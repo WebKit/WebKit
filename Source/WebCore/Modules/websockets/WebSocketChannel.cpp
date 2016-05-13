@@ -190,7 +190,7 @@ void WebSocketChannel::close(int code, const String& reason)
     ASSERT(!m_suspended);
     if (!m_handle)
         return;
-    Ref<WebSocketChannel> protect(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
+    Ref<WebSocketChannel> protectedThis(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
     startClosingHandshake(code, reason);
     if (m_closing && !m_closingTimer.isActive())
         m_closingTimer.startOneShot(2 * TCPMaximumSegmentLifetime);
@@ -214,7 +214,7 @@ void WebSocketChannel::fail(const String& reason)
 
     // Hybi-10 specification explicitly states we must not continue to handle incoming data
     // once the WebSocket connection is failed (section 7.1.7).
-    Ref<WebSocketChannel> protect(*this); // The client can close the channel, potentially removing the last reference.
+    Ref<WebSocketChannel> protectedThis(*this); // The client can close the channel, potentially removing the last reference.
     m_shouldDiscardReceivedData = true;
     if (!m_buffer.isEmpty())
         skipBuffer(m_buffer.size()); // Save memory.
@@ -301,7 +301,7 @@ void WebSocketChannel::didCloseSocketStream(SocketStreamHandle* handle)
 void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle* handle, const char* data, int len)
 {
     LOG(Network, "WebSocketChannel %p didReceiveSocketStreamData() Received %d bytes", this, len);
-    Ref<WebSocketChannel> protect(*this); // The client can close the channel, potentially removing the last reference.
+    Ref<WebSocketChannel> protectedThis(*this); // The client can close the channel, potentially removing the last reference.
     ASSERT(handle == m_handle);
     if (!m_document) {
         return;
@@ -428,7 +428,7 @@ bool WebSocketChannel::processBuffer()
         return false;
     }
 
-    Ref<WebSocketChannel> protect(*this); // The client can close the channel, potentially removing the last reference.
+    Ref<WebSocketChannel> protectedThis(*this); // The client can close the channel, potentially removing the last reference.
 
     if (m_handshake->mode() == WebSocketHandshake::Incomplete) {
         int headerLength = m_handshake->readServerHandshake(m_buffer.data(), m_buffer.size());
@@ -465,7 +465,7 @@ bool WebSocketChannel::processBuffer()
 
 void WebSocketChannel::resumeTimerFired()
 {
-    Ref<WebSocketChannel> protect(*this); // The client can close the channel, potentially removing the last reference.
+    Ref<WebSocketChannel> protectedThis(*this); // The client can close the channel, potentially removing the last reference.
     while (!m_suspended && m_client && !m_buffer.isEmpty())
         if (!processBuffer())
             break;
@@ -490,7 +490,7 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
         buf.append(reason.utf8().data(), reason.utf8().length());
     }
     enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.data(), buf.size());
-    Ref<WebSocketChannel> protect(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
+    Ref<WebSocketChannel> protectedThis(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
     processOutgoingFrameQueue();
 
     if (m_closed) {
@@ -729,7 +729,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
     if (m_outgoingFrameQueueStatus == OutgoingFrameQueueClosed)
         return;
 
-    Ref<WebSocketChannel> protect(*this); // Any call to fail() will get the channel closed and dereferenced.
+    Ref<WebSocketChannel> protectedThis(*this); // Any call to fail() will get the channel closed and dereferenced.
 
     while (!m_outgoingFrameQueue.isEmpty()) {
         auto frame = m_outgoingFrameQueue.takeFirst();

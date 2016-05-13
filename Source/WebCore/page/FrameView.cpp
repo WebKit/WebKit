@@ -475,7 +475,7 @@ void FrameView::invalidateRect(const IntRect& rect)
 
 void FrameView::setFrameRect(const IntRect& newRect)
 {
-    Ref<FrameView> protect(*this);
+    Ref<FrameView> protectedThis(*this);
     IntRect oldRect = frameRect();
     if (newRect == oldRect)
         return;
@@ -1218,7 +1218,7 @@ void FrameView::layout(bool allowSubtree)
     }
 
     // Protect the view from being deleted during layout (in recalcStyle).
-    Ref<FrameView> protect(*this);
+    Ref<FrameView> protectedThis(*this);
 
     // Many of the tasks performed during layout can cause this function to be re-entered,
     // so save the layout phase now and restore it on exit.
@@ -3113,7 +3113,7 @@ bool FrameView::updateEmbeddedObjects()
 
 void FrameView::updateEmbeddedObjectsTimerFired()
 {
-    RefPtr<FrameView> protect(this);
+    RefPtr<FrameView> protectedThis(this);
     m_updateEmbeddedObjectsTimer.stop();
     for (unsigned i = 0; i < maxUpdateEmbeddedObjectsIterations; i++) {
         if (updateEmbeddedObjects())
@@ -3190,7 +3190,7 @@ void FrameView::performPostLayoutTasks()
 
     // layout() protects FrameView, but it still can get destroyed when updateEmbeddedObjects()
     // is called through the post layout timer.
-    Ref<FrameView> protect(*this);
+    Ref<FrameView> protectedThis(*this);
 
     m_updateEmbeddedObjectsTimer.startOneShot(0);
 

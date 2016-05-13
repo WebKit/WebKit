@@ -40,7 +40,7 @@ using namespace JSC;
 // boolean.
 uint16_t JSNodeFilter::acceptNode(Node* node)
 {
-    Ref<JSNodeFilter> protect(*this);
+    Ref<JSNodeFilter> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 

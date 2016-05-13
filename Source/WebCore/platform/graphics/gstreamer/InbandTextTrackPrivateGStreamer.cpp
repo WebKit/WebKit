@@ -74,14 +74,18 @@ void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
         m_pendingSamples.append(sample);
     }
 
-    RefPtr<InbandTextTrackPrivateGStreamer> protector(this);
-    m_notifier.notify(MainThreadNotification::NewSample, [protector] { protector->notifyTrackOfSample(); });
+    RefPtr<InbandTextTrackPrivateGStreamer> protectedThis(this);
+    m_notifier.notify(MainThreadNotification::NewSample, [protectedThis] {
+        protectedThis->notifyTrackOfSample();
+    });
 }
 
 void InbandTextTrackPrivateGStreamer::streamChanged()
 {
-    RefPtr<InbandTextTrackPrivateGStreamer> protector(this);
-    m_notifier.notify(MainThreadNotification::StreamChanged, [protector] { protector->notifyTrackOfStreamChanged(); });
+    RefPtr<InbandTextTrackPrivateGStreamer> protectedThis(this);
+    m_notifier.notify(MainThreadNotification::StreamChanged, [protectedThis] {
+        protectedThis->notifyTrackOfStreamChanged();
+    });
 }
 
 void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()

@@ -167,7 +167,7 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
     m_showPopup = true;
 
     // Protect the popup menu in case its owner is destroyed while we're running the message pump.
-    RefPtr<PopupMenu> protect(this);
+    RefPtr<PopupMenu> protectedThis(this);
 
     ::SetCapture(hostWindow);
 

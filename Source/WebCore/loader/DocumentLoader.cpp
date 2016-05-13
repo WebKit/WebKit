@@ -275,8 +275,8 @@ void DocumentLoader::mainReceivedError(const ResourceError& error)
 // but not loads initiated by child frames' data sources -- that's the WebFrame's job.
 void DocumentLoader::stopLoading()
 {
-    RefPtr<Frame> protectFrame(m_frame);
-    Ref<DocumentLoader> protectLoader(*this);
+    RefPtr<Frame> protectedFrame(m_frame);
+    Ref<DocumentLoader> protectedThis(*this);
 
     // In some rare cases, calling FrameLoader::stopLoading could cause isLoading() to return false.
     // (This can happen when there's a single XMLHttpRequest currently loading and stopLoading causes it
@@ -400,7 +400,7 @@ void DocumentLoader::finishedLoading(double finishTime)
     ASSERT(!m_frame->page()->defersLoading() || InspectorInstrumentation::isDebuggerPaused(m_frame));
 #endif
 
-    Ref<DocumentLoader> protect(*this);
+    Ref<DocumentLoader> protectedThis(*this);
 
     if (m_identifierForLoadWithoutResourceLoader) {
         // A didFinishLoading delegate might try to cancel the load (despite it
@@ -637,7 +637,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
 #endif
 
     ASSERT_UNUSED(resource, m_mainResource == resource);
-    Ref<DocumentLoader> protect(*this);
+    Ref<DocumentLoader> protectedThis(*this);
     bool willLoadFallback = m_applicationCacheHost->maybeLoadFallbackForMainResponse(request(), response);
 
     // The memory cache doesn't understand the application cache or its caching rules. So if a main resource is served
@@ -816,8 +816,8 @@ void DocumentLoader::commitLoad(const char* data, int length)
 {
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
-    RefPtr<Frame> protectFrame(m_frame);
-    Ref<DocumentLoader> protectLoader(*this);
+    RefPtr<Frame> protectedFrame(m_frame);
+    Ref<DocumentLoader> protectedThis(*this);
 
     commitIfReady();
     FrameLoader* frameLoader = DocumentLoader::frameLoader();
@@ -999,8 +999,8 @@ void DocumentLoader::detachFromFrame()
     else
         ASSERT_WITH_MESSAGE(m_frame, "detachFromFrame() is being called on a DocumentLoader that has never attached to any Frame");
 #endif
-    RefPtr<Frame> protectFrame(m_frame);
-    Ref<DocumentLoader> protectLoader(*this);
+    RefPtr<Frame> protectedFrame(m_frame);
+    Ref<DocumentLoader> protectedThis(*this);
 
     // It never makes sense to have a document loader that is detached from its
     // frame have any loads active, so kill all the loads.
@@ -1475,7 +1475,7 @@ void DocumentLoader::startLoadingMainResource()
     ASSERT(!timing().fetchStart());
     timing().markFetchStart();
 
-    Ref<DocumentLoader> protect(*this); // willSendRequest() may deallocate the provisional loader (which may be us) if it cancels the load.
+    Ref<DocumentLoader> protectedThis(*this); // willSendRequest() may deallocate the provisional loader (which may be us) if it cancels the load.
     willSendRequest(m_request, ResourceResponse());
 
     // willSendRequest() may lead to our Frame being detached or cancelling the load via nulling the ResourceRequest.
@@ -1555,7 +1555,7 @@ void DocumentLoader::cancelPolicyCheckIfNeeded()
 
 void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
 {
-    Ref<DocumentLoader> protect(*this);
+    Ref<DocumentLoader> protectedThis(*this);
     ResourceError error = resourceError.isNull() ? frameLoader()->cancelledError(m_request) : resourceError;
 
     m_dataLoadTimer.stop();

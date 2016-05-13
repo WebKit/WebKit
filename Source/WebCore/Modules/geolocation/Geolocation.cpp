@@ -455,7 +455,7 @@ void Geolocation::clearWatch(int watchID)
 void Geolocation::setIsAllowed(bool allowed)
 {
     // Protect the Geolocation object from garbage collection during a callback.
-    Ref<Geolocation> protect(*this);
+    Ref<Geolocation> protectedThis(*this);
 
     // This may be due to either a new position from the service, or a cached
     // position.

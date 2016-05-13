@@ -1885,7 +1885,7 @@ void DOMWindow::dispatchLoadEvent()
 
 bool DOMWindow::dispatchEvent(Event& event, EventTarget* target)
 {
-    Ref<EventTarget> protect(*this);
+    Ref<EventTarget> protectedThis(*this);
 
     // Pausing a page may trigger pagehide and pageshow events. WebCore also implicitly fires these
     // events when closing a WebView. Here we keep track of the state of the page to prevent duplicate,

@@ -1,3 +1,107 @@
+2016-05-13  Brady Eidson  <beidson@apple.com>
+
+        Rename all protector variables that should be called `protectedThis`
+        https://bugs.webkit.org/show_bug.cgi?id=157610
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Renaming, no behavior change).
+        
+        WebCore has so many instances of these protectors as well as so much variance in naming them,
+        that I think it deserved a new style pass.
+
+        * Modules/fetch/FetchResponse.cpp:
+        * Modules/geolocation/GeoNotifier.cpp:
+        * Modules/geolocation/Geolocation.cpp:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        * Modules/indexeddb/client/TransactionOperation.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        * Modules/notifications/NotificationCenter.cpp:
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webdatabase/Database.cpp:
+        * Modules/websockets/WebSocket.cpp:
+        * Modules/websockets/WebSocketChannel.cpp:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityRenderObject.cpp:
+        * bindings/gobject/GObjectEventListener.cpp:
+        * bindings/js/JSCustomElementInterface.cpp:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSErrorHandler.cpp:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSMutationCallback.cpp:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bridge/runtime_root.cpp:
+        * css/CSSFontSelector.cpp:
+        * css/StyleSheetContents.cpp:
+        * dom/CharacterData.cpp:
+        * dom/ContainerNode.cpp:
+        * dom/Document.cpp:
+        * dom/EventTarget.cpp:
+        * dom/Node.cpp:
+        * dom/ScriptExecutionContext.cpp:
+        * dom/ScriptedAnimationController.cpp:
+        * dom/StringCallback.cpp:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLLinkElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLScriptElement.cpp:
+        * html/HTMLTableElement.cpp:
+        * html/HTMLTextAreaElement.cpp:
+        * html/HTMLTitleElement.cpp:
+        * html/parser/HTMLDocumentParser.cpp:
+        * html/shadow/SliderThumbElement.cpp:
+        * html/shadow/SpinButtonElement.cpp:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        * loader/DocumentLoader.cpp:
+        * loader/DocumentThreadableLoader.cpp:
+        * loader/MediaResourceLoader.cpp:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        * loader/ResourceLoader.cpp:
+        * loader/SubresourceLoader.cpp:
+        * loader/cache/CachedRawResource.cpp:
+        * loader/cf/SubresourceLoaderCF.cpp:
+        * loader/mac/ResourceLoaderMac.mm:
+        * page/DOMWindow.cpp:
+        * page/DOMWindowExtension.cpp:
+        * page/FrameView.cpp:
+        * page/animation/AnimationBase.cpp:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        * platform/ScrollView.cpp:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        * platform/mac/WidgetMac.mm:
+        * platform/network/BlobResourceHandle.cpp:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        * platform/network/curl/CurlDownload.cpp:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/soup/SocketStreamHandleSoup.cpp:
+        * platform/win/PopupMenuWin.cpp:
+        * workers/WorkerScriptLoader.cpp:
+        * xml/XMLHttpRequest.cpp:
+        * xml/parser/XMLDocumentParser.cpp:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+
 2016-05-13  Enrica Casucci  <enrica@apple.com>
 
         Remove unused initializer for WebEvent on iOS.

@@ -281,7 +281,7 @@ void CACFLayerTreeHost::setShouldInvertColors(bool)
 void CACFLayerTreeHost::flushPendingLayerChangesNow()
 {
     // Calling out to the client could cause our last reference to go away.
-    RefPtr<CACFLayerTreeHost> protector(this);
+    RefPtr<CACFLayerTreeHost> protectedThis(this);
 
     updateDebugInfoLayer(m_page->settings().showTiledScrollingIndicator());
 

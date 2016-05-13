@@ -342,7 +342,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
         return;
 
     // Completing the sheet load may cause scripts to execute.
-    Ref<HTMLLinkElement> protect(*this);
+    Ref<HTMLLinkElement> protectedThis(*this);
 
     CSSParserContext parserContext(document(), baseURL, charset);
     auto cachePolicy = frame->loader().subresourceCachePolicy();

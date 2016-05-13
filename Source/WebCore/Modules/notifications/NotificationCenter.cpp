@@ -121,7 +121,7 @@ void NotificationCenter::stop()
     // Clear m_client immediately to guarantee reentrant calls to NotificationCenter do nothing.
     // Also protect |this| so it's not indirectly destroyed under us by work done by the client.
     auto& client = *std::exchange(m_client, nullptr);
-    Ref<NotificationCenter> protector(*this);
+    Ref<NotificationCenter> protectedThis(*this);
 
     if (!m_callbacks.isEmpty())
         deref(); // Balanced by the ref in NotificationCenter::requestPermission.

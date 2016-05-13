@@ -114,7 +114,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     }
 
     if (callType != CallType::None) {
-        Ref<JSEventListener> protect(*this);
+        Ref<JSEventListener> protectedThis(*this);
 
         MarkedArgumentBuffer args;
         args.append(toJS(exec, globalObject, event));

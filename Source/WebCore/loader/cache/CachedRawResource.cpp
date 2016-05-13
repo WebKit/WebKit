@@ -59,7 +59,7 @@ const char* CachedRawResource::calculateIncrementalDataChunk(SharedBuffer* data,
 
 void CachedRawResource::addDataBuffer(SharedBuffer& data)
 {
-    CachedResourceHandle<CachedRawResource> protect(this);
+    CachedResourceHandle<CachedRawResource> protectedThis(this);
     ASSERT(dataBufferingPolicy() == BufferData);
     m_data = &data;
 
@@ -86,7 +86,7 @@ void CachedRawResource::addData(const char* data, unsigned length)
 
 void CachedRawResource::finishLoading(SharedBuffer* data)
 {
-    CachedResourceHandle<CachedRawResource> protect(this);
+    CachedResourceHandle<CachedRawResource> protectedThis(this);
     DataBufferingPolicy dataBufferingPolicy = this->dataBufferingPolicy();
     if (dataBufferingPolicy == BufferData) {
         m_data = data;
@@ -113,7 +113,7 @@ void CachedRawResource::notifyClientsDataWasReceived(const char* data, unsigned 
     if (!length)
         return;
 
-    CachedResourceHandle<CachedRawResource> protect(this);
+    CachedResourceHandle<CachedRawResource> protectedThis(this);
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next())
         c->dataReceived(this, data, length);
@@ -126,7 +126,7 @@ void CachedRawResource::didAddClient(CachedResourceClient* c)
     // The calls to the client can result in events running, potentially causing
     // this resource to be evicted from the cache and all clients to be removed,
     // so a protector is necessary.
-    CachedResourceHandle<CachedRawResource> protect(this);
+    CachedResourceHandle<CachedRawResource> protectedThis(this);
     CachedRawResourceClient* client = static_cast<CachedRawResourceClient*>(c);
     size_t redirectCount = m_redirectChain.size();
     for (size_t i = 0; i < redirectCount; i++) {
@@ -165,7 +165,7 @@ void CachedRawResource::allClientsRemoved()
 
 void CachedRawResource::redirectReceived(ResourceRequest& request, const ResourceResponse& response)
 {
-    CachedResourceHandle<CachedRawResource> protect(this);
+    CachedResourceHandle<CachedRawResource> protectedThis(this);
     if (!response.isNull()) {
         CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
         while (CachedRawResourceClient* c = w.next())
@@ -177,7 +177,7 @@ void CachedRawResource::redirectReceived(ResourceRequest& request, const Resourc
 
 void CachedRawResource::responseReceived(const ResourceResponse& response)
 {
-    CachedResourceHandle<CachedRawResource> protect(this);
+    CachedResourceHandle<CachedRawResource> protectedThis(this);
     if (!m_identifier)
         m_identifier = m_loader->identifier();
     CachedResource::responseReceived(response);

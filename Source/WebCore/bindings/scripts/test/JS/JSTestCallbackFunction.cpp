@@ -65,7 +65,7 @@ bool JSTestCallbackFunction::callbackWithNoParam()
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallbackFunction> protect(*this);
+    Ref<JSTestCallbackFunction> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
@@ -85,7 +85,7 @@ bool JSTestCallbackFunction::callbackWithArrayParam(RefPtr<Float32Array> arrayPa
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallbackFunction> protect(*this);
+    Ref<JSTestCallbackFunction> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
@@ -106,7 +106,7 @@ bool JSTestCallbackFunction::callbackWithSerializedScriptValueParam(PassRefPtr<S
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallbackFunction> protect(*this);
+    Ref<JSTestCallbackFunction> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
@@ -128,7 +128,7 @@ bool JSTestCallbackFunction::callbackWithStringList(PassRefPtr<DOMStringList> li
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallbackFunction> protect(*this);
+    Ref<JSTestCallbackFunction> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
@@ -149,7 +149,7 @@ bool JSTestCallbackFunction::callbackWithBoolean(bool boolParam)
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallbackFunction> protect(*this);
+    Ref<JSTestCallbackFunction> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
@@ -170,7 +170,7 @@ bool JSTestCallbackFunction::callbackRequiresThisToPass(int32_t longParam, TestN
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallbackFunction> protect(*this);
+    Ref<JSTestCallbackFunction> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 

@@ -105,7 +105,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
 
     // The call back can cause all our clients to be unregistered, so we need to protect
     // against deletion until the end of the method.
-    Ref<DisplayRefreshMonitor> protect(*this);
+    Ref<DisplayRefreshMonitor> protectedThis(*this);
 
     // Copy the hash table and remove clients from it one by one so we don't notify
     // any client twice, but can respond to removal of clients during the delivery process.

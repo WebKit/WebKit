@@ -402,7 +402,7 @@ String HTMLTextAreaElement::defaultValue() const
 
 void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
 {
-    Ref<HTMLTextAreaElement> protectFromMutationEvents(*this);
+    Ref<HTMLTextAreaElement> protectedThis(*this);
 
     // To preserve comments, remove only the text nodes, then add a single text node.
     Vector<Ref<Text>> textNodes;

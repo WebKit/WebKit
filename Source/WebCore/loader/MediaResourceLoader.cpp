@@ -140,7 +140,7 @@ void MediaResource::responseReceived(CachedResource* resource, const ResourceRes
     if (!m_loader->document())
         return;
 
-    RefPtr<MediaResource> protect(this);
+    RefPtr<MediaResource> protectedThis(this);
     if (!m_loader->crossOriginMode().isNull() && !resource->passesSameOriginPolicyCheck(*m_loader->document()->securityOrigin())) {
         static NeverDestroyed<const String> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy.");
         m_loader->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
@@ -160,7 +160,7 @@ bool MediaResource::shouldCacheResponse(CachedResource* resource, const Resource
 {
     ASSERT_UNUSED(resource, resource == m_resource);
 
-    RefPtr<MediaResource> protect(this);
+    RefPtr<MediaResource> protectedThis(this);
     if (m_client)
         return m_client->shouldCacheResponse(*this, response);
     return true;
@@ -170,7 +170,7 @@ void MediaResource::redirectReceived(CachedResource* resource, ResourceRequest& 
 {
     ASSERT_UNUSED(resource, resource == m_resource);
 
-    RefPtr<MediaResource> protect(this);
+    RefPtr<MediaResource> protectedThis(this);
     if (m_client)
         m_client->redirectReceived(*this, request, response);
 }
@@ -179,7 +179,7 @@ void MediaResource::dataSent(CachedResource* resource, unsigned long long bytesS
 {
     ASSERT_UNUSED(resource, resource == m_resource);
 
-    RefPtr<MediaResource> protect(this);
+    RefPtr<MediaResource> protectedThis(this);
     if (m_client)
         m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
@@ -188,7 +188,7 @@ void MediaResource::dataReceived(CachedResource* resource, const char* data, int
 {
     ASSERT_UNUSED(resource, resource == m_resource);
 
-    RefPtr<MediaResource> protect(this);
+    RefPtr<MediaResource> protectedThis(this);
     if (m_client)
         m_client->dataReceived(*this, data, dataLength);
 }
@@ -197,7 +197,7 @@ void MediaResource::notifyFinished(CachedResource* resource)
 {
     ASSERT(resource == m_resource);
 
-    RefPtr<MediaResource> protect(this);
+    RefPtr<MediaResource> protectedThis(this);
     if (m_client) {
         if (resource->loadFailedOrCanceled())
             m_client->loadFailed(*this, resource->resourceError());

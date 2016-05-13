@@ -111,7 +111,7 @@ void HTMLDocumentParser::prepareToStopParsing()
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    Ref<HTMLDocumentParser> protect(*this);
+    Ref<HTMLDocumentParser> protectedThis(*this);
 
     // NOTE: This pump should only ever emit buffered character tokens,
     // so ForceSynchronous vs. AllowYield should be meaningless.
@@ -178,7 +178,7 @@ void HTMLDocumentParser::resumeParsingAfterYield()
 {
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    Ref<HTMLDocumentParser> protect(*this);
+    Ref<HTMLDocumentParser> protectedThis(*this);
 
     // We should never be here unless we can pump immediately.
     // Call pumpTokenizer() directly so that ASSERTS will fire if we're wrong.
@@ -340,7 +340,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    Ref<HTMLDocumentParser> protect(*this);
+    Ref<HTMLDocumentParser> protectedThis(*this);
 
     SegmentedString excludedLineNumberSource(source);
     excludedLineNumberSource.setExcludeLineNumbers();
@@ -366,7 +366,7 @@ void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    Ref<HTMLDocumentParser> protect(*this);
+    Ref<HTMLDocumentParser> protectedThis(*this);
 
     String source(WTFMove(inputSource));
 
@@ -493,7 +493,7 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    Ref<HTMLDocumentParser> protect(*this);
+    Ref<HTMLDocumentParser> protectedThis(*this);
 
     m_insertionPreloadScanner = nullptr;
     pumpTokenizerIfPossible(AllowYield);
@@ -525,7 +525,7 @@ void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
 {
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    Ref<HTMLDocumentParser> protect(*this);
+    Ref<HTMLDocumentParser> protectedThis(*this);
 
     ASSERT(m_scriptRunner);
     ASSERT(!isExecutingScript());
@@ -552,7 +552,7 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    Ref<HTMLDocumentParser> protect(*this);
+    Ref<HTMLDocumentParser> protectedThis(*this);
     m_scriptRunner->executeScriptsWaitingForStylesheets();
     if (!isWaitingForScripts())
         resumeParsingAfterScriptExecution();

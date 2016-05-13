@@ -35,7 +35,7 @@ void SubresourceLoader::didReceiveDataArray(CFArrayRef dataArray)
 {
     // Reference the object in this method since the additional processing can do anything including
     // removing the last reference to this object; one example of this is <rdar://problem/3266216>.
-    Ref<SubresourceLoader> protect(*this);
+    Ref<SubresourceLoader> protectedThis(*this);
 
     ResourceLoader::didReceiveDataArray(dataArray);
 

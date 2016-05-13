@@ -59,9 +59,9 @@ ScrollingTree::EventResult ThreadedScrollingTree::tryToHandleWheelEvent(const Pl
     if (willWheelEventStartSwipeGesture(wheelEvent))
         return DidNotHandleEvent;
 
-    RefPtr<ThreadedScrollingTree> threadedScrollingTree(this);
-    ScrollingThread::dispatch([threadedScrollingTree, wheelEvent] {
-        threadedScrollingTree->handleWheelEvent(wheelEvent);
+    RefPtr<ThreadedScrollingTree> protectedThis(this);
+    ScrollingThread::dispatch([protectedThis, wheelEvent] {
+        protectedThis->handleWheelEvent(wheelEvent);
     });
     
     return DidHandleEvent;

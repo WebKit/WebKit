@@ -200,7 +200,7 @@ void RootObject::finalize(JSC::Handle<JSC::Unknown> handle, void*)
 {
     RuntimeObject* object = static_cast<RuntimeObject*>(handle.slot()->asCell());
 
-    Ref<RootObject> protect(*this);
+    Ref<RootObject> protectedThis(*this);
     object->invalidate();
     weakRemove(m_runtimeObjects, object, object);
 }

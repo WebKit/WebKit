@@ -84,7 +84,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
     CallType callType = jsFunction->methodTable()->getCallData(jsFunction, callData);
 
     if (callType != CallType::None) {
-        Ref<JSErrorHandler> protectedctor(*this);
+        Ref<JSErrorHandler> protectedThis(*this);
 
         Event* savedEvent = globalObject->currentEvent();
         globalObject->setCurrentEvent(event);

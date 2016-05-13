@@ -314,7 +314,7 @@ void UniqueIDBDatabase::handleCurrentOperation()
 
     ASSERT(m_currentOpenDBRequest);
 
-    RefPtr<UniqueIDBDatabase> protector(this);
+    RefPtr<UniqueIDBDatabase> protectedThis(this);
 
     if (m_currentOpenDBRequest->isOpenRequest())
         performCurrentOpenOperation();
@@ -1217,7 +1217,7 @@ void UniqueIDBDatabase::operationAndTransactionTimerFired()
 {
     LOG(IndexedDB, "(main) UniqueIDBDatabase::operationAndTransactionTimerFired");
 
-    RefPtr<UniqueIDBDatabase> protector(this);
+    RefPtr<UniqueIDBDatabase> protectedThis(this);
 
     // This UniqueIDBDatabase might be no longer in use by any web page.
     // Assuming it is not ephemeral, the server should now close it to free up resources.
@@ -1261,10 +1261,10 @@ void UniqueIDBDatabase::activateTransactionInBackingStore(UniqueIDBDatabaseTrans
 {
     LOG(IndexedDB, "(main) UniqueIDBDatabase::activateTransactionInBackingStore");
 
-    RefPtr<UniqueIDBDatabase> self(this);
+    RefPtr<UniqueIDBDatabase> protectedThis(this);
     RefPtr<UniqueIDBDatabaseTransaction> refTransaction(&transaction);
 
-    auto callback = [this, self, refTransaction](const IDBError& error) {
+    auto callback = [this, protectedThis, refTransaction](const IDBError& error) {
         refTransaction->didActivateInBackingStore(error);
     };
 

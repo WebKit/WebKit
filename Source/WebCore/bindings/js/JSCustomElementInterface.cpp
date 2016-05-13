@@ -61,7 +61,7 @@ RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& t
     if (!canInvokeCallback())
         return nullptr;
 
-    Ref<JSCustomElementInterface> protect(*this);
+    Ref<JSCustomElementInterface> protectedThis(*this);
 
     JSLockHolder lock(m_isolatedWorld->vm());
 
@@ -108,7 +108,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     if (!canInvokeCallback())
         return;
 
-    Ref<JSCustomElementInterface> protect(*this);
+    Ref<JSCustomElementInterface> protectedThis(*this);
     JSLockHolder lock(m_isolatedWorld->vm());
 
     if (!m_constructor)
@@ -156,7 +156,7 @@ void JSCustomElementInterface::attributeChanged(Element& element, const Qualifie
     if (!canInvokeCallback())
         return;
 
-    Ref<JSCustomElementInterface> protect(*this);
+    Ref<JSCustomElementInterface> protectedThis(*this);
 
     JSLockHolder lock(m_isolatedWorld->vm());
 

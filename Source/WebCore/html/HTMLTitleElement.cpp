@@ -90,7 +90,7 @@ StringWithDirection HTMLTitleElement::computedTextWithDirection()
 
 void HTMLTitleElement::setText(const String& value)
 {
-    Ref<HTMLTitleElement> protectFromMutationEvents(*this);
+    Ref<HTMLTitleElement> protectedThis(*this);
     
     if (!value.isEmpty() && hasOneChild() && is<Text>(*firstChild())) {
         downcast<Text>(*firstChild()).setData(value);

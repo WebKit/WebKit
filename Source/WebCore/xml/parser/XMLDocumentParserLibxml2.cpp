@@ -680,7 +680,7 @@ void XMLDocumentParser::doWrite(const String& parseString)
     if (parseString.length()) {
         // JavaScript may cause the parser to detach during xmlParseChunk
         // keep this alive until this function is done.
-        Ref<XMLDocumentParser> protect(*this);
+        Ref<XMLDocumentParser> protectedThis(*this);
 
         XMLDocumentParserScope scope(&document()->cachedResourceLoader());
 
@@ -872,7 +872,7 @@ void XMLDocumentParser::endElementNs()
 
     // JavaScript can detach the parser.  Make sure this is not released
     // before the end of this method.
-    Ref<XMLDocumentParser> protect(*this);
+    Ref<XMLDocumentParser> protectedThis(*this);
 
     if (!updateLeafTextNode())
         return;

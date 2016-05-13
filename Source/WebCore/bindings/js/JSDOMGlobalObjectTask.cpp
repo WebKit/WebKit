@@ -48,7 +48,7 @@ public:
         if (!canInvokeCallback())
             return;
 
-        Ref<JSGlobalObjectCallback> protect(*this);
+        Ref<JSGlobalObjectCallback> protectedThis(*this);
         JSLockHolder lock(m_globalObject->vm());
 
         ExecState* exec = m_globalObject->globalExec();

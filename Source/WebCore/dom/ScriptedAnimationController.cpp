@@ -147,7 +147,7 @@ void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTime
 
     // Invoking callbacks may detach elements from our document, which clears the document's
     // reference to us, so take a defensive reference.
-    Ref<ScriptedAnimationController> protect(*this);
+    Ref<ScriptedAnimationController> protectedThis(*this);
 
     for (auto& callback : callbacks) {
         if (!callback->m_firedOrCancelled) {

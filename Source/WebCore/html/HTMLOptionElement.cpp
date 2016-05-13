@@ -107,7 +107,7 @@ String HTMLOptionElement::text() const
 
 void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)
 {
-    Ref<HTMLOptionElement> protectFromMutationEvents(*this);
+    Ref<HTMLOptionElement> protectedThis(*this);
 
     // Changing the text causes a recalc of a select's items, which will reset the selected
     // index to the first item if the select is single selection with a menu list. We attempt to

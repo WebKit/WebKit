@@ -81,7 +81,7 @@ void HTMLScriptElement::finishedInsertingSubtree()
 
 void HTMLScriptElement::setText(const String& value)
 {
-    Ref<HTMLScriptElement> protectFromMutationEvents(*this);
+    Ref<HTMLScriptElement> protectedThis(*this);
 
     if (hasOneChild() && is<Text>(*firstChild())) {
         downcast<Text>(*firstChild()).setData(value);

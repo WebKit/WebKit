@@ -91,334 +91,334 @@ IDBServer::IDBConnectionToClient& InProcessIDBServer::connectionToClient() const
 
 void InProcessIDBServer::deleteDatabase(const IDBRequestData& requestData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, requestData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, requestData] {
         m_server->deleteDatabase(requestData);
     });
 }
 
 void InProcessIDBServer::didDeleteDatabase(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didDeleteDatabase(resultData);
     });
 }
 
 void InProcessIDBServer::openDatabase(const IDBRequestData& requestData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, requestData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, requestData] {
         m_server->openDatabase(requestData);
     });
 }
 
 void InProcessIDBServer::didOpenDatabase(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didOpenDatabase(resultData);
     });
 }
 
 void InProcessIDBServer::didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, transactionIdentifier, error] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, transactionIdentifier, error] {
         m_connectionToServer->didAbortTransaction(transactionIdentifier, error);
     });
 }
 
 void InProcessIDBServer::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, transactionIdentifier, error] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, transactionIdentifier, error] {
         m_connectionToServer->didCommitTransaction(transactionIdentifier, error);
     });
 }
 
 void InProcessIDBServer::didCreateObjectStore(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didCreateObjectStore(resultData);
     });
 }
 
 void InProcessIDBServer::didDeleteObjectStore(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didDeleteObjectStore(resultData);
     });
 }
 
 void InProcessIDBServer::didClearObjectStore(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didClearObjectStore(resultData);
     });
 }
 
 void InProcessIDBServer::didCreateIndex(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didCreateIndex(resultData);
     });
 }
 
 void InProcessIDBServer::didDeleteIndex(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didDeleteIndex(resultData);
     });
 }
 
 void InProcessIDBServer::didPutOrAdd(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didPutOrAdd(resultData);
     });
 }
 
 void InProcessIDBServer::didGetRecord(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didGetRecord(resultData);
     });
 }
 
 void InProcessIDBServer::didGetCount(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didGetCount(resultData);
     });
 }
 
 void InProcessIDBServer::didDeleteRecord(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didDeleteRecord(resultData);
     });
 }
 
 void InProcessIDBServer::didOpenCursor(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didOpenCursor(resultData);
     });
 }
 
 void InProcessIDBServer::didIterateCursor(const IDBResultData& resultData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData] {
         m_connectionToServer->didIterateCursor(resultData);
     });
 }
 
 void InProcessIDBServer::abortTransaction(const IDBResourceIdentifier& resourceIdentifier)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resourceIdentifier] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resourceIdentifier] {
         m_server->abortTransaction(resourceIdentifier);
     });
 }
 
 void InProcessIDBServer::commitTransaction(const IDBResourceIdentifier& resourceIdentifier)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resourceIdentifier] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resourceIdentifier] {
         m_server->commitTransaction(resourceIdentifier);
     });
 }
 
 void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, databaseConnectionIdentifier, transactionIdentifier] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, databaseConnectionIdentifier, transactionIdentifier] {
         m_server->didFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier);
     });
 }
 
 void InProcessIDBServer::createObjectStore(const IDBRequestData& resultData, const IDBObjectStoreInfo& info)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, resultData, info] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, resultData, info] {
         m_server->createObjectStore(resultData, info);
     });
 }
 
 void InProcessIDBServer::deleteObjectStore(const IDBRequestData& requestData, const String& objectStoreName)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, requestData, objectStoreName] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, requestData, objectStoreName] {
         m_server->deleteObjectStore(requestData, objectStoreName);
     });
 }
 
 void InProcessIDBServer::clearObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, requestData, objectStoreIdentifier] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, requestData, objectStoreIdentifier] {
         m_server->clearObjectStore(requestData, objectStoreIdentifier);
     });
 }
 
 void InProcessIDBServer::createIndex(const IDBRequestData& requestData, const IDBIndexInfo& info)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, requestData, info] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, requestData, info] {
         m_server->createIndex(requestData, info);
     });
 }
 
 void InProcessIDBServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& indexName)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, requestData, objectStoreIdentifier, indexName] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, requestData, objectStoreIdentifier, indexName] {
         m_server->deleteIndex(requestData, objectStoreIdentifier, indexName);
     });
 }
 
 void InProcessIDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, requestData, keyData, value, overwriteMode] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, requestData, keyData, value, overwriteMode] {
         m_server->putOrAdd(requestData, keyData, value, overwriteMode);
     });
 }
 
 void InProcessIDBServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
-    RefPtr<InProcessIDBServer> self(this);
+    RefPtr<InProcessIDBServer> protectedThis(this);
 
-    RunLoop::current().dispatch([this, self, requestData, keyRangeData] {
+    RunLoop::current().dispatch([this, protectedThis, requestData, keyRangeData] {
         m_server->getRecord(requestData, keyRangeData);
     });
 }
 
 void InProcessIDBServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, requestData, keyRangeData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, requestData, keyRangeData] {
         m_server->getCount(requestData, keyRangeData);
     });
 }
 
 void InProcessIDBServer::deleteRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
-    RefPtr<InProcessIDBServer> self(this);
+    RefPtr<InProcessIDBServer> protectedThis(this);
 
-    RunLoop::current().dispatch([this, self, requestData, keyRangeData] {
+    RunLoop::current().dispatch([this, protectedThis, requestData, keyRangeData] {
         m_server->deleteRecord(requestData, keyRangeData);
     });
 }
 
 void InProcessIDBServer::openCursor(const IDBRequestData& requestData, const IDBCursorInfo& info)
 {
-    RefPtr<InProcessIDBServer> self(this);
+    RefPtr<InProcessIDBServer> protectedThis(this);
 
-    RunLoop::current().dispatch([this, self, requestData, info] {
+    RunLoop::current().dispatch([this, protectedThis, requestData, info] {
         m_server->openCursor(requestData, info);
     });
 }
 
 void InProcessIDBServer::iterateCursor(const IDBRequestData& requestData, const IDBKeyData& key, unsigned long count)
 {
-    RefPtr<InProcessIDBServer> self(this);
+    RefPtr<InProcessIDBServer> protectedThis(this);
 
-    RunLoop::current().dispatch([this, self, requestData, key, count] {
+    RunLoop::current().dispatch([this, protectedThis, requestData, key, count] {
         m_server->iterateCursor(requestData, key, count);
     });
 }
 
 void InProcessIDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
-    RefPtr<InProcessIDBServer> self(this);
+    RefPtr<InProcessIDBServer> protectedThis(this);
 
-    RunLoop::current().dispatch([this, self, databaseConnectionIdentifier, info] {
+    RunLoop::current().dispatch([this, protectedThis, databaseConnectionIdentifier, info] {
         m_server->establishTransaction(databaseConnectionIdentifier, info);
     });
 }
 
 void InProcessIDBServer::fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection& connection, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
-    RefPtr<InProcessIDBServer> self(this);
+    RefPtr<InProcessIDBServer> protectedThis(this);
     uint64_t databaseConnectionIdentifier = connection.identifier();
-    RunLoop::current().dispatch([this, self, databaseConnectionIdentifier, requestIdentifier, requestedVersion] {
+    RunLoop::current().dispatch([this, protectedThis, databaseConnectionIdentifier, requestIdentifier, requestedVersion] {
         m_connectionToServer->fireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, requestedVersion);
     });
 }
 
 void InProcessIDBServer::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, transactionIdentifier, error] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, transactionIdentifier, error] {
         m_connectionToServer->didStartTransaction(transactionIdentifier, error);
     });
 }
 
 void InProcessIDBServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, requestIdentifier, oldVersion, newVersion] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, requestIdentifier, oldVersion, newVersion] {
         m_connectionToServer->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
     });
 }
 
 void InProcessIDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, databaseConnectionIdentifier] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, databaseConnectionIdentifier] {
         m_server->databaseConnectionClosed(databaseConnectionIdentifier);
     });
 }
 
 void InProcessIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, databaseConnectionIdentifier, transactionIdentifier] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, databaseConnectionIdentifier, transactionIdentifier] {
         m_server->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
     });
 }
 
 void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, databaseConnectionIdentifier, requestIdentifier] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, databaseConnectionIdentifier, requestIdentifier] {
         m_server->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier);
     });
 }
 
 void InProcessIDBServer::openDBRequestCancelled(const IDBRequestData& requestData)
 {
-    RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, requestData] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, requestData] {
         m_server->openDBRequestCancelled(requestData);
     });
 }
 
 void InProcessIDBServer::getAllDatabaseNames(const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
-    RefPtr<InProcessIDBServer> protector(this);
-    RunLoop::current().dispatch([this, protector, mainFrameOrigin, openingOrigin, callbackID] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, mainFrameOrigin, openingOrigin, callbackID] {
         m_server->getAllDatabaseNames(m_connectionToServer->identifier(), mainFrameOrigin, openingOrigin, callbackID);
     });
 }
 
 void InProcessIDBServer::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
 {
-    RefPtr<InProcessIDBServer> protector(this);
-    RunLoop::current().dispatch([this, protector, callbackID, databaseNames] {
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, callbackID, databaseNames] {
         m_connectionToServer->didGetAllDatabaseNames(callbackID, databaseNames);
     });
 }

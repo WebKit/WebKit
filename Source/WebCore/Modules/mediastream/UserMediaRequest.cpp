@@ -209,7 +209,7 @@ void UserMediaRequest::failedToCreateStreamWithPermissionError()
 
 void UserMediaRequest::contextDestroyed()
 {
-    Ref<UserMediaRequest> protect(*this);
+    Ref<UserMediaRequest> protectedThis(*this);
 
     if (m_controller) {
         m_controller->cancelUserMediaAccessRequest(*this);

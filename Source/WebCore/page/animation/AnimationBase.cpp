@@ -476,7 +476,7 @@ void AnimationBase::fireAnimationEventsIfNeeded()
     // during an animation callback that might get called. Since the owner is a CompositeAnimation
     // and it ref counts this object, we will keep a ref to that instead. That way the AnimationBase
     // can still access the resources of its CompositeAnimation as needed.
-    Ref<AnimationBase> protect(*this);
+    Ref<AnimationBase> protectedThis(*this);
     Ref<CompositeAnimation> protectCompositeAnimation(*m_compositeAnimation);
     
     // Check for start timeout

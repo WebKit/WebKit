@@ -92,7 +92,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 
     // During create, callbacks may happen which remove the last reference to this object.
-    Ref<WorkerScriptLoader> protect(*this);
+    Ref<WorkerScriptLoader> protectedThis(*this);
     m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, *request, options);
 }
 

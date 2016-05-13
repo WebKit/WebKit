@@ -397,7 +397,7 @@ void WorkerThreadableWebSocketChannel::Bridge::initialize()
 {
     ASSERT(!m_peer);
     setMethodNotCompleted();
-    Ref<Bridge> protect(*this);
+    Ref<Bridge> protectedThis(*this);
 
     WorkerLoaderProxy* loaderProxy = &m_loaderProxy;
     RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper = m_workerClientWrapper;
@@ -447,7 +447,7 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
         peer->send(capturedMessage.string());
     });
 
-    Ref<Bridge> protect(*this);
+    Ref<Bridge> protectedThis(*this);
     waitForMethodCompletion();
     ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
     if (!clientWrapper)
@@ -477,7 +477,7 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
         peer->send(*arrayBuffer);
     });
 
-    Ref<Bridge> protect(*this);
+    Ref<Bridge> protectedThis(*this);
     waitForMethodCompletion();
     ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
     if (!clientWrapper)
@@ -503,7 +503,7 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
         peer->send(Blob::deserialize(capturedURL.url(), capturedType.string(), size, { }));
     });
 
-    Ref<Bridge> protect(*this);
+    Ref<Bridge> protectedThis(*this);
     waitForMethodCompletion();
     ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
     if (!clientWrapper)
@@ -526,7 +526,7 @@ unsigned long WorkerThreadableWebSocketChannel::Bridge::bufferedAmount()
         peer->bufferedAmount();
     });
 
-    Ref<Bridge> protect(*this);
+    Ref<Bridge> protectedThis(*this);
     waitForMethodCompletion();
     ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
     if (clientWrapper)

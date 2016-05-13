@@ -90,11 +90,11 @@ bool NetscapePlugInStreamLoader::init(const ResourceRequest& request)
 
 void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback)
 {
-    RefPtr<NetscapePlugInStreamLoader> protect(this);
+    RefPtr<NetscapePlugInStreamLoader> protectedThis(this);
 
-    m_client->willSendRequest(this, WTFMove(request), redirectResponse, [protect, redirectResponse, callback](ResourceRequest request) {
+    m_client->willSendRequest(this, WTFMove(request), redirectResponse, [protectedThis, redirectResponse, callback](ResourceRequest request) {
         if (!request.isNull())
-            protect->willSendRequestInternal(request, redirectResponse);
+            protectedThis->willSendRequestInternal(request, redirectResponse);
 
         callback(WTFMove(request));
     });
@@ -102,7 +102,7 @@ void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, cons
 
 void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& response)
 {
-    Ref<NetscapePlugInStreamLoader> protect(*this);
+    Ref<NetscapePlugInStreamLoader> protectedThis(*this);
 
     m_client->didReceiveResponse(this, response);
 
@@ -139,7 +139,7 @@ void NetscapePlugInStreamLoader::didReceiveBuffer(PassRefPtr<SharedBuffer> buffe
 
 void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const char* data, int length, PassRefPtr<SharedBuffer> buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
-    Ref<NetscapePlugInStreamLoader> protect(*this);
+    Ref<NetscapePlugInStreamLoader> protectedThis(*this);
     
     m_client->didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length);
 
@@ -148,7 +148,7 @@ void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const char* data, int le
 
 void NetscapePlugInStreamLoader::didFinishLoading(double finishTime)
 {
-    Ref<NetscapePlugInStreamLoader> protect(*this);
+    Ref<NetscapePlugInStreamLoader> protectedThis(*this);
 
     notifyDone();
 
@@ -158,7 +158,7 @@ void NetscapePlugInStreamLoader::didFinishLoading(double finishTime)
 
 void NetscapePlugInStreamLoader::didFail(const ResourceError& error)
 {
-    Ref<NetscapePlugInStreamLoader> protect(*this);
+    Ref<NetscapePlugInStreamLoader> protectedThis(*this);
 
     notifyDone();
 

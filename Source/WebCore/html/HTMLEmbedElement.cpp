@@ -163,7 +163,7 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
     Vector<String> paramValues;
     parametersForPlugin(paramNames, paramValues);
 
-    Ref<HTMLEmbedElement> protect(*this); // Loading the plugin might remove us from the document.
+    Ref<HTMLEmbedElement> protectedThis(*this); // Loading the plugin might remove us from the document.
     bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(m_url);
     if (!beforeLoadAllowedLoad) {
         if (is<PluginDocument>(document())) {

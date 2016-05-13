@@ -989,7 +989,7 @@ void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior even
     if (!m_inputType->canSetValue(value))
         return;
 
-    Ref<HTMLInputElement> protect(*this);
+    Ref<HTMLInputElement> protectedThis(*this);
     EventQueueScope scope;
     String sanitizedValue = sanitizeValue(value);
     bool valueChanged = sanitizedValue != this->value();

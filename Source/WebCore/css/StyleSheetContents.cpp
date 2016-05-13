@@ -355,7 +355,7 @@ void StyleSheetContents::checkLoaded()
     // Avoid |this| being deleted by scripts that run via
     // ScriptableDocumentParser::executeScriptsWaitingForStylesheets().
     // See <rdar://problem/6622300>.
-    Ref<StyleSheetContents> protect(*this);
+    Ref<StyleSheetContents> protectedThis(*this);
     StyleSheetContents* parentSheet = parentStyleSheet();
     if (parentSheet) {
         parentSheet->checkLoaded();

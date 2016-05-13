@@ -155,7 +155,7 @@ DocumentThreadableLoader::~DocumentThreadableLoader()
 
 void DocumentThreadableLoader::cancel()
 {
-    Ref<DocumentThreadableLoader> protect(*this);
+    Ref<DocumentThreadableLoader> protectedThis(*this);
 
     // Cancel can re-enter and m_resource might be null here as a result.
     if (m_client && m_resource) {
@@ -191,7 +191,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
     ASSERT(m_client);
     ASSERT_UNUSED(resource, resource == m_resource);
 
-    Ref<DocumentThreadableLoader> protect(*this);
+    Ref<DocumentThreadableLoader> protectedThis(*this);
     if (!isAllowedByContentSecurityPolicy(request.url(), !redirectResponse.isNull())) {
         m_client->didFailRedirectCheck();
         request = ResourceRequest();

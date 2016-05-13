@@ -144,7 +144,7 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
 {
     checkConsistency();
 
-    Ref<ScriptExecutionContext> protect(*this);
+    Ref<ScriptExecutionContext> protectedThis(*this);
 
     // Make a frozen copy of the ports so we can iterate while new ones might be added or destroyed.
     Vector<MessagePort*> possibleMessagePorts;

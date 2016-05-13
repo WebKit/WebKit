@@ -211,7 +211,7 @@ RefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec)
         return 0;
     }
 
-    Ref<HTMLTableElement> protectFromMutationEvents(*this);
+    Ref<HTMLTableElement> protectedThis(*this);
 
     RefPtr<HTMLTableRowElement> lastRow = 0;
     RefPtr<HTMLTableRowElement> row = 0;

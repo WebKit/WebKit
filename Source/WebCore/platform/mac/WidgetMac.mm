@@ -160,7 +160,7 @@ void Widget::setFrameRect(const IntRect& rect)
 
     // Take a reference to this Widget, because sending messages to outerView can invoke arbitrary
     // code including recalc style/layout, which can deref it.
-    Ref<Widget> protect(*this);
+    Ref<Widget> protectedThis(*this);
 
     NSRect frame = rect;
     if (!NSEqualRects(frame, outerView.frame)) {
@@ -204,7 +204,7 @@ void Widget::paint(GraphicsContext& p, const IntRect& r)
 
     // Take a reference to this Widget, because sending messages to the views can invoke arbitrary
     // code, which can deref it.
-    Ref<Widget> protect(*this);
+    Ref<Widget> protectedThis(*this);
 
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {

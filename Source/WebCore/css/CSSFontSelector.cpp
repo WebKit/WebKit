@@ -292,7 +292,7 @@ void CSSFontSelector::beginLoadTimerFired()
     fontsToBeginLoading.swap(m_fontsToBeginLoading);
 
     // CSSFontSelector could get deleted via beginLoadIfNeeded() or loadDone() unless protected.
-    Ref<CSSFontSelector> protect(*this);
+    Ref<CSSFontSelector> protectedThis(*this);
 
     CachedResourceLoader& cachedResourceLoader = m_document->cachedResourceLoader();
     for (auto& fontHandle : fontsToBeginLoading) {

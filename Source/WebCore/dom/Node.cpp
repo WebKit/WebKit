@@ -2233,7 +2233,7 @@ bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
     if (!document().hasListenerType(Document::BEFORELOAD_LISTENER))
         return true;
 
-    Ref<Node> protect(*this);
+    Ref<Node> protectedThis(*this);
     Ref<BeforeLoadEvent> beforeLoadEvent = BeforeLoadEvent::create(sourceURL);
     dispatchEvent(beforeLoadEvent);
     return !beforeLoadEvent->defaultPrevented();

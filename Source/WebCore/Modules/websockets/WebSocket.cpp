@@ -509,7 +509,7 @@ void WebSocket::resume()
 
 void WebSocket::resumeTimerFired()
 {
-    Ref<WebSocket> protect(*this);
+    Ref<WebSocket> protectedThis(*this);
 
     ASSERT(!m_pendingEvents.isEmpty());
 

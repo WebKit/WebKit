@@ -936,7 +936,7 @@ void HTMLMediaElement::notifyAboutPlaying()
 
 void HTMLMediaElement::pendingActionTimerFired()
 {
-    Ref<HTMLMediaElement> protect(*this); // loadNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
+    Ref<HTMLMediaElement> protectedThis(*this); // loadNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
     PendingActionFlags pendingActions = m_pendingActionFlags;
     m_pendingActionFlags = 0;
 
@@ -1038,7 +1038,7 @@ double HTMLMediaElement::getStartDate() const
 
 void HTMLMediaElement::load()
 {
-    Ref<HTMLMediaElement> protect(*this); // loadInternal may result in a 'beforeload' event, which can make arbitrary DOM mutations.
+    Ref<HTMLMediaElement> protectedThis(*this); // loadInternal may result in a 'beforeload' event, which can make arbitrary DOM mutations.
     
     LOG(Media, "HTMLMediaElement::load(%p)", this);
     

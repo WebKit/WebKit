@@ -99,7 +99,7 @@ void ResourceLoader::releaseResources()
     // deallocated and release the last reference to this object.
     // We need to retain to avoid accessing the object after it
     // has been deallocated and also to avoid reentering this method.
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
 
     m_frame = nullptr;
     m_documentLoader = nullptr;
@@ -171,7 +171,7 @@ bool ResourceLoader::init(const ResourceRequest& r)
 
 void ResourceLoader::deliverResponseAndData(const ResourceResponse& response, RefPtr<SharedBuffer>&& buffer)
 {
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
 
     didReceiveResponse(response);
     if (reachedTerminalState())
@@ -247,32 +247,32 @@ void ResourceLoader::loadDataURL()
     auto url = m_request.url();
     ASSERT(url.protocolIsData());
 
-    RefPtr<ResourceLoader> loader(this);
+    RefPtr<ResourceLoader> protectedThis(this);
     DataURLDecoder::ScheduleContext scheduleContext;
 #if HAVE(RUNLOOP_TIMER)
     if (auto* scheduledPairs = m_frame->page()->scheduledRunLoopPairs())
         scheduleContext.scheduledPairs = *scheduledPairs;
 #endif
-    DataURLDecoder::decode(url, scheduleContext, [loader, url] (Optional<DataURLDecoder::Result> decodeResult) {
-        if (loader->reachedTerminalState())
+    DataURLDecoder::decode(url, scheduleContext, [protectedThis, url] (Optional<DataURLDecoder::Result> decodeResult) {
+        if (protectedThis->reachedTerminalState())
             return;
         if (!decodeResult) {
-            loader->didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Data URL decoding failed"));
+            protectedThis->didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Data URL decoding failed"));
             return;
         }
-        if (loader->wasCancelled())
+        if (protectedThis->wasCancelled())
             return;
         auto& result = decodeResult.value();
         auto dataSize = result.data->size();
 
         ResourceResponse dataResponse { url, result.mimeType, dataSize, result.charset };
-        loader->didReceiveResponse(dataResponse);
+        protectedThis->didReceiveResponse(dataResponse);
 
-        if (!loader->reachedTerminalState() && dataSize)
-            loader->didReceiveBuffer(result.data.get(), dataSize, DataPayloadWholeResource);
+        if (!protectedThis->reachedTerminalState() && dataSize)
+            protectedThis->didReceiveBuffer(result.data.get(), dataSize, DataPayloadWholeResource);
 
-        if (!loader->reachedTerminalState())
-            loader->didFinishLoading(currentTime());
+        if (!protectedThis->reachedTerminalState())
+            protectedThis->didFinishLoading(currentTime());
     });
 }
 
@@ -328,7 +328,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
 {
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
 
     ASSERT(!m_reachedTerminalState);
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -435,7 +435,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
 
     logResourceResponseSource(m_frame.get(), r.source());
 
@@ -477,7 +477,7 @@ void ResourceLoader::didReceiveDataOrBuffer(const char* data, unsigned length, P
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
     RefPtr<SharedBuffer> buffer = prpBuffer;
 
     addDataOrBuffer(data, length, buffer.get(), dataPayloadType);
@@ -523,7 +523,7 @@ void ResourceLoader::didFail(const ResourceError& error)
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
 
     cleanupForError(error);
     releaseResources();
@@ -556,7 +556,7 @@ void ResourceLoader::cancel(const ResourceError& error)
     
     // willCancel() and didFailToLoad() both call out to clients that might do 
     // something causing the last reference to this object to go away.
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
     
     // If we re-enter cancel() from inside willCancel(), we want to pick up from where we left 
     // off without re-running willCancel()
@@ -672,7 +672,7 @@ bool ResourceLoader::shouldUseCredentialStorage()
     if (m_options.allowCredentials() == DoNotAllowStoredCredentials)
         return false;
     
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
     return frameLoader()->client().shouldUseCredentialStorage(documentLoader(), identifier());
 }
 
@@ -687,7 +687,7 @@ void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChall
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
 
     if (m_options.allowCredentials() == AllowStoredCredentials) {
         if (isAllowedToAskUserForCredentials()) {
@@ -709,7 +709,7 @@ void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChalle
 {
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
     frameLoader()->notifier().didCancelAuthenticationChallenge(this, challenge);
 }
 
@@ -717,7 +717,7 @@ void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChalle
 
 bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
-    Ref<ResourceLoader> protect(*this);
+    Ref<ResourceLoader> protectedThis(*this);
     return frameLoader()->client().canAuthenticateAgainstProtectionSpace(documentLoader(), identifier(), protectionSpace);
 }
 

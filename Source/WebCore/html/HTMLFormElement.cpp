@@ -236,7 +236,7 @@ bool HTMLFormElement::validateInteractively(Event* event)
     // has !renderer()->needsLayout() assertion.
     document().updateLayoutIgnorePendingStylesheets();
 
-    Ref<HTMLFormElement> protect(*this);
+    Ref<HTMLFormElement> protectedThis(*this);
 
     // Focus on the first focusable control and show a validation message.
     for (auto& control : unhandledInvalidControls) {
@@ -285,7 +285,7 @@ void HTMLFormElement::prepareForSubmission(Event* event)
     RefPtr<FormState> formState = FormState::create(this, controlNamesAndValues, &document(), NotSubmittedByJavaScript);
     frame->loader().client().dispatchWillSendSubmitEvent(formState.release());
 
-    Ref<HTMLFormElement> protect(*this);
+    Ref<HTMLFormElement> protectedThis(*this);
     // Event handling can result in m_shouldSubmit becoming true, regardless of dispatchEvent() return value.
     if (dispatchEvent(Event::create(eventNames().submitEvent, true, true)))
         m_shouldSubmit = true;
@@ -356,7 +356,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
 
     LockHistory lockHistory = processingUserGesture ? LockHistory::No : LockHistory::Yes;
-    Ref<HTMLFormElement> protect(*this); // Form submission can execute arbitary JavaScript.
+    Ref<HTMLFormElement> protectedThis(*this); // Form submission can execute arbitary JavaScript.
     frame->loader().submitForm(FormSubmission::create(this, m_attributes, event, lockHistory, formSubmissionTrigger));
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
@@ -720,7 +720,7 @@ bool HTMLFormElement::checkValidity()
 
 bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<FormAssociatedElement>>& unhandledInvalidControls)
 {
-    Ref<HTMLFormElement> protect(*this);
+    Ref<HTMLFormElement> protectedThis(*this);
     // Copy m_associatedElements because event handlers called from
     // HTMLFormControlElement::checkValidity() might change m_associatedElements.
     Vector<RefPtr<FormAssociatedElement>> elements;

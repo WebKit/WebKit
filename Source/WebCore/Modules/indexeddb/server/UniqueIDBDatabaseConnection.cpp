@@ -73,9 +73,9 @@ void UniqueIDBDatabaseConnection::abortTransactionWithoutCallback(UniqueIDBDatab
     ASSERT(m_transactionMap.contains(transaction.info().identifier()));
 
     const auto& transactionIdentifier = transaction.info().identifier();
-    RefPtr<UniqueIDBDatabaseConnection> protector(this);
+    RefPtr<UniqueIDBDatabaseConnection> protectedThis(this);
 
-    m_database.abortTransaction(transaction, [this, protector, transactionIdentifier](const IDBError&) {
+    m_database.abortTransaction(transaction, [this, protectedThis, transactionIdentifier](const IDBError&) {
         ASSERT(m_transactionMap.contains(transactionIdentifier));
         m_transactionMap.remove(transactionIdentifier);
     });

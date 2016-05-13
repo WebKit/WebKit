@@ -320,7 +320,7 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
         return;
     }
 
-    Ref<HTMLObjectElement> protect(*this); // beforeload and plugin loading can make arbitrary DOM mutations.
+    Ref<HTMLObjectElement> protectedThis(*this); // beforeload and plugin loading can make arbitrary DOM mutations.
     bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(url);
     if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
         return;

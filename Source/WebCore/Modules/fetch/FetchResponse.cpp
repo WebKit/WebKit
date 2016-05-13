@@ -291,7 +291,7 @@ RefPtr<SharedBuffer> FetchResponse::BodyLoader::startStreaming()
 
 void FetchResponse::stop()
 {
-    RefPtr<FetchResponse> protect(this);
+    RefPtr<FetchResponse> protectedThis(this);
     FetchBodyOwner::stop();
     if (m_bodyLoader) {
         m_bodyLoader->stop();

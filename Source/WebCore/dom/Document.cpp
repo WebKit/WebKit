@@ -2694,7 +2694,7 @@ void Document::implicitClose()
         return;
 
     // Call to dispatchWindowLoadEvent can blow us from underneath.
-    Ref<Document> protect(*this);
+    Ref<Document> protectedThis(*this);
 
     m_processingLoadEvent = true;
 
@@ -5927,7 +5927,7 @@ void Document::fullScreenChangeDelayTimerFired()
     // Since we dispatch events in this function, it's possible that the
     // document will be detached and GC'd. We protect it here to make sure we
     // can finish the function successfully.
-    Ref<Document> protect(*this);
+    Ref<Document> protectedThis(*this);
     Deque<RefPtr<Node>> changeQueue;
     m_fullScreenChangeEventTargetQueue.swap(changeQueue);
     Deque<RefPtr<Node>> errorQueue;

@@ -333,7 +333,7 @@ void Database::performClose()
     // to it with a local pointer here for a liitle longer, so that we can
     // unschedule any DatabaseTasks that refer to it before the database gets
     // deleted.
-    Ref<Database> protect(*this);
+    Ref<Database> protectedThis(*this);
     databaseContext()->databaseThread()->recordDatabaseClosed(this);
     databaseContext()->databaseThread()->unscheduleDatabaseTasks(this);
 }

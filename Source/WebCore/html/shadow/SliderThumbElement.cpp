@@ -243,7 +243,7 @@ Element* SliderThumbElement::focusDelegate()
 
 void SliderThumbElement::dragFrom(const LayoutPoint& point)
 {
-    Ref<SliderThumbElement> protect(*this);
+    Ref<SliderThumbElement> protectedThis(*this);
     setPositionFromPoint(point);
 #if !PLATFORM(IOS)
     startDragging();

@@ -94,7 +94,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
             // The following functions of HTMLInputElement may run JavaScript
             // code which detaches this shadow node. We need to take a reference
             // and check renderer() after such function calls.
-            Ref<SpinButtonElement> protect(*this);
+            Ref<SpinButtonElement> protectedThis(*this);
             if (m_spinButtonOwner)
                 m_spinButtonOwner->focusAndSelectSpinButtonOwner();
             if (renderer()) {

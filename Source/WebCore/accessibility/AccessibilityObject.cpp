@@ -360,7 +360,7 @@ String AccessibilityObject::computedLabel()
 {
     // This method is being called by WebKit inspector, which may happen at any time, so we need to update our backing store now.
     // Also hold onto this object in case updateBackingStore deletes this node.
-    RefPtr<AccessibilityObject> protector(this);
+    RefPtr<AccessibilityObject> protectedThis(this);
     updateBackingStore();
     Vector<AccessibilityText> text;
     accessibilityText(text);
@@ -1679,7 +1679,7 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
 void AccessibilityObject::updateBackingStore()
 {
     // Updating the layout may delete this object.
-    RefPtr<AccessibilityObject> protector(this);
+    RefPtr<AccessibilityObject> protectedThis(this);
 
     if (Document* document = this->document()) {
         if (!document->view()->isInRenderTreeLayout())

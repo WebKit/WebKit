@@ -68,8 +68,8 @@ void UniqueIDBDatabaseTransaction::abort()
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::abort");
 
-    RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().abortTransaction(*this, [this, self](const IDBError& error) {
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().abortTransaction(*this, [this, protectedThis](const IDBError& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::abort (callback)");
         m_databaseConnection->didAbortTransaction(*this, error);
     });
@@ -96,8 +96,8 @@ void UniqueIDBDatabaseTransaction::commit()
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::commit");
 
-    RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().commitTransaction(*this, [this, self](const IDBError& error) {
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().commitTransaction(*this, [this, protectedThis](const IDBError& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::commit (callback)");
         m_databaseConnection->didCommitTransaction(*this, error);
     });
@@ -110,8 +110,8 @@ void UniqueIDBDatabaseTransaction::createObjectStore(const IDBRequestData& reque
     ASSERT(isVersionChange());
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
-    RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().createObjectStore(*this, info, [this, self, requestData](const IDBError& error) {
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().createObjectStore(*this, info, [this, protectedThis, requestData](const IDBError& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::createObjectStore (callback)");
         if (error.isNull())
             m_databaseConnection->didCreateObjectStore(IDBResultData::createObjectStoreSuccess(requestData.requestIdentifier()));
@@ -127,8 +127,8 @@ void UniqueIDBDatabaseTransaction::deleteObjectStore(const IDBRequestData& reque
     ASSERT(isVersionChange());
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
-    RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().deleteObjectStore(*this, objectStoreName, [this, self, requestData](const IDBError& error) {
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().deleteObjectStore(*this, objectStoreName, [this, protectedThis, requestData](const IDBError& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteObjectStore (callback)");
         if (error.isNull())
             m_databaseConnection->didDeleteObjectStore(IDBResultData::deleteObjectStoreSuccess(requestData.requestIdentifier()));
@@ -143,8 +143,8 @@ void UniqueIDBDatabaseTransaction::clearObjectStore(const IDBRequestData& reques
 
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
-    RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().clearObjectStore(*this, objectStoreIdentifier, [this, self, requestData](const IDBError& error) {
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().clearObjectStore(*this, objectStoreIdentifier, [this, protectedThis, requestData](const IDBError& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::clearObjectStore (callback)");
         if (error.isNull())
             m_databaseConnection->didClearObjectStore(IDBResultData::clearObjectStoreSuccess(requestData.requestIdentifier()));
@@ -160,8 +160,8 @@ void UniqueIDBDatabaseTransaction::createIndex(const IDBRequestData& requestData
     ASSERT(isVersionChange());
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
-    RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().createIndex(*this, info, [this, self, requestData](const IDBError& error) {
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().createIndex(*this, info, [this, protectedThis, requestData](const IDBError& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::createIndex (callback)");
         if (error.isNull())
             m_databaseConnection->didCreateIndex(IDBResultData::createIndexSuccess(requestData.requestIdentifier()));
@@ -177,8 +177,8 @@ void UniqueIDBDatabaseTransaction::deleteIndex(const IDBRequestData& requestData
     ASSERT(isVersionChange());
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
-    RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().deleteIndex(*this, objectStoreIdentifier, indexName, [this, self, requestData](const IDBError& error) {
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().deleteIndex(*this, objectStoreIdentifier, indexName, [this, protectedThis, requestData](const IDBError& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::createIndex (callback)");
         if (error.isNull())
             m_databaseConnection->didDeleteIndex(IDBResultData::deleteIndexSuccess(requestData.requestIdentifier()));
@@ -194,8 +194,8 @@ void UniqueIDBDatabaseTransaction::putOrAdd(const IDBRequestData& requestData, c
     ASSERT(!isReadOnly());
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
-    RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().putOrAdd(requestData, keyData, value, overwriteMode, [this, self, requestData](const IDBError& error, const IDBKeyData& key) {
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().putOrAdd(requestData, keyData, value, overwriteMode, [this, protectedThis, requestData](const IDBError& error, const IDBKeyData& key) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::putOrAdd (callback)");
 
         if (error.isNull())
@@ -211,8 +211,8 @@ void UniqueIDBDatabaseTransaction::getRecord(const IDBRequestData& requestData, 
 
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
-    RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().getRecord(requestData, keyRangeData, [this, self, requestData](const IDBError& error, const IDBGetResult& result) {
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().getRecord(requestData, keyRangeData, [this, protectedThis, requestData](const IDBError& error, const IDBGetResult& result) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getRecord (callback)");
 
         if (error.isNull())
@@ -228,8 +228,8 @@ void UniqueIDBDatabaseTransaction::getCount(const IDBRequestData& requestData, c
 
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
-    RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().getCount(requestData, keyRangeData, [this, self, requestData](const IDBError& error, uint64_t count) {
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().getCount(requestData, keyRangeData, [this, protectedThis, requestData](const IDBError& error, uint64_t count) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getCount (callback)");
 
         if (error.isNull())

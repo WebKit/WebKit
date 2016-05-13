@@ -231,7 +231,7 @@ bool ContainerNode::insertBefore(Node& newChild, Node* refChild, ExceptionCode& 
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
-    Ref<ContainerNode> protect(*this);
+    Ref<ContainerNode> protectedThis(*this);
 
     ec = 0;
 
@@ -386,7 +386,7 @@ bool ContainerNode::replaceChild(Node& newChild, Node& oldChild, ExceptionCode& 
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
-    Ref<ContainerNode> protect(*this);
+    Ref<ContainerNode> protectedThis(*this);
 
     ec = 0;
 
@@ -504,7 +504,7 @@ bool ContainerNode::removeChild(Node& oldChild, ExceptionCode& ec)
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
-    Ref<ContainerNode> protect(*this);
+    Ref<ContainerNode> protectedThis(*this);
 
     ec = 0;
 
@@ -611,7 +611,7 @@ void ContainerNode::removeChildren()
         return;
 
     // The container node can be removed from event handlers.
-    Ref<ContainerNode> protect(*this);
+    Ref<ContainerNode> protectedThis(*this);
 
     // exclude this node when looking for removed focusedNode since only children will be removed
     document().removeFocusedNodeOfSubtree(this, true);
@@ -649,7 +649,7 @@ void ContainerNode::removeChildren()
 
 bool ContainerNode::appendChild(Node& newChild, ExceptionCode& ec)
 {
-    Ref<ContainerNode> protect(*this);
+    Ref<ContainerNode> protectedThis(*this);
 
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.

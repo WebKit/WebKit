@@ -314,7 +314,7 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
         }
     }
 
-    Ref<ResourceHandle> protect(*this);
+    Ref<ResourceHandle> protectedThis(*this);
     if (d->m_usesAsyncCallbacks)
         client()->willSendRequestAsync(this, request, redirectResponse);
     else {

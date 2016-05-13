@@ -45,7 +45,7 @@ bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLEr
     if (!m_data || !m_data->globalObject() || !canInvokeCallback())
         return true;
 
-    Ref<JSSQLStatementErrorCallback> protect(*this);
+    Ref<JSSQLStatementErrorCallback> protectedThis(*this);
 
     JSC::JSLockHolder lock(m_data->globalObject()->vm());
 

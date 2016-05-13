@@ -187,11 +187,11 @@ void BlobResourceHandle::start()
         return;
     }
 
-    RefPtr<BlobResourceHandle> handle(this);
+    RefPtr<BlobResourceHandle> protectedThis(this);
 
     // Finish this async call quickly and return.
-    callOnMainThread([handle] {
-        handle->doStart();
+    callOnMainThread([protectedThis] {
+        protectedThis->doStart();
     });
 }
 
@@ -227,7 +227,7 @@ void BlobResourceHandle::doStart()
     if (m_async)
         getSizeForNext();
     else {
-        Ref<BlobResourceHandle> protect(*this); // getSizeForNext calls the client
+        Ref<BlobResourceHandle> protectedThis(*this); // getSizeForNext calls the client
         for (size_t i = 0; i < m_blobData->items().size() && !m_aborted && !m_errorCode; ++i)
             getSizeForNext();
         notifyResponse();
@@ -244,7 +244,7 @@ void BlobResourceHandle::getSizeForNext()
 
         // Start reading if in asynchronous mode.
         if (m_async) {
-            Ref<BlobResourceHandle> protect(*this);
+            Ref<BlobResourceHandle> protectedThis(*this);
             notifyResponse();
             m_buffer.resize(bufferSize);
             readAsync();
@@ -336,7 +336,7 @@ int BlobResourceHandle::readSync(char* buf, int length)
     ASSERT(isMainThread());
 
     ASSERT(!m_async);
-    Ref<BlobResourceHandle> protect(*this);
+    Ref<BlobResourceHandle> protectedThis(*this);
 
     int offset = 0;
     int remaining = length;
@@ -466,7 +466,7 @@ void BlobResourceHandle::readDataAsync(const BlobDataItem& item)
     ASSERT(m_async);
     ASSERT(item.data().data());
 
-    Ref<BlobResourceHandle> protect(*this);
+    Ref<BlobResourceHandle> protectedThis(*this);
 
     long long bytesToRead = item.length() - m_currentItemReadSize;
     if (bytesToRead > m_totalRemainingSize)
@@ -519,7 +519,7 @@ void BlobResourceHandle::didRead(int bytesRead)
 void BlobResourceHandle::consumeData(const char* data, int bytesRead)
 {
     ASSERT(m_async);
-    Ref<BlobResourceHandle> protect(*this);
+    Ref<BlobResourceHandle> protectedThis(*this);
 
     m_totalRemainingSize -= bytesRead;
 
@@ -549,7 +549,7 @@ void BlobResourceHandle::consumeData(const char* data, int bytesRead)
 void BlobResourceHandle::failed(int errorCode)
 {
     ASSERT(m_async);
-    Ref<BlobResourceHandle> protect(*this);
+    Ref<BlobResourceHandle> protectedThis(*this);
 
     // Notify the client.
     notifyFail(errorCode);
@@ -567,7 +567,7 @@ void BlobResourceHandle::notifyResponse()
         return;
 
     if (m_errorCode) {
-        Ref<BlobResourceHandle> protect(*this);
+        Ref<BlobResourceHandle> protectedThis(*this);
         notifyResponseOnError();
         notifyFinish();
     } else
@@ -665,9 +665,9 @@ void BlobResourceHandle::notifyFinish()
 
     // Schedule to notify the client from a standalone function because the client might dispose the handle immediately from the callback function
     // while we still have BlobResourceHandle calls in the stack.
-    RefPtr<BlobResourceHandle> handle(this);
-    callOnMainThread([handle] {
-        doNotifyFinish(*handle);
+    RefPtr<BlobResourceHandle> protectedThis(this);
+    callOnMainThread([protectedThis] {
+        doNotifyFinish(*protectedThis);
     });
 
 }

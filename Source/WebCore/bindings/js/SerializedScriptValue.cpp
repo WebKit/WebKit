@@ -2800,8 +2800,8 @@ void SerializedScriptValue::writeBlobsToDiskForIndexedDB(std::function<void (con
     ASSERT(isMainThread());
     ASSERT(hasBlobURLs());
 
-    RefPtr<SerializedScriptValue> protector(this);
-    blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler, this, protector](const Vector<String>& blobFilePaths) {
+    RefPtr<SerializedScriptValue> protectedThis(this);
+    blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler, this, protectedThis](const Vector<String>& blobFilePaths) {
         ASSERT(isMainThread());
 
         if (blobFilePaths.isEmpty()) {

@@ -87,7 +87,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
         function = m_customResolver.get();
     }
 
-    Ref<JSCustomXPathNSResolver> selfProtector(*this);
+    Ref<JSCustomXPathNSResolver> protectedThis(*this);
 
     MarkedArgumentBuffer args;
     args.append(jsStringWithCache(exec, prefix));
