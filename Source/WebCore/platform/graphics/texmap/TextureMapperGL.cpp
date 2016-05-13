@@ -221,7 +221,7 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     if (clipStack().isCurrentScissorBoxEmpty())
         return;
 
-    RefPtr<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
+    Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
     m_context3D->useProgram(program->programID());
 
     float r, g, b, a;
@@ -343,23 +343,23 @@ static float* gaussianKernel()
     return kernel;
 }
 
-static void prepareFilterProgram(TextureMapperShaderProgram* program, const FilterOperation& operation, unsigned pass, const IntSize& size, GC3Duint contentTexture)
+static void prepareFilterProgram(TextureMapperShaderProgram& program, const FilterOperation& operation, unsigned pass, const IntSize& size, GC3Duint contentTexture)
 {
-    Ref<GraphicsContext3D> context = program->context();
-    context->useProgram(program->programID());
+    Ref<GraphicsContext3D> context = program.context();
+    context->useProgram(program.programID());
 
     switch (operation.type()) {
     case FilterOperation::GRAYSCALE:
     case FilterOperation::SEPIA:
     case FilterOperation::SATURATE:
     case FilterOperation::HUE_ROTATE:
-        context->uniform1f(program->filterAmountLocation(), static_cast<const BasicColorMatrixFilterOperation&>(operation).amount());
+        context->uniform1f(program.filterAmountLocation(), static_cast<const BasicColorMatrixFilterOperation&>(operation).amount());
         break;
     case FilterOperation::INVERT:
     case FilterOperation::BRIGHTNESS:
     case FilterOperation::CONTRAST:
     case FilterOperation::OPACITY:
-        context->uniform1f(program->filterAmountLocation(), static_cast<const BasicComponentTransferFilterOperation&>(operation).amount());
+        context->uniform1f(program.filterAmountLocation(), static_cast<const BasicComponentTransferFilterOperation&>(operation).amount());
         break;
     case FilterOperation::BLUR: {
         const BlurFilterOperation& blur = static_cast<const BlurFilterOperation&>(operation);
@@ -371,29 +371,29 @@ static void prepareFilterProgram(TextureMapperShaderProgram* program, const Filt
         else
             radius.setWidth(floatValueForLength(blur.stdDeviation(), size.width()) / size.width());
 
-        context->uniform2f(program->blurRadiusLocation(), radius.width(), radius.height());
-        context->uniform1fv(program->gaussianKernelLocation(), GaussianKernelHalfWidth, gaussianKernel());
+        context->uniform2f(program.blurRadiusLocation(), radius.width(), radius.height());
+        context->uniform1fv(program.gaussianKernelLocation(), GaussianKernelHalfWidth, gaussianKernel());
         break;
     }
     case FilterOperation::DROP_SHADOW: {
         const DropShadowFilterOperation& shadow = static_cast<const DropShadowFilterOperation&>(operation);
-        context->uniform1fv(program->gaussianKernelLocation(), GaussianKernelHalfWidth, gaussianKernel());
+        context->uniform1fv(program.gaussianKernelLocation(), GaussianKernelHalfWidth, gaussianKernel());
         switch (pass) {
         case 0:
             // First pass: horizontal alpha blur.
-            context->uniform2f(program->blurRadiusLocation(), shadow.stdDeviation() / float(size.width()), 0);
-            context->uniform2f(program->shadowOffsetLocation(), float(shadow.location().x()) / float(size.width()), float(shadow.location().y()) / float(size.height()));
+            context->uniform2f(program.blurRadiusLocation(), shadow.stdDeviation() / float(size.width()), 0);
+            context->uniform2f(program.shadowOffsetLocation(), float(shadow.location().x()) / float(size.width()), float(shadow.location().y()) / float(size.height()));
             break;
         case 1:
             // Second pass: we need the shadow color and the content texture for compositing.
             float r, g, b, a;
             Color(premultipliedARGBFromColor(shadow.color())).getRGBA(r, g, b, a);
-            context->uniform4f(program->colorLocation(), r, g, b, a);
-            context->uniform2f(program->blurRadiusLocation(), 0, shadow.stdDeviation() / float(size.height()));
-            context->uniform2f(program->shadowOffsetLocation(), 0, 0);
+            context->uniform4f(program.colorLocation(), r, g, b, a);
+            context->uniform2f(program.blurRadiusLocation(), 0, shadow.stdDeviation() / float(size.height()));
+            context->uniform2f(program.shadowOffsetLocation(), 0, 0);
             context->activeTexture(GraphicsContext3D::TEXTURE1);
             context->bindTexture(GraphicsContext3D::TEXTURE_2D, contentTexture);
-            context->uniform1i(program->contentTextureLocation(), 1);
+            context->uniform1i(program.contentTextureLocation(), 1);
             break;
         }
         break;
@@ -448,7 +448,7 @@ void TextureMapperGL::drawTexture(Platform3DObject texture, Flags flags, const I
     if (useAntialiasing || opacity < 1)
         flags |= ShouldBlend;
 
-    RefPtr<TextureMapperShaderProgram> program = data().getShaderProgram(options);
+    Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
         prepareFilterProgram(program.get(), *filter.get(), data().filterInfo->pass, textureSize, filterContentTextureID);
@@ -465,7 +465,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
         flags |= ShouldBlend | ShouldAntialias;
     }
 
-    RefPtr<TextureMapperShaderProgram> program = data().getShaderProgram(options);
+    Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
     m_context3D->useProgram(program->programID());
 
     float r, g, b, a;
@@ -477,7 +477,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
     draw(rect, matrix, program.get(), GraphicsContext3D::TRIANGLE_FAN, flags);
 }
 
-void TextureMapperGL::drawEdgeTriangles(TextureMapperShaderProgram* program)
+void TextureMapperGL::drawEdgeTriangles(TextureMapperShaderProgram& program)
 {
     const GC3Dfloat left = 0;
     const GC3Dfloat top = 0;
@@ -502,29 +502,29 @@ void TextureMapperGL::drawEdgeTriangles(TextureMapperShaderProgram* program)
 
     Platform3DObject vbo = data().getStaticVBO(GraphicsContext3D::ARRAY_BUFFER, sizeof(GC3Dfloat) * 48, unitRectSideTriangles);
     m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, vbo);
-    m_context3D->vertexAttribPointer(program->vertexLocation(), 4, GraphicsContext3D::FLOAT, false, 0, 0);
+    m_context3D->vertexAttribPointer(program.vertexLocation(), 4, GraphicsContext3D::FLOAT, false, 0, 0);
     m_context3D->drawArrays(GraphicsContext3D::TRIANGLES, 0, 12);
     m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0);
 }
 
-void TextureMapperGL::drawUnitRect(TextureMapperShaderProgram* program, GC3Denum drawingMode)
+void TextureMapperGL::drawUnitRect(TextureMapperShaderProgram& program, GC3Denum drawingMode)
 {
     static const GC3Dfloat unitRect[] = { 0, 0, 1, 0, 1, 1, 0, 1 };
     Platform3DObject vbo = data().getStaticVBO(GraphicsContext3D::ARRAY_BUFFER, sizeof(GC3Dfloat) * 8, unitRect);
     m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, vbo);
-    m_context3D->vertexAttribPointer(program->vertexLocation(), 2, GraphicsContext3D::FLOAT, false, 0, 0);
+    m_context3D->vertexAttribPointer(program.vertexLocation(), 2, GraphicsContext3D::FLOAT, false, 0, 0);
     m_context3D->drawArrays(drawingMode, 0, 4);
     m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0);
 }
 
-void TextureMapperGL::draw(const FloatRect& rect, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram* shaderProgram, GC3Denum drawingMode, Flags flags)
+void TextureMapperGL::draw(const FloatRect& rect, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram& program, GC3Denum drawingMode, Flags flags)
 {
     TransformationMatrix matrix(modelViewMatrix);
     matrix.multiply(TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), rect));
 
-    m_context3D->enableVertexAttribArray(shaderProgram->vertexLocation());
-    shaderProgram->setMatrix(shaderProgram->modelViewMatrixLocation(), matrix);
-    shaderProgram->setMatrix(shaderProgram->projectionMatrixLocation(), data().projectionMatrix);
+    m_context3D->enableVertexAttribArray(program.vertexLocation());
+    program.setMatrix(program.modelViewMatrixLocation(), matrix);
+    program.setMatrix(program.projectionMatrixLocation(), data().projectionMatrix);
 
     if (isInMaskMode()) {
         m_context3D->blendFunc(GraphicsContext3D::ZERO, GraphicsContext3D::SRC_ALPHA);
@@ -538,22 +538,22 @@ void TextureMapperGL::draw(const FloatRect& rect, const TransformationMatrix& mo
     }
 
     if (flags & ShouldAntialias)
-        drawEdgeTriangles(shaderProgram);
+        drawEdgeTriangles(program);
     else
-        drawUnitRect(shaderProgram, drawingMode);
+        drawUnitRect(program, drawingMode);
 
-    m_context3D->disableVertexAttribArray(shaderProgram->vertexLocation());
+    m_context3D->disableVertexAttribArray(program.vertexLocation());
     m_context3D->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
     m_context3D->enable(GraphicsContext3D::BLEND);
 }
 
-void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram* program, uint32_t texture, Flags flags, const IntSize& size, const FloatRect& rect, const TransformationMatrix& modelViewMatrix, float opacity)
+void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& program, uint32_t texture, Flags flags, const IntSize& size, const FloatRect& rect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
-    m_context3D->useProgram(program->programID());
+    m_context3D->useProgram(program.programID());
     m_context3D->activeTexture(GraphicsContext3D::TEXTURE0);
     GC3Denum target = flags & ShouldUseARBTextureRect ? GC3Denum(Extensions3D::TEXTURE_RECTANGLE_ARB) : GC3Denum(GraphicsContext3D::TEXTURE_2D);
     m_context3D->bindTexture(target, texture);
-    m_context3D->uniform1i(program->samplerLocation(), 0);
+    m_context3D->uniform1i(program.samplerLocation(), 0);
     if (wrapMode() == RepeatWrap) {
         m_context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::REPEAT);
         m_context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::REPEAT);
@@ -567,8 +567,8 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram* pr
     if (flags & ShouldFlipTexture)
         patternTransform.translate(0, -1);
 
-    program->setMatrix(program->textureSpaceMatrixLocation(), patternTransform);
-    m_context3D->uniform1f(program->opacityLocation(), opacity);
+    program.setMatrix(program.textureSpaceMatrixLocation(), patternTransform);
+    m_context3D->uniform1f(program.opacityLocation(), opacity);
 
     if (opacity < 1)
         flags |= ShouldBlend;
@@ -582,8 +582,7 @@ void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTex
 {
     // For standard filters, we always draw the whole texture without transformations.
     TextureMapperShaderProgram::Options options = optionsForFilterType(filter.type(), pass);
-    RefPtr<TextureMapperShaderProgram> program = data().getShaderProgram(options);
-    ASSERT(program);
+    Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     prepareFilterProgram(program.get(), filter, pass, sampler.contentSize(), contentTexture ? static_cast<const BitmapTextureGL*>(contentTexture)->id() : 0);
     FloatRect targetRect(IntPoint::zero(), sampler.contentSize());
@@ -660,7 +659,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     data().initializeStencil();
 
-    RefPtr<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
+    Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
 
     m_context3D->useProgram(program->programID());
     m_context3D->enableVertexAttribArray(program->vertexLocation());

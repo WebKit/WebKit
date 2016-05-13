@@ -1,5 +1,29 @@
 2016-05-12  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] Handle TextureMapperShaderProgram objects through references
+        https://bugs.webkit.org/show_bug.cgi?id=157619
+
+        Reviewed by Antonio Gomes.
+
+        TextureMapper code always expects valid TextureMapperShaderProgram
+        objects to be created, so it doesn't make sense to access these
+        objects through raw pointers or RefPtr<>s.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawBorder):
+        (WebCore::prepareFilterProgram):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::TextureMapperGL::drawSolidColor):
+        (WebCore::TextureMapperGL::drawEdgeTriangles):
+        (WebCore::TextureMapperGL::drawUnitRect):
+        (WebCore::TextureMapperGL::draw):
+        (WebCore::TextureMapperGL::drawTexturedQuadWithProgram):
+        (WebCore::TextureMapperGL::drawFiltered):
+        (WebCore::TextureMapperGL::beginClip):
+        * platform/graphics/texmap/TextureMapperGL.h:
+
+2016-05-12  Zan Dobersek  <zdobersek@igalia.com>
+
         VideoSinkGStreamer: plug a GstBuffer leak in webkitVideoSinkRequestRender()
         https://bugs.webkit.org/show_bug.cgi?id=157617
 
