@@ -56,10 +56,4 @@
 #define WK_C_DEPRECATED(message)
 #endif
 
-#if defined(__has_extension) && __has_extension(enumerator_attributes) && __has_extension(attribute_unavailable_with_message)
-#define WK_ENUM_DEPRECATED(message) __attribute__((deprecated(message)))
-#else
-#define WK_ENUM_DEPRECATED(message)
-#endif
-
 #endif /* WKDeclarationSpecifiers_h */

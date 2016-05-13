@@ -48,7 +48,7 @@ enum DataDetectorTypes {
     DataDetectorTypeCalendarEvent = 1 << 3,
     DataDetectorTypeTrackingNumber = 1 << 4,
     DataDetectorTypeFlightNumber = 1 << 5,
-    DataDetectorTypeSpotlightSuggestion = 1 << 6,
+    DataDetectorTypeLookupSuggestion = 1 << 6,
     DataDetectorTypeAll = ULONG_MAX
 };
 

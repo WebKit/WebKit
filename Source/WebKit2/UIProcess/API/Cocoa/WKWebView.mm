@@ -358,8 +358,8 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
         value |= WebCore::DataDetectorTypeTrackingNumber;
     if (types & WKDataDetectorTypeFlightNumber)
         value |= WebCore::DataDetectorTypeFlightNumber;
-    if (types & WKDataDetectorTypeSpotlightSuggestion)
-        value |= WebCore::DataDetectorTypeSpotlightSuggestion;
+    if (types & WKDataDetectorTypeLookupSuggestion)
+        value |= WebCore::DataDetectorTypeLookupSuggestion;
 
     return static_cast<WebCore::DataDetectorTypes>(value);
 }

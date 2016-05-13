@@ -1,3 +1,15 @@
+2016-05-13  Sam Weinig  <sam@webkit.org>
+
+        Rename WKDataDetectorTypeSpotlightSuggestion to WKDataDetectorTypeLookupSuggestion
+        <rdar://problem/26269611>
+
+        Reviewed by Dan Bernstein and Enrica Casucci. 
+
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::constructURLStringForResult):
+        (WebCore::DataDetection::detectContentInRange):
+
 2016-05-13  Nan Wang  <n_wang@apple.com>
 
         AX: Wrong CharacterOffset from an upstream VisiblePosition
