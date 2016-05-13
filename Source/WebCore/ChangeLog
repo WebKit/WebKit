@@ -1,3 +1,20 @@
+2016-05-13  Nan Wang  <n_wang@apple.com>
+
+        AX: Wrong CharacterOffset from an upstream VisiblePosition
+        https://bugs.webkit.org/show_bug.cgi?id=157644
+
+        Reviewed by Chris Fleizach.
+
+        We should adjust the text marker's CharacterOffset if its corresponding
+        VisiblePosition has upstream affinity.
+
+        Test: accessibility/mac/character-offset-from-upstream-position.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::characterOffsetForTextMarkerData):
+        (WebCore::AXObjectCache::traverseToOffsetInRange):
+        (WebCore::AXObjectCache::localCaretRectForCharacterOffset):
+
 2016-05-13  Beth Dakin  <bdakin@apple.com>
 
         Add dyldSPI.h for linked on or after checks, and add one for link preview

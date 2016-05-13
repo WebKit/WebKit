@@ -1,3 +1,13 @@
+2016-05-13  Nan Wang  <n_wang@apple.com>
+
+        AX: Wrong CharacterOffset from an upstream VisiblePosition
+        https://bugs.webkit.org/show_bug.cgi?id=157644
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/character-offset-from-upstream-position-expected.txt: Added.
+        * accessibility/mac/character-offset-from-upstream-position.html: Added.
+
 2016-05-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/text-autosizing/ios/text-autosizing-after-back.html as a flaky timeout
