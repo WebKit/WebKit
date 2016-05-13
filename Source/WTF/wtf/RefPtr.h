@@ -39,8 +39,6 @@ public:
     typedef T ValueType;
     typedef ValueType* PtrType;
 
-    static constexpr bool isRefPtr = true;
-
     ALWAYS_INLINE RefPtr() : m_ptr(nullptr) { }
     ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }
     ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { refIfNotNull(m_ptr); }

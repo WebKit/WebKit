@@ -53,7 +53,7 @@ public:
     void blob(FetchBodyOwner&, DeferredWrapper&&);
     void json(FetchBodyOwner&, DeferredWrapper&&);
     void text(FetchBodyOwner&, DeferredWrapper&&);
-    void formData(FetchBodyOwner&, DeferredWrapper&& promise) { promise.reject(0); }
+    void formData(FetchBodyOwner&, DeferredWrapper&& promise) { promise.reject<ExceptionCode>(0); }
 
 #if ENABLE(STREAMS_API)
     void consumeAsStream(FetchBodyOwner&, FetchResponseSource&);

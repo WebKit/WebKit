@@ -1,3 +1,15 @@
+2016-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r200837.
+
+        Seems to have regressed Speedometer and JetStream on iOS
+
+        Reverted changeset:
+
+        "DOMPromise should only restrict the resolution type"
+        https://bugs.webkit.org/show_bug.cgi?id=157307
+        http://trac.webkit.org/changeset/200837
+
 2016-05-13  Beth Dakin  <bdakin@apple.com>
 
         Add dyldSPI.h

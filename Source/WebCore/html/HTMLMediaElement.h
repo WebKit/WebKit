@@ -212,7 +212,7 @@ public:
     bool loop() const;
     void setLoop(bool b);
 
-    typedef DOMPromise<std::nullptr_t> PlayPromise;
+    typedef DOMPromise<std::nullptr_t, DOMError&> PlayPromise;
     void play(PlayPromise&&);
 
     WEBCORE_EXPORT void play() override;

@@ -88,7 +88,7 @@ void fulfillPromiseWithJSON(DeferredWrapper& promise, const String& data)
 {
     JSC::JSValue value = parseAsJSON(promise.globalObject().globalExec(), data);
     if (!value)
-        promise.reject(SYNTAX_ERR);
+        promise.reject<ExceptionCode>(SYNTAX_ERR);
     else
         promise.resolve(value);
 }

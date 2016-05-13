@@ -65,7 +65,7 @@ public:
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     LoadStatus status() const;
 
-    typedef DOMPromise<FontFace&> Promise;
+    typedef DOMPromise<FontFace&, ExceptionCode> Promise;
     void registerLoaded(Promise&&);
 
     void load();

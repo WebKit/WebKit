@@ -54,7 +54,7 @@ public:
     static Ref<FetchResponse> error(ScriptExecutionContext&);
     static RefPtr<FetchResponse> redirect(ScriptExecutionContext&, const String&, int, ExceptionCode&);
 
-    using FetchPromise = DOMPromise<FetchResponse>;
+    using FetchPromise = DOMPromise<RefPtr<FetchResponse>, ExceptionCode>;
     static void fetch(ScriptExecutionContext&, FetchRequest&, const Dictionary&, FetchPromise&&);
     static void fetch(ScriptExecutionContext&, const String&, const Dictionary&, FetchPromise&&);
 

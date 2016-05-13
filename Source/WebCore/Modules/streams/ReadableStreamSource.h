@@ -44,7 +44,7 @@ class ReadableStreamSource : public RefCounted<ReadableStreamSource> {
 public:
     virtual ~ReadableStreamSource() { }
 
-    typedef DOMPromise<std::nullptr_t> Promise;
+    typedef DOMPromise<std::nullptr_t, ExceptionCode> Promise;
 
     void start(ReadableStreamController&&, Promise&&);
     void cancel(JSC::JSValue);

@@ -83,7 +83,7 @@ RefPtr<FontFace> FontFaceSet::Iterator::next()
     return m_target->backing()[m_index++].wrapper();
 }
 
-FontFaceSet::PendingPromise::PendingPromise(LoadPromise&& promise)
+FontFaceSet::PendingPromise::PendingPromise(Promise&& promise)
     : promise(WTFMove(promise))
 {
 }
@@ -123,7 +123,7 @@ void FontFaceSet::clear()
         m_backing->remove(m_backing.get()[0]);
 }
 
-void FontFaceSet::load(const String& font, const String& text, LoadPromise&& promise)
+void FontFaceSet::load(const String& font, const String& text, DeferredWrapper&& promise)
 {
     ExceptionCode ec = 0;
     auto matchingFaces = m_backing->matchingFaces(font, text, ec);
@@ -142,7 +142,7 @@ void FontFaceSet::load(const String& font, const String& text, LoadPromise&& pro
 
     for (auto& face : matchingFaces) {
         if (face.get().status() == CSSFontFace::Status::Failure) {
-            promise.reject(DOMCoreException::create(ExceptionCodeDescription(NETWORK_ERR)));
+            promise.reject(DOMCoreException::create(ExceptionCodeDescription(NETWORK_ERR)).ptr());
             return;
         }
     }
@@ -167,7 +167,7 @@ bool FontFaceSet::check(const String& family, const String& text, ExceptionCode&
     return m_backing->check(family, text, ec);
 }
 
-void FontFaceSet::registerReady(ReadyPromise&& promise)
+void FontFaceSet::registerReady(Promise&& promise)
 {
     ASSERT(!m_promise);
     if (m_isReady) {

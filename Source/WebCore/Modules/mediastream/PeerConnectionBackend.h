@@ -53,9 +53,9 @@ class RTCStatsResponse;
 class ScriptExecutionContext;
 
 namespace PeerConnection {
-typedef DOMPromise<RTCSessionDescription> SessionDescriptionPromise;
-typedef DOMPromise<std::nullptr_t> VoidPromise;
-typedef DOMPromise<RTCStatsResponse> StatsPromise;
+typedef DOMPromise<RefPtr<RTCSessionDescription>, RefPtr<DOMError>> SessionDescriptionPromise;
+typedef DOMPromise<std::nullptr_t, RefPtr<DOMError>> VoidPromise;
+typedef DOMPromise<RefPtr<RTCStatsResponse>, RefPtr<DOMError>> StatsPromise;
 }
 
 class PeerConnectionBackendClient {
