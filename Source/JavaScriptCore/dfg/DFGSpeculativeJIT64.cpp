@@ -5166,18 +5166,27 @@ void SpeculativeJIT::compile(Node* node)
 
 #if ENABLE(FTL_JIT)        
     case CheckTierUpInLoop: {
-        MacroAssembler::Jump done = m_jit.branchAdd32(
-            MacroAssembler::Signed,
+        MacroAssembler::Jump callTierUp = m_jit.branchAdd32(
+            MacroAssembler::PositiveOrZero,
             TrustedImm32(Options::ftlTierUpCounterIncrementForLoop()),
             MacroAssembler::AbsoluteAddress(&m_jit.jitCode()->tierUpCounter.m_counter));
-        
-        silentSpillAllRegisters(InvalidGPRReg);
-        m_jit.setupArgumentsWithExecState(
-            TrustedImm32(node->origin.semantic.bytecodeIndex));
-        appendCall(triggerTierUpNowInLoop);
-        silentFillAllRegisters(InvalidGPRReg);
-        
-        done.link(&m_jit);
+
+        MacroAssembler::Label toNextOperation = m_jit.label();
+
+        Vector<SilentRegisterSavePlan> savePlans;
+        silentSpillAllRegistersImpl(false, savePlans, InvalidGPRReg);
+        unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex;
+
+        addSlowPathGenerator([=]() {
+            callTierUp.link(&m_jit);
+
+            silentSpill(savePlans);
+            m_jit.setupArgumentsWithExecState(TrustedImm32(bytecodeIndex));
+            appendCall(triggerTierUpNowInLoop);
+            silentFill(savePlans);
+
+            m_jit.jump().linkTo(toNextOperation, &m_jit);
+        });
         break;
     }
         
@@ -5198,7 +5207,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case CheckTierUpAndOSREnter: {
         ASSERT(!node->origin.semantic.inlineCallFrame);
-        
+
         GPRTemporary temp(this);
         GPRReg tempGPR = temp.gpr();
 
@@ -5206,26 +5215,39 @@ void SpeculativeJIT::compile(Node* node)
         auto triggerIterator = m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex);
         RELEASE_ASSERT(triggerIterator != m_jit.jitCode()->tierUpEntryTriggers.end());
         uint8_t* forceEntryTrigger = &(m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex)->value);
+
         MacroAssembler::Jump forceOSREntry = m_jit.branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(forceEntryTrigger));
-        
-        MacroAssembler::Jump done = m_jit.branchAdd32(
-            MacroAssembler::Signed,
+        MacroAssembler::Jump overflowedCounter = m_jit.branchAdd32(
+            MacroAssembler::PositiveOrZero,
             TrustedImm32(Options::ftlTierUpCounterIncrementForLoop()),
             MacroAssembler::AbsoluteAddress(&m_jit.jitCode()->tierUpCounter.m_counter));
+        MacroAssembler::Label toNextOperation = m_jit.label();
 
-        forceOSREntry.link(&m_jit);
-        silentSpillAllRegisters(tempGPR);
+        Vector<SilentRegisterSavePlan> savePlans;
+        silentSpillAllRegistersImpl(false, savePlans, tempGPR);
+
         unsigned streamIndex = m_stream->size();
         m_jit.jitCode()->bytecodeIndexToStreamIndex.add(bytecodeIndex, streamIndex);
-        m_jit.setupArgumentsWithExecState(TrustedImm32(bytecodeIndex));
-        appendCallSetResult(triggerOSREntryNow, tempGPR);
-        MacroAssembler::Jump dontEnter = m_jit.branchTestPtr(MacroAssembler::Zero, tempGPR);
-        m_jit.emitRestoreCalleeSaves();
-        m_jit.jump(tempGPR);
-        dontEnter.link(&m_jit);
-        silentFillAllRegisters(tempGPR);
-        
-        done.link(&m_jit);
+
+        addSlowPathGenerator([=]() {
+            forceOSREntry.link(&m_jit);
+            overflowedCounter.link(&m_jit);
+
+            silentSpill(savePlans);
+            m_jit.setupArgumentsWithExecState(TrustedImm32(bytecodeIndex));
+            appendCallSetResult(triggerOSREntryNow, tempGPR);
+
+            if (savePlans.isEmpty())
+                m_jit.branchTestPtr(MacroAssembler::Zero, tempGPR).linkTo(toNextOperation, &m_jit);
+            else {
+                MacroAssembler::Jump osrEnter = m_jit.branchTestPtr(MacroAssembler::NonZero, tempGPR);
+                silentFill(savePlans);
+                m_jit.jump().linkTo(toNextOperation, &m_jit);
+                osrEnter.link(&m_jit);
+            }
+            m_jit.emitRestoreCalleeSaves();
+            m_jit.jump(tempGPR);
+        });
         break;
     }
 #else // ENABLE(FTL_JIT)

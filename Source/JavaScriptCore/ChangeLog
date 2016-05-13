@@ -1,5 +1,32 @@
 2016-05-13  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Move the CheckTierUp function calls out of the main path
+        https://bugs.webkit.org/show_bug.cgi?id=157668
+
+        Reviewed by Mark Lam.
+
+        If you have a tiny tiny loop (for example, Sunspider's bits-in-byte),
+        the size of CheckTierUp is a problem.
+
+        On multi-issue CPUs, the node is so big that we do not
+        get to run anything from the loop in the instruction fetch.
+
+        On x86, having a bigger loop also pushes us out of the LSD.
+
+        This is a 6% improvement on bits-in-byte. Other Sunspider tests
+        only improves marginally.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::addSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::runSlowPathGenerators):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::silentSpill):
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2016-05-13  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Emit the loads of emitLoadWithStructureCheck() in the order they are used
         https://bugs.webkit.org/show_bug.cgi?id=157671
 
