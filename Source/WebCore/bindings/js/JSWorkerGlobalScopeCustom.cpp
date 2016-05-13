@@ -59,14 +59,6 @@ void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
         visitor.addOpaqueRoot(navigator);
 }
 
-bool JSWorkerGlobalScope::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    // Look for overrides before looking at any of our own properties.
-    if (JSGlobalObject::getOwnPropertySlot(this, exec, propertyName, slot))
-        return true;
-    return false;
-}
-
 JSValue JSWorkerGlobalScope::importScripts(ExecState& state)
 {
     if (!state.argumentCount())

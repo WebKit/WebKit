@@ -28,7 +28,6 @@
     Exposed=Worker,
     CustomProxyToJSObject,
     JSCustomMarkFunction,
-    JSCustomGetOwnPropertySlotAndDescriptor,
     JSLegacyParent=JSWorkerGlobalScopeBase,
 ] interface WorkerGlobalScope : EventTarget {
 

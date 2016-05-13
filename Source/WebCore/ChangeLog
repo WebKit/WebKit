@@ -1,3 +1,22 @@
+2016-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Drop WorkerGlobalScope's custom GetOwnPropertySlot() implementation
+        https://bugs.webkit.org/show_bug.cgi?id=157662
+
+        Reviewed by Darin Adler.
+
+        Drop WorkerGlobalScope's custom GetOwnPropertySlot() implementation as
+        it is no longer needed after <http://trac.webkit.org/changeset/196678>.
+
+        JSC::getStaticPropertySlot() now properly checks for overrides *before*
+        checking the static table.
+
+        No new tests, no web-exposed behavior change.
+
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        (WebCore::JSWorkerGlobalScope::getOwnPropertySlotDelegate): Deleted.
+        * workers/WorkerGlobalScope.idl:
+
 2016-05-12  Zan Dobersek  <zdobersek@igalia.com>
 
         CoordinatedGraphicsLayer::syncLayerState() should set the m_layerState.contentsOpaque flag
