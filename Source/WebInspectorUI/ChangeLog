@@ -1,5 +1,29 @@
 2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Deleting nodes in DOM Tree sometimes changes selection to parent instead of sibling
+        https://bugs.webkit.org/show_bug.cgi?id=157649
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._updateChildren): Deleted.
+        When pressing delete, we remove the node via DOM.removeNode()
+        and remove the DOMTreeElement when we receive a successful response.
+        However, the backend could send a DOM.childNodeRemoved event before
+        the response from DOM.removeNode, and the frontend would have a race
+        between DOMTreeUpdater's timeout and the removeNode callback.
+
+        In DOMTreeUpdater's path, DOMTreeElement updateChildren would notice
+        a removed node and set the selection to the parent node.
+
+        In the DOM.removeNode path, TreeOutline would update the selection
+        based on availability of a previousSibling/nextSibling/parent.
+
+        Remove the custom code in DOMTreeElement updateChildren, so that it
+        can just do the normal TreeOutline behavior via removeChildAtIndex.
+
+2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         REGRESSION: Web Inspector: Fails to load sourceMappingURL with relative URL
         https://bugs.webkit.org/show_bug.cgi?id=157650
         <rdar://problem/26133763>
