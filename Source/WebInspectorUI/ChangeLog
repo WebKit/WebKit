@@ -1,5 +1,21 @@
 2016-05-13  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Typing "layout" in filter for Layout and Rendering Timeline matches everything
+        https://bugs.webkit.org/show_bug.cgi?id=157684
+        <rdar://problem/26276588>
+
+        Reviewed by Joseph Pecoraro.
+
+        Hidden columns should not participate in built-in grid filtering
+        using DataGrid.filterText. Hidden columns can still be custom filtered,
+        which is how TimelineDataGrid filters scopebar columns.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGridNode.prototype.get filterableData):
+        Skip hidden columns.
+
+2016-05-13  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Script ProfileViews should be searchable
         https://bugs.webkit.org/show_bug.cgi?id=157581
         <rdar://problem/26228530>
