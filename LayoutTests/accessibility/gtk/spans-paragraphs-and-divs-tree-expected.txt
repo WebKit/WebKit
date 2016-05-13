@@ -1,0 +1,22 @@
+AXRole: AXWebArea 
+    AXRole: AXParagraph AXValue: Block span in a link in a paragraph<\n>Inline span in a link in a paragraph
+        AXRole: AXLink AXValue: Block span in a link in a paragraph<\n>Inline span in a link in a paragraph
+    AXRole: AXParagraph AXValue: Block span in a paragraph<\n>Inline span in a paragraph
+    AXRole: AXParagraph AXValue: Inline span in a link in a paragraph<\n>Block span in a link in a paragraph<\n>
+        AXRole: AXLink AXValue: Inline span in a link in a paragraph<\n>Block span in a link in a paragraph<\n>
+    AXRole: AXParagraph AXValue: Inline span in a paragraph<\n>Block span in a paragraph<\n>
+    AXRole: AXLink AXValue: Block span in a link in a div<\n>Inline span in a link in a div
+    AXRole: AXSection AXValue: Inline span in a div
+    AXRole: AXSection AXValue: Inline span in a link in a div<\n>Block span in a link in a div<\n>
+        AXRole: AXLink AXValue: Inline span in a link in a div<\n>Block span in a link in a div<\n>
+    AXRole: AXSection AXValue: Inline span in a div
+    AXRole: AXSection AXValue: End of test
+This verifies the accessibility tree of spans, paragraphs, and divs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

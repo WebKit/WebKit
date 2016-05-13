@@ -4,7 +4,8 @@ baz
 End of test
 AXRole: AXWebArea 
     AXRole: AXSection AXValue: foo !
-    AXRole: AXSection AXValue: bar !
+    AXRole: AXSection AXValue: bar
+    AXRole: AXSection AXValue: !
     AXRole: AXSection AXValue: baz
     AXRole: AXSection AXValue: End of test
 This verifies that getting content of an element with generated content in CSS table doesn't cause a crash.
