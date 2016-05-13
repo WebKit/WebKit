@@ -52,6 +52,8 @@ public:
     void setEncoding(const TextEncoding&, EncodingSource);
     const TextEncoding& encoding() const { return m_encoding; }
 
+    bool hasEqualEncodingForCharset(const String&) const;
+
     WEBCORE_EXPORT String decode(const char* data, size_t length);
     WEBCORE_EXPORT String flush();
 

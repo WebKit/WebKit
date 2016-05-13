@@ -53,10 +53,11 @@ namespace WebCore {
 
         virtual void didAddClient(CachedResourceClient*) override;
 
-        virtual void setEncoding(const String&) override;
-        virtual String encoding() const override;
-        virtual void finishLoading(SharedBuffer*) override;
-        virtual void destroyDecodedData() override;
+        void setEncoding(const String&) override;
+        String encoding() const override;
+        const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
+        void finishLoading(SharedBuffer*) override;
+        void destroyDecodedData() override;
 
     protected:
         virtual void checkNotify() override;

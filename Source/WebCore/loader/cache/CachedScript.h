@@ -51,9 +51,10 @@ private:
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const override;
 
-    virtual void setEncoding(const String&) override;
-    virtual String encoding() const override;
-    virtual void finishLoading(SharedBuffer*) override;
+    void setEncoding(const String&) override;
+    String encoding() const override;
+    const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
+    void finishLoading(SharedBuffer*) override;
 
     virtual void destroyDecodedData() override;
 

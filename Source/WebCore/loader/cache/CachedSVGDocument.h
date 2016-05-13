@@ -38,10 +38,11 @@ public:
     SVGDocument* document() const { return m_document.get(); }
 
 private:
-    virtual bool mayTryReplaceEncodedData() const override { return true; }
-    virtual void setEncoding(const String&) override;
-    virtual String encoding() const override;
-    virtual void finishLoading(SharedBuffer*) override;
+    bool mayTryReplaceEncodedData() const override { return true; }
+    void setEncoding(const String&) override;
+    String encoding() const override;
+    const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
+    void finishLoading(SharedBuffer*) override;
 
     RefPtr<SVGDocument> m_document;
     RefPtr<TextResourceDecoder> m_decoder;
