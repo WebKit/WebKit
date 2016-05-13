@@ -99,7 +99,8 @@ void EditCommandComposition::unapply()
 {
     ASSERT(m_document);
     RefPtr<Frame> frame = m_document->frame();
-    ASSERT(frame);
+    if (!frame)
+        return;
 
     // Changes to the document may have been made since the last editing operation that require a layout, as in <rdar://problem/5658603>.
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
@@ -125,7 +126,8 @@ void EditCommandComposition::reapply()
 {
     ASSERT(m_document);
     RefPtr<Frame> frame = m_document->frame();
-    ASSERT(frame);
+    if (!frame)
+        return;
 
     // Changes to the document may have been made since the last editing operation that require a layout, as in <rdar://problem/5658603>.
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
