@@ -1,3 +1,22 @@
+2016-05-13  Enrica Casucci  <enrica@apple.com>
+
+        Remove unused initializer for WebEvent on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=157689
+
+        Reviewed by Anders Carlsson.
+
+        This is no longer used and can be removed.
+        The logic tied to isPopupVariant has been incorporated
+        in keyboard flags. The characterSet property is no longer needed too.
+
+        * platform/ios/WebEvent.h:
+        * platform/ios/WebEvent.mm:
+        (-[WebEvent initWithKeyEventType:timeStamp:characters:charactersIgnoringModifiers:modifiers:isRepeating:withFlags:keyCode:isTabKey:characterSet:]):
+        (-[WebEvent initWithKeyEventType:timeStamp:characters:charactersIgnoringModifiers:modifiers:isRepeating:isPopupVariant:keyCode:isTabKey:characterSet:]): Deleted.
+        (-[WebEvent _characterSetDescription]): Deleted.
+        (-[WebEvent isPopupVariant]): Deleted.
+        (-[WebEvent characterSet]): Deleted.
+
 2016-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         cross-fade() rendering doesn't match expectation
