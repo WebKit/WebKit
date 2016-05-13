@@ -1,44 +1,44 @@
-CONSOLE MESSAGE: line 47: [1] Testing statement '({}).a.b.c.d;'
-CONSOLE MESSAGE: line 48: [1] Paused and about to step
-CONSOLE MESSAGE: line 60: [1] Resumed
-CONSOLE MESSAGE: line 52: [1] Paused after stepping
-CONSOLE MESSAGE: line 60: [1] Resumed
+CONSOLE MESSAGE: line 56: [1] Testing statement '({}).a.b.c.d;'
+CONSOLE MESSAGE: line 57: [1] Paused and about to step
+CONSOLE MESSAGE: line 69: [1] Resumed
+CONSOLE MESSAGE: line 61: [1] Paused after stepping
+CONSOLE MESSAGE: line 69: [1] Resumed
 CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating '({}).a.b')
-CONSOLE MESSAGE: line 47: [2] Testing statement 'exceptionBasic();'
-CONSOLE MESSAGE: line 48: [2] Paused and about to step
-CONSOLE MESSAGE: line 60: [2] Resumed
-CONSOLE MESSAGE: line 52: [2] Paused after stepping
-CONSOLE MESSAGE: line 60: [2] Resumed
+CONSOLE MESSAGE: line 56: [2] Testing statement 'exceptionBasic();'
+CONSOLE MESSAGE: line 57: [2] Paused and about to step
+CONSOLE MESSAGE: line 69: [2] Resumed
+CONSOLE MESSAGE: line 61: [2] Paused after stepping
+CONSOLE MESSAGE: line 69: [2] Resumed
 CONSOLE MESSAGE: line 3: TypeError: undefined is not an object (evaluating '({}).a.b')
-CONSOLE MESSAGE: line 47: [3] Testing statement 'exceptionDOM();'
-CONSOLE MESSAGE: line 48: [3] Paused and about to step
-CONSOLE MESSAGE: line 60: [3] Resumed
-CONSOLE MESSAGE: line 52: [3] Paused after stepping
-CONSOLE MESSAGE: line 60: [3] Resumed
+CONSOLE MESSAGE: line 56: [3] Testing statement 'exceptionDOM();'
+CONSOLE MESSAGE: line 57: [3] Paused and about to step
+CONSOLE MESSAGE: line 69: [3] Resumed
+CONSOLE MESSAGE: line 61: [3] Paused after stepping
+CONSOLE MESSAGE: line 69: [3] Resumed
 CONSOLE MESSAGE: line 8: NotFoundError: DOM Exception 8: An attempt was made to reference a Node in a context where it does not exist.
-CONSOLE MESSAGE: line 47: [4] Testing statement 'exceptionInHostFunction();'
-CONSOLE MESSAGE: line 48: [4] Paused and about to step
-CONSOLE MESSAGE: line 60: [4] Resumed
-CONSOLE MESSAGE: line 52: [4] Paused after stepping
-CONSOLE MESSAGE: line 60: [4] Resumed
+CONSOLE MESSAGE: line 56: [4] Testing statement 'exceptionInHostFunction();'
+CONSOLE MESSAGE: line 57: [4] Paused and about to step
+CONSOLE MESSAGE: line 69: [4] Resumed
+CONSOLE MESSAGE: line 61: [4] Paused after stepping
+CONSOLE MESSAGE: line 69: [4] Resumed
 CONSOLE MESSAGE: line 24: exception in host function
-CONSOLE MESSAGE: line 47: [5] Testing statement 'throwString();'
-CONSOLE MESSAGE: line 48: [5] Paused and about to step
-CONSOLE MESSAGE: line 60: [5] Resumed
-CONSOLE MESSAGE: line 52: [5] Paused after stepping
-CONSOLE MESSAGE: line 60: [5] Resumed
+CONSOLE MESSAGE: line 56: [5] Testing statement 'throwString();'
+CONSOLE MESSAGE: line 57: [5] Paused and about to step
+CONSOLE MESSAGE: line 69: [5] Resumed
+CONSOLE MESSAGE: line 61: [5] Paused after stepping
+CONSOLE MESSAGE: line 69: [5] Resumed
 CONSOLE MESSAGE: line 13: exception string
-CONSOLE MESSAGE: line 47: [6] Testing statement 'throwParam({x:1});'
-CONSOLE MESSAGE: line 48: [6] Paused and about to step
-CONSOLE MESSAGE: line 60: [6] Resumed
-CONSOLE MESSAGE: line 52: [6] Paused after stepping
-CONSOLE MESSAGE: line 60: [6] Resumed
+CONSOLE MESSAGE: line 56: [6] Testing statement 'throwParam({x:1});'
+CONSOLE MESSAGE: line 57: [6] Paused and about to step
+CONSOLE MESSAGE: line 69: [6] Resumed
+CONSOLE MESSAGE: line 61: [6] Paused after stepping
+CONSOLE MESSAGE: line 69: [6] Resumed
 CONSOLE MESSAGE: line 18: [object Object]
-CONSOLE MESSAGE: line 47: [7] Testing statement 'throwParam(new Error('error message'));'
-CONSOLE MESSAGE: line 48: [7] Paused and about to step
-CONSOLE MESSAGE: line 60: [7] Resumed
-CONSOLE MESSAGE: line 52: [7] Paused after stepping
-CONSOLE MESSAGE: line 60: [7] Resumed
+CONSOLE MESSAGE: line 56: [7] Testing statement 'throwParam(new Error('error message'));'
+CONSOLE MESSAGE: line 57: [7] Paused and about to step
+CONSOLE MESSAGE: line 69: [7] Resumed
+CONSOLE MESSAGE: line 61: [7] Paused after stepping
+CONSOLE MESSAGE: line 69: [7] Resumed
 CONSOLE MESSAGE: line 18: Error: error message
 Regression test for https://bugs.webkit.org/show_bug.cgi?id=133182
 

@@ -186,7 +186,7 @@ static void compileStub(
     // The first thing we need to do is restablish our frame in the case of an exception.
     if (exit.isGenericUnwindHandler()) {
         RELEASE_ASSERT(vm->callFrameForCatch); // The first time we hit this exit, like at all other times, this field should be non-null.
-        jit.restoreCalleeSavesFromVMCalleeSavesBuffer();
+        jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer();
         jit.loadPtr(vm->addressOfCallFrameForCatch(), MacroAssembler::framePointerRegister);
         jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)),
             MacroAssembler::framePointerRegister, CCallHelpers::stackPointerRegister);
@@ -441,8 +441,10 @@ static void compileStub(
     RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->calleeSaveRegisters();
     RegisterAtOffsetList* vmCalleeSaves = vm->getAllCalleeSaveRegisterOffsets();
     RegisterSet vmCalleeSavesToSkip = RegisterSet::stackRegisters();
-    if (exit.isExceptionHandler())
-        jit.move(CCallHelpers::TrustedImmPtr(vm->calleeSaveRegistersBuffer), GPRInfo::regT1);
+    if (exit.isExceptionHandler()) {
+        jit.loadPtr(&vm->topVMEntryFrame, GPRInfo::regT1);
+        jit.addPtr(CCallHelpers::TrustedImm32(VMEntryFrame::calleeSaveRegistersBufferOffset()), GPRInfo::regT1);
+    }
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
         if (!allFTLCalleeSaves.get(reg)) {

@@ -206,7 +206,7 @@ public:
                 // clobber scratch.
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 
-                jit.copyCalleeSavesToVMCalleeSavesBuffer();
+                jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
                 jit.move(CCallHelpers::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
                 jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
                 CCallHelpers::Call call = jit.call();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -316,13 +316,14 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
 
     unsigned registerCount = registerSaveLocations->size();
+    VMEntryRecord* record = vmEntryRecord(vm->topVMEntryFrame);
     for (unsigned i = 0; i < registerCount; i++) {
         RegisterAtOffset currentEntry = registerSaveLocations->at(i);
         if (dontSaveRegisters.get(currentEntry.reg()))
             continue;
-        RegisterAtOffset* vmCalleeSavesEntry = allCalleeSaves->find(currentEntry.reg());
+        RegisterAtOffset* calleeSavesEntry = allCalleeSaves->find(currentEntry.reg());
         
-        *(bitwise_cast<intptr_t*>(pivot - 1) - currentEntry.offsetAsIndex()) = vm->calleeSaveRegistersBuffer[vmCalleeSavesEntry->offsetAsIndex()];
+        *(bitwise_cast<intptr_t*>(pivot - 1) - currentEntry.offsetAsIndex()) = record->calleeSaveRegistersBuffer[calleeSavesEntry->offsetAsIndex()];
     }
 #endif
     

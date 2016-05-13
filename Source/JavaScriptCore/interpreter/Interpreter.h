@@ -145,7 +145,7 @@ namespace JSC {
         {
             ASSERT(vm);
             ASSERT(callFrame);
-            ASSERT(callFrame < vm->topVMEntryFrame);
+            ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm->topVMEntryFrame));
             vm->topCallFrame = callFrame;
         }
     };

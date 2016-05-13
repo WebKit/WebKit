@@ -121,7 +121,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     // Emit the exception handler.
     *state.exceptionHandler = jit.label();
-    jit.copyCalleeSavesToVMCalleeSavesBuffer();
+    jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
     jit.move(MacroAssembler::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
     CCallHelpers::Call call = jit.call();

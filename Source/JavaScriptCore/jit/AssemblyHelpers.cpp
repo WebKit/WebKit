@@ -566,24 +566,50 @@ void AssemblyHelpers::emitRandomThunk(GPRReg scratch0, GPRReg scratch1, GPRReg s
 }
 #endif
 
-void AssemblyHelpers::restoreCalleeSavesFromVMCalleeSavesBuffer()
+void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer()
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-    char* sourceBuffer = bitwise_cast<char*>(m_vm->calleeSaveRegistersBuffer);
-
     RegisterAtOffsetList* allCalleeSaves = m_vm->getAllCalleeSaveRegisterOffsets();
     RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->size();
-    
+
+    GPRReg scratch = InvalidGPRReg;
+    unsigned scratchGPREntryIndex = 0;
+
+    // Use the first GPR entry's register as our scratch.
     for (unsigned i = 0; i < registerCount; i++) {
         RegisterAtOffset entry = allCalleeSaves->at(i);
         if (dontRestoreRegisters.get(entry.reg()))
             continue;
-        if (entry.reg().isGPR())
-            loadPtr(static_cast<void*>(sourceBuffer + entry.offset()), entry.reg().gpr());
-        else
-            loadDouble(TrustedImmPtr(sourceBuffer + entry.offset()), entry.reg().fpr());
+        if (entry.reg().isGPR()) {
+            scratchGPREntryIndex = i;
+            scratch = entry.reg().gpr();
+            break;
+        }
     }
+    ASSERT(scratch != InvalidGPRReg);
+
+    loadPtr(&m_vm->topVMEntryFrame, scratch);
+    addPtr(TrustedImm32(VMEntryFrame::calleeSaveRegistersBufferOffset()), scratch);
+
+    // Restore all callee saves except for the scratch.
+    for (unsigned i = 0; i < registerCount; i++) {
+        RegisterAtOffset entry = allCalleeSaves->at(i);
+        if (dontRestoreRegisters.get(entry.reg()))
+            continue;
+        if (entry.reg().isGPR()) {
+            if (i != scratchGPREntryIndex)
+                loadPtr(Address(scratch, entry.offset()), entry.reg().gpr());
+        } else
+            loadDouble(Address(scratch, entry.offset()), entry.reg().fpr());
+    }
+
+    // Restore the callee save value of the scratch.
+    RegisterAtOffset entry = allCalleeSaves->at(scratchGPREntryIndex);
+    ASSERT(!dontRestoreRegisters.get(entry.reg()));
+    ASSERT(entry.reg().isGPR());
+    ASSERT(scratch == entry.reg().gpr());
+    loadPtr(Address(scratch, entry.offset()), scratch);
 #endif
 }
 

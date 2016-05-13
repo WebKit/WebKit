@@ -265,7 +265,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     m_jit.emitMaterializeTagCheckRegisters();
 
     if (exit.isExceptionHandler())
-        m_jit.copyCalleeSavesToVMCalleeSavesBuffer();
+        m_jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
 
     // Do all data format conversions and store the results into the stack.
     

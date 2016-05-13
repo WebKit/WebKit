@@ -1,3 +1,131 @@
+2016-05-13  Mark Lam  <mark.lam@apple.com>
+
+        We should have one calleeSaveRegistersBuffer per VMEntryFrame, not one per VM.
+        https://bugs.webkit.org/show_bug.cgi?id=157537
+        <rdar://problem/24794845>
+
+        Reviewed by Michael Saboff.
+
+        The pre-existing code behaves this way:
+
+        1. When JS code throws an exception, it saves callee save registers in
+           the VM calleeSaveRegistersBuffer.  These values are meant to be restored
+           to the callee save registers later either at the catch handler or at the
+           uncaught exception handler.
+
+        2. If the Inspector is enable, the VM will invoke inspector C++ code to inspect
+           the exception.  That C++ code can change the values of the callee save
+           registers.
+
+           The inspector code in turn re-enters the VM to execute JS inspector code.
+
+           The JS inspector code can run hot enough that we do an enterOptimizationCheck
+           on it.  The enterOptimizationCheck first saves all callee save registers
+           into the VM calleeSaveRegistersBuffer.
+
+           This effectively overwrites the values in the VM calleeSaveRegistersBuffer
+           from (1).
+
+        3. Eventually, execution returns to the catch handler or the uncaught exception
+           handler which restores the overwritten values in the VM
+           calleeSaveRegistersBuffer to the callee save registers.
+
+           When execution returns to the C++ code that entered the VM before (1), the
+           values in the callee registers are not what that code expects, and badness
+           and/or crashes ensues.
+
+        This patch applies the following fix:
+        
+        1. Allocate space in the VMEntryFrame for the calleeSaveRegistersBuffer.
+           This ensures that each VM entry session has its own buffer to use, and will
+           not corrupt the one from the previous VM entry session.
+
+           Delete the VM calleeSaveRegistersBuffer.
+
+        2. Change all locations that uses the VM calleeSaveRegistersBuffer to use the
+           calleeSaveRegistersBuffer in the current VMEntryFrame.
+
+        3. Renamed all uses of the term "VMCalleeSavesBuffer" to
+           "VMEntryFrameCalleeSavesBuffer".
+
+        This fix has been tested on the following configurations:
+        1. JSC and layout tests on a debug ASan build for 64-bit x86_64.
+        2. JSC tests on a release ASan build for 32-bit x86.
+        3. JSC tests on a release normal (non-ASan) build for ARM64.
+        4. JSC tests on a release normal (non-ASan) build for ARMv7 and ARMv7s.
+        5. JSC tests on a release ASan CLOOP build for x86_64.
+
+        These test runs did not produce any new crashes.  The ASan CLOOP has some
+        pre-existing crashes which are not due to this patch.
+
+        This bug can be tested by running the inspector/debugger/regress-133182.html test
+        on an ASan build.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::operator()):
+        (JSC::UnwindFunctor::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        (JSC::UnwindFunctor::copyCalleeSavesToVMCalleeSavesBuffer): Deleted.
+        * interpreter/Interpreter.h:
+        (JSC::NativeCallFrameTracer::NativeCallFrameTracer):
+        * interpreter/VMEntryRecord.h:
+        (JSC::VMEntryRecord::calleeSaveRegistersBufferOffset):
+        (JSC::VMEntryRecord::prevTopCallFrame):
+        (JSC::VMEntryRecord::unsafePrevTopCallFrame):
+        (JSC::VMEntryFrame::vmEntryRecordOffset):
+        (JSC::VMEntryFrame::calleeSaveRegistersBufferOffset):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitRandomThunk):
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromVMCalleeSavesBuffer): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitRestoreSavedTagRegisters):
+        (JSC::AssemblyHelpers::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesFromFrameOrRegisterToVMEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesToVMCalleeSavesBuffer): Deleted.
+        (JSC::AssemblyHelpers::copyCalleeSavesFromFrameOrRegisterToVMCalleeSavesBuffer): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_catch):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::nativeForGenerator):
+        * llint/LLIntThunks.cpp:
+        (JSC::vmEntryRecord):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/VM.h:
+        (JSC::VM::getCTIStub):
+        (JSC::VM::calleeSaveRegistersBufferOffset): Deleted.
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::endFunction):
+
 2016-05-13  Beth Dakin  <bdakin@apple.com>
 
         Add dyldSPI.h for linked on or after checks, and add one for link preview

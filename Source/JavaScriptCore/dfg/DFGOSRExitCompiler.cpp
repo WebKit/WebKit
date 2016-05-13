@@ -151,7 +151,7 @@ void compileOSRExit(ExecState* exec)
         if (exit.m_kind == GenericUnwind) {
             // We are acting as a defacto op_catch because we arrive here from genericUnwind().
             // So, we must restore our call frame and stack pointer.
-            jit.restoreCalleeSavesFromVMCalleeSavesBuffer();
+            jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer();
             jit.loadPtr(vm->addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
             jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)),
                 GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);

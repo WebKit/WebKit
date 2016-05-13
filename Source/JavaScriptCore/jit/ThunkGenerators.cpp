@@ -66,7 +66,7 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM* vm)
     // even though we won't use it.
     jit.preserveReturnAddressAfterCall(GPRInfo::nonPreservedNonReturnGPR);
 
-    jit.copyCalleeSavesToVMCalleeSavesBuffer();
+    jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
 
     jit.setupArguments(CCallHelpers::TrustedImmPtr(vm), GPRInfo::callFrameRegister);
     jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(lookupExceptionHandler)), GPRInfo::nonArgGPR0);
@@ -355,7 +355,7 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     // Handle an exception
     exceptionHandler.link(&jit);
 
-    jit.copyCalleeSavesToVMCalleeSavesBuffer();
+    jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
 
 #if CPU(X86) && USE(JSVALUE32_64)

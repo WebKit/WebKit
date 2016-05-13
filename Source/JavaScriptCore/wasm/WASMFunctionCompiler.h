@@ -237,7 +237,7 @@ public:
         if (!m_exceptionChecks.empty()) {
             m_exceptionChecks.link(this);
 
-            copyCalleeSavesToVMCalleeSavesBuffer();
+            copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
 
             // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
             move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);

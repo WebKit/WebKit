@@ -1,3 +1,16 @@
+2016-05-13  Mark Lam  <mark.lam@apple.com>
+
+        We should have one calleeSaveRegistersBuffer per VMEntryFrame, not one per VM.
+        https://bugs.webkit.org/show_bug.cgi?id=157537
+        <rdar://problem/24794845>
+
+        Reviewed by Michael Saboff.
+
+        * inspector/debugger/regress-133182-expected.txt:
+        - Rebased test results to update line numbers.
+        * platform/mac/TestExpectations:
+        - Unskip the test.
+
 2016-05-13  Doug Russell  <d_russell@apple.com>
 
         AX: Regressions in undo/redo accessibility from Bug 153361

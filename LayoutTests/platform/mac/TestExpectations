@@ -731,7 +731,6 @@ inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html
 inspector/debugger/didSampleProbe-multiple-probes.html
 inspector/debugger/nested-inspectors.html
 inspector/debugger/pause-reason.html
-inspector/debugger/regress-133182.html
 
 webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
 

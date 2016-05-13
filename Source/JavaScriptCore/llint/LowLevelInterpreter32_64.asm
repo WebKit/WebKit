@@ -302,7 +302,7 @@ _handleUncaughtException:
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
-    restoreCalleeSavesFromVMCalleeSavesBuffer(t3, t0)
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForCatch[t3], cfr
     storep 0, VM::callFrameForCatch[t3]
 
@@ -1915,7 +1915,7 @@ _llint_op_catch:
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
-    restoreCalleeSavesFromVMCalleeSavesBuffer(t3, t0)
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForCatch[t3], cfr
     storep 0, VM::callFrameForCatch[t3]
     restoreStackPointerAfterCall()
@@ -1965,7 +1965,7 @@ _llint_throw_from_slow_path_trampoline:
     loadp Callee[cfr], t1
     andp MarkedBlockMask, t1
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
-    copyCalleeSavesToVMCalleeSavesBuffer(t1, t2)
+    copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(t1, t2)
     jmp VM::targetMachinePCForThrow[t1]
 
 
