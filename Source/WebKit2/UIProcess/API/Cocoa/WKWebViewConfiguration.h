@@ -70,7 +70,7 @@ typedef NS_OPTIONS(NSUInteger, WKDataDetectorTypes) {
     WKDataDetectorTypeTrackingNumber = 1 << 4,
     WKDataDetectorTypeFlightNumber = 1 << 5,
     WKDataDetectorTypeLookupSuggestion = 1 << 6,
-    WKDataDetectorTypeAll = NSUIntegerMax
+    WKDataDetectorTypeAll = NSUIntegerMax,
 
     WKDataDetectorTypeSpotlightSuggestion WK_ENUM_DEPRECATED(NA, NA, WK_IOS_TBA, WK_IOS_TBA, "Please use WKDataDetectorTypeLookupSuggestion") = WKDataDetectorTypeLookupSuggestion,
 } WK_ENUM_AVAILABLE(NA, WK_IOS_TBA);
