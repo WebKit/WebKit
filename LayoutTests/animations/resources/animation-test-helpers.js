@@ -399,7 +399,8 @@ function getPropertyValue(property, elementId, iframeId)
                || property == "webkitClipPath"
                || property == "webkitShapeInside"
                || property == "webkitShapeOutside"
-               || !property.indexOf("webkitTransform")) {
+               || !property.indexOf("webkitTransform")
+               || !property.indexOf("transform")) {
         computedValue = window.getComputedStyle(element)[property.split(".")[0]];
     } else {
         var computedStyle = window.getComputedStyle(element).getPropertyCSSValue(property);
@@ -413,7 +414,7 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
 {
     var result = true;
 
-    if (!property.indexOf("webkitTransform")) {
+    if (!property.indexOf("webkitTransform") || !property.indexOf("transform")) {
         if (typeof expectedValue == "string")
             result = (computedValue == expectedValue);
         else if (typeof expectedValue == "number") {

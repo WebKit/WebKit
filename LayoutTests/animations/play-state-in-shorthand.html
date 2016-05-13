@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    #box {
+      position: absolute;
+      left: 0px;
+      top: 100px;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      animation: move1 linear 2s;
+    }
+
+    #box.paused {
+        animation: move1 linear 2s paused;
+    }
+
+    @keyframes move1 {
+      from { transform: translateX(0px); }
+      to   { transform: translateX(300px); }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["move1", 0.5, "box", "transform", [1,0,0,1,75,0], 20],
+      ["move1", 1.0, "box", "transform", [1,0,0,1,150,0], 20],
+      ["move1", 2.5, "box", "transform", [1,0,0,1,150,0], 20],
+    ];
+
+    function pauseAnimation()
+    {
+        document.getElementById("box").classList.add('paused');
+    }
+
+    function setTimers()
+    {
+        setTimeout(pauseAnimation, 1000);
+    }
+
+    runAnimationTest(expectedValues, setTimers, null, true);
+  </script>
+</head>
+<body>
+<div id="box"></div>
+<div id="result"></div>
+</div>
+</body>
+</html>

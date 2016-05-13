@@ -3774,7 +3774,7 @@ bool CSSParser::parseAnimationShorthand(CSSPropertyID propId, bool important)
 {
     ASSERT(propId == CSSPropertyAnimation || propId == CSSPropertyWebkitAnimation);
 
-    const unsigned numProperties = 7;
+    const unsigned numProperties = 8;
     const StylePropertyShorthand& shorthand = animationShorthandForParsing(propId);
 
     // The list of properties in the shorthand should be the same
