@@ -186,7 +186,7 @@ static GstAppSrcCallbacks appsrcCallbacks = {
                 return;
         }
 
-        GRefPtr<WebKitWebSrc> protector(src);
+        GRefPtr<WebKitWebSrc> protector = WTF::ensureGRef(src);
         priv->notifier.notify(MainThreadSourceNotification::NeedData, [protector] { webKitWebSrcNeedData(protector.get()); });
     },
     // enough_data
@@ -200,7 +200,7 @@ static GstAppSrcCallbacks appsrcCallbacks = {
                 return;
         }
 
-        GRefPtr<WebKitWebSrc> protector(src);
+        GRefPtr<WebKitWebSrc> protector = WTF::ensureGRef(src);
         priv->notifier.notify(MainThreadSourceNotification::EnoughData, [protector] { webKitWebSrcEnoughData(protector.get()); });
     },
     // seek_data
@@ -220,7 +220,7 @@ static GstAppSrcCallbacks appsrcCallbacks = {
             priv->requestedOffset = offset;
         }
 
-        GRefPtr<WebKitWebSrc> protector(src);
+        GRefPtr<WebKitWebSrc> protector = WTF::ensureGRef(src);
         priv->notifier.notify(MainThreadSourceNotification::Seek, [protector] { webKitWebSrcSeek(protector.get()); });
         return TRUE;
     },
@@ -638,7 +638,7 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
     case GST_STATE_CHANGE_READY_TO_PAUSED:
     {
         GST_DEBUG_OBJECT(src, "READY->PAUSED");
-        GRefPtr<WebKitWebSrc> protector(src);
+        GRefPtr<WebKitWebSrc> protector = WTF::ensureGRef(src);
         priv->notifier.notify(MainThreadSourceNotification::Start, [protector] { webKitWebSrcStart(protector.get()); });
         break;
     }
@@ -646,7 +646,7 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
     {
         GST_DEBUG_OBJECT(src, "PAUSED->READY");
         priv->notifier.cancelPendingNotifications();
-        GRefPtr<WebKitWebSrc> protector(src);
+        GRefPtr<WebKitWebSrc> protector = WTF::ensureGRef(src);
         priv->notifier.notify(MainThreadSourceNotification::Stop, [protector] { webKitWebSrcStop(protector.get()); });
         break;
     }
