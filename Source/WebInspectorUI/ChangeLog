@@ -1,5 +1,16 @@
 2016-05-12  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Remove "Extra Scripts" folder from Resources sidebar if all children removed
+        https://bugs.webkit.org/show_bug.cgi?id=157656
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasRemoved):
+        Remove parent folder after last script tree element removed.
+
+2016-05-12  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Can't filter Rendering Frames by duration
         https://bugs.webkit.org/show_bug.cgi?id=157654
 

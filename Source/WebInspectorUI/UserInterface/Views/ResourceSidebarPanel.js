@@ -320,7 +320,11 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         if (!scriptTreeElement)
             return;
 
-        scriptTreeElement.parent.removeChild(scriptTreeElement);
+        let parentTreeElement = scriptTreeElement.parent;
+        parentTreeElement.removeChild(scriptTreeElement);
+
+        if (parentTreeElement instanceof WebInspector.FolderTreeElement && !parentTreeElement.children.length)
+            parentTreeElement.parent.removeChild(parentTreeElement);
     }
 
     _scriptsCleared(event)
