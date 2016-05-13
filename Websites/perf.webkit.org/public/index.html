@@ -2,6 +2,12 @@
 <html>
 <head>
 <title>Perf Monitor is Loading...</title>
+<script>
+
+if (location.hash.indexOf('#mode=dashboard') >= 0)
+    location.href = '/v3/';
+
+</script>
 <script src="js/jquery.js" defer></script>
 <script src="js/jquery.flot.js" defer></script>
 <script src="js/jquery.flot.crosshair.js" defer></script>
@@ -1056,7 +1062,34 @@ function init() {
             // Ignore any exception thrown by parse.
         }
 
+        redirectChartsToV3(chartList);
+
         chartList.forEach(function (item) { createChartFromListPair(item[0], item[1]); });
+    }
+
+    function redirectChartsToV3(chartList)
+    {
+        var v3URLParams = [];
+        var numberOfDays = URLState.get('days');
+        if (parseInt(numberOfDays) == numberOfDays)
+            v3URLParams.push('since=' + (+Date.now() - numberOfDays * 24 * 3600 * 1000));
+
+        var v3PaneList = [];
+        for (var item of chartList) {
+            var platform = nameToPlatform[item[0]];
+            var metric = fullNameToMetric[item[1]];
+            if (platform && metric)
+                v3PaneList.push(`(${platform.id}-${metric.id})`);
+        }
+        v3URLParams.push(`paneList=(${v3PaneList.join('-')})`);
+
+        try {
+            var zoomValues = JSON.parse(URLState.get('zoom', '[]'));
+            if (zoomValues.length == 2)
+                v3URLParams.push(`zoom=(${zoomValues[0]}-${zoomValues[1]})`);
+        } catch (error) { }
+
+        location.href = '/v3/#/charts?' + v3URLParams.join('&');
     }
 
     // FIXME: We should use exponential slider for charts page where we expect to have

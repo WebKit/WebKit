@@ -6,6 +6,19 @@
 
     <link rel="prefetch" href="../data/manifest.json">
     <script type="application/json" src="../data/manifest.json"></script>
+    <script>
+
+        function redirectToV3IfNeeded()
+        {
+            var hash = window.location.hash;
+            if (hash.startsWith('#/analysis') || hash.startsWith('#/dashboard'))
+                window.location.pathname = '/v3/';
+        }
+
+        window.onhashchange = redirectToV3IfNeeded;
+        redirectToV3IfNeeded();
+
+    </script>
 
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="chart-pane.css">

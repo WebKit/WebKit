@@ -1,5 +1,22 @@
 2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Always use v3 UI for dashboards and analysis task pages
+        https://bugs.webkit.org/show_bug.cgi?id=157647
+
+        Reviewed by Darin Adler.
+
+        Redirect dashboard pages from v1 and v2 to v3's summary page. Also redirect v1 UI's charts page and v2 UI's
+        analysis task pages to the corresponding v3 pages.
+
+        Keep v2's charts page accessible since some features such as segmentation is still only available on v2 UI.
+
+        * public/index.html:
+        (init.showCharts): Redirect to v3 UI once the chart list has been parsed.
+        (init.redirectChartsToV3): Added.
+        * public/v2/index.html:
+
+2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Show a spinner while fetching data on summary page
         https://bugs.webkit.org/show_bug.cgi?id=157658
 
