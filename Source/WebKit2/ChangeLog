@@ -1,3 +1,16 @@
+2016-05-13  Beth Dakin  <bdakin@apple.com>
+
+        Add dyldSPI.h for linked on or after checks, and add one for link preview
+        https://bugs.webkit.org/show_bug.cgi?id=157401
+
+        Reviewed by Darin Adler.
+
+        Set _allowsLinkPreview to YES for programs linked on or after 
+        firstSDKVersionWithLinkPreviewEnabledByDefault.
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+
 2016-05-13  Jer Noble  <jer.noble@apple.com>
 
         Fullscreen view attempts to resize when in 2-up mode

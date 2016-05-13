@@ -53,9 +53,9 @@
 #include "Text.h"
 #include "Widget.h"
 #include <wtf/Ref.h>
+#include <wtf/spi/darwin/dyldSPI.h>
 
 #if PLATFORM(IOS)
-#include "DynamicLinkerSPI.h"
 #include "RuntimeApplicationChecks.h"
 #endif
 

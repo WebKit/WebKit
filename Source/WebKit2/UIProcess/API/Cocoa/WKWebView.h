@@ -232,7 +232,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract A Boolean value indicating whether link preview is allowed for any
  links inside this WKWebView.
- @discussion The default value is NO on iOS and YES on Mac.
+ @discussion The default value is YES on Mac and iOS.
  */
 @property (nonatomic) BOOL allowsLinkPreview WK_AVAILABLE(10_11, 9_0);
 

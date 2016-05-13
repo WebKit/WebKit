@@ -95,6 +95,7 @@
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TemporaryChange.h>
+#import <wtf/spi/darwin/dyldSPI.h>
 
 #if PLATFORM(IOS)
 #import "_WKWebViewPrintFormatter.h"
@@ -111,7 +112,6 @@
 #import "WebVideoFullscreenManagerProxy.h"
 #import <UIKit/UIApplication.h>
 #import <WebCore/CoreGraphicsSPI.h>
-#import <WebCore/DynamicLinkerSPI.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/QuartzCoreSPI.h>
@@ -158,6 +158,10 @@ enum class DynamicViewportUpdateMode {
 };
 
 #endif // PLATFORM(IOS)
+
+#if PLATFORM(IOS)
+static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
+#endif
 
 #if PLATFORM(MAC)
 #import "WKTextFinderClient.h"
@@ -489,6 +493,9 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     [_scrollView setBouncesZoom:YES];
 
     [self addSubview:_scrollView.get()];
+
+    static uint32_t programSDKVersion = dyld_get_program_sdk_version();
+    _allowsLinkPreview = programSDKVersion >= firstSDKVersionWithLinkPreviewEnabledByDefault;
 
     _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds processPool:processPool configuration:WTFMove(pageConfiguration) webView:self]);
 

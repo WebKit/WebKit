@@ -26,10 +26,10 @@
 #import "FontServicesIOS.h"
 
 #import "CoreGraphicsSPI.h"
-#import "DynamicLinkerSPI.h"
 #import "FontMetrics.h"
 #import "OpenTypeCG.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/spi/darwin/dyldSPI.h>
 
 namespace WebCore {
 

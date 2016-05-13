@@ -6215,7 +6215,6 @@
 		CE12523D1A1676CD00864480 /* QuartzCoreSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE1252411A16B1B600864480 /* MediaPlayerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252401A16B1B600864480 /* MediaPlayerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE1252431A16C01A00864480 /* CoreUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252421A16C01A00864480 /* CoreUISPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CE1252451A16C22500864480 /* DynamicLinkerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252441A16C22500864480 /* DynamicLinkerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE1252491A16C3BC00864480 /* MobileGestaltSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252481A16C3BC00864480 /* MobileGestaltSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE12524D1A1A77DE00864480 /* IOPMLibSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12524C1A1A77DE00864480 /* IOPMLibSPI.h */; };
 		CE12524F1A1A78D200864480 /* MachVMSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12524E1A1A78D200864480 /* MachVMSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14253,7 +14252,6 @@
 		CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuartzCoreSPI.h; sourceTree = "<group>"; };
 		CE1252401A16B1B600864480 /* MediaPlayerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerSPI.h; sourceTree = "<group>"; };
 		CE1252421A16C01A00864480 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreUISPI.h; sourceTree = "<group>"; };
-		CE1252441A16C22500864480 /* DynamicLinkerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerSPI.h; sourceTree = "<group>"; };
 		CE1252481A16C3BC00864480 /* MobileGestaltSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileGestaltSPI.h; sourceTree = "<group>"; };
 		CE12524C1A1A77DE00864480 /* IOPMLibSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOPMLibSPI.h; sourceTree = "<group>"; };
 		CE12524E1A1A78D200864480 /* MachVMSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachVMSPI.h; sourceTree = "<group>"; };
@@ -17605,7 +17603,6 @@
 				CD4097FF1A8C855F004C65E9 /* CFNSURLConnectionSPI.h */,
 				1C5E980F1A02CEFA002DB55F /* CoreTextSPI.h */,
 				935E2B4D1AFF06CA00976F9F /* DataDetectorsCoreSPI.h */,
-				CE1252441A16C22500864480 /* DynamicLinkerSPI.h */,
 				CE12524C1A1A77DE00864480 /* IOPMLibSPI.h */,
 				44DEF6421A6FF92700D45EEC /* IOReturnSPI.h */,
 				44DFF6421A6FF92700D45EEC /* IOSurfaceSPI.h */,
@@ -25992,7 +25989,6 @@
 				A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */,
 				81F65FF613788FAA00FF6F2D /* DragState.h in Headers */,
 				E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */,
-				CE1252451A16C22500864480 /* DynamicLinkerSPI.h in Headers */,
 				FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */,
 				FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */,
 				FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */,

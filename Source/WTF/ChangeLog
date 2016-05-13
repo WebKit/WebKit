@@ -1,3 +1,16 @@
+2016-05-13  Beth Dakin  <bdakin@apple.com>
+
+        Add dyldSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=157401
+        -and corresponding-
+        rdar://problem/26253396
+
+        Reviewed by Darin Adler.
+
+        New header for dyld spi.
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/spi/darwin/dyldSPI.h: Added.
+
 2016-05-13  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         DOMPromise should only restrict the resolution type

@@ -1,3 +1,20 @@
+2016-05-13  Beth Dakin  <bdakin@apple.com>
+
+        Add dyldSPI.h for linked on or after checks, and add one for link preview
+        https://bugs.webkit.org/show_bug.cgi?id=157401
+        -and corresponding-
+        rdar://problem/26253396
+
+        Reviewed by Darin Adler.
+
+        This patch removes DynamicLinkerSPI.h and replaces it with 
+        wtf/spi/darwin/dyldSPI.h
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLObjectElement.cpp:
+        * platform/graphics/ios/FontServicesIOS.mm:
+        * platform/spi/cocoa/DynamicLinkerSPI.h: Removed.
+
 2016-05-13  Brady Eidson  <beidson@apple.com>
 
         Give CrossThreadCopier a default specialization for Vectors of objects.
