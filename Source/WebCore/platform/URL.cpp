@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2007, 2008, 2011, 2012, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2007, 2008, 2011, 2012, 2013, 2015-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2101,6 +2101,7 @@ bool portAllowed(const URL& url)
         2049, // NFS
         3659, // apple-sasl / PasswordServer [Apple addition]
         4045, // lockd
+        4190, // ManageSieve [Apple addition]
         6000, // X11
         6665, // Alternate IRC [Apple addition]
         6666, // Alternate IRC [Apple addition]
