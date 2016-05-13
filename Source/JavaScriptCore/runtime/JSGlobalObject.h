@@ -181,6 +181,8 @@ private:
     typedef HashMap<OpaqueJSClass*, std::unique_ptr<OpaqueJSClassContextData>> OpaqueJSClassDataMap;
 
     struct JSGlobalObjectRareData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         JSGlobalObjectRareData()
             : profileGroup(0)
         {
