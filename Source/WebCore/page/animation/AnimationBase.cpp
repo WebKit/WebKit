@@ -219,6 +219,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                 // We are pausing before we even started.
                 LOG(Animations, "%p AnimationState %s -> AnimationState::PausedNew", this, nameForState(m_animationState));
                 m_animationState = AnimationState::PausedNew;
+                m_pauseTime = 0;
             }
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
@@ -388,7 +389,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
             // AnimationState::PausedWaitResponse, we don't yet have a valid startTime, so we send 0 to startAnimation.
             // When the AnimationStateInput::StartTimeSet comes in and we were in AnimationState::PausedRun, we will notice
             // that we have already set the startTime and will ignore it.
-            ASSERT(input == AnimationStateInput::PlayStateRunning || input == AnimationStateInput::StartTimeSet || input == AnimationStateInput::StyleAvailable || input == AnimationStateInput::StartAnimation);
+            ASSERT(input == AnimationStateInput::PlayStatePaused || input == AnimationStateInput::PlayStateRunning || input == AnimationStateInput::StartTimeSet || input == AnimationStateInput::StyleAvailable || input == AnimationStateInput::StartAnimation);
             ASSERT(paused());
 
             if (input == AnimationStateInput::PlayStateRunning) {
@@ -397,6 +398,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                     // to start, so jump back to the New state and reset.
                     LOG(Animations, "%p AnimationState %s -> AnimationState::New", this, nameForState(m_animationState));
                     m_animationState = AnimationState::New;
+                    m_pauseTime = -1;
                     updateStateMachine(input, param);
                     break;
                 }
@@ -406,6 +408,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                     m_startTime += beginAnimationUpdateTime() - m_pauseTime;
                 else
                     m_startTime = 0;
+
                 m_pauseTime = -1;
 
                 if (m_animationState == AnimationState::PausedWaitStyleAvailable) {
@@ -446,7 +449,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                 break;
             }
 
-            ASSERT(m_animationState == AnimationState::PausedWaitStyleAvailable);
+            ASSERT(m_animationState == AnimationState::PausedNew || m_animationState == AnimationState::PausedWaitStyleAvailable);
             // We are paused but we got the callback that notifies us that style has been updated.
             // We move to the AnimationState::PausedWaitResponse state
             LOG(Animations, "%p AnimationState %s -> PausedWaitResponse", this, nameForState(m_animationState));
@@ -741,10 +744,14 @@ double AnimationBase::getElapsedTime() const
     }
 #endif
 
-    if (paused())
-        return m_pauseTime - m_startTime;
+    if (paused()) {
+        double delayOffset = (!m_startTime && m_animation->delay() < 0) ? m_animation->delay() : 0;
+        return m_pauseTime - m_startTime - delayOffset;
+    }
+
     if (m_startTime <= 0)
         return 0;
+
     if (postActive() || fillingForwards())
         return m_totalDuration;
 

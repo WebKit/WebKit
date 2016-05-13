@@ -131,8 +131,12 @@ bool KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
     fireAnimationEventsIfNeeded();
     
     // If we have not yet started, we will not have a valid start time, so just start the animation if needed.
-    if (isNew() && m_animation->playState() == AnimPlayStatePlaying && !compositeAnimation->isSuspended())
-        updateStateMachine(AnimationStateInput::StartAnimation, -1);
+    if (isNew()) {
+        if (m_animation->playState() == AnimPlayStatePlaying && !compositeAnimation->isSuspended())
+            updateStateMachine(AnimationStateInput::StartAnimation, -1);
+        else if (m_animation->playState() == AnimPlayStatePaused)
+            updateStateMachine(AnimationStateInput::PlayStatePaused, -1);
+    }
 
     // If we get this far and the animation is done, it means we are cleaning up a just finished animation.
     // If so, we need to send back the targetStyle.
