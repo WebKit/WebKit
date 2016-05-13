@@ -1,3 +1,17 @@
+2016-05-13  Yoav Weiss  <yoav@yoav.ws>
+
+        Turn on WEB_TIMING for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=157673
+
+        Reviewed by Alex Christensen.
+
+        Turn on WEB_TIMING by default on the cmake Mac port, to match it with all other ports,
+        and make sure that the flag will be on by default for all ports.
+
+        * Source/cmake/OptionsGTK.cmake: Remove the specific private flag for WEB_TIMING.
+        * Source/cmake/OptionsMac.cmake: Remove the specific private flag for WEB_TIMING.
+        * Source/cmake/WebKitFeatures.cmake: Turn on WEB_TIMING for all ports by default.
+
 2016-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(ES6_ARROWFUNCTION_SYNTAX) guards
