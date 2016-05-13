@@ -3291,6 +3291,21 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
     if match(r'\s*(return|delete)\b', line):
         return
 
+    # Make sure Ref/RefPtrs used as protectors are named correctly, and do this before we start stripping things off the input.
+    ref_regexp = r'^\s*Ref(Ptr)?<([\w_]|::)+> (?P<protector_name>[\w_]+)\((\*|&)*(m_)?(?P<protected_name>[\w_]+)\);'
+    ref_check = match(ref_regexp, line)
+    if ref_check:
+        protector_name = ref_check.group('protector_name')
+        protected_name = ref_check.group('protected_name')
+        cap_protected_name = protected_name[0].upper() + protected_name[1:]
+        expected_protector_name = 'protected' + cap_protected_name
+        if protected_name == 'this' and protector_name != 'protectedThis':
+            error(line_number, 'readability/naming/protected', 4, "\'" + protector_name + "\' is incorrectly named. It should be named \'protectedThis\'.")
+        elif protector_name == expected_protector_name or protector_name == 'protector':
+            return
+        else:
+            error(line_number, 'readability/naming/protected', 4, "\'" + protector_name + "\' is incorrectly named. It should be named \'protector\' or \'" + expected_protector_name + "\'.")
+
     # Basically, a declaration is a type name followed by whitespaces
     # followed by an identifier. The type name can be complicated
     # due to type adjectives and templates. We remove them first to
@@ -3846,6 +3861,7 @@ class CppChecker(object):
         'readability/multiline_string',
         'readability/parameter_name',
         'readability/naming',
+        'readability/naming/protected',
         'readability/naming/underscores',
         'readability/null',
         'readability/streams',

@@ -5179,6 +5179,52 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('unsigned _fillRule : 1;',
                          '_fillRule' + name_underscore_error_message)
 
+        # Valid protector RefPtr/Ref variable names.
+        self.assert_lint('RefPtr<Node> protectedThis(this);', '')
+        self.assert_lint('Ref<Node> protectedThis(*this);', '')
+        self.assert_lint('RefPtr<Node> protectedNode(node);', '')
+        self.assert_lint('RefPtr<Node> protectedNode(&node);', '')
+        self.assert_lint('RefPtr<Node> protector(node);', '')
+        self.assert_lint('RefPtr<Node> protector(&node);', '')
+        self.assert_lint('Ref<Node> protectedNode(node);', '')
+        self.assert_lint('Ref<Node> protectedNode(*node);', '')
+        self.assert_lint('Ref<Node> protector(node);', '')
+        self.assert_lint('Ref<Node> protector(*node);', '')
+        self.assert_lint('RefPtr<Node> protectedOtherNode(otherNode);', '')
+        self.assert_lint('RefPtr<Node> protectedOtherNode(&otherNode);', '')
+        self.assert_lint('Ref<Node> protectedOtherNode(otherNode);', '')
+        self.assert_lint('Ref<Node> protectedOtherNode(*otherNode);', '')
+        self.assert_lint('RefPtr<Widget> protectedWidget(m_widget);', '')
+        self.assert_lint('RefPtr<Widget> protectedWidget(&m_widget);', '')
+        self.assert_lint('Ref<Widget> protectedWidget(m_widget);', '')
+        self.assert_lint('Ref<Widget> protectedWidget(*m_widget);', '')
+        self.assert_lint('RefPtr<Widget> protector(m_widget);', '')
+        self.assert_lint('RefPtr<Widget> protector(&m_widget);', '')
+        self.assert_lint('Ref<Widget> protector(m_widget);', '')
+        self.assert_lint('Ref<Widget> protector(*m_widget);', '')
+        self.assert_lint('RefPtr<SomeNamespace::Node> protectedThis(this);', '')
+        self.assert_lint('RefPtr<SomeClass::InternalClass::Node> protectedThis(this);', '')
+
+        # Invalid protector RefPtr/Ref variable names.
+        self.assert_lint('RefPtr<Node> protector(this);', "'protector' is incorrectly named. It should be named 'protectedThis'.  [readability/naming/protected] [4]")
+        self.assert_lint('Ref<Node> protector(*this);', "'protector' is incorrectly named. It should be named 'protectedThis'.  [readability/naming/protected] [4]")
+        self.assert_lint('RefPtr<Node> self(this);', "'self' is incorrectly named. It should be named 'protectedThis'.  [readability/naming/protected] [4]")
+        self.assert_lint('Ref<Node> self(*this);', "'self' is incorrectly named. It should be named 'protectedThis'.  [readability/naming/protected] [4]")
+        self.assert_lint('RefPtr<Node> protectedThis(node);', "'protectedThis' is incorrectly named. It should be named 'protector' or 'protectedNode'.  [readability/naming/protected] [4]")
+        self.assert_lint('RefPtr<Node> protectedThis(&node);', "'protectedThis' is incorrectly named. It should be named 'protector' or 'protectedNode'.  [readability/naming/protected] [4]")
+        self.assert_lint('Ref<Node> protectedThis(node);', "'protectedThis' is incorrectly named. It should be named 'protector' or 'protectedNode'.  [readability/naming/protected] [4]")
+        self.assert_lint('Ref<Node> protectedThis(*node);', "'protectedThis' is incorrectly named. It should be named 'protector' or 'protectedNode'.  [readability/naming/protected] [4]")
+        self.assert_lint('RefPtr<Node> protectedNode(otherNode);', "'protectedNode' is incorrectly named. It should be named 'protector' or 'protectedOtherNode'.  [readability/naming/protected] [4]")
+        self.assert_lint('RefPtr<Node> protectedNode(&otherNode);', "'protectedNode' is incorrectly named. It should be named 'protector' or 'protectedOtherNode'.  [readability/naming/protected] [4]")
+        self.assert_lint('Ref<Node> protectedNode(otherNode);', "'protectedNode' is incorrectly named. It should be named 'protector' or 'protectedOtherNode'.  [readability/naming/protected] [4]")
+        self.assert_lint('Ref<Node> protectedNode(*otherNode);', "'protectedNode' is incorrectly named. It should be named 'protector' or 'protectedOtherNode'.  [readability/naming/protected] [4]")
+        self.assert_lint('RefPtr<Node> nodeRef(node);', "'nodeRef' is incorrectly named. It should be named 'protector' or 'protectedNode'.  [readability/naming/protected] [4]")
+        self.assert_lint('Ref<Node> nodeRef(*node);', "'nodeRef' is incorrectly named. It should be named 'protector' or 'protectedNode'.  [readability/naming/protected] [4]")
+
+        # Lines that look like a protector variable declaration but aren't.
+        self.assert_lint('static RefPtr<Widget> doSomethingWith(widget);', '')
+        self.assert_lint('RefPtr<Widget> create();', '')
+
     def test_parameter_names(self):
         # Leave meaningless variable names out of function declarations.
         meaningless_variable_name_error_message = 'The parameter name "%s" adds no information, so it should be removed.  [readability/parameter_name] [5]'
