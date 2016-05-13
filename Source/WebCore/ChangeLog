@@ -1,3 +1,25 @@
+2016-05-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Show auto-repeat line names in ComputedStyle
+        https://bugs.webkit.org/show_bug.cgi?id=157622
+
+        Reviewed by Darin Adler.
+
+        Add the necessary machinery to show the named lines from auto-repeat tracks in
+        getComputedStyle(). A new class OrderedNamedLinesCollector was added to abstract the
+        retrieval of line names no matter where they come from (explicit or auto-repeat tracks).
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::OrderedNamedLinesCollector::OrderedNamedLinesCollector):
+        (WebCore::OrderedNamedLinesCollector::isEmpty): TRUE if we don't have named lines neither on
+        explicit nor auto-repeat tracks.
+        (WebCore::OrderedNamedLinesCollector::appendLines): Add the named lines found for a given
+        index to the CSSGridLineNamesValue.
+        (WebCore::OrderedNamedLinesCollector::collectLineNamesForIndex): Collects named lines found
+        for a given index.
+        (WebCore::addValuesForNamedGridLinesAtIndex): Use the collector to gather named lines.
+        (WebCore::valueForGridTrackList): Ditto.
+
 2016-05-13  Tina Liu  <iting_liu@apple.com>
 
         Revert r199691.
