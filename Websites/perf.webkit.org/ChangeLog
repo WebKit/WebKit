@@ -1,5 +1,33 @@
 2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Summary page doesn't report some missing platforms
+        https://bugs.webkit.org/show_bug.cgi?id=157670
+
+        Reviewed by Darin Adler.
+
+        This patch improves the warning text for missing platforms and fixes the bug that platforms that don't have
+        any data reported for a given test would not be reported as missing.
+
+        * public/v3/pages/summary-page.js:
+        (SummaryPage.prototype.render): Added instrumentations.
+        (SummaryPage.prototype._constructRatioGraph): Always create both the ratio bar graph and the spinner icon.
+        (SummaryPage.prototype._renderCell): Extracted from _constructRatioGraph. Toggle the displayed-ness of the
+        spinner and the ratio bar graph in the cell by CSS for better performance.
+        (SummaryPage.prototype._warningTextForGroup): Extracted from _constructRatioGraph. Rephrased warning text
+        for clarity and adopted new API of SummaryPageConfigurationGroup.
+        (SummaryPage.prototype._warningTextForGroup.mapAndSortByName): Added.
+        (SummaryPage.prototype._warningTextForGroup.pluralizeIfNeeded): Added.
+        (SummaryPage.cssTemplate): Added rules to toggle the visibility of spinner icons and bar graphs.
+        (SummaryPageConfigurationGroup): Replaced this._warnings by more explicitly named this._missingPlatforms
+        and this._platformsWithoutBaseline. Also add a platform to this._missingPlatforms if it didn't appear in
+        any metrics. Note that adding a platform whenever it doesn't in any one metric would be incorrect since
+        some tests uses a different test name on different platforms: e.g. PLT-Mac and PLT-iPhone.
+        (SummaryPageConfigurationGroup.prototype.missingPlatforms): Added.
+        (SummaryPageConfigurationGroup.prototype.platformsWithoutBaseline): Added.
+        (SummaryPageConfigurationGroup.prototype._fetchAndComputeRatio):
+
+2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Always use v3 UI for dashboards and analysis task pages
         https://bugs.webkit.org/show_bug.cgi?id=157647
 

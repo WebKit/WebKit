@@ -40,13 +40,18 @@ class SummaryPage extends PageWithHeading {
     
     render()
     {
+        Instrumentation.startMeasuringTime('SummaryPage', 'render');
         super.render();
 
-        if (this._shouldConstructTable)
+        if (this._shouldConstructTable) {
+            Instrumentation.startMeasuringTime('SummaryPage', '_constructTable');
             this.renderReplace(this.content().querySelector('.summary-table'), this._constructTable());
+            Instrumentation.endMeasuringTime('SummaryPage', '_constructTable');
+        }
 
         for (var render of this._renderQueue)
             render();
+        Instrumentation.endMeasuringTime('SummaryPage', 'render');
     }
 
     _createConfigurationGroup(platformIdList, metricIdList)
@@ -90,38 +95,54 @@ class SummaryPage extends PageWithHeading {
         var element = ComponentBase.createElement;
         var link = ComponentBase.createLink;
         var configurationList = configurationGroup.configurationList();
-
         var ratioGraph = new RatioBarGraph();
-
-        var state = ChartsPage.createStateForConfigurationList(configurationList);
 
         if (configurationList.length == 0) {
             this._renderQueue.push(function () { ratioGraph.render(); });
             return element('td', ratioGraph);
         }
 
-        var cell = element('td');
-        var url = this.router().url('charts', state);
-        this._renderQueue.push(function () {
-            if (configurationGroup.isFetching()) {
-                ComponentBase.renderReplace(cell, new SpinnerIcon);
-                return;
-            }
+        var state = ChartsPage.createStateForConfigurationList(configurationList);
+        var anchor = link(ratioGraph, this.router().url('charts', state));
+        var cell = element('td', [anchor, new SpinnerIcon]);
 
-            var warnings = configurationGroup.warnings();
-            var warningText = '';
-            for (var type in warnings) {
-                var platformString = Array.from(warnings[type]).map(function (platform) { return platform.name(); }).join(', ');
-                warningText += `Missing ${type} for following platform(s): ${platformString}`;
-            }
-
-            ComponentBase.renderReplace(cell, link(ratioGraph, warningText || 'Open charts', url));
-
-            ratioGraph.update(configurationGroup.ratio(), configurationGroup.label(), !!warningText);
-            ratioGraph.render();
-        });
-
+        this._renderQueue.push(this._renderCell.bind(this, cell, anchor, ratioGraph, configurationGroup));
         return cell;
+    }
+
+    _renderCell(cell, anchor, ratioGraph, configurationGroup)
+    {
+        if (configurationGroup.isFetching())
+            cell.classList.add('fetching');
+        else
+            cell.classList.remove('fetching');
+
+        var warningText = this._warningTextForGroup(configurationGroup);
+        anchor.title = warningText || 'Open charts';
+        ratioGraph.update(configurationGroup.ratio(), configurationGroup.label(), !!warningText);
+        ratioGraph.render();
+    }
+
+    _warningTextForGroup(configurationGroup)
+    {
+        function mapAndSortByName(platforms)
+        {
+            return platforms && platforms.map(function (platform) { return platform.name(); }).sort();
+        }
+
+        function pluralizeIfNeeded(singularWord, platforms) { return singularWord + (platforms.length > 1 ? 's' : ''); }
+
+        var warnings = [];
+
+        var missingPlatforms = mapAndSortByName(configurationGroup.missingPlatforms());
+        if (missingPlatforms)
+            warnings.push(`Missing ${pluralizeIfNeeded('platform', missingPlatforms)}: ${missingPlatforms.join(', ')}`);
+
+        var platformsWithoutBaselines = mapAndSortByName(configurationGroup.platformsWithoutBaseline());
+        if (platformsWithoutBaselines)
+            warnings.push(`Need ${pluralizeIfNeeded('baseline', platformsWithoutBaselines)}: ${platformsWithoutBaselines.join(', ')}`);
+
+        return warnings.length ? warnings.join('\n') : null;
     }
 
     static htmlTemplate()
@@ -196,6 +217,14 @@ class SummaryPage extends PageWithHeading {
                 left: calc(50% - 1rem);
                 z-index: 100;
             }
+
+            .summary-table td.fetching a {
+                display: none;
+            }
+
+            .summary-table td:not(.fetching) spinner-icon {
+                display: none;
+            }
         `;
     }
 }
@@ -208,12 +237,14 @@ class SummaryPageConfigurationGroup {
         this._setToRatio = new Map;
         this._ratio = null;
         this._label = null;
-        this._warnings = {};
+        this._missingPlatforms = new Set;
+        this._platformsWithoutBaseline = new Set;
         this._isFetching = false;
         this._smallerIsBetter = metrics.length ? metrics[0].isSmallerBetter() : null;
 
         for (var platform of platforms) {
             console.assert(platform instanceof Platform);
+            var foundInSomeMetric = false;
             for (var metric of metrics) {
                 console.assert(metric instanceof Metric);
                 console.assert(this._smallerIsBetter == metric.isSmallerBetter());
@@ -221,20 +252,24 @@ class SummaryPageConfigurationGroup {
 
                 if (excludedConfigurations && platform.id() in excludedConfigurations && excludedConfigurations[platform.id()].includes(+metric.id()))
                     continue;
-                if (platform.hasMetric(metric)) {
-                    this._measurementSets.push(MeasurementSet.findSet(platform.id(), metric.id(), platform.lastModified(metric)));
-                    this._configurationList.push([platform.id(), metric.id()]);
-                }
+                if (!platform.hasMetric(metric))
+                    continue;
+                foundInSomeMetric = true;
+                this._measurementSets.push(MeasurementSet.findSet(platform.id(), metric.id(), platform.lastModified(metric)));
+                this._configurationList.push([platform.id(), metric.id()]);
             }
+            if (!foundInSomeMetric)
+                this._missingPlatforms.add(platform);
         }
     }
 
     ratio() { return this._ratio; }
     label() { return this._label; }
-    warnings() { return this._warnings; }
     changeType() { return this._changeType; }
     configurationList() { return this._configurationList; }
     isFetching() { return this._isFetching; }
+    missingPlatforms() { return this._missingPlatforms.size ? Array.from(this._missingPlatforms) : null; }
+    platformsWithoutBaseline() { return this._platformsWithoutBaseline.size ? Array.from(this._platformsWithoutBaseline) : null; }
 
     fetchAndComputeSummary(timeRange)
     {
@@ -294,16 +329,10 @@ class SummaryPageConfigurationGroup {
             var baselineMedian = SummaryPageConfigurationGroup._medianForTimeRange(baselineTimeSeries, timeRange);
             var currentMedian = SummaryPageConfigurationGroup._medianForTimeRange(currentTimeSeries, timeRange);
             var platform = Platform.findById(set.platformId());
-            if (!baselineMedian) {
-                if(!('baseline' in self._warnings))
-                    self._warnings['baseline'] = new Set;
-                self._warnings['baseline'].add(platform);
-            }
-            if (!currentMedian) {
-                if(!('current' in self._warnings))
-                    self._warnings['current'] = new Set;
-                self._warnings['current'].add(platform);
-            }
+            if (!currentMedian)
+                self._missingPlatforms.add(platform);
+            else if (!baselineMedian)
+                self._platformsWithoutBaseline.add(platform);
 
             setToRatio.set(set, currentMedian / baselineMedian);
         }).catch(function () {
