@@ -1,5 +1,13 @@
 2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed. Added the missing executable bits.
+
+        * tools/bundle-v3-scripts.py: Added property svn:executable.
+        * tools/detect-changes.js: Added property svn:executable.
+        * tools/process-maintenance-backlog.py: Added property svn:executable.
+
+2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Summary page doesn't report some missing platforms
         https://bugs.webkit.org/show_bug.cgi?id=157670
 
