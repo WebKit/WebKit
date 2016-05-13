@@ -173,12 +173,14 @@ private:
                     killedNode->defaultEdge());
             };
 
-            if (nodeMayExit && node->op() == SetLocal) {
-                // If the SetLocal does exit, we need the MovHint of its local
-                // to be live until the SetLocal is done.
+            if (node->op() == SetLocal) {
                 VirtualRegister local = node->local();
-                processKilledOperand(local);
-                alreadyKilled = local;
+                if (nodeMayExit) {
+                    // If the SetLocal does exit, we need the MovHint of its local
+                    // to be live until the SetLocal is done.
+                    processKilledOperand(local);
+                    alreadyKilled = local;
+                }
                 m_values.operand(local) = nullptr;
             }
 

@@ -1,5 +1,24 @@
 2016-05-13  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] SetLocal without exit do not need phantoms
+        https://bugs.webkit.org/show_bug.cgi?id=157653
+
+        Reviewed by Filip Pizlo.
+
+        I made a mistake in r200498.
+
+        If a SetLocal cannot possibly exit, we were not clearing
+        the source of the operand. As a result, we sometime kept
+        a value alive up to the end of the block.
+
+        That's uncommon because SetLocal typically appear
+        toward the end of blocks. That's probably why there was
+        no perf impact with that fix.
+
+        * dfg/DFGPhantomInsertionPhase.cpp:
+
+2016-05-13  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Move the CheckTierUp function calls out of the main path
         https://bugs.webkit.org/show_bug.cgi?id=157668
 
