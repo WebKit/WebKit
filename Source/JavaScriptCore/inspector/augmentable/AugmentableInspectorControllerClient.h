@@ -33,6 +33,7 @@ namespace Inspector {
 class AugmentableInspectorControllerClient {
 public:
     virtual ~AugmentableInspectorControllerClient() { }
+    virtual void inspectorControllerDestroyed() = 0;
     virtual void inspectorConnected() = 0;
     virtual void inspectorDisconnected() = 0;
 };

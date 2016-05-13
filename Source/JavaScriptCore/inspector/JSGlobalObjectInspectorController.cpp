@@ -106,6 +106,10 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
 
 JSGlobalObjectInspectorController::~JSGlobalObjectInspectorController()
 {
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    if (m_augmentingClient)
+        m_augmentingClient->inspectorControllerDestroyed();
+#endif
 }
 
 void JSGlobalObjectInspectorController::globalObjectDestroyed()

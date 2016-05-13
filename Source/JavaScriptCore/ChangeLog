@@ -1,3 +1,18 @@
+2016-05-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inform augmenting client when inspector controller is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=157688
+        <rdar://problem/25832724>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::~JSGlobalObjectInspectorController):
+        * inspector/augmentable/AugmentableInspectorControllerClient.h:
+        There is a weak relationship between the InspectorController and the
+        AugmentingClient. Let the augmenting client know when the controller
+        is destroyed so it doesn't try to use us anymore.
+
 2016-05-13  Geoffrey Garen  <ggaren@apple.com>
 
         Runaway malloc memory usage in this simple JSC program
