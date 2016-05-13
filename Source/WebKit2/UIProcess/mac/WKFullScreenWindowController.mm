@@ -128,13 +128,6 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     [super dealloc];
 }
 
-- (void)windowDidLoad
-{
-    [super windowDidLoad];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeScreenParameters:) name:NSApplicationDidChangeScreenParametersNotification object:NSApp];
-}
-
 #pragma mark -
 #pragma mark Accessors
 
@@ -165,20 +158,6 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
         _watchdogTimer = adoptNS([[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:DefaultWatchdogTimerInterval] interval:0 target:self selector:@selector(_watchdogTimerFired:) userInfo:nil repeats:NO]);
         [[NSRunLoop mainRunLoop] addTimer:_watchdogTimer.get() forMode:NSDefaultRunLoopMode];
     }
-}
-
-#pragma mark -
-#pragma mark Notifications
-
-- (void)applicationDidChangeScreenParameters:(NSNotification*)notification
-{
-    // The user may have changed the main screen by moving the menu bar, or they may have changed
-    // the Dock's size or location, or they may have changed the fullScreen screen's dimensions. 
-    // Update our presentation parameters, and ensure that the full screen window occupies the 
-    // entire screen:
-    NSWindow* window = [self window];
-    NSRect screenFrame = [[window screen] frame];
-    [window setFrame:screenFrame display:YES];
 }
 
 #pragma mark -

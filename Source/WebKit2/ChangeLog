@@ -1,3 +1,18 @@
+2016-05-13  Jer Noble  <jer.noble@apple.com>
+
+        Fullscreen view attempts to resize when in 2-up mode
+        https://bugs.webkit.org/show_bug.cgi?id=157558
+
+        Reviewed by Darin Adler.
+
+        No need to react to NSApplicationDidChangeScreenParametersNotification to resize the
+        fullscreen window when the screen parameters change; the NSWindow fullscreen machinery
+        will do that on our behalf.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController windowDidLoad]): Deleted.
+        (-[WKFullScreenWindowController applicationDidChangeScreenParameters:]): Deleted.
+
 2016-05-13  Antoine Quint  <graouts@apple.com>
 
         [iOS] <select> elements popover should render right-aligned when in RTL mode
