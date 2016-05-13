@@ -150,10 +150,6 @@ void WebPlatformStrategies::setPluginLoadClientPolicy(PluginLoadClientPolicy, co
 {
 }
 
-void WebPlatformStrategies::setPrivateBrowsingPluginLoadClientPolicy(PluginLoadClientPolicy, const String&, const String&, const String&)
-{
-}
-
 void WebPlatformStrategies::clearPluginClientPolicies()
 {
 }
