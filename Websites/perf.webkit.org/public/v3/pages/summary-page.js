@@ -94,8 +94,20 @@ class SummaryPage extends PageWithHeading {
         var ratioGraph = new RatioBarGraph();
 
         var state = ChartsPage.createStateForConfigurationList(configurationList);
-        var anchor = link(ratioGraph, this.router().url('charts', state));
+
+        if (configurationList.length == 0) {
+            this._renderQueue.push(function () { ratioGraph.render(); });
+            return element('td', ratioGraph);
+        }
+
+        var cell = element('td');
+        var url = this.router().url('charts', state);
         this._renderQueue.push(function () {
+            if (configurationGroup.isFetching()) {
+                ComponentBase.renderReplace(cell, new SpinnerIcon);
+                return;
+            }
+
             var warnings = configurationGroup.warnings();
             var warningText = '';
             for (var type in warnings) {
@@ -103,14 +115,13 @@ class SummaryPage extends PageWithHeading {
                 warningText += `Missing ${type} for following platform(s): ${platformString}`;
             }
 
-            anchor.title = warningText || 'Open charts';
+            ComponentBase.renderReplace(cell, link(ratioGraph, warningText || 'Open charts', url));
+
             ratioGraph.update(configurationGroup.ratio(), configurationGroup.label(), !!warningText);
             ratioGraph.render();
         });
-        if (configurationList.length == 0)
-            return element('td', ratioGraph);
 
-        return element('td', anchor);
+        return cell;
     }
 
     static htmlTemplate()
@@ -167,13 +178,23 @@ class SummaryPage extends PageWithHeading {
             }
 
             .summary-table tbody td {
+                position: relative;
                 font-weight: inherit;
                 font-size: 0.9rem;
+                height: 2.5rem;
                 padding: 0;
             }
 
             .summary-table td > * {
                 height: 100%;
+            }
+
+            .summary-table td spinner-icon {
+                display: block;
+                position: absolute;
+                top: 0.25rem;
+                left: calc(50% - 1rem);
+                z-index: 100;
             }
         `;
     }
@@ -188,6 +209,7 @@ class SummaryPageConfigurationGroup {
         this._ratio = null;
         this._label = null;
         this._warnings = {};
+        this._isFetching = false;
         this._smallerIsBetter = metrics.length ? metrics[0].isSmallerBetter() : null;
 
         for (var platform of platforms) {
@@ -212,6 +234,7 @@ class SummaryPageConfigurationGroup {
     warnings() { return this._warnings; }
     changeType() { return this._changeType; }
     configurationList() { return this._configurationList; }
+    isFetching() { return this._isFetching; }
 
     fetchAndComputeSummary(timeRange)
     {
@@ -223,7 +246,19 @@ class SummaryPageConfigurationGroup {
         for (var set of this._measurementSets)
             promises.push(this._fetchAndComputeRatio(set, timeRange));
 
-        return Promise.all(promises).then(this._computeSummary.bind(this));
+        var self = this;
+        var fetched = false;
+        setTimeout(function () {
+            // Don't set _isFetching to true if all promises were to resolve immediately (cached).
+            if (!fetched)
+                self._isFetching = true;
+        }, 50);
+
+        return Promise.all(promises).then(function () {
+            fetched = true;
+            self._isFetching = false;
+            self._computeSummary();
+        });
     }
 
     _computeSummary()

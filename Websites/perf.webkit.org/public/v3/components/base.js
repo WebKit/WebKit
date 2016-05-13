@@ -12,7 +12,9 @@ class ComponentBase {
     content() { return this._shadow; }
     render() { }
 
-    renderReplace(element, content)
+    renderReplace(element, content) { ComponentBase.renderReplace(element, content); }
+
+    static renderReplace(element, content)
     {
         element.innerHTML = '';
         if (content)
