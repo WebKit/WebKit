@@ -193,16 +193,21 @@ Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(ContainerNode& 
     // FIXME: It's surprising this is web compatible since it means a marginwidth and marginheight attribute can
     // magically appear on the <body> of all documents embedded through <iframe> or <frame>.
     // FIXME: Perhaps this code should be in attach() instead of here.
-    HTMLFrameOwnerElement* ownerElement = document().ownerElement();
-    if (is<HTMLFrameElementBase>(ownerElement)) {
-        HTMLFrameElementBase& ownerFrameElement = downcast<HTMLFrameElementBase>(*ownerElement);
-        int marginWidth = ownerFrameElement.marginWidth();
-        if (marginWidth != -1)
-            setIntegralAttribute(marginwidthAttr, marginWidth);
-        int marginHeight = ownerFrameElement.marginHeight();
-        if (marginHeight != -1)
-            setIntegralAttribute(marginheightAttr, marginHeight);
-    }
+    auto* ownerElement = document().ownerElement();
+    if (!is<HTMLFrameElementBase>(ownerElement))
+        return InsertionDone;
+    
+    auto& ownerFrameElement = downcast<HTMLFrameElementBase>(*ownerElement);
+
+    // Read values from the owner before setting any attributes, since setting an attribute can run arbitrary
+    // JavaScript, which might delete the owner element.
+    int marginWidth = ownerFrameElement.marginWidth();
+    int marginHeight = ownerFrameElement.marginHeight();
+
+    if (marginWidth != -1)
+        setIntegralAttribute(marginwidthAttr, marginWidth);
+    if (marginHeight != -1)
+        setIntegralAttribute(marginheightAttr, marginHeight);
 
     return InsertionDone;
 }
