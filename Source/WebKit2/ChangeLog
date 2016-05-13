@@ -1,3 +1,9 @@
+2016-05-13  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix some non-iOS builds.
+
+        * mac/postprocess-framework-headers.sh:
+
 2016-05-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Attempt to fix the iOS build after r200874
