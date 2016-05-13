@@ -1,5 +1,22 @@
 2016-04-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Toggling animation-play-state can re-start a finished animation
+        https://bugs.webkit.org/show_bug.cgi?id=156731
+
+        Reviewed by Dean Jackson.
+
+        * animations/animation-direction-reverse-expected.txt:
+        * animations/animation-direction-reverse.html: This is a progression. The test was detecting a
+        restarted animation.
+        * animations/change-completed-animation-expected.txt: Added.
+        * animations/change-completed-animation-transform-expected.html: Added.
+        * animations/change-completed-animation-transform.html: Added. Ref test that ensures that the final
+        state for normal and accelerated animations is correct.
+        * animations/change-completed-animation.html: Added. Tests that changing a property doesn't trigger
+        another animation, by detecting a second animationstart event.
+
+2016-04-25  Simon Fraser  <simon.fraser@apple.com>
+
         play-state not parsed as part of animation shorthand
         https://bugs.webkit.org/show_bug.cgi?id=156959
 
