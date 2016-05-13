@@ -1,3 +1,32 @@
+2016-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Unprefix -webkit-cross-fade()
+        https://bugs.webkit.org/show_bug.cgi?id=157632
+
+        Reviewed by Darin Adler.
+
+        Support unprefixed cross-fade() in addition to the prefixed value when parsing,
+        and have computed style round-trip the correct one.
+
+        If computed style is queried during an image transition, return an unprefixed
+        cross-fade(). If blending cross-fade values, only return the prefixed function if
+        both inputs are prefixed.
+
+        Tested by modified and existing tests.
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::customCSSText):
+        (WebCore::CSSCrossfadeValue::blend):
+        * css/CSSCrossfadeValue.h:
+        (WebCore::CSSCrossfadeValue::create):
+        (WebCore::CSSCrossfadeValue::isPrefixed):
+        (WebCore::CSSCrossfadeValue::CSSCrossfadeValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::isGeneratedImageValue):
+        (WebCore::CSSParser::parseGeneratedImage):
+        (WebCore::CSSParser::parseCrossfade):
+        * css/CSSParser.h:
+
 2016-05-13  Yoav Weiss  <yoav@yoav.ws>
 
         ResourceTiming entries for cached resources and XHR

@@ -70,7 +70,7 @@
     @-webkit-keyframes animCross2 {
         /* Image inputs are not identical - no animation.*/
         from { background-image: -webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 20%); }
-        to   { background-image: -webkit-cross-fade(url(resources/green-100.png), url(resources/blue-100.png), 50%); }
+        to   { background-image: cross-fade(url(resources/green-100.png), url(resources/blue-100.png), 50%); }
     }
     @-webkit-keyframes animCross3 {
         /* Direct image inputs are not identical - no animation.*/
@@ -82,12 +82,12 @@
   <script type="text/javascript" charset="utf-8">
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["anim", 2.5, "box", "backgroundImage", "-webkit-cross-fade(url(blue-100.png), url(green-100.png), 50%)", 0.05],
-      ["anim", 2.5, ["box", "static:boxStatic"], "backgroundImage", "-webkit-cross-fade(url(blue-100.png), url(green-100.png), 50%)", 0.05],
-      ["animShorthand", 2.5, ["boxShorthand", "static:boxStatic"], "backgroundImage", "-webkit-cross-fade(url(blue-100.png), url(green-100.png), 50%)", 0.05],
-      ["animCross1", 2.5, "boxAnim1", "backgroundImage", "-webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 0.5)", 0.05],
-      ["animCross2", 2.5, "boxAnim2", "backgroundImage", "-webkit-cross-fade(url(resources/green-100.png), url(resources/blue-100.png), 50%)", 0],
-      ["animCross3", 2.5, "boxAnim3", "backgroundImage", "-webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 50%)", 0],
+      ["anim", 2.5, "box", "backgroundImage", "cross-fade(url(blue-100.png), url(green-100.png), 50%)", 0.05],
+      ["anim", 2.5, ["box", "static:boxStatic"], "backgroundImage", "cross-fade(url(blue-100.png), url(green-100.png), 50%)", 0.05],
+      ["animShorthand", 2.5, ["boxShorthand", "static:boxStatic"], "backgroundImage", "cross-fade(url(blue-100.png), url(green-100.png), 50%)", 0.05],
+      ["animCross1", 2.5, "boxAnim1", "backgroundImage", "cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 0.5)", 0.05],
+      ["animCross2", 2.5, "boxAnim2", "backgroundImage", "cross-fade(url(resources/green-100.png), url(resources/blue-100.png), 50%)", 0],
+      ["animCross3", 2.5, "boxAnim3", "backgroundImage", "cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 50%)", 0],
     ];
 
     var doPixelTest = true;

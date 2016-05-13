@@ -304,7 +304,7 @@ public:
     bool parseRadialGradient(CSSParserValueList&, RefPtr<CSSValue>&, CSSGradientRepeat repeating);
     bool parseGradientColorStops(CSSParserValueList&, CSSGradientValue&, bool expectComma);
 
-    bool parseCrossfade(CSSParserValueList&, RefPtr<CSSValue>&);
+    bool parseCrossfade(CSSParserValueList&, RefPtr<CSSValue>&, bool prefixed);
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     RefPtr<CSSValue> parseImageResolution();

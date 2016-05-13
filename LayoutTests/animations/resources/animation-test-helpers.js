@@ -72,6 +72,7 @@ function parseCSSImage(s)
     switch (functionName) {
     case "filter":
         return parseFilterImage(functionValue);
+    case "cross-fade":
     case "-webkit-cross-fade":
         return parseCrossFade(functionValue);
     case "url":
@@ -88,14 +89,14 @@ function parseCrossFade(s)
 {
     var matches = s.match("(.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\s*");
     if (!matches) {
-        console.error("Parsing error on '-webkit-cross-fade()'.");
+        console.error("Parsing error on 'cross-fade()'.");
         return null;
     }
 
     var from = parseCSSImage(matches[1]);
     var to = parseCSSImage(matches[2]);
     if (!from || !to) {
-        console.error("Parsing error on images passed to '-webkit-cross-fade()' ", s);
+        console.error("Parsing error on images passed to 'cross-fade()' ", s);
         return null;
     }
 
@@ -105,19 +106,19 @@ function parseCrossFade(s)
         // Check if last char is '%' and rip it off.
         // Normalize it to number.
         if (fadeValue.search('%') != fadeValue.length - 1) {
-            console.error("Passed value to '-webkit-cross-fade()' is not a number or percentage ", fadeValue);
+            console.error("Passed value to 'cross-fade()' is not a number or percentage ", fadeValue);
             return null;
         }
         fadeValue = fadeValue.slice(0, fadeValue.length - 1);
         if (isNaN(fadeValue)) {
-            console.error("Passed value to '-webkit-cross-fade()' is not a number or percentage ", fadeValue);
+            console.error("Passed value to 'cross-fade()' is not a number or percentage ", fadeValue);
             return null;
         }
         percent = parseFloat(fadeValue) / 100;
     } else
         percent = parseFloat(fadeValue);
 
-    return ["-webkit-cross-fade", from, to, percent];
+    return ["cross-fade", from, to, percent];
 }
 
 // This should just be called by parseCSSImage.
@@ -244,6 +245,7 @@ function compareCSSImages(computedValue, expectedValue, tolerance)
     case "-webkit-filter":
         return compareCSSImages(actual[1], expected[1], tolerance)
             && compareFilterFunctions(actual[2], expected[2], tolerance);
+    case "cross-fade":
     case "-webkit-cross-fade":
         return compareCSSImages(actual[1], expected[1], tolerance)
             && compareCSSImages(actual[2], expected[2], tolerance)

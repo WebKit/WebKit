@@ -61,7 +61,7 @@ function compareRGB(rgb, expected, tolerance)
 
 function parseCrossFade(s)
 {
-    var matches = s.match("-webkit-cross-fade\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\)");
+    var matches = s.match("(?:-webkit-)?cross-fade\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\)");
 
     if (!matches)
         return null;

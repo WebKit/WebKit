@@ -4538,6 +4538,7 @@ void CSSParser::parse4ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
 
     valueList.next();
 }
+
 void CSSParser::parse3ValuesFillPosition(CSSParserValueList& valueList, RefPtr<CSSPrimitiveValue>& value1, RefPtr<CSSPrimitiveValue>& value2, RefPtr<CSSPrimitiveValue>&& parsedValue1, RefPtr<CSSPrimitiveValue>&& parsedValue2)
 {
     unsigned cumulativeFlags = 0;
@@ -9451,6 +9452,7 @@ bool CSSParser::isGeneratedImageValue(CSSParserValue& value) const
         || equalLettersIgnoringASCIICase(value.function->name, "-webkit-repeating-radial-gradient(")
         || equalLettersIgnoringASCIICase(value.function->name, "repeating-radial-gradient(")
         || equalLettersIgnoringASCIICase(value.function->name, "-webkit-canvas(")
+        || equalLettersIgnoringASCIICase(value.function->name, "cross-fade(")
         || equalLettersIgnoringASCIICase(value.function->name, "-webkit-cross-fade(")
         || equalLettersIgnoringASCIICase(value.function->name, "filter(")
         || equalLettersIgnoringASCIICase(value.function->name, "-webkit-filter(")
@@ -9495,7 +9497,10 @@ bool CSSParser::parseGeneratedImage(CSSParserValueList& valueList, RefPtr<CSSVal
         return parseCanvas(valueList, value);
 
     if (equalLettersIgnoringASCIICase(parserValue.function->name, "-webkit-cross-fade("))
-        return parseCrossfade(valueList, value);
+        return parseCrossfade(valueList, value, true);
+
+    if (equalLettersIgnoringASCIICase(parserValue.function->name, "cross-fade("))
+        return parseCrossfade(valueList, value, false);
 
     if (equalLettersIgnoringASCIICase(parserValue.function->name, "filter(") || equalLettersIgnoringASCIICase(parserValue.function->name, "-webkit-filter("))
         return parseFilterImage(valueList, value);
@@ -9547,7 +9552,7 @@ bool CSSParser::parseFilterImage(CSSParserValueList& valueList, RefPtr<CSSValue>
     return true;
 }
 
-bool CSSParser::parseCrossfade(CSSParserValueList& valueList, RefPtr<CSSValue>& crossfade)
+bool CSSParser::parseCrossfade(CSSParserValueList& valueList, RefPtr<CSSValue>& crossfade, bool prefixed)
 {
     RefPtr<CSSCrossfadeValue> result;
 
@@ -9591,7 +9596,7 @@ bool CSSParser::parseCrossfade(CSSParserValueList& valueList, RefPtr<CSSValue>& 
     else
         return false;
 
-    result = CSSCrossfadeValue::create(fromImageValue, toImageValue);
+    result = CSSCrossfadeValue::create(fromImageValue, toImageValue, prefixed);
     result->setPercentage(percentage);
 
     crossfade = result;

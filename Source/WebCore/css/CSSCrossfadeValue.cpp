@@ -69,7 +69,10 @@ CSSCrossfadeValue::~CSSCrossfadeValue()
 String CSSCrossfadeValue::customCSSText() const
 {
     StringBuilder result;
-    result.appendLiteral("-webkit-cross-fade(");
+    if (m_isPrefixed)
+        result.appendLiteral("-webkit-cross-fade(");
+    else
+        result.appendLiteral("cross-fade(");
     result.append(m_fromValue->cssText());
     result.appendLiteral(", ");
     result.append(m_toValue->cssText());
@@ -202,7 +205,7 @@ RefPtr<CSSCrossfadeValue> CSSCrossfadeValue::blend(const CSSCrossfadeValue& from
     auto fromImageValue = CSSImageValue::create(m_cachedFromImage->url(), fromStyledImage.get());
     auto toImageValue = CSSImageValue::create(m_cachedToImage->url(), toStyledImage.get());
 
-    RefPtr<CSSCrossfadeValue> crossfadeValue = CSSCrossfadeValue::create(WTFMove(fromImageValue), WTFMove(toImageValue));
+    RefPtr<CSSCrossfadeValue> crossfadeValue = CSSCrossfadeValue::create(WTFMove(fromImageValue), WTFMove(toImageValue), from.isPrefixed() && isPrefixed());
 
     double fromPercentage = from.m_percentageValue->getDoubleValue();
     if (from.m_percentageValue->isPercentage())

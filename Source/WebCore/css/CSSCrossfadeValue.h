@@ -43,9 +43,9 @@ class Document;
 class CSSCrossfadeValue : public CSSImageGeneratorValue {
     friend class CrossfadeSubimageObserverProxy;
 public:
-    static Ref<CSSCrossfadeValue> create(PassRefPtr<CSSValue> fromValue, PassRefPtr<CSSValue> toValue)
+    static Ref<CSSCrossfadeValue> create(PassRefPtr<CSSValue> fromValue, PassRefPtr<CSSValue> toValue, bool prefixed = false)
     {
-        return adoptRef(*new CSSCrossfadeValue(fromValue, toValue));
+        return adoptRef(*new CSSCrossfadeValue(fromValue, toValue, prefixed));
     }
 
     ~CSSCrossfadeValue();
@@ -56,6 +56,7 @@ public:
     bool isFixedSize() const { return true; }
     FloatSize fixedSize(const RenderElement*);
 
+    bool isPrefixed() const { return m_isPrefixed; }
     bool isPending() const;
     bool knownToBeOpaque(const RenderElement*) const;
 
@@ -72,11 +73,12 @@ public:
     bool equalInputImages(const CSSCrossfadeValue&) const;
 
 private:
-    CSSCrossfadeValue(PassRefPtr<CSSValue> fromValue, PassRefPtr<CSSValue> toValue)
+    CSSCrossfadeValue(PassRefPtr<CSSValue> fromValue, PassRefPtr<CSSValue> toValue, bool prefixed)
         : CSSImageGeneratorValue(CrossfadeClass)
         , m_fromValue(fromValue)
         , m_toValue(toValue)
         , m_crossfadeSubimageObserver(this)
+        , m_isPrefixed(prefixed)
     {
     }
 
@@ -108,6 +110,7 @@ private:
     RefPtr<Image> m_generatedImage;
 
     CrossfadeSubimageObserverProxy m_crossfadeSubimageObserver;
+    bool m_isPrefixed { false };
 };
 
 } // namespace WebCore
