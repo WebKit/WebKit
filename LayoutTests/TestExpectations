@@ -980,3 +980,5 @@ webkit.org/b/156099 http/tests/security/anchor-download-allow-blob.html [ Failur
 webkit.org/b/156100 http/tests/security/anchor-download-block-crossorigin.html [ Failure ]
 
 webkit.org/b/156631 fast/text/font-face-javascript.html [ Pass Crash Failure ]
+
+webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
