@@ -1,3 +1,22 @@
+2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: Fails to load sourceMappingURL with relative URL
+        https://bugs.webkit.org/show_bug.cgi?id=157650
+        <rdar://problem/26133763>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/SourceMapManager.js:
+        Wrong order of arguments. The intent was to pass the incoming
+        baseURL as the partialURL, because if it was not absolute by
+        that point we could make it relative to the main resource.
+        However we accidentally put the main resource as the partial
+        portion, which would just always return the main resource url.
+        Swap the order, so that if the incoming base is absolute
+        (such as a resource.url) that will be used, but if the
+        incoming base is relative (e.g. an incomplete sourceURL) we
+        can make it absolute with the main resource.
+
 2016-05-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Uncaught exception when removing selected Timeline instrument
