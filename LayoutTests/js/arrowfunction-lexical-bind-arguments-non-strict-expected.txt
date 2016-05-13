@@ -22,6 +22,7 @@ PASS test() is 40000
 PASS foo(10, 11, 12).next().value()[0] is 10
 PASS foo(10, 11, 12).next().value()[1] is 11
 PASS foo(10, 11, 12).next().value()[2] is 12
+PASS (function (a, b, c) { return (a = arguments) => {return a;}; })('1-1', '2-2', '3-3')()[1] is '2-2'
 PASS successfullyParsed is true
 
 TEST COMPLETE

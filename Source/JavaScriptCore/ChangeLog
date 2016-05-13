@@ -1,3 +1,20 @@
+2016-05-13  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Assertion failure for super() call in arrow function default parameters
+        https://bugs.webkit.org/show_bug.cgi?id=157079
+
+        Reviewed by Saam Barati.
+
+        Root of the issue that in arrow function we load bounded variables this/super/new.target just after 
+        input parameters were initialized, and did not covered case of default values for 
+        function parameters. 
+        Current patch tried to fix issue and allow to load bounded variables earlier, before the input 
+        parameters are assigned by default values.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * tests/stress/arrowfunction-lexical-bind-this-2.js:
+
 2016-05-12  Mark Lam  <mark.lam@apple.com>
 
         Baseline and DFG's JSC_report...CompileTimes needs CodeBlock hashes.

@@ -1,3 +1,19 @@
+2016-05-13  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Assertion failure for super() call in arrow function default parameters
+        https://bugs.webkit.org/show_bug.cgi?id=157079
+
+        Reviewed by Saam Barati.
+
+        * js/arrowfunction-lexical-bind-arguments-non-strict-expected.txt:
+        * js/arrowfunction-lexical-bind-this-expected.txt:
+        * js/arrowfunction-supercall-expected.txt:
+        * js/arrowfunction-superproperty-expected.txt:
+        * js/script-tests/arrowfunction-lexical-bind-arguments-non-strict.js:
+        * js/script-tests/arrowfunction-lexical-bind-this.js:
+        * js/script-tests/arrowfunction-supercall.js:
+        * js/script-tests/arrowfunction-superproperty.js:
+
 2016-05-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Show auto-repeat line names in ComputedStyle

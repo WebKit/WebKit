@@ -148,4 +148,10 @@ shouldBeTrue("indexOfnestedArrowInStackError > -1 && errorStack.indexOf('nestedA
 shouldBeTrue("indexOfarrowInChildConstructorInStackError > -1 && errorStack.indexOf('arrowInChildConstructor', indexOfarrowInChildConstructorInStackError + 1) === -1");
 shouldBeTrue("indexOfChildClassInStackError > -1 && errorStack.indexOf('ChildClass', indexOfChildClassInStackError + 1) === -1");
 
+shouldBe("(new class extends A { constructor() { ((a = super())=>{})() } }).id", "value");
+shouldThrow('(new class extends A { constructor() { ((a = this)=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class extends A { constructor() { ((a = this, b=super())=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldNotThrow('(new class extends A { constructor() { ((a = new.target)=>{ return a; })(); super(); } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldNotThrow('(new class extends A { constructor() { ((a = new.target, b=super())=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+
 var successfullyParsed = true;

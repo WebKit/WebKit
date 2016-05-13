@@ -70,7 +70,23 @@ function foo() {
 
 var fooObject = new foo();
 
+function fooDefault() {
+    let arr = (that = this) => {
+        var x = 123;
+        function bas() {
+            return x;
+        };
+        that._id = '12345';
+        return bas();
+    };
+    this.arr = arr;
+};
+
+var fooDefaultObject = new fooDefault();
+
 for (var i=0; i < 10000; i++) {
     testCase(fooObject.arr() === 123, true, "Error: this is not lexically binded inside of the arrow function #7");
     testCase(fooObject._id === '12345', true, "Error: this is not lexically binded inside of the arrow function #8");
+    testCase(fooDefaultObject.arr() === 123, true, "Error: this is not lexically binded inside of the arrow function #7");
+    testCase(fooDefaultObject._id === '12345', true, "Error: this is not lexically binded inside of the arrow function #8");
 }

@@ -557,15 +557,25 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     }
     }
 
+    // We need load |super| & |this| for arrow function before initializeDefaultParameterValuesAndSetupFunctionScopeStack
+    // if we have default parameter expression. Because |super| & |this| values can be used there
+    if (SourceParseMode::ArrowFunctionMode == parseMode && !isSimpleParameterList) {
+        if (functionNode->usesThis() || functionNode->usesSuperProperty())
+            emitLoadThisFromArrowFunctionLexicalEnvironment();
+
+        if (m_scopeNode->usesNewTarget() || m_scopeNode->usesSuperCall())
+            emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
+    }
+
     // All "addVar()"s needs to happen before "initializeDefaultParameterValuesAndSetupFunctionScopeStack()" is called
     // because a function's default parameter ExpressionNodes will use temporary registers.
     pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize);
     initializeDefaultParameterValuesAndSetupFunctionScopeStack(parameters, isSimpleParameterList, functionNode, functionSymbolTable, symbolTableConstantIndex, captures);
     
-    // Loading |this| inside an arrow function must be done after initializeDefaultParameterValuesAndSetupFunctionScopeStack()
-    // because that function sets up the SymbolTable stack and emitLoadThisFromArrowFunctionLexicalEnvironment()
-    // consults the SymbolTable stack
-    if (SourceParseMode::ArrowFunctionMode == parseMode) {
+    // If we don't have  default parameter expression, then loading |this| inside an arrow function must be done
+    // after initializeDefaultParameterValuesAndSetupFunctionScopeStack() because that function sets up the
+    // SymbolTable stack and emitLoadThisFromArrowFunctionLexicalEnvironment() consults the SymbolTable stack
+    if (SourceParseMode::ArrowFunctionMode == parseMode && isSimpleParameterList) {
         if (functionNode->usesThis() || functionNode->usesSuperProperty())
             emitLoadThisFromArrowFunctionLexicalEnvironment();
     

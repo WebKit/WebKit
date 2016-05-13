@@ -92,5 +92,16 @@ shouldBe('(new F()).getParentValue()', 'expectedValue');
 
 shouldBe('(new F()).genGetParentValue().next().value', 'expectedValue');
 shouldBe('(new F()).genGetParentValueDeepArrow().next().value', 'expectedValue');
+shouldBe('(new class extends A { constructor() { ((a = super(), b = super.getValue())=>{ this.id = b; })() } }).id', 'expectedValue');
+var expectedNewTarget;
+shouldBe('(new class extends A { constructor() { ((a = super(), b = new.target)=>{ this.newTarget = b; })(); expectedNewTarget = new.target;} }).newTarget', 'expectedNewTarget');
+shouldThrow('(new class extends A { constructor() { ((a = super.getValue())=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class extends A { constructor() { ((a = super.getValue(), b=super())=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class extends F { constructor() { ((a = super.prop)=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class extends F { constructor() { ((a = super.prop, b=super())=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class extends F { constructor() { ((a = (super.prop = "value"))=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class extends F { constructor() { ((a = (super.prop = "value"), b=super())=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class extends F { constructor() { ((a = super.genGetParentValue().next().value)=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class extends F { constructor() { ((a = super.genGetParentValue().next().value, b=super())=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
 
 var successfullyParsed = true;

@@ -21,6 +21,11 @@ PASS indexOfParentClassInStackError > -1 && errorStack.indexOf('ParentClass', in
 PASS indexOfnestedArrowInStackError > -1 && errorStack.indexOf('nestedArrow', indexOfnestedArrowInStackError + 1) === -1 is true
 PASS indexOfarrowInChildConstructorInStackError > -1 && errorStack.indexOf('arrowInChildConstructor', indexOfarrowInChildConstructorInStackError + 1) === -1 is true
 PASS indexOfChildClassInStackError > -1 && errorStack.indexOf('ChildClass', indexOfChildClassInStackError + 1) === -1 is true
+PASS (new class extends A { constructor() { ((a = super())=>{})() } }).id is value
+PASS (new class extends A { constructor() { ((a = this)=>{ return a; })() } }) threw exception ReferenceError: Cannot access uninitialized variable..
+PASS (new class extends A { constructor() { ((a = this, b=super())=>{ return a; })() } }) threw exception ReferenceError: Cannot access uninitialized variable..
+PASS (new class extends A { constructor() { ((a = new.target)=>{ return a; })(); super(); } }) did not throw exception.
+PASS (new class extends A { constructor() { ((a = new.target, b=super())=>{ return a; })() } }) did not throw exception.
 PASS successfullyParsed is true
 
 TEST COMPLETE

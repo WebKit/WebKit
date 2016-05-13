@@ -145,5 +145,6 @@ foo(10, 11, 12).next().value()[0];
 shouldBe("foo(10, 11, 12).next().value()[0]", "10");
 shouldBe("foo(10, 11, 12).next().value()[1]", "11");
 shouldBe("foo(10, 11, 12).next().value()[2]", "12");
+shouldBe("(function (a, b, c) { return (a = arguments) => {return a;}; })('1-1', '2-2', '3-3')()[1]", "'2-2'");
 
 var successfullyParsed = true;

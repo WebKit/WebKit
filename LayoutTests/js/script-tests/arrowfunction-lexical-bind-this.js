@@ -107,8 +107,9 @@ function boo() {
     return arr();
 }
 
-let o1 = {'this': 20};
+let expected = {'this': 20};
 
-shouldBe('boo.call(o1)', 'o1');
+shouldBe('boo.call(expected)', 'expected');
+shouldBe('(function () { return (a = this)=>{return a;}; }).call(expected)()', 'expected');
 
 var successfullyParsed = true;
