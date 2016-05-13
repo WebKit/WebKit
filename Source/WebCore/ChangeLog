@@ -1,3 +1,17 @@
+2016-05-13  Brady Eidson  <beidson@apple.com>
+
+        Give CrossThreadCopier a default specialization for Vectors of objects.
+        https://bugs.webkit.org/show_bug.cgi?id=157675
+
+        Reviewed by Darin Adler.
+
+        No new tests (Refactor, no change in behavior).
+
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::Vector<String>>::copy): Deleted.
+        * platform/CrossThreadCopier.h: Add a default specialization for Vector<T> where T is a type
+          that is CrossThreadCopyable itself.
+
 2016-05-13  Chris Dumez  <cdumez@apple.com>
 
         Have the WorkerGlobalScope API return more references

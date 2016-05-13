@@ -85,16 +85,6 @@ CrossThreadCopierBase<false, false, ThreadSafeDataBuffer>::Type CrossThreadCopie
     return ThreadSafeDataBuffer(buffer);
 }
 
-CrossThreadCopierBase<false, false, Vector<String>>::Type CrossThreadCopierBase<false, false, Vector<String>>::copy(const Vector<String>& strings)
-{
-    Vector<String> result;
-    result.reserveInitialCapacity(strings.size());
-    for (auto& string : strings)
-        result.uncheckedAppend(string.isolatedCopy());
-
-    return result;
-}
-
 // Test CrossThreadCopier using COMPILE_ASSERT.
 
 // Verify that ThreadSafeRefCounted objects get handled correctly.

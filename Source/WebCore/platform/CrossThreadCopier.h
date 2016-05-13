@@ -160,13 +160,21 @@ template<> struct CrossThreadCopierBase<false, false, ThreadSafeDataBuffer> {
     static Type copy(const ThreadSafeDataBuffer&);
 };
 
-template<> struct CrossThreadCopierBase<false, false, Vector<String>> {
-    typedef Vector<String> Type;
-    static Type copy(const Vector<String>&);
-};
-
 template<typename T>
 struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHelper::IsEnumOrConvertibleToInteger<T>::value, CrossThreadCopierBaseHelper::IsThreadSafeRefCountedPointer<T>::value, T> {
+};
+
+// Default specialization for Vectors of CrossThreadCopyable classes.
+template<typename T> struct CrossThreadCopierBase<false, false, Vector<T>> {
+    typedef Vector<T> Type;
+    static Type copy(const Type& source)
+    {
+        Type destination;
+        destination.reserveInitialCapacity(source.size());
+        for (auto& object : source)
+            destination.uncheckedAppend(CrossThreadCopier<T>::copy(object));
+        return destination;
+    }
 };
 
 } // namespace WebCore
