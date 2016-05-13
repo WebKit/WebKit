@@ -46,7 +46,7 @@
 
                 count++;
 
-                var expectedCount = 9;
+                var expectedCount = 11;
                 if (count == expectedCount) {
 
                     shouldBeTyping("3");
@@ -58,6 +58,8 @@
                     shouldBePaste("5");
                     shouldBePasteReplace("6", "5");
                     shouldBeTypingReplace("5", "6");
+                    shouldBeInsertReplace("6", "5");
+                    shouldBeInsertReplace("5", "6");
 
                     webArea.removeNotificationListener();
                     window.testRunner.notifyDone();
@@ -96,6 +98,10 @@
 
             execExtendSelectionLeftByCharacterCommand();
             eventSender.keyDown("6");
+
+            execUndoCommand();
+
+            execRedoCommand();
         }
     </script>
 

@@ -45,7 +45,7 @@
                 }
 
                 count++;
-                if (count == 9) {
+                if (count == 11) {
 
                     shouldBeTyping("1");
                     shouldBeDelete("1");
@@ -56,6 +56,8 @@
                     shouldBePaste("2");
                     shouldBePasteReplace("3", "2");
                     shouldBeTypingReplace("2", "3");
+                    shouldBeInsertReplace("3", "2");
+                    shouldBeInsertReplace("2", "3");
 
                     webArea.removeNotificationListener();
                     window.testRunner.notifyDone();
@@ -94,6 +96,10 @@
 
             execExtendSelectionLeftByCharacterCommand();
             eventSender.keyDown("3");
+
+            execUndoCommand();
+
+            execRedoCommand();
         }
     </script>
 

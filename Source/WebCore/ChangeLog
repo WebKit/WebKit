@@ -1,3 +1,59 @@
+2016-05-13  Doug Russell  <d_russell@apple.com>
+
+        AX: Regressions in undo/redo accessibility from Bug 153361
+        https://bugs.webkit.org/show_bug.cgi?id=157652
+
+        Reviewed by Darin Adler.
+        
+        Use indexForVisiblePosition & visiblePositionForIndex to store selection data
+        so that AccessibilityUndoReplacedText can build valid selection ranges and
+        retrieve strings for AT notifications.
+
+        Tests: accessibility/mac/value-change/value-change-user-info-contenteditable-expected.txt:
+               accessibility/mac/value-change/value-change-user-info-contenteditable.html:
+               accessibility/mac/value-change/value-change-user-info-textarea-expected.txt:
+               accessibility/mac/value-change/value-change-user-info-textarea.html:
+               accessibility/mac/value-change/value-change-user-info-textfield-expected.txt:
+               accessibility/mac/value-change/value-change-user-info-textfield.html:
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AccessibilityReplacedText::AccessibilityReplacedText):
+        (WebCore::AXObjectCache::postTextStateChangeNotification):
+        (WebCore::AXObjectCache::postTextReplacementNotification):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::AccessibilityUndoReplacedText::configureRangeDeletedByReapplyWithEndingSelection):
+        (WebCore::AccessibilityUndoReplacedText::configureRangeDeletedByReapplyWithStartingSelection):
+        (WebCore::AccessibilityUndoReplacedText::setRangeDeletedByUnapply):
+        (WebCore::AccessibilityUndoReplacedText::captureTextForUnapply):
+        (WebCore::AccessibilityUndoReplacedText::captureTextForReapply):
+        (WebCore::AccessibilityUndoReplacedText::textDeletedByUnapply):
+        (WebCore::AccessibilityUndoReplacedText::textDeletedByReapply):
+        (WebCore::AccessibilityUndoReplacedText::postTextStateChangeNotificationForUnapply):
+        (WebCore::AccessibilityUndoReplacedText::postTextStateChangeNotificationForReapply):
+        (WebCore::EditCommandComposition::EditCommandComposition):
+        (WebCore::EditCommandComposition::unapply):
+        (WebCore::EditCommandComposition::reapply):
+        (WebCore::EditCommandComposition::setStartingSelection):
+        (WebCore::EditCommandComposition::setEndingSelection):
+        (WebCore::EditCommandComposition::setRangeDeletedByUnapply):
+        (WebCore::AccessibilityUndoReplacedText::confgureTextToBeDeletedByUnapplyIndexesWithEditCommandEndingSelection): Deleted.
+        (WebCore::AccessibilityUndoReplacedText::confgureTextToBeDeletedByUnapplyStartIndexWithEditCommandStartingSelection): Deleted.
+        (WebCore::AccessibilityUndoReplacedText::setTextInsertedByUnapplyRange): Deleted.
+        (WebCore::AccessibilityUndoReplacedText::captureTextToBeDeletedByUnapply): Deleted.
+        (WebCore::AccessibilityUndoReplacedText::captureTextToBeDeletedByReapply): Deleted.
+        (WebCore::AccessibilityUndoReplacedText::textInsertedByUnapply): Deleted.
+        (WebCore::AccessibilityUndoReplacedText::textInsertedByReapply): Deleted.
+        (WebCore::EditCommandComposition::setTextInsertedByUnapplyRange): Deleted.
+        * editing/CompositeEditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::postTextStateChangeNotificationForDeletion):
+        (WebCore::TypingCommand::insertTextAndNotifyAccessibility):
+        (WebCore::TypingCommand::insertLineBreakAndNotifyAccessibility):
+        (WebCore::TypingCommand::insertParagraphSeparatorAndNotifyAccessibility):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContentAndNotifyAccessibility):
+
 2016-05-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r200837.

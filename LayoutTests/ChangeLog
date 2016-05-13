@@ -1,3 +1,21 @@
+2016-05-13  Doug Russell  <d_russell@apple.com>
+
+        AX: Regressions in undo/redo accessibility from Bug 153361
+        https://bugs.webkit.org/show_bug.cgi?id=157652
+
+        Reviewed by Darin Adler.
+        
+        Use indexForVisiblePosition & visiblePositionForIndex to store selection data
+        so that AccessibilityUndoReplacedText can build valid selection ranges and
+        retrieve strings for AT notifications.
+
+        * accessibility/mac/value-change/value-change-user-info-contenteditable-expected.txt:
+        * accessibility/mac/value-change/value-change-user-info-contenteditable.html:
+        * accessibility/mac/value-change/value-change-user-info-textarea-expected.txt:
+        * accessibility/mac/value-change/value-change-user-info-textarea.html:
+        * accessibility/mac/value-change/value-change-user-info-textfield-expected.txt:
+        * accessibility/mac/value-change/value-change-user-info-textfield.html:
+
 2016-05-13  Nan Wang  <n_wang@apple.com>
 
         AX: Wrong CharacterOffset from an upstream VisiblePosition

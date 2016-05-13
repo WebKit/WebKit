@@ -85,43 +85,43 @@ int AccessibilityUndoReplacedText::indexForVisiblePosition(const VisiblePosition
     return WebCore::indexForVisiblePosition(position, scope);
 }
 
-void AccessibilityUndoReplacedText::confgureTextToBeDeletedByUnapplyIndexesWithEditCommandEndingSelection(const VisibleSelection& selection)
+void AccessibilityUndoReplacedText::configureRangeDeletedByReapplyWithEndingSelection(const VisibleSelection& selection)
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;
-    if (selection.isRange() && m_textDeletedByUnapplyRange.startIndex.value == -1)
-        m_textDeletedByUnapplyRange.startIndex.value = indexForVisiblePosition(selection.start(), m_textDeletedByUnapplyRange.startIndex.scope);
-    if (m_textDeletedByUnapplyRange.endIndex.value == -1)
-        m_textDeletedByUnapplyRange.endIndex.value = indexForVisiblePosition(selection.start(), m_textDeletedByUnapplyRange.endIndex.scope);
+    if (selection.isNone())
+        return;
+    m_rangeDeletedByReapply.endIndex.value = indexForVisiblePosition(selection.end(), m_rangeDeletedByReapply.endIndex.scope);
 }
 
-void AccessibilityUndoReplacedText::confgureTextToBeDeletedByUnapplyStartIndexWithEditCommandStartingSelection(const VisibleSelection& selection)
+void AccessibilityUndoReplacedText::configureRangeDeletedByReapplyWithStartingSelection(const VisibleSelection& selection)
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;
-    if (m_textDeletedByUnapplyRange.startIndex.value == -1)
-        m_textDeletedByUnapplyRange.startIndex.value = indexForVisiblePosition(selection.start(), m_textDeletedByUnapplyRange.startIndex.scope);
-    if (selection.isRange() && m_textDeletedByUnapplyRange.endIndex.value == -1)
-        m_textDeletedByUnapplyRange.endIndex.value = indexForVisiblePosition(selection.end(), m_textDeletedByUnapplyRange.endIndex.scope);
+    if (selection.isNone())
+        return;
+    if (m_rangeDeletedByReapply.startIndex.value == -1)
+        m_rangeDeletedByReapply.startIndex.value = indexForVisiblePosition(selection.start(), m_rangeDeletedByReapply.startIndex.scope);
 }
 
-void AccessibilityUndoReplacedText::setTextInsertedByUnapplyRange(const VisiblePositionIndexRange& range)
+void AccessibilityUndoReplacedText::setRangeDeletedByUnapply(const VisiblePositionIndexRange& range)
 {
-    m_textInsertedByUnapplyRange = range;
+    if (m_rangeDeletedByUnapply.isNull())
+        m_rangeDeletedByUnapply = range;
 }
 
-void AccessibilityUndoReplacedText::captureTextToBeDeletedByUnapply()
+void AccessibilityUndoReplacedText::captureTextForUnapply()
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;
-    m_replacedText = textInsertedByReapply();
+    m_replacedText = textDeletedByReapply();
 }
 
-void AccessibilityUndoReplacedText::captureTextToBeDeletedByReapply()
+void AccessibilityUndoReplacedText::captureTextForReapply()
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;
-    m_replacedText = textInsertedByUnapply();
+    m_replacedText = textDeletedByUnapply();
 }
 
 static String stringForVisiblePositionIndexRange(const VisiblePositionIndexRange& range)
@@ -133,18 +133,18 @@ static String stringForVisiblePositionIndexRange(const VisiblePositionIndexRange
     return AccessibilityObject::stringForVisiblePositionRange(VisiblePositionRange(start, end));
 }
 
-String AccessibilityUndoReplacedText::textInsertedByUnapply()
+String AccessibilityUndoReplacedText::textDeletedByUnapply()
 {
     if (!AXObjectCache::accessibilityEnabled())
         return String();
-    return stringForVisiblePositionIndexRange(m_textInsertedByUnapplyRange);
+    return stringForVisiblePositionIndexRange(m_rangeDeletedByUnapply);
 }
 
-String AccessibilityUndoReplacedText::textInsertedByReapply()
+String AccessibilityUndoReplacedText::textDeletedByReapply()
 {
     if (!AXObjectCache::accessibilityEnabled())
         return String();
-    return stringForVisiblePositionIndexRange(m_textDeletedByUnapplyRange);
+    return stringForVisiblePositionIndexRange(m_rangeDeletedByReapply);
 }
 
 static void postTextStateChangeNotification(AXObjectCache* cache, const VisiblePosition& position, const String& deletedText, const String& insertedText)
@@ -167,12 +167,12 @@ void AccessibilityUndoReplacedText::postTextStateChangeNotificationForUnapply(AX
         return;
     if (!AXObjectCache::accessibilityEnabled())
         return;
-    if (m_textInsertedByUnapplyRange.isNull())
+    if (m_rangeDeletedByUnapply.isNull())
         return;
-    VisiblePosition position = visiblePositionForIndex(m_textInsertedByUnapplyRange.endIndex.value, m_textInsertedByUnapplyRange.endIndex.scope.get());
+    VisiblePosition position = visiblePositionForIndex(m_rangeDeletedByUnapply.endIndex.value, m_rangeDeletedByUnapply.endIndex.scope.get());
     if (position.isNull())
         return;
-    postTextStateChangeNotification(cache, position, textInsertedByUnapply(), m_replacedText);
+    postTextStateChangeNotification(cache, position, textDeletedByUnapply(), m_replacedText);
     m_replacedText = String();
 }
 
@@ -182,12 +182,12 @@ void AccessibilityUndoReplacedText::postTextStateChangeNotificationForReapply(AX
         return;
     if (!AXObjectCache::accessibilityEnabled())
         return;
-    if (m_textDeletedByUnapplyRange.isNull())
+    if (m_rangeDeletedByReapply.isNull())
         return;
-    VisiblePosition position = visiblePositionForIndex(m_textDeletedByUnapplyRange.startIndex.value, m_textDeletedByUnapplyRange.startIndex.scope.get());
+    VisiblePosition position = visiblePositionForIndex(m_rangeDeletedByReapply.startIndex.value, m_rangeDeletedByReapply.startIndex.scope.get());
     if (position.isNull())
         return;
-    postTextStateChangeNotification(cache, position, m_replacedText, textInsertedByReapply());
+    postTextStateChangeNotification(cache, position, textDeletedByReapply(), m_replacedText);
     m_replacedText = String();
 }
 
@@ -205,7 +205,7 @@ EditCommandComposition::EditCommandComposition(Document& document, const Visible
     , m_endingRootEditableElement(endingSelection.rootEditableElement())
     , m_editAction(editAction)
 {
-    m_replacedText.confgureTextToBeDeletedByUnapplyStartIndexWithEditCommandStartingSelection(startingSelection);
+    m_replacedText.configureRangeDeletedByReapplyWithStartingSelection(startingSelection);
 }
 
 void EditCommandComposition::unapply()
@@ -215,7 +215,7 @@ void EditCommandComposition::unapply()
     if (!frame)
         return;
 
-    m_replacedText.captureTextToBeDeletedByUnapply();
+    m_replacedText.captureTextForUnapply();
 
     // Changes to the document may have been made since the last editing operation that require a layout, as in <rdar://problem/5658603>.
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
@@ -247,7 +247,7 @@ void EditCommandComposition::reapply()
     if (!frame)
         return;
 
-    m_replacedText.captureTextToBeDeletedByReapply();
+    m_replacedText.captureTextForReapply();
 
     // Changes to the document may have been made since the last editing operation that require a layout, as in <rdar://problem/5658603>.
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
@@ -272,19 +272,19 @@ void EditCommandComposition::setStartingSelection(const VisibleSelection& select
 {
     m_startingSelection = selection;
     m_startingRootEditableElement = selection.rootEditableElement();
-    m_replacedText.confgureTextToBeDeletedByUnapplyStartIndexWithEditCommandStartingSelection(selection);
+    m_replacedText.configureRangeDeletedByReapplyWithStartingSelection(selection);
 }
 
 void EditCommandComposition::setEndingSelection(const VisibleSelection& selection)
 {
     m_endingSelection = selection;
     m_endingRootEditableElement = selection.rootEditableElement();
-    m_replacedText.confgureTextToBeDeletedByUnapplyIndexesWithEditCommandEndingSelection(selection);
+    m_replacedText.configureRangeDeletedByReapplyWithEndingSelection(selection);
 }
 
-void EditCommandComposition::setTextInsertedByUnapplyRange(const VisiblePositionIndexRange& range)
+void EditCommandComposition::setRangeDeletedByUnapply(const VisiblePositionIndexRange& range)
 {
-    m_replacedText.setTextInsertedByUnapplyRange(range);
+    m_replacedText.setRangeDeletedByUnapply(range);
 }
 
 #ifndef NDEBUG

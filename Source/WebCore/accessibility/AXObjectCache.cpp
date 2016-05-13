@@ -124,10 +124,13 @@ void AXComputedObjectAttributeCache::setIgnored(AXID id, AccessibilityObjectIncl
 
 AccessibilityReplacedText::AccessibilityReplacedText(const VisibleSelection& selection)
 {
-    if (AXObjectCache::accessibilityEnabled() && selection.isRange()) {
-        m_replacedText = AccessibilityObject::stringForVisiblePositionRange(selection);
+    if (AXObjectCache::accessibilityEnabled()) {
         m_replacedRange.startIndex.value = indexForVisiblePosition(selection.start(), m_replacedRange.startIndex.scope);
-        m_replacedRange.endIndex.value = indexForVisiblePosition(selection.end(), m_replacedRange.endIndex.scope);
+        if (selection.isRange()) {
+            m_replacedText = AccessibilityObject::stringForVisiblePositionRange(selection);
+            m_replacedRange.endIndex.value = indexForVisiblePosition(selection.end(), m_replacedRange.endIndex.scope);
+        } else
+            m_replacedRange.endIndex = m_replacedRange.startIndex;
     }
 }
 

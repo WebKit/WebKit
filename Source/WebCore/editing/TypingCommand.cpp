@@ -256,7 +256,7 @@ void TypingCommand::postTextStateChangeNotificationForDeletion(const VisibleSele
     VisiblePositionIndexRange range;
     range.startIndex.value = indexForVisiblePosition(selection.start(), range.startIndex.scope);
     range.endIndex.value = indexForVisiblePosition(selection.end(), range.endIndex.scope);
-    composition()->setTextInsertedByUnapplyRange(range);
+    composition()->setRangeDeletedByUnapply(range);
 }
 
 void TypingCommand::doApply()
@@ -383,7 +383,7 @@ void TypingCommand::insertTextAndNotifyAccessibility(const String &text, bool se
     AccessibilityReplacedText replacedText(frame().selection().selection());
     insertText(text, selectInsertedText);
     replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, text, frame().selection().selection());
-    composition()->setTextInsertedByUnapplyRange(replacedText.replacedRange());
+    composition()->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 
 void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool selectInsertedText)
@@ -410,7 +410,7 @@ void TypingCommand::insertLineBreakAndNotifyAccessibility()
     AccessibilityReplacedText replacedText(frame().selection().selection());
     insertLineBreak();
     replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, "\n", frame().selection().selection());
-    composition()->setTextInsertedByUnapplyRange(replacedText.replacedRange());
+    composition()->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 
 void TypingCommand::insertParagraphSeparator()
@@ -427,7 +427,7 @@ void TypingCommand::insertParagraphSeparatorAndNotifyAccessibility()
     AccessibilityReplacedText replacedText(frame().selection().selection());
     insertParagraphSeparator();
     replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, "\n", frame().selection().selection());
-    composition()->setTextInsertedByUnapplyRange(replacedText.replacedRange());
+    composition()->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent()
@@ -448,7 +448,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContentAndNotifyAccessibilit
     AccessibilityReplacedText replacedText(frame().selection().selection());
     insertParagraphSeparatorInQuotedContent();
     replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, "\n", frame().selection().selection());
-    composition()->setTextInsertedByUnapplyRange(replacedText.replacedRange());
+    composition()->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 
 bool TypingCommand::makeEditableRootEmpty()
