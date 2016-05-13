@@ -50,17 +50,20 @@ static void drawCrossfadeSubimage(GraphicsContext& context, Image& image, Compos
     bool useTransparencyLayer = image.isSVGImage();
 
     GraphicsContextStateSaver stateSaver(context);
+    
+    CompositeOperator drawImageOperation = operation;
 
-    context.setCompositeOperation(operation);
-
-    if (useTransparencyLayer)
+    if (useTransparencyLayer) {
+        context.setCompositeOperation(operation);
         context.beginTransparencyLayer(opacity);
-    else
+        drawImageOperation = CompositeSourceOver;
+    } else
         context.setAlpha(opacity);
 
     if (targetSize != imageSize)
         context.scale(FloatSize(targetSize.width() / imageSize.width(), targetSize.height() / imageSize.height()));
-    context.drawImage(image, IntPoint());
+
+    context.drawImage(image, IntPoint(), ImagePaintingOptions(drawImageOperation));
 
     if (useTransparencyLayer)
         context.endTransparencyLayer();

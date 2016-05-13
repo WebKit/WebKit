@@ -1,5 +1,25 @@
 2016-05-13  Simon Fraser  <simon.fraser@apple.com>
 
+        cross-fade() rendering doesn't match expectation
+        https://bugs.webkit.org/show_bug.cgi?id=157665
+        rdar://problem/17917708
+
+        Reviewed by Dean Jackson.
+
+        Cross-fading two opaque images would result in a non-opaque result in between the endpoints,
+        probably because r157045 caused both images to be drawn with srcOver, since drawImage()
+        clobbers the composite operation in the context.
+
+        Fix by passing the composite operation to the drawImage() calls for the non-transparency layer
+        code path.
+
+        Converted css3/images/cross-fade-blending.html into a ref test to test this.
+
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::drawCrossfadeSubimage):
+
+2016-05-13  Simon Fraser  <simon.fraser@apple.com>
+
         Unprefix -webkit-cross-fade()
         https://bugs.webkit.org/show_bug.cgi?id=157632
 
