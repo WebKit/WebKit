@@ -65,7 +65,7 @@ BuildbotBuilderQueueView.prototype = {
                 return;
             }
 
-            this._appendPendingRevisionCount(queue);
+            this._appendPendingRevisionCount(queue, this._latestProductiveIteration.bind(this, queue));
 
             var firstRecentUnsuccessfulIteration = queue.firstRecentUnsuccessfulIteration;
             var mostRecentFinishedIteration = queue.mostRecentFinishedIteration;

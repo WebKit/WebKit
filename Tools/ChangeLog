@@ -1,3 +1,42 @@
+2016-05-13  Aakash Jain  <aakash_jain@apple.com>
+
+        Dashboard code restructuring
+        https://bugs.webkit.org/show_bug.cgi?id=157680
+        <rdar://problem/14736888>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueView.js:
+        (BubbleQueueView.prototype.addLinkToRow): Moved to base class.
+        (BubbleQueueView.prototype.addTextToRow): Moved to base class.
+        (BubbleQueueView.prototype._addDividerToPopover): Moved to base class.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.prototype.update): Passing additional argument to _appendPendingRevisionCount.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotCombinedQueueView.js:
+        (BuildbotCombinedQueueView.prototype.update): Passing additional argument to _appendPendingRevisionCount.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update): Passing additional argument to _appendPendingRevisionCount.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._appendPendingRevisionCount): Moved to base class and modified to take
+        additional argument.
+        (BuildbotQueueView.prototype._popoverLinesForCommitRange): Moved to base class.
+        (BuildbotQueueView.prototype._presentPopoverForPendingCommits): Moved to base class.
+        (BuildbotQueueView.prototype._addDividerToPopover): Moved to base class.
+        (BuildbotQueueView.prototype._formatRevisionForDisplay): Moved to base class.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (documentReady): Display any customView if available.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/QueueView.js:
+        (QueueView.prototype.addLinkToRow): Moved from child class, no changes.
+        (QueueView.prototype.addTextToRow): Moved from child class, no changes.
+        (QueueView.prototype._addDividerToPopover): Moved from child class, no changes.
+        (QueueView.prototype._appendPendingRevisionCount): Moved from child class, made it more generic
+        by taking latestIterationGetter method as an argument.
+        (QueueView.prototype._popoverLinesForCommitRange): Moved from child class, no changes.
+        (QueueView.prototype._presentPopoverForPendingCommits): Moved from child class, no changes.
+        (QueueView.prototype._formatRevisionForDisplay): Moved from child class, no changes.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (a:hover:link): Underline only when there is a link.
+
 2016-05-13  Yoav Weiss  <yoav@yoav.ws>
 
         Turn on WEB_TIMING for all ports

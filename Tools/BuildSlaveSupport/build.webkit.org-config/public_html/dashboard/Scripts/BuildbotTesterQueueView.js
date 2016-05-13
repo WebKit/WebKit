@@ -52,7 +52,7 @@ BuildbotTesterQueueView.prototype = {
                 return;
             }
 
-            this._appendPendingRevisionCount(queue);
+            this._appendPendingRevisionCount(queue, this._latestProductiveIteration.bind(this, queue));
 
             var appendedStatus = false;
 

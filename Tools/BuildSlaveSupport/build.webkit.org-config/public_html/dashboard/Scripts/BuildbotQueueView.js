@@ -73,121 +73,6 @@ BuildbotQueueView.prototype = {
         this.element.appendChild(status.element);
     },
 
-    _appendPendingRevisionCount: function(queue)
-    {
-        var latestProductiveIteration = this._latestProductiveIteration(queue);
-        if (!latestProductiveIteration)
-            return;
-
-        var totalRevisionsBehind = 0;
-
-        // FIXME: To be 100% correct, we should also filter out changes that are ignored by
-        // the queue, see _should_file_trigger_build in wkbuild.py.
-        var branches = queue.branches;
-        for (var i = 0; i < branches.length; ++i) {
-            var branch = branches[i];
-            var repository = branch.repository;
-            var repositoryName = repository.name;
-            var trac = repository.trac;
-            var latestProductiveRevisionNumber = latestProductiveIteration.revision[repositoryName];
-            if (!latestProductiveRevisionNumber)
-                continue;
-            if (!trac)
-                continue;
-            if (!trac.latestRecordedRevisionNumber || trac.indexOfRevision(trac.oldestRecordedRevisionNumber) > trac.indexOfRevision(latestProductiveRevisionNumber)) {
-                trac.loadMoreHistoricalData();
-                return;
-            }
-
-            totalRevisionsBehind += trac.commitsOnBranchLaterThanRevision(branch.name, latestProductiveRevisionNumber).length;
-        }
-
-        if (!totalRevisionsBehind)
-            return;
-
-        var messageElement = document.createElement("span"); // We can't just pass text to StatusLineView here, because we need an element that perfectly fits the text for popover positioning.
-        messageElement.textContent = totalRevisionsBehind + " " + (totalRevisionsBehind === 1 ? "revision behind" : "revisions behind");
-        var status = new StatusLineView(messageElement, StatusLineView.Status.NoBubble);
-        this.element.appendChild(status.element);
-
-        new PopoverTracker(messageElement, this._presentPopoverForPendingCommits.bind(this), queue);
-    },
-
-    _popoverLinesForCommitRange: function(trac, branch, firstRevisionNumber, lastRevisionNumber)
-    {
-        function lineForCommit(trac, commit)
-        {
-            var result = document.createElement("div");
-            result.className = "pending-commit";
-
-            var linkElement = document.createElement("a");
-            linkElement.className = "revision";
-            linkElement.href = trac.revisionURL(commit.revisionNumber);
-            linkElement.target = "_blank";
-            linkElement.textContent = this._formatRevisionForDisplay(commit.revisionNumber, branch.repository);
-            result.appendChild(linkElement);
-
-            var authorElement = document.createElement("span");
-            authorElement.className = "author";
-            authorElement.textContent = commit.author;
-            result.appendChild(authorElement);
-
-            var titleElement = document.createElement("span");
-            titleElement.className = "title";
-            titleElement.innerHTML = commit.title.innerHTML;
-            result.appendChild(titleElement);
-
-            return result;
-        }
-
-        console.assert(trac.indexOfRevision(trac.oldestRecordedRevisionNumber) <= trac.indexOfRevision(firstRevisionNumber));
-
-        // FIXME: To be 100% correct, we should also filter out changes that are ignored by
-        // the queue, see _should_file_trigger_build in wkbuild.py.
-        var commits = trac.commitsOnBranchInRevisionRange(branch.name, firstRevisionNumber, lastRevisionNumber);
-        return commits.map(function(commit) {
-            return lineForCommit.call(this, trac, commit);
-        }, this).reverse();
-    },
-
-    _presentPopoverForPendingCommits: function(element, popover, queue)
-    {
-        var latestProductiveIteration = this._latestProductiveIteration(queue);
-        if (!latestProductiveIteration)
-            return false;
-
-        var content = document.createElement("div");
-        content.className = "commit-history-popover";
-
-        var shouldAddDivider = false;
-        var branches = queue.branches;
-        for (var i = 0; i < branches.length; ++i) {
-            var branch = branches[i];
-            var repository = branch.repository;
-            var repositoryName = repository.name;
-            var trac = repository.trac;
-            var latestProductiveRevisionNumber = latestProductiveIteration.revision[repositoryName];
-            if (!latestProductiveRevisionNumber || !trac.latestRecordedRevisionNumber)
-                continue;
-            var nextRevision = trac.nextRevision(branch.name, latestProductiveRevisionNumber);
-            if (nextRevision === Trac.NO_MORE_REVISIONS)
-                continue;
-            var lines = this._popoverLinesForCommitRange(trac, branch, nextRevision, trac.latestRecordedRevisionNumber);
-            var length = lines.length;
-            if (length && shouldAddDivider)
-                this._addDividerToPopover(content);
-            for (var j = 0; j < length; ++j)
-                content.appendChild(lines[j]);
-            shouldAddDivider = shouldAddDivider || length > 0;
-        }
-
-        var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
-        popover.content = content;
-        popover.present(rect, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
-
-        return true;
-    },
-
     _presentPopoverForRevisionRange: function(element, popover, context)
     {
         var content = document.createElement("div");
@@ -289,13 +174,6 @@ BuildbotQueueView.prototype = {
         content.appendChild(title);
     },
 
-    _addDividerToPopover: function(content)
-    {
-        var divider = document.createElement("div");
-        divider.className = "divider";
-        content.appendChild(divider);
-    },
-
     revisionContentForIteration: function(iteration, previousDisplayedIteration)
     {
         var fragment = document.createDocumentFragment();
@@ -356,14 +234,5 @@ BuildbotQueueView.prototype = {
     _unauthorizedAccess: function(event)
     {
         this.updateSoon();
-    },
-
-    _formatRevisionForDisplay: function(revision, repository)
-    {
-        console.assert(repository.isSVN || repository.isGit, "Should not get here; " + repository.name + " did not specify a known VCS type.");
-        if (repository.isSVN)
-            return "r" + revision;
-        // Truncating for display. Git traditionally uses seven characters for a short hash.
-        return revision.substr(0, 7);
     }
 };

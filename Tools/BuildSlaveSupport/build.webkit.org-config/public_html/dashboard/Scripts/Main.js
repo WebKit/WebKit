@@ -26,7 +26,8 @@
 var hasBubbles = typeof bubbleQueueServer != "undefined";
 var BubblesCategory = "bubbles";
 
-var categorizedQueuesByPlatformAndBuildType = {};
+if (!categorizedQueuesByPlatformAndBuildType)
+    var categorizedQueuesByPlatformAndBuildType = {};
 var platformsByFamily = {};
 
 for (var i = 0; i < buildbots.length; ++i) {
@@ -257,6 +258,9 @@ function documentReady()
             var view = new BuildbotLeaksQueueView(platformQueues.leaks);
             cell.appendChild(view.element);
         }
+
+        if (platformQueues.customView)
+            cell.appendChild(platformQueues.customView.element);
 
         if (platformQueues[BubblesCategory]) {
             var view = new BubbleQueueView(platformQueues[BubblesCategory]);

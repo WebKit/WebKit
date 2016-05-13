@@ -75,24 +75,6 @@ BubbleQueueView.prototype = {
         }, this);
     },
 
-    addLinkToRow: function(rowElement, className, text, url)
-    {
-        var linkElement = document.createElement("a");
-        linkElement.className = className;
-        linkElement.textContent = text;
-        linkElement.href = url;
-        linkElement.target = "_blank";
-        rowElement.appendChild(linkElement);
-    },
-
-    addTextToRow: function(rowElement, className, text)
-    {
-        var spanElement = document.createElement("span");
-        spanElement.className = className;
-        spanElement.textContent = text;
-        rowElement.appendChild(spanElement);
-    },
-
     _addQueueHeadingToPopover: function(queue, content)
     {
         var title = document.createElement("div");
@@ -111,13 +93,6 @@ BubbleQueueView.prototype = {
         title.className = "popover-bots-heading";
         title.textContent = "latest bot event";
         content.appendChild(title);
-    },
-
-    _addDividerToPopover: function(content)
-    {
-        var divider = document.createElement("div");
-        divider.className = "divider";
-        content.appendChild(divider);
     },
 
     _timeIntervalString: function(time)

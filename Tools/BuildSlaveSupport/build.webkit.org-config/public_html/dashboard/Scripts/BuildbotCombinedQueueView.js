@@ -84,7 +84,7 @@ BuildbotCombinedQueueView.prototype = {
             // Show the revision for the slowest queue, because we don't know if any newer revisions are green on all queues.
             // This can be slightly misleading after fixing a problem, because we can show a known broken revision as green.
             var slowestQueue = this.queues.slice().sort(function(a, b) { return BuildbotQueue.prototype.compareIterationsByRevisions(a.mostRecentSuccessfulIteration, b.mostRecentSuccessfulIteration); }).pop();
-            this._appendPendingRevisionCount(slowestQueue);
+            this._appendPendingRevisionCount(slowestQueue, this._latestProductiveIteration.bind(this, slowestQueue));
 
             var message = this.revisionContentForIteration(slowestQueue.mostRecentSuccessfulIteration);
             var statusMessagePassed = "all " + (queue.builder ? "builds succeeded" : "tests passed");
@@ -98,7 +98,7 @@ BuildbotCombinedQueueView.prototype = {
                     return;
                 }
 
-                this._appendPendingRevisionCount(queue);
+                this._appendPendingRevisionCount(queue, this._latestProductiveIteration.bind(this, queue));
 
                 var firstRecentUnsuccessfulIteration = queue.firstRecentUnsuccessfulIteration;
                 var mostRecentFinishedIteration = queue.mostRecentFinishedIteration;
