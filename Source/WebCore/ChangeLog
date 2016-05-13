@@ -1,3 +1,16 @@
+2016-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r200601): Crash when using local() and unicode-range in @font-face blocks
+        https://bugs.webkit.org/show_bug.cgi?id=157646
+
+        Reviewed by Geoffrey Garen.
+
+        I simply forgot a null check.
+
+        Test: fast/text/isLoading-crash-failed-font.html
+
+        * css/CSSSegmentedFontFace.cpp:
+
 2016-05-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         REGRESSION (r199313): ICBC app: text field In the webview is not tappable
