@@ -675,6 +675,7 @@ void CoordinatedGraphicsLayer::syncLayerState()
     m_layerState.size = m_adjustedSize;
 
     if (m_layerState.flagsChanged) {
+        m_layerState.contentsOpaque = contentsOpaque();
         m_layerState.drawsContent = drawsContent();
         m_layerState.contentsVisible = contentsAreVisible();
         m_layerState.backfaceVisible = backfaceVisibility();

@@ -1,5 +1,18 @@
 2016-05-12  Zan Dobersek  <zdobersek@igalia.com>
 
+        CoordinatedGraphicsLayer::syncLayerState() should set the m_layerState.contentsOpaque flag
+        https://bugs.webkit.org/show_bug.cgi?id=157575
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState): The contentsOpaque flag in the
+        layer's CoordinatedGraphicsLayerState object should also be set to the current value
+        of the layer. This is the only flag in the union of 9 members that's not being updated
+        in this method.
+
+2016-05-12  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Handle TextureMapperShaderProgram objects through references
         https://bugs.webkit.org/show_bug.cgi?id=157619
 
