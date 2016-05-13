@@ -1,3 +1,16 @@
+2016-05-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Emit the loads of emitLoadWithStructureCheck() in the order they are used
+        https://bugs.webkit.org/show_bug.cgi?id=157671
+
+        Reviewed by Mark Lam.
+
+        This improves the chances of having a value
+        when issuing the TEST.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitLoadWithStructureCheck):
+
 2016-05-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Inform augmenting client when inspector controller is destroyed

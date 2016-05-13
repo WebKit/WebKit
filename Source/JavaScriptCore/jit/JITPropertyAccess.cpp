@@ -801,8 +801,8 @@ void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<Slow
 
 void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)
 {
-    emitGetVirtualRegister(scope, regT0);
     loadPtr(structureSlot, regT1);
+    emitGetVirtualRegister(scope, regT0);
     addSlowCase(branchTestPtr(Zero, regT1));
     load32(Address(regT1, Structure::structureIDOffset()), regT1);
     addSlowCase(branch32(NotEqual, Address(regT0, JSCell::structureIDOffset()), regT1));
