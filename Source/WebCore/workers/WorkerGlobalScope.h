@@ -90,13 +90,13 @@ public:
     void postTask(Task) override; // Executes the task on context's thread asynchronously.
 
     // WorkerGlobalScope
-    WorkerGlobalScope* self() { return this; }
-    WorkerLocation* location() const;
+    WorkerGlobalScope& self() { return *this; }
+    WorkerLocation& location() const;
     void close();
 
     // WorkerUtils
     virtual void importScripts(const Vector<String>& urls, ExceptionCode&);
-    WorkerNavigator* navigator() const;
+    WorkerNavigator& navigator() const;
 
     // Timers
     int setTimeout(std::unique_ptr<ScheduledAction>, int timeout);

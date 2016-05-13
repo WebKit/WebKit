@@ -134,11 +134,11 @@ IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()
 }
 #endif // ENABLE(INDEXED_DATABASE)
 
-WorkerLocation* WorkerGlobalScope::location() const
+WorkerLocation& WorkerGlobalScope::location() const
 {
     if (!m_location)
         m_location = WorkerLocation::create(m_url);
-    return m_location.get();
+    return *m_location;
 }
 
 void WorkerGlobalScope::close()
@@ -158,11 +158,11 @@ void WorkerGlobalScope::close()
     } });
 }
 
-WorkerNavigator* WorkerGlobalScope::navigator() const
+WorkerNavigator& WorkerGlobalScope::navigator() const
 {
     if (!m_navigator)
         m_navigator = WorkerNavigator::create(m_userAgent);
-    return m_navigator.get();
+    return *m_navigator;
 }
 
 void WorkerGlobalScope::postTask(Task task)

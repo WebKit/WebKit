@@ -1,3 +1,19 @@
+2016-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Have the WorkerGlobalScope API return more references
+        https://bugs.webkit.org/show_bug.cgi?id=157663
+
+        Reviewed by Alexey Proskuryakov.
+
+        Have the WorkerGlobalScope API return more references instead of
+        pointers.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::location):
+        (WebCore::WorkerGlobalScope::navigator):
+        * workers/WorkerGlobalScope.h:
+        (WebCore::WorkerGlobalScope::self):
+
 2016-05-13  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         DOMPromise should only restrict the resolution type
