@@ -46,6 +46,8 @@ WeakSet::~WeakSet()
 void WeakSet::sweep()
 {
     for (WeakBlock* block = m_blocks.head(); block;) {
+        heap()->sweepNextLogicallyEmptyWeakBlock();
+
         WeakBlock* nextBlock = block->next();
         block->sweep();
         if (block->isLogicallyEmptyButNotFree()) {

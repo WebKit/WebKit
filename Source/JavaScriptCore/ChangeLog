@@ -1,3 +1,21 @@
+2016-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Runaway malloc memory usage in this simple JSC program
+        https://bugs.webkit.org/show_bug.cgi?id=157682
+
+        Reviewed by Mark Lam.
+
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::sweep): Whenever we might add a block to
+        m_logicallyEmptyWeakBlocks, be sure also to sweep a block in
+        m_logicallyEmptyWeakBlocks. Otherwise, additions might outpace removals
+        even when all memory is freed.
+
+        We do this whenever we *might* add a block and not just whenever we *do*
+        add a block because we'd like to sweep the entries in
+        m_logicallyEmptyWeakBlocks promptly even when it's not growing, and this
+        is a reasonably rate-limited opportunity to do so.
+
 2016-05-13  Mark Lam  <mark.lam@apple.com>
 
         We should have one calleeSaveRegistersBuffer per VMEntryFrame, not one per VM.
