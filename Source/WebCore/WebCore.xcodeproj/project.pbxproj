@@ -6007,6 +6007,8 @@
 		CB38FD5A1CD2325800592A3F /* JSPerformanceResourceTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB38FD581CD2314500592A3F /* JSPerformanceResourceTiming.cpp */; };
 		CB38FD5B1CD2325B00592A3F /* JSPerformanceResourceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */; };
 		CB8CF0181A9358D4000D510B /* Microtasks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB8CF0151A934B43000D510B /* Microtasks.cpp */; };
+		CBC2D22F1CE5B89D00D1880B /* ResourceTimingInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBC2D22D1CE5B77400D1880B /* ResourceTimingInformation.cpp */; };
+		CBC2D2301CE5B8A100D1880B /* ResourceTimingInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = CBC2D22E1CE5B77D00D1880B /* ResourceTimingInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CCC2B51415F613060048CDD6 /* DeviceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC2B51015F613060048CDD6 /* DeviceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CCC2B51515F613060048CDD6 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC2B51115F613060048CDD6 /* DeviceController.cpp */; };
 		CCC2B51615F613060048CDD6 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC2B51215F613060048CDD6 /* DeviceController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13988,6 +13990,8 @@
 		CB38FD581CD2314500592A3F /* JSPerformanceResourceTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceResourceTiming.cpp; sourceTree = "<group>"; };
 		CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceResourceTiming.h; sourceTree = "<group>"; };
 		CB8CF0151A934B43000D510B /* Microtasks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Microtasks.cpp; sourceTree = "<group>"; };
+		CBC2D22D1CE5B77400D1880B /* ResourceTimingInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceTimingInformation.cpp; sourceTree = "<group>"; };
+		CBC2D22E1CE5B77D00D1880B /* ResourceTimingInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceTimingInformation.h; sourceTree = "<group>"; };
 		CCC2B51015F613060048CDD6 /* DeviceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceClient.h; sourceTree = "<group>"; };
 		CCC2B51115F613060048CDD6 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		CCC2B51215F613060048CDD6 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
@@ -22819,6 +22823,8 @@
 				7A929CA21C598378004DF226 /* ResourceLoadStatistics.h */,
 				7A7CC8361C87506800366243 /* ResourceLoadStatisticsStore.cpp */,
 				7A7CC8371C87506800366243 /* ResourceLoadStatisticsStore.h */,
+				CBC2D22D1CE5B77400D1880B /* ResourceTimingInformation.cpp */,
+				CBC2D22E1CE5B77D00D1880B /* ResourceTimingInformation.h */,
 				51327D5F11A33A2B004F9D65 /* SinkDocument.cpp */,
 				51327D5E11A33A2B004F9D65 /* SinkDocument.h */,
 				D000ED2511C1B9CD00C47726 /* SubframeLoader.cpp */,
@@ -28244,6 +28250,7 @@
 				83C1D432178D5AB500141E68 /* SVGPathSegLinetoRel.h in Headers */,
 				B2227A7D0D00BF220071B782 /* SVGPathSegLinetoVertical.h in Headers */,
 				83C1D433178D5AB500141E68 /* SVGPathSegLinetoVerticalAbs.h in Headers */,
+				CBC2D2301CE5B8A100D1880B /* ResourceTimingInformation.h in Headers */,
 				83C1D434178D5AB500141E68 /* SVGPathSegLinetoVerticalRel.h in Headers */,
 				B2227A810D00BF220071B782 /* SVGPathSegList.h in Headers */,
 				8476C9E611DF6A0B00555B02 /* SVGPathSegListBuilder.h in Headers */,
@@ -32105,6 +32112,7 @@
 				1A1414B513A0F0500019996C /* WebKitFontFamilyNames.cpp in Sources */,
 				D7613A501474F13F00DB8606 /* WebKitNamedFlow.cpp in Sources */,
 				7C48A6D0191C9D6500026674 /* WebKitNamespace.cpp in Sources */,
+				CBC2D22F1CE5B89D00D1880B /* ResourceTimingInformation.cpp in Sources */,
 				A5DEBDA316FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.cpp in Sources */,
 				31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */,
 				0FCF332E0F2B9A25004B6795 /* WebLayer.mm in Sources */,

@@ -33,6 +33,7 @@
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "ResourceTimingInformation.h"
 #include "ThreadableLoader.h"
 
 namespace WebCore {
@@ -105,6 +106,7 @@ namespace WebCore {
         ThreadableLoaderClient* m_client;
         Document& m_document;
         ThreadableLoaderOptions m_options;
+        ResourceTimingInformation m_resourceTimingInfo;
         bool m_sameOriginRequest;
         bool m_simpleRequest;
         bool m_async;

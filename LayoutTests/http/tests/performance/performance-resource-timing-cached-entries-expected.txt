@@ -1,0 +1,2 @@
+PASS foundResource is 2
+

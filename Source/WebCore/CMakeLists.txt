@@ -1931,6 +1931,7 @@ set(WebCore_SOURCES
     loader/ResourceLoadStatistics.cpp
     loader/ResourceLoadStatisticsStore.cpp
     loader/ResourceLoader.cpp
+    loader/ResourceTimingInformation.cpp
     loader/SinkDocument.cpp
     loader/SubframeLoader.cpp
     loader/SubresourceLoader.cpp

@@ -1,3 +1,38 @@
+2016-05-13  Yoav Weiss  <yoav@yoav.ws>
+
+        ResourceTiming entries for cached resources and XHR
+        https://bugs.webkit.org/show_bug.cgi?id=157669
+
+        Reviewed by Alex Christensen.
+
+         - Moves the ResourceTiming storage and addition logic into its own class, so that it
+           can be accessed by both CachedResourceLoader and DocumentThreadableLoader.
+         - Using the above, adds ResourceTiming collection into DocumentThreadableLoader,
+           in order to support ResourceTiming entries for XHR based requests.
+         - Adds ResourceTiming entries for resources that are reused from the memory cache.
+
+        Test: http/tests/performance/performance-resource-timing-cached-entries.html
+
+        * CMakeLists.txt: Add ResourceTimingInformation.
+        * WebCore.xcodeproj/project.pbxproj: Add ResourceTimingInformation.
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didFinishLoading): Add a call to addResourceTiming.
+        (WebCore::DocumentThreadableLoader::loadRequest): Store the initiator information.
+        * loader/DocumentThreadableLoader.h:
+        * loader/ResourceTimingInformation.cpp: Added.
+        (WebCore::ResourceTimingInformation::addResourceTiming): Moved addResourceTiming logic from CachedResourceLoader.
+        (WebCore::ResourceTimingInformation::storeResourceTimingInitiatorInformation): Moved addResourceTiming logic from
+        CachedResourceLoader. Removed reliance on the committingFirstRealLoad bool when storing initiator info, as I don't
+        see why it is required, and it made no sense in the context of DocumentThreadableLoader.
+        * loader/ResourceTimingInformation.h: Added.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource): Add a ResourceTiming entry when a resource is reused from MemoryCache.
+        (WebCore::CachedResourceLoader::revalidateResource): Use ResourceTimingInformation::storeResourceTimingInitiatorInformation.
+        (WebCore::CachedResourceLoader::loadResource): Use ResourceTimingInformation::storeResourceTimingInitiatorInformation.
+        (WebCore::CachedResourceLoader::loadDone): Use ResourceTimingInformation::addResourceTiming.
+        (WebCore::CachedResourceLoader::storeResourceTimingInitiatorInformation): Deleted.
+        * loader/cache/CachedResourceLoader.h:
+
 2016-05-13  Doug Russell  <d_russell@apple.com>
 
         AX: Regressions in undo/redo accessibility from Bug 153361

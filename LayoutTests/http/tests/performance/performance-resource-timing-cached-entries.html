@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<script>
+    if (window.internals)
+        internals.setResourceTimingSupport(true);
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+<img src="../../resources/square100.png">
+<script>
+    var foundResource = 0;
+    var runTest = function() {
+        var resources = performance.getEntriesByType('resource');
+        for (var i = 0; i < resources.length; ++i) {
+            if (resources[i].name.indexOf("square") != -1)
+                ++foundResource;
+        };
+        shouldBe("foundResource", "2");
+        if (window.internals)
+            window.internals.setResourceTimingSupport(false);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+    var windowLoaded = false;
+    var xhrLoaded = false;
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener("load", function() {
+        if (windowLoaded)
+            runTest();
+        xhrLoaded = true;
+    });
+    xhr.open("GET", "../../resources/square100.png");
+    xhr.send();
+    window.addEventListener("load", function() {
+        if (xhrLoaded)
+            runTest();
+        windowLoaded = true;
+    });
+</script>
+</body>
+</html>

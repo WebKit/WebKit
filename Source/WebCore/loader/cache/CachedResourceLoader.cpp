@@ -618,6 +618,10 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
             return nullptr;
         logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::usedKey());
         memoryCache.resourceAccessed(*resource);
+        if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
+            m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request, frame());
+            m_resourceTimingInfo.addResourceTiming(resource.get(), document());
+        }
         break;
     }
 
@@ -670,7 +674,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(co
     memoryCache.remove(*resource);
     memoryCache.add(*newResource);
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        storeResourceTimingInitiatorInformation(resource, request);
+        m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request, frame());
     return newResource;
 }
 
@@ -686,23 +690,8 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
     if (request.allowsCaching() && !memoryCache.add(*resource))
         resource->setOwningCachedResourceLoader(this);
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        storeResourceTimingInitiatorInformation(resource, request);
+        m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request, frame());
     return resource;
-}
-
-void CachedResourceLoader::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const CachedResourceRequest& request)
-{
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
-    if (resource->type() == CachedResource::MainResource) {
-        // <iframe>s should report the initial navigation requested by the parent document, but not subsequent navigations.
-        if (frame()->ownerElement() && m_documentLoader->frameLoader()->stateMachine().committingFirstRealLoad()) {
-            InitiatorInfo info = { frame()->ownerElement()->localName(), monotonicallyIncreasingTime() };
-            m_initiatorMap.add(resource.get(), info);
-        }
-    } else {
-        InitiatorInfo info = { request.initiatorName(), monotonicallyIncreasingTime() };
-        m_initiatorMap.add(resource.get(), info);
-    }
 }
 
 static void logRevalidation(const String& reason, DiagnosticLoggingClient& logClient)
@@ -970,21 +959,8 @@ void CachedResourceLoader::loadDone(CachedResource* resource, bool shouldPerform
     RefPtr<Document> protectDocument(m_document);
 
 #if ENABLE(WEB_TIMING)
-    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()
-        && resource && resource->response().isHTTP()
-        && ((!resource->errorOccurred() && !resource->wasCanceled()) || resource->response().httpStatusCode() == 304)) {
-        HashMap<CachedResource*, InitiatorInfo>::iterator initiatorIt = m_initiatorMap.find(resource);
-        if (initiatorIt != m_initiatorMap.end()) {
-            ASSERT(document());
-            Document* initiatorDocument = document();
-            if (resource->type() == CachedResource::MainResource)
-                initiatorDocument = document()->parentDocument();
-            ASSERT(initiatorDocument);
-            const InitiatorInfo& info = initiatorIt->value;
-            initiatorDocument->domWindow()->performance()->addResourceTiming(info.name, initiatorDocument, resource->resourceRequest(), resource->response(), info.startTime, resource->loadFinishTime());
-            m_initiatorMap.remove(initiatorIt);
-        }
-    }
+    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
+        m_resourceTimingInfo.addResourceTiming(resource, document());
 #else
     UNUSED_PARAM(resource);
 #endif

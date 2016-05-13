@@ -1,3 +1,16 @@
+2016-05-13  Yoav Weiss  <yoav@yoav.ws>
+
+        ResourceTiming entries for cached resources and XHR
+        https://bugs.webkit.org/show_bug.cgi?id=157669
+
+        Reviewed by Alex Christensen.
+
+        These tests make sure that cacheable resources as well as XHR based resources
+        have ResourceTiming entries.
+
+        * http/tests/performance/performance-resource-timing-cached-entries-expected.txt: Added.
+        * http/tests/performance/performance-resource-timing-cached-entries.html: Added.
+
 2016-05-13  Mark Lam  <mark.lam@apple.com>
 
         We should have one calleeSaveRegistersBuffer per VMEntryFrame, not one per VM.
