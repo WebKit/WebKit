@@ -1,5 +1,11 @@
 2016-05-13  Beth Dakin  <bdakin@apple.com>
 
+        Build fix.
+
+        * WebView/WebView.mm:
+
+2016-05-13  Beth Dakin  <bdakin@apple.com>
+
         Add dyldSPI.h for linked on or after checks, and add one for link preview
         https://bugs.webkit.org/show_bug.cgi?id=157401
         -and corresponding-
