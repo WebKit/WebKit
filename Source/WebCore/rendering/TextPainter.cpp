@@ -54,13 +54,13 @@ ShadowApplier::ShadowApplier(GraphicsContext& context, const ShadowData* shadow,
     // often draw the *last* shadow and the text itself in a single call.
     if (m_onlyDrawsShadow) {
         FloatRect shadowRect(textRect);
-        shadowRect.inflate(shadow->paintingExtent());
+        shadowRect.inflate(shadow->paintingExtent() + 3 * textRect.height());
         shadowRect.move(shadowOffset);
         context.save();
         context.clip(shadowRect);
 
         m_didSaveContext = true;
-        m_extraOffset = FloatSize(0, 2 * textRect.height() + std::max(0.0f, shadowOffset.height()) + shadowRadius);
+        m_extraOffset = FloatSize(0, 2 * shadowRect.height() + std::max(0.0f, shadowOffset.height()) + shadowRadius);
         shadowOffset -= m_extraOffset;
     }
 

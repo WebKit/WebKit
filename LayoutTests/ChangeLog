@@ -1,3 +1,16 @@
+2016-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text shadow sometimes clipped unexpectedly
+        https://bugs.webkit.org/show_bug.cgi?id=108929
+
+        Reviewed by Dean Jackson.
+
+        Add a font which draws dramatically far outside of its layout rect.
+
+        * fast/text/multiple-text-shadow-overflow-layout-rect-expected.html: Added.
+        * fast/text/multiple-text-shadow-overflow-layout-rect.html: Added.
+        * fast/text/resources/font-overflow-layout-rect.svg: Added.
+
 2016-05-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/debugger/command-line-api-exception-nested-catch.html as a flaky timeout on mac

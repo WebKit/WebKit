@@ -1,5 +1,35 @@
 2016-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] Text shadow sometimes clipped unexpectedly
+        https://bugs.webkit.org/show_bug.cgi?id=108929
+
+        Reviewed by Dean Jackson.
+
+        CoreGraphics can only draw one text shadow at a time. We work around that by drawing
+        the text multiple times, one for each shadow. However, we want to make sure that the
+        original text isn't also drawn multiple times, so we bump up the shadow offsets so
+        the text and the shadow don't intersect, and then we clip out the original text (so
+        only the shadow remains).
+
+        Unfortunately, this clipping requires knowing where the visual extent of the text is,
+        which WebKit currently has trouble with. In particular, we often use layout extents
+        in lieu of visual extents, which is a problem when the glyphs draw outside of their
+        layout boxes. In this case, it causes us to think the text shadow is much smaller
+        than it really is, so our clipping operation clips to an area which is too small.
+
+        A quick solution to this is to inflate the clip rect by an amount proportional to the
+        font size, and offset the text shadow accordingly. If this amount is large enough,
+        this bug will occur on few enough sites that it is reasonable to consider this bug
+        fixed without the real solution of educating WebKit properly about the difference
+        between text layout rects and text visual extent rects.
+
+        Test: fast/text/multiple-text-shadow-overflow-layout-rect.html
+
+        * rendering/TextPainter.cpp:
+        (WebCore::ShadowApplier::ShadowApplier):
+
+2016-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
         REGRESSION(r200601): Crash when using local() and unicode-range in @font-face blocks
         https://bugs.webkit.org/show_bug.cgi?id=157646
 
