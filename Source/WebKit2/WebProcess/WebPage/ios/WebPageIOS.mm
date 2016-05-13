@@ -2512,6 +2512,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         bool inFixed = false;
         renderer->localToContainerPoint(FloatPoint(), nullptr, UseTransforms, &inFixed);
         information.insideFixedPosition = inFixed;
+        information.isRTL = renderer->style().direction() == RTL;
         
         if (inFixed && elementFrame.isMainFrame()) {
             FrameView* frameView = elementFrame.view();

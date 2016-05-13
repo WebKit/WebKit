@@ -100,6 +100,7 @@ struct AssistedNodeInformation {
         , hasNextNode(false)
         , hasPreviousNode(false)
         , isAutocorrect(false)
+        , isRTL(false)
         , isMultiSelect(false)
         , isReadOnly(false)
         , allowsUserScaling(false)
@@ -119,6 +120,7 @@ struct AssistedNodeInformation {
     bool hasNextNode;
     bool hasPreviousNode;
     bool isAutocorrect;
+    bool isRTL;
     bool isMultiSelect;
     bool isReadOnly;
     bool allowsUserScaling;

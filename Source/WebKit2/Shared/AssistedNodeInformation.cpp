@@ -71,6 +71,7 @@ void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
     encoder << hasNextNode;
     encoder << hasPreviousNode;
     encoder << isAutocorrect;
+    encoder << isRTL;
     encoder.encodeEnum(autocapitalizeType);
     encoder.encodeEnum(elementType);
     encoder << formAction;
@@ -110,6 +111,9 @@ bool AssistedNodeInformation::decode(IPC::ArgumentDecoder& decoder, AssistedNode
         return false;
 
     if (!decoder.decode(result.isAutocorrect))
+        return false;
+
+    if (!decoder.decode(result.isRTL))
         return false;
 
     if (!decoder.decodeEnum(result.autocapitalizeType))

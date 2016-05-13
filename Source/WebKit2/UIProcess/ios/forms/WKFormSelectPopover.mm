@@ -122,11 +122,12 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
         currentIndex++;
     }
     
-    UITextWritingDirection writingDirection = UITextWritingDirectionLeftToRight;
+    UITextWritingDirection writingDirection = _contentView.assistedNodeInformation.isRTL ? UITextWritingDirectionRightToLeft : UITextWritingDirectionLeftToRight;
     BOOL override = NO;
-    // FIXME: retrieve from WebProcess writing direction and override.
     _textAlignment = (writingDirection == UITextWritingDirectionLeftToRight) ? NSTextAlignmentLeft : NSTextAlignmentRight;
     
+    if (writingDirection == UITextWritingDirectionRightToLeft)
+        self.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
     [self setTitle:stringWithWritingDirection(_contentView.assistedNodeInformation.title, writingDirection, override)];
     
     return self;
@@ -244,6 +245,7 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     if (!cell)
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:WKPopoverTableViewCellReuseIdentifier] autorelease];
     
+    cell.semanticContentAttribute = self.view.semanticContentAttribute;
     cell.textLabel.textAlignment = _textAlignment;
     
     if (_contentView.assistedNodeInformation.selectOptions.isEmpty()) {
