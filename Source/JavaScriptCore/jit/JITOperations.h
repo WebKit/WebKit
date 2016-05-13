@@ -45,7 +45,6 @@ class JSArray;
 class JSFunction;
 class JSLexicalEnvironment;
 class JSScope;
-class RegExpObject;
 class Register;
 class StructureStubInfo;
 class SymbolTable;
@@ -95,7 +94,6 @@ typedef char* UnusedPtr;
     Pc: Instruction* i.e. bytecode PC
     Q: int64_t
     R: Register
-    Reo: RegExpObject*
     S: size_t
     Sprt: SlowPathReturnType
     Ssi: StructureStubInfo*
@@ -130,13 +128,9 @@ typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJA)(ExecState*, EncodedJS
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJI)(ExecState*, EncodedJSValue, UniquedStringImpl*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJIdc)(ExecState*, EncodedJSValue, const Identifier*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
-typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJJAp)(ExecState*, EncodedJSValue, EncodedJSValue, ArrayProfile*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJJBy)(ExecState*, EncodedJSValue, EncodedJSValue, ByValInfo*);
-typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJssZ)(ExecState*, JSString*, int32_t);
-typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJssReo)(ExecState*, JSString*, RegExpObject*);
-typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJssReoJss)(ExecState*, JSString*, RegExpObject*, JSString*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJP)(ExecState*, EncodedJSValue, void*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EP)(ExecState*, void*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EPP)(ExecState*, void*, void*);

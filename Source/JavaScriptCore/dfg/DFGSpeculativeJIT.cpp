@@ -6678,18 +6678,13 @@ void SpeculativeJIT::speculateFinalObject(Edge edge)
     speculateCellType(edge, operand.gpr(), SpecFinalObject, FinalObjectType);
 }
 
-void SpeculativeJIT::speculateRegExpObject(Edge edge, GPRReg cell)
-{
-    speculateCellType(edge, cell, SpecRegExpObject, RegExpObjectType);
-}
-
 void SpeculativeJIT::speculateRegExpObject(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecRegExpObject))
         return;
     
     SpeculateCellOperand operand(this, edge);
-    speculateRegExpObject(edge, operand.gpr());
+    speculateCellType(edge, operand.gpr(), SpecRegExpObject, RegExpObjectType);
 }
 
 void SpeculativeJIT::speculateObjectOrOther(Edge edge)
