@@ -27,7 +27,6 @@
 #define WKCertificateInfoMac_h
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <Security/SecTrust.h>
 #include <WebKit/WKBase.h>
 
 #ifdef __cplusplus
@@ -35,9 +34,6 @@ extern "C" {
 #endif
 
 WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain);
-WK_EXPORT SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfo);
-
-// Deprecated
 WK_EXPORT CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfo);
 
 #ifdef __cplusplus

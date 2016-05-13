@@ -42,12 +42,3 @@ CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificate
 {
     return toImpl(certificateInfoRef)->certificateInfo().certificateChain();
 }
-
-SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfoRef)
-{
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    return toImpl(certificateInfoRef)->certificateInfo().trust();
-#else
-    return nullptr;
-#endif
-}

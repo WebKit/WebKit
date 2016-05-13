@@ -29,59 +29,28 @@
 #include "PlatformExportMacros.h"
 #include <wtf/RetainPtr.h>
 
-#if HAVE(SEC_TRUST_SERIALIZATION)
-#include <Security/SecTrust.h>
-#endif
-
 namespace WebCore {
 
 class CertificateInfo {
 public:
-     CertificateInfo() = default;
- 
-    enum class Type {
-        None,
-        CertificateChain,
-#if HAVE(SEC_TRUST_SERIALIZATION)
-        Trust,
-#endif
-    };
+    CertificateInfo() { }
+    CertificateInfo(RetainPtr<CFArrayRef> certificateChain)
+        : m_certificateChain(certificateChain)
+    { }
 
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    explicit CertificateInfo(RetainPtr<SecTrustRef>&& trust)
-        : m_trust(WTFMove(trust))
-    {
-    }
- 
-    SecTrustRef trust() const { return m_trust.get(); }
-#endif
+    void setCertificateChain(CFArrayRef certificateChain) { m_certificateChain = certificateChain; }
+    CFArrayRef certificateChain() const { return m_certificateChain.get(); }
 
-    CertificateInfo(RetainPtr<CFArrayRef>&& certificateChain)
-        : m_certificateChain(WTFMove(certificateChain))
-    {
-    }
-
-    WEBCORE_EXPORT CFArrayRef certificateChain() const;
-
-    WEBCORE_EXPORT Type type() const;
     WEBCORE_EXPORT bool containsNonRootSHA1SignedCertificate() const;
-
-    bool isEmpty() const { return type() == Type::None; }
-
-#if PLATFORM(COCOA)
-    static RetainPtr<CFArrayRef> certificateChainFromSecTrust(SecTrustRef);
-#endif
 
 #ifndef NDEBUG
     void dump() const;
 #endif
 
 private:
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    RetainPtr<SecTrustRef> m_trust;
-#endif
-    mutable RetainPtr<CFArrayRef> m_certificateChain;
+    RetainPtr<CFArrayRef> m_certificateChain;
 };
 
 }
+
 #endif
