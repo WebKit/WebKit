@@ -1,3 +1,17 @@
+2016-05-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Can't filter Rendering Frames by duration
+        https://bugs.webkit.org/show_bug.cgi?id=157654
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.prototype._scopeBarSelectionDidChange):
+        Call filterDidChange on the grid, not the base class.
+        TimelineView.filterDidChange exists to let TimelineViews perform
+        additional work when the grid filter changes (see LayoutTimelineView).
+        (WebInspector.RenderingFrameTimelineView):
+
 2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Deleting nodes in DOM Tree sometimes changes selection to parent instead of sibling
