@@ -1,3 +1,21 @@
+2016-05-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        VideoSinkGStreamer: plug a GstBuffer leak in webkitVideoSinkRequestRender()
+        https://bugs.webkit.org/show_bug.cgi?id=157617
+
+        Reviewed by Darin Adler.
+
+        Unref the newly-created GstBuffer object after creating the new GstSample
+        that's based on it. gst_sample_new() doesn't take the ownership of it.
+
+        Also, don't unref the GstBuffer object that's passed in to the
+        webkitVideoSinkRequestRender() function in case the allocation of the
+        replacement buffer fails. We don't have any ownership over that buffer
+        and it's not unreffed anywhere else in this function.
+
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkRequestRender):
+
 2016-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Text shadow sometimes clipped unexpectedly
