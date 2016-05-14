@@ -1,3 +1,17 @@
+2016-05-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r200894.
+        https://bugs.webkit.org/show_bug.cgi?id=157695
+
+        This change broke the iOS build (Requested by ryanhaddad on
+        #webkit).
+
+        Reverted changeset:
+
+        "Remove unused initializer for WebEvent on iOS."
+        https://bugs.webkit.org/show_bug.cgi?id=157689
+        http://trac.webkit.org/changeset/200894
+
 2016-05-13  Enrica Casucci  <enrica@apple.com>
 
         Remove unused initializer for WebEvent on iOS.
