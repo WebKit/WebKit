@@ -1493,7 +1493,12 @@ double DOMWindow::devicePixelRatio() const
     return page->deviceScaleFactor();
 }
 
-void DOMWindow::scrollBy(int x, int y) const
+void DOMWindow::scrollBy(const ScrollToOptions& options) const
+{
+    return scrollBy(options.left.valueOr(0), options.top.valueOr(0));
+}
+
+void DOMWindow::scrollBy(double x, double y) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -1504,11 +1509,26 @@ void DOMWindow::scrollBy(int x, int y) const
     if (!view)
         return;
 
+    // Normalize non-finite values (https://drafts.csswg.org/cssom-view/#normalize-non-finite-values).
+    x = std::isfinite(x) ? x : 0;
+    y = std::isfinite(y) ? y : 0;
+
     IntSize scaledOffset(view->mapFromCSSToLayoutUnits(x), view->mapFromCSSToLayoutUnits(y));
     view->setContentsScrollPosition(view->contentsScrollPosition() + scaledOffset);
 }
 
-void DOMWindow::scrollTo(int x, int y) const
+void DOMWindow::scrollTo(const ScrollToOptions& options) const
+{
+    RefPtr<FrameView> view = m_frame->view();
+    if (!view)
+        return;
+
+    double x = options.left ? options.left.value() : view->contentsScrollPosition().x();
+    double y = options.top ? options.top.value() : view->contentsScrollPosition().y();
+    return scrollTo(x, y);
+}
+
+void DOMWindow::scrollTo(double x, double y) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -1516,6 +1536,10 @@ void DOMWindow::scrollTo(int x, int y) const
     RefPtr<FrameView> view = m_frame->view();
     if (!view)
         return;
+
+    // Normalize non-finite values (https://drafts.csswg.org/cssom-view/#normalize-non-finite-values).
+    x = std::isfinite(x) ? x : 0;
+    y = std::isfinite(y) ? y : 0;
 
     if (!x && !y && view->contentsScrollPosition() == IntPoint(0, 0))
         return;

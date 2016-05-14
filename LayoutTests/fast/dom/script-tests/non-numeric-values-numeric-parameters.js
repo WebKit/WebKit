@@ -344,11 +344,11 @@ shouldBe("nonNumericPolicy('document.createEvent(\"UIEvent\").initUIEvent(\"a\",
 // Window
 
 shouldBe("nonNumericPolicy('window.scrollBy(x, 0)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('window.scrollBy(0, x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('window.scrollBy(0, x)')", "'any type allowed (but not omitted)'");
 shouldBe("nonNumericPolicy('window.scrollTo(x, 0)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('window.scrollTo(0, x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('window.scrollTo(0, x)')", "'any type allowed (but not omitted)'");
 shouldBe("nonNumericPolicy('window.scroll(x, 0)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('window.scroll(0, x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('window.scroll(0, x)')", "'any type allowed (but not omitted)'");
 shouldBe("nonNumericPolicy('window.moveBy(x, 0)')", "'any type allowed'");
 shouldBe("nonNumericPolicy('window.moveBy(0, x)')", "'any type allowed'");
 shouldBe("nonNumericPolicy('window.moveTo(x, 0)')", "'any type allowed'");

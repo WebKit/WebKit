@@ -32,7 +32,7 @@ namespace WebCore {
 
 enum class ShouldAllowNonFinite { No, Yes };
 
-template<typename T> struct Converter;
+template<typename T, typename Enable = void> struct Converter;
 
 template<typename T> T convert(JSC::ExecState&, JSC::JSValue);
 template<typename T> T convert(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration);
@@ -40,6 +40,9 @@ template<typename T> T convert(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFini
 
 template<typename T> typename Converter<T>::OptionalValue convertOptional(JSC::ExecState&, JSC::JSValue);
 template<typename T, typename U> T convertOptional(JSC::ExecState&, JSC::JSValue, U&& defaultValue);
+
+template<typename T> typename Converter<T>::OptionalValue convertOptional(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite);
+template<typename T, typename U> T convertOptional(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite, U&& defaultValue);
 
 // This is where the implementation of the things declared above begins:
 
@@ -56,10 +59,7 @@ template<typename T> T convert(JSC::ExecState& state, JSC::JSValue value, Intege
 template<typename T> inline T convert(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow)
 {
     static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value, "ShouldAllowNonFinite can only be used with float or double");
-    double number = value.toNumber(&state);
-    if (allow == ShouldAllowNonFinite::No && UNLIKELY(!std::isfinite(number)))
-        throwNonFiniteTypeError(state);
-    return static_cast<T>(number);
+    return Converter<T>::convert(state, value, allow);
 }
 
 template<typename T> typename Converter<T>::OptionalValue inline convertOptional(JSC::ExecState& state, JSC::JSValue value)
@@ -72,11 +72,21 @@ template<typename T, typename U> inline T convertOptional(JSC::ExecState& state,
     return value.isUndefined() ? std::forward<U>(defaultValue) : convert<T>(state, value);
 }
 
+template<typename T> typename Converter<T>::OptionalValue inline convertOptional(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow)
+{
+    return value.isUndefined() ? typename Converter<T>::OptionalValue() : convert<T>(state, value, allow);
+}
+
+template<typename T, typename U> inline T convertOptional(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow, U&& defaultValue)
+{
+    return value.isUndefined() ? std::forward<U>(defaultValue) : convert<T>(state, value, allow);
+}
+
 template<typename T> struct DefaultConverter {
     using OptionalValue = Optional<T>;
 };
 
-template<typename T> struct Converter : DefaultConverter<T> {
+template<typename T, typename Enable> struct Converter : DefaultConverter<T> {
 };
 
 template<> struct Converter<bool> : DefaultConverter<bool> {
@@ -225,6 +235,16 @@ template<> struct Converter<uint64_t> : DefaultConverter<uint64_t> {
             return toUInt64Clamp(state, value);
         }
         return toUInt64(state, value);
+    }
+};
+
+template<typename T> struct Converter<T, typename std::enable_if<std::is_floating_point<T>::value>::type> : DefaultConverter<T> {
+    static T convert(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow)
+    {
+        double number = value.toNumber(&state);
+        if (allow == ShouldAllowNonFinite::No && UNLIKELY(!std::isfinite(number)))
+            throwNonFiniteTypeError(state);
+        return static_cast<T>(number);
     }
 };
 

@@ -248,9 +248,15 @@ namespace WebCore {
         void postMessageTimerFired(PostMessageTimer&);
         void dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event&, PassRefPtr<Inspector::ScriptCallStack>);
 
-        void scrollBy(int x, int y) const;
-        void scrollTo(int x, int y) const;
-        void scroll(int x, int y) const { scrollTo(x, y); }
+        struct ScrollToOptions {
+            Optional<double> left;
+            Optional<double> top;
+        };
+
+        void scrollBy(const ScrollToOptions&) const;
+        void scrollBy(double x, double y) const;
+        void scrollTo(const ScrollToOptions&) const;
+        void scrollTo(double x, double y) const;
 
         void moveBy(float x, float y) const;
         void moveTo(float x, float y) const;

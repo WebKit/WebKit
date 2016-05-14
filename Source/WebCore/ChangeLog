@@ -1,3 +1,55 @@
+2016-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Align window.scroll() / scrollTo() / scrollBy() with the CSSOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=157666
+
+        Reviewed by Darin Adler.
+
+        Align window.scroll() / scrollTo() / scrollBy() with Firefox and the CSSOM
+        specification:
+        https://drafts.csswg.org/cssom-view/#extensions-to-the-window-interface
+
+        In particular, the following changes were made:
+        1. Make parameters to scroll() / scrollTo() / scrollBy() mandatory.
+        2. Add overloads for scroll() / scrollTo() / scrollBy() that take an
+           optional ScrollToOptions dictionary.
+        3. Update API to use "unrestricted double" typing for x/y instead of
+           "long". This matches the specification but it does not really change
+           our behavior at this point because the values are still casted to
+           int in our implementation.
+
+        Web-Exposed behavior changes:
+        1. JS can now pass a dictionary to scroll() / scrollTo() / scrollBy().
+           This a new feature that Firefox already supports (Chrome does not).
+        2. Passing only 1 parameter to scroll() / scrollTo() / scrollBy() that
+           is not a dictionary will now throw a TypeError. The compatibility
+           risky should be low because Firefox and Chrome already throw in this
+           case (Chrome has been throwing for 2 years and a half).
+        3. Calling scrollTo() / scroll() without any parameter no longer
+           scrolls to 0. Instead we use the current viewport's x/y which means
+           we don't scroll at all. The new behavior matches Firefox, Chrome and
+           IE 11. This fixes scrolling on the following Website:
+           https://members.chosun.com/cms_subscribe/application/index.jsp
+
+        No new tests, extended existing testing.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::convert):
+        (WebCore::convertOptional):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldAllowNonFiniteForFloatingPointType):
+        (GenerateConversionRuleWithLeadingComma):
+        (GenerateDictionaryImplementationContent):
+        (JSValueToNative):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convert<TestObj::Dictionary>):
+        * bindings/scripts/test/TestObj.idl:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollBy):
+        (WebCore::DOMWindow::scrollTo):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2016-05-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r200894.

@@ -455,7 +455,7 @@ template<> inline const char* expectedEnumerationValues<TestObj::Confidence>()
 template<> TestObj::Dictionary convert<TestObj::Dictionary>(ExecState& state, JSValue value)
 {
     if (value.isUndefinedOrNull())
-        return { { }, TestObj::EnumType::EnumValue1, TestObj::EnumType::EmptyString, "defaultString", { }, false, { }, { } };
+        return { { }, TestObj::EnumType::EnumValue1, TestObj::EnumType::EmptyString, "defaultString", { }, false, { }, { }, { }, { }, 0, 0, { }, { }, 0, 0 };
     auto* object = value.getObject();
     if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
         throwTypeError(&state);
@@ -483,7 +483,31 @@ template<> TestObj::Dictionary convert<TestObj::Dictionary>(ExecState& state, JS
     if (UNLIKELY(state.hadException()))
         return { };
     auto sequenceOfStrings = convertOptional<Vector<String>>(state, object->get(&state, Identifier::fromString(&state, "sequenceOfStrings")));
-    return { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings) };
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto restrictedDouble = convertOptional<double>(state, object->get(&state, Identifier::fromString(&state, "restrictedDouble")), ShouldAllowNonFinite::No);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto unrestrictedDouble = convertOptional<double>(state, object->get(&state, Identifier::fromString(&state, "unrestrictedDouble")), ShouldAllowNonFinite::Yes);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto restrictedDoubleWithDefault = convertOptional<double>(state, object->get(&state, Identifier::fromString(&state, "restrictedDoubleWithDefault")), ShouldAllowNonFinite::No, 0);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto unrestrictedDoubleWithDefault = convertOptional<double>(state, object->get(&state, Identifier::fromString(&state, "unrestrictedDoubleWithDefault")), ShouldAllowNonFinite::Yes, 0);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto restrictedFloat = convertOptional<float>(state, object->get(&state, Identifier::fromString(&state, "restrictedFloat")), ShouldAllowNonFinite::No);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto unrestrictedFloat = convertOptional<float>(state, object->get(&state, Identifier::fromString(&state, "unrestrictedFloat")), ShouldAllowNonFinite::Yes);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto restrictedFloatWithDefault = convertOptional<float>(state, object->get(&state, Identifier::fromString(&state, "restrictedFloatWithDefault")), ShouldAllowNonFinite::No, 0);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto unrestrictedFloatWithDefault = convertOptional<float>(state, object->get(&state, Identifier::fromString(&state, "unrestrictedFloatWithDefault")), ShouldAllowNonFinite::Yes, 0);
+    return { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings), WTFMove(restrictedDouble), WTFMove(unrestrictedDouble), WTFMove(restrictedDoubleWithDefault), WTFMove(unrestrictedDoubleWithDefault), WTFMove(restrictedFloat), WTFMove(unrestrictedFloat), WTFMove(restrictedFloatWithDefault), WTFMove(unrestrictedFloatWithDefault) };
 }
 
 template<> TestObj::DictionaryThatShouldNotTolerateNull convert<TestObj::DictionaryThatShouldNotTolerateNull>(ExecState& state, JSValue value)

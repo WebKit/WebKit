@@ -391,6 +391,14 @@ dictionary TestDictionary {
     boolean booleanWithDefault = false;
     boolean booleanWithoutDefault;
     sequence<DOMString> sequenceOfStrings;
+    double restrictedDouble;
+    unrestricted double unrestrictedDouble;
+    double restrictedDoubleWithDefault = 0;
+    unrestricted double unrestrictedDoubleWithDefault = 0;
+    float restrictedFloat;
+    unrestricted float unrestrictedFloat;
+    float restrictedFloatWithDefault = 0;
+    unrestricted float unrestrictedFloatWithDefault = 0;
 };
 
 dictionary TestDictionaryThatShouldNotTolerateNull {

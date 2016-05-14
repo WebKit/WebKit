@@ -1,3 +1,17 @@
+2016-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Align window.scroll() / scrollTo() / scrollBy() with the CSSOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=157666
+
+        Reviewed by Darin Adler.
+
+        Update / improve testing coverage for the API.
+
+        * fast/dom/Window/window-scroll-arguments-expected.txt:
+        * fast/dom/Window/window-scroll-arguments.html:
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+
 2016-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         cross-fade() rendering doesn't match expectation
