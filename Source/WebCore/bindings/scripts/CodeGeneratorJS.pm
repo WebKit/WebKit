@@ -973,7 +973,7 @@ sub GenerateConversionRuleWithLeadingComma
     if ($codeGenerator->IsFloatingPointType($member->type)) {
         return ", " . (ShouldAllowNonFiniteForFloatingPointType($member->type) ? "ShouldAllowNonFinite::Yes" : "ShouldAllowNonFinite::No");
     }
-    # FIXME: Add support for integer types.
+    return ", " . GetIntegerConversionConfiguration($member) if $codeGenerator->IsIntegerType($member->type);
     return "";
 }
 
@@ -4384,7 +4384,7 @@ sub IsNativeType
     return exists $nativeType{$type};
 }
 
-sub GetIntegerConversionType
+sub GetIntegerConversionConfiguration
 {
     my $signature = shift;
 
@@ -4402,7 +4402,7 @@ sub JSValueToNative
 
     if ($codeGenerator->IsIntegerType($type)) {
         my $nativeType = GetNativeType($interface, $type);
-        my $conversionType = GetIntegerConversionType($signature);
+        my $conversionType = GetIntegerConversionConfiguration($signature);
         AddToImplIncludes("JSDOMConvert.h");
         return ("convert<$nativeType>(*state, $value, $conversionType)", 1);
     }

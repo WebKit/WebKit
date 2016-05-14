@@ -32,17 +32,22 @@ namespace WebCore {
 
 enum class ShouldAllowNonFinite { No, Yes };
 
+template<typename T, typename U = T> using EnableIfIntegralType = typename std::enable_if<std::is_integral<T>::value, U>::type;
+template<typename T, typename U = T> using EnableIfFloatingPointType = typename std::enable_if<std::is_floating_point<T>::value, U>::type;
+
 template<typename T, typename Enable = void> struct Converter;
 
 template<typename T> T convert(JSC::ExecState&, JSC::JSValue);
-template<typename T> T convert(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration);
-template<typename T> T convert(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite);
+template<typename T> EnableIfIntegralType<T> convert(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration);
+template<typename T> EnableIfFloatingPointType<T> convert(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite);
 
 template<typename T> typename Converter<T>::OptionalValue convertOptional(JSC::ExecState&, JSC::JSValue);
 template<typename T, typename U> T convertOptional(JSC::ExecState&, JSC::JSValue, U&& defaultValue);
 
-template<typename T> typename Converter<T>::OptionalValue convertOptional(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite);
-template<typename T, typename U> T convertOptional(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite, U&& defaultValue);
+template<typename T> EnableIfIntegralType<T, Optional<T>> convertOptional(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration);
+template<typename T> EnableIfFloatingPointType<T, Optional<T>> convertOptional(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite);
+template<typename T, typename U> EnableIfIntegralType<T> convertOptional(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration, U&& defaultValue);
+template<typename T, typename U> EnableIfFloatingPointType<T> convertOptional(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite, U&& defaultValue);
 
 // This is where the implementation of the things declared above begins:
 
@@ -51,18 +56,17 @@ template<typename T> T convert(JSC::ExecState& state, JSC::JSValue value)
     return Converter<T>::convert(state, value);
 }
 
-template<typename T> T convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+template<typename T> inline EnableIfIntegralType<T> convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
 {
     return Converter<T>::convert(state, value, configuration);
 }
 
-template<typename T> inline T convert(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow)
+template<typename T> inline EnableIfFloatingPointType<T> convert(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow)
 {
-    static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value, "ShouldAllowNonFinite can only be used with float or double");
     return Converter<T>::convert(state, value, allow);
 }
 
-template<typename T> typename Converter<T>::OptionalValue inline convertOptional(JSC::ExecState& state, JSC::JSValue value)
+template<typename T> inline typename Converter<T>::OptionalValue convertOptional(JSC::ExecState& state, JSC::JSValue value)
 {
     return value.isUndefined() ? typename Converter<T>::OptionalValue() : convert<T>(state, value);
 }
@@ -72,14 +76,24 @@ template<typename T, typename U> inline T convertOptional(JSC::ExecState& state,
     return value.isUndefined() ? std::forward<U>(defaultValue) : convert<T>(state, value);
 }
 
-template<typename T> typename Converter<T>::OptionalValue inline convertOptional(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow)
+template<typename T> inline EnableIfFloatingPointType<T, Optional<T>> convertOptional(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow)
 {
-    return value.isUndefined() ? typename Converter<T>::OptionalValue() : convert<T>(state, value, allow);
+    return value.isUndefined() ? Optional<T>() : convert<T>(state, value, allow);
 }
 
-template<typename T, typename U> inline T convertOptional(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow, U&& defaultValue)
+template<typename T, typename U> inline EnableIfFloatingPointType<T> convertOptional(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow, U&& defaultValue)
 {
     return value.isUndefined() ? std::forward<U>(defaultValue) : convert<T>(state, value, allow);
+}
+
+template<typename T> inline EnableIfIntegralType<T, Optional<T>> convertOptional(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+{
+    return value.isUndefined() ? Optional<T>() : convert<T>(state, value, configuration);
+}
+
+template<typename T, typename U> inline EnableIfIntegralType<T> convertOptional(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration, U&& defaultValue)
+{
+    return value.isUndefined() ? std::forward<U>(defaultValue) : convert<T>(state, value, configuration);
 }
 
 template<typename T> struct DefaultConverter {

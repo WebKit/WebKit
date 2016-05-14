@@ -681,6 +681,7 @@ sub parseDictionaryMember
             $self->assertTokenValue($self->getToken(), "required", __LINE__);
             $member->isOptional(0);
         }
+        $member->extendedAttributes($extendedAttributeList);
         $member->type($self->parseType());
         my $nameToken = $self->getToken();
         $self->assertTokenType($nameToken, IdentifierToken);

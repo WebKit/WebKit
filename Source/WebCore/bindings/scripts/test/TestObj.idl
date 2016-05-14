@@ -399,6 +399,18 @@ dictionary TestDictionary {
     unrestricted float unrestrictedFloat;
     float restrictedFloatWithDefault = 0;
     unrestricted float unrestrictedFloatWithDefault = 0;
+    [Clamp] byte smallIntegerClamped;
+    byte smallIntegerWithDefault;
+    [EnforceRange] octet smallUnsignedIntegerEnforcedRange;
+    octet smallUnsignedIntegerWithDefault = 0;
+    long integer;
+    long integerWithDefault = 0;
+    unsigned long unsignedInteger;
+    unsigned long unsignedIntegerWithDefault = 0;
+    long long largeInteger;
+    long long largeIntegerWithDefault = 0;
+    unsigned long long unsignedLargeInteger;
+    unsigned long long unsignedLargeIntegerWithDefault = 0;
 };
 
 dictionary TestDictionaryThatShouldNotTolerateNull {

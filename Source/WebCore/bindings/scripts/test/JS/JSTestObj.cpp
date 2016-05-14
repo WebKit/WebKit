@@ -455,7 +455,7 @@ template<> inline const char* expectedEnumerationValues<TestObj::Confidence>()
 template<> TestObj::Dictionary convert<TestObj::Dictionary>(ExecState& state, JSValue value)
 {
     if (value.isUndefinedOrNull())
-        return { { }, TestObj::EnumType::EnumValue1, TestObj::EnumType::EmptyString, "defaultString", { }, false, { }, { }, { }, { }, 0, 0, { }, { }, 0, 0 };
+        return { { }, TestObj::EnumType::EnumValue1, TestObj::EnumType::EmptyString, "defaultString", { }, false, { }, { }, { }, { }, 0, 0, { }, { }, 0, 0, { }, { }, { }, 0, { }, 0, { }, 0, { }, 0, { }, 0 };
     auto* object = value.getObject();
     if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
         throwTypeError(&state);
@@ -507,7 +507,43 @@ template<> TestObj::Dictionary convert<TestObj::Dictionary>(ExecState& state, JS
     if (UNLIKELY(state.hadException()))
         return { };
     auto unrestrictedFloatWithDefault = convertOptional<float>(state, object->get(&state, Identifier::fromString(&state, "unrestrictedFloatWithDefault")), ShouldAllowNonFinite::Yes, 0);
-    return { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings), WTFMove(restrictedDouble), WTFMove(unrestrictedDouble), WTFMove(restrictedDoubleWithDefault), WTFMove(unrestrictedDoubleWithDefault), WTFMove(restrictedFloat), WTFMove(unrestrictedFloat), WTFMove(restrictedFloatWithDefault), WTFMove(unrestrictedFloatWithDefault) };
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto smallIntegerClamped = convertOptional<int8_t>(state, object->get(&state, Identifier::fromString(&state, "smallIntegerClamped")), Clamp);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto smallIntegerWithDefault = convertOptional<int8_t>(state, object->get(&state, Identifier::fromString(&state, "smallIntegerWithDefault")), NormalConversion);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto smallUnsignedIntegerEnforcedRange = convertOptional<uint8_t>(state, object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerEnforcedRange")), EnforceRange);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto smallUnsignedIntegerWithDefault = convertOptional<uint8_t>(state, object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerWithDefault")), NormalConversion, 0);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto integer = convertOptional<int32_t>(state, object->get(&state, Identifier::fromString(&state, "integer")), NormalConversion);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto integerWithDefault = convertOptional<int32_t>(state, object->get(&state, Identifier::fromString(&state, "integerWithDefault")), NormalConversion, 0);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto unsignedInteger = convertOptional<uint32_t>(state, object->get(&state, Identifier::fromString(&state, "unsignedInteger")), NormalConversion);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto unsignedIntegerWithDefault = convertOptional<uint32_t>(state, object->get(&state, Identifier::fromString(&state, "unsignedIntegerWithDefault")), NormalConversion, 0);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto largeInteger = convertOptional<int64_t>(state, object->get(&state, Identifier::fromString(&state, "largeInteger")), NormalConversion);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto largeIntegerWithDefault = convertOptional<int64_t>(state, object->get(&state, Identifier::fromString(&state, "largeIntegerWithDefault")), NormalConversion, 0);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto unsignedLargeInteger = convertOptional<uint64_t>(state, object->get(&state, Identifier::fromString(&state, "unsignedLargeInteger")), NormalConversion);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto unsignedLargeIntegerWithDefault = convertOptional<uint64_t>(state, object->get(&state, Identifier::fromString(&state, "unsignedLargeIntegerWithDefault")), NormalConversion, 0);
+    return { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings), WTFMove(restrictedDouble), WTFMove(unrestrictedDouble), WTFMove(restrictedDoubleWithDefault), WTFMove(unrestrictedDoubleWithDefault), WTFMove(restrictedFloat), WTFMove(unrestrictedFloat), WTFMove(restrictedFloatWithDefault), WTFMove(unrestrictedFloatWithDefault), WTFMove(smallIntegerClamped), WTFMove(smallIntegerWithDefault), WTFMove(smallUnsignedIntegerEnforcedRange), WTFMove(smallUnsignedIntegerWithDefault), WTFMove(integer), WTFMove(integerWithDefault), WTFMove(unsignedInteger), WTFMove(unsignedIntegerWithDefault), WTFMove(largeInteger), WTFMove(largeIntegerWithDefault), WTFMove(unsignedLargeInteger), WTFMove(unsignedLargeIntegerWithDefault) };
 }
 
 template<> TestObj::DictionaryThatShouldNotTolerateNull convert<TestObj::DictionaryThatShouldNotTolerateNull>(ExecState& state, JSValue value)

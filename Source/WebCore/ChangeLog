@@ -1,5 +1,42 @@
 2016-05-14  Chris Dumez  <cdumez@apple.com>
 
+        [WebIDL] Add support for dictionary members of integer types
+        https://bugs.webkit.org/show_bug.cgi?id=157703
+
+        Reviewed by Darin Adler.
+
+        Add support for dictionary members of integer types, including support
+        for the [Clamp] and [EnforceRange] IDL extended attributes on such
+        members.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::convert):
+        (WebCore::convertOptional):
+        - Add the needed template specializations so we can use convertOptional()
+          with integral types.
+        - Use std::enable_if so the template specializations meants to be used
+          for floating point types or integral types can only be instantiated
+          for such types.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConversionRuleWithLeadingComma):
+        (GetIntegerConversionConfiguration):
+        (JSValueToNative):
+        Generate the right IntegerConversionConfiguration parameter for convert()
+        and convertOptional() when converting dictionary members of integral
+        types
+
+        * bindings/scripts/IDLParser.pm:
+        (parseDictionaryMember):
+        Fix bug in the IDL parser where we weren't initializing the extended
+        attributes for dictionary members.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/TestObj.idl:
+        Add bindings tests coverage.
+
+2016-05-14  Chris Dumez  <cdumez@apple.com>
+
         Allocate MacGlyphToPathTranslator / CairoGlyphToPathTranslator on the stack
         https://bugs.webkit.org/show_bug.cgi?id=157690
 
