@@ -1,5 +1,20 @@
 2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        v3 UI shows full git hash instead of the first 8 characters for a blame range
+        https://bugs.webkit.org/show_bug.cgi?id=157691
+
+        Reviewed by Stephanie Lewis.
+
+        Fixed the bug that v3 UI shows the full 40 character git hash instead of the first 8 character as done in v2 UI.
+
+        * public/v3/models/commit-log.js:
+        (CommitLog.prototype.diff): Fixed the bug.
+        * tools/run-tests.py:
+        (main): Add the support for running a subset of tests as mocha does.
+        * unit-tests/commit-log-tests.js: Added.
+
+2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed. Added the missing executable bits.
 
         * tools/bundle-v3-scripts.py: Added property svn:executable.

@@ -60,7 +60,7 @@ class CommitLog extends DataModelObject {
             from = parseInt(from) + 1;
             label = `r${from}-r${this.revision()}`;
         } else if (to.length == 40) { // e.g. git hash
-            label = `${from}..${to}`;
+            label = `${from.substring(0, 8)}..${to.substring(0, 8)}`;
         } else
             label = `${from} - ${to}`;
 

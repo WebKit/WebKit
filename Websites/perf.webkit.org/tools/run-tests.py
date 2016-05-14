@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import sys
 
 
 def main():
@@ -17,7 +18,8 @@ def main():
             subprocess.call(['npm', 'install', package_name])
 
     mocha_path = os.path.join(node_modules_dir, 'mocha/bin/mocha')
-    return subprocess.call([mocha_path, 'unit-tests', 'server-tests'])
+    test_paths = sys.argv[1:] or ['unit-tests', 'server-tests']
+    return subprocess.call([mocha_path] + test_paths)
 
 if __name__ == "__main__":
     main()
