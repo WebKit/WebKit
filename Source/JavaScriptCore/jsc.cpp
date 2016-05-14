@@ -1848,15 +1848,17 @@ EncodedJSValue JSC_HOST_CALL functionGenerateHeapSnapshot(ExecState* exec)
 #if ENABLE(SAMPLING_PROFILER)
 EncodedJSValue JSC_HOST_CALL functionStartSamplingProfiler(ExecState* exec)
 {
-    exec->vm().ensureSamplingProfiler(WTF::Stopwatch::create());
-    exec->vm().samplingProfiler()->noticeCurrentThreadAsJSCExecutionThread();
-    exec->vm().samplingProfiler()->start();
+    SamplingProfiler& samplingProfiler = exec->vm().ensureSamplingProfiler(WTF::Stopwatch::create());
+    samplingProfiler.noticeCurrentThreadAsJSCExecutionThread();
+    samplingProfiler.start();
     return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState* exec)
 {
-    RELEASE_ASSERT(exec->vm().samplingProfiler());
+    if (!exec->vm().samplingProfiler())
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Sampling profiler was never started"))));
+
     String jsonString = exec->vm().samplingProfiler()->stackTracesAsJSON();
     EncodedJSValue result = JSValue::encode(JSONParse(exec, jsonString));
     RELEASE_ASSERT(!exec->hadException());

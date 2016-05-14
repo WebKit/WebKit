@@ -453,10 +453,11 @@ HeapProfiler& VM::ensureHeapProfiler()
 }
 
 #if ENABLE(SAMPLING_PROFILER)
-void VM::ensureSamplingProfiler(RefPtr<Stopwatch>&& stopwatch)
+SamplingProfiler& VM::ensureSamplingProfiler(RefPtr<Stopwatch>&& stopwatch)
 {
     if (!m_samplingProfiler)
         m_samplingProfiler = adoptRef(new SamplingProfiler(*this, WTFMove(stopwatch)));
+    return *m_samplingProfiler;
 }
 #endif // ENABLE(SAMPLING_PROFILER)
 

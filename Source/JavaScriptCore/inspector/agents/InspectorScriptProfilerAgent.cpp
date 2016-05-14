@@ -67,11 +67,9 @@ void InspectorScriptProfilerAgent::startTracking(ErrorString&, const bool* inclu
 #if ENABLE(SAMPLING_PROFILER)
     if (includeSamples && *includeSamples) {
         VM& vm = m_environment.scriptDebugServer().vm();
-        vm.ensureSamplingProfiler(m_environment.executionStopwatch());
+        SamplingProfiler& samplingProfiler = vm.ensureSamplingProfiler(m_environment.executionStopwatch());
 
-        SamplingProfiler& samplingProfiler = *vm.samplingProfiler();
         LockHolder locker(samplingProfiler.getLock());
-
         samplingProfiler.setStopWatch(locker, m_environment.executionStopwatch());
         samplingProfiler.noticeCurrentThreadAsJSCExecutionThread(locker);
         samplingProfiler.start(locker);

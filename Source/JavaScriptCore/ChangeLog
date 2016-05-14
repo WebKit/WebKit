@@ -1,3 +1,22 @@
+2016-05-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        jsc: samplingProfilerStackTraces() without starting sampling should not cause jsc to crash
+        https://bugs.webkit.org/show_bug.cgi?id=157704
+
+        Reviewed by Saam Barati.
+
+        * jsc.cpp:
+        (functionStartSamplingProfiler):
+        (functionSamplingProfilerStackTraces):
+        Throw an exception instead of crashing if we haven't started sampling.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::startTracking):
+        * runtime/VM.h:
+        * runtime/VM.cpp:
+        (JSC::VM::ensureSamplingProfiler):
+        Switch ensure to returning a reference, like most other ensures.
+
 2016-05-13  Saam barati  <sbarati@apple.com>
 
         DFG/FTL have a few bugs in their reasoning about the scope
