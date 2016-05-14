@@ -1,3 +1,28 @@
+2016-05-13  Sam Weinig  <sam@webkit.org>
+
+        ScriptController::processingUserGesture should propagate across postMessage boundaries
+        <rdar://problem/26273173>
+        https://bugs.webkit.org/show_bug.cgi?id=157686
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/dom/Window/post-message-user-action.html
+
+        * dom/UserGestureIndicator.h:
+        Export processingUserGesture() for testing.
+
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer):
+        (WebCore::PostMessageTimer::event):
+        Maintain the processingUserGesture bit through postMessage.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setResourceTimingSupport):
+        (WebCore::Internals::isProcessingUserGesture):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add new internals function to get the current state of the UseGestureIndicator for testing.
+
 2016-05-13  Chris Dumez  <cdumez@apple.com>
 
         Align window.scroll() / scrollTo() / scrollBy() with the CSSOM specification

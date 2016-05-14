@@ -483,6 +483,8 @@ public:
     void setWebGL2Enabled(bool);
 #endif
 
+    bool isProcessingUserGesture();
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

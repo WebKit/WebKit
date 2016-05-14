@@ -459,4 +459,6 @@ enum AutoFillButtonType {
 #endif
 
     void setResourceTimingSupport(boolean scalable);
+    
+    boolean isProcessingUserGesture();
 };

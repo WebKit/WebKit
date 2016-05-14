@@ -97,6 +97,7 @@
 #include "StyleResolver.h"
 #include "SuddenTermination.h"
 #include "URL.h"
+#include "UserGestureIndicator.h"
 #include "WebKitPoint.h"
 #include "WindowFeatures.h"
 #include "WindowFocusAllowedIndicator.h"
@@ -152,6 +153,7 @@ public:
         , m_channels(WTFMove(channels))
         , m_targetOrigin(WTFMove(targetOrigin))
         , m_stackTrace(stackTrace)
+        , m_wasProcessingUserGesture(UserGestureIndicator::processingUserGesture())
     {
     }
 
@@ -159,6 +161,7 @@ public:
     {
         return MessageEvent::create(MessagePort::entanglePorts(context, WTFMove(m_channels)), WTFMove(m_message), m_origin, { }, m_source.ptr());
     }
+
     SecurityOrigin* targetOrigin() const { return m_targetOrigin.get(); }
     ScriptCallStack* stackTrace() const { return m_stackTrace.get(); }
 
@@ -167,6 +170,8 @@ private:
     {
         // This object gets deleted when std::unique_ptr falls out of scope..
         std::unique_ptr<PostMessageTimer> timer(this);
+        
+        UserGestureIndicator userGestureIndicator(m_wasProcessingUserGesture ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         m_window->postMessageTimerFired(*timer);
     }
 
@@ -177,6 +182,7 @@ private:
     std::unique_ptr<MessagePortChannelArray> m_channels;
     RefPtr<SecurityOrigin> m_targetOrigin;
     RefPtr<ScriptCallStack> m_stackTrace;
+    bool m_wasProcessingUserGesture;
 };
 
 typedef HashCountedSet<DOMWindow*> DOMWindowSet;

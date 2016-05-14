@@ -1,3 +1,14 @@
+2016-05-13  Sam Weinig  <sam@webkit.org>
+
+        ScriptController::processingUserGesture should propagate across postMessage boundaries
+        <rdar://problem/26273173>
+        https://bugs.webkit.org/show_bug.cgi?id=157686
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/Window/post-message-user-action-expected.txt: Added.
+        * fast/dom/Window/post-message-user-action.html: Added.
+
 2016-05-13  Chris Dumez  <cdumez@apple.com>
 
         Align window.scroll() / scrollTo() / scrollBy() with the CSSOM specification
