@@ -1868,10 +1868,10 @@ bool ArgumentCoder<BlobPart>::decode(ArgumentDecoder& decoder, BlobPart& blobPar
         break;
     }
     case BlobPart::Blob: {
-        String url;
+        URL url;
         if (!decoder.decode(url))
             return false;
-        blobPart = BlobPart(URL(URL(), url));
+        blobPart = BlobPart(url);
         break;
     }
     default:

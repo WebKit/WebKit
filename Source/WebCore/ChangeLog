@@ -1,3 +1,27 @@
+2016-05-13  Chris Dumez  <cdumez@apple.com>
+
+        [NetworkCache] Avoid having to re-parse URLs after deserializing them
+        https://bugs.webkit.org/show_bug.cgi?id=157660
+
+        Reviewed by Darin Adler.
+
+        Avoid having to re-parse URLs after deserializing them in the WebKit2
+        network cache storage implementation.
+
+        We previously serialized URLs as Strings, which meant that we had the
+        re-parse them upon deserialization. We now serialize all of the URL
+        data members to avoid having to parse the String again.
+
+        * platform/URL.h:
+        (WebCore::URL::encode):
+        (WebCore::URL::decode):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::encodeWithoutPlatformData):
+        (WebCore::ResourceRequestBase::decodeWithoutPlatformData):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::encode):
+        (WebCore::ResourceResponseBase::decode):
+
 2016-05-13  Sam Weinig  <sam@webkit.org>
 
         ScriptController::processingUserGesture should propagate across postMessage boundaries

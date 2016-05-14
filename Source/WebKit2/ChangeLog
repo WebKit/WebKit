@@ -1,3 +1,23 @@
+2016-05-13  Chris Dumez  <cdumez@apple.com>
+
+        [NetworkCache] Avoid having to re-parse URLs after deserializing them
+        https://bugs.webkit.org/show_bug.cgi?id=157660
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::decode): Deleted.
+        * NetworkProcess/cache/NetworkCacheCoders.h:
+        Drop template specializations used by our network cache for encoding
+        / decoding URLs as Strings. This causes us to now rely on
+        URL::encode() / URL::decode() instead.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<BlobPart>::decode):
+        Fix bug in BlobPart encoding / decoding. It was encoding the url member
+        as a URL but decoding it as a String.
+
 2016-05-13  Dan Bernstein  <mitz@apple.com>
 
         Try to fix some non-iOS builds.

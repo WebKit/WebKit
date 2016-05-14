@@ -195,6 +195,9 @@ public:
 
     bool isSafeToSendToAnotherThread() const;
 
+    template <class Encoder> void encode(Encoder&) const;
+    template <class Decoder> static bool decode(Decoder&, URL&);
+
 private:
     WEBCORE_EXPORT void invalidate();
     static bool protocolIs(const String&, const char*);
@@ -224,6 +227,64 @@ private:
     int m_queryEnd;
     int m_fragmentEnd;
 };
+
+template <class Encoder>
+void URL::encode(Encoder& encoder) const
+{
+    encoder << m_string;
+    encoder << static_cast<bool>(m_isValid);
+    if (!m_isValid)
+        return;
+    encoder << static_cast<bool>(m_protocolIsInHTTPFamily);
+    encoder << m_schemeEnd;
+    encoder << m_userStart;
+    encoder << m_userEnd;
+    encoder << m_passwordEnd;
+    encoder << m_hostEnd;
+    encoder << m_portEnd;
+    encoder << m_pathAfterLastSlash;
+    encoder << m_pathEnd;
+    encoder << m_queryEnd;
+    encoder << m_fragmentEnd;
+}
+
+template <class Decoder>
+bool URL::decode(Decoder& decoder, URL& url)
+{
+    if (!decoder.decode(url.m_string))
+        return false;
+    bool isValid;
+    if (!decoder.decode(isValid))
+        return false;
+    url.m_isValid = isValid;
+    if (!isValid)
+        return true;
+    bool protocolIsInHTTPFamily;
+    if (!decoder.decode(protocolIsInHTTPFamily))
+        return false;
+    url.m_protocolIsInHTTPFamily = protocolIsInHTTPFamily;
+    if (!decoder.decode(url.m_schemeEnd))
+        return false;
+    if (!decoder.decode(url.m_userStart))
+        return false;
+    if (!decoder.decode(url.m_userEnd))
+        return false;
+    if (!decoder.decode(url.m_passwordEnd))
+        return false;
+    if (!decoder.decode(url.m_hostEnd))
+        return false;
+    if (!decoder.decode(url.m_portEnd))
+        return false;
+    if (!decoder.decode(url.m_pathAfterLastSlash))
+        return false;
+    if (!decoder.decode(url.m_pathEnd))
+        return false;
+    if (!decoder.decode(url.m_queryEnd))
+        return false;
+    if (!decoder.decode(url.m_fragmentEnd))
+        return false;
+    return true;
+}
 
 bool operator==(const URL&, const URL&);
 bool operator==(const URL&, const String&);

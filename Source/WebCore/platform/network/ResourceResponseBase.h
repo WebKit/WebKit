@@ -202,7 +202,7 @@ void ResourceResponseBase::encode(Encoder& encoder) const
         return;
     lazyInit(AllFields);
 
-    encoder << m_url.string();
+    encoder << m_url;
     encoder << m_mimeType;
     encoder << static_cast<int64_t>(m_expectedContentLength);
     encoder << m_textEncodingName;
@@ -227,10 +227,8 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
     if (responseIsNull)
         return true;
 
-    String url;
-    if (!decoder.decode(url))
+    if (!decoder.decode(response.m_url))
         return false;
-    response.m_url = URL(URL(), url);
     if (!decoder.decode(response.m_mimeType))
         return false;
     int64_t expectedContentLength;
