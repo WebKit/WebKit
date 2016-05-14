@@ -1,3 +1,20 @@
+2016-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Allocate MacGlyphToPathTranslator / CairoGlyphToPathTranslator on the stack
+        https://bugs.webkit.org/show_bug.cgi?id=157690
+
+        Reviewed by Myles C. Maxfield.
+
+        Allocate MacGlyphToPathTranslator / CairoGlyphToPathTranslator on the
+        stack. We also now use the subclass type for the local variable so it
+        will bypass the vtable for various virtual function calls (if the compiler
+        was not already smart enough to figure this out).
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::FontCascade::dashesForIntersectionsWithRect):
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::dashesForIntersectionsWithRect):
+
 2016-05-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix the iOS build after the protector variables renaming.
