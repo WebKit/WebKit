@@ -89,7 +89,8 @@ class BenchmarkResults(object):
         if sample_count <= 1:
             sample_stdev = 0
         else:
-            sample_stdev = math.sqrt(square_sum / (sample_count - 1) - total * total / (sample_count - 1) / sample_count)
+            # Be careful about round-off error when sample_stdev is 0.
+            sample_stdev = math.sqrt(max(0, square_sum / (sample_count - 1) - total * total / (sample_count - 1) / sample_count))
 
         unit = cls._unit_from_metric(metric_name)
 

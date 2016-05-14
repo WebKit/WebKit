@@ -24,7 +24,7 @@ index 4b9d269..876fddd 100644
                  if (bmresults.length == 0) continue;
  
 +                if (pr)
-+                    tests[benchmark] = {'metrics': {'Time': {'current': bmresults}}};
++                    tests[benchmark] = {'metrics': {'Time': {'current': bmresults.map(function (value) { return value || 1; })}}};
 +
                  // get the raw results
                  var rr = spc2 + mode + ": [";
