@@ -720,12 +720,14 @@ setResizable(NotResizable);
 ```cpp
 RefPtr<Node> protectedThis(this);
 Ref<Element> protectedThis(*this);
+RefPtr<Widget> protectedThis = this;
 ```
 
 ###### Wrong:
 
 ```cpp
 RefPtr<Node> protector(this);
+Ref<Node> protector = *this;
 RefPtr<Widget> self(this);
 Ref<Element> elementRef(*this);
 ```
@@ -736,8 +738,10 @@ Ref<Element> elementRef(*this);
 
 ```cpp
 RefPtr<Element> protector(&element);
+RefPtr<Element> protector = &element;
 RefPtr<Node> protectedNode(node);
 RefPtr<Widget> protectedMainWidget(m_mainWidget);
+RefPtr<Loader> protectedFontLoader = m_fontLoader;
 ```
 
 ###### Wrong:
@@ -745,8 +749,8 @@ RefPtr<Widget> protectedMainWidget(m_mainWidget);
 ```cpp
 RefPtr<Node> nodeRef(&rootNode);
 Ref<Element> protect(*element);
-RefPtr<Widget> protected(widget);
 RefPtr<Node> protectorNode(node);
+RefPtr<Widget> protected = widget;
 ```
 
 ### Other Punctuation

@@ -1,3 +1,15 @@
+2016-05-13  Brady Eidson  <beidson@apple.com>
+
+        Extend protector naming code style guideline to cover operator= assignment.
+        https://bugs.webkit.org/show_bug.cgi?id=157693
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_names):
+
 2016-05-13  Aakash Jain  <aakash_jain@apple.com>
 
         Dashboard code restructuring

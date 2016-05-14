@@ -3292,7 +3292,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
         return
 
     # Make sure Ref/RefPtrs used as protectors are named correctly, and do this before we start stripping things off the input.
-    ref_regexp = r'^\s*Ref(Ptr)?<([\w_]|::)+> (?P<protector_name>[\w_]+)\((\*|&)*(m_)?(?P<protected_name>[\w_]+)\);'
+    ref_regexp = r'^\s*Ref(Ptr)?<([\w_]|::)+> (?P<protector_name>[\w_]+)(\(| = )(\*|&)*(m_)?(?P<protected_name>[\w_]+)\)?;'
     ref_check = match(ref_regexp, line)
     if ref_check:
         protector_name = ref_check.group('protector_name')
