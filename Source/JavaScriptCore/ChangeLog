@@ -1,3 +1,26 @@
+2016-05-13  Saam barati  <sbarati@apple.com>
+
+        DFG/FTL have a few bugs in their reasoning about the scope
+        https://bugs.webkit.org/show_bug.cgi?id=157696
+
+        Reviewed by Benjamin Poulain.
+
+        1. When the debugger is enabled, it is easier for the DFG to reason
+        about the scope register by simply claiming all nodes read the scope
+        register. This prevents us from ever entering the runtime where we
+        may take a stack trace but there isn't a scope on the stack.
+
+        2. This patch fixes a bug where the FTL compilation wasn't properly
+        setting the CodeBlock register. It was only doing this when there
+        was inline data, but when the debugger is enabled, we never inline.
+        So this code just needed to be removed from that loop. It was never
+        right for it to be inside the loop.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+
 2016-05-13  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] SetLocal without exit do not need phantoms

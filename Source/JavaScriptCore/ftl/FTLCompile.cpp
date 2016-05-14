@@ -103,9 +103,11 @@ void compile(State& state, Safepoint::Result& safepointResult)
                 inlineCallFrame->calleeRecovery.withLocalsOffset(localsOffset);
         }
 
-        if (graph.hasDebuggerEnabled())
-            codeBlock->setScopeRegister(codeBlock->scopeRegister() + localsOffset);
     }
+
+    if (graph.hasDebuggerEnabled())
+        codeBlock->setScopeRegister(codeBlock->scopeRegister() + localsOffset);
+
     for (OSRExitDescriptor& descriptor : state.jitCode->osrExitDescriptors) {
         for (unsigned i = descriptor.m_values.size(); i--;)
             descriptor.m_values[i] = descriptor.m_values[i].withLocalsOffset(localsOffset);
