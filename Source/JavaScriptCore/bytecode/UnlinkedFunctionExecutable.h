@@ -101,7 +101,7 @@ public:
     void setInvalidTypeProfilingOffsets();
 
     UnlinkedFunctionCodeBlock* unlinkedCodeBlockFor(
-        VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, 
+        VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode,
         ParserError&, SourceParseMode);
 
     static UnlinkedFunctionExecutable* fromGlobalCode(

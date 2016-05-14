@@ -39,7 +39,6 @@ enum class ConstructorKind { None, Base, Derived };
 enum class SuperBinding { Needed, NotNeeded };
 enum class ThisTDZMode { AlwaysCheck, CheckIfNeeded };
 
-enum ProfilerMode { ProfilerOff, ProfilerOn };
 enum DebuggerMode { DebuggerOff, DebuggerOn };
 
 enum class FunctionMode { FunctionExpression, FunctionDeclaration, MethodDefinition };

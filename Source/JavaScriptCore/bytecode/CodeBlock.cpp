@@ -1654,16 +1654,6 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %d", registerName(condition).data(), line);
             break;
         }
-        case op_profile_will_call: {
-            int function = (++it)->u.operand;
-            printLocationOpAndRegisterOperand(out, exec, location, it, "profile_will_call", function);
-            break;
-        }
-        case op_profile_did_call: {
-            int function = (++it)->u.operand;
-            printLocationOpAndRegisterOperand(out, exec, location, it, "profile_did_call", function);
-            break;
-        }
         case op_end: {
             int r0 = (++it)->u.operand;
             printLocationOpAndRegisterOperand(out, exec, location, it, "end", r0);

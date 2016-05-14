@@ -81,13 +81,13 @@ template <> struct CacheTypes<UnlinkedModuleProgramCodeBlock> {
 };
 
 template <class UnlinkedCodeBlockType, class ExecutableType>
-UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
 {
     SourceCodeKey key = SourceCodeKey(source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, builtinMode, strictMode, thisTDZMode);
     SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
     // FIXME: We should do something smart for TDZ instead of just disabling caching.
     // https://bugs.webkit.org/show_bug.cgi?id=154010
-    bool canCache = debuggerMode == DebuggerOff && profilerMode == ProfilerOff && !vm.typeProfiler() && !vm.controlFlowProfiler() && !variablesUnderTDZ->size();
+    bool canCache = debuggerMode == DebuggerOff && !vm.typeProfiler() && !vm.controlFlowProfiler() && !variablesUnderTDZ->size();
     if (cache && canCache) {
         UnlinkedCodeBlockType* unlinkedCodeBlock = jsCast<UnlinkedCodeBlockType*>(cache->cell.get());
         unsigned firstLine = source.firstLine() + unlinkedCodeBlock->firstLine();
@@ -120,7 +120,7 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
     unlinkedCodeBlock->setSourceURLDirective(source.provider()->sourceURL());
     unlinkedCodeBlock->setSourceMappingURLDirective(source.provider()->sourceMappingURL());
 
-    error = BytecodeGenerator::generate(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, profilerMode, variablesUnderTDZ);
+    error = BytecodeGenerator::generate(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, variablesUnderTDZ);
 
     if (error.isValid())
         return nullptr;
@@ -132,21 +132,21 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
     return unlinkedCodeBlock;
 }
 
-UnlinkedProgramCodeBlock* CodeCache::getProgramCodeBlock(VM& vm, ProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+UnlinkedProgramCodeBlock* CodeCache::getProgramCodeBlock(VM& vm, ProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error)
 {
     VariableEnvironment emptyParentTDZVariables;
-    return getGlobalCodeBlock<UnlinkedProgramCodeBlock>(vm, executable, source, builtinMode, strictMode, ThisTDZMode::CheckIfNeeded, debuggerMode, profilerMode, error, EvalContextType::None, &emptyParentTDZVariables);
+    return getGlobalCodeBlock<UnlinkedProgramCodeBlock>(vm, executable, source, builtinMode, strictMode, ThisTDZMode::CheckIfNeeded, debuggerMode, error, EvalContextType::None, &emptyParentTDZVariables);
 }
 
-UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(VM& vm, EvalExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(VM& vm, EvalExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
 {
-    return getGlobalCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, builtinMode, strictMode, thisTDZMode, debuggerMode, profilerMode, error, evalContextType, variablesUnderTDZ);
+    return getGlobalCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, builtinMode, strictMode, thisTDZMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
 }
 
-UnlinkedModuleProgramCodeBlock* CodeCache::getModuleProgramCodeBlock(VM& vm, ModuleProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+UnlinkedModuleProgramCodeBlock* CodeCache::getModuleProgramCodeBlock(VM& vm, ModuleProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, DebuggerMode debuggerMode, ParserError& error)
 {
     VariableEnvironment emptyParentTDZVariables;
-    return getGlobalCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, executable, source, builtinMode, JSParserStrictMode::Strict, ThisTDZMode::CheckIfNeeded, debuggerMode, profilerMode, error, EvalContextType::None, &emptyParentTDZVariables);
+    return getGlobalCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, executable, source, builtinMode, JSParserStrictMode::Strict, ThisTDZMode::CheckIfNeeded, debuggerMode, error, EvalContextType::None, &emptyParentTDZVariables);
 }
 
 // FIXME: There's no need to add the function's name to the key here. It's already in the source code.

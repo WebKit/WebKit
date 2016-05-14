@@ -45,7 +45,6 @@
 #include "SecurityOrigin.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
-#include <profiler/Profile.h>
 
 using Inspector::Protocol::Runtime::ExecutionContextDescription;
 

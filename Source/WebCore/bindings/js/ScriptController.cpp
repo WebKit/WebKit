@@ -52,7 +52,6 @@
 #include <debugger/Debugger.h>
 #include <heap/StrongInlines.h>
 #include <inspector/ScriptCallStack.h>
-#include <profiler/Profile.h>
 #include <runtime/InitializeThreading.h>
 #include <runtime/JSLock.h>
 #include <wtf/Threading.h>
@@ -214,13 +213,6 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
         // Clear the debugger and console from the current window before setting the new window.
         attachDebugger(windowShell, nullptr);
         windowShell->window()->setConsoleClient(nullptr);
-
-        // FIXME: We should clear console profiles for each frame as soon as the frame is destroyed.
-        // Instead of clearing all of them when the main frame is destroyed.
-        if (m_frame.isMainFrame()) {
-            if (Page* page = m_frame.page())
-                page->console().clearProfiles();
-        }
 
         windowShell->window()->willRemoveFromWindowShell();
         windowShell->setWindow(newDOMWindow);

@@ -1,3 +1,75 @@
+2016-05-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove LegacyProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=153565
+
+        Reviewed by Mark Lam.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * ForwardingHeaders/profiler/LegacyProfiler.h: Removed.
+        * ForwardingHeaders/profiler/Profile.h: Removed.
+        * ForwardingHeaders/profiler/ProfileNode.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsLegacyProfiling): Deleted.
+        (WebCore::JSDOMWindowBase::supportsRichSourceInfo): Deleted.
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::supportsLegacyProfiling): Deleted.
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        * bindings/js/ScriptCachedFrameData.cpp:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell): Deleted.
+        * bindings/js/ScriptProfile.h: Removed.
+        * bindings/js/ScriptProfileNode.h: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddClassForwardIfNeeded): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/TestObj.idl:
+        * css/CSSParser.cpp:
+        * dom/Document.cpp:
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::stopProfiling):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::legacyProfilerEnabled): Deleted.
+        (WebCore::InspectorController::setLegacyProfilerEnabled): Deleted.
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::stopProfilingImpl):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::startFromConsole):
+        (WebCore::InspectorTimelineAgent::stopFromConsole):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/PageDebuggerAgent.cpp:
+        * inspector/PageRuntimeAgent.cpp:
+        * inspector/ScriptProfile.idl: Removed.
+        * inspector/ScriptProfileNode.idl: Removed.
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::buildAggregateCallInfoInspectorObject): Deleted.
+        (WebCore::buildInspectorObject): Deleted.
+        (WebCore::buildProfileInspectorObject): Deleted.
+        (WebCore::TimelineRecordFactory::appendProfile): Deleted.
+        * page/DOMWindow.cpp:
+        * page/Page.cpp:
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::profileEnd):
+        (WebCore::PageConsoleClient::clearProfiles): Deleted.
+        * page/PageConsoleClient.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState): Deleted.
+        (WebCore::Internals::consoleProfiles): Deleted.
+        (WebCore::Internals::setLegacyJavaScriptProfilingEnabled): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/js/WebCoreTestSupport.cpp:
+        * xml/XSLStyleSheetLibxslt.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+
 2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         ToT WebKit doesn't show tooltip on perf dashboard's summary page

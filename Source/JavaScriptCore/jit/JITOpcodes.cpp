@@ -774,22 +774,6 @@ void JIT::emitSlow_op_check_tdz(Instruction* currentInstruction, Vector<SlowCase
     slowPathCall.call();
 }
 
-void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
-{
-    Jump profilerDone = branchTestPtr(Zero, AbsoluteAddress(m_vm->enabledProfilerAddress()));
-    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
-    callOperation(operationProfileWillCall, regT0);
-    profilerDone.link(this);
-}
-
-void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
-{
-    Jump profilerDone = branchTestPtr(Zero, AbsoluteAddress(m_vm->enabledProfilerAddress()));
-    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
-    callOperation(operationProfileDidCall, regT0);
-    profilerDone.link(this);
-}
-
 
 // Slow cases
 

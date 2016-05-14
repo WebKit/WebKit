@@ -1035,8 +1035,6 @@ private:
         case DFG::Jump:
         case Branch:
         case Switch:
-        case ProfileWillCall:
-        case ProfileDidCall:
         case ProfileType:
         case ProfileControlFlow:
         case ThrowReferenceError:

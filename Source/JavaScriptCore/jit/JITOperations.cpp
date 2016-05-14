@@ -53,7 +53,6 @@
 #include "JSPropertyNameEnumerator.h"
 #include "JSStackInlines.h"
 #include "JSWithScope.h"
-#include "LegacyProfiler.h"
 #include "ObjectConstructor.h"
 #include "PolymorphicAccess.h"
 #include "PropertyName.h"
@@ -1242,12 +1241,6 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t byte
         return encodeResult(0, 0);
     }
     
-    if (vm.enabledProfiler()) {
-        CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("profiler is enabled"));
-        updateAllPredictionsAndOptimizeAfterWarmUp(codeBlock);
-        return encodeResult(0, 0);
-    }
-
     Debugger* debugger = codeBlock->globalObject()->debugger();
     if (debugger && (debugger->isStepping() || codeBlock->baselineAlternative()->hasDebuggerRequests())) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("debugger is stepping or has requests"));
@@ -1557,24 +1550,6 @@ void JIT_OPERATION operationPopScope(ExecState* exec, int32_t scopeReg)
 
     JSScope* scope = exec->uncheckedR(scopeReg).Register::scope();
     exec->uncheckedR(scopeReg) = scope->next();
-}
-
-void JIT_OPERATION operationProfileDidCall(ExecState* exec, EncodedJSValue encodedValue)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->didExecute(exec, JSValue::decode(encodedValue));
-}
-
-void JIT_OPERATION operationProfileWillCall(ExecState* exec, EncodedJSValue encodedValue)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->willExecute(exec, JSValue::decode(encodedValue));
 }
 
 int32_t JIT_OPERATION operationInstanceOfCustom(ExecState* exec, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance)
@@ -2357,9 +2332,6 @@ int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(Ex
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     RELEASE_ASSERT(!!vm.exception());
-
-    if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->exceptionUnwind(exec);
 
     if (isTerminatedExecutionException(vm.exception())) {
         genericUnwind(&vm, exec);

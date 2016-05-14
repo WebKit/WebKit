@@ -125,7 +125,6 @@
 #include "WebCoreJSClientData.h"
 #include "WorkerThread.h"
 #include "XMLHttpRequest.h"
-#include <JavaScriptCore/Profile.h>
 #include <bytecode/CodeBlock.h>
 #include <inspector/InspectorAgentBase.h>
 #include <inspector/InspectorFrontendChannel.h>
@@ -389,7 +388,6 @@ void Internals::resetToConsistentState(Page& page)
     WebCore::overrideUserPreferredLanguages(Vector<String>());
     WebCore::Settings::setUsesOverlayScrollbars(false);
     WebCore::Settings::setUsesMockScrollAnimator(false);
-    page.inspectorController().setLegacyProfilerEnabled(false);
 #if ENABLE(VIDEO_TRACK)
     page.group().captionPreferences().setCaptionsStyleSheetOverride(emptyString());
     page.group().captionPreferences().setTestingMode(false);
@@ -1734,11 +1732,6 @@ unsigned Internals::countMatchesForText(const String& text, unsigned findOptions
     return document->frame()->editor().countMatchesForText(text, nullptr, findOptions, 1000, mark, nullptr);
 }
 
-const ProfilesArray& Internals::consoleProfiles() const
-{
-    return contextDocument()->page()->console().profiles();
-}
-
 unsigned Internals::numberOfLiveNodes() const
 {
     unsigned nodeCount = 0;
@@ -1765,17 +1758,6 @@ RefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
 void Internals::closeDummyInspectorFrontend()
 {
     m_inspectorFrontend = nullptr;
-}
-
-void Internals::setLegacyJavaScriptProfilingEnabled(bool enabled, ExceptionCode& ec)
-{
-    Page* page = contextDocument()->frame()->page();
-    if (!page) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    page->inspectorController().setLegacyProfilerEnabled(enabled);
 }
 
 void Internals::setInspectorIsUnderTest(bool isUnderTest, ExceptionCode& ec)

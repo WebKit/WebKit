@@ -39,7 +39,6 @@
 #include <inspector/ScriptBreakpoint.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
-#include <profiler/Profile.h>
 
 using namespace Inspector;
 
@@ -150,65 +149,6 @@ Ref<InspectorObject> TimelineRecordFactory::createPaintData(const FloatQuad& qua
 void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQuad& quad)
 {
     data->setArray(ASCIILiteral("root"), createQuad(quad));
-}
-
-static Ref<Protocol::Timeline::CPUProfileNodeAggregateCallInfo> buildAggregateCallInfoInspectorObject(const JSC::ProfileNode* node)
-{
-    double startTime = node->calls()[0].startTime();
-    double endTime = node->calls().last().startTime() + node->calls().last().elapsedTime();
-
-    double totalTime = 0;
-    for (const JSC::ProfileNode::Call& call : node->calls())
-        totalTime += call.elapsedTime();
-
-    return Protocol::Timeline::CPUProfileNodeAggregateCallInfo::create()
-        .setCallCount(node->calls().size())
-        .setStartTime(startTime)
-        .setEndTime(endTime)
-        .setTotalTime(totalTime)
-        .release();
-}
-
-static Ref<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const JSC::ProfileNode* node)
-{
-    auto result = Protocol::Timeline::CPUProfileNode::create()
-        .setId(node->id())
-        .setCallInfo(buildAggregateCallInfoInspectorObject(node))
-        .release();
-
-    if (!node->functionName().isEmpty())
-        result->setFunctionName(node->functionName());
-
-    if (!node->url().isEmpty()) {
-        result->setUrl(node->url());
-        result->setLineNumber(node->lineNumber());
-        result->setColumnNumber(node->columnNumber());
-    }
-
-    if (!node->children().isEmpty()) {
-        auto children = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
-        for (RefPtr<JSC::ProfileNode> profileNode : node->children())
-            children->addItem(buildInspectorObject(profileNode.get()));
-        result->setChildren(WTFMove(children));
-    }
-
-    return result;
-}
-
-static Ref<Protocol::Timeline::CPUProfile> buildProfileInspectorObject(const JSC::Profile* profile)
-{
-    auto rootNodes = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
-    for (RefPtr<JSC::ProfileNode> profileNode : profile->rootNode()->children())
-        rootNodes->addItem(buildInspectorObject(profileNode.get()));
-
-    return Protocol::Timeline::CPUProfile::create()
-        .setRootNodes(WTFMove(rootNodes))
-        .release();
-}
-
-void TimelineRecordFactory::appendProfile(InspectorObject* data, RefPtr<JSC::Profile>&& profile)
-{
-    data->setValue(ASCIILiteral("profile"), buildProfileInspectorObject(profile.get()));
 }
 
 } // namespace WebCore

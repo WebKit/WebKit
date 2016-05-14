@@ -1535,8 +1535,6 @@ private:
         case NewObject:
         case NewArrayBuffer:
         case NewRegexp:
-        case ProfileWillCall:
-        case ProfileDidCall:
         case DeleteById:
         case DeleteByVal:
         case IsArrayObject:

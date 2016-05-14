@@ -707,9 +707,6 @@ CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argume
     : m_argumentsNode(argumentsNode)
     , m_padding(0)
 {
-    if (generator.shouldEmitProfileHooks())
-        m_profileHookRegister = generator.newTemporary();
-
     size_t argumentCountIncludingThis = 1 + additionalArguments; // 'this' register.
     if (argumentsNode) {
         for (ArgumentListNode* node = argumentsNode->m_listNode; node; node = node->m_next)
@@ -1021,16 +1018,13 @@ RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, 
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst);
     {
         if (m_args->m_listNode && m_args->m_listNode->m_expr && m_args->m_listNode->m_expr->isSpreadExpression()) {
-            RefPtr<RegisterID> profileHookRegister;
-            if (generator.shouldEmitProfileHooks())
-                profileHookRegister = generator.newTemporary();
             SpreadExpressionNode* spread = static_cast<SpreadExpressionNode*>(m_args->m_listNode->m_expr);
             ExpressionNode* subject = spread->expression();
             RefPtr<RegisterID> argumentsRegister;
             argumentsRegister = generator.emitNode(subject);
             generator.emitExpressionInfo(spread->divot(), spread->divotStart(), spread->divotEnd());
             RefPtr<RegisterID> thisRegister = generator.emitGetByVal(generator.newTemporary(), argumentsRegister.get(), generator.emitLoad(0, jsNumber(0)));
-            generator.emitCallVarargsInTailPosition(returnValue.get(), base.get(), thisRegister.get(), argumentsRegister.get(), generator.newTemporary(), 1, profileHookRegister.get(), divot(), divotStart(), divotEnd());
+            generator.emitCallVarargsInTailPosition(returnValue.get(), base.get(), thisRegister.get(), argumentsRegister.get(), generator.newTemporary(), 1, divot(), divotStart(), divotEnd());
         } else if (m_args->m_listNode && m_args->m_listNode->m_expr) {
             ArgumentListNode* oldList = m_args->m_listNode;
             m_args->m_listNode = m_args->m_listNode->m_next;
@@ -1094,9 +1088,6 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
             ArgumentListNode* oldList = m_args->m_listNode;
             if (m_args->m_listNode->m_expr->isSpreadExpression()) {
                 SpreadExpressionNode* spread = static_cast<SpreadExpressionNode*>(m_args->m_listNode->m_expr);
-                RefPtr<RegisterID> profileHookRegister;
-                if (generator.shouldEmitProfileHooks())
-                    profileHookRegister = generator.newTemporary();
                 RefPtr<RegisterID> realFunction = generator.emitMove(generator.newTemporary(), base.get());
                 RefPtr<RegisterID> index = generator.emitLoad(generator.newTemporary(), jsNumber(0));
                 RefPtr<RegisterID> thisRegister = generator.emitLoad(generator.newTemporary(), jsUndefined());
@@ -1120,7 +1111,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
                     generator.emitLabel(end.get());
                 };
                 generator.emitEnumeration(this, spread->expression(), extractor);
-                generator.emitCallVarargsInTailPosition(returnValue.get(), realFunction.get(), thisRegister.get(), argumentsRegister.get(), generator.newTemporary(), 0, profileHookRegister.get(), divot(), divotStart(), divotEnd());
+                generator.emitCallVarargsInTailPosition(returnValue.get(), realFunction.get(), thisRegister.get(), argumentsRegister.get(), generator.newTemporary(), 0, divot(), divotStart(), divotEnd());
             } else if (m_args->m_listNode->m_next) {
                 ASSERT(m_args->m_listNode->m_next->m_expr->isSimpleArray());
                 ASSERT(!m_args->m_listNode->m_next->m_next);
@@ -1145,9 +1136,6 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
         }
     } else {
         ASSERT(m_args->m_listNode && m_args->m_listNode->m_next);
-        RefPtr<RegisterID> profileHookRegister;
-        if (generator.shouldEmitProfileHooks())
-            profileHookRegister = generator.newTemporary();
         RefPtr<RegisterID> realFunction = generator.emitMove(generator.tempDestination(dst), base.get());
         RefPtr<RegisterID> thisRegister = generator.emitNode(m_args->m_listNode->m_expr);
         RefPtr<RegisterID> argsRegister;
@@ -1159,7 +1147,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
         while ((args = args->m_next))
             generator.emitNode(args->m_expr);
 
-        generator.emitCallVarargsInTailPosition(returnValue.get(), realFunction.get(), thisRegister.get(), argsRegister.get(), generator.newTemporary(), 0, profileHookRegister.get(), divot(), divotStart(), divotEnd());
+        generator.emitCallVarargsInTailPosition(returnValue.get(), realFunction.get(), thisRegister.get(), argsRegister.get(), generator.newTemporary(), 0, divot(), divotStart(), divotEnd());
     }
     if (emitCallCheck) {
         generator.emitJump(end.get());

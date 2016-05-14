@@ -54,7 +54,6 @@ set(JavaScriptCore_SOURCES
     API/JSClassRef.cpp
     API/JSContextRef.cpp
     API/JSObjectRef.cpp
-    API/JSProfilerPrivate.cpp
     API/JSTypedArray.cpp
     API/JSScriptRef.cpp
     API/JSStringRef.cpp
@@ -586,10 +585,6 @@ set(JavaScriptCore_SOURCES
     parser/SourceProviderCache.cpp
     parser/VariableEnvironment.cpp
 
-    profiler/LegacyProfiler.cpp
-    profiler/Profile.cpp
-    profiler/ProfileGenerator.cpp
-    profiler/ProfileNode.cpp
     profiler/ProfilerBytecode.cpp
     profiler/ProfilerBytecodeSequence.cpp
     profiler/ProfilerBytecodes.cpp

@@ -50,7 +50,6 @@
 #include "JSWithScope.h"
 #include "LLIntCommon.h"
 #include "LLIntExceptions.h"
-#include "LegacyProfiler.h"
 #include "LowLevelInterpreter.h"
 #include "ObjectConstructor.h"
 #include "ProtoCallFrame.h"
@@ -1426,22 +1425,6 @@ LLINT_SLOW_PATH_DECL(slow_path_debug)
     LLINT_END();
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_profile_will_call)
-{
-    LLINT_BEGIN();
-    if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->willExecute(exec, LLINT_OP(1).jsValue());
-    LLINT_END();
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_profile_did_call)
-{
-    LLINT_BEGIN();
-    if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->didExecute(exec, LLINT_OP(1).jsValue());
-    LLINT_END();
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
 {
     LLINT_BEGIN_NO_SET_PC();
@@ -1529,9 +1512,6 @@ LLINT_SLOW_PATH_DECL(slow_path_check_if_exception_is_uncatchable_and_notify_prof
 {
     LLINT_BEGIN();
     RELEASE_ASSERT(!!vm.exception());
-
-    if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->exceptionUnwind(exec);
 
     if (isTerminatedExecutionException(vm.exception()))
         LLINT_RETURN_TWO(pc, bitwise_cast<void*>(static_cast<uintptr_t>(1)));
