@@ -1,3 +1,19 @@
+2016-05-13  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION (r200463): Autofill Credit Card expected but got Autofill Contact
+        <rdar://problem/26251538>
+        https://bugs.webkit.org/show_bug.cgi?id=157701
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame _certificateChain]):
+        We need to do a retain-autorelease here now because the CertificateInfo's that contain the
+        cached certificate chain, are being destroyed, and therefore destroying the chain, before this
+        function returns. This used to work when the chain wasn't just a cache, because there was still
+        a strong reference to it being held by the ResourceResponse's CertificateInfo copy, but now
+        there is none.
+
 2016-05-13  Dean Jackson  <dino@apple.com>
 
         [iOS] <select> elements popover should render right-aligned when in RTL mode

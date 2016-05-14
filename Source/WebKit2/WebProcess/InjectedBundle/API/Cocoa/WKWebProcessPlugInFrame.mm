@@ -146,7 +146,7 @@ static RetainPtr<NSArray> collectIcons(WebCore::Frame* frame, OptionSet<WebCore:
 
 - (NSArray *)_certificateChain
 {
-    return (NSArray *)_frame->certificateInfo().certificateChain();
+    return [[(NSArray *)_frame->certificateInfo().certificateChain() retain] autorelease];
 }
 
 - (SecTrustRef)_serverTrust
