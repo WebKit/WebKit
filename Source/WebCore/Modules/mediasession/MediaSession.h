@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class Dictionary;
 class Document;
 class HTMLMediaElement;
 
@@ -54,7 +53,14 @@ public:
     WEBCORE_EXPORT State currentState() const { return m_currentState; }
     bool hasActiveMediaElements() const;
 
-    void setMetadata(const Dictionary&);
+    struct MediaMetadataInit {
+        String title;
+        String artist;
+        String album;
+        String artwork;
+    };
+
+    void setMetadata(const MediaMetadataInit&);
 
     void deactivate();
 

@@ -1,3 +1,20 @@
+2016-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Use new Web IDL dictionary support for MediaSession.setMetadata()
+        https://bugs.webkit.org/show_bug.cgi?id=157711
+
+        Reviewed by Eric Carlson.
+
+        Use new Web IDL dictionary support for MediaSession.setMetadata().
+
+        No new tests, no intended Web-exposed behavior change.
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::setMetadata):
+        (WebCore::MediaSession::deactivate): Deleted.
+        * Modules/mediasession/MediaSession.h:
+        * Modules/mediasession/MediaSession.idl:
+
 2016-05-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove LegacyProfiler

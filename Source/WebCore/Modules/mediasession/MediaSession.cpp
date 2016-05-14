@@ -30,7 +30,6 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Dictionary.h"
 #include "Event.h"
 #include "HTMLMediaElement.h"
 #include "MediaSessionManager.h"
@@ -113,31 +112,15 @@ bool MediaSession::hasActiveMediaElements() const
     return !m_activeParticipatingElements.isEmpty();
 }
 
-void MediaSession::setMetadata(const Dictionary& metadata)
+void MediaSession::setMetadata(const MediaMetadataInit& metadata)
 {
-    // 5.1.3
-    // 1. Let media session be the current media session.
-    // 2. Let baseURL be the API base URL specified by the entry settings object.
-    // 3. Set media session's title to metadata's title.
-    String title;
-    metadata.get("title", title);
-
-    // 4. Set media session's artist name to metadata's artist.
-    String artist;
-    metadata.get("artist", artist);
-
-    // 5. Set media session's album name to metadata's album.
-    String album;
-    metadata.get("album", album);
-
-    // 6. If metadata's artwork is present, parse it using baseURL, and if that does not return failure, set media
-    //    session's artwork URL to the return value.
+    // If metadata's artwork is present, parse it using baseURL, and if that does not return failure, set media
+    // session's artwork URL to the return value.
     URL artworkURL;
-    String artworkPath;
-    if (metadata.get("artwork", artworkPath))
-        artworkURL = m_document.completeURL(artworkPath);
+    if (!metadata.artwork.isNull())
+        artworkURL = m_document.completeURL(metadata.artwork);
 
-    m_metadata = MediaSessionMetadata(title, artist, album, artworkURL);
+    m_metadata = MediaSessionMetadata(metadata.title, metadata.artist, metadata.album, artworkURL);
 
     if (Page *page = m_document.page())
         page->chrome().client().mediaSessionMetadataDidChange(m_metadata);
