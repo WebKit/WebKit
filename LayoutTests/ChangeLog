@@ -1,3 +1,15 @@
+2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ToT WebKit doesn't show tooltip on perf dashboard's summary page
+        https://bugs.webkit.org/show_bug.cgi?id=157705
+
+        Reviewed by Darin Adler.
+
+        Added a regression test for finding a tooltip across shadow boundaries.
+
+        * fast/shadow-dom/tooltip-on-composed-tree-expected.txt: Added.
+        * fast/shadow-dom/tooltip-on-composed-tree.html: Added.
+
 2016-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Support ArrayBufferViews in the CSS Font Loading API

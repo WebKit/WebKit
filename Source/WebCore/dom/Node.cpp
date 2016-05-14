@@ -1138,6 +1138,22 @@ HTMLSlotElement* Node::assignedSlot() const
 }
 #endif
 
+ContainerNode* Node::parentInComposedTree() const
+{
+    ASSERT(isMainThreadOrGCThread());
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
+    if (auto* parent = parentElement()) {
+        if (auto* shadowRoot = parent->shadowRoot()) {
+            if (auto* assignedSlot = shadowRoot->findAssignedSlot(*this))
+                return assignedSlot;
+        }
+    }
+#endif
+    if (is<ShadowRoot>(*this))
+        return downcast<ShadowRoot>(*this).host();
+    return parentNode();
+}
+
 bool Node::isInUserAgentShadowTree() const
 {
     auto* shadowRoot = containingShadowRoot();

@@ -1,3 +1,23 @@
+2016-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ToT WebKit doesn't show tooltip on perf dashboard's summary page
+        https://bugs.webkit.org/show_bug.cgi?id=157705
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by WebKit doesn't look for the title attribute across shadow boundaries.
+        Fixed it by using a newly added Node::parentNodeInComposedTree in HitTestResult::title.
+
+        Test: fast/shadow-dom/tooltip-on-composed-tree.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::parentInComposedTree): Added.
+        * dom/Node.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::title): Fixed the bug.
+        (WebCore::HitTestResult::innerTextIfTruncated): Fixed a related bug when ShowsToolTipOverTruncatedText
+        is enabled. Unfortunately, there is no machinery to test this feature yet.
+
 2016-05-14  Darin Adler  <darin@apple.com>
 
         CTTE for the HTML editing header
