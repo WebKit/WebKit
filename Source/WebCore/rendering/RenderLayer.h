@@ -1099,7 +1099,7 @@ private:
     ScrollPosition m_scrollPosition;
 
     // The width/height of our scrolled area.
-    LayoutSize m_scrollSize;
+    IntSize m_scrollSize;
 
     // For layers with overflow, we have a pair of scrollbars.
     RefPtr<Scrollbar> m_hBar;

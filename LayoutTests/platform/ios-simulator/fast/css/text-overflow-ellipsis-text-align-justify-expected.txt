@@ -66,7 +66,7 @@ layer at (8,466) size 310x32 clip at (9,467) size 308x30 scrollWidth 762
     RenderImage {IMG} at (278,1) size 26x25
     RenderText {#text} at (303,11) size 460x19
       text run at (303,11) width 460: "ipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
-layer at (8,559) size 310x22 clip at (9,560) size 308x20 scrollX 428 scrollWidth 737
+layer at (8,559) size 310x22 clip at (9,560) size 308x20 scrollX 429 scrollWidth 737
   RenderBlock {DIV} at (0,551) size 310x23 [border: (1px solid #000000)]
     RenderText {#text} at (-427,1) size 737x19
       text run at (-427,1) width 736 RTL override: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
@@ -84,14 +84,14 @@ layer at (8,643) size 310x82 clip at (9,644) size 308x80
     RenderText {#text} at (1,61) size 714x19
       text run at (1,61) width 714 RTL override: "em ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
     RenderBR {BR} at (0,0) size 0x0
-layer at (8,787) size 310x32 clip at (9,788) size 308x30 scrollX 457 scrollWidth 766
+layer at (8,787) size 310x32 clip at (9,788) size 308x30 scrollX 458 scrollWidth 766
   RenderBlock {DIV} at (0,778) size 310x33 [border: (1px solid #000000)]
     RenderText {#text} at (123,11) size 186x19
       text run at (123,11) width 186 RTL override: "Lorem ipsum dolor sit amet, "
     RenderImage {IMG} at (98,1) size 26x25
     RenderText {#text} at (-456,11) size 556x19
       text run at (-456,11) width 555 RTL override: " consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
-layer at (8,880) size 310x32 clip at (9,881) size 308x30 scrollX 453 scrollWidth 762
+layer at (8,880) size 310x32 clip at (9,881) size 308x30 scrollX 454 scrollWidth 762
   RenderBlock {DIV} at (0,872) size 310x33 [border: (1px solid #000000)]
     RenderText {#text} at (31,11) size 278x19
       text run at (31,11) width 278 RTL override: "Lorem ipsum dolor sit amet, consectetur ad"

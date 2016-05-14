@@ -1,3 +1,27 @@
+2016-05-13  Zalan Bujtas  <zalan@apple.com>
+
+        All scrolling height/width values should be integral rounded.
+        https://bugs.webkit.org/show_bug.cgi?id=157687
+
+        Reviewed by Simon Fraser.
+
+        Both clientHeight(Width) and scrollHeight(width) need to be explicitly integral
+        rounded in order to ensure that scrollable content is computed properly.
+        This will evolve into subpixel snapping once we apply subpixel arithmetics on scrolling.
+
+        Not testable.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollWidth):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::horizontalScrollbarStart):
+        (WebCore::RenderLayer::scrollWidth):
+        (WebCore::RenderLayer::scrollHeight):
+        (WebCore::RenderLayer::computeScrollDimensions):
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        * rendering/RenderLayer.h:
+
 2016-05-13  Chris Dumez  <cdumez@apple.com>
 
         [NetworkCache] Avoid having to re-parse URLs after deserializing them

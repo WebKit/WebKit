@@ -572,7 +572,7 @@ int RenderBox::scrollWidth() const
         // FIXME: This should use snappedIntSize() instead with absolute coordinates.
         return roundToInt(std::max(clientWidth(), layoutOverflowRect().maxX() - borderLeft()));
     }
-    return clientWidth() - std::min<LayoutUnit>(0, layoutOverflowRect().x() - borderLeft());
+    return roundToInt(clientWidth() - std::min<LayoutUnit>(0, layoutOverflowRect().x() - borderLeft()));
 }
 
 int RenderBox::scrollHeight() const

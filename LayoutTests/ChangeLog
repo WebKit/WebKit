@@ -1,3 +1,24 @@
+2016-05-13  Zalan Bujtas  <zalan@apple.com>
+
+        All scrolling height/width values should be integral rounded.
+        https://bugs.webkit.org/show_bug.cgi?id=157687
+
+        Reviewed by Simon Fraser.
+
+        Both clientHeight(Width) and scrollHeight(width) need to be explicitly integral
+        rounded in order to ensure that scrollable content is computed properly.
+        This will evolve into subpixel snapping once we apply subpixel arithmetics on scrolling.
+
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt:
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-left-expected.txt:
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-right-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/mac/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.txt:
+        * platform/mac/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.txt:
+        * platform/mac/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt:
+
 2016-05-13  Sam Weinig  <sam@webkit.org>
 
         ScriptController::processingUserGesture should propagate across postMessage boundaries

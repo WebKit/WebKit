@@ -2353,7 +2353,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
 #if PLATFORM(IOS)
         if (adjustForIOSCaretWhenScrolling()) {
             // FIXME: It's not clear what this code is trying to do. Behavior seems reasonable with it removed.
-            int maxOffset = scrollWidth() - box->clientWidth();
+            int maxOffset = scrollWidth() - roundToInt(box->clientWidth());
             ScrollOffset newOffset = scrollOffsetFromPosition(newPosition);
             int scrollXOffset = newOffset.x();
             if (scrollXOffset > maxOffset - caretWidth) {
@@ -3321,7 +3321,7 @@ int RenderLayer::scrollWidth() const
     if (m_scrollDimensionsDirty)
         const_cast<RenderLayer*>(this)->computeScrollDimensions();
     // FIXME: This should use snappedIntSize() instead with absolute coordinates.
-    return roundToInt(m_scrollSize.width());
+    return m_scrollSize.width();
 }
 
 int RenderLayer::scrollHeight() const
@@ -3330,7 +3330,7 @@ int RenderLayer::scrollHeight() const
     if (m_scrollDimensionsDirty)
         const_cast<RenderLayer*>(this)->computeScrollDimensions();
     // FIXME: This should use snappedIntSize() instead with absolute coordinates.
-    return roundToInt(m_scrollSize.height());
+    return m_scrollSize.height();
 }
 
 LayoutUnit RenderLayer::overflowTop() const
@@ -3372,13 +3372,13 @@ void RenderLayer::computeScrollDimensions()
 
     m_scrollDimensionsDirty = false;
 
-    m_scrollSize.setWidth(overflowRight() - overflowLeft());
-    m_scrollSize.setHeight(overflowBottom() - overflowTop());
+    m_scrollSize.setWidth(roundToInt(overflowRight() - overflowLeft()));
+    m_scrollSize.setHeight(roundToInt(overflowBottom() - overflowTop()));
 
-    int scrollableLeftOverflow = overflowLeft() - box->borderLeft();
+    int scrollableLeftOverflow = roundToInt(overflowLeft() - box->borderLeft());
     if (shouldPlaceBlockDirectionScrollbarOnLeft())
         scrollableLeftOverflow -= verticalScrollbarWidth();
-    int scrollableTopOverflow = overflowTop() - box->borderTop();
+    int scrollableTopOverflow = roundToInt(overflowTop() - box->borderTop());
     setScrollOrigin(IntPoint(-scrollableLeftOverflow, -scrollableTopOverflow));
 }
 
@@ -3479,13 +3479,13 @@ void RenderLayer::updateScrollbarsAfterLayout()
         int clientWidth = roundToInt(box->clientWidth());
         int pageStep = Scrollbar::pageStep(clientWidth);
         m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_hBar->setProportion(clientWidth, m_scrollSize.width().round());
+        m_hBar->setProportion(clientWidth, m_scrollSize.width());
     }
     if (m_vBar) {
         int clientHeight = roundToInt(box->clientHeight());
         int pageStep = Scrollbar::pageStep(clientHeight);
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_vBar->setProportion(clientHeight, m_scrollSize.height().round());
+        m_vBar->setProportion(clientHeight, m_scrollSize.height());
     }
 
     updateScrollableAreaSet(hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
