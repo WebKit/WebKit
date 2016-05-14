@@ -44,9 +44,9 @@
 #include "File.h"
 #include "Frame.h"
 #include "HTMLAttachmentElement.h"
+#include "HTMLBRElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDivElement.h"
-#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
@@ -792,7 +792,7 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
     if (contextPreservesNewline(context)) {
         fragment->appendChild(document.createTextNode(string), ASSERT_NO_EXCEPTION);
         if (string.endsWith('\n')) {
-            auto element = createBreakElement(document);
+            auto element = HTMLBRElement::create(document);
             element->setAttribute(classAttr, AppleInterchangeNewline);            
             fragment->appendChild(element, ASSERT_NO_EXCEPTION);
         }
@@ -824,10 +824,10 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
         RefPtr<Element> element;
         if (s.isEmpty() && i + 1 == numLines) {
             // For last line, use the "magic BR" rather than a P.
-            element = createBreakElement(document);
+            element = HTMLBRElement::create(document);
             element->setAttribute(classAttr, AppleInterchangeNewline);
         } else if (useLineBreak) {
-            element = createBreakElement(document);
+            element = HTMLBRElement::create(document);
             fillContainerFromString(fragment, s);
         } else {
             if (useClonesOfEnclosingBlock)

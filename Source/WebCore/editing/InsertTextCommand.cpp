@@ -27,9 +27,9 @@
 #include "InsertTextCommand.h"
 
 #include "Document.h"
-#include "Element.h"
 #include "Editor.h"
 #include "Frame.h"
+#include "HTMLElement.h"
 #include "HTMLInterchange.h"
 #include "Text.h"
 #include "VisibleUnits.h"
@@ -249,15 +249,15 @@ Position InsertTextCommand::insertTab(const Position& pos)
     }
     
     // create new tab span
-    RefPtr<Element> spanNode = createTabSpanElement(document());
+    auto spanNode = createTabSpanElement(document());
     
     // place it
-    if (!is<Text>(*node)) {
-        insertNodeAt(spanNode.get(), insertPos);
-    } else {
+    if (!is<Text>(*node))
+        insertNodeAt(spanNode.ptr(), insertPos);
+    else {
         RefPtr<Text> textNode = downcast<Text>(node);
         if (offset >= textNode->length())
-            insertNodeAfter(spanNode, textNode.release());
+            insertNodeAfter(spanNode.copyRef(), WTFMove(textNode));
         else {
             // split node to make room for the span
             // NOTE: splitTextNode uses textNode for the
@@ -265,12 +265,12 @@ Position InsertTextCommand::insertTab(const Position& pos)
             // insert the span before it.
             if (offset > 0)
                 splitTextNode(textNode, offset);
-            insertNodeBefore(spanNode, textNode.release());
+            insertNodeBefore(spanNode.copyRef(), WTFMove(textNode));
         }
     }
 
     // return the position following the new tab
-    return lastPositionInNode(spanNode.get());
+    return lastPositionInNode(spanNode.ptr());
 }
 
 }

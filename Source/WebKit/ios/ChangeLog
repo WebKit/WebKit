@@ -1,3 +1,15 @@
+2016-05-14  Darin Adler  <darin@apple.com>
+
+        CTTE for the HTML editing header
+        https://bugs.webkit.org/show_bug.cgi?id=157676
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame previousUnperturbedDictationResultBoundaryFromPosition:]): Update since
+        lastOffsetForEditing takes a reference now. Seems like this code should be in WebCore.
+        (-[WebFrame nextUnperturbedDictationResultBoundaryFromPosition:]): Ditto.
+
 2016-05-13  Beth Dakin  <bdakin@apple.com>
 
         Add dyldSPI.h for linked on or after checks, and add one for link preview

@@ -41,10 +41,11 @@
 #include "Event.h"
 #include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
+#include "HTMLBRElement.h"
 #include "HTMLDivElement.h"
-#include "HTMLElement.h"
 #include "HTMLLIElement.h"
 #include "HTMLNames.h"
+#include "HTMLSpanElement.h"
 #include "InlineTextBox.h"
 #include "InsertIntoTextNodeCommand.h"
 #include "InsertLineBreakCommand.h"
@@ -150,7 +151,7 @@ String AccessibilityUndoReplacedText::textDeletedByReapply()
 static void postTextStateChangeNotification(AXObjectCache* cache, const VisiblePosition& position, const String& deletedText, const String& insertedText)
 {
     ASSERT(cache);
-    Node* node = highestEditableRoot(position.deepEquivalent(), HasEditableAXRole);
+    auto* node = highestEditableRoot(position.deepEquivalent(), HasEditableAXRole);
     if (!node)
         return;
     if (insertedText.length() && deletedText.length())
@@ -493,9 +494,9 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
             insertNodeBefore(insertChild, child);
         else
             appendNode(insertChild, downcast<ContainerNode>(refChild));
-    } else if (caretMinOffset(refChild) >= offset)
+    } else if (caretMinOffset(*refChild) >= offset)
         insertNodeBefore(insertChild, refChild);
-    else if (is<Text>(*refChild) && caretMaxOffset(refChild) > offset) {
+    else if (is<Text>(*refChild) && caretMaxOffset(*refChild) > offset) {
         splitTextNode(downcast<Text>(refChild), offset);
 
         // Mutation events (bug 22634) from the text node insertion may have removed the refChild
@@ -715,33 +716,33 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> p
 #endif // PLATFORM(IOS)
 }
 
-Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
+Position CompositeEditCommand::positionOutsideTabSpan(const Position& position)
 {
-    if (!isTabSpanTextNode(pos.anchorNode()))
-        return pos;
+    if (!isTabSpanTextNode(position.anchorNode()))
+        return position;
 
-    switch (pos.anchorType()) {
+    switch (position.anchorType()) {
     case Position::PositionIsBeforeChildren:
     case Position::PositionIsAfterChildren:
         ASSERT_NOT_REACHED();
-        return pos;
+        return position;
     case Position::PositionIsOffsetInAnchor:
         break;
     case Position::PositionIsBeforeAnchor:
-        return positionInParentBeforeNode(pos.anchorNode());
+        return positionInParentBeforeNode(position.anchorNode());
     case Position::PositionIsAfterAnchor:
-        return positionInParentAfterNode(pos.anchorNode());
+        return positionInParentAfterNode(position.anchorNode());
     }
 
-    Node* tabSpan = tabSpanNode(pos.containerNode());
+    auto* tabSpan = tabSpanNode(position.containerNode());
 
-    if (pos.offsetInContainerNode() <= caretMinOffset(pos.containerNode()))
+    if (position.offsetInContainerNode() <= caretMinOffset(*position.containerNode()))
         return positionInParentBeforeNode(tabSpan);
 
-    if (pos.offsetInContainerNode() >= caretMaxOffset(pos.containerNode()))
+    if (position.offsetInContainerNode() >= caretMaxOffset(*position.containerNode()))
         return positionInParentAfterNode(tabSpan);
 
-    splitTextNodeContainingElement(downcast<Text>(pos.containerNode()), pos.offsetInContainerNode());
+    splitTextNodeContainingElement(&downcast<Text>(*position.containerNode()), position.offsetInContainerNode());
     return positionInParentBeforeNode(tabSpan);
 }
 
@@ -788,19 +789,18 @@ void CompositeEditCommand::setNodeAttribute(PassRefPtr<Element> element, const Q
     applyCommandToComposite(SetNodeAttributeCommand::create(element, attribute, value));
 }
 
-static inline bool containsOnlyWhitespace(const String& text)
+static inline bool containsOnlyDeprecatedEditingWhitespace(const String& text)
 {
     for (unsigned i = 0; i < text.length(); ++i) {
-        if (!isWhitespace(text[i]))
+        if (!deprecatedIsEditingWhitespace(text[i]))
             return false;
     }
-    
     return true;
 }
 
 bool CompositeEditCommand::shouldRebalanceLeadingWhitespaceFor(const String& text) const
 {
-    return containsOnlyWhitespace(text);
+    return containsOnlyDeprecatedEditingWhitespace(text);
 }
 
 bool CompositeEditCommand::canRebalance(const Position& position) const
@@ -832,9 +832,9 @@ void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
     // If the rebalance is for the single offset, and neither text[offset] nor text[offset - 1] are some form of whitespace, do nothing.
     int offset = position.deprecatedEditingOffset();
     String text = downcast<Text>(*node).data();
-    if (!isWhitespace(text[offset])) {
+    if (!deprecatedIsEditingWhitespace(text[offset])) {
         offset--;
-        if (offset < 0 || !isWhitespace(text[offset]))
+        if (offset < 0 || !deprecatedIsEditingWhitespace(text[offset]))
             return;
     }
 
@@ -850,11 +850,11 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(PassRefPtr<Text> p
 
     // Set upstream and downstream to define the extent of the whitespace surrounding text[offset].
     int upstream = startOffset;
-    while (upstream > 0 && isWhitespace(text[upstream - 1]))
+    while (upstream > 0 && deprecatedIsEditingWhitespace(text[upstream - 1]))
         upstream--;
     
     int downstream = endOffset;
-    while ((unsigned)downstream < text.length() && isWhitespace(text[downstream]))
+    while ((unsigned)downstream < text.length() && deprecatedIsEditingWhitespace(text[downstream]))
         downstream++;
     
     int length = downstream - upstream;
@@ -1089,7 +1089,7 @@ void CompositeEditCommand::removePlaceholderAt(const Position& p)
 Ref<HTMLElement> CompositeEditCommand::insertNewDefaultParagraphElementAt(const Position& position)
 {
     auto paragraphElement = createDefaultParagraphElement(document());
-    paragraphElement->appendChild(createBreakElement(document()), IGNORE_EXCEPTION);
+    paragraphElement->appendChild(HTMLBRElement::create(document()), IGNORE_EXCEPTION);
     insertNodeAt(paragraphElement.ptr(), position);
     return paragraphElement;
 }
@@ -1326,7 +1326,7 @@ void CompositeEditCommand::moveParagraphWithClones(const VisiblePosition& startO
         && ((!isEndOfParagraph(beforeParagraph) && !isStartOfParagraph(beforeParagraph)) || beforeParagraph == afterParagraph)
         && isEditablePosition(beforeParagraph.deepEquivalent())) {
         // FIXME: Trim text between beforeParagraph and afterParagraph if they aren't equal.
-        insertNodeAt(createBreakElement(document()), beforeParagraph.deepEquivalent());
+        insertNodeAt(HTMLBRElement::create(document()), beforeParagraph.deepEquivalent());
     }
 }
     
@@ -1429,7 +1429,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     afterParagraph = VisiblePosition(afterParagraph.deepEquivalent());
     if (beforeParagraph.isNotNull() && (!isEndOfParagraph(beforeParagraph) || beforeParagraph == afterParagraph)) {
         // FIXME: Trim text between beforeParagraph and afterParagraph if they aren't equal.
-        insertNodeAt(createBreakElement(document()), beforeParagraph.deepEquivalent());
+        insertNodeAt(HTMLBRElement::create(document()), beforeParagraph.deepEquivalent());
         // Need an updateLayout here in case inserting the br has split a text node.
         document().updateLayoutIgnorePendingStylesheets();
     }
@@ -1485,18 +1485,18 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     RefPtr<Element> newBlock;
     if (ContainerNode* blockEnclosingList = listNode->parentNode()) {
         if (is<HTMLLIElement>(*blockEnclosingList)) { // listNode is inside another list item
-            if (visiblePositionAfterNode(blockEnclosingList) == visiblePositionAfterNode(listNode.get())) {
+            if (visiblePositionAfterNode(*blockEnclosingList) == visiblePositionAfterNode(*listNode)) {
                 // If listNode appears at the end of the outer list item, then move listNode outside of this list item
                 // e.g. <ul><li>hello <ul><li><br></li></ul> </li></ul> should become <ul><li>hello</li> <ul><li><br></li></ul> </ul> after this section
                 // If listNode does NOT appear at the end, then we should consider it as a regular paragraph.
                 // e.g. <ul><li> <ul><li><br></li></ul> hello</li></ul> should become <ul><li> <div><br></div> hello</li></ul> at the end
                 splitElement(downcast<HTMLLIElement>(blockEnclosingList), listNode);
                 removeNodePreservingChildren(listNode->parentNode());
-                newBlock = createListItemElement(document());
+                newBlock = HTMLLIElement::create(document());
             }
             // If listNode does NOT appear at the end of the outer list item, then behave as if in a regular paragraph.
         } else if (blockEnclosingList->hasTagName(olTag) || blockEnclosingList->hasTagName(ulTag))
-            newBlock = createListItemElement(document());
+            newBlock = HTMLLIElement::create(document());
     }
     if (!newBlock)
         newBlock = createDefaultParagraphElement(document());
@@ -1541,16 +1541,16 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     Node* highestBlockquote = highestEnclosingNodeOfType(caret.deepEquivalent(), &isMailBlockquote);
     if (!highestBlockquote)
         return false;
-        
+
     if (!isStartOfParagraph(caret) || !isEndOfParagraph(caret))
         return false;
-    
+
     VisiblePosition previous(caret.previous(CannotCrossEditingBoundary));
     // Only move forward if there's nothing before the caret, or if there's unquoted content before it.
     if (enclosingNodeOfType(previous.deepEquivalent(), &isMailBlockquote))
         return false;
     
-    RefPtr<Node> br = createBreakElement(document());
+    RefPtr<Node> br = HTMLBRElement::create(document());
     // We want to replace this quoted paragraph with an unquoted one, so insert a br
     // to hold the caret before the highest blockquote.
     insertNodeBefore(br, highestBlockquote);
@@ -1558,7 +1558,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     // If the br we inserted collapsed, for example foo<br><blockquote>...</blockquote>, insert
     // a second one.
     if (!isStartOfParagraph(atBR))
-        insertNodeBefore(createBreakElement(document()), br);
+        insertNodeBefore(HTMLBRElement::create(document()), br);
     setEndingSelection(VisibleSelection(atBR, endingSelection().isDirectional()));
     
     // If this is an empty paragraph there must be a line break here.

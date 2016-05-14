@@ -142,7 +142,7 @@ void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectCache* c
         return;
 
     VisiblePosition position = selection.start();
-    Node* node = highestEditableRoot(position.deepEquivalent(), HasEditableAXRole);
+    auto* node = highestEditableRoot(position.deepEquivalent(), HasEditableAXRole);
     if (m_replacedText.length())
         cache->postTextReplacementNotification(node, AXTextEditTypeDelete, m_replacedText, type, text, position);
     else
@@ -2330,18 +2330,18 @@ CharacterOffset AXObjectCache::startCharacterOffsetOfParagraph(const CharacterOf
     if (characterOffset.isNull())
         return CharacterOffset();
     
-    Node* startNode = characterOffset.node;
+    auto* startNode = characterOffset.node;
     
     if (isRenderedAsNonInlineTableImageOrHR(startNode))
         return startOrEndCharacterOffsetForRange(rangeForNodeContents(startNode), true);
     
-    Node* startBlock = enclosingBlock(startNode);
+    auto* startBlock = enclosingBlock(startNode);
     int offset = characterOffset.startIndex + characterOffset.offset;
     Position p(startNode, offset, Position::PositionIsOffsetInAnchor);
-    Node* highestRoot = highestEditableRoot(p);
+    auto* highestRoot = highestEditableRoot(p);
     Position::AnchorType type = Position::PositionIsOffsetInAnchor;
     
-    Node* node = findStartOfParagraph(startNode, highestRoot, startBlock, offset, type, boundaryCrossingRule);
+    auto* node = findStartOfParagraph(startNode, highestRoot, startBlock, offset, type, boundaryCrossingRule);
     
     if (type == Position::PositionIsOffsetInAnchor)
         return characterOffsetForNodeAndOffset(*node, offset, TraverseOptionIncludeStart);

@@ -1874,10 +1874,10 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
     return visiblePositionForIndexUsingCharacterIterator(*node, index);
 }
     
-int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& pos) const
+int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& position) const
 {
     if (isNativeTextControl())
-        return downcast<RenderTextControl>(*m_renderer).textFormControlElement().indexForVisiblePosition(pos);
+        return downcast<RenderTextControl>(*m_renderer).textFormControlElement().indexForVisiblePosition(position);
 
     if (!isTextControl())
         return 0;
@@ -1886,7 +1886,7 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     if (!node)
         return 0;
 
-    Position indexPosition = pos.deepEquivalent();
+    Position indexPosition = position.deepEquivalent();
     if (indexPosition.isNull() || highestEditableRoot(indexPosition, HasEditableAXRole) != node)
         return 0;
 
@@ -1898,7 +1898,7 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     bool forSelectionPreservation = false;
 #endif
 
-    return WebCore::indexForVisiblePosition(node, pos, forSelectionPreservation);
+    return WebCore::indexForVisiblePosition(*node, position, forSelectionPreservation);
 }
 
 Element* AccessibilityRenderObject::rootEditableElementForPosition(const Position& position) const

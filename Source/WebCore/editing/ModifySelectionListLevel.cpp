@@ -29,7 +29,8 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameSelection.h"
-#include "HTMLElement.h"
+#include "HTMLOListElement.h"
+#include "HTMLUListElement.h"
 #include "RenderObject.h"
 #include "htmlediting.h"
 
@@ -190,10 +191,10 @@ void IncreaseSelectionListLevelCommand::doApply()
                     newParent = newParent->cloneElementWithoutChildren(document());
                 break;
             case OrderedList:
-                newParent = createOrderedListElement(document());
+                newParent = HTMLOListElement::create(document());
                 break;
             case UnorderedList:
-                newParent = createUnorderedListElement(document());
+                newParent = HTMLUListElement::create(document());
                 break;
         }
         insertNodeBefore(newParent, startListChild);

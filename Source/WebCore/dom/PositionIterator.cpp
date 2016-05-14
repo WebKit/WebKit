@@ -66,7 +66,7 @@ void PositionIterator::increment()
         return;
     }
 
-    if (m_anchorNode->renderer() && !m_anchorNode->hasChildNodes() && m_offsetInAnchor < lastOffsetForEditing(m_anchorNode))
+    if (m_anchorNode->renderer() && !m_anchorNode->hasChildNodes() && m_offsetInAnchor < lastOffsetForEditing(*m_anchorNode))
         m_offsetInAnchor = Position::uncheckedNextOffset(m_anchorNode, m_offsetInAnchor);
     else {
         m_nodeAfterPositionInAnchor = m_anchorNode;
@@ -85,7 +85,7 @@ void PositionIterator::decrement()
         m_anchorNode = m_nodeAfterPositionInAnchor->previousSibling();
         if (m_anchorNode) {
             m_nodeAfterPositionInAnchor = nullptr;
-            m_offsetInAnchor = m_anchorNode->hasChildNodes() ? 0 : lastOffsetForEditing(m_anchorNode);
+            m_offsetInAnchor = m_anchorNode->hasChildNodes() ? 0 : lastOffsetForEditing(*m_anchorNode);
         } else {
             m_nodeAfterPositionInAnchor = m_nodeAfterPositionInAnchor->parentNode();
             m_anchorNode = m_nodeAfterPositionInAnchor->parentNode();
@@ -96,7 +96,7 @@ void PositionIterator::decrement()
     
     if (m_anchorNode->hasChildNodes()) {
         m_anchorNode = m_anchorNode->lastChild();
-        m_offsetInAnchor = m_anchorNode->hasChildNodes()? 0: lastOffsetForEditing(m_anchorNode);
+        m_offsetInAnchor = m_anchorNode->hasChildNodes()? 0: lastOffsetForEditing(*m_anchorNode);
     } else {
         if (m_offsetInAnchor && m_anchorNode->renderer())
             m_offsetInAnchor = Position::uncheckedPreviousOffset(m_anchorNode, m_offsetInAnchor);
@@ -122,7 +122,7 @@ bool PositionIterator::atEnd() const
         return true;
     if (m_nodeAfterPositionInAnchor)
         return false;
-    return !m_anchorNode->parentNode() && (m_anchorNode->hasChildNodes() || m_offsetInAnchor >= lastOffsetForEditing(m_anchorNode));
+    return !m_anchorNode->parentNode() && (m_anchorNode->hasChildNodes() || m_offsetInAnchor >= lastOffsetForEditing(*m_anchorNode));
 }
 
 bool PositionIterator::atStartOfNode() const
@@ -140,7 +140,7 @@ bool PositionIterator::atEndOfNode() const
         return true;
     if (m_nodeAfterPositionInAnchor)
         return false;
-    return m_anchorNode->hasChildNodes() || m_offsetInAnchor >= lastOffsetForEditing(m_anchorNode);
+    return m_anchorNode->hasChildNodes() || m_offsetInAnchor >= lastOffsetForEditing(*m_anchorNode);
 }
 
 bool PositionIterator::isCandidate() const

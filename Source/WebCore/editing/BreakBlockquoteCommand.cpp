@@ -26,7 +26,7 @@
 #include "config.h"
 #include "BreakBlockquoteCommand.h"
 
-#include "HTMLElement.h"
+#include "HTMLBRElement.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
 #include "RenderListItem.h"
@@ -70,25 +70,25 @@ void BreakBlockquoteCommand::doApply()
     if (!topBlockquote || !topBlockquote->parentNode() || !topBlockquote->isElementNode())
         return;
     
-    RefPtr<Element> breakNode = createBreakElement(document());
+    auto breakNode = HTMLBRElement::create(document());
 
     bool isLastVisPosInNode = isLastVisiblePositionInNode(visiblePos, topBlockquote);
 
     // If the position is at the beginning of the top quoted content, we don't need to break the quote.
     // Instead, insert the break before the blockquote, unless the position is as the end of the the quoted content.
     if (isFirstVisiblePositionInNode(visiblePos, topBlockquote) && !isLastVisPosInNode) {
-        insertNodeBefore(breakNode.get(), topBlockquote);
-        setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.get()), DOWNSTREAM, endingSelection().isDirectional()));
+        insertNodeBefore(breakNode.copyRef(), topBlockquote);
+        setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.ptr()), DOWNSTREAM, endingSelection().isDirectional()));
         rebalanceWhitespace();   
         return;
     }
     
     // Insert a break after the top blockquote.
-    insertNodeAfter(breakNode.get(), topBlockquote);
+    insertNodeAfter(breakNode.copyRef(), topBlockquote);
 
     // If we're inserting the break at the end of the quoted content, we don't need to break the quote.
     if (isLastVisPosInNode) {
-        setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.get()), DOWNSTREAM, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.ptr()), DOWNSTREAM, endingSelection().isDirectional()));
         rebalanceWhitespace();
         return;
     }
@@ -132,7 +132,7 @@ void BreakBlockquoteCommand::doApply()
     
     // Insert a clone of the top blockquote after the break.
     RefPtr<Element> clonedBlockquote = downcast<Element>(*topBlockquote).cloneElementWithoutChildren(document());
-    insertNodeAfter(clonedBlockquote.get(), breakNode.get());
+    insertNodeAfter(clonedBlockquote.get(), breakNode.copyRef());
     
     // Clone startNode's ancestors into the cloned blockquote.
     // On exiting this loop, clonedAncestor is the lowest ancestor
@@ -180,7 +180,7 @@ void BreakBlockquoteCommand::doApply()
     addBlockPlaceholderIfNeeded(clonedBlockquote.get());
     
     // Put the selection right before the break.
-    setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.get()), DOWNSTREAM, endingSelection().isDirectional()));
+    setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.ptr()), DOWNSTREAM, endingSelection().isDirectional()));
     rebalanceWhitespace();
 }
 

@@ -245,7 +245,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
     // Save and restore the selection endpoints using their indices in the editable root, since
     // addBlockStyleIfNeeded may moveParagraphs, which can remove these endpoints.
     // Calculate start and end indices from the start of the tree that they're in.
-    Node* scope = highestEditableRoot(visibleStart.deepEquivalent());
+    auto* scope = highestEditableRoot(visibleStart.deepEquivalent());
     if (!scope)
         return;
 
@@ -283,8 +283,8 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
         nextParagraphStart = endOfParagraph(paragraphStart).next();
     }
     
-    startRange = TextIterator::rangeFromLocationAndLength(downcast<ContainerNode>(scope), startIndex, 0, true);
-    endRange = TextIterator::rangeFromLocationAndLength(downcast<ContainerNode>(scope), endIndex, 0, true);
+    startRange = TextIterator::rangeFromLocationAndLength(scope, startIndex, 0, true);
+    endRange = TextIterator::rangeFromLocationAndLength(scope, endIndex, 0, true);
     if (startRange && endRange)
         updateStartEnd(startRange->startPosition(), endRange->startPosition());
 }
@@ -363,12 +363,11 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     start = start.upstream(); // Move upstream to ensure we do not add redundant spans.
     Node* startNode = start.deprecatedNode();
 
-    // Make sure we're not already at the end or the next NodeTraversal::next() will traverse
-    // past it.
+    // Make sure we're not already at the end or the next NodeTraversal::next() will traverse past it.
     if (startNode == beyondEnd)
         return;
 
-    if (startNode->isTextNode() && start.deprecatedEditingOffset() >= caretMaxOffset(startNode)) {
+    if (startNode->isTextNode() && start.deprecatedEditingOffset() >= caretMaxOffset(*startNode)) {
         // Move out of text node if range does not include its characters.
         startNode = NodeTraversal::next(*startNode);
         if (!startNode)
@@ -701,28 +700,29 @@ void ApplyStyleCommand::fixRangeAndApplyInlineStyle(EditingStyle* style, const P
 {
     Node* startNode = start.deprecatedNode();
 
-    if (start.deprecatedEditingOffset() >= caretMaxOffset(start.deprecatedNode())) {
+    if (start.deprecatedEditingOffset() >= caretMaxOffset(*startNode)) {
         startNode = NodeTraversal::next(*startNode);
         if (!startNode || comparePositions(end, firstPositionInOrBeforeNode(startNode)) < 0)
             return;
     }
 
     Node* pastEndNode = end.deprecatedNode();
-    if (end.deprecatedEditingOffset() >= caretMaxOffset(end.deprecatedNode()))
-        pastEndNode = NodeTraversal::nextSkippingChildren(*end.deprecatedNode());
+    if (end.deprecatedEditingOffset() >= caretMaxOffset(*pastEndNode))
+        pastEndNode = NodeTraversal::nextSkippingChildren(*pastEndNode);
 
     // FIXME: Callers should perform this operation on a Range that includes the br
     // if they want style applied to the empty line.
+    // FIXME: Should this be using startNode instead of start.deprecatedNode()?
     if (start == end && start.deprecatedNode()->hasTagName(brTag))
         pastEndNode = NodeTraversal::next(*start.deprecatedNode());
 
     // Start from the highest fully selected ancestor so that we can modify the fully selected node.
     // e.g. When applying font-size: large on <font color="blue">hello</font>, we need to include the font element in our run
     // to generate <font color="blue" size="4">hello</font> instead of <font color="blue"><font size="4">hello</font></font>
-    RefPtr<Range> range = Range::create(startNode->document(), start, end);
-    Element* editableRoot = startNode->rootEditableElement();
+    auto range = Range::create(startNode->document(), start, end);
+    auto* editableRoot = startNode->rootEditableElement();
     if (startNode != editableRoot) {
-        while (editableRoot && startNode->parentNode() != editableRoot && isNodeVisiblyContainedWithin(*startNode->parentNode(), range.get()))
+        while (editableRoot && startNode->parentNode() != editableRoot && isNodeVisiblyContainedWithin(*startNode->parentNode(), range))
             startNode = startNode->parentNode();
     }
 
@@ -1277,12 +1277,12 @@ bool ApplyStyleCommand::isValidCaretPositionInTextNode(const Position& position)
     if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node->isTextNode())
         return false;
     int offsetInText = position.offsetInContainerNode();
-    return offsetInText > caretMinOffset(node) && offsetInText < caretMaxOffset(node);
+    return offsetInText > caretMinOffset(*node) && offsetInText < caretMaxOffset(*node);
 }
 
 bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start, const Position& end)
 {
-    Node* startNode = start.containerNode();
+    auto* startNode = start.containerNode();
     int startOffset = start.computeOffsetInContainerNode();
     if (startOffset)
         return false;
@@ -1296,26 +1296,21 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start,
         startNode = startNode->parentNode();
     }
 
-    if (!startNode->isElementNode())
+    auto* previousSibling = startNode->previousSibling();
+    if (!previousSibling || !areIdenticalElements(*startNode, *previousSibling))
         return false;
 
-    Node* previousSibling = startNode->previousSibling();
+    auto& previousElement = downcast<Element>(*previousSibling);
+    auto& element = downcast<Element>(*startNode);
+    auto* startChild = element.firstChild();
+    ASSERT(startChild);
+    mergeIdenticalElements(&previousElement, &element);
 
-    if (previousSibling && areIdenticalElements(startNode, previousSibling)) {
-        Element* previousElement = downcast<Element>(previousSibling);
-        Element* element = downcast<Element>(startNode);
-        Node* startChild = element->firstChild();
-        ASSERT(startChild);
-        mergeIdenticalElements(previousElement, element);
-
-        unsigned startOffsetAdjustment = startChild->computeNodeIndex();
-        unsigned endOffsetAdjustment = startNode == end.deprecatedNode() ? startOffsetAdjustment : 0;
-        updateStartEnd(Position(startNode, startOffsetAdjustment, Position::PositionIsOffsetInAnchor),
-                       Position(end.deprecatedNode(), end.deprecatedEditingOffset() + endOffsetAdjustment, Position::PositionIsOffsetInAnchor)); 
-        return true;
-    }
-
-    return false;
+    int startOffsetAdjustment = startChild->computeNodeIndex();
+    int endOffsetAdjustment = startNode == end.deprecatedNode() ? startOffsetAdjustment : 0;
+    updateStartEnd({ startNode, startOffsetAdjustment, Position::PositionIsOffsetInAnchor},
+        { end.deprecatedNode(), end.deprecatedEditingOffset() + endOffsetAdjustment, Position::PositionIsOffsetInAnchor });
+    return true;
 }
 
 bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position& start, const Position& end)
@@ -1330,25 +1325,24 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position& start, const
         endNode = end.deprecatedNode()->parentNode();
     }
 
-    if (!endNode->isElementNode() || endNode->hasTagName(brTag))
+    if (endNode->hasTagName(brTag))
         return false;
 
     Node* nextSibling = endNode->nextSibling();
-    if (nextSibling && areIdenticalElements(endNode, nextSibling)) {
-        Element* nextElement = downcast<Element>(nextSibling);
-        Element* element = downcast<Element>(endNode);
-        Node* nextChild = nextElement->firstChild();
+    if (!nextSibling || !areIdenticalElements(*endNode, *nextSibling))
+        return false;
 
-        mergeIdenticalElements(element, nextElement);
+    auto& nextElement = downcast<Element>(*nextSibling);
+    auto& element = downcast<Element>(*endNode);
+    Node* nextChild = nextElement.firstChild();
 
-        bool shouldUpdateStart = start.containerNode() == endNode;
-        unsigned endOffset = nextChild ? nextChild->computeNodeIndex() : nextElement->countChildNodes();
-        updateStartEnd(shouldUpdateStart ? Position(nextElement, start.offsetInContainerNode(), Position::PositionIsOffsetInAnchor) : start,
-                       Position(nextElement, endOffset, Position::PositionIsOffsetInAnchor));
-        return true;
-    }
+    mergeIdenticalElements(&element, &nextElement);
 
-    return false;
+    bool shouldUpdateStart = start.containerNode() == endNode;
+    int endOffset = nextChild ? nextChild->computeNodeIndex() : nextElement.countChildNodes();
+    updateStartEnd(shouldUpdateStart ? Position(&nextElement, start.offsetInContainerNode(), Position::PositionIsOffsetInAnchor) : start,
+        { &nextElement, endOffset, Position::PositionIsOffsetInAnchor });
+    return true;
 }
 
 void ApplyStyleCommand::surroundNodeRangeWithElement(PassRefPtr<Node> passedStartNode, PassRefPtr<Node> endNode, PassRefPtr<Element> elementToInsert)
@@ -1375,15 +1369,13 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(PassRefPtr<Node> passedStar
 
     RefPtr<Node> nextSibling = element->nextSibling();
     RefPtr<Node> previousSibling = element->previousSibling();
-    if (is<Element>(nextSibling.get()) && nextSibling->hasEditableStyle()
-        && areIdenticalElements(element.get(), downcast<Element>(nextSibling.get())))
+    if (is<Element>(nextSibling.get()) && nextSibling->hasEditableStyle() && areIdenticalElements(*element, *nextSibling))
         mergeIdenticalElements(element.get(), downcast<Element>(nextSibling.get()));
 
     if (is<Element>(previousSibling.get()) && previousSibling->hasEditableStyle()) {
         Node* mergedElement = previousSibling->nextSibling();
         ASSERT(mergedElement);
-        if (is<Element>(*mergedElement) && mergedElement->hasEditableStyle()
-            && areIdenticalElements(downcast<Element>(previousSibling.get()), downcast<Element>(mergedElement)))
+        if (is<Element>(*mergedElement) && mergedElement->hasEditableStyle() && areIdenticalElements(*previousSibling, *mergedElement))
             mergeIdenticalElements(downcast<Element>(previousSibling.get()), downcast<Element>(mergedElement));
     }
 

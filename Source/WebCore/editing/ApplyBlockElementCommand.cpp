@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ApplyBlockElementCommand.h"
 
-#include "HTMLElement.h"
+#include "HTMLBRElement.h"
 #include "HTMLNames.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
@@ -113,11 +113,11 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
     // and there's nothing to move.
     Position start = startOfSelection.deepEquivalent().downstream();
     if (isAtUnsplittableElement(start) && startOfParagraph(start) == endOfParagraph(endOfSelection)) {
-        RefPtr<Element> blockquote = createBlockElement();
-        insertNodeAt(blockquote, start);
-        RefPtr<Element> placeholder = createBreakElement(document());
-        appendNode(placeholder, blockquote);
-        setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.get()), DOWNSTREAM, endingSelection().isDirectional()));
+        auto blockquote = createBlockElement();
+        insertNodeAt(blockquote.copyRef(), start);
+        auto placeholder = HTMLBRElement::create(document());
+        appendNode(placeholder.copyRef(), WTFMove(blockquote));
+        setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.ptr()), DOWNSTREAM, endingSelection().isDirectional()));
         return;
     }
 

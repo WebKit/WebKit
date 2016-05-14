@@ -1,3 +1,195 @@
+2016-05-14  Darin Adler  <darin@apple.com>
+
+        CTTE for the HTML editing header
+        https://bugs.webkit.org/show_bug.cgi?id=157676
+
+        Reviewed by Chris Dumez.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AccessibilityReplacedText::postTextStateChangeNotification): Use auto so we have a
+        change to compile more efficient code using the more specific types returned, rather than
+        explicitly using a less specific type like Node.
+        (WebCore::AXObjectCache::startCharacterOffsetOfParagraph): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp: Update for deprecatedIsEditingWhitespace name.
+        * dom/Position.cpp:
+        (WebCore::Position::offsetForPositionAfterAnchor): Update to use a reference instead of a pointer.
+        (WebCore::Position::next): Ditto.
+        (WebCore::Position::atFirstEditingPositionForNode): Ditto.
+        (WebCore::Position::atLastEditingPositionForNode): Ditto.
+        (WebCore::Position::atStartOfTree): Ditto.
+        (WebCore::Position::atEndOfTree): Ditto.
+        (WebCore::Position::upstream): Ditto.
+        (WebCore::Position::downstream): Ditto.
+        (WebCore::Position::rendersInDifferentPosition): Ditto.
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::increment): Ditto.
+        (WebCore::PositionIterator::decrement): Ditto.
+        (WebCore::PositionIterator::atEnd): Ditto.
+        (WebCore::PositionIterator::atEndOfNode): Ditto.
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand):
+        Use new name, deprecatedIsEditingWhitespace.
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::formatSelection): Use auto (see rationale above).
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle): More of the same.
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Ditto.
+        (WebCore::ApplyStyleCommand::fixRangeAndApplyInlineStyle): Ditto.
+        (WebCore::ApplyStyleCommand::isValidCaretPositionInTextNode): Ditto.
+        (WebCore::ApplyStyleCommand::mergeStartWithPreviousIfIdentical): Ditto.
+        (WebCore::ApplyStyleCommand::mergeEndWithNextIfIdentical): Ditto.
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement): Ditto.
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): Ditto.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::postTextStateChangeNotification): Ditto.
+        (WebCore::CompositeEditCommand::insertNodeAt): Ditto.
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan): Ditto.
+        (WebCore::containsOnlyDeprecatedEditingWhitespace): Ditto.
+        (WebCore::CompositeEditCommand::shouldRebalanceLeadingWhitespaceFor): Ditto.
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt): Ditto.
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring): Ditto.
+        (WebCore::CompositeEditCommand::insertNewDefaultParagraphElementAt): Ditto.
+        (WebCore::CompositeEditCommand::moveParagraphWithClones): Ditto.
+        (WebCore::CompositeEditCommand::moveParagraphs): Ditto.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd): Ditto.
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): Ditto.
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Ditto.
+        (WebCore::DeleteSelectionCommand::doApply): Ditto.
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::postTextStateChangeNotification): Ditto.
+        * editing/EditingStyle.cpp: Ditto.
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling): Ditto.
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::formatRange): Ditto.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph): Ditto.
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): Ditto.
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::fixOrphanedListChild): Ditto.
+        (WebCore::InsertListCommand::doApplyForSingleParagraph): Ditto.
+        (WebCore::InsertListCommand::unlistifyParagraph): Ditto.
+        (WebCore::InsertListCommand::listifyParagraph): Ditto.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Ditto.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::insertTab): Ditto.
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::IncreaseSelectionListLevelCommand::doApply): Ditto.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::removeUnrenderedNodes): Ditto.
+        (WebCore::ReplaceSelectionCommand::shouldMerge): Ditto.
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline): Ditto.
+        (WebCore::ReplaceSelectionCommand::mergeEndIfNeeded): Ditto.
+        (WebCore::enclosingInline): Ditto.
+        (WebCore::ReplaceSelectionCommand::doApply): Ditto.
+        * editing/TextIterator.cpp:
+        (WebCore::maxOffsetIncludingCollapsedSpaces): Ditto.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::honorEditingBoundaryAtOrBefore): Ditto.
+        (WebCore::VisiblePosition::honorEditingBoundaryAtOrAfter): Ditto.
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity): Ditto.
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries): Ditto.
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousRootInlineBoxCandidatePosition): Ditto.
+        (WebCore::nextRootInlineBoxCandidatePosition): Ditto.
+        (WebCore::startOfParagraph): Ditto.
+        (WebCore::endOfParagraph): Ditto.
+        (WebCore::startOfEditableContent): Ditto.
+        (WebCore::endOfEditableContent): Ditto.
+
+        * editing/htmlediting.cpp:
+        (WebCore::highestEditableRoot): Changed return type to ContainerNode. Maybe later could
+        change it to Element.
+        (WebCore::lowestEditableAncestor): Changed return type to Element.
+        (WebCore::isEditableToAccessibility): Use auto.
+        (WebCore::isRichlyEditablePosition): Ditto.
+        (WebCore::editableRootForPosition): Ditto.
+        (WebCore::unsplittableElementForPosition):Ditto.
+        (WebCore::nextCandidate): Streamline.
+        (WebCore::nextVisuallyDistinctCandidate): Ditto.
+        (WebCore::previousCandidate): Ditto.
+        (WebCore::previousVisuallyDistinctCandidate): Ditto.
+        (WebCore::firstEditablePositionAfterPositionInRoot): Changed arugment type to
+        ContainerNode.
+        (WebCore::lastEditablePositionBeforePositionInRoot): Ditto.
+        (WebCore::lastOffsetForEditing): Changed argument type to reference.
+        (WebCore::stringWithRebalancedWhitespace): Optimized the case where the function does
+        not need to change the string, so it just returns the passed string rather than a copy.
+        (WebCore::isTableStructureNode): Use auto.
+        (WebCore::isSpecialElement): Made this function private to the file. Use auto.
+        (WebCore::firstInSpecialElement): Return an HTMLElement.
+        (WebCore::lastInSpecialElement): Ditto.
+        (WebCore::isFirstVisiblePositionInSpecialElement): Made this function private to the file.
+        (WebCore::positionBeforeContainingSpecialElement): Changed out argument to HTMLElement.
+        (WebCore::isLastVisiblePositionInSpecialElement): Ditto.
+        (WebCore::positionAfterContainingSpecialElement): Ditto.
+        (WebCore::positionOutsideContainingSpecialElement): Ditto.
+        (WebCore::isFirstPositionAfterTable): Changed return type to Element.
+        (WebCore::isLastPositionBeforeTable): Ditto.
+        (WebCore::visiblePositionBeforeNode): Changed argument type to reference.
+        (WebCore::visiblePositionAfterNode): Ditto.
+        (WebCore::enclosingElementWithTag): Use auto. Removed special case for null since the
+        algorithm already handles null correctly.
+        (WebCore::enclosingNodeOfType): Use auto.
+        (WebCore::highestEnclosingNodeOfType): Ditto.
+        (WebCore::highestNodeToRemoveInPruning): Ditto.
+        (WebCore::enclosingTableCell): Changed return type to Element.
+        (WebCore::enclosingAnchorElement): Removed special case for null since the algorithm
+        already handles null correctly.
+        (WebCore::enclosingList): Use auto.
+        (WebCore::enclosingListChild): Use auto.
+        (WebCore::enclosingEmptyListItem): Use auto.
+        (WebCore::outermostEnclosingList): Use auto.
+        (WebCore::canMergeLists): Use references and more specific type. Since both elements are
+        known to be HTMLElement, compare local names instead of using hasTagName.
+        (WebCore::isRenderedTable): Use auto.
+        (WebCore::isTableCell): Ditto.
+        (WebCore::isEmptyTableCell): Ditto.
+        (WebCore::createBreakElement): Deleted. Callers can use HTMLBRElement directly.
+        (WebCore::createOrderedListElement): Deleted. Callers can use HTMLOListElement directly.
+        (WebCore::createUnorderedListElement): Deleted. Callers can use HTMLUListElement directly.
+        (WebCore::createListItemElement): Deleted. Callers can use HTMLLIElement directly.
+        (WebCore::isTabSpanNode): Remove redundant checks and did more specific typecast.
+        (WebCore::isTabSpanTextNode): Removed redundant null checks.
+        (WebCore::tabSpanNode): Changed return type to HTMLSpanElement.
+        (WebCore::positionOutsideTabSpan): Deleted. Unused function.
+        (WebCore::createTabSpanElement): Made one of the overloads private to this file. Use auto.
+        Changed argument type since we don't need to support null. Moved createEditingTextNode code,
+        specific to the version without a string into that function rather than the helper function.
+        (WebCore::isNodeRendered): Changed argument type to a reference.
+        (WebCore::numEnclosingMailBlockquotes): Streamlined.
+        (WebCore::isMailBlockquote): Use downcast instead of static_cast.
+        (WebCore::caretMinOffset): Take a reference instead of a pointer.
+        (WebCore::caretMaxOffset): Ditto.
+        (WebCore::selectionForParagraphIteration): Use auto.
+        (WebCore::indexForVisiblePosition): Ditto.
+        (WebCore::visiblePositionForIndex): Ditto.
+        (WebCore::visiblePositionForIndexUsingCharacterIterator): Ditto.
+        (WebCore::isVisiblyAdjacent): Made this private to this file.
+        (WebCore::isNodeVisiblyContainedWithin): Changed argument type to a reference.
+        (WebCore::areIdenticalElements): Changed argument types to references.
+        (WebCore::adjustedSelectionStartForStyleComputation): Use auto.
+        (WebCore::isBlockFlowElement): Changed argument type to a reference. Use auto.
+        (WebCore::deprecatedEnclosingBlockFlowElement): Updated for reference changes.
+        (WebCore::rendererForCaretPainting): Use auto.
+
+        * editing/htmlediting.h: Use pragma once. Removed unneeded includes and forward declarations.
+        Removed various non-helpful comments (the sections still don't make sense; not really good to
+        group functions by their return types). Moved inline functoin bodies to the bottom of the file.
+        Renamed isWhitespace to deprecatedIsEditingWhitespace.
+
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText): Use HTMLBRElement.
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::extend): Updated since caretMaxOffset takes a reference.
+
 2016-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Support ArrayBufferViews in the CSS Font Loading API

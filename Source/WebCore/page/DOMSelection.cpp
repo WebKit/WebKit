@@ -332,7 +332,7 @@ void DOMSelection::extend(Node& node, int offset, ExceptionCode& ec)
     if (!m_frame)
         return;
 
-    if (offset < 0 || offset > (node.offsetInCharacters() ? caretMaxOffset(&node) : static_cast<int>(node.countChildNodes()))) {
+    if (offset < 0 || offset > (node.offsetInCharacters() ? caretMaxOffset(node) : static_cast<int>(node.countChildNodes()))) {
         ec = INDEX_SIZE_ERR;
         return;
     }

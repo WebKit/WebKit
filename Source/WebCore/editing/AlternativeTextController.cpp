@@ -583,7 +583,7 @@ void AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionA
 
     RefPtr<Range> precedingCharacterRange = Range::create(*m_frame.document(), precedingCharacterPosition, endOfSelection);
     String string = plainText(precedingCharacterRange.get());
-    if (string.isEmpty() || !isWhitespace(string[string.length() - 1]))
+    if (string.isEmpty() || !deprecatedIsEditingWhitespace(string[string.length() - 1]))
         return;
 
     // Mark this whitespace to indicate we have deleted an autocorrection following this

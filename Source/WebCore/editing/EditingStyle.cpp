@@ -39,6 +39,7 @@
 #include "HTMLFontElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
+#include "HTMLSpanElement.h"
 #include "Node.h"
 #include "NodeTraversal.h"
 #include "QualifiedName.h"

@@ -28,7 +28,7 @@
 
 #include "Document.h"
 #include "EditingStyle.h"
-#include "HTMLElement.h"
+#include "HTMLBRElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
@@ -297,7 +297,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // it if visiblePos is at the start of a paragraph so that the 
     // content will move down a line.
     if (isStartOfParagraph(visiblePos)) {
-        RefPtr<Element> br = createBreakElement(document());
+        RefPtr<Element> br = HTMLBRElement::create(document());
         insertNodeAt(br.get(), insertionPosition);
         insertionPosition = positionInParentAfterNode(br.get());
         // If the insertion point is a break element, there is nothing else
@@ -368,7 +368,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // created.  All of the nodes, starting at visiblePos, are about to be added to the new paragraph 
     // element.  If the first node to be inserted won't be one that will hold an empty line open, add a br.
     if (isEndOfParagraph(visiblePos) && !lineBreakExistsAtVisiblePosition(visiblePos))
-        appendNode(createBreakElement(document()), blockToInsert.get());
+        appendNode(HTMLBRElement::create(document()), blockToInsert.get());
 
     // Move the start node and the siblings of the start node.
     if (VisiblePosition(insertionPosition) != VisiblePosition(positionBeforeNode(blockToInsert.get()))) {
@@ -377,7 +377,7 @@ void InsertParagraphSeparatorCommand::doApply()
             n = insertionPosition.computeNodeAfterPosition();
         else {
             Node* splitTo = insertionPosition.containerNode();
-            if (splitTo->isTextNode() && insertionPosition.offsetInContainerNode() >= caretMaxOffset(splitTo))
+            if (is<Text>(*splitTo) && insertionPosition.offsetInContainerNode() >= caretMaxOffset(*splitTo))
                 splitTo = NodeTraversal::next(*splitTo, startBlock.get());
             ASSERT(splitTo);
             splitTreeToNode(splitTo, startBlock.get());

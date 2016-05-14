@@ -601,7 +601,7 @@ static VisibleSelection wordAtPositionForAtkBoundary(const AccessibilityObject* 
         // as when at the beginning of a whitespace range between two "real" words,
         // since that whitespace is considered a "word" as well. And in case we are
         // already at the beginning of a "real" word we do not need to look backwards.
-        if (isStartOfWord(position) && isWhitespace(position.characterBefore()))
+        if (isStartOfWord(position) && deprecatedIsEditingWhitespace(position.characterBefore()))
             startPosition = position;
         else
             startPosition = previousWordPosition(position);
@@ -729,7 +729,7 @@ static bool isWhiteSpaceBetweenSentences(const VisiblePosition& position)
     if (position.isNull())
         return false;
 
-    if (!isWhitespace(position.characterAfter()))
+    if (!deprecatedIsEditingWhitespace(position.characterAfter()))
         return false;
 
     VisiblePosition startOfWhiteSpace = startOfWord(position, RightWordIfOnBoundary);
@@ -764,12 +764,12 @@ static VisibleSelection sentenceAtPositionForAtkBoundary(const AccessibilityObje
 
         // startOfSentence returns a position after any white space previous to
         // the sentence, so we might need to adjust that offset for this boundary.
-        if (isWhitespace(startPosition.characterBefore()))
+        if (deprecatedIsEditingWhitespace(startPosition.characterBefore()))
             startPosition = startOfWord(startPosition, LeftWordIfOnBoundary);
 
         // endOfSentence returns a position after any white space after the
         // sentence, so we might need to adjust that offset for this boundary.
-        if (isWhitespace(endPosition.characterBefore()))
+        if (deprecatedIsEditingWhitespace(endPosition.characterBefore()))
             endPosition = startOfWord(endPosition, LeftWordIfOnBoundary);
 
         // Finally, do some additional adjustments that might be needed if

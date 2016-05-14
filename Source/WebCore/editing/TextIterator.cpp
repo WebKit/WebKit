@@ -974,7 +974,7 @@ static int collapsedSpaceLength(RenderText& renderer, int textEnd)
 
 static int maxOffsetIncludingCollapsedSpaces(Node& node)
 {
-    int offset = caretMaxOffset(&node);
+    int offset = caretMaxOffset(node);
     if (auto* renderer = node.renderer()) {
         if (is<RenderText>(*renderer))
             offset += collapsedSpaceLength(downcast<RenderText>(*renderer), offset);
