@@ -57,14 +57,6 @@ enum class InputType {
 
 #if PLATFORM(IOS)
 struct OptionItem {
-    OptionItem()
-        : isGroup(false)
-        , isSelected(false)
-        , disabled(false)
-        , parentGroupID(0)
-    {
-    }
-
     OptionItem(const OptionItem& item)
         : text(item.text)
         , isGroup(item.isGroup)
@@ -83,55 +75,36 @@ struct OptionItem {
     {
     }
     String text;
-    bool isGroup;
-    bool isSelected;
-    bool disabled;
-    int parentGroupID;
+    bool isGroup { false };
+    bool isSelected { false };
+    bool disabled { false };
+    int parentGroupID { 0 };
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, OptionItem&);
 };
 
 struct AssistedNodeInformation {
-    AssistedNodeInformation()
-        : minimumScaleFactor(-INFINITY)
-        , maximumScaleFactor(INFINITY)
-        , nodeFontSize(0)
-        , hasNextNode(false)
-        , hasPreviousNode(false)
-        , isAutocorrect(false)
-        , isRTL(false)
-        , isMultiSelect(false)
-        , isReadOnly(false)
-        , allowsUserScaling(false)
-        , insideFixedPosition(false)
-        , autocapitalizeType(WebAutocapitalizeTypeDefault)
-        , elementType(InputType::None)
-        , selectedIndex(-1)
-        , valueAsNumber(0)
-    {
-    }
-
     WebCore::IntRect elementRect;
     WebCore::IntRect selectionRect;
-    double minimumScaleFactor;
-    double maximumScaleFactor;
-    double nodeFontSize;
-    bool hasNextNode;
-    bool hasPreviousNode;
-    bool isAutocorrect;
-    bool isRTL;
-    bool isMultiSelect;
-    bool isReadOnly;
-    bool allowsUserScaling;
-    bool insideFixedPosition;
-    WebAutocapitalizeType autocapitalizeType;
-    InputType elementType;
+    double minimumScaleFactor { -INFINITY };
+    double maximumScaleFactor { INFINITY };
+    double nodeFontSize { 0 };
+    bool hasNextNode { false };
+    bool hasPreviousNode { false };
+    bool isAutocorrect { false };
+    bool isRTL { false };
+    bool isMultiSelect { false };
+    bool isReadOnly {false };
+    bool allowsUserScaling { false };
+    bool insideFixedPosition { false };
+    WebAutocapitalizeType autocapitalizeType { WebAutocapitalizeTypeDefault };
+    InputType elementType { InputType::None };
     String formAction;
     Vector<OptionItem> selectOptions;
-    int selectedIndex;
+    int selectedIndex { -1 };
     String value;
-    double valueAsNumber;
+    double valueAsNumber { 0 };
     String title;
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
 

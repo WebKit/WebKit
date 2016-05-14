@@ -1,3 +1,21 @@
+2016-05-13  Dean Jackson  <dino@apple.com>
+
+        [iOS] <select> elements popover should render right-aligned when in RTL mode
+        https://bugs.webkit.org/show_bug.cgi?id=157699
+        <rdar://problem/26282319>
+
+        Reviewed by Simon Fraser.
+
+        Some follow-up changes as suggested by Darin in review.
+
+        * Shared/AssistedNodeInformation.h: Use initializers so we can
+        remove the constructors.
+        (WebKit::OptionItem::OptionItem): Deleted.
+        (WebKit::AssistedNodeInformation::AssistedNodeInformation): Deleted.
+        * UIProcess/ios/forms/WKFormSelectPopover.mm: Add a comment to explain
+        why we are explicitly setting the language.
+        (-[WKSelectTableViewController initWithView:hasGroups:]):
+
 2016-05-13  Chris Dumez  <cdumez@apple.com>
 
         [NetworkCache] Avoid having to re-parse URLs after deserializing them

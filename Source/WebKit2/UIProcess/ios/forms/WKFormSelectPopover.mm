@@ -125,7 +125,10 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     UITextWritingDirection writingDirection = _contentView.assistedNodeInformation.isRTL ? UITextWritingDirectionRightToLeft : UITextWritingDirectionLeftToRight;
     BOOL override = NO;
     _textAlignment = (writingDirection == UITextWritingDirectionLeftToRight) ? NSTextAlignmentLeft : NSTextAlignmentRight;
-    
+
+    // Typically UIKit apps have their writing direction follow the system
+    // language. However WebKit wants to follow the content direction.
+    // For that reason we have to override what the system thinks.
     if (writingDirection == UITextWritingDirectionRightToLeft)
         self.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
     [self setTitle:stringWithWritingDirection(_contentView.assistedNodeInformation.title, writingDirection, override)];
