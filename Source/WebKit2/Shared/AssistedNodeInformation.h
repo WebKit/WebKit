@@ -57,6 +57,8 @@ enum class InputType {
 
 #if PLATFORM(IOS)
 struct OptionItem {
+    OptionItem() { }
+
     OptionItem(const OptionItem& item)
         : text(item.text)
         , isGroup(item.isGroup)
