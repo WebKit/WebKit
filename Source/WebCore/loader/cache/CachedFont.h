@@ -51,6 +51,9 @@ public:
 
     virtual bool ensureCustomFontData(const AtomicString& remoteURI);
 
+    static std::unique_ptr<FontCustomPlatformData> createCustomFontData(SharedBuffer&, bool& wrapping);
+    static FontPlatformData platformDataFromCustomData(FontCustomPlatformData&, const FontDescription&, bool bold, bool italic, const FontFeatureSettings&, const FontVariantSettings&);
+
     virtual RefPtr<Font> createFont(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, const FontVariantSettings&);
 
 protected:

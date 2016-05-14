@@ -1,3 +1,29 @@
+2016-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support ArrayBufferViews in the CSS Font Loading API
+        https://bugs.webkit.org/show_bug.cgi?id=157694
+        <rdar://problem/25554267>
+
+        This patch adds a new mode to CSSFontFaceSource for immediate (ArrayBuffer) data.
+        Then, FontFace can simply be hooked up to this new mode.
+
+        Reviewed by Darin Adler.
+
+        Test: fast/text/css-font-loading-arraybuffer.html
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::font):
+        * css/CSSFontFaceSource.h:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::createCustomFontData):
+        (WebCore::CachedFont::createFont):
+        (WebCore::CachedFont::platformDataFromCustomData):
+        * loader/cache/CachedFont.h:
+
 2016-05-14  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Add support for dictionary members of integer types

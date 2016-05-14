@@ -1,3 +1,14 @@
+2016-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support ArrayBufferViews in the CSS Font Loading API
+        https://bugs.webkit.org/show_bug.cgi?id=157694
+        <rdar://problem/25554267>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/css-font-loading-arraybuffer-expected.txt: Added.
+        * fast/text/css-font-loading-arraybuffer.html: Added.
+
 2016-05-13  Zalan Bujtas  <zalan@apple.com>
 
         All scrolling height/width values should be integral rounded.

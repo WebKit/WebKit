@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FontFace.h"
 
+#include "CSSFontFaceSource.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValuePool.h"
@@ -36,9 +37,18 @@
 
 namespace WebCore {
 
+static bool populateFontFaceWithArrayBuffer(CSSFontFace& fontFace, Ref<JSC::ArrayBufferView>&& arrayBufferView)
+{
+    auto source = std::make_unique<CSSFontFaceSource>(fontFace, String(), nullptr, nullptr, WTFMove(arrayBufferView));
+    fontFace.adoptSource(WTFMove(source));
+    return false;
+}
+
 RefPtr<FontFace> FontFace::create(JSC::ExecState& state, Document& document, const String& family, JSC::JSValue source, const Descriptors& descriptors, ExceptionCode& ec)
 {
     auto result = adoptRef(*new FontFace(document.fontSelector()));
+
+    bool dataRequiresAsynchronousLoading = true;
 
     ec = 0;
     result->setFamily(family, ec);
@@ -52,6 +62,11 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& state, Document& document, con
             return nullptr;
         }
         CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &document, false);
+    } else if (auto arrayBufferView = toArrayBufferView(source))
+        dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
+    else if (auto arrayBuffer = toArrayBuffer(source)) {
+        auto arrayBufferView = JSC::Uint8Array::create(arrayBuffer, 0, arrayBuffer->byteLength());
+        dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
     }
 
     result->setStyle(descriptors.style, ec);
@@ -72,6 +87,11 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& state, Document& document, con
     result->setFeatureSettings(descriptors.featureSettings, ec);
     if (ec)
         return nullptr;
+
+    if (!dataRequiresAsynchronousLoading) {
+        result->backing().load();
+        ASSERT(result->backing().status() == CSSFontFace::Status::Success);
+    }
 
     return WTFMove(result);
 }
