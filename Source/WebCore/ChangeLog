@@ -1,3 +1,140 @@
+2016-05-15  Chris Dumez  <cdumez@apple.com>
+
+        Use more references in JS wrappers related code
+        https://bugs.webkit.org/show_bug.cgi?id=157721
+
+        Reviewed by Darin Adler.
+
+        - Use more references in JS wrappers related code.
+        - Avoid some refcounting churn when using toJSNewlyCreated() and in
+          HTML/SVG elements factories by moving the Ref<> around.
+        - Add toJS() / toJSNewlyCreated() implementations for Text, XMLDocument
+          and HTMLDocument. Now that toJSNewlyCreated() takes a Ref<>&& /
+          RefPtr<>&& in, the compiler is no longer able to implicitly use the
+          toJSNewlyCreated() implementation of a parent class for a subclass
+          type (complains about calls being ambiguous). I thought about updating
+          the bindings generator to always generate a toJSNewlyCreated() for
+          all wrapper types (that would call the one on the parent class if the
+          subclass does not have a proper implementation). However this would
+          add some complexity to the bindings generator and it did not seem
+          worth it because [NewObject] and therefore toJSNewlyCreated() is only
+          used for a very limited set of subtypes. I have therefore decided to
+          add the toJS() / toJSNewlyCreated() implementations for the subtypes
+          in question. This also has the benefit of avoiding calling the more
+          complex implementations on Node / Document.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAnimationTimelineCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::constructJSAudioContext):
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::constructJSBlob):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getCachedWrapper):
+        (WebCore::createWrapper):
+        (WebCore::wrap):
+        (WebCore::getExistingWrapper):
+        (WebCore::createNewWrapper):
+        (WebCore::toJS):
+        (WebCore::finiteInt32Value): Deleted.
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::createNewDocumentWrapper):
+        (WebCore::toJS):
+        (WebCore::cachedDocumentWrapper):
+        (WebCore::reportMemoryForFramelessDocument):
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSDocumentCustom.h:
+        * bindings/js/JSDocumentFragmentCustom.cpp:
+        (WebCore::createNewDocumentFragmentWrapper):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSElementCustom.h:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::createNewEventWrapper):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSFileCustom.cpp:
+        (WebCore::constructJSFile):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::createNewHTMLDocumentWrapper):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSHTMLTemplateElementCustom.cpp:
+        (WebCore::JSHTMLTemplateElement::content):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        (WebCore::createWrapper):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::getOutOfLineCachedWrapper):
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::toJS):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::createWrapper):
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSNodeListCustom.h:
+        (WebCore::toJS):
+        * bindings/js/JSRTCPeerConnectionCustom.cpp:
+        (WebCore::constructJSRTCPeerConnection):
+        * bindings/js/JSRTCSessionDescriptionCustom.cpp:
+        (WebCore::constructJSRTCSessionDescription):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTextCustom.cpp: Copied from Source/WebCore/dom/XMLDocument.idl.
+        (WebCore::createNewTextWrapper):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSXMLDocumentCustom.cpp: Copied from Source/WebCore/bindings/js/JSDocumentFragmentCustom.cpp.
+        (WebCore::createNewXMLDocumentWrapper):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/*: Rebaseline bindings tests.
+        * dom/Element.cpp:
+        (WebCore::Element::setInnerHTML):
+        * dom/Text.idl:
+        * dom/XMLDocument.idl:
+        * dom/make_names.pl:
+        (printWrapperFunctions):
+        (printWrapperFactoryCppFile):
+        (printWrapperFactoryHeaderFile):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::serializeNodesWithNamespaces):
+        * html/HTMLDocument.idl:
+        * html/HTMLTemplateElement.cpp:
+        (WebCore::HTMLTemplateElement::content):
+        (WebCore::HTMLTemplateElement::cloneNodeInternal):
+        * html/HTMLTemplateElement.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::insert):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::ownerDocumentForCurrentNode):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+
 2016-05-15  Darin Adler  <darin@apple.com>
 
         Something tiny left out of the last patch.

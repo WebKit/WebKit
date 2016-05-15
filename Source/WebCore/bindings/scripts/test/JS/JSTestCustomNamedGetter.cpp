@@ -223,14 +223,14 @@ extern "C" { extern void* _ZTVN7WebCore21TestCustomNamedGetterE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomNamedGetter& impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestCustomNamedGetter>&& impl)
 {
-    return createNewWrapper<JSTestCustomNamedGetter>(globalObject, &impl);
+    return createNewWrapper<JSTestCustomNamedGetter>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomNamedGetter& impl)
 {
-    if (JSValue result = getExistingWrapper<JSTestCustomNamedGetter>(globalObject, &impl))
+    if (JSValue result = getExistingWrapper<JSTestCustomNamedGetter>(globalObject, impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -251,7 +251,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomNa
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestCustomNamedGetter>(globalObject, &impl);
+    return createNewWrapper<JSTestCustomNamedGetter, TestCustomNamedGetter>(globalObject, impl);
 }
 
 TestCustomNamedGetter* JSTestCustomNamedGetter::toWrapped(JSC::JSValue value)

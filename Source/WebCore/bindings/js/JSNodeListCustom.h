@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT JSC::JSValue createWrapper(JSDOMGlobalObject&, NodeList&);
+WEBCORE_EXPORT JSC::JSValue createWrapper(JSDOMGlobalObject&, Ref<NodeList>&&);
 
 ALWAYS_INLINE JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, NodeList& nodeList)
 {
-    if (JSC::JSValue existingWrapper = getExistingWrapper<JSNodeList>(globalObject, &nodeList))
+    if (JSC::JSValue existingWrapper = getExistingWrapper<JSNodeList>(globalObject, nodeList))
         return existingWrapper;
     return createWrapper(*globalObject, nodeList);
 }

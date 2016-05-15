@@ -101,7 +101,7 @@ static inline bool isAllWhitespace(const String& string)
 static inline void insert(HTMLConstructionSiteTask& task)
 {
     if (is<HTMLTemplateElement>(*task.parent))
-        task.parent = downcast<HTMLTemplateElement>(*task.parent).content();
+        task.parent = &downcast<HTMLTemplateElement>(*task.parent).content();
 
     if (ContainerNode* parent = task.child->parentNode())
         parent->parserRemoveChild(*task.child);
@@ -558,7 +558,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
         findFosterSite(task);
 
     if (is<HTMLTemplateElement>(*task.parent))
-        task.parent = downcast<HTMLTemplateElement>(*task.parent).content();
+        task.parent = &downcast<HTMLTemplateElement>(*task.parent).content();
 
     // Strings composed entirely of whitespace are likely to be repeated.
     // Turn them into AtomicString so we share a single string for each.
@@ -641,7 +641,7 @@ Ref<Element> HTMLConstructionSite::createElement(AtomicHTMLToken& token, const A
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
     if (is<HTMLTemplateElement>(currentNode()))
-        return downcast<HTMLTemplateElement>(currentNode()).content()->document();
+        return downcast<HTMLTemplateElement>(currentNode()).content().document();
     return currentNode().document();
 }
 

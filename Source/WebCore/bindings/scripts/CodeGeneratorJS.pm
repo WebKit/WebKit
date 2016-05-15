@@ -1481,9 +1481,9 @@ sub GenerateHeader
         }
         push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $implType* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }\n");
 
-        push(@headerContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, $implType&);\n");
-        push(@headerContent, "inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $implType* impl) { return impl ? toJSNewlyCreated(state, globalObject, *impl) : JSC::jsNull(); }\n");
-    }
+        push(@headerContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, Ref<$implType>&&);\n");
+        push(@headerContent, "inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, RefPtr<$implType>&& impl) { return impl ? toJSNewlyCreated(state, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }\n");
+   }
 
     push(@headerContent, "\n");
 
@@ -3403,22 +3403,22 @@ extern "C" { extern void* ${vtableNameGnu}[]; }
 
 END
 
-        push(@implContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, $implType& impl)\n");
+        push(@implContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@implContent, "{\n");
         if ($svgPropertyType) {
-            push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, &impl);\n");
+            push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, WTFMove(impl));\n");
         } else {
-            push(@implContent, "    return createNewWrapper<$className>(globalObject, &impl);\n");
+            push(@implContent, "    return createNewWrapper<$className>(globalObject, WTFMove(impl));\n");
         }
         push(@implContent, "}\n\n");
 
         push(@implContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, $implType& impl)\n");
         push(@implContent, "{\n");
         if ($svgPropertyType) {
-            push(@implContent, "    if (JSValue result = getExistingWrapper<$className, $implType>(globalObject, &impl))\n");
+            push(@implContent, "    if (JSValue result = getExistingWrapper<$className, $implType>(globalObject, impl))\n");
             push(@implContent, "        return result;\n");
         } else {
-            push(@implContent, "    if (JSValue result = getExistingWrapper<$className>(globalObject, &impl))\n");
+            push(@implContent, "    if (JSValue result = getExistingWrapper<$className>(globalObject, impl))\n");
             push(@implContent, "        return result;\n");
         }
         push(@implContent, <<END) if $vtableNameGnu;
@@ -3455,11 +3455,7 @@ END
     globalObject->vm().heap.reportExtraMemoryAllocated(impl.memoryCost());
 END
 
-        if ($svgPropertyType) {
-            push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, &impl);\n");
-        } else {
-            push(@implContent, "    return createNewWrapper<$className>(globalObject, &impl);\n");
-        }
+        push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, impl);\n");
 
         push(@implContent, "}\n\n");
     }

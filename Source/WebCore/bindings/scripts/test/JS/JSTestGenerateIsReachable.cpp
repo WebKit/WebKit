@@ -163,14 +163,14 @@ extern "C" { extern void* _ZTVN7WebCore23TestGenerateIsReachableE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestGenerateIsReachable& impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestGenerateIsReachable>&& impl)
 {
-    return createNewWrapper<JSTestGenerateIsReachable>(globalObject, &impl);
+    return createNewWrapper<JSTestGenerateIsReachable>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestGenerateIsReachable& impl)
 {
-    if (JSValue result = getExistingWrapper<JSTestGenerateIsReachable>(globalObject, &impl))
+    if (JSValue result = getExistingWrapper<JSTestGenerateIsReachable>(globalObject, impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -191,7 +191,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestGenerate
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestGenerateIsReachable>(globalObject, &impl);
+    return createNewWrapper<JSTestGenerateIsReachable, TestGenerateIsReachable>(globalObject, impl);
 }
 
 TestGenerateIsReachable* JSTestGenerateIsReachable::toWrapped(JSC::JSValue value)

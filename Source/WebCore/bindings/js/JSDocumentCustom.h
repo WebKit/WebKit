@@ -38,6 +38,9 @@ ALWAYS_INLINE JSDocument* jsDocumentCast(JSC::JSValue value)
     return value.asCell()->type() == JSDocumentWrapperType ? JSC::jsCast<JSDocument*>(value) : nullptr;
 }
 
+JSC::JSObject* cachedDocumentWrapper(JSC::ExecState&, JSDOMGlobalObject&, Document&);
+void reportMemoryForDocumentIfFrameless(JSC::ExecState&, Document&);
+
 } // namespace WebCore
 
 #endif // JSDocumentCustom_h

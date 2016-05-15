@@ -21,6 +21,7 @@
 [
     CustomGetOwnPropertySlot,
     CustomNamedGetter,
+    CustomToJSObject,
     NewImpurePropertyFiresWatchpoints,
     OverrideBuiltins,
 ] interface HTMLDocument : Document {

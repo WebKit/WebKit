@@ -230,14 +230,14 @@ extern "C" { extern void* _ZTVN7WebCore15TestEventTargetE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTarget& impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestEventTarget>&& impl)
 {
-    return createNewWrapper<JSTestEventTarget>(globalObject, &impl);
+    return createNewWrapper<JSTestEventTarget>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTarget& impl)
 {
-    if (JSValue result = getExistingWrapper<JSTestEventTarget>(globalObject, &impl))
+    if (JSValue result = getExistingWrapper<JSTestEventTarget>(globalObject, impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -258,7 +258,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTar
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestEventTarget>(globalObject, &impl);
+    return createNewWrapper<JSTestEventTarget, TestEventTarget>(globalObject, impl);
 }
 
 TestEventTarget* JSTestEventTarget::toWrapped(JSC::JSValue value)

@@ -52,53 +52,62 @@ using namespace JSC;
 
 namespace WebCore {
 
-static inline JSValue createNewDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObject, Document& document)
+static inline JSValue createNewDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObject, Ref<Document>&& passedDocument)
 {
+    auto& document = passedDocument.get();
     JSObject* wrapper;
     if (document.isHTMLDocument())
-        wrapper = CREATE_DOM_WRAPPER(&globalObject, HTMLDocument, &document);
+        wrapper = CREATE_DOM_WRAPPER(&globalObject, HTMLDocument, WTFMove(passedDocument));
     else if (document.isSVGDocument())
-        wrapper = CREATE_DOM_WRAPPER(&globalObject, SVGDocument, &document);
+        wrapper = CREATE_DOM_WRAPPER(&globalObject, SVGDocument, WTFMove(passedDocument));
     else if (document.isXMLDocument())
-        wrapper = CREATE_DOM_WRAPPER(&globalObject, XMLDocument, &document);
+        wrapper = CREATE_DOM_WRAPPER(&globalObject, XMLDocument, WTFMove(passedDocument));
     else
-        wrapper = CREATE_DOM_WRAPPER(&globalObject, Document, &document);
+        wrapper = CREATE_DOM_WRAPPER(&globalObject, Document, WTFMove(passedDocument));
 
-    // Make sure the document is kept around by the window object, and works right with the
-    // back/forward cache.
-    if (!document.frame()) {
-        size_t nodeCount = 0;
-        for (Node* n = &document; n; n = NodeTraversal::next(*n))
-            ++nodeCount;
-
-        // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
-        // https://bugs.webkit.org/show_bug.cgi?id=142595
-        state.heap()->deprecatedReportExtraMemory(nodeCount * sizeof(Node));
-    }
+    reportMemoryForDocumentIfFrameless(state, document);
 
     return wrapper;
 }
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Document& document)
 {
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), &document);
-    if (wrapper)
+    if (auto* wrapper = cachedDocumentWrapper(*state, *globalObject, document))
         return wrapper;
-
-    if (DOMWindow* domWindow = document.domWindow()) {
-        globalObject = toJSDOMWindow(toJS(state, *domWindow));
-        // Creating a wrapper for domWindow might have created a wrapper for document as well.
-        wrapper = getCachedWrapper(globalObject->world(), &document);
-        if (wrapper)
-            return wrapper;
-    }
-
     return createNewDocumentWrapper(*state, *globalObject, document);
 }
 
-JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Document& document)
+JSObject* cachedDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObject, Document& document)
 {
-    return createNewDocumentWrapper(*state, *globalObject, document);
+    if (auto* wrapper = getCachedWrapper(globalObject.world(), document))
+        return wrapper;
+
+    auto* window = document.domWindow();
+    if (!window)
+        return nullptr;
+
+    // Creating a wrapper for domWindow might have created a wrapper for document as well.
+    return getCachedWrapper(toJSDOMWindow(toJS(&state, *window))->world(), document);
+}
+
+void reportMemoryForDocumentIfFrameless(ExecState& state, Document& document)
+{
+    // Make sure the document is kept around by the window object, and works right with the back/forward cache.
+    if (document.frame())
+        return;
+
+    size_t nodeCount = 0;
+    for (Node* node = &document; node; node = NodeTraversal::next(*node))
+        ++nodeCount;
+
+    // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
+    // https://bugs.webkit.org/show_bug.cgi?id=142595
+    state.heap()->deprecatedReportExtraMemory(nodeCount * sizeof(Node));
+}
+
+JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<Document>&& document)
+{
+    return createNewDocumentWrapper(*state, *globalObject, WTFMove(document));
 }
 
 JSValue JSDocument::prepend(ExecState& state)

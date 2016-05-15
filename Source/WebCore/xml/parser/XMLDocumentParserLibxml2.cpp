@@ -849,7 +849,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         return;
 
     if (is<HTMLTemplateElement>(newElement))
-        pushCurrentNode(downcast<HTMLTemplateElement>(newElement.get()).content());
+        pushCurrentNode(&downcast<HTMLTemplateElement>(newElement.get()).content());
     else
         pushCurrentNode(newElement.ptr());
 

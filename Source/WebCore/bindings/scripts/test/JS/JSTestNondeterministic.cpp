@@ -472,14 +472,14 @@ extern "C" { extern void* _ZTVN7WebCore20TestNondeterministicE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeterministic& impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestNondeterministic>&& impl)
 {
-    return createNewWrapper<JSTestNondeterministic>(globalObject, &impl);
+    return createNewWrapper<JSTestNondeterministic>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeterministic& impl)
 {
-    if (JSValue result = getExistingWrapper<JSTestNondeterministic>(globalObject, &impl))
+    if (JSValue result = getExistingWrapper<JSTestNondeterministic>(globalObject, impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -500,7 +500,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeter
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestNondeterministic>(globalObject, &impl);
+    return createNewWrapper<JSTestNondeterministic, TestNondeterministic>(globalObject, impl);
 }
 
 TestNondeterministic* JSTestNondeterministic::toWrapped(JSC::JSValue value)

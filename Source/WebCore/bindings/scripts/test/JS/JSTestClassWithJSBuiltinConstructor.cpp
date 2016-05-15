@@ -176,14 +176,14 @@ extern "C" { extern void* _ZTVN7WebCore33TestClassWithJSBuiltinConstructorE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestClassWithJSBuiltinConstructor& impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestClassWithJSBuiltinConstructor>&& impl)
 {
-    return createNewWrapper<JSTestClassWithJSBuiltinConstructor>(globalObject, &impl);
+    return createNewWrapper<JSTestClassWithJSBuiltinConstructor>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestClassWithJSBuiltinConstructor& impl)
 {
-    if (JSValue result = getExistingWrapper<JSTestClassWithJSBuiltinConstructor>(globalObject, &impl))
+    if (JSValue result = getExistingWrapper<JSTestClassWithJSBuiltinConstructor>(globalObject, impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -204,7 +204,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestClassWit
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestClassWithJSBuiltinConstructor>(globalObject, &impl);
+    return createNewWrapper<JSTestClassWithJSBuiltinConstructor, TestClassWithJSBuiltinConstructor>(globalObject, impl);
 }
 
 TestClassWithJSBuiltinConstructor* JSTestClassWithJSBuiltinConstructor::toWrapped(JSC::JSValue value)

@@ -18,7 +18,8 @@
  */
 [
     Constructor(optional DOMString data),
-    ConstructorCallWith=Document
+    ConstructorCallWith=Document,
+    CustomToJSObject,
 ] interface Text : CharacterData {
 
     // DOM Level 1

@@ -55,23 +55,21 @@ bool JSHTMLCollection::nameGetter(ExecState* exec, PropertyName propertyName, JS
 
 JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, HTMLCollection& collection)
 {
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), &collection);
-
-    if (wrapper)
+    if (auto* wrapper = getCachedWrapper(globalObject->world(), collection))
         return wrapper;
 
     switch (collection.type()) {
     case FormControls:
-        return CREATE_DOM_WRAPPER(globalObject, HTMLFormControlsCollection, &collection);
+        return CREATE_DOM_WRAPPER(globalObject, HTMLFormControlsCollection, collection);
     case SelectOptions:
-        return CREATE_DOM_WRAPPER(globalObject, HTMLOptionsCollection, &collection);
+        return CREATE_DOM_WRAPPER(globalObject, HTMLOptionsCollection, collection);
     case DocAll:
-        return CREATE_DOM_WRAPPER(globalObject, HTMLAllCollection, &collection);
+        return CREATE_DOM_WRAPPER(globalObject, HTMLAllCollection, collection);
     default:
         break;
     }
 
-    return CREATE_DOM_WRAPPER(globalObject, HTMLCollection, &collection);
+    return CREATE_DOM_WRAPPER(globalObject, HTMLCollection, collection);
 }
 
 } // namespace WebCore

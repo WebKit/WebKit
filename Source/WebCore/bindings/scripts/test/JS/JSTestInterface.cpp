@@ -915,14 +915,14 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     uncacheWrapper(world, &jsTestInterface->wrapped(), jsTestInterface);
 }
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface& impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
 {
-    return createNewWrapper<JSTestInterface>(globalObject, &impl);
+    return createNewWrapper<JSTestInterface>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface& impl)
 {
-    if (JSValue result = getExistingWrapper<JSTestInterface>(globalObject, &impl))
+    if (JSValue result = getExistingWrapper<JSTestInterface>(globalObject, impl))
         return result;
 #if COMPILER(CLANG)
     // If you hit this failure the interface definition has the ImplementationLacksVTable
@@ -931,7 +931,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterfac
     // attribute to TestInterface.
     static_assert(!__is_polymorphic(TestInterface), "TestInterface is polymorphic but the IDL claims it is not");
 #endif
-    return createNewWrapper<JSTestInterface>(globalObject, &impl);
+    return createNewWrapper<JSTestInterface, TestInterface>(globalObject, impl);
 }
 
 TestInterface* JSTestInterface::toWrapped(JSC::JSValue value)

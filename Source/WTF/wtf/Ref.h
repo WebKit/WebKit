@@ -167,6 +167,11 @@ template<typename T, typename U> inline Ref<T> static_reference_cast(Ref<U>& ref
     return Ref<T>(static_cast<T&>(reference.get()));
 }
 
+template<typename T, typename U> inline Ref<T> static_reference_cast(Ref<U>&& reference)
+{
+    return adoptRef(static_cast<T&>(reference.leakRef()));
+}
+
 template<typename T, typename U> inline Ref<T> static_reference_cast(const Ref<U>& reference)
 {
     return Ref<T>(static_cast<T&>(reference.copyRef().get()));

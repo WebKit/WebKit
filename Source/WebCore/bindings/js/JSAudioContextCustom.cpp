@@ -105,10 +105,10 @@ EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState* exec)
 #endif
     }
 
-    if (!audioContext.get())
+    if (!audioContext)
         return throwVMError(exec, createReferenceError(exec, "Error creating AudioContext"));
 
-    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), AudioContext, audioContext.get()));
+    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), AudioContext, audioContext.releaseNonNull()));
 }
 
 } // namespace WebCore

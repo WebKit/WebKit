@@ -73,25 +73,25 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSValue& value)
     if (!value.isCSSOMSafe())
         return jsNull();
 
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), &value);
+    JSObject* wrapper = getCachedWrapper(globalObject->world(), value);
 
     if (wrapper)
         return wrapper;
 
     if (value.isWebKitCSSTransformValue())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSTransformValue, &value);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSTransformValue, value);
     else if (value.isWebKitCSSFilterValue())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSFilterValue, &value);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSFilterValue, value);
     else if (value.isValueList())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSValueList, &value);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSValueList, value);
     else if (value.isSVGPaint())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGPaint, &value);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGPaint, value);
     else if (value.isSVGColor())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGColor, &value);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGColor, value);
     else if (value.isPrimitiveValue())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSPrimitiveValue, &value);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSPrimitiveValue, value);
     else
-        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSValue, &value);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSValue, value);
 
     return wrapper;
 }

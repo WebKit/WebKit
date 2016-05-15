@@ -52,23 +52,23 @@ JSValue JSDocumentFragment::append(ExecState& state)
     return jsUndefined();
 }
 
-static inline JSValue createNewDocumentFragmentWrapper(JSDOMGlobalObject& globalObject, DocumentFragment& impl)
+static inline JSValue createNewDocumentFragmentWrapper(JSDOMGlobalObject& globalObject, Ref<DocumentFragment>&& impl)
 {
 #if ENABLE(SHADOW_DOM)
-    if (impl.isShadowRoot())
-        return createNewWrapper<JSShadowRoot>(&globalObject, &static_cast<ShadowRoot&>(impl));
+    if (impl->isShadowRoot())
+        return CREATE_DOM_WRAPPER(&globalObject, ShadowRoot, WTFMove(impl));
 #endif
-    return createNewWrapper<JSDocumentFragment>(&globalObject, &impl);
+    return createNewWrapper<JSDocumentFragment>(&globalObject, WTFMove(impl));
 }
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, DocumentFragment& impl)
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<DocumentFragment>&& impl)
 {
-    return createNewDocumentFragmentWrapper(*globalObject, impl);
+    return createNewDocumentFragmentWrapper(*globalObject, WTFMove(impl));
 }
 
 JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, DocumentFragment& impl)
 {
-    if (JSValue result = getExistingWrapper<JSDocumentFragment>(globalObject, &impl))
+    if (JSValue result = getExistingWrapper<JSDocumentFragment>(globalObject, impl))
         return result;
 
     return createNewDocumentFragmentWrapper(*globalObject, impl);

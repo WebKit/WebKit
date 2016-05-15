@@ -1170,22 +1170,22 @@ sub printWrapperFunctions
 
         if ($enabledTags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
             print F <<END
-static JSDOMObject* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+static JSDOMObject* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
     if (element->is$parameters{fallbackInterfaceName}())
-        return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackInterfaceName}, element.get());
-    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, element.get());
+        return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackInterfaceName}, WTFMove(element));
+    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, WTFMove(element));
 }
 
 END
             ;
         } elsif ($enabledTags{$tagName}{settingsConditional}) {
             print F <<END
-static JSDOMObject* create$enabledTags{$tagName}{interfaceName}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+static JSDOMObject* create$enabledTags{$tagName}{interfaceName}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
     if (element->is$parameters{fallbackInterfaceName}())
-        return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackInterfaceName}, element.get());
-    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, element.get());
+        return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackInterfaceName}, WTFMove(element));
+    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, WTFMove(element));
 }
 
 END
@@ -1193,22 +1193,22 @@ END
         } elsif ($enabledTags{$tagName}{runtimeConditional}) {
             my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
             print F <<END
-static JSDOMObject* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+static JSDOMObject* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().${runtimeConditional}Enabled()) {
-        ASSERT(!element || element->is$parameters{fallbackInterfaceName}());
-        return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackJSInterfaceName}, element.get());
+        ASSERT(element->is$parameters{fallbackInterfaceName}());
+        return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackJSInterfaceName}, WTFMove(element));
     }
 
-    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, element.get());
+    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, WTFMove(element));
 }
 END
     ;
         } else {
             print F <<END
-static JSDOMObject* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+static JSDOMObject* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
-    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, element.get());
+    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, WTFMove(element));
 }
 
 END
@@ -1259,7 +1259,7 @@ namespace WebCore {
 
 using namespace $parameters{namespace}Names;
 
-typedef JSDOMObject* (*Create$parameters{namespace}ElementWrapperFunction)(JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
+typedef JSDOMObject* (*Create$parameters{namespace}ElementWrapperFunction)(JSDOMGlobalObject*, Ref<$parameters{namespace}Element>&&);
 
 END
 ;
@@ -1310,13 +1310,13 @@ END
         map.add(table[i].name.localName().impl(), table[i].function);
 }
 
-JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
     static NeverDestroyed<HashMap<AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction>> functions;
     if (functions.get().isEmpty())
         populate$parameters{namespace}WrapperMap(functions);
     if (auto function = functions.get().get(element->localName().impl()))
-        return function(globalObject, element);
+        return function(globalObject, WTFMove(element));
 END
 ;
 
@@ -1324,14 +1324,14 @@ END
         print F <<END
 #if ENABLE(CUSTOM_ELEMENTS)
     if (element->isUnresolvedCustomElement())
-        return CREATE_DOM_WRAPPER(globalObject, $parameters{customElementInterfaceName}, element.get());
+        return CREATE_DOM_WRAPPER(globalObject, $parameters{customElementInterfaceName}, WTFMove(element));
 #endif
 END
 ;
     }
 
     print F <<END
-    return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackJSInterfaceName}, element.get());
+    return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackJSInterfaceName}, WTFMove(element));
 }
 
 }
@@ -1366,7 +1366,7 @@ namespace WebCore {
     class JSDOMGlobalObject;
     class $parameters{namespace}Element;
 
-    JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
+    JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject*, Ref<$parameters{namespace}Element>&&);
 
 }
  

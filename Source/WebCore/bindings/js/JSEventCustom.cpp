@@ -51,32 +51,31 @@ JSValue JSEvent::clipboardData(ExecState& state) const
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
     case interfaceName##InterfaceType: \
-        return CREATE_DOM_WRAPPER(&globalObject, interfaceName, &event);
+        return CREATE_DOM_WRAPPER(&globalObject, interfaceName, WTFMove(event));
 
-static inline JSValue createNewEventWrapper(JSDOMGlobalObject& globalObject, Event& event)
+static inline JSValue createNewEventWrapper(JSDOMGlobalObject& globalObject, Ref<Event>&& event)
 {
-    switch (event.eventInterface()) {
+    switch (event->eventInterface()) {
         DOM_EVENT_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
     }
 
-    return CREATE_DOM_WRAPPER(&globalObject, Event, &event);
+    return CREATE_DOM_WRAPPER(&globalObject, Event, WTFMove(event));
 }
 
 JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Event& event)
 {
     JSLockHolder lock(globalObject->vm());
 
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), &event);
-    if (wrapper)
+    if (auto* wrapper = getCachedWrapper(globalObject->world(), event))
         return wrapper;
 
     return createNewEventWrapper(*globalObject, event);
 }
 
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Event& event)
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<Event>&& event)
 {
-    return createNewEventWrapper(*globalObject, event);
+    return createNewEventWrapper(*globalObject, WTFMove(event));
 }
 
 #undef TRY_TO_WRAP_WITH_INTERFACE

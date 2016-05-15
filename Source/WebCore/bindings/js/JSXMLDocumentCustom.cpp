@@ -22,8 +22,43 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-[
-    CustomToJSObject,
-] interface XMLDocument : Document
+
+#include "config.h"
+#include "JSXMLDocument.h"
+
+#include "JSDOMWindow.h"
+#include "JSDocumentCustom.h"
+#include "JSSVGDocument.h"
+#include "NodeTraversal.h"
+
+namespace WebCore {
+
+using namespace JSC;
+
+static inline JSValue createNewXMLDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObject, Ref<XMLDocument>&& passedDocument)
 {
-};
+    auto& document = passedDocument.get();
+    JSObject* wrapper;
+    if (document.isSVGDocument())
+        wrapper = CREATE_DOM_WRAPPER(&globalObject, SVGDocument, WTFMove(passedDocument));
+    else
+        wrapper = CREATE_DOM_WRAPPER(&globalObject, XMLDocument, WTFMove(passedDocument));
+
+    reportMemoryForDocumentIfFrameless(state, document);
+
+    return wrapper;
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, XMLDocument& document)
+{
+    if (auto* wrapper = cachedDocumentWrapper(*state, *globalObject, document))
+        return wrapper;
+    return createNewXMLDocumentWrapper(*state, *globalObject, document);
+}
+
+JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<XMLDocument>&& document)
+{
+    return createNewXMLDocumentWrapper(*state, *globalObject, WTFMove(document));
+}
+
+} // namespace WebCore

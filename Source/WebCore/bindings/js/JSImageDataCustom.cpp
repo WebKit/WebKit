@@ -37,11 +37,10 @@ namespace WebCore {
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, ImageData& imageData)
 {
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), &imageData);
-    if (wrapper)
+    if (auto* wrapper = getCachedWrapper(globalObject->world(), imageData))
         return wrapper;
     
-    wrapper = CREATE_DOM_WRAPPER(globalObject, ImageData, &imageData);
+    auto* wrapper = CREATE_DOM_WRAPPER(globalObject, ImageData, imageData);
     Identifier dataName = Identifier::fromString(exec, "data");
     wrapper->putDirect(exec->vm(), dataName, toJS(exec, globalObject, imageData.data()), DontDelete | ReadOnly);
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.

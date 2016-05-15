@@ -1,3 +1,17 @@
+2016-05-15  Chris Dumez  <cdumez@apple.com>
+
+        Use more references in JS wrappers related code
+        https://bugs.webkit.org/show_bug.cgi?id=157721
+
+        Reviewed by Darin Adler.
+
+        Add new static_reference_cast() overload that takes a Ref<U>&& in
+        in order to downcast Ref<> types without causing ref-counting
+        churn.
+
+        * wtf/Ref.h:
+        (WTF::static_reference_cast):
+
 2016-05-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r200837.

@@ -55,7 +55,7 @@ EncodedJSValue JSC_HOST_CALL constructJSRTCPeerConnection(ExecState* exec)
     if (!scriptExecutionContext)
         return throwVMError(exec, createReferenceError(exec, "RTCPeerConnection constructor associated document is unavailable"));
 
-    RefPtr<RTCPeerConnection> peerConnection = RTCPeerConnection::create(*scriptExecutionContext, rtcConfiguration, ec);
+    auto peerConnection = RTCPeerConnection::create(*scriptExecutionContext, rtcConfiguration, ec);
     if (ec == TYPE_MISMATCH_ERR) {
         setDOMException(exec, ec);
         return throwVMError(exec, createTypeError(exec, "Invalid RTCPeerConnection constructor arguments"));
@@ -66,7 +66,7 @@ EncodedJSValue JSC_HOST_CALL constructJSRTCPeerConnection(ExecState* exec)
         return throwVMError(exec, createTypeError(exec, "Error creating RTCPeerConnection"));
     }
 
-    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), RTCPeerConnection, peerConnection.get()));
+    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), RTCPeerConnection, peerConnection.releaseNonNull()));
 }
 
 } // namespace WebCore

@@ -49,26 +49,30 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Element* element)
+static JSValue createNewElementWrapper(JSDOMGlobalObject* globalObject, Ref<Element>&& element)
 {
-    if (!element)
-        return jsNull();
+    if (is<HTMLElement>(element.get()))
+        return createJSHTMLWrapper(globalObject, static_reference_cast<HTMLElement>(WTFMove(element)));
+    if (is<SVGElement>(element.get()))
+        return createJSSVGWrapper(globalObject, static_reference_cast<SVGElement>(WTFMove(element)));
+    return CREATE_DOM_WRAPPER(globalObject, Element, WTFMove(element));
+}
 
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Element& element)
+{
+    if (auto* wrapper = getCachedWrapper(globalObject->world(), element))
+        return wrapper;
+    return createNewElementWrapper(globalObject, element);
+}
+
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<Element>&& element)
+{
 #if ENABLE(CUSTOM_ELEMENTS)
     if (element->isCustomElement())
         return getCachedWrapper(globalObject->world(), element);
 #endif
     ASSERT(!getCachedWrapper(globalObject->world(), element));
-
-    JSDOMObject* wrapper;        
-    if (is<HTMLElement>(*element))
-        wrapper = createJSHTMLWrapper(globalObject, downcast<HTMLElement>(element));
-    else if (is<SVGElement>(*element))
-        wrapper = createJSSVGWrapper(globalObject, downcast<SVGElement>(element));
-    else
-        wrapper = CREATE_DOM_WRAPPER(globalObject, Element, element);
-
-    return wrapper;    
+    return createNewElementWrapper(globalObject, WTFMove(element));
 }
 
 JSValue JSElement::before(ExecState& state)

@@ -51,7 +51,7 @@ EncodedJSValue JSC_HOST_CALL constructJSRTCSessionDescription(ExecState* exec)
     }
 
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
-    RefPtr<RTCSessionDescription> sessionDescription = RTCSessionDescription::create(sessionInit, ec);
+    auto sessionDescription = RTCSessionDescription::create(sessionInit, ec);
     if (ec == TYPE_MISMATCH_ERR) {
         setDOMException(exec, ec);
         return throwVMError(exec, createTypeError(exec, "Invalid RTCSessionDescription constructor arguments"));
@@ -62,7 +62,7 @@ EncodedJSValue JSC_HOST_CALL constructJSRTCSessionDescription(ExecState* exec)
         return throwVMError(exec, createTypeError(exec, "Error creating RTCSessionDescription"));
     }
 
-    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), RTCSessionDescription, sessionDescription.get()));
+    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), RTCSessionDescription, sessionDescription.releaseNonNull()));
 }
 
 } // namespace WebCore

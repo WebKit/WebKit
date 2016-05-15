@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, Element*);
-
 ALWAYS_INLINE JSElement* jsElementCast(JSC::JSValue value)
 {
     if (UNLIKELY(!value.isCell()))

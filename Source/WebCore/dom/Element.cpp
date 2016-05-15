@@ -2384,7 +2384,7 @@ void Element::setInnerHTML(const String& html, ExceptionCode& ec)
         ContainerNode* container = this;
 
         if (is<HTMLTemplateElement>(*this))
-            container = downcast<HTMLTemplateElement>(*this).content();
+            container = &downcast<HTMLTemplateElement>(*this).content();
 
         replaceChildrenWithFragment(*container, fragment.releaseNonNull(), ec);
     }

@@ -43,7 +43,7 @@ public:
     static Ref<HTMLTemplateElement> create(const QualifiedName&, Document&);
     virtual ~HTMLTemplateElement();
 
-    DocumentFragment* content() const;
+    DocumentFragment& content() const;
 
 private:
     HTMLTemplateElement(const QualifiedName&, Document&);

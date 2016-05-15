@@ -37,13 +37,11 @@ void JSStyleSheet::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, StyleSheet& styleSheet)
 {
-    if (JSC::JSObject* wrapper = getCachedWrapper(globalObject->world(), &styleSheet))
+    if (auto* wrapper = getCachedWrapper(globalObject->world(), styleSheet))
         return wrapper;
-
     if (styleSheet.isCSSStyleSheet())
-        return CREATE_DOM_WRAPPER(globalObject, CSSStyleSheet, &styleSheet);
-
-    return CREATE_DOM_WRAPPER(globalObject, StyleSheet, &styleSheet);
+        return CREATE_DOM_WRAPPER(globalObject, CSSStyleSheet, styleSheet);
+    return CREATE_DOM_WRAPPER(globalObject, StyleSheet, styleSheet);
 }
 
 } // namespace WebCore

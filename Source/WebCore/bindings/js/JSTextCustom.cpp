@@ -22,8 +22,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-[
-    CustomToJSObject,
-] interface XMLDocument : Document
+
+#include "config.h"
+#include "JSText.h"
+
+#include "JSCDATASection.h"
+
+namespace WebCore {
+
+using namespace JSC;
+
+static inline JSValue createNewTextWrapper(JSDOMGlobalObject& globalObject, Ref<Text>&& text)
 {
-};
+    if (is<CDATASection>(text.get()))
+        return CREATE_DOM_WRAPPER(&globalObject, CDATASection, WTFMove(text));
+    return CREATE_DOM_WRAPPER(&globalObject, Text, WTFMove(text));
+}
+
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Text& text)
+{
+    if (auto* wrapper = getCachedWrapper(globalObject->world(), text))
+        return wrapper;
+    return createNewTextWrapper(*globalObject, text);
+}
+
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<Text>&& text)
+{
+    return createNewTextWrapper(*globalObject, WTFMove(text));
+}
+
+} // namespace WebCore

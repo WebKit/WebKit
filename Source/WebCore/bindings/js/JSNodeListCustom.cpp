@@ -51,17 +51,17 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
     return false;
 }
 
-JSC::JSValue createWrapper(JSDOMGlobalObject& globalObject, NodeList& nodeList)
+JSC::JSValue createWrapper(JSDOMGlobalObject& globalObject, Ref<NodeList>&& nodeList)
 {
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
     // https://bugs.webkit.org/show_bug.cgi?id=142595
-    globalObject.vm().heap.deprecatedReportExtraMemory(nodeList.memoryCost());
-    return createNewWrapper<JSNodeList>(&globalObject, &nodeList);
+    globalObject.vm().heap.deprecatedReportExtraMemory(nodeList->memoryCost());
+    return createNewWrapper<JSNodeList>(&globalObject, WTFMove(nodeList));
 }
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, NodeList& nodeList)
+JSC::JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<NodeList>&& nodeList)
 {
-    return createWrapper(*globalObject, nodeList);
+    return createWrapper(*globalObject, WTFMove(nodeList));
 }
 
 } // namespace WebCore
