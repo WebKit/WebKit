@@ -56,9 +56,9 @@ void IntlDateTimeFormat::UDateFormatDeleter::operator()(UDateFormat* dateFormat)
         udat_close(dateFormat);
 }
 
-IntlDateTimeFormat* IntlDateTimeFormat::create(VM& vm, IntlDateTimeFormatConstructor* constructor)
+IntlDateTimeFormat* IntlDateTimeFormat::create(VM& vm, Structure* structure)
 {
-    IntlDateTimeFormat* format = new (NotNull, allocateCell<IntlDateTimeFormat>(vm.heap)) IntlDateTimeFormat(vm, constructor->dateTimeFormatStructure());
+    IntlDateTimeFormat* format = new (NotNull, allocateCell<IntlDateTimeFormat>(vm.heap)) IntlDateTimeFormat(vm, structure);
     format->finishCreation(vm);
     return format;
 }

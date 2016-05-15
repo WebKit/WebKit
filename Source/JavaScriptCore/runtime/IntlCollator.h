@@ -41,7 +41,7 @@ class IntlCollator : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static IntlCollator* create(VM&, IntlCollatorConstructor*);
+    static IntlCollator* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;

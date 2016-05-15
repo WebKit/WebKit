@@ -88,27 +88,16 @@ static EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState* state)
 {
     // 10.1.2 Intl.Collator ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
-    JSValue newTarget = state->newTarget();
-    if (newTarget.isUndefined())
-        newTarget = state->callee();
-
     // 2. Let collator be OrdinaryCreateFromConstructor(newTarget, %CollatorPrototype%).
-    VM& vm = state->vm();
-    IntlCollator* collator = IntlCollator::create(vm, jsCast<IntlCollatorConstructor*>(state->callee()));
-    if (collator && !jsDynamicCast<IntlCollatorConstructor*>(newTarget)) {
-        JSValue proto = asObject(newTarget)->getDirect(vm, vm.propertyNames->prototype);
-        asObject(collator)->setPrototype(vm, state, proto);
-        if (vm.exception())
-            return JSValue::encode(JSValue());
-    }
-
     // 3. ReturnIfAbrupt(collator).
+    Structure* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), jsCast<IntlCollatorConstructor*>(state->callee())->collatorStructure());
+    if (state->hadException())
+        return JSValue::encode(jsUndefined());
+    IntlCollator* collator = IntlCollator::create(state->vm(), structure);
     ASSERT(collator);
 
     // 4. Return InitializeCollator(collator, locales, options).
-    JSValue locales = state->argument(0);
-    JSValue options = state->argument(1);
-    collator->initializeCollator(*state, locales, options);
+    collator->initializeCollator(*state, state->argument(0), state->argument(1));
     return JSValue::encode(collator);
 }
 
@@ -118,17 +107,19 @@ static EncodedJSValue JSC_HOST_CALL callIntlCollator(ExecState* state)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // NewTarget is always undefined when called as a function.
 
-    // 2. Let collator be OrdinaryCreateFromConstructor(newTarget, %CollatorPrototype%).
     VM& vm = state->vm();
-    IntlCollator* collator = IntlCollator::create(vm, jsCast<IntlCollatorConstructor*>(state->callee()));
+    IntlCollatorConstructor* callee = jsCast<IntlCollatorConstructor*>(state->callee());
 
+    // FIXME: Collator does not get the workaround for ECMA-402 1.0 compatibility.
+    // https://bugs.webkit.org/show_bug.cgi?id=153679
+
+    // 2. Let collator be OrdinaryCreateFromConstructor(newTarget, %CollatorPrototype%).
     // 3. ReturnIfAbrupt(collator).
+    IntlCollator* collator = IntlCollator::create(vm, callee->collatorStructure());
     ASSERT(collator);
 
     // 4. Return InitializeCollator(collator, locales, options).
-    JSValue locales = state->argument(0);
-    JSValue options = state->argument(1);
-    collator->initializeCollator(*state, locales, options);
+    collator->initializeCollator(*state, state->argument(0), state->argument(1));
     return JSValue::encode(collator);
 }
 

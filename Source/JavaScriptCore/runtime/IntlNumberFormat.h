@@ -40,7 +40,7 @@ class IntlNumberFormat : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static IntlNumberFormat* create(VM&, IntlNumberFormatConstructor*);
+    static IntlNumberFormat* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;

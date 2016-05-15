@@ -40,7 +40,7 @@ class IntlDateTimeFormat : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static IntlDateTimeFormat* create(VM&, IntlDateTimeFormatConstructor*);
+    static IntlDateTimeFormat* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;

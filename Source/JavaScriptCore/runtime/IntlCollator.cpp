@@ -56,9 +56,9 @@ void IntlCollator::UCollatorDeleter::operator()(UCollator* collator) const
         ucol_close(collator);
 }
 
-IntlCollator* IntlCollator::create(VM& vm, IntlCollatorConstructor* constructor)
+IntlCollator* IntlCollator::create(VM& vm, Structure* structure)
 {
-    IntlCollator* format = new (NotNull, allocateCell<IntlCollator>(vm.heap)) IntlCollator(vm, constructor->collatorStructure());
+    IntlCollator* format = new (NotNull, allocateCell<IntlCollator>(vm.heap)) IntlCollator(vm, structure);
     format->finishCreation(vm);
     return format;
 }

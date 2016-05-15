@@ -32,6 +32,7 @@
 #include "IntlDateTimeFormat.h"
 #include "IntlDateTimeFormatPrototype.h"
 #include "IntlObject.h"
+#include "IntlObjectInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "Lookup.h"
@@ -87,27 +88,16 @@ static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* state
 {
     // 12.1.2 Intl.DateTimeFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
-    JSValue newTarget = state->newTarget();
-    if (newTarget.isUndefined())
-        newTarget = state->callee();
-
     // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
-    VM& vm = state->vm();
-    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, jsCast<IntlDateTimeFormatConstructor*>(state->callee()));
-    if (dateTimeFormat && !jsDynamicCast<IntlDateTimeFormatConstructor*>(newTarget)) {
-        JSValue proto = asObject(newTarget)->getDirect(vm, vm.propertyNames->prototype);
-        asObject(dateTimeFormat)->setPrototype(vm, state, proto);
-        if (vm.exception())
-            return JSValue::encode(JSValue());
-    }
-
     // 3. ReturnIfAbrupt(dateTimeFormat).
+    Structure* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), jsCast<IntlDateTimeFormatConstructor*>(state->callee())->dateTimeFormatStructure());
+    if (state->hadException())
+        return JSValue::encode(jsUndefined());
+    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(state->vm(), structure);
     ASSERT(dateTimeFormat);
 
     // 4. Return InitializeDateTimeFormat(dateTimeFormat, locales, options).
-    JSValue locales = state->argument(0);
-    JSValue options = state->argument(1);
-    dateTimeFormat->initializeDateTimeFormat(*state, locales, options);
+    dateTimeFormat->initializeDateTimeFormat(*state, state->argument(0), state->argument(1));
     return JSValue::encode(dateTimeFormat);
 }
 
@@ -117,36 +107,20 @@ static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState* state)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // NewTarget is always undefined when called as a function.
 
-    VM& vm = state->vm();
     IntlDateTimeFormatConstructor* callee = jsCast<IntlDateTimeFormatConstructor*>(state->callee());
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
-    JSValue thisValue = state->thisValue();
-    IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(thisValue);
-    if (!dateTimeFormat) {
-        JSValue prototype = callee->getDirect(vm, vm.propertyNames->prototype);
-        if (JSObject::defaultHasInstance(state, thisValue, prototype)) {
-            JSObject* thisObject = thisValue.toObject(state);
-            if (state->hadException())
-                return JSValue::encode(jsUndefined());
+    // https://bugs.webkit.org/show_bug.cgi?id=153679
+    return JSValue::encode(constructIntlInstanceWithWorkaroundForLegacyIntlConstructor<IntlDateTimeFormat>(*state, state->thisValue(), callee, [&] (VM& vm) {
+        // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
+        // 3. ReturnIfAbrupt(dateTimeFormat).
+        IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, callee->dateTimeFormatStructure());
+        ASSERT(dateTimeFormat);
 
-            dateTimeFormat = IntlDateTimeFormat::create(vm, callee);
-            dateTimeFormat->initializeDateTimeFormat(*state, state->argument(0), state->argument(1));
-            if (state->hadException())
-                return JSValue::encode(jsUndefined());
-
-            thisObject->putDirect(vm, vm.propertyNames->intlSubstituteValuePrivateName, dateTimeFormat);
-            return JSValue::encode(thisValue);
-        }
-    }
-
-    // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
-    // 3. ReturnIfAbrupt(dateTimeFormat).
-    dateTimeFormat = IntlDateTimeFormat::create(vm, callee);
-
-    // 4. Return InitializeDateTimeFormat(dateTimeFormat, locales, options).
-    dateTimeFormat->initializeDateTimeFormat(*state, state->argument(0), state->argument(1));
-    return JSValue::encode(dateTimeFormat);
+        // 4. Return InitializeDateTimeFormat(dateTimeFormat, locales, options).
+        dateTimeFormat->initializeDateTimeFormat(*state, state->argument(0), state->argument(1));
+        return dateTimeFormat;
+    }));
 }
 
 ConstructType IntlDateTimeFormatConstructor::getConstructData(JSCell*, ConstructData& constructData)

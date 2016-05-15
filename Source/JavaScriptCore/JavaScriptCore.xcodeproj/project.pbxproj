@@ -1237,6 +1237,7 @@
 		705B41B01A6E501E00716757 /* SymbolObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41A81A6E501E00716757 /* SymbolObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		705B41B11A6E501E00716757 /* SymbolPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705B41A91A6E501E00716757 /* SymbolPrototype.cpp */; };
 		705B41B21A6E501E00716757 /* SymbolPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41AA1A6E501E00716757 /* SymbolPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		708EBE241CE8F35800453146 /* IntlObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 708EBE231CE8F35000453146 /* IntlObjectInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7094C4DE1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7094C4DC1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp */; };
 		7094C4DF1AE439530041A2EE /* BytecodeIntrinsicRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 7094C4DD1AE439530041A2EE /* BytecodeIntrinsicRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		709FB8671AE335C60039D069 /* JSWeakSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 709FB8611AE335C60039D069 /* JSWeakSet.cpp */; };
@@ -3408,6 +3409,7 @@
 		705B41A81A6E501E00716757 /* SymbolObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolObject.h; sourceTree = "<group>"; };
 		705B41A91A6E501E00716757 /* SymbolPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolPrototype.cpp; sourceTree = "<group>"; };
 		705B41AA1A6E501E00716757 /* SymbolPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolPrototype.h; sourceTree = "<group>"; };
+		708EBE231CE8F35000453146 /* IntlObjectInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlObjectInlines.h; sourceTree = "<group>"; };
 		7094C4DC1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BytecodeIntrinsicRegistry.cpp; sourceTree = "<group>"; };
 		7094C4DD1AE439530041A2EE /* BytecodeIntrinsicRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeIntrinsicRegistry.h; sourceTree = "<group>"; };
 		709FB8611AE335C60039D069 /* JSWeakSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakSet.cpp; sourceTree = "<group>"; };
@@ -5492,6 +5494,7 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
+				708EBE231CE8F35000453146 /* IntlObjectInlines.h */,
 				DCF3D5641CD29468003D5C65 /* LazyClassStructure.cpp */,
 				DCF3D5651CD29468003D5C65 /* LazyClassStructure.h */,
 				DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */,
@@ -7482,6 +7485,7 @@
 				0FE050191AA9091100D33B33 /* GenericArguments.h in Headers */,
 				0FE0501A1AA9091100D33B33 /* GenericArgumentsInlines.h in Headers */,
 				FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */,
+				708EBE241CE8F35800453146 /* IntlObjectInlines.h in Headers */,
 				0FE0501B1AA9091100D33B33 /* GenericOffset.h in Headers */,
 				0F2B66E017B6B5AB00A7AE3F /* GenericTypedArrayView.h in Headers */,
 				0F2B66E117B6B5AB00A7AE3F /* GenericTypedArrayViewInlines.h in Headers */,

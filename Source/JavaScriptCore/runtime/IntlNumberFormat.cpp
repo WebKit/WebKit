@@ -52,9 +52,9 @@ void IntlNumberFormat::UNumberFormatDeleter::operator()(UNumberFormat* numberFor
         unum_close(numberFormat);
 }
 
-IntlNumberFormat* IntlNumberFormat::create(VM& vm, IntlNumberFormatConstructor* constructor)
+IntlNumberFormat* IntlNumberFormat::create(VM& vm, Structure* structure)
 {
-    IntlNumberFormat* format = new (NotNull, allocateCell<IntlNumberFormat>(vm.heap)) IntlNumberFormat(vm, constructor->numberFormatStructure());
+    IntlNumberFormat* format = new (NotNull, allocateCell<IntlNumberFormat>(vm.heap)) IntlNumberFormat(vm, structure);
     format->finishCreation(vm);
     return format;
 }

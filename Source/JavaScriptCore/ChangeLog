@@ -1,3 +1,57 @@
+2016-05-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Modernize Intl constructors; using InternalFunction::createSubclassStructure
+        https://bugs.webkit.org/show_bug.cgi?id=157082
+
+        Reviewed by Darin Adler.
+
+        Previously, Intl constructors retrieve "prototype" to inherit the "new.target".
+        At that time, this mis-assumed that getDirect() always returns meaningful JS value.
+        Actually, it returns an empty value if a property does not exist.
+
+        Instead of fixing this assertion, we now use InternalFunction::createSubclassStructure
+        in Intl constructors. It is modern and preferable way since it can cache the derived
+        structures in InternalFunction.
+
+        This patch also cleans up the workaround in Intl.NumberFormat and Intl.DateTimeFormat.
+        Those code are largely duplicate. This is now extracted into
+        constructIntlInstanceWithWorkaroundForLegacyIntlConstructor. This clean up does not
+        have any behavior changes. They are already tested in LayoutTests/js/intl-datetimeformat
+        and LayoutTests/js/intl-numberformat.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::create):
+        * runtime/IntlCollator.h:
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::constructIntlCollator):
+        (JSC::callIntlCollator):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::create):
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::constructIntlDateTimeFormat):
+        (JSC::callIntlDateTimeFormat):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        (JSC::IntlDateTimeFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::create):
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::constructIntlNumberFormat):
+        (JSC::callIntlNumberFormat):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        (JSC::IntlNumberFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlObjectInlines.h: Added.
+        (JSC::constructIntlInstanceWithWorkaroundForLegacyIntlConstructor):
+        * tests/stress/intl-constructors-with-proxy.js: Added.
+        (shouldBe):
+        (throw.new.Error.Empty):
+        (throw.new.Error):
+        (shouldBe.Empty):
+
 2016-05-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove LegacyProfiler
