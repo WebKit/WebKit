@@ -1,3 +1,18 @@
+2016-05-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r200925.
+        https://bugs.webkit.org/show_bug.cgi?id=157725
+
+        Does not build if MEDIA_SESSION is enabled (Requested by
+        cdumez_ on #webkit).
+
+        Reverted changeset:
+
+        "Use new Web IDL dictionary support for
+        MediaSession.setMetadata()"
+        https://bugs.webkit.org/show_bug.cgi?id=157711
+        http://trac.webkit.org/changeset/200925
+
 2016-05-14  Chris Dumez  <cdumez@apple.com>
 
         Use new Web IDL dictionary support for MediaSession.setMetadata()

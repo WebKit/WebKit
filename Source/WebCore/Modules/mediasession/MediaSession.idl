@@ -33,9 +33,7 @@
     readonly attribute MediaSessionKind kind;
     readonly attribute MediaRemoteControls? controls;
 
-    // FIXME: The latest specification says this should be:
-    // attribute MediaMetadata? metadata;
-    void setMetadata(MediaMetadataInit metadata);
+    void setMetadata(Dictionary metadata);
 
     void deactivate();
 };
@@ -45,11 +43,4 @@ enum MediaSessionKind {
     "transient",
     "transient-solo",
     "ambient"
-};
-
-dictionary MediaMetadataInit {
-    DOMString title;
-    DOMString artist;
-    DOMString album;
-    DOMString artwork;
 };
