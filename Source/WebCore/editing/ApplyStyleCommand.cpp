@@ -1435,7 +1435,7 @@ void ApplyStyleCommand::applyInlineStyleChange(PassRefPtr<Node> passedStart, Pas
     // Find appropriate font and span elements top-down.
     HTMLFontElement* fontContainer = nullptr;
     HTMLElement* styleContainer = nullptr;
-    while (startNode && startNode == endNode) {
+    while (startNode == endNode) {
         if (is<HTMLElement>(*startNode)) {
             auto& container = downcast<HTMLElement>(*startNode);
             if (is<HTMLFontElement>(container))
