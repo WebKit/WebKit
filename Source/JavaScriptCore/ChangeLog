@@ -1,3 +1,60 @@
+2016-05-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::Plan shouldn't read from its VM once it's been cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=157726
+
+        Reviewed by Saam Barati.
+        
+        Plan::vm was a reference, not a pointer, and so wasn't nulled by Plan::cancel(). So, a
+        cancelled plan may have a dangling pointer to a VM: we could delete the VM after cancelling
+        the plan.
+        
+        Prior to http://trac.webkit.org/changeset/200705, this was probably fine because nobody
+        would read Plan::vm if the plan was cancelled. But r200705 changed that. It was a hard
+        regression to spot because usually a cancelled plan will still refer to a valid VM.
+        
+        This change fixes the regression and makes it a lot easier to spot the regression in the
+        future. Plan::vm is now a pointer and we null it in Plan::cancel(). Now if you make this
+        mistake, you will get a crash anytime the Plan is cancelled, not just anytime the plan is
+        cancelled and the VM gets deleted. Also, it's now very clear what to do when you want to
+        use Plan::vm on the cancel path: you can null-check vm; if it's null, assume the worst.
+        
+        Because we null the VM of a cancelled plan, we cannot have Safepoint::vm() return the
+        plan's VM anymore. That's because when we cancel a plan that is at a safepoint, we use the
+        safepoint's VM to determine whether this is one of our safepoints *after* the plan is
+        already cancelled. So, Safepoint now has its own copy of m_vm, and that copy gets nulled
+        when the Safepoint is cancelled. The Safepoint's m_vm will be nulled moments after Plan's
+        vm gets nulled (see Worklist::removeDeadPlans(), which has a cancel path for Plans in one
+        loop and a cancel path for Safepoints in the loop after it).
+
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::computeCompileTimes):
+        (JSC::DFG::Plan::reportCompileTimes):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::reallyAdd):
+        (JSC::DFG::Plan::notifyCompiling):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        (JSC::DFG::Plan::cancel):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::canTierUpAndOSREnter):
+        * dfg/DFGSafepoint.cpp:
+        (JSC::DFG::Safepoint::cancel):
+        (JSC::DFG::Safepoint::vm):
+        * dfg/DFGSafepoint.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::isActiveForVM):
+        (JSC::DFG::Worklist::waitUntilAllPlansForVMAreReady):
+        (JSC::DFG::Worklist::removeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::rememberCodeBlocks):
+        (JSC::DFG::Worklist::visitWeakReferences):
+        (JSC::DFG::Worklist::removeDeadPlans):
+        (JSC::DFG::Worklist::runThread):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+
 2016-05-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Modernize Intl constructors; using InternalFunction::createSubclassStructure

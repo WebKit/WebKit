@@ -91,7 +91,7 @@ void JITFinalizer::finalizeCommon()
 #endif // ENABLE(FTL_JIT)
     
     if (m_plan.compilation)
-        m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.codeBlock, m_plan.compilation);
+        m_plan.vm->m_perBytecodeProfiler->addCompilation(m_plan.codeBlock, m_plan.compilation);
     
     if (!m_plan.willTryToTierUp)
         m_plan.codeBlock->baselineVersion()->m_didFailFTLCompilation = true;

@@ -138,13 +138,13 @@ Profiler::CompilationKind profilerCompilationKindForMode(CompilationMode mode)
 Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     CompilationMode mode, unsigned osrEntryBytecodeIndex,
     const Operands<JSValue>& mustHandleValues)
-    : vm(*passedCodeBlock->vm())
+    : vm(passedCodeBlock->vm())
     , codeBlock(passedCodeBlock)
     , profiledDFGCodeBlock(profiledDFGCodeBlock)
     , mode(mode)
     , osrEntryBytecodeIndex(osrEntryBytecodeIndex)
     , mustHandleValues(mustHandleValues)
-    , compilation(codeBlock->vm()->m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(codeBlock->vm()->m_perBytecodeProfiler->ensureBytecodesFor(codeBlock), profilerCompilationKindForMode(mode))) : 0)
+    , compilation(vm->m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(vm->m_perBytecodeProfiler->ensureBytecodesFor(codeBlock), profilerCompilationKindForMode(mode))) : 0)
     , inlineCallFrames(adoptRef(new InlineCallFrameSet()))
     , identifiers(codeBlock)
     , weakReferences(codeBlock)
@@ -160,7 +160,7 @@ bool Plan::computeCompileTimes() const
 {
     return reportCompileTimes()
         || Options::reportTotalCompileTimes()
-        || vm.m_perBytecodeProfiler;
+        || (vm && vm->m_perBytecodeProfiler);
 }
 
 bool Plan::reportCompileTimes() const
@@ -244,7 +244,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         dataLog("\n");
     }
     
-    Graph dfg(vm, *this, longLivedState);
+    Graph dfg(*vm, *this, longLivedState);
     
     if (!parse(dfg)) {
         finalizer = std::make_unique<FailedFinalizer>(*this);
@@ -537,9 +537,9 @@ bool Plan::isStillValid()
 void Plan::reallyAdd(CommonData* commonData)
 {
     watchpoints.reallyAdd(codeBlock, *commonData);
-    identifiers.reallyAdd(vm, commonData);
-    weakReferences.reallyAdd(vm, commonData);
-    transitions.reallyAdd(vm, commonData);
+    identifiers.reallyAdd(*vm, commonData);
+    weakReferences.reallyAdd(*vm, commonData);
+    transitions.reallyAdd(*vm, commonData);
 }
 
 void Plan::notifyCompiling()
@@ -561,7 +561,7 @@ void Plan::notifyReady()
 CompilationResult Plan::finalizeWithoutNotifyingCallback()
 {
     // We will establish new references from the code block to things. So, we need a barrier.
-    vm.heap.writeBarrier(codeBlock);
+    vm->heap.writeBarrier(codeBlock);
     
     if (!isStillValid()) {
         CODEBLOCK_LOG_EVENT(codeBlock, "dfgFinalize", ("invalidated"));
@@ -660,6 +660,7 @@ bool Plan::isKnownToBeLiveDuringGC()
 
 void Plan::cancel()
 {
+    vm = nullptr;
     codeBlock = nullptr;
     profiledDFGCodeBlock = nullptr;
     mustHandleValues.clear();

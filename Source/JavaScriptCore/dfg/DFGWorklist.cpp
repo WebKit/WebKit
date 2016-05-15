@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,7 +80,7 @@ bool Worklist::isActiveForVM(VM& vm) const
     LockHolder locker(m_lock);
     PlanMap::const_iterator end = m_plans.end();
     for (PlanMap::const_iterator iter = m_plans.begin(); iter != end; ++iter) {
-        if (&iter->value->vm == &vm)
+        if (iter->value->vm == &vm)
             return true;
     }
     return false;
@@ -129,7 +129,7 @@ void Worklist::waitUntilAllPlansForVMAreReady(VM& vm)
         bool allAreCompiled = true;
         PlanMap::iterator end = m_plans.end();
         for (PlanMap::iterator iter = m_plans.begin(); iter != end; ++iter) {
-            if (&iter->value->vm != &vm)
+            if (iter->value->vm != &vm)
                 continue;
             if (iter->value->stage != Plan::Ready) {
                 allAreCompiled = false;
@@ -150,7 +150,7 @@ void Worklist::removeAllReadyPlansForVM(VM& vm, Vector<RefPtr<Plan>, 8>& myReady
     LockHolder locker(m_lock);
     for (size_t i = 0; i < m_readyPlans.size(); ++i) {
         RefPtr<Plan> plan = m_readyPlans[i];
-        if (&plan->vm != &vm)
+        if (plan->vm != &vm)
             continue;
         if (plan->stage != Plan::Ready)
             continue;
@@ -212,7 +212,7 @@ void Worklist::rememberCodeBlocks(VM& vm)
     LockHolder locker(m_lock);
     for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
         Plan* plan = iter->value.get();
-        if (&plan->vm != &vm)
+        if (plan->vm != &vm)
             continue;
         plan->rememberCodeBlocks();
     }
@@ -239,7 +239,7 @@ void Worklist::visitWeakReferences(SlotVisitor& visitor)
         LockHolder locker(m_lock);
         for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
             Plan* plan = iter->value.get();
-            if (&plan->vm != vm)
+            if (plan->vm != vm)
                 continue;
             plan->checkLivenessAndVisitChildren(visitor);
         }
@@ -251,7 +251,7 @@ void Worklist::visitWeakReferences(SlotVisitor& visitor)
     for (unsigned i = m_threads.size(); i--;) {
         ThreadData* data = m_threads[i].get();
         Safepoint* safepoint = data->m_safepoint;
-        if (safepoint && &safepoint->vm() == vm)
+        if (safepoint && safepoint->vm() == vm)
             safepoint->checkLivenessAndVisitChildren(visitor);
     }
 }
@@ -263,7 +263,7 @@ void Worklist::removeDeadPlans(VM& vm)
         HashSet<CompilationKey> deadPlanKeys;
         for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
             Plan* plan = iter->value.get();
-            if (&plan->vm != &vm)
+            if (plan->vm != &vm)
                 continue;
             if (plan->isKnownToBeLiveDuringGC())
                 continue;
@@ -296,7 +296,7 @@ void Worklist::removeDeadPlans(VM& vm)
         Safepoint* safepoint = data->m_safepoint;
         if (!safepoint)
             continue;
-        if (&safepoint->vm() != &vm)
+        if (safepoint->vm() != &vm)
             continue;
         if (safepoint->isKnownToBeLiveDuringGC())
             continue;
@@ -365,9 +365,9 @@ void Worklist::runThread(ThreadData* data)
             if (Options::verboseCompilationQueue())
                 dataLog(*this, ": Compiling ", plan->key(), " asynchronously\n");
         
-            RELEASE_ASSERT(!plan->vm.heap.isCollecting());
+            RELEASE_ASSERT(!plan->vm->heap.isCollecting());
             plan->compileInThread(longLivedState, data);
-            RELEASE_ASSERT(plan->stage == Plan::Cancelled || !plan->vm.heap.isCollecting());
+            RELEASE_ASSERT(plan->stage == Plan::Cancelled || !plan->vm->heap.isCollecting());
             
             {
                 LockHolder locker(m_lock);
@@ -377,7 +377,7 @@ void Worklist::runThread(ThreadData* data)
                 }
                 plan->notifyCompiled();
             }
-            RELEASE_ASSERT(!plan->vm.heap.isCollecting());
+            RELEASE_ASSERT(!plan->vm->heap.isCollecting());
         }
 
         {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,8 @@ bool Safepoint::Result::didGetCancelled()
 }
 
 Safepoint::Safepoint(Plan& plan, Result& result)
-    : m_plan(plan)
+    : m_vm(plan.vm)
+    , m_plan(plan)
     , m_didCallBegin(false)
     , m_result(result)
 {
@@ -114,11 +115,12 @@ void Safepoint::cancel()
     
     m_plan.cancel();
     m_result.m_didGetCancelled = true;
+    m_vm = nullptr;
 }
 
-VM& Safepoint::vm() const
+VM* Safepoint::vm() const
 {
-    return m_plan.vm;
+    return m_vm;
 }
 
 } } // namespace JSC::DFG

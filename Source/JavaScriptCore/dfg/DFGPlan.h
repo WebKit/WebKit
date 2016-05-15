@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,7 +78,10 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
 
     bool canTierUpAndOSREnter() const { return !tierUpAndOSREnterBytecodes.isEmpty(); }
     
-    VM& vm;
+    // Warning: pretty much all of the pointer fields in this object get nulled by cancel(). So, if
+    // you're writing code that is callable on the cancel path, be sure to null check everything!
+    
+    VM* vm;
 
     // These can be raw pointers because we visit them during every GC in checkLivenessAndVisitChildren.
     CodeBlock* codeBlock;

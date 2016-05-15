@@ -83,7 +83,7 @@ bool JITFinalizer::finalizeFunction()
     m_plan.codeBlock->setJITCode(jitCode);
 
     if (m_plan.compilation)
-        m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.codeBlock, m_plan.compilation);
+        m_plan.vm->m_perBytecodeProfiler->addCompilation(m_plan.codeBlock, m_plan.compilation);
     
     return true;
 }
