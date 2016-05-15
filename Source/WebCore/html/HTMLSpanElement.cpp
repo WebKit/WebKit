@@ -38,6 +38,11 @@ HTMLSpanElement::HTMLSpanElement(const QualifiedName& tagName, Document& documen
     ASSERT(hasTagName(spanTag));
 }
 
+Ref<HTMLSpanElement> HTMLSpanElement::create(Document& document)
+{
+    return adoptRef(*new HTMLSpanElement(spanTag, document));
+}
+
 Ref<HTMLSpanElement> HTMLSpanElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLSpanElement(tagName, document));

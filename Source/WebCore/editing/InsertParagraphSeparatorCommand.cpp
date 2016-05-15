@@ -319,7 +319,7 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // If the returned position lies either at the end or at the start of an element that is ignored by editing
     // we should move to its upstream or downstream position.
-    if (editingIgnoresContent(insertionPosition.deprecatedNode())) {
+    if (editingIgnoresContent(*insertionPosition.deprecatedNode())) {
         if (insertionPosition.atLastEditingPositionForNode())
             insertionPosition = insertionPosition.downstream();
         else if (insertionPosition.atFirstEditingPositionForNode())

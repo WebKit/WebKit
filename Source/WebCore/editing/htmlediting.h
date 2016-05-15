@@ -71,14 +71,13 @@ int caretMaxOffset(const Node&);
 bool hasEditableStyle(const Node&, EditableType);
 bool isEditableNode(const Node&);
 
-// FIXME: editingIgnoresContent, canHaveChildrenForEditing, and isAtomicNode should be renamed to better reflect their usage.
+// FIXME: editingIgnoresContent, canHaveChildrenForEditing, and isAtomicNode should be named to clarify how they differ.
 
 // Returns true for nodes that either have no content, or have content that is ignored (skipped over) while editing.
 // There are no VisiblePositions inside these nodes.
-bool editingIgnoresContent(const Node*);
+bool editingIgnoresContent(const Node&);
 
-bool canHaveChildrenForEditing(const Node*);
-
+bool canHaveChildrenForEditing(const Node&);
 bool isAtomicNode(const Node*);
 
 bool isBlock(const Node*);
@@ -91,7 +90,7 @@ bool isRenderedTable(const Node*);
 bool isTableCell(const Node*);
 bool isEmptyTableCell(const Node*);
 bool isTableStructureNode(const Node*);
-bool isListElement(Node*);
+bool isListHTMLElement(Node*);
 bool isListItem(const Node*);
 bool isNodeRendered(const Node&);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
@@ -101,7 +100,7 @@ bool isNodeVisiblyContainedWithin(Node&, const Range&);
 
 bool areIdenticalElements(const Node&, const Node&);
 
-bool positionBeforeOrAfterNodeIsCandidate(Node*);
+bool positionBeforeOrAfterNodeIsCandidate(Node&);
 
 // -------------------------------------------------------------------------
 // Position
@@ -224,33 +223,28 @@ inline bool isAmbiguousBoundaryCharacter(UChar character)
     return character == '\'' || character == rightSingleQuotationMark || character == hebrewPunctuationGershayim;
 }
 
-inline bool editingIgnoresContent(const Node* node)
+inline bool editingIgnoresContent(const Node& node)
 {
-    return !node->canContainRangeEndPoint();
+    return !node.canContainRangeEndPoint();
 }
 
-inline bool canHaveChildrenForEditing(const Node* node)
+inline bool positionBeforeOrAfterNodeIsCandidate(Node& node)
 {
-    return !node->isTextNode() && node->canContainRangeEndPoint();
-}
-
-inline bool positionBeforeOrAfterNodeIsCandidate(Node* node)
-{
-    return isRenderedTable(node) || editingIgnoresContent(node);
+    return isRenderedTable(&node) || editingIgnoresContent(node);
 }
 
 inline Position firstPositionInOrBeforeNode(Node* node)
 {
     if (!node)
         return { };
-    return editingIgnoresContent(node) ? positionBeforeNode(node) : firstPositionInNode(node);
+    return editingIgnoresContent(*node) ? positionBeforeNode(node) : firstPositionInNode(node);
 }
 
 inline Position lastPositionInOrAfterNode(Node* node)
 {
     if (!node)
         return { };
-    return editingIgnoresContent(node) ? positionAfterNode(node) : lastPositionInNode(node);
+    return editingIgnoresContent(*node) ? positionAfterNode(node) : lastPositionInNode(node);
 }
 
 }

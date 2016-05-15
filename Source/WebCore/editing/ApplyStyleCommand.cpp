@@ -312,7 +312,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     }
 
     // Join up any adjacent text nodes.
-    if (start.deprecatedNode()->isTextNode()) {
+    if (is<Text>(*start.deprecatedNode())) {
         joinChildTextNodes(start.deprecatedNode()->parentNode(), start, end);
         start = startPosition();
         end = endPosition();
@@ -321,7 +321,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     if (start.isNull() || end.isNull())
         return;
 
-    if (end.deprecatedNode()->isTextNode() && start.deprecatedNode()->parentNode() != end.deprecatedNode()->parentNode()) {
+    if (is<Text>(*end.deprecatedNode()) && start.deprecatedNode()->parentNode() != end.deprecatedNode()->parentNode()) {
         joinChildTextNodes(end.deprecatedNode()->parentNode(), start, end);
         start = startPosition();
         end = endPosition();
@@ -367,7 +367,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     if (startNode == beyondEnd)
         return;
 
-    if (startNode->isTextNode() && start.deprecatedEditingOffset() >= caretMaxOffset(*startNode)) {
+    if (is<Text>(*startNode) && start.deprecatedEditingOffset() >= caretMaxOffset(*startNode)) {
         // Move out of text node if range does not include its characters.
         startNode = NodeTraversal::next(*startNode);
         if (!startNode)
@@ -391,10 +391,10 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         RefPtr<HTMLElement> element;
         if (is<HTMLElement>(*node)) {
             // Only work on fully selected nodes.
-            if (!nodeFullySelected(node, start, end))
+            if (!nodeFullySelected(downcast<HTMLElement>(*node), start, end))
                 continue;
-            element = downcast<HTMLElement>(node);
-        } else if (node->isTextNode() && node->renderer() && node->parentNode() != lastStyledNode) {
+            element = &downcast<HTMLElement>(*node);
+        } else if (is<Text>(*node) && node->renderer() && node->parentNode() != lastStyledNode) {
             // Last styled node was not parent node of this text node, but we wish to style this
             // text node. To make this possible, add a style span to surround this text node.
             auto span = createStyleSpanElement(document());
@@ -626,11 +626,11 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
 
         // Avoid removing the dir attribute and the unicode-bidi and direction properties from the unsplit ancestors.
         Position embeddingRemoveStart = removeStart;
-        if (startUnsplitAncestor && nodeFullySelected(startUnsplitAncestor, removeStart, end))
+        if (startUnsplitAncestor && nodeFullySelected(*startUnsplitAncestor, removeStart, end))
             embeddingRemoveStart = positionInParentAfterNode(startUnsplitAncestor);
 
         Position embeddingRemoveEnd = end;
-        if (endUnsplitAncestor && nodeFullySelected(endUnsplitAncestor, removeStart, end))
+        if (endUnsplitAncestor && nodeFullySelected(*endUnsplitAncestor, removeStart, end))
             embeddingRemoveEnd = positionInParentBeforeNode(endUnsplitAncestor).downstream();
 
         if (embeddingRemoveEnd != removeStart || embeddingRemoveEnd != end) {
@@ -802,7 +802,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
         if (node->hasChildNodes()) {
             if (node->contains(pastEndNode.get()) || containsNonEditableRegion(*node) || !node->parentNode()->hasEditableStyle())
                 continue;
-            if (editingIgnoresContent(node.get())) {
+            if (editingIgnoresContent(*node)) {
                 next = NodeTraversal::nextSkippingChildren(*node);
                 continue;
             }
@@ -870,7 +870,7 @@ void ApplyStyleCommand::removeConflictingInlineStyleFromRun(EditingStyle* style,
     ASSERT(runStart && runEnd);
     RefPtr<Node> next = runStart;
     for (RefPtr<Node> node = next; node && node->inDocument() && node != pastEndNode; node = next) {
-        if (editingIgnoresContent(node.get())) {
+        if (editingIgnoresContent(*node)) {
             ASSERT(!node->contains(pastEndNode.get()));
             next = NodeTraversal::nextSkippingChildren(*node);
         } else
@@ -1092,7 +1092,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
     }
 }
 
-void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &start, const Position &end)
+void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position& start, const Position& end)
 {
     ASSERT(start.isNotNull());
     ASSERT(end.isNotNull());
@@ -1105,15 +1105,14 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
     // If the pushDownStart is at the end of a text node, then this node is not fully selected.
     // Move it to the next deep quivalent position to avoid removing the style from this node.
     // e.g. if pushDownStart was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead.
-    Node* pushDownStartContainer = pushDownStart.containerNode();
-    if (pushDownStartContainer && pushDownStartContainer->isTextNode()
-        && pushDownStart.computeOffsetInContainerNode() == pushDownStartContainer->maxCharacterOffset())
+    auto* pushDownStartContainer = pushDownStart.containerNode();
+    if (is<Text>(pushDownStartContainer) && pushDownStart.computeOffsetInContainerNode() == pushDownStartContainer->maxCharacterOffset())
         pushDownStart = nextVisuallyDistinctCandidate(pushDownStart);
     // If pushDownEnd is at the start of a text node, then this node is not fully selected.
     // Move it to the previous deep equivalent position to avoid removing the style from this node.
     Position pushDownEnd = end.upstream();
-    Node* pushDownEndContainer = pushDownEnd.containerNode();
-    if (pushDownEndContainer && pushDownEndContainer->isTextNode() && !pushDownEnd.computeOffsetInContainerNode())
+    auto* pushDownEndContainer = pushDownEnd.containerNode();
+    if (is<Text>(pushDownEndContainer) && !pushDownEnd.computeOffsetInContainerNode())
         pushDownEnd = previousVisuallyDistinctCandidate(pushDownEnd);
 
     pushDownInlineStyleAroundNode(style, pushDownStart.deprecatedNode());
@@ -1130,32 +1129,32 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
     RefPtr<Node> node = start.deprecatedNode();
     while (node) {
         RefPtr<Node> next;
-        if (editingIgnoresContent(node.get())) {
+        if (editingIgnoresContent(*node)) {
             ASSERT(node == end.deprecatedNode() || !node->contains(end.deprecatedNode()));
             next = NodeTraversal::nextSkippingChildren(*node);
         } else
             next = NodeTraversal::next(*node);
 
-        if (is<HTMLElement>(*node) && nodeFullySelected(node.get(), start, end)) {
-            Ref<HTMLElement> elem = downcast<HTMLElement>(*node);
-            RefPtr<Node> prev = NodeTraversal::previousPostOrder(elem);
-            RefPtr<Node> next = NodeTraversal::next(elem);
+        if (is<HTMLElement>(*node) && nodeFullySelected(downcast<HTMLElement>(*node), start, end)) {
+            Ref<HTMLElement> element = downcast<HTMLElement>(*node);
+            RefPtr<Node> prev = NodeTraversal::previousPostOrder(element);
+            RefPtr<Node> next = NodeTraversal::next(element);
             RefPtr<EditingStyle> styleToPushDown;
             RefPtr<Node> childNode;
-            if (isStyledInlineElementToRemove(elem.ptr())) {
+            if (isStyledInlineElementToRemove(element.ptr())) {
                 styleToPushDown = EditingStyle::create();
-                childNode = elem->firstChild();
+                childNode = element->firstChild();
             }
 
-            removeInlineStyleFromElement(style, elem.ptr(), RemoveIfNeeded, styleToPushDown.get());
-            if (!elem->inDocument()) {
-                if (s.deprecatedNode() == elem.ptr()) {
+            removeInlineStyleFromElement(style, element.ptr(), RemoveIfNeeded, styleToPushDown.get());
+            if (!element->inDocument()) {
+                if (s.deprecatedNode() == element.ptr()) {
                     // Since elem must have been fully selected, and it is at the start
                     // of the selection, it is clear we can set the new s offset to 0.
                     ASSERT(s.anchorType() == Position::PositionIsBeforeAnchor || s.offsetInContainerNode() <= 0);
                     s = firstPositionInOrBeforeNode(next.get());
                 }
-                if (e.deprecatedNode() == elem.ptr()) {
+                if (e.deprecatedNode() == element.ptr()) {
                     // Since elem must have been fully selected, and it is at the end
                     // of the selection, it is clear we can set the new e offset to
                     // the max range offset of prev.
@@ -1177,32 +1176,27 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
     updateStartEnd(s, e);
 }
 
-bool ApplyStyleCommand::nodeFullySelected(Node *node, const Position &start, const Position &end) const
+bool ApplyStyleCommand::nodeFullySelected(Element& element, const Position& start, const Position& end) const
 {
-    ASSERT(node);
-    ASSERT(node->isElementNode());
-
     // The tree may have changed and Position::upstream() relies on an up-to-date layout.
-    node->document().updateLayoutIgnorePendingStylesheets();
+    element.document().updateLayoutIgnorePendingStylesheets();
 
-    return comparePositions(firstPositionInOrBeforeNode(node), start) >= 0
-        && comparePositions(lastPositionInOrAfterNode(node).upstream(), end) <= 0;
+    return comparePositions(firstPositionInOrBeforeNode(&element), start) >= 0
+        && comparePositions(lastPositionInOrAfterNode(&element).upstream(), end) <= 0;
 }
 
-bool ApplyStyleCommand::nodeFullyUnselected(Node *node, const Position &start, const Position &end) const
+bool ApplyStyleCommand::nodeFullyUnselected(Element& element, const Position& start, const Position& end) const
 {
-    ASSERT(node);
-    ASSERT(node->isElementNode());
+    // The tree may have changed and Position::upstream() relies on an up-to-date layout.
+    element.document().updateLayoutIgnorePendingStylesheets();
 
-    bool isFullyBeforeStart = comparePositions(lastPositionInOrAfterNode(node).upstream(), start) < 0;
-    bool isFullyAfterEnd = comparePositions(firstPositionInOrBeforeNode(node), end) > 0;
-
-    return isFullyBeforeStart || isFullyAfterEnd;
+    return comparePositions(lastPositionInOrAfterNode(&element).upstream(), start) < 0
+        || comparePositions(firstPositionInOrBeforeNode(&element), end) > 0;
 }
 
 void ApplyStyleCommand::splitTextAtStart(const Position& start, const Position& end)
 {
-    ASSERT(start.containerNode()->isTextNode());
+    ASSERT(is<Text>(start.containerNode()));
 
     Position newEnd;
     if (end.anchorType() == Position::PositionIsOffsetInAnchor && start.containerNode() == end.containerNode())
@@ -1233,7 +1227,7 @@ void ApplyStyleCommand::splitTextAtEnd(const Position& start, const Position& en
 
 void ApplyStyleCommand::splitTextElementAtStart(const Position& start, const Position& end)
 {
-    ASSERT(start.containerNode()->isTextNode());
+    ASSERT(is<Text>(start.containerNode()));
 
     Position newEnd;
     if (start.containerNode() == end.containerNode())
@@ -1247,7 +1241,7 @@ void ApplyStyleCommand::splitTextElementAtStart(const Position& start, const Pos
 
 void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Position& end)
 {
-    ASSERT(end.containerNode()->isTextNode());
+    ASSERT(is<Text>(end.containerNode()));
 
     bool shouldUpdateStart = start.containerNode() == end.containerNode();
     splitTextNodeContainingElement(end.containerText(), end.offsetInContainerNode());
@@ -1268,13 +1262,13 @@ bool ApplyStyleCommand::shouldSplitTextElement(Element* element, EditingStyle* s
     if (!is<HTMLElement>(element))
         return false;
 
-    return shouldRemoveInlineStyleFromElement(style, downcast<HTMLElement>(element));
+    return shouldRemoveInlineStyleFromElement(style, &downcast<HTMLElement>(*element));
 }
 
 bool ApplyStyleCommand::isValidCaretPositionInTextNode(const Position& position)
 {
     Node* node = position.containerNode();
-    if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node->isTextNode())
+    if (position.anchorType() != Position::PositionIsOffsetInAnchor || !is<Text>(node))
         return false;
     int offsetInText = position.offsetInContainerNode();
     return offsetInText > caretMinOffset(*node) && offsetInText < caretMaxOffset(*node);
@@ -1369,13 +1363,14 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(PassRefPtr<Node> passedStar
 
     RefPtr<Node> nextSibling = element->nextSibling();
     RefPtr<Node> previousSibling = element->previousSibling();
-    if (is<Element>(nextSibling.get()) && nextSibling->hasEditableStyle() && areIdenticalElements(*element, *nextSibling))
+
+    if (nextSibling && nextSibling->hasEditableStyle() && areIdenticalElements(*element, *nextSibling))
         mergeIdenticalElements(element.get(), downcast<Element>(nextSibling.get()));
 
     if (is<Element>(previousSibling.get()) && previousSibling->hasEditableStyle()) {
-        Node* mergedElement = previousSibling->nextSibling();
+        auto* mergedElement = previousSibling->nextSibling();
         ASSERT(mergedElement);
-        if (is<Element>(*mergedElement) && mergedElement->hasEditableStyle() && areIdenticalElements(*previousSibling, *mergedElement))
+        if (mergedElement->hasEditableStyle() && areIdenticalElements(*previousSibling, *mergedElement))
             mergeIdenticalElements(downcast<Element>(previousSibling.get()), downcast<Element>(mergedElement));
     }
 
@@ -1421,7 +1416,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, PassRefPtr<N
 Position ApplyStyleCommand::positionToComputeInlineStyleChange(PassRefPtr<Node> startNode, RefPtr<Node>& dummyElement)
 {
     // It's okay to obtain the style at the startNode because we've removed all relevant styles from the current run.
-    if (!startNode->isElementNode()) {
+    if (!is<Element>(*startNode)) {
         dummyElement = createStyleSpanElement(document());
         insertNodeAt(dummyElement, positionBeforeNode(startNode.get()));
         return firstPositionInOrBeforeNode(dummyElement.get());
@@ -1440,16 +1435,19 @@ void ApplyStyleCommand::applyInlineStyleChange(PassRefPtr<Node> passedStart, Pas
     // Find appropriate font and span elements top-down.
     HTMLFontElement* fontContainer = nullptr;
     HTMLElement* styleContainer = nullptr;
-    for (Node* container = startNode.get(); container && startNode == endNode; container = container->firstChild()) {
-        if (is<HTMLFontElement>(*container))
-            fontContainer = downcast<HTMLFontElement>(container);
-        bool styleContainerIsNotSpan = !is<HTMLSpanElement>(styleContainer);
-        if (is<HTMLElement>(*container) && (is<HTMLSpanElement>(*container) || (styleContainerIsNotSpan && container->hasChildNodes())))
-            styleContainer = downcast<HTMLElement>(container);
-        if (!container->firstChild())
+    while (startNode && startNode == endNode) {
+        if (is<HTMLElement>(*startNode)) {
+            auto& container = downcast<HTMLElement>(*startNode);
+            if (is<HTMLFontElement>(container))
+                fontContainer = &downcast<HTMLFontElement>(container);
+            if (is<HTMLSpanElement>(container) || (!is<HTMLSpanElement>(styleContainer) && container.hasChildNodes()))
+                styleContainer = &container;
+        }
+        auto* startNodeFirstChild = startNode->firstChild();
+        if (!startNodeFirstChild)
             break;
-        startNode = container->firstChild();
-        endNode = container->lastChild();
+        endNode = startNode->lastChild();
+        startNode = startNodeFirstChild;
     }
 
     // Font tags need to go outside of CSS so that CSS font sizes override leagcy font sizes.
@@ -1482,9 +1480,9 @@ void ApplyStyleCommand::applyInlineStyleChange(PassRefPtr<Node> passedStart, Pas
             } else
                 setNodeAttribute(styleContainer, styleAttr, styleToMerge->asText());
         } else {
-            RefPtr<Element> styleElement = createStyleSpanElement(document());
+            auto styleElement = createStyleSpanElement(document());
             styleElement->setAttribute(styleAttr, styleToMerge->asText());
-            surroundNodeRangeWithElement(startNode, endNode, styleElement.release());
+            surroundNodeRangeWithElement(startNode, endNode, WTFMove(styleElement));
         }
     }
 

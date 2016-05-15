@@ -32,6 +32,7 @@ namespace WebCore {
 
 class HTMLSpanElement final : public HTMLElement {
 public:
+    static Ref<HTMLSpanElement> create(Document&);
     static Ref<HTMLSpanElement> create(const QualifiedName&, Document&);
 
 private:

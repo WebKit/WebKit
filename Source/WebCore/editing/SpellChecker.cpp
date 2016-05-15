@@ -32,7 +32,6 @@
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"
-#include "Node.h"
 #include "Page.h"
 #include "PositionIterator.h"
 #include "RenderObject.h"

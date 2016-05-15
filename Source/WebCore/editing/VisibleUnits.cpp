@@ -1028,7 +1028,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
         IntPoint pointInLine = absoluteLineDirectionPointToLocalPointInBlock(*root, lineDirectionPoint);
         RenderObject& renderer = root->closestLeafChildForPoint(pointInLine, isEditablePosition(p))->renderer();
         Node* node = renderer.node();
-        if (node && editingIgnoresContent(node))
+        if (node && editingIgnoresContent(*node))
             return positionInParentBeforeNode(node);
         return renderer.positionForPoint(pointInLine, nullptr);
     }
@@ -1086,7 +1086,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
         IntPoint pointInLine = absoluteLineDirectionPointToLocalPointInBlock(*root, lineDirectionPoint);
         RenderObject& renderer = root->closestLeafChildForPoint(pointInLine, isEditablePosition(p))->renderer();
         Node* node = renderer.node();
-        if (node && editingIgnoresContent(node))
+        if (node && editingIgnoresContent(*node))
             return positionInParentBeforeNode(node);
         return renderer.positionForPoint(pointInLine, nullptr);
     }
@@ -1198,7 +1198,7 @@ Node* findStartOfParagraph(Node* startNode, Node* highestRoot, Node* startBlock,
             node = n;
             offset = 0;
             n = NodeTraversal::previousPostOrder(*n, startBlock);
-        } else if (editingIgnoresContent(n) || isRenderedTable(n)) {
+        } else if (editingIgnoresContent(*n) || isRenderedTable(n)) {
             node = n;
             type = Position::PositionIsBeforeAnchor;
             n = n->previousSibling() ? n->previousSibling() : NodeTraversal::previousPostOrder(*n, startBlock);
@@ -1260,7 +1260,7 @@ Node* findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayInsideBlo
             node = n;
             offset = r->caretMaxOffset();
             n = NodeTraversal::next(*n, stayInsideBlock);
-        } else if (editingIgnoresContent(n) || isRenderedTable(n)) {
+        } else if (editingIgnoresContent(*n) || isRenderedTable(n)) {
             node = n;
             type = Position::PositionIsAfterAnchor;
             n = NodeTraversal::nextSkippingChildren(*n, stayInsideBlock);

@@ -402,9 +402,10 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
         next = NodeTraversal::next(*n);
         bool openedTag = false;
 
-        if (isBlock(n) && canHaveChildrenForEditing(n) && next == pastEnd)
+        if (isBlock(n) && canHaveChildrenForEditing(*n) && next == pastEnd) {
             // Don't write out empty block containers that aren't fully selected.
             continue;
+        }
 
         if (!n->renderer() && !enclosingElementWithTag(firstPositionInOrBeforeNode(n), selectTag)) {
             next = NodeTraversal::nextSkippingChildren(*n);
@@ -529,7 +530,7 @@ static bool isElementPresentational(const Node* node)
 
 static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterchange shouldAnnotate)
 {
-    Node* commonAncestor = range->commonAncestorContainer();
+    auto* commonAncestor = range->commonAncestorContainer();
     ASSERT(commonAncestor);
     Node* specialCommonAncestor = nullptr;
     if (shouldAnnotate == AnnotateForInterchange) {
@@ -537,10 +538,10 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
         // the structure and appearance of the copied markup.
         specialCommonAncestor = ancestorToRetainStructureAndAppearance(commonAncestor);
 
-        if (Node* parentListNode = enclosingNodeOfType(firstPositionInOrBeforeNode(range->firstNode()), isListItem)) {
-            if (!editingIgnoresContent(parentListNode) && WebCore::areRangesEqual(VisibleSelection::selectionFromContentsOfNode(parentListNode).toNormalizedRange().get(), range)) {
+        if (auto* parentListNode = downcast<Element>(enclosingNodeOfType(firstPositionInOrBeforeNode(range->firstNode()), isListItem))) {
+            if (!editingIgnoresContent(*parentListNode) && WebCore::areRangesEqual(VisibleSelection::selectionFromContentsOfNode(parentListNode).toNormalizedRange().get(), range)) {
                 specialCommonAncestor = parentListNode->parentNode();
-                while (specialCommonAncestor && !isListElement(specialCommonAncestor))
+                while (specialCommonAncestor && !isListHTMLElement(specialCommonAncestor))
                     specialCommonAncestor = specialCommonAncestor->parentNode();
             }
         }
@@ -550,7 +551,7 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
             specialCommonAncestor = highestMailBlockquote;
     }
 
-    Node* checkAncestor = specialCommonAncestor ? specialCommonAncestor : commonAncestor;
+    auto* checkAncestor = specialCommonAncestor ? specialCommonAncestor : commonAncestor;
     if (checkAncestor->renderer() && checkAncestor->renderer()->containingBlock()) {
         Node* newSpecialCommonAncestor = highestEnclosingNodeOfType(firstPositionInNode(checkAncestor), &isElementPresentational, CanCrossEditingBoundary, checkAncestor->renderer()->containingBlock()->element());
         if (newSpecialCommonAncestor)

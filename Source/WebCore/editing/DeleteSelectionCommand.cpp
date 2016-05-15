@@ -457,7 +457,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
     makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss();
 
     // Never remove the start block unless it's a table, in which case we won't merge content in.
-    if (startNode == m_startBlock && !startOffset && canHaveChildrenForEditing(startNode) && !is<HTMLTableElement>(*startNode)) {
+    if (startNode == m_startBlock && !startOffset && canHaveChildrenForEditing(*startNode) && !is<HTMLTableElement>(*startNode)) {
         startOffset = 0;
         startNode = NodeTraversal::next(*startNode);
         if (!startNode)
@@ -538,7 +538,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         }
         
         if (m_downstreamEnd.deprecatedNode() != startNode && !m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode()) && m_downstreamEnd.anchorNode()->inDocument() && m_downstreamEnd.deprecatedEditingOffset() >= caretMinOffset(*m_downstreamEnd.deprecatedNode())) {
-            if (m_downstreamEnd.atLastEditingPositionForNode() && !canHaveChildrenForEditing(m_downstreamEnd.deprecatedNode())) {
+            if (m_downstreamEnd.atLastEditingPositionForNode() && !canHaveChildrenForEditing(*m_downstreamEnd.deprecatedNode())) {
                 // The node itself is fully selected, not just its contents.  Delete it.
                 removeNode(m_downstreamEnd.deprecatedNode());
             } else {

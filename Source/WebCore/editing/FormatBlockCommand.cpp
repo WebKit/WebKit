@@ -24,15 +24,16 @@
  */
 
 #include "config.h"
-#include "Element.h"
 #include "FormatBlockCommand.h"
+
 #include "Document.h"
+#include "Element.h"
 #include "ExceptionCodePlaceholder.h"
-#include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Range.h"
 #include "VisibleUnits.h"
+#include "htmlediting.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ using namespace HTMLNames;
 
 static Node* enclosingBlockToSplitTreeTo(Node* startNode);
 static bool isElementForFormatBlock(const QualifiedName& tagName);
+
 static inline bool isElementForFormatBlock(Node* node)
 {
     return is<Element>(*node) && isElementForFormatBlock(downcast<Element>(*node).tagQName());
@@ -156,7 +158,7 @@ Node* enclosingBlockToSplitTreeTo(Node* startNode)
             return n;
         if (isBlock(n))
             lastBlock = n;
-        if (isListElement(n))
+        if (isListHTMLElement(n))
             return n->parentNode()->hasEditableStyle() ? n->parentNode() : n;
     }
     return lastBlock;

@@ -95,7 +95,7 @@ VisibleSelection::VisibleSelection(const Range& range, EAffinity affinity, bool 
 
 VisibleSelection VisibleSelection::selectionFromContentsOfNode(Node* node)
 {
-    ASSERT(!editingIgnoresContent(node));
+    ASSERT(!editingIgnoresContent(*node));
     return VisibleSelection(firstPositionInNode(node), lastPositionInNode(node), DOWNSTREAM);
 }
 

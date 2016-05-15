@@ -37,8 +37,8 @@
 #include "GraphicsContext.h"
 #include "HTMLBodyElement.h"
 #include "HTMLButtonElement.h"
-#include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
@@ -4386,7 +4386,7 @@ LayoutRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit
     // FIXME: Border/padding should be added for all elements but this workaround
     // is needed because we use offsets inside an "atomic" element to represent
     // positions before and after the element in deprecated editing offsets.
-    if (element() && !(editingIgnoresContent(element()) || isRenderedTable(element()))) {
+    if (element() && !(editingIgnoresContent(*element()) || isRenderedTable(element()))) {
         rect.setX(rect.x() + borderLeft() + paddingLeft());
         rect.setY(rect.y() + paddingTop() + borderTop());
     }

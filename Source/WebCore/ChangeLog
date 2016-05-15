@@ -1,3 +1,154 @@
+2016-05-15  Darin Adler  <darin@apple.com>
+
+        More CTTE and other cleanups for HTML editing header
+        https://bugs.webkit.org/show_bug.cgi?id=157722
+
+        Reviewed by Chris Dumez.
+
+        These changes are mostly things Chris asked for in his review of my last patch
+        or other related style and small efficiency improvements.
+
+        - using nullptr instead of 0
+        - using is<Text> instead of isTextNode and is<> instead of hasTagName
+        - changing argument type of functions like editingIgnoresContent to a reference
+        - using { } instead of constructor calls for classes like Position
+        - using words like position intead of abbreviations like pos
+        - using auto rather than explicit types
+        - rename functions that return true for HTMLElement to express that in the function names
+
+        * dom/Position.cpp:
+        (WebCore::nextRenderedEditable): nullptr
+        (WebCore::previousRenderedEditable): nullptr
+        (WebCore::Position::Position): is<>, reference
+        (WebCore::Position::moveToPosition): reference
+        (WebCore::Position::offsetForPositionAfterAnchor): Added a null assertion and
+        null check that replaces the one that used to be in lastOffsetForEditing.
+        (WebCore::Position::parentAnchoredEquivalent): { }, reference
+        (WebCore::Position::computeNodeBeforePosition): nullptr
+        (WebCore::Position::computeNodeAfterPosition): nullptr
+        (WebCore::Position::anchorTypeForLegacyEditingPosition): reference
+        (WebCore::Position::previous): reference
+        (WebCore::Position::next): reference
+        (WebCore::Position::parentEditingBoundary): nullptr
+        (WebCore::Position::previousCharacterPosition): { }, pos -> position
+        (WebCore::Position::nextCharacterPosition): { }, pos -> position
+        (WebCore::endsOfNodeAreVisuallyDistinctPositions): reference
+        (WebCore::Position::upstream): { }, pos -> position
+        (WebCore::Position::downstream): { }, pos -> position
+        (WebCore::Position::rootUserSelectAllForNode): nullptr
+        (WebCore::Position::isCandidate): auto, reference, is<>
+        (WebCore::Position::rendersInDifferentPosition): pos -> position, auto, is<>
+        (WebCore::Position::leadingWhitespacePosition): { }, is<>
+        (WebCore::Position::trailingWhitespacePosition): { }
+        (WebCore::Position::getInlineBoxAndOffset): reference
+        (WebCore::Position::equals): reference, is<>
+
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::operator Position): reference
+        (WebCore::PositionIterator::isCandidate): reference
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): is<>
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange): is<>, reference
+        (WebCore::ApplyStyleCommand::removeConflictingInlineStyleFromRun): reference
+        (WebCore::ApplyStyleCommand::removeInlineStyle): auto, is<>, reference
+        (WebCore::ApplyStyleCommand::nodeFullySelected): is<>
+        (WebCore::ApplyStyleCommand::nodeFullyUnselected): is<>
+        (WebCore::ApplyStyleCommand::splitTextAtStart): is<>
+        (WebCore::ApplyStyleCommand::splitTextElementAtStart): is<>
+        (WebCore::ApplyStyleCommand::splitTextElementAtEnd): is<>
+        (WebCore::ApplyStyleCommand::isValidCaretPositionInTextNode): is<>
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement): Removed unneeded
+        is<Element> calls before calling areIdenticalElements.
+        (WebCore::ApplyStyleCommand::positionToComputeInlineStyleChange): Tightened
+        up logic for the loop to avoid redundant checks.
+        (WebCore::ApplyStyleCommand::applyInlineStyleChange): auto
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAt): reference
+        (WebCore::CompositeEditCommand::appendNode): reference
+        (WebCore::CompositeEditCommand::moveParagraphs): isListHTMLElement
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): reference
+
+        * editing/FormatBlockCommand.cpp: Fixed order of includes.
+        (WebCore::enclosingBlockToSplitTreeTo): isListHTMLElement
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): reference
+
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::getStartEndListChildren): isListHTMLElement
+        (WebCore::IncreaseSelectionListLevelCommand::doApply):isListHTMLElement
+        (WebCore::canDecreaseListLevel):isListHTMLElement
+
+        * editing/RemoveNodeCommand.cpp: Removed unneeded include.
+
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::ReplaceNodeWithSpanCommand::doApply): Use HTMLSpanElement::create.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isInterchangeNewlineNode): is<>, downcast<>
+        (WebCore::isInterchangeConvertedSpaceSpan): is<>, downcast<>
+        (WebCore::positionAvoidingPrecedingNodes): pos -> position, reference
+        (WebCore::ReplaceSelectionCommand::doApply): isListHTMLElement
+        (WebCore::ReplaceSelectionCommand::insertAsListItems): isListHTMLElement
+
+        * editing/SpellChecker.cpp: Removed unneeded include.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::advance): reference
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::selectionFromContentsOfNode): reference
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousLinePosition): reference
+        (WebCore::nextLinePosition): reference
+        (WebCore::findStartOfParagraph): reference
+        (WebCore::findEndOfParagraph): reference
+
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing): Moved here from header file so we don't
+        have to include "Text.h". Not critical to inline this.
+        (WebCore::isAtomicNode): reference
+        (WebCore::lastOffsetForEditing): reference
+        (WebCore::stringWithRebalancedWhitespace): Changed to use StringBuilder instead
+        of Vector<UChar> so this won't turn 8-bit strings into 16-bit strings. Changed
+        to not use the StringBuilder at all until we encounter a character that needs
+        to be changed.
+        (WebCore::isSpecialHTMLElement): Renamed to make it clear that it only can return
+        true for a Node that is an HTMLElement.
+        (WebCore::firstInSpecialElement): isSpecialHTMLElement
+        (WebCore::lastInSpecialElement): isSpecialHTMLElement
+        (WebCore::isListHTMLElement): Renamed to make it clear that it can only return
+        true for a Node that is an HTMLElement.
+        (WebCore::isListItem): isListHTMLElement, is<>
+        (WebCore::enclosingNodeOfType): p -> position, nullptr
+        (WebCore::highestEnclosingNodeOfType): p -> position
+        (WebCore::enclosingListChild): isListHTMLElement, is<>
+        (WebCore::embeddedSublist): isListHTMLElement
+        (WebCore::appendedSublist):isListHTMLElement
+        (WebCore::caretMaxOffset): is<>
+        (WebCore::caretRendersInsideNode): changed to take a reference
+        (WebCore::rendererForCaretPainting): reference
+
+        * editing/htmlediting.h: Updated for name changes and type changes above.
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization): reference
+        (WebCore::highestAncestorToWrapMarkup): auto, reference, isListHTMLElement
+
+        * html/HTMLSpanElement.cpp:
+        (WebCore::HTMLSpanElement::create): Added overload that does not require a tag name.
+        * html/HTMLSpanElement.h: Ditto.
+
+        * page/DOMSelection.cpp: Removed unneeded includes.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localCaretRect): reference
+
 2016-05-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r200925.

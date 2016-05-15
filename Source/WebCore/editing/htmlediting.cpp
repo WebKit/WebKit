@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2007, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,7 @@
 #include "VisibleUnits.h"
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -63,10 +64,15 @@ using namespace HTMLNames;
 
 static bool isVisiblyAdjacent(const Position&, const Position&);
 
+bool canHaveChildrenForEditing(const Node& node)
+{
+    return !is<Text>(node) && node.canContainRangeEndPoint();
+}
+
 // Atomic means that the node has no children, or has children which are ignored for the purposes of editing.
 bool isAtomicNode(const Node* node)
 {
-    return node && (!node->hasChildNodes() || editingIgnoresContent(node));
+    return node && (!node->hasChildNodes() || editingIgnoresContent(*node));
 }
 
 // Compare two positions, taking into account the possibility that one or both
@@ -373,8 +379,9 @@ int lastOffsetForEditing(const Node& node)
     if (node.hasChildNodes())
         return node.countChildNodes();
 
-    // NOTE: This should preempt the countChildNodes() for, e.g., select nodes (what does this mean)?
-    if (editingIgnoresContent(&node))
+    // NOTE: This should preempt the countChildNodes() for, e.g., select nodes.
+    // FIXME: What does the comment above mean?
+    if (editingIgnoresContent(node))
         return 1;
 
     return 0;
@@ -382,33 +389,37 @@ int lastOffsetForEditing(const Node& node)
 
 String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfParagraph, bool endIsEndOfParagraph)
 {
-    Vector<UChar> rebalancedString(string.length());
-    StringView(string).getCharactersWithUpconvert(rebalancedString.data());
-
-    bool changedSomething = false;
+    StringBuilder rebalancedString;
 
     bool previousCharacterWasSpace = false;
-    for (size_t i = 0; i < rebalancedString.size(); i++) {
-        if (!deprecatedIsEditingWhitespace(rebalancedString[i])) {
+    unsigned length = string.length();
+    for (unsigned i = 0; i < length; ++i) {
+        auto character = string[i];
+        if (!deprecatedIsEditingWhitespace(character)) {
             previousCharacterWasSpace = false;
             continue;
         }
-        if (previousCharacterWasSpace || (!i && startIsStartOfParagraph) || (i + 1 == rebalancedString.size() && endIsEndOfParagraph)) {
-            if (rebalancedString[i] != noBreakSpace) {
-                rebalancedString[i] = noBreakSpace;
-                changedSomething = true;
-            }
+        LChar selectedWhitespaceCharacter;
+        if (previousCharacterWasSpace || (!i && startIsStartOfParagraph) || (i == length - 1 && endIsEndOfParagraph)) {
+            selectedWhitespaceCharacter = noBreakSpace;
             previousCharacterWasSpace = false;
         } else {
-            if (rebalancedString[i] != ' ') {
-                rebalancedString[i] = ' ';
-                changedSomething = true;
-            }
+            selectedWhitespaceCharacter = ' ';
             previousCharacterWasSpace = true;
         }
+        if (character == selectedWhitespaceCharacter)
+            continue;
+        rebalancedString.reserveCapacity(length);
+        rebalancedString.append(string, rebalancedString.length(), i - rebalancedString.length());
+        rebalancedString.append(selectedWhitespaceCharacter);
     }
 
-    return changedSomething ? String::adopt(rebalancedString) : string;
+    if (rebalancedString.isEmpty())
+        return string;
+
+    rebalancedString.reserveCapacity(length);
+    rebalancedString.append(string, rebalancedString.length(), length - rebalancedString.length());
+    return rebalancedString.toString();
 }
 
 bool isTableStructureNode(const Node* node)
@@ -423,7 +434,7 @@ const String& nonBreakingSpaceString()
     return nonBreakingSpaceString;
 }
 
-static bool isSpecialElement(const Node* node)
+static bool isSpecialHTMLElement(const Node* node)
 {
     if (!is<HTMLElement>(node))
         return false;
@@ -451,7 +462,7 @@ static HTMLElement* firstInSpecialElement(const Position& position)
 {
     auto* rootEditableElement = position.containerNode()->rootEditableElement();
     for (Node* node = position.deprecatedNode(); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
-        if (!isSpecialElement(node))
+        if (!isSpecialHTMLElement(node))
             continue;
         VisiblePosition vPos(position, DOWNSTREAM);
         VisiblePosition firstInElement(firstPositionInOrBeforeNode(node), DOWNSTREAM);
@@ -465,7 +476,7 @@ static HTMLElement* lastInSpecialElement(const Position& position)
 {
     auto* rootEditableElement = position.containerNode()->rootEditableElement();
     for (Node* node = position.deprecatedNode(); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
-        if (!isSpecialElement(node))
+        if (!isSpecialHTMLElement(node))
             continue;
         VisiblePosition vPos(position, DOWNSTREAM);
         VisiblePosition lastInElement(lastPositionInOrAfterNode(node), DOWNSTREAM);
@@ -564,14 +575,14 @@ VisiblePosition visiblePositionAfterNode(Node& node)
     return positionInParentAfterNode(&node);
 }
 
-bool isListElement(Node* node)
+bool isListHTMLElement(Node* node)
 {
-    return node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag));
+    return node && (is<HTMLUListElement>(*node) || is<HTMLOListElement>(*node) || is<HTMLDListElement>(*node));
 }
 
 bool isListItem(const Node* node)
 {
-    return node && (isListElement(node->parentNode()) || (node->renderer() && node->renderer()->isListItem()));
+    return node && (isListHTMLElement(node->parentNode()) || (node->renderer() && node->renderer()->isListItem()));
 }
 
 Element* enclosingElementWithTag(const Position& position, const QualifiedName& tagName)
@@ -590,12 +601,12 @@ Element* enclosingElementWithTag(const Position& position, const QualifiedName& 
     return nullptr;
 }
 
-Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule)
+Node* enclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule)
 {
     // FIXME: support CanSkipCrossEditingBoundary
     ASSERT(rule == CanCrossEditingBoundary || rule == CannotCrossEditingBoundary);
-    auto* root = rule == CannotCrossEditingBoundary ? highestEditableRoot(p) : 0;
-    for (Node* n = p.deprecatedNode(); n; n = n->parentNode()) {
+    auto* root = rule == CannotCrossEditingBoundary ? highestEditableRoot(position) : nullptr;
+    for (Node* n = position.deprecatedNode(); n; n = n->parentNode()) {
         // Don't return a non-editable node if the input position was editable, since
         // the callers from editing will no doubt want to perform editing inside the returned node.
         if (root && !n->hasEditableStyle())
@@ -608,11 +619,11 @@ Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), 
     return nullptr;
 }
 
-Node* highestEnclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule, Node* stayWithin)
+Node* highestEnclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule, Node* stayWithin)
 {
     Node* highest = nullptr;
-    auto* root = rule == CannotCrossEditingBoundary ? highestEditableRoot(p) : 0;
-    for (Node* n = p.containerNode(); n && n != stayWithin; n = n->parentNode()) {
+    auto* root = rule == CannotCrossEditingBoundary ? highestEditableRoot(position) : nullptr;
+    for (Node* n = position.containerNode(); n && n != stayWithin; n = n->parentNode()) {
         if (root && !n->hasEditableStyle())
             continue;
         if (nodeIsOfType(n))
@@ -693,7 +704,7 @@ Node* enclosingListChild(Node *node)
     
     // FIXME: This function is inappropriately named since it starts with node instead of node->parentNode()
     for (Node* n = node; n && n->parentNode(); n = n->parentNode()) {
-        if (n->hasTagName(liTag) || (isListElement(n->parentNode()) && n != root))
+        if (is<HTMLLIElement>(*n) || (isListHTMLElement(n->parentNode()) && n != root))
             return n;
         if (n == root || isTableCell(n))
             return nullptr;
@@ -706,7 +717,7 @@ static HTMLElement* embeddedSublist(Node* listItem)
 {
     // Check the DOM so that we'll find collapsed sublists without renderers.
     for (Node* n = listItem->firstChild(); n; n = n->nextSibling()) {
-        if (isListElement(n))
+        if (isListHTMLElement(n))
             return downcast<HTMLElement>(n);
     }
     return nullptr;
@@ -716,7 +727,7 @@ static Node* appendedSublist(Node* listItem)
 {
     // Check the DOM so that we'll find collapsed sublists without renderers.
     for (Node* n = listItem->nextSibling(); n; n = n->nextSibling()) {
-        if (isListElement(n))
+        if (isListHTMLElement(n))
             return downcast<HTMLElement>(n);
         if (isListItem(listItem))
             return nullptr;
@@ -994,9 +1005,10 @@ int caretMinOffset(const Node& node)
 int caretMaxOffset(const Node& node)
 {
     // For rendered text nodes, return the last position that a caret could occupy.
-    if (node.isTextNode() && node.renderer())
-        return node.renderer()->caretMaxOffset();
-    // For containers return the number of children. For others do the same as above.
+    if (is<Text>(node)) {
+        if (auto* renderer = downcast<Text>(node).renderer())
+            return renderer->caretMaxOffset();
+    }
     return lastOffsetForEditing(node);
 }
 
@@ -1216,9 +1228,9 @@ Element* deprecatedEnclosingBlockFlowElement(Node* node)
     return nullptr;
 }
 
-static inline bool caretRendersInsideNode(Node* node)
+static inline bool caretRendersInsideNode(Node& node)
 {
-    return node && !isRenderedTable(node) && !editingIgnoresContent(node);
+    return !isRenderedTable(&node) && !editingIgnoresContent(node);
 }
 
 RenderBlock* rendererForCaretPainting(Node* node)
@@ -1231,7 +1243,7 @@ RenderBlock* rendererForCaretPainting(Node* node)
         return nullptr;
 
     // If caretNode is a block and caret is inside it, then caret should be painted by that block.
-    bool paintedByBlock = is<RenderBlockFlow>(*renderer) && caretRendersInsideNode(node);
+    bool paintedByBlock = is<RenderBlockFlow>(*renderer) && caretRendersInsideNode(*node);
     return paintedByBlock ? downcast<RenderBlock>(renderer) : renderer->containingBlock();
 }
 

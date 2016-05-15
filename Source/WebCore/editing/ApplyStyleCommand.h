@@ -86,8 +86,8 @@ private:
     void applyInlineStyleToPushDown(Node*, EditingStyle*);
     void pushDownInlineStyleAroundNode(EditingStyle*, Node*);
     void removeInlineStyle(EditingStyle* , const Position& start, const Position& end);
-    bool nodeFullySelected(Node*, const Position& start, const Position& end) const;
-    bool nodeFullyUnselected(Node*, const Position& start, const Position& end) const;
+    bool nodeFullySelected(Element&, const Position& start, const Position& end) const;
+    bool nodeFullyUnselected(Element&, const Position& start, const Position& end) const;
 
     // style-application helpers
     void applyBlockStyle(EditingStyle*);

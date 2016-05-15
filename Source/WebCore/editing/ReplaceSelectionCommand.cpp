@@ -101,44 +101,46 @@ private:
     bool m_hasInterchangeNewlineAtEnd;
 };
 
-static bool isInterchangeNewlineNode(const Node *node)
+static bool isInterchangeNewlineNode(const Node* node)
 {
     static NeverDestroyed<String> interchangeNewlineClassString(AppleInterchangeNewline);
-    return node && node->hasTagName(brTag) && 
-           static_cast<const Element *>(node)->getAttribute(classAttr) == interchangeNewlineClassString;
+    return is<HTMLBRElement>(node) && downcast<HTMLBRElement>(*node).fastGetAttribute(classAttr) == interchangeNewlineClassString;
 }
 
-static bool isInterchangeConvertedSpaceSpan(const Node *node)
+static bool isInterchangeConvertedSpaceSpan(const Node* node)
 {
     static NeverDestroyed<String> convertedSpaceSpanClassString(AppleConvertedSpace);
-    return node->isHTMLElement() && 
-           static_cast<const HTMLElement *>(node)->getAttribute(classAttr) == convertedSpaceSpanClassString;
+    return is<HTMLElement>(node) && downcast<HTMLElement>(*node).fastGetAttribute(classAttr) == convertedSpaceSpanClassString;
 }
 
-static Position positionAvoidingPrecedingNodes(Position pos)
+static Position positionAvoidingPrecedingNodes(Position position)
 {
+    ASSERT(position.isNotNull());
+
     // If we're already on a break, it's probably a placeholder and we shouldn't change our position.
-    if (editingIgnoresContent(pos.deprecatedNode()))
-        return pos;
+    if (editingIgnoresContent(*position.deprecatedNode()))
+        return position;
 
     // We also stop when changing block flow elements because even though the visual position is the
     // same.  E.g.,
     //   <div>foo^</div>^
     // The two positions above are the same visual position, but we want to stay in the same block.
-    Node* enclosingBlockNode = enclosingBlock(pos.containerNode());
-    for (Position nextPosition = pos; nextPosition.containerNode() != enclosingBlockNode; pos = nextPosition) {
-        if (lineBreakExistsAtPosition(pos))
+    auto* enclosingBlockNode = enclosingBlock(position.containerNode());
+    for (Position nextPosition = position; nextPosition.containerNode() != enclosingBlockNode; position = nextPosition) {
+        if (lineBreakExistsAtPosition(position))
             break;
 
-        if (pos.containerNode()->nonShadowBoundaryParentNode())
-            nextPosition = positionInParentAfterNode(pos.containerNode());
-        
-        if (nextPosition == pos 
-            || enclosingBlock(nextPosition.containerNode()) != enclosingBlockNode
-            || VisiblePosition(pos) != VisiblePosition(nextPosition))
+        if (position.containerNode()->nonShadowBoundaryParentNode())
+            nextPosition = positionInParentAfterNode(position.containerNode());
+
+        if (nextPosition == position)
+            break;
+        if (enclosingBlock(nextPosition.containerNode()) != enclosingBlockNode)
+            break;
+        if (VisiblePosition(position) != VisiblePosition(nextPosition))
             break;
     }
-    return pos;
+    return position;
 }
 
 ReplacementFragment::ReplacementFragment(Document& document, DocumentFragment* fragment, const VisibleSelection& selection)
@@ -1101,7 +1103,7 @@ void ReplaceSelectionCommand::doApply()
     fragment.removeNode(refNode);
 
     Node* blockStart = enclosingBlock(insertionPos.deprecatedNode());
-    if ((isListElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListElement(refNode->firstChild())))
+    if ((isListHTMLElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListHTMLElement(refNode->firstChild())))
         && blockStart && blockStart->renderer()->isListItem())
         refNode = insertAsListItems(downcast<HTMLElement>(refNode.get()), blockStart, insertionPos, insertedNodes);
     else {
@@ -1439,7 +1441,7 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<HTMLElement> prpList
 {
     RefPtr<HTMLElement> listElement = prpListElement;
 
-    while (listElement->hasOneChild() && isListElement(listElement->firstChild()))
+    while (listElement->hasOneChild() && isListHTMLElement(listElement->firstChild()))
         listElement = downcast<HTMLElement>(listElement->firstChild());
 
     bool isStart = isStartOfParagraph(insertPos);

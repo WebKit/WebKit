@@ -43,11 +43,11 @@ PositionIterator::operator Position() const
     if (m_nodeAfterPositionInAnchor) {
         ASSERT(m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode);
         // FIXME: This check is inadaquete because any ancestor could be ignored by editing
-        if (positionBeforeOrAfterNodeIsCandidate(m_anchorNode))
+        if (positionBeforeOrAfterNodeIsCandidate(*m_anchorNode))
             return positionBeforeNode(m_anchorNode);
         return positionInParentBeforeNode(m_nodeAfterPositionInAnchor);
     }
-    if (positionBeforeOrAfterNodeIsCandidate(m_anchorNode))
+    if (positionBeforeOrAfterNodeIsCandidate(*m_anchorNode))
         return atStartOfNode() ? positionBeforeNode(m_anchorNode) : positionAfterNode(m_anchorNode);
     if (m_anchorNode->hasChildNodes())
         return lastPositionInOrAfterNode(m_anchorNode);
@@ -161,7 +161,7 @@ bool PositionIterator::isCandidate() const
     if (is<RenderText>(*renderer))
         return !Position::nodeIsUserSelectNone(m_anchorNode) && downcast<RenderText>(*renderer).containsCaretOffset(m_offsetInAnchor);
 
-    if (isRenderedTable(m_anchorNode) || editingIgnoresContent(m_anchorNode))
+    if (isRenderedTable(m_anchorNode) || editingIgnoresContent(*m_anchorNode))
         return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(m_anchorNode->parentNode());
 
     if (!is<HTMLHtmlElement>(*m_anchorNode) && is<RenderBlockFlow>(*renderer)) {
