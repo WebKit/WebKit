@@ -877,13 +877,6 @@ webkit.org/b/94458 http/tests/security/MessagePort/event-listener-context.html [
 # Our IDL parser test harness is not what this test expects
 imported/w3c/web-platform-tests/IndexedDB/interfaces.html [ Skip ]
 
-# W3C IDB tests where the test is wrong (the spec, other browsers, and WebKit all agree)
-# Covered by https://github.com/w3c/web-platform-tests/issues/2456
-imported/w3c/web-platform-tests/IndexedDB/idbindex_get7.htm [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/idbindex_getKey7.htm [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/idbindex_openCursor2.htm [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/idbindex_openKeyCursor3.htm [ Failure ]
-
 # Times out for unexplored reasons                                                             
 storage/indexeddb/database-quota.html [ Skip ]
 storage/indexeddb/database-quota-private.html [ Skip ]
@@ -947,7 +940,7 @@ webkit.org/b/155019 mathml/presentation/menclose-notation-attribute-change-value
 ### END OF IndexedDB failures
 ########################################
 
-# RTL Scrollbars are only implemented on certain versions of OS X
+# RTL Scrollbars are only implemented for GTK+ and certain versions of OS X
 fast/scrolling/rtl-scrollbars.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-simple.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-overflow-contents.html [ ImageOnlyFailure ]
