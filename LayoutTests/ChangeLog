@@ -1,3 +1,15 @@
+2016-05-16  Michael Saboff  <msaboff@apple.com>
+
+        RegExp /y flag incorrect handling of mixed-length alternation
+        https://bugs.webkit.org/show_bug.cgi?id=157723
+
+        Reviewed by Filip Pizlo.
+
+        Added tests for alternatives with shorter to longer lengths.
+
+        * js/regexp-sticky-expected.txt:
+        * js/script-tests/regexp-sticky.js:
+
 2016-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r192098): Content missing after copy and paste to Notes App on retina displays

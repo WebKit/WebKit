@@ -1,3 +1,18 @@
+2016-05-15  Michael Saboff  <msaboff@apple.com>
+
+        RegExp /y flag incorrect handling of mixed-length alternation
+        https://bugs.webkit.org/show_bug.cgi?id=157723
+
+        Reviewed by Filip Pizlo.
+
+        Previously for sticky patterns, we were bailing out and exiting when backtracking
+        alternatives with dissimilar match lengths.  Deleted that code.  Instead, for
+        sticky patterns we need to process the backtracking except for advancing to the
+        next input index.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::backtrack):
+
 2016-05-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::Plan shouldn't read from its VM once it's been cancelled

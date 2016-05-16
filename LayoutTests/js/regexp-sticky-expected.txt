@@ -6,7 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS Repeating Pattern
 PASS Test lastIndex resets
 PASS Ignore Case
-PASS Alternates
+PASS Alternates, differing lengths long to short
+PASS Alternates, differing lengths long to short with mutliple matches 
+PASS Alternates, differing lengths, short to long
 PASS BOL Anchored, starting at 0
 PASS BOL Anchored, starting at 1
 PASS EOL Anchored, not at EOL

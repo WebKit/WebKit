@@ -1888,20 +1888,6 @@ class YarrGenerator : private MacroAssembler {
                     }
                 }
 
-                if (m_pattern.sticky()) {
-                    // We have failed matching from the initial index and we're a sticky expression.
-                    // We are done matching. Link failures for any reason to here.
-                    YarrOp* tempOp = beginOp;
-                    do {
-                        tempOp->m_jumps.link(this);
-                        tempOp = &m_ops[tempOp->m_nextOp];
-                    } while (tempOp->m_op != OpBodyAlternativeEnd);
-
-                    removeCallFrame();
-                    generateFailReturn();
-                    break;
-                }
-
                 // We can reach this point in the code in two ways:
                 //  - Fallthrough from the code above (a repeating alternative backtracked out of its
                 //    last alternative, and did not have sufficent input to run the first).
@@ -1965,52 +1951,53 @@ class YarrGenerator : private MacroAssembler {
                     needsToUpdateMatchStart = false;
                 }
 
-                // Check whether there is sufficient input to loop. Increment the input position by
-                // one, and check. Also add in the minimum disjunction size before checking - there
-                // is no point in looping if we're just going to fail all the input checks around
-                // the next iteration.
-                ASSERT(alternative->m_minimumSize >= m_pattern.m_body->m_minimumSize);
-                if (alternative->m_minimumSize == m_pattern.m_body->m_minimumSize) {
-                    // If the last alternative had the same minimum size as the disjunction,
-                    // just simply increment input pos by 1, no adjustment based on minimum size.
-                    add32(TrustedImm32(1), index);
-                } else {
-                    // If the minumum for the last alternative was one greater than than that
-                    // for the disjunction, we're already progressed by 1, nothing to do!
-                    unsigned delta = (alternative->m_minimumSize - m_pattern.m_body->m_minimumSize) - 1;
-                    if (delta)
-                        sub32(Imm32(delta), index);
-                }
-                Jump matchFailed = jumpIfNoAvailableInput();
-
-                if (needsToUpdateMatchStart) {
-                    if (!m_pattern.m_body->m_minimumSize)
-                        setMatchStart(index);
-                    else {
-                        move(index, regT0);
-                        sub32(Imm32(m_pattern.m_body->m_minimumSize), regT0);
-                        setMatchStart(regT0);
+                if (!m_pattern.sticky()) {
+                    // Check whether there is sufficient input to loop. Increment the input position by
+                    // one, and check. Also add in the minimum disjunction size before checking - there
+                    // is no point in looping if we're just going to fail all the input checks around
+                    // the next iteration.
+                    ASSERT(alternative->m_minimumSize >= m_pattern.m_body->m_minimumSize);
+                    if (alternative->m_minimumSize == m_pattern.m_body->m_minimumSize) {
+                        // If the last alternative had the same minimum size as the disjunction,
+                        // just simply increment input pos by 1, no adjustment based on minimum size.
+                        add32(TrustedImm32(1), index);
+                    } else {
+                        // If the minumum for the last alternative was one greater than than that
+                        // for the disjunction, we're already progressed by 1, nothing to do!
+                        unsigned delta = (alternative->m_minimumSize - m_pattern.m_body->m_minimumSize) - 1;
+                        if (delta)
+                            sub32(Imm32(delta), index);
                     }
+                    Jump matchFailed = jumpIfNoAvailableInput();
+
+                    if (needsToUpdateMatchStart) {
+                        if (!m_pattern.m_body->m_minimumSize)
+                            setMatchStart(index);
+                        else {
+                            move(index, regT0);
+                            sub32(Imm32(m_pattern.m_body->m_minimumSize), regT0);
+                            setMatchStart(regT0);
+                        }
+                    }
+
+                    // Calculate how much more input the first alternative requires than the minimum
+                    // for the body as a whole. If no more is needed then we dont need an additional
+                    // input check here - jump straight back up to the start of the first alternative.
+                    if (beginOp->m_alternative->m_minimumSize == m_pattern.m_body->m_minimumSize)
+                        jump(beginOp->m_reentry);
+                    else {
+                        if (beginOp->m_alternative->m_minimumSize > m_pattern.m_body->m_minimumSize)
+                            add32(Imm32(beginOp->m_alternative->m_minimumSize - m_pattern.m_body->m_minimumSize), index);
+                        else
+                            sub32(Imm32(m_pattern.m_body->m_minimumSize - beginOp->m_alternative->m_minimumSize), index);
+                        checkInput().linkTo(beginOp->m_reentry, this);
+                        jump(firstInputCheckFailed);
+                    }
+
+                    // We jump to here if we iterate to the point that there is insufficient input to
+                    // run any matches, and need to return a failure state from JIT code.
+                    matchFailed.link(this);
                 }
-
-                // Calculate how much more input the first alternative requires than the minimum
-                // for the body as a whole. If no more is needed then we dont need an additional
-                // input check here - jump straight back up to the start of the first alternative.
-                if (beginOp->m_alternative->m_minimumSize == m_pattern.m_body->m_minimumSize)
-                    jump(beginOp->m_reentry);
-                else {
-                    if (beginOp->m_alternative->m_minimumSize > m_pattern.m_body->m_minimumSize)
-                        add32(Imm32(beginOp->m_alternative->m_minimumSize - m_pattern.m_body->m_minimumSize), index);
-                    else
-                        sub32(Imm32(m_pattern.m_body->m_minimumSize - beginOp->m_alternative->m_minimumSize), index);
-                    checkInput().linkTo(beginOp->m_reentry, this);
-                    jump(firstInputCheckFailed);
-                }
-
-                // We jump to here if we iterate to the point that there is insufficient input to
-                // run any matches, and need to return a failure state from JIT code.
-                matchFailed.link(this);
-
                 removeCallFrame();
                 generateFailReturn();
                 break;
