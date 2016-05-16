@@ -1658,6 +1658,8 @@ RefPtr<Range> WebPage::switchToBlockSelectionAtPoint(const IntPoint& point, Sele
 
 bool WebPage::shouldSwitchToBlockModeForHandle(const IntPoint& handlePoint, SelectionHandlePosition handlePosition)
 {
+    if (!m_blockRectForTextSelection.height())
+        return false;
     switch (handlePosition) {
     case SelectionHandlePosition::Top:
         return handlePoint.y() < m_blockRectForTextSelection.y();
@@ -1859,6 +1861,12 @@ PassRefPtr<Range> WebPage::rangeForGranularityAtPoint(const Frame& frame, const 
     return range;
 }
 
+static inline bool rectIsTooBigForSelection(const IntRect& blockRect, const Frame& frame)
+{
+    const float factor = 0.97;
+    return blockRect.height() > frame.view()->unobscuredContentRect().height() * factor;
+}
+
 void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithAssistedNode, uint64_t callbackID)
 {
     const Frame& frame = m_page->focusController().focusedOrMainFrame();
@@ -1867,9 +1875,17 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, u
         m_blockSelectionDesiredSize.setWidth(blockSelectionStartWidth);
         m_blockSelectionDesiredSize.setHeight(blockSelectionStartHeight);
         m_currentBlockSelection = nullptr;
-        RefPtr<Range> paragraphRange = enclosingTextUnitOfGranularity(visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode), ParagraphGranularity, DirectionForward);
-        if (paragraphRange && !paragraphRange->collapsed())
-            m_blockRectForTextSelection = selectionBoxForRange(paragraphRange.get());
+        auto* renderer = range->startContainer().renderer();
+        if (renderer->style().preserveNewline())
+            m_blockRectForTextSelection = renderer->absoluteBoundingBoxRect(true);
+        else {
+            auto* paragraphRange = enclosingTextUnitOfGranularity(visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode), ParagraphGranularity, DirectionForward).get();
+            if (paragraphRange && !paragraphRange->collapsed())
+                m_blockRectForTextSelection = selectionBoxForRange(paragraphRange);
+        }
+        
+        if (rectIsTooBigForSelection(m_blockRectForTextSelection, frame))
+            m_blockRectForTextSelection.setHeight(0);
     }
 
     if (range)
@@ -2388,8 +2404,9 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                 if (attachment.file())
                     info.url = downcast<HTMLAttachmentElement>(*hitNode).file()->path();
             } else {
-                const static CGFloat factor = 0.97;
-                info.isSelectable = renderer->style().userSelect() != SELECT_NONE && info.bounds.height() < result.innerNodeFrame()->view()->unobscuredContentRect().height() * factor;
+                info.isSelectable = renderer->style().userSelect() != SELECT_NONE;
+                if (info.isSelectable && !hitNode->isTextNode())
+                    info.isSelectable = !rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame());
             }
         }
     }
