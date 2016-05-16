@@ -1,3 +1,13 @@
+2016-05-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        CSSParser.cpp triggers -Wunused-parameter
+        https://bugs.webkit.org/show_bug.cgi?id=157734
+
+        Reviewed by Csaba Osztrogonác.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+
 2016-05-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] GraphicsContext3D::ImageExtractor should use the correct size for copying non-image surfaces
