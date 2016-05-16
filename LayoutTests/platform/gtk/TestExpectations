@@ -1311,9 +1311,9 @@ webkit.org/b/145639 media/volume-bar-empty-when-muted.html [ Failure Pass ]
 
 webkit.org/b/157729 fast/images/image-map-outline-with-paint-root-offset.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/157730 fast/forms/select/optgroup-clicking.html
+webkit.org/b/157730 fast/forms/select/optgroup-clicking.html [ Failure Pass ]
 
-webkit.org/b/157731 fast/events/touch/touch-inside-iframe-scrolled.html
+webkit.org/b/157731 fast/events/touch/touch-inside-iframe-scrolled.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

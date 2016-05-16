@@ -1,5 +1,11 @@
 2016-05-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Fix some bogus expectations broken by the previous commit
+
+        * platform/gtk/TestExpectations:
+
+2016-05-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] More unreviewed test expectations gardening
 
         * platform/gtk/TestExpectations:
