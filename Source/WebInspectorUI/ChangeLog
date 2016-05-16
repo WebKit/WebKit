@@ -1,5 +1,24 @@
 2016-05-14  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: DataGrid _updateVisibleRows dominates profiles of timeline recordings when data grid (Overview or TimelineDataGrids) is showing
+        https://bugs.webkit.org/show_bug.cgi?id=157664
+        rdar://problem/26262219
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid): Added new members.
+        (WebInspector.DataGrid.prototype.layout): Reset _cachedScrollTop and _cachedScrollHeight on resize.
+        (WebInspector.DataGrid.prototype._noteScrollPositionChanged): Added.
+        (WebInspector.DataGrid.prototype._updateVisibleRows): Cache sizes and positions when possible.
+        (WebInspector.DataGridNode.prototype.set hidden): Added call to _noteRowsChanged.
+        (WebInspector.DataGridNode.prototype.collapse): Call _noteRowsChanged instead of needsLayout.
+        (WebInspector.DataGridNode.prototype.expand): Call _noteRowsChanged instead of needsLayout.
+        (WebInspector.DataGrid.prototype._updateFilter): Removed direct call to _updateVisibleRows, this is
+        better handled by DataGridNode's hidden setter.
+
+2016-05-14  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Many DataGrid instances do not save/restore their scroll position
         https://bugs.webkit.org/show_bug.cgi?id=157709
         rdar://problem/26286090
