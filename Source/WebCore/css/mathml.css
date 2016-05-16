@@ -93,9 +93,6 @@ math {
 
     /* FIXME: Should we reset more CSS properties (http://webkit.org/b/156839)? */
 }
-mtext {
-    line-height: 1.0;
-}
 
 math {
     display: -webkit-inline-flex !important;

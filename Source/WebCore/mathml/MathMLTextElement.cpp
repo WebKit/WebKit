@@ -86,10 +86,6 @@ RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(RenderStyle&& 
 
     ASSERT(hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag));
 
-    // FIXME: why do we have to set the alignment here ? It seems needed to make the
-    // style-changed.htmt test to pass, since mathml renders expect Stretch as default.
-    style.setAlignItemsPosition(ItemPositionStretch);
-
     return createRenderer<RenderMathMLToken>(*this, WTFMove(style));
 }
 

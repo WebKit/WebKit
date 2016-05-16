@@ -1,3 +1,22 @@
+2016-05-15  Frederic Wang  <fwang@igalia.com>
+
+        Small removal of useless code for MathML token elements
+        https://bugs.webkit.org/show_bug.cgi?id=157568
+
+        Reviewed by Darin Adler.
+
+        We remove two pieces of code for MathML token elements with unclear purposes and that do not
+        have any effect on math rendering.
+
+        No new tests, behavior is unchanged.
+
+        * css/mathml.css:
+        (mtext): Deleted. This was probably a hack that is no longer needed with the latest math font
+        ascent/descent management.
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::createElementRenderer): Deleted. Removing this does not break
+        the mentioned test.
+
 2016-05-15  Chris Dumez  <cdumez@apple.com>
 
         Use more references in JS wrappers related code
