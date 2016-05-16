@@ -1,3 +1,19 @@
+2016-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Optional for ScrollView's m_deferredScrollDelta / m_deferredScrollOffsets
+        https://bugs.webkit.org/show_bug.cgi?id=157747
+
+        Reviewed by Zalan Bujtas.
+
+        Use WTF::Optional for ScrollView's m_deferredScrollDelta / m_deferredScrollOffsets
+        instead of std::unique_ptr as it is more suited for this purpose.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollOffsetChangedViaPlatformWidget):
+        (WebCore::ScrollView::handleDeferredScrollUpdateAfterContentSizeChange):
+        (WebCore::ScrollView::scrollTo):
+        * platform/ScrollView.h:
+
 2016-05-16  Zalan Bujtas  <zalan@apple.com>
 
         containingBlockFor*Position functions should take the renderer instead of the parent.

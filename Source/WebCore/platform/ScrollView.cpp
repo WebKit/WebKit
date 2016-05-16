@@ -448,7 +448,7 @@ void ScrollView::scrollOffsetChangedViaPlatformWidget(const ScrollOffset& oldOff
     // is not complete. Instead, defer the scroll event until the layout finishes.
     if (shouldDeferScrollUpdateAfterContentSizeChange()) {
         // We only care about the most recent scroll position change request
-        m_deferredScrollOffsets = std::make_unique<std::pair<ScrollOffset, ScrollOffset>>(std::make_pair(oldOffset, newOffset));
+        m_deferredScrollOffsets = std::make_pair(oldOffset, newOffset);
         return;
     }
 
@@ -465,12 +465,12 @@ void ScrollView::handleDeferredScrollUpdateAfterContentSizeChange()
     ASSERT(static_cast<bool>(m_deferredScrollDelta) != static_cast<bool>(m_deferredScrollOffsets));
 
     if (m_deferredScrollDelta)
-        completeUpdatesAfterScrollTo(*m_deferredScrollDelta);
+        completeUpdatesAfterScrollTo(m_deferredScrollDelta.value());
     else if (m_deferredScrollOffsets)
-        scrollOffsetChangedViaPlatformWidgetImpl(m_deferredScrollOffsets->first, m_deferredScrollOffsets->second);
+        scrollOffsetChangedViaPlatformWidgetImpl(m_deferredScrollOffsets.value().first, m_deferredScrollOffsets.value().second);
     
-    m_deferredScrollDelta = nullptr;
-    m_deferredScrollOffsets = nullptr;
+    m_deferredScrollDelta = Nullopt;
+    m_deferredScrollOffsets = Nullopt;
 }
 
 void ScrollView::scrollTo(const ScrollPosition& newPosition)
@@ -496,7 +496,7 @@ void ScrollView::scrollTo(const ScrollPosition& newPosition)
     // is not complete. Instead, defer the scroll event until the layout finishes.
     if (shouldDeferScrollUpdateAfterContentSizeChange()) {
         ASSERT(!m_deferredScrollDelta);
-        m_deferredScrollDelta = std::make_unique<IntSize>(scrollDelta);
+        m_deferredScrollDelta = scrollDelta;
         return;
     }
 
