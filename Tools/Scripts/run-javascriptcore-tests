@@ -68,6 +68,7 @@ my $enableFTL = isAppleMacWebKit() || isX86_64() && (isGtk() || isEfl());
 my $createTarball = 0;
 my $remoteHost = 0;
 my $failFast = 1;
+my %jsonData = ();
 my $remoteConfigFile;
 my $jsonFileName;
 
@@ -207,7 +208,14 @@ if ($runTestAPI) {
     my $testapiResult = system { $command[0] } @command;
     my $exitStatus = exitStatus($testapiResult);
     print "testAPI completed with rc=$testapiResult ($exitStatus)\n";
+
+    if (defined($jsonFileName)) {
+        my $apiStatus = ($exitStatus == 0)? JSON::PP::true: JSON::PP::false;
+        $jsonData{'apiTestResult'} = $apiStatus;
+    }
+
     if ($testapiResult && $failFast) {
+        writeJsonDataIfApplicable();
         exit exitStatus($testapiResult);
     }
 }
@@ -337,15 +345,10 @@ sub runJSCStressTests
     print "\n";
 
     if (defined($jsonFileName)) {
-        my %jsonData = (
-            "failures" => \@jscStressFailList,
-        );
-
-        open(my $fileHandler, ">", $jsonFileName) or die;
-        print $fileHandler "${\encode_json(\%jsonData)}\n";
-        close($fileHandler);
+        $jsonData{'failures'} = \@jscStressFailList;
     }
 
+    writeJsonDataIfApplicable();
     exit(1) if $numJSCStressFailures;
 }
 
@@ -374,4 +377,13 @@ sub printThingsFound
         print $pluralLabel;
     }
     print " $verb.\n";
+}
+
+sub writeJsonDataIfApplicable
+{
+    if (defined($jsonFileName)) {
+        open(my $fileHandler, ">", $jsonFileName) or die;
+        print $fileHandler "${\encode_json(\%jsonData)}\n";
+        close($fileHandler);
+    }
 }
