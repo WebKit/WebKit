@@ -91,9 +91,8 @@ bool CachedFont::ensureCustomFontData(const AtomicString&)
 bool CachedFont::ensureCustomFontData(SharedBuffer* data)
 {
     if (!m_fontCustomPlatformData && !errorOccurred() && !isLoading() && data) {
-        RefPtr<SharedBuffer> buffer(data);
         bool wrapping;
-        m_fontCustomPlatformData = createCustomFontData(*buffer, wrapping);
+        m_fontCustomPlatformData = createCustomFontData(*data, wrapping);
         m_hasCreatedFontDataWrappingResource = m_fontCustomPlatformData && wrapping;
         if (!m_fontCustomPlatformData)
             setStatus(DecodeError);
@@ -104,21 +103,21 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
 
 std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedBuffer& bytes, bool& wrapping)
 {
-    RefPtr<SharedBuffer> buffer = &bytes;
     wrapping = true;
 
 #if !PLATFORM(COCOA)
-    if (isWOFF(*buffer)) {
-        Vector<char> convertedFont;
-        if (!convertWOFFToSfnt(*buffer, convertedFont))
-            buffer = nullptr;
-        else
-            buffer = SharedBuffer::adoptVector(convertedFont);
+    if (isWOFF(bytes)) {
         wrapping = false;
+        Vector<char> convertedFont;
+        if (!convertWOFFToSfnt(bytes, convertedFont))
+            return nullptr;
+
+        auto buffer = SharedBuffer::adoptVector(convertedFont);
+        return createFontCustomPlatformData(*buffer);
     }
 #endif
 
-    return buffer ? createFontCustomPlatformData(*buffer) : nullptr;
+    return createFontCustomPlatformData(bytes);
 }
 
 RefPtr<Font> CachedFont::createFont(const FontDescription& fontDescription, const AtomicString&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings)

@@ -1,3 +1,16 @@
+2016-05-16  Brady Eidson  <beidson@apple.com>
+
+        Random CachedFont.cpp cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=157740
+
+        Reviewed by Myles C. Maxfield.
+
+        No new tests (Refactor/cleanup, no behavior change)
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureCustomFontData): Remove unneeded local RefPtr<>
+        (WebCore::CachedFont::createCustomFontData): Refactor to not require unnecessary Ref-churn in the common case.
+
 2016-05-16  Chris Dumez  <cdumez@apple.com>
 
         Modernize Track classes' code
