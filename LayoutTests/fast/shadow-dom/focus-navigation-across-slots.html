@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests for moving focus by pressing tab key across shadow boundaries.<br>
+To manually test, press tab key sixteen times then shift+tab sixteen times.<br>
+It should traverse focusable elements in the increasing numerical order and then in the reverse order.</p>
+<style>
+
+#test-content > * {
+    display: block;
+    width: 350px;
+    height: 150px;
+    border: solid 1px black;
+    margin: 10px;
+    float: left;
+}
+
+pre {
+    padding-top: 1rem;
+    clear: both;
+}
+
+</style>
+<div id="test-content">
+
+<div id="first" tabindex="1">1. First sequentially focusable element</div>
+
+<div id="shadow-without-tabindex">
+A non-focusable shadow host should not be focused.
+<div slot="slot" tabindex="0">5. Slotted content with tabindex=0</div>
+<div slot="slot" tabindex="3">4. Slotted content with tabindex=4</div>
+</div>
+
+<div id="shadow-with-multiple-slots">
+A non-focusable shadow host should not be focused.
+<div slot="slot2"><div tabindex="2">11. Content in slot 2 with tabindex=1</div></div>
+<div slot="slot2" tabindex="1">10. Content in slot 2 with tabindex=1</div>
+<div slot="slot2" tabindex="0">12. Content in slot 2 with tabindex=0</div>
+<div slot="slot1" tabindex="0">9. Content in slot 1 with tabindex=0</div>
+<div slot="slot1" tabindex="7">8. Content in slot 1 with tabindex=7</div>
+</div>
+
+<div id="shadow-with-slot-fallback">
+A non-focusable shadow host should not be focused.
+</div>
+
+</div>
+<pre></pre>
+<script>
+
+var oldActiveElement = null;
+function log()
+{
+    setTimeout(function () {
+        var newActiveElement = document.activeElement;
+
+        var shadowRoot = newActiveElement.shadowRoot || newActiveElement.closedShadowRoot;
+        if (shadowRoot) {
+            var activeElementInShadow = shadowRoot.activeElement;
+            if (activeElementInShadow)
+                newActiveElement = activeElementInShadow;
+        }
+
+        if (oldActiveElement == newActiveElement || newActiveElement == document.body)
+            return;
+        oldActiveElement = newActiveElement;
+        document.querySelector('pre').textContent += newActiveElement.firstChild.textContent.trim() + '\n';
+    }, 0);
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function () {
+    document.onkeydown = log;
+
+    for (var element of document.querySelectorAll('#test-content *')) {
+        if (element instanceof HTMLIFrameElement)
+            element.contentDocument.onkeydown = log;
+        else
+            element.onfocus = log;
+    }
+
+    var hostWithoutTabIndex = document.getElementById('shadow-without-tabindex');
+    hostWithoutTabIndex.closedShadowRoot = hostWithoutTabIndex.attachShadow({mode: 'closed'});
+    hostWithoutTabIndex.closedShadowRoot.innerHTML = `
+        <div tabindex="2" onfocus="log(this)">3. The focusable element in shadow tree with the lowest tabindex</div>
+        <slot name="slot" onfocus="log(this)">Non-focusable slot element should not be focused</slot>
+        <div tabindex="1" onfocus="log(this)">2. The focusable element in shadow tree with the higehst tabindex</div>`;
+
+    var hostWithMultipleSlots = document.getElementById('shadow-with-multiple-slots');
+    hostWithMultipleSlots.closedShadowRoot = hostWithMultipleSlots.attachShadow({mode: 'closed'});
+    hostWithMultipleSlots.closedShadowRoot.innerHTML = `
+        <slot name="slot1" tabindex="2" onfocus="log(this)" style="display:block;">7. Focusable slot 1</slot>
+        <div tabindex="1" onfocus="log(this)">6. The focusable element in shadow tree with the higehst tabindex</div>
+        <slot name="slot2" onfocus="log(this)">Non-focusable slot 2 should not be focused</slot>`;
+
+    var shadowWithSlotFallback = document.getElementById('shadow-with-slot-fallback');
+    shadowWithSlotFallback.closedShadowRoot = shadowWithSlotFallback.attachShadow({mode: 'closed'});
+    shadowWithSlotFallback.closedShadowRoot.innerHTML = `
+        <slot name="slot1" onfocus="log(this)">
+            Non-focusable slot should not be focused.
+            <div tabindex="0">16. Non-focusable slot fallback with tabindex=0</div>
+            <div tabindex="1">13. Non-focusable slot fallback with tabindex=1</div>
+        </slot>
+        <div tabindex="2" onfocus="log(this)">15. Shadow content with tabindex=2</div>
+        <slot name="slot2" tabindex="1" style="display:block;" onfocus="log(this)">
+            14. Focusable slot element.
+            <div tabindex="0">17. Focusable slot fallback content with tabindex=0</div>
+        </slot>`;
+
+    document.getElementById('first').focus();
+    document.onkeydown();
+
+    if (window.eventSender)
+        moveFocusForward(16);
+}
+
+function moveFocusForward(focusCount)
+{
+    setTimeout(function () {
+        if (!focusCount)
+            return moveFocusBackward(16);
+        eventSender.keyDown('\t');
+        setTimeout(function () {
+            moveFocusForward(focusCount - 1);            
+        }, 1);
+    }, 1);
+}
+
+function moveFocusBackward(focusCount)
+{
+    setTimeout(function () {
+        if (!focusCount) {
+            document.getElementById('test-content').style.display = 'none';
+            testRunner.notifyDone();
+            return;
+        }
+        eventSender.keyDown('\t', ['shiftKey']);
+        setTimeout(function () {
+            moveFocusBackward(focusCount - 1);            
+        }, 1);
+    }, 1);
+}
+
+</script>
+</body>
+</html>

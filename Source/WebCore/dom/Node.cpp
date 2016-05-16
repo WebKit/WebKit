@@ -1123,18 +1123,27 @@ bool Node::isUnclosedNode(const Node& otherNode) const
     return false;
 }
 
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
+static inline ShadowRoot* parentShadowRoot(const Node& node)
+{
+    if (auto* parent = node.parentElement())
+        return parent->shadowRoot();
+    return nullptr;
+}
+
 HTMLSlotElement* Node::assignedSlot() const
 {
-    auto* parent = parentElement();
-    if (!parent)
-        return nullptr;
+    if (auto* shadowRoot = parentShadowRoot(*this))
+        return shadowRoot->findAssignedSlot(*this);
+    return nullptr;
+}
 
-    auto* shadowRoot = parent->shadowRoot();
-    if (!shadowRoot || shadowRoot->type() != ShadowRoot::Type::Open)
-        return nullptr;
-
-    return shadowRoot->findAssignedSlot(*this);
+HTMLSlotElement* Node::assignedSlotForBindings() const
+{
+    auto* shadowRoot = parentShadowRoot(*this);
+    if (shadowRoot && shadowRoot->type() == ShadowRoot::Type::Open)
+        return shadowRoot->findAssignedSlot(*this);
+    return nullptr;
 }
 #endif
 
@@ -1142,12 +1151,8 @@ ContainerNode* Node::parentInComposedTree() const
 {
     ASSERT(isMainThreadOrGCThread());
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-    if (auto* parent = parentElement()) {
-        if (auto* shadowRoot = parent->shadowRoot()) {
-            if (auto* assignedSlot = shadowRoot->findAssignedSlot(*this))
-                return assignedSlot;
-        }
-    }
+    if (auto* slot = assignedSlot())
+        return slot;
 #endif
     if (is<ShadowRoot>(*this))
         return downcast<ShadowRoot>(*this).host();

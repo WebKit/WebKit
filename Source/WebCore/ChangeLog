@@ -1,3 +1,77 @@
+2016-05-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Focus ordering should respect slot elements
+        https://bugs.webkit.org/show_bug.cgi?id=151379
+
+        Reviewed by Antti Koivisto.
+
+        Implemented the sequential focus navigation ordering as discussed on
+        https://github.com/w3c/webcomponents/issues/375
+
+        New behavior treats each shadow root and slot as a "focus scope". The focus navigation ordering
+        is defined within each "focus scope" using tabindex, treating any "focus scope owner"
+        (e.g. shadow host or a slot) as if it was having tabindex=0 if it wasn't itself focusable.
+
+        This patch modifies FocusNavigationScope to support a focus scope defined for a slot element in
+        addition to the one defined for a shadow tree and a document as previously supported.
+
+        Tests: fast/shadow-dom/focus-across-details-element.html
+               fast/shadow-dom/focus-navigation-across-slots.html
+
+        * dom/Node.cpp:
+        (WebCore::parentShadowRoot): Extracted from assignedSlot.
+        (WebCore::Node::assignedSlot):
+        (WebCore::Node::assignedSlotForBindings): Added.
+        * dom/Node.h:
+        * dom/NonDocumentTypeChildNode.idl:
+        * html/HTMLDetailsElement.h:
+        (HTMLDetailsElement::hasCustomFocusLogic): Added. Don't treat details element as a "focus scope".
+        * html/HTMLSummaryElement.h:
+        (HTMLSummaryElement::hasCustomFocusLogic): Ditto for summary element.
+        * page/FocusController.cpp:
+        (WebCore::hasCustomFocusLogic): Moved.
+        (WebCore::isFocusScopeOwner): Added. Returns true on a shadow host without a custom focus logic or
+        on a slot inside a shadow tree whose shadow host doesn't have a custom focus logic.
+        (WebCore::FocusNavigationScope::firstChildInScope): Now takes a reference. Call isFocusScopeOwner
+        to check for both slots and shadow roots instead of just the latter. This fixes a subtle bug that
+        focus may never get out of textarea in some cases due to its failure to check hasCustomFocusLogic.
+        (WebCore::FocusNavigationScope::lastChildInScope): Ditto.
+        (WebCore::FocusNavigationScope::parentInScope): Made this a member function since it needs to check
+        against m_slotElement inside the focus scope of a slot.
+        (WebCore::FocusNavigationScope::nextSiblingInScope): Added. Finds the next assigned node in a slot
+        in the focus scope defined for a slot. Just calls nextSibling() in the focus scope for shadow tree
+        and document.
+        (WebCore::FocusNavigationScope::previousSiblingInScope): Ditto for finding the previous sibling.
+        (WebCore::FocusNavigationScope::firstNodeInScope): Added. This function replaces rootNode() which
+        doesn't exist for the focus scope of a slot element.
+        (WebCore::FocusNavigationScope::lastNodeInScope): Ditto for the last node.
+        (WebCore::FocusNavigationScope::nextInScope):
+        (WebCore::FocusNavigationScope::previousInScope):
+        (WebCore::FocusNavigationScope::FocusNavigationScope): Added a variant that takes HTMLSlotElement.
+        (WebCore::FocusNavigationScope::owner): Added the support for slot elements.
+        (WebCore::FocusNavigationScope::scopeOf): Ditto.
+        (WebCore::FocusNavigationScope::scopeOwnedByScopeOwner): Ditto.
+        (WebCore::isFocusableElementOrScopeOwner): Added the support for slot elements and renamed from
+        isFocusableOrHasShadowTreeWithoutCustomFocusLogic.
+        (WebCore::isNonFocusableScopeOwner): Ditto. Renamed from isNonFocusableShadowHost.
+        (WebCore::isFocusableScopeOwner): Ditto. Renamed from isFocusableShadowHost.
+        (WebCore::shadowAdjustedTabIndex): Added the support for slot elements.
+        (WebCore::FocusController::findFocusableElementAcrossFocusScope):
+        (WebCore::FocusController::nextFocusableElementWithinScope):
+        (WebCore::FocusController::previousFocusableElementWithinScope):
+        (WebCore::FocusController::findElementWithExactTabIndex):
+        (WebCore::nextElementWithGreaterTabIndex): Call firstNodeInScope() instead of rootNode() here since
+        there is no root node for the focus scope defined for a slot element.
+        (WebCore::previousElementWithLowerTabIndex): Ditto for scope.lastNodeInScope().
+        (WebCore::FocusController::nextFocusableElementOrScopeOwner):
+        (WebCore::FocusController::previousFocusableElementOrScopeOwner):
+        (WebCore::parentInScope): Deleted.
+        (WebCore::FocusNavigationScope::rootNode): Deleted.
+        (WebCore::FocusNavigationScope::scopeOwnedByShadowHost): Deleted.
+        (WebCore::isNonFocusableShadowHost): Deleted.
+        (WebCore::isFocusableShadowHost): Deleted.
+        (WebCore::isFocusableOrHasShadowTreeWithoutCustomFocusLogic): Deleted.
+
 2016-05-16  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Optional for ScrollView's m_deferredScrollDelta / m_deferredScrollOffsets

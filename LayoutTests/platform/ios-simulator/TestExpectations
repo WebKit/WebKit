@@ -256,6 +256,8 @@ fast/text/text-disappear-on-deselect.html [ ImageOnlyFailure ]
 webkit.org/b/148695 fast/shadow-dom [ Pass ]
 
 # No tab navigation support on iOS
+fast/shadow-dom/focus-across-details-element.html [ Failure ]
+fast/shadow-dom/focus-navigation-across-slots.html [ Failure ]
 fast/shadow-dom/focus-on-iframe.html [ Failure ]
 fast/shadow-dom/negative-tabindex-on-shadow-host.html [ Failure ]
 

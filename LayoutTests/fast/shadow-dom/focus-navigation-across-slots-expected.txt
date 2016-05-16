@@ -1,0 +1,38 @@
+Tests for moving focus by pressing tab key across shadow boundaries.
+To manually test, press tab key sixteen times then shift+tab sixteen times.
+It should traverse focusable elements in the increasing numerical order and then in the reverse order.
+
+1. First sequentially focusable element
+2. The focusable element in shadow tree with the higehst tabindex
+3. The focusable element in shadow tree with the lowest tabindex
+4. Slotted content with tabindex=4
+5. Slotted content with tabindex=0
+6. The focusable element in shadow tree with the higehst tabindex
+7. Focusable slot 1
+8. Content in slot 1 with tabindex=7
+9. Content in slot 1 with tabindex=0
+10. Content in slot 2 with tabindex=1
+11. Content in slot 2 with tabindex=1
+12. Content in slot 2 with tabindex=0
+13. Non-focusable slot fallback with tabindex=1
+14. Focusable slot element.
+15. Shadow content with tabindex=2
+16. Non-focusable slot fallback with tabindex=0
+17. Focusable slot fallback content with tabindex=0
+16. Non-focusable slot fallback with tabindex=0
+15. Shadow content with tabindex=2
+14. Focusable slot element.
+13. Non-focusable slot fallback with tabindex=1
+12. Content in slot 2 with tabindex=0
+11. Content in slot 2 with tabindex=1
+10. Content in slot 2 with tabindex=1
+9. Content in slot 1 with tabindex=0
+8. Content in slot 1 with tabindex=7
+7. Focusable slot 1
+6. The focusable element in shadow tree with the higehst tabindex
+5. Slotted content with tabindex=0
+4. Slotted content with tabindex=4
+3. The focusable element in shadow tree with the lowest tabindex
+2. The focusable element in shadow tree with the higehst tabindex
+1. First sequentially focusable element
+

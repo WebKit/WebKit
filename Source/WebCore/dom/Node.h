@@ -261,8 +261,9 @@ public:
     ShadowRoot* shadowRoot() const;
     bool isUnclosedNode(const Node&) const;
 
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     HTMLSlotElement* assignedSlot() const;
+    HTMLSlotElement* assignedSlotForBindings() const;
 #endif
 
 #if ENABLE(CUSTOM_ELEMENTS)

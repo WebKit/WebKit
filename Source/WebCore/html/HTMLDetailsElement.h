@@ -43,6 +43,7 @@ private:
 
     void didAddUserAgentShadowRoot(ShadowRoot*) override;
     bool canHaveUserAgentShadowRoot() const final { return true; }
+    bool hasCustomFocusLogic() const final { return true; }
 
     bool m_isOpen { false };
     HTMLSlotElement* m_summarySlot { nullptr };
