@@ -449,6 +449,10 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setEnabledForFeature(value, *feature->_experimentalFeature);
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKPreferencesPrivateMethods.mm>
+#endif
+
 @end
 
 #endif // WK_API_ENABLED

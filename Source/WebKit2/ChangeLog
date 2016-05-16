@@ -1,3 +1,13 @@
+2016-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Add a WKA extension point for WKPreferences SPI
+        https://bugs.webkit.org/show_bug.cgi?id=157762
+        rdar://problem/24529203
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+
 2016-05-16  David Kilzer  <ddkilzer@apple.com>
 
         Action sheets don’t work in presented view controllers
