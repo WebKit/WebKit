@@ -77,8 +77,6 @@ public:
         : m_debugger(debugger)
     {
         ASSERT(!m_debugger.m_currentDebuggerCallFrame);
-        if (m_debugger.m_currentCallFrame)
-            m_debugger.m_currentDebuggerCallFrame = DebuggerCallFrame::create(debugger.m_currentCallFrame);
     }
 
     ~DebuggerPausedScope()
@@ -770,9 +768,10 @@ void Debugger::didReachBreakpoint(CallFrame* callFrame)
     updateCallFrameAndPauseIfNeeded(callFrame);
 }
 
-DebuggerCallFrame* Debugger::currentDebuggerCallFrame() const
+DebuggerCallFrame* Debugger::currentDebuggerCallFrame()
 {
-    ASSERT(m_currentDebuggerCallFrame);
+    if (!m_currentDebuggerCallFrame)
+        m_currentDebuggerCallFrame = DebuggerCallFrame::create(m_currentCallFrame);
     return m_currentDebuggerCallFrame.get();
 }
 

@@ -29,13 +29,13 @@ WebInspector.CallFrameTreeElement = class CallFrameTreeElement extends WebInspec
     {
         console.assert(callFrame instanceof WebInspector.CallFrame);
 
-        var className = WebInspector.CallFrameView.iconClassNameForCallFrame(callFrame);
-        var title = callFrame.functionName || WebInspector.UIString("(anonymous function)");
+        let className = WebInspector.CallFrameView.iconClassNameForCallFrame(callFrame);
+        let title = callFrame.functionName || WebInspector.UIString("(anonymous function)");
 
         super(className, title, null, callFrame, false);
 
         if (!callFrame.nativeCode && callFrame.sourceCodeLocation) {
-            var displayScriptURL = callFrame.sourceCodeLocation.displaySourceCode.url;
+            let displayScriptURL = callFrame.sourceCodeLocation.displaySourceCode.url;
             if (displayScriptURL) {
                 this.subtitle = document.createElement("span");
                 callFrame.sourceCodeLocation.populateLiveDisplayLocationString(this.subtitle, "textContent");
@@ -63,7 +63,10 @@ WebInspector.CallFrameTreeElement = class CallFrameTreeElement extends WebInspec
         console.assert(this.element);
 
         if (this.tooltipHandledSeparately) {
-            var tooltipPrefix = this.mainTitle + "\n";
+            let tailCallSuffix = "";
+            if (this._callFrame.isTailDeleted)
+                tailCallSuffix = " " + WebInspector.UIString("(Tail Call)");
+            let tooltipPrefix = this.mainTitle + tailCallSuffix + "\n";
             this._callFrame.sourceCodeLocation.populateLiveDisplayLocationTooltip(this.element, tooltipPrefix);
         }
     }

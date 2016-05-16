@@ -89,7 +89,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
 
     switch (breakpointAction.type) {
     case ScriptBreakpointActionTypeLog: {
-        dispatchBreakpointActionLog(debuggerCallFrame->exec(), breakpointAction.data);
+        dispatchBreakpointActionLog(debuggerCallFrame->globalExec(), breakpointAction.data);
         break;
     }
     case ScriptBreakpointActionTypeEvaluate: {
@@ -97,21 +97,21 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         JSObject* scopeExtensionObject = nullptr;
         debuggerCallFrame->evaluateWithScopeExtension(breakpointAction.data, scopeExtensionObject, exception);
         if (exception)
-            reportException(debuggerCallFrame->exec(), exception);
+            reportException(debuggerCallFrame->globalExec(), exception);
         break;
     }
     case ScriptBreakpointActionTypeSound:
-        dispatchBreakpointActionSound(debuggerCallFrame->exec(), breakpointAction.identifier);
+        dispatchBreakpointActionSound(debuggerCallFrame->globalExec(), breakpointAction.identifier);
         break;
     case ScriptBreakpointActionTypeProbe: {
         NakedPtr<Exception> exception;
         JSObject* scopeExtensionObject = nullptr;
         JSValue result = debuggerCallFrame->evaluateWithScopeExtension(breakpointAction.data, scopeExtensionObject, exception);
+        JSC::ExecState* exec = debuggerCallFrame->globalExec();
         if (exception)
-            reportException(debuggerCallFrame->exec(), exception);
+            reportException(exec, exception);
         
-        JSC::ExecState* state = debuggerCallFrame->scope()->globalObject()->globalExec();
-        dispatchBreakpointActionProbe(state, breakpointAction, exception ? exception->value() : result);
+        dispatchBreakpointActionProbe(exec, breakpointAction, exception ? exception->value() : result);
         break;
     }
     default:

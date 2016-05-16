@@ -5109,7 +5109,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
         case op_log_shadow_chicken_prologue: {
             if (!m_inlineStackTop->m_inlineCallFrame)
-                addToGraph(LogShadowChickenPrologue);
+                addToGraph(LogShadowChickenPrologue, get(VirtualRegister(currentInstruction[1].u.operand)));
             NEXT_OPCODE(op_log_shadow_chicken_prologue);
         }
 
@@ -5118,7 +5118,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 // FIXME: The right solution for inlining is to elide these whenever the tail call
                 // ends up being inlined.
                 // https://bugs.webkit.org/show_bug.cgi?id=155686
-                addToGraph(LogShadowChickenTail);
+                addToGraph(LogShadowChickenTail, get(VirtualRegister(currentInstruction[1].u.operand)), get(VirtualRegister(currentInstruction[2].u.operand)));
             }
             NEXT_OPCODE(op_log_shadow_chicken_tail);
         }

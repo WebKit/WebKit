@@ -29,7 +29,9 @@
 #ifndef DebuggerCallFrame_h
 #define DebuggerCallFrame_h
 
+#include "CallFrame.h"
 #include "DebuggerPrimitives.h"
+#include "ShadowChicken.h"
 #include "Strong.h"
 #include <wtf/NakedPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -40,22 +42,15 @@ namespace JSC {
 
 class DebuggerScope;
 class Exception;
-class ExecState;
-typedef ExecState CallFrame;
 
 class DebuggerCallFrame : public RefCounted<DebuggerCallFrame> {
 public:
     enum Type { ProgramType, FunctionType };
 
-    static Ref<DebuggerCallFrame> create(CallFrame* callFrame)
-    {
-        return adoptRef(*new DebuggerCallFrame(callFrame));
-    }
-
-    JS_EXPORT_PRIVATE explicit DebuggerCallFrame(CallFrame*);
+    static Ref<DebuggerCallFrame> create(CallFrame*);
 
     JS_EXPORT_PRIVATE RefPtr<DebuggerCallFrame> callerFrame();
-    ExecState* exec() const { return m_callFrame; }
+    ExecState* globalExec();
     JS_EXPORT_PRIVATE SourceID sourceID() const;
 
     // line and column are in base 0 e.g. the first line is line 0.
@@ -70,23 +65,28 @@ public:
     JS_EXPORT_PRIVATE JSValue thisValue() const;
     JSValue evaluateWithScopeExtension(const String&, JSObject* scopeExtensionObject, NakedPtr<Exception>&);
 
-    bool isValid() const { return !!m_callFrame; }
+    bool isValid() const { return !!m_validMachineFrame || isTailDeleted(); }
     JS_EXPORT_PRIVATE void invalidate();
 
     // The following are only public for the Debugger's use only. They will be
     // made private soon. Other clients should not use these.
 
+    JS_EXPORT_PRIVATE TextPosition currentPosition();
     JS_EXPORT_PRIVATE static TextPosition positionForCallFrame(CallFrame*);
     JS_EXPORT_PRIVATE static SourceID sourceIDForCallFrame(CallFrame*);
-    static JSValue thisValueForCallFrame(CallFrame*);
+
+    bool isTailDeleted() const { return m_shadowChickenFrame.isTailDeleted; }
 
 private:
-    CallFrame* m_callFrame;
+    DebuggerCallFrame(CallFrame*, const ShadowChicken::Frame&);
+
+    CallFrame* m_validMachineFrame;
     RefPtr<DebuggerCallFrame> m_caller;
     TextPosition m_position;
     // The DebuggerPausedScope is responsible for calling invalidate() which,
     // in turn, will clear this strong ref.
     Strong<DebuggerScope> m_scope;
+    ShadowChicken::Frame m_shadowChickenFrame;
 };
 
 } // namespace JSC

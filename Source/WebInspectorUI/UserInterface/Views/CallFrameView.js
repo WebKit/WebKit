@@ -73,6 +73,9 @@ WebInspector.CallFrameView = class CallFrameView extends WebInspector.Object
 
     static iconClassNameForCallFrame(callFrame)
     {
+        if (callFrame.isTailDeleted)
+            return WebInspector.CallFrameView.TailDeletedIcon;
+
         if (callFrame.programCode)
             return WebInspector.CallFrameView.ProgramIconStyleClassName;
 
@@ -92,3 +95,4 @@ WebInspector.CallFrameView.ProgramIconStyleClassName = "program-icon";
 WebInspector.CallFrameView.FunctionIconStyleClassName = "function-icon";
 WebInspector.CallFrameView.EventListenerIconStyleClassName = "event-listener-icon";
 WebInspector.CallFrameView.NativeIconStyleClassName = "native-icon";
+WebInspector.CallFrameView.TailDeletedIcon = "tail-deleted";

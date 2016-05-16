@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "CallFrame.h"
+#include "JSCJSValue.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
@@ -33,9 +35,11 @@
 
 namespace JSC {
 
+class CodeBlock;
 class ExecState;
 class JSArray;
 class JSObject;
+class JSScope;
 class LLIntOffsetsExtractor;
 class SlotVisitor;
 class VM;
@@ -85,23 +89,25 @@ public:
             return bitwise_cast<JSObject*>(static_cast<intptr_t>(unlikelyValue + 1));
         }
         
-        static Packet prologue(JSObject* callee, CallFrame* frame, CallFrame* callerFrame)
+        static Packet prologue(JSObject* callee, CallFrame* frame, CallFrame* callerFrame, JSScope* scope)
         {
             Packet result;
             result.callee = callee;
             result.frame = frame;
             result.callerFrame = callerFrame;
+            result.scope = scope;
             return result;
         }
         
-        // FIXME: Tail packets should hold currentScope so that the inspector can look at local
-        // variables in tail-deleted frames.
-        // https://bugs.webkit.org/show_bug.cgi?id=155722
-        static Packet tail(CallFrame* frame)
+        static Packet tail(CallFrame* frame, JSValue thisValue, JSScope* scope, CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
         {
             Packet result;
             result.callee = tailMarker();
             result.frame = frame;
+            result.thisValue = thisValue;
+            result.scope = scope;
+            result.codeBlock = codeBlock;
+            result.callSiteIndex = callSiteIndex;
             return result;
         }
         
@@ -120,9 +126,14 @@ public:
         
         void dump(PrintStream&) const;
         
+        // Only tail packets have a valid thisValue, CodeBlock*, and CallSiteIndex. We grab 'this' and CodeBlock* from non tail-deleted frames from the machine frame.
+        JSValue thisValue { JSValue() };
         JSObject* callee { nullptr };
         CallFrame* frame { nullptr };
         CallFrame* callerFrame { nullptr };
+        JSScope* scope { nullptr };
+        CodeBlock* codeBlock { nullptr };
+        CallSiteIndex callSiteIndex;
     };
     
     struct Frame {
@@ -130,9 +141,13 @@ public:
         {
         }
         
-        Frame(JSObject* callee, CallFrame* frame, bool isTailDeleted)
+        Frame(JSObject* callee, CallFrame* frame, bool isTailDeleted, JSValue thisValue = JSValue(), JSScope* scope = nullptr, CodeBlock* codeBlock = nullptr, CallSiteIndex callSiteIndex = CallSiteIndex())
             : callee(callee)
             , frame(frame)
+            , thisValue(thisValue)
+            , scope(scope)
+            , codeBlock(codeBlock)
+            , callSiteIndex(callSiteIndex)
             , isTailDeleted(isTailDeleted)
         {
         }
@@ -141,6 +156,10 @@ public:
         {
             return callee == other.callee
                 && frame == other.frame
+                && thisValue == other.thisValue
+                && scope == other.scope
+                && codeBlock == other.codeBlock
+                && callSiteIndex.bits() == other.callSiteIndex.bits()
                 && isTailDeleted == other.isTailDeleted;
         }
         
@@ -156,6 +175,10 @@ public:
         // https://bugs.webkit.org/show_bug.cgi?id=155686
         JSObject* callee { nullptr };
         CallFrame* frame { nullptr };
+        JSValue thisValue { JSValue() };
+        JSScope* scope { nullptr };
+        CodeBlock* codeBlock { nullptr };
+        CallSiteIndex callSiteIndex;
         bool isTailDeleted { false };
     };
     
@@ -166,7 +189,7 @@ public:
     
     void update(VM&, ExecState*);
     
-    // Expects this signature: (const Frame& frame) -> bool.
+    // Expects this signature: (const Frame& frame) -> bool. Return true to keep iterating. Return false to stop iterating.
     // Note that this only works right with inlining disabled, but that's OK since for now we
     // disable inlining when the inspector is attached. It would be easy to make this work with
     // inlining, and would mostly require that we can request that StackVisitor doesn't skip tail

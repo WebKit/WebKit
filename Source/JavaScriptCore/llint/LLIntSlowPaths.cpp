@@ -1542,8 +1542,8 @@ LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_prologue)
 {
     LLINT_BEGIN();
     
-    vm.shadowChicken().log(
-        vm, exec, ShadowChicken::Packet::prologue(exec->callee(), exec, exec->callerFrame()));
+    JSScope* scope = exec->uncheckedR(pc[1].u.operand).Register::scope();
+    vm.shadowChicken().log(vm, exec, ShadowChicken::Packet::prologue(exec->callee(), exec, exec->callerFrame(), scope));
     
     LLINT_END();
 }
@@ -1551,8 +1551,16 @@ LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_prologue)
 LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_tail)
 {
     LLINT_BEGIN();
+
+    JSValue thisValue = LLINT_OP(1).jsValue();
+    JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
     
-    vm.shadowChicken().log(vm, exec, ShadowChicken::Packet::tail(exec));
+#if USE(JSVALUE64)
+    CallSiteIndex callSiteIndex(exec->codeBlock()->bytecodeOffset(pc));
+#else
+    CallSiteIndex callSiteIndex(pc);
+#endif
+    vm.shadowChicken().log(vm, exec, ShadowChicken::Packet::tail(exec, thisValue, scope, exec->codeBlock(), callSiteIndex));
     
     LLINT_END();
 }

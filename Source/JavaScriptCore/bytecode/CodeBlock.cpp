@@ -1360,11 +1360,16 @@ void CodeBlock::dumpBytecode(
             break;
         }
         case op_log_shadow_chicken_prologue: {
+            int r0 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "log_shadow_chicken_prologue");
+            out.printf("%s", registerName(r0).data());
             break;
         }
         case op_log_shadow_chicken_tail: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "log_shadow_chicken_tail");
+            out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
             break;
         }
         case op_switch_imm: {
@@ -4386,5 +4391,25 @@ Optional<CodeOrigin> CodeBlock::findPC(void* pc)
     return Nullopt;
 }
 #endif // ENABLE(JIT)
+
+Optional<unsigned> CodeBlock::bytecodeOffsetFromCallSiteIndex(CallSiteIndex callSiteIndex)
+{
+    Optional<unsigned> bytecodeOffset;
+    JITCode::JITType jitType = this->jitType();
+    if (jitType == JITCode::InterpreterThunk || jitType == JITCode::BaselineJIT) {
+#if USE(JSVALUE64)
+        bytecodeOffset = callSiteIndex.bits();
+#else
+        Instruction* instruction = bitwise_cast<Instruction*>(callSiteIndex.bits());
+        bytecodeOffset = instruction - instructions().begin();
+#endif
+    } else if (jitType == JITCode::DFGJIT || jitType == JITCode::FTLJIT) {
+        RELEASE_ASSERT(canGetCodeOrigin(callSiteIndex));
+        CodeOrigin origin = codeOrigin(callSiteIndex);
+        bytecodeOffset = origin.bytecodeIndex;
+    }
+
+    return bytecodeOffset;
+}
 
 } // namespace JSC

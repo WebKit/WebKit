@@ -339,6 +339,16 @@ RegisterSet RegisterSet::webAssemblyCalleeSaveRegisters()
 }
 #endif
 
+RegisterSet RegisterSet::argumentGPRS()
+{
+    RegisterSet result;
+#if NUMBER_OF_ARGUMENT_REGISTERS
+    for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; i++)
+        result.set(GPRInfo::toArgumentRegister(i));
+#endif
+    return result;
+}
+
 RegisterSet RegisterSet::registersToNotSaveForJSCall()
 {
     return RegisterSet(RegisterSet::vmCalleeSaveRegisters(), RegisterSet::stackRegisters(), RegisterSet::reservedHardwareRegisters());

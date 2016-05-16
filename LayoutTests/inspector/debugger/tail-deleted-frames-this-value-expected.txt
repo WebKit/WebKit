@@ -1,0 +1,19 @@
+Testing that we keep around tail deleted frames in the inspector and their this values.
+
+Starting Test
+
+
+------------------------------------
+Hit breakpoint at line: 3, column: 4
+------------------------------------
+Expected frame: {"functionName":"a","thisValue":["aThis",2],"isTailDeleted":false}
+PASS: 'this' value should have expected property: aThis
+PASS: Call Frame 0 'this' value is correct.
+Expected frame: {"functionName":"b","thisValue":["bThis",1],"isTailDeleted":true}
+PASS: 'this' value should have expected property: bThis
+PASS: Call Frame 1 'this' value is correct.
+Expected frame: {"functionName":"c","thisValue":["cThis",0],"isTailDeleted":true}
+PASS: 'this' value should have expected property: cThis
+PASS: Call Frame 2 'this' value is correct.
+Tests done
+

@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector/debugger/debugger-test.js"></script>
+<script type="text/javascript" src="./resources/tail-recursion.js"></script>
+<script>
+
+function test()
+{
+    var scriptObject;
+
+    function startTest() {
+        InspectorTest.log("Starting Test");
+        // 0 based indices.
+        var testInfos = [{line : 3, column : 8}, {line : 4, column : 8}];
+        for (let testInfo of testInfos) {
+            let location = scriptObject.createSourceCodeLocation(testInfo.line, testInfo.column);
+            let breakpoint = new WebInspector.Breakpoint(location);
+            WebInspector.debuggerManager.addBreakpoint(breakpoint);
+        }
+        InspectorTest.evaluateInPage("startRecurse()");
+    }
+
+    let numBreakpointHits = 0;
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+
+        if (!activeCallFrame)
+            return;
+
+        numBreakpointHits++;
+        var stopLocation = "line: " + activeCallFrame.sourceCodeLocation.lineNumber + ", column: " + activeCallFrame.sourceCodeLocation.columnNumber;
+
+        InspectorTest.log("\n\n------------------------------------");
+        InspectorTest.log("Hit breakpoint at " + stopLocation);
+        InspectorTest.log("numBreakpointHits: " + numBreakpointHits);
+        const numFramesToInspect = 50;
+        InspectorTest.log("Going to look at the top " + numFramesToInspect + " frames.");
+        InspectorTest.log("------------------------------------");
+
+        InspectorTest.assert(WebInspector.debuggerManager.callFrames.length > numFramesToInspect); // We just look at top 50. This isn't a precise number. But it gets at the gist of the debugging experience.
+        for (let i = 0; i < numFramesToInspect; i++) {
+            let callFrame = WebInspector.debuggerManager.callFrames[i];
+            InspectorTest.assert(callFrame.functionName === "recurse");
+            let topScope = callFrame.scopeChain[0];
+
+            if (i > 0)
+                InspectorTest.assert(callFrame.isTailDeleted);
+            else
+                InspectorTest.assert(!callFrame.isTailDeleted);
+
+            topScope.objects[0].getAllPropertyDescriptors(function(properties) {
+                let found = false;
+                for (let propertyDescriptor of properties) {
+                    if (propertyDescriptor.name === 'i') {
+                        found = true;
+                        InspectorTest.log("Looking at frame number: " + i);
+                        InspectorTest.log("    variable 'i': " + JSON.stringify(propertyDescriptor.value));
+                        InspectorTest.assert(propertyDescriptor.value.type === 'number');
+                        if (numBreakpointHits === 2 && i === 0)
+                            InspectorTest.assert(propertyDescriptor.value.value === i + 1); // this tests the i++ inside tail-recurse.js
+                        else
+                            InspectorTest.assert(propertyDescriptor.value.value === i);
+                    }
+                }
+                InspectorTest.assert(found);
+            });
+        }
+
+        WebInspector.debuggerManager.resume();
+    });
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+        InspectorTest.log("Tests done");
+        InspectorTest.completeTest();
+    });
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+        eventScriptObject = event.data.script;
+        
+        if (/tail-recursion\.js$/.test(eventScriptObject.url)) {
+            scriptObject = eventScriptObject;
+            startTest();
+            return;
+        }
+
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that we keep around tail deleted frames in the inspector. </p>
+</body>
+</html>

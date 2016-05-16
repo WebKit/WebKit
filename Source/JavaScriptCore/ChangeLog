@@ -1,5 +1,221 @@
 2016-05-16  Saam barati  <sbarati@apple.com>
 
+        Hook up ShadowChicken to the debugger to show tail deleted frames
+        https://bugs.webkit.org/show_bug.cgi?id=156685
+        <rdar://problem/25770521>
+
+        Reviewed by Filip Pizlo and Mark Lam and Joseph Pecoraro.
+
+        The heart of this patch hooks up ShadowChicken to DebuggerCallFrame to
+        allow the Web Inspector to display the ShadowChicken's shadow stack.
+        This means the Web Inspector can now display tail deleted frames.
+        To make this work, I made the necessary changes to ShadowChicken and
+        DebuggerCallFrame to allow DebuggerCallFrame to keep the same API
+        when representing both machine frames and tail deleted frames.
+
+        - ShadowChicken prologue packets now log the current scope. Tail packets
+          log the current scope, the 'this' value, the CodeBlock, and the
+          CallSiteIndex. This allows the inspector to not only show the
+          tail deleted frame, but also show exactly where the tail call happened (line and column numbers),
+          with which scope it executed, and with which 'this' value. This
+          patch also allows DebuggerCallFrame to execute console statements
+          in a tail deleted frame.
+
+        - I changed ShadowChicken's stack resizing algorithm. ShadowChicken
+          now only keeps a maximum number of tail deleted frames in its shadow stack.
+          It will happily represent all machine frames without limit. Right now, the
+          maximum number of tail deleted frames I chose to keep alive is 128.
+          We will keep frames alive starting from the top of the stack. This
+          allows us to have a strong defense against runaway memory usage. We will only
+          keep around at most 128 "shadow" frames that wouldn't have naturally been kept
+          alive by the executing program. We can play around with this number
+          if we find that 128 is either too many or too few frames.
+
+        - DebuggerCallFrame is no longer a cheap class to create. When it is created,
+          we will eagerly create the entire virtual debugger stack. So I modified the
+          existing code to lazily create DebuggerCallFrames only when necessary. We
+          used to eagerly create them at each op_debug statement even though we would
+          just throw them away if we didn't hit a breakpoint.
+
+        - A valid DebuggerCallFrame will always have a valid CallFrame* pointer
+          into the stack. This pointer won't always refer to the logical frame
+          that the DebuggerCallFrame represents because a DebuggerCallFrame can
+          now represent a tail deleted frame. To do this, DebuggerCallFrame now
+          has a ShadowChicken::Frame member variable. This allows DebuggerCallFrame
+          to know when it represents a tail deleted frame and gives DebuggerCallFrame
+          a mechanism to ask the tail deleted frame for interesting information
+          (like its 'this' value, scope, CodeBlock, etc). A tail deleted frame's
+          machine frame pointer will be the machine caller of the tail deleted frame
+          (or the machine caller of the first of a series of consecutive tail calls).
+
+        - I added a new flag to UnlinkedCodeBlock to indicate when it is compiled
+          with debugging opcodes. I did this because ShadowChicken may read a JSScope
+          from the machine stack. This is only safe if the machine CodeBlock was
+          compiled with debugging opcodes. This is safer than asking if the
+          CodeBlock's global object has an interactive debugger enabled because
+          it's theoretically possible for the debugger to be enabled while code
+          compiled without a debugger is still live on the stack. This field is
+          also now used to indicate to the DFGGraph that the interactive debugger
+          is enabled.
+
+        - Finally, this patch adds a new field to the Inspector's CallFrame protocol
+          object called 'isTailDeleted' to allow the Inspector to know when a
+          CallFrame represents a tail deleted frame.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::findPC):
+        (JSC::CodeBlock::bytecodeOffsetFromCallSiteIndex):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::clearDebuggerRequests):
+        (JSC::CodeBlock::wasCompiledWithDebuggingOpcodes):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::wasCompiledWithDebuggingOpcodes):
+        (JSC::UnlinkedCodeBlock::finishCreation):
+        (JSC::UnlinkedGlobalCodeBlock::UnlinkedGlobalCodeBlock):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitEnter):
+        (JSC::BytecodeGenerator::emitLogShadowChickenPrologueIfNecessary):
+        (JSC::BytecodeGenerator::emitLogShadowChickenTailIfNecessary):
+        (JSC::BytecodeGenerator::emitCallDefineProperty):
+        * debugger/Debugger.cpp:
+        (JSC::DebuggerPausedScope::DebuggerPausedScope):
+        (JSC::DebuggerPausedScope::~DebuggerPausedScope):
+        (JSC::Debugger::didReachBreakpoint):
+        (JSC::Debugger::currentDebuggerCallFrame):
+        * debugger/Debugger.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::LineAndColumnFunctor::operator()):
+        (JSC::DebuggerCallFrame::create):
+        (JSC::DebuggerCallFrame::DebuggerCallFrame):
+        (JSC::DebuggerCallFrame::callerFrame):
+        (JSC::DebuggerCallFrame::globalExec):
+        (JSC::DebuggerCallFrame::vmEntryGlobalObject):
+        (JSC::DebuggerCallFrame::sourceID):
+        (JSC::DebuggerCallFrame::functionName):
+        (JSC::DebuggerCallFrame::scope):
+        (JSC::DebuggerCallFrame::type):
+        (JSC::DebuggerCallFrame::thisValue):
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        (JSC::DebuggerCallFrame::invalidate):
+        (JSC::DebuggerCallFrame::currentPosition):
+        (JSC::DebuggerCallFrame::positionForCallFrame):
+        (JSC::DebuggerCallFrame::sourceIDForCallFrame):
+        (JSC::FindCallerMidStackFunctor::FindCallerMidStackFunctor): Deleted.
+        (JSC::FindCallerMidStackFunctor::operator()): Deleted.
+        (JSC::FindCallerMidStackFunctor::getCallerFrame): Deleted.
+        (JSC::DebuggerCallFrame::thisValueForCallFrame): Deleted.
+        * debugger/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::isValid):
+        (JSC::DebuggerCallFrame::isTailDeleted):
+        (JSC::DebuggerCallFrame::create): Deleted.
+        (JSC::DebuggerCallFrame::exec): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::~Graph):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addCallSite):
+        (JSC::DFG::JITCompiler::emitStoreCodeOrigin):
+        (JSC::DFG::JITCompiler::emitStoreCallSiteIndex):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileLogShadowChickenPrologue):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLogShadowChickenTail):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRecordRegExpCachedResult):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::ensureShadowChickenPacket):
+        (JSC::FTL::DFG::LowerDFGToB3::setupShadowChickenPacket): Deleted.
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.CallFrameProxy):
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::thisObject):
+        (Inspector::JSJavaScriptCallFrame::isTailDeleted):
+        (Inspector::JSJavaScriptCallFrame::type):
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation):
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension):
+        (Inspector::jsJavaScriptCallFrameAttributeType):
+        (Inspector::jsJavaScriptCallFrameIsTailDeleted):
+        * inspector/JavaScriptCallFrame.h:
+        (Inspector::JavaScriptCallFrame::type):
+        (Inspector::JavaScriptCallFrame::scopeChain):
+        (Inspector::JavaScriptCallFrame::vmEntryGlobalObject):
+        (Inspector::JavaScriptCallFrame::isTailDeleted):
+        (Inspector::JavaScriptCallFrame::thisValue):
+        (Inspector::JavaScriptCallFrame::evaluateWithScopeExtension):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::evaluateBreakpointAction):
+        * inspector/protocol/Debugger.json:
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+        (JSC::ShadowChicken::visitChildren):
+        (JSC::ShadowChicken::reset):
+        * interpreter/ShadowChicken.h:
+        (JSC::ShadowChicken::Packet::throwMarker):
+        (JSC::ShadowChicken::Packet::prologue):
+        (JSC::ShadowChicken::Packet::tail):
+        (JSC::ShadowChicken::Frame::Frame):
+        (JSC::ShadowChicken::Frame::operator==):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::logShadowChickenProloguePacket):
+        (JSC::CCallHelpers::logShadowChickenTailPacket):
+        (JSC::CCallHelpers::ensureShadowChickenPacket):
+        (JSC::CCallHelpers::setupShadowChickenPacket): Deleted.
+        * jit/CCallHelpers.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_type):
+        (JSC::JIT::emit_op_log_shadow_chicken_prologue):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        (JSC::JIT::emit_op_get_enumerable_length):
+        (JSC::JIT::emit_op_resume):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_profile_type):
+        (JSC::JIT::emit_op_log_shadow_chicken_prologue):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::webAssemblyCalleeSaveRegisters):
+        (JSC::RegisterSet::argumentGPRS):
+        (JSC::RegisterSet::registersToNotSaveForJSCall):
+        * jit/RegisterSet.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        * runtime/Options.h:
+        * tests/stress/shadow-chicken-enabled.js:
+        (test5a.foo):
+        (test5a):
+        (test5b.foo):
+        (test5b):
+        (test6.foo):
+        (test6):
+
+2016-05-16  Saam barati  <sbarati@apple.com>
+
         TypeSet/StructureShape have a flawed sense of JS prototype chains
         https://bugs.webkit.org/show_bug.cgi?id=157760
 

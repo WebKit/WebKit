@@ -184,6 +184,11 @@ JSValue JSJavaScriptCallFrame::thisObject(ExecState*) const
     return impl().thisValue();
 }
 
+JSValue JSJavaScriptCallFrame::isTailDeleted(JSC::ExecState*) const
+{
+    return jsBoolean(impl().isTailDeleted());
+}
+
 JSValue JSJavaScriptCallFrame::type(ExecState* exec) const
 {
     switch (impl().type()) {

@@ -2330,12 +2330,10 @@ public:
     
     // These operations clobber all volatile registers. They assume that there is room on the top of
     // stack to marshall call arguments.
-    void logShadowChickenProloguePacket();
-    void logShadowChickenTailPacket();
-
-private:
-    // Leaves behind a pointer to the Packet we should write to in regT1.
-    void setupShadowChickenPacket();
+    void logShadowChickenProloguePacket(GPRReg shadowPacket, GPRReg scratch1, GPRReg scope);
+    void logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, CodeBlock*, CallSiteIndex);
+    // Leaves behind a pointer to the Packet we should write to in shadowPacket.
+    void ensureShadowChickenPacket(GPRReg shadowPacket, GPRReg scratch1NonArgGPR, GPRReg scratch2);
 };
 
 } // namespace JSC

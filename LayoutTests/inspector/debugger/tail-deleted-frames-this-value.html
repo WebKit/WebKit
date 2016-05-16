@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector/debugger/debugger-test.js"></script>
+<script type="text/javascript" src="./resources/tail-deleted-frames-this-value.js"></script>
+<script>
+
+function test()
+{
+    var scriptObject;
+
+    function startTest() {
+        InspectorTest.log("Starting Test");
+        // 0 based indices.
+        let testInfo = {line: 3, column: 4};
+        let location = scriptObject.createSourceCodeLocation(testInfo.line, testInfo.column);
+        let breakpoint = new WebInspector.Breakpoint(location);
+        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+        InspectorTest.evaluateInPage("startABC()");
+    }
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+
+        if (!activeCallFrame)
+            return;
+
+        var stopLocation = "line: " + activeCallFrame.sourceCodeLocation.lineNumber + ", column: " + activeCallFrame.sourceCodeLocation.columnNumber;
+
+        InspectorTest.log("\n\n------------------------------------");
+        InspectorTest.log("Hit breakpoint at " + stopLocation);
+        InspectorTest.log("------------------------------------");
+
+        // top down list
+        let expectedFrames = [
+            {functionName: 'a', thisValue: ['aThis', 2], isTailDeleted: false},
+            {functionName: 'b', thisValue: ['bThis', 1], isTailDeleted: true},
+            {functionName: 'c', thisValue: ['cThis', 0], isTailDeleted: true}
+        ];
+
+        InspectorTest.assert(WebInspector.debuggerManager.callFrames.length >= expectedFrames.length);
+
+        for (let i = 0; i < expectedFrames.length; i++) {
+            let callFrame = WebInspector.debuggerManager.callFrames[i];
+            let expectedFrame = expectedFrames[i];
+            InspectorTest.log("Expected frame: " + JSON.stringify(expectedFrame));
+            InspectorTest.assert(callFrame.functionName === expectedFrame.functionName);
+            InspectorTest.assert(callFrame.isTailDeleted === expectedFrame.isTailDeleted);
+
+            let thisObject = callFrame.thisObject;
+            let properties = thisObject.preview.propertyPreviews;
+            InspectorTest.assert(properties.length === 1);
+            let prop = properties[0];
+            InspectorTest.expectThat(expectedFrame.thisValue[0] === prop.name, `'this' value should have expected property: ${expectedFrame.thisValue[0]}`);
+            InspectorTest.assert('' + expectedFrame.thisValue[1] === prop.value, `'this' value object should have expected property value: ${expectedFrame.thisValue[1]}`);
+            InspectorTest.pass(`Call Frame ${i} 'this' value is correct.`);
+        }
+
+        WebInspector.debuggerManager.resume();
+    });
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+        InspectorTest.log("Tests done");
+        InspectorTest.completeTest();
+    });
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+        eventScriptObject = event.data.script;
+        
+        if (/tail-deleted-frames-this-value\.js$/.test(eventScriptObject.url)) {
+            scriptObject = eventScriptObject;
+            startTest();
+            return;
+        }
+
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that we keep around tail deleted frames in the inspector and their this values.</p>
+</body>
+</html>

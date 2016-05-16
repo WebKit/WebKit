@@ -32,36 +32,40 @@
 
 namespace JSC {
 
-void CCallHelpers::logShadowChickenProloguePacket()
+void CCallHelpers::logShadowChickenProloguePacket(GPRReg shadowPacket, GPRReg scratch1, GPRReg scope)
 {
-    setupShadowChickenPacket();
-    storePtr(GPRInfo::callFrameRegister, Address(GPRInfo::regT1, OBJECT_OFFSETOF(ShadowChicken::Packet, frame)));
-    loadPtr(Address(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame)), GPRInfo::regT0);
-    storePtr(GPRInfo::regT0, Address(GPRInfo::regT1, OBJECT_OFFSETOF(ShadowChicken::Packet, callerFrame)));
-    loadPtr(addressFor(JSStack::Callee), GPRInfo::regT0);
-    storePtr(GPRInfo::regT0, Address(GPRInfo::regT1, OBJECT_OFFSETOF(ShadowChicken::Packet, callee)));
+    storePtr(GPRInfo::callFrameRegister, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, frame)));
+    loadPtr(Address(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame)), scratch1);
+    storePtr(scratch1, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, callerFrame)));
+    loadPtr(addressFor(JSStack::Callee), scratch1);
+    storePtr(scratch1, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, callee)));
+    storePtr(scope, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, scope)));
 }
 
-void CCallHelpers::logShadowChickenTailPacket()
+void CCallHelpers::logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
 {
-    setupShadowChickenPacket();
-    storePtr(GPRInfo::callFrameRegister, Address(GPRInfo::regT1, OBJECT_OFFSETOF(ShadowChicken::Packet, frame)));
-    storePtr(TrustedImmPtr(ShadowChicken::Packet::tailMarker()), Address(GPRInfo::regT1, OBJECT_OFFSETOF(ShadowChicken::Packet, callee)));
+    storePtr(GPRInfo::callFrameRegister, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, frame)));
+    storePtr(TrustedImmPtr(ShadowChicken::Packet::tailMarker()), Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, callee)));
+    storeValue(thisRegs, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, thisValue)));
+    storePtr(scope, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, scope)));
+    storePtr(TrustedImmPtr(codeBlock), Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, codeBlock)));
+    store32(TrustedImm32(callSiteIndex.bits()), Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, callSiteIndex)));
 }
 
-void CCallHelpers::setupShadowChickenPacket()
+void CCallHelpers::ensureShadowChickenPacket(GPRReg shadowPacket, GPRReg scratch1NonArgGPR, GPRReg scratch2)
 {
-    move(TrustedImmPtr(vm()->shadowChicken().addressOfLogCursor()), GPRInfo::regT0);
-    loadPtr(Address(GPRInfo::regT0), GPRInfo::regT1);
-    Jump ok = branchPtr(Below, GPRInfo::regT1, TrustedImmPtr(vm()->shadowChicken().logEnd()));
+    ASSERT(!RegisterSet::argumentGPRS().get(scratch1NonArgGPR));
+    move(TrustedImmPtr(vm()->shadowChicken().addressOfLogCursor()), scratch1NonArgGPR);
+    loadPtr(Address(scratch1NonArgGPR), shadowPacket);
+    Jump ok = branchPtr(Below, shadowPacket, TrustedImmPtr(vm()->shadowChicken().logEnd()));
     setupArgumentsExecState();
-    move(TrustedImmPtr(bitwise_cast<void*>(operationProcessShadowChickenLog)), GPRInfo::nonArgGPR0);
-    call(GPRInfo::nonArgGPR0);
-    move(TrustedImmPtr(vm()->shadowChicken().addressOfLogCursor()), GPRInfo::regT0);
-    loadPtr(Address(GPRInfo::regT0), GPRInfo::regT1);
+    move(TrustedImmPtr(bitwise_cast<void*>(operationProcessShadowChickenLog)), scratch1NonArgGPR);
+    call(scratch1NonArgGPR);
+    move(TrustedImmPtr(vm()->shadowChicken().addressOfLogCursor()), scratch1NonArgGPR);
+    loadPtr(Address(scratch1NonArgGPR), shadowPacket);
     ok.link(this);
-    addPtr(TrustedImm32(sizeof(ShadowChicken::Packet)), GPRInfo::regT1, GPRInfo::regT2);
-    storePtr(GPRInfo::regT2, Address(GPRInfo::regT0));
+    addPtr(TrustedImm32(sizeof(ShadowChicken::Packet)), shadowPacket, scratch2);
+    storePtr(scratch2, Address(scratch1NonArgGPR));
 }
 
 #if NUMBER_OF_ARGUMENT_REGISTERS >= 4

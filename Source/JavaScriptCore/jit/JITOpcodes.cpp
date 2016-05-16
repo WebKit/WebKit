@@ -1352,6 +1352,31 @@ void JIT::emit_op_profile_type(Instruction* currentInstruction)
     jumpToEnd.link(this);
 }
 
+void JIT::emit_op_log_shadow_chicken_prologue(Instruction* currentInstruction)
+{
+    updateTopCallFrame();
+    static_assert(nonArgGPR0 != regT0 && nonArgGPR0 != regT2, "we will have problems if this is true.");
+    GPRReg shadowPacketReg = regT0;
+    GPRReg scratch1Reg = nonArgGPR0; // This must be a non-argument register.
+    GPRReg scratch2Reg = regT2;
+    ensureShadowChickenPacket(shadowPacketReg, scratch1Reg, scratch2Reg);
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT3);
+    logShadowChickenProloguePacket(shadowPacketReg, scratch1Reg, regT3);
+}
+
+void JIT::emit_op_log_shadow_chicken_tail(Instruction* currentInstruction)
+{
+    updateTopCallFrame();
+    static_assert(nonArgGPR0 != regT0 && nonArgGPR0 != regT2, "we will have problems if this is true.");
+    GPRReg shadowPacketReg = regT0;
+    GPRReg scratch1Reg = nonArgGPR0; // This must be a non-argument register.
+    GPRReg scratch2Reg = regT2;
+    ensureShadowChickenPacket(shadowPacketReg, scratch1Reg, scratch2Reg);
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT2);
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT3);
+    logShadowChickenTailPacket(shadowPacketReg, JSValueRegs(regT2), regT3, m_codeBlock, CallSiteIndex(m_bytecodeOffset));
+}
+
 #endif // USE(JSVALUE64)
 
 void JIT::emit_op_get_enumerable_length(Instruction* currentInstruction)
@@ -1460,18 +1485,6 @@ void JIT::emit_op_resume(Instruction* currentInstruction)
 {
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_resume);
     slowPathCall.call();
-}
-
-void JIT::emit_op_log_shadow_chicken_prologue(Instruction*)
-{
-    updateTopCallFrame();
-    logShadowChickenProloguePacket();
-}
-
-void JIT::emit_op_log_shadow_chicken_tail(Instruction*)
-{
-    updateTopCallFrame();
-    logShadowChickenTailPacket();
 }
 
 } // namespace JSC

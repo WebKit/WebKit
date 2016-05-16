@@ -25,7 +25,7 @@
 
 WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 {
-    constructor(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode)
+    constructor(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted)
     {
         super();
 
@@ -40,6 +40,7 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
         this._scopeChain = scopeChain || [];
         this._nativeCode = nativeCode || false;
         this._programCode = programCode || false;
+        this._isTailDeleted = isTailDeleted || false;
     }
 
     // Public
@@ -77,6 +78,11 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
     get scopeChain()
     {
         return this._scopeChain;
+    }
+
+    get isTailDeleted()
+    {
+        return this._isTailDeleted;
     }
 
     saveIdentityToCookie()
@@ -132,13 +138,14 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
         let functionName = WebInspector.CallFrame.functionNameFromPayload(payload);
         let nativeCode = false;
         let programCode = WebInspector.CallFrame.programCodeFromPayload(payload);
+        let isTailDeleted = payload.isTailDeleted;
 
         if (sourceCodeLocation && isWebInspectorConsoleEvaluationScript(sourceCodeLocation.sourceCode.sourceURL)) {
             functionName = WebInspector.UIString("Console Evaluation");
             programCode = true;
         }
 
-        return new WebInspector.CallFrame(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode);
+        return new WebInspector.CallFrame(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted);
     }
 
     static fromPayload(payload)

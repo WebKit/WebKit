@@ -38,3 +38,7 @@
 .native-icon .icon {
     content: url(../Images/Native.svg);
 }
+
+.tail-deleted .icon {
+    content: url(../Images/TailDeletedFunction.svg);
+}

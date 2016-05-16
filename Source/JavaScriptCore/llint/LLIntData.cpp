@@ -34,6 +34,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "Opcode.h"
 #include "PropertyOffset.h"
+#include "ShadowChicken.h"
 #include "WriteBarrier.h"
 
 #define STATIC_ASSERT(cond) static_assert(cond, "LLInt assumes " #cond)
@@ -190,6 +191,8 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(GetPutInfo::initializationBits == 0xffc00);
 
     STATIC_ASSERT(MarkedBlock::blockMask == ~static_cast<decltype(MarkedBlock::blockMask)>(0x3fff));
+
+    ASSERT(bitwise_cast<uintptr_t>(ShadowChicken::Packet::tailMarker()) == static_cast<uintptr_t>(0x7a11));
 
     // FIXME: make these assertions less horrible.
 #if !ASSERT_DISABLED

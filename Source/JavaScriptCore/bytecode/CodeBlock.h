@@ -231,6 +231,8 @@ public:
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
                                           int& startOffset, int& endOffset, unsigned& line, unsigned& column);
 
+    Optional<unsigned> bytecodeOffsetFromCallSiteIndex(CallSiteIndex);
+
     void getStubInfoMap(const ConcurrentJITLocker&, StubInfoMap& result);
     void getStubInfoMap(StubInfoMap& result);
     
@@ -833,6 +835,8 @@ public:
         m_steppingMode = SteppingModeDisabled;
         m_numBreakpoints = 0;
     }
+
+    bool wasCompiledWithDebuggingOpcodes() const { return m_unlinkedCode->wasCompiledWithDebuggingOpcodes(); }
     
     // FIXME: Make these remaining members private.
 

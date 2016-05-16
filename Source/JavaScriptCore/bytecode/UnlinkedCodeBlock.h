@@ -368,8 +368,10 @@ public:
 
     void dumpExpressionRangeInfo(); // For debugging purpose only.
 
+    bool wasCompiledWithDebuggingOpcodes() const { return m_wasCompiledWithDebuggingOpcodes; }
+
 protected:
-    UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&);
+    UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&, DebuggerMode);
     ~UnlinkedCodeBlock();
 
     void finishCreation(VM& vm)
@@ -409,6 +411,7 @@ private:
     unsigned m_evalContextType : 2;
     unsigned m_isArrowFunctionContext : 1;
     unsigned m_isClassContext : 1;
+    unsigned m_wasCompiledWithDebuggingOpcodes : 1;
     unsigned m_firstLine;
     unsigned m_lineCount;
     unsigned m_endColumn;
@@ -479,8 +482,8 @@ public:
     typedef UnlinkedCodeBlock Base;
 
 protected:
-    UnlinkedGlobalCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info)
-        : Base(vm, structure, codeType, info)
+    UnlinkedGlobalCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, DebuggerMode debuggerMode)
+        : Base(vm, structure, codeType, info, debuggerMode)
     {
     }
 
@@ -490,9 +493,9 @@ protected:
 class UnlinkedProgramCodeBlock final : public UnlinkedGlobalCodeBlock {
 private:
     friend class CodeCache;
-    static UnlinkedProgramCodeBlock* create(VM* vm, const ExecutableInfo& info)
+    static UnlinkedProgramCodeBlock* create(VM* vm, const ExecutableInfo& info, DebuggerMode debuggerMode)
     {
-        UnlinkedProgramCodeBlock* instance = new (NotNull, allocateCell<UnlinkedProgramCodeBlock>(vm->heap)) UnlinkedProgramCodeBlock(vm, vm->unlinkedProgramCodeBlockStructure.get(), info);
+        UnlinkedProgramCodeBlock* instance = new (NotNull, allocateCell<UnlinkedProgramCodeBlock>(vm->heap)) UnlinkedProgramCodeBlock(vm, vm->unlinkedProgramCodeBlockStructure.get(), info, debuggerMode);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -512,8 +515,8 @@ public:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    UnlinkedProgramCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info)
-        : Base(vm, structure, GlobalCode, info)
+    UnlinkedProgramCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info, DebuggerMode debuggerMode)
+        : Base(vm, structure, GlobalCode, info, debuggerMode)
     {
     }
 
@@ -532,9 +535,9 @@ public:
 class UnlinkedModuleProgramCodeBlock final : public UnlinkedGlobalCodeBlock {
 private:
     friend class CodeCache;
-    static UnlinkedModuleProgramCodeBlock* create(VM* vm, const ExecutableInfo& info)
+    static UnlinkedModuleProgramCodeBlock* create(VM* vm, const ExecutableInfo& info, DebuggerMode debuggerMode)
     {
-        UnlinkedModuleProgramCodeBlock* instance = new (NotNull, allocateCell<UnlinkedModuleProgramCodeBlock>(vm->heap)) UnlinkedModuleProgramCodeBlock(vm, vm->unlinkedModuleProgramCodeBlockStructure.get(), info);
+        UnlinkedModuleProgramCodeBlock* instance = new (NotNull, allocateCell<UnlinkedModuleProgramCodeBlock>(vm->heap)) UnlinkedModuleProgramCodeBlock(vm, vm->unlinkedModuleProgramCodeBlockStructure.get(), info, debuggerMode);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -578,8 +581,8 @@ public:
     }
 
 private:
-    UnlinkedModuleProgramCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info)
-        : Base(vm, structure, ModuleCode, info)
+    UnlinkedModuleProgramCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info, DebuggerMode debuggerMode)
+        : Base(vm, structure, ModuleCode, info, debuggerMode)
     {
     }
 
@@ -598,9 +601,9 @@ class UnlinkedEvalCodeBlock final : public UnlinkedGlobalCodeBlock {
 private:
     friend class CodeCache;
 
-    static UnlinkedEvalCodeBlock* create(VM* vm, const ExecutableInfo& info)
+    static UnlinkedEvalCodeBlock* create(VM* vm, const ExecutableInfo& info, DebuggerMode debuggerMode)
     {
-        UnlinkedEvalCodeBlock* instance = new (NotNull, allocateCell<UnlinkedEvalCodeBlock>(vm->heap)) UnlinkedEvalCodeBlock(vm, vm->unlinkedEvalCodeBlockStructure.get(), info);
+        UnlinkedEvalCodeBlock* instance = new (NotNull, allocateCell<UnlinkedEvalCodeBlock>(vm->heap)) UnlinkedEvalCodeBlock(vm, vm->unlinkedEvalCodeBlockStructure.get(), info, debuggerMode);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -620,8 +623,8 @@ public:
     }
 
 private:
-    UnlinkedEvalCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info)
-        : Base(vm, structure, EvalCode, info)
+    UnlinkedEvalCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info, DebuggerMode debuggerMode)
+        : Base(vm, structure, EvalCode, info, debuggerMode)
     {
     }
 
@@ -641,9 +644,9 @@ public:
     typedef UnlinkedCodeBlock Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static UnlinkedFunctionCodeBlock* create(VM* vm, CodeType codeType, const ExecutableInfo& info)
+    static UnlinkedFunctionCodeBlock* create(VM* vm, CodeType codeType, const ExecutableInfo& info, DebuggerMode debuggerMode)
     {
-        UnlinkedFunctionCodeBlock* instance = new (NotNull, allocateCell<UnlinkedFunctionCodeBlock>(vm->heap)) UnlinkedFunctionCodeBlock(vm, vm->unlinkedFunctionCodeBlockStructure.get(), codeType, info);
+        UnlinkedFunctionCodeBlock* instance = new (NotNull, allocateCell<UnlinkedFunctionCodeBlock>(vm->heap)) UnlinkedFunctionCodeBlock(vm, vm->unlinkedFunctionCodeBlockStructure.get(), codeType, info, debuggerMode);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -651,8 +654,8 @@ public:
     static void destroy(JSCell*);
 
 private:
-    UnlinkedFunctionCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info)
-        : Base(vm, structure, codeType, info)
+    UnlinkedFunctionCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, DebuggerMode debuggerMode)
+        : Base(vm, structure, codeType, info, debuggerMode)
     {
     }
     

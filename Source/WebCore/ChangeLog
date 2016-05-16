@@ -1,3 +1,17 @@
+2016-05-16  Saam barati  <sbarati@apple.com>
+
+        Hook up ShadowChicken to the debugger to show tail deleted frames
+        https://bugs.webkit.org/show_bug.cgi?id=156685
+        <rdar://problem/25770521>
+
+        Reviewed by Filip Pizlo and Mark Lam and Joseph Pecoraro.
+
+        Tests: inspector/debugger/tail-deleted-frames-this-value.html
+               inspector/debugger/tail-deleted-frames.html
+               inspector/debugger/tail-recursion.html
+
+        * ForwardingHeaders/interpreter/ShadowChicken.h: Added.
+
 2016-05-16  Alex Christensen  <achristensen@webkit.org>
 
         Don't include CSSParser.h from other headers

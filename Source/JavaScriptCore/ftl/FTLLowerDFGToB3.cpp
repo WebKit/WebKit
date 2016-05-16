@@ -7094,19 +7094,28 @@ private:
     
     void compileLogShadowChickenPrologue()
     {
-        LValue packet = setupShadowChickenPacket();
-        
+        LValue packet = ensureShadowChickenPacket();
+        LValue scope = lowCell(m_node->child1());
+
         m_out.storePtr(m_callFrame, packet, m_heaps.ShadowChicken_Packet_frame);
         m_out.storePtr(m_out.loadPtr(addressFor(0)), packet, m_heaps.ShadowChicken_Packet_callerFrame);
         m_out.storePtr(m_out.loadPtr(payloadFor(JSStack::Callee)), packet, m_heaps.ShadowChicken_Packet_callee);
+        m_out.storePtr(scope, packet, m_heaps.ShadowChicken_Packet_scope);
     }
     
     void compileLogShadowChickenTail()
     {
-        LValue packet = setupShadowChickenPacket();
+        LValue packet = ensureShadowChickenPacket();
+        LValue thisValue = lowJSValue(m_node->child1());
+        LValue scope = lowCell(m_node->child2());
+        CallSiteIndex callSiteIndex = m_ftlState.jitCode->common.addCodeOrigin(m_node->origin.semantic);
         
         m_out.storePtr(m_callFrame, packet, m_heaps.ShadowChicken_Packet_frame);
         m_out.storePtr(m_out.constIntPtr(ShadowChicken::Packet::tailMarker()), packet, m_heaps.ShadowChicken_Packet_callee);
+        m_out.store64(thisValue, packet, m_heaps.ShadowChicken_Packet_thisValue);
+        m_out.storePtr(scope, packet, m_heaps.ShadowChicken_Packet_scope);
+        m_out.storePtr(m_out.constIntPtr(codeBlock()), packet, m_heaps.ShadowChicken_Packet_codeBlock);
+        m_out.store32(m_out.constInt32(callSiteIndex.bits()), packet, m_heaps.ShadowChicken_Packet_callSiteIndex);
     }
 
     void compileRecordRegExpCachedResult()
@@ -8380,7 +8389,7 @@ private:
             m_out.phi(m_out.intPtr, fastButterfly, slowButterfly));
     }
     
-    LValue setupShadowChickenPacket()
+    LValue ensureShadowChickenPacket()
     {
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();

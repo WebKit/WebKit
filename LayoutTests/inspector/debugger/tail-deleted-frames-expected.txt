@@ -1,0 +1,19 @@
+Testing that we keep around tail deleted frames in the inspector.
+
+Starting Test
+
+
+------------------------------------
+Hit breakpoint at line: 3, column: 4
+------------------------------------
+Expected frame: {"functionName":"a","scope":["x",20],"isTailDeleted":false}
+Expected frame: {"functionName":"b","scope":["y",40],"isTailDeleted":true}
+Expected frame: {"functionName":"c","scope":["z",60],"isTailDeleted":true}
+Looking at frame number: 0
+    variable 'x': {"_type":"number","_description":"20","_hasChildren":false,"_value":20}
+Looking at frame number: 1
+    variable 'y': {"_type":"number","_description":"40","_hasChildren":false,"_value":40}
+Looking at frame number: 2
+    variable 'z': {"_type":"number","_description":"60","_hasChildren":false,"_value":60}
+Tests done
+

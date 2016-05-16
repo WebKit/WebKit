@@ -64,6 +64,8 @@ void Label::setLocation(unsigned location)
 ParserError BytecodeGenerator::generate()
 {
     m_codeBlock->setThisRegister(m_thisRegister.virtualRegister());
+
+    emitLogShadowChickenPrologueIfNecessary();
     
     // If we have declared a variable named "arguments" and we are using arguments then we should
     // perform that assignment now.
@@ -291,7 +293,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     emitEnter();
 
     allocateAndEmitScope();
-    
+
     m_calleeRegister.setIndex(JSStack::Callee);
 
     initializeParameters(parameters);
@@ -1105,7 +1107,6 @@ UnlinkedValueProfile BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
 void BytecodeGenerator::emitEnter()
 {
     emitOpcode(op_enter);
-    emitLogShadowChickenPrologueIfNecessary();
     emitWatchdog();
 }
 
@@ -3167,6 +3168,7 @@ void BytecodeGenerator::emitLogShadowChickenPrologueIfNecessary()
     if (!m_shouldEmitDebugHooks && !Options::alwaysUseShadowChicken())
         return;
     emitOpcode(op_log_shadow_chicken_prologue);
+    instructions().append(scopeRegister()->index());
 }
 
 void BytecodeGenerator::emitLogShadowChickenTailIfNecessary()
@@ -3174,6 +3176,8 @@ void BytecodeGenerator::emitLogShadowChickenTailIfNecessary()
     if (!m_shouldEmitDebugHooks && !Options::alwaysUseShadowChicken())
         return;
     emitOpcode(op_log_shadow_chicken_tail);
+    instructions().append(thisRegister()->index());
+    instructions().append(scopeRegister()->index());
 }
 
 void BytecodeGenerator::emitCallDefineProperty(RegisterID* newObj, RegisterID* propertyNameRegister,

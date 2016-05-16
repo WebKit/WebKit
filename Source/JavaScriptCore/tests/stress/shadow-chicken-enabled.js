@@ -121,7 +121,7 @@ initialize();
 (function test5a() {
     if (verbose)
         print("In test5a:");
-    var foos = 990;
+    var foos = 50;
     
     function foo(ttl) {
         if (ttl <= 1) {
@@ -141,7 +141,7 @@ initialize();
 (function test5b() {
     if (verbose)
         print("In test5b:");
-    var foos = 9990;
+    var foos = 100;
     
     function foo(ttl) {
         if (ttl <= 1) {
@@ -165,7 +165,7 @@ initialize();
         print("array.push = " + describe([].push));
     }
     
-    var foos = 99990;
+    var foos = 128;
     
     function foo(ttl) {
         if (ttl <= 1) {

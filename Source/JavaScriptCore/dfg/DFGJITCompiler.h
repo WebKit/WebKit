@@ -147,10 +147,11 @@ public:
         return m_jitCode->common.addCodeOrigin(codeOrigin);
     }
 
-    void emitStoreCodeOrigin(CodeOrigin codeOrigin)
+    CallSiteIndex emitStoreCodeOrigin(CodeOrigin codeOrigin)
     {
         CallSiteIndex callSite = addCallSite(codeOrigin);
         emitStoreCallSiteIndex(callSite);
+        return callSite;
     }
 
     void emitStoreCallSiteIndex(CallSiteIndex callSite)

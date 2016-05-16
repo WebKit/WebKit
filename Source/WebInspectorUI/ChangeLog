@@ -1,3 +1,25 @@
+2016-05-16  Saam barati  <sbarati@apple.com>
+
+        Hook up ShadowChicken to the debugger to show tail deleted frames
+        https://bugs.webkit.org/show_bug.cgi?id=156685
+        <rdar://problem/25770521>
+
+        Reviewed by Filip Pizlo and Mark Lam and Joseph Pecoraro.
+
+        This patch makes the WebInspector display tail deleted frames.
+        We show tail deleted frames with a gray [f] instead of a green
+        [f]. We also put text in the tooltip to indicate that the frame
+        is tail deleted. Other than that, tail deleted frames behave like
+        normal frames. You can evaluate in them, inspect their scope, etc.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/TailDeletedFunction.svg: Added.
+        * UserInterface/Images/gtk/TailDeletedFunction.svg: Added.
+        * UserInterface/Models/CallFrame.js:
+        * UserInterface/Views/CallFrameIcons.css:
+        * UserInterface/Views/CallFrameTreeElement.js:
+        * UserInterface/Views/CallFrameView.js:
+
 2016-05-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Contents of Duration column are covered by always on (legacy) scroll bars

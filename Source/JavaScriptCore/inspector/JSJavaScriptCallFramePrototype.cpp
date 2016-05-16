@@ -50,6 +50,7 @@ static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeFunctionName(E
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeScopeChain(ExecState*);
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeThisObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeType(ExecState*);
+static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameIsTailDeleted(ExecState*);
 
 const ClassInfo JSJavaScriptCallFramePrototype::s_info = { "JavaScriptCallFrame", &Base::s_info, 0, CREATE_METHOD_TABLE(JSJavaScriptCallFramePrototype) };
 
@@ -70,6 +71,7 @@ void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* glob
     JSC_NATIVE_GETTER("scopeChain", jsJavaScriptCallFrameAttributeScopeChain, DontEnum | Accessor);
     JSC_NATIVE_GETTER("thisObject", jsJavaScriptCallFrameAttributeThisObject, DontEnum | Accessor);
     JSC_NATIVE_GETTER("type", jsJavaScriptCallFrameAttributeType, DontEnum | Accessor);
+    JSC_NATIVE_GETTER("isTailDeleted", jsJavaScriptCallFrameIsTailDeleted, DontEnum | Accessor);
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension(ExecState* exec)
@@ -170,6 +172,16 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeType(ExecState* exec)
         return throwVMTypeError(exec);
 
     return JSValue::encode(castedThis->type(exec));
+}
+
+EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameIsTailDeleted(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(thisValue);
+    if (!castedThis)
+        return throwVMTypeError(exec);
+
+    return JSValue::encode(castedThis->isTailDeleted(exec));
 }
 
 } // namespace Inspector

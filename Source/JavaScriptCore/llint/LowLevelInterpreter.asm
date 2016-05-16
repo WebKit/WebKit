@@ -249,6 +249,9 @@ const ClearWatchpoint = 0
 const IsWatched = 1
 const IsInvalidated = 2
 
+# ShadowChicken data
+const ShadowChickenTailMarker = 0x7a11
+
 # Some register conventions.
 if JSVALUE64
     # - Use a pair of registers to represent the PC: one register for the
@@ -1470,30 +1473,6 @@ macro acquireShadowChickenPacket(slow)
     addp sizeof ShadowChicken::Packet, t0, t1
     storep t1, ShadowChicken::m_logCursor[t2]
 end
-
-_llint_op_log_shadow_chicken_prologue:
-    traceExecution()
-    acquireShadowChickenPacket(.opLogShadowChickenPrologueSlow)
-    storep cfr, ShadowChicken::Packet::frame[t0]
-    loadp CallerFrame[cfr], t1
-    storep t1, ShadowChicken::Packet::callerFrame[t0]
-    loadp Callee + PayloadOffset[cfr], t1
-    storep t1, ShadowChicken::Packet::callee[t0]
-    dispatch(1)
-.opLogShadowChickenPrologueSlow:
-    callSlowPath(_llint_slow_path_log_shadow_chicken_prologue)
-    dispatch(1)
-
-
-_llint_op_log_shadow_chicken_tail:
-    traceExecution()
-    acquireShadowChickenPacket(.opLogShadowChickenTailSlow)
-    storep cfr, ShadowChicken::Packet::frame[t0]
-    storep 0x7a11, ShadowChicken::Packet::callee[t0]
-    dispatch(1)
-.opLogShadowChickenTailSlow:
-    callSlowPath(_llint_slow_path_log_shadow_chicken_tail)
-    dispatch(1)
 
 
 _llint_op_switch_string:
