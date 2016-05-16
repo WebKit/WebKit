@@ -127,54 +127,12 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
        charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers
                          modifiers:(WebEventFlags)modifiers
                        isRepeating:(BOOL)repeating
-                    isPopupVariant:(BOOL)popupVariant
-                           keyCode:(uint16_t)keyCode
-                          isTabKey:(BOOL)tabKey
-                      characterSet:(WebEventCharacterSet)characterSet
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    
-    _type = type;
-    _timestamp = timeStamp;
-
-    _characters = [characters retain];
-    _charactersIgnoringModifiers = [charactersIgnoringModifiers retain];
-    _modifierFlags = modifiers;
-    _keyRepeating = repeating;
-    _popupVariant = popupVariant;
-    _tabKey = tabKey;
-    _characterSet = characterSet;
-
-    if (keyCode)
-        _keyCode = windowsKeyCodeForKeyCode(keyCode);
-
-    // NOTE: this preserves the original semantics which used the
-    // characters string for the keyCode. This should be changed in iOS 4.0 to
-    // allow the client to explicitly specify a keyCode, otherwise default to
-    // mapping the characters string to a keyCode.
-    // e.g. add an 'else' before this 'if'.
-    if ([charactersIgnoringModifiers length] == 1) {
-        unichar ch = [charactersIgnoringModifiers characterAtIndex:0];
-        _keyCode = windowsKeyCodeForCharCodeIOS(ch);
-    }
-
-    return self;
-}
-
-
-- (WebEvent *)initWithKeyEventType:(WebEventType)type
-                         timeStamp:(CFTimeInterval)timeStamp
-                        characters:(NSString *)characters
-       charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers
-                         modifiers:(WebEventFlags)modifiers
-                       isRepeating:(BOOL)repeating
                          withFlags:(NSUInteger)flags
                            keyCode:(uint16_t)keyCode
                           isTabKey:(BOOL)tabKey
                       characterSet:(WebEventCharacterSet)characterSet
 {
+    UNUSED_PARAM(characterSet);
     self = [super init];
     if (!self)
         return nil;
@@ -188,7 +146,6 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     _keyRepeating = repeating;
     _keyboardFlags = flags;
     _tabKey = tabKey;
-    _characterSet = characterSet;
     
     if (keyCode)
         _keyCode = windowsKeyCodeForKeyCode(keyCode);
@@ -276,25 +233,6 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     return @"Unknown";
 }
 
-- (NSString *)_characterSetDescription
-{
-    switch (_characterSet) {
-        case WebEventCharacterSetASCII:
-            return @"WebEventCharacterSetASCII";
-        case WebEventCharacterSetSymbol:
-            return @"WebEventCharacterSetSymbol";
-        case WebEventCharacterSetDingbats:
-            return @"WebEventCharacterSetDingbats";
-        case WebEventCharacterSetUnicode:
-            return @"WebEventCharacterSetUnicode";
-        case WebEventCharacterSetFunctionKeys:
-            return @"WebEventCharacterSetFunctionKeys";
-        default:
-            ASSERT_NOT_REACHED();
-    }
-    return @"Unknown";
-}
-
 - (NSString *)_touchLocationsDescription:(NSArray *)locations
 {
     BOOL shouldAddComma = NO;
@@ -359,7 +297,7 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
             return [NSString stringWithFormat:@"location: (%f, %f) deltaX: %f deltaY: %f", _locationInWindow.x, _locationInWindow.y, _deltaX, _deltaY];
         case WebEventKeyDown:
         case WebEventKeyUp:
-            return [NSString stringWithFormat:@"chars: %@ charsNoModifiers: %@ flags: %d repeating: %d keyboardFlags: %lu keyCode %d, isTab: %d charSet: %@", _characters, _charactersIgnoringModifiers, _modifierFlags, _keyRepeating, static_cast<unsigned long>(_keyboardFlags), _keyCode, _tabKey, [self _characterSetDescription]];
+            return [NSString stringWithFormat:@"chars: %@ charsNoModifiers: %@ flags: %d repeating: %d keyboardFlags: %lu keyCode %d, isTab: %d", _characters, _charactersIgnoringModifiers, _modifierFlags, _keyRepeating, static_cast<unsigned long>(_keyboardFlags), _keyCode, _tabKey];
         case WebEventTouchBegin:
         case WebEventTouchChange:
         case WebEventTouchEnd:
@@ -408,13 +346,6 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     return _keyRepeating;
 }
 
-// FIXME: to be removed
-- (BOOL)isPopupVariant
-{
-    ASSERT(_type == WebEventKeyDown || _type == WebEventKeyUp);
-    return _popupVariant;
-}
-
 - (NSUInteger)keyboardFlags
 {
     ASSERT(_type == WebEventKeyDown || _type == WebEventKeyUp);
@@ -431,12 +362,6 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
 {
     ASSERT(_type == WebEventKeyDown || _type == WebEventKeyUp);
     return _tabKey;
-}
-
-- (WebEventCharacterSet)characterSet
-{
-    ASSERT(_type == WebEventKeyDown || _type == WebEventKeyUp);
-    return _characterSet;
 }
 
 - (float)deltaX

@@ -1,3 +1,15 @@
+2016-05-16  Enrica Casucci  <enrica@apple.com>
+
+        Remove unused initializer for WebEvent on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=157689
+
+        Reviewed by Anders Carlsson.
+
+        Adopting different initializer for WebEvent to fix the build.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+
 2016-05-16  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Add machine-readable results for JSC API tests to the Buildbot json log

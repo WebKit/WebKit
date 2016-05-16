@@ -86,11 +86,9 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
     NSString *_charactersIgnoringModifiers;
     WebEventFlags _modifierFlags;
     BOOL _keyRepeating;
-    BOOL _popupVariant; // FIXME: to be removed
     NSUInteger _keyboardFlags;
     uint16_t _keyCode;
     BOOL _tabKey;
-    WebEventCharacterSet _characterSet;
     
     float _deltaX;
     float _deltaY;
@@ -127,18 +125,6 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
                         gestureScale:(float)gestureScale
                      gestureRotation:(float)gestureRotation;
 
-// FIXME: this is deprecated. It will be removed when UIKit adopts the new one below.
-- (WebEvent *)initWithKeyEventType:(WebEventType)type
-                         timeStamp:(CFTimeInterval)timeStamp
-                        characters:(NSString *)characters
-       charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers
-                         modifiers:(WebEventFlags)modifiers
-                       isRepeating:(BOOL)repeating
-                    isPopupVariant:(BOOL)popupVariant
-                           keyCode:(uint16_t)keyCode
-                          isTabKey:(BOOL)tabKey
-                      characterSet:(WebEventCharacterSet)characterSet;
-
 - (WebEvent *)initWithKeyEventType:(WebEventType)type
                          timeStamp:(CFTimeInterval)timeStamp
                         characters:(NSString *)characters
@@ -162,12 +148,9 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
 @property(nonatomic, readonly) WebEventFlags modifierFlags;
 @property(nonatomic, readonly, getter = isKeyRepeating) BOOL keyRepeating;
 
-// FIXME: this is deprecated. It will be removed when UIKit adopts the new initWithKeyEventType.
-@property(nonatomic, readonly, getter = isPopupVariant) BOOL popupVariant;
 @property(nonatomic, readonly) NSUInteger keyboardFlags;
 @property(nonatomic, readonly) uint16_t keyCode;
 @property(nonatomic, readonly, getter = isTabKey) BOOL tabKey;
-@property(nonatomic, readonly) WebEventCharacterSet characterSet;
 
 // Scroll Wheel
 @property(nonatomic, readonly) float deltaX;

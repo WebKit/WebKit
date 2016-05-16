@@ -1041,7 +1041,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                         charactersIgnoringModifiers:charactersIgnoringModifiers
                         modifiers:(WebEventFlags)modifierFlags
                         isRepeating:NO
-                        isPopupVariant:NO
+                        withFlags:0
                         keyCode:[character characterAtIndex:0]
                         isTabKey:([character characterAtIndex:0] == '\t')
                         characterSet:WebEventCharacterSetASCII];
