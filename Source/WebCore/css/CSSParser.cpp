@@ -1595,7 +1595,7 @@ CSSParser::SourceSize CSSParser::sourceSize(std::unique_ptr<MediaQueryExp>&& exp
     return SourceSize(WTFMove(expression), WTFMove(value));
 }
 
-static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenCustomProperties)
+static inline void filterProperties(bool important, const ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenCustomProperties)
 {
     // Add properties in reverse order so that highest priority definitions are reached first. Duplicate definitions can then be ignored when found.
     for (int i = input.size() - 1; i >= 0; --i) {

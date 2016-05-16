@@ -818,7 +818,7 @@ bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, St
     return oldProperties != m_propertyVector;
 }
 
-bool MutableStyleProperties::addParsedProperties(const CSSParser::ParsedPropertyVector& properties)
+bool MutableStyleProperties::addParsedProperties(const ParsedPropertyVector& properties)
 {
     bool anyChanged = false;
     m_propertyVector.reserveCapacity(m_propertyVector.size() + properties.size());

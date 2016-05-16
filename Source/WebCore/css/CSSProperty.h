@@ -104,6 +104,8 @@ private:
     RefPtr<CSSValue> m_value;
 };
 
+typedef Vector<CSSProperty, 256> ParsedPropertyVector;
+
 inline CSSPropertyID prefixingVariantForPropertyId(CSSPropertyID propertyID)
 {
     ASSERT(propertyID != CSSPropertyInvalid);

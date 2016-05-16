@@ -25,6 +25,7 @@
 
 #include "ContentData.h"
 #include "CSSCustomPropertyValue.h"
+#include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSVariableDependentValue.h"
 #include "CursorList.h"

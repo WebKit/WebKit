@@ -88,8 +88,6 @@ public:
         Error
     };
 
-    using ParsedPropertyVector = Vector<CSSProperty, 256>;
-
     class ValueWithCalculation {
     public:
         explicit ValueWithCalculation(CSSParserValue& value)

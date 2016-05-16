@@ -62,6 +62,7 @@ class CSSProperty;
 class CSSSelector;
 class CSSStyleSheet;
 class CSSValue;
+class CSSVariableDependentValue;
 class ContainerNode;
 class Document;
 class Element;

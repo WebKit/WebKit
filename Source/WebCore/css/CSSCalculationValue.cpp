@@ -32,6 +32,7 @@
 #include "config.h"
 #include "CSSCalculationValue.h"
 
+#include "CSSParser.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "StyleResolver.h"
 #include <wtf/MathExtras.h>

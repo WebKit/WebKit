@@ -28,6 +28,7 @@
 
 #include "CSSFontFaceSource.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSParser.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValuePool.h"
 #include "Document.h"

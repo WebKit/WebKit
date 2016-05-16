@@ -1,3 +1,28 @@
+2016-05-16  Alex Christensen  <achristensen@webkit.org>
+
+        Don't include CSSParser.h from other headers
+        https://bugs.webkit.org/show_bug.cgi?id=157765
+
+        Reviewed by Zalan Bujtas.
+
+        No change in behavior.  This just makes it so touching CSSParser.h doesn't rebuild as many files.
+
+        * css/CSSCalculationValue.cpp:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::sourceSize):
+        (WebCore::filterProperties):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::ValueWithCalculation::ValueWithCalculation):
+        * css/CSSProperty.h:
+        (WebCore::prefixingVariantForPropertyId):
+        * css/FontFace.cpp:
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::parseDeclaration):
+        (WebCore::MutableStyleProperties::addParsedProperties):
+        * css/StyleProperties.h:
+        * css/StyleResolver.h:
+        * rendering/style/RenderStyle.cpp:
+
 2016-05-16  Aaron Chu  <aaron_chu@apple.com>
 
         REGRESSION (r200441): Yahoo sports, finance and news pages automatically scroll
