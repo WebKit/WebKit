@@ -1,3 +1,12 @@
+2016-05-16  Enrica Casucci  <enrica@apple.com>
+
+        build fix after r200968 and r200969
+
+        Unreviewed.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+
 2016-05-16  Jer Noble  <jer.noble@apple.com>
 
         API test WebKit2.MSEIsPlayingAudio timing out after r200951
