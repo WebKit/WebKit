@@ -226,9 +226,10 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
 
         // if m_imageSurface is not an image, extract a copy of the surface
         if (m_imageSurface && cairo_surface_get_type(m_imageSurface.get()) != CAIRO_SURFACE_TYPE_IMAGE) {
-            RefPtr<cairo_surface_t> tmpSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, m_imageWidth, m_imageHeight));
-            copyRectFromOneSurfaceToAnother(m_imageSurface.get(), tmpSurface.get(), IntSize(), IntRect(0, 0, m_imageWidth, m_imageHeight), IntSize(), CAIRO_OPERATOR_SOURCE);
-            m_imageSurface = tmpSurface.release();
+            IntSize surfaceSize = cairoSurfaceSize(m_imageSurface.get());
+            auto tmpSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, surfaceSize.width(), surfaceSize.height()));
+            copyRectFromOneSurfaceToAnother(m_imageSurface.get(), tmpSurface.get(), IntSize(), IntRect(IntPoint(), surfaceSize), IntSize(), CAIRO_OPERATOR_SOURCE);
+            m_imageSurface = WTFMove(tmpSurface);
         }
     }
 
