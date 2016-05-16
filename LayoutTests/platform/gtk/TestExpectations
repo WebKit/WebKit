@@ -1,6 +1,8 @@
 # These are the layout test expectations for the GTK port of WebKit.
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+# Never add any tests to this file without opening a bug on bugzilla.webkit.org.
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Platform-specific directories.
@@ -29,26 +31,29 @@ editing/pasteboard/gtk [ Pass ]
 # These are in a separate section than failing tests, because they should be
 # priority fixes.
 
-# 4. SLOW TESTS
+# 4. FLAKY TESTS
+# Tests that sometimes pass.
+
+# 5. SLOW TESTS
 # These tests are assigned the SLOW modifier to prevent them timing out as they
 # otherwise pass, but take a long time to complete due to the nature of test,
 # debug configuration or some other performance-affecting factor.
 
-# 5. TESTS TIMING OUT
+# 6. TESTS TIMING OUT
 # Please open a bug for each test timing out with any important information.
 
-# 6. TESTS WITH ARCHITECTURE-SPECIFIC RESULTS
+# 7. TESTS WITH ARCHITECTURE-SPECIFIC RESULTS
 # Tests with different results (of which at least one is failure) on 32-bit and 64-bit builders.
 # These tests are essentially marked as flaky, but are noted as failing only on specific architecture.
 #
-# 7. WEBKIT2 REGRESSIONS
+# 8. WEBKIT2 REGRESSIONS
 # Tests that are now failing because of the switch to WebKit2, probably misssing some
 # test harness support.
 #
-# 8. TESTS FAILING
+# 9. TESTS FAILING
 # Each test should (eventually) have a bug. Missing test harness features also go here.
 #
-# 9. TESTS PASSING
+# 10. TESTS PASSING
 # Tests that pass for GTK but have different expectations in the global expectations file.
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1299,6 +1304,16 @@ webkit.org/b/153948 imported/w3c/web-platform-tests/html/semantics/document-meta
 webkit.org/b/156436 fast/harness/sample-fail-mismatch-reftest.html [ Failure Pass ]
 
 webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/157728 plugins/get-javascript-url.html [ Timeout Pass ]
+
+webkit.org/b/145639 media/volume-bar-empty-when-muted.html [ Failure Pass ]
+
+webkit.org/b/157729 fast/images/image-map-outline-with-paint-root-offset.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/157730 fast/forms/select/optgroup-clicking.html
+
+webkit.org/b/157731 fast/events/touch/touch-inside-iframe-scrolled.html
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
