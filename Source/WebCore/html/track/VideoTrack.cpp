@@ -175,7 +175,7 @@ void VideoTrack::languageChanged(TrackPrivateBase* trackPrivate, const AtomicStr
 void VideoTrack::willRemove(TrackPrivateBase* trackPrivate)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    mediaElement()->removeVideoTrack(this);
+    mediaElement()->removeVideoTrack(*this);
 }
 
 #if ENABLE(MEDIA_SOURCE)
@@ -197,7 +197,7 @@ void VideoTrack::setKind(const AtomicString& kind)
 
     // 4. Queue a task to fire a simple event named change at the VideoTrackList object referenced by
     // the videoTracks attribute on the HTMLMediaElement.
-    mediaElement()->videoTracks()->scheduleChangeEvent();
+    mediaElement()->videoTracks().scheduleChangeEvent();
 }
 
 void VideoTrack::setLanguage(const AtomicString& language)
@@ -217,8 +217,7 @@ void VideoTrack::setLanguage(const AtomicString& language)
 
     // 4. Queue a task to fire a simple event named change at the VideoTrackList object referenced by
     // the videoTracks attribute on the HTMLMediaElement.
-    if (mediaElement()->videoTracks())
-        mediaElement()->videoTracks()->scheduleChangeEvent();
+    mediaElement()->videoTracks().scheduleChangeEvent();
 }
 #endif
 

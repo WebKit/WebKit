@@ -93,12 +93,10 @@ private:
     RefPtr<AudioTrackPrivate> m_private;
 };
 
-inline AudioTrack* toAudioTrack(TrackBase* track)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(track->type() == TrackBase::AudioTrack);
-    return static_cast<AudioTrack*>(track);
-}
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioTrack)
+    static bool isType(const WebCore::TrackBase& track) { return track.type() == WebCore::TrackBase::AudioTrack; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -40,7 +40,7 @@ namespace WebCore {
 TrackBase* toTrack(JSValue value)
 {
     if (!value.isObject())
-        return 0;
+        return nullptr;
 
     JSObject* object = asObject(value);
     if (object->inherits(JSTextTrack::info()))
@@ -50,7 +50,7 @@ TrackBase* toTrack(JSValue value)
     if (object->inherits(JSVideoTrack::info()))
         return &jsCast<JSVideoTrack*>(object)->wrapped();
 
-    return 0;
+    return nullptr;
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TrackBase& track)
@@ -62,17 +62,17 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TrackBase& t
         break;
         
     case TrackBase::AudioTrack:
-        if (auto* wrapper = getCachedWrapper(globalObject->world(), *toAudioTrack(&track)))
+        if (auto* wrapper = getCachedWrapper(globalObject->world(), downcast<AudioTrack>(track)))
             return wrapper;
         return CREATE_DOM_WRAPPER(globalObject, AudioTrack, track);
 
     case TrackBase::VideoTrack:
-        if (auto* wrapper = getCachedWrapper(globalObject->world(), *toVideoTrack(&track)))
+        if (auto* wrapper = getCachedWrapper(globalObject->world(), downcast<VideoTrack>(track)))
             return wrapper;
         return CREATE_DOM_WRAPPER(globalObject, VideoTrack, track);
 
     case TrackBase::TextTrack:
-        if (auto* wrapper = getCachedWrapper(globalObject->world(), *toTextTrack(&track)))
+        if (auto* wrapper = getCachedWrapper(globalObject->world(), downcast<TextTrack>(track)))
             return wrapper;
         return CREATE_DOM_WRAPPER(globalObject, TextTrack, track);
     }

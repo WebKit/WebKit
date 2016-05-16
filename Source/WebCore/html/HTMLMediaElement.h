@@ -280,18 +280,18 @@ public:
 #if ENABLE(VIDEO_TRACK)
     RefPtr<TextTrack> addTextTrack(const String& kind, const String& label, const String& language, ExceptionCode&);
 
-    AudioTrackList* audioTracks();
-    TextTrackList* textTracks();
-    VideoTrackList* videoTracks();
+    AudioTrackList& audioTracks();
+    TextTrackList& textTracks();
+    VideoTrackList& videoTracks();
 
     CueList currentlyActiveCues() const { return m_currentlyActiveCues; }
 
-    void addAudioTrack(PassRefPtr<AudioTrack>);
-    void addTextTrack(PassRefPtr<TextTrack>);
-    void addVideoTrack(PassRefPtr<VideoTrack>);
-    void removeAudioTrack(AudioTrack*);
-    void removeTextTrack(TextTrack*, bool scheduleEvent = true);
-    void removeVideoTrack(VideoTrack*);
+    void addAudioTrack(Ref<AudioTrack>&&);
+    void addTextTrack(Ref<TextTrack>&&);
+    void addVideoTrack(Ref<VideoTrack>&&);
+    void removeAudioTrack(AudioTrack&);
+    void removeTextTrack(TextTrack&, bool scheduleEvent = true);
+    void removeVideoTrack(VideoTrack&);
     void forgetResourceSpecificTracks();
     void closeCaptionTracksChanged();
     void notifyMediaPlayerOfTextTrackChanges();

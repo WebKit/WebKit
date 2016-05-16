@@ -47,8 +47,8 @@ public:
     virtual ~TrackListBase();
 
     virtual unsigned length() const;
-    virtual bool contains(TrackBase*) const;
-    virtual void remove(TrackBase*, bool scheduleEvent = true);
+    virtual bool contains(TrackBase&) const;
+    virtual void remove(TrackBase&, bool scheduleEvent = true);
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override = 0;
@@ -68,13 +68,13 @@ public:
 protected:
     TrackListBase(HTMLMediaElement*, ScriptExecutionContext*);
 
-    void scheduleAddTrackEvent(PassRefPtr<TrackBase>);
-    void scheduleRemoveTrackEvent(PassRefPtr<TrackBase>);
+    void scheduleAddTrackEvent(Ref<TrackBase>&&);
+    void scheduleRemoveTrackEvent(Ref<TrackBase>&&);
 
     Vector<RefPtr<TrackBase>> m_inbandTracks;
 
 private:
-    void scheduleTrackEvent(const AtomicString& eventName, PassRefPtr<TrackBase>);
+    void scheduleTrackEvent(const AtomicString& eventName, Ref<TrackBase>&&);
 
     // EventTarget
     void refEventTarget() final { ref(); }

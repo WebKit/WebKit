@@ -189,7 +189,7 @@ void InbandTextTrack::willRemove(TrackPrivateBase* trackPrivate)
     if (!mediaElement())
         return;
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    mediaElement()->removeTextTrack(this);
+    mediaElement()->removeTextTrack(*this);
 }
 
 void InbandTextTrack::updateKindFromPrivate()

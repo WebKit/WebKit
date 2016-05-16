@@ -173,12 +173,6 @@ private:
     bool m_hasBeenConfigured { false };
 };
 
-inline TextTrack* toTextTrack(TrackBase* track)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(track->type() == TrackBase::TextTrack);
-    return static_cast<TextTrack*>(track);
-}
-
 inline auto TextTrack::mode() const -> Mode
 {
     return m_mode;
@@ -214,5 +208,9 @@ inline void TextTrack::setKindForBindings(Kind kind)
 
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextTrack)
+    static bool isType(const WebCore::TrackBase& track) { return track.type() == WebCore::TrackBase::TextTrack; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

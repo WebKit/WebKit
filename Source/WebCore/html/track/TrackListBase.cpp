@@ -58,33 +58,33 @@ unsigned TrackListBase::length() const
     return m_inbandTracks.size();
 }
 
-void TrackListBase::remove(TrackBase* track, bool scheduleEvent)
+void TrackListBase::remove(TrackBase& track, bool scheduleEvent)
 {
-    size_t index = m_inbandTracks.find(track);
+    size_t index = m_inbandTracks.find(&track);
     ASSERT(index != notFound);
 
-    ASSERT(track->mediaElement() == m_element);
-    track->setMediaElement(0);
+    ASSERT(track.mediaElement() == m_element);
+    track.setMediaElement(nullptr);
 
-    RefPtr<TrackBase> trackRef = m_inbandTracks[index];
+    Ref<TrackBase> trackRef = *m_inbandTracks[index];
 
     m_inbandTracks.remove(index);
 
     if (scheduleEvent)
-        scheduleRemoveTrackEvent(trackRef.release());
+        scheduleRemoveTrackEvent(WTFMove(trackRef));
 }
 
-bool TrackListBase::contains(TrackBase* track) const
+bool TrackListBase::contains(TrackBase& track) const
 {
-    return m_inbandTracks.find(track) != notFound;
+    return m_inbandTracks.find(&track) != notFound;
 }
 
-void TrackListBase::scheduleTrackEvent(const AtomicString& eventName, PassRefPtr<TrackBase> track)
+void TrackListBase::scheduleTrackEvent(const AtomicString& eventName, Ref<TrackBase>&& track)
 {
-    m_asyncEventQueue.enqueueEvent(TrackEvent::create(eventName, false, false, track));
+    m_asyncEventQueue.enqueueEvent(TrackEvent::create(eventName, false, false, WTFMove(track)));
 }
 
-void TrackListBase::scheduleAddTrackEvent(PassRefPtr<TrackBase> track)
+void TrackListBase::scheduleAddTrackEvent(Ref<TrackBase>&& track)
 {
     // 4.8.10.5 Loading the media resource
     // ...
@@ -104,10 +104,10 @@ void TrackListBase::scheduleAddTrackEvent(PassRefPtr<TrackBase> track)
     // bubble and is not cancelable, and that uses the TrackEvent interface, with
     // the track attribute initialized to the text track's TextTrack object, at
     // the media element's textTracks attribute's TextTrackList object.
-    scheduleTrackEvent(eventNames().addtrackEvent, track);
+    scheduleTrackEvent(eventNames().addtrackEvent, WTFMove(track));
 }
 
-void TrackListBase::scheduleRemoveTrackEvent(PassRefPtr<TrackBase> track)
+void TrackListBase::scheduleRemoveTrackEvent(Ref<TrackBase>&& track)
 {
     // 4.8.10.6 Offsets into the media resource
     // If at any time the user agent learns that an audio or video track has
@@ -131,7 +131,7 @@ void TrackListBase::scheduleRemoveTrackEvent(PassRefPtr<TrackBase> track)
     // interface, with the track attribute initialized to the text track's
     // TextTrack object, at the media element's textTracks attribute's
     // TextTrackList object.
-    scheduleTrackEvent(eventNames().removetrackEvent, track);
+    scheduleTrackEvent(eventNames().removetrackEvent, WTFMove(track));
 }
 
 void TrackListBase::scheduleChangeEvent()

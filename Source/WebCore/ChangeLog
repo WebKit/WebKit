@@ -1,3 +1,102 @@
+2016-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Modernize Track classes' code
+        https://bugs.webkit.org/show_bug.cgi?id=157735
+
+        Reviewed by Eric Carlson.
+
+        Modernize Track classes' code a bit.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::removeSourceBuffer):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toTrack):
+        (WebCore::toJS):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::audioTrackEnabledChanged):
+        (WebCore::HTMLMediaElement::textTrackModeChanged):
+        (WebCore::HTMLMediaElement::videoTrackSelectedChanged):
+        (WebCore::HTMLMediaElement::textTrackRemoveCues):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTextTrack):
+        (WebCore::HTMLMediaElement::addAudioTrack):
+        (WebCore::HTMLMediaElement::addTextTrack):
+        (WebCore::HTMLMediaElement::addVideoTrack):
+        (WebCore::HTMLMediaElement::removeAudioTrack):
+        (WebCore::HTMLMediaElement::removeTextTrack):
+        (WebCore::HTMLMediaElement::removeVideoTrack):
+        (WebCore::HTMLMediaElement::forgetResourceSpecificTracks):
+        (WebCore::HTMLMediaElement::audioTracks):
+        (WebCore::HTMLMediaElement::textTracks):
+        (WebCore::HTMLMediaElement::videoTracks):
+        (WebCore::HTMLMediaElement::didAddTextTrack):
+        (WebCore::HTMLMediaElement::didRemoveTextTrack):
+        (WebCore::HTMLMediaElement::setSelectedTextTrack):
+        (WebCore::HTMLMediaElement::textTrackAddCues): Deleted.
+        (WebCore::HTMLMediaElement::closeCaptionTracksChanged): Deleted.
+        * html/HTMLMediaElement.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu):
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::~AudioTrack):
+        (WebCore::AudioTrack::setPrivate):
+        (WebCore::AudioTrack::isValidKind):
+        (WebCore::AudioTrack::willRemove):
+        (WebCore::AudioTrack::setEnabled): Deleted.
+        (WebCore::AudioTrack::updateKindFromPrivate): Deleted.
+        * html/track/AudioTrack.h:
+        (isType):
+        * html/track/AudioTrackList.cpp:
+        (AudioTrackList::append):
+        (AudioTrackList::item):
+        (AudioTrackList::getTrackById):
+        (AudioTrackList::eventTargetInterface): Deleted.
+        * html/track/AudioTrackList.h:
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::willRemove):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::setKind):
+        (WebCore::TextTrack::trackIndex):
+        (WebCore::TextTrack::trackIndexRelativeToRenderedTracks):
+        (WebCore::TextTrack::setLanguage):
+        * html/track/TextTrack.h:
+        (isType):
+        * html/track/TextTrackList.cpp:
+        (TextTrackList::getTrackIndex):
+        (TextTrackList::getTrackIndexRelativeToRenderedTracks):
+        (TextTrackList::item):
+        (TextTrackList::getTrackById):
+        (TextTrackList::invalidateTrackIndexesAfterTrack):
+        (TextTrackList::append):
+        (TextTrackList::remove):
+        (TextTrackList::contains):
+        * html/track/TextTrackList.h:
+        * html/track/TrackBase.h:
+        * html/track/TrackEvent.cpp:
+        (WebCore::TrackEvent::TrackEvent):
+        * html/track/TrackEvent.h:
+        * html/track/TrackListBase.cpp:
+        (TrackListBase::remove):
+        (TrackListBase::contains):
+        (TrackListBase::scheduleTrackEvent):
+        (TrackListBase::scheduleAddTrackEvent):
+        (TrackListBase::scheduleRemoveTrackEvent):
+        * html/track/TrackListBase.h:
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::willRemove):
+        (WebCore::VideoTrack::setKind):
+        (WebCore::VideoTrack::setLanguage):
+        * html/track/VideoTrack.h:
+        (isType):
+        * html/track/VideoTrackList.cpp:
+        (VideoTrackList::append):
+        (VideoTrackList::item):
+        (VideoTrackList::getTrackById):
+        (VideoTrackList::selectedIndex):
+        * html/track/VideoTrackList.h:
+
 2016-05-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         CSSParser.cpp triggers -Wunused-parameter

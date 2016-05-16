@@ -90,7 +90,7 @@ AudioTrack::AudioTrack(AudioTrackClient* client, PassRefPtr<AudioTrackPrivate> t
 
 AudioTrack::~AudioTrack()
 {
-    m_private->setClient(0);
+    m_private->setClient(nullptr);
 }
 
 void AudioTrack::setPrivate(PassRefPtr<AudioTrackPrivate> trackPrivate)
@@ -101,7 +101,7 @@ void AudioTrack::setPrivate(PassRefPtr<AudioTrackPrivate> trackPrivate)
     if (m_private == trackPrivate)
         return;
 
-    m_private->setClient(0);
+    m_private->setClient(nullptr);
     m_private = trackPrivate;
     m_private->setClient(this);
 
@@ -111,20 +111,12 @@ void AudioTrack::setPrivate(PassRefPtr<AudioTrackPrivate> trackPrivate)
 
 bool AudioTrack::isValidKind(const AtomicString& value) const
 {
-    if (value == alternativeKeyword())
-        return true;
-    if (value == descriptionKeyword())
-        return true;
-    if (value == mainKeyword())
-        return true;
-    if (value == mainDescKeyword())
-        return true;
-    if (value == translationKeyword())
-        return true;
-    if (value == commentaryKeyword())
-        return true;
-
-    return false;
+    return value == alternativeKeyword()
+        || value == descriptionKeyword()
+        || value == mainKeyword()
+        || value == mainDescKeyword()
+        || value == translationKeyword()
+        || value == commentaryKeyword();
 }
 
 void AudioTrack::setEnabled(const bool enabled)
@@ -175,7 +167,7 @@ void AudioTrack::languageChanged(TrackPrivateBase* trackPrivate, const AtomicStr
 void AudioTrack::willRemove(TrackPrivateBase* trackPrivate)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    mediaElement()->removeAudioTrack(this);
+    mediaElement()->removeAudioTrack(*this);
 }
 
 void AudioTrack::updateKindFromPrivate()

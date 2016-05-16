@@ -51,56 +51,51 @@ unsigned TextTrackList::length() const
     return m_addTrackTracks.size() + m_elementTracks.size() + m_inbandTracks.size();
 }
 
-int TextTrackList::getTrackIndex(TextTrack* textTrack)
+int TextTrackList::getTrackIndex(TextTrack& textTrack)
 {
     if (is<LoadableTextTrack>(textTrack))
-        return downcast<LoadableTextTrack>(*textTrack).trackElementIndex();
+        return downcast<LoadableTextTrack>(textTrack).trackElementIndex();
 
-    if (textTrack->trackType() == TextTrack::AddTrack)
-        return m_elementTracks.size() + m_addTrackTracks.find(textTrack);
+    if (textTrack.trackType() == TextTrack::AddTrack)
+        return m_elementTracks.size() + m_addTrackTracks.find(&textTrack);
 
-    if (textTrack->trackType() == TextTrack::InBand)
-        return m_elementTracks.size() + m_addTrackTracks.size() + m_inbandTracks.find(textTrack);
+    if (textTrack.trackType() == TextTrack::InBand)
+        return m_elementTracks.size() + m_addTrackTracks.size() + m_inbandTracks.find(&textTrack);
 
     ASSERT_NOT_REACHED();
 
     return -1;
 }
 
-int TextTrackList::getTrackIndexRelativeToRenderedTracks(TextTrack *textTrack)
+int TextTrackList::getTrackIndexRelativeToRenderedTracks(TextTrack& textTrack)
 {
     // Calculate the "Let n be the number of text tracks whose text track mode is showing and that are in the media element's list of text tracks before track."
     int trackIndex = 0;
 
     for (auto& elementTrack : m_elementTracks) {
-        if (!toTextTrack(elementTrack.get())->isRendered())
+        if (!downcast<TextTrack>(*elementTrack).isRendered())
             continue;
-
-        if (elementTrack == textTrack)
+        if (elementTrack == &textTrack)
             return trackIndex;
         ++trackIndex;
     }
 
     for (auto& addTrack : m_addTrackTracks) {
-        if (!toTextTrack(addTrack.get())->isRendered())
+        if (!downcast<TextTrack>(*addTrack).isRendered())
             continue;
-
-        if (addTrack == textTrack)
+        if (addTrack == &textTrack)
             return trackIndex;
         ++trackIndex;
     }
 
     for (auto& inbandTrack : m_inbandTracks) {
-        if (!toTextTrack(inbandTrack.get())->isRendered())
+        if (!downcast<TextTrack>(*inbandTrack).isRendered())
             continue;
-
-        if (inbandTrack == textTrack)
+        if (inbandTrack == &textTrack)
             return trackIndex;
         ++trackIndex;
     }
-
     ASSERT_NOT_REACHED();
-
     return -1;
 }
 
@@ -114,17 +109,17 @@ TextTrack* TextTrackList::item(unsigned index) const
     // resource), in the order defined by the media resource's format specification.
 
     if (index < m_elementTracks.size())
-        return toTextTrack(m_elementTracks[index].get());
+        return downcast<TextTrack>(m_elementTracks[index].get());
 
     index -= m_elementTracks.size();
     if (index < m_addTrackTracks.size())
-        return toTextTrack(m_addTrackTracks[index].get());
+        return downcast<TextTrack>(m_addTrackTracks[index].get());
 
     index -= m_addTrackTracks.size();
     if (index < m_inbandTracks.size())
-        return toTextTrack(m_inbandTracks[index].get());
+        return downcast<TextTrack>(m_inbandTracks[index].get());
 
-    return 0;
+    return nullptr;
 }
 
 TextTrack* TextTrackList::getTrackById(const AtomicString& id)
@@ -134,110 +129,122 @@ TextTrack* TextTrackList::getTrackById(const AtomicString& id)
     // TextTrackList object whose id IDL attribute would return a value equal
     // to the value of the id argument.
     for (unsigned i = 0; i < length(); ++i) {
-        TextTrack* track = item(i);
-        if (track->id() == id)
-            return track;
+        auto& track = *item(i);
+        if (track.id() == id)
+            return &track;
     }
 
     // When no tracks match the given argument, the method must return null.
     return nullptr;
 }
 
-void TextTrackList::invalidateTrackIndexesAfterTrack(TextTrack* track)
+void TextTrackList::invalidateTrackIndexesAfterTrack(TextTrack& track)
 {
-    Vector<RefPtr<TrackBase>>* tracks = 0;
+    Vector<RefPtr<TrackBase>>* tracks = nullptr;
 
-    if (track->trackType() == TextTrack::TrackElement) {
+    switch (track.trackType()) {
+    case TextTrack::TrackElement:
         tracks = &m_elementTracks;
         for (auto& addTrack : m_addTrackTracks)
-            toTextTrack(addTrack.get())->invalidateTrackIndex();
+            downcast<TextTrack>(addTrack.get())->invalidateTrackIndex();
         for (auto& inbandTrack : m_inbandTracks)
-            toTextTrack(inbandTrack.get())->invalidateTrackIndex();
-    } else if (track->trackType() == TextTrack::AddTrack) {
+            downcast<TextTrack>(inbandTrack.get())->invalidateTrackIndex();
+        break;
+    case TextTrack::AddTrack:
         tracks = &m_addTrackTracks;
         for (auto& inbandTrack : m_inbandTracks)
-            toTextTrack(inbandTrack.get())->invalidateTrackIndex();
-    } else if (track->trackType() == TextTrack::InBand)
+            downcast<TextTrack>(inbandTrack.get())->invalidateTrackIndex();
+        break;
+    case TextTrack::InBand:
         tracks = &m_inbandTracks;
-    else
+        break;
+    default:
         ASSERT_NOT_REACHED();
+    }
 
-    size_t index = tracks->find(track);
+    size_t index = tracks->find(&track);
     if (index == notFound)
         return;
 
     for (size_t i = index; i < tracks->size(); ++i)
-        toTextTrack(tracks->at(index).get())->invalidateTrackIndex();
+        downcast<TextTrack>(*tracks->at(index)).invalidateTrackIndex();
 }
 
-void TextTrackList::append(PassRefPtr<TextTrack> prpTrack)
+void TextTrackList::append(Ref<TextTrack>&& track)
 {
-    RefPtr<TextTrack> track = prpTrack;
-
     if (track->trackType() == TextTrack::AddTrack)
-        m_addTrackTracks.append(track);
-    else if (is<LoadableTextTrack>(*track)) {
+        m_addTrackTracks.append(track.ptr());
+    else if (is<LoadableTextTrack>(track.get())) {
         // Insert tracks added for <track> element in tree order.
-        size_t index = downcast<LoadableTextTrack>(*track).trackElementIndex();
-        m_elementTracks.insert(index, track);
+        size_t index = downcast<LoadableTextTrack>(track.get()).trackElementIndex();
+        m_elementTracks.insert(index, track.ptr());
     } else if (track->trackType() == TextTrack::InBand) {
         // Insert tracks added for in-band in the media file order.
-        size_t index = static_cast<InbandTextTrack*>(track.get())->inbandTrackIndex();
-        m_inbandTracks.insert(index, track);
+        size_t index = downcast<InbandTextTrack>(track.get()).inbandTrackIndex();
+        m_inbandTracks.insert(index, track.ptr());
     } else
         ASSERT_NOT_REACHED();
 
-    invalidateTrackIndexesAfterTrack(track.get());
+    invalidateTrackIndexesAfterTrack(track);
 
     ASSERT(!track->mediaElement() || track->mediaElement() == mediaElement());
     track->setMediaElement(mediaElement());
 
-    scheduleAddTrackEvent(track.release());
+    scheduleAddTrackEvent(WTFMove(track));
 }
 
-void TextTrackList::remove(TrackBase* track, bool scheduleEvent)
+void TextTrackList::remove(TrackBase& track, bool scheduleEvent)
 {
-    TextTrack* textTrack = toTextTrack(track);
-    Vector<RefPtr<TrackBase>>* tracks = 0;
-    if (textTrack->trackType() == TextTrack::TrackElement)
+    auto& textTrack = downcast<TextTrack>(track);
+    Vector<RefPtr<TrackBase>>* tracks = nullptr;
+    switch (textTrack.trackType()) {
+    case TextTrack::TrackElement:
         tracks = &m_elementTracks;
-    else if (textTrack->trackType() == TextTrack::AddTrack)
+        break;
+    case TextTrack::AddTrack:
         tracks = &m_addTrackTracks;
-    else if (textTrack->trackType() == TextTrack::InBand)
+        break;
+    case TextTrack::InBand:
         tracks = &m_inbandTracks;
-    else
+        break;
+    default:
         ASSERT_NOT_REACHED();
+    }
 
-    size_t index = tracks->find(track);
+    size_t index = tracks->find(&track);
     if (index == notFound)
         return;
 
     invalidateTrackIndexesAfterTrack(textTrack);
 
-    ASSERT(!track->mediaElement() || track->mediaElement() == element());
-    track->setMediaElement(0);
+    ASSERT(!track.mediaElement() || track.mediaElement() == element());
+    track.setMediaElement(nullptr);
 
-    RefPtr<TrackBase> trackRef = (*tracks)[index];
+    Ref<TrackBase> trackRef = *(*tracks)[index];
     tracks->remove(index);
 
     if (scheduleEvent)
-        scheduleRemoveTrackEvent(trackRef.release());
+        scheduleRemoveTrackEvent(WTFMove(trackRef));
 }
 
-bool TextTrackList::contains(TrackBase* track) const
+bool TextTrackList::contains(TrackBase& track) const
 {
-    const Vector<RefPtr<TrackBase>>* tracks = 0;
-    TextTrack::TextTrackType type = toTextTrack(track)->trackType();
-    if (type == TextTrack::TrackElement)
+    const Vector<RefPtr<TrackBase>>* tracks = nullptr;
+    switch (downcast<TextTrack>(track).trackType()) {
+    case TextTrack::TrackElement:
         tracks = &m_elementTracks;
-    else if (type == TextTrack::AddTrack)
+        break;
+    case TextTrack::AddTrack:
         tracks = &m_addTrackTracks;
-    else if (type == TextTrack::InBand)
+        break;
+    case TextTrack::InBand:
         tracks = &m_inbandTracks;
-    else
+        break;
+    default:
         ASSERT_NOT_REACHED();
+    }
     
-    return tracks->find(track) != notFound;
+    return tracks->find(&track) != notFound;
 }
 
 EventTargetInterface TextTrackList::eventTargetInterface() const

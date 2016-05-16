@@ -43,43 +43,40 @@ AudioTrackList::~AudioTrackList()
 {
 }
 
-void AudioTrackList::append(PassRefPtr<AudioTrack> prpTrack)
+void AudioTrackList::append(Ref<AudioTrack>&& track)
 {
-    RefPtr<AudioTrack> track = prpTrack;
-
     // Insert tracks in the media file order.
     size_t index = track->inbandTrackIndex();
     size_t insertionIndex;
     for (insertionIndex = 0; insertionIndex < m_inbandTracks.size(); ++insertionIndex) {
-        AudioTrack* otherTrack = static_cast<AudioTrack*>(m_inbandTracks[insertionIndex].get());
-        if (otherTrack->inbandTrackIndex() > index)
+        auto& otherTrack = downcast<AudioTrack>(*m_inbandTracks[insertionIndex]);
+        if (otherTrack.inbandTrackIndex() > index)
             break;
     }
-    m_inbandTracks.insert(insertionIndex, track);
+    m_inbandTracks.insert(insertionIndex, track.ptr());
 
 
     ASSERT(!track->mediaElement() || track->mediaElement() == mediaElement());
     track->setMediaElement(mediaElement());
 
-    scheduleAddTrackEvent(track.release());
+    scheduleAddTrackEvent(WTFMove(track));
 }
 
 AudioTrack* AudioTrackList::item(unsigned index) const
 {
     if (index < m_inbandTracks.size())
-        return toAudioTrack(m_inbandTracks[index].get());
-
-    return 0;
+        return downcast<AudioTrack>(m_inbandTracks[index].get());
+    return nullptr;
 }
 
 AudioTrack* AudioTrackList::getTrackById(const AtomicString& id) const
 {
     for (auto& inbandTrack : m_inbandTracks) {
-        AudioTrack* track = toAudioTrack(inbandTrack.get());
-        if (track->id() == id)
-            return track;
+        auto& track = downcast<AudioTrack>(*inbandTrack);
+        if (track.id() == id)
+            return &track;
     }
-    return 0;
+    return nullptr;
 }
 
 EventTargetInterface AudioTrackList::eventTargetInterface() const

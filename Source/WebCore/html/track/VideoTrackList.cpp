@@ -43,54 +43,50 @@ VideoTrackList::~VideoTrackList()
 {
 }
 
-void VideoTrackList::append(PassRefPtr<VideoTrack> prpTrack)
+void VideoTrackList::append(Ref<VideoTrack>&& track)
 {
-    RefPtr<VideoTrack> track = prpTrack;
-
     // Insert tracks in the media file order.
     size_t index = track->inbandTrackIndex();
     size_t insertionIndex;
     for (insertionIndex = 0; insertionIndex < m_inbandTracks.size(); ++insertionIndex) {
-        VideoTrack* otherTrack = static_cast<VideoTrack*>(m_inbandTracks[insertionIndex].get());
-        if (otherTrack->inbandTrackIndex() > index)
+        auto& otherTrack = downcast<VideoTrack>(*m_inbandTracks[insertionIndex]);
+        if (otherTrack.inbandTrackIndex() > index)
             break;
     }
-    m_inbandTracks.insert(insertionIndex, track);
+    m_inbandTracks.insert(insertionIndex, track.ptr());
 
     ASSERT(!track->mediaElement() || track->mediaElement() == mediaElement());
     track->setMediaElement(mediaElement());
 
-    scheduleAddTrackEvent(track.release());
+    scheduleAddTrackEvent(WTFMove(track));
 }
 
 VideoTrack* VideoTrackList::item(unsigned index) const
 {
     if (index < m_inbandTracks.size())
-        return toVideoTrack(m_inbandTracks[index].get());
-
-    return 0;
+        return downcast<VideoTrack>(m_inbandTracks[index].get());
+    return nullptr;
 }
 
 VideoTrack* VideoTrackList::getTrackById(const AtomicString& id) const
 {
     for (auto& inbandTracks : m_inbandTracks) {
-        VideoTrack* track = toVideoTrack(inbandTracks.get());
-        if (track->id() == id)
-            return track;
+        auto& track = downcast<VideoTrack>(*inbandTracks);
+        if (track.id() == id)
+            return &track;
     }
-    return 0;
+    return nullptr;
 }
 
-long VideoTrackList::selectedIndex() const
+int VideoTrackList::selectedIndex() const
 {
     // 4.8.10.10.1 AudioTrackList and VideoTrackList objects
     // The VideoTrackList.selectedIndex attribute must return the index of the
     // currently selected track, if any. If the VideoTrackList object does not
     // currently represent any tracks, or if none of the tracks are selected,
     // it must instead return −1.
-    for (size_t i = 0; i < length(); ++i) {
-        VideoTrack* track = toVideoTrack(m_inbandTracks[i].get());
-        if (track->selected())
+    for (unsigned i = 0; i < length(); ++i) {
+        if (downcast<VideoTrack>(*m_inbandTracks[i]).selected())
             return i;
     }
     return -1;

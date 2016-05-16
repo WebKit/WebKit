@@ -102,12 +102,10 @@ private:
     RefPtr<VideoTrackPrivate> m_private;
 };
 
-inline VideoTrack* toVideoTrack(TrackBase* track)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(track->type() == TrackBase::VideoTrack);
-    return static_cast<VideoTrack*>(track);
-}
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoTrack)
+    static bool isType(const WebCore::TrackBase& track) { return track.type() == WebCore::TrackBase::VideoTrack; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -46,7 +46,7 @@ public:
 
     AudioTrack* item(unsigned index) const;
     AudioTrack* lastItem() const { return item(length() - 1); }
-    void append(PassRefPtr<AudioTrack>);
+    void append(Ref<AudioTrack>&&);
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override;

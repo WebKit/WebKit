@@ -193,7 +193,7 @@ void TextTrack::setKind(Kind newKind)
     // 4. Queue a task to fire a simple event named change at the TextTrackList object referenced by
     // the textTracks attribute on the HTMLMediaElement.
     if (mediaElement())
-        mediaElement()->textTracks()->scheduleChangeEvent();
+        mediaElement()->textTracks().scheduleChangeEvent();
 #endif
 
     if (m_client && oldKind != m_kind)
@@ -454,7 +454,7 @@ int TextTrack::trackIndex()
     ASSERT(m_mediaElement);
 
     if (m_trackIndex == invalidTrackIndex)
-        m_trackIndex = m_mediaElement->textTracks()->getTrackIndex(this);
+        m_trackIndex = m_mediaElement->textTracks().getTrackIndex(*this);
 
     return m_trackIndex;
 }
@@ -483,7 +483,7 @@ int TextTrack::trackIndexRelativeToRenderedTracks()
     ASSERT(m_mediaElement);
     
     if (m_renderedTrackIndex == invalidTrackIndex)
-        m_renderedTrackIndex = m_mediaElement->textTracks()->getTrackIndexRelativeToRenderedTracks(this);
+        m_renderedTrackIndex = m_mediaElement->textTracks().getTrackIndexRelativeToRenderedTracks(*this);
     
     return m_renderedTrackIndex;
 }
@@ -581,7 +581,7 @@ void TextTrack::setLanguage(const AtomicString& language)
     // 4. Queue a task to fire a simple event named change at the TextTrackList object referenced by
     // the textTracks attribute on the HTMLMediaElement.
     if (mediaElement())
-        mediaElement()->textTracks()->scheduleChangeEvent();
+        mediaElement()->textTracks().scheduleChangeEvent();
 }
 
 #endif

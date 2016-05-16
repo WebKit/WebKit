@@ -29,6 +29,7 @@
 
 #include "EventTarget.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 

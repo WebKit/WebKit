@@ -734,8 +734,7 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
     if (!mediaElement)
         return;
 
-    TextTrackList* trackList = mediaElement->textTracks();
-    if (!trackList || !trackList->length())
+    if (!mediaElement->textTracks().length())
         return;
 
     rebuildTrackListMenu();
@@ -796,14 +795,14 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     if (!mediaElement)
         return;
 
-    TextTrackList* trackList = mediaElement->textTracks();
-    if (!trackList || !trackList->length())
+    TextTrackList& trackList = mediaElement->textTracks();
+    if (!trackList.length())
         return;
 
     if (!document().page())
         return;
     auto& captionPreferences = document().page()->group().captionPreferences();
-    Vector<RefPtr<TextTrack>> tracksForMenu = captionPreferences.sortedTrackListForMenu(trackList);
+    Vector<RefPtr<TextTrack>> tracksForMenu = captionPreferences.sortedTrackListForMenu(&trackList);
 
     auto captionsHeader = document().createElement(h3Tag, ASSERT_NO_EXCEPTION);
     captionsHeader->appendChild(document().createTextNode(textTrackSubtitlesText()));

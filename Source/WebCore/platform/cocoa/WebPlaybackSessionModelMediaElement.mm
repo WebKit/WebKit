@@ -259,15 +259,12 @@ void WebPlaybackSessionModelMediaElement::updateLegibleOptions()
     if (!m_mediaElement)
         return;
 
-    AudioTrackList* audioTrackList = m_mediaElement->audioTracks();
-    TextTrackList* trackList = m_mediaElement->textTracks();
-
-    if ((!trackList && !audioTrackList) || !m_mediaElement->document().page())
+    if (!m_mediaElement->document().page())
         return;
 
     auto& captionPreferences = m_mediaElement->document().page()->group().captionPreferences();
-    m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(trackList);
-    m_audioTracksForMenu = captionPreferences.sortedTrackListForMenu(audioTrackList);
+    m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(&m_mediaElement->textTracks());
+    m_audioTracksForMenu = captionPreferences.sortedTrackListForMenu(&m_mediaElement->audioTracks());
 
     m_playbackSessionInterface->setAudioMediaSelectionOptions(audioMediaSelectionOptions(), audioMediaSelectedIndex());
     m_playbackSessionInterface->setLegibleMediaSelectionOptions(legibleMediaSelectionOptions(), legibleMediaSelectedIndex());

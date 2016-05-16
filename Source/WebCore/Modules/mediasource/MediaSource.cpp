@@ -584,14 +584,14 @@ void MediaSource::removeSourceBuffer(SourceBuffer& buffer, ExceptionCode& ec)
 
         // 5.3 For each AudioTrack object in the SourceBuffer audioTracks list, run the following steps:
         while (audioTracks->length()) {
-            AudioTrack* track = audioTracks->lastItem();
+            auto& track = *audioTracks->lastItem();
 
             // 5.3.1 Set the sourceBuffer attribute on the AudioTrack object to null.
-            track->setSourceBuffer(nullptr);
+            track.setSourceBuffer(nullptr);
 
             // 5.3.2 If the enabled attribute on the AudioTrack object is true, then set the removed enabled
             // audio track flag to true.
-            if (track->enabled())
+            if (track.enabled())
                 removedEnabledAudioTrack = true;
 
             // 5.3.3 Remove the AudioTrack object from the HTMLMediaElement audioTracks list.
@@ -609,7 +609,7 @@ void MediaSource::removeSourceBuffer(SourceBuffer& buffer, ExceptionCode& ec)
         // 5.4 If the removed enabled audio track flag equals true, then queue a task to fire a simple event
         // named change at the HTMLMediaElement audioTracks list.
         if (removedEnabledAudioTrack)
-            mediaElement()->audioTracks()->scheduleChangeEvent();
+            mediaElement()->audioTracks().scheduleChangeEvent();
     }
 
     // 6. Let SourceBuffer videoTracks list equal the VideoTrackList object returned by sourceBuffer.videoTracks.
@@ -624,14 +624,14 @@ void MediaSource::removeSourceBuffer(SourceBuffer& buffer, ExceptionCode& ec)
 
         // 7.3 For each VideoTrack object in the SourceBuffer videoTracks list, run the following steps:
         while (videoTracks->length()) {
-            VideoTrack* track = videoTracks->lastItem();
+            auto& track = *videoTracks->lastItem();
 
             // 7.3.1 Set the sourceBuffer attribute on the VideoTrack object to null.
-            track->setSourceBuffer(nullptr);
+            track.setSourceBuffer(nullptr);
 
             // 7.3.2 If the selected attribute on the VideoTrack object is true, then set the removed selected
             // video track flag to true.
-            if (track->selected())
+            if (track.selected())
                 removedSelectedVideoTrack = true;
 
             // 7.3.3 Remove the VideoTrack object from the HTMLMediaElement videoTracks list.
@@ -649,7 +649,7 @@ void MediaSource::removeSourceBuffer(SourceBuffer& buffer, ExceptionCode& ec)
         // 7.4 If the removed selected video track flag equals true, then queue a task to fire a simple event
         // named change at the HTMLMediaElement videoTracks list.
         if (removedSelectedVideoTrack)
-            mediaElement()->videoTracks()->scheduleChangeEvent();
+            mediaElement()->videoTracks().scheduleChangeEvent();
     }
 
     // 8. Let SourceBuffer textTracks list equal the TextTrackList object returned by sourceBuffer.textTracks.
@@ -664,14 +664,14 @@ void MediaSource::removeSourceBuffer(SourceBuffer& buffer, ExceptionCode& ec)
 
         // 9.3 For each TextTrack object in the SourceBuffer textTracks list, run the following steps:
         while (textTracks->length()) {
-            TextTrack* track = textTracks->lastItem();
+            auto& track = *textTracks->lastItem();
 
             // 9.3.1 Set the sourceBuffer attribute on the TextTrack object to null.
-            track->setSourceBuffer(nullptr);
+            track.setSourceBuffer(nullptr);
 
             // 9.3.2 If the mode attribute on the TextTrack object is set to "showing" or "hidden", then
             // set the removed enabled text track flag to true.
-            if (track->mode() == TextTrack::Mode::Showing || track->mode() == TextTrack::Mode::Hidden)
+            if (track.mode() == TextTrack::Mode::Showing || track.mode() == TextTrack::Mode::Hidden)
                 removedEnabledTextTrack = true;
 
             // 9.3.3 Remove the TextTrack object from the HTMLMediaElement textTracks list.
@@ -689,7 +689,7 @@ void MediaSource::removeSourceBuffer(SourceBuffer& buffer, ExceptionCode& ec)
         // 9.4 If the removed enabled text track flag equals true, then queue a task to fire a simple event
         // named change at the HTMLMediaElement textTracks list.
         if (removedEnabledTextTrack)
-            mediaElement()->textTracks()->scheduleChangeEvent();
+            mediaElement()->textTracks().scheduleChangeEvent();
     }
     
     
