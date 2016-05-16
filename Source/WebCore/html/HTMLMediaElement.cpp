@@ -6547,6 +6547,11 @@ void HTMLMediaElement::setMediaControlsDependOnPageScaleFactor(bool dependsOnPag
 
 void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
 {
+    // Don't execute script if the controls script hasn't been injected yet, or we have
+    // stopped/suspended the object.
+    if (!m_mediaControlsHost || document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped())
+        return;
+
     DOMWrapperWorld& world = ensureIsolatedWorld();
     ScriptController& scriptController = document().frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
