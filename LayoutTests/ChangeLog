@@ -1,5 +1,11 @@
 2016-05-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] More Unreviewed test expectations gardening
+
+        * platform/gtk/TestExpectations:
+
+2016-05-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Unreviewed test expectations gardening
 
         * TestExpectations:
