@@ -1530,7 +1530,7 @@ Controller.prototype = {
 
     showShowControlsButton: function (shouldShow) {
         this.showControlsButton.hidden = !shouldShow;
-        if (shouldShow) 
+        if (shouldShow && this.shouldHaveControls())
             this.showControlsButton.focus();
     },
 

@@ -1,3 +1,24 @@
+2016-05-16  Aaron Chu  <aaron_chu@apple.com>
+
+        REGRESSION (r200441): Yahoo sports, finance and news pages automatically scroll
+        https://bugs.webkit.org/show_bug.cgi?id=157692
+        <rdar://problem/26231897>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-controls-to-not-scroll-page-on-load.html
+
+        This bug was due to the fact that showControls button was shown and focused
+        when the video controls are hidden. The showControls button is used by FKA or 
+        screen readers to make the video controls reappear after they have faded out. 
+        When the showControls button is shown, a focus() is called on it to ensure that
+        the screen reader is focusing on the button instead of <body> or the video chrome.
+        To fix this bug, I added the shouldHaveControls() check before calling focus() on
+        the showControls button.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.showShowControlsButton):
+
 2016-05-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r200924. Caused js/regress/string-replace-generic.html to fail.

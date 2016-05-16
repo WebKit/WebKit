@@ -1,3 +1,17 @@
+2016-05-16  Aaron Chu  <aaron_chu@apple.com>
+
+        REGRESSION (r200441): Yahoo sports, finance and news pages automatically scroll
+        https://bugs.webkit.org/show_bug.cgi?id=157692
+        <rdar://problem/26231897>
+
+        Reviewed by Eric Carlson.
+
+        Added Layout test to make sure that the page does not scroll automatically because
+        of the focus() on showControlsButton in the video shadow DOM.
+
+        * media/video-controls-to-not-scroll-page-on-load-expected.txt: Added.
+        * media/video-controls-to-not-scroll-page-on-load.html: Added.
+
 2016-05-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r200924. Caused js/regress/string-replace-generic.html to fail.

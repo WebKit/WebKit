@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body onload="testScroll()">
+<div style="width: 256px; height: 2096px; background-color: blue"></div> <!-- Dummy content to help make the page scrollable vertically. -->
+<video src="non-existent.mov" style="width: 256px; height: 256px; background-color: yellow">
+    <track src="non-existent.vtt" kind="captions"></track>
+</video>
+
+<div id="result">FAILED: Test did not run.</div>
+
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var result = document.getElementById("result");
+
+result.innerHTML = "";
+
+function testScroll () {
+	result.innerHTML += (document.body.scrollTop <= 0)? `PASS`: `FAILED: ${document.body.scrollTop} > 0, the page scrolled automatically.`;
+
+	testRunner.notifyDone();
+}
+</script>
+</body>
+</html>
