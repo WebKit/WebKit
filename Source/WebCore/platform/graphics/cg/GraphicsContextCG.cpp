@@ -34,12 +34,15 @@
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "ImageBuffer.h"
 #include "ImageOrientation.h"
+#include "Logging.h"
 #include "Path.h"
 #include "Pattern.h"
 #include "ShadowBlur.h"
 #include "SubimageCacheWithTimer.h"
+#include "TextStream.h"
 #include "Timer.h"
 #include "URL.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 
@@ -172,6 +175,9 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
         return;
     }
 
+#if !LOG_DISABLED
+    double startTime = currentTime();
+#endif
     RetainPtr<CGImageRef> subImage(image);
 
     float currHeight = orientation.usesWidthAsHeight() ? CGImageGetWidth(subImage.get()) : CGImageGetHeight(subImage.get());
@@ -272,6 +278,8 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
         CGContextSetShouldAntialias(context, wasAntialiased);
 #endif
     }
+
+    LOG_WITH_STREAM(Images, stream << "GraphicsContext::drawNativeImage " << image.get() << " size " << imageSize << " into " << destRect << " took " << 1000.0 * (currentTime() - startTime) << "ms");
 }
 
 static void drawPatternCallback(void* info, CGContextRef context)

@@ -59,6 +59,7 @@ namespace WebCore {
     M(Gamepad) \
     M(History) \
     M(IconDatabase) \
+    M(Images) \
     M(IndexedDB) \
     M(Layout) \
     M(Loading) \

@@ -31,6 +31,7 @@
 #include "ImageOrientation.h"
 #include "IntPoint.h"
 #include "IntSize.h"
+#include "Logging.h"
 #include "SharedBuffer.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -339,6 +340,8 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel subsampl
 
 NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
+    LOG(Images, "ImageDecoder %p createFrameImageAtIndex %lu", this, index);
+
     RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(m_nativeDecoder.get(), index, imageSourceOptions(subsamplingLevel).get()));
     
 #if PLATFORM(IOS)

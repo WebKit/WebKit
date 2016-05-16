@@ -32,6 +32,7 @@
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
+#include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "TextStream.h"
 #include "Timer.h"
@@ -158,8 +159,10 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
     for (size_t i = 0; i < m_frames.size(); ++i)
         allFrameBytes += m_frames[i].m_frameBytes;
 
-    if (allFrameBytes > largeAnimationCutoff)
+    if (allFrameBytes > largeAnimationCutoff) {
+        LOG(Images, "BitmapImage %p destroyDecodedDataIfNecessary destryingData: allFrameBytes=%u cutoff=%u", this, allFrameBytes, largeAnimationCutoff);
         destroyDecodedData(destroyAll);
+    }
 }
 
 void BitmapImage::destroyMetadataAndNotify(unsigned frameBytesCleared, ClearedSource clearedSource)
@@ -205,6 +208,8 @@ void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, Im
 
     m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
     m_frames[index].m_frameBytes = m_source.frameBytesAtIndex(index, subsamplingLevel);
+
+    LOG(Images, "BitmapImage %p cacheFrame %lu (%s%u bytes, complete %d)", this, index, frameCaching == CacheMetadataOnly ? "metadata only, " : "", m_frames[index].m_frameBytes, m_frames[index].m_isComplete);
 
     if (m_frames[index].m_image) {
         int deltaBytes = safeCast<int>(m_frames[index].m_frameBytes);
@@ -549,6 +554,11 @@ void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
     // See if we've also passed the time for frames after that to start, in
     // case we need to skip some frames entirely. Remember not to advance
     // to an incomplete frame.
+
+#if !LOG_DISABLED
+    size_t startCatchupFrameIndex = nextFrame;
+#endif
+    
     for (size_t frameAfterNext = (nextFrame + 1) % frameCount(); frameIsCompleteAtIndex(frameAfterNext); frameAfterNext = (nextFrame + 1) % frameCount()) {
         // Should we skip the next frame?
         double frameAfterNextStartTime = m_desiredFrameStartTime + frameDurationAtIndex(nextFrame);
@@ -560,11 +570,14 @@ void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
         if (!internalAdvanceAnimation(SkippingFramesToCatchUp)) {
             m_animationFinishedWhenCatchingUp = true;
             startTimer(0);
+            LOG(Images, "BitmapImage %p startAnimation catching up from frame %lu, ended", this, startCatchupFrameIndex);
             return;
         }
         m_desiredFrameStartTime = frameAfterNextStartTime;
         nextFrame = frameAfterNext;
     }
+
+    LOG(Images, "BitmapImage %p startAnimation catching up jumped from from frame %lu to %d", this, startCatchupFrameIndex, (int)nextFrame - 1);
 
     // Draw the next frame as soon as possible. Note that m_desiredFrameStartTime
     // may be in the past, meaning the next time through this function we'll

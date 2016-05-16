@@ -1,3 +1,23 @@
+2016-05-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a WebCore logging channel for images
+        https://bugs.webkit.org/show_bug.cgi?id=157752
+
+        Reviewed by Zalan Bujtas.
+
+        Create an Images log channel, and log various things related to decoding and drawing
+        images.
+
+        * platform/Logging.h:
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedDataIfNecessary):
+        (WebCore::BitmapImage::cacheFrame):
+        (WebCore::BitmapImage::startAnimation):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+
 2016-05-12  Ada Chan  <adachan@apple.com>
 
         Don't execute JavaScript within HTMLMediaElement::stop()
