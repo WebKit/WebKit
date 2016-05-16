@@ -1,3 +1,24 @@
+2016-05-16  Brian Burg  <bburg@apple.com>
+
+        Web Automation: WebAutomationSessionProxy.js gets injected more than once sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=157716
+        <rdar://problem/26287306>
+
+        Reviewed by Timothy Hatcher.
+
+        Whenever a script was injected into a non-normal world by a WebKit client,
+        the WebProcess's WebAutomationSessionProxy singleton would get a
+        notification that the window was cleared from the relevant frame.
+        This notification happens when creating the world's window shell for
+        the first time.
+
+        This code should ignore such notifications that originate from non-main world
+        contexts. Web Inspector's instrumentation already ignored this, but
+        the automation session notification comes in via a different WebKit2 layer.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+
 2016-05-13  Dean Jackson  <dino@apple.com>
 
         Fix iOS Build.
