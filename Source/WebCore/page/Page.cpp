@@ -96,6 +96,7 @@
 #include "VisitedLinkStore.h"
 #include "VoidCallback.h"
 #include "Widget.h"
+#include <JavaScriptCore/Profile.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>

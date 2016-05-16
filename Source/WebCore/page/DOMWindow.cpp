@@ -101,6 +101,7 @@
 #include "WebKitPoint.h"
 #include "WindowFeatures.h"
 #include "WindowFocusAllowedIndicator.h"
+#include <JavaScriptCore/Profile.h>
 #include <algorithm>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>

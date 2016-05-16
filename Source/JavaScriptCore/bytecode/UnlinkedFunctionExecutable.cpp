@@ -49,7 +49,7 @@ const ClassInfo UnlinkedFunctionExecutable::s_info = { "UnlinkedFunctionExecutab
 
 static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source,
-    CodeSpecializationKind kind, DebuggerMode debuggerMode,
+    CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode,
     UnlinkedFunctionKind functionKind, ParserError& error, SourceParseMode parseMode)
 {
     JSParserBuiltinMode builtinMode = executable->isBuiltinFunction() ? JSParserBuiltinMode::Builtin : JSParserBuiltinMode::NotBuiltin;
@@ -70,7 +70,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 
     UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction, executable->constructorKind(), executable->superBinding(), parseMode, executable->derivedContextType(), false, isClassContext, EvalContextType::FunctionEvalContext));
 
-    error = BytecodeGenerator::generate(vm, function.get(), result, debuggerMode, executable->parentScopeTDZVariables());
+    error = BytecodeGenerator::generate(vm, function.get(), result, debuggerMode, profilerMode, executable->parentScopeTDZVariables());
 
     if (error.isValid())
         return nullptr;
@@ -191,7 +191,7 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
 
 UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     VM& vm, const SourceCode& source, CodeSpecializationKind specializationKind, 
-    DebuggerMode debuggerMode, ParserError& error, SourceParseMode parseMode)
+    DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error, SourceParseMode parseMode)
 {
     switch (specializationKind) {
     case CodeForCall:
@@ -205,7 +205,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     }
 
     UnlinkedFunctionCodeBlock* result = generateUnlinkedFunctionCodeBlock(
-        vm, this, source, specializationKind, debuggerMode, 
+        vm, this, source, specializationKind, debuggerMode, profilerMode, 
         isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, 
         error, parseMode);
     

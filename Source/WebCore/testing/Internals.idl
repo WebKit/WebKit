@@ -260,10 +260,16 @@ enum AutoFillButtonType {
     [RaisesException] void setDeviceProximity(DOMString eventType, unrestricted double value, unrestricted double min, unrestricted double max);
 #endif
 
+    // As per spec: http://www.w3.org/TR/WebIDL/#idl-sequence
+    // "Sequences must not be used as the type of an attribute, constant or exception field."
+    // FIXME: this will lead to BUG internals.consoleProfiles !== internals.consoleProfiles as profile will always returns new array.
+    readonly attribute ScriptProfile[] consoleProfiles;
+
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
     DOMWindow openDummyInspectorFrontend(DOMString url);
     void closeDummyInspectorFrontend();
+    [RaisesException] void setLegacyJavaScriptProfilingEnabled(boolean enabled);
     [RaisesException] void setInspectorIsUnderTest(boolean isUnderTest);
 
     DOMString counterValue(Element element);

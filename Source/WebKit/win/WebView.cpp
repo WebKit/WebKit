@@ -78,6 +78,7 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/Profile.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/BString.h>
@@ -120,6 +121,7 @@
 #include <WebCore/HitTestResult.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/JSElement.h>
+#include <WebCore/JSScriptProfile.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Logging.h>
 #include <WebCore/MIMETypeRegistry.h>

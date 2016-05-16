@@ -47,6 +47,7 @@
 #include <inspector/agents/InspectorDebuggerAgent.h>
 #include <inspector/agents/InspectorHeapAgent.h>
 #include <inspector/agents/InspectorScriptProfilerAgent.h>
+#include <profiler/LegacyProfiler.h>
 #include <wtf/Stopwatch.h>
 
 #if PLATFORM(IOS)
@@ -241,14 +242,58 @@ double InspectorTimelineAgent::timestamp()
     return m_environment.executionStopwatch()->elapsedTime();
 }
 
-void InspectorTimelineAgent::startFromConsole(JSC::ExecState*, const String&)
+void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String &title)
 {
     // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
+
+    // Only allow recording of a profile if it is anonymous (empty title) or does not match
+    // the title of an already recording profile.
+    if (!title.isEmpty()) {
+        for (const TimelineRecordEntry& record : m_pendingConsoleProfileRecords) {
+            String recordTitle;
+            record.data->getString(ASCIILiteral("title"), recordTitle);
+            if (recordTitle == title)
+                return;
+        }
+    }
+
+    if (!m_enabled && m_pendingConsoleProfileRecords.isEmpty())
+        internalStart();
+
+    JSC::LegacyProfiler::profiler()->startProfiling(exec, title, m_environment.executionStopwatch());
+
+    m_pendingConsoleProfileRecords.append(createRecordEntry(TimelineRecordFactory::createConsoleProfileData(title), TimelineRecordType::ConsoleProfile, true, frameFromExecState(exec)));
 }
 
-void InspectorTimelineAgent::stopFromConsole(JSC::ExecState*, const String&)
+RefPtr<JSC::Profile> InspectorTimelineAgent::stopFromConsole(JSC::ExecState* exec, const String& title)
 {
     // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
+
+    // Stop profiles in reverse order. If the title is empty, then stop the last profile.
+    // Otherwise, match the title of the profile to stop.
+    for (ptrdiff_t i = m_pendingConsoleProfileRecords.size() - 1; i >= 0; --i) {
+        const TimelineRecordEntry& record = m_pendingConsoleProfileRecords[i];
+
+        String recordTitle;
+        record.data->getString(ASCIILiteral("title"), recordTitle);
+
+        if (title.isEmpty() || recordTitle == title) {
+            RefPtr<JSC::Profile> profile = JSC::LegacyProfiler::profiler()->stopProfiling(exec, title);
+            if (profile)
+                TimelineRecordFactory::appendProfile(record.data.get(), profile.copyRef());
+
+            didCompleteRecordEntry(record);
+
+            m_pendingConsoleProfileRecords.remove(i);
+
+            if (!m_enabledFromFrontend && m_pendingConsoleProfileRecords.isEmpty())
+                internalStop();
+
+            return profile;
+        }
+    }
+
+    return nullptr;
 }
 
 void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine, Frame* frame)

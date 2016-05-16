@@ -422,6 +422,8 @@
 #include "JSRTCTrackEvent.cpp"
 #include "JSScreen.cpp"
 #include "JSScriptProcessorNode.cpp"
+#include "JSScriptProfile.cpp"
+#include "JSScriptProfileNode.cpp"
 #if ENABLE(CSP_NEXT)
 #include "JSSecurityPolicyViolationEvent.cpp"
 #endif

@@ -36,6 +36,10 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
+namespace JSC {
+class Profile;
+}
+
 namespace Inspector {
 struct ScriptBreakpointAction;
 }
@@ -61,6 +65,7 @@ public:
     static Ref<Inspector::InspectorObject> createPaintData(const FloatQuad&);
 
     static void appendLayoutRoot(Inspector::InspectorObject* data, const FloatQuad&);
+    static void appendProfile(Inspector::InspectorObject*, RefPtr<JSC::Profile>&&);
 
 private:
     TimelineRecordFactory() { }

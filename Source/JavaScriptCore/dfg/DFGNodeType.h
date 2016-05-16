@@ -303,6 +303,8 @@ namespace JSC { namespace DFG {
     macro(MaterializeCreateActivation, NodeResultJS | NodeHasVarArgs) \
     \
     /* Nodes for misc operations. */\
+    macro(ProfileWillCall, NodeMustGenerate) \
+    macro(ProfileDidCall, NodeMustGenerate) \
     macro(OverridesHasInstance, NodeMustGenerate | NodeResultBoolean) \
     macro(InstanceOf, NodeResultBoolean) \
     macro(InstanceOfCustom, NodeMustGenerate | NodeResultBoolean) \

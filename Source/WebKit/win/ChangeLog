@@ -1,3 +1,15 @@
+2016-05-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout r200924. Caused js/regress/string-replace-generic.html to fail.
+
+        * Interfaces/IWebInspector.idl:
+        * WebCoreStatistics.cpp:
+        * WebInspector.cpp:
+        (WebInspector::isJavaScriptProfilingEnabled):
+        (WebInspector::setJavaScriptProfilingEnabled):
+        * WebInspector.h:
+        * WebView.cpp:
+
 2016-05-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove LegacyProfiler

@@ -123,6 +123,8 @@
             { "name" : "op_throw", "length" : 2 },
             { "name" : "op_throw_static_error", "length" : 3 },
             { "name" : "op_debug", "length" : 3 },
+            { "name" : "op_profile_will_call", "length" : 2 },
+            { "name" : "op_profile_did_call", "length" : 2 },
             { "name" : "op_end", "length" : 2 },
             { "name" : "op_profile_type", "length" : 6 },
             { "name" : "op_profile_control_flow", "length" : 2 },

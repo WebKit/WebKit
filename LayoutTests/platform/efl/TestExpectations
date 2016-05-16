@@ -1021,6 +1021,9 @@ webkit.org/b/142156 css3/shapes/spec-examples/shape-outside-011.html [ Failure P
 webkit.org/b/142156 css3/shapes/spec-examples/shape-outside-012.html [ Failure Pass ]
 webkit.org/b/142156 css3/shapes/spec-examples/shape-outside-019.html [ Failure Pass ]
 
+webkit.org/b/142157 fast/profiler/dead-time.html [ Failure Pass ]
+webkit.org/b/142157 fast/profiler/stop-profiling-after-setTimeout.html [ Failure Pass ]
+
 webkit.org/b/95551 fast/forms/datalist/update-range-with-datalist.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-006.svg [ Pass ImageOnlyFailure ]

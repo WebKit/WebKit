@@ -1,3 +1,77 @@
+2016-05-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout r200924. Caused js/regress/string-replace-generic.html to fail.
+
+        Tests: fast/profiler/*
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * ForwardingHeaders/profiler/LegacyProfiler.h: Added.
+        * ForwardingHeaders/profiler/Profile.h: Added.
+        * ForwardingHeaders/profiler/ProfileNode.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsLegacyProfiling):
+        (WebCore::JSDOMWindowBase::supportsRichSourceInfo):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::supportsLegacyProfiling):
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        * bindings/js/ScriptCachedFrameData.cpp:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell):
+        * bindings/js/ScriptProfile.h: Copied from Source/JavaScriptCore/profiler/ProfilerJettisonReason.h.
+        * bindings/js/ScriptProfileNode.h: Copied from Source/JavaScriptCore/profiler/ProfilerJettisonReason.h.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddClassForwardIfNeeded):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithSequenceArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodReturningSequence):
+        * bindings/scripts/test/TestObj.idl:
+        * css/CSSParser.cpp:
+        * dom/Document.cpp:
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::stopProfiling):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::legacyProfilerEnabled):
+        (WebCore::InspectorController::setLegacyProfilerEnabled):
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::stopProfilingImpl):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::startFromConsole):
+        (WebCore::InspectorTimelineAgent::stopFromConsole):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/PageDebuggerAgent.cpp:
+        * inspector/PageRuntimeAgent.cpp:
+        * inspector/ScriptProfile.idl: Copied from Source/JavaScriptCore/profiler/ProfilerJettisonReason.h.
+        * inspector/ScriptProfileNode.idl: Copied from Source/JavaScriptCore/profiler/ProfilerJettisonReason.h.
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::buildAggregateCallInfoInspectorObject):
+        (WebCore::buildInspectorObject):
+        (WebCore::buildProfileInspectorObject):
+        (WebCore::TimelineRecordFactory::appendProfile):
+        * inspector/TimelineRecordFactory.h:
+        * page/DOMWindow.cpp:
+        * page/Page.cpp:
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::profileEnd):
+        (WebCore::PageConsoleClient::clearProfiles):
+        * page/PageConsoleClient.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::consoleProfiles):
+        (WebCore::Internals::setLegacyJavaScriptProfilingEnabled):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/js/WebCoreTestSupport.cpp:
+        * xml/XSLStyleSheetLibxslt.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+
 2016-05-16  Zalan Bujtas  <zalan@apple.com>
 
         RenderLayer::hitTestList could mutate the list of candidate layers.

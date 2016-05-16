@@ -1,0 +1,36 @@
+This page's JavaScript has many function calls in the same scope. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile many functions should be the children of startTest. Use the sorting capabilites to make sure the similarly named functions are sorted correctly.
+
+Profile title: Many Calls In The Same Scope
+Thread_1 (no file) (line 0:0)
+   startTest many-calls-in-the-same-scope.html (line 10:19)
+      insertNewText profiler-test-JS-resources.js (line 17:23)
+         createElement (no file) (line 0:0)
+         createTextNode (no file) (line 0:0)
+         appendChild (no file) (line 0:0)
+         getElementById (no file) (line 0:0)
+      insertGivenText profiler-test-JS-resources.js (line 9:25)
+         createElement (no file) (line 0:0)
+         createTextNode (no file) (line 0:0)
+         appendChild (no file) (line 0:0)
+         getElementById (no file) (line 0:0)
+      arrayOperatorFunction profiler-test-JS-resources.js (line 25:31)
+      intermediaryFunction profiler-test-JS-resources.js (line 32:30)
+         anonymousFunction profiler-test-JS-resources.js (line 29:34)
+            insertNewText profiler-test-JS-resources.js (line 17:23)
+               createElement (no file) (line 0:0)
+               createTextNode (no file) (line 0:0)
+               appendChild (no file) (line 0:0)
+               getElementById (no file) (line 0:0)
+      anonymousFunction profiler-test-JS-resources.js (line 29:34)
+         insertNewText profiler-test-JS-resources.js (line 17:23)
+            createElement (no file) (line 0:0)
+            createTextNode (no file) (line 0:0)
+            appendChild (no file) (line 0:0)
+            getElementById (no file) (line 0:0)
+      end many-calls-in-the-same-scope.html (line 26:13)
+      endT many-calls-in-the-same-scope.html (line 31:14)
+      endTest profiler-test-JS-resources.js (line 1:17)
+
+

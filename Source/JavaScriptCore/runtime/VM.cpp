@@ -194,6 +194,7 @@ VM::VM(VMType vmType, HeapType heapType)
 #endif
     , m_inDefineOwnProperty(false)
     , m_codeCache(std::make_unique<CodeCache>())
+    , m_enabledProfiler(nullptr)
     , m_builtinExecutables(std::make_unique<BuiltinExecutables>(*this))
     , m_typeProfilerEnabledCount(0)
     , m_controlFlowProfilerEnabledCount(0)
@@ -774,6 +775,25 @@ void VM::addImpureProperty(const String& propertyName)
 {
     if (RefPtr<WatchpointSet> watchpointSet = m_impurePropertyWatchpointSets.take(propertyName))
         watchpointSet->fireAll("Impure property added");
+}
+
+class SetEnabledProfilerFunctor {
+public:
+    bool operator()(CodeBlock* codeBlock) const
+    {
+        if (JITCode::isOptimizingJIT(codeBlock->jitType()))
+            codeBlock->jettison(Profiler::JettisonDueToLegacyProfiler);
+        return false;
+    }
+};
+
+void VM::setEnabledProfiler(LegacyProfiler* profiler)
+{
+    m_enabledProfiler = profiler;
+    if (m_enabledProfiler) {
+        SetEnabledProfilerFunctor functor;
+        heap.forEachCodeBlock(functor);
+    }
 }
 
 static bool enableProfilerWithRespectToCount(unsigned& counter, std::function<void()> doEnableWork)

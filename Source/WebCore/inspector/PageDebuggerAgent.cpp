@@ -45,6 +45,7 @@
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
+#include <profiler/Profile.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace Inspector;

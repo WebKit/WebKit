@@ -53,6 +53,7 @@ namespace WebCore {
         static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
 
         static bool allowsAccessFrom(const JSC::JSGlobalObject*, JSC::ExecState*);
+        static bool supportsLegacyProfiling(const JSC::JSGlobalObject*);
         static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
         static bool shouldInterruptScript(const JSC::JSGlobalObject*);
         static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);

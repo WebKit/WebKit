@@ -92,6 +92,7 @@ class JSBoundSlotBaseFunction;
 class JSGlobalObject;
 class JSObject;
 class LLIntOffsetsExtractor;
+class LegacyProfiler;
 class NativeExecutable;
 class RegExpCache;
 class RegisterAtOffsetList;
@@ -353,6 +354,11 @@ public:
     {
         return m_inDefineOwnProperty;
     }
+
+    LegacyProfiler* enabledProfiler() { return m_enabledProfiler; }
+    void setEnabledProfiler(LegacyProfiler*);
+
+    void* enabledProfilerAddress() { return &m_enabledProfiler; }
 
 #if ENABLE(JIT)
     bool canUseJIT() { return m_canUseJIT; }
@@ -651,6 +657,7 @@ private:
     bool m_globalConstRedeclarationShouldThrow { true };
     bool m_shouldBuildPCToCodeOriginMapping { false };
     std::unique_ptr<CodeCache> m_codeCache;
+    LegacyProfiler* m_enabledProfiler;
     std::unique_ptr<BuiltinExecutables> m_builtinExecutables;
     HashMap<String, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
     std::unique_ptr<TypeProfiler> m_typeProfiler;

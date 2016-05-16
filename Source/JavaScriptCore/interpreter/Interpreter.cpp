@@ -53,6 +53,7 @@
 #include "JSWithScope.h"
 #include "LLIntCLoop.h"
 #include "LLIntThunks.h"
+#include "LegacyProfiler.h"
 #include "LiteralParser.h"
 #include "ObjectPrototype.h"
 #include "Parser.h"
@@ -674,6 +675,7 @@ public:
     StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         visitor.unwindToMachineCodeBlockFrame();
+        VM& vm = m_callFrame->vm();
         m_callFrame = visitor->callFrame();
         m_codeBlock = visitor->codeBlock();
 
@@ -690,6 +692,9 @@ public:
 
         bool shouldStopUnwinding = visitor->callerIsVMEntryFrame();
         if (shouldStopUnwinding) {
+            if (LegacyProfiler* profiler = vm.enabledProfiler())
+                profiler->exceptionUnwind(m_callFrame);
+
             copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(visitor);
 
             return StackVisitor::Done;
@@ -949,8 +954,14 @@ failedJSONP:
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(codeBlock, JSCallee::create(vm, scope->globalObject(), scope), thisObj, 1);
 
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->willExecute(callFrame, program->sourceURL(), program->firstLine(), program->startColumn());
+
     // Execute the code:
     JSValue result = program->generatedJITCode()->execute(&vm, &protoCallFrame);
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->didExecute(callFrame, program->sourceURL(), program->firstLine(), program->startColumn());
 
     return checkedReturn(result);
 }
@@ -1000,6 +1011,9 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(newCodeBlock, function, thisValue, argsCount, args.data());
 
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->willExecute(callFrame, function);
+
     JSValue result;
     {
         // Execute the code:
@@ -1011,6 +1025,9 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
                 result = jsNull();
         }
     }
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->didExecute(callFrame, function);
 
     return checkedReturn(result);
 }
@@ -1062,6 +1079,9 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(newCodeBlock, constructor, newTarget, argsCount, args.data());
 
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->willExecute(callFrame, constructor);
+
     JSValue result;
     {
         // Execute the code.
@@ -1074,6 +1094,9 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
                 RELEASE_ASSERT(result.isObject());
         }
     }
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->didExecute(callFrame, constructor);
 
     if (callFrame->hadException())
         return 0;
@@ -1117,11 +1140,17 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
 
     StackStats::CheckPoint stackCheckPoint;
 
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->willExecute(closure.oldCallFrame, closure.function);
+
     if (UNLIKELY(vm.shouldTriggerTermination(closure.oldCallFrame)))
         return throwTerminatedExecutionException(closure.oldCallFrame);
 
     // Execute the code:
     JSValue result = closure.functionExecutable->generatedJITCodeForCall()->execute(&vm, closure.protoCallFrame);
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->didExecute(closure.oldCallFrame, closure.function);
 
     return checkedReturn(result);
 }
@@ -1220,8 +1249,14 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(codeBlock, JSCallee::create(vm, scope->globalObject(), scope), thisValue, 1);
 
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->willExecute(callFrame, eval->sourceURL(), eval->firstLine(), eval->startColumn());
+
     // Execute the code:
     JSValue result = eval->generatedJITCode()->execute(&vm, &protoCallFrame);
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->didExecute(callFrame, eval->sourceURL(), eval->firstLine(), eval->startColumn());
 
     return checkedReturn(result);
 }
@@ -1257,8 +1292,14 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(codeBlock, JSCallee::create(vm, scope->globalObject(), scope), jsUndefined(), 1);
 
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->willExecute(callFrame, executable->sourceURL(), executable->firstLine(), executable->startColumn());
+
     // Execute the code:
     JSValue result = executable->generatedJITCode()->execute(&vm, &protoCallFrame);
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->didExecute(callFrame, executable->sourceURL(), executable->firstLine(), executable->startColumn());
 
     return checkedReturn(result);
 }

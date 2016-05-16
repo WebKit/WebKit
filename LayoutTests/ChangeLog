@@ -1,3 +1,112 @@
+2016-05-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout r200924. Caused js/regress/string-replace-generic.html to fail.
+
+        * fast/profiler/anonymous-event-handler-expected.txt: Added.
+        * fast/profiler/anonymous-event-handler.html: Added.
+        * fast/profiler/anonymous-function-called-from-different-contexts-expected.txt: Added.
+        * fast/profiler/anonymous-function-called-from-different-contexts.html: Added.
+        * fast/profiler/anonymous-function-calls-built-in-functions-expected.txt: Added.
+        * fast/profiler/anonymous-function-calls-built-in-functions.html: Added.
+        * fast/profiler/anonymous-function-calls-eval-expected.txt: Added.
+        * fast/profiler/anonymous-function-calls-eval.html: Added.
+        * fast/profiler/anonymous-functions-with-display-names-expected.txt: Added.
+        * fast/profiler/anonymous-functions-with-display-names.html: Added.
+        * fast/profiler/apply-expected.txt: Added.
+        * fast/profiler/apply.html: Added.
+        * fast/profiler/built-in-function-calls-anonymous-expected.txt: Added.
+        * fast/profiler/built-in-function-calls-anonymous.html: Added.
+        * fast/profiler/built-in-function-calls-user-defined-function-expected.txt: Added.
+        * fast/profiler/built-in-function-calls-user-defined-function.html: Added.
+        * fast/profiler/call-expected.txt: Added.
+        * fast/profiler/call-register-leak-expected.txt: Added.
+        * fast/profiler/call-register-leak.html: Added.
+        * fast/profiler/call.html: Added.
+        * fast/profiler/calling-the-function-that-started-the-profiler-from-another-scope-expected.txt: Added.
+        * fast/profiler/calling-the-function-that-started-the-profiler-from-another-scope.html: Added.
+        * fast/profiler/compare-multiple-profiles-expected.txt: Added.
+        * fast/profiler/compare-multiple-profiles.html: Added.
+        * fast/profiler/constructor-expected.txt: Added.
+        * fast/profiler/constructor.html: Added.
+        * fast/profiler/dead-time-expected.txt: Added.
+        * fast/profiler/dead-time.html: Added.
+        * fast/profiler/document-dot-write-expected.txt: Added.
+        * fast/profiler/document-dot-write.html: Added.
+        * fast/profiler/event-handler-expected.txt: Added.
+        * fast/profiler/event-handler.html: Added.
+        * fast/profiler/execution-context-and-eval-on-same-line-expected.txt: Added.
+        * fast/profiler/execution-context-and-eval-on-same-line.html: Added.
+        * fast/profiler/inline-event-handler-expected.txt: Added.
+        * fast/profiler/inline-event-handler.html: Added.
+        * fast/profiler/many-calls-in-the-same-scope-expected.txt: Added.
+        * fast/profiler/many-calls-in-the-same-scope.html: Added.
+        * fast/profiler/multiple-and-different-scoped-anonymous-function-calls-expected.txt: Added.
+        * fast/profiler/multiple-and-different-scoped-anonymous-function-calls.html: Added.
+        * fast/profiler/multiple-and-different-scoped-function-calls-expected.txt: Added.
+        * fast/profiler/multiple-and-different-scoped-function-calls.html: Added.
+        * fast/profiler/multiple-anonymous-functions-called-from-the-same-function-expected.txt: Added.
+        * fast/profiler/multiple-anonymous-functions-called-from-the-same-function.html: Added.
+        * fast/profiler/multiple-frames-expected.txt: Added.
+        * fast/profiler/multiple-frames.html: Added.
+        * fast/profiler/named-functions-with-display-names-expected.txt: Added.
+        * fast/profiler/named-functions-with-display-names.html: Added.
+        * fast/profiler/nested-anonymous-functon-expected.txt: Added.
+        * fast/profiler/nested-anonymous-functon.html: Added.
+        * fast/profiler/nested-start-and-stop-profiler-expected.txt: Added.
+        * fast/profiler/nested-start-and-stop-profiler.html: Added.
+        * fast/profiler/no-execution-context-expected.txt: Added.
+        * fast/profiler/no-execution-context.html: Added.
+        * fast/profiler/one-execution-context-expected.txt: Added.
+        * fast/profiler/one-execution-context.html: Added.
+        * fast/profiler/profile-calls-in-included-file-expected.txt: Added.
+        * fast/profiler/profile-calls-in-included-file.html: Added.
+        * fast/profiler/profile-with-no-title-expected.txt: Added.
+        * fast/profiler/profile-with-no-title.html: Added.
+        * fast/profiler/profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting-expected.txt: Added.
+        * fast/profiler/profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting.html: Added.
+        * fast/profiler/profiling-from-a-nested-location-expected.txt: Added.
+        * fast/profiler/profiling-from-a-nested-location.html: Added.
+        * fast/profiler/resources/other-frame.html: Added.
+        * fast/profiler/resources/other-window.html: Added.
+        * fast/profiler/resources/profiler-test-JS-resources.js: Added.
+        (endTest):
+        (insertGivenText):
+        (insertNewText):
+        (arrayOperatorFunction):
+        (anonymousFunction):
+        (anotherAnonymousFunction):
+        (intermediaryFunction):
+        (isEqualToFive):
+        (startProfile):
+        (printHeavyProfilesDataWithoutTime):
+        (printProfilesDataWithoutTime):
+        (printProfileNodeWithoutTime):
+        * fast/profiler/simple-event-call-expected.txt: Added.
+        * fast/profiler/simple-event-call.html: Added.
+        * fast/profiler/simple-no-level-change-expected.txt: Added.
+        * fast/profiler/simple-no-level-change.html: Added.
+        * fast/profiler/start-and-stop-profiler-multiple-times-expected.txt: Added.
+        * fast/profiler/start-and-stop-profiler-multiple-times.html: Added.
+        * fast/profiler/start-and-stop-profiling-in-the-same-function-expected.txt: Added.
+        * fast/profiler/start-and-stop-profiling-in-the-same-function.html: Added.
+        * fast/profiler/start-but-dont-stop-profiling-expected.txt: Added.
+        * fast/profiler/start-but-dont-stop-profiling.html: Added.
+        * fast/profiler/stop-profiling-after-setTimeout-expected.txt: Added.
+        * fast/profiler/stop-profiling-after-setTimeout.html: Added.
+        * fast/profiler/stop-then-function-call-expected.txt: Added.
+        * fast/profiler/stop-then-function-call.html: Added.
+        * fast/profiler/throw-exception-from-eval-expected.txt: Added.
+        * fast/profiler/throw-exception-from-eval.html-disabled: Added.
+        * fast/profiler/two-execution-contexts-expected.txt: Added.
+        * fast/profiler/two-execution-contexts.html: Added.
+        * fast/profiler/user-defined-function-calls-built-in-functions-expected.txt: Added.
+        * fast/profiler/user-defined-function-calls-built-in-functions.html: Added.
+        * fast/profiler/window-dot-eval-expected.txt: Added.
+        * fast/profiler/window-dot-eval.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-05-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Focus ordering should respect slot elements

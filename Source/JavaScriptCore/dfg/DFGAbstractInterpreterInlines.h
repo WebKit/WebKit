@@ -2844,6 +2844,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case LogShadowChickenTail:
         break;
 
+    case ProfileWillCall:
+    case ProfileDidCall:
     case ProfileType:
     case ProfileControlFlow:
     case Phantom:

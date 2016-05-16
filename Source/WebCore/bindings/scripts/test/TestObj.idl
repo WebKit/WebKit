@@ -117,6 +117,9 @@ enum TestConfidence { "high", "kinda-low" };
     static DOMString? nullableStringStaticMethod();
     getter DOMString? nullableStringSpecialMethod(unsigned long index);
 
+    void methodWithSequenceArg(sequence<ScriptProfile> sequenceArg);
+    sequence<ScriptProfile> methodReturningSequence(long longArg);
+
     void methodWithEnumArg(TestEnumType enumArg);
     void methodWithOptionalEnumArg(optional TestEnumType enumArg);
     void methodWithOptionalEnumArgAndDefaultValue(optional TestEnumType enumArg = "EnumValue1");

@@ -1,0 +1,22 @@
+<html>
+<head>
+<script src="profiler-test-JS-resources.js"></script>
+<script>
+var interestingKnowledge;
+function otherTestStart()
+{
+    interestingKnowledge = isEqualToFive(3);
+    opener.windowFinishedLoading();
+}
+
+function functionInOtherWindow() {
+        return interestingKnowledge;
+}
+</script>
+</head>
+
+<body onload="otherTestStart()">
+This file executes some JavaScript.
+</body>
+</html>
+

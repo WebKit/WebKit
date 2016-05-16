@@ -34,6 +34,7 @@
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "SecurityOrigin.h"
+#include <profiler/Profile.h>
 #include <runtime/JSLock.h>
 #include <wtf/Ref.h>
 

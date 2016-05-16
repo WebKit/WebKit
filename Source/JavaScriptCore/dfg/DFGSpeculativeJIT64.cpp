@@ -4812,6 +4812,8 @@ void SpeculativeJIT::compile(Node* node)
         noResult(node);
         break;
         
+    case ProfileWillCall:
+    case ProfileDidCall:
     case PhantomLocal:
     case LoopHint:
         // This is a no-op.

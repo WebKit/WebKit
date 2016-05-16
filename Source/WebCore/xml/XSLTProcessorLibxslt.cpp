@@ -40,6 +40,7 @@
 #include "XSLTExtensions.h"
 #include "XSLTUnicodeSort.h"
 #include "markup.h"
+#include <JavaScriptCore/Profile.h>
 #include <libxslt/imports.h>
 #include <libxslt/security.h>
 #include <libxslt/variables.h>

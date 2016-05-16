@@ -1,3 +1,206 @@
+2016-05-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout r200924. Caused js/regress/string-replace-generic.html to fail.
+
+        * API/JSProfilerPrivate.cpp: Copied from Source/JavaScriptCore/profiler/ProfilerJettisonReason.h.
+        (JSStartProfiling):
+        (JSEndProfiling):
+        * API/JSProfilerPrivate.h: Copied from Source/JavaScriptCore/profiler/ProfilerJettisonReason.h.
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitCallVarargsInTailPosition):
+        (JSC::BytecodeGenerator::emitConstructVarargs):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::CallArguments::profileHookRegister):
+        (JSC::BytecodeGenerator::shouldEmitProfileHooks):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallArguments::CallArguments):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::callFunctionWithEvalEnabled):
+        * inspector/protocol/Timeline.json:
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::operator()):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_will_call):
+        (JSC::JIT::emit_op_profile_did_call):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_profile_will_call):
+        (JSC::JIT::emit_op_profile_did_call):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/ParserModes.h:
+        * profiler/CallIdentifier.h: Added.
+        (JSC::CallIdentifier::CallIdentifier):
+        (JSC::CallIdentifier::functionName):
+        (JSC::CallIdentifier::url):
+        (JSC::CallIdentifier::lineNumber):
+        (JSC::CallIdentifier::columnNumber):
+        (JSC::CallIdentifier::operator==):
+        (JSC::CallIdentifier::operator!=):
+        (JSC::CallIdentifier::Hash::hash):
+        (JSC::CallIdentifier::Hash::equal):
+        (JSC::CallIdentifier::hash):
+        (JSC::CallIdentifier::operator const char*):
+        (JSC::CallIdentifier::c_str):
+        (WTF::HashTraits<JSC::CallIdentifier>::constructDeletedValue):
+        (WTF::HashTraits<JSC::CallIdentifier>::isDeletedValue):
+        * profiler/LegacyProfiler.cpp: Added.
+        (JSC::LegacyProfiler::profiler):
+        (JSC::LegacyProfiler::startProfiling):
+        (JSC::LegacyProfiler::stopProfiling):
+        (JSC::callFunctionForProfilesWithGroup):
+        (JSC::LegacyProfiler::suspendProfiling):
+        (JSC::LegacyProfiler::unsuspendProfiling):
+        (JSC::LegacyProfiler::willExecute):
+        (JSC::LegacyProfiler::didExecute):
+        (JSC::LegacyProfiler::exceptionUnwind):
+        (JSC::LegacyProfiler::createCallIdentifier):
+        (JSC::createCallIdentifierFromFunctionImp):
+        * profiler/LegacyProfiler.h: Added.
+        (JSC::LegacyProfiler::currentProfiles):
+        * profiler/Profile.cpp: Added.
+        (JSC::Profile::create):
+        (JSC::Profile::Profile):
+        (JSC::Profile::~Profile):
+        (JSC::Profile::debugPrint):
+        (JSC::functionNameCountPairComparator):
+        (JSC::Profile::debugPrintSampleStyle):
+        * profiler/Profile.h: Copied from Source/JavaScriptCore/profiler/ProfilerJettisonReason.h.
+        * profiler/ProfileGenerator.cpp: Added.
+        (JSC::ProfileGenerator::create):
+        (JSC::ProfileGenerator::ProfileGenerator):
+        (JSC::AddParentForConsoleStartFunctor::AddParentForConsoleStartFunctor):
+        (JSC::AddParentForConsoleStartFunctor::foundParent):
+        (JSC::AddParentForConsoleStartFunctor::operator()):
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+        (JSC::ProfileGenerator::title):
+        (JSC::ProfileGenerator::beginCallEntry):
+        (JSC::ProfileGenerator::endCallEntry):
+        (JSC::ProfileGenerator::willExecute):
+        (JSC::ProfileGenerator::didExecute):
+        (JSC::ProfileGenerator::exceptionUnwind):
+        (JSC::ProfileGenerator::stopProfiling):
+        (JSC::ProfileGenerator::removeProfileStart):
+        (JSC::ProfileGenerator::removeProfileEnd):
+        * profiler/ProfileGenerator.h: Added.
+        (JSC::ProfileGenerator::profile):
+        (JSC::ProfileGenerator::origin):
+        (JSC::ProfileGenerator::profileGroup):
+        (JSC::ProfileGenerator::setIsSuspended):
+        * profiler/ProfileNode.cpp: Added.
+        (JSC::ProfileNode::ProfileNode):
+        (JSC::ProfileNode::addChild):
+        (JSC::ProfileNode::removeChild):
+        (JSC::ProfileNode::spliceNode):
+        (JSC::ProfileNode::traverseNextNodePostOrder):
+        (JSC::ProfileNode::debugPrint):
+        (JSC::ProfileNode::debugPrintSampleStyle):
+        (JSC::ProfileNode::debugPrintRecursively):
+        (JSC::ProfileNode::debugPrintSampleStyleRecursively):
+        * profiler/ProfileNode.h: Added.
+        (JSC::ProfileNode::create):
+        (JSC::ProfileNode::Call::Call):
+        (JSC::ProfileNode::Call::startTime):
+        (JSC::ProfileNode::Call::setStartTime):
+        (JSC::ProfileNode::Call::elapsedTime):
+        (JSC::ProfileNode::Call::setElapsedTime):
+        (JSC::ProfileNode::operator==):
+        (JSC::ProfileNode::callerCallFrame):
+        (JSC::ProfileNode::callIdentifier):
+        (JSC::ProfileNode::id):
+        (JSC::ProfileNode::functionName):
+        (JSC::ProfileNode::url):
+        (JSC::ProfileNode::lineNumber):
+        (JSC::ProfileNode::columnNumber):
+        (JSC::ProfileNode::parent):
+        (JSC::ProfileNode::setParent):
+        (JSC::ProfileNode::calls):
+        (JSC::ProfileNode::lastCall):
+        (JSC::ProfileNode::appendCall):
+        (JSC::ProfileNode::children):
+        (JSC::ProfileNode::firstChild):
+        (JSC::ProfileNode::lastChild):
+        (JSC::ProfileNode::nextSibling):
+        (JSC::ProfileNode::setNextSibling):
+        (JSC::ProfileNode::forEachNodePostorder):
+        (JSC::CalculateProfileSubtreeDataFunctor::operator()):
+        (JSC::CalculateProfileSubtreeDataFunctor::returnValue):
+        * profiler/ProfilerJettisonReason.cpp:
+        (WTF::printInternal):
+        * profiler/ProfilerJettisonReason.h:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getModuleProgramCodeBlock):
+        * runtime/CodeCache.h:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+        (JSC::JSGlobalObject::hasLegacyProfiler):
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        (JSC::JSGlobalObject::createModuleProgramCodeBlock):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::supportsLegacyProfiling):
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::SetEnabledProfilerFunctor::operator()):
+        (JSC::VM::setEnabledProfiler):
+        * runtime/VM.h:
+        (JSC::VM::enabledProfiler):
+        (JSC::VM::enabledProfilerAddress):
+
 2016-05-16  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, fixed typo in a comment.

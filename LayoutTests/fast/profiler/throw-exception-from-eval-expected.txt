@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: Test exception.
+This page throws an exception from within eval(). 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. The profiler should not crash and still show the stack under insertnewText().
+
+Profile title: Throw within an eval.
+Thread_1 (no file) (line 0)
+   (program) throw-exception-from-eval.html (line 19)
+      (program) throw-exception-from-eval.html (line 10)
+         (program) throw-exception-from-eval.html (line 4)
+         (program) throw-exception-from-eval.html (line 19)
+            eval (no file) (line 0)
+               (program) (no file) (line 1)
+   onload throw-exception-from-eval.html (line 24)
+      startTest throw-exception-from-eval.html (line 13)
+         insertNewText profiler-test-JS-resources.js (line 17)
+            createElement (no file) (line 0)
+            createTextNode (no file) (line 0)
+            appendChild (no file) (line 0)
+            getElementById (no file) (line 0)
+         endTest profiler-test-JS-resources.js (line 1)
+
+

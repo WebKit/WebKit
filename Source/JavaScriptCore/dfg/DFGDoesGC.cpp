@@ -150,6 +150,8 @@ bool doesGC(Graph& graph, Node* node)
     case ConstructForwardVarargs:
     case TailCallForwardVarargs:
     case TailCallForwardVarargsInlinedCaller:
+    case ProfileWillCall:
+    case ProfileDidCall:
     case ProfileType:
     case ProfileControlFlow:
     case OverridesHasInstance:

@@ -182,6 +182,7 @@
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
 #include "htmlediting.h"
+#include <JavaScriptCore/Profile.h>
 #include <ctime>
 #include <inspector/ScriptCallStack.h>
 #include <wtf/CurrentTime.h>

@@ -60,6 +60,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE isProfilingJavaScript(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE toggleProfilingJavaScript();
 
+    virtual HRESULT STDMETHODCALLTYPE isJavaScriptProfilingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setJavaScriptProfilingEnabled(BOOL);
+
     virtual HRESULT STDMETHODCALLTYPE evaluateInFrontend(_In_ BSTR script);
 
     virtual HRESULT STDMETHODCALLTYPE isTimelineProfilingEnabled(_Out_ BOOL*);

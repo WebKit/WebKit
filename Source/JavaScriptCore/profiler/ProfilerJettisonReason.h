@@ -33,6 +33,7 @@ enum JettisonReason {
     JettisonDueToWeakReference,
     JettisonDueToDebuggerBreakpoint,
     JettisonDueToDebuggerStepping,
+    JettisonDueToLegacyProfiler,
     JettisonDueToBaselineLoopReoptimizationTrigger,
     JettisonDueToBaselineLoopReoptimizationTriggerOnOSREntryFail,
     JettisonDueToOSRExit,

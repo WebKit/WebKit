@@ -36,6 +36,7 @@
 #include "InspectorValues.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
+#include "LegacyProfiler.h"
 #include "ScriptFunctionCall.h"
 #include <wtf/text/WTFString.h>
 
@@ -71,8 +72,17 @@ const Deprecated::ScriptObject& InjectedScriptBase::injectedScriptObject() const
 JSC::JSValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall& function, bool& hadException) const
 {
     JSC::ExecState* scriptState = m_injectedScriptObject.scriptState();
-    JSC::DebuggerEvalEnabler evalEnabler(scriptState);
-    return function.call(hadException);
+    JSC::LegacyProfiler::profiler()->suspendProfiling(scriptState);
+
+    JSC::JSValue resultValue;
+    {
+        JSC::DebuggerEvalEnabler evalEnabler(scriptState);
+        resultValue = function.call(hadException);
+    }
+
+    JSC::LegacyProfiler::profiler()->unsuspendProfiling(scriptState);
+
+    return resultValue;
 }
 
 void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefPtr<InspectorValue>* result)
