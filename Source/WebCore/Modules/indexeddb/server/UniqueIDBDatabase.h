@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "CrossThreadTask.h"
 #include "IDBBackingStore.h"
 #include "IDBBindingUtilities.h"
 #include "IDBDatabaseIdentifier.h"
@@ -41,6 +42,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/MessageQueue.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -187,6 +189,11 @@ private:
 
     bool prepareToFinishTransaction(UniqueIDBDatabaseTransaction&);
 
+    void postDatabaseTask(std::unique_ptr<CrossThreadTask>&&);
+    void postDatabaseTaskReply(std::unique_ptr<CrossThreadTask>&&);
+    void executeNextDatabaseTask();
+    void executeNextDatabaseTaskReply();
+
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;
     
@@ -225,6 +232,9 @@ private:
     HashSet<uint64_t> m_objectStoreWriteTransactions;
 
     bool m_deleteBackingStoreInProgress { false };
+
+    MessageQueue<CrossThreadTask> m_databaseQueue;
+    MessageQueue<CrossThreadTask> m_databaseReplyQueue;
 };
 
 } // namespace IDBServer
