@@ -1,5 +1,20 @@
 2016-05-16  Brian Burg  <bburg@apple.com>
 
+        Crash simulating keystrokes at WebKit::WebAutomationSession::platformSimulateKeyStroke
+        https://bugs.webkit.org/show_bug.cgi?id=157737
+        <rdar://problem/26292946>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke):
+        AppKit expects characters passed to [NSEvent keyEventWithType:...]
+        to be non-nil even if there are no characters. Initialize characters
+        to the empty string @"". It will be overwritten if the keystroke should
+        produce any unicode characters.
+
+2016-05-16  Brian Burg  <bburg@apple.com>
+
         Web Automation: Automation.inspectBrowsingContext should automatically start page profiling
         https://bugs.webkit.org/show_bug.cgi?id=157739
 
