@@ -347,6 +347,14 @@ File.open(outputFlnm, "w") {
         configIndex = configuration[1]
         forSettings(computeSettingsCombinations(ast)[configIndex], ast) {
             | concreteSettings, lowLevelAST, backend |
+
+            # There could be multiple backends we are generating for, but the C_LOOP is
+            # always by itself so this check to turn off $enableDebugAnnotations won't
+            # affect the generation for any other backend.
+            if backend == "C_LOOP"
+                $enableDebugAnnotations = false
+            end
+
             lowLevelAST = lowLevelAST.resolve(*buildOffsetsMap(lowLevelAST, offsetsList))
             lowLevelAST.validate
             emitCodeInConfiguration(concreteSettings, lowLevelAST, backend) {
