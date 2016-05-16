@@ -322,6 +322,8 @@ public:
 
     void accummulateLogsForChannel(JSStringRef channel);
 
+    unsigned imageCountInGeneralPasteboard() const;
+
 private:
     TestRunner();
 

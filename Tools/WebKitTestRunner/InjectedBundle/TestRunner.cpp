@@ -178,6 +178,11 @@ void TestRunner::notifyDone()
     m_waitToDump = false;
 }
 
+unsigned TestRunner::imageCountInGeneralPasteboard() const
+{
+    return InjectedBundle::singleton().imageCountInGeneralPasteboard();
+}
+
 void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
     WKRetainPtr<WKStringRef> sourceWK = toWK(source);

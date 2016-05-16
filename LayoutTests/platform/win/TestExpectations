@@ -1230,6 +1230,8 @@ editing/pasteboard/emacs-cntl-y-001.html [ Failure ]
 # Assertion failure in replaySavedEvents
 webkit.org/b/21796 editing/pasteboard/drop-text-events.html [ Skip ]
 
+http/tests/images/hidpi-srcset-copy.html [ Skip ]
+
 ###### Selection
 editing/selection/ [ Pass Failure ]
 # This test is flaky due to capitalization; perhaps a capslock keypress or something?

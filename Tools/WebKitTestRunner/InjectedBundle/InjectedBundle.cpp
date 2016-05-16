@@ -552,6 +552,16 @@ bool InjectedBundle::isGeolocationProviderActive() const
     return WKBooleanGetValue(isActive.get());
 }
 
+unsigned InjectedBundle::imageCountInGeneralPasteboard() const
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("ImageCountInGeneralPasteboard"));
+    WKTypeRef resultToPass = 0;
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), messageName.get(), 0, &resultToPass);
+    WKRetainPtr<WKUInt64Ref> imageCount(AdoptWK, static_cast<WKUInt64Ref>(resultToPass));
+    
+    return static_cast<unsigned>(WKUInt64GetValue(imageCount.get()));
+}
+
 void InjectedBundle::setUserMediaPermission(bool enabled)
 {
     auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetUserMediaPermission"));

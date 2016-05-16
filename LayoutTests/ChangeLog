@@ -1,3 +1,36 @@
+2016-05-16  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r192098): Content missing after copy and paste to Notes App on retina displays
+        https://bugs.webkit.org/show_bug.cgi?id=157630
+        <rdar://problem/25277577>
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/images/hidpi-srcset-copy-expected.txt: Added.
+        * http/tests/images/hidpi-srcset-copy.html: Added.
+        * http/tests/resources/img-srcset: Added.
+        * http/tests/resources/img-srcset/image1-620x442.jpg: Added.
+        * http/tests/resources/img-srcset/image2-1024x731.jpg: Added.
+        * http/tests/resources/img-srcset/image2-1400x1000.jpg: Added.
+        * http/tests/resources/img-srcset/image2-300x214.jpg: Added.
+        * http/tests/resources/img-srcset/image2-620x442.jpg: Added.
+        * http/tests/resources/img-srcset/image2-840x600.jpg: Added.
+        * http/tests/resources/img-srcset/image3-250x178.jpg: Added.
+        * http/tests/resources/img-srcset/image3-615x438.jpg: Added.
+        * http/tests/resources/img-srcset/image3-620x440.jpg: Added.
+        * http/tests/resources/img-srcset/image3-700x498.jpg: Added.
+        * http/tests/resources/img-srcset/image3-840x598.jpg: Added.
+        * http/tests/resources/img-srcset/image3.jpg: Added.
+        * http/tests/resources/img-srcset/image4-1024x612.jpg: Added.
+        * http/tests/resources/img-srcset/image4-300x179.jpg: Added.
+        * http/tests/resources/img-srcset/image4-620x370.jpg: Added.
+        * http/tests/resources/img-srcset/image4-768x459.jpg: Added.
+        * http/tests/resources/img-srcset/image4-840x502.jpg: Added.
+        * http/tests/resources/img-srcset/image4-940x560.jpg: Added.
+        * platform/efl/TestExpectations: No pasteboard implementation. Skip.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+
 2016-05-16  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] Unreviewed gardening

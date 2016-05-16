@@ -1,3 +1,23 @@
+2016-05-16  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r192098): Content missing after copy and paste to Notes App on retina displays
+        https://bugs.webkit.org/show_bug.cgi?id=157630
+        <rdar://problem/25277577>
+
+        Reviewed by Simon Fraser.
+
+        Tested by http/tests/images/hidpi-srcset-copy.html
+
+        The code to create a WebArchive (or other representation) of a webpage was using the 'src' attribute of
+        the image element, which might be changed to reflect the optimal image dimensions for a specific
+        display. Instead, we should use the 'imageSourceURL' method of the Element class so we get the correct
+        'original' image URL in our cached resources.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_processElement): Use 'imageSourceURL', rather than getting the raw 'src' attribute.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::addSubresourceAttributeURLs): Ditto.
+
 2016-05-16  Brady Eidson  <beidson@apple.com>
 
         Random CachedFont.cpp cleanup.

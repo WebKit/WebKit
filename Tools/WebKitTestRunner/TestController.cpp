@@ -2163,6 +2163,12 @@ void TestController::platformResetStateToConsistentValues()
 {
 
 }
+
+unsigned TestController::imageCountInGeneralPasteboard() const
+{
+    return 0;
+}
+
 #endif
 
 } // namespace WTR

@@ -1333,3 +1333,10 @@ void TestRunner::simulateLegacyWebNotificationClick(JSStringRef title)
 {
     // FIXME: Implement.
 }
+
+unsigned TestRunner::imageCountInGeneralPasteboard() const
+{
+    printf("ERROR: TestRunner::imageCountInGeneralPasteboard() not implemented\n");
+    return 0;
+}
+

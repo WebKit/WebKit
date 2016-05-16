@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -140,6 +140,37 @@ void TestController::cocoaResetStateToConsistentValues()
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)
 {
     setCrashReportApplicationSpecificInformationToURL(testInvocation.url());
+}
+
+static NSString * const WebArchivePboardType = @"Apple Web Archive pasteboard type";
+static NSString * const WebSubresourcesKey = @"WebSubresources";
+static NSString * const WebSubframeArchivesKey = @"WebResourceMIMEType like 'image*'";
+
+unsigned TestController::imageCountInGeneralPasteboard() const
+{
+#if PLATFORM(MAC)
+    NSData *data = [[NSPasteboard generalPasteboard] dataForType:WebArchivePboardType];
+#elif PLATFORM(IOS)
+    NSData *data = [[UIPasteboard generalPasteboard] valueForPasteboardType:WebArchivePboardType];
+#endif
+    if (!data)
+        return 0;
+    
+    NSError *error = nil;
+    id webArchive = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:NULL error:&error];
+    if (error) {
+        NSLog(@"Encountered error while serializing Web Archive pasteboard data: %@", error);
+        return 0;
+    }
+    
+    NSArray *subItems = [NSArray arrayWithArray:[webArchive objectForKey:WebSubresourcesKey]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:WebSubframeArchivesKey];
+    NSArray *imagesArray = [subItems filteredArrayUsingPredicate:predicate];
+    
+    if (!imagesArray)
+        return 0;
+    
+    return imagesArray.count;
 }
 
 } // namespace WTR

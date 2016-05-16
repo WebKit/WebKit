@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1901,7 +1901,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         retval = NO;
 #endif
     } else if (element.hasTagName(imgTag)) {
-        NSString *urlString = element.getAttribute(srcAttr);
+        NSString *urlString = element.imageSourceURL();
         if (urlString && [urlString length] > 0) {
             NSURL *url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
             if (!url)

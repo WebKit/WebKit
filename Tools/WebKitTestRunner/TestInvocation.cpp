@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -708,6 +708,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ImageCountInGeneralPasteboard")) {
+        unsigned count = TestController::singleton().imageCountInGeneralPasteboard();
+        WKRetainPtr<WKUInt64Ref> result(AdoptWK, WKUInt64Create(count));
+        return result;
+    }
+    
     ASSERT_NOT_REACHED();
     return nullptr;
 }

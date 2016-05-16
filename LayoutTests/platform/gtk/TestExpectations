@@ -2186,6 +2186,7 @@ webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-in
 
 # PasteBoard::plainText() does not support file names.
 webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element.html [ Failure ]
+http/tests/images/hidpi-srcset-copy.html [ Skip ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]

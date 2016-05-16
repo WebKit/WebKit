@@ -1119,6 +1119,7 @@ webkit.org/b/85877 fast/forms/select-style.html [ Pass ]
 
 # EFL port needs Pasteboard implementation, needs baselines.
 webkit.org/b/84338 fast/forms/plaintext-mode-2.html [ Pass ]
+http/tests/images/hidpi-srcset-copy.html [ Skip ]
 
 # Controls are not zoomed.
 webkit.org/b/102367 fast/forms/zoomed-controls.html [ Pass ]
