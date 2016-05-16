@@ -151,6 +151,11 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
             categoryView.clear();
     }
 
+    get scrollableElements()
+    {
+        return [this.element];
+    }
+
     // Protected
 
     get showsFilterBar() { return false; }

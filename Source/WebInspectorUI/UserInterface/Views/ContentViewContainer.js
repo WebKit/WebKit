@@ -88,8 +88,23 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         if (contentView.parentContainer !== this)
             this._takeOwnershipOfContentView(contentView);
 
-        var currentEntry = this.currentBackForwardEntry;
-        var provisionalEntry = new WebInspector.BackForwardEntry(contentView, cookie);
+        let currentEntry = this.currentBackForwardEntry;
+
+        // Try to find the last entry with the same content view so we can copy it
+        // to preserve the last scroll positions. The supplied cookie (if any) could
+        // still change the scroll position afterwards, but in most cases the cookie
+        // is undefined, so we want to show with a state last used.
+        let provisionalEntry = null;
+        for (let i = this._backForwardList.length - 1; i >= 0; --i) {
+            if (this._backForwardList[i].contentView === contentView) {
+                provisionalEntry = this._backForwardList[i].makeCopy(cookie);
+                break;
+            }
+        }
+
+        if (!provisionalEntry)
+            provisionalEntry = new WebInspector.BackForwardEntry(contentView, cookie);
+
         // Don't do anything if we would have added an identical back/forward list entry.
         if (currentEntry && currentEntry.contentView === contentView && Object.shallowEqual(provisionalEntry.cookie, currentEntry.cookie)) {
             const shouldCallShown = false;
@@ -101,18 +116,18 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         // at the end of the list. Finally, the current index will be updated to point to the end of the back/forward list.
 
         // Increment the current index to where we will insert the content view.
-        var newIndex = this._currentIndex + 1;
+        let newIndex = this._currentIndex + 1;
 
         // Insert the content view at the new index. This will remove any content views greater than or equal to the index.
-        var removedEntries = this._backForwardList.splice(newIndex, this._backForwardList.length - newIndex, provisionalEntry);
+        let removedEntries = this._backForwardList.splice(newIndex, this._backForwardList.length - newIndex, provisionalEntry);
 
         console.assert(newIndex === this._backForwardList.length - 1);
         console.assert(this._backForwardList[newIndex] === provisionalEntry);
 
         // Disassociate with the removed content views.
-        for (var i = 0; i < removedEntries.length; ++i) {
+        for (let i = 0; i < removedEntries.length; ++i) {
             // Skip disassociation if this content view is still in the back/forward list.
-            var shouldDissociateContentView = !this._backForwardList.some(function(existingEntry) {
+            let shouldDissociateContentView = !this._backForwardList.some(function(existingEntry) {
                 return existingEntry.contentView === removedEntries[i].contentView;
             });
 

@@ -101,6 +101,11 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
         cookie.objectStoreIndexName = this._objectStoreIndex && this._objectStoreIndex.name;
     }
 
+    get scrollableElements()
+    {
+        return [this._dataGrid.scrollContainer];
+    }
+
     // Private
 
     _reset()

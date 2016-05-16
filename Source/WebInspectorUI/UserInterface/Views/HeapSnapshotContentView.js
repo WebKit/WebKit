@@ -65,6 +65,11 @@ WebInspector.HeapSnapshotContentView = class HeapSnapshotContentView extends Web
         this._heapSnapshotDataGridTree.hidden();
     }
 
+    get scrollableElements()
+    {
+        return [this._dataGrid.scrollContainer];
+    }
+
     // Private
 
     _sortDataGrid()

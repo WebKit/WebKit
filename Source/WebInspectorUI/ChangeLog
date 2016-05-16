@@ -1,3 +1,33 @@
+2016-05-14  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Many DataGrid instances do not save/restore their scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=157709
+        rdar://problem/26286090
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/BackForwardEntry.js:
+        (WebInspector.BackForwardEntry.prototype.makeCopy): Added.
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.showContentView): Copy the last entry for the view.
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView.prototype.get scrollableElements): Added.
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WebInspector.HeapSnapshotContentView.prototype.get scrollableElements): Added.
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype.get scrollableElements): Added.
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WebInspector.MemoryTimelineView.prototype.get scrollableElements): Added.
+        * UserInterface/Views/ProfileView.js:
+        (WebInspector.ProfileView.prototype.get scrollableElements): Added.
+        (WebInspector.ProfileView.prototype._repopulateDataGridFromTree): Removed unused skipRefresh argument.
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView.prototype.get scrollableElements): Added.
+        * UserInterface/Views/ScriptProfileTimelineView.js:
+        (WebInspector.ScriptProfileTimelineView.prototype.get scrollableElements): Added.
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.get scrollableElements): Added.
+
 2016-05-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Empty line shows arrow when hovering over Animation Frame Requested in timeline recording
