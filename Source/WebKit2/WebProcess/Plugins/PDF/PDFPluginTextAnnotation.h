@@ -60,7 +60,10 @@ protected:
 private:
     bool handleEvent(WebCore::Event*) override;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     PDFAnnotationTextWidget *textAnnotation() const { return static_cast<PDFAnnotationTextWidget *>(annotation()); }
+#pragma clang diagnostic pop
 };
 
 } // namespace WebKit

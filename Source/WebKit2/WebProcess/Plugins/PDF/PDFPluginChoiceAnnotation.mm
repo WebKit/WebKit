@@ -69,7 +69,10 @@ void PDFPluginChoiceAnnotation::commit()
 PassRefPtr<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
 {
     Document& document = parent()->document();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     PDFAnnotationChoiceWidget *choiceAnnotation = this->choiceAnnotation();
+#pragma clang diagnostic pop
 
     RefPtr<Element> element = document.createElement(selectTag, false);
 

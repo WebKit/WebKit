@@ -1,3 +1,21 @@
+2016-05-16  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Fix some deprecation warnings.
+
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _drawPDFDocument:page:atPoint:]):
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::setActiveAnnotation):
+        (WebKit::PDFPlugin::lookupTextAtLocation):
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::createAnnotationElement):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::drawPDFPage):
+
 2016-04-06  Jer Noble  <jer.noble@apple.com>
 
         [WK2] Add API to WKWebViewConfiguration to control autoplay policy.

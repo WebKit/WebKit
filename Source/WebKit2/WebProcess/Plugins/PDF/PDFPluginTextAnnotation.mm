@@ -86,7 +86,10 @@ PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
     RefPtr<Element> element;
 
     Document& document = parent()->document();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     PDFAnnotationTextWidget *textAnnotation = this->textAnnotation();
+#pragma clang diagnostic pop
     bool isMultiline = textAnnotation.isMultiline;
 
     if (isMultiline)

@@ -53,7 +53,10 @@ private:
 
     PassRefPtr<WebCore::Element> createAnnotationElement() override;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     PDFAnnotationChoiceWidget *choiceAnnotation() { return static_cast<PDFAnnotationChoiceWidget *>(annotation()); }
+#pragma clang diagnostic pop
 };
 
 } // namespace WebKit
