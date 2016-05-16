@@ -1,3 +1,18 @@
+2016-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        RenderLayer::hitTestList could mutate the list of candidate layers.
+        https://bugs.webkit.org/show_bug.cgi?id=157718
+        <rdar://problem/22556046>
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that we always start hittesting a clean render tree at EventHandler::hitTestResultAtPoint.
+
+        Speculative fix.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+
 2016-05-13  Enrica Casucci  <enrica@apple.com>
 
         Remove unused initializer for WebEvent on iOS.
