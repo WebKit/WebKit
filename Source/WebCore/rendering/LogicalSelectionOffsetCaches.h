@@ -88,12 +88,10 @@ public:
         // such that we can remove this assertion.
         ASSERT(rootBlock.isSelectionRoot());
 #endif
-        auto parent = rootBlock.parent();
-
         // LogicalSelectionOffsetCaches should not be used on an orphaned tree.
-        m_containingBlockForFixedPosition.setBlock(containingBlockForFixedPosition(parent), nullptr);
-        m_containingBlockForAbsolutePosition.setBlock(containingBlockForAbsolutePosition(parent), nullptr);
-        m_containingBlockForInflowPosition.setBlock(containingBlockForObjectInFlow(parent), nullptr);
+        m_containingBlockForFixedPosition.setBlock(rootBlock.containingBlockForFixedPosition(), nullptr);
+        m_containingBlockForAbsolutePosition.setBlock(rootBlock.containingBlockForAbsolutePosition(), nullptr);
+        m_containingBlockForInflowPosition.setBlock(rootBlock.containingBlockForObjectInFlow(), nullptr);
     }
 
     LogicalSelectionOffsetCaches(RenderBlock& block, const LogicalSelectionOffsetCaches& cache)

@@ -488,9 +488,6 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Render
     return adjustLayoutUnitForAbsoluteZoom(value, renderer.style());
 }
 
-RenderBlock* containingBlockForFixedPosition(const RenderElement*);
-RenderBlock* containingBlockForAbsolutePosition(const RenderElement*);
-RenderBlock* containingBlockForObjectInFlow(const RenderElement*);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderElement, isRenderElement())

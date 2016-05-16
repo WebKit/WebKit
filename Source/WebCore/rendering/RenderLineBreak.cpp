@@ -241,7 +241,7 @@ void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsign
             rect.shiftXEdgeTo(rootBox.lineTopWithLeading());
     }
 
-    auto* containingBlock = containingBlockForObjectInFlow(this);
+    auto* containingBlock = containingBlockForObjectInFlow();
     // Map rect, extended left to leftOffset, and right to rightOffset, through transforms to get minX and maxX.
     LogicalSelectionOffsetCaches cache(*containingBlock);
     LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, box->logicalTop(), cache);

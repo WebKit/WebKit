@@ -622,19 +622,64 @@ void RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout()
 
 RenderBlock* RenderObject::containingBlock() const
 {
-    auto* parent = this->parent();
+    auto containingBlockForRenderer = [](const RenderObject& renderer)
+    {
+        auto& style = renderer.style();
+        if (style.position() == AbsolutePosition)
+            return renderer.containingBlockForAbsolutePosition();
+        if (style.position() == FixedPosition)
+            return renderer.containingBlockForFixedPosition();
+        return renderer.containingBlockForObjectInFlow();
+    };
+
     if (is<RenderText>(*this))
-        return containingBlockForObjectInFlow(parent);
+        return containingBlockForObjectInFlow();
 
-    if (!parent && is<RenderScrollbarPart>(*this))
-        parent = downcast<RenderScrollbarPart>(*this).rendererOwningScrollbar();
+    if (!parent() && is<RenderScrollbarPart>(*this)) {
+        if (auto* renderer = downcast<RenderScrollbarPart>(*this).rendererOwningScrollbar())
+            return containingBlockForRenderer(*renderer);
+        return nullptr;
+    }
+    return containingBlockForRenderer(*this);
+}
 
-    auto& style = this->style();
-    if (style.position() == AbsolutePosition)
-        return containingBlockForAbsolutePosition(parent);
-    if (style.position() == FixedPosition)
-        return containingBlockForFixedPosition(parent);
-    return containingBlockForObjectInFlow(parent);
+RenderBlock* RenderObject::containingBlockForFixedPosition() const
+{
+    auto* renderer = parent();
+    while (renderer && !renderer->canContainFixedPositionObjects())
+        renderer = renderer->parent();
+
+    ASSERT(!renderer || !renderer->isAnonymousBlock());
+    return downcast<RenderBlock>(renderer);
+}
+
+RenderBlock* RenderObject::containingBlockForAbsolutePosition() const
+{
+    // RenderInlines forward their absolute positioned descendants to the containing block, so
+    // we need to start searching from 'this' and not from 'parent()'.
+    auto* renderer = isRenderInline() ? const_cast<RenderElement*>(downcast<RenderElement>(this)) : parent();
+    while (renderer && !renderer->canContainAbsolutelyPositionedObjects())
+        renderer = renderer->parent();
+
+    // For a relatively positioned inline, return its nearest non-anonymous containing block,
+    // not the inline itself, to avoid having a positioned objects list in all RenderInlines
+    // and use RenderBlock* as RenderElement::containingBlock's return type.
+    // Use RenderBlock::container() to obtain the inline.
+    if (renderer && !is<RenderBlock>(*renderer))
+        renderer = renderer->containingBlock();
+
+    while (renderer && renderer->isAnonymousBlock())
+        renderer = renderer->containingBlock();
+
+    return downcast<RenderBlock>(renderer);
+}
+
+RenderBlock* RenderObject::containingBlockForObjectInFlow() const
+{
+    auto* renderer = parent();
+    while (renderer && ((renderer->isInline() && !renderer->isReplaced()) || !renderer->isRenderBlock()))
+        renderer = renderer->parent();
+    return downcast<RenderBlock>(renderer);
 }
 
 void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

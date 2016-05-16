@@ -976,7 +976,7 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderElement& render
     }
 
     // This renderer may have positioned descendants whose containing block is some ancestor.
-    if (auto containingBlock = containingBlockForAbsolutePosition(&renderer)) {
+    if (auto containingBlock = renderer.containingBlockForAbsolutePosition()) {
         if (auto positionedObjects = containingBlock->positionedObjects()) {
             for (RenderBox* it : *positionedObjects) {
                 if (it != &renderer && renderer.element()->contains(it->element()))

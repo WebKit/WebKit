@@ -1,3 +1,31 @@
+2016-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        containingBlockFor*Position functions should take the renderer instead of the parent.
+        https://bugs.webkit.org/show_bug.cgi?id=157659
+
+        Reviewed by Simon Fraser.
+
+        containingBlockForFixedPosition, containingBlockForAbsolutePosition and containingBlockForObjectInFlow functions
+        expect the renderer's parent to be passed in (unless it is a RenderInline!). It is rather misleading and highly error-prone.
+        We should call them with the renderer itself instead.
+
+        * dom/Element.cpp:
+        (WebCore::layoutOverflowRectContainsAllDescendants): This expects ancestor containing block.
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches):
+        * rendering/RenderElement.cpp:
+        (WebCore::containingBlockForFixedPosition):
+        (WebCore::containingBlockForAbsolutePosition):
+        (WebCore::containingBlockForObjectInFlow):
+        * rendering/RenderElement.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleWillChange):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::collectSelectionRects): Not a behaviour change.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock): RenderScrollbarPart renderer now returns
+        the containing block based on its owning renderer's style.
+
 2016-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r192098): Content missing after copy and paste to Notes App on retina displays
