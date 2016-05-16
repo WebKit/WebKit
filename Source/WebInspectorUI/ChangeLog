@@ -1,3 +1,13 @@
+2016-05-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Background stripes don't span the width of Network sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=157744
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NetworkSidebarPanel.css:
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content):
+
 2016-05-16  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Computed style shows both prefixed and unprefixed variants of properties
