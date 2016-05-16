@@ -77,7 +77,6 @@ public:
 #if TARGET_OS_IPHONE
         configuration.get().allowsInlineMediaPlayback = YES;
         configuration.get()._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
-        configuration.get().requiresUserActionForMediaPlayback = NO;
 #endif
     }
 
@@ -169,6 +168,45 @@ TEST_F(RequiresUserActionForPlaybackTest, DoesNotRequireUserActionForMediaPlayba
 
 TEST_F(RequiresUserActionForPlaybackTest, RequiresUserActionForAudioAndVideoPlayback)
 {
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio | WKAudiovisualMediaTypeVideo;
+    createWebView();
+
+    testVideoWithAudio();
+    EXPECT_WK_STREQ(@"not playing", (NSString *)[lastScriptMessage body]);
+    testVideoWithoutAudio();
+    EXPECT_WK_STREQ(@"not playing", (NSString *)[lastScriptMessage body]);
+    testAudioOnly();
+    EXPECT_WK_STREQ(@"not playing", (NSString *)[lastScriptMessage body]);
+}
+
+TEST_F(RequiresUserActionForPlaybackTest, RequiresUserActionForAudioButNotVideoPlayback)
+{
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
+    createWebView();
+
+    testVideoWithAudio();
+    EXPECT_WK_STREQ(@"not playing", (NSString *)[lastScriptMessage body]);
+    testVideoWithoutAudio();
+    EXPECT_WK_STREQ(@"playing", (NSString *)[lastScriptMessage body]);
+    testAudioOnly();
+    EXPECT_WK_STREQ(@"not playing", (NSString *)[lastScriptMessage body]);
+}
+
+TEST_F(RequiresUserActionForPlaybackTest, RequiresUserActionForVideoButNotAudioPlayback)
+{
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeVideo;
+    createWebView();
+
+    testVideoWithAudio();
+    EXPECT_WK_STREQ(@"not playing", (NSString *)[lastScriptMessage body]);
+    testVideoWithoutAudio();
+    EXPECT_WK_STREQ(@"not playing", (NSString *)[lastScriptMessage body]);
+    testAudioOnly();
+    EXPECT_WK_STREQ(@"playing", (NSString *)[lastScriptMessage body]);
+}
+
+TEST_F(RequiresUserActionForPlaybackTest, DeprecatedRequiresUserActionForAudioAndVideoPlayback)
+{
     configuration.get()._requiresUserActionForAudioPlayback = YES;
     configuration.get()._requiresUserActionForVideoPlayback = YES;
     createWebView();
@@ -181,7 +219,7 @@ TEST_F(RequiresUserActionForPlaybackTest, RequiresUserActionForAudioAndVideoPlay
     EXPECT_WK_STREQ(@"not playing", (NSString *)[lastScriptMessage body]);
 }
 
-TEST_F(RequiresUserActionForPlaybackTest, RequiresUserActionForAudioButNotVideoPlayback)
+TEST_F(RequiresUserActionForPlaybackTest, DeprecatedRequiresUserActionForAudioButNotVideoPlayback)
 {
     configuration.get()._requiresUserActionForAudioPlayback = YES;
     configuration.get()._requiresUserActionForVideoPlayback = NO;
@@ -195,7 +233,7 @@ TEST_F(RequiresUserActionForPlaybackTest, RequiresUserActionForAudioButNotVideoP
     EXPECT_WK_STREQ(@"not playing", (NSString *)[lastScriptMessage body]);
 }
 
-TEST_F(RequiresUserActionForPlaybackTest, RequiresUserActionForVideoButNotAudioPlayback)
+TEST_F(RequiresUserActionForPlaybackTest, DeprecatedRequiresUserActionForVideoButNotAudioPlayback)
 {
     configuration.get()._requiresUserActionForAudioPlayback = NO;
     configuration.get()._requiresUserActionForVideoPlayback = YES;

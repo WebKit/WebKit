@@ -66,6 +66,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration._mediaDataLoadsAutomatically = YES;
     globalWebViewConfiguration.requiresUserActionForMediaPlayback = NO;
 #endif
+    globalWebViewConfiguration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
 #endif
 }
 

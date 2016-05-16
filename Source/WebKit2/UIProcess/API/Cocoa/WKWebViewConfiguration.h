@@ -95,6 +95,20 @@ typedef NS_ENUM(NSInteger, WKUserInterfaceDirectionPolicy) {
 
 #endif
 
+/*! @enum WKAudiovisualMediaTypes
+ @abstract The types of audiovisual media which will require a user gesture to begin playing.
+ @constant WKAudiovisualMediaTypeNone No audiovisual media will require a user gesture to begin playing.
+ @constant WKAudiovisualMediaTypeAudio Audiovisual media containing audio will require a user gesture to begin playing.
+ @constant WKAudiovisualMediaTypeVideo Audiovisual media containing video will require a user gesture to begin playing.
+ @constant WKAudiovisualMediaTypeAll All audiovisual media will require a user gesture to begin playing.
+*/
+typedef NS_OPTIONS(NSUInteger, WKAudiovisualMediaTypes) {
+    WKAudiovisualMediaTypeNone = 0,
+    WKAudiovisualMediaTypeAudio = 1 << 0,
+    WKAudiovisualMediaTypeVideo = 1 << 1,
+    WKAudiovisualMediaTypeAll = NSUIntegerMax
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 /*! A WKWebViewConfiguration object is a collection of properties with
  which to initialize a web view.
  @helps Contains properties used to configure a @link WKWebView @/link.
@@ -137,18 +151,14 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic) BOOL allowsAirPlayForMediaPlayback WK_AVAILABLE(10_11, 9_0);
 
+@property (nonatomic) WKAudiovisualMediaTypes mediaTypesRequiringUserActionForPlayback WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline
  (YES) or use the native full-screen controller (NO).
  @discussion The default value is NO.
  */
 @property (nonatomic) BOOL allowsInlineMediaPlayback;
-
-/*! @abstract A Boolean value indicating whether HTML5 videos require the
- user to start playing them (YES) or can play automatically (NO).
- @discussion The default value is YES.
- */
-@property (nonatomic) BOOL requiresUserActionForMediaPlayback WK_AVAILABLE(NA, 9_0);
 
 /*! @abstract The level of granularity with which the user can interactively
  select content in the web view.
@@ -189,6 +199,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 #if TARGET_OS_IPHONE
 @property (nonatomic) BOOL mediaPlaybackRequiresUserAction WK_DEPRECATED(NA, NA, 8_0, 9_0, "Please use requiresUserActionForMediaPlayback");
 @property (nonatomic) BOOL mediaPlaybackAllowsAirPlay WK_DEPRECATED(NA, NA, 8_0, 9_0, "Please use allowsAirPlayForMediaPlayback");
+@property (nonatomic) BOOL requiresUserActionForMediaPlayback WK_DEPRECATED(NA, NA, 9_0, 10_0, "Please use mediaTypesRequiringUserActionForPlayback");
 #endif
 
 @end

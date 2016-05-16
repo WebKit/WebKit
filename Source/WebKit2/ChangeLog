@@ -1,3 +1,30 @@
+2016-04-06  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] Add API to WKWebViewConfiguration to control autoplay policy.
+        https://bugs.webkit.org/show_bug.cgi?id=156312
+
+        Reviewed by Dan Bernstein.
+
+        Add a new API to WKWebViewConfiguration to allow fine-grained control over when media is allowed
+        to play without a user gesture, and simultaneously deprecate the existing, all-or-nothing API,
+        and deprecated the equivalent SPIs.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _requiresUserActionForVideoPlayback]):
+        (-[WKWebViewConfiguration _setRequiresUserActionForVideoPlayback:]):
+        (-[WKWebViewConfiguration _requiresUserActionForAudioPlayback]):
+        (-[WKWebViewConfiguration _setRequiresUserActionForAudioPlayback:]):
+        (-[WKWebViewConfiguration requiresUserActionForMediaPlayback]):
+        (-[WKWebViewConfiguration setRequiresUserActionForMediaPlayback:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2016-05-16  Brian Burg  <bburg@apple.com>
 
         Web Automation: WebAutomationSessionProxy.js gets injected more than once sometimes

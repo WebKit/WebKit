@@ -1,3 +1,15 @@
+2016-04-06  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] Add API to WKWebViewConfiguration to control autoplay policy.
+        https://bugs.webkit.org/show_bug.cgi?id=156312
+
+        Reviewed by Dan Bernstein.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RequiresUserActionForPlayback.mm:
+        (TEST_F):
+
 2016-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r192098): Content missing after copy and paste to Notes App on retina displays
