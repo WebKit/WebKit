@@ -271,7 +271,7 @@ public:
     }
 #endif
 
-    // Platform agnostic onvenience functions,
+    // Platform agnostic convenience functions,
     // described in terms of other macro assembly methods.
     void pop()
     {

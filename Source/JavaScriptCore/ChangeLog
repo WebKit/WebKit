@@ -1,3 +1,10 @@
+2016-05-16  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed, fixed typo in a comment.
+
+        * assembler/MacroAssembler.h: Replaced "onvenience" with
+        "convenience".
+
 2016-05-16  Filip Pizlo  <fpizlo@apple.com>
 
         FixupPhase should be more eager to demote bit math to untyped
