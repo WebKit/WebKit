@@ -5,13 +5,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS 'TouchEvent' in window is true
 PASS window.propertyIsEnumerable('TouchEvent') is false
-PASS new TouchEvent() threw exception TypeError: TouchEventConstructor is not a constructor (evaluating 'new TouchEvent()').
+PASS new TouchEvent() threw exception TypeError: function is not a constructor (evaluating 'new TouchEvent()').
 PASS "createTouchList" in document is true
 PASS touchList is non-null.
 PASS touchList.length is 0
 PASS touchList.item(0) is null
 PASS touchList.item(1) is null
-FAIL An exception was thrown: Type error
+FAIL An exception was thrown: The provided value is non-finite
 PASS successfullyParsed is true
 
 TEST COMPLETE
