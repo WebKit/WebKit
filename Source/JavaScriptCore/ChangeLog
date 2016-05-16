@@ -1,3 +1,23 @@
+2016-05-16  Saam barati  <sbarati@apple.com>
+
+        TypeSet/StructureShape have a flawed sense of JS prototype chains
+        https://bugs.webkit.org/show_bug.cgi?id=157760
+
+        Reviewed by Joseph Pecoraro.
+
+        There was an assumption that we would bottom out in "Object". This is
+        not true for many reasons. JS objects may not end in Object.prototype.
+        Also, our mechanism of grabbing an Object's class name may also not
+        bottom out in "Object". We were seeing this in the JS objects we use
+        in the InjectedScriptSource.js inspector script.
+
+        * runtime/TypeSet.cpp:
+        (JSC::StructureShape::leastCommonAncestor):
+        * tests/typeProfiler/weird-prototype-chain.js: Added.
+        (wrapper.foo):
+        (wrapper.let.o2):
+        (wrapper):
+
 2016-05-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r200924. Caused js/regress/string-replace-generic.html to fail.

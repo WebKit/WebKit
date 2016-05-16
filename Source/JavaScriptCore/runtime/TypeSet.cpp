@@ -386,8 +386,10 @@ String StructureShape::leastCommonAncestor(const Vector<RefPtr<StructureShape>> 
             }
             if (!foundLUB) {
                 origin = origin->m_proto;
-                // All Objects must share the 'Object' Prototype. Therefore, at the very least, we should always converge on 'Object' before reaching a null prototype.
-                RELEASE_ASSERT(origin); 
+                // This is unlikely to happen, because we usually bottom out at "Object", but there are some sets of Objects
+                // that may cause this behavior. We fall back to "Object" because it's our version of Top.
+                if (!origin)
+                    return ASCIILiteral("Object");
             }
         }
 
