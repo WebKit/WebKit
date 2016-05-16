@@ -1,3 +1,13 @@
+2016-05-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] Unreviewed gardening
+
+        Re-mark a failing test as failing. Update the expectations file so
+        that it fails rather than passes unexpectedly.
+
+        * accessibility/gtk/title-and-alt-expected.txt:
+        * platform/gtk/TestExpectations:
+
 2016-05-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r199821): Large animated GIFs with slow network do not animate till the last frame
