@@ -99,7 +99,7 @@
     if (_popoverPresentationControllerDelegateWhileRotating)
         presentationController.delegate = _popoverPresentationControllerDelegateWhileRotating.get();
 
-    UIViewController *presentingViewController = [view.window rootViewController];
+    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:view];
     [presentingViewController presentViewController:presentedViewController animated:YES completion:NULL];
 
     return YES;
@@ -130,7 +130,7 @@
     //    view controller, without re-presenting the alert controller.
 
     UIView *view = [_sheetDelegate hostViewForSheet];
-    UIViewController *presentingViewController = view.window.rootViewController;
+    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:view];
 
     // topPresentedViewController is either self (cases (a) and (b) above) or an action's view controller
     // (case (c) above).

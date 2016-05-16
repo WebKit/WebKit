@@ -1,3 +1,17 @@
+2016-05-16  David Kilzer  <ddkilzer@apple.com>
+
+        Action sheets don’t work in presented view controllers
+        <https://webkit.org/b/157754>
+        <rdar://problem/26304845>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/ios/WKActionSheet.mm:
+        (-[WKActionSheet presentSheetFromRect:]):
+        (-[WKActionSheet willRotate]):
+        - Call SPI to get the presenting view controller, since it may
+          not always be the root view controller.
+
 2016-05-13  Enrica Casucci  <enrica@apple.com>
 
         Text selection is basically impossible on plain text pages.
