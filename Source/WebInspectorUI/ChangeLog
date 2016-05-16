@@ -1,3 +1,23 @@
+2016-05-16  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: Computed style shows both prefixed and unprefixed variants of properties
+        https://bugs.webkit.org/show_bug.cgi?id=157674
+        <rdar://problem/24339756>
+
+        Reviewed by Timothy Hatcher.
+
+        We make the CSSProperty `implicit` property read-write, and in the case where a computed style
+        has a property marked as explicit, we also check that it's found in matching rules to consider
+        it non-implicit. This correctly filters out variants of properties set explicitly.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WebInspector.CSSProperty.prototype.set implicit):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.refresh.fetchedComputedStyle):
+        (WebInspector.DOMNodeStyles.prototype.refresh):
+        (WebInspector.DOMNodeStyles.prototype._isPropertyFoundInMatchingRules):
+        (WebInspector.DOMNodeStyles):
+
 2016-05-14  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: DataGrid _updateVisibleRows dominates profiles of timeline recordings when data grid (Overview or TimelineDataGrids) is showing

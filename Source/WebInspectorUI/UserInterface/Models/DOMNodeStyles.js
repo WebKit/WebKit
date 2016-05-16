@@ -150,6 +150,8 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                 propertyPayload.implicit = !this._propertyNameToEffectivePropertyMap[canonicalName];
 
                 var property = this._parseStylePropertyPayload(propertyPayload, NaN, this._computedStyle);
+                if (!property.implicit)
+                    property.implicit = !this._isPropertyFoundInMatchingRules(property.name);
                 properties.push(property);
             }
 
@@ -952,6 +954,13 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                     propertyNameToEffectiveProperty[property.canonicalName] = property;
             }
         }
+    }
+
+    _isPropertyFoundInMatchingRules(propertyName)
+    {
+        return this._orderedStyles.some((style) => {
+            return style.properties.some((property) => property.name === propertyName);
+        });
     }
 };
 

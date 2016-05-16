@@ -199,10 +199,8 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         this._overriddenStatusChangedTimeout = setTimeout(delayed.bind(this), 0);
     }
 
-    get implicit()
-    {
-        return this._implicit;
-    }
+    get implicit() { return this._implicit; }
+    set implicit(implicit) { this._implicit = implicit; }
 
     get anonymous()
     {
