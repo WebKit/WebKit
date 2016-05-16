@@ -310,7 +310,7 @@ public:
     void didEnterFullscreen();
     void didExitFullscreen();
 
-    WebInspectorProxy* inspector();
+    WebInspectorProxy* inspector() const;
 
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool);

@@ -459,6 +459,9 @@ void WebAutomationSession::inspectorFrontendLoaded(const WebPageProxy& page)
 {
     if (auto callback = m_pendingInspectorCallbacksPerPage.take(page.pageID()))
         callback->sendSuccess(InspectorObject::create());
+
+    // Start collecting profile information immediately so the entire session is captured.
+    page.inspector()->togglePageProfiling();
 }
 
 void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)

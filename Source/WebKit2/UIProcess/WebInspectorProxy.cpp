@@ -296,9 +296,9 @@ void WebInspectorProxy::togglePageProfiling()
         return;
 
     if (m_isProfilingPage)
-        m_inspectedPage->process().send(Messages::WebInspector::StopPageProfiling(), m_inspectedPage->pageID());
+        m_inspectorPage->process().send(Messages::WebInspectorUI::StopPageProfiling(), m_inspectorPage->pageID());
     else
-        m_inspectedPage->process().send(Messages::WebInspector::StartPageProfiling(), m_inspectedPage->pageID());
+        m_inspectorPage->process().send(Messages::WebInspectorUI::StartPageProfiling(), m_inspectorPage->pageID());
 
     // FIXME: have the WebProcess notify us on state changes.
     m_isProfilingPage = !m_isProfilingPage;

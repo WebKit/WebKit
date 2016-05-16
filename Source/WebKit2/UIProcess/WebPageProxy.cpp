@@ -4034,7 +4034,7 @@ void WebPageProxy::didEndColorPicker()
 #endif
 
 // Inspector
-WebInspectorProxy* WebPageProxy::inspector()
+WebInspectorProxy* WebPageProxy::inspector() const
 {
     if (isClosed() || !isValid())
         return 0;
