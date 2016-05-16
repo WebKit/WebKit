@@ -1,3 +1,26 @@
+2016-05-16  Filip Pizlo  <fpizlo@apple.com>
+
+        FixupPhase should be more eager to demote bit math to untyped
+        https://bugs.webkit.org/show_bug.cgi?id=157746
+
+        Reviewed by Mark Lam.
+        
+        This just makes the logic for how we fixup bit math match the way we do it in other places.
+        This doesn't affect performance on any major benchmark but it's a big win on new
+        microbenchmarks added in this change.
+        
+        Details:
+
+        object-and                                     11.1610+-0.7602     ^      4.8105+-0.1690        ^ definitely 2.3201x faster
+        object-or                                      11.0845+-0.2487     ^      4.7146+-0.0374        ^ definitely 2.3511x faster
+        object-xor                                     10.2946+-0.9946     ^      4.7278+-0.0814        ^ definitely 2.1775x faster
+        object-lshift                                  10.4896+-1.0867     ^      4.7699+-0.0721        ^ definitely 2.1991x faster
+        object-rshift                                  11.1239+-0.5010     ^      4.7194+-0.0445        ^ definitely 2.3570x faster
+        object-urshift                                 10.9745+-0.1315     ^      4.7848+-0.0479        ^ definitely 2.2936x faster
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2016-05-15  Michael Saboff  <msaboff@apple.com>
 
         RegExp /y flag incorrect handling of mixed-length alternation

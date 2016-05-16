@@ -105,8 +105,7 @@ private:
         case BitRShift:
         case BitLShift:
         case BitURShift: {
-            if (Node::shouldSpeculateUntypedForBitOps(node->child1().node(), node->child2().node())
-                && m_graph.hasExitSite(node->origin.semantic, BadType)) {
+            if (Node::shouldSpeculateUntypedForBitOps(node->child1().node(), node->child2().node())) {
                 fixEdge<UntypedUse>(node->child1());
                 fixEdge<UntypedUse>(node->child2());
                 break;

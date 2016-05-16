@@ -1,3 +1,39 @@
+2016-05-16  Filip Pizlo  <fpizlo@apple.com>
+
+        FixupPhase should be more eager to demote bit math to untyped
+        https://bugs.webkit.org/show_bug.cgi?id=157746
+
+        Reviewed by Mark Lam.
+
+        * js/regress/object-and-expected.txt: Added.
+        * js/regress/object-and.html: Added.
+        * js/regress/object-int-and-array-expected.txt: Added.
+        * js/regress/object-int-and-array.html: Added.
+        * js/regress/object-lshift-expected.txt: Added.
+        * js/regress/object-lshift.html: Added.
+        * js/regress/object-or-expected.txt: Added.
+        * js/regress/object-or.html: Added.
+        * js/regress/object-rshift-expected.txt: Added.
+        * js/regress/object-rshift.html: Added.
+        * js/regress/object-urshift-expected.txt: Added.
+        * js/regress/object-urshift.html: Added.
+        * js/regress/object-xor-expected.txt: Added.
+        * js/regress/object-xor.html: Added.
+        * js/regress/script-tests/object-and.js: Added.
+        (o.valueOf):
+        * js/regress/script-tests/object-int-and-array.js: Added.
+        (i.o.valueOf):
+        * js/regress/script-tests/object-lshift.js: Added.
+        (o.valueOf):
+        * js/regress/script-tests/object-or.js: Added.
+        (o.valueOf):
+        * js/regress/script-tests/object-rshift.js: Added.
+        (o.valueOf):
+        * js/regress/script-tests/object-urshift.js: Added.
+        (o.valueOf):
+        * js/regress/script-tests/object-xor.js: Added.
+        (o.valueOf):
+
 2016-05-16  Michael Saboff  <msaboff@apple.com>
 
         RegExp /y flag incorrect handling of mixed-length alternation
