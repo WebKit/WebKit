@@ -1,3 +1,36 @@
+2016-05-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r199821): Large animated GIFs with slow network do not animate till the last frame
+        https://bugs.webkit.org/show_bug.cgi?id=157500
+        
+        Reviewed by Darin Adler.
+
+        Ensure the large animated gif will get the correct frameCount even if it
+        is loaded through a slow network.
+
+        * http/tests/misc/resources/large-animated.gif: Added.
+        This is a large animated GIF with 48 frames. The frameCount keeps changing
+        every time a new data block is decoded. Each frame except the last one lasts
+        for 20 ms. The last one lasts for 10 seconds which is similar to setting no-
+        loop to true. I created all the images myself. All the images except the last
+        one are rectangles filled with gradient color so their sizes can be large and
+        get the bug to repro.
+        
+        * http/tests/misc/resources/slow-image-load.pl: Added.
+        * http/tests/misc/resources/slow-png-load.pl: Removed.
+        I wanted to use the slow-png-load.pl but only changing the image mimetype.
+        So I changed its name and I added a new query paramater called 'mimetype'.
+        
+        * http/tests/misc/slow-loading-animated-image-expected.html: Added.
+        * http/tests/misc/slow-loading-animated-image.html: Added.
+        This test loads the animated image in 1 second. It waits for another 1 second
+        to ensure that all the frames are displayed. All we need is to capture the
+        last frame which is distinctly filled with solid green color.
+        
+        * http/tests/misc/slow-loading-image-in-pattern.html:
+        * http/tests/misc/slow-loading-mask.html:
+        Use slow-image-load.pl and pass the image mime type.
+
 2016-05-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Fix some bogus expectations broken by the previous commit

@@ -13,12 +13,13 @@ my $filesize = stat($filename)->size;
 my $loadtime = $query->param('loadtime'); # in seconds
 my $chunkcount = $filesize / CHUNK_SIZE_BYTES;
 my $chunkdelay = $loadtime / $chunkcount;
+my $mimetype = $query->param('mimetype');
 
 # flush the buffers after each print
 select (STDOUT);
 $| = 1;
 
-print "Content-Type: image/png\r\n";
+print "Content-Type: ${mimetype}\r\n";
 print "Expires: Thu, 01 Dec 2003 16:00:00 GMT\r\n";
 print "Cache-Control: no-store, no-cache, must-revalidate\r\n";
 print "Pragma: no-cache\r\n";

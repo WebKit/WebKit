@@ -50,6 +50,21 @@
 
 namespace WebCore {
 
+namespace NativeImage {
+
+IntSize size(const RetainPtr<CGImageRef>& image)
+{
+    return IntSize(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
+}
+
+bool hasAlpha(const RetainPtr<CGImageRef>&)
+{
+    // FIXME: Answer correctly the question: does the CGImageRef have alpha channnel?
+    return true;
+}
+
+}
+
 bool FrameData::clear(bool clearMetadata)
 {
     if (clearMetadata)
@@ -65,26 +80,6 @@ bool FrameData::clear(bool clearMetadata)
         return true;
     }
     return false;
-}
-
-BitmapImage::BitmapImage(RetainPtr<CGImageRef>&& image, ImageObserver* observer)
-    : BitmapImage(observer, std::true_type())
-{
-    CGFloat width = CGImageGetWidth(image.get());
-    CGFloat height = CGImageGetHeight(image.get());
-    m_decodedSize = width * height * 4;
-    m_size = IntSize(width, height);
-
-    // Since we don't have a decoder, we can't figure out the image orientation.
-    // Set m_sizeRespectingOrientation to be the same as m_size so it's not 0x0.
-    m_sizeRespectingOrientation = m_size;
-
-    m_frames.grow(1);
-    m_frames[0].m_image = WTFMove(image);
-    m_frames[0].m_hasAlpha = true;
-    m_frames[0].m_haveMetadata = true;
-
-    checkForSolidColor();
 }
 
 void BitmapImage::checkForSolidColor()

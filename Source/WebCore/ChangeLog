@@ -1,3 +1,68 @@
+2016-05-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r199821): Large animated GIFs with slow network do not animate till the last frame
+        https://bugs.webkit.org/show_bug.cgi?id=157500
+
+        Reviewed by Darin Adler.
+
+        r199821 relies on the assumption that the image frameCount can be retrieved
+        only once when the image size is available and it is not going to change. It
+        turned out this assumption is wrong for some animated GIFs. The frameCount
+        can change every time a new data block is decoded.
+
+        The fix is to invalidate the image cached metadata every time a new data
+        block is decoded.
+
+        Test: http/tests/misc/slow-loading-animated-image.html
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage): Move the "fromImage" BitmapImage constructor
+        to BitmapImage.cpp. The ImageSource needs to be initialized differently for
+        this case from the decoder image case. Also get rid of the template constructor.
+        Most of the flags of the BitmapImage will be deleted with the asynchronous image
+        decoding work.
+        
+        (WebCore::BitmapImage::cacheFrame): Delete unused flag m_hasUniformFrameSize.
+        It was added in r35761 and was mainly used by BitmapImage::currentFrameSize().
+        But this function itself was deleted in r172348.
+        
+        (WebCore::BitmapImage::dataChanged): Invalidate the image metadata cache.
+        
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::BitmapImage): Deleted.
+        Delete unused flag m_hasUniformFrameSize. Also define new static functions in
+        FrameData to calculate platform dependent properties of an image.
+        
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ImageSource): Add a new constructor for the "fromImage"
+        BitmapImage case. The purpose of this constructor is to keep m_needsUpdateMetadata
+        and m_maximumSubsamplingLevel be initialized as they are in the class definition.
+        This constructor will be used with the asynchronous image decoding work where the
+        ImageSource needs to cache the FrameData.
+        
+        (WebCore::ImageSource::updateMetadata): If needsUpdateMetaData() is true, cache new metadata.
+        
+        (WebCore::ImageSource::subsamplingLevelForScale): Call updateMetadata() with its new name.
+        (WebCore::ImageSource::frameCount): Ditto
+        (WebCore::ImageSource::cacheMetadata): Deleted.
+        
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::setNeedsUpdateMetadata): Invalidate the image cached metadata.
+        
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::NativeImage::size):
+        (WebCore::NativeImage::hasAlpha):
+        (WebCore::BitmapImage::BitmapImage): Deleted.
+        Delete the "fromImage" BitmapImage constructor from this file since it is now platform
+        independent and has been moved to BitmapImage.cpp. Also add the new NativeImage platform
+        dependent functions which are used by the new "fromImage" BitmapImage constructor.
+        
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::NativeImage::size):
+        (WebCore::NativeImage::hasAlpha):
+        (WebCore::BitmapImage::BitmapImage): Deleted.
+        Ditto.
+
 2016-05-15  Frederic Wang  <fwang@igalia.com>
 
         Small removal of useless code for MathML token elements

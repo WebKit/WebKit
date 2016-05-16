@@ -60,6 +60,11 @@ namespace WebCore {
 
 class Timer;
 
+namespace NativeImage {
+    IntSize size(const NativeImagePtr&);
+    bool hasAlpha(const NativeImagePtr&);
+}
+
 // ================================================
 // FrameData Class
 // ================================================
@@ -284,8 +289,6 @@ protected:
 #endif
 
 private:
-    template<typename T> BitmapImage(ImageObserver*, T fromNativeImage);
-
     void clearTimer();
     void startTimer(double delay);
 
@@ -330,28 +333,11 @@ private:
     bool m_allDataReceived : 1; // Whether or not we've received all our data.
     mutable bool m_haveSize : 1; // Whether or not our |m_size| member variable has the final overall image size yet.
     bool m_sizeAvailable : 1; // Whether or not we can obtain the size of the first image frame yet from ImageIO.
-    mutable bool m_hasUniformFrameSize : 1;
     mutable bool m_haveFrameCount : 1;
     bool m_animationFinishedWhenCatchingUp : 1;
 
     RefPtr<Image> m_cachedImage;
 };
-
-template<typename T>
-inline BitmapImage::BitmapImage(ImageObserver* observer, T fromNativeImage)
-    : Image(observer)
-    , m_frameCount(fromNativeImage ? 1 : 0)
-    , m_isSolidColor(false)
-    , m_checkedForSolidColor(false)
-    , m_animationFinished(fromNativeImage)
-    , m_allDataReceived(fromNativeImage)
-    , m_haveSize(fromNativeImage)
-    , m_sizeAvailable(fromNativeImage)
-    , m_hasUniformFrameSize(true)
-    , m_haveFrameCount(fromNativeImage)
-    , m_animationFinishedWhenCatchingUp(false)
-{
-}
 
 } // namespace WebCore
 

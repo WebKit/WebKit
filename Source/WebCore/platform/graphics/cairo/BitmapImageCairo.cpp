@@ -38,18 +38,18 @@
 
 namespace WebCore {
 
-BitmapImage::BitmapImage(RefPtr<cairo_surface_t>&& nativeImage, ImageObserver* observer)
-    : BitmapImage(observer, std::true_type())
+namespace NativeImage {
+
+IntSize size(const RefPtr<cairo_surface_t>& image)
 {
-    m_size = cairoSurfaceSize(nativeImage.get());
-    m_decodedSize = m_size.width() * m_size.height() * 4;
+    return cairoSurfaceSize(image.get());
+}
 
-    m_frames.grow(1);
-    m_frames[0].m_hasAlpha = cairo_surface_get_content(nativeImage.get()) != CAIRO_CONTENT_COLOR;
-    m_frames[0].m_image = WTFMove(nativeImage);
-    m_frames[0].m_haveMetadata = true;
+bool hasAlpha(const RefPtr<cairo_surface_t>& image)
+{
+    return cairo_surface_get_content(image.get()) != CAIRO_CONTENT_COLOR;
+}
 
-    checkForSolidColor();
 }
 
 void BitmapImage::draw(GraphicsContext& context, const FloatRect& dst, const FloatRect& src, CompositeOperator op,
