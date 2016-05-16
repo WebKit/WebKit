@@ -50,18 +50,23 @@
     left: 0;
     right: 0;
     overflow-x: hidden;
-    overflow-y: overlay;
+    overflow-y: scroll;
 }
 
 .data-grid.inline .data-container {
     position: static;
+    overflow-y: auto;
 }
 
 .data-grid.inline {
     border: 0.5px solid var(--border-color);
 }
 
-.data-grid.no-header > table.header {
+.data-grid > .header-wrapper {
+    border-bottom: 0.5px solid var(--border-color);
+}
+
+.data-grid.no-header > .header-wrapper > table.header {
     display: none;
 }
 
@@ -74,8 +79,6 @@
     vertical-align: middle;
 
     background-color: white;
-
-    border-bottom: 0.5px solid var(--border-color);
 
     font-weight: normal;
 

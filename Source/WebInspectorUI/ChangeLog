@@ -1,5 +1,30 @@
 2016-05-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Contents of Duration column are covered by always on (legacy) scroll bars
+        https://bugs.webkit.org/show_bug.cgi?id=157590
+
+        Reviewed by Timothy Hatcher.
+
+        Set the right padding of the DataGrid header to match the scrollbar width.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid .data-container):
+        (.data-grid.inline .data-container):
+        Don't show scrollbars for inline data grids.
+
+        (.data-grid > .header-wrapper):
+        (.data-grid.no-header > .header-wrapper > table.header):
+        (.data-grid.no-header > table.header): Deleted.
+        (.data-grid th): Deleted.
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        We can't add padding-rigth to a table. Wrap the table in div.header-wrapper.
+
+        (WebInspector.DataGrid.prototype._updateScrollbarPadding):
+        (WebInspector.DataGrid.prototype.layout):
+
+2016-05-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Background stripes don't span the width of Network sidebar
         https://bugs.webkit.org/show_bug.cgi?id=157744
 

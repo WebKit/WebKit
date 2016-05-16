@@ -52,6 +52,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this.rowHeight = 20;
         this.resizers = [];
         this._columnWidthsInitialized = false;
+        this._scrollbarWidth = 0;
 
         this._cachedScrollTop = NaN;
         this._cachedScrollableOffsetHeight = NaN;
@@ -67,8 +68,13 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this.element.addEventListener("keydown", this._keyDown.bind(this), false);
         this.element.copyHandler = this;
 
+        this._headerWrapperElement = document.createElement("div");
+        this._headerWrapperElement.classList.add("header-wrapper");
+
         this._headerTableElement = document.createElement("table");
         this._headerTableElement.className = "header";
+        this._headerWrapperElement.appendChild(this._headerTableElement);
+
         this._headerTableColumnGroupElement = this._headerTableElement.createChild("colgroup");
         this._headerTableBodyElement = this._headerTableElement.createChild("tbody");
         this._headerTableRowElement = this._headerTableBodyElement.createChild("tr");
@@ -109,7 +115,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         this._fillerRowElement = this.dataTableBodyElement.createChild("tr", "filler");
 
-        this.element.appendChild(this._headerTableElement);
+        this.element.appendChild(this._headerWrapperElement);
         this.element.appendChild(this._scrollContainerElement);
 
         if (preferredColumnOrder) {
@@ -119,6 +125,21 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             for (var columnIdentifier in columnsData)
                 this.insertColumn(columnIdentifier, columnsData[columnIdentifier]);
         }
+
+        this._updateScrollbarPadding();
+    }
+
+    _updateScrollbarPadding()
+    {
+        if (this._inline)
+            return;
+
+        let scrollbarWidth = this._scrollContainerElement.offsetWidth - this._scrollContainerElement.scrollWidth;
+        if (this._scrollbarWidth === scrollbarWidth)
+            return;
+
+        this._headerWrapperElement.style.paddingRight = scrollbarWidth + "px";
+        this._scrollbarWidth = scrollbarWidth;
     }
 
     static createSortableDataGrid(columnNames, values)
@@ -806,6 +827,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (layoutReason === WebInspector.View.LayoutReason.Resize || firstUpdate) {
             this._positionResizerElements();
             this._positionHeaderViews();
+            this._updateScrollbarPadding();
 
             this._cachedScrollTop = NaN;
             this._cachedScrollableOffsetHeight = NaN;
