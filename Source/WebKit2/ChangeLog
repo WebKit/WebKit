@@ -1,3 +1,15 @@
+2016-05-16  Chelsea Pugh  <cpugh@apple.com>
+
+        [iOS] Remove dispatch_after in -[WKFormInputSession setSuggestions:]
+        https://bugs.webkit.org/show_bug.cgi?id=157745
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession setSuggestions:]): Remove the dispatch_after since
+        there is no longer a chance of keyboard suggestions replacing the
+        suggestions set here.
+
 2016-05-16  Brian Burg  <bburg@apple.com>
 
         Crash simulating keystrokes at WebKit::WebAutomationSession::platformSimulateKeyStroke

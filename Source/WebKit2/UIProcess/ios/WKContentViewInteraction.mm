@@ -346,11 +346,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)_contentView.inputDelegate;
     _suggestions = adoptNS([suggestions copy]);
-    // FIXME 25102224: Remove this dispatch_after once race condition causing keyboard suggestions to overwrite
-    // the suggestions being set is resolved
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
-        [suggestionDelegate setSuggestions:suggestions];
-    });
+    [suggestionDelegate setSuggestions:suggestions];
 #endif
 }
 
