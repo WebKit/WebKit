@@ -42,24 +42,24 @@ class Text;
 class AccessibilityUndoReplacedText {
 public:
     AccessibilityUndoReplacedText() { }
-    void confgureTextToBeDeletedByUnapplyStartIndexWithEditCommandStartingSelection(const VisibleSelection&);
-    void confgureTextToBeDeletedByUnapplyIndexesWithEditCommandEndingSelection(const VisibleSelection&);
-    void setTextInsertedByUnapplyRange(const VisiblePositionIndexRange&);
+    void configureRangeDeletedByReapplyWithStartingSelection(const VisibleSelection&);
+    void configureRangeDeletedByReapplyWithEndingSelection(const VisibleSelection&);
+    void setRangeDeletedByUnapply(const VisiblePositionIndexRange&);
 
-    void captureTextToBeDeletedByUnapply();
-    void captureTextToBeDeletedByReapply();
+    void captureTextForUnapply();
+    void captureTextForReapply();
 
     void postTextStateChangeNotificationForUnapply(AXObjectCache*);
     void postTextStateChangeNotificationForReapply(AXObjectCache*);
 
 private:
     int indexForVisiblePosition(const VisiblePosition&, RefPtr<ContainerNode>&) const;
-    String textInsertedByUnapply();
-    String textInsertedByReapply();
+    String textDeletedByUnapply();
+    String textDeletedByReapply();
 
     String m_replacedText;
-    VisiblePositionIndexRange m_textDeletedByUnapplyRange;
-    VisiblePositionIndexRange m_textInsertedByUnapplyRange;
+    VisiblePositionIndexRange m_rangeDeletedByUnapply;
+    VisiblePositionIndexRange m_rangeDeletedByReapply;
 };
 
 class EditCommandComposition : public UndoStep {
@@ -78,7 +78,7 @@ public:
     void setEndingSelection(const VisibleSelection&);
     Element* startingRootEditableElement() const { return m_startingRootEditableElement.get(); }
     Element* endingRootEditableElement() const { return m_endingRootEditableElement.get(); }
-    void setTextInsertedByUnapplyRange(const VisiblePositionIndexRange&);
+    void setRangeDeletedByUnapply(const VisiblePositionIndexRange&);
 
 #ifndef NDEBUG
     virtual void getNodesInCommand(HashSet<Node*>&);

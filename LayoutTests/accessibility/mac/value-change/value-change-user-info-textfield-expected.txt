@@ -32,6 +32,16 @@ PASS actualChangeValues[resultIndex][0] is expectedValues[resultIndex][0]
 PASS actualEditTypes[resultIndex][0] is "Delete"
 PASS actualChangeValues[resultIndex][1] is expectedValues[resultIndex][1]
 PASS actualEditTypes[resultIndex][1] is "Typing"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex][0] is expectedValues[resultIndex][0]
+PASS actualEditTypes[resultIndex][0] is "Delete"
+PASS actualChangeValues[resultIndex][1] is expectedValues[resultIndex][1]
+PASS actualEditTypes[resultIndex][1] is "Insert"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex][0] is expectedValues[resultIndex][0]
+PASS actualEditTypes[resultIndex][0] is "Delete"
+PASS actualChangeValues[resultIndex][1] is expectedValues[resultIndex][1]
+PASS actualEditTypes[resultIndex][1] is "Insert"
 PASS successfullyParsed is true
 
 TEST COMPLETE
