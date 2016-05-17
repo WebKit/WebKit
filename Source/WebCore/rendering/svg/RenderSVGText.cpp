@@ -120,7 +120,6 @@ static inline void collectLayoutAttributes(RenderObject* text, Vector<SVGTextLay
 
 static inline bool findPreviousAndNextAttributes(RenderElement& start, RenderSVGInlineText* locateElement, bool& stopAfterNext, SVGTextLayoutAttributes*& previous, SVGTextLayoutAttributes*& next)
 {
-    ASSERT(start);
     ASSERT(locateElement);
     // FIXME: Make this iterative.
     for (auto& child : childrenOfType<RenderObject>(start)) {
