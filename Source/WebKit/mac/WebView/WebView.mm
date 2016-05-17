@@ -208,6 +208,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/spi/darwin/dyldSPI.h>
 
 #if !PLATFORM(IOS)
 #import "WebContextMenuClient.h"

@@ -41,13 +41,9 @@
 #import <wtf/HashSet.h>
 #import <wtf/Vector.h>
 #import <wtf/spi/cocoa/NSMapTableSPI.h>
+#import <wtf/spi/darwin/dyldSPI.h>
 
 #include <mach-o/dyld.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <mach-o/dyld_priv.h>
-#endif
-extern "C" uint32_t dyld_get_program_sdk_version();
 
 #if PLATFORM(APPLETV)
 #elif PLATFORM(IOS)

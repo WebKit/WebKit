@@ -33,7 +33,6 @@
 #import "WebPlatformStrategies.h"
 #import "WebSystemInterface.h"
 #import "WebViewPrivate.h"
-#import <WebCore/DynamicLinkerSPI.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/Settings.h>
@@ -41,6 +40,7 @@
 #import <WebCore/WebCoreSystemInterface.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import <WebCore/break_lines.h>
+#import <wtf/spi/darwin/dyldSPI.h>
 
 #import <runtime/InitializeThreading.h>
 
