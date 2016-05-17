@@ -153,6 +153,8 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
     // Protected
 
+    get showsFilterBar() { return false; }
+
     layout()
     {
         // Always update timeline ruler.

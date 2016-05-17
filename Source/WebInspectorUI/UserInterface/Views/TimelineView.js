@@ -49,6 +49,12 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
         return true;
     }
 
+    get showsFilterBar()
+    {
+        // Implemented by sub-classes if needed.
+        return true;
+    }
+
     get navigationItems()
     {
         return this._scopeBar ? [this._scopeBar] : [];

@@ -153,6 +153,9 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
 
     // Protected
 
+    // FIXME: <https://webkit.org/b/157582> Web Inspector: Heap Snapshot Views should be searchable
+    get showsFilterBar() { return this._showingSnapshotList; }
+
     get navigationItems()
     {
         if (this._showingSnapshotList) {
@@ -226,6 +229,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
     layout()
     {
         // Wait to show records until our zeroTime has been set.
+        // FIXME: Waiting until zero time causes snapshots taken without recording to not show up in the list.
         if (this._pendingRecords.length && this.zeroTime) {
             for (let heapAllocationsTimelineRecord of this._pendingRecords) {
                 let dataGridNode = new WebInspector.HeapAllocationsTimelineDataGridNode(heapAllocationsTimelineRecord, this.zeroTime, this);
@@ -246,6 +250,11 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         this.showHeapSnapshotList();
         this._pendingRecords = [];
         this._updateCompareHeapSnapshotButton();
+    }
+
+    updateFilter(filters)
+    {
+        this._dataGrid.filterText = filters ? filters.text : "";
     }
 
     // Private

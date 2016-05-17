@@ -69,6 +69,9 @@ WebInspector.ScriptProfileTimelineView = class ScriptProfileTimelineView extends
 
     get showsLiveRecordingData() { return false; }
 
+    // FIXME: <https://webkit.org/b/157581> Web Inspector: Script ProfileViews should be searchable
+    get showsFilterBar() { return false; }
+
     // Protected
 
     closed()
