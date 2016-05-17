@@ -1632,6 +1632,9 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
 
 void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
 {
+    // Calling stopAllLoaders can cause the frame to be deallocated, including the frame loader.
+    Ref<Frame> protectedFrame(m_frame);
+
     stopAllLoaders();
 
 #if PLATFORM(IOS)
@@ -2491,6 +2494,9 @@ void FrameLoader::dispatchOnloadEvents()
 
 void FrameLoader::frameDetached()
 {
+    // Calling stopAllLoaders can cause the frame to be deallocated, including the frame loader.
+    Ref<Frame> protectedFrame(m_frame);
+
     stopAllLoaders();
     m_frame.document()->stopActiveDOMObjects();
     detachFromParent();
@@ -2789,6 +2795,10 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
 
     if (!shouldContinue)
         return;
+
+    // Calling stopLoading() on the provisional document loader can cause the underlying
+    // frame to be deallocated.
+    Ref<Frame> protectedFrame(m_frame);
 
     // If we have a provisional request for a different document, a fragment scroll should cancel it.
     if (m_provisionalDocumentLoader && !equalIgnoringFragmentIdentifier(m_provisionalDocumentLoader->request().url(), request.url())) {

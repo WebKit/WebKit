@@ -1,3 +1,19 @@
+2016-05-16  Brent Fulgham  <bfulgham@apple.com>
+
+        heap use-after-free at WebCore::TimerBase::heapPopMin()
+        https://bugs.webkit.org/show_bug.cgi?id=157742
+        <rdar://problem/26236778>
+
+        Reviewed by David Kilzer.
+
+        Tested by fast/frames/resources/crash-during-iframe-load-stop.html.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopForUserCancel): Protect m_frame from destruction while it is still
+        being used by the current stack frame.
+        (WebCore::FrameLoader::frameDetached): Ditto.
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy): Ditto.
+
 2016-05-16  Dean Jackson  <dino@apple.com>
 
         WebCoreJSBuiltinInternals won't compile if some build flags are off
