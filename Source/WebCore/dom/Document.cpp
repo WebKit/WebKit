@@ -5785,15 +5785,6 @@ static void unwrapFullScreenRenderer(RenderFullScreen* fullScreenRenderer, Eleme
         fullScreenElement->parentNode()->setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
-static bool hostIsYouTube(const String& host)
-{
-    // Match .youtube.com, youtube.com, youtube.co.uk, and all two-letter country codes.
-    static NeverDestroyed<JSC::Yarr::RegularExpression> youtubePattern("(^|\\.)youtube.(com|co.uk|[a-z]{2})$", TextCaseInsensitive);
-    ASSERT(youtubePattern.get().isValid());
-
-    return youtubePattern.get().match(host);
-}
-
 void Document::webkitWillEnterFullScreenForElement(Element* element)
 {
     if (!hasLivingRenderTree() || inPageCache())
@@ -5836,9 +5827,6 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 
     recalcStyle(Style::Force);
-
-    if (settings() && settings()->needsSiteSpecificQuirks() && hostIsYouTube(url().host()))
-        fullScreenChangeDelayTimerFired();
 }
 
 void Document::webkitDidEnterFullScreenForElement(Element*)
@@ -5851,8 +5839,7 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
 
     m_fullScreenElement->didBecomeFullscreenElement();
 
-    if (!settings() || !settings()->needsSiteSpecificQuirks() || !hostIsYouTube(url().host()))
-        m_fullScreenChangeDelayTimer.startOneShot(0);
+    m_fullScreenChangeDelayTimer.startOneShot(0);
 }
 
 void Document::webkitWillExitFullScreenForElement(Element*)
@@ -5889,13 +5876,7 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     bool eventTargetQueuesEmpty = m_fullScreenChangeEventTargetQueue.isEmpty() && m_fullScreenErrorEventTargetQueue.isEmpty();
     Document& exitingDocument = eventTargetQueuesEmpty ? topDocument() : *this;
 
-    // FIXME(136605): Remove this quirk once YouTube moves to relative widths and heights for
-    // fullscreen mode.
-    if (settings() && settings()->needsSiteSpecificQuirks() && hostIsYouTube(url().host()))
-        exitingDocument.fullScreenChangeDelayTimerFired();
-    else
-        exitingDocument.m_fullScreenChangeDelayTimer.startOneShot(0);
-
+    exitingDocument.m_fullScreenChangeDelayTimer.startOneShot(0);
 }
 
 void Document::setFullScreenRenderer(RenderFullScreen* renderer)

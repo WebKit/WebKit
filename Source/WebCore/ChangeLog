@@ -1,3 +1,22 @@
+2016-05-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove YouTube site-specific hack
+        https://bugs.webkit.org/show_bug.cgi?id=157776
+
+        Reviewed by Eric Carlson.
+
+        No new tests.  Youtube fullscreen seems to work without
+        http://trac.webkit.org/changeset/173533 now.
+
+        * dom/Document.cpp:
+        (WebCore::unwrapFullScreenRenderer):
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        (WebCore::Document::webkitDidEnterFullScreenForElement):
+        (WebCore::Document::webkitWillExitFullScreenForElement):
+        (WebCore::Document::webkitDidExitFullScreenForElement):
+        (WebCore::Document::setFullScreenRenderer):
+        (WebCore::hostIsYouTube): Deleted.
+
 2016-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         heap use-after-free at WebCore::TimerBase::heapPopMin()
