@@ -1,3 +1,63 @@
+2016-05-16  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize CSS Parser
+        https://bugs.webkit.org/show_bug.cgi?id=157772
+
+        Reviewed by Brady Eidson.
+
+        No new tests.  This patch just replaces PassRefPtr with RefPtr&&.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::SourceSize::SourceSize):
+        (WebCore::CSSParser::createStyleProperties):
+        (WebCore::CSSParser::addProperty):
+        (WebCore::CSSParser::parseValidPrimitive):
+        (WebCore::CSSParser::addExpandedPropertyForValue):
+        (WebCore::CSSParser::parseVariableDependentValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColumnsShorthand):
+        (WebCore::CSSParser::parseGridItemPositionShorthand):
+        (WebCore::CSSParser::parseGridAreaShorthand):
+        (WebCore::CSSParser::parseInsetRoundedCorners):
+        (WebCore::CSSParser::parseBasicShapeInset):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::ShadowParseContext::commitColor):
+        (WebCore::BorderImageParseContext::requireWidth):
+        (WebCore::BorderImageParseContext::requireOutset):
+        (WebCore::BorderImageParseContext::commitImage):
+        (WebCore::BorderImageParseContext::commitImageSlice):
+        (WebCore::BorderImageParseContext::commitForwardSlashOperator):
+        (WebCore::BorderImageParseContext::commitBorderWidth):
+        (WebCore::BorderImageParseContext::commitBorderOutset):
+        (WebCore::BorderImageParseContext::commitRepeat):
+        (WebCore::BorderImageParseContext::commitWebKitBorderImage):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::BorderImageParseContext::commitBorderImageProperty):
+        (WebCore::BorderImageSliceParseContext::commitFill):
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+        (WebCore::BorderImageQuadParseContext::commitNumber):
+        (WebCore::BorderImageQuadParseContext::setAllowFinalCommit):
+        (WebCore::BorderImageQuadParseContext::setTop):
+        (WebCore::BorderImageQuadParseContext::commitBorderImageQuad):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::parseDeprecatedGradientPoint):
+        (WebCore::CSSParser::parseDeprecatedGradient):
+        (WebCore::valueFromSideKeyword):
+        (WebCore::parseGradientColorOrKeyword):
+        (WebCore::CSSParser::parsePerspectiveOrigin):
+        (WebCore::CSSParser::addTextDecorationProperty):
+        (WebCore::CSSParser::parseTextDecoration):
+        (WebCore::CSSParser::realLex):
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createMediaRule):
+        (WebCore::CSSParser::processAndAddNewRuleToSourceTreeIfNeeded):
+        (WebCore::CSSParser::addNewRuleToSourceTree):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::hasProperties):
+        (WebCore::CSSParser::resetPropertyRange):
+        (WebCore::CSSParser::isExtractingSourceData):
+
 2016-05-16  Chris Dumez  <cdumez@apple.com>
 
         Add RenderDescendantIterator to traverse a RenderObject's descendants

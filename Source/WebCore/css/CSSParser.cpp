@@ -1489,7 +1489,7 @@ Ref<ImmutableStyleProperties> CSSParser::parseDeclaration(const String& string, 
 }
 
 
-bool CSSParser::parseDeclaration(MutableStyleProperties* declaration, const String& string, PassRefPtr<CSSRuleSourceData> prpRuleSourceData, StyleSheetContents* contextStyleSheet)
+bool CSSParser::parseDeclaration(MutableStyleProperties* declaration, const String& string, RefPtr<CSSRuleSourceData>&& prpRuleSourceData, StyleSheetContents* contextStyleSheet)
 {
     // Length of the "@-webkit-decls{" prefix.
     static const unsigned prefixLength = 15;
@@ -1573,7 +1573,7 @@ CSSParser::SourceSize::SourceSize(CSSParser::SourceSize&& original)
 {
 }
 
-CSSParser::SourceSize::SourceSize(std::unique_ptr<MediaQueryExp>&& origExp, RefPtr<CSSValue> value)
+CSSParser::SourceSize::SourceSize(std::unique_ptr<MediaQueryExp>&& origExp, RefPtr<CSSValue>&& value)
     : expression(WTFMove(origExp))
     , length(value)
 {
@@ -1639,7 +1639,7 @@ Ref<ImmutableStyleProperties> CSSParser::createStyleProperties()
     return ImmutableStyleProperties::create(results.data(), results.size(), m_context.mode);
 }
 
-void CSSParser::addProperty(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
+void CSSParser::addProperty(CSSPropertyID propId, RefPtr<CSSValue>&& value, bool important, bool implicit)
 {
     // This property doesn't belong to a shorthand or is a CSS variable (which will be resolved later).
     if (!m_currentShorthand) {
@@ -1877,12 +1877,12 @@ inline RefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(CSSValueID ident
     return nullptr;
 }
 
-void CSSParser::addExpandedPropertyForValue(CSSPropertyID propId, PassRefPtr<CSSValue> prpValue, bool important)
+void CSSParser::addExpandedPropertyForValue(CSSPropertyID propId, RefPtr<CSSValue>&& prpValue, bool important)
 {
     const StylePropertyShorthand& shorthand = shorthandForProperty(propId);
     unsigned shorthandLength = shorthand.length();
     if (!shorthandLength) {
-        addProperty(propId, prpValue, important);
+        addProperty(propId, WTFMove(prpValue), important);
         return;
     }
 
@@ -1890,7 +1890,7 @@ void CSSParser::addExpandedPropertyForValue(CSSPropertyID propId, PassRefPtr<CSS
     ShorthandScope scope(this, propId);
     const CSSPropertyID* longhands = shorthand.properties();
     for (unsigned i = 0; i < shorthandLength; ++i)
-        addProperty(longhands[i], value, important);
+        addProperty(longhands[i], WTFMove(value), important);
 }
 
 RefPtr<CSSValue> CSSParser::parseVariableDependentValue(CSSPropertyID propID, const CSSVariableDependentValue& dependentValue, const CustomPropertyValueMap& customProperties)
@@ -2023,7 +2023,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             overflowXValue = cssValuePool.createIdentifierValue(CSSValueAuto);
         else
             overflowXValue = m_parsedProperties.last().value();
-        addProperty(CSSPropertyOverflowX, overflowXValue.release(), important);
+        addProperty(CSSPropertyOverflowX, WTFMove(overflowXValue), important);
         return true;
     }
 
@@ -2452,7 +2452,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitMaskBoxImage: {
         RefPtr<CSSValue> result;
         if (parseBorderImage(propId, result)) {
-            addProperty(propId, result, important);
+            addProperty(propId, WTFMove(result), important);
             return true;
         }
         break;
@@ -2461,7 +2461,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitMaskBoxImageOutset: {
         RefPtr<CSSPrimitiveValue> result;
         if (parseBorderImageOutset(result)) {
-            addProperty(propId, result, important);
+            addProperty(propId, WTFMove(result), important);
             return true;
         }
         break;
@@ -2470,7 +2470,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitMaskBoxImageRepeat: {
         RefPtr<CSSValue> result;
         if (parseBorderImageRepeat(result)) {
-            addProperty(propId, result, important);
+            addProperty(propId, WTFMove(result), important);
             return true;
         }
         break;
@@ -2479,7 +2479,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitMaskBoxImageSlice: {
         RefPtr<CSSBorderImageSliceValue> result;
         if (parseBorderImageSlice(propId, result)) {
-            addProperty(propId, result, important);
+            addProperty(propId, WTFMove(result), important);
             return true;
         }
         break;
@@ -2488,7 +2488,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitMaskBoxImageWidth: {
         RefPtr<CSSPrimitiveValue> result;
         if (parseBorderImageWidth(result)) {
-            addProperty(propId, result, important);
+            addProperty(propId, WTFMove(result), important);
             return true;
         }
         break;
@@ -2594,7 +2594,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             RefPtr<CSSValue> currValue;
             if (!parseFilter(*m_valueList, currValue))
                 return false;
-            addProperty(propId, currValue, important);
+            addProperty(propId, WTFMove(currValue), important);
             return true;
         }
         break;
@@ -3907,14 +3907,14 @@ bool CSSParser::parseColumnsShorthand(bool important)
 
     // Any unassigned property at this point will become implicit 'auto'.
     if (columnWidth)
-        addProperty(CSSPropertyColumnWidth, columnWidth, important);
+        addProperty(CSSPropertyColumnWidth, WTFMove(columnWidth), important);
     else {
         addProperty(CSSPropertyColumnWidth, CSSValuePool::singleton().createIdentifierValue(CSSValueAuto), important, !hasPendingExplicitAuto /* implicit */);
         hasPendingExplicitAuto = false;
     }
 
     if (columnCount)
-        addProperty(CSSPropertyColumnCount, columnCount, important);
+        addProperty(CSSPropertyColumnCount, WTFMove(columnCount), important);
     else
         addProperty(CSSPropertyColumnCount, CSSValuePool::singleton().createIdentifierValue(CSSValueAuto), important, !hasPendingExplicitAuto /* implicit */);
 
@@ -5545,8 +5545,8 @@ bool CSSParser::parseGridItemPositionShorthand(CSSPropertyID shorthandId, bool i
     } else
         endValue = gridMissingGridPositionValue(*startValue);
 
-    addProperty(shorthand.properties()[0], startValue, important);
-    addProperty(shorthand.properties()[1], endValue, important);
+    addProperty(shorthand.properties()[0], WTFMove(startValue), important);
+    addProperty(shorthand.properties()[1], WTFMove(endValue), important);
     return true;
 }
 
@@ -5813,10 +5813,10 @@ bool CSSParser::parseGridAreaShorthand(bool important)
     if (!columnEndValue)
         columnEndValue = gridMissingGridPositionValue(*columnStartValue);
 
-    addProperty(CSSPropertyGridRowStart, rowStartValue, important);
-    addProperty(CSSPropertyGridColumnStart, columnStartValue, important);
-    addProperty(CSSPropertyGridRowEnd, rowEndValue, important);
-    addProperty(CSSPropertyGridColumnEnd, columnEndValue, important);
+    addProperty(CSSPropertyGridRowStart, WTFMove(rowStartValue), important);
+    addProperty(CSSPropertyGridColumnStart, WTFMove(columnStartValue), important);
+    addProperty(CSSPropertyGridRowEnd, WTFMove(rowEndValue), important);
+    addProperty(CSSPropertyGridColumnEnd, WTFMove(columnEndValue), important);
     return true;
 }
 
@@ -6504,7 +6504,7 @@ static void completeBorderRadii(RefPtr<CSSPrimitiveValue> radii[4])
 
 // FIXME: This should be refactored with CSSParser::parseBorderRadius.
 // CSSParser::parseBorderRadius contains support for some legacy radius construction.
-RefPtr<CSSBasicShape> CSSParser::parseInsetRoundedCorners(PassRefPtr<CSSBasicShapeInset> shape, CSSParserValueList& args)
+RefPtr<CSSBasicShape> CSSParser::parseInsetRoundedCorners(RefPtr<CSSBasicShapeInset>&& shape, CSSParserValueList& args)
 {
     CSSParserValue* argument = args.next();
 
@@ -6612,7 +6612,7 @@ RefPtr<CSSBasicShape> CSSParser::parseBasicShapeInset(CSSParserValueList& args)
     }
 
     if (hasRoundedInset)
-        return parseInsetRoundedCorners(shape, args);
+        return parseInsetRoundedCorners(WTFMove(shape), args);
     return shape;
 }
 
@@ -7951,7 +7951,7 @@ struct ShadowParseContext {
         }
     }
 
-    void commitColor(PassRefPtr<CSSPrimitiveValue> val)
+    void commitColor(RefPtr<CSSPrimitiveValue>&& val)
     {
         color = val;
         allowColor = false;
@@ -8179,7 +8179,7 @@ struct BorderImageParseContext {
     bool requireWidth() const { return m_requireWidth; }
     bool requireOutset() const { return m_requireOutset; }
 
-    void commitImage(PassRefPtr<CSSValue> image)
+    void commitImage(RefPtr<CSSValue>&& image)
     {
         m_image = image;
         m_canAdvance = true;
@@ -8188,7 +8188,7 @@ struct BorderImageParseContext {
         m_allowImageSlice = !m_imageSlice;
         m_allowRepeat = !m_repeat;
     }
-    void commitImageSlice(PassRefPtr<CSSBorderImageSliceValue> slice)
+    void commitImageSlice(RefPtr<CSSBorderImageSliceValue>&& slice)
     {
         m_imageSlice = slice;
         m_canAdvance = true;
@@ -8209,7 +8209,7 @@ struct BorderImageParseContext {
             m_requireWidth = false;
         }
     }
-    void commitBorderWidth(PassRefPtr<CSSPrimitiveValue> slice)
+    void commitBorderWidth(RefPtr<CSSPrimitiveValue>&& slice)
     {
         m_borderSlice = slice;
         m_canAdvance = true;
@@ -8218,7 +8218,7 @@ struct BorderImageParseContext {
         m_allowImage = !m_image;
         m_allowRepeat = !m_repeat;
     }
-    void commitBorderOutset(PassRefPtr<CSSPrimitiveValue> outset)
+    void commitBorderOutset(RefPtr<CSSPrimitiveValue>&& outset)
     {
         m_outset = outset;
         m_canAdvance = true;
@@ -8227,7 +8227,7 @@ struct BorderImageParseContext {
         m_allowImage = !m_image;
         m_allowRepeat = !m_repeat;
     }
-    void commitRepeat(PassRefPtr<CSSValue> repeat)
+    void commitRepeat(RefPtr<CSSValue>&& repeat)
     {
         m_repeat = repeat;
         m_canAdvance = true;
@@ -8237,24 +8237,24 @@ struct BorderImageParseContext {
         m_allowImage = !m_image;
     }
 
-    PassRefPtr<CSSValue> commitWebKitBorderImage()
+    RefPtr<CSSValue> commitWebKitBorderImage()
     {
         return createBorderImageValue(m_image, m_imageSlice, m_borderSlice, m_outset, m_repeat);
     }
 
     void commitBorderImage(CSSParser& parser, bool important)
     {
-        commitBorderImageProperty(CSSPropertyBorderImageSource, parser, m_image, important);
+        commitBorderImageProperty(CSSPropertyBorderImageSource, parser, WTFMove(m_image), important);
         commitBorderImageProperty(CSSPropertyBorderImageSlice, parser, m_imageSlice, important);
         commitBorderImageProperty(CSSPropertyBorderImageWidth, parser, m_borderSlice, important);
         commitBorderImageProperty(CSSPropertyBorderImageOutset, parser, m_outset, important);
-        commitBorderImageProperty(CSSPropertyBorderImageRepeat, parser, m_repeat, important);
+        commitBorderImageProperty(CSSPropertyBorderImageRepeat, parser, WTFMove(m_repeat), important);
     }
 
-    void commitBorderImageProperty(CSSPropertyID propId, CSSParser& parser, PassRefPtr<CSSValue> value, bool important)
+    void commitBorderImageProperty(CSSPropertyID propId, CSSParser& parser, RefPtr<CSSValue>&& value, bool important)
     {
         if (value)
-            parser.addProperty(propId, value, important);
+            parser.addProperty(propId, WTFMove(value), important);
         else
             parser.addProperty(propId, CSSValuePool::singleton().createImplicitInitialValue(), important, true);
     }
@@ -8423,7 +8423,7 @@ public:
 
     void commitFill() { m_fill = true; m_allowFill = false; m_allowNumber = !m_top; }
 
-    PassRefPtr<CSSBorderImageSliceValue> commitBorderImageSlice()
+    Ref<CSSBorderImageSliceValue> commitBorderImageSlice()
     {
         // We need to clone and repeat values for any omissions.
         ASSERT(m_top);
@@ -8539,9 +8539,9 @@ public:
     }
 
     void setAllowFinalCommit() { m_allowFinalCommit = true; }
-    void setTop(PassRefPtr<CSSPrimitiveValue> val) { m_top = val; }
+    void setTop(RefPtr<CSSPrimitiveValue>&& val) { m_top = val; }
 
-    PassRefPtr<CSSPrimitiveValue> commitBorderImageQuad()
+    Ref<CSSPrimitiveValue> commitBorderImageQuad()
     {
         // We need to clone and repeat values for any omissions.
         ASSERT(m_top);
@@ -8753,7 +8753,7 @@ bool CSSParser::parseCounter(CSSPropertyID propId, int defaultValue, bool import
 }
 
 // This should go away once we drop support for -webkit-gradient
-static PassRefPtr<CSSPrimitiveValue> parseDeprecatedGradientPoint(CSSParserValue& value, bool horizontal)
+static RefPtr<CSSPrimitiveValue> parseDeprecatedGradientPoint(CSSParserValue& value, bool horizontal)
 {
     RefPtr<CSSPrimitiveValue> result;
     if (value.unit == CSSPrimitiveValue::CSS_IDENT) {
@@ -8971,7 +8971,7 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList& valueList, RefPtr<CS
     return true;
 }
 
-static PassRefPtr<CSSPrimitiveValue> valueFromSideKeyword(CSSParserValue& value, bool& isHorizontal)
+static RefPtr<CSSPrimitiveValue> valueFromSideKeyword(CSSParserValue& value, bool& isHorizontal)
 {
     if (value.unit != CSSPrimitiveValue::CSS_IDENT)
         return nullptr;
@@ -8991,7 +8991,7 @@ static PassRefPtr<CSSPrimitiveValue> valueFromSideKeyword(CSSParserValue& value,
     return CSSValuePool::singleton().createIdentifierValue(value.id);
 }
 
-static PassRefPtr<CSSPrimitiveValue> parseGradientColorOrKeyword(CSSParser& parser, CSSParserValue& value)
+static RefPtr<CSSPrimitiveValue> parseGradientColorOrKeyword(CSSParser& parser, CSSParserValue& value)
 {
     CSSValueID id = value.id;
     if (id == CSSValueWebkitText || CSSParser::isValidSystemColorValue(id) || id == CSSValueMenu || id == CSSValueCurrentcolor)
@@ -10398,7 +10398,7 @@ bool CSSParser::parsePerspectiveOrigin(CSSPropertyID propId, CSSPropertyID& prop
     return value;
 }
 
-void CSSParser::addTextDecorationProperty(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important)
+void CSSParser::addTextDecorationProperty(CSSPropertyID propId, RefPtr<CSSValue>&& value, bool important)
 {
     // The text-decoration-line property takes priority over text-decoration, unless the latter has important priority set.
     if (propId == CSSPropertyTextDecoration && !important && !inShorthand()) {
@@ -10407,7 +10407,7 @@ void CSSParser::addTextDecorationProperty(CSSPropertyID propId, PassRefPtr<CSSVa
                 return;
         }
     }
-    addProperty(propId, value, important);
+    addProperty(propId, WTFMove(value), important);
 }
 
 bool CSSParser::parseTextDecoration(CSSPropertyID propId, bool important)
@@ -12856,7 +12856,7 @@ restartAfterComment:
     return token();
 }
 
-RefPtr<StyleRuleBase> CSSParser::createImportRule(const CSSParserString& url, PassRefPtr<MediaQuerySet> media)
+RefPtr<StyleRuleBase> CSSParser::createImportRule(const CSSParserString& url, RefPtr<MediaQuerySet>&& media)
 {
     if (!media || !m_allowImportRules) {
         popRuleData();
@@ -12867,7 +12867,7 @@ RefPtr<StyleRuleBase> CSSParser::createImportRule(const CSSParserString& url, Pa
     return rule;
 }
 
-RefPtr<StyleRuleBase> CSSParser::createMediaRule(PassRefPtr<MediaQuerySet> media, RuleList* rules)
+RefPtr<StyleRuleBase> CSSParser::createMediaRule(RefPtr<MediaQuerySet>&& media, RuleList* rules)
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<StyleRuleMedia> rule;
@@ -12952,7 +12952,7 @@ void CSSParser::processAndAddNewRuleToSourceTreeIfNeeded()
     addNewRuleToSourceTree(rule.release());
 }
 
-void CSSParser::addNewRuleToSourceTree(PassRefPtr<CSSRuleSourceData> rule)
+void CSSParser::addNewRuleToSourceTree(RefPtr<CSSRuleSourceData>&& rule)
 {
     // Precondition: (isExtractingSourceData()).
     if (!m_ruleSourceDataResult)

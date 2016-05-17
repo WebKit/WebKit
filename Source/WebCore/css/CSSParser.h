@@ -126,14 +126,14 @@ public:
     static RefPtr<CSSValueList> parseFontFaceValue(const AtomicString&);
     RefPtr<CSSPrimitiveValue> parseValidPrimitive(CSSValueID ident, ValueWithCalculation&);
 
-    WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties*, const String&, PassRefPtr<CSSRuleSourceData>, StyleSheetContents* contextStyleSheet);
+    WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties*, const String&, RefPtr<CSSRuleSourceData>&&, StyleSheetContents* contextStyleSheet);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
     std::unique_ptr<MediaQuery> parseMediaQuery(const String&);
 
-    void addProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
+    void addProperty(CSSPropertyID, RefPtr<CSSValue>&&, bool important, bool implicit = false);
     void rollbackLastProperties(int num);
     bool hasProperties() const { return !m_parsedProperties.isEmpty(); }
-    void addExpandedPropertyForValue(CSSPropertyID propId, PassRefPtr<CSSValue>, bool);
+    void addExpandedPropertyForValue(CSSPropertyID propId, RefPtr<CSSValue>&&, bool);
 
     bool parseValue(CSSPropertyID, bool important);
     bool parseShorthand(CSSPropertyID, const StylePropertyShorthand&, bool important);
@@ -153,7 +153,7 @@ public:
         RefPtr<CSSValue> length;
 
         SourceSize(SourceSize&&);
-        SourceSize(std::unique_ptr<MediaQueryExp>&&, RefPtr<CSSValue>);
+        SourceSize(std::unique_ptr<MediaQueryExp>&&, RefPtr<CSSValue>&&);
     };
     Vector<SourceSize> parseSizesAttribute(StringView);
     SourceSize sourceSize(std::unique_ptr<MediaQueryExp>&&, CSSParserValue&);
@@ -330,7 +330,7 @@ public:
     bool parseTextEmphasisStyle(bool important);
     bool parseTextEmphasisPosition(bool important);
 
-    void addTextDecorationProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important);
+    void addTextDecorationProperty(CSSPropertyID, RefPtr<CSSValue>&&, bool important);
     bool parseTextDecoration(CSSPropertyID propId, bool important);
     bool parseTextDecorationSkip(bool important);
     bool parseTextUnderlinePosition(bool important);
@@ -359,12 +359,12 @@ public:
     std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> createSelectorVector();
     void recycleSelectorVector(std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>);
 
-    RefPtr<StyleRuleBase> createImportRule(const CSSParserString&, PassRefPtr<MediaQuerySet>);
+    RefPtr<StyleRuleBase> createImportRule(const CSSParserString&, RefPtr<MediaQuerySet>&&);
     RefPtr<StyleKeyframe> createKeyframe(CSSParserValueList&);
     RefPtr<StyleRuleKeyframes> createKeyframesRule(const String&, std::unique_ptr<Vector<RefPtr<StyleKeyframe>>>);
 
     typedef Vector<RefPtr<StyleRuleBase>> RuleList;
-    RefPtr<StyleRuleBase> createMediaRule(PassRefPtr<MediaQuerySet>, RuleList*);
+    RefPtr<StyleRuleBase> createMediaRule(RefPtr<MediaQuerySet>&&, RuleList*);
     RefPtr<StyleRuleBase> createEmptyMediaRule(RuleList*);
     RefPtr<StyleRuleBase> createStyleRule(Vector<std::unique_ptr<CSSParserSelector>>* selectors);
     RefPtr<StyleRuleBase> createFontFaceRule();
@@ -446,7 +446,7 @@ public:
     void markPropertyStart();
     void markPropertyEnd(bool isImportantFound, bool isPropertyParsed);
     void processAndAddNewRuleToSourceTreeIfNeeded();
-    void addNewRuleToSourceTree(PassRefPtr<CSSRuleSourceData>);
+    void addNewRuleToSourceTree(RefPtr<CSSRuleSourceData>&&);
     RefPtr<CSSRuleSourceData> popRuleData();
     void resetPropertyRange() { m_propertyRange.start = m_propertyRange.end = UINT_MAX; }
     bool isExtractingSourceData() const { return !!m_currentRuleDataStack; }
@@ -570,7 +570,7 @@ private:
     ParseResult parseValue(MutableStyleProperties*, CSSPropertyID, const String&, bool important, StyleSheetContents* contextStyleSheet);
     Ref<ImmutableStyleProperties> parseDeclaration(const String&, StyleSheetContents* contextStyleSheet);
 
-    RefPtr<CSSBasicShape> parseInsetRoundedCorners(PassRefPtr<CSSBasicShapeInset>, CSSParserValueList&);
+    RefPtr<CSSBasicShape> parseInsetRoundedCorners(RefPtr<CSSBasicShapeInset>&&, CSSParserValueList&);
 
     enum SizeParameterType {
         None,
