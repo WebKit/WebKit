@@ -1,3 +1,14 @@
+2016-05-17  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r200669.
+
+    2016-05-10  Dan Bernstein  <mitz@apple.com>
+
+            Tried to fix the Mac build after r200668.
+
+            * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+            (WTR::TestController::platformCreateWebView):
+
 2016-05-11  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r200659.
