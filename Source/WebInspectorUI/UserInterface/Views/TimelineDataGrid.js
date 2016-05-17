@@ -450,15 +450,12 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         if (this._showPopoverTimeout)
             return;
 
-        function delayedWork()
-        {
+        this._showPopoverTimeout = setTimeout(() => {
             if (!this._popover)
                 this._popover = new WebInspector.Popover;
-
             this._updatePopoverForSelectedNode(true);
-        }
-
-        this._showPopoverTimeout = setTimeout(delayedWork.bind(this), WebInspector.TimelineDataGrid.DelayedPopoverShowTimeout);
+            this._showPopoverTimeout = undefined;
+        }, WebInspector.TimelineDataGrid.DelayedPopoverShowTimeout);
     }
 
     _hidePopover()
@@ -471,15 +468,13 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         if (this._popover)
             this._popover.dismiss();
 
-        function delayedWork()
-        {
-            if (this._popoverCallStackTreeOutline)
-                this._popoverCallStackTreeOutline.removeChildren();
-        }
-
         if (this._hidePopoverContentClearTimeout)
             clearTimeout(this._hidePopoverContentClearTimeout);
-        this._hidePopoverContentClearTimeout = setTimeout(delayedWork.bind(this), WebInspector.TimelineDataGrid.DelayedPopoverHideContentClearTimeout);
+
+        this._hidePopoverContentClearTimeout = setTimeout(() => {
+            if (this._popoverCallStackTreeOutline)
+                this._popoverCallStackTreeOutline.removeChildren();
+        }, WebInspector.TimelineDataGrid.DelayedPopoverHideContentClearTimeout);
     }
 
     _updatePopoverForSelectedNode(updateContent)
@@ -487,15 +482,14 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         if (!this._popover || !this.selectedNode)
             return;
 
-        var targetPopoverElement = this.callFramePopoverAnchorElement();
+        let targetPopoverElement = this.callFramePopoverAnchorElement();
         console.assert(targetPopoverElement, "TimelineDataGrid subclass should always return a valid element from callFramePopoverAnchorElement.");
         if (!targetPopoverElement)
             return;
 
-        var targetFrame = WebInspector.Rect.rectFromClientRect(targetPopoverElement.getBoundingClientRect());
-
         // The element might be hidden if it does not have a width and height.
-        if (!targetFrame.size.width && !targetFrame.size.height)
+        let rect = WebInspector.Rect.rectFromClientRect(targetPopoverElement.getBoundingClientRect());
+        if (!rect.size.width && !targetFrame.rect.height)
             return;
 
         if (this._hidePopoverContentClearTimeout) {
@@ -503,10 +497,13 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
             this._hidePopoverContentClearTimeout = undefined;
         }
 
-        if (updateContent)
-            this._popover.content = this._createPopoverContent();
+        let targetFrame = rect.pad(2);
+        let preferredEdges = [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X];
 
-        this._popover.present(targetFrame.pad(2), [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
+        if (updateContent)
+            this._popover.presentNewContentWithFrame(this._createPopoverContent(), targetFrame, preferredEdges);
+        else
+            this._popover.present(targetFrame, preferredEdges);
     }
 
     _createPopoverContent()
@@ -547,8 +544,6 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation);
     }
 };
-
-WebInspector.TimelineDataGrid.WasExpandedDuringFilteringSymbol = Symbol("was-expanded-during-filtering");
 
 WebInspector.TimelineDataGrid.HasNonDefaultFilterStyleClassName = "has-non-default-filter";
 WebInspector.TimelineDataGrid.DelayedPopoverShowTimeout = 250;
