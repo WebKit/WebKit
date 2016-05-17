@@ -42,7 +42,7 @@ enum ProcessingUserGestureState {
 class UserGestureIndicator {
     WTF_MAKE_NONCOPYABLE(UserGestureIndicator);
 public:
-    static bool processingUserGesture();
+    WEBCORE_EXPORT static bool processingUserGesture();
     static bool processingUserGestureForMedia();
 
     // If a document is provided, its last known user gesture timestamp is updated.
