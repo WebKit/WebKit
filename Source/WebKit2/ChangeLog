@@ -1,5 +1,25 @@
 2016-05-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200668.
+
+    2016-05-10  Sam Weinig  <sam@webkit.org>
+
+            Only expose WKDataDetectorTypes and -[WKWebViewConfiguration dataDetectorTypes] on iOS
+            for now, since we don't have it fully implemented on Mac.
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (fromWKDataDetectorTypes):
+            (-[WKWebView _initializeWithConfiguration:]):
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+            (-[WKWebViewConfiguration encodeWithCoder:]):
+            (-[WKWebViewConfiguration initWithCoder:]):
+            (-[WKWebViewConfiguration copyWithZone:]):
+
+2016-05-17  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200819. rdar://problem/26235373
 
     2016-05-13  Tina Liu  <iting_liu@apple.com>
