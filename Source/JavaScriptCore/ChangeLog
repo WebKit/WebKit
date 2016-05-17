@@ -1,3 +1,10 @@
+2016-05-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, dump more information when math-pow-stable-results.js failed
+        https://bugs.webkit.org/show_bug.cgi?id=157168
+
+        * tests/stress/math-pow-stable-results.js:
+
 2016-05-16  Saam barati  <sbarati@apple.com>
 
         ShadowChicken crashes when reading a scope from the frame during a stack overflow exception
