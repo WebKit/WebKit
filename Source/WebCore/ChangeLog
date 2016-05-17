@@ -1,3 +1,40 @@
+2016-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Add RenderDescendantIterator to traverse a RenderObject's descendants
+        https://bugs.webkit.org/show_bug.cgi?id=157785
+
+        Reviewed by Zalan Bujtas.
+
+        Add RenderDescendantIterator to traverse a RenderObject's descendants. I
+        am planning to use it in the iOS Text Autosizing code (See Bug 157784).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderDescendantIterator.h: Added.
+        (WebCore::RenderDescendantIterator<T>::RenderDescendantIterator):
+        (WebCore::RenderDescendantIterator<T>::operator):
+        (WebCore::RenderDescendantConstIterator<T>::RenderDescendantConstIterator):
+        (WebCore::RenderDescendantConstIterator<T>::operator):
+        (WebCore::RenderDescendantIteratorAdapter<T>::RenderDescendantIteratorAdapter):
+        (WebCore::RenderDescendantIteratorAdapter<T>::begin):
+        (WebCore::RenderDescendantIteratorAdapter<T>::end):
+        (WebCore::RenderDescendantConstIteratorAdapter<T>::RenderDescendantConstIteratorAdapter):
+        (WebCore::RenderDescendantConstIteratorAdapter<T>::begin):
+        (WebCore::RenderDescendantConstIteratorAdapter<T>::end):
+        (WebCore::descendantsOfType):
+        * rendering/RenderIterator.h:
+        (WebCore::RenderObjectTraversal::firstChild):
+        (WebCore::RenderObjectTraversal::nextAncestorSibling):
+        (WebCore::RenderObjectTraversal::next):
+        (WebCore::RenderTraversal::firstChild):
+        (WebCore::RenderTraversal::lastChild):
+        (WebCore::RenderTraversal::nextSibling):
+        (WebCore::RenderTraversal::previousSibling):
+        (WebCore::RenderTraversal::findAncestorOfType):
+        (WebCore::RenderTraversal::firstWithin):
+        (WebCore::RenderTraversal::next):
+        (WebCore::RenderIterator<T>::traverseNext):
+        (WebCore::RenderConstIterator<T>::traverseNext):
+
 2016-05-16  Alex Christensen  <achristensen@webkit.org>
 
         Remove YouTube site-specific hack
