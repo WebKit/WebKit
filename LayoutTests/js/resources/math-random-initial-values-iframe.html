@@ -1,0 +1,6 @@
+<script>
+var random1 = Math.random();
+var random2 = Math.random();
+var similiar = Math.floor(random1 * 1000) === Math.floor(random2 * 1000);
+window.top.postMessage({similiar, random1, random2}, "*");
+</script>
