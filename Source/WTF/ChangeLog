@@ -1,3 +1,25 @@
+2016-05-16  Michael Saboff  <msaboff@apple.com>
+
+        ARMV7K: Crash at JavaScriptCore: WTF::ScopedLambdaFunctor<bool
+        https://bugs.webkit.org/show_bug.cgi?id=157781
+
+        Reviewed by Filip Pizlo.
+
+        Replaced use of ScopedLambda in locking code with std::function much as it was
+        before change set 199760 to work around what appears to be a clang compiler issue.
+
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionallyImpl):
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::unparkAll):
+        (WTF::ParkingLot::forEach):
+        (WTF::ParkingLot::unparkOneImpl): Deleted.
+        (WTF::ParkingLot::forEachImpl): Deleted.
+        * wtf/ParkingLot.h:
+        (WTF::ParkingLot::parkConditionally):
+        (WTF::ParkingLot::unparkOne): Deleted.
+        (WTF::ParkingLot::forEach): Deleted.
+
 2016-05-15  Chris Dumez  <cdumez@apple.com>
 
         Use more references in JS wrappers related code

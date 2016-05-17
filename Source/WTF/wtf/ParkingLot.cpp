@@ -532,8 +532,8 @@ bool dequeue(
 
 NEVER_INLINE bool ParkingLot::parkConditionallyImpl(
     const void* address,
-    const ScopedLambda<bool()>& validation,
-    const ScopedLambda<void()>& beforeSleep,
+    std::function<bool()> validation,
+    std::function<void()> beforeSleep,
     Clock::time_point timeout)
 {
     if (verbose)
@@ -649,9 +649,9 @@ NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
     return result;
 }
 
-NEVER_INLINE void ParkingLot::unparkOneImpl(
+NEVER_INLINE void ParkingLot::unparkOne(
     const void* address,
-    const ScopedLambda<void(ParkingLot::UnparkResult)>& callback)
+    std::function<void(ParkingLot::UnparkResult)> callback)
 {
     if (verbose)
         dataLog(toString(currentThread(), ": unparking one the hard way.\n"));
@@ -719,7 +719,7 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
         dataLog(toString(currentThread(), ": done unparking.\n"));
 }
 
-NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(ThreadIdentifier, const void*)>& callback)
+NEVER_INLINE void ParkingLot::forEach(std::function<void(ThreadIdentifier, const void*)> callback)
 {
     Vector<Bucket*> bucketsToUnlock = lockHashtable();
 

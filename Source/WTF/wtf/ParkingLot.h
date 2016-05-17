@@ -29,7 +29,6 @@
 #include <chrono>
 #include <functional>
 #include <wtf/Atomics.h>
-#include <wtf/ScopedLambda.h>
 #include <wtf/Threading.h>
 
 namespace WTF {
@@ -61,8 +60,8 @@ public:
     {
         return parkConditionallyImpl(
             address,
-            scopedLambda<bool()>(std::forward<ValidationFunctor>(validation)),
-            scopedLambda<void()>(std::forward<BeforeSleepFunctor>(beforeSleep)),
+            std::function<bool()>(std::forward<ValidationFunctor>(validation)),
+            std::function<void()>(std::forward<BeforeSleepFunctor>(beforeSleep)),
             timeout);
     }
 
@@ -101,11 +100,9 @@ public:
     // that race - see Rusty Russel's well-known usersem library - but it's not pretty. This form
     // allows that race to be completely avoided, since there is no way that a thread can be parked
     // while the callback is running.
-    template<typename CallbackFunctor>
-    static void unparkOne(const void* address, CallbackFunctor&& callback)
-    {
-        unparkOneImpl(address, scopedLambda<void(UnparkResult)>(std::forward<CallbackFunctor>(callback)));
-    }
+    WTF_EXPORT_PRIVATE static void unparkOne(
+        const void* address,
+        std::function<void(ParkingLot::UnparkResult)> callback);
 
     // Unparks every thread from the queue associated with the given address, which cannot be null.
     WTF_EXPORT_PRIVATE static void unparkAll(const void* address);
@@ -123,23 +120,19 @@ public:
     // As well as many other possible interleavings that all have T1 before T2 and T3 before T4 but are
     // otherwise unconstrained. This method is useful primarily for debugging. It's also used by unit
     // tests.
-    template<typename CallbackFunctor>
-    static void forEach(CallbackFunctor&& callback)
-    {
-        forEachImpl(scopedLambda<void(ThreadIdentifier, const void*)>(std::forward<CallbackFunctor>(callback)));
-    }
+    WTF_EXPORT_PRIVATE static void forEach(std::function<void(ThreadIdentifier, const void*)>);
 
 private:
     WTF_EXPORT_PRIVATE static bool parkConditionallyImpl(
         const void* address,
-        const ScopedLambda<bool()>& validation,
-        const ScopedLambda<void()>& beforeSleep,
+        std::function<bool()> validation,
+        std::function<void()> beforeSleep,
         Clock::time_point timeout);
     
     WTF_EXPORT_PRIVATE static void unparkOneImpl(
-        const void* address, const ScopedLambda<void(UnparkResult)>& callback);
+        const void* address, std::function<void(UnparkResult)> callback);
 
-    WTF_EXPORT_PRIVATE static void forEachImpl(const ScopedLambda<void(ThreadIdentifier, const void*)>&);
+    WTF_EXPORT_PRIVATE static void forEachImpl(const std::function<void(ThreadIdentifier, const void*)>&);
 };
 
 } // namespace WTF
