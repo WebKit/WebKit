@@ -1197,44 +1197,11 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
     if (!quads.isEmpty())
         rectForSelectionCandidates = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
-    auto weakEditor = m_weakPtrFactory.createWeakPtr();
-    [m_webView showCandidates:candidates forString:m_paragraphContextForCandidateRequest.get() inRect:rectForSelectionCandidates forSelectedRange:m_rangeForCandidates view:m_webView completionHandler:[weakEditor](NSTextCheckingResult *acceptedCandidate) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (!weakEditor)
-                return;
-            weakEditor->handleAcceptedCandidate(acceptedCandidate);
-        });
-    }];
+    [m_webView showCandidates:candidates forString:m_paragraphContextForCandidateRequest.get() inRect:rectForSelectionCandidates forSelectedRange:m_rangeForCandidates view:m_webView completionHandler:nil];
 
 }
 
-static WebCore::TextCheckingResult textCheckingResultFromNSTextCheckingResult(NSTextCheckingResult *nsResult)
-{
-    WebCore::TextCheckingResult result;
-
-    switch ([nsResult resultType]) {
-    case NSTextCheckingTypeSpelling:
-        result.type = WebCore::TextCheckingTypeSpelling;
-        break;
-    case NSTextCheckingTypeReplacement:
-        result.type = WebCore::TextCheckingTypeReplacement;
-        break;
-    case NSTextCheckingTypeCorrection:
-        result.type = WebCore::TextCheckingTypeCorrection;
-        break;
-    default:
-        result.type = WebCore::TextCheckingTypeNone;
-    }
-
-    NSRange resultRange = [nsResult range];
-    result.location = resultRange.location;
-    result.length = resultRange.length;
-    result.replacement = [nsResult replacementString];
-
-    return result;
-}
-
-void WebEditorClient::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidate)
+void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult acceptedCandidate)
 {
     Frame* frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
@@ -1246,16 +1213,16 @@ void WebEditorClient::handleAcceptedCandidate(NSTextCheckingResult *acceptedCand
 
     NSView <WebDocumentView> *view = [[[m_webView selectedFrame] frameView] documentView];
     if ([view isKindOfClass:[WebHTMLView class]]) {
-        NSRange range = [acceptedCandidate range];
-        if (acceptedCandidate.replacementString && [acceptedCandidate.replacementString length] > 0) {
-            NSRange replacedRange = NSMakeRange(range.location, [acceptedCandidate.replacementString length]);
+        unsigned replacementLength = acceptedCandidate.replacement.length();
+        if (replacementLength > 0) {
+            NSRange replacedRange = NSMakeRange(acceptedCandidate.location, replacementLength);
             NSRange softSpaceRange = NSMakeRange(NSMaxRange(replacedRange) - 1, 1);
-            if ([acceptedCandidate.replacementString hasSuffix:@" "])
+            if (acceptedCandidate.replacement.endsWith(" "))
                 [(WebHTMLView *)view _setSoftSpaceRange:softSpaceRange];
         }
     }
 
-    frame->editor().handleAcceptedCandidate(textCheckingResultFromNSTextCheckingResult(acceptedCandidate));
+    frame->editor().handleAcceptedCandidate(acceptedCandidate);
 }
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 

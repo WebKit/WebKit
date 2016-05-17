@@ -297,7 +297,6 @@ OBJC_CLASS NSTextAlternatives;
 
 @interface WebView (WebUpdateWebViewAdditions)
 - (void)updateWebViewAdditions;
-- (void)showCandidates:(NSArray *)candidates forString:(NSString *)string inRect:(NSRect)rectOfTypedString forSelectedRange:(NSRange)range view:(NSView *)view completionHandler:(void (^)(NSTextCheckingResult *acceptedCandidate))completionBlock;
 - (BOOL)shouldRequestCandidates;
 - (void)webViewAdditionsWillDestroyView;
 @end

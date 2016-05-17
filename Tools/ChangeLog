@@ -1,3 +1,20 @@
+2016-05-17  Beth Dakin  <bdakin@apple.com>
+
+        Make handleAcceptedCandidate a public function
+        https://bugs.webkit.org/show_bug.cgi?id=157763
+        -and corresponding-
+        rdar://problem/26206397
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/autofocused-text-input.html: Added.
+        * TestWebKitAPI/Tests/mac/ViewWithEditableAreaLeak.mm: Added.
+        (-[DoNotLeakWebView dealloc]):
+        (-[DoNotLeakWebView showCandidates:forString:inRect:forSelectedRange:view:completionHandler:]):
+        (-[DoNotLeakFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+
 2016-05-17  Keith Miller  <keith_miller@apple.com>
 
         Add test262 harness support code

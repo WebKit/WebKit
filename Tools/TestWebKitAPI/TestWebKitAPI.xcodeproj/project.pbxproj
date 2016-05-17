@@ -299,6 +299,8 @@
 		936F72811CD7D9EC0068A0FB /* large-video-with-audio.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 936F727F1CD7D9D00068A0FB /* large-video-with-audio.mp4 */; };
 		93AF4ECE1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */; };
 		93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93AF4ECF1506F123007FD57E /* lots-of-images.html */; };
+		93CFA8671CEB9E38000565A8 /* autofocused-text-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */; };
+		93CFA8691CEBCFED000565A8 /* ViewWithEditableAreaLeak.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93CFA8681CEBCFED000565A8 /* ViewWithEditableAreaLeak.mm */; };
 		93E943F21CD3E87E00AC08C2 /* VideoControlsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93E943F11CD3E87E00AC08C2 /* VideoControlsManager.mm */; };
 		93F1DB3414DA20870024C362 /* NewFirstVisuallyNonEmptyLayout_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB3314DA20870024C362 /* NewFirstVisuallyNonEmptyLayout_Bundle.cpp */; };
 		93F1DB5714DB1B840024C362 /* NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB5614DB1B840024C362 /* NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp */; };
@@ -422,6 +424,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				93CFA8671CEB9E38000565A8 /* autofocused-text-input.html in Copy Resources */,
 				93625D271CD9741C006DC1F1 /* large-video-without-audio.html in Copy Resources */,
 				936F72801CD7D9EC0068A0FB /* large-video-with-audio.html in Copy Resources */,
 				936F72811CD7D9EC0068A0FB /* large-video-with-audio.mp4 in Copy Resources */,
@@ -743,6 +746,8 @@
 		93AF4ECA1506F035007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutForImages.cpp; sourceTree = "<group>"; };
 		93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp; sourceTree = "<group>"; };
 		93AF4ECF1506F123007FD57E /* lots-of-images.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "lots-of-images.html"; sourceTree = "<group>"; };
+		93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autofocused-text-input.html"; sourceTree = "<group>"; };
+		93CFA8681CEBCFED000565A8 /* ViewWithEditableAreaLeak.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewWithEditableAreaLeak.mm; sourceTree = "<group>"; };
 		93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "all-content-in-one-iframe.html"; sourceTree = "<group>"; };
 		93D3D19D17B1A84200C7C415 /* LayoutMilestonesWithAllContentInFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutMilestonesWithAllContentInFrame.cpp; sourceTree = "<group>"; };
 		93E943F11CD3E87E00AC08C2 /* VideoControlsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoControlsManager.mm; sourceTree = "<group>"; };
@@ -1156,6 +1161,7 @@
 				51BCEE4D1C84F52C0042C82E /* IndexedDBMultiProcess-2.html */,
 				51B1EE941C80FADD0064FB98 /* IndexedDBPersistence-1.html */,
 				51B1EE951C80FADD0064FB98 /* IndexedDBPersistence-2.html */,
+				93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */,
 				936F727E1CD7D9D00068A0FB /* large-video-with-audio.html */,
 				936F727F1CD7D9D00068A0FB /* large-video-with-audio.mp4 */,
 				93625D261CD973AF006DC1F1 /* large-video-without-audio.html */,
@@ -1517,6 +1523,7 @@
 				939BFE3918E5548900883275 /* StringTruncator.mm */,
 				37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */,
 				E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */,
+				93CFA8681CEBCFED000565A8 /* ViewWithEditableAreaLeak.mm */,
 				51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */,
 				C2EB2DD116CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm */,
 				51B454EB1B4E236B0085EAA6 /* WebViewCloseInsideDidFinishLoadForFrame.mm */,
@@ -2013,6 +2020,7 @@
 				41973B5B1AF2286A006C7B36 /* FileSystem.cpp in Sources */,
 				CD89D03A1C4EDB2A00040A04 /* WebCoreNSURLSession.mm in Sources */,
 				83B88A341C80056D00BB2418 /* HTMLParserIdioms.cpp in Sources */,
+				93CFA8691CEBCFED000565A8 /* ViewWithEditableAreaLeak.mm in Sources */,
 				A1C4FB6E1BACCE50003742D0 /* QuickLook.mm in Sources */,
 				51B1EE8E1C80F5880064FB98 /* IndexedDBPersistence.mm in Sources */,
 				7A5623111AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp in Sources */,

@@ -1067,6 +1067,10 @@ Could be worth adding to the API.
 - (NSCachedURLResponse *)webView:(WebView *)sender resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
 @end
 
+@interface WebView (WebShowCandidates)
+- (void)showCandidates:(NSArray *)candidates forString:(NSString *)string inRect:(NSRect)rectOfTypedString forSelectedRange:(NSRange)range view:(NSView *)view completionHandler:(void (^)(NSTextCheckingResult *acceptedCandidate))completionBlock;
+@end
+
 #ifdef __cplusplus
 extern "C" {
 #endif

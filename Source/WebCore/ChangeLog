@@ -1,3 +1,18 @@
+2016-05-17  Beth Dakin  <bdakin@apple.com>
+
+        Make handleAcceptedCandidate a public function
+        https://bugs.webkit.org/show_bug.cgi?id=157763
+        -and corresponding-
+        rdar://problem/26206397
+
+        Reviewed by Tim Horton.
+
+        Define handleAcceptedCandidateWithSoftSpaces on EditorClient so that it can 
+        be invoked on any EditorClient. 
+        * loader/EmptyClients.h:
+        * page/EditorClient.h:
+        (WebCore::EditorClient::handleAcceptedCandidateWithSoftSpaces):
+
 2016-05-17  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed debug build fix after r201052.

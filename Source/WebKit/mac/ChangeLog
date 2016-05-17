@@ -1,3 +1,28 @@
+2016-05-17  Beth Dakin  <bdakin@apple.com>
+
+        Make handleAcceptedCandidate a public function
+        https://bugs.webkit.org/show_bug.cgi?id=157763
+        -and corresponding-
+        rdar://problem/26206397
+
+        Reviewed by Tim Horton.
+
+        This patch re-names handleAcceptedCandidate to 
+        handleAcceptedCandidateWithSoftSpaces. The function now takes a 
+        WebCore::TextCheckingResult instead of an NSTextCheckingResult and it can be 
+        called from outside of WebEditorClient.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleRequestedCandidates):
+        (WebEditorClient::handleAcceptedCandidateWithSoftSpaces):
+        (textCheckingResultFromNSTextCheckingResult): Deleted.
+        (WebEditorClient::handleAcceptedCandidate): Deleted.
+
+        Move showCandidates to WebViewPrivate so that it can be overridden by a test.
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2016-05-17  Dean Jackson  <dino@apple.com>
 
         Remove ES6_GENERATORS flag
