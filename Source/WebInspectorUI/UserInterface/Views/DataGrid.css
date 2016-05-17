@@ -122,6 +122,10 @@
     background-size: 100% 40px;
 }
 
+.data-grid:not(.variable-height-rows) > .data-container > table.data > tbody > tr > td > div {
+    height: 16px;
+}
+
 .data-grid:not(.variable-height-rows) table.data.odd-first-zebra-stripe {
     background-image: linear-gradient(to bottom, var(--odd-zebra-stripe-row-background-color), var(--odd-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color));
 }
