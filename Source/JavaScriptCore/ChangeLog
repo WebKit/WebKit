@@ -1,5 +1,20 @@
 2016-05-16  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Remove the index check from op_get_by_val/op_put_by_val when the index is constant
+        https://bugs.webkit.org/show_bug.cgi?id=157766
+
+        Reviewed by Geoffrey Garen.
+
+        If the index is an integer constant, do not generate the index check.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+
+2016-05-16  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC][DFG] Fill spilled Int32 as Int32 instead of JSInt32
         https://bugs.webkit.org/show_bug.cgi?id=157700
 

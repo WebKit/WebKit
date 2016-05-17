@@ -100,20 +100,28 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     ByValInfo* byValInfo = m_codeBlock->addByValInfo();
 
-    emitGetVirtualRegisters(base, regT0, property, regT1);
+    emitGetVirtualRegister(base, regT0);
+    bool propertyNameIsIntegerConstant = isOperandConstantInt(property);
+    if (propertyNameIsIntegerConstant)
+        move(Imm32(getOperandConstantInt(property)), regT1);
+    else
+        emitGetVirtualRegister(property, regT1);
 
     emitJumpSlowCaseIfNotJSCell(regT0, base);
 
-    PatchableJump notIndex = emitPatchableJumpIfNotInt(regT1);
-    addSlowCase(notIndex);
+    PatchableJump notIndex;
+    if (!propertyNameIsIntegerConstant) {
+        notIndex = emitPatchableJumpIfNotInt(regT1);
+        addSlowCase(notIndex);
 
-    // This is technically incorrect - we're zero-extending an int32.  On the hot path this doesn't matter.
-    // We check the value as if it was a uint32 against the m_vectorLength - which will always fail if
-    // number was signed since m_vectorLength is always less than intmax (since the total allocation
-    // size is always less than 4Gb).  As such zero extending will have been correct (and extending the value
-    // to 64-bits is necessary since it's used in the address calculation).  We zero extend rather than sign
-    // extending since it makes it easier to re-tag the value in the slow case.
-    zeroExtend32ToPtr(regT1, regT1);
+        // This is technically incorrect - we're zero-extending an int32. On the hot path this doesn't matter.
+        // We check the value as if it was a uint32 against the m_vectorLength - which will always fail if
+        // number was signed since m_vectorLength is always less than intmax (since the total allocation
+        // size is always less than 4Gb). As such zero extending will have been correct (and extending the value
+        // to 64-bits is necessary since it's used in the address calculation). We zero extend rather than sign
+        // extending since it makes it easier to re-tag the value in the slow case.
+        zeroExtend32ToPtr(regT1, regT1);
+    }
 
     emitArrayProfilingSiteWithCell(regT0, regT2, profile);
     and32(TrustedImm32(IndexingShapeMask), regT2);
@@ -237,7 +245,9 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
     
     linkSlowCaseIfNotJSCell(iter, base); // base cell check
-    linkSlowCase(iter); // property int32 check
+
+    if (!isOperandConstantInt(property))
+        linkSlowCase(iter); // property int32 check
     Jump nonCell = jump();
     linkSlowCase(iter); // base array check
     Jump notString = branchStructure(NotEqual, 
@@ -274,12 +284,21 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     ByValInfo* byValInfo = m_codeBlock->addByValInfo();
 
-    emitGetVirtualRegisters(base, regT0, property, regT1);
+    emitGetVirtualRegister(base, regT0);
+    bool propertyNameIsIntegerConstant = isOperandConstantInt(property);
+    if (propertyNameIsIntegerConstant)
+        move(Imm32(getOperandConstantInt(property)), regT1);
+    else
+        emitGetVirtualRegister(property, regT1);
+
     emitJumpSlowCaseIfNotJSCell(regT0, base);
-    PatchableJump notIndex = emitPatchableJumpIfNotInt(regT1);
-    addSlowCase(notIndex);
-    // See comment in op_get_by_val.
-    zeroExtend32ToPtr(regT1, regT1);
+    PatchableJump notIndex;
+    if (!propertyNameIsIntegerConstant) {
+        notIndex = emitPatchableJumpIfNotInt(regT1);
+        addSlowCase(notIndex);
+        // See comment in op_get_by_val.
+        zeroExtend32ToPtr(regT1, regT1);
+    }
     emitArrayProfilingSiteWithCell(regT0, regT2, profile);
     and32(TrustedImm32(IndexingShapeMask), regT2);
     
@@ -451,7 +470,8 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
 
     linkSlowCaseIfNotJSCell(iter, base); // base cell check
-    linkSlowCase(iter); // property int32 check
+    if (!isOperandConstantInt(property))
+        linkSlowCase(iter); // property int32 check
     linkSlowCase(iter); // base not array check
     
     linkSlowCase(iter); // out of bounds
