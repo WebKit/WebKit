@@ -177,7 +177,9 @@ private:
 
     Timer m_garbageCollectDocumentResourcesTimer;
 
+#if ENABLE(WEB_TIMING)
     ResourceTimingInformation m_resourceTimingInfo;
+#endif
 
     // 29 bits left
     bool m_autoLoadImages : 1;

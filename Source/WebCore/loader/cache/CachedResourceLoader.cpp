@@ -618,10 +618,12 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
             return nullptr;
         logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::usedKey());
         memoryCache.resourceAccessed(*resource);
+#if ENABLE(WEB_TIMING)
         if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
             m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request, frame());
             m_resourceTimingInfo.addResourceTiming(resource.get(), document());
         }
+#endif
         break;
     }
 
@@ -673,8 +675,12 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(co
     
     memoryCache.remove(*resource);
     memoryCache.add(*newResource);
+#if ENABLE(WEB_TIMING)
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
         m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request, frame());
+#else
+    UNUSED_PARAM(request);
+#endif
     return newResource;
 }
 
@@ -689,8 +695,10 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
 
     if (request.allowsCaching() && !memoryCache.add(*resource))
         resource->setOwningCachedResourceLoader(this);
+#if ENABLE(WEB_TIMING)
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
         m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request, frame());
+#endif
     return resource;
 }
 
