@@ -1,3 +1,18 @@
+2016-05-16  Dean Jackson  <dino@apple.com>
+
+        Tidy unused parameters with build flags in isValidKeywordPropertyAndValue
+        https://bugs.webkit.org/show_bug.cgi?id=157780
+        <rdar://problem/26327312>
+
+        Reviewed by Alex Christensen.
+
+        CSS_COMPOSITING and CSS_REGIONS aren't runtime flags any more, so
+        don't need a parser context. Meanwhile CSS_GRID_LAYOUT does, even
+        though it wasn't in the condition for the UNUSED_PARAM.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+
 2016-05-17  Chris Dumez  <cdumez@apple.com>
 
         Regression(r177786): GlyphMetricsMap<T>::locatePageSlowCase() fills existing pages with unknown metrics
