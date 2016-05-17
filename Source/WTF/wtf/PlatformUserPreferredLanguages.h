@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Language_h
-#define Language_h
+#ifndef PlatformUserPreferredLanguages_h
+#define PlatformUserPreferredLanguages_h
 
-#include <wtf/Forward.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
 
-WEBCORE_EXPORT String defaultLanguage();
-WEBCORE_EXPORT Vector<String> userPreferredLanguages();
-Vector<String> userPreferredLanguagesOverride();
-WEBCORE_EXPORT void overrideUserPreferredLanguages(const Vector<String>&);
-size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch);
+WTF_EXPORT_PRIVATE void setPlatformUserPreferredLanguagesChangedCallback(void (*)());
 
-// The observer function will be called when system language changes.
-typedef void (*LanguageChangeObserverFunction)(void* context);
-WEBCORE_EXPORT void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction);
-WEBCORE_EXPORT void removeLanguageChangeObserver(void* context);
+WTF_EXPORT_PRIVATE Vector<String> platformUserPreferredLanguages();
 
-String displayNameForLanguageLocale(const String&);
+} // namespace WTF
 
-// Called from platform specific code when the user's preferred language(s) change.
-WEBCORE_EXPORT void languageDidChange();
-}
+using WTF::setPlatformUserPreferredLanguagesChangedCallback;
+using WTF::platformUserPreferredLanguages;
 
-#endif
+#endif // PlatformUserPreferredLanguages_h
+

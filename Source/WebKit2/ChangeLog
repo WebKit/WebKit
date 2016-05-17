@@ -1,3 +1,17 @@
+2016-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF should know about Language
+        https://bugs.webkit.org/show_bug.cgi?id=157756
+
+        Reviewed by Geoffrey Garen and Alexey Proskuryakov.
+
+        Rewires a bunch of includes/imports.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+
 2016-05-17  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed GTK+ and EFL bulid fix; make the audio playback user gesture requirement

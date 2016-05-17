@@ -26,7 +26,6 @@
 #import "config.h"
 #import "ScrollView.h"
 
-#import "BlockExceptions.h"
 #import "FloatRect.h"
 #import "IntRect.h"
 #import "Logging.h"
@@ -38,6 +37,7 @@
 #import "WAKWindow.h"
 #import "WKViewPrivate.h"
 #import "WebCoreFrameView.h"
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/CurrentTime.h>
 
 using namespace std;

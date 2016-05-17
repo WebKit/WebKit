@@ -28,7 +28,6 @@
 #if PLATFORM(IOS)
 
 #import "AnimationController.h"
-#import "BlockExceptions.h"
 #import "DOMCSSStyleDeclarationInternal.h"
 #import "DOMCore.h"
 #import "DOMInternal.h"
@@ -70,6 +69,7 @@
 #import "WAKWindow.h"
 #import "WebCoreSystemInterface.h"
 #import <runtime/JSLock.h>
+#import <wtf/BlockObjCExceptions.h>
 
 using namespace WebCore::HTMLNames;
 using namespace WTF::Unicode;

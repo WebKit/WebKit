@@ -12,6 +12,8 @@ list(APPEND WTF_LIBRARIES
 
 list(APPEND WTF_SOURCES
     AutodrainedPoolMac.mm
+    BlockObjCExceptions.mm
+    PlatformUserPreferredLanguagesMac.mm
     RunLoopTimerCF.cpp
     SchedulePairCF.cpp
     SchedulePairMac.mm

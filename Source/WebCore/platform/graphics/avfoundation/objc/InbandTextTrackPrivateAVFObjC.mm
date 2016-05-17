@@ -29,7 +29,6 @@
 
 #import "InbandTextTrackPrivateAVFObjC.h"
 
-#import "BlockExceptions.h"
 #import "FloatConversion.h"
 #import "InbandTextTrackPrivate.h"
 #import "InbandTextTrackPrivateAVF.h"
@@ -37,6 +36,7 @@
 #import "SoftLinking.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
+#import <wtf/BlockObjCExceptions.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "Widget.h"
 
-
-#import "BlockExceptions.h"
 #import "Chrome.h"
 #import "Cursor.h"
 #import "Document.h"
@@ -40,6 +38,7 @@
 #import "RuntimeApplicationChecks.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
 

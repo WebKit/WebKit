@@ -26,12 +26,12 @@
 #include "config.h"
 #import "PlatformCAFilters.h"
 
-#import "BlockExceptions.h"
 #import "FloatConversion.h"
 #import "LengthFunctions.h" // This is a layering violation.
 #import "PlatformCALayerCocoa.h"
 #import "QuartzCoreSPI.h"
 #import <QuartzCore/QuartzCore.h>
+#import <wtf/BlockObjCExceptions.h>
 
 using namespace WebCore;
 

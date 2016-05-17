@@ -29,8 +29,8 @@
 #import "WebFrameInternal.h"
 #import "WebHistoryInternal.h"
 #import "WebViewInternal.h"
-#import <WebCore/BlockExceptions.h>
 #import <WebCore/PageCache.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;

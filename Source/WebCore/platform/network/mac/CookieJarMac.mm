@@ -26,10 +26,10 @@
 #import "config.h"
 #import "PlatformCookieJar.h"
 
-#import "BlockExceptions.h"
 #import "CFNetworkSPI.h"
 #import "NetworkStorageSession.h"
 #import "WebCoreSystemInterface.h"
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 static NSHTTPCookieStorage *cookieStorage(const NetworkStorageSession&);

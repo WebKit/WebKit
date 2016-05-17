@@ -1,3 +1,56 @@
+2016-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF should know about Language
+        https://bugs.webkit.org/show_bug.cgi?id=157756
+
+        Reviewed by Geoffrey Garen.
+
+        This contains two changes:
+
+        - Move everything that WebCore's logic for getting the platform user preferred language
+          depended on into WTF. This means CFBundleSPI.h and BlockObjCExceptions.h|cpp.
+
+        - Move WebCore::platformUserPreferredLanguages() to WTF::platformUserPreferredLanguages().
+          This is needed by https://bugs.webkit.org/show_bug.cgi?id=157755, which will make JSC
+          use this to detect the platform user preferred language when running standalone.
+
+        Moving the dependencies accounts for a huge chunk of this change, since we have to rewire
+        all of the references to those headers in all of WebKit.
+
+        Moving platformUserPreferredLanguages() is mostly easy except for the weird callback.
+        That function would call languageDidChange(), which needs to stay in WebCore. So, this
+        gives WebCore the ability to register a languageDidChange callback. Other than this new
+        logic, the code being added to WTF is just being lifted out of WebCore.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BlockObjCExceptions.h: Added.
+        * wtf/BlockObjCExceptions.mm: Added.
+        (ReportBlockedObjCException):
+        * wtf/PlatformEfl.cmake:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformUserPreferredLanguages.h: Added.
+        * wtf/PlatformUserPreferredLanguagesMac.mm: Added.
+        (WTF::setPlatformUserPreferredLanguagesChangedCallback):
+        (WTF::preferredLanguages):
+        (+[WTFLanguageChangeObserver languagePreferencesDidChange:]):
+        (WTF::httpStyleLanguageCode):
+        (WTF::isValidICUCountryCode):
+        (WTF::platformUserPreferredLanguages):
+        * wtf/PlatformUserPreferredLanguagesUnix.cpp: Added.
+        (WTF::setPlatformUserPreferredLanguagesChangedCallback):
+        (WTF::platformLanguage):
+        (WTF::platformUserPreferredLanguages):
+        * wtf/PlatformUserPreferredLanguagesWin.cpp: Added.
+        (WTF::setPlatformUserPreferredLanguagesChangedCallback):
+        (WTF::localeInfo):
+        (WTF::platformLanguage):
+        (WTF::platformUserPreferredLanguages):
+        * wtf/PlatformWin.cmake:
+        * wtf/spi/cf: Added.
+        * wtf/spi/cf/CFBundleSPI.h: Added.
+
 2016-05-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         DOMPromise should only restrict the resolution type

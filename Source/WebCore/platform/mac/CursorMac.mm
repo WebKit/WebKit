@@ -26,8 +26,8 @@
 #import "config.h"
 #import "Cursor.h"
 
-#import "BlockExceptions.h"
 #import "WebCoreSystemInterface.h"
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/StdLibExtras.h>
 
 @interface WebCoreCursorBundle : NSObject { }

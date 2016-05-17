@@ -28,10 +28,10 @@
 
 #if ENABLE(CONTENT_FILTERING)
 
-#import "BlockExceptions.h"
 #import "ContentFilter.h"
 #import "Logging.h"
 #import "ResourceRequest.h"
+#import <wtf/BlockObjCExceptions.h>
 
 #if !LOG_DISABLED
 #import <wtf/text/CString.h>

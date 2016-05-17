@@ -26,13 +26,13 @@
 #import "config.h"
 #import "ScrollView.h"
 
-#import "BlockExceptions.h"
 #import "FloatRect.h"
 #import "FloatSize.h"
 #import "IntRect.h"
 #import "Logging.h"
 #import "NotImplemented.h"
 #import "WebCoreFrameView.h"
+#import <wtf/BlockObjCExceptions.h>
 
 @interface NSScrollView ()
 - (NSEdgeInsets)contentInsets;

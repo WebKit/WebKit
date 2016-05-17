@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ScrollbarThemeMac.h"
 
-#include "BlockExceptions.h"
 #include "ColorMac.h"
 #include "GraphicsLayer.h"
 #include "ImageBuffer.h"
@@ -38,6 +37,7 @@
 #include "ScrollView.h"
 #include "WebCoreSystemInterface.h"
 #include <Carbon/Carbon.h>
+#include <wtf/BlockObjCExceptions.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>

@@ -26,7 +26,6 @@
 #import "config.h"
 #import "Editor.h"
 
-#import "BlockExceptions.h"
 #import "CSSPrimitiveValueMappings.h"
 #import "CSSValuePool.h"
 #import "CachedResourceLoader.h"
@@ -65,6 +64,7 @@
 #import "WebNSAttributedStringExtras.h"
 #import "htmlediting.h"
 #import "markup.h"
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 

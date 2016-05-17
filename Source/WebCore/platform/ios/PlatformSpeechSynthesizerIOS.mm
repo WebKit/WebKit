@@ -29,11 +29,11 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
-#include "BlockExceptions.h"
 #include "PlatformSpeechSynthesisUtterance.h"
 #include "PlatformSpeechSynthesisVoice.h"
 #include "SoftLinking.h"
 #include <AVFoundation/AVSpeechSynthesis.h>
+#include <wtf/BlockObjCExceptions.h>
 #include <wtf/RetainPtr.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)

@@ -26,10 +26,10 @@
 #import "config.h"
 #import "ResourceError.h"
 
-#import "BlockExceptions.h"
 #import "URL.h"
 #import <CoreFoundation/CFError.h>
 #import <Foundation/Foundation.h>
+#import <wtf/BlockObjCExceptions.h>
 
 #if PLATFORM(IOS) && USE(CFNETWORK)
 #import <CFNetwork/CFSocketStreamPriv.h>

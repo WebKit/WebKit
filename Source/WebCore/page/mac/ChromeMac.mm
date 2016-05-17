@@ -20,8 +20,8 @@
 #import "config.h"
 #import "Chrome.h"
 
-#import "BlockExceptions.h"
 #import "ChromeClient.h"
+#import <wtf/BlockObjCExceptions.h>
 
 #if PLATFORM(IOS)
 #include "WAKResponder.h"

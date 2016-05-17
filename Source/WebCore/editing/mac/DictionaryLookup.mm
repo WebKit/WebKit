@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import "BlockExceptions.h"
 #import "Document.h"
 #import "FocusController.h"
 #import "Frame.h"
@@ -47,6 +46,7 @@
 #import "WebCoreSystemInterface.h"
 #import "htmlediting.h"
 #import <PDFKit/PDFKit.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)

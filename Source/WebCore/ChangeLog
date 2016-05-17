@@ -1,3 +1,82 @@
+2016-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF should know about Language
+        https://bugs.webkit.org/show_bug.cgi?id=157756
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests because this does not change behavior.
+
+        This change is all about moving some language functionality to WTF. Quoting the WTF
+        ChangeLog, this contains two changes:
+
+        - Move everything that WebCore's logic for getting the platform user preferred language
+          depended on into WTF. This means CFBundleSPI.h and BlockObjCExceptions.h|cpp.
+
+        - Move WebCore::platformUserPreferredLanguages() to WTF::platformUserPreferredLanguages().
+          This is needed by https://bugs.webkit.org/show_bug.cgi?id=157755, which will make JSC
+          use this to detect the platform user preferred language when running standalone.
+
+        The changes in WebCore are mostly about rewiring #includes and #imports and removing the
+        code that we moved to WTF. But there is one logic change: previously,
+        platformUserPreferredLanguages() would call WebCore::languageDidChange(). It can't do that
+        directly anymore, but WTF gives WebCore some API for registering the callback. So in
+        Language.cpp we now register languageDidChange anytime we do something that would
+        necessitate it, like calling platformUserPreferredLanguages(). This also registers the
+        callback inside addLanguageChangeObserver(), since it's possible for that to be called
+        after JSC had called platformUserPreferredLanguages() but before WebCore does so.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMCustomXPathNSResolver.mm:
+        * editing/ios/EditorIOS.mm:
+        * editing/mac/DictionaryLookup.mm:
+        * editing/mac/EditorMac.mm:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/ios/EventHandlerIOS.mm:
+        * page/ios/FrameIOS.mm:
+        * page/mac/ChromeMac.mm:
+        * page/mac/EventHandlerMac.mm:
+        * platform/Language.cpp:
+        (WebCore::registerLanguageDidChangeCallbackIfNecessary):
+        (WebCore::observerMap):
+        (WebCore::addLanguageChangeObserver):
+        (WebCore::overrideUserPreferredLanguages):
+        (WebCore::userPreferredLanguages):
+        * platform/Language.h:
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        * platform/graphics/cocoa/FontCocoa.mm:
+        * platform/graphics/mac/ColorMac.mm:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/ios/PlatformSpeechSynthesizerIOS.mm:
+        * platform/ios/ScrollViewIOS.mm:
+        * platform/ios/WidgetIOS.mm:
+        * platform/mac/BlockExceptions.h: Removed.
+        * platform/mac/BlockExceptions.mm: Removed.
+        * platform/mac/CursorMac.mm:
+        * platform/mac/Language.mm: Removed.
+        * platform/mac/ScrollAnimatorMac.mm:
+        * platform/mac/ScrollViewMac.mm:
+        * platform/mac/ScrollbarThemeMac.mm:
+        * platform/mac/ThemeMac.mm:
+        * platform/mac/WidgetMac.mm:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        * platform/network/mac/CookieJarMac.mm:
+        * platform/network/mac/ResourceErrorMac.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/spi/cf/CFBundleSPI.h: Removed.
+        * platform/unix/LanguageUnix.cpp: Removed.
+        * platform/win/LanguageWin.cpp: Removed.
+
 2016-05-16  Dean Jackson  <dino@apple.com>
 
         Tidy unused parameters with build flags in isValidKeywordPropertyAndValue

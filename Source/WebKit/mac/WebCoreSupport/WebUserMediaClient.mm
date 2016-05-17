@@ -31,11 +31,11 @@
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
-#import <WebCore/BlockExceptions.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScriptExecutionContext.h>
 #import <WebCore/UserMediaPermissionCheck.h>
 #import <WebCore/UserMediaRequest.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RefPtr.h>

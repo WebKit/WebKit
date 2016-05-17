@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PlatformUserPreferredLanguages.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,6 +37,16 @@
 #endif
 
 namespace WebCore {
+
+static void registerLanguageDidChangeCallbackIfNecessary()
+{
+    static std::once_flag once;
+    std::call_once(
+        once,
+        [] {
+            setPlatformUserPreferredLanguagesChangedCallback(languageDidChange);
+        });
+}
 
 typedef HashMap<void*, LanguageChangeObserverFunction> ObserverMap;
 static ObserverMap& observerMap()
@@ -46,6 +57,7 @@ static ObserverMap& observerMap()
 
 void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction customObserver)
 {
+    registerLanguageDidChangeCallbackIfNecessary();
     observerMap().set(context, customObserver);
 }
 
@@ -87,13 +99,14 @@ void overrideUserPreferredLanguages(const Vector<String>& override)
     preferredLanguagesOverride() = override;
     languageDidChange();
 }
-    
+
 Vector<String> userPreferredLanguages()
 {
     Vector<String>& override = preferredLanguagesOverride();
     if (!override.isEmpty())
         return override;
     
+    registerLanguageDidChangeCallbackIfNecessary();
     return platformUserPreferredLanguages();
 }
 

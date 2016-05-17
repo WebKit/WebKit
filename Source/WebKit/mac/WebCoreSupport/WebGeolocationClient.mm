@@ -33,10 +33,10 @@
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
-#import <WebCore/BlockExceptions.h>
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
 #import <WebCore/Geolocation.h>
+#import <wtf/BlockObjCExceptions.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/WAKResponder.h>

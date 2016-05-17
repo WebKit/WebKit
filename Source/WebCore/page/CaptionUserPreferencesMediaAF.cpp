@@ -42,6 +42,7 @@
 #include "UserStyleSheetTypes.h"
 #include "VTTCue.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PlatformUserPreferredLanguages.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

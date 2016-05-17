@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #import "AVCaptureDeviceManager.h"
-#import "BlockExceptions.h"
 #import "GraphicsContextCG.h"
 #import "ImageBuffer.h"
 #import "IntRect.h"
@@ -41,6 +40,7 @@
 #import "RealtimeMediaSourceSettings.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
+#import <wtf/BlockObjCExceptions.h>
 
 #import "CoreMediaSoftLink.h"
 #import "CoreVideoSoftLink.h"

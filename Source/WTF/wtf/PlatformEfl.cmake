@@ -1,4 +1,6 @@
 list(APPEND WTF_SOURCES
+    PlatformUserPreferredLanguagesUnix.cpp
+
     efl/DispatchQueueEfl.cpp
     efl/MainThreadEfl.cpp
     efl/RunLoopEfl.cpp

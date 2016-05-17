@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ColorMac.h"
 
-#import <WebCore/BlockExceptions.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 

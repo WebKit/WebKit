@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Editor.h"
 
-#include "BlockExceptions.h"
 #include "CachedImage.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -58,6 +57,7 @@
 #include "WAKAppKitStubs.h"
 #include "htmlediting.h"
 #include "markup.h"
+#include <wtf/BlockObjCExceptions.h>
 
 SOFT_LINK_FRAMEWORK(AppSupport)
 SOFT_LINK(AppSupport, CPSharedResourcesDirectory, CFStringRef, (void), ())

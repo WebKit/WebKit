@@ -32,9 +32,9 @@
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
-#import <WebCore/BlockExceptions.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScriptExecutionContext.h>
+#import <wtf/BlockObjCExceptions.h>
 #endif
 
 #if ENABLE(NOTIFICATIONS)

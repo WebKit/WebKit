@@ -24,20 +24,26 @@
  */
 
 #import "config.h"
-#import "Language.h"
+#import "PlatformUserPreferredLanguages.h"
 
-#import "BlockExceptions.h"
-#import "CFBundleSPI.h"
-#import "WebCoreNSStringExtras.h"
+#import "BlockObjCExceptions.h"
 #import <mutex>
 #import <unicode/uloc.h>
 #import <wtf/Assertions.h>
 #import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
+
+static void (*callback)();
+
+void setPlatformUserPreferredLanguagesChangedCallback(void (*passedCallback)())
+{
+    callback = passedCallback;
+}
 
 static StaticLock preferredLanguagesMutex;
 
@@ -49,26 +55,27 @@ static Vector<String>& preferredLanguages()
 
 }
 
-@interface WebLanguageChangeObserver : NSObject
+@interface WTFLanguageChangeObserver : NSObject
 @end
 
-@implementation WebLanguageChangeObserver
+@implementation WTFLanguageChangeObserver
 
 + (void)languagePreferencesDidChange:(NSNotification *)notification
 {
     UNUSED_PARAM(notification);
 
     {
-        std::lock_guard<StaticLock> lock(WebCore::preferredLanguagesMutex);
-        WebCore::preferredLanguages().clear();
+        std::lock_guard<StaticLock> lock(WTF::preferredLanguagesMutex);
+        WTF::preferredLanguages().clear();
     }
-
-    WebCore::languageDidChange();
+    
+    if (WTF::callback)
+        WTF::callback();
 }
 
 @end
 
-namespace WebCore {
+namespace WTF {
 
 static String httpStyleLanguageCode(NSString *language, NSString *country)
 {
@@ -130,7 +137,7 @@ Vector<String> platformUserPreferredLanguages()
 #if PLATFORM(MAC)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [[NSDistributedNotificationCenter defaultCenter] addObserver:[WebLanguageChangeObserver self] selector:@selector(languagePreferencesDidChange:) name:@"AppleLanguagePreferencesChangedNotification" object:nil];
+        [[NSDistributedNotificationCenter defaultCenter] addObserver:[WTFLanguageChangeObserver self] selector:@selector(languagePreferencesDidChange:) name:@"AppleLanguagePreferencesChangedNotification" object:nil];
     });
 #endif
 
@@ -169,4 +176,4 @@ Vector<String> platformUserPreferredLanguages()
     return Vector<String>();
 }
 
-}
+} // namespace WTF

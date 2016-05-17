@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,13 +19,15 @@
  */
 
 #include "config.h"
-#include "Language.h"
+#include "PlatformUserPreferredLanguages.h"
 
 #include <locale.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
+
+void setPlatformUserPreferredLanguagesChangedCallback(void (*)()) { }
 
 // Using pango_language_get_default() here is not an option, because
 // it doesn't support changing the locale in runtime, so it returns
@@ -46,4 +49,4 @@ Vector<String> platformUserPreferredLanguages()
     return { platformLanguage() };
 }
 
-}
+} // namespace WTF

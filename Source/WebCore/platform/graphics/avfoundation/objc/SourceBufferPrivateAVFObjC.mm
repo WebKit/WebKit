@@ -28,7 +28,6 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
-#import "BlockExceptions.h"
 #import "CDMSessionAVContentKeySession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "ExceptionCodePlaceholder.h"
@@ -50,6 +49,7 @@
 #import <objc/runtime.h>
 #import <wtf/text/AtomicString.h>
 #import <wtf/text/CString.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashCountedSet.h>
 #import <wtf/MainThread.h>
 #import <wtf/WeakPtr.h>

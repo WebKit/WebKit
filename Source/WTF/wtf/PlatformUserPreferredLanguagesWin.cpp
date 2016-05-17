@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,13 +24,15 @@
  */
 
 #include "config.h"
-#include "Language.h"
+#include "PlatformUserPreferredLanguages.h"
 
 #include <windows.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
+
+void setPlatformUserPreferredLanguagesChangedCallback(void (*)()) { }
 
 static String localeInfo(LCTYPE localeType, const String& fallback)
 {
@@ -74,4 +76,4 @@ Vector<String> platformUserPreferredLanguages()
     return userPreferredLanguages;
 }
 
-}
+} // namespace WTF

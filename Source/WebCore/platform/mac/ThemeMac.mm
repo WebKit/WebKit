@@ -27,7 +27,6 @@
 #import "ThemeMac.h"
 
 #import "AXObjectCache.h"
-#import "BlockExceptions.h"
 #import "GraphicsContext.h"
 #import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
@@ -35,6 +34,7 @@
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
 #import <Carbon/Carbon.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 

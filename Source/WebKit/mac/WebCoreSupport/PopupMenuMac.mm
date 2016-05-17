@@ -24,7 +24,6 @@
 #import "WebFrameInternal.h"
 #import <WebCore/IntRect.h>
 #import <WebCore/AXObjectCache.h>
-#import <WebCore/BlockExceptions.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ChromeClient.h>
 #import <WebCore/EventHandler.h>
@@ -34,6 +33,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PopupMenuClient.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/BlockObjCExceptions.h>
 
 using namespace WebCore;
 

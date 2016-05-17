@@ -1,3 +1,7 @@
+list(APPEND WTF_SOURCES
+    PlatformUserPreferredLanguagesUnix.cpp
+)
+
 if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     list(APPEND WTF_SOURCES
         glib/GRefPtr.cpp

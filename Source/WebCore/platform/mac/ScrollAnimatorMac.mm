@@ -29,7 +29,6 @@
 
 #include "ScrollAnimatorMac.h"
 
-#include "BlockExceptions.h"
 #include "FloatPoint.h"
 #include "GraphicsLayer.h"
 #include "Logging.h"
@@ -42,6 +41,7 @@
 #include "ScrollbarThemeMac.h"
 #include "TextStream.h"
 #include "WebCoreSystemInterface.h"
+#include <wtf/BlockObjCExceptions.h>
 
 using namespace WebCore;
 

@@ -27,7 +27,6 @@
 #import "EventHandler.h"
 
 #import "AXObjectCache.h"
-#import "BlockExceptions.h"
 #import "Chrome.h"
 #import "ChromeClient.h"
 #import "FocusController.h"
@@ -42,6 +41,7 @@
 #import "WAKView.h"
 #import "WAKWindow.h"
 #import "WebEvent.h"
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Noncopyable.h>
 

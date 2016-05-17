@@ -29,7 +29,6 @@
 
 #import "MediaPlayerPrivateQTKit.h"
 
-#import "BlockExceptions.h"
 #import "DocumentLoader.h"
 #import "GraphicsContext.h"
 #import "URL.h"
@@ -43,6 +42,7 @@
 #import "WebCoreSystemInterface.h"
 #import <QTKit/QTKit.h>
 #import <objc/runtime.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 
 SOFT_LINK_FRAMEWORK(QTKit)

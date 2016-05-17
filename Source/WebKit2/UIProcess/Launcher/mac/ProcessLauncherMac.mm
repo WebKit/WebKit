@@ -26,7 +26,6 @@
 #import "config.h"
 #import "ProcessLauncher.h"
 
-#import <WebCore/CFBundleSPI.h>
 #import <WebCore/ServersSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreNSStringExtras.h>
@@ -41,6 +40,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/Threading.h>
 #import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 

@@ -123,7 +123,6 @@ list(APPEND WebCore_SOURCES
     platform/win/GDIObjectCounter.cpp
     platform/win/GDIUtilities.cpp
     platform/win/KeyEventWin.cpp
-    platform/win/LanguageWin.cpp
     platform/win/LocalizedStringsWin.cpp
     platform/win/LoggingWin.cpp
     platform/win/MemoryPressureHandlerWin.cpp

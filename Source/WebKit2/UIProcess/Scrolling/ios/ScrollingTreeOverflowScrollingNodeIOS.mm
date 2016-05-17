@@ -30,11 +30,11 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/BlockExceptions.h>
 #import <WebCore/ScrollingStateOverflowScrollingNode.h>
 #import <WebCore/ScrollingTree.h>
 #import <UIKit/UIPanGestureRecognizer.h>
 #import <UIKit/UIScrollView.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/TemporaryChange.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)

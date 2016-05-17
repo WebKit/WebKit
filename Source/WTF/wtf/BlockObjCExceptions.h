@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "BlockExceptions.h"
+#import <Foundation/NSException.h>
 
-#import <wtf/Assertions.h>
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_ASSERT void ReportBlockedObjCException(NSException *);
 
-void ReportBlockedObjCException(NSException *exception)
-{
-#if ASSERT_DISABLED
-    NSLog(@"*** WebKit discarding exception: <%@> %@", [exception name], [exception reason]);
-#else
-    ASSERT_WITH_MESSAGE(0, "Uncaught exception - %@", exception);
-#endif
-}
+#define BEGIN_BLOCK_OBJC_EXCEPTIONS @try {
+#define END_BLOCK_OBJC_EXCEPTIONS } @catch(NSException *localException) { ReportBlockedObjCException(localException); }
+

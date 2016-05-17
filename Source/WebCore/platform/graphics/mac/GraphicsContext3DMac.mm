@@ -32,7 +32,7 @@
 #include "GraphicsContext3DIOS.h"
 #endif
 
-#import "BlockExceptions.h"
+#import <wtf/BlockObjCExceptions.h>
 
 #include "CanvasRenderingContext.h"
 #include <CoreGraphics/CGBitmapContext.h>

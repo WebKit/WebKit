@@ -461,7 +461,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/opentype/OpenTypeCG.cpp
     platform/graphics/opentype/OpenTypeMathData.cpp
 
-    platform/mac/BlockExceptions.mm
     platform/mac/CursorMac.mm
     platform/mac/DragDataMac.mm
     platform/mac/DragImageMac.mm
@@ -471,7 +470,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/HIDGamepadProvider.cpp
     platform/mac/KeyEventMac.mm
     platform/mac/KillRingMac.mm
-    platform/mac/Language.mm
     platform/mac/LocalCurrentGraphicsContext.mm
     platform/mac/LoggingMac.mm
     platform/mac/NSScrollerImpDetails.mm

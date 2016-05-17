@@ -27,7 +27,6 @@
 #import "config.h"
 #import "Font.h"
 
-#import "BlockExceptions.h"
 #import "Color.h"
 #import "CoreGraphicsSPI.h"
 #import "CoreTextSPI.h"
@@ -40,6 +39,7 @@
 #import <float.h>
 #import <unicode/uchar.h>
 #import <wtf/Assertions.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>

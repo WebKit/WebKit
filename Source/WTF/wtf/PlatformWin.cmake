@@ -1,4 +1,6 @@
 list(APPEND WTF_SOURCES
+    PLatformUserPreferredLanguagesWin.cpp
+
     text/cf/AtomicStringImplCF.cpp
     text/cf/StringCF.cpp
     text/cf/StringImplCF.cpp

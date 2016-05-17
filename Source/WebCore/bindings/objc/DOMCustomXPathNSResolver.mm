@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DOMCustomXPathNSResolver.h"
 
-#include "BlockExceptions.h"
+#include <wtf/BlockObjCExceptions.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

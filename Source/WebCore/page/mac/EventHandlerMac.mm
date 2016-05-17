@@ -27,7 +27,6 @@
 #include "EventHandler.h"
 
 #include "AXObjectCache.h"
-#include "BlockExceptions.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DataTransfer.h"
@@ -61,6 +60,7 @@
 #include "ShadowRoot.h"
 #include "WebCoreSystemInterface.h"
 #include "WheelEventTestTrigger.h"
+#include <wtf/BlockObjCExceptions.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ObjcRuntimeExtras.h>
