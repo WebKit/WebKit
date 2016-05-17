@@ -284,12 +284,12 @@
 // - You must provide the last two parameters for all experimental features. They
 //   are the text exposed to the user from the WebKit client.
 // - They should be alphabetically ordered by the human readable text.
-// - They should be false by default. The client is responsible for enabling them.
+// - They should be false by default, although they are currently set to true while we develop client UI.
 
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
-    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, false, "CSS Grid", "CSS Grid Layout Module support") \
-    macro(CustomElementsEnabled, customElementsEnabled, Bool, bool, false, "Custom Elements", "HTML Custom Elements prototype") \
-    macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \
+    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, true, "CSS Grid", "CSS Grid Layout Module support") \
+    macro(CustomElementsEnabled, customElementsEnabled, Bool, bool, true, "Custom Elements", "HTML Custom Elements prototype") \
+    macro(WebGL2Enabled, webGL2Enabled, Bool, bool, true, "WebGL 2.0", "WebGL 2 prototype") \
     \
 
 #if PLATFORM(COCOA)

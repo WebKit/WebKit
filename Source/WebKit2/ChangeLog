@@ -1,3 +1,18 @@
+2016-05-17  Dean Jackson  <dino@apple.com>
+
+        Temporarily enable Experimental Features
+        https://bugs.webkit.org/show_bug.cgi?id=157810
+        <rdar://problem/26330804>
+
+        Reviewed by Anders Carlsson.
+
+        We currently don't have good UI for enabling these features,
+        which would mean Safari Technology Preview users would
+        never be able to turn them on… unless we enable them by
+        default temporarily.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2016-05-17  Filip Pizlo  <fpizlo@apple.com>
 
         WTF should know about Language
