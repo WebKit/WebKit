@@ -134,16 +134,50 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         let self = this;
         function createProxyConsoleHandler(type) {
             return function() {
-                self.addResult(`${type}: ` + Array.from(arguments).join(" ")); 
+                self.addResult(`${type}: ` + Array.from(arguments).join(" "));
             };
         }
 
-        let redirectedMethods = {};
-        for (let key in window.console) 
-            redirectedMethods[key] = window.console[key].bind(window.console);
+        function createProxyConsoleTraceHandler(){
+            return function() {
+                try {
+                    throw new Exception();
+                } catch (e) {
+                    // Skip the first frame which is added by this function.
+                    let frames = e.stack.split("\n").slice(1);
+                    let sanitizedFrames = frames.map((frame, i) => {
+                        // Most frames are of the form "functionName@file:///foo/bar/File.js:345".
+                        // But, some frames do not have a functionName. Get rid of the file path.
+                        let nameAndURLSeparator = frame.indexOf("@");
+                        let frameName = (nameAndURLSeparator > 0) ? frame.substr(0, nameAndURLSeparator) : "(anonymous)";
 
-        for (let type of ["log", "error", "info"])
+                        let lastPathSeparator = Math.max(frame.lastIndexOf("/"), frame.lastIndexOf("\\"));
+                        let frameLocation = (lastPathSeparator > 0) ? frame.substr(lastPathSeparator + 1) : frame;
+                        if (!frameLocation.length)
+                            frameLocation = "unknown";
+
+                        // Clean up the location so it is bracketed or in parenthesis.
+                        if (frame.indexOf("[native code]") !== -1)
+                            frameLocation = "[native code]";
+                        else
+                            frameLocation = "(" + frameLocation + ")"
+
+                        return `#${i}: ${frameName} ${frameLocation}`;
+                    });
+                    self.addResult("TRACE: " + Array.from(arguments).join(" "));
+                    self.addResult(sanitizedFrames.join("\n"));
+                }
+            }
+        }
+
+        let redirectedMethods = {};
+        for (let key in window.console)
+            redirectedMethods[key] = window.console[key];
+
+        for (let type of ["log", "error", "info", "warn"])
             redirectedMethods[type] = createProxyConsoleHandler(type.toUpperCase());
+
+        redirectedMethods["trace"] = createProxyConsoleTraceHandler();
 
         this._originalConsole = window.console;
         window.console = redirectedMethods;

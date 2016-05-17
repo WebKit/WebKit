@@ -1,5 +1,21 @@
 2016-05-17  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: inspector tests should redirect and log console.trace() calls in test output
+        https://bugs.webkit.org/show_bug.cgi?id=157802
+        <rdar://problem/26325671>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness.prototype.redirectConsoleToTestOutput.createProxyConsoleHandler):
+        Remove bind() that is now unnecessary. Also redirect console.warn.
+
+        (FrontendTestHarness.prototype.redirectConsoleToTestOutput):
+        For console.trace(), throw and catch a dummy Error to get a stack trace.
+        Do some post processing on it to remove useless frames and sanitize file paths.
+
+2016-05-17  Brian Burg  <bburg@apple.com>
+
         Web Inspector: Filtering huge data grids should yield occasionally so the UI remains responsive
         https://bugs.webkit.org/show_bug.cgi?id=157702
         <rdar://problem/26282898>
