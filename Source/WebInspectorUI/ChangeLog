@@ -1,5 +1,71 @@
 2016-05-17  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: Filtering huge data grids should yield occasionally so the UI remains responsive
+        https://bugs.webkit.org/show_bug.cgi?id=157702
+        <rdar://problem/26282898>
+
+        Based on a patch by Matt Baker <mattbaker@apple.com> on 2016-05-16
+        Reviewed by Timothy Hatcher.
+
+        This patch adds a new class, YieldableTask, for processing large
+        data sets without starving the runloop. A yieldable task takes a delegate,
+        an iterator that produces the items to be processed by the delegate, and
+        the "work interval" time slice and "idle interval" to wait between time slices.
+        It works by using `yield` to suspend processing when the current time
+        slice is exceeded, and setting a timeout to wait out the idle interval.
+
+        The iterator is responsible for deciding a good traversal order for items,
+        and the delegate is responsible for processing each item in turn. Tasks
+        cannot be reused once cancelled or processing completes.
+
+        Change DataGrid to use a yieldable task for filtering data grid nodes.
+        When the filtering criteria changes, cancel the task and run a new task.
+
+        * UserInterface/Base/YieldableTask.js: Added.
+        (WebInspector.YieldableTask.prototype.get processing):
+        (WebInspector.YieldableTask.prototype.get cancelled):
+        (WebInspector.YieldableTask.prototype.get idleInterval):
+        (WebInspector.YieldableTask.prototype.get workInterval):
+        Add getters.
+
+        (WebInspector.YieldableTask.prototype.start.createIteratorForProcessingItems):
+        (WebInspector.YieldableTask.prototype.start):
+        Set up an iterator that cranks through items to be processed until the
+        time slice is exceeded. Check to see if the task is cancelled before and
+        after calling out to the delegate to perform processing on the item.
+
+        (WebInspector.YieldableTask.prototype.cancel):
+        Set the cancel flag. Tell the delegate the task is finished soon.
+
+        (WebInspector.YieldableTask.prototype._processPendingItems):
+        Request the next item from the cranking iterator so it tries to process
+        more items. If it yields but still has more items to process, set a timeout
+        and continue processing more items after the idle interval.
+
+        (WebInspector.YieldableTask.prototype._willYield): Notify the delegate.
+        (WebInspector.YieldableTask.prototype._didFinish): Clear state and notify.
+        (WebInspector.YieldableTask):
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html: Add new file.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.filterDidChange):
+        Cancel the currently running filter task, if any exists.
+
+        (WebInspector.DataGrid.prototype._updateFilter.createIteratorForNodesToBeFiltered):
+        (WebInspector.DataGrid.prototype._updateFilter):
+        Set up and start a new filtering task when the filter updates.
+
+        (WebInspector.DataGrid.prototype.yieldableTaskWillProcessItem):
+        (WebInspector.DataGrid.prototype.yieldableTaskDidYield):
+        (WebInspector.DataGrid.prototype.yieldableTaskDidFinish):
+        Batch up notifications about filtered nodes changing since this can
+        cause a lot of unnecessary work by event listeners.
+
+2016-05-17  Brian Burg  <bburg@apple.com>
+
         Web Inspector: breakpoints in sourceURL named scripts are not persisted
         https://bugs.webkit.org/show_bug.cgi?id=157714
         <rdar://problem/26287099>

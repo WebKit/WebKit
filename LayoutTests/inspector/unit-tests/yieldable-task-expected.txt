@@ -1,0 +1,70 @@
+Testing WebInspector.YieldableTask.
+
+
+== Running test suite: YieldableTask
+-- Running test case: ItemsAreProcessedInIterationOrder
+PASS: Item to process should be next expected item.
+PASS: Item to process should be next expected item.
+PASS: Item to process should be next expected item.
+PASS: Item to process should be next expected item.
+PASS: Item to process should be next expected item.
+The yieldable task finished.
+PASS: Task should not be cancelled.
+PASS: Task should not be processing.
+
+-- Running test case: ProcessedItemsArgumentContainsExpectedItems
+PASS: processedItems argument should contain 10 items.
+PASS: Time to process items before yielding should be greater than zero.
+PASS: processedItems argument should contain all items processed since the previous yield.
+PASS: processedItems argument should contain 10 items.
+PASS: Time to process items before yielding should be greater than zero.
+PASS: processedItems argument should contain all items processed since the previous yield.
+PASS: processedItems argument should contain 10 items.
+PASS: Time to process items before yielding should be greater than zero.
+PASS: processedItems argument should contain all items processed since the previous yield.
+PASS: processedItems argument should contain 10 items.
+PASS: Time to process items before yielding should be greater than zero.
+PASS: processedItems argument should contain all items processed since the previous yield.
+Finished processing items.
+
+-- Running test case: TaskFinishesWhenInterruptedByCancellation
+Process item: "test"
+Finished processing items.
+PASS: Task should not be processing.
+PASS: Task should be cancelled.
+
+-- Running test case: ShortTaskCompletesWithoutYielding
+PASS: Should process all items without yielding.
+Finished processing items.
+PASS: Task should not be cancelled.
+PASS: Task should not be processing.
+
+-- Running test case: ProcessItemsFromGenerator
+Process item: 1
+Process item: 2
+Process item: 4
+Process item: 8
+Process item: 16
+Process item: 32
+Process item: 64
+Process item: 128
+Finished processing items.
+PASS: Task should not be cancelled.
+PASS: Task should not be processing.
+
+-- Running test case: ProcessItemsFromMap
+Process item: [1,"one"]
+Process item: [2,"two"]
+Process item: [3,"three"]
+Finished processing items.
+PASS: Task should not be cancelled.
+PASS: Task should not be processing.
+
+-- Running test case: ProcessItemsFromSet
+Process item: 1
+Process item: 2
+Process item: 3
+Finished processing items.
+PASS: Task should not be cancelled.
+PASS: Task should not be processing.
+

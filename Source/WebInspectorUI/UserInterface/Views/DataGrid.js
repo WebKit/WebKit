@@ -62,6 +62,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         this._filterText = "";
         this._filterDelegate = null;
+        this._filterDidModifyNodeWhileProcessingItems = false;
 
         this.element.className = "data-grid";
         this.element.tabIndex = 0;
@@ -328,6 +329,11 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
     {
         if (this._scheduledFilterUpdateIdentifier)
             return;
+
+        if (this._applyFilterToNodesTask) {
+            this._applyFilterToNodesTask.cancel();
+            this._applyFilterToNodesTask = null;
+        }
 
         this._scheduledFilterUpdateIdentifier = requestAnimationFrame(this._updateFilter.bind(this));
     }
@@ -1754,27 +1760,56 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         this._textFilterRegex = simpleGlobStringToRegExp(this._filterText, "i");
 
-        // Don't populate if we don't have any active filters.
-        // We only need to populate when a filter needs to reveal.
-        let dontPopulate = !this._textFilterRegex && !this.hasCustomFilters();
+        if (this._applyFilterToNodesTask && this._applyFilterToNodesTask.processing)
+            this._applyFilterToNodesTask.cancel();
 
-        let filterDidModifyNode = false;
-        let currentNode = this._rows[0];
-        while (currentNode && !currentNode.root) {
-            const currentNodeWasHidden = currentNode.hidden;
-            this._applyFiltersToNode(currentNode);
-            if (currentNodeWasHidden !== currentNode.hidden) {
-                this.dispatchEventToListeners(WebInspector.DataGrid.Event.NodeWasFiltered, {node: currentNode});
-                filterDidModifyNode = true;
+        function *createIteratorForNodesToBeFiltered()
+        {
+            // Don't populate if we don't have any active filters.
+            // We only need to populate when a filter needs to reveal.
+            let dontPopulate = !this._textFilterRegex && !this.hasCustomFilters();
+
+            let currentNode = this._rows[0];
+            while (currentNode && !currentNode.root) {
+                yield currentNode;
+                currentNode = currentNode.traverseNextNode(false, null, dontPopulate);
             }
-
-            currentNode = currentNode.traverseNextNode(false, null, dontPopulate);
         }
 
-        if (!filterDidModifyNode)
+        let items = createIteratorForNodesToBeFiltered.call(this);
+        this._applyFilterToNodesTask = new WebInspector.YieldableTask(this, items, {workInterval: 100});
+
+        this._filterDidModifyNodeWhileProcessingItems = false;
+
+        this._applyFilterToNodesTask.start();
+    }
+
+    // YieldableTask delegate
+
+    yieldableTaskWillProcessItem(task, node)
+    {
+        const nodeWasHidden = node.hidden;
+        this._applyFiltersToNode(node);
+        if (nodeWasHidden === node.hidden)
             return;
 
+        this.dispatchEventToListeners(WebInspector.DataGrid.Event.NodeWasFiltered, {node});
+        this._filterDidModifyNodeWhileProcessingItems = true;
+    }
+
+    yieldableTaskDidYield(task, processedItems, elapsedTime)
+    {
+        if (!this._filterDidModifyNodeWhileProcessingItems)
+            return;
+
+        this._filterDidModifyNodeWhileProcessingItems = false;
+
         this.dispatchEventToListeners(WebInspector.DataGrid.Event.FilterDidChange);
+    }
+
+    yieldableTaskDidFinish(task)
+    {
+        this._applyFilterToNodesTask = null;
     }
 };
 

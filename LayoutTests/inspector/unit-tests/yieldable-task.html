@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let options = {
+        workInterval: 100,
+    };
+
+    function createTaskItems(size = 5) {
+        return Array(size).fill("test");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("YieldableTask");
+
+    suite.addTestCase({
+        name: "ItemsAreProcessedInIterationOrder",
+        description: "Check that yieldableTaskWillProcessItem delegate is called on input items in order.",
+        test: (resolve, reject) => {
+            let expectedItems = createTaskItems();
+            let delegate = {
+                yieldableTaskWillProcessItem: (task, item) => {
+                    let expectedItem = expectedItems.shift();
+                    InspectorTest.expectThat(item === expectedItem, "Item to process should be next expected item.");
+                },
+                yieldableTaskDidFinish: (task) => {
+                    InspectorTest.log("The yieldable task finished.");
+                    InspectorTest.expectThat(!task.cancelled, "Task should not be cancelled.");
+                    InspectorTest.expectThat(!task.processing, "Task should not be processing.");
+                    resolve();
+                }
+            };
+
+            new WebInspector.YieldableTask(delegate, expectedItems.slice(), options).start();
+        }
+    });
+
+    suite.addTestCase({
+        name: "ProcessedItemsArgumentContainsExpectedItems",
+        description: "The list of processed items after a yield should contain the items that were processed by yieldableTaskWillProcessItem.",
+        test: (resolve, reject) => {
+            const itemsToProcessBeforeForcingTaskToYield = 10;
+            let actualProcessedItems = [];
+
+            let delegate = {
+                yieldableTaskWillProcessItem: (task, item) => {
+                    actualProcessedItems.push(item);
+                    if (actualProcessedItems.length < itemsToProcessBeforeForcingTaskToYield)
+                        return;
+
+                    // Busy wait until workInterval is exceeded.
+                    let startTime = Date.now();
+                    while (Date.now() - startTime <= task.workInterval) {}
+                },
+                yieldableTaskDidYield: (task, processedItems, elapsedTime) => {
+                    InspectorTest.expectThat(itemsToProcessBeforeForcingTaskToYield === processedItems.length, `processedItems argument should contain ${itemsToProcessBeforeForcingTaskToYield} items.`);
+                    InspectorTest.expectThat(elapsedTime > 0, "Time to process items before yielding should be greater than zero.");
+                    InspectorTest.expectThat(Object.shallowEqual(processedItems, actualProcessedItems), "processedItems argument should contain all items processed since the previous yield.");
+                    actualProcessedItems = [];
+                },
+                yieldableTaskDidFinish: (task) => {
+                    InspectorTest.log("Finished processing items.");
+                    resolve();
+                }
+            };
+
+            new WebInspector.YieldableTask(delegate, createTaskItems(40), options).start();
+        }
+    });
+
+    suite.addTestCase({
+        name: "TaskFinishesWhenInterruptedByCancellation",
+        description: "Check that a task can be cancelled.",
+        test: (resolve, reject) => {
+            let items = createTaskItems(40);
+            let delegate = {
+                yieldableTaskWillProcessItem: (task, item) => {
+                    InspectorTest.log("Process item: " + JSON.stringify(item));
+                    task.cancel();
+                },
+                yieldableTaskDidFinish: (task) => {
+                    InspectorTest.log("Finished processing items.");
+                    InspectorTest.expectThat(!task.processing, "Task should not be processing.");
+                    InspectorTest.expectThat(task.cancelled, "Task should be cancelled.");
+                    resolve();
+                }
+            };
+
+            new WebInspector.YieldableTask(delegate, items, options).start();
+        }
+    });
+
+    suite.addTestCase({
+        name: "ShortTaskCompletesWithoutYielding",
+        description: "A task with very few items should run to completion without yielding.",
+        test: (resolve, reject) => {
+            let processedItemsCount = 0;
+
+            let delegate = {
+                yieldableTaskWillProcessItem: (task, item) => {},
+                yieldableTaskDidYield: (task, processedItems, elapsedTime) => { processedItemsCount++; },
+                yieldableTaskDidFinish: (task) => {
+                    // Note: we expect a fake yield notification when the final item is processed, whether
+                    // or not the task actually yielded the run loop.
+                    InspectorTest.expectThat(processedItemsCount === 1, "Should process all items without yielding.");
+                    InspectorTest.log("Finished processing items.");
+                    InspectorTest.expectThat(!task.cancelled, "Task should not be cancelled.");
+                    InspectorTest.expectThat(!task.processing, "Task should not be processing.");
+                    resolve();
+                }
+            };
+
+            new WebInspector.YieldableTask(delegate, createTaskItems(50)).start();
+        }
+    });
+
+    function addTestCaseForIterable(iterable, name) {
+        suite.addTestCase({
+            name: `ProcessItemsFrom${name}`,
+            description: "Check that any iterable object is supported.",
+            test: (resolve, reject) => {
+                let delegate = {
+                    yieldableTaskWillProcessItem: (task, item) => {
+                        InspectorTest.log("Process item: " + JSON.stringify(item));
+                    },
+                    yieldableTaskDidFinish: (task) => {
+                        InspectorTest.log("Finished processing items.");
+                        InspectorTest.expectThat(!task.cancelled, "Task should not be cancelled.");
+                        InspectorTest.expectThat(!task.processing, "Task should not be processing.");
+                        resolve();
+                    }
+                };
+
+                new WebInspector.YieldableTask(delegate, iterable).start();
+            }
+        });
+    }
+
+    function* gen() {
+        let i = 0;
+        while (i < 8)
+            yield 1 << i++;
+    }
+    addTestCaseForIterable(gen(), "Generator");
+
+    let map = new Map;
+    map.set(1, "one");
+    map.set(2, "two");
+    map.set(3, "three");
+    addTestCaseForIterable(map, "Map");
+
+    let set = new Set;
+    set.add(1);
+    set.add(2);
+    set.add(3);
+    addTestCaseForIterable(set, "Set");
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing WebInspector.YieldableTask.</p>
+</body>
+</html>
