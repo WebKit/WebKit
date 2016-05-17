@@ -1,0 +1,13 @@
+Lorem ipsum vivamus nibh urna mollis at aliquam taciti, etiam arcu mi semper nostra taciti nulla dolor
+This tests that CharacterOffset that comes from an upstream VisiblePosition is correct.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+First Line: Lorem ipsum vivamus nibh
+Second Line: urna mollis at aliquam taciti,
+[firstEnd, secondStart]: 'space'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
