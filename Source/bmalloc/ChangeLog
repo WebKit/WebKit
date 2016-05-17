@@ -1,3 +1,24 @@
+2016-05-17  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION: JetStream crashes on some iPhones
+        https://bugs.webkit.org/show_bug.cgi?id=157814
+
+        Reviewed by Michael Saboff.
+
+        * bmalloc/Sizes.h: Reduce smallMax to 32kB. 
+
+        Previous justification for 64kB was:
+
+            * bmalloc/Sizes.h: Upped smallMax to 64kB. Upping to 32kB is pretty
+            reasonable, since sizes between 16kB and 32kB share page sizes. I went
+            all the way up to 64kB because the GC uses 64kB blocks, and also just
+            for extra padding to ensure that large allocations are indeed rare.
+
+        It turns out that the bump to 64kB substantially increases our memory
+        high water mark on JetStream, leading to jetsam crashes. Also, there
+        doesn't seem to be a practical performance problem to putting objects in
+        the (32kB - 64kB) range in the large allocator.
+
 2016-05-16  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION (200035): changes in "WebKit Malloc" VM regions are causing 'leaks' to spew "Failed to map remote region" messages
