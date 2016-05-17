@@ -1,3 +1,27 @@
+2016-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r177786): GlyphMetricsMap<T>::locatePageSlowCase() fills existing pages with unknown metrics
+        https://bugs.webkit.org/show_bug.cgi?id=157749
+
+        Reviewed by Antti Koivisto.
+
+        After r177786, GlyphMetricsMap<T>::locatePageSlowCase() would unconditionally fill
+        pages with unknown metrics. This patch updates the code to do so only if the page
+        is new, thus restoring the pre-r177786 behavior.
+
+        * platform/graphics/GlyphMetricsMap.h:
+        (WebCore::GlyphMetricsMap::metricsForGlyph):
+        (WebCore::GlyphMetricsMap::setMetricsForGlyph):
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::GlyphMetricsPage):
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::fill):
+        (WebCore::GlyphMetricsMap::locatePage):
+        (WebCore::GlyphMetricsMap<T>::locatePageSlowCase):
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::metricsForGlyph): Deleted.
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::setMetricsForGlyph): Deleted.
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::setMetricsForIndex): Deleted.
+        (WebCore::GlyphMetricsMap<float>::unknownMetrics): Deleted.
+        (WebCore::GlyphMetricsMap<FloatRect>::unknownMetrics): Deleted.
+
 2016-05-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(WEB_TIMING) build after r200887
