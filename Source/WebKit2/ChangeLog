@@ -1,5 +1,17 @@
 2016-05-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200877. rdar://problem/26269611
+
+    2016-05-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Attempt to fix the iOS build after r200874
+
+            Unreviewed build fix.
+
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+
+2016-05-17  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200874. rdar://problem/26269611
 
     2016-05-13  Sam Weinig  <sam@webkit.org>
