@@ -1,3 +1,10 @@
+2016-05-17  Keith Miller  <keith_miller@apple.com>
+
+        Rollout r200426 since it causes PLT regressions.
+        https://bugs.webkit.org/show_bug.cgi?id=157812
+
+        Unreviewed rollout of r200426 since the bots see a ~.6% PLT regression from the patch.
+
 2016-05-17  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Filtering huge data grids should yield occasionally so the UI remains responsive
