@@ -1,3 +1,20 @@
+2016-05-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r200986.
+
+    2016-05-16  Brent Fulgham  <bfulgham@apple.com>
+
+            heap use-after-free at WebCore::TimerBase::heapPopMin()
+            https://bugs.webkit.org/show_bug.cgi?id=157742
+            <rdar://problem/26236778>
+
+            Reviewed by Simon Fraser.
+
+            * fast/frames/crash-during-iframe-load-stop-expected.txt: Added.
+            * fast/frames/crash-during-iframe-load-stop.html: Added.
+            * fast/frames/resources/crash-during-iframe-load-stop-inner.html: Added.
+            * fast/frames/resources/crash-during-iframe-load-stop.html: Added.
+
 2016-05-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Merge r194403. rdar://problem/26274768
