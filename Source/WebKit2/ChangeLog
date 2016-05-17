@@ -1,3 +1,10 @@
+2016-05-17  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed GTK+ and EFL bulid fix; make the audio playback user gesture requirement
+        Cocoa-only.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2016-05-16  Anders Carlsson  <andersca@apple.com>
 
         Add a WKA extension point for WKPreferences SPI
