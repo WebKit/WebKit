@@ -1,3 +1,16 @@
+2016-05-16  Dean Jackson  <dino@apple.com>
+
+        WebCoreJSBuiltinInternals won't compile if some build flags are off
+        https://bugs.webkit.org/show_bug.cgi?id=157777
+        <rdar://problem/26312967>
+
+        Reviewed by Simon Fraser.
+
+        Allow this file to compile when some build flags are disabled.
+
+        * bindings/js/WebCoreJSBuiltinInternals.cpp:
+        (WebCore::JSBuiltinInternalFunctions::JSBuiltinInternalFunctions):
+
 2016-05-16  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Give each UniqueIDBDatabase its own task queues.
