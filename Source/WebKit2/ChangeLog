@@ -1,5 +1,23 @@
 2016-05-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200874. rdar://problem/26269611
+
+    2016-05-13  Sam Weinig  <sam@webkit.org>
+
+            Rename WKDataDetectorTypeSpotlightSuggestion to WKDataDetectorTypeLookupSuggestion
+            <rdar://problem/26269611>
+
+            Reviewed by Dan Bernstein and Enrica Casucci.
+
+            * Shared/API/Cocoa/WKFoundation.h:
+            * Shared/API/c/WKDeclarationSpecifiers.h:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (fromWKDataDetectorTypes):
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+            * mac/postprocess-framework-headers.sh:
+
+2016-05-17  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200668.
 
     2016-05-10  Sam Weinig  <sam@webkit.org>

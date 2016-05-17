@@ -71,6 +71,7 @@ function rewrite_headers () {
             -e s/WK_AVAILABLE/NS_AVAILABLE/
             -e s/WK_DEPRECATED/NS_DEPRECATED/
             -e s/WK_ENUM_AVAILABLE/NS_ENUM_AVAILABLE/
+            -e s/WK_ENUM_DEPRECATED/NS_ENUM_DEPRECATED/
             -e s/^WK_CLASS_AVAILABLE/NS_CLASS_AVAILABLE/
             -e s/^WK_CLASS_DEPRECATED/NS_CLASS_DEPRECATED/
         )
