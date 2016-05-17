@@ -456,7 +456,7 @@ void ComplexTextController::ComplexTextRun::setIsNonMonotonic()
     ASSERT(m_isMonotonic);
     m_isMonotonic = false;
 
-    Vector<bool, 64> mappedIndices(m_stringLength);
+    Vector<bool, 64> mappedIndices(m_stringLength, false);
     for (size_t i = 0; i < m_glyphCount; ++i) {
         ASSERT(indexAt(i) < static_cast<CFIndex>(m_stringLength));
         mappedIndices[indexAt(i)] = true;

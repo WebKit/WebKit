@@ -1,3 +1,18 @@
+2016-05-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r54729): Line breaking in complex mixed-direction text is inconsistent across page refreshes
+        https://bugs.webkit.org/show_bug.cgi?id=157783
+        <rdar://problem/22908924>
+
+        Reviewed by Zalan Bujtas.
+
+        mappedIndices is uninitialized.
+
+        Test: fast/text/complex-mixed-direction-line-breaking.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::setIsNonMonotonic):
+
 2016-05-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         DOMPromise should only restrict the resolution type

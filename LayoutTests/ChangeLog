@@ -1,3 +1,15 @@
+2016-05-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r54729): Line breaking in complex mixed-direction text is inconsistent across page refreshes
+        https://bugs.webkit.org/show_bug.cgi?id=157783
+        <rdar://problem/22908924>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/complex-mixed-direction-line-breaking-expected.html: Added.
+        * fast/text/complex-mixed-direction-line-breaking.html: Added.
+        * fast/text/resources/Gulf-regular.ttf: Added.
+
 2016-05-16  Saam barati  <sbarati@apple.com>
 
         ShadowChicken crashes when reading a scope from the frame during a stack overflow exception
