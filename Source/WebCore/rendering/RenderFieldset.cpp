@@ -29,6 +29,7 @@
 #include "HTMLFieldSetElement.h"
 #include "HTMLNames.h"
 #include "PaintInfo.h"
+#include "RenderChildIterator.h"
 
 namespace WebCore {
 
@@ -124,14 +125,14 @@ RenderObject* RenderFieldset::layoutSpecialExcludedChild(bool relayoutChildren)
     return &legend;
 }
 
-RenderBox* RenderFieldset::findLegend(FindLegendOption option) const
+RenderBox* RenderFieldset::findLegend(FindLegendOption option)
 {
-    for (RenderObject* legend = firstChild(); legend; legend = legend->nextSibling()) {
-        if (option == IgnoreFloatingOrOutOfFlow && legend->isFloatingOrOutOfFlowPositioned())
+    for (auto& legend : childrenOfType<RenderElement>(*this)) {
+        if (option == IgnoreFloatingOrOutOfFlow && legend.isFloatingOrOutOfFlowPositioned())
             continue;
         
-        if (is<HTMLLegendElement>(legend->node()))
-            return downcast<RenderBox>(legend);
+        if (is<HTMLLegendElement>(legend.element()))
+            return &downcast<RenderBox>(legend);
     }
     return nullptr;
 }

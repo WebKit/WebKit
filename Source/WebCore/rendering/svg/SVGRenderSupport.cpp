@@ -26,6 +26,7 @@
 #include "SVGRenderSupport.h"
 
 #include "NodeRenderStyle.h"
+#include "RenderChildIterator.h"
 #include "RenderElement.h"
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
@@ -131,7 +132,7 @@ bool SVGRenderSupport::checkForSVGRepaintDuringLayout(const RenderElement& rende
 }
 
 // Update a bounding box taking into account the validity of the other bounding box.
-static inline void updateObjectBoundingBox(FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, RenderObject* other, FloatRect otherBoundingBox)
+static inline void updateObjectBoundingBox(FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, const RenderObject* other, FloatRect otherBoundingBox)
 {
     bool otherValid = is<RenderSVGContainer>(*other) ? downcast<RenderSVGContainer>(*other).isObjectBoundingBoxValid() : true;
     if (!otherValid)
@@ -155,21 +156,21 @@ void SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& contai
     // When computing the strokeBoundingBox, we use the repaintRects of the container's children so that the container's stroke includes
     // the resources applied to the children (such as clips and filters). This allows filters applied to containers to correctly bound
     // the children, and also improves inlining of SVG content, as the stroke bound is used in that situation also.
-    for (RenderObject* current = container.firstChild(); current; current = current->nextSibling()) {
-        if (current->isSVGHiddenContainer())
+    for (auto& current : childrenOfType<RenderObject>(container)) {
+        if (current.isSVGHiddenContainer())
             continue;
 
         // Don't include elements in the union that do not render.
-        if (is<RenderSVGShape>(*current) && downcast<RenderSVGShape>(*current).isRenderingDisabled())
+        if (is<RenderSVGShape>(current) && downcast<RenderSVGShape>(current).isRenderingDisabled())
             continue;
 
-        const AffineTransform& transform = current->localToParentTransform();
+        const AffineTransform& transform = current.localToParentTransform();
         if (transform.isIdentity()) {
-            updateObjectBoundingBox(objectBoundingBox, objectBoundingBoxValid, current, current->objectBoundingBox());
-            strokeBoundingBox.unite(current->repaintRectInLocalCoordinates());
+            updateObjectBoundingBox(objectBoundingBox, objectBoundingBoxValid, &current, current.objectBoundingBox());
+            strokeBoundingBox.unite(current.repaintRectInLocalCoordinates());
         } else {
-            updateObjectBoundingBox(objectBoundingBox, objectBoundingBoxValid, current, transform.mapRect(current->objectBoundingBox()));
-            strokeBoundingBox.unite(transform.mapRect(current->repaintRectInLocalCoordinates()));
+            updateObjectBoundingBox(objectBoundingBox, objectBoundingBoxValid, &current, transform.mapRect(current.objectBoundingBox()));
+            strokeBoundingBox.unite(transform.mapRect(current.repaintRectInLocalCoordinates()));
         }
     }
 
@@ -247,58 +248,57 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
     bool needsBoundariesUpdate = start.needsBoundariesUpdate();
     HashSet<RenderElement*> elementsThatDidNotReceiveLayout;
 
-    for (RenderObject* child = start.firstChild(); child; child = child->nextSibling()) {
+    for (auto& child : childrenOfType<RenderObject>(start)) {
         bool needsLayout = selfNeedsLayout;
-        bool childEverHadLayout = child->everHadLayout();
+        bool childEverHadLayout = child.everHadLayout();
 
         if (needsBoundariesUpdate && hasSVGShadow) {
             // If we have a shadow, our shadow is baked into our children's cached boundaries,
             // so they need to update.
-            child->setNeedsBoundariesUpdate();
+            child.setNeedsBoundariesUpdate();
             needsLayout = true;
         }
 
         if (transformChanged) {
             // If the transform changed we need to update the text metrics (note: this also happens for layoutSizeChanged=true).
-            if (is<RenderSVGText>(*child))
-                downcast<RenderSVGText>(*child).setNeedsTextMetricsUpdate();
+            if (is<RenderSVGText>(child))
+                downcast<RenderSVGText>(child).setNeedsTextMetricsUpdate();
             needsLayout = true;
         }
 
-        if (layoutSizeChanged) {
+        if (layoutSizeChanged && is<SVGElement>(child.node())) {
             // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
-            if (SVGElement* element = is<SVGElement>(*child->node()) ? downcast<SVGElement>(child->node()) : nullptr) {
-                if (element->hasRelativeLengths()) {
-                    // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
-                    if (is<RenderSVGShape>(*child))
-                        downcast<RenderSVGShape>(*child).setNeedsShapeUpdate();
-                    else if (is<RenderSVGText>(*child)) {
-                        RenderSVGText& svgText = downcast<RenderSVGText>(*child);
-                        svgText.setNeedsTextMetricsUpdate();
-                        svgText.setNeedsPositioningValuesUpdate();
-                    }
-
-                    needsLayout = true;
+            auto& element = downcast<SVGElement>(*child.node());
+            if (element.hasRelativeLengths()) {
+                // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
+                if (is<RenderSVGShape>(child))
+                    downcast<RenderSVGShape>(child).setNeedsShapeUpdate();
+                else if (is<RenderSVGText>(child)) {
+                    auto& svgText = downcast<RenderSVGText>(child);
+                    svgText.setNeedsTextMetricsUpdate();
+                    svgText.setNeedsPositioningValuesUpdate();
                 }
+
+                needsLayout = true;
             }
         }
 
         if (needsLayout)
-            child->setNeedsLayout(MarkOnlyThis);
+            child.setNeedsLayout(MarkOnlyThis);
 
-        if (child->needsLayout()) {
-            layoutDifferentRootIfNeeded(downcast<RenderElement>(*child));
-            downcast<RenderElement>(*child).layout();
+        if (child.needsLayout()) {
+            layoutDifferentRootIfNeeded(downcast<RenderElement>(child));
+            downcast<RenderElement>(child).layout();
             // Renderers are responsible for repainting themselves when changing, except
             // for the initial paint to avoid potential double-painting caused by non-sensical "old" bounds.
             // We could handle this in the individual objects, but for now it's easier to have
             // parent containers call repaint().  (RenderBlock::layout* has similar logic.)
             if (!childEverHadLayout)
-                child->repaint();
-        } else if (layoutSizeChanged && is<RenderElement>(*child))
-            elementsThatDidNotReceiveLayout.add(downcast<RenderElement>(child));
+                child.repaint();
+        } else if (layoutSizeChanged && is<RenderElement>(child))
+            elementsThatDidNotReceiveLayout.add(&downcast<RenderElement>(child));
 
-        ASSERT(!child->needsLayout());
+        ASSERT(!child.needsLayout());
     }
 
     if (!layoutSizeChanged) {

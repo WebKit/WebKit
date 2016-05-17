@@ -66,7 +66,7 @@ private:
     String bind(const RenderLayer*);
     void unbind(const RenderLayer*);
 
-    void gatherLayersUsingRenderObjectHierarchy(ErrorString&, RenderObject*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&);
+    void gatherLayersUsingRenderObjectHierarchy(ErrorString&, RenderElement&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&);
     void gatherLayersUsingRenderLayerHierarchy(ErrorString&, RenderLayer*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&);
 
     Ref<Inspector::Protocol::LayerTree::Layer> buildObjectForLayer(ErrorString&, RenderLayer*);

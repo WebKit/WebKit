@@ -22,6 +22,7 @@
 #include "config.h"
 #include "AutoTableLayout.h"
 
+#include "RenderChildIterator.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
@@ -48,14 +49,14 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
     RenderTableCell* fixedContributor = nullptr;
     RenderTableCell* maxContributor = nullptr;
 
-    for (RenderObject* child = m_table->firstChild(); child; child = child->nextSibling()) {
-        if (is<RenderTableCol>(*child)) {
+    for (auto& child : childrenOfType<RenderObject>(*m_table)) {
+        if (is<RenderTableCol>(child)) {
             // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
             // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark it's
             // ancestors as dirty.
-            downcast<RenderTableCol>(*child).clearPreferredLogicalWidthsDirtyBits();
-        } else if (is<RenderTableSection>(*child)) {
-            RenderTableSection& section = downcast<RenderTableSection>(*child);
+            downcast<RenderTableCol>(child).clearPreferredLogicalWidthsDirtyBits();
+        } else if (is<RenderTableSection>(child)) {
+            auto& section = downcast<RenderTableSection>(child);
             unsigned numRows = section.numRows();
             for (unsigned i = 0; i < numRows; ++i) {
                 RenderTableSection::CellStruct current = section.cellAt(i, effCol);

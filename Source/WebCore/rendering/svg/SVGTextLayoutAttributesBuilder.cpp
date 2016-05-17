@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGTextLayoutAttributesBuilder.h"
 
+#include "RenderChildIterator.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
@@ -98,16 +99,16 @@ void SVGTextLayoutAttributesBuilder::collectTextPositioningElements(RenderBoxMod
 {
     ASSERT(!is<RenderSVGText>(start) || m_textPositions.isEmpty());
 
-    for (RenderObject* child = start.firstChild(); child; child = child->nextSibling()) {
-        if (is<RenderSVGInlineText>(*child)) {
-            processRenderSVGInlineText(downcast<RenderSVGInlineText>(*child), m_textLength, lastCharacterWasSpace);
+    for (auto& child : childrenOfType<RenderObject>(start)) {
+        if (is<RenderSVGInlineText>(child)) {
+            processRenderSVGInlineText(downcast<RenderSVGInlineText>(child), m_textLength, lastCharacterWasSpace);
             continue;
         }
 
-        if (!is<RenderSVGInline>(*child))
+        if (!is<RenderSVGInline>(child))
             continue;
 
-        RenderSVGInline& inlineChild = downcast<RenderSVGInline>(*child);
+        auto& inlineChild = downcast<RenderSVGInline>(child);
         SVGTextPositioningElement* element = SVGTextPositioningElement::elementFromRenderer(inlineChild);
 
         unsigned atPosition = m_textPositions.size();

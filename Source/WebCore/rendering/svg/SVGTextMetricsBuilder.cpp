@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGTextMetricsBuilder.h"
 
+#include "RenderChildIterator.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
@@ -171,9 +172,9 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText& text, Measu
 
 void SVGTextMetricsBuilder::walkTree(RenderElement& start, RenderSVGInlineText* stopAtLeaf, MeasureTextData* data)
 {
-    for (auto* child = start.firstChild(); child; child = child->nextSibling()) {
-        if (is<RenderSVGInlineText>(*child)) {
-            RenderSVGInlineText& text = downcast<RenderSVGInlineText>(*child);
+    for (auto& child : childrenOfType<RenderObject>(start)) {
+        if (is<RenderSVGInlineText>(child)) {
+            auto& text = downcast<RenderSVGInlineText>(child);
             if (stopAtLeaf && stopAtLeaf != &text) {
                 data->processRenderer = false;
                 measureTextRenderer(text, data);
@@ -188,10 +189,10 @@ void SVGTextMetricsBuilder::walkTree(RenderElement& start, RenderSVGInlineText* 
             continue;
         }
 
-        if (!is<RenderSVGInline>(*child))
+        if (!is<RenderSVGInline>(child))
             continue;
 
-        walkTree(downcast<RenderSVGInline>(*child), stopAtLeaf, data);
+        walkTree(downcast<RenderSVGInline>(child), stopAtLeaf, data);
     }
 }
 

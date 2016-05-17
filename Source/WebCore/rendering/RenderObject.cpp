@@ -47,6 +47,7 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "PseudoElement.h"
+#include "RenderChildIterator.h"
 #include "RenderCounter.h"
 #include "RenderFlowThread.h"
 #include "RenderGeometryMap.h"
@@ -168,12 +169,15 @@ void RenderObject::setFlowThreadStateIncludingDescendants(FlowThreadState state)
 {
     setFlowThreadState(state);
 
-    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling()) {
+    if (!is<RenderElement>(*this))
+        return;
+
+    for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(*this))) {
         // If the child is a fragmentation context it already updated the descendants flag accordingly.
-        if (child->isRenderFlowThread())
+        if (child.isRenderFlowThread())
             continue;
-        ASSERT(state != child->flowThreadState());
-        child->setFlowThreadStateIncludingDescendants(state);
+        ASSERT(state != child.flowThreadState());
+        child.setFlowThreadStateIncludingDescendants(state);
     }
 }
 
@@ -800,8 +804,12 @@ void RenderObject::addAbsoluteRectForLayer(LayoutRect& result)
 {
     if (hasLayer())
         result.unite(absoluteBoundingBoxRectIgnoringTransforms());
-    for (RenderObject* current = firstChildSlow(); current; current = current->nextSibling())
-        current->addAbsoluteRectForLayer(result);
+
+    if (!is<RenderElement>(*this))
+        return;
+
+    for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(*this)))
+        child.addAbsoluteRectForLayer(result);
 }
 
 // FIXME: change this to use the subtreePaint terminology
@@ -809,8 +817,10 @@ LayoutRect RenderObject::paintingRootRect(LayoutRect& topLevelRect)
 {
     LayoutRect result = absoluteBoundingBoxRectIgnoringTransforms();
     topLevelRect = result;
-    for (RenderObject* current = firstChildSlow(); current; current = current->nextSibling())
-        current->addAbsoluteRectForLayer(result);
+    if (is<RenderElement>(*this)) {
+        for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(*this)))
+            child.addAbsoluteRectForLayer(result);
+    }
     return result;
 }
 
@@ -1588,8 +1598,10 @@ void RenderObject::removeFromRenderFlowThreadIncludingDescendants(bool shouldUpd
     if (isRenderFlowThread())
         shouldUpdateState = false;
 
-    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling())
-        child->removeFromRenderFlowThreadIncludingDescendants(shouldUpdateState);
+    if (is<RenderElement>(*this)) {
+        for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(*this)))
+            child.removeFromRenderFlowThreadIncludingDescendants(shouldUpdateState);
+    }
 
     // We have to ask for our containing flow thread as it may be above the removed sub-tree.
     RenderFlowThread* flowThreadContainingBlock = this->flowThreadContainingBlock();
@@ -1627,8 +1639,11 @@ void RenderObject::invalidateFlowThreadContainingBlockIncludingDescendants(Rende
     if (flowThread)
         flowThread->removeFlowChildInfo(this);
 
-    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling())
-        child->invalidateFlowThreadContainingBlockIncludingDescendants(flowThread);
+    if (!is<RenderElement>(*this))
+        return;
+
+    for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(*this)))
+        child.invalidateFlowThreadContainingBlockIncludingDescendants(flowThread);
 }
 
 static void collapseAnonymousTableRowsIfNeeded(const RenderObject& rendererToBeDestroyed)
@@ -1723,8 +1738,12 @@ void RenderObject::updateDragState(bool dragOn)
     setIsDragging(dragOn);
     if (valueChanged && node() && (style().affectedByDrag() || (is<Element>(*node()) && downcast<Element>(*node()).childrenAffectedByDrag())))
         node()->setNeedsStyleRecalc();
-    for (RenderObject* curr = firstChildSlow(); curr; curr = curr->nextSibling())
-        curr->updateDragState(dragOn);
+
+    if (!is<RenderElement>(*this))
+        return;
+
+    for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(*this)))
+        child.updateDragState(dragOn);
 }
 
 bool RenderObject::isComposited() const

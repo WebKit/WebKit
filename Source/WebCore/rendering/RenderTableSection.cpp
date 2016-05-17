@@ -29,6 +29,7 @@
 #include "HitTestResult.h"
 #include "HTMLNames.h"
 #include "PaintInfo.h"
+#include "RenderChildIterator.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
@@ -570,11 +571,11 @@ void RenderTableSection::layoutRows()
             bool flexAllChildren = cell->style().logicalHeight().isFixed()
                 || (!table()->style().logicalHeight().isAuto() && rHeight != cell->logicalHeight());
 
-            for (RenderObject* renderer = cell->firstChild(); renderer; renderer = renderer->nextSibling()) {
-                if (!is<RenderText>(*renderer) && renderer->style().logicalHeight().isPercentOrCalculated() && (flexAllChildren || ((renderer->isReplaced() || (is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).scrollsOverflow())) && !is<RenderTextControl>(*renderer)))) {
+            for (auto& renderer : childrenOfType<RenderObject>(*cell)) {
+                if (!is<RenderText>(renderer) && renderer.style().logicalHeight().isPercentOrCalculated() && (flexAllChildren || ((renderer.isReplaced() || (is<RenderBox>(renderer) && downcast<RenderBox>(renderer).scrollsOverflow())) && !is<RenderTextControl>(renderer)))) {
                     // Tables with no sections do not flex.
-                    if (!is<RenderTable>(*renderer) || downcast<RenderTable>(*renderer).hasSections()) {
-                        renderer->setNeedsLayout(MarkOnlyThis);
+                    if (!is<RenderTable>(renderer) || downcast<RenderTable>(renderer).hasSections()) {
+                        renderer.setNeedsLayout(MarkOnlyThis);
                         cellChildrenFlex = true;
                     }
                 }

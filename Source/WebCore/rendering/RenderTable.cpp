@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "LayoutRepainter.h"
+#include "RenderChildIterator.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderNamedFlowFragment.h"
@@ -879,12 +880,12 @@ void RenderTable::appendColumn(unsigned span)
 
 RenderTableCol* RenderTable::firstColumn() const
 {
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (is<RenderTableCol>(*child))
-            return downcast<RenderTableCol>(child);
+    for (auto& child : childrenOfType<RenderObject>(*this)) {
+        if (is<RenderTableCol>(child))
+            return &const_cast<RenderTableCol&>(downcast<RenderTableCol>(child));
 
         // We allow only table-captions before columns or column-groups.
-        if (!is<RenderTableCaption>(*child))
+        if (!is<RenderTableCaption>(child))
             return nullptr;
     }
 

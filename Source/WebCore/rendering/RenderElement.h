@@ -278,7 +278,7 @@ protected:
 
     void paintFocusRing(PaintInfo&, const RenderStyle&, const Vector<LayoutRect>& focusRingRects);
     void paintOutline(PaintInfo&, const LayoutRect&);
-    void updateOutlineAutoAncestor(bool hasOutlineAuto) const;
+    void updateOutlineAutoAncestor(bool hasOutlineAuto);
 
 private:
     RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);

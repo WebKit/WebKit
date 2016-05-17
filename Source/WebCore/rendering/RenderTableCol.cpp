@@ -28,6 +28,7 @@
 
 #include "HTMLNames.h"
 #include "HTMLTableColElement.h"
+#include "RenderChildIterator.h"
 #include "RenderIterator.h"
 #include "RenderTable.h"
 #include "RenderTableCaption.h"
@@ -131,8 +132,8 @@ void RenderTableCol::clearPreferredLogicalWidthsDirtyBits()
 {
     setPreferredLogicalWidthsDirty(false);
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        child->setPreferredLogicalWidthsDirty(false);
+    for (auto& child : childrenOfType<RenderObject>(*this))
+        child.setPreferredLogicalWidthsDirty(false);
 }
 
 RenderTable* RenderTableCol::table() const

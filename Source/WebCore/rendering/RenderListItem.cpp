@@ -30,6 +30,7 @@
 #include "HTMLUListElement.h"
 #include "InlineElementBox.h"
 #include "PseudoElement.h"
+#include "RenderChildIterator.h"
 #include "RenderInline.h"
 #include "RenderListMarker.h"
 #include "RenderMultiColumnFlowThread.h"
@@ -227,23 +228,23 @@ bool RenderListItem::isEmpty() const
 static RenderBlock* getParentOfFirstLineBox(RenderBlock& current, RenderObject& marker)
 {
     bool inQuirksMode = current.document().inQuirksMode();
-    for (RenderObject* child = current.firstChild(); child; child = child->nextSibling()) {
-        if (child == &marker)
+    for (auto& child : childrenOfType<RenderObject>(current)) {
+        if (&child == &marker)
             continue;
 
-        if (child->isInline() && (!is<RenderInline>(*child) || current.generatesLineBoxesForInlineChild(child)))
+        if (child.isInline() && (!is<RenderInline>(child) || current.generatesLineBoxesForInlineChild(&child)))
             return &current;
 
-        if (child->isFloating() || child->isOutOfFlowPositioned())
+        if (child.isFloating() || child.isOutOfFlowPositioned())
             continue;
 
-        if (is<RenderTable>(*child) || !is<RenderBlock>(*child) || (is<RenderBox>(*child) && downcast<RenderBox>(*child).isWritingModeRoot()))
+        if (is<RenderTable>(child) || !is<RenderBlock>(child) || (is<RenderBox>(child) && downcast<RenderBox>(child).isWritingModeRoot()))
             break;
 
-        if (is<RenderListItem>(current) && inQuirksMode && child->node() && isHTMLListElement(*child->node()))
+        if (is<RenderListItem>(current) && inQuirksMode && child.node() && isHTMLListElement(*child.node()))
             break;
 
-        if (RenderBlock* lineBox = getParentOfFirstLineBox(downcast<RenderBlock>(*child), marker))
+        if (RenderBlock* lineBox = getParentOfFirstLineBox(downcast<RenderBlock>(child), marker))
             return lineBox;
     }
 

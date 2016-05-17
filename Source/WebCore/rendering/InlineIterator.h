@@ -25,6 +25,7 @@
 
 #include "BidiRun.h"
 #include "RenderBlockFlow.h"
+#include "RenderChildIterator.h"
 #include "RenderInline.h"
 #include "RenderText.h"
 #include <wtf/StdLibExtras.h>
@@ -209,15 +210,15 @@ enum EmptyInlineBehavior {
 
 static bool isEmptyInline(const RenderInline& renderer)
 {
-    for (RenderObject* current = renderer.firstChild(); current; current = current->nextSibling()) {
-        if (current->isFloatingOrOutOfFlowPositioned())
+    for (auto& current : childrenOfType<RenderObject>(renderer)) {
+        if (current.isFloatingOrOutOfFlowPositioned())
             continue;
-        if (is<RenderText>(*current)) {
-            if (!downcast<RenderText>(*current).isAllCollapsibleWhitespace())
+        if (is<RenderText>(current)) {
+            if (!downcast<RenderText>(current).isAllCollapsibleWhitespace())
                 return false;
             continue;
         }
-        if (!is<RenderInline>(*current) || !isEmptyInline(downcast<RenderInline>(*current)))
+        if (!is<RenderInline>(current) || !isEmptyInline(downcast<RenderInline>(current)))
             return false;
     }
     return true;

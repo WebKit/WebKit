@@ -48,6 +48,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBoxRegionInfo.h"
+#include "RenderChildIterator.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGeometryMap.h"
@@ -4421,17 +4422,12 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const Rend
     if (isTableRow())
         adjustedPoint.moveBy(location());
 
-    for (RenderObject* renderObject = firstChild(); renderObject; renderObject = renderObject->nextSibling()) {
-        if (!is<RenderBox>(*renderObject))
-            continue;
-
+    for (auto& renderer : childrenOfType<RenderBox>(*this)) {
         if (is<RenderFlowThread>(*this)) {
             ASSERT(region);
-            if (!downcast<RenderFlowThread>(*this).objectShouldFragmentInFlowRegion(renderObject, region))
+            if (!downcast<RenderFlowThread>(*this).objectShouldFragmentInFlowRegion(&renderer, region))
                 continue;
         }
-
-        auto& renderer = downcast<RenderBox>(*renderObject);
 
         if ((!renderer.firstChild() && !renderer.isInline() && !is<RenderBlockFlow>(renderer))
             || renderer.style().visibility() != VISIBLE)

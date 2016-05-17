@@ -48,6 +48,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBoxRegionInfo.h"
 #include "RenderButton.h"
+#include "RenderChildIterator.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
@@ -3465,17 +3466,17 @@ void RenderBlock::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint
         if (childrenInline())
             addFocusRingRectsForInlineChildren(rects, additionalOffset, paintContainer);
     
-        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if (!is<RenderText>(*child) && !is<RenderListMarker>(*child) && is<RenderBox>(*child)) {
-                auto& box = downcast<RenderBox>(*child);
-                FloatPoint pos;
-                // FIXME: This doesn't work correctly with transforms.
-                if (box.layer())
-                    pos = child->localToContainerPoint(FloatPoint(), paintContainer);
-                else
-                    pos = FloatPoint(additionalOffset.x() + box.x(), additionalOffset.y() + box.y());
-                box.addFocusRingRects(rects, flooredLayoutPoint(pos), paintContainer);
-            }
+        for (auto& box : childrenOfType<RenderBox>(*this)) {
+            if (is<RenderListMarker>(box))
+                continue;
+
+            FloatPoint pos;
+            // FIXME: This doesn't work correctly with transforms.
+            if (box.layer())
+                pos = box.localToContainerPoint(FloatPoint(), paintContainer);
+            else
+                pos = FloatPoint(additionalOffset.x() + box.x(), additionalOffset.y() + box.y());
+            box.addFocusRingRects(rects, flooredLayoutPoint(pos), paintContainer);
         }
     }
 

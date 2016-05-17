@@ -36,6 +36,7 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "PseudoElement.h"
+#include "RenderChildIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
@@ -105,30 +106,31 @@ void InspectorLayerTreeAgent::layersForNode(ErrorString& errorString, int nodeId
 {
     layers = Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>::create();
 
-    Node* node = m_instrumentingAgents.inspectorDOMAgent()->nodeForId(nodeId);
+    auto* node = m_instrumentingAgents.inspectorDOMAgent()->nodeForId(nodeId);
     if (!node) {
         errorString = ASCIILiteral("Provided node id doesn't match any known node");
         return;
     }
 
-    RenderObject* renderer = node->renderer();
+    auto* renderer = node->renderer();
     if (!renderer) {
         errorString = ASCIILiteral("Node for provided node id doesn't have a renderer");
         return;
     }
 
-    gatherLayersUsingRenderObjectHierarchy(errorString, renderer, layers);
+    if (is<RenderElement>(*renderer))
+        gatherLayersUsingRenderObjectHierarchy(errorString, downcast<RenderElement>(*renderer), layers);
 }
 
-void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(ErrorString& errorString, RenderObject* renderer, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>& layers)
+void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(ErrorString& errorString, RenderElement& renderer, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>& layers)
 {
-    if (renderer->hasLayer()) {
-        gatherLayersUsingRenderLayerHierarchy(errorString, downcast<RenderLayerModelObject>(*renderer).layer(), layers);
+    if (renderer.hasLayer()) {
+        gatherLayersUsingRenderLayerHierarchy(errorString, downcast<RenderLayerModelObject>(renderer).layer(), layers);
         return;
     }
 
-    for (renderer = renderer->firstChildSlow(); renderer; renderer = renderer->nextSibling())
-        gatherLayersUsingRenderObjectHierarchy(errorString, renderer, layers);
+    for (auto& child : childrenOfType<RenderElement>(renderer))
+        gatherLayersUsingRenderObjectHierarchy(errorString, child, layers);
 }
 
 void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(ErrorString& errorString, RenderLayer* renderLayer, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>& layers)

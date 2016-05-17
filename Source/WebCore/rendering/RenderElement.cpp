@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "PathUtilities.h"
 #include "RenderBlock.h"
+#include "RenderChildIterator.h"
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
@@ -2151,18 +2152,18 @@ void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
     repaintRectangle(repaintRect);
 }
 
-void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto) const
+void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
 {
-    for (auto* child = firstChild(); child; child = child->nextSibling()) {
-        if (hasOutlineAuto == child->hasOutlineAutoAncestor())
+    for (auto& child : childrenOfType<RenderObject>(*this)) {
+        if (hasOutlineAuto == child.hasOutlineAutoAncestor())
             continue;
-        child->setHasOutlineAutoAncestor(hasOutlineAuto);
-        bool childHasOutlineAuto = child->outlineStyleForRepaint().outlineStyleIsAuto();
+        child.setHasOutlineAutoAncestor(hasOutlineAuto);
+        bool childHasOutlineAuto = child.outlineStyleForRepaint().outlineStyleIsAuto();
         if (childHasOutlineAuto)
             continue;
         if (!is<RenderElement>(child))
             continue;
-        downcast<RenderElement>(*child).updateOutlineAutoAncestor(hasOutlineAuto);
+        downcast<RenderElement>(child).updateOutlineAutoAncestor(hasOutlineAuto);
     }
     if (hasContinuation())
         downcast<RenderBoxModelObject>(*this).continuation()->updateOutlineAutoAncestor(hasOutlineAuto);

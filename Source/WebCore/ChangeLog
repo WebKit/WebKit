@@ -1,3 +1,65 @@
+2016-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Use RenderChildIterator more for traversing a renderer's children
+        https://bugs.webkit.org/show_bug.cgi?id=157811
+
+        Reviewed by Antti Koivisto.
+
+        Use RenderChildIterator more for traversing a renderer's children.
+
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::layersForNode):
+        (WebCore::InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy):
+        * inspector/InspectorLayerTreeAgent.h:
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/InlineIterator.h:
+        (WebCore::isEmptyInline):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::updateOutlineAutoAncestor):
+        * rendering/RenderElement.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::findLegend):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::generateCulledLineBoxRects):
+        (WebCore::RenderInline::culledInlineFirstLineBox):
+        (WebCore::RenderInline::culledInlineVisualOverflowBoundingBox):
+        (WebCore::RenderInline::dirtyLineBoxes):
+        * rendering/RenderListItem.cpp:
+        (WebCore::getParentOfFirstLineBox):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setFlowThreadStateIncludingDescendants):
+        (WebCore::RenderObject::addAbsoluteRectForLayer):
+        (WebCore::RenderObject::paintingRootRect):
+        (WebCore::RenderObject::removeFromRenderFlowThreadIncludingDescendants):
+        (WebCore::RenderObject::invalidateFlowThreadContainingBlockIncludingDescendants):
+        (WebCore::RenderObject::updateDragState):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::firstColumn):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::clearPreferredLogicalWidthsDirtyBits):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::findPreviousAndNextAttributes):
+        (WebCore::RenderSVGText::subtreeChildWasAdded):
+        (WebCore::RenderSVGText::subtreeChildWillBeRemoved):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::updateObjectBoundingBox):
+        (WebCore::SVGRenderSupport::computeContainerBoundingBoxes):
+        (WebCore::SVGRenderSupport::layoutChildren):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::SVGTextLayoutAttributesBuilder::collectTextPositioningElements):
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::walkTree):
+
 2016-05-17  Dean Jackson  <dino@apple.com>
 
         Remove ES6_GENERATORS flag

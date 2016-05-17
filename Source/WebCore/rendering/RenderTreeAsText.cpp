@@ -566,10 +566,10 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         }
 
     } else {
-        for (RenderObject* child = downcast<RenderElement>(o).firstChild(); child; child = child->nextSibling()) {
-            if (child->hasLayer())
+        for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(o))) {
+            if (child.hasLayer())
                 continue;
-            write(ts, *child, indent + 1, behavior);
+            write(ts, child, indent + 1, behavior);
         }
     }
 
