@@ -1539,7 +1539,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     // 1. paint background, borders etc
     if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && style().visibility() == VISIBLE) {
-        if (hasBoxDecorations()) {
+        if (hasVisibleBoxDecorations()) {
             bool didClipToRegion = false;
             
             RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();

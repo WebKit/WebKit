@@ -305,6 +305,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_layerListMutationAllowed(true)
 #endif
     , m_hasFilterInfo(false)
+    , m_hasComputedRepaintRect(false)
 #if ENABLE(CSS_COMPOSITING)
     , m_blendMode(BlendModeNormal)
     , m_hasNotIsolatedCompositedBlendingDescendants(false)
@@ -509,7 +510,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
 
         // FIXME: Should ASSERT that value calculated for m_outlineBox using the cached offset is the same
         // as the value not using the cached offset, but we can't due to https://bugs.webkit.org/show_bug.cgi?id=37048
-        if (flags & CheckForRepaint) {
+        if ((flags & CheckForRepaint) && m_hasComputedRepaintRect) {
             if (!renderer().view().printing()) {
                 bool didRepaint = false;
                 if (m_repaintStatus & NeedsFullRepaint) {
@@ -594,7 +595,7 @@ LayoutRect RenderLayer::repaintRectIncludingNonCompositingDescendants() const
         if (child->isComposited())
             continue;
 
-        repaintRect.unite(child->repaintRectIncludingNonCompositingDescendants());
+        repaintRect.uniteIfNonZero(child->repaintRectIncludingNonCompositingDescendants());
     }
     return repaintRect;
 }
@@ -785,6 +786,12 @@ void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintConta
 {
     ASSERT(!m_visibleContentStatusDirty);
 
+    if (!isSelfPaintingLayer()) {
+        clearRepaintRects();
+        return;
+    }
+    
+    m_hasComputedRepaintRect = true;
     m_repaintRect = renderer().clippedOverflowRectForRepaint(repaintContainer);
     m_outlineBox = renderer().outlineBoundsForRepaint(repaintContainer, geometryMap);
 }
@@ -803,9 +810,9 @@ void RenderLayer::computeRepaintRectsIncludingDescendants()
 
 void RenderLayer::clearRepaintRects()
 {
-    ASSERT(!m_hasVisibleContent);
     ASSERT(!m_visibleContentStatusDirty);
 
+    m_hasComputedRepaintRect = false;
     m_repaintRect = LayoutRect();
     m_outlineBox = LayoutRect();
 }
@@ -845,9 +852,6 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
     if (positionChanged)
         flags |= HasChangedAncestor;
 
-    if (geometryMap)
-        geometryMap->pushMappingsToAncestor(this, parent());
-
     if (flags & HasChangedAncestor || flags & HasSeenViewportConstrainedAncestor || flags & IsOverflowScroll)
         clearClipRects();
 
@@ -856,15 +860,23 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
 
     if (renderer().hasOverflowClip())
         flags |= HasSeenAncestorWithOverflowClip;
+    
+    bool shouldComputeRepaintRects = (flags & HasSeenViewportConstrainedAncestor || (flags & IsOverflowScroll && flags & HasSeenAncestorWithOverflowClip)) && isSelfPaintingLayer();
+    bool isVisuallyEmpty = !isVisuallyNonEmpty();
+    bool shouldPushAndPopMappings = geometryMap && ((shouldComputeRepaintRects && !isVisuallyEmpty) || firstChild());
+    if (shouldPushAndPopMappings)
+        geometryMap->pushMappingsToAncestor(this, parent());
 
-    if (flags & HasSeenViewportConstrainedAncestor
-        || (flags & IsOverflowScroll && flags & HasSeenAncestorWithOverflowClip)) {
-        // FIXME: We could track the repaint container as we walk down the tree.
-        computeRepaintRects(renderer().containerForRepaint(), geometryMap);
+    if (shouldComputeRepaintRects) {
+        // When scrolling, we don't compute repaint rects for visually non-empty layers.
+        if (isVisuallyEmpty)
+            clearRepaintRects();
+        else // FIXME: We could track the repaint container as we walk down the tree.
+            computeRepaintRects(renderer().containerForRepaint(), geometryMap);
     } else {
         // Check that our cached rects are correct.
-        ASSERT(m_repaintRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint()));
-        ASSERT(m_outlineBox == renderer().outlineBoundsForRepaint(renderer().containerForRepaint(), geometryMap));
+        ASSERT(!m_hasComputedRepaintRect || (m_repaintRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint())));
+        ASSERT(!m_hasComputedRepaintRect || m_outlineBox == renderer().outlineBoundsForRepaint(renderer().containerForRepaint()));
     }
     
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
@@ -881,7 +893,7 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
         m_updatingMarqueePosition = oldUpdatingMarqueePosition;
     }
 
-    if (geometryMap)
+    if (shouldPushAndPopMappings)
         geometryMap->popMappingsToAncestor(parent());
 
     renderer().document().markers().invalidateRectsForAllMarkers();
@@ -2411,8 +2423,10 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
     RenderLayerModelObject* repaintContainer = renderer().containerForRepaint();
     // The caret rect needs to be invalidated after scrolling
     frame.selection().setCaretRectNeedsUpdate();
+    
+    LayoutRect rectForRepaint = m_hasComputedRepaintRect ? m_repaintRect : renderer().clippedOverflowRectForRepaint(repaintContainer);
 
-    FloatQuad quadForFakeMouseMoveEvent = FloatQuad(m_repaintRect);
+    FloatQuad quadForFakeMouseMoveEvent = FloatQuad(rectForRepaint);
     if (repaintContainer)
         quadForFakeMouseMoveEvent = repaintContainer->localToAbsoluteQuad(quadForFakeMouseMoveEvent);
     frame.eventHandler().dispatchFakeMouseMoveEventSoonInQuad(quadForFakeMouseMoveEvent);
@@ -2423,7 +2437,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
 
     // Just schedule a full repaint of our object.
     if (requiresRepaint)
-        renderer().repaintUsingContainer(repaintContainer, m_repaintRect);
+        renderer().repaintUsingContainer(repaintContainer, rectForRepaint);
 
     // Schedule the scroll and scroll-related DOM events.
     if (Element* element = renderer().element()) {
@@ -6500,9 +6514,9 @@ void RenderLayer::updateSelfPaintingLayer()
         parent()->dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 }
 
-static bool hasBoxDecorationsOrBackground(const RenderElement& renderer)
+static bool hasVisibleBoxDecorationsOrBackground(const RenderElement& renderer)
 {
-    return renderer.hasBoxDecorations() || renderer.style().hasOutline();
+    return renderer.hasVisibleBoxDecorations() || renderer.style().hasOutline();
 }
 
 // Constrain the depth and breadth of the search for performance.
@@ -6533,7 +6547,7 @@ static bool hasPaintingNonLayerDescendants(const RenderElement& renderer, int de
         if (is<RenderLayerModelObject>(renderElementChild) && downcast<RenderLayerModelObject>(renderElementChild).hasSelfPaintingLayer())
             continue;
 
-        if (hasBoxDecorationsOrBackground(renderElementChild))
+        if (hasVisibleBoxDecorationsOrBackground(renderElementChild))
             return true;
         
         if (is<RenderReplaced>(renderElementChild))
@@ -6551,9 +6565,9 @@ bool RenderLayer::hasNonEmptyChildRenderers() const
     return hasPaintingNonLayerDescendants(renderer(), 0);
 }
 
-bool RenderLayer::hasBoxDecorationsOrBackground() const
+bool RenderLayer::hasVisibleBoxDecorationsOrBackground() const
 {
-    return WebCore::hasBoxDecorationsOrBackground(renderer());
+    return WebCore::hasVisibleBoxDecorationsOrBackground(renderer());
 }
 
 bool RenderLayer::hasVisibleBoxDecorations() const
@@ -6561,7 +6575,7 @@ bool RenderLayer::hasVisibleBoxDecorations() const
     if (!hasVisibleContent())
         return false;
 
-    return hasBoxDecorationsOrBackground() || hasOverflowControls();
+    return hasVisibleBoxDecorationsOrBackground() || hasOverflowControls();
 }
 
 bool RenderLayer::isVisuallyNonEmpty() const
@@ -6574,7 +6588,7 @@ bool RenderLayer::isVisuallyNonEmpty() const
     if (renderer().isRenderReplaced() || hasOverflowControls())
         return true;
 
-    if (hasBoxDecorationsOrBackground())
+    if (hasVisibleBoxDecorationsOrBackground())
         return true;
     
     if (hasNonEmptyChildRenderers())

@@ -145,7 +145,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 #endif
     LayoutPoint adjustedPaintOffset = paintOffset + location();
     
-    if (hasBoxDecorations() && paintInfo.phase == PaintPhaseForeground)
+    if (hasVisibleBoxDecorations() && paintInfo.phase == PaintPhaseForeground)
         paintBoxDecorations(paintInfo, adjustedPaintOffset);
     
     if (paintInfo.phase == PaintPhaseMask) {

@@ -204,7 +204,7 @@ void RenderSVGRoot::layout()
     }
 
     updateLayerTransform();
-    m_hasBoxDecorations = isDocumentElementRenderer() ? hasBoxDecorationStyle() : hasBoxDecorations();
+    m_hasBoxDecorations = isDocumentElementRenderer() ? hasVisibleBoxDecorationStyle() : hasVisibleBoxDecorations();
     invalidateBackgroundObscurationStatus();
 
     repainter.repaintAfterLayout();
@@ -305,7 +305,7 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 
     // Box decorations may have appeared/disappeared - recompute status.
     if (diff == StyleDifferenceRepaint)
-        m_hasBoxDecorations = hasBoxDecorationStyle();
+        m_hasBoxDecorations = hasVisibleBoxDecorationStyle();
 
     RenderReplaced::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(*this, diff, style());

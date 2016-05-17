@@ -860,7 +860,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             clearPositionedState();
         }
         setHorizontalWritingMode(true);
-        setHasBoxDecorations(false);
+        setHasVisibleBoxDecorations(false);
         setHasOverflowClip(false);
         setHasTransformRelatedProperty(false);
         setHasReflection(false);
@@ -1257,7 +1257,7 @@ static bool mustRepaintBackgroundOrBorder(const RenderElement& renderer)
         return true;
 
     // If we don't have a background/border/mask, then nothing to do.
-    if (!renderer.hasBoxDecorations())
+    if (!renderer.hasVisibleBoxDecorations())
         return false;
 
     if (mustRepaintFillLayers(renderer, renderer.style().backgroundLayers()))

@@ -1366,7 +1366,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
 
     // You can use p::first-line to specify a background. If so, the root line boxes for
     // a line may actually have to paint a background.
-    if (parent() && !renderer().hasBoxDecorations())
+    if (parent() && !renderer().hasVisibleBoxDecorations())
         return;
     const RenderStyle& lineStyle = this->lineStyle();
     if (!parent() && (!isFirstLine() || &lineStyle == &renderer().style()))
@@ -1385,7 +1385,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
 
     // :first-line cannot be used to put borders on a line. Always paint borders with our
     // non-first-line style.
-    if (!parent() || !renderer().style().hasBorderDecoration())
+    if (!parent() || !renderer().style().hasVisibleBorderDecoration())
         return;
     const NinePieceImage& borderImage = renderer().style().borderImage();
     StyleImage* borderImageSource = borderImage.image();

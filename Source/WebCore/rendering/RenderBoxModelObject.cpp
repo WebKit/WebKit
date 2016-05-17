@@ -193,9 +193,9 @@ void RenderBoxModelObject::willBeDestroyed()
     RenderLayerModelObject::willBeDestroyed();
 }
 
-bool RenderBoxModelObject::hasBoxDecorationStyle() const
+bool RenderBoxModelObject::hasVisibleBoxDecorationStyle() const
 {
-    return hasBackground() || style().hasBorderDecoration() || style().hasAppearance() || style().boxShadow();
+    return hasBackground() || style().hasVisibleBorderDecoration() || style().hasAppearance() || style().boxShadow();
 }
 
 void RenderBoxModelObject::updateFromStyle()
@@ -205,7 +205,7 @@ void RenderBoxModelObject::updateFromStyle()
     // Set the appropriate bits for a box model object.  Since all bits are cleared in styleWillChange,
     // we only check for bits that could possibly be set to true.
     const RenderStyle& styleToUse = style();
-    setHasBoxDecorations(hasBoxDecorationStyle());
+    setHasVisibleBoxDecorations(hasVisibleBoxDecorationStyle());
     setInline(styleToUse.isDisplayInlineType());
     setPositionState(styleToUse.position());
     setHorizontalWritingMode(styleToUse.isHorizontalWritingMode());

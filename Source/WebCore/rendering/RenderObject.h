@@ -518,7 +518,7 @@ public:
         HasBoxDecorationsAndBackgroundIsKnownToBeObscured,
         HasBoxDecorationsAndBackgroundMayBeVisible,
     };
-    bool hasBoxDecorations() const { return m_bitfields.boxDecorationState() != NoBoxDecorations; }
+    bool hasVisibleBoxDecorations() const { return m_bitfields.boxDecorationState() != NoBoxDecorations; }
     bool backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset);
     bool hasEntirelyFixedBackground() const;
 
@@ -601,7 +601,7 @@ public:
     void setFloating(bool b = true) { m_bitfields.setFloating(b); }
     void setInline(bool b = true) { m_bitfields.setIsInline(b); }
 
-    void setHasBoxDecorations(bool = true);
+    void setHasVisibleBoxDecorations(bool = true);
     void invalidateBackgroundObscurationStatus();
     virtual bool computeBackgroundIsKnownToBeObscured(const LayoutPoint&) { return false; }
 
@@ -1125,20 +1125,20 @@ inline void RenderObject::setSelectionStateIfNeeded(SelectionState state)
     setSelectionState(state);
 }
 
-inline void RenderObject::setHasBoxDecorations(bool b)
+inline void RenderObject::setHasVisibleBoxDecorations(bool b)
 {
     if (!b) {
         m_bitfields.setBoxDecorationState(NoBoxDecorations);
         return;
     }
-    if (hasBoxDecorations())
+    if (hasVisibleBoxDecorations())
         return;
     m_bitfields.setBoxDecorationState(HasBoxDecorationsAndBackgroundObscurationStatusInvalid);
 }
 
 inline void RenderObject::invalidateBackgroundObscurationStatus()
 {
-    if (!hasBoxDecorations())
+    if (!hasVisibleBoxDecorations())
         return;
     m_bitfields.setBoxDecorationState(HasBoxDecorationsAndBackgroundObscurationStatusInvalid);
 }

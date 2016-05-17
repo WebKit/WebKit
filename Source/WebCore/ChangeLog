@@ -1,3 +1,97 @@
+2016-05-17  Dave Hyatt  <hyatt@apple.com>
+
+        Optimize layer repaint rect computation and painting.
+        https://bugs.webkit.org/show_bug.cgi?id=157631
+
+        Reviewed by Zalan Bujtas.
+
+        This patch changes the computation of repaint rects to be for self-painting layers
+        only. In addition, hasBoxDecorations() has been changed to hasVisibleBoxDecorations(),
+        and it will no longer be set for transparent borders.
+
+        For scrolling layer position updating, visually empty layers have their repaint rects
+        cleared, and we don't compute repaint rects during the scroll. We would like to do this
+        all the time, but computeRepaintRects can be called at times when the visually empty
+        state is stale/unknown. For now we limit it to scrolling, since we know that the layer's
+        visually empty state is correct.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutRunsAndFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateFromStyle):
+        (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::willBeDestroyed):
+        (WebCore::RenderBoxModelObject::hasVisibleBoxDecorationStyle):
+        (WebCore::RenderBoxModelObject::updateFromStyle):
+        (WebCore::RenderBoxModelObject::hasBoxDecorationStyle): Deleted.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::mustRepaintBackgroundOrBorder):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::repaintRectIncludingNonCompositingDescendants):
+        (WebCore::RenderLayer::computeRepaintRects):
+        (WebCore::RenderLayer::clearRepaintRects):
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDrawsContent):
+        (WebCore::RenderLayerBacking::compositingOpacity):
+        (WebCore::hasVisibleBoxDecorations):
+        (WebCore::canCreateTiledImage):
+        (WebCore::hasVisibleBoxDecorationsOrBackgroundImage):
+        (WebCore::supportsDirectBoxDecorationsComposition):
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+        (WebCore::hasBoxDecorations): Deleted.
+        (WebCore::hasBoxDecorationsOrBackgroundImage): Deleted.
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::setObjectStyleInRegion):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasVisibleBoxDecorations):
+        (WebCore::RenderObject::setFloating):
+        (WebCore::RenderObject::setInline):
+        (WebCore::RenderObject::computeBackgroundIsKnownToBeObscured):
+        (WebCore::RenderObject::setSelectionStateIfNeeded):
+        (WebCore::RenderObject::setHasVisibleBoxDecorations):
+        (WebCore::RenderObject::invalidateBackgroundObscurationStatus):
+        (WebCore::RenderObject::hasBoxDecorations): Deleted.
+        (WebCore::RenderObject::setHasBoxDecorations): Deleted.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleDidChange):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::hasBorder):
+        (WebCore::BorderData::hasVisibleBorder):
+        (WebCore::BorderData::hasFill):
+        (WebCore::BorderData::hasBorderRadius):
+        * rendering/style/RenderStyle.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::styleDidChange):
+
 2016-05-17  Filip Pizlo  <fpizlo@apple.com>
 
         WTF should know about Language

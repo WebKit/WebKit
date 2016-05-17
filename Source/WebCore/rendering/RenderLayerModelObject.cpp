@@ -161,7 +161,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         setHasTransformRelatedProperty(false); // All transform-related propeties force layers, so we know we don't have one or the object doesn't support them.
         setHasReflection(false);
         // Repaint the about to be destroyed self-painting layer when style change also triggers repaint.
-        if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == NeedsFullRepaint)
+        if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == NeedsFullRepaint && layer()->hasComputedRepaintRect())
             repaintUsingContainer(containerForRepaint(), layer()->repaintRect());
         layer()->removeOnlyThisLayer(); // calls destroyLayer() which clears m_layer
         if (s_wasFloating && isFloating())

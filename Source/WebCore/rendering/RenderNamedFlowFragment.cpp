@@ -392,13 +392,13 @@ void RenderNamedFlowFragment::setObjectStyleInRegion(RenderObject* object, std::
     if (is<RenderElement>(*object))
         downcast<RenderElement>(*object).setStyleInternal(WTFMove(*styleInRegion));
 
-    if (is<RenderBoxModelObject>(*object) && !object->hasBoxDecorations()) {
-        bool hasBoxDecorations = is<RenderTableCell>(*object)
+    if (is<RenderBoxModelObject>(*object) && !object->hasVisibleBoxDecorations()) {
+        bool hasVisibleBoxDecorations = is<RenderTableCell>(*object)
         || object->style().hasBackground()
-        || object->style().hasBorder()
+        || object->style().hasVisibleBorder()
         || object->style().hasAppearance()
         || object->style().boxShadow();
-        object->setHasBoxDecorations(hasBoxDecorations);
+        object->setHasVisibleBoxDecorations(hasVisibleBoxDecorations);
     }
 
     ObjectRegionStyleInfo styleInfo;

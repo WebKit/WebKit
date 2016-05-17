@@ -494,7 +494,7 @@ void RenderBox::updateFromStyle()
 
     // The root and the RenderView always paint their backgrounds/borders.
     if (isDocElementRenderer || isViewObject)
-        setHasBoxDecorations(true);
+        setHasVisibleBoxDecorations(true);
 
     setFloating(!isOutOfFlowPositioned() && styleToUse.isFloating());
 
@@ -1369,7 +1369,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     paintBoxShadow(paintInfo, paintRect, style(), Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
-    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasAppearance() || (borderOrBackgroundPaintingIsNeeded && theme().paintBorderOnly(*this, paintInfo, paintRect))) && style().hasBorderDecoration())
+    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasAppearance() || (borderOrBackgroundPaintingIsNeeded && theme().paintBorderOnly(*this, paintInfo, paintRect))) && style().hasVisibleBorderDecoration())
         paintBorder(paintInfo, paintRect, style(), bleedAvoidance);
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)

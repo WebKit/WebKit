@@ -46,12 +46,18 @@ public:
         bool haveImage = m_image.hasImage();
         return m_left.nonZero(!haveImage) || m_right.nonZero(!haveImage) || m_top.nonZero(!haveImage) || m_bottom.nonZero(!haveImage);
     }
+    
+    bool hasVisibleBorder() const
+    {
+        bool haveImage = m_image.hasImage();
+        return m_left.isVisible(!haveImage) || m_right.isVisible(!haveImage) || m_top.isVisible(!haveImage) || m_bottom.isVisible(!haveImage);
+    }
 
     bool hasFill() const
     {
         return m_image.hasImage() && m_image.fill();
     }
-
+    
     bool hasBorderRadius() const
     {
         if (!m_topLeft.width().isZero())
