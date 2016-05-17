@@ -49,6 +49,12 @@ JSBuiltinInternalFunctions::JSBuiltinInternalFunctions(JSC::VM& v)
     , m_writableStreamInternalsFunctions(vm)
 #endif
 {
+#if !ENABLE(STREAMS_API) && !ENABLE(WEB_RTC)
+    // FIXME: When none of the features that use this class are enabled, we
+    // don't ever use the vm member. However, the logic of initializing
+    // it when any of the features are enabled gets pretty messy.
+    (void)vm;
+#endif
 }
 
 void JSBuiltinInternalFunctions::visit(JSC::SlotVisitor& visitor)
