@@ -80,6 +80,7 @@ public:
         GammaAndColorProfileIgnored
     };
 
+    ImageSource(const NativeImagePtr&);
     ImageSource(AlphaOption = AlphaPremultiplied, GammaAndColorProfileOption = GammaAndColorProfileApplied);
     ~ImageSource();
 
@@ -109,6 +110,8 @@ public:
     bool initialized() const { return m_decoder.get(); }
 
     void setData(SharedBuffer* data, bool allDataReceived);
+    
+    void setNeedsUpdateMetadata() { m_needsUpdateMetadata = true; }
 
     SubsamplingLevel subsamplingLevelForScale(float);
     void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
@@ -145,13 +148,14 @@ public:
 private:
     void clearFrameBufferCache(size_t);
     SubsamplingLevel calculateMaximumSubsamplingLevel() const;
-    void cacheMetadata();
+    void updateMetadata();
     void dump(TextStream&) const;
     
     std::unique_ptr<ImageDecoder> m_decoder;
     
+    bool m_needsUpdateMetadata { false };
     size_t m_frameCount { 0 };
-    SubsamplingLevel m_maximumSubsamplingLevel { 0 };
+    Optional<SubsamplingLevel> m_maximumSubsamplingLevel { 0 };
 
     // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
 #if PLATFORM(IOS)
@@ -160,8 +164,8 @@ private:
     bool m_allowSubsampling { false };
 #endif
 
-    AlphaOption m_alphaOption;
-    GammaAndColorProfileOption m_gammaAndColorProfileOption;
+    AlphaOption m_alphaOption { AlphaPremultiplied };
+    GammaAndColorProfileOption m_gammaAndColorProfileOption { GammaAndColorProfileApplied };
 };
 
 }
