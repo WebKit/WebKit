@@ -50,7 +50,7 @@ XLargeRange VMHeap::tryAllocateLargeChunk(std::lock_guard<StaticMutex>&, size_t 
     Chunk* chunk = static_cast<Chunk*>(memory);
     
 #if BOS(DARWIN)
-    m_zone.addChunk(chunk);
+    m_zone.addRange(Range(chunk->bytes(), size));
 #endif
 
     return XLargeRange(chunk->bytes(), size, 0);
@@ -85,7 +85,7 @@ void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageC
     new (chunk) Chunk(lock);
 
 #if BOS(DARWIN)
-    m_zone.addChunk(chunk);
+    m_zone.addRange(Range(begin.address(), end.address() - begin.address()));
 #endif
 
     for (Object it = begin; it + pageSize <= end; it = it + pageSize) {

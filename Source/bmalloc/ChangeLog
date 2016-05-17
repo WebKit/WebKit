@@ -1,3 +1,36 @@
+2016-05-16  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION (200035): changes in "WebKit Malloc" VM regions are causing 'leaks' to spew "Failed to map remote region" messages
+        https://bugs.webkit.org/show_bug.cgi?id=157764
+
+        Reviewed by Gavin Barraclough.
+
+        We need to allow for guard pages and only report unguarded pages to the
+        leaks tool -- otherwise, it will try to remote map our guarded pages,
+        and crash.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::tryAllocateLargeChunk):
+        (bmalloc::VMHeap::allocateSmallChunk): Adopt the new API for reporting
+        a range instead of a Chunk*, and report the unguarded range.
+
+        This also fixes a separate bug -- very large allocations would not
+        fully participate in pointer scanning because they would only report 2MB
+        (chunkSize) in size. This could cause false-positive leak reports.
+
+        * bmalloc/Zone.cpp:
+        (bmalloc::enumerator): Updated to scan ranges instead of fixed-sized
+        Chunk pointers.
+
+        * bmalloc/Zone.h:
+        (bmalloc::Zone::ranges):
+        (bmalloc::Zone::addRange): Store ranges instead of fixed-sized Chunk 
+        pointers because our VM ranges have variable sizes -- both due to guard
+        pages and due to large allocations.
+
+        (bmalloc::Zone::chunks): Deleted.
+        (bmalloc::Zone::addChunk): Deleted.
+
 2016-05-10  David Kilzer  <ddkilzer@apple.com>
 
         bmalloc should automatically disable itself when ThreadSanitizer is used

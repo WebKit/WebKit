@@ -27,6 +27,7 @@
 #define Zone_h
 
 #include "FixedVector.h"
+#include "Range.h"
 #include <malloc/malloc.h>
 
 namespace bmalloc {
@@ -41,8 +42,8 @@ public:
     Zone();
     Zone(task_t, memory_reader_t, vm_address_t);
 
-    void addChunk(Chunk*);
-    FixedVector<Chunk*, capacity>& chunks() { return m_chunks; }
+    void addRange(Range);
+    FixedVector<Range, capacity>& ranges() { return m_ranges; }
     
 private:
     // This vector has two purposes:
@@ -56,15 +57,15 @@ private:
     // This prevents the leaks tool from reporting false positive leaks for
     // objects pointed to from bmalloc memory -- though it also prevents the
     // leaks tool from finding any leaks in bmalloc memory.
-    FixedVector<Chunk*, capacity> m_chunks;
+    FixedVector<Range, capacity> m_ranges;
 };
 
-inline void Zone::addChunk(Chunk* chunk)
+inline void Zone::addRange(Range range)
 {
-    if (m_chunks.size() == m_chunks.capacity())
+    if (m_ranges.size() == m_ranges.capacity())
         return;
     
-    m_chunks.push(chunk);
+    m_ranges.push(range);
 }
 
 } // namespace bmalloc
