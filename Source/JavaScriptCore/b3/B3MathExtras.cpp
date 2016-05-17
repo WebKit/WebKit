@@ -36,6 +36,7 @@
 #include "B3ControlValue.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
+#include "MathCommon.h"
 
 namespace JSC { namespace B3 {
 
@@ -50,7 +51,7 @@ std::pair<BasicBlock*, Value*> powDoubleInt32(Procedure& procedure, BasicBlock* 
 
     Value* shouldGoSlowPath = start->appendNew<Value>(procedure, Above, origin,
         y,
-        start->appendNew<Const32Value>(procedure, origin, 1000));
+        start->appendNew<Const32Value>(procedure, origin, maxExponentForIntegerMathPow));
     start->appendNew<ControlValue>(
         procedure, Branch, origin,
         shouldGoSlowPath,

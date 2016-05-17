@@ -1,3 +1,27 @@
+2016-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r200208): It made 2 JSC stress tests fail on x86
+        https://bugs.webkit.org/show_bug.cgi?id=157168
+
+        Reviewed by Benjamin Poulain.
+
+        The fast path in operationMathPow produces different results between x87 and the other environments.
+        This is because x87 calculates the double value in 80bit precision.
+        The situation is the following: in x86 32bit environment, floating point operations are compiled to
+        x87 operations by default even if we can use SSE2. But in DFG environment, we aggressively use SSE2
+        if the cpuid reports SSE2 is available. As a result, the implementations differ between C runtime
+        and DFG JIT code. The C runtime uses x87 while DFG JIT code uses SSE2. This causes a precision
+        problem since x87 has 80bit precision while SSE2 has 64bit precision.
+
+        In this patch, in x86 32bit environment, we use `volatile double` if the `-mfpmath=sse and -msse2 (or later)`
+        is not specified. This will round the x87 value into 64bit per multiplying. Note that this problem does not
+        occur in OS X clang 32bit environment. This is because `-mfpmath=sse` is enabled by default in OS X clang 32bit.
+
+        * b3/B3MathExtras.cpp:
+        (JSC::B3::powDoubleInt32):
+        * runtime/MathCommon.cpp:
+        (JSC::operationMathPow):
+
 2016-05-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] "return this" in a constructor does not need a branch on isObject(this)
