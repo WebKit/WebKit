@@ -1,5 +1,26 @@
 2016-05-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200788. rdar://problem/26143008
+
+    2016-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Touch.prototype is undefined on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=157560
+            <rdar://problem/26143008>
+
+            Reviewed by Chris Dumez.
+
+            Remove Touch and TouchList attributes from DOMWindow.
+            These attributes should be exposed via generated binding code (JSDOMWindow.cpp).
+
+            * bindings/js/JSDOMWindowCustom.cpp:
+            (WebCore::JSDOMWindow::touch): Deleted.
+            (WebCore::JSDOMWindow::touchList): Deleted.
+            * bindings/js/ios/TouchConstructors.cpp:
+            * page/DOMWindow.idl:
+
+2016-05-17  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200688. rdar://problem/26013966
 
     2016-05-11  Jer Noble  <jer.noble@apple.com>
