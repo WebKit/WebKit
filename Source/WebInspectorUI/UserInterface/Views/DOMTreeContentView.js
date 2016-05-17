@@ -371,6 +371,9 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
     _pathComponentSelected(event)
     {
+        if (!event.data.pathComponent)
+            return;
+
         console.assert(event.data.pathComponent instanceof WebInspector.DOMTreeElementPathComponent);
         console.assert(event.data.pathComponent.domTreeElement instanceof WebInspector.DOMTreeElement);
 

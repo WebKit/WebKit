@@ -86,8 +86,10 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
 
     get selectedPathComponent()
     {
-        var selectElement = this._selectElement[this._selectElement.selectedIndex];
-        return selectElement && selectElement._pathComponent || null;
+        let selectedOption = this._selectElement[this._selectElement.selectedIndex];
+        if (!selectedOption && this._selectElement.options.length === 1)
+            selectedOption = this._selectElement.options[0];
+        return selectedOption && selectedOption._pathComponent || null;
     }
 
     get element()
