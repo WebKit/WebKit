@@ -76,7 +76,7 @@ function rewrite_headers () {
             -e s/^WK_CLASS_DEPRECATED/NS_CLASS_DEPRECATED/
         )
     else
-        SED_OPTIONS+=(-e 's/WK_(CLASS_|ENUM_)?AVAILABLE(_IOS|_MAC)?\([^\)]+\)//g' -e 's/WK_(CLASS_)?DEPRECATED\([^\)]+\)//g')
+        SED_OPTIONS+=(-e 's/WK_(CLASS_|ENUM_)?AVAILABLE(_IOS|_MAC)?\([^\)]+\)//g' -e 's/WK_(CLASS_|ENUM_)?DEPRECATED\([^\)]+\)//g')
     fi
 
     SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})

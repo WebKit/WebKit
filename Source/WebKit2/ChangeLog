@@ -1,5 +1,15 @@
 2016-05-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200891. rdar://problem/26269611
+
+    2016-05-13  Dan Bernstein  <mitz@apple.com>
+
+            Try to fix some non-iOS builds.
+
+            * mac/postprocess-framework-headers.sh:
+
+2016-05-17  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200877. rdar://problem/26269611
 
     2016-05-13  Ryan Haddad  <ryanhaddad@apple.com>
