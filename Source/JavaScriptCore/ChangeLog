@@ -1,3 +1,34 @@
+2016-05-17  Keith Miller  <keith_miller@apple.com>
+
+        Add test262 harness support code
+        https://bugs.webkit.org/show_bug.cgi?id=157797
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds some new tooling needed to run Test262 with the jsc
+        CLI. There were three options that needed to be added for Test262:
+
+        1) "--test262-async" This option overrides the print function in the test runner to look for
+        'Test262:AsyncTestComplete' instead of printing the passed text. If test262-async mode is on
+        and that string is not passed then the test is marked as failing.
+
+        2) "--strict-file=<file>" This option appends `"use strict";\n` to the beginning of the
+        passed file before passing the source code to the VM. This option can, in theory, be passed
+        multiple times.
+
+        3) "--exception=<name>" This option asserts that at the end of the last script file passed
+        the VM has an uncaught exception with its name property equal to the passed name.
+
+        * jsc.cpp:
+        (Script::Script):
+        (fillBufferWithContentsOfFile):
+        (functionPrint):
+        (checkUncaughtException):
+        (runWithScripts):
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+        (runJSC):
+
 2016-05-17  Filip Pizlo  <fpizlo@apple.com>
 
         WTF should know about Language

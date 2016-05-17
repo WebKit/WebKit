@@ -1011,6 +1011,61 @@ def runControlFlowProfiler
     end
 end
 
+def runTest262(mode, exception, includeFiles, flags)
+    failsWithException = exception != "NoException"
+    isStrict = false
+    isModule = false
+    isAsync = false
+
+    flags.each {
+        | flag |
+        case flag
+        when :strict
+            isStrict = true
+        when :module
+            isModule = true
+        when :async
+            isAsync = true
+        else
+            raise "Invalid flag for runTest262, #{flag}"
+        end
+    }
+
+    prepareExtraRelativeFiles(includeFiles.map { |f| "../" + f }, $collection)
+
+    args = [pathToVM.to_s] + BASE_OPTIONS
+    args << "-m" if isModule
+    args << "--exception=" + exception if failsWithException
+    args << "--test262-async" if isAsync
+    args += includeFiles
+
+    case mode
+    when :normal
+        errorHandler = simpleErrorHandler
+        outputHandler = silentOutputHandler
+    when :fail
+        errorHandler = expectedFailErrorHandler
+        outputHandler = noisyOutputHandler
+    else
+        raise "Invalid mode: #{mode}"
+    end
+
+    if isStrict
+        kind = "default-strict"
+        args << "--strict-file=#{$benchmark}"
+    else
+        kind = "default"
+        args << $benchmark.to_s
+    end
+
+    addRunCommand(kind, args, outputHandler, errorHandler)
+end
+
+def prepareTest262Fixture
+    # This function is used to add the files used by Test262 modules tests.
+    prepareExtraRelativeFiles([""], $collection)
+end
+
 def runES6(mode)
     args = [pathToVM.to_s] + BASE_OPTIONS + [$benchmark.to_s]
     case mode
@@ -1149,7 +1204,9 @@ def prepareExtraRelativeFiles(extraFiles, destination)
     Dir.chdir($outputDir) {
         extraFiles.each {
             | file |
-            FileUtils.cp $extraFilesBaseDir + file, destination + file
+            dest = destination + file
+            FileUtils.mkdir_p(dest.dirname)
+            FileUtils.cp $extraFilesBaseDir + file, dest
         }
     }
 end

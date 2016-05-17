@@ -1,3 +1,34 @@
+2016-05-17  Keith Miller  <keith_miller@apple.com>
+
+        Add test262 harness support code
+        https://bugs.webkit.org/show_bug.cgi?id=157797
+
+        Reviewed by Filip Pizlo.
+
+        The import-test262-tests script is used to generate the yaml file used to run test262. It
+        takes a path to the local copy of the Test262 repository as well as an optional path to file
+        containing a list of failures. This script currently just creates the yaml file used to run
+        the script. It does not relocate the test files into our tests directory. In the future I
+        plan to add that feature but it didn't seem essential for the first iteration. Since many
+        test262 tests need to be run in both strict and non-strict mode, import-test262-tests
+        creates two separate runs for those tests. This enables us to distinguish between failures
+        in only one of the two modes.
+
+        This patch also updates the run-jsc-stress-tests Script to run tests from Test262. In order
+        to do so two new run commands were needed runTest262 and prepareTest262Fixture. runTest262
+        takes an actual test file along with the metadata associated with it. prepareTest262Fixture
+        takes a fixture file (used by module tests for importing) and makes sure that file is
+        properly relocated to the test runner directory.
+
+        The proccess I used to import the tests was to first run import-test262-tests to create a
+        yaml for all the tests (import-test262-tests assumes all tests pass if to failures file is
+        passed). Then I ran the generated yaml file with "run-jsc-stress-tests -v -c 1" piping the
+        output to a file and collected all the lines with "FAIL" in it. Finally, I reran
+        import-test262-tests with the new failure file to create the final yaml.
+
+        * Scripts/import-test262-tests: Added.
+        * Scripts/run-jsc-stress-tests:
+
 2016-05-16  Enrica Casucci  <enrica@apple.com>
 
         build fix after r200968 and r200969

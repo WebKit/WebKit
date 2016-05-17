@@ -1,0 +1,256 @@
+#!/usr/bin/env ruby
+
+# Copyright (C) 2016 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+require 'fileutils'
+require 'getoptlong'
+require 'pathname'
+require 'yaml'
+require 'find'
+
+THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
+SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
+WEBKIT_PATH = SCRIPTS_PATH.dirname.dirname
+TEST262_YAML_PATH = WEBKIT_PATH + "Source/JavaScriptCore/tests/test262.yaml"
+
+raise unless SCRIPTS_PATH.basename.to_s == "Scripts"
+raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
+
+def mysys(*cmd)
+    printCommandArray(*cmd) if $verbosity >= 1
+    raise "Command failed: #{$?.inspect}" unless system(*cmd)
+end
+
+
+def usage
+    puts "import-test262-tests [options] <path-to-test262-repository>"
+    puts
+    puts "-h, --help                   print this help message."
+    puts "-f, --failures FAILURES      Supplied file will be used to determine which tests fail."
+    puts "                             If a failures file is not provided all tests are assumed to pass."
+
+    exit 1
+end
+
+$failures = nil
+JS_TEST_REGEXP = /.*\.js/
+JS_FIXTURE_REGEXP = /.*(_FIXTURE\.js|_\.js)/
+GET_YAML_REGEXP = /\/\*---(?<yaml>.*?)---\*\//m
+
+GetoptLong.new(["--help", "-h", GetoptLong::NO_ARGUMENT],
+               ["--failures", "-f", GetoptLong::REQUIRED_ARGUMENT]).each {
+    | opt, arg |
+    case opt
+    when "--help"
+        usage
+    when "--failures"
+        $failures = File.open(Pathname.new(arg)).readlines
+    end
+}
+
+def didPassForMode(path, strict)
+    if $failures
+        if strict == :strict
+            return $failures.grep(/.*#{path}\.default-strict$/).length == 0
+        else
+            return $failures.grep(/.*#{path}\.default$/).length == 0
+        end
+    else
+        return true
+    end
+end
+
+class Test
+    attr_writer :failsWithException, :isModule, :isAsync
+    attr_accessor :includeFiles, :needsStrict, :needsNonStrict
+    attr_reader :path
+
+    def initialize(path)
+        @path = path
+        @failsWithException = nil
+        @includeFiles = []
+        @needsStrict = true
+        @needsNonStrict = true
+        @isModule = false
+        @isAsync = false
+    end
+
+    def check
+        # Throw an exception here since I'm not sure if the test infrastructure works in these cases.
+        raise if !@needsStrict and !@needsNonStrict
+        raise if @isModule and !@needsNonStrict
+    end
+
+    def formatFlags(strict)
+        flags = []
+        flags << strict if strict == :strict
+        flags << :module if @isModule
+        flags << :async if @isAsync
+
+        return flags.to_s
+    end
+
+    def formatCmdArguments(strict)
+        raise if strict == :strict ? !@needsStrict : !@needsNonStrict
+        passed = didPassForMode(@path, strict)
+        cmd = "runTest262"
+        cmd += passed ? " :normal, " : " :fail, "
+        cmd += @failsWithException ? @failsWithException.inspect : "\"NoException\""
+        cmd += ", #{@includeFiles.inspect}"
+        cmd += ", #{formatFlags(strict)}"
+    end
+
+    def finalizeIncludes
+        if @isAsync
+            @includeFiles << "donePrintHandle.js"
+        end
+
+        dir = Pathname.new(".")
+        @path.dirname.each_filename {
+            | part |
+            dir += ".."
+        }
+        dir += "harness"
+
+        @includeFiles.map! { | file | (dir + file).to_s }
+    end
+
+end
+
+def processTestFile(path)
+    /\/\*---(?<yaml>.*?)---\*\//m =~ File::read(path)
+
+    test = Test.new(path)
+    # These should be included by all the tests
+    test.includeFiles = ["assert.js", "sta.js"]
+
+    begin
+        yamlElements = YAML::load(yaml)
+    rescue Exception => e
+        puts "Failed to parse YAML for #{path}, threw exception:"
+        puts e.inspect
+    end
+    yamlElements.each {
+        | option |
+        case option[0]
+        when "negative"
+            test.failsWithException = option[1].to_s
+        when "includes"
+            test.includeFiles += option[1]
+        when "flags"
+            option[1].each {
+                | flag |
+                case flag
+                when "raw", "noStrict"
+                    test.needsStrict = false
+                when "onlyStrict"
+                    test.needsNonStrict = false
+                when "module"
+                    test.isModule = true
+                    test.needsStrict = false
+                when "async"
+                    test.isAsync = true
+                when "generated"
+                else
+                    raise "Invalid Metadata flag option, #{flag}, when parsing #{$benchmarkDirectory + $benchmark}"
+                end
+            }
+        end
+    }
+
+    test.finalizeIncludes
+    test.check
+
+    return test
+end
+
+class Fixture
+    attr_reader :path, :needsNonStrict, :needsStrict
+
+    def initialize(path)
+        @path = path
+        @needsNonStrict = true
+        @needsStrict = false
+    end
+
+    def formatCmdArguments(strict)
+        return "prepareTest262Fixture"
+    end
+
+end
+
+def processFixtureFile(path)
+    Fixture.new(path)
+end
+
+def processFilesRecursively(path)
+    # We only run the run the built-ins, language, and annexB tests.
+    # At some point we should add intl402
+    tests = []
+
+    Dir.chdir(path) {
+        paths = [Pathname.new("test/annexB"), Pathname.new("test/built-ins"), Pathname.new("test/language")]
+
+        paths.each {
+            | testPath |
+            Find.find(testPath) {
+                | file |
+                if File.file?(file) and JS_TEST_REGEXP =~ file.to_s
+                    path = Pathname.new(file)
+                    if JS_FIXTURE_REGEXP =~ file.to_s
+                        tests << processFixtureFile(path)
+                    else
+                        tests << processTestFile(path)
+                    end
+                end
+            }
+        }
+
+    }
+
+    return tests
+end
+
+def printYAML(tests)
+    File.open(TEST262_YAML_PATH, "w+") {
+        | outp |
+        outp.puts "---"
+        tests.each {
+            | test |
+            if test.needsNonStrict
+                outp.puts "- path: test262/" + test.path.to_s
+                outp.puts "  cmd: " + test.formatCmdArguments(:nonStrict)
+            end
+            if test.needsStrict
+                outp.puts "- path: test262/" + test.path.to_s
+                outp.puts "  cmd: " + test.formatCmdArguments(:strict)
+            end
+        }
+
+    }
+end
+
+tests = processFilesRecursively(Pathname.new(ARGV[0]))
+printYAML(tests)
