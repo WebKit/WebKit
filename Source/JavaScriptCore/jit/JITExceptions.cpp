@@ -51,7 +51,12 @@ void genericUnwind(VM* vm, ExecState* callFrame, UnwindStart unwindStart)
         CRASH();
     }
     
-    vm->shadowChicken().log(*vm, callFrame, ShadowChicken::Packet::throwPacket());
+    ExecState* shadowChickenTopFrame = callFrame;
+    if (unwindStart == UnwindFromCallerFrame) {
+        VMEntryFrame* topVMEntryFrame = vm->topVMEntryFrame;
+        shadowChickenTopFrame = callFrame->callerFrame(topVMEntryFrame);
+    }
+    vm->shadowChicken().log(*vm, shadowChickenTopFrame, ShadowChicken::Packet::throwPacket());
     
     Exception* exception = vm->exception();
     RELEASE_ASSERT(exception);

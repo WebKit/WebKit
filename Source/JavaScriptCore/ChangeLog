@@ -1,3 +1,21 @@
+2016-05-16  Saam barati  <sbarati@apple.com>
+
+        ShadowChicken crashes when reading a scope from the frame during a stack overflow exception
+        https://bugs.webkit.org/show_bug.cgi?id=157770
+
+        Reviewed by Filip Pizlo.
+
+        ShadowChicken was reading the scope from a half formed
+        frame as it threw a stack overflow exception. The frame had
+        a valid CodeBlock pointer, but it did not have a valid scope.
+        The code in ShadowChicken's throw packet logging mechanism didn't
+        account for this. The fix is to respect whether genericUnwind wants
+        to unwind from the current frame or the caller's frame. For stack
+        overflow errors, we always unwind the caller's frame.
+
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+
 2016-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r200208): It made 2 JSC stress tests fail on x86

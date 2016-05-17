@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector/debugger/debugger-test.js"></script>
+<script type="text/javascript" src="./resources/stack-overflow.js"></script>
+<script>
+
+function test()
+{
+    var scriptObject;
+
+    function startTest() {
+        InspectorTest.log("Starting Test");
+        // 0 based indices.
+        let testInfo = {line: 8, column: 8};
+        let location = scriptObject.createSourceCodeLocation(testInfo.line, testInfo.column);
+        let breakpoint = new WebInspector.Breakpoint(location);
+        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+        InspectorTest.evaluateInPage("start()");
+    }
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+        if (!activeCallFrame)
+            return;
+
+        WebInspector.debuggerManager.resume();
+    });
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+        InspectorTest.log("Tests done");
+        InspectorTest.completeTest();
+    });
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+        eventScriptObject = event.data.script;
+        
+        if (/stack-overflow\.js$/.test(eventScriptObject.url)) {
+            scriptObject = eventScriptObject;
+            startTest();
+            return;
+        }
+
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that we don't crash on a stack overflow.</p>
+</body>
+</html>

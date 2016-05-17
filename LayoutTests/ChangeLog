@@ -1,3 +1,16 @@
+2016-05-16  Saam barati  <sbarati@apple.com>
+
+        ShadowChicken crashes when reading a scope from the frame during a stack overflow exception
+        https://bugs.webkit.org/show_bug.cgi?id=157770
+
+        Reviewed by Filip Pizlo.
+
+        * inspector/debugger/debugger-stack-overflow-expected.txt: Added.
+        * inspector/debugger/debugger-stack-overflow.html: Added.
+        * inspector/debugger/resources/stack-overflow.js: Added.
+        (foo):
+        (start):
+
 2016-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         heap use-after-free at WebCore::TimerBase::heapPopMin()

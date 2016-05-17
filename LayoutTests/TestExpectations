@@ -145,6 +145,9 @@ webkit.org/b/142208 inspector/timeline/exception-in-injected-script-while-record
 
 webkit.org/b/137130 inspector/replay [ Skip ]
 
+# This test is fast enough in release but quite slow in debug builds.
+[ Debug ] inspector/debugger/debugger-stack-overflow.html [ Skip ]
+
 # Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)
 webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
 
