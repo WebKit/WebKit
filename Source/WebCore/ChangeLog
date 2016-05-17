@@ -1,3 +1,23 @@
+2016-05-16  Simon Fraser  <simon.fraser@apple.com>
+
+        BitmapImage::destroyDecodedDataIfNecessary() should only count frames with image data
+        https://bugs.webkit.org/show_bug.cgi?id=157779
+
+        Reviewed by Tim Horton.
+
+        BitmapImage::destroyDecodedDataIfNecessary() throws away all frames of an image if the
+        decoded frame size exceeds a threshold. However, it counts all frames, whether or not
+        they have an image (some frames may only have metadata, but m_frameBytes still returns
+        height*width*4).
+
+        Fix by only count m_frameBytes for frames that have an image.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedDataIfNecessary):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::FrameData::FrameData):
+        (WebCore::FrameData::usedFrameBytes):
+
 2016-05-17  Dave Hyatt  <hyatt@apple.com>
 
         Optimize layer repaint rect computation and painting.

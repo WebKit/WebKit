@@ -72,13 +72,9 @@ namespace NativeImage {
 struct FrameData {
 public:
     FrameData()
-        : m_orientation(DefaultImageOrientation)
-        , m_subsamplingLevel(0)
-        , m_duration(0)
-        , m_haveMetadata(false)
+        : m_haveMetadata(false)
         , m_isComplete(false)
         , m_hasAlpha(true)
-        , m_frameBytes(0)
     {
     }
 
@@ -90,15 +86,17 @@ public:
     // Clear the cached image data on the frame, and (optionally) the metadata.
     // Returns whether there was cached image data to clear.
     bool clear(bool clearMetadata);
+    
+    unsigned usedFrameBytes() const { return m_image ? m_frameBytes : 0; }
 
     NativeImagePtr m_image;
-    ImageOrientation m_orientation;
-    SubsamplingLevel m_subsamplingLevel;
-    float m_duration;
+    ImageOrientation m_orientation { DefaultImageOrientation };
+    SubsamplingLevel m_subsamplingLevel { 0 };
+    float m_duration { 0 };
     bool m_haveMetadata : 1;
     bool m_isComplete : 1;
     bool m_hasAlpha : 1;
-    unsigned m_frameBytes;
+    unsigned m_frameBytes { 0 };
 };
 
 // =================================================
