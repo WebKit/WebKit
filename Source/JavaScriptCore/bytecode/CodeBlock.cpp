@@ -4404,9 +4404,13 @@ Optional<unsigned> CodeBlock::bytecodeOffsetFromCallSiteIndex(CallSiteIndex call
         bytecodeOffset = instruction - instructions().begin();
 #endif
     } else if (jitType == JITCode::DFGJIT || jitType == JITCode::FTLJIT) {
+#if ENABLE(DFG_JIT)
         RELEASE_ASSERT(canGetCodeOrigin(callSiteIndex));
         CodeOrigin origin = codeOrigin(callSiteIndex);
         bytecodeOffset = origin.bytecodeIndex;
+#else
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
     }
 
     return bytecodeOffset;
