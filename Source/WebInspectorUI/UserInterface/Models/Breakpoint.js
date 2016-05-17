@@ -31,11 +31,12 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
         if (sourceCodeLocationOrInfo instanceof WebInspector.SourceCodeLocation) {
             var sourceCode = sourceCodeLocationOrInfo.sourceCode;
-            var url = sourceCode ? sourceCode.url : null;
+            var contentIdentifier = sourceCode ? sourceCode.contentIdentifier : null;
             var scriptIdentifier = sourceCode instanceof WebInspector.Script ? sourceCode.id : null;
             var location = sourceCodeLocationOrInfo;
         } else if (sourceCodeLocationOrInfo && typeof sourceCodeLocationOrInfo === "object") {
-            var url = sourceCodeLocationOrInfo.url;
+            // The 'url' fallback is for transitioning from older frontends and should be removed.
+            var contentIdentifier = sourceCodeLocationOrInfo.contentIdentifier || sourceCodeLocationOrInfo.url;
             var lineNumber = sourceCodeLocationOrInfo.lineNumber || 0;
             var columnNumber = sourceCodeLocationOrInfo.columnNumber || 0;
             var location = new WebInspector.SourceCodeLocation(null, lineNumber, columnNumber);
@@ -50,7 +51,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
             console.error("Unexpected type passed to WebInspector.Breakpoint", sourceCodeLocationOrInfo);
 
         this._id = null;
-        this._url = url || null;
+        this._contentIdentifier = contentIdentifier || null;
         this._scriptIdentifier = scriptIdentifier || null;
         this._disabled = disabled || false;
         this._condition = condition || "";
@@ -76,9 +77,9 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         this._id = id || null;
     }
 
-    get url()
+    get contentIdentifier()
     {
-        return this._url;
+        return this._contentIdentifier;
     }
 
     get scriptIdentifier()
@@ -196,7 +197,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
     {
         // The id, scriptIdentifier and resolved state are tied to the current session, so don't include them for serialization.
         return {
-            url: this._url,
+            contentIdentifier: this._contentIdentifier,
             lineNumber: this._sourceCodeLocation.lineNumber,
             columnNumber: this._sourceCodeLocation.columnNumber,
             disabled: this._disabled,
@@ -299,7 +300,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WebInspector.Breakpoint.URLCookieKey] = this.url;
+        cookie[WebInspector.Breakpoint.ContentIdentifierCookieKey] = this.contentIdentifier;
         cookie[WebInspector.Breakpoint.LineNumberCookieKey] = this.sourceCodeLocation.lineNumber;
         cookie[WebInspector.Breakpoint.ColumnNumberCookieKey] = this.sourceCodeLocation.columnNumber;
     }
@@ -340,7 +341,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 WebInspector.Breakpoint.DefaultBreakpointActionType = WebInspector.BreakpointAction.Type.Log;
 
 WebInspector.Breakpoint.TypeIdentifier = "breakpoint";
-WebInspector.Breakpoint.URLCookieKey = "breakpoint-url";
+WebInspector.Breakpoint.ContentIdentifierCookieKey = "breakpoint-content-identifier";
 WebInspector.Breakpoint.LineNumberCookieKey = "breakpoint-line-number";
 WebInspector.Breakpoint.ColumnNumberCookieKey = "breakpoint-column-number";
 

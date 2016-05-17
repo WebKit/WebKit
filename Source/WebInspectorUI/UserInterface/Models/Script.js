@@ -90,6 +90,28 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         return this._url;
     }
 
+    get contentIdentifier()
+    {
+        if (this._url)
+            return this._url;
+
+        if (!this._sourceURL)
+            return null;
+
+        // Since reused content identifiers can cause breakpoints
+        // to show up in completely unrelated files, sourceURLs should
+        // be unique where possible. The checks below exclude cases
+        // where sourceURLs are intentionally reused and we would never
+        // expect a breakpoint to be persisted across sessions.
+        if (isWebInspectorConsoleEvaluationScript(this._sourceURL))
+            return null;
+
+        if (isWebInspectorInternalScript(this._sourceURL))
+            return null;
+
+        return this._sourceURL;
+    }
+
     get sourceURL()
     {
         return this._sourceURL;

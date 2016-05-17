@@ -76,6 +76,20 @@ WebInspector.SourceCode = class SourceCode extends WebInspector.Object
         return this._currentRevision.content;
     }
 
+    get url()
+    {
+        // To be overridden by subclasses.
+    }
+
+    get contentIdentifier()
+    {
+        // A contentIdentifier is roughly `url || sourceURL` for cases where
+        // the content is consistent between sessions and not ephemeral.
+
+        // Can be overridden by subclasses if better behavior is possible.
+        return this.url;
+    }
+
     get sourceMaps()
     {
         return this._sourceMaps || [];

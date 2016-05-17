@@ -78,7 +78,7 @@ WebInspector.TextResourceContentView = class TextResourceContentView extends Web
     get supplementalRepresentedObjects()
     {
         var objects = WebInspector.probeManager.probeSets.filter(function(probeSet) {
-            return this._resource.url === probeSet.breakpoint.url;
+            return this._resource.contentIdentifier === probeSet.breakpoint.contentIdentifier;
         }, this);
 
         // If the SourceCodeTextEditor has an executionLineNumber, we can assume
