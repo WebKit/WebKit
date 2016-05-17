@@ -1,3 +1,10 @@
+2016-05-16  Dean Jackson  <dino@apple.com>
+
+        Disable some features on safari-602.1.32-branch.
+        <rdar://problem/26080754>
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-05-12  Babak Shafiei  <bshafiei@apple.com>
 
         Roll out r200463.
