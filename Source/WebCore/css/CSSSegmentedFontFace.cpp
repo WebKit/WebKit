@@ -84,7 +84,7 @@ private:
 
     bool isLoading() const final
     {
-        return m_result && m_result.value()->isLoading();
+        return m_result && m_result.value() && m_result.value()->isLoading();
     }
 
     mutable Optional<RefPtr<Font>> m_result; // Caches nullptr too
