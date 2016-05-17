@@ -1,5 +1,16 @@
 2016-05-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200628.
+
+    2016-05-10  Anders Carlsson  <andersca@apple.com>
+
+            Fix a deprecation warning.
+
+            * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm:
+            (DatabaseServiceInitializer):
+
+2016-05-17  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200975. rdar://problem/24529203
 
     2016-05-16  Anders Carlsson  <andersca@apple.com>
