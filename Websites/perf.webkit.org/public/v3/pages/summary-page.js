@@ -6,7 +6,7 @@ class SummaryPage extends PageWithHeading {
         super('Summary', null);
 
         this._table = {
-            heading: summarySettings.platformGroups.map(function (platformGroup) { return platformGroup.name; }),
+            heading: summarySettings.platformGroups,
             groups: [],
         };
         this._shouldConstructTable = true;
@@ -76,7 +76,14 @@ class SummaryPage extends PageWithHeading {
             element('thead',
                 element('tr', [
                     element('td', {colspan: 2}),
-                    this._table.heading.map(function (label) { return element('td', label); }),
+                    this._table.heading.map(function (group) {
+                        var nodes = [group.name];
+                        if (group.subtitle) {
+                            nodes.push(element('br'));
+                            nodes.push(element('span', {class: 'subtitle'}, group.subtitle));
+                        }
+                        return element('td', nodes);
+                    }),
                 ])),
             this._table.groups.map(function (rowGroup) {
                 return element('tbody', rowGroup.rows.map(function (row, rowIndex) {
@@ -196,6 +203,14 @@ class SummaryPage extends PageWithHeading {
 
             .summary-table thead td {
                 font-size: 1.2rem;
+                line-height: 1.3rem;
+            }
+
+            .summary-table .subtitle {
+                display: block;
+                font-size: 0.9rem;
+                line-height: 1.2rem;
+                color: #666;
             }
 
             .summary-table tbody td {
