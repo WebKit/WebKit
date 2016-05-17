@@ -46,6 +46,8 @@ template<typename T> Ref<T> adoptRef(T&);
 
 template<typename T> class Ref {
 public:
+    static constexpr bool isRef = true;
+
     ~Ref()
     {
 #if ASAN_ENABLED

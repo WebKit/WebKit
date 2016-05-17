@@ -47,14 +47,15 @@ public:
     bool remove(FontFace&);
     void clear();
 
-    void load(const String& font, const String& text, DeferredWrapper&& promise);
+    typedef DOMPromise<Vector<RefPtr<FontFace>>> LoadPromise;
+    void load(const String& font, const String& text, LoadPromise&&);
     bool check(const String& font, const String& text, ExceptionCode&);
 
     enum class LoadStatus { Loading, Loaded };
     LoadStatus status() const;
 
-    typedef DOMPromise<FontFaceSet&, DOMCoreException&> Promise;
-    void registerReady(Promise&&);
+    typedef DOMPromise<FontFaceSet&> ReadyPromise;
+    void registerReady(ReadyPromise&&);
 
     CSSFontFaceSet& backing() { return m_backing; }
 
@@ -74,19 +75,18 @@ public:
 
 private:
     struct PendingPromise : RefCounted<PendingPromise> {
-        typedef DOMPromise<Vector<RefPtr<FontFace>>&, DOMCoreException&> Promise;
-        static Ref<PendingPromise> create(Promise&& promise)
+        static Ref<PendingPromise> create(LoadPromise&& promise)
         {
             return adoptRef(*new PendingPromise(WTFMove(promise)));
         }
         ~PendingPromise();
 
     private:
-        PendingPromise(Promise&&);
+        PendingPromise(LoadPromise&&);
 
     public:
         Vector<RefPtr<FontFace>> faces;
-        Promise promise;
+        LoadPromise promise;
         bool hasReachedTerminalState { false };
     };
 
@@ -110,7 +110,7 @@ private:
 
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<CSSFontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
-    Optional<Promise> m_promise;
+    Optional<ReadyPromise> m_promise;
     bool m_isReady { false };
 };
 

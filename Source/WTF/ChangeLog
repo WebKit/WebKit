@@ -1,3 +1,13 @@
+2016-05-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        DOMPromise should only restrict the resolution type
+        https://bugs.webkit.org/show_bug.cgi?id=157307
+
+        Reviewed by Darin Adler.
+
+        * wtf/Ref.h: Adding static constexpr to ease detection of Ref for templates.
+        * wtf/RefPtr.h: Ditto.
+
 2016-05-16  Michael Saboff  <msaboff@apple.com>
 
         ARMV7K: Crash at JavaScriptCore: WTF::ScopedLambdaFunctor<bool
