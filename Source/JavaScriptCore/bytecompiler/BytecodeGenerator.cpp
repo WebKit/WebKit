@@ -3219,24 +3219,26 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
 {
     if (isConstructor()) {
         bool derived = constructorKind() == ConstructorKind::Derived;
-        if (derived && src->index() == m_thisRegister.index())
+        bool srcIsThis = src->index() == m_thisRegister.index();
+
+        if (derived && srcIsThis)
             emitTDZCheck(src);
 
-        RefPtr<Label> isObjectLabel = newLabel();
-        emitJumpIfTrue(emitIsObject(newTemporary(), src), isObjectLabel.get());
+        if (!srcIsThis) {
+            RefPtr<Label> isObjectLabel = newLabel();
+            emitJumpIfTrue(emitIsObject(newTemporary(), src), isObjectLabel.get());
 
-        if (derived) {
-            RefPtr<Label> isUndefinedLabel = newLabel();
-            emitJumpIfTrue(emitIsUndefined(newTemporary(), src), isUndefinedLabel.get());
-            emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class.");
-            emitLabel(isUndefinedLabel.get());
-            if (constructorKind() == ConstructorKind::Derived)
+            if (derived) {
+                RefPtr<Label> isUndefinedLabel = newLabel();
+                emitJumpIfTrue(emitIsUndefined(newTemporary(), src), isUndefinedLabel.get());
+                emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class.");
+                emitLabel(isUndefinedLabel.get());
                 emitTDZCheck(&m_thisRegister);
+            }
+
+            emitUnaryNoDstOp(op_ret, &m_thisRegister);
+            emitLabel(isObjectLabel.get());
         }
-
-        emitUnaryNoDstOp(op_ret, &m_thisRegister);
-
-        emitLabel(isObjectLabel.get());
     }
 
     return emitUnaryNoDstOp(op_ret, src);

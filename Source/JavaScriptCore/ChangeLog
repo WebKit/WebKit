@@ -1,5 +1,26 @@
 2016-05-16  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] "return this" in a constructor does not need a branch on isObject(this)
+        https://bugs.webkit.org/show_bug.cgi?id=157775
+
+        Reviewed by Saam Barati and Ryosuke Niwa.
+
+        When returning "this" in a constructor, the bytecode generator was generating:
+            is_object         locX, this
+            jtrue             locX, 5(->second ret)
+            ret               this
+            ret               this
+
+        That code is eliminated in DFG but it is pretty costly lower tiers.
+
+        This patch changes bytecode generation to avoid the is_object test
+        when possible and not generate two ret if they encode the same thing.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitReturn):
+
+2016-05-16  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Remove the index check from op_get_by_val/op_put_by_val when the index is constant
         https://bugs.webkit.org/show_bug.cgi?id=157766
 
