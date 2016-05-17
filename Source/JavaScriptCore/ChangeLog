@@ -1,3 +1,22 @@
+2016-05-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC][DFG] Fill spilled Int32 as Int32 instead of JSInt32
+        https://bugs.webkit.org/show_bug.cgi?id=157700
+
+        Reviewed by Michael Saboff.
+
+        In general, fillSpeculateInt32() originate from SpeculateInt32
+        and the user does not care about the tag.
+
+        This is particularily obvious on Sunspider's math-spectral-norm.js.
+        In that test, registers are frequently spilled because of x86's DIV.
+
+        When they are re-filled, they were always tagged.
+        Since the loops are small, all the tagging adds up.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+
 2016-05-16  Saam barati  <sbarati@apple.com>
 
         Unreviewed Cloop build fix.
