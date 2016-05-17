@@ -7,8 +7,10 @@
 <script>
 shouldBeEqualToString("typeof console", "object");
 shouldBeEqualToString("console.toString()", "[object Console]");
-shouldBe("Object.getPrototypeOf(console)", "Object.getPrototypeOf({})");
 shouldBe("console", "console");
+
+// <https://webkit.org/b/157782> console namespace breaks putting properties on console.__proto__
+shouldNotBe("Object.getPrototypeOf(console)", "Object.getPrototypeOf({})");
 
 var consoleDescriptor = Object.getOwnPropertyDescriptor(window, "console");
 shouldBeTrue('consoleDescriptor.configurable');

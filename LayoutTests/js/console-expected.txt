@@ -1,17 +1,17 @@
-CONSOLE MESSAGE: line 19: log message
-CONSOLE MESSAGE: line 20: log message
 CONSOLE MESSAGE: line 21: log message
 CONSOLE MESSAGE: line 22: log message
 CONSOLE MESSAGE: line 23: log message
 CONSOLE MESSAGE: line 24: log message
+CONSOLE MESSAGE: line 25: log message
 CONSOLE MESSAGE: line 26: log message
+CONSOLE MESSAGE: line 28: log message
 CONSOLE MESSAGE: line 1: 1
 CONSOLE MESSAGE: line 1: 2
 CONSOLE MESSAGE: line 1: 3
 PASS typeof console is "object"
 PASS console.toString() is "[object Console]"
-PASS Object.getPrototypeOf(console) is Object.getPrototypeOf({})
 PASS console is console
+PASS Object.getPrototypeOf(console) is not Object.getPrototypeOf({})
 PASS consoleDescriptor.configurable is true
 PASS consoleDescriptor.writable is true
 PASS consoleDescriptor.enumerable is false

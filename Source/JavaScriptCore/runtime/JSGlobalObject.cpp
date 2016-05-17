@@ -197,7 +197,7 @@ static JSValue createMathProperty(VM& vm, JSObject* object)
 static JSValue createConsoleProperty(VM& vm, JSObject* object)
 {
     JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
-    return ConsoleObject::create(vm, global, ConsoleObject::createStructure(vm, global, global->objectPrototype()));
+    return ConsoleObject::create(vm, global, ConsoleObject::createStructure(vm, global, constructEmptyObject(global->globalExec())));
 }
 
 } // namespace JSC

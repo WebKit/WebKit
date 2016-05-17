@@ -1,3 +1,14 @@
+2016-05-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        console namespace breaks putting properties on console.__proto__
+        https://bugs.webkit.org/show_bug.cgi?id=157782
+        <rdar://problem/26250526>
+
+        Reviewed by Geoffrey Garen.
+
+        * js/console-expected.txt:
+        * js/console.html:
+
 2016-05-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201017.

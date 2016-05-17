@@ -1,3 +1,19 @@
+2016-05-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        console namespace breaks putting properties on console.__proto__
+        https://bugs.webkit.org/show_bug.cgi?id=157782
+        <rdar://problem/26250526>
+
+        Reviewed by Geoffrey Garen.
+
+        Some websites currently depend on console.__proto__ existing and being
+        a separate object from Object.prototype. This patch adds back a basic
+        console.__proto__ object, but all the console functions are left on
+        the ConsoleObject itself.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::createConsoleProperty):
+
 2016-05-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, dump more information when math-pow-stable-results.js failed
