@@ -66,6 +66,9 @@ void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initial
     XPCServiceInitializer<NetworkProcess, NetworkServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage);
 
 #if HAVE(OS_ACTIVITY)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     os_activity_end(activity);
+#pragma clang diagnostic pop
 #endif
 }

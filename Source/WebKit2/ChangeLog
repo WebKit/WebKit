@@ -1,5 +1,20 @@
 2016-05-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200631.
+
+    2016-05-10  Anders Carlsson  <andersca@apple.com>
+
+            Fix more deprecation warnings.
+
+            * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+            (NetworkServiceInitializer):
+            * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+            (PluginServiceInitializer):
+            * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+            (WebContentServiceInitializer):
+
+2016-05-17  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200628.
 
     2016-05-10  Anders Carlsson  <andersca@apple.com>
