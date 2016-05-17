@@ -71,11 +71,17 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
     set endTime(x) { this._contentViewContainer.currentContentView.endTime = x; }
     get currentTime() { return this._contentViewContainer.currentContentView.currentTime; }
     set currentTime(x) { this._contentViewContainer.currentContentView.currentTime = x; }
-    get navigationSidebarTreeOutline() { return this._contentViewContainer.currentContentView.navigationSidebarTreeOutline; }
-    reset() { return this._contentViewContainer.currentContentView.reset(); }
     updateFilter(filters) { return this._contentViewContainer.currentContentView.updateFilter(filters); }
     filterDidChange() { return this._contentViewContainer.currentContentView.filterDidChange(); }
     matchDataGridNodeAgainstCustomFilters(node) { return this._contentViewContainer.currentContentView.matchDataGridNodeAgainstCustomFilters(node); }
+
+    reset()
+    {
+        this._eventsContentView.reset();
+
+        if (this._profileContentView)
+            this._profileContentView.reset();
+    }
 
     // Public
 

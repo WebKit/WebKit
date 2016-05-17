@@ -100,11 +100,6 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
     // Public
 
-    get navigationSidebarTreeOutline()
-    {
-        return this._contentTreeOutline;
-    }
-
     get selectionPathComponents()
     {
         if (!this._contentTreeOutline.selectedTreeElement || this._contentTreeOutline.selectedTreeElement.hidden)
