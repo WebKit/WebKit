@@ -44,7 +44,6 @@
 #include "HTMLBaseFontElement.cpp"
 #include "HTMLBodyElement.cpp"
 #include "HTMLButtonElement.cpp"
-#include "HTMLCanvasElement.cpp"
 #include "HTMLDataElement.cpp"
 #include "HTMLDataListElement.cpp"
 #include "HTMLDetailsElement.cpp"

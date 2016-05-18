@@ -1,3 +1,12 @@
+2016-05-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the allinone-build on Linux in Source/WebCore/html/HTMLElementsAllInOne.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=157800
+
+        Reviewed by Alex Christensen.
+
+        * html/HTMLElementsAllInOne.cpp:
+
 2016-05-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Make TestRunner.clearAllDatabases also delete IndexedDB databases (once doing so is supported).
