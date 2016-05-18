@@ -1,3 +1,10 @@
+2016-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove logging inadvertently committed in r201090.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext): Deleted.
+
 2016-05-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add support for server side closing of open database connections.

@@ -272,7 +272,6 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
         useLegacyBackgroundSizeShorthandBehavior = settings->useLegacyBackgroundSizeShorthandBehavior();
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         textAutosizingEnabled = settings->textAutosizingEnabled();
-        WTFLogAlways("CSSParserContext %p CSSParserContext textAutosizingEnabled=%d", this, textAutosizingEnabled);
 #endif
     }
 
