@@ -1,3 +1,12 @@
+2016-05-18  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GStreamer] Use FakeSink to get a decoded texture from a pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=153641
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/FindGStreamer.cmake: Bump gst-gl version to 1.8.0
+
 2016-05-17  Dean Jackson  <dino@apple.com>
 
         Remove ES6_GENERATORS flag

@@ -1,3 +1,32 @@
+2016-05-18  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GStreamer] Use FakeSink to get a decoded texture from a pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=153641
+
+        Reviewed by Philippe Normand.
+
+        Relying on GstGLImageSink to use GStreamerGL brings a lot of overheads such as
+        window handling, context switching and overlay handling which are not needed in
+        our case.
+
+        This patch replaces GstGLImageSink with a custom GstBin which has a
+        GstGLUpload, GstGLColorConvert, and GstFakeSink.
+
+        GstFakeSink sends decoded frames via handoff signal from the vqueue thread of
+        GStreamer. Previously,  GstGLImageSink passes frames through GStreamer's GL
+        thread, which adds additional overhead.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::GstVideoFrameHolder::~GstVideoFrameHolder): Modified to
+        unmap GstVideoFrame without async call. GstGLMemory will unmap itself
+        in gl-thread.
+        (WebCore::MediaPlayerPrivateGStreamerBase::drawCallback):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSinkGL): Split
+        out creating of the gst-gl video sink into the separte method.
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint): Remove assertion
+        for the threaded compositor. It can be called by focusing event.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2016-05-18  Antti Koivisto  <antti@apple.com>
 
         Resolve !important properties from different shadow trees in a single pass.

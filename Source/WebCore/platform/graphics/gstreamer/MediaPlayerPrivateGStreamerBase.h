@@ -35,6 +35,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
 
+typedef struct _GstBaseSink GstBaseSink;
 typedef struct _GstMessage GstMessage;
 typedef struct _GstStreamVolume GstStreamVolume;
 typedef struct _GstVideoInfo GstVideoInfo;
@@ -120,6 +121,10 @@ protected:
     MediaPlayerPrivateGStreamerBase(MediaPlayer*);
     virtual GstElement* createVideoSink();
 
+#if USE(GSTREAMER_GL)
+    GstElement* createVideoSinkGL();
+#endif
+
     void setStreamVolumeElement(GstStreamVolume*);
     virtual GstElement* createAudioSink() { return 0; }
     virtual GstElement* audioSink() const { return 0; }
@@ -133,7 +138,7 @@ protected:
 
     static void repaintCallback(MediaPlayerPrivateGStreamerBase*, GstSample*);
 #if USE(GSTREAMER_GL)
-    static gboolean drawCallback(MediaPlayerPrivateGStreamerBase*, GstGLContext*, GstSample*);
+    static gboolean drawCallback(MediaPlayerPrivateGStreamerBase*, GstBuffer*, GstPad*, GstBaseSink*);
 #endif
 
     void notifyPlayerOfVolumeChange();
