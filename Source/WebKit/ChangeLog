@@ -1,3 +1,14 @@
+2016-05-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Make TestRunner.clearAllDatabases also delete IndexedDB databases (once doing so is supported).
+        https://bugs.webkit.org/show_bug.cgi?id=157823
+
+        Reviewed by Alex Christensen.
+
+        * Storage/WebDatabaseProvider.cpp:
+        (WebDatabaseProvider::deleteAllDatabases):
+        * Storage/WebDatabaseProvider.h:
+
 2016-04-25  Per Arne Vollan  <peavo@outlook.com>
 
         [Win][IndexedDB] Fix build errors.

@@ -38,6 +38,7 @@
 #include <WebKit/WKInspector.h>
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKWebsiteDataStoreRef.h>
 #include <climits>
 #include <cstdio>
 #include <wtf/StdLibExtras.h>
@@ -714,6 +715,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "DeleteAllIndexedDatabases")) {
+        WKWebsiteDataStoreRemoveAllIndexedDatabases(WKContextGetWebsiteDataStore(TestController::singleton().context()));
+        return nullptr;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

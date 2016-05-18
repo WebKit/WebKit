@@ -462,6 +462,7 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKUserMediaPermissionRequest.cpp
     UIProcess/API/C/WKVibration.cpp
     UIProcess/API/C/WKViewportAttributes.cpp
+    UIProcess/API/C/WKWebsiteDataStoreRef.cpp
     UIProcess/API/C/WKWindowFeaturesRef.cpp
 
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp

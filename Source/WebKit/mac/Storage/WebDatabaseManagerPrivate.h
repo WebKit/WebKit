@@ -68,6 +68,9 @@ extern CFStringRef WebDatabaseOriginsDidChangeNotification;
 - (BOOL)deleteOrigin:(WebSecurityOrigin *)origin;
 - (BOOL)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin;
 
+// For DumpRenderTree support only
+- (void)deleteAllIndexedDatabases;
+
 #if TARGET_OS_IPHONE
 + (void)scheduleEmptyDatabaseRemoval;
 #endif

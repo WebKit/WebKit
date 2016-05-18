@@ -1,3 +1,15 @@
+2016-05-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Make TestRunner.clearAllDatabases also delete IndexedDB databases (once doing so is supported).
+        https://bugs.webkit.org/show_bug.cgi?id=157823
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreRemoveAllIndexedDatabases):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+
 2016-05-18  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r200959): "Start Timeline Recording" menu item doesn't start recording

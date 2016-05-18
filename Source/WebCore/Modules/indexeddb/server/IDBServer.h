@@ -96,6 +96,8 @@ public:
 
     std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&);
 
+    WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, std::function<void ()> completionHandler);
+
 private:
     IDBServer(IDBBackingStoreTemporaryFileHandler&);
     IDBServer(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&);

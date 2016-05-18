@@ -197,6 +197,7 @@ JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
 void TestRunner::clearAllDatabases()
 {
     [[WebDatabaseManager sharedWebDatabaseManager] deleteAllDatabases];
+    [[WebDatabaseManager sharedWebDatabaseManager] deleteAllIndexedDatabases];
 }
 
 void TestRunner::setStorageDatabaseIdleInterval(double interval)

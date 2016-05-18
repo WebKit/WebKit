@@ -53,6 +53,8 @@ public:
     WEBCORE_EXPORT IDBClient::IDBConnectionToServer& connectionToServer() const;
     IDBServer::IDBConnectionToClient& connectionToClient() const;
 
+    IDBServer::IDBServer& idbServer() { return m_server.get(); }
+
     // IDBConnectionToServer
     void deleteDatabase(const IDBRequestData&) final;
     void openDatabase(const IDBRequestData&) final;

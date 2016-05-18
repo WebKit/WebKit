@@ -468,6 +468,12 @@ void IDBServer::handleTaskRepliesOnMainThread()
         task->performTask();
 }
 
+void IDBServer::closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, std::function<void ()> completionHandler)
+{
+    // FIXME: Implement (https://bugs.webkit.org/show_bug.cgi?id=157626)
+    completionHandler();
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

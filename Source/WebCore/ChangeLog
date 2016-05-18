@@ -1,3 +1,17 @@
+2016-05-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Make TestRunner.clearAllDatabases also delete IndexedDB databases (once doing so is supported).
+        https://bugs.webkit.org/show_bug.cgi?id=157823
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No current behavior change, will be tested with b/157626's resolution).
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesModifiedSince): Stub this out for now.
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
 2016-05-18  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Sync DOM exception types with WebIDL and update promise rejections
