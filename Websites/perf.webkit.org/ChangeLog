@@ -1,5 +1,12 @@
 2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Removed the erroneously committed debug code.
+
+        * tools/sync-commits.py:
+        (GitRepository.fetch_commit):
+
+2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard should have a script to sync git commits
         https://bugs.webkit.org/show_bug.cgi?id=157867
 

@@ -190,7 +190,6 @@ class GitRepository(Repository):
                     return None
 
         current_hash = tokens[0]
-        print 'current:', tokens
         commit_time = int(tokens[1])
         author_email = tokens[2]
         parent_hash = tokens[3] if len(tokens) >= 4 else None
