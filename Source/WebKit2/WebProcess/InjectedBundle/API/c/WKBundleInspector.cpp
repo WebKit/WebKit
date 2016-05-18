@@ -55,6 +55,8 @@ void WKBundleInspectorEvaluateScriptForTest(WKBundleInspectorRef inspectorRef, W
 
 void WKBundleInspectorSetPageProfilingEnabled(WKBundleInspectorRef inspectorRef, bool enabled)
 {
+    toImpl(inspectorRef)->show();
+
     if (enabled)
         toImpl(inspectorRef)->startPageProfiling();
     else

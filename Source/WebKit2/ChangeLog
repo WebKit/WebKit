@@ -1,3 +1,40 @@
+2016-05-18  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r200959): "Start Timeline Recording" menu item doesn't start recording
+        https://bugs.webkit.org/show_bug.cgi?id=157821
+        <rdar://problem/26335429>
+
+        Reviewed by Timothy Hatcher.
+
+        In r200959, WebInspectorProxy started sending start/stop profiling
+        messages directly to the frontend process to avoid the inspected page
+        process from implicitly showing the frontend. To compensate, the WebKit
+        API layer was changed to call show() in togglePageProfiling().
+
+        Unfortunately, this fix was not quite right, because the ordering of
+        the Show and StartPageProfiling messages is undefined. The latter has to bounce
+        from UI to inspected to inspector processes, so the frontend may try
+        to start profiling before the frontend is shown, causing it to be ignored.
+
+        This patch takes a different approach: just remove all implicit show()
+        calls in the inspected page processes, and bounce both the Show and
+        StartPageProfiling messages through the inspected page process to ensure
+        they are handled in order by the frontend process.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::togglePageProfiling):
+        Revert to sending to the inspected page process.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp:
+        (WKBundleInspectorSetPageProfilingEnabled):
+        Add a call to show() now that the implementation doesn't do it implicitly.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::startPageProfiling):
+        (WebKit::WebInspector::stopPageProfiling):
+        Don't implicitly show the inspector. These methods are only called
+        through the WKBundleInspector API and via IPC from WebInspectorProxy.
+
 2016-05-17  Beth Dakin  <bdakin@apple.com>
 
         Make handleAcceptedCandidate a public function

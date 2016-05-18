@@ -196,7 +196,6 @@ void WebInspector::startPageProfiling()
     if (!m_page->corePage())
         return;
 
-    m_page->corePage()->inspectorController().show();
     m_frontendConnection->send(Messages::WebInspectorUI::StartPageProfiling(), 0);
 }
 
@@ -205,7 +204,6 @@ void WebInspector::stopPageProfiling()
     if (!m_page->corePage())
         return;
 
-    m_page->corePage()->inspectorController().show();
     m_frontendConnection->send(Messages::WebInspectorUI::StopPageProfiling(), 0);
 }
 
