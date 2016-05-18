@@ -1,3 +1,20 @@
+2016-05-17  Dean Jackson  <dino@apple.com>
+
+        Add media query support for wide gamut displays on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=157824
+        <rdar://problem/26333137>
+
+        Reviewed by Simon Fraser.
+
+        Remove the check for sRGB, since it is confusingly false
+        on browsers that don't implement this query, and is likely
+        to be dropped from the specification.
+
+        Also, make the text readable.
+
+        * fast/media/mq-color-gamut-expected.html:
+        * fast/media/mq-color-gamut.html:
+
 2016-05-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r192855): Math.random() always produces the same first 7 decimal points the first two invocations

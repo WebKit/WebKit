@@ -33,8 +33,13 @@
 #include "IOSurfaceSPI.h"
 #endif
 
+#if PLATFORM(MAC)
+#include <ColorSync/ColorSync.h>
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 
+#include <ColorSync/ColorSyncPriv.h>
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
 
@@ -195,6 +200,8 @@ CFArrayRef CGSHWCaptureWindowList(CGSConnectionID cid, CGSWindowIDList windowLis
 CGError CGSSetConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CFTypeRef value);
 CGError CGSCopyConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CFTypeRef *value);
 CGError CGSGetScreenRectForWindow(CGSConnectionID, CGSWindowID, CGRect *);
+
+bool ColorSyncProfileIsWideGamut(ColorSyncProfileRef);
 #endif
 
 WTF_EXTERN_C_END
