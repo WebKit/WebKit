@@ -1,3 +1,30 @@
+2016-05-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorFrontendAPI.setTimelineProfilingEnabled should not implicitly show Timelines tab
+        https://bugs.webkit.org/show_bug.cgi?id=157846
+
+        Reviewed by Timothy Hatcher.
+
+        Add a separate ShowTimelines message to WebInspector and WebInspectorUI. Have the
+        start/stop profiling methods in public APIs explicitly call showTimelines() rather than
+        relying on InspectorFrontendAPI to do it.
+
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorTogglePageProfiling):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::showTimelines):
+        * UIProcess/WebInspectorProxy.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp:
+        (WKBundleInspectorSetPageProfilingEnabled):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::showTimelines):
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.messages.in:
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::showTimelines):
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
+
 2016-05-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add support for server side closing of open database connections.

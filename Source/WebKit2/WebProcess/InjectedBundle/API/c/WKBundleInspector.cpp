@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ void WKBundleInspectorEvaluateScriptForTest(WKBundleInspectorRef inspectorRef, W
 
 void WKBundleInspectorSetPageProfilingEnabled(WKBundleInspectorRef inspectorRef, bool enabled)
 {
-    toImpl(inspectorRef)->show();
+    toImpl(inspectorRef)->showTimelines();
 
     if (enabled)
         toImpl(inspectorRef)->startPageProfiling();

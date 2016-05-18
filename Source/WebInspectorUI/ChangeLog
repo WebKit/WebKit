@@ -1,5 +1,20 @@
 2016-05-18  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: InspectorFrontendAPI.setTimelineProfilingEnabled should not implicitly show Timelines tab
+        https://bugs.webkit.org/show_bug.cgi?id=157846
+
+        Reviewed by Timothy Hatcher.
+
+        Currently, if the Web Inspector opens for an in-progress or finished automation session,
+        it will always show the Timelines tab, disregarding any previous user view state. This
+        is annoying and is a bad user experience when trying to debug the same test repeatedly.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setTimelineProfilingEnabled): Don't implicitly show Timelines tab.
+        (InspectorFrontendAPI.showTimelines): Added. This is called explicitly when desired.
+
+2016-05-18  Brian Burg  <bburg@apple.com>
+
         Web Inspector: DebuggerSidebarPanel doesn't need to help manage temporarily disabling breakpoints while capturing
         https://bugs.webkit.org/show_bug.cgi?id=157854
 

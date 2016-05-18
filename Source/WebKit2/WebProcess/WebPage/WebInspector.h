@@ -69,6 +69,7 @@ public:
 
     void showConsole();
     void showResources();
+    void showTimelines();
 
     void showMainResourceForFrame(uint64_t frameIdentifier);
 

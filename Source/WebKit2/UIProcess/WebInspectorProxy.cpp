@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014, 2016 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -207,6 +207,16 @@ void WebInspectorProxy::showResources()
     eagerlyCreateInspectorPage();
 
     m_inspectedPage->process().send(Messages::WebInspector::ShowResources(), m_inspectedPage->pageID());
+}
+
+void WebInspectorProxy::showTimelines()
+{
+    if (!m_inspectedPage)
+        return;
+
+    eagerlyCreateInspectorPage();
+
+    m_inspectedPage->process().send(Messages::WebInspector::ShowTimelines(), m_inspectedPage->pageID());
 }
 
 void WebInspectorProxy::showMainResourceForFrame(WebFrameProxy* frame)
