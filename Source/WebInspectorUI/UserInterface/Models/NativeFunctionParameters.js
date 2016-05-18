@@ -175,6 +175,7 @@ WebInspector.NativeConstructorFunctionParameters = {
         profile: "name",
         profileEnd: "name",
         table: "data, [columns]",
+        takeHeapSnapshot: "[label]",
         time: "name = \"default\"",
         timeEnd: "name = \"default\"",
         timeStamp: "[label]",

@@ -1,3 +1,13 @@
+2016-05-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve console.takeHeapSnapshot documentation in console
+        https://bugs.webkit.org/show_bug.cgi?id=157853
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+        Mention optional label argument.
+
 2016-05-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: race between frontend and backend both starting timeline recordings causes console assert
