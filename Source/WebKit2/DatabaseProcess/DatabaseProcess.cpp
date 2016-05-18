@@ -260,7 +260,7 @@ void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDat
 
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
-        m_idbServer->closeAndDeleteDatabasesModifiedSince(modifiedSince, [callbackAggregator] { });
+        idbServer().closeAndDeleteDatabasesModifiedSince(modifiedSince, [callbackAggregator] { });
 #endif
 }
 

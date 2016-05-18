@@ -1,3 +1,13 @@
+2016-05-18  Brady Eidson  <beidson@apple.com>
+
+        Fix null-deref crash sporadically seen after http://trac.webkit.org/changeset/201098
+
+        No review.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::deleteWebsiteData): Don't access m_idbServer directly, as calling
+          the idbServer() accessor is how you actually get your IDBServer created for you.
+
 2016-05-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorFrontendAPI.setTimelineProfilingEnabled should not implicitly show Timelines tab
