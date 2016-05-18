@@ -125,7 +125,7 @@
     background-size: 100% 40px;
 }
 
-.data-grid:not(.variable-height-rows) > .data-container > table.data > tbody > tr > td > div {
+.data-grid:not(.variable-height-rows) > .data-container > table.data > tbody > tr > td > .cell-content {
     height: 16px;
 }
 

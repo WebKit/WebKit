@@ -2179,7 +2179,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         if (column["group"])
             cellElement.classList.add("column-group-" + column["group"]);
 
-        var div = cellElement.createChild("div");
+        var div = cellElement.createChild("div", "cell-content");
         var content = this.createCellContent(columnIdentifier, cellElement);
         div.append(content);
 
