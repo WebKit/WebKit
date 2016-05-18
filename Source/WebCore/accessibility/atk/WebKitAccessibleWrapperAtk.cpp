@@ -420,6 +420,10 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (!isReadOnly.isEmpty())
         attributeSet = addToAtkAttributeSet(attributeSet, "readonly", isReadOnly.utf8().data());
 
+    String valueDescription = coreObject->valueDescription();
+    if (!valueDescription.isEmpty())
+        attributeSet = addToAtkAttributeSet(attributeSet, "valuetext", valueDescription.utf8().data());
+
     // According to the W3C Core Accessibility API Mappings 1.1, section 5.4.1 General Rules:
     // "User agents must expose the WAI-ARIA role string if the API supports a mechanism to do so."
     // In the case of ATK, the mechanism to do so is an object attribute pair (xml-roles:"string").
@@ -514,8 +518,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case BusyIndicatorRole:
         return ATK_ROLE_PROGRESS_BAR; // Is this right?
     case ProgressIndicatorRole:
-        // return ATK_ROLE_SPIN_BUTTON; // Some confusion about this role in AccessibilityRenderObject.cpp
-        return ATK_ROLE_PROGRESS_BAR;
+        return coreObject->isMeter() ? ATK_ROLE_LEVEL_BAR : ATK_ROLE_PROGRESS_BAR;
     case WindowRole:
         return ATK_ROLE_WINDOW;
     case PopUpButtonRole:

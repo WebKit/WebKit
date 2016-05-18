@@ -1,3 +1,42 @@
+2016-05-18  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/meter-element.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=115633
+
+        Reviewed by Chris Fleizach.
+
+        The meter's value description should be exposed in the same fashion
+        as (we should have been exposing) aria-valuetext, namely through the
+        "valuetext" AtkObject attribute. This exposure is now in place. Also
+        implement AccessibilityProgressIndicator::valueDescription() so that
+        the ports do not have to special-case meter in the platform wrappers.
+        Map the meter element to the correct role (ATK_ROLE_LEVEL_BAR), and
+        ignore a previously-included accessible object resulting from the
+        use of the title attribute on a meter. Finally, do not expose the
+        meter's title as the accessible name because the HTML spec suggests
+        authors can supply the numeric unit as the value of title.
+
+        No new test file as the failure was identified by meter-element.html.
+        Seven new test cases were added for additional coverage. Also updated
+        the ATK expectations for spinbutton-value.html to reflect that we are now
+        exposing the value of aria-valuetext.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::helpText):
+        (WebCore::AccessibilityNodeObject::accessibilityDescriptionForChildren):
+        (WebCore::AccessibilityNodeObject::visibleText):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::valueDescription):
+        * accessibility/AccessibilityProgressIndicator.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+        (atkRole):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2016-05-18  Antti Koivisto  <antti@apple.com>
 
         Allow RenderStyles marked unique in matched properties cache

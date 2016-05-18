@@ -1,3 +1,20 @@
+2016-05-18  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/meter-element.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=115633
+
+        Reviewed by Chris Fleizach.
+
+        Seven new test cases were added to meter-element.html for additional
+        coverage. Also updated the ATK expectations for spinbutton-value.html
+        to reflect that we are now exposing the value of aria-valuetext.
+
+        * accessibility/meter-element.html: New test cases added.
+        * platform/gtk/TestExpectations: Unskip the previously-failing test.
+        * platform/gtk/accessibility/meter-element-expected.txt: Updated.
+        * platform/gtk/accessibility/spinbutton-value-expected.txt: Updated.
+        * platform/mac/accessibility/meter-element-expected.txt: Updated.
+
 2016-05-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline inspector/debugger/command-line-api-exception.html after r201080

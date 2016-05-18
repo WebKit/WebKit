@@ -1,3 +1,16 @@
+2016-05-18  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/meter-element.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=115633
+
+        Reviewed by Chris Fleizach.
+
+        Implement AccessibilityUIElement::valueDescription() and add mapping
+        from ATK_ROLE_LEVEL_BAR to AXProgressIndicator.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::valueDescription):
+
 2016-05-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Make TestRunner.clearAllDatabases also delete IndexedDB databases (once doing so is supported).

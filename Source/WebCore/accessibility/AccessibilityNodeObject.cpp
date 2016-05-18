@@ -1355,7 +1355,6 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     case RadioButtonRole:
     case SwitchRole:
     case TabRole:
-    case ProgressIndicatorRole:
         useTextUnderElement = true;
         break;
     default:
@@ -1396,9 +1395,17 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
         textOrder.append(AccessibilityText(summary, SummaryText));
 
     // The title attribute should be used as help text unless it is already being used as descriptive text.
+    // However, when the title attribute is the only text alternative provided, it may be exposed as the
+    // descriptive text. This is problematic in the case of meters because the HTML spec suggests authors
+    // can expose units through this attribute. Therefore, if the element is a meter, change its source
+    // type to HelpText.
     const AtomicString& title = getAttribute(titleAttr);
-    if (!title.isEmpty())
-        textOrder.append(AccessibilityText(title, TitleTagText));
+    if (!title.isEmpty()) {
+        if (!isMeter())
+            textOrder.append(AccessibilityText(title, TitleTagText));
+        else
+            textOrder.append(AccessibilityText(title, HelpText));
+    }
 }
 
 void AccessibilityNodeObject::accessibilityText(Vector<AccessibilityText>& textOrder)
@@ -1888,6 +1895,32 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         return title;
     
     return String();
+}
+
+String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
+{
+    Node* node = this->node();
+    if (!node)
+        return String();
+
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return String();
+
+    StringBuilder builder;
+    for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
+        if (!is<Element>(child))
+            continue;
+
+        if (AccessibilityObject* axObject = cache->getOrCreate(child)) {
+            String description = axObject->ariaLabeledByAttribute();
+            if (description.isEmpty())
+                description = accessibleNameForNode(child);
+            appendNameToStringBuilder(builder, description);
+        }
+    }
+
+    return builder.toString();
 }
 
 String AccessibilityNodeObject::accessibilityDescriptionForElements(Vector<Element*> &elements) const

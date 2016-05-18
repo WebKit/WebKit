@@ -3150,12 +3150,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return nil;
     }
     
-    if ([attributeName isEqualToString:NSAccessibilityValueDescriptionAttribute]) {
-        if (m_object->isMeter())
-            return [self baseAccessibilityTitle];
-        
+    if ([attributeName isEqualToString:NSAccessibilityValueDescriptionAttribute])
         return m_object->valueDescription();
-    }
     
     if ([attributeName isEqualToString:NSAccessibilityOrientationAttribute]) {
         AccessibilityOrientation elementOrientation = m_object->orientation();

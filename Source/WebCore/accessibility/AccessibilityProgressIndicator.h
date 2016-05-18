@@ -46,6 +46,7 @@ private:
 
     bool isProgressIndicator() const override { return true; }
 
+    String valueDescription() const override;
     float valueForRange() const override;
     float maxValueForRange() const override;
     float minValueForRange() const override;
