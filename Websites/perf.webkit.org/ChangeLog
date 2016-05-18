@@ -1,3 +1,43 @@
+2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should have a script to sync git commits
+        https://bugs.webkit.org/show_bug.cgi?id=157867
+
+        Reviewed by Chris Dumez.
+
+        Added the support to pull from a Git repo to pull-svn.py and renamed it to sync-commits.py.
+
+        Added two classes SVNRepository and GitRepository which inherits from an abstract class, Repository.
+        The code that fetches commit and format revision number / git hash is specialized in each.
+
+        * Install.md:
+        * tools/pull-svn.py: Removed.
+        * tools/sync-commits.py: Renamed from Websites/perf.webkit.org/tools/pull-svn.py.
+        (main): Renamed --svn-config-json to --repository-config-json. Also made it robust against exceptions
+        inside fetch_commits_and_submit of each Repository class.
+        (load_repository): A factory function for SVNRepository and GitRepository.
+        (Repository): Added.
+        (Repository.__init__): Added.
+        (Repository.fetch_commits_and_submit): Extracted from standalone fetch_commits_and_submit.
+        (Repository.fetch_commit): Added. Implemented by a subclass.
+        (Repository.format_revision): Ditto.
+        (Repository.determine_last_reported_revision): Extracted from alonealone
+        determine_first_revision_to_fetch. The fallback to use "oldest" has been moved to SVNRepository's
+        fetch_commit since it doesn't work in Git.
+        (Repository.fetch_revision_from_dasbhoard): Extracted from fetch_revision_from_dasbhoard.
+        (SVNRepository): Added.
+        (SVNRepository.__init__): Added.
+        (SVNRepository.fetch_commit): Extracted from standalone fetch_commit_and_resolve_author and fetch_commit.
+        (SVNRepository._resolve_author_name): Renamed from resolve_author_name_from_account.
+        (SVNRepository.format_revision): Added.
+        (GitRepository): Added.
+        (GitRepository.__init__):
+        (GitRepository.fetch_commit): Added. Fetches the list of all git hashes if needed, and finds the next hash.
+        (GitRepository._find_next_hash): Added. Finds the first commit that appears after the specified hash.
+        (GitRepository._fetch_all_hashes): Added. Gets the list of all git hashs chronologically (old to new).
+        (GitRepository._run_git_command): Added.
+        (GitRepository.format_revision): Added. Use the first 8 characters of the hash.
+
 2016-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a subtitle under platform name in the summary page

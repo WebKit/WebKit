@@ -102,7 +102,7 @@ Require valid-user
 # Configuring PostgreSQL
 
 Run the following command to setup a Postgres server at `/Volumes/Data/perf.webkit.org/PostgresSQL` (or wherever you'd prefer):
-`python ./setup-database.py /Volumes/Data/perf.webkit.org/PostgresSQL`
+`python ./tools/setup-database.py /Volumes/Data/perf.webkit.org/PostgresSQL`
 
 It automatically retrieves the database name, the username, and the password from `config.json`.
 
@@ -111,7 +111,7 @@ It automatically retrieves the database name, the username, and the password fro
 The setup script automatically starts the database but you may need to run the following command to manually start the database after reboot.
 
 - Starting the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l /Volumes/Data/perf.webkit.org/PostgresSQL/logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" start`
-- Stopping the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l /Volumes/Data/perf.webkit.org/PostgresSQL/logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" start`
+- Stopping the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l /Volumes/Data/perf.webkit.org/PostgresSQL/logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" stop`
 
 ## Initializing the Database
 
