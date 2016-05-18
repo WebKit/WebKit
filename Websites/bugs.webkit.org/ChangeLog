@@ -1,3 +1,13 @@
+2016-05-18  David Kilzer  <ddkilzer@apple.com>
+
+        CVE-2016-2803: [SECURITY] XSS vulnerability in dependency graphs via bug summary
+        <https://bugzilla.mozilla.org/show_bug.cgi?id=1253263>
+
+        Merge Bugzilla upstream master dd61903154fd363fb4e763d60aa155a507c2c3fc.
+
+        * showdependencygraph.cgi:
+        (CreateImagemap): Fix XSS vulnerability.
+
 2016-05-05  David Kilzer  <ddkilzer@apple.com>
 
         bugs.webkit.org: "See Also" field should support Chromium bugs

@@ -67,13 +67,19 @@ sub CreateImagemap {
             $default = qq{<area alt="" shape="default" href="$1">\n};
         }
 
-        if ($line =~ /^rectangle \((.*),(.*)\) \((.*),(.*)\) (http[^ ]*) (\d+)(\\n.*)?$/) {
+        if ($line =~ /^rectangle \((\d+),(\d+)\) \((\d+),(\d+)\) (http[^ ]*) (\d+)(?:\\n.*)?$/) {
             my ($leftx, $rightx, $topy, $bottomy, $url, $bugid) = ($1, $3, $2, $4, $5, $6);
 
             # Pick up bugid from the mapdata label field. Getting the title from
             # bugtitle hash instead of mapdata allows us to get the summary even
             # when showsummary is off, and also gives us status and resolution.
+            # This text is safe; it has already been escaped.
             my $bugtitle = html_quote(clean_text($bugtitles{$bugid}));
+
+            # The URL is supposed to be safe, because it's built manually.
+            # But in case someone manages to inject code, it's safer to escape it.
+            $url = html_quote($url);
+
             $map .= qq{<area alt="bug $bugid" name="bug$bugid" shape="rect" } .
                     qq{title="$bugtitle" href="$url" } .
                     qq{coords="$leftx,$topy,$rightx,$bottomy">\n};
