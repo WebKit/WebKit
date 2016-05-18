@@ -1,3 +1,16 @@
+2016-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Update platform/mac/fast/text/sticky-typesetting-features.html
+        https://bugs.webkit.org/show_bug.cgi?id=157851
+
+        Reviewed by Simon Fraser.
+
+        Kerning and ligatures are enabled by default now.
+
+        * platform/mac/fast/text/sticky-typesetting-features-expected.png:
+        * platform/mac/fast/text/sticky-typesetting-features-expected.txt:
+        * platform/mac/fast/text/sticky-typesetting-features.html:
+
 2016-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r200534) Command-+ no longer zooms pages 
