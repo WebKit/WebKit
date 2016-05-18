@@ -257,6 +257,7 @@ public:
             struct {
                 unsigned linkMatchType : 2;
                 unsigned whitelistType : 2;
+                unsigned treeContextOrdinal : 28;
             };
             // Used to make sure all memory is zero-initialized since we compute the hash over the bytes of this object.
             void* possiblyPaddedMember;
@@ -271,7 +272,7 @@ public:
 
         const Vector<MatchedProperties, 64>& matchedProperties() const { return m_matchedProperties; }
 
-        void addMatchedProperties(const StyleProperties&, StyleRule* = nullptr, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone);
+        void addMatchedProperties(const StyleProperties&, StyleRule* = nullptr, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone, unsigned treeContextOrdinal = 0);
     private:
         Vector<MatchedProperties, 64> m_matchedProperties;
     };
@@ -291,7 +292,9 @@ public:
 
         bool hasProperty(CSSPropertyID) const;
         Property& property(CSSPropertyID);
-        void addMatches(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly = false);
+
+        void addNormalMatches(const MatchResult&, int startIndex, int endIndex, bool inheritedOnly = false);
+        void addImportantMatches(const MatchResult&, int startIndex, int endIndex, bool inheritedOnly = false);
 
         void set(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel);
         void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel);
@@ -303,6 +306,7 @@ public:
         Property customProperty(const String&) const;
         
     private:
+        void addMatch(const MatchResult&, unsigned index, bool isImportant, bool inheritedOnly);
         void addStyleProperties(const StyleProperties&, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType, unsigned linkMatchType, CascadeLevel);
         static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel);
 

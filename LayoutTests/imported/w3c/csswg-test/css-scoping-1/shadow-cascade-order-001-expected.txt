@@ -17,14 +17,14 @@ PASS C3. document with !important vs inline, document rule should win for open m
 PASS C4. ::slotted vs :host with !important, later in tree-of-trees rule should win for open mode. 
 PASS C5. ::slotted with !important vs inline, ::slotted rule should win for open mode. 
 PASS C6. :host with !important vs inline, :host rule should win for open mode. 
-FAIL D1. document vs ::slotted both with !important, ::slotted rule should win for open mode. assert_equals: D1. document vs ::slotted both with !important, ::slotted rule should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D2. document vs :host both with !important, :host rule should win for open mode. assert_equals: D2. document vs :host both with !important, :host rule should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS D1. document vs ::slotted both with !important, ::slotted rule should win for open mode. 
+PASS D2. document vs :host both with !important, :host rule should win for open mode. 
 PASS D3. document vs inline both with !important, inline rule should win for open mode. 
-FAIL D4. ::slotted vs :host both with !important, later in tree-of-trees rule should win for open mode. assert_equals: D4. ::slotted vs :host both with !important, later in tree-of-trees rule should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D5. ::slotted vs inline both with !important, ::slotted rule should win for open mode. assert_equals: D5. ::slotted vs inline both with !important, ::slotted rule should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D6. :host vs inline both with !important, :host rule should win for open mode. assert_equals: D6. :host vs inline both with !important, :host rule should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS D4. ::slotted vs :host both with !important, later in tree-of-trees rule should win for open mode. 
+PASS D5. ::slotted vs inline both with !important, ::slotted rule should win for open mode. 
+PASS D6. :host vs inline both with !important, :host rule should win for open mode. 
 PASS E1. all style applied, inline rule should win for open mode. 
-FAIL E2. all styles with !important applied, rule in the last tree-of-trees should win for open mode. assert_equals: E2. all styles with !important applied, rule in the last tree-of-trees should win expected "rgb(0, 128, 0)" but got "rgb(255, 255, 0)"
+PASS E2. all styles with !important applied, rule in the last tree-of-trees should win for open mode. 
 PASS A1. document vs ::slotted, document rule should win for closed mode. 
 PASS A2. document vs :host, document rule should win for closed mode. 
 PASS A3. document vs inline, inline rule should win for closed mode. 
@@ -43,24 +43,24 @@ PASS C3. document with !important vs inline, document rule should win for closed
 PASS C4. ::slotted vs :host with !important, later in tree-of-trees rule should win for closed mode. 
 PASS C5. ::slotted with !important vs inline, ::slotted rule should win for closed mode. 
 PASS C6. :host with !important vs inline, :host rule should win for closed mode. 
-FAIL D1. document vs ::slotted both with !important, ::slotted rule should win for closed mode. assert_equals: D1. document vs ::slotted both with !important, ::slotted rule should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D2. document vs :host both with !important, :host rule should win for closed mode. assert_equals: D2. document vs :host both with !important, :host rule should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS D1. document vs ::slotted both with !important, ::slotted rule should win for closed mode. 
+PASS D2. document vs :host both with !important, :host rule should win for closed mode. 
 PASS D3. document vs inline both with !important, inline rule should win for closed mode. 
-FAIL D4. ::slotted vs :host both with !important, later in tree-of-trees rule should win for closed mode. assert_equals: D4. ::slotted vs :host both with !important, later in tree-of-trees rule should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D5. ::slotted vs inline both with !important, ::slotted rule should win for closed mode. assert_equals: D5. ::slotted vs inline both with !important, ::slotted rule should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D6. :host vs inline both with !important, :host rule should win for closed mode. assert_equals: D6. :host vs inline both with !important, :host rule should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS D4. ::slotted vs :host both with !important, later in tree-of-trees rule should win for closed mode. 
+PASS D5. ::slotted vs inline both with !important, ::slotted rule should win for closed mode. 
+PASS D6. :host vs inline both with !important, :host rule should win for closed mode. 
 PASS E1. all style applied, inline rule should win for closed mode. 
-FAIL E2. all styles with !important applied, rule in the last tree-of-trees should win for closed mode. assert_equals: E2. all styles with !important applied, rule in the last tree-of-trees should win expected "rgb(0, 128, 0)" but got "rgb(255, 255, 0)"
+PASS E2. all styles with !important applied, rule in the last tree-of-trees should win for closed mode. 
 PASS F1. document vs others, document (the first rule in tree-of-trees order) rule should win for open mode. 
 PASS F2. document with !important vs others, document rule should win for open mode. 
 PASS F3. document vs ::slotted with !important, important rule should win for open mode. 
 PASS F4. document vs ::slotted with !important, important rule should win for open mode. 
 PASS F5. document vs :host with !important, important rule should win for open mode. 
-FAIL F6. all rules with !important, the last rule in tree-of-trees should win for open mode. assert_equals: F6. all rules with !important, the last rule in tree-of-trees should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS F6. all rules with !important, the last rule in tree-of-trees should win for open mode. 
 PASS F1. document vs others, document (the first rule in tree-of-trees order) rule should win for closed mode. 
 PASS F2. document with !important vs others, document rule should win for closed mode. 
 PASS F3. document vs ::slotted with !important, important rule should win for closed mode. 
 PASS F4. document vs ::slotted with !important, important rule should win for closed mode. 
 PASS F5. document vs :host with !important, important rule should win for closed mode. 
-FAIL F6. all rules with !important, the last rule in tree-of-trees should win for closed mode. assert_equals: F6. all rules with !important, the last rule in tree-of-trees should win expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS F6. all rules with !important, the last rule in tree-of-trees should win for closed mode. 
 

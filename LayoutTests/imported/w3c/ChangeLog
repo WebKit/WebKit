@@ -1,3 +1,13 @@
+2016-05-18  Antti Koivisto  <antti@apple.com>
+
+        Cascading order for !important properties in ::slotted and ::host rules is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=157789
+        <rdar://problem/26318781>
+
+        Reviewed by Andreas Kling.
+
+        * csswg-test/css-scoping-1/shadow-cascade-order-001-expected.txt: This now passes.
+
 2016-05-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: WebWorker support.

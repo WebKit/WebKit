@@ -1,3 +1,61 @@
+2016-05-17  Antti Koivisto  <antti@apple.com>
+
+        Cascading order for !important properties in ::slotted and ::host rules is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=157789
+        <rdar://problem/26318781>
+
+        Reviewed by Andreas Kling.
+
+        https://drafts.csswg.org/css-scoping-1/#shadow-cascading
+
+        "When comparing two declarations that have different tree contexts, then for normal rules the declaration earlier
+        in the shadow-including tree order wins, and for important rules the declaration coming later in the shadow-including
+        tree order wins."
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::MatchRequest::MatchRequest):
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+        (WebCore::ElementRuleCollector::matchedRuleList):
+        (WebCore::ElementRuleCollector::addMatchedRule):
+        (WebCore::ElementRuleCollector::clearMatchedRules):
+        (WebCore::ElementRuleCollector::addElementStyleProperties):
+        (WebCore::ElementRuleCollector::sortAndTransferMatchedRules):
+
+            Pass the tree context ordinal onwards so we can implement the order reversal semantics for !important properties.
+
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchHostPseudoClassRules):
+        (WebCore::ElementRuleCollector::matchSlottedPseudoElementRules):
+
+            Don't flush the matched rules immediately to get the right ordering. Instead compute tree context ordinal
+            that is then used as a sorting criteria.
+
+        (WebCore::ElementRuleCollector::collectSlottedPseudoElementRulesForSlot):
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        (WebCore::compareRules):
+
+            Sort regular rules so that earlier shadow trees win.
+
+        (WebCore::ElementRuleCollector::sortMatchedRules):
+        * css/ElementRuleCollector.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        (WebCore::StyleResolver::MatchResult::addMatchedProperties):
+        (WebCore::StyleResolver::CascadedProperties::addMatch): Added.
+
+            Add a helper.
+
+        (WebCore::StyleResolver::CascadedProperties::addNormalMatches):
+
+            Split normal and important to different functions for clarity.
+
+        (WebCore::StyleResolver::CascadedProperties::addImportantMatches):
+
+            For !important properties a later shadow tree wins. Do multiple passes to apply in correct order if needed.
+
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::MatchResult::matchedProperties):
+
 2016-05-18  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Use WebCore Accessibility's AccessibilityText for AtkObject name and description

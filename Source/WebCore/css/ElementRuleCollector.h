@@ -40,7 +40,8 @@ class SelectorFilter;
 
 struct MatchedRule {
     const RuleData* ruleData;
-    unsigned specificity;
+    unsigned specificity;   
+    unsigned treeContextOrdinal;
 };
 
 class ElementRuleCollector {
@@ -76,9 +77,9 @@ private:
 
     void matchUARules(RuleSet*);
 #if ENABLE(SHADOW_DOM)
-    void matchHostPseudoClassRules(bool includeEmptyRules);
-    void matchSlottedPseudoElementRules(bool includeEmptyRules);
-    RuleSet::RuleDataVector collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules);
+    void matchHostPseudoClassRules(MatchRequest&, StyleResolver::RuleRange&);
+    void matchSlottedPseudoElementRules(MatchRequest&, StyleResolver::RuleRange&);
+    std::unique_ptr<RuleSet::RuleDataVector> collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules);
 #endif
 
     void collectMatchingRules(const MatchRequest&, StyleResolver::RuleRange&);
@@ -89,7 +90,7 @@ private:
     void sortMatchedRules();
     void sortAndTransferMatchedRules();
 
-    void addMatchedRule(const RuleData&, unsigned specificity, StyleResolver::RuleRange&);
+    void addMatchedRule(const RuleData&, unsigned specificity, unsigned treeContextOrdinal, StyleResolver::RuleRange&);
 
     const Element& m_element;
     const RuleSet& m_authorStyle;
@@ -103,6 +104,7 @@ private:
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
 #if ENABLE(SHADOW_DOM)
     bool m_isMatchingSlottedPseudoElements { false };
+    Vector<std::unique_ptr<RuleSet::RuleDataVector>> m_keepAliveSlottedPseudoElementRules;
 #endif
 
     Vector<MatchedRule, 64> m_matchedRules;
