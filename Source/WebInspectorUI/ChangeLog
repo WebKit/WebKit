@@ -1,3 +1,25 @@
+2016-05-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: race between frontend and backend both starting timeline recordings causes console assert
+        https://bugs.webkit.org/show_bug.cgi?id=157850
+        <rdar://problem/26349229>
+
+        Reviewed by Joseph Pecoraro.
+
+        If TimelineManager has created a fresh recording and the Timeline.autoCaptureStarted
+        event comes before Timeline.recordingStarted, then the manager will try to start the
+        same recording twice. In this scenario, the manager should just wait until the
+        Timeline.recordingStarted event comes, since it causes TimelineMangare to set up
+        the isCapturing flag and other state.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.prototype.startCapturing):
+        (WebInspector.TimelineManager.prototype.capturingStarted):
+        (WebInspector.TimelineManager.prototype.autoCaptureStarted):
+        Add a new flag, this._waitingForCapturingStartedEvent. If true, don't start the
+        recording in response to this event.
+
 2016-05-18  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION(r197488): Incorrect start time in Rendering Frames timeline grid
