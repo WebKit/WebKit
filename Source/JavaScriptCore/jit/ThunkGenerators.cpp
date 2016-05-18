@@ -505,42 +505,60 @@ MacroAssemblerCodeRef arityFixupGenerator(VM* vm)
     return FINALIZE_CODE(patchBuffer, ("fixup arity"));
 }
 
+static void computeTopOfStack(JSInterfaceJIT& jit, GPRReg dstReg, GPRReg scratchReg)
+{
+    // The following is an inlined implementation of JIT::stackPointerOffsetFor() applied to
+    // computing the top of stack for the call frame we're returning to.
+
+    // 1. Compute localRegisterCount.
+    jit.emitGetFromCallFrameHeaderPtr(JSStack::CodeBlock, scratchReg);
+    jit.load32(AssemblyHelpers::Address(GPRInfo::regT3, OBJECT_OFFSETOF(CodeBlock, m_numCalleeRegisters)), scratchReg);
+    if (maxFrameExtentForSlowPathCallInRegisters)
+        jit.add32(AssemblyHelpers::TrustedImm32(maxFrameExtentForSlowPathCallInRegisters), scratchReg);
+    
+    // 2. Compute roundLocalRegisterCountForFramePointerOffset(localRegisterCount)
+    unsigned alignment = stackAlignmentRegisters();
+    ASSERT(alignment && !(alignment & (alignment - 1)));
+    unsigned remainderMask = alignment - 1;
+    jit.add32(AssemblyHelpers::TrustedImm32(JSStack::CallerFrameAndPCSize + remainderMask), scratchReg);
+    jit.and32(AssemblyHelpers::TrustedImm32(~remainderMask), scratchReg);
+    jit.add32(AssemblyHelpers::TrustedImm32(-JSStack::CallerFrameAndPCSize), scratchReg);
+    
+    // 3. Compute sizeof(Register) and offset it from the callFrameRegister.
+    jit.lshift32(AssemblyHelpers::TrustedImm32(3), scratchReg);
+    jit.xor32(dstReg, dstReg);
+    jit.sub32(scratchReg, dstReg);
+#if USE(JSVALUE64)
+    jit.signExtend32ToPtr(dstReg, dstReg);
+#endif
+    jit.addPtr(GPRInfo::callFrameRegister, dstReg);
+}
+
+    
 MacroAssemblerCodeRef baselineGetterReturnThunkGenerator(VM* vm)
 {
     JSInterfaceJIT jit(vm);
+
+    computeTopOfStack(jit, GPRInfo::regT2, GPRInfo::regT3);
     
 #if USE(JSVALUE64)
     jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0);
 #else
     jit.setupResults(GPRInfo::regT0, GPRInfo::regT1);
 #endif
-    
-    unsigned numberOfParameters = 0;
-    numberOfParameters++; // The 'this' argument.
-    numberOfParameters++; // The true return PC.
-    
-    unsigned numberOfRegsForCall =
-        JSStack::CallFrameHeaderSize + numberOfParameters;
-    
-    unsigned numberOfBytesForCall =
-        numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
-    
-    unsigned alignedNumberOfBytesForCall =
-        WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
-            
+
     // The real return address is stored above the arguments. We passed one argument, which is
     // 'this'. So argument at index 1 is the return address.
     jit.loadPtr(
         AssemblyHelpers::Address(
             AssemblyHelpers::stackPointerRegister,
             (virtualRegisterForArgument(1).offset() - JSStack::CallerFrameAndPCSize) * sizeof(Register)),
-        GPRInfo::regT2);
-    
-    jit.addPtr(
-        AssemblyHelpers::TrustedImm32(alignedNumberOfBytesForCall),
-        AssemblyHelpers::stackPointerRegister);
-    
-    jit.jump(GPRInfo::regT2);
+        GPRInfo::regT3);
+
+    jit.move(GPRInfo::regT2, AssemblyHelpers::stackPointerRegister);
+    jit.checkStackPointerAlignment();
+
+    jit.jump(GPRInfo::regT3);
 
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("baseline getter return thunk"));
@@ -550,33 +568,20 @@ MacroAssemblerCodeRef baselineSetterReturnThunkGenerator(VM* vm)
 {
     JSInterfaceJIT jit(vm);
     
-    unsigned numberOfParameters = 0;
-    numberOfParameters++; // The 'this' argument.
-    numberOfParameters++; // The value to set.
-    numberOfParameters++; // The true return PC.
+    computeTopOfStack(jit, GPRInfo::regT2, GPRInfo::regT3);
     
-    unsigned numberOfRegsForCall =
-        JSStack::CallFrameHeaderSize + numberOfParameters;
-    
-    unsigned numberOfBytesForCall =
-        numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
-    
-    unsigned alignedNumberOfBytesForCall =
-        WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
-            
     // The real return address is stored above the arguments. We passed two arguments, so
     // the argument at index 2 is the return address.
     jit.loadPtr(
         AssemblyHelpers::Address(
             AssemblyHelpers::stackPointerRegister,
             (virtualRegisterForArgument(2).offset() - JSStack::CallerFrameAndPCSize) * sizeof(Register)),
-        GPRInfo::regT2);
-    
-    jit.addPtr(
-        AssemblyHelpers::TrustedImm32(alignedNumberOfBytesForCall),
-        AssemblyHelpers::stackPointerRegister);
-    
-    jit.jump(GPRInfo::regT2);
+        GPRInfo::regT3);
+
+    jit.move(GPRInfo::regT2, AssemblyHelpers::stackPointerRegister);
+    jit.checkStackPointerAlignment();
+
+    jit.jump(GPRInfo::regT3);
 
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("baseline setter return thunk"));

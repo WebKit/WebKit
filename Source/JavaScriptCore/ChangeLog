@@ -1,3 +1,23 @@
+2016-05-18  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/26350121.
+
+    2016-04-18  Mark Lam  <mark.lam@apple.com>
+
+            Baseline getter/setter return thunks should compute their caller's stack top the same way JIT::stackPointerOffsetFor() does.
+            rdar://problem/25753147
+
+            Reviewed by Geoffrey Garen.
+
+            * jit/ThunkGenerators.cpp:
+            (JSC::arityFixupGenerator):
+            (JSC::computeTopOfStack):
+            (JSC::baselineGetterReturnThunkGenerator):
+            (JSC::baselineSetterReturnThunkGenerator):
+            - I swapped regT2 with regT3 because X86 does not like using regT3 ($rcx) for
+              certain operations.  The code can be more straightforward and efficient by
+              swapping them.
+
 2016-05-13  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r196490. rdar://problem/26270871
