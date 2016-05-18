@@ -1,3 +1,12 @@
+2016-05-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the allinone-build after r198669
+        https://bugs.webkit.org/show_bug.cgi?id=157798
+
+        Reviewed by Michael Catanzaro.
+
+        * CMakeLists.txt: Use DerivedSources.cpp only on Windows, it's broken everywhere else.
+
 2016-05-17  Antti Koivisto  <antti@apple.com>
 
         Cascading order for !important properties in ::slotted and ::host rules is incorrect

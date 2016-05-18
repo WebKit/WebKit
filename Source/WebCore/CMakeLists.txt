@@ -3808,7 +3808,7 @@ list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/XMLNSNames.cp
 GENERATE_DOM_NAMES(XML ${WEBCORE_DIR}/xml/xmlattrs.in)
 list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/XMLNames.cpp)
 
-if (ENABLE_ALLINONE_BUILD)
+if (ENABLE_ALLINONE_BUILD AND WIN32)
     message(STATUS "All-in-One DerivedSources build is enabled.")
     PROCESS_ALLINONE_FILE("${WebCore_DERIVED_SOURCES}" DerivedSources.cpp newSources TRUE)
     set(WebCore_DERIVED_SOURCES DerivedSources.cpp ${newSources})
