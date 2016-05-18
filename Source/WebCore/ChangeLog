@@ -1,3 +1,20 @@
+2016-05-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] webaudio playback improvements
+        https://bugs.webkit.org/show_bug.cgi?id=155228
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::autoAudioSinkChildAddedCallback): Fix sink buffer-time
+        to 100ms to reduce playback latency.
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        Connect to child-added signal of autoaudiosink to be notified when
+        a real sink is added into the bin.
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcConstructed): Fine-tune blocksize of appsrc
+        according to the buffer size already configured on the src element.
+
 2016-05-18  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GStreamer] Use FakeSink to get a decoded texture from a pipeline

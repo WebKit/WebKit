@@ -230,6 +230,7 @@ static void webKitWebAudioSrcConstructed(GObject* object)
 
         // Configure the appsrc for minimal latency.
         g_object_set(appsrc, "max-bytes", 2 * priv->bufferSize, "block", TRUE,
+            "blocksize", priv->bufferSize,
             "format", GST_FORMAT_TIME, "caps", caps.get(), nullptr);
 
         priv->sources = g_slist_prepend(priv->sources, gst_object_ref(appsrc));
