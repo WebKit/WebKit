@@ -78,24 +78,27 @@ void ModuleAnalyzer::exportVariable(const RefPtr<UniquedStringImpl>& localName, 
 
     // Exported module local variable.
     if (!variable.isImported()) {
-        moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createLocal(exportName, Identifier::fromUid(m_vm, localName.get()), variable));
+        moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createLocal(exportName, Identifier::fromUid(m_vm, localName.get())));
         return;
     }
 
-    Optional<JSModuleRecord::ImportEntry> optionalImportEntry = moduleRecord()->tryGetImportEntry(localName.get());
-    ASSERT(optionalImportEntry);
-    const JSModuleRecord::ImportEntry& importEntry = *optionalImportEntry;
     if (variable.isImportedNamespace()) {
         // Exported namespace binding.
         // import * as namespace from "mod"
         // export { namespace }
-        moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createNamespace(exportName, importEntry.moduleRequest));
+        //
+        // Sec 15.2.1.16.1 step 11-a-ii-2-b https://tc39.github.io/ecma262/#sec-parsemodule
+        // Namespace export is handled as local export since a namespace object binding itself is implemented as a local binding.
+        moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createLocal(exportName, Identifier::fromUid(m_vm, localName.get())));
         return;
     }
 
     // Indirectly exported binding.
     // import a from "mod"
     // export { a }
+    Optional<JSModuleRecord::ImportEntry> optionalImportEntry = moduleRecord()->tryGetImportEntry(localName.get());
+    ASSERT(optionalImportEntry);
+    const JSModuleRecord::ImportEntry& importEntry = *optionalImportEntry;
     moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createIndirect(exportName, importEntry.importName, importEntry.moduleRequest));
 }
 

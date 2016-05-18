@@ -48,15 +48,14 @@ class JSModuleRecord : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
+    // https://tc39.github.io/ecma262/#sec-source-text-module-records
     struct ExportEntry {
         enum class Type {
             Local,
-            Namespace,
             Indirect
         };
 
-        static ExportEntry createLocal(const Identifier& exportName, const Identifier& localName, const VariableEnvironmentEntry&);
-        static ExportEntry createNamespace(const Identifier& exportName, const Identifier& moduleName);
+        static ExportEntry createLocal(const Identifier& exportName, const Identifier& localName);
         static ExportEntry createIndirect(const Identifier& exportName, const Identifier& importName, const Identifier& moduleName);
 
         Type type;
@@ -64,7 +63,6 @@ public:
         Identifier moduleName;
         Identifier importName;
         Identifier localName;
-        VariableEnvironmentEntry variable;
     };
 
     struct ImportEntry {

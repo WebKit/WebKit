@@ -1,3 +1,36 @@
+2016-05-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Namespace object re-export should be handled as local export
+        https://bugs.webkit.org/show_bug.cgi?id=157806
+
+        Reviewed by Mark Lam.
+
+        We align the implementation of ExportEntry to the spec; remove Type::Namespace.
+        This Type::Namespace is used for re-exported namespace object binding. For example,
+
+            import * as namespace from "namespace.js"
+            export { namespace }
+
+        In the above case, we used ExportEntry(Type::Namespace). In this patch, we drop this
+        and use normal local export (Type::Local) instead because namespace object actually has
+        the local binding in the above module environment. And this handling strictly meets the
+        spec (Sec 15.2.1.16.1 step 11-a-ii-2-b).
+
+        And we also clean up the ExportEntry implementation; dropping unnecessary information.
+        This change fixes the test262/test/language/module-code/instn-star-equality.js crash.
+
+        * parser/ModuleAnalyzer.cpp:
+        (JSC::ModuleAnalyzer::exportVariable):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::getExportedNames):
+        (JSC::JSModuleRecord::dump): Deleted.
+        * runtime/JSModuleRecord.h:
+        * tests/modules/namespace-re-export.js: Added.
+        * tests/modules/namespace-re-export/namespace-re-export-fixture.js: Added.
+        * tests/modules/namespace-re-export/namespace-re-export.js: Added.
+        * tests/modules/resources/assert.js:
+        (export.shouldNotBe):
+
 2016-05-17  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should detect the right default locale even when it's not embedded in WebCore

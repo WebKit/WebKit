@@ -3,6 +3,11 @@ export function shouldBe(actual, expected) {
         throw new Error(`bad value: ${String(actual)}`);
 }
 
+export function shouldNotBe(actual, expected) {
+    if (actual === expected)
+        throw new Error(`bad value: ${String(actual)}`);
+}
+
 export function shouldThrow(func, errorMessage) {
     var errorThrown = false;
     var error = null;
