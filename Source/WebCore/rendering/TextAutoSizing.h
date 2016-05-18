@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class Document;
-class Node;
+class Text;
 
 class TextAutoSizingKey {
 public:
@@ -78,13 +78,13 @@ public:
         return adoptRef(*new TextAutoSizingValue);
     }
 
-    void addNode(Node*, float size);
+    void addNode(Text&, float size);
     bool adjustNodeSizes();
     int numNodes() const;
     void reset();
 private:
     TextAutoSizingValue() { }
-    HashSet<RefPtr<Node> > m_autoSizedNodes;
+    HashSet<RefPtr<Text>> m_autoSizedNodes;
 };
 
 } // namespace WebCore

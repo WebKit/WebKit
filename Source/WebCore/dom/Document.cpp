@@ -5279,11 +5279,11 @@ HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 
-void Document::addAutoSizingNode(Node* node, float candidateSize)
+void Document::addAutoSizingNode(Text& node, float candidateSize)
 {
-    LOG(TextAutosizing, " addAutoSizingNode %p candidateSize=%f", node, candidateSize);
+    LOG(TextAutosizing, " addAutoSizingNode %p candidateSize=%f", &node, candidateSize);
 
-    TextAutoSizingKey key(&node->renderer()->style());
+    TextAutoSizingKey key(&node.renderer()->style());
     auto addResult = m_textAutoSizedNodes.ensure(WTFMove(key), [] {
         return TextAutoSizingValue::create();
     });

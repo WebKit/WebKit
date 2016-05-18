@@ -1,3 +1,24 @@
+2016-05-18  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / Modernize TextAutoSizingValue::adjustNodeSizes()
+        https://bugs.webkit.org/show_bug.cgi?id=157861
+
+        Reviewed by Alex Christensen.
+
+        Clean up / Modernize TextAutoSizingValue::adjustNodeSizes(), and
+        use tighter typing for autosizing nodes.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addAutoSizingNode):
+        * dom/Document.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustComputedFontSizes):
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingValue::addNode):
+        (WebCore::TextAutoSizingValue::adjustNodeSizes):
+        (WebCore::TextAutoSizingValue::reset):
+        * rendering/TextAutoSizing.h:
+
 2016-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Remove logging inadvertently committed in r201090.

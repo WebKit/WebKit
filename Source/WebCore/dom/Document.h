@@ -1692,7 +1692,7 @@ private:
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 public:
-    void addAutoSizingNode(Node*, float size);
+    void addAutoSizingNode(Text&, float size);
     void validateAutoSizingNodes();
     void resetAutoSizingNodes();
 
