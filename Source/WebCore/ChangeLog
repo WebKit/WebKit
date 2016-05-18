@@ -1,3 +1,17 @@
+2016-05-18  Jer Noble  <jer.noble@apple.com>
+
+        Playback session sends audio and text track lists when media does not have audio or text tracks.
+        https://bugs.webkit.org/show_bug.cgi?id=157865
+        <rdar://problem/25992750>
+
+        Reviewed by Beth Dakin.
+
+        Only send across the CaptionUserPreferences-generated list of audio and text tracks if those
+        text tracks exist in the first place. This matches the behavior of the built-in controls.
+
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebPlaybackSessionModelMediaElement::updateLegibleOptions):
+
 2016-05-18  Chris Dumez  <cdumez@apple.com>
 
         Clean up / Modernize TextAutoSizingValue::adjustNodeSizes()
