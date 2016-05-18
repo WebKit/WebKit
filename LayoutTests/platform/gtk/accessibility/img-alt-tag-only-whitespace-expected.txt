@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 27: Image description: AXDescription:    Image 
+CONSOLE MESSAGE: line 29: Image title: AXTitle:    Image 
 
 
 

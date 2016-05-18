@@ -1,0 +1,29 @@
+Name: 
+High Score:
+Name: 
+High Score:
+Name: 
+High Score:
+Name: 
+High Score:
+Name: 
+High Score: Name: 
+Name: 
+Other:
+This tests that fieldset and legend elements are exposed correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXTitle: High Score:
+AXTitle: High Score:
+AXTitle: New High Score:
+AXTitle: New High Score:
+AXTitle: 
+AXTitle: High Score:
+AXTitle: 
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

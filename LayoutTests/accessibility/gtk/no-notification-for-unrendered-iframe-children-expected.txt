@@ -4,8 +4,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 
-AXChildrenAdded on AXDescription: inner body
-AXChildrenAdded on AXDescription: inner body
+AXChildrenAdded on AXTitle: inner body
+AXChildrenAdded on AXTitle: inner body
 PASS successfullyParsed is true
 
 TEST COMPLETE

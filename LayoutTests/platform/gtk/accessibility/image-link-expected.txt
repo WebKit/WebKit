@@ -30,7 +30,7 @@ AXChildren: 0
 AXPosition: { 8.000000, 98.000000 }
 AXSize: { 280.000000, 210.000000 }
 AXTitle: Delicious cake
-AXDescription: Delicious cake
+AXDescription: 
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0

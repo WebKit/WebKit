@@ -21,7 +21,10 @@
 
             var body = document.getElementById("body").focus();
             var imgUIElement = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
-            debug("imgUIElement.description is " + imgUIElement.description);
+            if (accessibilityController.platformName == "atk")
+                debug("imgUIElement.title is " + imgUIElement.title);
+            else
+                debug("imgUIElement.description is " + imgUIElement.description);
         }
     </script>
     

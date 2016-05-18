@@ -32,11 +32,16 @@
             var labeledItem = document.getElementById("rep");
             labeledItem.focus();
             var result = document.getElementById("result");
-            if ( accessibilityController.focusedElement.description == "AXDescription: Reply Item Five" ) {
+            var resultValue;
+            if (accessibilityController.platformName == "atk")
+                resultValue = accessibilityController.focusedElement.title;
+            else
+                resultValue = accessibilityController.focusedElement.description;
+            if (resultValue.endsWith("Reply Item Five")) {
                result.innerText = "Passed";
             }
             else { 
-               result.innerText = "Failed. Result ==" + accessibilityController.focusedElement.description + "==";
+               result.innerText = "Failed. Result ==" + resultValue + "==";
             }
         }
     </script>

@@ -1,10 +1,9 @@
-button
-This tests that aria-help attribute works as expected.
+This tests that aria-labelledby overrides aria-labeledby correctly.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS button.description is 'AXDescription: click here'
+PASS linkTitle is 'AXTitle: Y Z'
 PASS successfullyParsed is true
 
 TEST COMPLETE

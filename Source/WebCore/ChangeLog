@@ -1,3 +1,43 @@
+2016-05-18  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Use WebCore Accessibility's AccessibilityText for AtkObject name and description
+        https://bugs.webkit.org/show_bug.cgi?id=157822
+
+        Reviewed by Chris Fleizach.
+
+        Remove the old code which was overriding WebCore Accessibility and always use
+        AccessibilityText.
+
+        If the AccessibilityText's textSource is HelpText or SummaryText, it should be exposed
+        as the AtkObject description. If the textSource is TitleTagText and there is no other
+        text alternative, the value should also be exposed in this fashion. Note that AtkObject's
+        description property is equivalent to AXAPI's AXHelp property.
+
+        If the AccessibilityText's textSource is anything other than the above, the first
+        non-empty value should be exposed as the AtkObject name. Depending on the source of
+        the name content, AtkObject's name property can be the equivalent of AXAPI's AXTitle.
+        However, most of the time, AtkObject's name property is equivalent to AXAPI's
+        AXDescription property.
+
+        By making these changes, what WebKit exposes for ATK is now extremely similar to what
+        WebKit exposes on the Mac (modulo the property names) and also with what is defined in
+        the HTML Accessibility and Accessible Name and Description Computation API mappings specs.
+
+        Now that the exposure is correct, the Layout Tests needed to be adjusted accordingly because
+        asking for the "AXDescription" gives you the AXDescription on the Mac and the AtkObject
+        description in GNU/Linux. But as indicated above, what ATK calls a "description" is what
+        the Mac calls "help."
+
+        Ultimately our Layout Tests and/or our platform TestRunner API should be modified to deal
+        with these differences more gracefully. (Bug https://bugs.webkit.org/show_bug.cgi?id=157187
+        has been opened for that task.) In the meantime, the existing tests have been given platform
+        checks to ask for the right property on each platform. This was done in such a way as to not
+        require other (non-ATK) platforms change their current expectations files.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetName):
+        (webkitAccessibleGetDescription):
+
 2016-05-17  Zalan Bujtas  <zalan@apple.com>
 
         Add LayerListMutationDetector to hittesting.

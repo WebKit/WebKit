@@ -23,12 +23,12 @@
         shouldBe("image.description", "'AXDescription: Image title attr'");
 
         var link = accessibilityController.accessibleElementById("link");
-        shouldBe("link.title", "'AXTitle: Functional label.'");
+        shouldBe("link.title", "'AXTitle: Functional label'");
         shouldBe("link.description", "'AXDescription: Link title attr'");
 
         var entry = accessibilityController.accessibleElementById("entry");
-        shouldBe("entry.title", "'AXTitle: '");
-        shouldBe("entry.description", "'AXDescription: Entry title attr'");
+        shouldBe("entry.title", "'AXTitle: Entry title attr'");
+        shouldBe("entry.description", "'AXDescription: '");
 
         var button = accessibilityController.accessibleElementById("button");
         shouldBe("button.title", "'AXTitle: Submit'");

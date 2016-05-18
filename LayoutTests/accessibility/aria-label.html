@@ -18,11 +18,18 @@
           var body = document.getElementById("body");
           body.focus();
           var obj = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
-          var succeeded = obj.description == "AXDescription: aria label";
+          var succeeded;
+          if (accessibilityController.platformName == "atk")
+              succeeded = obj.title == "AXTitle: aria label";
+          else
+              succeeded = obj.description == "AXDescription: aria label";
           shouldBe("succeeded", "true");
 
           obj = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
-          succeeded = obj.description == "AXDescription: aria link";
+          if (accessibilityController.platformName == "atk")
+              succeeded = obj.title == "AXTitle: aria link";
+          else
+              succeeded = obj.description == "AXDescription: aria link";
           shouldBe("succeeded", "true");
     }
 

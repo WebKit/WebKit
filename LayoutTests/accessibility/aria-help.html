@@ -20,7 +20,10 @@ button
 
         document.getElementById("button").focus();
         var button = accessibilityController.focusedElement;
-        shouldBe("button.helpText", "'AXHelp: click here'");
+        if (accessibilityController.platformName == "atk")
+            shouldBe("button.description", "'AXDescription: click here'");
+        else
+            shouldBe("button.helpText", "'AXHelp: click here'");
     }
 
 </script>

@@ -21,7 +21,7 @@ function runTest() {
 
         accessibilityController.addNotificationListener(function(element, notification) {
             if (notification == "AXChildrenAdded" && element.role == "AXRole: AXGroup")
-                debug(notification + " on " + element.description);
+                debug(notification + " on " + element.title);
         });
     }
 

@@ -24,10 +24,15 @@
         shouldBe("text.stringValue", "'AXValue: TEST1'");
 
         var group = accessibilityController.accessibleElementById("group");
-        shouldBe("group.description", "'AXDescription: TEST2'");
-
         var button = accessibilityController.accessibleElementById("button");
-        shouldBe("button.description", "'AXDescription: TEST3'");
+
+        if (accessibilityController.platformName == "atk") {
+            shouldBe("group.title", "'AXTitle: TEST2'");
+            shouldBe("button.title", "'AXTitle: TEST3'");
+        } else {
+            shouldBe("group.description", "'AXDescription: TEST2'");
+            shouldBe("button.description", "'AXDescription: TEST3'");
+        }
     }
 
 </script>

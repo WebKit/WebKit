@@ -78,7 +78,10 @@ Name: <input type="text">
         // fieldset tests.
         fieldsetTestCount = document.getElementsByClassName("fieldsetTest").length;
         for (var i = 0; i < fieldsetTestCount; ++i) {
-            fieldsetDescription = accessibilityController.accessibleElementById("f" + i).description;
+            if (accessibilityController.platformName == "atk")
+                fieldsetDescription = accessibilityController.accessibleElementById("f" + i).title;
+            else
+                fieldsetDescription = accessibilityController.accessibleElementById("f" + i).description;
             debug(fieldsetDescription);
         }
         

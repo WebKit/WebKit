@@ -40,7 +40,10 @@
         testCount = document.getElementsByClassName("test").length;
         for (var i = 0; i < testCount; ++i) {
             var test = accessibilityController.accessibleElementById("t" + i);
-            shouldBe("test.description", "'AXDescription: X Y Z'");
+            if (accessibilityController.platformName == "atk")
+                shouldBe("test.title", "'AXTitle: X Y Z'");
+            else
+                shouldBe("test.description", "'AXDescription: X Y Z'");
         }
     }
 </script>

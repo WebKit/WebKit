@@ -1,3 +1,84 @@
+2016-05-18  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Use WebCore Accessibility's AccessibilityText for AtkObject name and description
+        https://bugs.webkit.org/show_bug.cgi?id=157822
+
+        Reviewed by Chris Fleizach.
+
+        Now that the exposure is correct, the Layout Tests needed to be adjusted accordingly because asking
+        for the "AXDescription" gives you the AXDescription on the Mac and the AtkObject description in
+        GNU/Linux. But what the Mac calls a "description" is what ATK calls a "name." What ATK calls a
+        "description" is what the Mac calls "help."
+
+        Ultimately our Layout Tests and/or our platform TestRunner API should be modified to deal with
+        with these differences more gracefully. (Bug https://bugs.webkit.org/show_bug.cgi?id=157187 has
+        been opened for that task.) In the meantime, the existing tests have been given platform checks
+        to ask for the right property on each platform. This was done in such a way as to not require
+        other (non-ATK) platforms change their current expectations files.
+
+        In addition to the above, three previously-failing tests were corrected and are now passing.
+
+        * accessibility/alt-tag-on-image-with-nonimage-role.html:
+        * accessibility/aria-help.html:
+        * accessibility/aria-label.html:
+        * accessibility/aria-labeled-with-hidden-node.html:
+        * accessibility/aria-labelledby-on-input.html:
+        * accessibility/aria-labelledby-overrides-aria-labeledby.html:
+        * accessibility/aria-labelledby-overrides-label.html:
+        * accessibility/aria-labelledby-stay-within.html:
+        * accessibility/aria-labelledby-with-descendants.html:
+        * accessibility/aria-namefrom-author.html:
+        * accessibility/aria-option-role.html:
+        * accessibility/canvas-description-and-role.html:
+        * accessibility/empty-image-with-title.html:
+        * accessibility/fieldset-element.html:
+        * accessibility/focusable-div.html:
+        * accessibility/gtk/no-notification-for-unrendered-iframe-children-expected.txt:
+        * accessibility/gtk/no-notification-for-unrendered-iframe-children.html:
+        * accessibility/gtk/title-and-alt-expected.txt:
+        * accessibility/gtk/title-and-alt.html:
+        * accessibility/help-text.html:
+        * accessibility/img-alt-tag-only-whitespace-expected.txt:
+        * accessibility/img-alt-tag-only-whitespace.html:
+        * accessibility/img-aria-button-alt-tag.html:
+        * accessibility/img-fallsback-to-title.html:
+        * accessibility/input-image-alt.html:
+        * accessibility/loading-iframe-sends-notification.html:
+        * accessibility/media-element.html:
+        * accessibility/radio-button-title-label.html:
+        * accessibility/self-referencing-aria-labelledby.html:
+        * accessibility/svg-bounds.html:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/alt-tag-on-image-with-nonimage-role-expected.txt: Added.
+        * platform/gtk/accessibility/aria-help-expected.txt:
+        * platform/gtk/accessibility/aria-hidden-negates-no-visibility-expected.txt: Added.
+        * platform/gtk/accessibility/aria-labeled-with-hidden-node-expected.txt: Added.
+        * platform/gtk/accessibility/aria-labelledby-on-input-expected.txt: Added.
+        * platform/gtk/accessibility/aria-labelledby-overrides-aria-label-expected.txt: Added.
+        * platform/gtk/accessibility/aria-labelledby-overrides-aria-labeledby-expected.txt: Added.
+        * platform/gtk/accessibility/aria-labelledby-overrides-label-expected.txt: Added.
+        * platform/gtk/accessibility/aria-labelledby-with-descendants-expected.txt: Added.
+        * platform/gtk/accessibility/aria-namefrom-author-expected.txt: Added.
+        * platform/gtk/accessibility/aria-option-role-expected.txt: Added.
+        * platform/gtk/accessibility/aria-switch-text-expected.txt:
+        * platform/gtk/accessibility/canvas-description-and-role-expected.txt: Added.
+        * platform/gtk/accessibility/empty-image-with-title-expected.txt: Added.
+        * platform/gtk/accessibility/fieldset-element-expected.txt: Added.
+        * platform/gtk/accessibility/focusable-div-expected.txt: Added.
+        * platform/gtk/accessibility/help-text-expected.txt: Added.
+        * platform/gtk/accessibility/image-link-expected.txt:
+        * platform/gtk/accessibility/image-map1-expected.txt:
+        * platform/gtk/accessibility/image-map2-expected.txt:
+        * platform/gtk/accessibility/image-with-alt-and-map-expected.txt:
+        * platform/gtk/accessibility/img-alt-tag-only-whitespace-expected.txt: Added.
+        * platform/gtk/accessibility/img-aria-button-alt-tag-expected.txt: Added.
+        * platform/gtk/accessibility/img-fallsback-to-title-expected.txt:
+        * platform/gtk/accessibility/input-image-alt-expected.txt: Added.
+        * platform/gtk/accessibility/media-element-expected.txt:
+        * platform/gtk/accessibility/radio-button-title-label-expected.txt:
+        * platform/gtk/accessibility/self-referencing-aria-labelledby-expected.txt: Added.
+        * platform/gtk/accessibility/svg-bounds-expected.txt: Added.
+
 2016-05-17  Saam barati  <sbarati@apple.com>
 
         LayoutTest inspector/debugger/tail-recursion.html failing on WK2 debug

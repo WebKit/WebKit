@@ -23,10 +23,13 @@
     description("This tests that aria-labelledby overrides aria-labeledby correctly.");
     
     if (window.accessibilityController) {
-        var linkDescription = accessibilityController.accessibleElementById("link").description;
-        
-        shouldBe("linkDescription", "'AXDescription: Y Z'");
-        
+        if (accessibilityController.platformName == "atk") {
+            var linkTitle = accessibilityController.accessibleElementById("link").title;
+            shouldBe("linkTitle", "'AXTitle: Y Z'");
+        } else {
+            var linkDescription = accessibilityController.accessibleElementById("link").description;
+            shouldBe("linkDescription", "'AXDescription: Y Z'");
+        }
         // Hide superfluous text.
         document.getElementById("test").style.display = "none";
     }

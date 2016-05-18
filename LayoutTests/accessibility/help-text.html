@@ -65,7 +65,11 @@
             var ax = accessibilityController.accessibleElementById(id);
             if (!ax)
                 continue;
-            var output = ax.helpText.replace("AXHelp: ", "");
+            var output;
+            if (accessibilityController.platformName == "atk")
+                output = ax.description.replace("AXDescription: ", "");
+            else
+                output = ax.helpText.replace("AXHelp: ", "");
             var result = document.getElementById("console");
             if (expectation === output)
                 result.textContent += "PASS: Help text for <" + tag +"> is \"" + output + "\"\n";

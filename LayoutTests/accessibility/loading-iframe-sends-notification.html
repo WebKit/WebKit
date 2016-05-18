@@ -54,7 +54,14 @@
 
             window.accessibilityController.addNotificationListener(function (target, notification) {
                 // Ignore this notification if it's not on the iframe or not about the iframe being loaded.
-                if (target.description.indexOf("InnerFrame") == -1
+
+                var targetString;
+                if (accessibilityController.platformName == "atk")
+                    targetString = target.title;
+                else
+                    targetString = target.description;
+
+                if (targetString.indexOf("InnerFrame") == -1
                     || (notification != "AXLoadComplete" && notification != "AXLayoutComplete"))
                     return;
 

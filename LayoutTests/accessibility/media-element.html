@@ -18,7 +18,10 @@
 
             function dumpObject(axObject)
             {
-                debug(indent(indentLevel) + "description: " + axObject.description); 
+            if (accessibilityController.platformName == "atk")
+                debug(indent(indentLevel) + "title: " + axObject.title);
+            else
+                debug(indent(indentLevel) + "description: " + axObject.description);
                 debug(indent(indentLevel) + "role: " + axObject.role); 
                 if (axObject.subrole && axObject.subrole != 'AXSubrole: ') debug(indent(indentLevel) + "subrole: " + axObject.subrole);
                 debug("<br>");

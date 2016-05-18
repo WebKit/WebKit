@@ -22,7 +22,10 @@
           text.focus();
           text = accessibilityController.focusedElement;
 
-          debug("text.description is " + text.description);
+          if (accessibilityController.platformName == "atk")
+              debug("text.title is " + text.title);
+          else
+              debug("text.description is " + text.description);
 
           // There should be no title UI element.
           shouldBe("text.titleUIElement() != null && text.titleUIElement().isValid", "false");

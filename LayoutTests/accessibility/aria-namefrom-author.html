@@ -67,7 +67,10 @@
     document.getElementById("button").setAttribute("aria-labelledby", labelledby);
 
     if (window.accessibilityController) {
-        debug("Button description: " + accessibilityController.accessibleElementById("button").description);
+        if (accessibilityController.platformName == "atk")
+            debug("Button title: " + accessibilityController.accessibleElementById("button").title);
+        else
+            debug("Button description: " + accessibilityController.accessibleElementById("button").description);
         document.getElementById("content").style.visibility = "hidden";
     }
 

@@ -17,7 +17,10 @@
 
           var image1 = accessibilityController.accessibleElementById("image1");
           debug("image1.role is " + image1.role);
-          debug("image1.description is " + image1.description);
+          if (accessibilityController.platformName == "atk")
+              debug("image1.title is " + image1.title);
+          else
+              debug("image1.description is " + image1.description);
     }
 
 </script>

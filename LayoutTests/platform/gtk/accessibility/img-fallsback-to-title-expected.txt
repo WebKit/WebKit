@@ -1,22 +1,21 @@
-    
-test
+     test
 test
 This tests that images will fallback to using the title attribute if no other descriptive text is present.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Image1 description: AXDescription: test1
-Image1 help: AXHelp: 
+Image1 title: AXTitle: test1
+Image1 description: AXDescription: 
 
+Image2 title: AXTitle: alt
 Image2 description: AXDescription: test2
-Image2 help: AXHelp: test2
 
-Image3 description: AXDescription: test3
-Image3 help: AXHelp: 
+Image3 title: AXTitle: test3
+Image3 description: AXDescription: 
 
-Image4 description: AXDescription: alt
-Image4 help: AXHelp: test4
+Image4 title: AXTitle: alt
+Image4 description: AXDescription: test4
 
 PASS imagesGroup.childAtIndex(0).childrenCount is 2
 PASS successfullyParsed is true

@@ -17,7 +17,10 @@
     
     if (window.accessibilityController) {
        var button = accessibilityController.accessibleElementById("button");
-       shouldBe("button.description", "'AXDescription: TITLE'");
+       if (accessibilityController.platformName == "atk")
+           shouldBe("button.title", "'AXTitle: TITLE'");
+       else
+           shouldBe("button.description", "'AXDescription: TITLE'");
     }
 </script>
 
