@@ -375,12 +375,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (this._startTimeNeedsReset && !isNaN(startTime)) {
             this._timelineOverview.startTime = startTime;
             this._overviewTimelineView.zeroTime = startTime;
-            for (var timelineView of this._timelineViewMap.values()) {
-                if (timelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
-                    continue;
-
+            for (let timelineView of this._timelineViewMap.values())
                 timelineView.zeroTime = startTime;
-            }
 
             this._startTimeNeedsReset = false;
         }
@@ -615,8 +611,13 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
             selectedPathComponent = this._entireRecordingPathComponent;
         else {
             let timelineRange = this._timelineSelectionPathComponent.representedObject;
-            timelineRange.startValue = this.currentTimelineView.startTime - this.currentTimelineView.zeroTime;
-            timelineRange.endValue = this.currentTimelineView.endTime - this.currentTimelineView.zeroTime;
+            timelineRange.startValue = this.currentTimelineView.startTime;
+            timelineRange.endValue = this.currentTimelineView.endTime;
+
+            if (!(this.currentTimelineView instanceof WebInspector.RenderingFrameTimelineView)) {
+                timelineRange.startValue -= this.currentTimelineView.zeroTime;
+                timelineRange.endValue -= this.currentTimelineView.zeroTime;
+            }
 
             this._updateTimeRangePathComponents();
             selectedPathComponent = this._timelineSelectionPathComponent;
