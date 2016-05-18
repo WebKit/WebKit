@@ -1,3 +1,41 @@
+2016-05-18  Antti Koivisto  <antti@apple.com>
+
+        Allow RenderStyles marked unique in matched properties cache
+        https://bugs.webkit.org/show_bug.cgi?id=157844
+
+        Reviewed by Andreas Kling.
+
+        Depending on content this can improve matched properties cache hit rate quite a bit and so reduce
+        time spent building styles.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueContent):
+
+            Set the attr bit on render style.
+
+        * css/StyleResolver.cpp:
+        (WebCore::isCacheableInMatchedPropertiesCache):
+
+            Allow caching of styles marked "unique". It only means that they are not shareable by style
+            sharing code because there were some complex selectors in the rules used for building them. It
+            doesn't affect matched properties cache the cache how the properties were resolved.
+
+            We still need to test against "content: attr()" as that makes the style depend on the element
+            being matched. It now has a separate bit in RenderStyle.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setHasAttrContent):
+
+            Bit for "content: attr()". It also sets unique() to keep style sharing code happy.
+
+        (WebCore::requireTransformOrigin):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasAttrContent):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2016-05-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the allinone-build on Linux in Source/WebCore/html/HTMLElementsAllInOne.cpp

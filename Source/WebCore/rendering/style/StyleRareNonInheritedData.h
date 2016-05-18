@@ -227,6 +227,8 @@ public:
     unsigned m_breakInside : 3; // BreakInside
     unsigned m_resize : 2; // EResize
 
+    unsigned m_hasAttrContent : 1;
+
     unsigned m_isPlaceholderStyle : 1;
 
 private:

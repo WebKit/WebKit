@@ -109,6 +109,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_breakAfter(RenderStyle::initialBreakBetween())
     , m_breakInside(RenderStyle::initialBreakInside())
     , m_resize(RenderStyle::initialResize())
+    , m_hasAttrContent(false)
     , m_isPlaceholderStyle(false)
 {
     m_maskBoxImage.setMaskDefaults();
@@ -204,6 +205,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_breakAfter(o.m_breakAfter)
     , m_breakInside(o.m_breakInside)
     , m_resize(o.m_resize)
+    , m_hasAttrContent(o.m_hasAttrContent)
     , m_isPlaceholderStyle(o.m_isPlaceholderStyle)
 {
 }
@@ -310,6 +312,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_breakBefore == o.m_breakBefore
         && m_breakInside == o.m_breakInside
         && m_resize == o.m_resize
+        && m_hasAttrContent == o.m_hasAttrContent
         && m_isPlaceholderStyle == o.m_isPlaceholderStyle;
 }
 

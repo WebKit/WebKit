@@ -1073,6 +1073,12 @@ const String& RenderStyle::contentAltText() const
     return rareNonInheritedData->m_altText;
 }
 
+void RenderStyle::setHasAttrContent()
+{
+    setUnique();
+    SET_VAR(rareNonInheritedData, m_hasAttrContent, true);
+}
+
 // FIXME: use affectedByTransformOrigin().
 static inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation>>& transformOperations, RenderStyle::ApplyTransformOrigin applyOrigin)
 {

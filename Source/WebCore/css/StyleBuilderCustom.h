@@ -1335,9 +1335,9 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
         } else if (contentValue.isAttr()) {
             // FIXME: Can a namespace be specified for an attr(foo)?
             if (styleResolver.style()->styleType() == NOPSEUDO)
-                styleResolver.style()->setUnique();
+                styleResolver.style()->setHasAttrContent();
             else
-                const_cast<RenderStyle*>(styleResolver.parentStyle())->setUnique();
+                const_cast<RenderStyle*>(styleResolver.parentStyle())->setHasAttrContent();
             QualifiedName attr(nullAtom, contentValue.getStringValue().impl(), nullAtom);
             const AtomicString& value = styleResolver.element()->getAttribute(attr);
             styleResolver.style()->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);

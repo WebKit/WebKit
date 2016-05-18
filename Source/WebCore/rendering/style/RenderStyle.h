@@ -1834,6 +1834,8 @@ public:
     void setContent(QuoteType, bool add = false);
     void setContentAltText(const String&);
     const String& contentAltText() const;
+    bool hasAttrContent() const { return rareNonInheritedData->m_hasAttrContent; }
+    void setHasAttrContent();
 
     const CounterDirectiveMap* counterDirectives() const;
     CounterDirectiveMap& accessCounterDirectives();
