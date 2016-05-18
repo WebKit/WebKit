@@ -145,6 +145,8 @@ public:
 
     ThreadIdentifier originThreadID() const;
 
+    void connectionClosedFromServer(const IDBError&);
+
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest*);
 

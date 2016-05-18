@@ -33,7 +33,9 @@
 #include "IDBResultData.h"
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
+#include "SQLiteFileSystem.h"
 #include "SQLiteIDBBackingStore.h"
+#include "SecurityOrigin.h"
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 
@@ -388,6 +390,14 @@ void IDBServer::openDBRequestCancelled(const IDBRequestData& requestData)
     uniqueIDBDatabase->openDBRequestCancelled(requestData.requestIdentifier());
 }
 
+void IDBServer::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
+{
+    LOG(IndexedDB, "IDBServer::confirmDidCloseFromServer");
+
+    if (auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier))
+        databaseConnection->confirmDidCloseFromServer();
+}
+
 void IDBServer::getAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
     postDatabaseTask(createCrossThreadTask(*this, &IDBServer::performGetAllDatabaseNames, serverConnectionIdentifier, mainFrameOrigin, openingOrigin, callbackID));
@@ -468,10 +478,75 @@ void IDBServer::handleTaskRepliesOnMainThread()
         task->performTask();
 }
 
-void IDBServer::closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, std::function<void ()> completionHandler)
+static uint64_t generateDeleteCallbackID()
 {
-    // FIXME: Implement (https://bugs.webkit.org/show_bug.cgi?id=157626)
-    completionHandler();
+    ASSERT(isMainThread());
+    static uint64_t currentID = 0;
+    return ++currentID;
+}
+
+void IDBServer::closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point modificationTime, std::function<void ()> completionHandler)
+{
+    uint64_t callbackID = generateDeleteCallbackID();
+    auto addResult = m_deleteDatabaseCompletionHandlers.add(callbackID, WTFMove(completionHandler));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
+    // If the modification time is in the future, don't both doing anything.
+    if (modificationTime > std::chrono::system_clock::now()) {
+        postDatabaseTaskReply(createCrossThreadTask(*this, &IDBServer::didPerformCloseAndDeleteDatabases, callbackID));
+        return;
+    }
+
+    HashSet<UniqueIDBDatabase*> openDatabases;
+    for (auto* connection : m_databaseConnections.values())
+        openDatabases.add(&connection->database());
+
+    for (auto* database : openDatabases)
+        database->immediateCloseForUserDelete();
+
+    postDatabaseTask(createCrossThreadTask(*this, &IDBServer::performCloseAndDeleteDatabasesModifiedSince, modificationTime, callbackID));
+}
+
+void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>& origins, std::function<void ()> completionHandler)
+{
+    uint64_t callbackID = generateDeleteCallbackID();
+    auto addResult = m_deleteDatabaseCompletionHandlers.add(callbackID, WTFMove(completionHandler));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
+    HashSet<UniqueIDBDatabase*> openDatabases;
+    for (auto* connection : m_databaseConnections.values()) {
+        const auto& identifier = connection->database().identifier();
+        for (auto& origin : origins) {
+            if (identifier.isRelatedToOrigin(origin)) {
+                openDatabases.add(&connection->database());
+                break;
+            }
+        }
+    }
+
+    for (auto* database : openDatabases)
+        database->immediateCloseForUserDelete();
+
+    postDatabaseTask(createCrossThreadTask(*this, &IDBServer::performCloseAndDeleteDatabasesForOrigins, origins, callbackID));
+}
+
+void IDBServer::performCloseAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, uint64_t callbackID)
+{
+    // FIXME: Implement deleting the files.
+    postDatabaseTaskReply(createCrossThreadTask(*this, &IDBServer::didPerformCloseAndDeleteDatabases, callbackID));
+}
+
+void IDBServer::performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID)
+{
+    // FIXME: Implement deleting the files.
+    postDatabaseTaskReply(createCrossThreadTask(*this, &IDBServer::didPerformCloseAndDeleteDatabases, callbackID));
+}
+
+void IDBServer::didPerformCloseAndDeleteDatabases(uint64_t callbackID)
+{
+    auto callback = m_deleteDatabaseCompletionHandlers.take(callbackID);
+    ASSERT(callback);
+    callback();
 }
 
 } // namespace IDBServer

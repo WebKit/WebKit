@@ -106,6 +106,10 @@ public:
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier);
 
     WEBCORE_EXPORT void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
+
+    WEBCORE_EXPORT void didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError&);
+    void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
+
     WEBCORE_EXPORT void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
     void openDBRequestCancelled(const IDBRequestData&);
 

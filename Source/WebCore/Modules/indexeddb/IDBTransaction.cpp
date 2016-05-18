@@ -1075,6 +1075,29 @@ ThreadIdentifier IDBTransaction::originThreadID() const
     return m_database->originThreadID();
 }
 
+void IDBTransaction::connectionClosedFromServer(const IDBError& error)
+{
+    LOG(IndexedDB, "IDBTransaction::connectionClosedFromServer - %s", error.message().utf8().data());
+
+    m_state = IndexedDB::TransactionState::Aborting;
+
+    Vector<RefPtr<IDBClient::TransactionOperation>> operations;
+    copyValuesToVector(m_transactionOperationMap, operations);
+
+    for (auto& operation : operations)
+        operation->completed(IDBResultData::error(operation->identifier(), error));
+
+    connectionProxy().forgetActiveOperations(operations);
+
+    m_transactionOperationQueue.clear();
+    m_abortQueue.clear();
+    m_transactionOperationMap.clear();
+
+    m_idbError = error;
+    m_domError = error.toDOMError();
+    fireOnAbort();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

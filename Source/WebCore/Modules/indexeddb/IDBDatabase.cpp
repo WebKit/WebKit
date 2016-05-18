@@ -245,6 +245,25 @@ void IDBDatabase::close()
     maybeCloseInServer();
 }
 
+void IDBDatabase::didCloseFromServer(const IDBError& error)
+{
+    LOG(IndexedDB, "IDBDatabase::didCloseFromServer - %" PRIu64, m_databaseConnectionIdentifier);
+
+    ASSERT(currentThread() == m_originThreadID);
+
+    m_closePending = true;
+    m_closedInServer = true;
+
+    for (auto& transaction : m_activeTransactions.values())
+        transaction->connectionClosedFromServer(error);
+
+    Ref<Event> event = Event::create(eventNames().errorEvent, true, false);
+    event->setTarget(this);
+    scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
+
+    m_connectionProxy->confirmDidCloseFromServer(*this);
+}
+
 void IDBDatabase::maybeCloseInServer()
 {
     LOG(IndexedDB, "IDBDatabase::maybeCloseInServer - %" PRIu64, m_databaseConnectionIdentifier);

@@ -42,6 +42,7 @@ messages -> WebIDBConnectionToServer {
 
     FireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, uint64_t requestedVersion)
     DidStartTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, WebCore::IDBError error)
+    DidCloseFromServer(uint64_t databaseConnectionIdentifier, WebCore::IDBError error) final;
     NotifyOpenDBRequestBlocked(WebCore::IDBResourceIdentifier requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 
     DidGetAllDatabaseNames(uint64_t callbackID, Vector<String> databaseNames)

@@ -160,6 +160,11 @@ template<> struct CrossThreadCopierBase<false, false, ThreadSafeDataBuffer> {
     static Type copy(const ThreadSafeDataBuffer&);
 };
 
+template<> struct CrossThreadCopierBase<false, false, std::chrono::system_clock::time_point> {
+    typedef std::chrono::system_clock::time_point Type;
+    static Type copy(const Type& source);
+};
+
 template<typename T>
 struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHelper::IsEnumOrConvertibleToInteger<T>::value, CrossThreadCopierBaseHelper::IsThreadSafeRefCountedPointer<T>::value, T> {
 };

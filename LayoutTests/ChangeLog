@@ -1,3 +1,14 @@
+2016-05-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Add support for server side closing of open database connections.
+        https://bugs.webkit.org/show_bug.cgi?id=157843
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/handle-user-delete-expected.txt: Added.
+        * storage/indexeddb/modern/handle-user-delete.html: Added.
+        * storage/indexeddb/modern/resources/handle-user-delete.js: Added.
+
 2016-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Update platform/mac/fast/text/sticky-typesetting-features.html

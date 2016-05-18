@@ -186,6 +186,11 @@ void WebIDBConnectionToServer::openDBRequestCancelled(const IDBRequestData& requ
     send(Messages::WebIDBConnectionToClient::OpenDBRequestCancelled(requestData));
 }
 
+void WebIDBConnectionToServer::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
+{
+    send(Messages::WebIDBConnectionToClient::ConfirmDidCloseFromServer(databaseConnectionIdentifier));
+}
+
 void WebIDBConnectionToServer::getAllDatabaseNames(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
     send(Messages::WebIDBConnectionToClient::GetAllDatabaseNames(m_identifier, topOrigin, openingOrigin, callbackID));
@@ -282,9 +287,14 @@ void WebIDBConnectionToServer::fireVersionChangeEvent(uint64_t uniqueDatabaseCon
     m_connectionToServer->fireVersionChangeEvent(uniqueDatabaseConnectionIdentifier, requestIdentifier, requestedVersion);
 }
 
-void WebIDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError& error)
+void WebIDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
     m_connectionToServer->didStartTransaction(transactionIdentifier, error);
+}
+
+void WebIDBConnectionToServer::didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError& error)
+{
+    m_connectionToServer->didCloseFromServer(databaseConnectionIdentifier, error);
 }
 
 void WebIDBConnectionToServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)

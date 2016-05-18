@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014, 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -259,13 +259,8 @@ void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDat
     }));
 
 #if ENABLE(INDEXED_DATABASE)
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        postDatabaseTask(std::make_unique<CrossThreadTask>([this, callbackAggregator, modifiedSince] {
-
-            deleteIndexedDatabaseEntriesModifiedSince(modifiedSince);
-            RunLoop::main().dispatch([callbackAggregator] { });
-        }));
-    }
+    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
+        m_idbServer->closeAndDeleteDatabasesModifiedSince(modifiedSince, [callbackAggregator] { });
 #endif
 }
 

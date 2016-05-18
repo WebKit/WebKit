@@ -74,6 +74,7 @@ public:
     void didDeleteIndex(const IDBResultData&);
     void didFireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier);
     void didFinishHandlingVersionChange(const IDBResourceIdentifier& transactionIdentifier);
+    void confirmDidCloseFromServer();
 
     void abortTransactionWithoutCallback(UniqueIDBDatabaseTransaction&);
 

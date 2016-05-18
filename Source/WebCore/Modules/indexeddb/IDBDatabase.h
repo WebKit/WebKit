@@ -86,6 +86,7 @@ public:
     void didAbortTransaction(IDBTransaction&);
 
     void fireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
+    void didCloseFromServer(const IDBError&);
 
     IDBClient::IDBConnectionProxy& connectionProxy() { return m_connectionProxy.get(); }
 

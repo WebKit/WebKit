@@ -367,6 +367,15 @@ void InProcessIDBServer::didStartTransaction(const IDBResourceIdentifier& transa
     });
 }
 
+void InProcessIDBServer::didCloseFromServer(IDBServer::UniqueIDBDatabaseConnection& connection, const IDBError& error)
+{
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    uint64_t databaseConnectionIdentifier = connection.identifier();
+    RunLoop::current().dispatch([this, protectedThis, databaseConnectionIdentifier, error] {
+        m_connectionToServer->didCloseFromServer(databaseConnectionIdentifier, error);
+    });
+}
+
 void InProcessIDBServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 {
     RefPtr<InProcessIDBServer> protectedThis(this);
@@ -404,6 +413,14 @@ void InProcessIDBServer::openDBRequestCancelled(const IDBRequestData& requestDat
     RefPtr<InProcessIDBServer> protectedThis(this);
     RunLoop::current().dispatch([this, protectedThis, requestData] {
         m_server->openDBRequestCancelled(requestData);
+    });
+}
+
+void InProcessIDBServer::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
+{
+    RefPtr<InProcessIDBServer> protectedThis(this);
+    RunLoop::current().dispatch([this, protectedThis, databaseConnectionIdentifier] {
+        m_server->confirmDidCloseFromServer(databaseConnectionIdentifier);
     });
 }
 

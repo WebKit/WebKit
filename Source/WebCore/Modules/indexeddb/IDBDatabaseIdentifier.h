@@ -102,6 +102,11 @@ public:
     String debugString() const;
 #endif
 
+    bool isRelatedToOrigin(const SecurityOriginData& other) const
+    {
+        return m_openingOrigin == other || m_mainFrameOrigin == other;
+    }
+
 private:
     String m_databaseName;
     SecurityOriginData m_openingOrigin;

@@ -1,5 +1,32 @@
 2016-05-18  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Add support for server side closing of open database connections.
+        https://bugs.webkit.org/show_bug.cgi?id=157843
+
+        Reviewed by Alex Christensen.
+
+        - Implement the required IDB delegate code.
+        - Make DatabaseProcess::deleteWebsiteData call the right method in IDB server.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::deleteWebsiteData):
+
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::didGetRecord):
+        (WebKit::WebIDBConnectionToClient::didCloseFromServer):
+        (WebKit::WebIDBConnectionToClient::confirmDidCloseFromServer):
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in:
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::confirmDidCloseFromServer):
+        (WebKit::WebIDBConnectionToServer::didStartTransaction):
+        (WebKit::WebIDBConnectionToServer::didCloseFromServer):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in:
+
+2016-05-18  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Make TestRunner.clearAllDatabases also delete IndexedDB databases (once doing so is supported).
         https://bugs.webkit.org/show_bug.cgi?id=157823
 

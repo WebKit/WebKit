@@ -127,6 +127,11 @@ void WebIDBConnectionToClient::didPutOrAdd(const WebCore::IDBResultData& resultD
 
 void WebIDBConnectionToClient::didGetRecord(const WebCore::IDBResultData& resultData)
 {
+    if (resultData.type() == IDBResultType::Error) {
+        send(Messages::WebIDBConnectionToServer::DidGetRecord(resultData));
+        return;
+    }
+
     auto& blobFilePaths = resultData.getResult().value().blobFilePaths();
     if (blobFilePaths.isEmpty()) {
         send(Messages::WebIDBConnectionToServer::DidGetRecord(resultData));
@@ -167,6 +172,11 @@ void WebIDBConnectionToClient::fireVersionChangeEvent(WebCore::IDBServer::Unique
 void WebIDBConnectionToClient::didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError& error)
 {
     send(Messages::WebIDBConnectionToServer::DidStartTransaction(transactionIdentifier, error));
+}
+
+void WebIDBConnectionToClient::didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection& connection, const WebCore::IDBError& error)
+{
+    send(Messages::WebIDBConnectionToServer::DidCloseFromServer(connection.identifier(), error));
 }
 
 void WebIDBConnectionToClient::notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
@@ -292,6 +302,11 @@ void WebIDBConnectionToClient::didFireVersionChangeEvent(uint64_t databaseConnec
 void WebIDBConnectionToClient::openDBRequestCancelled(const IDBRequestData& requestData)
 {
     DatabaseProcess::singleton().idbServer().openDBRequestCancelled(requestData);
+}
+
+void WebIDBConnectionToClient::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
+{
+    DatabaseProcess::singleton().idbServer().confirmDidCloseFromServer(databaseConnectionIdentifier);
 }
 
 void WebIDBConnectionToClient::getAllDatabaseNames(uint64_t serverConnectionIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)

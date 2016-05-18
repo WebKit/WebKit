@@ -85,6 +85,11 @@ CrossThreadCopierBase<false, false, ThreadSafeDataBuffer>::Type CrossThreadCopie
     return ThreadSafeDataBuffer(buffer);
 }
 
+CrossThreadCopierBase<false, false, std::chrono::system_clock::time_point>::Type CrossThreadCopierBase<false, false, std::chrono::system_clock::time_point>::copy(const std::chrono::system_clock::time_point& timePoint)
+{
+    return timePoint;
+}
+
 // Test CrossThreadCopier using COMPILE_ASSERT.
 
 // Verify that ThreadSafeRefCounted objects get handled correctly.

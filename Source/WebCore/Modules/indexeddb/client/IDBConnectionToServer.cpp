@@ -316,6 +316,22 @@ void IDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& tra
     m_proxy->didStartTransaction(transactionIdentifier, error);
 }
 
+void IDBConnectionToServer::didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError& error)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didCloseFromServer");
+    ASSERT(isMainThread());
+
+    m_proxy->didCloseFromServer(databaseConnectionIdentifier, error);
+}
+
+void IDBConnectionToServer::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::confirmDidCloseFromServer");
+    ASSERT(isMainThread());
+
+    m_delegate->confirmDidCloseFromServer(databaseConnectionIdentifier);
+}
+
 void IDBConnectionToServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didStartTransaction");

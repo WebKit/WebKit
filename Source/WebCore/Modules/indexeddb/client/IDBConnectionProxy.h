@@ -93,6 +93,9 @@ public:
     void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, IDBTransaction&);
     void databaseConnectionClosed(IDBDatabase&);
 
+    void didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError&);
+    void confirmDidCloseFromServer(IDBDatabase&);
+
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
 
     void completeOperation(const IDBResultData&);
@@ -108,6 +111,8 @@ public:
     void unregisterDatabaseConnection(IDBDatabase&);
 
     RefPtr<IDBOpenDBRequest> takeIDBOpenDBRequest(IDBOpenDBRequest&);
+
+    void forgetActiveOperations(const Vector<RefPtr<TransactionOperation>>&);
 
 private:
     void completeOpenDBRequest(const IDBResultData&);

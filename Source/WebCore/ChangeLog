@@ -1,3 +1,136 @@
+2016-05-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Add support for server side closing of open database connections.
+        https://bugs.webkit.org/show_bug.cgi?id=157843
+
+        Reviewed by Alex Christensen.
+
+        Test: storage/indexeddb/modern/handle-user-delete.html
+
+        In order to support deleting IndexedDB databases, the IDB server needs the ability to 
+        "immediately" close a currently open IDB connection.
+        
+        To do so cleanly, the server has to:
+        - Error out all requests it knows about
+        - Abort all transactions it knows about
+        - Tell the connection that it is being closed
+        - Wait for the connection to acknowledge that it was closed on the server
+        
+        And then the client has to:
+        - Error out all requests it hasn't sent to the server
+        - Abort all transactions that haven't already been aborted by the server
+        - Send acknowledgement to the server that it has been closed.
+
+        Finally, because the status of a given request might be "in flight" somewhere between the 
+        server and the client, some design assumptions change. This requires reworking some ASSERTS,
+        null checks, etc.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::didCloseFromServer): Do the heavy lifting for the immediate close on
+          the client side.
+        * Modules/indexeddb/IDBDatabase.h:
+        
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        (WebCore::IDBDatabaseIdentifier::isRelatedToOrigin):
+        
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::connectionClosedFromServer): Error out all outstanding operations
+          and fire the abort error on itself.
+        * Modules/indexeddb/IDBTransaction.h:
+        
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::completeOperation):
+        (WebCore::IDBClient::IDBConnectionProxy::didCloseFromServer):
+        (WebCore::IDBClient::IDBConnectionProxy::confirmDidCloseFromServer):
+        (WebCore::IDBClient::IDBConnectionProxy::forgetActiveOperations):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::didCloseFromServer):
+        (WebCore::IDBClient::IDBConnectionToServer::confirmDidCloseFromServer):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+        
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        (WebCore::IDBServer::IDBConnectionToClient::didCloseFromServer):
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+        
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::confirmDidCloseFromServer):
+        (WebCore::IDBServer::generateDeleteCallbackID):
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesForOrigins):
+        (WebCore::IDBServer::IDBServer::didPerformCloseAndDeleteDatabases):
+        * Modules/indexeddb/server/IDBServer.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::~UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::openDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDatabaseOperations):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleCurrentOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::iterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromServer):
+        (WebCore::IDBServer::UniqueIDBDatabase::confirmDidCloseFromServer):
+        (WebCore::IDBServer::UniqueIDBDatabase::enqueueTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::isCurrentlyInUse):
+        (WebCore::IDBServer::UniqueIDBDatabase::invokeOperationAndTransactionTimer):
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired):
+        (WebCore::IDBServer::UniqueIDBDatabase::activateTransactionInBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::transactionCompleted):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTask):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTaskReply):
+        (WebCore::IDBServer::UniqueIDBDatabase::executeNextDatabaseTask):
+        (WebCore::IDBServer::UniqueIDBDatabase::executeNextDatabaseTaskReply):
+        (WebCore::IDBServer::UniqueIDBDatabase::doneWithHardClose):
+        (WebCore::IDBServer::errorOpenDBRequestForUserDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete): Do the heavy lifting
+          for the immediate close on the server side.
+        (WebCore::IDBServer::UniqueIDBDatabase::performErrorCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::performKeyDataCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetResultCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCountCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::storeCallback): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::storeCallbackOrFireError): If the database has been
+          hard stopped, immediately fire and error for the callback and return a 0-identifier to
+          reflect this.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::confirmDidCloseFromServer):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        
+        * Modules/indexeddb/shared/IDBError.cpp:
+        (WebCore::IDBError::toDOMError):
+        * Modules/indexeddb/shared/IDBError.h:
+        (WebCore::IDBError::userDeleteError):
+        
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::didCloseFromServer):
+        (WebCore::InProcessIDBServer::confirmDidCloseFromServer):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+        
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::std::chrono::system_clock::time_point>::copy):
+        * platform/CrossThreadCopier.h:
+
 2016-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r200534) Command-+ no longer zooms pages 

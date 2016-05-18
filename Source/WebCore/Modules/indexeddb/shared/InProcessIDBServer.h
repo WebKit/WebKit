@@ -52,6 +52,7 @@ public:
 
     WEBCORE_EXPORT IDBClient::IDBConnectionToServer& connectionToServer() const;
     IDBServer::IDBConnectionToClient& connectionToClient() const;
+    IDBServer::IDBServer& server() { return m_server.get(); }
 
     IDBServer::IDBServer& idbServer() { return m_server.get(); }
 
@@ -77,6 +78,7 @@ public:
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier) final;
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier) final;
     void openDBRequestCancelled(const IDBRequestData&) final;
+    void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier) final;
     void getAllDatabaseNames(const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID) final;
 
     // IDBConnectionToClient
@@ -98,6 +100,7 @@ public:
     void didIterateCursor(const IDBResultData&) final;
     void fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) final;
     void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) final;
+    void didCloseFromServer(IDBServer::UniqueIDBDatabaseConnection&, const IDBError&) final;
     void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) final;
     void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames) final;
 

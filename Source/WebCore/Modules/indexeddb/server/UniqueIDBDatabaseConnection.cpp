@@ -89,6 +89,13 @@ void UniqueIDBDatabaseConnection::connectionClosedFromClient()
     m_database.connectionClosedFromClient(*this);
 }
 
+void UniqueIDBDatabaseConnection::confirmDidCloseFromServer()
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseConnection::confirmDidCloseFromServer - %s - %" PRIu64, m_openRequestIdentifier.loggingString().utf8().data(), m_identifier);
+
+    m_database.confirmDidCloseFromServer(*this);
+}
+
 void UniqueIDBDatabaseConnection::didFireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didFireVersionChangeEvent - %s - %" PRIu64, m_openRequestIdentifier.loggingString().utf8().data(), m_identifier);

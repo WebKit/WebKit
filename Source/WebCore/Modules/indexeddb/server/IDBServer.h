@@ -81,6 +81,7 @@ public:
     WEBCORE_EXPORT void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     WEBCORE_EXPORT void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier);
     WEBCORE_EXPORT void openDBRequestCancelled(const IDBRequestData&);
+    WEBCORE_EXPORT void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
 
     WEBCORE_EXPORT void getAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
 
@@ -97,6 +98,7 @@ public:
     std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&);
 
     WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, std::function<void ()> completionHandler);
+    WEBCORE_EXPORT void closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, std::function<void ()> completionHandler);
 
 private:
     IDBServer(IDBBackingStoreTemporaryFileHandler&);
@@ -106,6 +108,10 @@ private:
 
     void performGetAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
     void didGetAllDatabaseNames(uint64_t serverConnectionIdentifier, uint64_t callbackID, const Vector<String>& databaseNames);
+
+    void performCloseAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, uint64_t callbackID);
+    void performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
+    void didPerformCloseAndDeleteDatabases(uint64_t callbackID);
 
     static void databaseThreadEntry(void*);
     void databaseRunLoop();
@@ -124,6 +130,8 @@ private:
 
     HashMap<uint64_t, UniqueIDBDatabaseConnection*> m_databaseConnections;
     HashMap<IDBResourceIdentifier, UniqueIDBDatabaseTransaction*> m_transactions;
+
+    HashMap<uint64_t, std::function<void ()>> m_deleteDatabaseCompletionHandlers;
 
     String m_databaseDirectoryPath;
     IDBBackingStoreTemporaryFileHandler& m_backingStoreTemporaryFileHandler;

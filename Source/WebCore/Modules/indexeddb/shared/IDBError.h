@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBError_h
-#define IDBError_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMError.h"
 #include "IDBDatabaseException.h"
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +39,14 @@ public:
     IDBError(ExceptionCode);
     IDBError(ExceptionCode, const String& message);
 
+    static IDBError userDeleteError()
+    {
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Database deleted by request of the user") };
+    }
+
     IDBError& operator=(const IDBError&);
+
+    RefPtr<DOMError> toDOMError() const;
 
     ExceptionCode code() const { return m_code; }
     String name() const;
@@ -78,4 +85,3 @@ bool IDBError::decode(Decoder& decoder, IDBError& error)
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBError_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBConnectionToClient_h
-#define WebIDBConnectionToClient_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -76,6 +75,7 @@ public:
 
     void fireVersionChangeEvent(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) final;
     void didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) final;
+    void didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBError&) final;
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) final;
 
     void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames) final;
@@ -106,6 +106,7 @@ public:
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier);
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier);
     void openDBRequestCancelled(const WebCore::IDBRequestData&);
+    void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
 
     void getAllDatabaseNames(uint64_t serverConnectionIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID);
 
@@ -127,4 +128,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // WebIDBConnectionToClient_h

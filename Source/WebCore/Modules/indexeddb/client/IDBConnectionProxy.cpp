@@ -249,7 +249,8 @@ void IDBConnectionProxy::completeOperation(const IDBResultData& resultData)
         operation = m_activeOperations.take(resultData.requestIdentifier());
     }
 
-    ASSERT(operation);
+    if (!operation)
+        return;
 
     performCallbackOnCorrectThread(*operation, &TransactionOperation::completed, resultData);
 }
@@ -388,6 +389,29 @@ void IDBConnectionProxy::databaseConnectionClosed(IDBDatabase& database)
     callConnectionOnMainThread(&IDBConnectionToServer::databaseConnectionClosed, database.databaseConnectionIdentifier());
 }
 
+void IDBConnectionProxy::didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError& error)
+{
+    RefPtr<IDBDatabase> database;
+    {
+        Locker<Lock> locker(m_databaseConnectionMapLock);
+        database = m_databaseConnectionMap.get(databaseConnectionIdentifier);
+    }
+
+    // If the IDBDatabase object is gone, message back to the server so it doesn't hang
+    // waiting for a reply that will never come.
+    if (!database) {
+        m_connectionToServer.confirmDidCloseFromServer(databaseConnectionIdentifier);
+        return;
+    }
+
+    performCallbackOnCorrectThread(*database, &IDBDatabase::didCloseFromServer, error);
+}
+
+void IDBConnectionProxy::confirmDidCloseFromServer(IDBDatabase& database)
+{
+    callConnectionOnMainThread(&IDBConnectionToServer::confirmDidCloseFromServer, database.databaseConnectionIdentifier());
+}
+
 void IDBConnectionProxy::scheduleMainThreadTasks()
 {
     Locker<Lock> locker(m_mainThreadTaskLock);
@@ -436,6 +460,14 @@ void IDBConnectionProxy::unregisterDatabaseConnection(IDBDatabase& database)
     ASSERT(m_databaseConnectionMap.contains(database.databaseConnectionIdentifier()));
     ASSERT(m_databaseConnectionMap.get(database.databaseConnectionIdentifier()) == &database);
     m_databaseConnectionMap.remove(database.databaseConnectionIdentifier());
+}
+
+void IDBConnectionProxy::forgetActiveOperations(const Vector<RefPtr<TransactionOperation>>& operations)
+{
+    Locker<Lock> locker(m_transactionOperationLock);
+
+    for (auto& operation : operations)
+        m_activeOperations.remove(operation->identifier());
 }
 
 } // namesapce IDBClient
