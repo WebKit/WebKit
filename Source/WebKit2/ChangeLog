@@ -1,3 +1,10 @@
+2016-05-18  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix when not using CredentialStorage with NetworkSession.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::clearCredentials):
+
 2016-05-18  Brady Eidson  <beidson@apple.com>
 
         Fix null-deref crash sporadically seen after http://trac.webkit.org/changeset/201098
