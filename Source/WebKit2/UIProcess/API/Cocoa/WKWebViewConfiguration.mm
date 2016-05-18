@@ -136,14 +136,15 @@ private:
     _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = NO;
-#else
-    _mediaDataLoadsAutomatically = YES;
-    _userInterfaceDirectionPolicy = WKUserInterfaceDirectionPolicyContent;
-#endif
     if (linkedOnOrAfter(WebKit::LibraryVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
     else
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
+#else
+    _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    _mediaDataLoadsAutomatically = YES;
+    _userInterfaceDirectionPolicy = WKUserInterfaceDirectionPolicyContent;
+#endif
     _mainContentUserGestureOverrideEnabled = NO;
     _invisibleAutoplayNotPermitted = NO;
 

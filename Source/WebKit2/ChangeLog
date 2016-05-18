@@ -1,3 +1,17 @@
+2016-05-18  Jer Noble  <jer.noble@apple.com>
+
+        Disable default user gesture requirement for audio playback on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=157820
+
+        Reviewed by Sam Weinig.
+
+        Disable the WebPreferences and matching WKWebViewConfiguration.mediaTypesRequiringUserActionForPlayback
+        settings on Mac (and other non-iOS ports).
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+
 2016-05-18  Alex Christensen  <achristensen@webkit.org>
 
         Build fix when not using CredentialStorage with NetworkSession.
