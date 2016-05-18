@@ -1,3 +1,12 @@
+2016-05-17  Saam barati  <sbarati@apple.com>
+
+        LayoutTest inspector/debugger/tail-recursion.html failing on WK2 debug
+        https://bugs.webkit.org/show_bug.cgi?id=157801
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * inspector/debugger/tail-recursion.html:
+
 2016-05-17  Nan Wang  <n_wang@apple.com>
 
         AX: Adding children incorrectly when there are nested inline continuations

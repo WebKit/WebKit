@@ -72,8 +72,10 @@ function test()
     });
 
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
-        InspectorTest.log("Tests done");
-        InspectorTest.completeTest();
+        if (numBreakpointHits === 2) {
+            InspectorTest.log("Tests done");
+            InspectorTest.completeTest();
+        }
     });
 
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
