@@ -5154,7 +5154,7 @@ END
                  push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
 
-            push(@$outputArray, "    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));\n");
+            push(@$outputArray, "    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), WTFMove(object))));\n");
             push(@$outputArray, "}\n\n");
         }
     }

@@ -1,3 +1,39 @@
+2016-05-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Remove toJS template methods taking const Ref and const RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=157791
+
+        Reviewed by Chris Dumez.
+
+        Updating toJS template method taking a const Ref<T>& to take a Ref<T>&&.
+        Updating toJS template method taking a const RefPtr<T>& to take a RefPtr<T>&&.
+        Updating binding generator to generate rvalue references.
+
+        Covered by existing tests.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::construct):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorNamedConstructor::construct):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::construct):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors2):
+        (WebCore::constructJSTestOverloadedConstructors3):
+        (WebCore::constructJSTestOverloadedConstructors4):
+        (WebCore::constructJSTestOverloadedConstructors5):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+
 2016-05-17  Nan Wang  <n_wang@apple.com>
 
         AX: Adding children incorrectly when there are nested inline continuations

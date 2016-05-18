@@ -255,8 +255,8 @@ JSC::JSObject* toJSSequence(JSC::ExecState*, JSC::JSValue, unsigned& length);
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBuffer*);
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBufferView*);
 JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBufferView*);
-template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const RefPtr<T>&);
-template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Ref<T>&);
+template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, Ref<T>&&);
+template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, RefPtr<T>&&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T>&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Vector<RefPtr<T>>&);
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const String&);
@@ -541,14 +541,14 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject
     return view->wrap(exec, globalObject);
 }
 
-template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const RefPtr<T>& ptr)
+template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Ref<T>&& ptr)
 {
     return toJS(exec, globalObject, ptr.get());
 }
 
-template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Ref<T>& ptr)
+template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, RefPtr<T>&& ptr)
 {
-    return toJS(exec, globalObject, const_cast<T&>(ptr.get()));
+    return toJS(exec, globalObject, ptr.get());
 }
 
 template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T>& vector)

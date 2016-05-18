@@ -6478,7 +6478,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
         m_mediaControlsHost = MediaControlsHost::create(this);
 
     auto mediaJSWrapper = toJS(exec, globalObject, *this);
-    auto mediaControlsHostJSWrapper = toJS(exec, globalObject, m_mediaControlsHost);
+    auto mediaControlsHostJSWrapper = toJS(exec, globalObject, *m_mediaControlsHost);
     
     JSC::MarkedArgumentBuffer argList;
     argList.append(toJS(exec, globalObject, root));

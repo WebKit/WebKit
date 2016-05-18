@@ -76,7 +76,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* s
     if (UNLIKELY(!arrayBuffer))
         return throwArgumentTypeError(*state, 0, "arrayBuffer", "TestOverloadedConstructors", nullptr, "ArrayBuffer");
     auto object = TestOverloadedConstructors::create(*arrayBuffer);
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), WTFMove(object))));
 }
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* state)
@@ -90,7 +90,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* s
     if (UNLIKELY(!arrayBufferView))
         return throwArgumentTypeError(*state, 0, "arrayBufferView", "TestOverloadedConstructors", nullptr, "ArrayBufferView");
     auto object = TestOverloadedConstructors::create(*arrayBufferView);
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), WTFMove(object))));
 }
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* state)
@@ -102,7 +102,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* s
     if (UNLIKELY(!blob))
         return throwArgumentTypeError(*state, 0, "blob", "TestOverloadedConstructors", nullptr, "Blob");
     auto object = TestOverloadedConstructors::create(*blob);
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), WTFMove(object))));
 }
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* state)
@@ -114,7 +114,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* s
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     auto object = TestOverloadedConstructors::create(string);
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), WTFMove(object))));
 }
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* state)
@@ -124,7 +124,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* s
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     auto object = TestOverloadedConstructors::create(longArgs);
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), WTFMove(object))));
 }
 
 template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::construct(ExecState* state)
