@@ -1,3 +1,11 @@
+2016-05-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline inspector/debugger/command-line-api-exception.html after r201080
+
+        Unreviewed test gardening.
+
+        * inspector/debugger/command-line-api-exception-expected.txt:
+
 2016-05-18  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Sync DOM exception types with WebIDL and update promise rejections
