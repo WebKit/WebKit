@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (thetalecrafter@gmail.com)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +49,7 @@
 #include <unicode/unumsys.h>
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PlatformUserPreferredLanguages.h>
 
 namespace JSC {
 
@@ -645,11 +647,24 @@ String bestAvailableLocale(const HashSet<String>& availableLocales, const String
 String defaultLocale(ExecState& state)
 {
     // 6.2.4 DefaultLocale ()
+    
+    // WebCore's global objects will have their own ideas of how to determine the language. It may
+    // be determined by WebCore-specific logic like some WK settings. Usually this will return the
+    // same thing as platformUserPreferredLanguages()[0].
     if (auto defaultLanguage = state.callee()->globalObject()->globalObjectMethodTable()->defaultLanguage) {
         String locale = defaultLanguage();
         if (!locale.isEmpty())
             return canonicalizeLanguageTag(locale);
     }
+    
+    // If WebCore isn't around to tell us how to get the language then fall back to our own way of
+    // doing it, which mostly follows what WebCore would have done.
+    Vector<String> languages = platformUserPreferredLanguages();
+    if (!languages.isEmpty() && !languages[0].isEmpty())
+        return canonicalizeLanguageTag(languages[0]);
+    
+    // If all else fails, ask ICU. It will probably say something bogus like en_us even if the user
+    // has configured some other language, but being wrong is better than crashing.
     String locale = uloc_getDefault();
     convertICULocaleToBCP47LanguageTag(locale);
     return locale;

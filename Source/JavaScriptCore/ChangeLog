@@ -1,3 +1,28 @@
+2016-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should detect the right default locale even when it's not embedded in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=157755
+        rdar://problem/24665424
+
+        Reviewed by Keith Miller.
+        
+        This makes JSC try to use WTF's platform user preferred language detection if the DOM did
+        not register a defaultLanguage callback. The result is that when JSC runs standalone it
+        will detect the platform user preferred language almost the same way as when it's embedded
+        in WebCore. The only difference is that WebCore may have its own additional overrides via
+        the WK API. But in the absence of overrides, WebCore uses the same WTF logic that JSC falls
+        back to.
+        
+        We first found this bug because on iOS, the intl tests would fail because ICU would report
+        a somewhat bogus locale on that platform. Prior to this change, standalone JSC would fall
+        back to ICU's locale detection. It turns out that the ICU default locale is also bogus on
+        OS X, just less so. For example, setting things to Poland did not result in the jsc shell
+        printing dates Polish-style. Now it will print them Polish-style if your system preferences
+        say so. Also, the tests don't fail on iOS anymore.
+        
+        * runtime/IntlObject.cpp:
+        (JSC::defaultLocale):
+
 2016-05-17  Dean Jackson  <dino@apple.com>
 
         Remove ES6_GENERATORS flag
