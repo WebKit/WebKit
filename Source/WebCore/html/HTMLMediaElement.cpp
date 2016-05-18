@@ -442,29 +442,23 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if PLATFORM(IOS)
     m_sendProgressEvents = false;
 #endif
-    if (!settings || settings->videoPlaybackRequiresUserGesture()) {
-        // Allow autoplay in a MediaDocument that is not in an iframe.
-        if (document.ownerElement() || !document.isMediaDocument()) {
-            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoRateChange);
-            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForLoad);
-        }
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToShowPlaybackTargetPicker);
-#endif
-    }
-#if PLATFORM(IOS)
-    else {
-        // Relax RequireUserGestureForFullscreen when videoPlaybackRequiresUserGesture is not set:
-        m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
-    }
-#endif
 
     if (settings && settings->invisibleAutoplayNotPermitted())
         m_mediaSession->addBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted);
 
     if (document.ownerElement() || !document.isMediaDocument()) {
+        if (settings && settings->videoPlaybackRequiresUserGesture()) {
+            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoRateChange);
+            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForLoad);
+        }
+
         if (settings && settings->audioPlaybackRequiresUserGesture())
             m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+        if (settings && (settings->videoPlaybackRequiresUserGesture() || settings->audioPlaybackRequiresUserGesture()))
+            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToShowPlaybackTargetPicker);
+#endif
 
         if (!settings || !settings->mediaDataLoadsAutomatically())
             m_mediaSession->addBehaviorRestriction(MediaElementSession::AutoPreloadingNotPermitted);
@@ -472,6 +466,13 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
         if (settings && settings->mainContentUserGestureOverrideEnabled())
             m_mediaSession->addBehaviorRestriction(MediaElementSession::OverrideUserGestureRequirementForMainContent);
     }
+
+#if PLATFORM(IOS)
+    if (settings && !settings->videoPlaybackRequiresUserGesture() && !settings->audioPlaybackRequiresUserGesture()) {
+        // Relax RequireUserGestureForFullscreen when videoPlaybackRequiresUserGesture and audioPlaybackRequiresUserGesture is not set:
+        m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
+    }
+#endif
 
 #if ENABLE(VIDEO_TRACK)
     if (document.page())

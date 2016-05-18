@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <title>Test that video play, pause and enterfullscreen does not work unless a user gesture is involved in playing a video</title>
+        <script src=media-controls.js></script>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var userGestureInitiated = 0;
+            if (window.internals) 
+                window.internals.settings.setAudioPlaybackRequiresUserGesture(true);
+
+            function click()
+            {
+                if (window.eventSender) {
+                    var playCoords;
+                    try {
+                        playCoords = mediaControlsButtonCoordinates(video, "play-button");
+                    } catch (exception) {
+                        failTest(exception.description);
+                        return;
+                    }
+                    var x = playCoords[0];
+                    var y = playCoords[1];
+                     
+                    userGestureInitiated = 1;
+                    eventSender.mouseMoveTo(x, y);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+            }
+
+            function playing()
+            {
+                if (userGestureInitiated == 0) {
+                    failTest("Should not play without user gesture.");
+                } else {
+                    run("video.pause()");
+                }
+            }
+
+            function pause()
+            {
+                testExpected("video.paused", true);
+                // Now video.webkitEnterFullScreen() should no longer throw any exception.
+                // However, the video element may not always enter fullscreen. For example,
+                // chromium uses fullscreen API which still requires user gesture
+                try {
+                    run("video.webkitEnterFullScreen()");
+                } catch(ex) {
+                    failTest("video.webkitEnterFullScreen() still requires user gesture.");
+                }
+                endTest();
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("");
+                consoleWrite("* No user gesture initiated");
+                run("video.play()");
+                testDOMException("video.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
+                testExpected("video.paused", true);
+                consoleWrite("");
+
+                consoleWrite("* User gesture initiated");
+                click();
+            }
+
+            function start()
+            {
+                 findMediaElement();
+                 waitForEvent('canplaythrough', canplaythrough);
+                 waitForEvent('playing', playing);
+                 waitForEvent('pause', pause);
+                 video.src = findMediaFile("video", "content/test");
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+    <p>Test that video play(), pause() and webkitEnterFullScreen() should not work unless a user clicked on the play button.</p>
+    <video controls></video>
+    </body>
+</html>

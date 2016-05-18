@@ -1,3 +1,13 @@
+2016-05-18  Jer Noble  <jer.noble@apple.com>
+
+        webkitEnterFullscreen() does not require a user gesture when RequireUserGestureForAudioRateChange is set.
+        https://bugs.webkit.org/show_bug.cgi?id=157803
+
+        Reviewed by Eric Carlson.
+
+        * media/video-play-audio-require-user-gesture-expected.txt: Added.
+        * media/video-play-audio-require-user-gesture.html: Added.
+
 2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r186569): media/restore-from-page-cache.html is very flaky

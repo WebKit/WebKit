@@ -1,5 +1,21 @@
 2016-05-18  Jer Noble  <jer.noble@apple.com>
 
+        webkitEnterFullscreen() does not require a user gesture when RequireUserGestureForAudioRateChange is set.
+        https://bugs.webkit.org/show_bug.cgi?id=157803
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-play-audio-require-user-gesture.html
+
+        Refactor the setting of restrictions in the HTMLMediaElement constructor, and in so doing, only
+        relax the RequireUserGestureForFullscreen restriction if both videoPlaybackRequiresUserGesture()
+        and audioPlaybackRequiresUserGesture() settings are not set.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+
+2016-05-18  Jer Noble  <jer.noble@apple.com>
+
         Playback session sends audio and text track lists when media does not have audio or text tracks.
         https://bugs.webkit.org/show_bug.cgi?id=157865
         <rdar://problem/25992750>
