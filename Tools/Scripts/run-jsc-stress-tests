@@ -784,6 +784,15 @@ def runWithRAMSize(size)
     run("ram-size-#{size}", "--forceRAMSize=#{size}")
 end
 
+def runOneLargeHeap
+    if $memoryLimited
+        $didAddRunCommand = true
+        puts "Skipping #{$collectionName}/#{$benchmark}"
+    else
+        run("default")
+    end
+end
+
 def runNoJIT
     run("no-jit", "--useJIT=false")
 end

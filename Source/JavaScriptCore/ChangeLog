@@ -1,3 +1,24 @@
+2016-05-18  Michael Saboff  <msaboff@apple.com>
+
+        r199812 broke test262
+        https://bugs.webkit.org/show_bug.cgi?id=157595
+
+        Reviewed by Filip Pizlo.
+
+        Added a reasonable limit to the size of the match result array to catch possible
+        infinite loops when matching.
+        Added a new tests that creates an infinite loop in RegExp.prototype.[Symbol.match]
+        by creating a subclass of RegExp where the base RegExp's global flag is false and
+        the subclass overrides .global with a getter that always returns true.
+
+        * builtins/RegExpPrototype.js:
+        (match):
+        * tests/stress/regress-157595.js: Added.
+        (MyRegExp):
+        (MyRegExp.prototype.get global):
+        (test):
+        (catch):
+
 2016-05-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Namespace object re-export should be handled as local export

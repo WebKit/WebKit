@@ -97,7 +97,8 @@ function match(strArg)
     let unicode = regexp.unicode;
     regexp.lastIndex = 0;
     let resultList = [];
-    let stringLength = str.length;
+
+    const maximumReasonableMatchSize = 100000000;
 
     while (true) {
         let result = @regExpExec(regexp, str);
@@ -107,6 +108,9 @@ function match(strArg)
                 return null;
             return resultList;
         }
+
+        if (resultList.length > maximumReasonableMatchSize)
+            throw new @Error("Out of memory");
 
         if (!@isObject(result))
             throw new @TypeError("RegExp.prototype.@@match call to RegExp.exec didn't return null or an object");
