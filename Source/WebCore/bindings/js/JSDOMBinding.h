@@ -178,6 +178,7 @@ WEBCORE_EXPORT void reportException(JSC::ExecState*, JSC::Exception*, CachedScri
 void reportCurrentException(JSC::ExecState*);
 
 JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode);
+JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode, const String&);
 
 // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
 WEBCORE_EXPORT void setDOMException(JSC::ExecState*, ExceptionCode);

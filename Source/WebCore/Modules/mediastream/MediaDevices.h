@@ -47,7 +47,6 @@ class Dictionary;
 class Document;
 class MediaStream;
 class MediaTrackSupportedConstraints;
-class NavigatorUserMediaError;
 
 typedef int ExceptionCode;
 

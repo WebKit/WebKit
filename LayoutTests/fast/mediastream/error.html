@@ -20,7 +20,7 @@ navigator.webkitGetUserMedia(options, function(stream) {
     finishJSTest();
 }, function(e) {
     error = e;
-    shouldBe('error.code', 'error.PERMISSION_DENIED');
+    shouldBeEqualToString('error.name', 'NotAllowedError');
     finishJSTest();
 });
 </script>

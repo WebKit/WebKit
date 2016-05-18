@@ -33,8 +33,6 @@
 #if ENABLE(WEB_RTC)
 #include "MediaEndpointPeerConnection.h"
 
-#include "DOMError.h"
-#include "JSDOMError.h"
 #include "JSRTCSessionDescription.h"
 #include "MediaEndpointSessionConfiguration.h"
 #include "MediaStreamTrack.h"
@@ -171,7 +169,7 @@ void MediaEndpointPeerConnection::createAnswer(RTCAnswerOptions& options, Sessio
 
     notImplemented();
 
-    promise.reject(DOMError::create("NotSupportedError"));
+    promise.reject(NOT_SUPPORTED_ERR);
 }
 
 void MediaEndpointPeerConnection::setLocalDescription(RTCSessionDescription& description, VoidPromise&& promise)
@@ -180,7 +178,7 @@ void MediaEndpointPeerConnection::setLocalDescription(RTCSessionDescription& des
 
     notImplemented();
 
-    promise.reject(DOMError::create("NotSupportedError"));
+    promise.reject(NOT_SUPPORTED_ERR);
 }
 
 RefPtr<RTCSessionDescription> MediaEndpointPeerConnection::localDescription() const
@@ -210,7 +208,7 @@ void MediaEndpointPeerConnection::setRemoteDescription(RTCSessionDescription& de
 
     notImplemented();
 
-    promise.reject(DOMError::create("NotSupportedError"));
+    promise.reject(NOT_SUPPORTED_ERR);
 }
 
 RefPtr<RTCSessionDescription> MediaEndpointPeerConnection::remoteDescription() const
@@ -247,14 +245,14 @@ void MediaEndpointPeerConnection::addIceCandidate(RTCIceCandidate& rtcCandidate,
 
     notImplemented();
 
-    promise.reject(DOMError::create("NotSupportedError"));
+    promise.reject(NOT_SUPPORTED_ERR);
 }
 
 void MediaEndpointPeerConnection::getStats(MediaStreamTrack*, PeerConnection::StatsPromise&& promise)
 {
     notImplemented();
 
-    promise.reject(DOMError::create("NotSupportedError"));
+    promise.reject(NOT_SUPPORTED_ERR);
 }
 
 void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, MediaStreamTrack& withTrack, PeerConnection::VoidPromise&& promise)
@@ -265,7 +263,7 @@ void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, MediaStream
 
     notImplemented();
 
-    promise.reject(DOMError::create("NotSupportedError"));
+    promise.reject(NOT_SUPPORTED_ERR);
 }
 
 void MediaEndpointPeerConnection::stop()

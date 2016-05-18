@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 13: IndexSizeError: DOM Exception 1: Index or size was negative, or greater than the allowed value.
+CONSOLE MESSAGE: line 13: IndexSizeError: DOM Exception 1: The index is not in the allowed range.
 This tests that we are getting the correct message for DOM Exception 1: INDEX_SIZE_ERR.

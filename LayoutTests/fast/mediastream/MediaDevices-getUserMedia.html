@@ -32,8 +32,7 @@
             function error1(e) {
                 errorArg = e;
                 testPassed("Error callback called.");
-                shouldBeEqualToString("errorArg.name", "PermissionDeniedError");
-                shouldBeEqualToString("errorArg.constraintName", "");
+                shouldBeEqualToString("errorArg.name", "NotAllowedError");
 
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true}).then(invalidGotStream).catch(error2);");
             }

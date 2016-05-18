@@ -24,8 +24,7 @@ PASS stream.getAudioTracks().length is 1
 PASS stream.getVideoTracks().length is 1
 PASS navigator.mediaDevices.getUserMedia({audio:true}).then(invalidGotStream, error1); did not throw exception.
 PASS Error callback called.
-PASS errorArg.name is "PermissionDeniedError"
-PASS errorArg.constraintName is ""
+PASS errorArg.name is "NotAllowedError"
 PASS navigator.mediaDevices.getUserMedia({audio:true}).then(invalidGotStream).catch(error2); did not throw exception.
 PASS Error callback called.
 PASS successfullyParsed is true

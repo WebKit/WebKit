@@ -64,6 +64,18 @@ enum {
     INVALID_NODE_TYPE_ERR = 24,
     DATA_CLONE_ERR = 25,
 
+    // Others introduced in https://heycam.github.io/webidl/#idl-exceptions
+    EncodingError,
+    NotReadableError,
+    UnknownError,
+    ConstraintError,
+    DataError,
+    TransactionInactiveError,
+    ReadonlyError,
+    VersionError,
+    OperationError,
+    NotAllowedError,
+
     // WebIDL exception types, handled by the binding layer.
     // FIXME: Add GeneralError, EvalError, etc. when implemented in the bindings.
     TypeError = 105,

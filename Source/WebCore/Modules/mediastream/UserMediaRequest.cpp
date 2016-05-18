@@ -43,7 +43,6 @@
 #include "Frame.h"
 #include "JSMediaDeviceInfo.h"
 #include "JSMediaStream.h"
-#include "JSNavigatorUserMediaError.h"
 #include "MainFrame.h"
 #include "MediaConstraintsImpl.h"
 #include "MediaStream.h"
@@ -191,11 +190,13 @@ void UserMediaRequest::didCreateStream(PassRefPtr<MediaStreamPrivate> privateStr
 
 void UserMediaRequest::failedToCreateStreamWithConstraintsError(const String& constraintName)
 {
+    UNUSED_PARAM(constraintName);
     ASSERT(!constraintName.isEmpty());
     if (!m_scriptExecutionContext)
         return;
 
-    m_promise.reject(NavigatorUserMediaError::create(NavigatorUserMediaError::constraintNotSatisfiedErrorName(), constraintName));
+    // FIXME: The promise should be rejected with an OverconstrainedError, https://bugs.webkit.org/show_bug.cgi?id=157839.
+    m_promise.reject(DataError);
 }
 
 void UserMediaRequest::failedToCreateStreamWithPermissionError()
@@ -203,8 +204,7 @@ void UserMediaRequest::failedToCreateStreamWithPermissionError()
     if (!m_scriptExecutionContext)
         return;
 
-    // FIXME: Replace NavigatorUserMediaError with MediaStreamError (see bug 143335)
-    m_promise.reject(NavigatorUserMediaError::create(NavigatorUserMediaError::permissionDeniedErrorName(), emptyString()));
+    m_promise.reject(NotAllowedError);
 }
 
 void UserMediaRequest::contextDestroyed()

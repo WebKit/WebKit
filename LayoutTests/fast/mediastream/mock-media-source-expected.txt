@@ -10,7 +10,7 @@ PASS mediaStream.getTracks().length is 2
 
 *** Disable mock capture devices
 internals.setMockMediaCaptureDevicesEnabled(false)
-PASS mediaDevices.getUserMedia() failed with PermissionDeniedError
+PASS mediaDevices.getUserMedia() failed with NotAllowedError
 
 *** Enable mock capture devices
 internals.setMockMediaCaptureDevicesEnabled(true)

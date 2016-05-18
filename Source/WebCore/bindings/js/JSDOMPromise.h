@@ -118,7 +118,7 @@ public:
     template<class RejectResultType> typename std::enable_if<PromiseResultInspector<RejectResultType>::passByConstRef, void>::type
     reject(const RejectResultType& result) { rejectWithValue(result); }
 
-    void reject(ExceptionCode);
+    void reject(ExceptionCode, const String& = { });
 
     JSDOMGlobalObject& globalObject() const;
     JSC::JSValue promise() const;
@@ -163,20 +163,11 @@ public:
 
     void resolve(typename PromiseResultInspector<Value>::Type value) { m_wrapper.resolve(value); }
 
-    template<typename ErrorType> void reject(ErrorType&& error) { m_wrapper.reject(std::forward<ErrorType>(error)); }
+    template<typename... ErrorType> void reject(ErrorType&&... error) { m_wrapper.reject(std::forward<ErrorType>(error)...); }
 
 private:
     DeferredWrapper m_wrapper;
 };
-
-inline void DeferredWrapper::reject(ExceptionCode ec)
-{
-    ASSERT(m_deferred);
-    ASSERT(m_globalObject);
-    JSC::ExecState* exec = m_globalObject->globalExec();
-    JSC::JSLockHolder locker(exec);
-    reject(*exec, createDOMException(exec, ec));
-}
 
 template<class ResolveResultType>
 inline void DeferredWrapper::resolveWithValue(ResolveResultType&& result)

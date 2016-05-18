@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 66: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
+CONSOLE MESSAGE: line 66: HierarchyRequestError: DOM Exception 3: The operation would yield an incorrect node tree.
 
 Errlog selectionTest: HierarchyRequestError: HierarchyRequestError: DOM Exception 3 : index 1 
 Errlog webtest_fn_24: 

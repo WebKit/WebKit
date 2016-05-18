@@ -3028,12 +3028,12 @@ void HTMLMediaElement::play(PlayPromise&& promise)
     LOG(Media, "HTMLMediaElement::play(%p)", this);
 
     if (!m_mediaSession->playbackPermitted(*this)) {
-        promise.reject(DOMError::create("NotAllowedError", "The request is not allowed by the user agent or the platform in the current context."));
+        promise.reject(NotAllowedError);
         return;
     }
 
     if (m_error && m_error->code() == MediaError::MEDIA_ERR_SRC_NOT_SUPPORTED) {
-        promise.reject(DOMError::create("NotSupportedError", "The operation is not supported.."));
+        promise.reject(NOT_SUPPORTED_ERR, "The operation is not supported.");
         return;
     }
 
@@ -3041,7 +3041,7 @@ void HTMLMediaElement::play(PlayPromise&& promise)
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
     if (!playInternal())
-        promise.reject(DOMError::create("NotAllowedError", "The request is not allowed by the user agent or the platform in the current context."));
+        promise.reject(NotAllowedError);
 
     m_pendingPlayPromises.append(WTFMove(promise));
 }

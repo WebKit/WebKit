@@ -33,9 +33,7 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "DOMError.h"
 #include "ExceptionCode.h"
-#include "JSDOMError.h"
 
 namespace WebCore {
 
@@ -51,7 +49,7 @@ RTCRtpSender::RTCRtpSender(Ref<MediaStreamTrack>&& track, Vector<String>&& media
 void RTCRtpSender::replaceTrack(MediaStreamTrack& withTrack, PeerConnection::VoidPromise&& promise, ExceptionCode& ec)
 {
     if (!m_client) {
-        promise.reject(DOMError::create("InvalidStateError"));
+        promise.reject(INVALID_STATE_ERR);
         return;
     }
 

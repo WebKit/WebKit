@@ -361,7 +361,6 @@
 #include "JSNavigatorGeolocation.cpp"
 #include "JSNavigatorMediaDevices.cpp"
 #include "JSNavigatorUserMedia.cpp"
-#include "JSNavigatorUserMediaError.cpp"
 #include "JSNavigatorVibration.cpp"
 #include "JSNode.cpp"
 #include "JSNodeFilter.cpp"

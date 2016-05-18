@@ -22,7 +22,7 @@ function onIframeLoaded() {
         finishJSTest();
     }, function(e) {
         error = e;
-        shouldBe('error.code', 'error.PERMISSION_DENIED');
+        shouldBeEqualToString('error.name', 'NotAllowedError');
         debug('');
         iframe.src = 'data:text/html,This frame should be visible when the test completes';
     });

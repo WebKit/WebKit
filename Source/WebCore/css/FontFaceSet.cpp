@@ -142,7 +142,7 @@ void FontFaceSet::load(const String& font, const String& text, LoadPromise&& pro
 
     for (auto& face : matchingFaces) {
         if (face.get().status() == CSSFontFace::Status::Failure) {
-            promise.reject(DOMCoreException::create(ExceptionCodeDescription(NETWORK_ERR)));
+            promise.reject(NETWORK_ERR);
             return;
         }
     }
@@ -222,7 +222,7 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
             }
         } else {
             ASSERT(newStatus == CSSFontFace::Status::Failure);
-            pendingPromise->promise.reject(DOMCoreException::create(ExceptionCodeDescription(NETWORK_ERR)));
+            pendingPromise->promise.reject(NETWORK_ERR);
             pendingPromise->hasReachedTerminalState = true;
         }
     }

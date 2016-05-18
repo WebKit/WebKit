@@ -280,7 +280,7 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
     return errorObject;
 }
 
-static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String& message)
+JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String& message)
 {
     return createDOMException(exec, ec, &message);
 }

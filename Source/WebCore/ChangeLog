@@ -1,3 +1,59 @@
+2016-05-18  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Sync DOM exception types with WebIDL and update promise rejections
+        https://bugs.webkit.org/show_bug.cgi?id=157792
+
+        Reviewed by Eric Carlson.
+
+        Updating ExceptionCode with WebIDL latest exception types.
+        Updating promise rejection code to use those types as per the latest specifications.
+
+        Updating getUserMedia error handling by removing NavigatorUserMediaError which no long exists.
+
+        Covered by rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createAnswer):
+        (WebCore::MediaEndpointPeerConnection::setLocalDescription):
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescription):
+        (WebCore::MediaEndpointPeerConnection::addIceCandidate):
+        (WebCore::MediaEndpointPeerConnection::getStats):
+        (WebCore::MediaEndpointPeerConnection::replaceTrack):
+        * Modules/mediastream/NavigatorUserMediaError.cpp: Removed.
+        * Modules/mediastream/NavigatorUserMediaError.h: Removed.
+        * Modules/mediastream/NavigatorUserMediaError.idl: Removed.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::queuedCreateOffer):
+        (WebCore::RTCPeerConnection::queuedCreateAnswer):
+        (WebCore::RTCPeerConnection::queuedSetLocalDescription):
+        (WebCore::RTCPeerConnection::queuedSetRemoteDescription):
+        (WebCore::RTCPeerConnection::queuedAddIceCandidate):
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::replaceTrack):
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::failedToCreateStreamWithConstraintsError):
+        (WebCore::UserMediaRequest::failedToCreateStreamWithPermissionError):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::createDOMException):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DeferredWrapper::reject):
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredWrapper::reject):
+        (WebCore::DOMPromise::reject):
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::load):
+        (WebCore::FontFaceSet::faceFinished):
+        * dom/DOMCoreException.cpp:
+        * dom/ExceptionCode.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::play):
+
 2016-05-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] webaudio crash on ARM platforms

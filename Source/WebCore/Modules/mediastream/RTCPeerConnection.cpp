@@ -36,12 +36,10 @@
 
 #include "RTCPeerConnection.h"
 
-#include "DOMError.h"
 #include "Document.h"
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "JSDOMError.h"
 #include "MediaStream.h"
 #include "MediaStreamTrack.h"
 #include "RTCConfiguration.h"
@@ -152,14 +150,14 @@ void RTCPeerConnection::removeTrack(RTCRtpSender& sender, ExceptionCode& ec)
 void RTCPeerConnection::queuedCreateOffer(const Dictionary& offerOptions, SessionDescriptionPromise&& promise)
 {
     if (m_signalingState == SignalingState::Closed) {
-        promise.reject(DOMError::create("InvalidStateError"));
+        promise.reject(INVALID_STATE_ERR);
         return;
     }
 
     ExceptionCode ec = 0;
     RefPtr<RTCOfferOptions> options = RTCOfferOptions::create(offerOptions, ec);
     if (ec) {
-        promise.reject(DOMError::create("Invalid createOffer argument"));
+        promise.reject(OperationError, "Invalid createOffer argument");
         return;
     }
     ASSERT(options);
@@ -170,14 +168,14 @@ void RTCPeerConnection::queuedCreateOffer(const Dictionary& offerOptions, Sessio
 void RTCPeerConnection::queuedCreateAnswer(const Dictionary& answerOptions, SessionDescriptionPromise&& promise)
 {
     if (m_signalingState == SignalingState::Closed) {
-        promise.reject(DOMError::create("InvalidStateError"));
+        promise.reject(INVALID_STATE_ERR);
         return;
     }
 
     ExceptionCode ec = 0;
     RefPtr<RTCAnswerOptions> options = RTCAnswerOptions::create(answerOptions, ec);
     if (ec) {
-        promise.reject(DOMError::create("Invalid createAnswer argument"));
+        promise.reject(OperationError, "Invalid createAnswer argument");
         return;
     }
 
@@ -187,7 +185,7 @@ void RTCPeerConnection::queuedCreateAnswer(const Dictionary& answerOptions, Sess
 void RTCPeerConnection::queuedSetLocalDescription(RTCSessionDescription& description, PeerConnection::VoidPromise&& promise)
 {
     if (m_signalingState == SignalingState::Closed) {
-        promise.reject(DOMError::create("InvalidStateError"));
+        promise.reject(INVALID_STATE_ERR);
         return;
     }
 
@@ -212,7 +210,7 @@ RefPtr<RTCSessionDescription> RTCPeerConnection::pendingLocalDescription() const
 void RTCPeerConnection::queuedSetRemoteDescription(RTCSessionDescription& description, PeerConnection::VoidPromise&& promise)
 {
     if (m_signalingState == SignalingState::Closed) {
-        promise.reject(DOMError::create("InvalidStateError"));
+        promise.reject(INVALID_STATE_ERR);
         return;
     }
 
@@ -237,7 +235,7 @@ RefPtr<RTCSessionDescription> RTCPeerConnection::pendingRemoteDescription() cons
 void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate& rtcCandidate, VoidPromise&& promise)
 {
     if (m_signalingState == SignalingState::Closed) {
-        promise.reject(DOMError::create("InvalidStateError"));
+        promise.reject(INVALID_STATE_ERR);
         return;
     }
 
