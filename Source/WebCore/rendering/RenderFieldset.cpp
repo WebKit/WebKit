@@ -127,12 +127,12 @@ RenderObject* RenderFieldset::layoutSpecialExcludedChild(bool relayoutChildren)
 
 RenderBox* RenderFieldset::findLegend(FindLegendOption option)
 {
-    for (auto& legend : childrenOfType<RenderElement>(*this)) {
+    for (auto& legend : childrenOfType<RenderBox>(*this)) {
         if (option == IgnoreFloatingOrOutOfFlow && legend.isFloatingOrOutOfFlowPositioned())
             continue;
         
         if (is<HTMLLegendElement>(legend.element()))
-            return &downcast<RenderBox>(legend);
+            return &legend;
     }
     return nullptr;
 }

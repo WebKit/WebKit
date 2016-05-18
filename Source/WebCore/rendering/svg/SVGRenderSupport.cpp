@@ -266,7 +266,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
             needsLayout = true;
         }
 
-        if (layoutSizeChanged && is<SVGElement>(child.node())) {
+        if (layoutSizeChanged && is<SVGElement>(*child.node())) {
             // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
             auto& element = downcast<SVGElement>(*child.node());
             if (element.hasRelativeLengths()) {

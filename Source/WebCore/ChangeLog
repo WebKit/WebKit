@@ -1,3 +1,12 @@
+2016-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix Darin's post-mortem review comments for r201052.
+
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::findLegend):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::layoutChildren):
+
 2016-05-17  Beth Dakin  <bdakin@apple.com>
 
         Make handleAcceptedCandidate a public function
