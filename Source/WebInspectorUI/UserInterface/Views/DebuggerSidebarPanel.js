@@ -46,8 +46,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._debuggerActiveCallFrameDidChange, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.WaitingToPause, this._debuggerWaitingToPause, this);
 
-        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingWillStart, this._timelineRecordingWillStart, this);
-        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._timelineRecordingStopped, this);        
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingWillStart, this._timelineCapturingWillStart, this);
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._timelineCapturingStopped, this);
 
         this._timelineRecordingWarningElement = document.createElement("div");
         this._timelineRecordingWarningElement.classList.add("timeline-recording-warning");
@@ -429,23 +429,16 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._addIssuesForSourceCode(resource);
     }
 
-    _timelineRecordingWillStart(event)
+    _timelineCapturingWillStart(event)
     {
-        WebInspector.debuggerManager.startDisablingBreakpointsTemporarily();
-
-        if (WebInspector.debuggerManager.paused)
-            WebInspector.debuggerManager.resume();
-
         this._debuggerBreakpointsButtonItem.enabled = false;
         this._debuggerPauseResumeButtonItem.enabled = false;
 
         this.contentView.element.insertBefore(this._timelineRecordingWarningElement, this.contentView.element.firstChild);
     }
 
-    _timelineRecordingStopped(event)
+    _timelineCapturingStopped(event)
     {
-        WebInspector.debuggerManager.stopDisablingBreakpointsTemporarily();
-
         this._debuggerBreakpointsButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.enabled = true;
 
