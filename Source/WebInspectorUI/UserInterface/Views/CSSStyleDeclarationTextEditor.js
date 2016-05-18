@@ -835,7 +835,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return;
 
         // Matches a comment like: /* -webkit-foo: bar; */
-        var commentedPropertyRegex = /\/\*\s*[-\w]+\s*:\s*[^;]+;?\s*\*\//g;
+        let commentedPropertyRegex = /\/\*\s*[-\w]+\s*\:\s*(?:(?:\".*\"|url\(.+\)|[^;])\s*)+;?\s*\*\//g;
 
         var match = commentedPropertyRegex.exec(lineHandle.text);
         if (!match)

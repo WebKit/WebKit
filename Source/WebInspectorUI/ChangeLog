@@ -1,3 +1,16 @@
+2016-05-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Checkbox disappears when unchecking CSS property with value containing a semicolon
+        https://bugs.webkit.org/show_bug.cgi?id=157862
+        <rdar://problem/16214480>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createCommentedCheckboxMarker):
+        Modify regex to match CSS properties with url() and quoted values,
+        which can contain semicolons.
+
 2016-05-18  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: ugly gaps in Call Trees data grid when expanding more than one level
