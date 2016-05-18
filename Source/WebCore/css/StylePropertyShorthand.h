@@ -19,24 +19,16 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef StylePropertyShorthand_h
-#define StylePropertyShorthand_h
+#pragma once
 
 #include "CSSPropertyNames.h"
-#include "StylePropertyShorthandFunctions.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class StylePropertyShorthand {
 public:
-    StylePropertyShorthand()
-        : m_properties(0)
-        , m_propertiesForInitialization(0)
-        , m_length(0)
-        , m_shorthandID(CSSPropertyInvalid)
-    {
-    }
+    StylePropertyShorthand() = default;
 
     template<unsigned numProperties>
     StylePropertyShorthand(CSSPropertyID id, const CSSPropertyID (&properties)[numProperties], const StylePropertyShorthand* propertiesForInitialization = nullptr)
@@ -53,10 +45,10 @@ public:
     CSSPropertyID id() const { return m_shorthandID; }
 
 private:
-    const CSSPropertyID* m_properties;
-    const StylePropertyShorthand* m_propertiesForInitialization;
-    unsigned m_length;
-    CSSPropertyID m_shorthandID;
+    const CSSPropertyID* m_properties { nullptr };
+    const StylePropertyShorthand* m_propertiesForInitialization { nullptr };
+    unsigned m_length { 0 };
+    CSSPropertyID m_shorthandID { CSSPropertyInvalid };
 };
 
 // Custom StylePropertyShorthand functions.
@@ -76,5 +68,3 @@ unsigned indexOfShorthandForLonghand(CSSPropertyID, const Vector<StylePropertySh
 bool isShorthandCSSProperty(CSSPropertyID);
 
 } // namespace WebCore
-
-#endif // StylePropertyShorthand_h

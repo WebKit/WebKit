@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertyShorthand.h"
+#include "StylePropertyShorthandFunctions.h"
 #include "StyleSheetContents.h"
 #include <bitset>
 #include <wtf/text/StringBuilder.h>
@@ -606,9 +607,9 @@ String StyleProperties::borderPropertyValue(CommonValueMode valueMode) const
     return result.isEmpty() ? String() : result.toString();
 }
 
-PassRefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) const
+RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) const
 {
-    PassRefPtr<CSSValue> value = getPropertyCSSValueInternal(propertyID);
+    RefPtr<CSSValue> value = getPropertyCSSValueInternal(propertyID);
     if (value && value->isVariableDependentValue()) {
         auto& dependentValue = downcast<CSSVariableDependentValue>(*value);
         if (dependentValue.propertyID() != propertyID)
@@ -617,7 +618,7 @@ PassRefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID property
     return value;
 }
 
-PassRefPtr<CSSValue> StyleProperties::getPropertyCSSValueInternal(CSSPropertyID propertyID) const
+RefPtr<CSSValue> StyleProperties::getPropertyCSSValueInternal(CSSPropertyID propertyID) const
 {
     int foundPropertyIndex = findPropertyIndex(propertyID);
     if (foundPropertyIndex == -1)
@@ -751,19 +752,18 @@ bool MutableStyleProperties::setCustomProperty(const String& propertyName, const
     return CSSParser::parseCustomPropertyValue(this, propertyName, value, important, cssParserMode(), contextStyleSheet) == CSSParser::ParseResult::Changed;
 }
 
-void MutableStyleProperties::setProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue> prpValue, bool important)
+void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important)
 {
     StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
     if (!shorthand.length()) {
-        setProperty(CSSProperty(propertyID, prpValue, important));
+        setProperty(CSSProperty(propertyID, WTFMove(value), important));
         return;
     }
 
     removePropertiesInSet(shorthand.properties(), shorthand.length());
 
-    RefPtr<CSSValue> value = prpValue;
     for (unsigned i = 0; i < shorthand.length(); ++i)
-        m_propertyVector.append(CSSProperty(shorthand.properties()[i], value, important));
+        m_propertyVector.append(CSSProperty(shorthand.properties()[i], value.copyRef(), important));
 }
 
 bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSProperty* slot)

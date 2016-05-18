@@ -24,6 +24,7 @@
 #include "CSSValueList.h"
 #include "RenderStyleConstants.h"
 #include "StylePropertyShorthand.h"
+#include "StylePropertyShorthandFunctions.h"
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>

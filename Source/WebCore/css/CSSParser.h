@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSParser_h
-#define CSSParser_h
+#pragma once
 
 #include "CSSCalculationValue.h"
 #include "CSSGradientValue.h"
@@ -778,5 +777,3 @@ inline int cssyylex(void* yylval, CSSParser* parser)
 }
 
 } // namespace WebCore
-
-#endif // CSSParser_h

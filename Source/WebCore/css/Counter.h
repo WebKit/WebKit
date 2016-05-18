@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef Counter_h
-#define Counter_h
+#pragma once
 
 #include "CSSPrimitiveValue.h"
 #include <wtf/text/WTFString.h>
@@ -28,9 +27,9 @@ namespace WebCore {
 
 class Counter : public RefCounted<Counter> {
 public:
-    static Ref<Counter> create(PassRefPtr<CSSPrimitiveValue> identifier, PassRefPtr<CSSPrimitiveValue> listStyle, PassRefPtr<CSSPrimitiveValue> separator)
+    static Ref<Counter> create(RefPtr<CSSPrimitiveValue>&& identifier, RefPtr<CSSPrimitiveValue>&& listStyle, RefPtr<CSSPrimitiveValue>&& separator)
     {
-        return adoptRef(*new Counter(identifier, listStyle, separator));
+        return adoptRef(*new Counter(WTFMove(identifier), WTFMove(listStyle), WTFMove(separator)));
     }
 
     String identifier() const { return m_identifier ? m_identifier->getStringValue() : String(); }
@@ -39,9 +38,9 @@ public:
 
     CSSValueID listStyleIdent() const { return m_listStyle ? m_listStyle->getValueID() : CSSValueInvalid; }
 
-    void setIdentifier(PassRefPtr<CSSPrimitiveValue> identifier) { m_identifier = identifier; }
-    void setListStyle(PassRefPtr<CSSPrimitiveValue> listStyle) { m_listStyle = listStyle; }
-    void setSeparator(PassRefPtr<CSSPrimitiveValue> separator) { m_separator = separator; }
+    void setIdentifier(RefPtr<CSSPrimitiveValue>&& identifier) { m_identifier = WTFMove(identifier); }
+    void setListStyle(RefPtr<CSSPrimitiveValue>&& listStyle) { m_listStyle = WTFMove(listStyle); }
+    void setSeparator(RefPtr<CSSPrimitiveValue>&& separator) { m_separator = WTFMove(separator); }
 
     bool equals(const Counter& other) const
     {
@@ -58,10 +57,10 @@ public:
     }
 
 private:
-    Counter(PassRefPtr<CSSPrimitiveValue> identifier, PassRefPtr<CSSPrimitiveValue> listStyle, PassRefPtr<CSSPrimitiveValue> separator)
-        : m_identifier(identifier)
-        , m_listStyle(listStyle)
-        , m_separator(separator)
+    Counter(RefPtr<CSSPrimitiveValue>&& identifier, RefPtr<CSSPrimitiveValue>&& listStyle, RefPtr<CSSPrimitiveValue>&& separator)
+        : m_identifier(WTFMove(identifier))
+        , m_listStyle(WTFMove(listStyle))
+        , m_separator(WTFMove(separator))
     {
     }
 
@@ -71,5 +70,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // Counter_h

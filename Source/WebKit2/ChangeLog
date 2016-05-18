@@ -1,3 +1,12 @@
+2016-05-18  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up CSS code
+        https://bugs.webkit.org/show_bug.cgi?id=157808
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+
 2016-05-18  Jer Noble  <jer.noble@apple.com>
 
         Disable default user gesture requirement for audio playback on Mac

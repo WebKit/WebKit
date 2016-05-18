@@ -17,18 +17,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSBorderImage_h
-#define CSSBorderImage_h
+#pragma once
 
-#include "CSSBorderImageSliceValue.h"
-#include "CSSValueList.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-Ref<CSSValueList> createBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSValue> imageSlice, PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat);
+class CSSValue;
+class CSSValueList;
+
+Ref<CSSValueList> createBorderImageValue(RefPtr<CSSValue>&& image, RefPtr<CSSValue>&& imageSlice, RefPtr<CSSValue>&& borderSlice, RefPtr<CSSValue>&& outset, RefPtr<CSSValue>&& repeat);
 
 } // namespace WebCore
-
-#endif // CSSBorderImage_h

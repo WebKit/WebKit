@@ -39,10 +39,10 @@ CSSFontFaceLoadEvent::CSSFontFaceLoadEvent()
 {
 }
 
-CSSFontFaceLoadEvent::CSSFontFaceLoadEvent(const AtomicString& type, PassRefPtr<CSSFontFaceRule> fontface, PassRefPtr<DOMError> error)
+CSSFontFaceLoadEvent::CSSFontFaceLoadEvent(const AtomicString& type, RefPtr<CSSFontFaceRule>&& fontface, RefPtr<DOMError>&& error)
     : Event(type, false, false)
-    , m_fontface(fontface)
-    , m_error(error)
+    , m_fontface(WTFMove(fontface))
+    , m_error(WTFMove(error))
 {
 }
 

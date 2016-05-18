@@ -133,7 +133,7 @@ unsigned CSSGroupingRule::length() const
 CSSRule* CSSGroupingRule::item(unsigned index) const
 { 
     if (index >= length())
-        return 0;
+        return nullptr;
     ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
     RefPtr<CSSRule>& rule = m_childRuleCSSOMWrappers[index];
     if (!rule)
@@ -144,7 +144,7 @@ CSSRule* CSSGroupingRule::item(unsigned index) const
 CSSRuleList& CSSGroupingRule::cssRules() const
 {
     if (!m_ruleListCSSOMWrapper)
-        m_ruleListCSSOMWrapper = std::make_unique<LiveCSSRuleList<CSSGroupingRule>>(const_cast<CSSGroupingRule*>(this));
+        m_ruleListCSSOMWrapper = std::make_unique<LiveCSSRuleList<CSSGroupingRule>>(const_cast<CSSGroupingRule&>(*this));
     return *m_ruleListCSSOMWrapper;
 }
 

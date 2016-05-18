@@ -23,21 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSAnimationTriggerScrollValue_h
-#define CSSAnimationTriggerScrollValue_h
+#pragma once
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
 
 #include "CSSValue.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class CSSAnimationTriggerScrollValue : public CSSValue {
 public:
-    static Ref<CSSAnimationTriggerScrollValue> create(PassRefPtr<CSSValue> startValue, PassRefPtr<CSSValue> endValue = nullptr)
+    static Ref<CSSAnimationTriggerScrollValue> create(Ref<CSSValue>&& startValue, RefPtr<CSSValue>&& endValue = nullptr)
     {
-        return adoptRef(*new CSSAnimationTriggerScrollValue(startValue, endValue));
+        return adoptRef(*new CSSAnimationTriggerScrollValue(WTFMove(startValue), WTFMove(endValue)));
     }
 
     const CSSValue* startValue() const { return m_startValue.get(); }
@@ -49,10 +47,10 @@ public:
     bool equals(const CSSAnimationTriggerScrollValue&) const;
 
 private:
-    CSSAnimationTriggerScrollValue(PassRefPtr<CSSValue> startValue, PassRefPtr<CSSValue> endValue)
+    CSSAnimationTriggerScrollValue(Ref<CSSValue>&& startValue, RefPtr<CSSValue>&& endValue)
         : CSSValue(AnimationTriggerScrollClass)
-        , m_startValue(startValue)
-        , m_endValue(endValue)
+        , m_startValue(WTFMove(startValue))
+        , m_endValue(WTFMove(endValue))
     {
     }
 
@@ -63,7 +61,5 @@ private:
 }
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSAnimationTriggerScrollValue, isAnimationTriggerScrollValue())
-
-#endif
 
 #endif

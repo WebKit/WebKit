@@ -23,11 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitCSSTransformValue_h
-#define WebKitCSSTransformValue_h
+#pragma once
 
 #include "CSSValueList.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -82,5 +80,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(WebKitCSSTransformValue, isWebKitCSSTransformValue())
-
-#endif

@@ -42,6 +42,7 @@
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
+#include "ViewportStyleResolver.h"
 
 #if ENABLE(VIDEO_TRACK)
 #include "TextTrackCue.h"

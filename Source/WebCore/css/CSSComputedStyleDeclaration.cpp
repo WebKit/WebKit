@@ -32,6 +32,7 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
+#include "CSSBorderImageSliceValue.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontValue.h"
@@ -64,6 +65,7 @@
 #include "StyleInheritedData.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
+#include "StylePropertyShorthandFunctions.h"
 #include "StyleResolver.h"
 #include "WebKitCSSFilterValue.h"
 #include "WebKitCSSTransformValue.h"
@@ -538,10 +540,10 @@ static Ref<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePiece
     }
 
     auto quad = Quad::create();
-    quad->setTop(top.release());
-    quad->setRight(right.release());
-    quad->setBottom(bottom.release());
-    quad->setLeft(left.release());
+    quad->setTop(WTFMove(top));
+    quad->setRight(WTFMove(right));
+    quad->setBottom(WTFMove(bottom));
+    quad->setLeft(WTFMove(left));
 
     return CSSBorderImageSliceValue::create(CSSValuePool::singleton().createValue(WTFMove(quad)), image.fill());
 }
@@ -591,10 +593,10 @@ static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box)
     }
 
     auto quad = Quad::create();
-    quad->setTop(top);
-    quad->setRight(right);
-    quad->setBottom(bottom);
-    quad->setLeft(left);
+    quad->setTop(WTFMove(top));
+    quad->setRight(WTFMove(right));
+    quad->setBottom(WTFMove(bottom));
+    quad->setLeft(WTFMove(left));
 
     return cssValuePool.createValue(WTFMove(quad));
 }
@@ -634,7 +636,7 @@ static Ref<CSSValue> valueForNinePieceImage(const NinePieceImage& image)
     // Create the repeat rules.
     RefPtr<CSSValue> repeat = valueForNinePieceImageRepeat(image);
 
-    return createBorderImageValue(imageValue.release(), imageSlices.release(), borderSlices.release(), outset.release(), repeat.release());
+    return createBorderImageValue(WTFMove(imageValue), WTFMove(imageSlices), WTFMove(borderSlices), WTFMove(outset), WTFMove(repeat));
 }
 
 inline static Ref<CSSPrimitiveValue> zoomAdjustedPixelValue(double value, const RenderStyle& style)

@@ -19,14 +19,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSProperty_h
-#define CSSProperty_h
+#pragma once
 
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
-#include "RenderStyleConstants.h"
 #include "WritingMode.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -64,9 +61,9 @@ struct StylePropertyMetadata {
 
 class CSSProperty {
 public:
-    CSSProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue> value, bool important = false, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, bool implicit = false)
+    CSSProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important = false, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, bool implicit = false)
         : m_metadata(propertyID, isSetFromShorthand, indexInShorthandsVector, important, implicit, isInheritedProperty(propertyID))
-        , m_value(value)
+        , m_value(WTFMove(value))
     {
     }
 
@@ -180,5 +177,3 @@ template <> struct VectorTraits<WebCore::CSSProperty> : VectorTraitsBase<false, 
     static const bool canMoveWithMemcpy = true;
 };
 }
-
-#endif // CSSProperty_h

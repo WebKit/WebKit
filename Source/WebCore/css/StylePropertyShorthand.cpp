@@ -21,8 +21,7 @@
 
 #include "config.h"
 #include "StylePropertyShorthand.h"
-
-#include <wtf/StdLibExtras.h>
+#include "StylePropertyShorthandFunctions.h"
 
 namespace WebCore {
 

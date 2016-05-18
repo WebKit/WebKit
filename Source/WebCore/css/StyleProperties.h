@@ -19,13 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef StyleProperties_h
-#define StyleProperties_h
+#pragma once
 
 #include "CSSParserMode.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
-#include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include <memory>
 #include <wtf/ListHashSet.h>
@@ -85,7 +82,7 @@ public:
     bool isEmpty() const { return !propertyCount(); }
     PropertyReference propertyAt(unsigned) const;
 
-    WEBCORE_EXPORT PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
+    WEBCORE_EXPORT RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     WEBCORE_EXPORT String getPropertyValue(CSSPropertyID) const;
     bool propertyIsImportant(CSSPropertyID) const;
     String getPropertyShorthand(CSSPropertyID) const;
@@ -152,7 +149,7 @@ private:
     String fontValue() const;
     void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
     
-    PassRefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) const;
+    RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) const;
     
     friend class PropertySetCSSStyleDeclaration;
 };
@@ -205,7 +202,7 @@ public:
 
     // These expand shorthand properties into multiple properties.
     bool setProperty(CSSPropertyID, const String& value, bool important = false, StyleSheetContents* contextStyleSheet = 0);
-    void setProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important = false);
+    void setProperty(CSSPropertyID, RefPtr<CSSValue>&&, bool important = false);
 
     // These do not. FIXME: This is too messy, we can do better.
     bool setProperty(CSSPropertyID, CSSValueID identifier, bool important = false);
@@ -305,5 +302,3 @@ SPECIALIZE_TYPE_TRAITS_END()
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ImmutableStyleProperties)
     static bool isType(const WebCore::StyleProperties& set) { return !set.isMutable(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // StyleProperties_h

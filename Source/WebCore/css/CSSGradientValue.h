@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSGradientValue_h
-#define CSSGradientValue_h
+#pragma once
 
 #include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
@@ -64,10 +63,10 @@ class CSSGradientValue : public CSSImageGeneratorValue {
 public:
     RefPtr<Image> image(RenderElement*, const FloatSize&);
 
-    void setFirstX(PassRefPtr<CSSPrimitiveValue> val) { m_firstX = val; }
-    void setFirstY(PassRefPtr<CSSPrimitiveValue> val) { m_firstY = val; }
-    void setSecondX(PassRefPtr<CSSPrimitiveValue> val) { m_secondX = val; }
-    void setSecondY(PassRefPtr<CSSPrimitiveValue> val) { m_secondY = val; }
+    void setFirstX(RefPtr<CSSPrimitiveValue>&& val) { m_firstX = WTFMove(val); }
+    void setFirstY(RefPtr<CSSPrimitiveValue>&& val) { m_firstY = WTFMove(val); }
+    void setSecondX(RefPtr<CSSPrimitiveValue>&& val) { m_secondX = WTFMove(val); }
+    void setSecondY(RefPtr<CSSPrimitiveValue>&& val) { m_secondY = WTFMove(val); }
 
     void addStop(const CSSGradientColorStop& stop) { m_stops.append(stop); }
 
@@ -139,7 +138,7 @@ public:
         return adoptRef(*new CSSLinearGradientValue(repeat, gradientType));
     }
 
-    void setAngle(PassRefPtr<CSSPrimitiveValue> val) { m_angle = val; }
+    void setAngle(RefPtr<CSSPrimitiveValue>&& val) { m_angle = WTFMove(val); }
 
     String customCSSText() const;
 
@@ -182,14 +181,14 @@ public:
 
     String customCSSText() const;
 
-    void setFirstRadius(PassRefPtr<CSSPrimitiveValue> val) { m_firstRadius = val; }
-    void setSecondRadius(PassRefPtr<CSSPrimitiveValue> val) { m_secondRadius = val; }
+    void setFirstRadius(RefPtr<CSSPrimitiveValue>&& val) { m_firstRadius = WTFMove(val); }
+    void setSecondRadius(RefPtr<CSSPrimitiveValue>&& val) { m_secondRadius = WTFMove(val); }
 
-    void setShape(PassRefPtr<CSSPrimitiveValue> val) { m_shape = val; }
-    void setSizingBehavior(PassRefPtr<CSSPrimitiveValue> val) { m_sizingBehavior = val; }
+    void setShape(RefPtr<CSSPrimitiveValue>&& val) { m_shape = WTFMove(val); }
+    void setSizingBehavior(RefPtr<CSSPrimitiveValue>&& val) { m_sizingBehavior = WTFMove(val); }
 
-    void setEndHorizontalSize(PassRefPtr<CSSPrimitiveValue> val) { m_endHorizontalSize = val; }
-    void setEndVerticalSize(PassRefPtr<CSSPrimitiveValue> val) { m_endVerticalSize = val; }
+    void setEndHorizontalSize(RefPtr<CSSPrimitiveValue>&& val) { m_endHorizontalSize = WTFMove(val); }
+    void setEndVerticalSize(RefPtr<CSSPrimitiveValue>&& val) { m_endVerticalSize = WTFMove(val); }
 
     // Create the gradient for a given size.
     Ref<Gradient> createGradient(RenderElement&, const FloatSize&);
@@ -234,5 +233,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSGradientValue, isGradientValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSLinearGradientValue, isLinearGradientValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSRadialGradientValue, isRadialGradientValue())
-
-#endif // CSSGradientValue_h

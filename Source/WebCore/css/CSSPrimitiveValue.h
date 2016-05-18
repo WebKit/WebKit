@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSPrimitiveValue_h
-#define CSSPrimitiveValue_h
+#pragma once
 
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
@@ -469,5 +468,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPrimitiveValue, isPrimitiveValue())
-
-#endif // CSSPrimitiveValue_h

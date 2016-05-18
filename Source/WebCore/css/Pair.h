@@ -18,15 +18,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef Pair_h
-#define Pair_h
+#pragma once
 
 #include <wtf/RefCounted.h>
-#include "CSSPrimitiveValue.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+class CSSPrimitiveValue;
 
 // A primitive value representing a pair.  This is useful for properties like border-radius, background-size/position,
 // and border-spacing (all of which are space-separated sets of two values).  At the moment we are only using it for
@@ -73,5 +71,3 @@ private:
 };
 
 } // namespace
-
-#endif

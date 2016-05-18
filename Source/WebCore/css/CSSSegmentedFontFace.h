@@ -28,9 +28,7 @@
 
 #include "CSSFontFace.h"
 #include "FontCache.h"
-#include "FontRanges.h"
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -38,6 +36,7 @@ namespace WebCore {
 
 class CSSFontSelector;
 class FontDescription;
+class FontRanges;
 
 class CSSSegmentedFontFace final : public RefCounted<CSSSegmentedFontFace>, public CSSFontFace::Client {
     WTF_MAKE_FAST_ALLOCATED;

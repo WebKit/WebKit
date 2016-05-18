@@ -20,9 +20,11 @@
 #include "config.h"
 #include "CSSBorderImage.h"
 
+#include "CSSValueList.h"
+
 namespace WebCore {
 
-Ref<CSSValueList> createBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSValue> imageSlice, PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat)
+Ref<CSSValueList> createBorderImageValue(RefPtr<CSSValue>&& image, RefPtr<CSSValue>&& imageSlice, RefPtr<CSSValue>&& borderSlice, RefPtr<CSSValue>&& outset, RefPtr<CSSValue>&& repeat)
 {
     auto list = CSSValueList::createSpaceSeparated();
     if (image)
@@ -31,19 +33,19 @@ Ref<CSSValueList> createBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<
     if (borderSlice || outset) {
         auto listSlash = CSSValueList::createSlashSeparated();
         if (imageSlice)
-            listSlash.get().append(*imageSlice);
+            listSlash.get().append(imageSlice.releaseNonNull());
 
         if (borderSlice)
-            listSlash.get().append(*borderSlice);
+            listSlash.get().append(borderSlice.releaseNonNull());
 
         if (outset)
-            listSlash.get().append(*outset);
+            listSlash.get().append(outset.releaseNonNull());
 
         list.get().append(WTFMove(listSlash));
     } else if (imageSlice)
-        list.get().append(*imageSlice);
+        list.get().append(imageSlice.releaseNonNull());
     if (repeat)
-        list.get().append(*repeat);
+        list.get().append(repeat.releaseNonNull());
     return list;
 }
 

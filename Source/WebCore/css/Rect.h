@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef Rect_h
-#define Rect_h
+#pragma once
 
 #include "CSSPrimitiveValue.h"
 #include <wtf/RefPtr.h>
@@ -34,10 +33,10 @@ public:
     CSSPrimitiveValue* bottom() const { return m_bottom.get(); }
     CSSPrimitiveValue* left() const { return m_left.get(); }
 
-    void setTop(PassRefPtr<CSSPrimitiveValue> top) { m_top = top; }
-    void setRight(PassRefPtr<CSSPrimitiveValue> right) { m_right = right; }
-    void setBottom(PassRefPtr<CSSPrimitiveValue> bottom) { m_bottom = bottom; }
-    void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
+    void setTop(RefPtr<CSSPrimitiveValue>&& top) { m_top = WTFMove(top); }
+    void setRight(RefPtr<CSSPrimitiveValue>&& right) { m_right = WTFMove(right); }
+    void setBottom(RefPtr<CSSPrimitiveValue>&& bottom) { m_bottom = WTFMove(bottom); }
+    void setLeft(RefPtr<CSSPrimitiveValue>&& left) { m_left = WTFMove(left); }
 
     bool equals(const RectBase& other) const
     {
@@ -123,5 +122,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // Rect_h

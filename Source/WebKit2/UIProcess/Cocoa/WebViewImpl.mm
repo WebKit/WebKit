@@ -90,6 +90,7 @@
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
+#import <wtf/NeverDestroyed.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebViewImplIncludes.h>

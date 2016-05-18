@@ -27,7 +27,6 @@
 #include "WebKitCSSFilterValue.h"
 
 #include "CSSValueList.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

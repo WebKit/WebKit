@@ -1,3 +1,141 @@
+2016-05-18  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up CSS code
+        https://bugs.webkit.org/show_bug.cgi?id=157808
+
+        Reviewed by Chris Dumez.
+
+        No new tests. Just cleaning up and modernizing code.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::convertToCenterCoordinate):
+        (WebCore::cssValueToBasicShapeRadius):
+        (WebCore::basicShapeForValue):
+        * css/BasicShapeFunctions.h:
+        * css/CSSAnimationTriggerScrollValue.h:
+        (WebCore::CSSAnimationTriggerScrollValue::create):
+        (WebCore::CSSAnimationTriggerScrollValue::startValue):
+        (WebCore::CSSAnimationTriggerScrollValue::CSSAnimationTriggerScrollValue):
+        * css/CSSAspectRatioValue.h:
+        * css/CSSBasicShapes.h:
+        * css/CSSBorderImage.cpp:
+        (WebCore::createBorderImageValue):
+        * css/CSSBorderImage.h:
+        * css/CSSBorderImageSliceValue.h:
+        (WebCore::CSSBorderImageSliceValue::create):
+        * css/CSSCalculationValue.h:
+        * css/CSSCanvasValue.h:
+        (WebCore::CSSCanvasValue::CSSCanvasValue):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImageSlice):
+        (WebCore::valueForNinePieceImageQuad):
+        (WebCore::valueForNinePieceImage):
+        (WebCore::zoomAdjustedPixelValue):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSFontFaceLoadEvent.cpp:
+        (WebCore::CSSFontFaceLoadEvent::CSSFontFaceLoadEvent):
+        * css/CSSFontFaceLoadEvent.h:
+        * css/CSSFontValue.h:
+        * css/CSSFunctionValue.h:
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientValue::setFirstX):
+        (WebCore::CSSGradientValue::setFirstY):
+        (WebCore::CSSGradientValue::setSecondX):
+        (WebCore::CSSGradientValue::setSecondY):
+        (WebCore::CSSGradientValue::addStop):
+        (WebCore::CSSLinearGradientValue::create):
+        (WebCore::CSSLinearGradientValue::setAngle):
+        (WebCore::CSSRadialGradientValue::setFirstRadius):
+        (WebCore::CSSRadialGradientValue::setSecondRadius):
+        (WebCore::CSSRadialGradientValue::setShape):
+        (WebCore::CSSRadialGradientValue::setSizingBehavior):
+        (WebCore::CSSRadialGradientValue::setEndHorizontalSize):
+        (WebCore::CSSRadialGradientValue::setEndVerticalSize):
+        * css/CSSGroupingRule.cpp:
+        (WebCore::CSSGroupingRule::item):
+        (WebCore::CSSGroupingRule::cssRules):
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::CSSKeyframesRule::cssRules):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addProperty):
+        (WebCore::CSSParser::rollbackLastProperties):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseClipShape):
+        (WebCore::CSSParser::parseBasicShapeCircle):
+        (WebCore::BorderImageParseContext::commitWebKitBorderImage):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+        (WebCore::BorderImageQuadParseContext::commitBorderImageQuad):
+        (WebCore::CSSParser::parseDeprecatedRadialGradient):
+        (WebCore::CSSParser::parseRadialGradient):
+        * css/CSSParser.h:
+        (WebCore::cssyylex):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSProperty.cpp:
+        * css/CSSProperty.h:
+        (WebCore::CSSProperty::CSSProperty):
+        * css/CSSRule.h:
+        * css/CSSRuleList.h:
+        * css/CSSSegmentedFontFace.h:
+        * css/Counter.h:
+        (WebCore::Counter::create):
+        (WebCore::Counter::identifier):
+        (WebCore::Counter::listStyleIdent):
+        (WebCore::Counter::setIdentifier):
+        (WebCore::Counter::setListStyle):
+        (WebCore::Counter::setSeparator):
+        (WebCore::Counter::equals):
+        (WebCore::Counter::cloneForCSSOM):
+        (WebCore::Counter::Counter):
+        * css/Pair.h:
+        * css/Rect.h:
+        (WebCore::RectBase::bottom):
+        (WebCore::RectBase::left):
+        (WebCore::RectBase::setTop):
+        (WebCore::RectBase::setRight):
+        (WebCore::RectBase::setBottom):
+        (WebCore::RectBase::setLeft):
+        (WebCore::RectBase::equals):
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::strokeDashArrayToCSSValueList):
+        (WebCore::ComputedStyleExtractor::adjustSVGPaintForCurrentColor):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertClipPath):
+        (WebCore::StyleBuilderConverter::convertShapeValue):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::borderPropertyValue):
+        (WebCore::StyleProperties::getPropertyCSSValue):
+        (WebCore::StyleProperties::getPropertyCSSValueInternal):
+        (WebCore::MutableStyleProperties::setCustomProperty):
+        (WebCore::MutableStyleProperties::setProperty):
+        * css/StyleProperties.h:
+        (WebCore::StyleProperties::isEmpty):
+        (isType):
+        * css/StylePropertyShorthand.cpp:
+        * css/StylePropertyShorthand.h:
+        (WebCore::StylePropertyShorthand::StylePropertyShorthand):
+        (WebCore::StylePropertyShorthand::id):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+        (WebCore::StyleResolver::addKeyframeStyle):
+        (WebCore::StyleResolver::~StyleResolver):
+        (WebCore::StyleResolver::resolvedVariableValue):
+        (WebCore::StyleResolver::styleImage):
+        (WebCore::StyleResolver::cachedOrPendingFromValue):
+        (WebCore::StyleResolver::generatedOrPendingFromValue):
+        (WebCore::StyleResolver::createFilterOperations):
+        (WebCore::StyleResolver::loadPendingImage):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::hasViewportDependentMediaQueries):
+        (WebCore::StyleResolver::state):
+        (WebCore::checkRegionSelector):
+        * css/StyleSheetList.h:
+        * css/WebKitCSSFilterValue.cpp:
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSTransformValue.cpp:
+        * css/WebKitCSSTransformValue.h:
+        * rendering/shapes/Shape.cpp:
+
 2016-05-18  Jer Noble  <jer.noble@apple.com>
 
         webkitEnterFullscreen() does not require a user gesture when RequireUserGestureForAudioRateChange is set.

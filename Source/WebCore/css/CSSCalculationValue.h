@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSCalculationValue_h
-#define CSSCalculationValue_h
+#pragma once
 
 #include "CSSPrimitiveValue.h"
 #include "CalculationValue.h"
@@ -134,5 +133,3 @@ inline void CSSCalcValue::setPermittedValueRange(CalculationPermittedValueRange 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCalcValue, isCalcValue())
-
-#endif // CSSCalculationValue_h

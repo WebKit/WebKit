@@ -27,14 +27,13 @@
 #include "WebKitCSSTransformValue.h"
 
 #include "CSSValueList.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 // These names must be kept in sync with TransformOperationType.
 const char* const transformNamePrefixes[] = {
-    0,
+    nullptr,
     "translate(",
     "translateX(",
     "translateY(",

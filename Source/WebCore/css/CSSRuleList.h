@@ -19,14 +19,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSRuleList_h
-#define CSSRuleList_h
+#pragma once
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -76,19 +73,20 @@ private:
 template <class Rule>
 class LiveCSSRuleList final : public CSSRuleList {
 public:
-    LiveCSSRuleList(Rule* rule) : m_rule(rule) { }
+    LiveCSSRuleList(Rule& rule)
+        : m_rule(rule)
+    {
+    }
     
-    void ref() override { m_rule->ref(); }
-    void deref() override { m_rule->deref(); }
+    void ref() override { m_rule.ref(); }
+    void deref() override { m_rule.deref(); }
 
 private:
-    unsigned length() const override { return m_rule->length(); }
-    CSSRule* item(unsigned index) const override { return m_rule->item(index); }
-    CSSStyleSheet* styleSheet() const override { return m_rule->parentStyleSheet(); }
+    unsigned length() const override { return m_rule.length(); }
+    CSSRule* item(unsigned index) const override { return m_rule.item(index); }
+    CSSStyleSheet* styleSheet() const override { return m_rule.parentStyleSheet(); }
     
-    Rule* m_rule;
+    Rule& m_rule;
 };
 
 } // namespace WebCore
-
-#endif // CSSRuleList_h

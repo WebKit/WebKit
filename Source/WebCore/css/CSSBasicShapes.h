@@ -27,10 +27,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef CSSBasicShapes_h
-#define CSSBasicShapes_h
+#pragma once
 
-#include "CSSPrimitiveValue.h"
 #include "WindRule.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
@@ -39,6 +37,7 @@
 
 namespace WebCore {
 
+class CSSPrimitiveValue;
 class SVGPathByteStream;
 
 class CSSBasicShape : public RefCounted<CSSBasicShape> {
@@ -77,10 +76,10 @@ public:
     CSSPrimitiveValue* bottomRightRadius() const { return m_bottomRightRadius.get(); }
     CSSPrimitiveValue* bottomLeftRadius() const { return m_bottomLeftRadius.get(); }
 
-    void setTop(PassRefPtr<CSSPrimitiveValue> top) { m_top = top; }
-    void setRight(PassRefPtr<CSSPrimitiveValue> right) { m_right = right; }
-    void setBottom(PassRefPtr<CSSPrimitiveValue> bottom) { m_bottom = bottom; }
-    void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
+    void setTop(RefPtr<CSSPrimitiveValue>&& top) { m_top = WTFMove(top); }
+    void setRight(RefPtr<CSSPrimitiveValue>&& right) { m_right = WTFMove(right); }
+    void setBottom(RefPtr<CSSPrimitiveValue>&& bottom) { m_bottom = WTFMove(bottom); }
+    void setLeft(RefPtr<CSSPrimitiveValue>&& left) { m_left = WTFMove(left); }
 
     void updateShapeSize4Values(CSSPrimitiveValue* top, CSSPrimitiveValue* right, CSSPrimitiveValue* bottom, CSSPrimitiveValue* left)
     {
@@ -105,10 +104,10 @@ public:
         updateShapeSize4Values(value1, value2, value3, value2);
     }
 
-    void setTopLeftRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_topLeftRadius = radius; }
-    void setTopRightRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_topRightRadius = radius; }
-    void setBottomRightRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_bottomRightRadius = radius; }
-    void setBottomLeftRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_bottomLeftRadius = radius; }
+    void setTopLeftRadius(RefPtr<CSSPrimitiveValue>&& radius) { m_topLeftRadius = WTFMove(radius); }
+    void setTopRightRadius(RefPtr<CSSPrimitiveValue>&& radius) { m_topRightRadius = WTFMove(radius); }
+    void setBottomRightRadius(RefPtr<CSSPrimitiveValue>&& radius) { m_bottomRightRadius = WTFMove(radius); }
+    void setBottomLeftRadius(RefPtr<CSSPrimitiveValue>&& radius) { m_bottomLeftRadius = WTFMove(radius); }
 
 private:
     CSSBasicShapeInset() { }
@@ -136,9 +135,9 @@ public:
     CSSPrimitiveValue* centerY() const { return m_centerY.get(); }
     CSSPrimitiveValue* radius() const { return m_radius.get(); }
 
-    void setCenterX(PassRefPtr<CSSPrimitiveValue> centerX) { m_centerX = centerX; }
-    void setCenterY(PassRefPtr<CSSPrimitiveValue> centerY) { m_centerY = centerY; }
-    void setRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_radius = radius; }
+    void setCenterX(RefPtr<CSSPrimitiveValue>&& centerX) { m_centerX = WTFMove(centerX); }
+    void setCenterY(RefPtr<CSSPrimitiveValue>&& centerY) { m_centerY = WTFMove(centerY); }
+    void setRadius(RefPtr<CSSPrimitiveValue>&& radius) { m_radius = WTFMove(radius); }
 
 private:
     CSSBasicShapeCircle() { }
@@ -248,5 +247,3 @@ SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapeCircle)
 SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapeEllipse)
 SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapePolygon)
 SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapePath)
-
-#endif // CSSBasicShapes_h

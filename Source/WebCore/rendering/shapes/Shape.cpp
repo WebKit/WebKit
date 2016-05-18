@@ -31,6 +31,7 @@
 #include "Shape.h"
 
 #include "BasicShapeFunctions.h"
+#include "BasicShapes.h"
 #include "BoxShape.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"

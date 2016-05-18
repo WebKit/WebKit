@@ -19,25 +19,17 @@
  *
  */
 
-#ifndef StyleResolver_h
-#define StyleResolver_h
+#pragma once
 
 #include "CSSToLengthConversionData.h"
 #include "CSSToStyleMap.h"
-#include "CSSValueList.h"
 #include "DocumentRuleSets.h"
 #include "InspectorCSSOMWrappers.h"
-#include "LinkHash.h"
 #include "MediaQueryEvaluator.h"
 #include "RenderStyle.h"
 #include "RuleFeature.h"
 #include "RuleSet.h"
-#include "RuntimeEnabledFeatures.h"
-#include "ScrollTypes.h"
 #include "SelectorChecker.h"
-#include "StyleInheritedData.h"
-#include "StyleRelations.h"
-#include "ViewportStyleResolver.h"
 #include <bitset>
 #include <memory>
 #include <wtf/HashMap.h>
@@ -213,7 +205,7 @@ public:
     bool hasViewportDependentMediaQueries() const { return !m_viewportDependentMediaQueryResults.isEmpty(); }
     bool hasMediaQueriesAffectedByViewportChange() const;
 
-    void addKeyframeStyle(PassRefPtr<StyleRuleKeyframes>);
+    void addKeyframeStyle(RefPtr<StyleRuleKeyframes>&&);
 
     bool checkRegionStyle(const Element* regionElement);
 
@@ -463,9 +455,9 @@ public:
 
     State& state() { return m_state; }
 
-    PassRefPtr<StyleImage> styleImage(CSSPropertyID, CSSValue&);
+    RefPtr<StyleImage> styleImage(CSSPropertyID, CSSValue&);
     RefPtr<StyleImage> cachedOrPendingFromValue(CSSPropertyID, CSSImageValue&);
-    PassRefPtr<StyleImage> generatedOrPendingFromValue(CSSPropertyID, CSSImageGeneratorValue&);
+    Ref<StyleImage> generatedOrPendingFromValue(CSSPropertyID, CSSImageGeneratorValue&);
 #if ENABLE(CSS_IMAGE_SET)
     RefPtr<StyleImage> setOrPendingFromValue(CSSPropertyID, CSSImageSetValue&);
 #endif
@@ -497,8 +489,8 @@ private:
 
     void applySVGProperty(CSSPropertyID, CSSValue*);
 
-    PassRefPtr<StyleImage> loadPendingImage(const StylePendingImage&, const ResourceLoaderOptions&);
-    PassRefPtr<StyleImage> loadPendingImage(const StylePendingImage&);
+    RefPtr<StyleImage> loadPendingImage(const StylePendingImage&, const ResourceLoaderOptions&);
+    RefPtr<StyleImage> loadPendingImage(const StylePendingImage&);
     void loadPendingImages();
 #if ENABLE(CSS_SHAPES)
     void loadPendingShapeImage(ShapeValue*);
@@ -590,5 +582,3 @@ inline bool checkRegionSelector(const CSSSelector* regionSelector, const Element
 }
 
 } // namespace WebCore
-
-#endif // StyleResolver_h

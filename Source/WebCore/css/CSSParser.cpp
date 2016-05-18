@@ -32,6 +32,7 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
+#include "CSSBorderImageSliceValue.h"
 #include "CSSCanvasValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSCrossfadeValue.h"
@@ -90,6 +91,7 @@
 #include "Settings.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
+#include "StylePropertyShorthandFunctions.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
@@ -1646,15 +1648,15 @@ void CSSParser::addProperty(CSSPropertyID propId, RefPtr<CSSValue>&& value, bool
 {
     // This property doesn't belong to a shorthand or is a CSS variable (which will be resolved later).
     if (!m_currentShorthand) {
-        m_parsedProperties.append(CSSProperty(propId, value, important, false, CSSPropertyInvalid, m_implicitShorthand || implicit));
+        m_parsedProperties.append(CSSProperty(propId, WTFMove(value), important, false, CSSPropertyInvalid, m_implicitShorthand || implicit));
         return;
     }
 
     Vector<StylePropertyShorthand> shorthands = matchingShorthandsForLonghand(propId);
     if (shorthands.size() == 1)
-        m_parsedProperties.append(CSSProperty(propId, value, important, true, CSSPropertyInvalid, m_implicitShorthand || implicit));
+        m_parsedProperties.append(CSSProperty(propId, WTFMove(value), important, true, CSSPropertyInvalid, m_implicitShorthand || implicit));
     else
-        m_parsedProperties.append(CSSProperty(propId, value, important, true, indexOfShorthandForLonghand(m_currentShorthand, shorthands), m_implicitShorthand || implicit));
+        m_parsedProperties.append(CSSProperty(propId, WTFMove(value), important, true, indexOfShorthandForLonghand(m_currentShorthand, shorthands), m_implicitShorthand || implicit));
 }
 
 void CSSParser::rollbackLastProperties(int num)
@@ -1880,20 +1882,19 @@ inline RefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(CSSValueID ident
     return nullptr;
 }
 
-void CSSParser::addExpandedPropertyForValue(CSSPropertyID propId, RefPtr<CSSValue>&& prpValue, bool important)
+void CSSParser::addExpandedPropertyForValue(CSSPropertyID propId, RefPtr<CSSValue>&& value, bool important)
 {
     const StylePropertyShorthand& shorthand = shorthandForProperty(propId);
     unsigned shorthandLength = shorthand.length();
     if (!shorthandLength) {
-        addProperty(propId, WTFMove(prpValue), important);
+        addProperty(propId, WTFMove(value), important);
         return;
     }
 
-    RefPtr<CSSValue> value = prpValue;
     ShorthandScope scope(this, propId);
     const CSSPropertyID* longhands = shorthand.properties();
     for (unsigned i = 0; i < shorthandLength; ++i)
-        addProperty(longhands[i], WTFMove(value), important);
+        addProperty(longhands[i], value.copyRef(), important);
 }
 
 RefPtr<CSSValue> CSSParser::parseVariableDependentValue(CSSPropertyID propID, const CSSVariableDependentValue& dependentValue, const CustomPropertyValueMap& customProperties)
@@ -5114,12 +5115,12 @@ RefPtr<CSSValue> CSSParser::parseAnimationTrigger()
         if (!validateUnit(firstArgumentWithCalculation, FLength))
             return nullptr;
 
-        RefPtr<CSSValue> startValue = createPrimitiveNumericValue(firstArgumentWithCalculation);
+        Ref<CSSValue> startValue = createPrimitiveNumericValue(firstArgumentWithCalculation);
 
         argument = args->next();
 
         if (!argument)
-            return CSSAnimationTriggerScrollValue::create(startValue.release());
+            return CSSAnimationTriggerScrollValue::create(WTFMove(startValue));
 
         if (!isComma(argument))
             return nullptr;
@@ -5129,9 +5130,9 @@ RefPtr<CSSValue> CSSParser::parseAnimationTrigger()
         if (!validateUnit(secondArgumentWithCalculation, FLength))
             return nullptr;
 
-        RefPtr<CSSValue> endValue = createPrimitiveNumericValue(secondArgumentWithCalculation);
+        Ref<CSSValue> endValue = createPrimitiveNumericValue(secondArgumentWithCalculation);
 
-        return CSSAnimationTriggerScrollValue::create(startValue.release(), endValue.release());
+        return CSSAnimationTriggerScrollValue::create(WTFMove(startValue), WTFMove(endValue));
     }
 
     return nullptr;
@@ -6234,10 +6235,10 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
             // This originally used CSSValueInvalid by accident. It might be more logical to use something else.
             RefPtr<CSSPrimitiveValue> amount = CSSValuePool::singleton().createIdentifierValue(CSSValueInvalid);
 
-            region->setTop(amount);
-            region->setRight(amount);
-            region->setBottom(amount);
-            region->setLeft(amount);
+            region->setTop(amount.copyRef());
+            region->setRight(amount.copyRef());
+            region->setBottom(amount.copyRef());
+            region->setLeft(WTFMove(amount));
         } else {
             // Next four arguments must be offset numbers
             for (int i = 0; i < 4; ++i) {
@@ -6252,13 +6253,13 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
                 RefPtr<CSSPrimitiveValue> amount = arg->id == CSSValueAuto ? CSSValuePool::singleton().createIdentifierValue(CSSValueAuto) : createPrimitiveNumericValue(argWithCalculation);
 
                 if (i == 0)
-                    region->setTop(amount);
+                    region->setTop(WTFMove(amount));
                 else if (i == 1)
-                    region->setRight(amount);
+                    region->setRight(WTFMove(amount));
                 else if (i == 2)
-                    region->setBottom(amount);
+                    region->setBottom(WTFMove(amount));
                 else
-                    region->setLeft(amount);
+                    region->setLeft(WTFMove(amount));
             }
         }
 
@@ -6470,13 +6471,13 @@ bool CSSParser::parseClipShape(CSSPropertyID propId, bool important)
             break;
         RefPtr<CSSPrimitiveValue> length = argument->id == CSSValueAuto ? CSSValuePool::singleton().createIdentifierValue(CSSValueAuto) : createPrimitiveNumericValue(argumentWithCalculation);
         if (i == 0)
-            rect->setTop(length);
+            rect->setTop(WTFMove(length));
         else if (i == 1)
-            rect->setRight(length);
+            rect->setRight(WTFMove(length));
         else if (i == 2)
-            rect->setBottom(length);
+            rect->setBottom(WTFMove(length));
         else
-            rect->setLeft(length);
+            rect->setLeft(WTFMove(length));
         argument = args->next();
         if (argument && args->size() == 7) {
             if (argument->unit == CSSParserValue::Operator && argument->iValue == ',') {
@@ -6651,7 +6652,7 @@ RefPtr<CSSBasicShape> CSSParser::parseBasicShapeCircle(CSSParserValueList& args)
 
         if (!args.currentIndex() && argument->id != CSSValueAt) {
             if (RefPtr<CSSPrimitiveValue> radius = parseShapeRadius(*argument)) {
-                shape->setRadius(radius);
+                shape->setRadius(WTFMove(radius));
                 continue;
             }
 
@@ -6663,8 +6664,8 @@ RefPtr<CSSBasicShape> CSSParser::parseBasicShapeCircle(CSSParserValueList& args)
             RefPtr<CSSPrimitiveValue> centerY;
             parseFillPosition(args, centerX, centerY);
             if (centerX && centerY && !args.current()) {
-                shape->setCenterX(centerX);
-                shape->setCenterY(centerY);
+                shape->setCenterX(WTFMove(centerX));
+                shape->setCenterY(WTFMove(centerY));
             } else
                 return nullptr;
         } else
@@ -8245,7 +8246,7 @@ struct BorderImageParseContext {
 
     RefPtr<CSSValue> commitWebKitBorderImage()
     {
-        return createBorderImageValue(m_image, m_imageSlice, m_borderSlice, m_outset, m_repeat);
+        return createBorderImageValue(m_image.copyRef(), m_imageSlice.copyRef(), m_borderSlice.copyRef(), m_outset.copyRef(), m_repeat.copyRef());
     }
 
     void commitBorderImage(CSSParser& parser, bool important)
@@ -8447,10 +8448,10 @@ public:
 
         // Now build a rect value to hold all four of our primitive values.
         auto quad = Quad::create();
-        quad->setTop(m_top);
-        quad->setRight(m_right);
-        quad->setBottom(m_bottom);
-        quad->setLeft(m_left);
+        quad->setTop(m_top.copyRef());
+        quad->setRight(m_right.copyRef());
+        quad->setBottom(m_bottom.copyRef());
+        quad->setLeft(m_left.copyRef());
 
         // Make our new border image value now.
         return CSSBorderImageSliceValue::create(CSSValuePool::singleton().createValue(WTFMove(quad)), m_fill);
@@ -8565,10 +8566,10 @@ public:
 
         // Now build a quad value to hold all four of our primitive values.
         auto quad = Quad::create();
-        quad->setTop(m_top);
-        quad->setRight(m_right);
-        quad->setBottom(m_bottom);
-        quad->setLeft(m_left);
+        quad->setTop(m_top.copyRef());
+        quad->setRight(m_right.copyRef());
+        quad->setBottom(m_bottom.copyRef());
+        quad->setLeft(m_left.copyRef());
 
         // Make our new value now.
         return CSSValuePool::singleton().createValue(WTFMove(quad));
@@ -9109,11 +9110,11 @@ bool CSSParser::parseDeprecatedRadialGradient(CSSParserValueList& valueList, Ref
             return false;
     }
 
-    result->setFirstX(centerX);
-    result->setSecondX(centerX);
+    result->setFirstX(centerX.copyRef());
+    result->setSecondX(WTFMove(centerX));
     // CSS3 radial gradients always share the same start and end point.
-    result->setFirstY(centerY);
-    result->setSecondY(centerY);
+    result->setFirstY(centerY.copyRef());
+    result->setSecondY(WTFMove(centerY));
 
     RefPtr<CSSPrimitiveValue> shapeValue;
     RefPtr<CSSPrimitiveValue> sizeValue;
@@ -9152,8 +9153,8 @@ bool CSSParser::parseDeprecatedRadialGradient(CSSParserValueList& valueList, Ref
         }
     }
 
-    result->setShape(shapeValue);
-    result->setSizingBehavior(sizeValue);
+    result->setShape(shapeValue.copyRef());
+    result->setSizingBehavior(sizeValue.copyRef());
 
     // Or, two lengths or percentages
     RefPtr<CSSPrimitiveValue> horizontalSize;
@@ -9185,8 +9186,8 @@ bool CSSParser::parseDeprecatedRadialGradient(CSSParserValueList& valueList, Ref
     if (!horizontalSize != !verticalSize)
         return false;
 
-    result->setEndHorizontalSize(horizontalSize);
-    result->setEndVerticalSize(verticalSize);
+    result->setEndHorizontalSize(WTFMove(horizontalSize));
+    result->setEndVerticalSize(WTFMove(verticalSize));
 
     if (!parseGradientColorStops(*args, *result, expectComma))
         return false;
@@ -9355,10 +9356,10 @@ bool CSSParser::parseRadialGradient(CSSParserValueList& valueList, RefPtr<CSSVal
     if (!verticalSize && horizontalSize && horizontalSize->isPercentage())
         return false;
 
-    result->setShape(shapeValue);
-    result->setSizingBehavior(sizeValue);
-    result->setEndHorizontalSize(horizontalSize);
-    result->setEndVerticalSize(verticalSize);
+    result->setShape(shapeValue.copyRef());
+    result->setSizingBehavior(sizeValue.copyRef());
+    result->setEndHorizontalSize(horizontalSize.copyRef());
+    result->setEndVerticalSize(verticalSize.copyRef());
 
     // Second part of grammar, the center-position clause:
     // at <position>
@@ -9377,11 +9378,11 @@ bool CSSParser::parseRadialGradient(CSSParserValueList& valueList, RefPtr<CSSVal
         if (!argument)
             return false;
 
-        result->setFirstX(centerX);
-        result->setFirstY(centerY);
+        result->setFirstX(centerX.copyRef());
+        result->setFirstY(centerY.copyRef());
         // Right now, CSS radial gradients have the same start and end centers.
-        result->setSecondX(centerX);
-        result->setSecondY(centerY);
+        result->setSecondX(centerX.copyRef());
+        result->setSecondY(centerY.copyRef());
     }
 
     if (shapeValue || sizeValue || horizontalSize || centerX || centerY)

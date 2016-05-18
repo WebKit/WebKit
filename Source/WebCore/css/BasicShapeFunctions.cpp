@@ -188,7 +188,7 @@ static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthCon
     return BasicShapeCenterCoordinate(direction, offset);
 }
 
-static BasicShapeRadius cssValueToBasicShapeRadius(const CSSToLengthConversionData& conversionData, PassRefPtr<CSSPrimitiveValue> radius)
+static BasicShapeRadius cssValueToBasicShapeRadius(const CSSToLengthConversionData& conversionData, CSSPrimitiveValue* radius)
 {
     if (!radius)
         return BasicShapeRadius(BasicShapeRadius::ClosestSide);
@@ -205,16 +205,16 @@ static BasicShapeRadius cssValueToBasicShapeRadius(const CSSToLengthConversionDa
         }
     }
 
-    return BasicShapeRadius(convertToLength(conversionData, radius.get()));
+    return BasicShapeRadius(convertToLength(conversionData, radius));
 }
 
-Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionData, const CSSBasicShape* basicShapeValue)
+Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionData, const CSSBasicShape& basicShapeValue)
 {
     RefPtr<BasicShape> basicShape;
 
-    switch (basicShapeValue->type()) {
+    switch (basicShapeValue.type()) {
     case CSSBasicShape::CSSBasicShapeCircleType: {
-        auto& circleValue = downcast<CSSBasicShapeCircle>(*basicShapeValue);
+        auto& circleValue = downcast<CSSBasicShapeCircle>(basicShapeValue);
         auto circle = BasicShapeCircle::create();
 
         circle->setCenterX(convertToCenterCoordinate(conversionData, circleValue.centerX()));
@@ -225,7 +225,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         break;
     }
     case CSSBasicShape::CSSBasicShapeEllipseType: {
-        auto& ellipseValue = downcast<CSSBasicShapeEllipse>(*basicShapeValue);
+        auto& ellipseValue = downcast<CSSBasicShapeEllipse>(basicShapeValue);
         auto ellipse = BasicShapeEllipse::create();
 
         ellipse->setCenterX(convertToCenterCoordinate(conversionData, ellipseValue.centerX()));
@@ -238,7 +238,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         break;
     }
     case CSSBasicShape::CSSBasicShapePolygonType: {
-        auto& polygonValue = downcast<CSSBasicShapePolygon>(*basicShapeValue);
+        auto& polygonValue = downcast<CSSBasicShapePolygon>(basicShapeValue);
         auto polygon = BasicShapePolygon::create();
 
         polygon->setWindRule(polygonValue.windRule());
@@ -250,7 +250,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         break;
     }
     case CSSBasicShape::CSSBasicShapeInsetType: {
-        auto& rectValue = downcast<CSSBasicShapeInset>(*basicShapeValue);
+        auto& rectValue = downcast<CSSBasicShapeInset>(basicShapeValue);
         auto rect = BasicShapeInset::create();
 
         rect->setTop(convertToLength(conversionData, rectValue.top()));
@@ -267,7 +267,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         break;
     }
     case CSSBasicShape::CSSBasicShapePathType: {
-        auto& pathValue = downcast<CSSBasicShapePath>(*basicShapeValue);
+        auto& pathValue = downcast<CSSBasicShapePath>(basicShapeValue);
         auto path = BasicShapePath::create(pathValue.pathData().copy());
         path->setWindRule(pathValue.windRule());
 
