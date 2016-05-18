@@ -1,3 +1,15 @@
+2016-05-18  Dave Hyatt  <hyatt@apple.com>
+
+        markAllDescendantsWithFloatsForLayout should not drill into blocks with
+        inline children. It was sufficient to mark ourselves as needing layout.
+
+        https://bugs.webkit.org/show_bug.cgi?id=157845
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::markAllDescendantsWithFloatsForLayout):
+
 2016-05-18  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/meter-element.html is failing

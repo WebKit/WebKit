@@ -2766,6 +2766,9 @@ void RenderBlockFlow::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRe
     if (floatToRemove)
         removeFloatingObject(*floatToRemove);
 
+    if (childrenInline())
+        return;
+
     // Iterate over our block children and mark them as needed.
     for (auto& block : childrenOfType<RenderBlock>(*this)) {
         if (!floatToRemove && block.isFloatingOrOutOfFlowPositioned())
