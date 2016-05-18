@@ -1,3 +1,18 @@
+2016-05-17  Nan Wang  <n_wang@apple.com>
+
+        AX: Adding children incorrectly when there are nested inline continuations
+        https://bugs.webkit.org/show_bug.cgi?id=157818
+
+        Reviewed by Chris Fleizach.
+
+        When getting the inline element continuation's next sibling, if we fall back on to the parent
+        case, we might end up adding the same node repeatedly. Fixed it by skipping this case.
+
+        Test: accessibility/mac/nested-inline-elements-children.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::nextSibling):
+
 2016-05-17  Dean Jackson  <dino@apple.com>
 
         Add media query support for wide gamut displays on Mac
