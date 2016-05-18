@@ -737,8 +737,6 @@ webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-i
 
 webkit.org/b/124321 animations/resume-after-page-cache.html [ Pass Failure ]
 
-webkit.org/b/147254 media/restore-from-page-cache.html [ Pass Failure ]
-
 # These fast/forms/select tests open a pop-up menu (visible on screen even when using run-webkit-tests), and get stuck in its nested event loop.
 webkit.org/b/87748 fast/forms/select/optgroup-clicking.html [ Skip ]
 webkit.org/b/73304 fast/forms/select/menulist-popup-crash.html [ Skip ]
