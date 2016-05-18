@@ -1,3 +1,14 @@
+2016-05-18  Timothy Hatcher  <timothy@apple.com>
+
+        Make Animometer work in all browsers
+        https://bugs.webkit.org/show_bug.cgi?id=157855
+        rdar://problem/26338521
+
+        Reviewed by Jon Lee.
+
+        * Animometer/resources/runner/logo.svg: Use a symbol instead
+        of putting the id on the root svg. This works in all browsers.
+
 2016-05-07  Timothy Hatcher  <timothy@apple.com>
 
         Update Animometer design
