@@ -692,16 +692,6 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (!treeElement)
             return;
 
-        // Deselect any other tree elements to prevent two selections in the sidebar.
-        for (let treeOutline of this.visibleContentTreeOutlines) {
-            if (treeOutline === treeElement.treeOutline)
-                continue;
-
-            let selectedTreeElement = treeOutline.selectedTreeElement;
-            if (selectedTreeElement)
-                selectedTreeElement.deselect();
-        }
-
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
             WebInspector.showSourceCode(treeElement.representedObject);
             return;

@@ -152,6 +152,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         contentTreeOutline.allowsRepeatSelection = true;
         contentTreeOutline.hidden = !dontHideByDefault;
         contentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName);
+        contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._contentTreeOutlineTreeSelectionDidChange, this);
 
         this.contentView.element.appendChild(contentTreeOutline.element);
 
@@ -159,7 +160,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementAdded, this._treeElementAddedOrChanged, this);
             contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementDidChange, this._treeElementAddedOrChanged, this);
             contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange, this);
-            contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
         }
 
         contentTreeOutline[WebInspector.NavigationSidebarPanel.SuppressFilteringSymbol] = suppressFiltering;
@@ -428,11 +428,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         treeElement.hidden = true;
     }
 
-    treeElementAddedOrChanged(treeElement)
-    {
-        // Implemented by subclasses if needed.
-    }
-
     show()
     {
         if (!this.parentSidebar)
@@ -483,6 +478,11 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
                     contentTreeOutline.removeChildAtIndex(i, true, true);
             }
         }
+    }
+
+    treeElementAddedOrChanged(treeElement)
+    {
+        // Implemented by subclasses if needed.
     }
 
     // Private
@@ -646,10 +646,22 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this.soon._updateContentOverflowShadowVisibility();
     }
 
-    _treeSelectionDidChange(event)
+    _contentTreeOutlineTreeSelectionDidChange(event)
     {
-        let selectedElement = event.data.selectedElement;
-        this._selectedContentTreeOutline = selectedElement ? selectedElement.treeOutline : null;
+        let treeElement = event.data.selectedElement;
+        if (!treeElement)
+            return;
+
+        this._selectedContentTreeOutline = treeElement.treeOutline;
+
+        // Deselect any other tree elements to prevent two selections in the sidebar.
+        for (let treeOutline of this.visibleContentTreeOutlines) {
+            if (treeOutline === this._selectedContentTreeOutline)
+                continue;
+
+            if (treeOutline.selectedTreeElement)
+                treeOutline.selectedTreeElement.deselect();
+        }
     }
 
     _checkForStaleResourcesIfNeeded()

@@ -1,5 +1,30 @@
 2016-05-17  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: NavigationSidebarPanel should coordinate item selection between its tree outlines
+        https://bugs.webkit.org/show_bug.cgi?id=157813
+        <rdar://problem/26331779>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        Deselecting elements in other tree outlines is now done in the base class.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        Listen for selection changed events on all content tree outlines.
+        (WebInspector.NavigationSidebarPanel.prototype.treeElementAddedOrChanged):
+        Moved stub from the public section to the protected section.
+        (WebInspector.NavigationSidebarPanel.prototype._contentTreeOutlineTreeSelectionDidChange):
+        Deselect tree elements in any content tree outline that is not the
+        parent of the selected element.
+
+        (WebInspector.NavigationSidebarPanel.prototype._treeSelectionDidChange): Deleted.
+        Rename _contentTreeOutlineTreeSelectionDidChange, to prevent being
+        shadowed by subclasses with _treeSelectionDidChange event handlers.
+
+2016-05-17  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Remove TimelineSidebarPanel.js as it's no longer referenced anywhere
         https://bugs.webkit.org/show_bug.cgi?id=157819
 
