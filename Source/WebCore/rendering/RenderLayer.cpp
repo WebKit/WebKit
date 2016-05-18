@@ -5125,6 +5125,9 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 
     // This variable tracks which layer the mouse ends up being inside.
     RenderLayer* candidateLayer = nullptr;
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(this);
+#endif
 
     // Check the fixed positioned layers within flow threads that are positioned by the view.
     RenderLayer* hitLayer = hitTestFixedLayersInNamedFlows(rootLayer, request, result, hitTestRect, hitTestLocation,

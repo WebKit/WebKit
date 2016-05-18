@@ -1,3 +1,17 @@
+2016-05-17  Zalan Bujtas  <zalan@apple.com>
+
+        Add LayerListMutationDetector to hittesting.
+        https://bugs.webkit.org/show_bug.cgi?id=157758
+
+        Reviewed by Simon Fraser.
+
+        Hittesting is supposed to be readonly.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::clearZOrderLists):
+
 2016-05-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove toJS template methods taking const Ref and const RefPtr

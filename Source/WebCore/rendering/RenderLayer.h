@@ -1151,6 +1151,7 @@ private:
 inline void RenderLayer::clearZOrderLists()
 {
     ASSERT(!isStackingContainer());
+    ASSERT(m_layerListMutationAllowed);
 
     m_posZOrderList = nullptr;
     m_negZOrderList = nullptr;
