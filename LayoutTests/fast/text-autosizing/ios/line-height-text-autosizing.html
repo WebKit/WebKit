@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script>
+    if (window.internals) {
+        internals.settings.setTextAutosizingEnabled(true);
+        internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+    }
+    </script>
 <script src="../../../resources/js-test-pre.js"></script>
 <style>
 #testDivAdjust {
@@ -11,12 +17,6 @@
   font-size: 20px;
 }
 </style>
-<script>
-if (window.internals) {
-    window.internals.settings.setTextAutosizingEnabled(true);
-    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
-}
-</script>
 </head>
 <boby>
 <div id="testDivNoAdjust">Test</div>

@@ -204,6 +204,10 @@ public:
     RefPtr<CSSValue> parseColumnCount();
     bool parseColumnsShorthand(bool important);
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    bool isTextAutosizingEnabled() const;
+#endif
+
 #if ENABLE(CSS_GRID_LAYOUT)
     bool isCSSGridLayoutEnabled() const;
     RefPtr<CSSValue> parseGridPosition();

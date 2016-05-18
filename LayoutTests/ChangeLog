@@ -1,3 +1,22 @@
+2016-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r200534) Command-+ no longer zooms pages 
+        https://bugs.webkit.org/show_bug.cgi?id=157826
+        rdar://problem/26334636
+
+        Reviewed by Dean Jackson.
+
+        Need to call internals.settings.setTextAutosizingEnabled(true) earlier in some tests.
+
+        * fast/text-autosizing/ios/line-height-text-autosizing.html:
+        * fast/text-autosizing/ios/percent-adjust-length-line-height.html:
+        * fast/text-autosizing/ios/percent-adjust-number-line-height.html:
+        * fast/text-autosizing/ios/percent-adjust-percent-line-height.html:
+        * fast/text-autosizing/mac/text-size-adjust-text-zoom-expected.html: Added.
+        * fast/text-autosizing/mac/text-size-adjust-text-zoom.html: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-05-18  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/meter-element.html is failing

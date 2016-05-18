@@ -9,6 +9,7 @@ tiled-drawing [ Pass ]
 swipe [ Pass ]
 
 fast/text-autosizing/ios [ Pass ]
+fast/text-autosizing/mac [ Pass ]
 
 fast/events/cancelled-force-click-link-navigation.html [ Pass ]
 fast/events/force-click-link-selection-behavior.html [ Pass ]

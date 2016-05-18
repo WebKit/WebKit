@@ -1,3 +1,30 @@
+2016-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r200534) Command-+ no longer zooms pages 
+        https://bugs.webkit.org/show_bug.cgi?id=157826
+        rdar://problem/26334636
+
+        Reviewed by Dean Jackson.
+
+        When text autosizing was enabled on Mac, we started to parse and respect
+        -webkit-text-size-adjust. Fix by cutting this off in CSSParser if the feature
+        is disabled.
+
+        Also fix InternalSettings to reset page and text zoom, since WebKit1 aliases
+        the zoom levels causing DRT to fail to reset them between tests.
+
+        Test: fast/text-autosizing/mac/text-size-adjust-text-zoom.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::isTextAutosizingEnabled):
+        * css/CSSParser.h:
+        * css/CSSParserMode.h:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::resetToConsistentState):
+
 2016-05-18  Dave Hyatt  <hyatt@apple.com>
 
         markAllDescendantsWithFloatsForLayout should not drill into blocks with

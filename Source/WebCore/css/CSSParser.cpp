@@ -245,13 +245,9 @@ const CSSParserContext& strictCSSParserContext()
 CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     : baseURL(baseURL)
     , mode(mode)
-    , isHTMLDocument(false)
 #if ENABLE(CSS_GRID_LAYOUT)
     , cssGridLayoutEnabled(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled())
 #endif
-    , needsSiteSpecificQuirks(false)
-    , enforcesCSSMIMETypeInNoQuirksMode(true)
-    , useLegacyBackgroundSizeShorthandBehavior(false)
 {
 #if PLATFORM(IOS)
     // FIXME: Force the site specific quirk below to work on iOS. Investigating other site specific quirks
@@ -269,10 +265,17 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
 #if ENABLE(CSS_GRID_LAYOUT)
     , cssGridLayoutEnabled(document.isCSSGridLayoutEnabled())
 #endif
-    , needsSiteSpecificQuirks(document.settings() ? document.settings()->needsSiteSpecificQuirks() : false)
-    , enforcesCSSMIMETypeInNoQuirksMode(!document.settings() || document.settings()->enforceCSSMIMETypeInNoQuirksMode())
-    , useLegacyBackgroundSizeShorthandBehavior(document.settings() ? document.settings()->useLegacyBackgroundSizeShorthandBehavior() : false)
 {
+    if (Settings* settings = document.settings()) {
+        needsSiteSpecificQuirks = settings->needsSiteSpecificQuirks();
+        enforcesCSSMIMETypeInNoQuirksMode = settings->enforceCSSMIMETypeInNoQuirksMode();
+        useLegacyBackgroundSizeShorthandBehavior = settings->useLegacyBackgroundSizeShorthandBehavior();
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+        textAutosizingEnabled = settings->textAutosizingEnabled();
+        WTFLogAlways("CSSParserContext %p CSSParserContext textAutosizingEnabled=%d", this, textAutosizingEnabled);
+#endif
+    }
+
 #if PLATFORM(IOS)
     // FIXME: Force the site specific quirk below to work on iOS. Investigating other site specific quirks
     // to see if we can enable the preference all together is to be handled by:
@@ -970,6 +973,9 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         break;
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     case CSSPropertyWebkitTextSizeAdjust:
+        if (!parserContext.textAutosizingEnabled)
+            return false;
+
         if (valueID == CSSValueAuto || valueID == CSSValueNone)
             return true;
         break;
@@ -2913,6 +2919,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     case CSSPropertyWebkitTextSizeAdjust:
+        if (!isTextAutosizingEnabled())
+            return false;
+
         if (id == CSSValueAuto || id == CSSValueNone)
             validPrimitive = true;
         else {
@@ -10242,6 +10251,13 @@ static bool validFlowName(const String& flowName)
         || equalLettersIgnoringASCIICase(flowName, "inherit")
         || equalLettersIgnoringASCIICase(flowName, "initial")
         || equalLettersIgnoringASCIICase(flowName, "none"));
+}
+#endif
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+bool CSSParser::isTextAutosizingEnabled() const
+{
+    return m_context.textAutosizingEnabled;
 }
 #endif
 
