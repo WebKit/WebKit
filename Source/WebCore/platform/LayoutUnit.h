@@ -114,7 +114,6 @@ public:
     unsigned toUnsigned() const { REPORT_OVERFLOW(m_value >= 0); return toInt(); }
 
     operator int() const { return toInt(); }
-    operator unsigned() const { return toUnsigned(); }
     operator float() const { return toFloat(); }
     operator double() const { return toDouble(); }
     operator bool() const { return m_value; }

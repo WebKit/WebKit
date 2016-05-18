@@ -5104,7 +5104,7 @@ bool WebPage::plugInIsPrimarySize(WebCore::HTMLPlugInImageElement& plugInImageEl
 
     LayoutUnit contentArea = pluginRenderBox.contentWidth() * pluginRenderBox.contentHeight();
     if (contentArea > candidatePlugInArea * primarySnapshottedPlugInSearchBucketSize) {
-        candidatePlugInArea = contentArea;
+        candidatePlugInArea = contentArea.toUnsigned();
         return true;
     }
     return false;

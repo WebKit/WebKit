@@ -1,3 +1,25 @@
+2016-05-18  Zalan Bujtas  <zalan@apple.com>
+
+        Remove LayoutUnit::operator unsigned().
+        https://bugs.webkit.org/show_bug.cgi?id=157856
+
+        Reviewed by Simon Fraser.
+
+        Converting LayoutUnit values to unsigned is lossy. We should avoid
+        such implicit conversions. 
+
+        No behaviour change.
+
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::height):
+        (WebCore::ImageInputType::width):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        * platform/LayoutUnit.h:
+        (WebCore::LayoutUnit::operator unsigned): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeColumnCountAndWidth):
+
 2016-05-18  Alex Christensen  <achristensen@webkit.org>
 
         Clean up CSS code
