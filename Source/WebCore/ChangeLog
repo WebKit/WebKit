@@ -1,3 +1,16 @@
+2016-05-18  Antti Koivisto  <antti@apple.com>
+
+        Resolve !important properties from different shadow trees in a single pass.
+        https://bugs.webkit.org/show_bug.cgi?id=157836
+
+        Reviewed by Andreas Kling.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::CascadedProperties::addImportantMatches):
+
+        Instead of doing multiple passes over increasing tree context ordinals collect matches with
+        non-zero ordinals to a vector and sort it to ascending order.
+
 2016-05-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the allinone-build after r198669

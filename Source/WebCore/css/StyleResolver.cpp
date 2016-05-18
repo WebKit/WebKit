@@ -2418,24 +2418,37 @@ void StyleResolver::CascadedProperties::addImportantMatches(const MatchResult& m
     if (startIndex == -1)
         return;
 
-    unsigned highestTreeContextOrdinal = 0;
-    for (unsigned treeContextPass = 0; treeContextPass <= highestTreeContextOrdinal; ++treeContextPass) {
-        for (int i = startIndex; i <= endIndex; ++i) {
-            const MatchedProperties& matchedProperties = matchResult.matchedProperties()[i];
+    struct IndexAndOrdinal {
+        int index;
+        unsigned ordinal;
+    };
+    Vector<IndexAndOrdinal> shadowTreeMatches;
 
-            if (!hasImportantProperties(*matchedProperties.properties))
-                continue;
+    for (int i = startIndex; i <= endIndex; ++i) {
+        const MatchedProperties& matchedProperties = matchResult.matchedProperties()[i];
 
-            // For !important properties a later shadow tree wins. Do multiple passes to apply in correct order if needed.
-            // Matched properties are sorted in reverse tree context order so this is not needed for normal properties.
-            if (matchedProperties.treeContextOrdinal != treeContextPass) {
-                highestTreeContextOrdinal = std::max(matchedProperties.treeContextOrdinal, highestTreeContextOrdinal);
-                continue;
-            }
+        if (!hasImportantProperties(*matchedProperties.properties))
+            continue;
 
-            addMatch(matchResult, i, true, inheritedOnly);
+        if (matchedProperties.treeContextOrdinal) {
+            shadowTreeMatches.append({ i, matchedProperties.treeContextOrdinal });
+            continue;
         }
+
+        addMatch(matchResult, i, true, inheritedOnly);
     }
+
+    if (shadowTreeMatches.isEmpty())
+        return;
+
+    // For !important properties a later shadow tree wins.
+    // Match results are sorted in reverse tree context order so this is not needed for normal properties.
+    std::stable_sort(shadowTreeMatches.begin(), shadowTreeMatches.end(), [] (const IndexAndOrdinal& a, const IndexAndOrdinal& b) {
+        return a.ordinal < b.ordinal;
+    });
+
+    for (auto& match : shadowTreeMatches)
+        addMatch(matchResult, match.index, true, inheritedOnly);
 }
 
 void StyleResolver::CascadedProperties::applyDeferredProperties(StyleResolver& resolver, const MatchResult* matchResult)
