@@ -414,11 +414,14 @@ void StringBuilder::appendQuotedJSONString(const String& string)
     // The 6 is for characters that need to be \uNNNN encoded.
     size_t maximumCapacityRequired = length() + 2 + string.length() * 6;
     RELEASE_ASSERT(maximumCapacityRequired < std::numeric_limits<unsigned>::max());
+    unsigned allocationSize = maximumCapacityRequired;
+    // This max() is here to allow us to allocate sizes between the range [2^31, 2^32 - 2] because roundUpToPowerOfTwo(1<<31 + some int smaller than 1<<31) == 0.
+    allocationSize = std::max(allocationSize, roundUpToPowerOfTwo(allocationSize));
 
     if (is8Bit() && !string.is8Bit())
-        allocateBufferUpConvert(m_bufferCharacters8, roundUpToPowerOfTwo(maximumCapacityRequired));
+        allocateBufferUpConvert(m_bufferCharacters8, allocationSize);
     else
-        reserveCapacity(roundUpToPowerOfTwo(maximumCapacityRequired));
+        reserveCapacity(allocationSize);
 
     if (is8Bit()) {
         ASSERT(string.is8Bit());
