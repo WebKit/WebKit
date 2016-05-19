@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//# sourceURL=__WebAutomationInjectedScript__
+//# sourceURL=__InjectedScript_WebAutomationSessionProxy.js
 
 (function (sessionIdentifier, evaluate, createUUID) {
 

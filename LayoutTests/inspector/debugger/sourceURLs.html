@@ -36,7 +36,7 @@ function test()
 
             InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject) {
                 // Ignore named inspector internal scripts.
-                if (messageObject.params.sourceURL && messageObject.params.sourceURL.startsWith("__WebInspector"))
+                if (messageObject.params.sourceURL && messageObject.params.sourceURL.startsWith("__InjectedScript_"))
                     return;
 
                 // Has a sourceURL, must be one of the valid ones.

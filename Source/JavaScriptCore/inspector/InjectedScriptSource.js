@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//# sourceURL=__WebInspectorInjectedScript__
+//# sourceURL=__InjectedScript_InjectedScriptSource.js
 
 (function (InjectedScriptHost, inspectedGlobalObject, injectedScriptId) {
 

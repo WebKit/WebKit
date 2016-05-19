@@ -50,11 +50,11 @@ function test()
     }
 
     function isInjectedScriptSourceScript(params) {
-        return params.sourceURL === "__WebInspectorInjectedScript__";
+        return params.sourceURL.startsWith("__InjectedScript_") && params.sourceURL.endsWith(".js");
     }
 
     function isCommandLineAPISourceScript(params) {
-        return params.sourceURL === "__WebInspectorCommandLineAPIModuleSource__";
+        return params.sourceURL.indexOf("CommandLineAPIModuleSource") !== -1;
     }
 
     suite.addTestCase({

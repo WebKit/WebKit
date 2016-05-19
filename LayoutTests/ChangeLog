@@ -1,3 +1,16 @@
+2016-05-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: use a consistent prefix for injected scripts
+        https://bugs.webkit.org/show_bug.cgi?id=157715
+        <rdar://problem/26287188>
+
+        Reviewed by Timothy Hatcher.
+
+        Update how inspector tests check sourceURLs for internal scripts.
+
+        * inspector/debugger/scriptParsed.html:
+        * inspector/debugger/sourceURLs.html:
+
 2016-05-18  Antti Koivisto  <antti@apple.com>
 
         Style resolution for explicitly inherited properties is inefficient

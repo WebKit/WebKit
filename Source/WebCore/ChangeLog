@@ -1,3 +1,15 @@
+2016-05-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: use a consistent prefix for injected scripts
+        https://bugs.webkit.org/show_bug.cgi?id=157715
+        <rdar://problem/26287188>
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * inspector/CommandLineAPIModuleSource.js:
+
 2016-05-18  Jer Noble  <jer.noble@apple.com>
 
         Playback controls should not be active for muted media elements.
