@@ -1,5 +1,16 @@
 2016-05-19  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r201016. rdar://problem/25584201
+
+    2016-05-17  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed GTK+ and EFL bulid fix; make the audio playback user gesture requirement
+            Cocoa-only.
+
+            * Shared/WebPreferencesDefinitions.h:
+
+2016-05-19  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200951. rdar://problem/25584201
 
     2016-04-06  Jer Noble  <jer.noble@apple.com>
