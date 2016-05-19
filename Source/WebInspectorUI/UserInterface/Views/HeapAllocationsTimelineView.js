@@ -89,6 +89,8 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         this._pendingRecords = [];
 
         timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._heapAllocationsTimelineRecordAdded, this);
+
+        WebInspector.HeapSnapshotWorkerProxy.singleton().addEventListener("HeapSnapshot.CollectionEvent", this._heapSnapshotCollectionEvent, this);
     }
 
     // Public
@@ -227,6 +229,8 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         this._dataGrid.closed();
 
         this._contentViewContainer.closeAllContentViews();
+
+        WebInspector.HeapSnapshotWorkerProxy.singleton().removeEventListener("HeapSnapshot.CollectionEvent", this._heapSnapshotCollectionEvent, this);
     }
 
     layout()
@@ -267,6 +271,22 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         this._pendingRecords.push(event.data.record);
 
         this.needsLayout();
+    }
+
+    _heapSnapshotCollectionEvent(event)
+    {
+        function updateHeapSnapshotForEvent(heapSnapshot) {
+            heapSnapshot.updateForCollectionEvent(event);
+        }
+
+        for (let node of this._dataGrid.children)
+            updateHeapSnapshotForEvent(node.record.heapSnapshot);
+        for (let record of this._pendingRecords)
+            updateHeapSnapshotForEvent(record.heapSnapshot);
+        if (this._heapSnapshotDiff)
+            updateHeapSnapshotForEvent(this._heapSnapshotDiff);
+
+        // FIXME: <https://webkit.org/b/157904> Web Inspector: Snapshot List should show the total size and the total live size
     }
 
     _snapshotListPathComponentClicked(event)

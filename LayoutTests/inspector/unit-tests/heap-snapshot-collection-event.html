@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerCreateObjects() {
+    window.list = [];
+    for (let i = 0; i < 100; ++i)
+        window.list.push({key: "value" + i});
+}
+
+function triggerRemoveObjects() {
+    window.list = null;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("HeapSnapshot.CollectionEvent");
+
+    let snapshot = null;
+
+    suite.addTestCase({
+        name: "HeapSnapshot",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("triggerCreateObjects()");
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+                InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+                let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                    InspectorTest.expectThat(snapshot, "Should create HeapSnapshotProxy snapshot.");
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshotCollectionEvent",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("triggerRemoveObjects()");
+
+            let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+                InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+                workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    // Ignore result. This should trigger the collection event.
+                });
+            });
+
+            workerProxy.addEventListener("HeapSnapshot.CollectionEvent", (event) => {
+                InspectorTest.pass("Received HeapSnapshot.CollectionEvent.");
+                InspectorTest.expectThat(Object.keys(event.data.collectedNodes).length >= 200, "Collection should include at least 200 nodes (100 objects and 100 strings).");
+                InspectorTest.expectThat(event.data.affectedSnapshots.includes(snapshot.identifier), "Collection should affect the first snapshot.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshot.prototype.updateCategories",
+        test: (resolve, reject) => {
+            let categoriesBefore = snapshot.categories;
+            snapshot.updateCategories(() => {
+                let categoriesAfter = snapshot.categories;
+                InspectorTest.expectThat(categoriesBefore.get("Object").deadCount === 0, "0 Objects were dead before.");
+                InspectorTest.expectThat(categoriesAfter.get("Object").deadCount >= 100, "At least 100 Objects are dead after.");
+                InspectorTest.expectThat(categoriesBefore.get("string").deadCount === 0, "0 strings were dead before.");
+                InspectorTest.expectThat(categoriesAfter.get("string").deadCount >= 100, "At least 100 strings are dead after.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing HeapSnapshot CollectionEvent between snapshots.</p>
+</body>
+</html>

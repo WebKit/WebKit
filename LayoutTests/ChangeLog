@@ -1,3 +1,14 @@
+2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: HeapSnapshot Instances view should remove dead objects
+        https://bugs.webkit.org/show_bug.cgi?id=157920
+        <rdar://problem/26375866>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/unit-tests/heap-snapshot-collection-event-expected.txt: Added.
+        * inspector/unit-tests/heap-snapshot-collection-event.html: Added.
+
 2016-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::LICMPhase shouldn't hoist type checks unless it knows that the check will succeed at the loop pre-header

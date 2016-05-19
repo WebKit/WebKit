@@ -52,7 +52,7 @@ const rootNodeIdentifier = 0;
 
 // Terminology:
 //   - `nodeIndex` is an index into the `nodes` list.
-//   - `nodeOrdinal` is the order of the node in the `nodes` list. (nodeIndex / nodeFieldCount)
+//   - `nodeOrdinal` is the order of the node in the `nodes` list. (nodeIndex / nodeFieldCount).
 //   - `nodeIdentifier` is the node's id value. (nodes[nodeIndex + nodeIdOffset]).
 //   - `edgeIndex` is an index into the `edges` list.
 //
@@ -61,8 +61,9 @@ const rootNodeIdentifier = 0;
 //     Iterate edges by walking `edges` (edgeFieldCount) and checking if fromIdentifier is current.
 //   - _nodeOrdinalToFirstIncomingEdge - `nodeOrdinal` to `incomingEdgeIndex` in `incomingEdges`.
 //     Iterate edges by walking `incomingEdges` until `nodeOrdinal+1`'s first incoming edge index.
-//   - _nodeOrdinalToDominatorNodeOrdinal - `nodeOrdinal` to `nodeOrdinal` of dominator
-//   - _nodeOrdinalToRetainedSizes - `nodeOrdinal` to retain size value
+//   - _nodeOrdinalToDominatorNodeOrdinal - `nodeOrdinal` to `nodeOrdinal` of dominator.
+//   - _nodeOrdinalToRetainedSizes - `nodeOrdinal` to retain size value.
+//   - _nodeOrdinalIsDead - `nodeOrdinal` is dead or alive.
 //
 // Temporary Lists:
 //   - nodeOrdinalToPostOrderIndex - `nodeOrdinal` to a `postOrderIndex`.
@@ -96,10 +97,14 @@ HeapSnapshot = class HeapSnapshot
 
         this._totalSize = 0;
         this._nodeIdentifierToOrdinal = new Map; // <node identifier> => nodeOrdinal
+        this._lastNodeIdentifier = 0;
         for (let nodeIndex = 0; nodeIndex < nodes.length; nodeIndex += nodeFieldCount) {
             let nodeOrdinal = nodeIndex / nodeFieldCount;
-            this._nodeIdentifierToOrdinal.set(nodes[nodeIndex + nodeIdOffset], nodeOrdinal);
+            let nodeIdentifier = nodes[nodeIndex + nodeIdOffset];
+            this._nodeIdentifierToOrdinal.set(nodeIdentifier, nodeOrdinal);
             this._totalSize += nodes[nodeIndex + nodeSizeOffset];
+            if (nodeIdentifier > this._lastNodeIdentifier)
+                this._lastNodeIdentifier = nodeIdentifier;
         }
 
         // FIXME: Replace toIdentifier and fromIdentifier in edges with nodeIndex to reduce hash lookups?
@@ -125,6 +130,8 @@ HeapSnapshot = class HeapSnapshot
 
         postOrderIndexToNodeOrdinal = null;
 
+        this._nodeOrdinalIsDead = new Uint8Array(this._nodeCount);
+
         this._categories = HeapSnapshot.buildCategories(this);
     }
 
@@ -137,6 +144,7 @@ HeapSnapshot = class HeapSnapshot
         let nodes = snapshot._nodes;
         let nodeClassNamesTable = snapshot._nodeClassNamesTable;
         let nodeOrdinalToRetainedSizes = snapshot._nodeOrdinalToRetainedSizes;
+        let nodeOrdinalIsDead = snapshot._nodeOrdinalIsDead;
 
         // Skip the <root> node.
         let firstNodeIndex = nodeFieldCount;
@@ -150,16 +158,19 @@ HeapSnapshot = class HeapSnapshot
             let size = nodes[nodeIndex + nodeSizeOffset];
             let retainedSize = nodeOrdinalToRetainedSizes[nodeOrdinal];
             let internal = nodes[nodeIndex + nodeInternalOffset] ? true : false;
+            let dead = nodeOrdinalIsDead[nodeOrdinal] ? true : false;
 
             let category = categories[className];
             if (!category)
-                category = categories[className] = {className, size: 0, retainedSize: 0, count: 0, internalCount: 0};
+                category = categories[className] = {className, size: 0, retainedSize: 0, count: 0, internalCount: 0, deadCount: 0};
 
             category.size += size;
             category.retainedSize += retainedSize;
             category.count += 1;
             if (internal)
                 category.internalCount += 1;
+            if (dead)
+                category.deadCount += 1;
         }
 
         return categories;
@@ -226,6 +237,11 @@ HeapSnapshot = class HeapSnapshot
     instancesWithClassName(className)
     {
         return HeapSnapshot.instancesWithClassName(this, className);
+    }
+
+    updateCategories()
+    {
+        return HeapSnapshot.buildCategories(this);
     }
 
     nodeWithIdentifier(nodeIdentifier)
@@ -323,10 +339,60 @@ HeapSnapshot = class HeapSnapshot
         };
     }
 
+    updateDeadNodesAndGatherCollectionData(snapshots)
+    {
+        let previousSnapshotIndex = snapshots.indexOf(this) - 1;
+        let previousSnapshot = snapshots[previousSnapshotIndex];
+        console.assert(previousSnapshot instanceof HeapSnapshot);
+        if (!previousSnapshot)
+            return;
+
+        let lastNodeIdentifier = previousSnapshot._lastNodeIdentifier;
+
+        // All of the node identifiers that could have existed prior to this snapshot.
+        let known = new Map;
+        for (let nodeIndex = 0; nodeIndex < this._nodes.length; nodeIndex += nodeFieldCount) {
+            let nodeIdentifier = this._nodes[nodeIndex + nodeIdOffset];
+            if (nodeIdentifier > lastNodeIdentifier)
+                continue;
+            known.set(nodeIdentifier, nodeIndex);
+        }
+
+        // Determine which node identifiers have since been deleted.
+        let collectedNodesList = [];
+        for (let nodeIndex = 0; nodeIndex < previousSnapshot._nodes.length; nodeIndex += nodeFieldCount) {
+            let nodeIdentifier = previousSnapshot._nodes[nodeIndex + nodeIdOffset];
+            let wasDeleted = !known.has(nodeIdentifier);
+            if (wasDeleted)
+                collectedNodesList.push(nodeIdentifier);
+        }
+
+        // Update dead nodes in previous snapshots.
+        let affectedSnapshots = [];
+        for (let snapshot of snapshots) {
+            if (snapshot === this)
+                break;
+            if (snapshot._markDeadNodes(collectedNodesList))
+                affectedSnapshots.push(snapshot._identifier);
+        }
+
+        // Convert list to a map.
+        let collectedNodes = {};
+        for (let i = 0; i < collectedNodesList.length; ++i)
+            collectedNodes[collectedNodesList[i]] = true;
+
+        return {
+            collectedNodes,
+            affectedSnapshots,
+        };
+    }
+
     // Public
 
     serialize()
     {
+        // FIXME: <https://webkit.org/b/157904> Web Inspector: Snapshot List should show the total size and the total live size
+
         return {
             identifier: this._identifier,
             title: this._title,
@@ -356,6 +422,7 @@ HeapSnapshot = class HeapSnapshot
             retainedSize: this._nodeOrdinalToRetainedSizes[nodeOrdinal],
             internal: this._nodes[nodeIndex + nodeInternalOffset] ? true : false,
             gcRoot: this._nodeOrdinalIsGCRoot[nodeOrdinal] ? true : false,
+            dead: this._nodeOrdinalIsDead[nodeOrdinal] ? true : false,
             dominatorNodeIdentifier,
             hasChildren,
         };
@@ -619,6 +686,22 @@ HeapSnapshot = class HeapSnapshot
         }
     }
 
+    _markDeadNodes(collectedNodesList)
+    {
+        let affected = false;
+
+        for (let i = 0; i < collectedNodesList.length; ++i) {
+            let nodeIdentifier = collectedNodesList[i];
+            if (nodeIdentifier > this._lastNodeIdentifier)
+                continue;
+            let nodeOrdinal = this._nodeIdentifierToOrdinal.get(nodeIdentifier);
+            this._nodeOrdinalIsDead[nodeOrdinal] = 1;
+            affected = true;
+        }
+
+        return affected;
+    }
+
     _isNodeGlobalObject(nodeIndex)
     {
         let className = this._nodeClassNamesTable[this._nodes[nodeIndex + nodeClassNameOffset]];
@@ -723,6 +806,11 @@ HeapSnapshotDiff = class HeapSnapshotDiff
     instancesWithClassName(className)
     {
         return HeapSnapshot.instancesWithClassName(this._snapshot2, className, (nodeIdentifier) => this._addedNodeIdentifiers.has(nodeIdentifier));
+    }
+
+    updateCategories()
+    {
+        return HeapSnapshot.buildCategories(this._snapshot2, (nodeIdentifier) => this._addedNodeIdentifiers.has(nodeIdentifier));
     }
 
     nodeWithIdentifier(nodeIdentifier) { return this._snapshot2.nodeWithIdentifier(nodeIdentifier); }

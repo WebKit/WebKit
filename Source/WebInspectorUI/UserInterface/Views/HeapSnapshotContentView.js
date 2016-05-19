@@ -86,6 +86,7 @@ WebInspector.HeapSnapshotContentView = class HeapSnapshotContentView extends Web
 
     _heapSnapshotDataGridTreeDidPopulate()
     {
+        this._dataGrid.removeChildren();
         for (let child of this._heapSnapshotDataGridTree.children)
             this._dataGrid.appendChild(child);
     }

@@ -92,6 +92,43 @@ WebInspector.HeapSnapshotClassDataGridNode = class HeapSnapshotClassDataGridNode
         }
     }
 
+    removeCollectedNodes(collectedNodes)
+    {
+        let nodesToRemove = [];
+
+        this.forEachImmediateChild((dataGridNode) => {
+            if (dataGridNode instanceof WebInspector.HeapSnapshotInstanceDataGridNode) {
+                let heapSnapshotNode = dataGridNode.node;
+                if (heapSnapshotNode.id in collectedNodes)
+                    nodesToRemove.push(dataGridNode);
+            }
+        });
+
+        if (nodesToRemove.length) {
+            for (let dataGridNode of nodesToRemove)
+                this.removeChild(dataGridNode);
+        }
+
+        if (this._instances) {
+            this._instances = this._instances.filter((instance) => !(instance.id in collectedNodes));
+            this._fetchBatch(nodesToRemove.length);
+        }
+    }
+
+    updateCount(count)
+    {
+        if (count === this._data.count)
+            return;
+
+        if (!count) {
+            this._tree.removeChild(this);
+            return;
+        }
+
+        this._data.count = count;
+        this.needsRefresh();
+    }
+
     // Private
 
     _populate()
@@ -99,7 +136,8 @@ WebInspector.HeapSnapshotClassDataGridNode = class HeapSnapshotClassDataGridNode
         this.removeEventListener("populate", this._populate, this);
 
         this._tree.heapSnapshot.instancesWithClassName(this._data.className, (instances) => {
-            this._instances = instances;
+            // FIXME: <https://webkit.org/b/157905> Web Inspector: Provide a way to toggle between showing only live objects and live+dead objects
+            this._instances = instances.filter((instance) => !instance.dead);
             this._sortInstances();
 
             // Batch.
@@ -128,9 +166,11 @@ WebInspector.HeapSnapshotClassDataGridNode = class HeapSnapshotClassDataGridNode
         }
 
         let count = newCount - oldCount;
-        for (let i = 0; i <= count; ++i) {
-            let instance = this._instances[oldCount + i];
-            this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this._tree));
+        if (count) {
+            for (let i = 0; i <= count; ++i) {
+                let instance = this._instances[oldCount + i];
+                this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this._tree));
+            }
         }
 
         if (this._batched)

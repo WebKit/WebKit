@@ -1,3 +1,91 @@
+2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: HeapSnapshot Instances view should remove dead objects
+        https://bugs.webkit.org/show_bug.cgi?id=157920
+        <rdar://problem/26375866>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshotWorker.js:
+        (HeapSnapshotWorker):
+        (HeapSnapshotWorker.prototype.clearSnapshots):
+        (HeapSnapshotWorker.prototype.createSnapshot):
+        Preserve a list of snapshots for this page's session. When
+        new snapshots come in we can determine which nodes have died
+        and update previous snapshots. Emit a CollectionEvent
+        containing the nodes that were deleted and affected snapshots.
+
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshot.js:
+        (HeapSnapshot):
+        Stash the largest node identifier.
+        Create a byte-per-node list to mark it as dead or alive.
+        All snapshots start with all live nodes.
+
+        (HeapSnapshot.prototype.updateDeadNodesAndGatherCollectionData):
+        (HeapSnapshot.prototype._markDeadNodes):
+        When we get a new snapshot we can mark dead nodes in previous
+        snapshots. Determine the nodeIdentifiers of dead nodes, and
+        mark them as dead if they existed in previous snapshots.
+
+        (HeapSnapshot.buildCategories):
+        (HeapSnapshot.prototype.updateCategories):
+        (HeapSnapshotDiff.prototype.updateCategories):
+        Include a "deadCount" in category data. And provide a method
+        to return an updated category list.
+
+        (HeapSnapshot.prototype.serializeNode):
+        Include a "dead" property on nodes when they are first fetched.
+
+        * UserInterface/Proxies/HeapSnapshotDiffProxy.js:
+        (WebInspector.HeapSnapshotDiffProxy.prototype.updateForCollectionEvent):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.updateCategories):
+        * UserInterface/Proxies/HeapSnapshotNodeProxy.js:
+        (WebInspector.HeapSnapshotNodeProxy):
+        (WebInspector.HeapSnapshotNodeProxy.deserialize):
+        * UserInterface/Proxies/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotProxy.prototype.updateForCollectionEvent):
+        (WebInspector.HeapSnapshotProxy.prototype.updateCategories):
+        Update snapshot proxies from a collection event by updating properties
+        and dispatching an event from the model object.
+
+        * UserInterface/Proxies/HeapSnapshotWorkerProxy.js:
+        (WebInspector.HeapSnapshotWorkerProxy):
+        (WebInspector.HeapSnapshotWorkerProxy.prototype.clearSnapshots):
+        (WebInspector.HeapSnapshotWorkerProxy.prototype._mainResourceDidChange):
+        Clear the session snapshot list when the main resource changes.
+        However we can't yet clear the HeapSnapshot objects on the worker
+        because we may still have UI that interact with them.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView):
+        (WebInspector.HeapAllocationsTimelineView.prototype.closed):
+        Register and unregister for HeapSnapshot collection events.
+
+        (WebInspector.HeapAllocationsTimelineView.prototype._heapSnapshotCollectionEvent.updateHeapSnapshotForEvent):
+        (WebInspector.HeapAllocationsTimelineView.prototype._heapSnapshotCollectionEvent):
+        Update all the snapshots we know about when a collection event happens.
+
+        * UserInterface/Views/HeapSnapshotClassDataGridNode.js:
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype.removeCollectedNodes):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype.updateCount):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._populate):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._fetchBatch):
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WebInspector.HeapSnapshotContentView.prototype._heapSnapshotDataGridTreeDidPopulate):
+        (WebInspector.HeapSnapshotContentView):
+        * UserInterface/Views/HeapSnapshotDataGridTree.js:
+        (WebInspector.HeapSnapshotDataGridTree):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.removeChild):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.removeCollectedNodes):
+        (WebInspector.HeapSnapshotDataGridTree.prototype._heapSnapshotCollectedNodes):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.populateTopLevel):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.removeCollectedNodes):
+        (WebInspector.HeapSnapshotInstancesDataGridTree):
+        Update the Instances DataGridTree UI when a collection event happens.
+        Remove any top level InstanceDataGridNodes that may be showing for collected nodes.
+        Update the category counts on the ClassDataGridNodes.
+        Update FetchMoreDataGridNodes to have updated counts (and replace removed nodes).
+
 2016-05-19  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: REGRESSION: Search magnifying glass shifted in Search tab input field
