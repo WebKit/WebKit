@@ -214,7 +214,7 @@ class GitRepository(Repository):
 
     def _fetch_all_hashes(self):
         self._run_git_command(['pull', self._git_url])
-        lines = self._run_git_command(['log', '--all', '--reverse', '--pretty=%H %ct %ce %P']).split('\n')
+        lines = self._run_git_command(['log', '--all', '--date-order', '--reverse', '--pretty=%H %ct %ce %P']).split('\n')
         self._tokenized_hashes = [line.split() for line in lines]
 
     def _run_git_command(self, args):

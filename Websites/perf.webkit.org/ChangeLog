@@ -1,5 +1,13 @@
 2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed build fix. Use --date-order so that every child commit appears after its parent.
+        Otherwise we'll hit a FailedToFindParentCommit error while submitting a commit that appears before its parent.
+
+        * tools/sync-commits.py:
+        (GitRepository._fetch_all_hashes):
+
+2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Removed the erroneously committed debug code.
 
         * tools/sync-commits.py:
