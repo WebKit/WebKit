@@ -156,7 +156,7 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
 
     unsigned allFrameBytes = 0;
     for (size_t i = 0; i < m_frames.size(); ++i)
-        allFrameBytes += m_frames[i].m_frameBytes;
+        allFrameBytes += m_frames[i].usedFrameBytes();
 
     if (allFrameBytes > largeAnimationCutoff)
         destroyDecodedData(destroyAll);
