@@ -56,6 +56,7 @@ public:
     WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
     WEBCORE_EXPORT HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*);
+    WebPlaybackSessionModelMediaElement& playbackSessionModel() { return m_playbackSessionModel; }
     
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
     void updateForEventName(const WTF::AtomicString&);
