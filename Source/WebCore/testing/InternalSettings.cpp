@@ -226,11 +226,12 @@ InternalSettings::InternalSettings(Page* page)
 
 void InternalSettings::resetToConsistentState()
 {
-    page()->setPageScaleFactor(1, IntPoint(0, 0));
+    page()->setPageScaleFactor(1, { 0, 0 });
+    page()->mainFrame().setPageAndTextZoomFactors(1, 1);
     page()->setCanStartMedia(true);
     page()->settings().setForcePendingWebGLPolicy(false);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    m_page->settings().setAllowsAirPlayForMediaPlayback(false);
+    page()->settings().setAllowsAirPlayForMediaPlayback(false);
 #endif
 
     m_backup.restoreTo(*settings());

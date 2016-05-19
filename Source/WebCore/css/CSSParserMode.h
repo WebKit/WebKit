@@ -62,14 +62,17 @@ public:
 
     URL baseURL;
     String charset;
-    CSSParserMode mode;
-    bool isHTMLDocument;
+    CSSParserMode mode { CSSStrictMode };
+    bool isHTMLDocument { false };
 #if ENABLE(CSS_GRID_LAYOUT)
-    bool cssGridLayoutEnabled;
+    bool cssGridLayoutEnabled { false };
 #endif
-    bool needsSiteSpecificQuirks;
-    bool enforcesCSSMIMETypeInNoQuirksMode;
-    bool useLegacyBackgroundSizeShorthandBehavior;
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    bool textAutosizingEnabled { false };
+#endif
+    bool needsSiteSpecificQuirks { false };
+    bool enforcesCSSMIMETypeInNoQuirksMode { true };
+    bool useLegacyBackgroundSizeShorthandBehavior { false };
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);

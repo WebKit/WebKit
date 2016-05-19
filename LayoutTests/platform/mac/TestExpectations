@@ -17,6 +17,7 @@ fast/forms/search/search-results-hidden-crash.html [ Pass ]
 fast/url/user-visible [ Pass ]
 
 fast/text-autosizing/ios [ Pass ]
+fast/text-autosizing/mac [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

@@ -2,6 +2,12 @@
 <head>
     <meta name="viewport" content="user-scalable=no, width=320">
     <title>&lt;rdar://problem/6646628&gt; Text Autosizing: Overlapping text in message</title>
+    <script>
+    if (window.internals) {
+        internals.settings.setTextAutosizingEnabled(true);
+        internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+    }
+    </script>
     <style>
     #expected {
         font-size: 10px;
@@ -15,12 +21,6 @@
     }
     </style>
     <script src="../../../resources/js-test-pre.js"></script>
-    <script>
-    if (window.internals) {
-        window.internals.settings.setTextAutosizingEnabled(true);
-        window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
-    }
-    </script>
 </head>
 <body>
     <p id="expected">This text should have a decent spacing between the lines. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ante orci, posuere at aliquam eget, ornare ut sapien. Praesent commodo volutpat auctor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vivamus interdum tincidunt pulvinar. Donec nec libero eros. Morbi facilisis lacus quis mi mattis quis pretium velit fringilla. Integer ipsum metus, pretium et tincidunt eget, commodo vel nibh. Cras feugiat lorem et velit interdum eu luctus dui gravida. Nullam nec gravida orci. Vestibulum quis imperdiet nibh. Vivamus tincidunt erat ac risus egestas mattis.</p>

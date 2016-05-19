@@ -953,9 +953,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setStorageTrackerEnabled:YES];
 #endif
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
     [preferences _setTextAutosizingEnabled:NO];
-#endif
 
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
     // So, turn it off for now, but we might want to turn it back on some day.
@@ -971,13 +969,8 @@ static void resetWebPreferencesToConsistentValues()
     ASSERT([preferences mockScrollbarsEnabled]);
 #endif
 
-#if ENABLE(WEB_AUDIO)
     [preferences setWebAudioEnabled:YES];
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
     [preferences setMediaSourceEnabled:YES];
-#endif
 
     [preferences setShadowDOMEnabled:YES];
     [preferences setCustomElementsEnabled:YES];
