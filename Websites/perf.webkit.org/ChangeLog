@@ -1,5 +1,29 @@
 2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard "Add pane" should list first by test, then by machine
+        https://bugs.webkit.org/show_bug.cgi?id=157880
+
+        Reviewed by Stephanie Lewis.
+
+        Reversed the order which tests and platforms are selected. Also split .pane-selector-container into #tests and
+        #platform for the ease of DOM node manipulations.
+
+        * public/v3/components/pane-selector.js:
+        (PaneSelector):
+        (PaneSelector.prototype._renderPlatformList): Renamed from _renderPlatformLists since there is a single list
+        for platforms. This list now disappears while a non-metric item is selected in the collection of test lists.
+        e.g. "Speedometer" instead of its "Score" metric. Remember the last metric we rendered to avoid churning.
+        (PaneSelector.prototype._renderTestLists): Render the top level tests once. The index of lists have been
+        decreased by one since test lists are now inside #tests instead of appearing after the platform list.
+        (PaneSelector.prototype._buildTestList): Don't filter tests since platform is chosen after tests now.
+        (PaneSelector.prototype._replaceList):
+        (PaneSelector.prototype._selectedItem): Don't reset the test path (specifies which subtest or metric is picked)
+        when a platform is selected since it happens after a test metric is chosen now.
+        (PaneSelector.prototype._clickedItem): Add a pane when a platform is clicked, not when a metric is clicked.
+        (PaneSelector.cssTemplate):
+
+2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Analysis task should look for a git commit based on abridged hashes
         https://bugs.webkit.org/show_bug.cgi?id=157877
         <rdar://problem/26254374>

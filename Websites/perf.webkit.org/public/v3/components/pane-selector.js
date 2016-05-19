@@ -5,18 +5,19 @@ class PaneSelector extends ComponentBase {
         super('pane-selector');
         this._currentPlatform = null;
         this._currentPath = [];
-        this._platformItems = null;
-        this._renderedPlatform = null;
+        this._platformItems = [];
+        this._renderedMetric = null;
         this._renderedPath = null;
         this._updateTimer = null;
-        this._container = this.content().querySelector('.pane-selector-container');
+        this._platformContainer = this.content().querySelector('#platform');
+        this._testsContainer = this.content().querySelector('#tests');
         this._callback = null;
         this._previouslySelectedItem = null;
     }
 
     render()
     {
-        this._renderPlatformLists();
+        this._renderPlatformList();
         this._renderTestLists();
     }
 
@@ -30,16 +31,29 @@ class PaneSelector extends ComponentBase {
         }
     }
 
-    _renderPlatformLists()
+    _renderPlatformList()
     {
-        if (!this._platformItems) {
+        var currentMetric = null;
+        if (this._currentPath.length) {
+            var lastItem = this._currentPath[this._currentPath.length - 1];
+            if (lastItem instanceof Metric)
+                currentMetric = lastItem;
+        }
+
+        if (this._renderedMetric != currentMetric) {
+            if (this._platformContainer.firstChild)
+                this._platformContainer.removeChild(this._platformContainer.firstChild);
+
+            this._renderedMetric = currentMetric;
             this._platformItems = [];
 
-            var platforms = Platform.sortByName(Platform.all());
-            for (var platform of platforms)
-                this._platformItems.push(this._createListItem(platform, platform.label()));
-
-            this._replaceList(0, this._buildList(this._platformItems));
+            if (currentMetric) {
+                for (var platform of Platform.sortByName(Platform.all())) {
+                    if (platform.hasMetric(currentMetric))
+                        this._platformItems.push(this._createListItem(platform, platform.label()));
+                }
+                this._platformContainer.appendChild(this._buildList(this._platformItems));
+            }
         }
 
         for (var li of this._platformItems) {
@@ -50,10 +64,8 @@ class PaneSelector extends ComponentBase {
 
     _renderTestLists()
     {
-        if (this._renderedPlatform != this._currentPlatform) {
-            this._replaceList(1, this._buildTestList(Test.topLevelTests()), []);
-            this._renderedPlatform = this._currentPlatform;
-        }
+        if (this._renderedPath == null)
+            this._replaceList(0, this._buildTestList(Test.topLevelTests()), []);
 
         for (var i = 0; i < this._currentPath.length; i++) {
             var item = this._currentPath[i];
@@ -62,17 +74,17 @@ class PaneSelector extends ComponentBase {
             if (item instanceof Metric)
                 break;
             var newList = this._buildTestList(Test.sortByName(item.childTests()), Metric.sortByName(item.metrics()));
-            this._replaceList(i + 2, newList);
+            this._replaceList(i + 1, newList);
         }
 
-        var removeNodeCount = this._container.childNodes.length - i - 2;
+        var removeNodeCount = this._testsContainer.childNodes.length - i - 1;
         if (removeNodeCount > 0) {
             while (removeNodeCount--)
-                this._container.removeChild(this._container.lastChild);
+                this._testsContainer.removeChild(this._testsContainer.lastChild);
         }
 
         for (var i = 0; i < this._currentPath.length; i++) {
-            var list = this._container.childNodes[i + 1];
+            var list = this._testsContainer.childNodes[i];
             var item = this._currentPath[i];
             for (var j = 0; j < list.childNodes.length; j++) {
                 var option = list.childNodes[j];
@@ -90,11 +102,9 @@ class PaneSelector extends ComponentBase {
         var platform = this._currentPlatform;
 
         var metricItems = (metrics || [])
-            .filter(function (metric) { return platform && platform.hasMetric(metric); })
             .map(function (metric) { return self._createListItem(metric, metric.label()); });
 
         var testItems = tests
-            .filter(function (test) { return platform && platform.hasTest(test); })
             .map(function (test) {
                 var data = test;
                 var label = test.label();
@@ -110,11 +120,11 @@ class PaneSelector extends ComponentBase {
 
     _replaceList(position, newList)
     {
-        var existingList = this._container.childNodes[position];
+        var existingList = this._testsContainer.childNodes[position];
         if (existingList)
-            this._container.replaceChild(newList, existingList);
+            this._testsContainer.replaceChild(newList, existingList);
         else
-            this._container.appendChild(newList);
+            this._testsContainer.appendChild(newList);
     }
 
     _createListItem(data, label, hoverCallback, activationCallback)
@@ -150,10 +160,9 @@ class PaneSelector extends ComponentBase {
             return;
         this._previouslySelectedItem = data;
 
-        if (data instanceof Platform) {
+        if (data instanceof Platform)
             this._currentPlatform = data;
-            this._currentPath = [];
-        } else {
+        else {
             this._currentPath = data.path();
             if (data instanceof Metric && data.test().onlyContainsSingleMetric())
                 this._currentPath.splice(this._currentPath.length - 2, 1);
@@ -168,7 +177,7 @@ class PaneSelector extends ComponentBase {
 
     _clickedItem(data, event)
     {
-        if (!(data instanceof Metric) || !this._callback || !this._currentPlatform || !this._currentPath.length)
+        if (!(data instanceof Platform) || !this._callback || !this._currentPlatform || !this._currentPath.length)
             return;
         event.preventDefault();
         this._callback(this._currentPlatform, this._currentPath[this._currentPath.length - 1]);
@@ -177,14 +186,15 @@ class PaneSelector extends ComponentBase {
     static htmlTemplate()
     {
         return `
-            <div class="pane-selector-container"></div>
+            <div class="pane-selector-container"><div id="tests"></div><div id="platform"></div></div>
         `;
     }
 
     static cssTemplate()
     {
         return `
-            .pane-selector-container {
+            .pane-selector-container,
+            .pane-selector-container > div {
                 display: flex;
                 flex-direction: row-reverse;
                 height: 10rem;
