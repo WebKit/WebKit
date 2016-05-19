@@ -4,6 +4,21 @@
         https://bugs.webkit.org/show_bug.cgi?id=157715
         <rdar://problem/26287188>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Follow-up fix to an affected test.
+
+        * inspector/debugger/scriptParsed.html:
+        Check whether the script is for CommandLineAPIModuleSource before
+        checking whether it is an InjectedScript. With the new naming scheme,
+        the latter is a subset of the former, so do the more specific check first.
+
+2016-05-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: use a consistent prefix for injected scripts
+        https://bugs.webkit.org/show_bug.cgi?id=157715
+        <rdar://problem/26287188>
+
         Reviewed by Timothy Hatcher.
 
         Update how inspector tests check sourceURLs for internal scripts.

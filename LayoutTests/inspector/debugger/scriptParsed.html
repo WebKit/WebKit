@@ -79,10 +79,10 @@ function test()
                         foundInlineAttributeEventListenerScript = true;
                     else if (!foundEvalScript && isEvalScript(params))
                         foundEvalScript = true;
-                    else if (!foundInjectedScriptSourceScript && isInjectedScriptSourceScript(params))
-                        foundInjectedScriptSourceScript = true;
                     else if (!foundCommandLineAPISourceScript && isCommandLineAPISourceScript(params))
                         foundCommandLineAPISourceScript = true;
+                    else if (!foundInjectedScriptSourceScript && isInjectedScriptSourceScript(params))
+                        foundInjectedScriptSourceScript = true;
                     else {
                         ProtocolTest.log("UNEXPECTED SCRIPT: " + JSON.stringify(messageObject));
                         foundUnexpectedScript = true;
