@@ -1,5 +1,26 @@
 2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Analysis task should look for a git commit based on abridged hashes
+        https://bugs.webkit.org/show_bug.cgi?id=157877
+        <rdar://problem/26254374>
+
+        Reviewed by Chris Dumez.
+
+        Made /privileged-api/associate-commit look for commits using LIKE instead of an exact match.
+        Associate the commit when there is exactly one match.
+
+        * public/include/commit-log-fetcher.php:
+        (CommitLogFetcher::fetch_between):
+        * public/include/db.php:
+        (Database::escape_for_like): Extracted from CommitLogFetcher::fetch_between.
+        * public/privileged-api/associate-commit.php:
+        (main): Look for the commits using LIKE. Reject whenever there are multiple commits. We limit the number of
+        matches to two for performance when the user specifies something that almost thousands of commits: e.g. "1".
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype._associateCommit): Added human friendly error messages for mismatching commits.
+
+2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed build fix. Use --date-order so that every child commit appears after its parent.
         Otherwise we'll hit a FailedToFindParentCommit error while submitting a commit that appears before its parent.
 

@@ -84,6 +84,10 @@ class Database
         return intval($timestamp_in_s * 1000);
     }
 
+    static function escape_for_like($string) {
+        return str_replace(array('\\', '_', '%'), array('\\\\', '\\_', '\\%'), $string);
+    }
+
     function connect() {
         $databaseConfig = config('database');
         $this->connection = @pg_connect('host=' . $databaseConfig['host'] . ' port=' . $databaseConfig['port']

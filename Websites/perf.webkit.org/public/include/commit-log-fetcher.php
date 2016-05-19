@@ -65,7 +65,7 @@ class CommitLogFetcher {
         }
 
         if ($keyword) {
-            array_push($values, '%' . str_replace(array('\\', '_', '%'), array('\\\\', '\\_', '\\%'), $keyword) . '%');
+            array_push($values, '%' . Database::escape_for_like($keyword) . '%');
             $keyword_index = '$' . count($values);
             array_push($values, ltrim($keyword, 'r'));
             $revision_index = '$' . count($values);

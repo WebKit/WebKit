@@ -496,7 +496,12 @@ class AnalysisTaskPage extends PageWithHeading {
         var render = this.render.bind(this);
         return this._task.associateCommit(kind, repository, revision).then(render, function (error) {
             render();
-            alert('Failed to associate the commit: ' + error);
+            if (error == 'AmbiguousRevision')
+                alert('There are multiple revisions that match the specified string: ' + revision);
+            else if (error == 'CommitNotFound')
+                alert('There are no revisions that match the specified string:' + revision);
+            else
+                alert('Failed to associate the commit: ' + error);
         });
     }
 
