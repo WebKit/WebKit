@@ -116,7 +116,7 @@ public:
     operator int() const { return toInt(); }
     operator float() const { return toFloat(); }
     operator double() const { return toDouble(); }
-    operator bool() const { return m_value; }
+    explicit operator bool() const { return m_value; }
 
     LayoutUnit& operator++()
     {
