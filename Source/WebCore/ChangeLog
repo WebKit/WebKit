@@ -1,3 +1,21 @@
+2016-05-18  Jer Noble  <jer.noble@apple.com>
+
+        Playback controls still valid after navigating back after watching YouTube video.
+        https://bugs.webkit.org/show_bug.cgi?id=157874
+        <rdar://problem/25993063>
+
+        Reviewed by Eric Carlson.
+
+        YouTube uses window.onpopstate to "navigate" backwards from a video page to the main page
+        (or other video page). This causes the playback controls to not be cleared (since no
+        navigation actually occured). Instead, clear the playback controls when we clear our
+        MediaPlayer due to load() being called, when the src= attribute is changed, or when a
+        <source> element is added to the <video>.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+
 2016-05-19  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] unrelated codecs required to play videos

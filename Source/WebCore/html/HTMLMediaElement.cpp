@@ -5008,6 +5008,9 @@ void HTMLMediaElement::clearMediaPlayer(DelayedActionType flags)
         document().removeMediaCanStartListener(this);
     }
 
+    if (document().page())
+        document().page()->chrome().client().clearPlaybackControlsManager(*this);
+
     m_player = nullptr;
 
     stopPeriodicTimers();
@@ -5887,6 +5890,10 @@ void HTMLMediaElement::createMediaPlayer()
 #if ENABLE(VIDEO_TRACK)
     forgetResourceSpecificTracks();
 #endif
+
+    if (document().page())
+        document().page()->chrome().client().clearPlaybackControlsManager(*this);
+
     m_player = std::make_unique<MediaPlayer>(static_cast<MediaPlayerClient&>(*this));
 
 #if ENABLE(WEB_AUDIO)
