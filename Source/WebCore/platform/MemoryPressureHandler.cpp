@@ -202,11 +202,11 @@ void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
 
     long memoryDiff = currentMemory - m_initialMemory;
     if (memoryDiff < 0)
-        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": -dirty %ld bytes (from %lu to %lu)", m_logString, (memoryDiff * -1), m_initialMemory, currentMemory);
+        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": -dirty %ld bytes (from %zu to %zu)", m_logString, (memoryDiff * -1), m_initialMemory, currentMemory);
     else if (memoryDiff > 0)
-        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": +dirty %ld bytes (from %lu to %lu)", m_logString, memoryDiff, m_initialMemory, currentMemory);
+        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": +dirty %ld bytes (from %zu to %zu)", m_logString, memoryDiff, m_initialMemory, currentMemory);
     else
-        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": =dirty (at %lu bytes)", m_logString, currentMemory);
+        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": =dirty (at %zu bytes)", m_logString, currentMemory);
 }
 
 #if !PLATFORM(COCOA) && !OS(LINUX) && !PLATFORM(WIN)
