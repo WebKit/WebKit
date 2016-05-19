@@ -1,3 +1,47 @@
+2016-05-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Fullscreen video playback broken in WK1 apps
+        https://bugs.webkit.org/show_bug.cgi?id=157847
+        <rdar://problem/25879521>
+
+        Reviewed by Jer Noble.
+
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.h:
+        (WebCore::WebVideoFullscreenModelVideoElement::playbackSessionModel): New, model accessor.
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::setWebVideoFullscreenInterface): Set model's playback interface.
+        (WebVideoFullscreenModelVideoElement::setVideoElement): Set model's video element.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::didCleanupFullscreen): Clear m_sessionModel.
+        (WebVideoFullscreenControllerContext::setVideoDimensions): This is called from both the UI and
+          Web threads, so dispatch to the UI thread when necessary.
+        (WebVideoFullscreenControllerContext::play): Call the model's playback session on the Web thread.
+        (WebVideoFullscreenControllerContext::pause): Ditto.
+        (WebVideoFullscreenControllerContext::togglePlayState): Ditto.
+        (WebVideoFullscreenControllerContext::beginScrubbing): Ditto.
+        (WebVideoFullscreenControllerContext::endScrubbing): Ditto.
+        (WebVideoFullscreenControllerContext::seekToTime): Ditto.
+        (WebVideoFullscreenControllerContext::fastSeek): Ditto.
+        (WebVideoFullscreenControllerContext::beginScanningForward): Ditto.
+        (WebVideoFullscreenControllerContext::beginScanningBackward): Ditto.
+        (WebVideoFullscreenControllerContext::endScanning): Ditto.
+        (WebVideoFullscreenControllerContext::selectAudioMediaOption): Ditto.
+        (WebVideoFullscreenControllerContext::selectLegibleMediaOption): Ditto.
+        (WebVideoFullscreenControllerContext::setUpFullscreen): Create and configure a session model.
+        (WebVideoFullscreenSessionModel::play): Pass call back to the controller.
+        (WebVideoFullscreenSessionModel::pause): Ditto.
+        (WebVideoFullscreenSessionModel::togglePlayState): Ditto.
+        (WebVideoFullscreenSessionModel::beginScrubbing): Ditto.
+        (WebVideoFullscreenSessionModel::endScrubbing): Ditto.
+        (WebVideoFullscreenSessionModel::seekToTime): Ditto.
+        (WebVideoFullscreenSessionModel::fastSeek): Ditto.
+        (WebVideoFullscreenSessionModel::beginScanningForward): Ditto.
+        (WebVideoFullscreenSessionModel::beginScanningBackward): Ditto.
+        (WebVideoFullscreenSessionModel::endScanning): Ditto.
+        (WebVideoFullscreenSessionModel::selectAudioMediaOption): Ditto.
+        (WebVideoFullscreenSessionModel::selectLegibleMediaOption): Ditto.
+
 2016-05-18  Zalan Bujtas  <zalan@apple.com>
 
         Remove LayoutUnit::operator unsigned().
