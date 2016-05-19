@@ -40,7 +40,7 @@ class BackwardsGraph {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // We use "#end" to refer to the synthetic root we have created.
-    static const char* rootName = "#end";
+    static const char* rootName() { return "#end" };
 
     class Node {
     public:
@@ -112,7 +112,7 @@ public:
         void dump(PrintStream& out) const
         {
             if (m_hasRoot)
-                out.print(rootName, " ");
+                out.print(rootName(), " ");
             out.print(m_set);
         }
         
@@ -256,7 +256,7 @@ public:
         if (!node)
             out.print("<null>");
         else if (node.isRoot())
-            out.print(rootName);
+            out.print(rootName());
         else
             out.print(m_graph.dump(node.node()));
         return out.toCString();

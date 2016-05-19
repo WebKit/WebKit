@@ -1,3 +1,13 @@
+2016-05-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix all of the builds. I had made an additional change that I did not mean to
+        commit. This fixes it.
+
+        * wtf/BackwardsGraph.h:
+        (WTF::BackwardsGraph::rootName):
+        (WTF::BackwardsGraph::Set::dump):
+        (WTF::BackwardsGraph::dump):
+
 2016-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::LICMPhase shouldn't hoist type checks unless it knows that the check will succeed at the loop pre-header
