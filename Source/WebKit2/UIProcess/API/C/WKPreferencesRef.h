@@ -49,6 +49,12 @@ enum WKDebugOverlayRegionFlags {
 };
 typedef unsigned WKDebugOverlayRegions;
 
+enum _WKUserInterfaceDirectionPolicy {
+    kWKUserInterfaceDirectionPolicyContent,
+    kWKUserInterfaceDirectionPolicySystem,
+};
+typedef enum _WKUserInterfaceDirectionPolicy _WKUserInterfaceDirectionPolicy;
+
 WK_EXPORT WKTypeID WKPreferencesGetTypeID();
 
 WK_EXPORT WKPreferencesRef WKPreferencesCreate();
@@ -265,6 +271,10 @@ WK_EXPORT bool WKPreferencesGetIgnoreViewportScalingConstraints(WKPreferencesRef
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetAllowsAirPlayForMediaPlayback(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetAllowsAirPlayForMediaPlayback(WKPreferencesRef preferencesRef);
+
+// Defaults to kWKUserInterfaceDirectionPolicyContent.
+WK_EXPORT void WKPreferencesSetUserInterfaceDirectionPolicy(WKPreferencesRef preferencesRef, _WKUserInterfaceDirectionPolicy userInterfaceDirectionPolicy);
+WK_EXPORT _WKUserInterfaceDirectionPolicy WKPreferencesGetUserInterfaceDirectionPolicy(WKPreferencesRef preferencesRef);
 
 #ifdef __cplusplus
 }

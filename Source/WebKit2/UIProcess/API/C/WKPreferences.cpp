@@ -1466,6 +1466,16 @@ bool WKPreferencesGetAllowsAirPlayForMediaPlayback(WKPreferencesRef preferencesR
     return toImpl(preferencesRef)->allowsAirPlayForMediaPlayback();
 }
 
+void WKPreferencesSetUserInterfaceDirectionPolicy(WKPreferencesRef preferencesRef, _WKUserInterfaceDirectionPolicy userInterfaceDirectionPolicy)
+{
+    toImpl(preferencesRef)->setUserInterfaceDirectionPolicy(userInterfaceDirectionPolicy);
+}
+
+_WKUserInterfaceDirectionPolicy WKPreferencesGetUserInterfaceDirectionPolicy(WKPreferencesRef preferencesRef)
+{
+    return static_cast<_WKUserInterfaceDirectionPolicy>(toImpl(preferencesRef)->userInterfaceDirectionPolicy());
+}
+
 void WKPreferencesSetResourceUsageOverlayVisible(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setResourceUsageOverlayVisible(enabled);

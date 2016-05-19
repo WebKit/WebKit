@@ -1,3 +1,16 @@
+2016-05-18  Anders Carlsson  <andersca@apple.com>
+
+        Add WKPreferencesRef getter/setter pair to set RTL mode
+        https://bugs.webkit.org/show_bug.cgi?id=157873
+        rdar://problem/26329970
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetUserInterfaceDirectionPolicy):
+        (WKPreferencesGetUserInterfaceDirectionPolicy):
+        * UIProcess/API/C/WKPreferencesRef.h:
+
 2016-05-18  Alex Christensen  <achristensen@webkit.org>
 
         Clean up CSS code
