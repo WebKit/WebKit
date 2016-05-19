@@ -103,6 +103,7 @@ public:
         bool m_allowsAirPlayForMediaPlayback;
 #endif
         bool m_allowsInlineMediaPlayback;
+        bool m_allowsInlineMediaPlaybackAfterFullscreen;
         bool m_inlineMediaPlaybackRequiresPlaysInlineAttribute;
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
         bool m_indexedDBWorkersEnabled;
@@ -154,6 +155,7 @@ public:
     void setShouldConvertPositionStyleOnCopy(bool, ExceptionCode&);
     void setScrollingTreeIncludesFrames(bool, ExceptionCode&);
     void setAllowsInlineMediaPlayback(bool, ExceptionCode&);
+    void setAllowsInlineMediaPlaybackAfterFullscreen(bool, ExceptionCode&);
     void setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool, ExceptionCode&);
     void setIndexedDBWorkersEnabled(bool, ExceptionCode&);
     String userInterfaceDirectionPolicy(ExceptionCode&);

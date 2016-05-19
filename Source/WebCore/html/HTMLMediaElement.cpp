@@ -5342,7 +5342,7 @@ void HTMLMediaElement::exitFullscreen()
     if (hasMediaControls())
         mediaControls()->exitedFullscreen();
     if (document().page() && is<HTMLVideoElement>(*this)) {
-        if (m_mediaSession->requiresFullscreenForVideoPlayback(*this))
+        if (m_mediaSession->requiresFullscreenForVideoPlayback(*this) && (!document().settings() || !document().settings()->allowsInlineMediaPlaybackAfterFullscreen()))
             pauseInternal();
 
         if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
