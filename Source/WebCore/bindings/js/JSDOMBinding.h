@@ -165,8 +165,7 @@ template<typename DOMClass, typename WrapperClass> void cacheWrapper(DOMWrapperW
 template<typename DOMClass, typename WrapperClass> void uncacheWrapper(DOMWrapperWorld&, DOMClass*, WrapperClass*);
 template<typename WrapperClass, typename DOMClass> WrapperClass* createWrapper(JSDOMGlobalObject*, Ref<DOMClass>&&);
 
-template<typename WrapperClass, typename DOMClass> JSC::JSValue wrap(JSDOMGlobalObject*, DOMClass&);
-template<typename WrapperClass, typename DOMClass> JSC::JSValue getExistingWrapper(JSDOMGlobalObject*, DOMClass&);
+template<typename DOMClass> JSC::JSValue wrap(JSC::ExecState*, JSDOMGlobalObject*, DOMClass&);
 template<typename WrapperClass, typename DOMClass> JSC::JSValue createNewWrapper(JSDOMGlobalObject*, Ref<DOMClass>&&);
 
 void addImpureProperty(const AtomicString&);
@@ -467,16 +466,11 @@ template<typename WrapperClass, typename DOMClass> inline WrapperClass* createWr
     return wrapper;
 }
 
-template<typename WrapperClass, typename DOMClass> inline JSC::JSValue wrap(JSDOMGlobalObject* globalObject, DOMClass& domObject)
+template<typename DOMClass> inline JSC::JSValue wrap(JSC::ExecState* state, JSDOMGlobalObject* globalObject, DOMClass& domObject)
 {
     if (auto* wrapper = getCachedWrapper(globalObject->world(), domObject))
         return wrapper;
-    return createWrapper<WrapperClass, DOMClass>(globalObject, domObject);
-}
-
-template<typename WrapperClass, typename DOMClass> inline JSC::JSValue getExistingWrapper(JSDOMGlobalObject* globalObject, DOMClass& domObject)
-{
-    return getCachedWrapper(globalObject->world(), domObject);
+    return toJSNewlyCreated(state, globalObject, Ref<DOMClass>(domObject));
 }
 
 template<typename WrapperClass, typename DOMClass> inline JSC::JSValue createNewWrapper(JSDOMGlobalObject* globalObject, Ref<DOMClass>&& domObject)
@@ -521,7 +515,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
 {
     if (!buffer)
         return JSC::jsNull();
-    if (JSC::JSValue result = getExistingWrapper<JSC::JSArrayBuffer>(globalObject, *buffer))
+    if (JSC::JSValue result = getCachedWrapper(globalObject->world(), *buffer))
         return result;
 
     // The JSArrayBuffer::create function will register the wrapper in finishCreation.

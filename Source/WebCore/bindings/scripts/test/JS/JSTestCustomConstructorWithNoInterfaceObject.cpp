@@ -168,16 +168,9 @@ extern "C" { extern void* _ZTVN7WebCore42TestCustomConstructorWithNoInterfaceObj
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestCustomConstructorWithNoInterfaceObject>&& impl)
 {
-    return createNewWrapper<JSTestCustomConstructorWithNoInterfaceObject>(globalObject, WTFMove(impl));
-}
-
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomConstructorWithNoInterfaceObject& impl)
-{
-    if (JSValue result = getExistingWrapper<JSTestCustomConstructorWithNoInterfaceObject>(globalObject, impl))
-        return result;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestCustomConstructorWithNoInterfaceObject@WebCore@@6B@"));
 #else
@@ -194,7 +187,12 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomCo
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestCustomConstructorWithNoInterfaceObject, TestCustomConstructorWithNoInterfaceObject>(globalObject, impl);
+    return createNewWrapper<JSTestCustomConstructorWithNoInterfaceObject, TestCustomConstructorWithNoInterfaceObject>(globalObject, WTFMove(impl));
+}
+
+JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCustomConstructorWithNoInterfaceObject& impl)
+{
+    return wrap(state, globalObject, impl);
 }
 
 TestCustomConstructorWithNoInterfaceObject* JSTestCustomConstructorWithNoInterfaceObject::toWrapped(JSC::JSValue value)

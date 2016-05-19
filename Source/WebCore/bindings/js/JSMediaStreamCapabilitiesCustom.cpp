@@ -37,12 +37,16 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, MediaStreamCapabilities& object)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<MediaStreamCapabilities>&& object)
 {
     if (object.hasVideoSource())
-        return wrap<JSAllVideoCapabilities>(globalObject, static_cast<AllVideoCapabilities&>(object));
+        return CREATE_DOM_WRAPPER(globalObject, AllVideoCapabilities, WTFMove(object));
+    return CREATE_DOM_WRAPPER(globalObject, AllAudioCapabilities, WTFMove(object));
+}
 
-    return wrap<JSAllAudioCapabilities>(globalObject, static_cast<AllAudioCapabilities&>(object));
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, MediaStreamCapabilities& object)
+{
+    return wrap(state, globalObject, object);
 }
 
 } // namespace WebCore

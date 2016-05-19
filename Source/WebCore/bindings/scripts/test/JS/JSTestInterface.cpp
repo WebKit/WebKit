@@ -917,13 +917,6 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
 {
-    return createNewWrapper<JSTestInterface>(globalObject, WTFMove(impl));
-}
-
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface& impl)
-{
-    if (JSValue result = getExistingWrapper<JSTestInterface>(globalObject, impl))
-        return result;
 #if COMPILER(CLANG)
     // If you hit this failure the interface definition has the ImplementationLacksVTable
     // attribute. You should remove that attribute. If the class has subclasses
@@ -931,7 +924,12 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterfac
     // attribute to TestInterface.
     static_assert(!__is_polymorphic(TestInterface), "TestInterface is polymorphic but the IDL claims it is not");
 #endif
-    return createNewWrapper<JSTestInterface, TestInterface>(globalObject, impl);
+    return createNewWrapper<JSTestInterface, TestInterface>(globalObject, WTFMove(impl));
+}
+
+JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestInterface& impl)
+{
+    return wrap(state, globalObject, impl);
 }
 
 TestInterface* JSTestInterface::toWrapped(JSC::JSValue value)

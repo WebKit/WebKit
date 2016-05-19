@@ -35,13 +35,16 @@ void JSStyleSheet::visitAdditionalChildren(JSC::SlotVisitor& visitor)
     visitor.addOpaqueRoot(root(&wrapped()));
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, StyleSheet& styleSheet)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<StyleSheet>&& styleSheet)
 {
-    if (auto* wrapper = getCachedWrapper(globalObject->world(), styleSheet))
-        return wrapper;
-    if (styleSheet.isCSSStyleSheet())
-        return CREATE_DOM_WRAPPER(globalObject, CSSStyleSheet, styleSheet);
-    return CREATE_DOM_WRAPPER(globalObject, StyleSheet, styleSheet);
+    if (styleSheet->isCSSStyleSheet())
+        return CREATE_DOM_WRAPPER(globalObject, CSSStyleSheet, WTFMove(styleSheet));
+    return CREATE_DOM_WRAPPER(globalObject, StyleSheet, WTFMove(styleSheet));
+}
+
+JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, StyleSheet& stylesheet)
+{
+    return wrap(state, globalObject, stylesheet);
 }
 
 } // namespace WebCore

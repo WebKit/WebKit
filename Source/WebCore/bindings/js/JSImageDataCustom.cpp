@@ -50,9 +50,7 @@ JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, ImageData& imageData)
 {
-    if (auto* wrapper = getCachedWrapper(globalObject->world(), imageData))
-        return wrapper;
-    return toJSNewlyCreated(state, globalObject, Ref<ImageData>(imageData));
+    return wrap(state, globalObject, imageData);
 }
 
 }

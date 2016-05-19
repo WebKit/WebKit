@@ -190,16 +190,9 @@ extern "C" { extern void* _ZTVN7WebCore26TestMediaQueryListListenerE[]; }
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestMediaQueryListListener>&& impl)
 {
-    return createNewWrapper<JSTestMediaQueryListListener>(globalObject, WTFMove(impl));
-}
-
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestMediaQueryListListener& impl)
-{
-    if (JSValue result = getExistingWrapper<JSTestMediaQueryListListener>(globalObject, impl))
-        return result;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestMediaQueryListListener@WebCore@@6B@"));
 #else
@@ -216,7 +209,12 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestMediaQue
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestMediaQueryListListener, TestMediaQueryListListener>(globalObject, impl);
+    return createNewWrapper<JSTestMediaQueryListListener, TestMediaQueryListListener>(globalObject, WTFMove(impl));
+}
+
+JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestMediaQueryListListener& impl)
+{
+    return wrap(state, globalObject, impl);
 }
 
 TestMediaQueryListListener* JSTestMediaQueryListListener::toWrapped(JSC::JSValue value)

@@ -53,12 +53,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline JSValue createNewHTMLDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObject, Ref<HTMLDocument>&& passedDocument)
+JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<HTMLDocument>&& passedDocument)
 {
     auto& document = passedDocument.get();
-    JSObject* wrapper = CREATE_DOM_WRAPPER(&globalObject, HTMLDocument, WTFMove(passedDocument));
+    JSObject* wrapper = createWrapper<JSHTMLDocument>(globalObject, WTFMove(passedDocument));
 
-    reportMemoryForDocumentIfFrameless(state, document);
+    reportMemoryForDocumentIfFrameless(*state, document);
 
     return wrapper;
 }
@@ -67,12 +67,7 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, HTMLDocument& do
 {
     if (auto* wrapper = cachedDocumentWrapper(*state, *globalObject, document))
         return wrapper;
-    return createNewHTMLDocumentWrapper(*state, *globalObject, document);
-}
-
-JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<HTMLDocument>&& document)
-{
-    return createNewHTMLDocumentWrapper(*state, *globalObject, WTFMove(document));
+    return toJSNewlyCreated(state, globalObject, Ref<HTMLDocument>(document));
 }
 
 bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

@@ -347,16 +347,9 @@ extern "C" { extern void* _ZTVN7WebCore16TestGlobalObjectE[]; }
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestGlobalObject>&& impl)
 {
-    return createNewWrapper<JSTestGlobalObject>(globalObject, WTFMove(impl));
-}
-
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestGlobalObject& impl)
-{
-    if (JSValue result = getExistingWrapper<JSTestGlobalObject>(globalObject, impl))
-        return result;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestGlobalObject@WebCore@@6B@"));
 #else
@@ -373,7 +366,12 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestGlobalOb
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestGlobalObject, TestGlobalObject>(globalObject, impl);
+    return createNewWrapper<JSTestGlobalObject, TestGlobalObject>(globalObject, WTFMove(impl));
+}
+
+JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestGlobalObject& impl)
+{
+    return wrap(state, globalObject, impl);
 }
 
 TestGlobalObject* JSTestGlobalObject::toWrapped(JSC::JSValue value)

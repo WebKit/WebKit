@@ -206,16 +206,9 @@ extern "C" { extern void* _ZTVN7WebCore9attributeE[]; }
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<attribute>&& impl)
 {
-    return createNewWrapper<JSattribute>(globalObject, WTFMove(impl));
-}
-
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, attribute& impl)
-{
-    if (JSValue result = getExistingWrapper<JSattribute>(globalObject, impl))
-        return result;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7attribute@WebCore@@6B@"));
 #else
@@ -232,7 +225,12 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, attribute& i
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSattribute, attribute>(globalObject, impl);
+    return createNewWrapper<JSattribute, attribute>(globalObject, WTFMove(impl));
+}
+
+JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, attribute& impl)
+{
+    return wrap(state, globalObject, impl);
 }
 
 attribute* JSattribute::toWrapped(JSC::JSValue value)

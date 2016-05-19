@@ -70,13 +70,6 @@ static inline JSValue createNewDocumentWrapper(ExecState& state, JSDOMGlobalObje
     return wrapper;
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Document& document)
-{
-    if (auto* wrapper = cachedDocumentWrapper(*state, *globalObject, document))
-        return wrapper;
-    return createNewDocumentWrapper(*state, *globalObject, document);
-}
-
 JSObject* cachedDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObject, Document& document)
 {
     if (auto* wrapper = getCachedWrapper(globalObject.world(), document))
@@ -108,6 +101,13 @@ void reportMemoryForDocumentIfFrameless(ExecState& state, Document& document)
 JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<Document>&& document)
 {
     return createNewDocumentWrapper(*state, *globalObject, WTFMove(document));
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Document& document)
+{
+    if (auto* wrapper = cachedDocumentWrapper(*state, *globalObject, document))
+        return wrapper;
+    return toJSNewlyCreated(state, globalObject, Ref<Document>(document));
 }
 
 JSValue JSDocument::prepend(ExecState& state)

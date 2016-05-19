@@ -48,12 +48,16 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Blob& blob)
+JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<Blob>&& blob)
 {
     if (is<File>(blob))
-        return wrap<JSFile>(globalObject, downcast<File>(blob));
+        return CREATE_DOM_WRAPPER(globalObject, File, WTFMove(blob));
+    return createWrapper<JSBlob>(globalObject, WTFMove(blob));
+}
 
-    return wrap<JSBlob>(globalObject, blob);
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Blob& blob)
+{
+    return wrap(state, globalObject, blob);
 }
 
 EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)

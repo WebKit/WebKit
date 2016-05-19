@@ -59,54 +59,56 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, SVGPathSeg& object)
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<SVGPathSeg>&& object)
 {
-    if (auto* wrapper = getCachedWrapper(globalObject->world(), object))
-        return wrapper;
-
-    switch (object.pathSegType()) {
+    switch (object->pathSegType()) {
     case SVGPathSeg::PATHSEG_CLOSEPATH:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegClosePath, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegClosePath, WTFMove(object));
     case SVGPathSeg::PATHSEG_MOVETO_ABS:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegMovetoAbs, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegMovetoAbs, WTFMove(object));
     case SVGPathSeg::PATHSEG_MOVETO_REL:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegMovetoRel, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegMovetoRel, WTFMove(object));
     case SVGPathSeg::PATHSEG_LINETO_ABS:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoAbs, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoAbs, WTFMove(object));
     case SVGPathSeg::PATHSEG_LINETO_REL:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoRel, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoRel, WTFMove(object));
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_ABS:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoCubicAbs, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoCubicAbs, WTFMove(object));
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_REL:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoCubicRel, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoCubicRel, WTFMove(object));
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_ABS:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoQuadraticAbs, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoQuadraticAbs, WTFMove(object));
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_REL:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoQuadraticRel, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoQuadraticRel, WTFMove(object));
     case SVGPathSeg::PATHSEG_ARC_ABS:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegArcAbs, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegArcAbs, WTFMove(object));
     case SVGPathSeg::PATHSEG_ARC_REL:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegArcRel, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegArcRel, WTFMove(object));
     case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_ABS:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoHorizontalAbs, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoHorizontalAbs, WTFMove(object));
     case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_REL:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoHorizontalRel, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoHorizontalRel, WTFMove(object));
     case SVGPathSeg::PATHSEG_LINETO_VERTICAL_ABS:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoVerticalAbs, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoVerticalAbs, WTFMove(object));
     case SVGPathSeg::PATHSEG_LINETO_VERTICAL_REL:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoVerticalRel, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegLinetoVerticalRel, WTFMove(object));
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoCubicSmoothAbs, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoCubicSmoothAbs, WTFMove(object));
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoCubicSmoothRel, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoCubicSmoothRel, WTFMove(object));
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoQuadraticSmoothAbs, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoQuadraticSmoothAbs, WTFMove(object));
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoQuadraticSmoothRel, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSegCurvetoQuadraticSmoothRel, WTFMove(object));
     case SVGPathSeg::PATHSEG_UNKNOWN:
     default:
-        return CREATE_DOM_WRAPPER(globalObject, SVGPathSeg, object);
+        return CREATE_DOM_WRAPPER(globalObject, SVGPathSeg, WTFMove(object));
     }
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, SVGPathSeg& object)
+{
+    return wrap(state, globalObject, object);
 }
 
 }

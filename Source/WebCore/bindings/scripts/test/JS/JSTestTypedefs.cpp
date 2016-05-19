@@ -662,16 +662,9 @@ extern "C" { extern void* _ZTVN7WebCore12TestTypedefsE[]; }
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestTypedefs>&& impl)
 {
-    return createNewWrapper<JSTestTypedefs>(globalObject, WTFMove(impl));
-}
-
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestTypedefs& impl)
-{
-    if (JSValue result = getExistingWrapper<JSTestTypedefs>(globalObject, impl))
-        return result;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestTypedefs@WebCore@@6B@"));
 #else
@@ -688,7 +681,12 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestTypedefs
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestTypedefs, TestTypedefs>(globalObject, impl);
+    return createNewWrapper<JSTestTypedefs, TestTypedefs>(globalObject, WTFMove(impl));
+}
+
+JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestTypedefs& impl)
+{
+    return wrap(state, globalObject, impl);
 }
 
 TestTypedefs* JSTestTypedefs::toWrapped(JSC::JSValue value)

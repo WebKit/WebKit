@@ -3412,26 +3412,10 @@ END
 
         push(@implContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@implContent, "{\n");
-        if ($svgPropertyType) {
-            push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, WTFMove(impl));\n");
-        } else {
-            push(@implContent, "    return createNewWrapper<$className>(globalObject, WTFMove(impl));\n");
-        }
-        push(@implContent, "}\n\n");
-
-        push(@implContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, $implType& impl)\n");
-        push(@implContent, "{\n");
-        if ($svgPropertyType) {
-            push(@implContent, "    if (JSValue result = getExistingWrapper<$className, $implType>(globalObject, impl))\n");
-            push(@implContent, "        return result;\n");
-        } else {
-            push(@implContent, "    if (JSValue result = getExistingWrapper<$className>(globalObject, impl))\n");
-            push(@implContent, "        return result;\n");
-        }
         push(@implContent, <<END) if $vtableNameGnu;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(${vtableRefWin});
 #else
@@ -3459,11 +3443,15 @@ END
 #endif
 END
         push(@implContent, <<END) if $interface->extendedAttributes->{"ReportExtraMemoryCost"};
-    globalObject->vm().heap.reportExtraMemoryAllocated(impl.memoryCost());
+    globalObject->vm().heap.reportExtraMemoryAllocated(impl->memoryCost());
 END
 
-        push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, impl);\n");
+        push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, WTFMove(impl));\n");
+        push(@implContent, "}\n\n");
 
+        push(@implContent, "JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $implType& impl)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    return wrap(state, globalObject, impl);\n");
         push(@implContent, "}\n\n");
     }
 

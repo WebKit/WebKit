@@ -35,16 +35,16 @@ namespace WebCore {
 
 using namespace JSC;
 
-static inline JSValue createNewXMLDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObject, Ref<XMLDocument>&& passedDocument)
+JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<XMLDocument>&& passedDocument)
 {
     auto& document = passedDocument.get();
     JSObject* wrapper;
     if (document.isSVGDocument())
-        wrapper = CREATE_DOM_WRAPPER(&globalObject, SVGDocument, WTFMove(passedDocument));
+        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGDocument, WTFMove(passedDocument));
     else
-        wrapper = CREATE_DOM_WRAPPER(&globalObject, XMLDocument, WTFMove(passedDocument));
+        wrapper = CREATE_DOM_WRAPPER(globalObject, XMLDocument, WTFMove(passedDocument));
 
-    reportMemoryForDocumentIfFrameless(state, document);
+    reportMemoryForDocumentIfFrameless(*state, document);
 
     return wrapper;
 }
@@ -53,12 +53,7 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, XMLDocument& doc
 {
     if (auto* wrapper = cachedDocumentWrapper(*state, *globalObject, document))
         return wrapper;
-    return createNewXMLDocumentWrapper(*state, *globalObject, document);
-}
-
-JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<XMLDocument>&& document)
-{
-    return createNewXMLDocumentWrapper(*state, *globalObject, WTFMove(document));
+    return toJSNewlyCreated(state, globalObject, Ref<XMLDocument>(document));
 }
 
 } // namespace WebCore

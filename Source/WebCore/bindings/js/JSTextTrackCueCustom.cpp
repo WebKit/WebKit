@@ -76,10 +76,7 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<TextTr
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, TextTrackCue& cue)
 {
-    if (auto* wrapper = getCachedWrapper(globalObject->world(), cue))
-        return wrapper;
-
-    return toJSNewlyCreated(state, globalObject, Ref<TextTrackCue>(cue));
+    return wrap(state, globalObject, cue);
 }
 
 void JSTextTrackCue::visitAdditionalChildren(SlotVisitor& visitor)

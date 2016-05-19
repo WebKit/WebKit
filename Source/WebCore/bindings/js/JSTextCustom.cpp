@@ -32,23 +32,16 @@ namespace WebCore {
 
 using namespace JSC;
 
-static inline JSValue createNewTextWrapper(JSDOMGlobalObject& globalObject, Ref<Text>&& text)
-{
-    if (is<CDATASection>(text.get()))
-        return CREATE_DOM_WRAPPER(&globalObject, CDATASection, WTFMove(text));
-    return CREATE_DOM_WRAPPER(&globalObject, Text, WTFMove(text));
-}
-
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Text& text)
-{
-    if (auto* wrapper = getCachedWrapper(globalObject->world(), text))
-        return wrapper;
-    return createNewTextWrapper(*globalObject, text);
-}
-
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<Text>&& text)
 {
-    return createNewTextWrapper(*globalObject, WTFMove(text));
+    if (is<CDATASection>(text.get()))
+        return CREATE_DOM_WRAPPER(globalObject, CDATASection, WTFMove(text));
+    return CREATE_DOM_WRAPPER(globalObject, Text, WTFMove(text));
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Text& text)
+{
+    return wrap(state, globalObject, text);
 }
 
 } // namespace WebCore

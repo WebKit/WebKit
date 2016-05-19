@@ -47,20 +47,25 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, PerformanceEntry& entry)
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<PerformanceEntry>&& entry)
 {
     if (is<PerformanceResourceTiming>(entry))
-        return wrap<JSPerformanceResourceTiming>(globalObject, downcast<PerformanceResourceTiming>(entry));
+        return CREATE_DOM_WRAPPER(globalObject, PerformanceResourceTiming, WTFMove(entry));
 
 #if ENABLE(USER_TIMING)
     if (is<PerformanceMark>(entry))
-        return wrap<JSPerformanceMark>(globalObject, downcast<PerformanceMark>(entry));
+        return CREATE_DOM_WRAPPER(globalObject, PerformanceMark, WTFMove(entry));
 
     if (is<PerformanceMeasure>(entry))
-        return wrap<JSPerformanceMeasure>(globalObject, downcast<PerformanceMeasure>(entry));
+        return CREATE_DOM_WRAPPER(globalObject, PerformanceMeasure, WTFMove(entry));
 #endif
 
-    return wrap<JSPerformanceEntry>(globalObject, entry);
+    return createWrapper<JSPerformanceEntry>(globalObject, WTFMove(entry));
+}
+
+JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, PerformanceEntry& entry)
+{
+    return wrap(state, globalObject, entry);
 }
 
 } // namespace WebCore
