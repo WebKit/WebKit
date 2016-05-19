@@ -62,6 +62,8 @@ WebInspector.ScriptProfileTimelineView = class ScriptProfileTimelineView extends
 
     // Public
 
+    get scrollableElements() { return this._profileView.scrollableElements; }
+
     get showsLiveRecordingData() { return false; }
 
     // Protected

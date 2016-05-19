@@ -107,6 +107,11 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
         this._profileDataGridTree.clearFocusNodes();
     }
 
+    get scrollableElements()
+    {
+        return [this._dataGrid.scrollContainer];
+    }
+
     // Protected
 
     get selectionPathComponents()
@@ -142,7 +147,7 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
             this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
-    _repopulateDataGridFromTree(skipRefresh)
+    _repopulateDataGridFromTree()
     {
         this._dataGrid.removeChildren();
         for (let child of this._profileDataGridTree.children)

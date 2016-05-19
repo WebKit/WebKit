@@ -43,6 +43,13 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
     // Public
 
+    get scrollableElements()
+    {
+        if (!this._timelineDataGrid)
+            return [];
+        return [this._timelineDataGrid.scrollContainer];
+    }
+
     get showsLiveRecordingData()
     {
         // Implemented by sub-classes if needed.

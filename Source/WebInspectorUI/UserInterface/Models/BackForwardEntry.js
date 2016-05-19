@@ -46,6 +46,14 @@ WebInspector.BackForwardEntry = class BackForwardEntry extends WebInspector.Obje
 
     // Public
 
+    makeCopy(newCookie)
+    {
+        let copy = new WebInspector.BackForwardEntry(this._contentView, newCookie || this.cookie);
+        copy._tombstone = this._tombstone;
+        copy._scrollPositions = this._scrollPositions.slice();
+        return copy;
+    }
+
     get contentView()
     {
         return this._contentView;

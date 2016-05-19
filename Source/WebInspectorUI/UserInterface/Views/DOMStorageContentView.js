@@ -60,6 +60,11 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
         cookie.host = this.representedObject.host;
     }
 
+    get scrollableElements()
+    {
+        return [this._dataGrid.scrollContainer];
+    }
+
     itemsCleared(event)
     {
         this._dataGrid.removeChildren();
