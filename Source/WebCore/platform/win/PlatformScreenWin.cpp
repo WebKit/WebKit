@@ -101,7 +101,7 @@ FloatRect screenAvailableRect(Widget* widget)
     return monitorInfo.rcWork;
 }
 
-bool screenSupportsExtendedColor()
+bool screenSupportsExtendedColor(Widget*)
 {
     return false;
 }

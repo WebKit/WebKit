@@ -69,7 +69,7 @@ bool screenHasInvertedColors()
     return UIAccessibilityIsInvertColorsEnabled();
 }
 
-bool screenSupportsExtendedColor()
+bool screenSupportsExtendedColor(Widget*)
 {
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300
     return MGGetBoolAnswer(kMGQHasExtendedColorDisplay);

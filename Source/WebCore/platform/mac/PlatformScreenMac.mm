@@ -26,9 +26,12 @@
 #import "config.h"
 #import "PlatformScreen.h"
 
+#import "CoreGraphicsSPI.h"
 #import "FloatRect.h"
 #import "FrameView.h"
 #import "HostWindow.h"
+
+#import <ColorSync/ColorSync.h>
 
 extern "C" {
 bool CGDisplayUsesInvertedPolarity(void);
@@ -135,9 +138,30 @@ NSScreen *screenForDisplayID(PlatformDisplayID displayID)
     return nil;
 }
 
-bool screenSupportsExtendedColor()
+bool screenSupportsExtendedColor(Widget* widget)
 {
-    return false; // FIXME: Update this to detect extended color screens.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
+    UNUSED_PARAM(widget);
+    return false;
+#else
+    if (!widget)
+        return false;
+
+    NSWindow *window = [widget->platformWidget() window];
+    NSScreen *screen = screenForWidget(widget, window);
+    CGColorSpaceRef colorSpace = screen.colorSpace.CGColorSpace;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    return CGColorSpaceIsWideGamutRGB(colorSpace);
+#else
+    bool isWideGamut = false;
+    RetainPtr<CFDataRef> iccData = adoptCF(CGColorSpaceCopyICCProfile(colorSpace));
+    RetainPtr<ColorSyncProfileRef> profile = adoptCF(ColorSyncProfileCreate(iccData.get(), NULL));
+    if (profile)
+        isWideGamut = ColorSyncProfileIsWideGamut(profile.get());
+    return isWideGamut;
+#endif
+#endif
 }
 
 FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)

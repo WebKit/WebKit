@@ -130,7 +130,7 @@ FloatRect screenAvailableRect(Widget* widget)
 
 }
 
-bool screenSupportsExtendedColor()
+bool screenSupportsExtendedColor(Widget*)
 {
     return false;
 }

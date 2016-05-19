@@ -246,7 +246,7 @@ static bool color_indexMediaFeatureEval(CSSValue* value, const CSSToLengthConver
     return numberValue(value, number) && compareValue(0, static_cast<int>(number), op);
 }
 
-static bool color_gamutMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix)
+static bool color_gamutMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix)
 {
     if (!value)
         return true;
@@ -257,7 +257,7 @@ static bool color_gamutMediaFeatureEval(CSSValue* value, const CSSToLengthConver
     case CSSValueP3:
         // FIXME: For the moment we'll just assume an "extended
         // color" display is at least as good as P3.
-        return screenSupportsExtendedColor();
+        return screenSupportsExtendedColor(frame->page()->mainFrame().view());
     case CSSValueRec2020:
         // FIXME: At some point we should start detecting displays that
         // support more colors.
