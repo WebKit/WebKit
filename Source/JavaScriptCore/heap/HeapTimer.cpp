@@ -80,9 +80,9 @@ void HeapTimer::timerDidFire(CFRunLoopTimerRef timer, void* context)
     JSLock* apiLock = static_cast<JSLock*>(context);
     apiLock->lock();
 
-    VM* vm = apiLock->vm();
-    // The VM has been destroyed, so we should just give up.
+    RefPtr<VM> vm = apiLock->vm();
     if (!vm) {
+        // The VM has been destroyed, so we should just give up.
         apiLock->unlock();
         return;
     }
@@ -98,7 +98,7 @@ void HeapTimer::timerDidFire(CFRunLoopTimerRef timer, void* context)
         RELEASE_ASSERT_NOT_REACHED();
 
     {
-        JSLockHolder locker(vm);
+        JSLockHolder locker(vm.get());
         heapTimer->doWork();
     }
 

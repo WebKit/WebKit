@@ -177,11 +177,12 @@ void JSLock::unlock(intptr_t unlockCount)
 
 void JSLock::willReleaseLock()
 {
-    if (m_vm) {
-        m_vm->drainMicrotasks();
+    RefPtr<VM> vm = m_vm;
+    if (vm) {
+        vm->drainMicrotasks();
 
-        m_vm->heap.releaseDelayedReleasedObjects();
-        m_vm->setStackPointerAtVMEntry(nullptr);
+        vm->heap.releaseDelayedReleasedObjects();
+        vm->setStackPointerAtVMEntry(nullptr);
     }
 
     if (m_entryAtomicStringTable) {
