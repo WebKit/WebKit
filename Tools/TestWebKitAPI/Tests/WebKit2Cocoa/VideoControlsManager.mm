@@ -77,6 +77,7 @@ namespace TestWebKitAPI {
 TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideo)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     RetainPtr<DidPlayMessageHandler> handler = adoptNS([[DidPlayMessageHandler alloc] initWithWKWebView:webView.get()]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
@@ -97,6 +98,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideo)
 TEST(VideoControlsManager, VideoControlsManagerSingleSmallVideo)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     RetainPtr<DidPlayMessageHandler> handler = adoptNS([[DidPlayMessageHandler alloc] initWithWKWebView:webView.get()]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
@@ -117,6 +119,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallVideo)
 TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideoWithoutAudio)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     RetainPtr<DidPlayMessageHandler> handler = adoptNS([[DidPlayMessageHandler alloc] initWithWKWebView:webView.get()]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
@@ -137,6 +140,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideoWithoutAudio)
 TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedWithScript)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     RetainPtr<DidPlayMessageHandler> handler = adoptNS([[DidPlayMessageHandler alloc] initWithWKWebView:webView.get()]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
