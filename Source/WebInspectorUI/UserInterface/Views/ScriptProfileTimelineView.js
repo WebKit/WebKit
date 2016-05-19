@@ -42,10 +42,7 @@ WebInspector.ScriptProfileTimelineView = class ScriptProfileTimelineView extends
         if (!WebInspector.ScriptProfileTimelineView.profileOrientationSetting)
             WebInspector.ScriptProfileTimelineView.profileOrientationSetting = new WebInspector.Setting("script-profile-timeline-view-profile-orientation-setting", WebInspector.ScriptProfileTimelineView.ProfileOrientation.TopDown);
 
-        let callingContextTree = this._callingContextTreeForOrientation(WebInspector.ScriptProfileTimelineView.profileOrientationSetting.value);
-        this._profileView = new WebInspector.ProfileView(callingContextTree);
-        this._profileView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._profileViewSelectionPathComponentsDidChange, this);
-        this.addSubview(this._profileView);
+        this._showProfileViewForOrientation(WebInspector.ScriptProfileTimelineView.profileOrientationSetting.value);
 
         let scopeBarItems = [
             new WebInspector.ScopeBarItem(WebInspector.ScriptProfileTimelineView.ProfileOrientation.TopDown, WebInspector.UIString("Top Down"), true),
@@ -61,16 +58,11 @@ WebInspector.ScriptProfileTimelineView = class ScriptProfileTimelineView extends
         this._updateClearFocusNodesButtonItem();
 
         timeline.addEventListener(WebInspector.Timeline.Event.Refreshed, this._scriptTimelineRecordRefreshed, this);
-
-        // FIXME: Support filtering the ProfileView.
     }
 
     // Public
 
     get showsLiveRecordingData() { return false; }
-
-    // FIXME: <https://webkit.org/b/157581> Web Inspector: Script ProfileViews should be searchable
-    get showsFilterBar() { return false; }
 
     // Protected
 
@@ -130,22 +122,34 @@ WebInspector.ScriptProfileTimelineView = class ScriptProfileTimelineView extends
     {
         let currentOrientation = WebInspector.ScriptProfileTimelineView.profileOrientationSetting.value;
         let newOrientation = this._profileOrientationScopeBar.selectedItems[0].id;
-        let callingContextTree = this._callingContextTreeForOrientation(newOrientation);
 
         WebInspector.ScriptProfileTimelineView.profileOrientationSetting.value = newOrientation;
-
-        this.removeSubview(this._profileView);
-        this._profileView.removeEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._profileViewSelectionPathComponentsDidChange, this);
-
-        this._profileView = new WebInspector.ProfileView(callingContextTree);
-
-        this._profileView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._profileViewSelectionPathComponentsDidChange, this);
-        this.addSubview(this._profileView);
+        this._showProfileViewForOrientation(newOrientation);
 
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
 
         this._forceNextLayout = true;
         this.needsLayout();
+    }
+
+    _showProfileViewForOrientation(orientation)
+    {
+        let filterText;
+        if (this._profileView) {
+            this._profileView.removeEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._profileViewSelectionPathComponentsDidChange, this);
+            this.removeSubview(this._profileView);
+            filterText = this._profileView.dataGrid.filterText;
+        }
+
+        let callingContextTree = this._callingContextTreeForOrientation(orientation);
+        this._profileView = new WebInspector.ProfileView(callingContextTree);
+        this._profileView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._profileViewSelectionPathComponentsDidChange, this);
+
+        this.addSubview(this._profileView);
+        this.setupDataGrid(this._profileView.dataGrid);
+
+        if (filterText)
+            this._profileView.dataGrid.filterText = filterText;
     }
 
     _updateClearFocusNodesButtonItem()
