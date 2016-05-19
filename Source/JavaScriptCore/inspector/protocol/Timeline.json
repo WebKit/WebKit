@@ -6,6 +6,7 @@
         {
             "id": "EventType",
             "type": "string",
+            "description": "Timeline record type.",
             "enum": [
                 "EventDispatch",
                 "ScheduleStyleRecalculation",
@@ -28,18 +29,28 @@
                 "RequestAnimationFrame",
                 "CancelAnimationFrame",
                 "FireAnimationFrame"
-            ],
-            "description": "Timeline record type."
+            ]
+        },
+        {
+            "id": "Instrument",
+            "type": "string",
+            "description": "Instrument types.",
+            "enum": [
+                "ScriptProfiler",
+                "Timeline",
+                "Memory",
+                "Heap"
+            ]
         },
         {
             "id": "TimelineEvent",
             "type": "object",
+            "description": "Timeline record contains information about the recorded activity.",
             "properties": [
                 { "name": "type", "$ref": "EventType", "description": "Event type." },
                 { "name": "data", "type": "object", "description": "Event data." },
                 { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." }
-            ],
-            "description": "Timeline record contains information about the recorded activity."
+            ]
         },
         {
             "id": "CPUProfileNodeAggregateCallInfo",
@@ -79,37 +90,55 @@
     "commands": [
         {
             "name": "start",
+            "description": "Starts capturing instrumentation events.",
             "parameters": [
                 { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." }
-            ],
-            "description": "Starts capturing instrumentation events."
+            ]
         },
         {
             "name": "stop",
             "description": "Stops capturing instrumentation events."
+        },
+        {
+            "name": "setAutoCaptureEnabled",
+            "description": "Toggle auto capture state. If <code>true</code> the backend will disable breakpoints and start capturing on navigation. The backend will fire the <code>autoCaptureStarted</code> event when an auto capture starts. The frontend should stop the auto capture when appropriate and re-enable breakpoints.",
+            "parameters": [
+                { "name": "enabled", "type": "boolean", "description": "New auto capture state." }
+            ]
+        },
+        {
+            "name": "setAutoCaptureInstruments",
+            "description": "Instruments to enable when an auto capture starts.",
+            "parameters": [
+                { "name": "instruments", "type": "array", "items": { "$ref": "Instrument" }, "description": "Instruments to enable." }
+            ]
         }
     ],
     "events": [
         {
             "name": "eventRecorded",
+            "description": "Fired for every instrumentation event while timeline is started.",
             "parameters": [
                 { "name": "record", "$ref": "TimelineEvent", "description": "Timeline event record data." }
-            ],
-            "description": "Fired for every instrumentation event while timeline is started."
+            ]
         },
         {
             "name": "recordingStarted",
+            "description": "Fired when recording has started.",
             "parameters": [
                 { "name": "startTime", "type": "number", "description": "Start time of this new recording." }
-            ],
-            "description": "Fired when recording has started."
+            ]
         },
         {
             "name": "recordingStopped",
+            "description": "Fired when recording has stopped.",
             "parameters": [
                 { "name": "endTime", "type": "number", "description": "End time of this recording." }
-            ],
-            "description": "Fired when recording has stopped."
+            ]
+        },
+        {
+            "name": "autoCaptureStarted",
+            "description": "Fired when auto capture started."
         }
     ]
 }

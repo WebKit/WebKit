@@ -41,4 +41,9 @@ WebInspector.TimelineObserver = class TimelineObserver
     {
         WebInspector.timelineManager.capturingStopped(endTime);
     }
+
+    autoCaptureStarted()
+    {
+        WebInspector.timelineManager.autoCaptureStarted();
+    }
 };
