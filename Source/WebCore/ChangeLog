@@ -1,3 +1,16 @@
+2016-05-19  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION(201098) GuardMalloc / ASan crashes in WebCore::IDBServer::UniqueIDBDatabase::executeNextDatabaseTaskReply
+        https://bugs.webkit.org/show_bug.cgi?id=157917
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by all existing tests in Gmalloc/ASAN configs).
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::~UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::executeNextDatabaseTaskReply): Protect this from deletion before executing the task.
+
 2016-05-19  Jer Noble  <jer.noble@apple.com>
 
         [IOS] Add setting to allow playback to continue inline after exiting fullscreen.

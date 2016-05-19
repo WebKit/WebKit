@@ -65,6 +65,7 @@ UniqueIDBDatabase::~UniqueIDBDatabase()
     ASSERT(m_openDatabaseConnections.isEmpty());
     ASSERT(m_clientClosePendingDatabaseConnections.isEmpty());
     ASSERT(m_serverClosePendingDatabaseConnections.isEmpty());
+    ASSERT(!m_queuedTaskCount);
 }
 
 const IDBDatabaseInfo& UniqueIDBDatabase::info() const
@@ -1515,11 +1516,14 @@ void UniqueIDBDatabase::executeNextDatabaseTaskReply()
     auto task = m_databaseReplyQueue.tryGetMessage();
     ASSERT(task);
 
+    // Performing the task might end up removing the last reference to this.
+    RefPtr<UniqueIDBDatabase> protectedThis(this);
+
     task->performTask();
     --m_queuedTaskCount;
 
     // If this database was force closed (e.g. for a user delete) and there are no more
-    // queued tasks left, delete this.
+    // cleanup tasks left, delete this.
     if (m_hardCloseProtector && doneWithHardClose())
         m_hardCloseProtector = nullptr;
 }
