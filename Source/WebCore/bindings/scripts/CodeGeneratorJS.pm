@@ -3446,7 +3446,7 @@ END
     globalObject->vm().heap.reportExtraMemoryAllocated(impl->memoryCost());
 END
 
-        push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, WTFMove(impl));\n");
+        push(@implContent, "    return createWrapper<$className, $implType>(globalObject, WTFMove(impl));\n");
         push(@implContent, "}\n\n");
 
         push(@implContent, "JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $implType& impl)\n");

@@ -164,7 +164,6 @@ template<typename DOMClass, typename WrapperClass> void uncacheWrapper(DOMWrappe
 template<typename WrapperClass, typename DOMClass> WrapperClass* createWrapper(JSDOMGlobalObject*, Ref<DOMClass>&&);
 
 template<typename DOMClass> JSC::JSValue wrap(JSC::ExecState*, JSDOMGlobalObject*, DOMClass&);
-template<typename WrapperClass, typename DOMClass> JSC::JSValue createNewWrapper(JSDOMGlobalObject*, Ref<DOMClass>&&);
 
 void addImpureProperty(const AtomicString&);
 
@@ -469,12 +468,6 @@ template<typename DOMClass> inline JSC::JSValue wrap(JSC::ExecState* state, JSDO
     if (auto* wrapper = getCachedWrapper(globalObject->world(), domObject))
         return wrapper;
     return toJSNewlyCreated(state, globalObject, Ref<DOMClass>(domObject));
-}
-
-template<typename WrapperClass, typename DOMClass> inline JSC::JSValue createNewWrapper(JSDOMGlobalObject* globalObject, Ref<DOMClass>&& domObject)
-{
-    ASSERT(!getCachedWrapper(globalObject->world(), domObject));
-    return createWrapper<WrapperClass>(globalObject, WTFMove(domObject));
 }
 
 inline int32_t finiteInt32Value(JSC::JSValue value, JSC::ExecState* exec, bool& okay)
