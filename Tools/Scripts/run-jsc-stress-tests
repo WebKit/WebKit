@@ -2012,9 +2012,10 @@ if !$numChildProcesses
     end
 end
 
-if $enableFTL and ENV["JSCTEST_timeout"]
+if $enableFTL and ENV["JSCTEST_timeout"] or !ifJSCArgIsntProvidedAreWeReleaseBuild
     # Currently, using the FTL is a performance regression particularly in real
     # (i.e. non-loopy) benchmarks. Account for this in the timeout.
+    # Increase the timeout for debug builds too. (--debug command line option)
     ENV["JSCTEST_timeout"] = (ENV["JSCTEST_timeout"].to_i * 2).to_s
 end
 

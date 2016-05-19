@@ -265,6 +265,10 @@ sub runJSCStressTests
         shift @jscStressDriverCmd; # Remove /usr/bin/env
     }
 
+    if (configuration() eq "Debug") {
+        push(@jscStressDriverCmd, "--debug");
+    }
+
     if ($envVars ne "") {
             push(@jscStressDriverCmd, "--env-vars");
             push(@jscStressDriverCmd, $envVars);

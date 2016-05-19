@@ -1,3 +1,14 @@
+2016-05-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Slow JSC stress tests times out in 32 bit debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=154964
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Pass through the --debug option.
+        * Scripts/run-jsc-stress-tests: Increase the timeout for debug builds.
+
 2016-05-18  Aakash Jain  <aakash_jain@apple.com>
 
         Remove underline from Status Bubbles on dashboard
