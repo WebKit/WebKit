@@ -34,3 +34,11 @@
     width: 16px;
     height: 16px;
 }
+
+.timeline-overview-graph.heap-allocations > img.snapshot.selected {
+    content: url(../Images/HeapSnapshotSelected.svg);
+}
+
+.timeline-overview-graph.heap-allocations:not(.selected) > img.snapshot.selected {
+    filter: grayscale(100%) brightness(1.3);
+}

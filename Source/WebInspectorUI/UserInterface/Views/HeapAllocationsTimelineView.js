@@ -191,9 +191,12 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         return components.concat(this._contentViewContainer.currentContentView.selectionPathComponents);
     }
 
-    userSelectedRecordFromOverview(timelineRecord)
+    selectRecord(record)
     {
-        this.showHeapSnapshotTimelineRecord(timelineRecord);
+        if (record)
+            this.showHeapSnapshotTimelineRecord(record);
+        else
+            this.showHeapSnapshotList();
     }
 
     shown()

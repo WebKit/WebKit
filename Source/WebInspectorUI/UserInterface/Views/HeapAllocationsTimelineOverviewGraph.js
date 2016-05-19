@@ -34,6 +34,8 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
         this._heapAllocationsTimeline = timeline;
         this._heapAllocationsTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._heapAllocationTimelineRecordAdded, this);
 
+        this._selectedImageElement = null;
+
         this.reset();
     }
 
@@ -52,6 +54,7 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
             return;
 
         this.element.removeChildren();
+        this._selectedImageElement = null;
 
         // This may display records past the current time marker.
         let visibleRecords = this._visibleRecords(this.startTime, this.endTime);
@@ -71,16 +74,45 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
             if (x <= 1)
                 x = 1;
 
-            let imageElement = this.element.appendChild(document.createElement("img"));
-            imageElement.classList.add("snapshot");
+            let imageElement = record[WebInspector.HeapAllocationsTimelineOverviewGraph.RecordElementAssociationSymbol];
+            if (!imageElement) {
+                imageElement = document.createElement("img");
+                imageElement.classList.add("snapshot");
+                imageElement.addEventListener("click", () => { this.selectedRecord = record; });
+                record[WebInspector.HeapAllocationsTimelineOverviewGraph.RecordElementAssociationSymbol] = imageElement;
+            }
+
             imageElement.style.left = x + "px";
-            imageElement.addEventListener("click", (event) => {
-                this.timelineOverview.userSelectedRecord(record);
-            });
+
+            this.element.appendChild(imageElement);
         }
+
+        this._updateSnapshotMarkers();
+    }
+
+    updateSelectedRecord()
+    {
+        this._updateSnapshotMarkers();
     }
 
     // Private
+
+    _updateSnapshotMarkers()
+    {
+        if (this._selectedImageElement)
+            this._selectedImageElement.classList.remove("selected");
+
+        if (!this.selectedRecord) {
+            this._selectedImageElement = null;
+            return;
+        }
+
+        let imageElement = this.selectedRecord[WebInspector.HeapAllocationsTimelineOverviewGraph.RecordElementAssociationSymbol];
+        console.assert(imageElement, "Missing snapshot image element for selected record", this.selectedRecord);
+        imageElement.classList.add("selected");
+
+        this._selectedImageElement = imageElement;
+    }
 
     _visibleRecords(startTime, endTime)
     {
@@ -95,3 +127,5 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
         this.needsLayout();
     }
 };
+
+WebInspector.HeapAllocationsTimelineOverviewGraph.RecordElementAssociationSymbol = Symbol("record-element-association");

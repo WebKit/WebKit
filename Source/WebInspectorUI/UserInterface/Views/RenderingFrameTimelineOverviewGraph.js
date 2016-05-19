@@ -219,8 +219,6 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
         if (!this.selectedRecord) {
             if (this._selectedFrameMarker.parentElement)
                 this.element.removeChild(this._selectedFrameMarker);
-
-            this.dispatchSelectedRecordChangedEvent();
             return;
         }
 
@@ -244,8 +242,6 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
 
         this._selectedTimelineRecordFrame = this._timelineRecordFrames[index];
         this._selectedTimelineRecordFrame.selected = true;
-
-        this.dispatchSelectedRecordChangedEvent();
     }
 
     _mouseClicked(event)
