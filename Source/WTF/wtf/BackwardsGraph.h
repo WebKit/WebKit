@@ -40,7 +40,7 @@ class BackwardsGraph {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // We use "#end" to refer to the synthetic root we have created.
-    static const char* rootName() { return "#end" };
+    static const char* rootName() { return "#end"; };
 
     class Node {
     public:
