@@ -1,5 +1,28 @@
 2016-05-19  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200716. rdar://problem/26232856
+
+    2016-05-11  Matt Baker  <mattbaker@apple.com>
+
+            Web Inspector: Make it possible to do special styling on selected TimelineOverviewGraphs
+            https://bugs.webkit.org/show_bug.cgi?id=157593
+            <rdar://problem/26232886>
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/TimelineOverview.js:
+            (WebInspector.TimelineOverview.prototype._timelinesTreeSelectionDidChange.updateGraphSelectedState):
+            (WebInspector.TimelineOverview.prototype._timelinesTreeSelectionDidChange):
+            Select the new overview graph and deselect the old one.
+
+            * UserInterface/Views/TimelineOverviewGraph.js:
+            (WebInspector.TimelineOverviewGraph):
+            (WebInspector.TimelineOverviewGraph.prototype.get selected):
+            (WebInspector.TimelineOverviewGraph.prototype.set selected):
+            New property, toggles "selected" class on the graph element.
+
+2016-05-19  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200656. rdar://problem/25898256
 
     2016-05-10  Matt Baker  <mattbaker@apple.com>
