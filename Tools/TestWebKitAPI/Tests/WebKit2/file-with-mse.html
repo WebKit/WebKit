@@ -7,6 +7,7 @@
 
       function playVideo()
       {
+          document.getElementById('test-video').play();
           request = new XMLHttpRequest();
           request.responseType = 'arraybuffer';
           request.open('GET', 'test-mse.mp4', true);
@@ -26,12 +27,6 @@
       {
           var sourceBuffer = source.addSourceBuffer('video/mp4;codecs="avc1.4D4001,mp4a.40.2"');
           sourceBuffer.appendBuffer(request.response);
-          sourceBuffer.addEventListener('updateend', updateend);
-      }
-
-      function updateend(event)
-      {
-          document.getElementById('test-video').play();
       }
   </script>
 </head>

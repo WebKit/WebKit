@@ -1,5 +1,22 @@
 2016-05-19  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200978. rdar://problem/25584201
+
+    2016-05-16  Jer Noble  <jer.noble@apple.com>
+
+            API test WebKit2.MSEIsPlayingAudio timing out after r200951
+            https://bugs.webkit.org/show_bug.cgi?id=157748
+
+            Reviewed by Eric Carlson.
+
+            The file-with-mse.html testcase only calls play() once it's own XHR loading is complete; the
+            "user gesture" check fails at that point.  Call play() up front; playback will begin as soon
+            as enough data is loaded.
+
+            * TestWebKitAPI/Tests/WebKit2/file-with-mse.html:
+
+2016-05-19  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200951. rdar://problem/25584201
 
     2016-04-06  Jer Noble  <jer.noble@apple.com>
