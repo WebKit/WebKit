@@ -1,3 +1,12 @@
+2016-05-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Fix the gst-libav build on ARM Thumb2 after r199649
+        https://bugs.webkit.org/show_bug.cgi?id=157893
+
+        Reviewed by Antonio Gomes.
+
+        * efl/patches/gst-libav.patch:
+
 2016-05-19  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r200951): VideoControlsManager API tests time out
