@@ -56,6 +56,9 @@
 (allow mach-lookup
     (global-name "com.apple.ocspd")
     (global-name "com.apple.securityd")
+    (global-name "com.apple.securityd.xpc")
+    (global-name "com.apple.ctkd.token-client")
+    (global-name "com.apple.CoreAuthentication.agent.libxpc")
     (global-name "com.apple.accountsd.accountmanager"))
 
 (deny file-write-create
