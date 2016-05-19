@@ -124,7 +124,7 @@ class Test
 
     def finalizeIncludes
         if @isAsync
-            @includeFiles << "donePrintHandle.js"
+            @includeFiles << "doneprintHandle.js"
         end
 
         dir = Pathname.new(".")
