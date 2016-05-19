@@ -180,7 +180,7 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspect
     // The likely keyCode for the virtual key as defined in <HIToolbox/Events.h>.
     int keyCode = 0;
     // Typical characters produced by the virtual key, if any.
-    NSString *characters;
+    NSString *characters = @"";
 
     // FIXME: this function and the Automation protocol enum should probably adopt key names
     // from W3C UIEvents standard. For more details: https://w3c.github.io/uievents-code/

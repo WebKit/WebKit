@@ -1,5 +1,24 @@
 2016-05-19  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200961. rdar://problem/25984480
+
+    2016-05-16  Brian Burg  <bburg@apple.com>
+
+            Crash simulating keystrokes at WebKit::WebAutomationSession::platformSimulateKeyStroke
+            https://bugs.webkit.org/show_bug.cgi?id=157737
+            <rdar://problem/26292946>
+
+            Reviewed by Timothy Hatcher.
+
+            * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+            (WebKit::WebAutomationSession::platformSimulateKeyStroke):
+            AppKit expects characters passed to [NSEvent keyEventWithType:...]
+            to be non-nil even if there are no characters. Initialize characters
+            to the empty string @"". It will be overwritten if the keystroke should
+            produce any unicode characters.
+
+2016-05-19  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200959. rdar://problem/26298247
 
     2016-05-16  Brian Burg  <bburg@apple.com>
