@@ -1,6 +1,7 @@
 // Test that an overridden global on a RegExp object doesn't cause an infinite loop
 // in String.match(). Instead it should eventually throw an Out of Memory exception.
-//@ runOneLargeHeap
+// Skipping until the test doesn't timeout on the bots - <https://bugs.webkit.org/show_bug.cgi?id=157903>
+//@ skip
 
 class MyRegExp extends RegExp {
     constructor(pattern) {

@@ -1,3 +1,14 @@
+2016-05-19  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed build fix.
+
+        Skipping this new test as it times out on the bots.
+
+        Issue tracked in https://bugs.webkit.org/show_bug.cgi?id=157903
+
+        * tests/stress/regress-157595.js:
+        (MyRegExp):
+
 2016-05-19  Guillaume Emont  <guijemont@igalia.com>
 
         JSC: DFG::SpeculativeJIT::compile special case for MIPS for PutByValWithThis
