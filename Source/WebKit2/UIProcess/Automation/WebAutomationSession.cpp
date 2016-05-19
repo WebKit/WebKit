@@ -31,6 +31,7 @@
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
 #include "WebCookieManagerProxy.h"
+#include "WebInspectorProxy.h"
 #include "WebProcessPool.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
@@ -432,9 +433,31 @@ void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorSt
     page->reload(reloadFromOrigin, contentBlockersEnabled);
 }
 
+void WebAutomationSession::inspectBrowsingContext(Inspector::ErrorString& errorString, const String& handle, Ref<InspectBrowsingContextCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+
+    if (auto callback = m_pendingInspectorCallbacksPerPage.take(page->pageID()))
+        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
+    m_pendingInspectorCallbacksPerPage.set(page->pageID(), WTFMove(callback));
+
+    // Don't bring the inspector to front since this may be done automatically.
+    // We just want it loaded so it can pause if a breakpoint is hit during a command.
+    if (page->inspector())
+        page->inspector()->connect();
+}
+
 void WebAutomationSession::navigationOccurredForPage(const WebPageProxy& page)
 {
     if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page.pageID()))
+        callback->sendSuccess(InspectorObject::create());
+}
+
+void WebAutomationSession::inspectorFrontendLoaded(const WebPageProxy& page)
+{
+    if (auto callback = m_pendingInspectorCallbacksPerPage.take(page.pageID()))
         callback->sendSuccess(InspectorObject::create());
 }
 

@@ -96,6 +96,8 @@ void WebInspectorUI::frontendLoaded()
     setDockingUnavailable(m_dockingUnavailable);
     setDockSide(m_dockSide);
 
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::FrontendLoaded(), m_inspectedPageIdentifier);
+
     bringToFront();
 }
 
@@ -127,6 +129,9 @@ void WebInspectorUI::closeWindow()
     if (m_frontendController)
         m_frontendController->setInspectorFrontendClient(nullptr);
     m_frontendController = nullptr;
+
+    if (m_frontendHost)
+        m_frontendHost->disconnectClient();
 
     m_inspectedPageIdentifier = 0;
     m_underTest = false;

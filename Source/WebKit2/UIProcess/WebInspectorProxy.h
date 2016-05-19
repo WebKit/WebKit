@@ -190,6 +190,7 @@ private:
 
     // Called by WebInspectorProxy messages
     void createInspectorPage(IPC::Attachment, bool canAttach, bool underTest);
+    void frontendLoaded();
     void didClose();
     void bringToFront();
     void attachAvailabilityChanged(bool);

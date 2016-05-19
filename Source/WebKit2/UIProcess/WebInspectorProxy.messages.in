@@ -23,6 +23,7 @@
 messages -> WebInspectorProxy {
     CreateInspectorPage(IPC::Attachment connectionIdentifier, bool canAttach, bool underTest)
 
+    FrontendLoaded()
     DidClose()
     BringToFront()
 

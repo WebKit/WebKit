@@ -51,6 +51,10 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
     NSWindow *window = page.platformWindow();
 
     for (NSEvent *event in eventsToSend) {
+        // Take focus back in case the Inspector became focused while the prior command or
+        // NSEvent was delivered to the window.
+        [window makeKeyAndOrderFront:nil];
+
         markEventAsSynthesizedForAutomation(event);
         [window sendEvent:event];
     }

@@ -294,6 +294,14 @@
             "async": true
         },
         {
+            "name": "inspectBrowsingContext",
+            "description": "Inspect the specified browsing context using Web Inspector.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be inspected." }
+            ],
+            "async": true
+        },
+        {
             "name": "evaluateJavaScriptFunction",
             "description": "Evaluates a script function in a browsing context and calls it with the supplied arguments.",
             "parameters": [
