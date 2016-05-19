@@ -38,7 +38,6 @@
     border: 1px solid transparent;
     border-radius: 3px;
     text-align: center;
-    height: auto;
 }
 
 .navigation-bar .item.button > .glyph {

@@ -1,3 +1,22 @@
+2016-05-19  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Timelines "Edit" button should be right-aligned
+        https://bugs.webkit.org/show_bug.cgi?id=157909
+        rdar://problem/26373969
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button.text-only): Deleted height: auto. Now inherited.
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar .item): Change height to auto to support any NavigationBar height.
+        This is needed since the Timelines tab has a shorter NavigationBar height, and
+        flexible items were overflowing.
+        * UserInterface/Views/TextNavigationItem.css:
+        (.navigation-bar .item.text): Deleted height: auto. Now inherited.
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview): Add a FlexibleSpaceNavigationItem before the Edit button.
+
 2016-05-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: timelines should not update via requestAnimationFrame unless Web Inspector is visible
