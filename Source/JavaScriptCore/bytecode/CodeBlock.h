@@ -340,8 +340,7 @@ public:
     ExecutableBase* ownerExecutable() const { return m_ownerExecutable.get(); }
     ScriptExecutable* ownerScriptExecutable() const { return jsCast<ScriptExecutable*>(m_ownerExecutable.get()); }
 
-    void setVM(VM* vm) { m_vm = vm; }
-    VM* vm() { return m_vm; }
+    VM* vm() const { return m_vm; }
 
     void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }
     VirtualRegister thisRegister() const { return m_thisRegister; }

@@ -1,3 +1,28 @@
+2016-05-19  Mark Lam  <mark.lam@apple.com>
+
+        Code that null checks the VM pointer before any use should ref the VM.
+        https://bugs.webkit.org/show_bug.cgi?id=157864
+
+        Reviewed by Filip Pizlo and Keith Miller.
+
+        JSLock::willReleaseLock() and HeapTimer::timerDidFire() need to reference the VM
+        through a RefPtr.  Otherwise, there's no guarantee that the VM won't be deleted
+        after their null checks.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::vm):
+        (JSC::CodeBlock::setVM): Deleted.
+        - Not used, and suggests that it can be changed during the lifetime of the
+          CodeBlock (which should not be).
+
+        * heap/HeapTimer.cpp:
+        (JSC::HeapTimer::timerDidFire):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::willReleaseLock):
+        - Store the VM pointer in a RefPtr first, and null check the RefPtr instead of
+          the raw VM pointer.  This makes the null check a strong guarantee that the
+          VM pointer is valid while these functions are using it.
+
 2016-05-19  Saam barati  <sbarati@apple.com>
 
         arrow function lexical environment should reuse the same environment as the function's lexical environment where possible
