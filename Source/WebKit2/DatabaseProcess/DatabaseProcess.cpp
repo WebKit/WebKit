@@ -287,17 +287,8 @@ void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<
     }));
 
 #if ENABLE(INDEXED_DATABASE)
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        Vector<RefPtr<WebCore::SecurityOrigin>> securityOrigins;
-        for (const auto& securityOriginData : securityOriginDatas)
-            securityOrigins.append(securityOriginData.securityOrigin());
-
-        postDatabaseTask(std::make_unique<CrossThreadTask>([this, securityOrigins, callbackAggregator] {
-            deleteIndexedDatabaseEntriesForOrigins(securityOrigins);
-
-            RunLoop::main().dispatch([callbackAggregator] { });
-        }));
-    }
+    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
+        idbServer().closeAndDeleteDatabasesForOrigins(securityOriginDatas, [callbackAggregator] { });
 #endif
 }
 
@@ -345,59 +336,6 @@ Vector<RefPtr<WebCore::SecurityOrigin>> DatabaseProcess::indexedDatabaseOrigins(
     return securityOrigins;
 }
 
-static void removeAllDatabasesForOriginPath(const String& originPath, std::chrono::system_clock::time_point modifiedSince)
-{
-    // FIXME: We should also close/invalidate any live handles to the database files we are about to delete.
-    // Right now:
-    //     - For read-only operations, they will continue functioning as normal on the unlinked file.
-    //     - For write operations, they will start producing errors as SQLite notices the missing backing store.
-    // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=135347
-
-    Vector<String> databasePaths = listDirectory(originPath, "*");
-
-    for (auto& databasePath : databasePaths) {
-        String databaseFile = pathByAppendingComponent(databasePath, "IndexedDB.sqlite3");
-
-        if (!fileExists(databaseFile))
-            continue;
-
-        if (modifiedSince > std::chrono::system_clock::time_point::min()) {
-            time_t modificationTime;
-            if (!getFileModificationTime(databaseFile, modificationTime))
-                continue;
-
-            if (std::chrono::system_clock::from_time_t(modificationTime) < modifiedSince)
-                continue;
-        }
-
-        deleteFile(databaseFile);
-        deleteEmptyDirectory(databasePath);
-    }
-
-    deleteEmptyDirectory(originPath);
-}
-
-void DatabaseProcess::deleteIndexedDatabaseEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins)
-{
-    if (m_indexedDatabaseDirectory.isEmpty())
-        return;
-
-    for (const auto& securityOrigin : securityOrigins) {
-        String originPath = pathByAppendingComponent(m_indexedDatabaseDirectory, securityOrigin->databaseIdentifier());
-
-        removeAllDatabasesForOriginPath(originPath, std::chrono::system_clock::time_point::min());
-    }
-}
-
-void DatabaseProcess::deleteIndexedDatabaseEntriesModifiedSince(std::chrono::system_clock::time_point modifiedSince)
-{
-    if (m_indexedDatabaseDirectory.isEmpty())
-        return;
-
-    Vector<String> originPaths = listDirectory(m_indexedDatabaseDirectory, "*");
-    for (auto& originPath : originPaths)
-        removeAllDatabasesForOriginPath(originPath, modifiedSince);
-}
 #endif
 
 void DatabaseProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, std::function<void (const SandboxExtension::HandleArray&)> completionHandler)

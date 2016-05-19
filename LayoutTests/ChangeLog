@@ -1,3 +1,14 @@
+2016-05-19  Brady Eidson  <beidson@apple.com>
+
+        Finishing off: Modern IDB: Website data store management.
+        https://bugs.webkit.org/show_bug.cgi?id=157626
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/new-database-after-user-delete-expected.txt: Added.
+        * storage/indexeddb/modern/new-database-after-user-delete.html: Added.
+        * storage/indexeddb/modern/resources/new-database-after-user-delete.js: Added.
+        
 2016-05-19  Enrica Casucci  <enrica@apple.com>
 
         Drag cannot start if no drag data is available in the Pasteboard.

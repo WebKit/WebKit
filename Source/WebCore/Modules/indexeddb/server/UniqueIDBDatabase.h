@@ -153,6 +153,7 @@ private:
     void performOpenCursor(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&);
     void performIterateCursor(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBKeyData&, unsigned long count);
     void performActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBTransactionInfo&);
+    void performUnconditionalDeleteBackingStore();
 
     // Main thread callbacks
     void didDeleteBackingStore(uint64_t deletedVersion);

@@ -111,6 +111,8 @@ void IDBServer::unregisterDatabaseConnection(UniqueIDBDatabaseConnection& connec
 
 UniqueIDBDatabase& IDBServer::getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier& identifier)
 {
+    ASSERT(isMainThread());
+
     auto uniqueIDBDatabase = m_uniqueIDBDatabaseMap.add(identifier, nullptr);
     if (uniqueIDBDatabase.isNewEntry)
         uniqueIDBDatabase.iterator->value = UniqueIDBDatabase::create(*this, identifier);
@@ -147,7 +149,8 @@ void IDBServer::openDatabase(const IDBRequestData& requestData)
 void IDBServer::deleteDatabase(const IDBRequestData& requestData)
 {
     LOG(IndexedDB, "IDBServer::deleteDatabase - %s", requestData.databaseIdentifier().debugString().utf8().data());
-    
+    ASSERT(isMainThread());
+
     auto connection = m_connectionMap.get(requestData.requestIdentifier().connectionIdentifier());
     if (!connection) {
         // If the connection back to the client is gone, there's no way to delete the database as
@@ -165,9 +168,9 @@ void IDBServer::deleteDatabase(const IDBRequestData& requestData)
 void IDBServer::closeUniqueIDBDatabase(UniqueIDBDatabase& database)
 {
     LOG(IndexedDB, "IDBServer::closeUniqueIDBDatabase");
+    ASSERT(isMainThread());
 
-    auto deletedDatabase = m_uniqueIDBDatabaseMap.take(database.identifier());
-    ASSERT_UNUSED(deletedDatabase, deletedDatabase.get() == &database);
+    m_uniqueIDBDatabaseMap.remove(database.identifier());
 }
 
 void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
@@ -382,6 +385,7 @@ void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier,
 void IDBServer::openDBRequestCancelled(const IDBRequestData& requestData)
 {
     LOG(IndexedDB, "IDBServer::openDBRequestCancelled");
+    ASSERT(isMainThread());
 
     auto* uniqueIDBDatabase = m_uniqueIDBDatabaseMap.get(requestData.databaseIdentifier());
     if (!uniqueIDBDatabase)
@@ -530,15 +534,52 @@ void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginDat
     postDatabaseTask(createCrossThreadTask(*this, &IDBServer::performCloseAndDeleteDatabasesForOrigins, origins, callbackID));
 }
 
-void IDBServer::performCloseAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, uint64_t callbackID)
+static void removeAllDatabasesForOriginPath(const String& originPath, std::chrono::system_clock::time_point modifiedSince)
 {
-    // FIXME: Implement deleting the files.
+    Vector<String> databasePaths = listDirectory(originPath, "*");
+
+    for (auto& databasePath : databasePaths) {
+        String databaseFile = pathByAppendingComponent(databasePath, "IndexedDB.sqlite3");
+
+        if (!fileExists(databaseFile))
+            continue;
+
+        if (modifiedSince > std::chrono::system_clock::time_point::min()) {
+            time_t modificationTime;
+            if (!getFileModificationTime(databaseFile, modificationTime))
+                continue;
+
+            if (std::chrono::system_clock::from_time_t(modificationTime) < modifiedSince)
+                continue;
+        }
+
+        SQLiteFileSystem::deleteDatabaseFile(databaseFile);
+        deleteEmptyDirectory(databasePath);
+    }
+
+    deleteEmptyDirectory(originPath);
+}
+
+void IDBServer::performCloseAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+{
+    if (!m_databaseDirectoryPath.isEmpty()) {
+        Vector<String> originPaths = listDirectory(m_databaseDirectoryPath, "*");
+        for (auto& originPath : originPaths)
+            removeAllDatabasesForOriginPath(originPath, modifiedSince);
+    }
+
     postDatabaseTaskReply(createCrossThreadTask(*this, &IDBServer::didPerformCloseAndDeleteDatabases, callbackID));
 }
 
-void IDBServer::performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID)
+void IDBServer::performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>& origins, uint64_t callbackID)
 {
-    // FIXME: Implement deleting the files.
+    if (!m_databaseDirectoryPath.isEmpty()) {
+        for (const auto& origin : origins) {
+            String originPath = pathByAppendingComponent(m_databaseDirectoryPath, origin.securityOrigin()->databaseIdentifier());
+            removeAllDatabasesForOriginPath(originPath, std::chrono::system_clock::time_point::min());
+        }
+    }
+
     postDatabaseTaskReply(createCrossThreadTask(*this, &IDBServer::didPerformCloseAndDeleteDatabases, callbackID));
 }
 

@@ -110,8 +110,6 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     Vector<RefPtr<WebCore::SecurityOrigin>> indexedDatabaseOrigins();
-    void deleteIndexedDatabaseEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&);
-    void deleteIndexedDatabaseEntriesModifiedSince(std::chrono::system_clock::time_point modifiedSince);
 #endif
 
     // For execution on work queue thread only

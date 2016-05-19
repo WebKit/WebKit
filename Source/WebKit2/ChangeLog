@@ -1,3 +1,17 @@
+2016-05-19  Brady Eidson  <beidson@apple.com>
+
+        Finishing off: Modern IDB: Website data store management.
+        https://bugs.webkit.org/show_bug.cgi?id=157626
+
+        Reviewed by Alex Christensen.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::deleteWebsiteDataForOrigins):
+        (WebKit::removeAllDatabasesForOriginPath): Deleted.
+        (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesForOrigins): Deleted.
+        (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesModifiedSince): Deleted.
+        * DatabaseProcess/DatabaseProcess.h:
+
 2016-05-19  Brent Fulgham  <bfulgham@apple.com>
 
         [OS X][WK2] Expand sandbox for new mach endpoints
