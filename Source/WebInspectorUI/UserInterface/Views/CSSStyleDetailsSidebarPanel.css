@@ -103,6 +103,7 @@
     background: none;
     border: none;
     border-radius: 3px;
+    white-space: nowrap;
     -webkit-appearance: none;
 }
 

@@ -1,3 +1,15 @@
+2016-05-18  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Classes toggle wraps in some localizations
+        https://bugs.webkit.org/show_bug.cgi?id=157878
+        rdar://problem/26108859
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle):
+        Add white-space: nowrap.
+
 2016-05-18  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: unable to switch between navigation tree outlines using up/down arrow keys
