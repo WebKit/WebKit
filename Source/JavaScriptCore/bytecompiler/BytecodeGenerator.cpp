@@ -321,14 +321,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         emitPushFunctionNameScope(functionNode->ident(), &m_calleeRegister, markAsCaptured);
     }
 
-    if (shouldCaptureSomeOfTheThings) {
+    if (shouldCaptureSomeOfTheThings)
         m_lexicalEnvironmentRegister = addVar();
-        // We can allocate the "var" environment if we don't have default parameter expressions. If we have
-        // default parameter expressions, we have to hold off on allocating the "var" environment because
-        // the parent scope of the "var" environment is the parameter environment.
-        if (isSimpleParameterList)
-            initializeVarLexicalEnvironment(symbolTableConstantIndex);
-    }
+
+    // We can allocate the "var" environment if we don't have default parameter expressions. If we have
+    // default parameter expressions, we have to hold off on allocating the "var" environment because
+    // the parent scope of the "var" environment is the parameter environment.
+    if (isSimpleParameterList)
+        initializeVarLexicalEnvironment(symbolTableConstantIndex, functionSymbolTable, shouldCaptureSomeOfTheThings);
 
     // Figure out some interesting facts about our arguments.
     bool capturesAnyArgumentByName = false;
@@ -452,19 +452,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         instructions().append(m_argumentsRegister->index());
     }
     
-    for (FunctionMetadataNode* function : functionNode->functionStack()) {
-        const Identifier& ident = function->ident();
-        createVariable(ident, varKind(ident.impl()), functionSymbolTable);
-        m_functionsToInitialize.append(std::make_pair(function, NormalFunctionVariable));
-    }
-    for (auto& entry : functionNode->varDeclarations()) {
-        ASSERT(!entry.value.isLet() && !entry.value.isConst());
-        if (!entry.value.isVar()) // This is either a parameter or callee.
-            continue;
-        // Variables named "arguments" are never const.
-        createVariable(Identifier::fromUid(m_vm, entry.key.get()), varKind(entry.key.get()), functionSymbolTable, IgnoreExisting);
-    }
-
     // There are some variables that need to be preinitialized to something other than Undefined:
     //
     // - "arguments": unless it's used as a function or parameter, this should refer to the
@@ -486,6 +473,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     
     // This is our final act of weirdness. "arguments" is overridden by everything except the
     // callee. We add it to the symbol table if it's not already there and it's not an argument.
+    bool shouldCreateArgumentsVariableInParameterScope = false;
     if (needsArguments) {
         // If "arguments" is overridden by a function or destructuring parameter name, then it's
         // OK for us to call createVariable() because it won't change anything. It's also OK for
@@ -504,14 +492,31 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             }
         }
 
+        bool shouldCreateArgumensVariable = !haveParameterNamedArguments && !m_codeBlock->isArrowFunction();
+        shouldCreateArgumentsVariableInParameterScope = shouldCreateArgumensVariable && !isSimpleParameterList;
         // Do not create arguments variable in case of Arrow function. Value will be loaded from parent scope
-        if (!haveParameterNamedArguments && !m_codeBlock->isArrowFunction()) {
+        if (shouldCreateArgumensVariable && !shouldCreateArgumentsVariableInParameterScope) {
             createVariable(
                 propertyNames().arguments, varKind(propertyNames().arguments.impl()), functionSymbolTable);
 
             m_needToInitializeArguments = true;
         }
     }
+
+    for (FunctionMetadataNode* function : functionNode->functionStack()) {
+        const Identifier& ident = function->ident();
+        createVariable(ident, varKind(ident.impl()), functionSymbolTable);
+        m_functionsToInitialize.append(std::make_pair(function, NormalFunctionVariable));
+    }
+    for (auto& entry : functionNode->varDeclarations()) {
+        ASSERT(!entry.value.isLet() && !entry.value.isConst());
+        if (!entry.value.isVar()) // This is either a parameter or callee.
+            continue;
+        if (shouldCreateArgumentsVariableInParameterScope && entry.key.get() == propertyNames().arguments.impl())
+            continue;
+        createVariable(Identifier::fromUid(m_vm, entry.key.get()), varKind(entry.key.get()), functionSymbolTable, IgnoreExisting);
+    }
+
 
     m_newTargetRegister = addVar();
     switch (parseMode) {
@@ -569,10 +574,17 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
     }
 
+    if (needsToUpdateArrowFunctionContext() && !codeBlock->isArrowFunction()) {
+        initializeArrowFunctionContextScopeIfNeeded();
+        emitPutThisToArrowFunctionContextScope();
+        emitPutNewTargetToArrowFunctionContextScope();
+        emitPutDerivedConstructorToArrowFunctionContextScope();
+    }
+
     // All "addVar()"s needs to happen before "initializeDefaultParameterValuesAndSetupFunctionScopeStack()" is called
     // because a function's default parameter ExpressionNodes will use temporary registers.
     pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize);
-    initializeDefaultParameterValuesAndSetupFunctionScopeStack(parameters, isSimpleParameterList, functionNode, functionSymbolTable, symbolTableConstantIndex, captures);
+    initializeDefaultParameterValuesAndSetupFunctionScopeStack(parameters, isSimpleParameterList, functionNode, functionSymbolTable, symbolTableConstantIndex, captures, shouldCreateArgumentsVariableInParameterScope);
     
     // If we don't have  default parameter expression, then loading |this| inside an arrow function must be done
     // after initializeDefaultParameterValuesAndSetupFunctionScopeStack() because that function sets up the
@@ -585,13 +597,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
     }
     
-    if (needsToUpdateArrowFunctionContext() && !codeBlock->isArrowFunction()) {
-        initializeArrowFunctionContextScopeIfNeeded(functionSymbolTable);
-        emitPutThisToArrowFunctionContextScope();
-        emitPutNewTargetToArrowFunctionContextScope();
-        emitPutDerivedConstructorToArrowFunctionContextScope();
-    }
-
     bool shouldInitializeBlockScopedFunctions = false; // We generate top-level function declarations in ::generate().
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
@@ -805,9 +810,10 @@ BytecodeGenerator::~BytecodeGenerator()
 
 void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack(
     FunctionParameters& parameters, bool isSimpleParameterList, FunctionNode* functionNode, SymbolTable* functionSymbolTable, 
-    int symbolTableConstantIndex, const std::function<bool (UniquedStringImpl*)>& captures)
+    int symbolTableConstantIndex, const std::function<bool (UniquedStringImpl*)>& captures, bool shouldCreateArgumentsVariableInParameterScope)
 {
     Vector<std::pair<Identifier, RefPtr<RegisterID>>> valuesToMoveIntoVars;
+    ASSERT(!(isSimpleParameterList && shouldCreateArgumentsVariableInParameterScope));
     if (!isSimpleParameterList) {
         // Refer to the ES6 spec section 9.2.12: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-functiondeclarationinstantiation
         // This implements step 21.
@@ -815,6 +821,8 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
         Vector<Identifier> allParameterNames; 
         for (unsigned i = 0; i < parameters.size(); i++)
             parameters.at(i).first->collectBoundIdentifiers(allParameterNames);
+        if (shouldCreateArgumentsVariableInParameterScope)
+            allParameterNames.append(propertyNames().arguments);
         IdentifierSet parameterSet;
         for (auto& ident : allParameterNames) {
             parameterSet.add(ident.impl());
@@ -823,9 +831,14 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
             if (captures(ident.impl()))
                 addResult.iterator->value.setIsCaptured();
         }
-        
         // This implements step 25 of section 9.2.12.
         pushLexicalScopeInternal(environment, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, TDZRequirement::UnderTDZ, ScopeType::LetConstScope, ScopeRegisterType::Block);
+
+        if (shouldCreateArgumentsVariableInParameterScope) {
+            Variable argumentsVariable = variable(propertyNames().arguments); 
+            initializeVariable(argumentsVariable, m_argumentsRegister);
+            liftTDZCheckIfPossible(argumentsVariable);
+        }
 
         RefPtr<RegisterID> temp = newTemporary();
         for (unsigned i = 0; i < parameters.size(); i++) {
@@ -867,15 +880,9 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
         // record for parameters and "var"s. The "var" environment record must have the
         // parameter environment record as its parent.
         // See step 28 of section 9.2.12.
-        if (m_lexicalEnvironmentRegister)
-            initializeVarLexicalEnvironment(symbolTableConstantIndex);
+        bool hasCapturedVariables = !!m_lexicalEnvironmentRegister; 
+        initializeVarLexicalEnvironment(symbolTableConstantIndex, functionSymbolTable, hasCapturedVariables);
     }
-
-    if (m_lexicalEnvironmentRegister)
-        pushScopedControlFlowContext();
-    m_symbolTableStack.append(SymbolTableStackEntry{ functionSymbolTable, m_lexicalEnvironmentRegister, false, symbolTableConstantIndex });
-
-    m_varScopeSymbolTableIndex = m_symbolTableStack.size() - 1;
 
     // This completes step 28 of section 9.2.12.
     for (unsigned i = 0; i < valuesToMoveIntoVars.size(); i++) {
@@ -886,43 +893,16 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
     }
 }
 
-void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable* symbolTable)
+void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded()
 {
-    if (m_arrowFunctionContextLexicalEnvironmentRegister != nullptr)
-        return;
-    
-    if (m_lexicalEnvironmentRegister != nullptr) {
-        m_arrowFunctionContextLexicalEnvironmentRegister = m_lexicalEnvironmentRegister;
-        
-        if (!m_codeBlock->isArrowFunction()) {
-            ScopeOffset offset;
-            
-            ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
-            if (isThisUsedInInnerArrowFunction()) {
-                offset = symbolTable->takeNextScopeOffset(locker);
-                symbolTable->set(locker, propertyNames().thisIdentifier.impl(), SymbolTableEntry(VarOffset(offset)));
-            }
-
-            if (m_codeType == FunctionCode && isNewTargetUsedInInnerArrowFunction()) {
-                offset = symbolTable->takeNextScopeOffset();
-                symbolTable->set(locker, propertyNames().newTargetLocalPrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
-            }
-            
-            if (isConstructor() && constructorKind() == ConstructorKind::Derived && isSuperUsedInInnerArrowFunction()) {
-                offset = symbolTable->takeNextScopeOffset(locker);
-                symbolTable->set(locker, propertyNames().derivedConstructorPrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
-            }
-        }
-
-        return;
-    }
+    ASSERT(!m_arrowFunctionContextLexicalEnvironmentRegister);
 
     VariableEnvironment environment;
 
     if (isThisUsedInInnerArrowFunction()) {
         auto addResult = environment.add(propertyNames().thisIdentifier);
         addResult.iterator->value.setIsCaptured();
-        addResult.iterator->value.setIsConst();
+        addResult.iterator->value.setIsLet();
     }
     
     if (m_codeType == FunctionCode && isNewTargetUsedInInnerArrowFunction()) {
@@ -972,18 +952,25 @@ void BytecodeGenerator::initializeParameters(FunctionParameters& parameters)
     }
 }
 
-void BytecodeGenerator::initializeVarLexicalEnvironment(int symbolTableConstantIndex)
+void BytecodeGenerator::initializeVarLexicalEnvironment(int symbolTableConstantIndex, SymbolTable* functionSymbolTable, bool hasCapturedVariables)
 {
-    RELEASE_ASSERT(m_lexicalEnvironmentRegister);
-    emitOpcode(op_create_lexical_environment);
-    instructions().append(m_lexicalEnvironmentRegister->index());
-    instructions().append(scopeRegister()->index());
-    instructions().append(symbolTableConstantIndex);
-    instructions().append(addConstantValue(jsUndefined())->index());
+    if (hasCapturedVariables) {
+        RELEASE_ASSERT(m_lexicalEnvironmentRegister);
+        emitOpcode(op_create_lexical_environment);
+        instructions().append(m_lexicalEnvironmentRegister->index());
+        instructions().append(scopeRegister()->index());
+        instructions().append(symbolTableConstantIndex);
+        instructions().append(addConstantValue(jsUndefined())->index());
 
-    emitOpcode(op_mov);
-    instructions().append(scopeRegister()->index());
-    instructions().append(m_lexicalEnvironmentRegister->index());
+        emitOpcode(op_mov);
+        instructions().append(scopeRegister()->index());
+        instructions().append(m_lexicalEnvironmentRegister->index());
+
+        pushScopedControlFlowContext();
+    }
+    bool isWithScope = false;
+    m_symbolTableStack.append(SymbolTableStackEntry{ functionSymbolTable, m_lexicalEnvironmentRegister, isWithScope, symbolTableConstantIndex });
+    m_varScopeSymbolTableIndex = m_symbolTableStack.size() - 1;
 }
 
 UniquedStringImpl* BytecodeGenerator::visibleNameForParameter(DestructuringPatternNode* pattern)

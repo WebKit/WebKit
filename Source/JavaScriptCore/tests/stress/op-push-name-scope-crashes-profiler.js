@@ -8,7 +8,7 @@ function test() {
      })(arguments[0]);
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < 1000; ++i) {
     counter = 0;
     test(100);
     if (counter !== 101) {

@@ -1,3 +1,43 @@
+2016-05-18  Saam barati  <sbarati@apple.com>
+
+        Function with default parameter values that are arrow functions that capture this isn't working
+        https://bugs.webkit.org/show_bug.cgi?id=157786
+        <rdar://problem/26327329>
+
+        Reviewed by Geoffrey Garen.
+
+        To make the scopes ordered properly, I needed to initialize the arrow 
+        function lexical environment before initializing default parameter values.
+        I also made the code easier to reason about by never reusing the function's
+        var lexical environment for the arrow function lexical environment. The
+        reason for this is that that code was wrong, and we just didn't have code to
+        that properly tested it. It was easy for that code to be wrong because
+        sometimes the function's lexical environment isn't the top-most scope
+        (namely, when a function's parameter list is non-simple) and sometimes
+        it is (when the function's parameter list is simple).
+
+        Also, because a function's default parameter values may capture the
+        'arguments' variable inside an arrow function, I needed to take care
+        to initialize the 'arguments' variable as part of whichever scope
+        is the top-most scope. It's either the function's var environment
+        if the parameter list is simple, or it's the function's parameter
+        environment if the parameter list is non-simple.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        (JSC::BytecodeGenerator::initializeParameters):
+        (JSC::BytecodeGenerator::initializeVarLexicalEnvironment):
+        (JSC::BytecodeGenerator::visibleNameForParameter):
+        * bytecompiler/BytecodeGenerator.h:
+        * tests/stress/arrow-functions-as-default-parameter-values.js: Added.
+        (assert):
+        (test):
+        (test.foo):
+        * tests/stress/op-push-name-scope-crashes-profiler.js:
+        (test):
+
 2016-05-18  Michael Saboff  <msaboff@apple.com>
 
         r199812 broke test262
