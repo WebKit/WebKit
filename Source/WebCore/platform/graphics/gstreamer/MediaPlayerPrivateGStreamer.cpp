@@ -1660,113 +1660,137 @@ void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState error)
     m_readyTimerHandler.stop();
 }
 
-// FIXME: In what sense is this a "cache"?
-static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
+static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeSet()
 {
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache = []() {
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> mimeTypes = []()
+    {
         initializeGStreamerAndRegisterWebKitElements();
         HashSet<String, ASCIICaseInsensitiveHash> set;
-        const char* mimeTypes[] = {
-            "application/ogg",
-            "application/vnd.apple.mpegurl",
-            "application/vnd.rn-realmedia",
-            "application/x-3gp",
-            "application/x-pn-realaudio",
-            "application/x-mpegurl",
-            "audio/3gpp",
-            "audio/aac",
-            "audio/flac",
-            "audio/iLBC-sh",
-            "audio/midi",
-            "audio/mobile-xmf",
-            "audio/mp1",
-            "audio/mp2",
-            "audio/mp3",
-            "audio/mp4",
-            "audio/mpeg",
-            "audio/ogg",
-            "audio/opus",
-            "audio/qcelp",
-            "audio/riff-midi",
-            "audio/speex",
-            "audio/wav",
-            "audio/webm",
-            "audio/x-ac3",
-            "audio/x-aiff",
-            "audio/x-amr-nb-sh",
-            "audio/x-amr-wb-sh",
-            "audio/x-au",
-            "audio/x-ay",
-            "audio/x-celt",
-            "audio/x-dts",
-            "audio/x-flac",
-            "audio/x-gbs",
-            "audio/x-gsm",
-            "audio/x-gym",
-            "audio/x-imelody",
-            "audio/x-ircam",
-            "audio/x-kss",
-            "audio/x-m4a",
-            "audio/x-mod",
-            "audio/x-mp3",
-            "audio/x-mpeg",
-            "audio/x-musepack",
-            "audio/x-nist",
-            "audio/x-nsf",
-            "audio/x-paris",
-            "audio/x-sap",
-            "audio/x-sbc",
-            "audio/x-sds",
-            "audio/x-shorten",
-            "audio/x-sid",
-            "audio/x-spc",
-            "audio/x-speex",
-            "audio/x-svx",
-            "audio/x-ttafile",
-            "audio/x-vgm",
-            "audio/x-voc",
-            "audio/x-vorbis+ogg",
-            "audio/x-w64",
-            "audio/x-wav",
-            "audio/x-wavpack",
-            "audio/x-wavpack-correction",
-            "video/3gpp",
-            "video/flv",
-            "video/mj2",
-            "video/mp2t",
-            "video/mp4",
-            "video/mpeg",
-            "video/mpegts",
-            "video/ogg",
-            "video/quicktime",
-            "video/vivo",
-            "video/webm",
-            "video/x-cdxa",
-            "video/x-dirac",
-            "video/x-dv",
-            "video/x-fli",
-            "video/x-flv",
-            "video/x-h263",
-            "video/x-ivf",
-            "video/x-m4v",
-            "video/x-matroska",
-            "video/x-mng",
-            "video/x-ms-asf",
-            "video/x-msvideo",
-            "video/x-mve",
-            "video/x-nuv",
-            "video/x-vcd"
+
+        GList* audioDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_AUDIO, GST_RANK_MARGINAL);
+        GList* videoDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
+        GList* demuxerFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DEMUXER, GST_RANK_MARGINAL);
+
+        enum ElementType {
+            AudioDecoder = 0,
+            VideoDecoder,
+            Demuxer
         };
-        for (auto& type : mimeTypes)
-            set.add(type);
+        struct GstCapsWebKitMapping {
+            ElementType elementType;
+            const char* capsString;
+            Vector<AtomicString> webkitMimeTypes;
+        };
+
+        Vector<GstCapsWebKitMapping> mapping = {
+            {AudioDecoder, "audio/midi", {"audio/midi", "audio/riff-midi"}},
+            {AudioDecoder, "audio/x-sbc", { }},
+            {AudioDecoder, "audio/x-sid", { }},
+            {AudioDecoder, "audio/x-flac", {"audio/x-flac", "audio/flac"}},
+            {AudioDecoder, "audio/x-wav", {"audio/x-wav", "audio/wav"}},
+            {AudioDecoder, "audio/x-wavpack", {"audio/x-wavpack"}},
+            {AudioDecoder, "audio/x-speex", {"audio/speex", "audio/x-speex"}},
+            {AudioDecoder, "audio/x-ac3", { }},
+            {AudioDecoder, "audio/x-eac3", {"audio/x-ac3"}},
+            {AudioDecoder, "audio/x-dts", { }},
+            {VideoDecoder, "video/x-h264, profile=(string)high", {"video/mp4", "video/x-m4v"}},
+            {VideoDecoder, "video/x-msvideocodec", {"video/x-msvideo"}},
+            {VideoDecoder, "video/x-h263", { }},
+            {VideoDecoder, "video/mpegts", { }},
+            {VideoDecoder, "video/mpeg, mpegversion=(int){1,2}, systemstream=(boolean)false", {"video/mpeg"}},
+            {VideoDecoder, "video/x-dirac", { }},
+            {VideoDecoder, "video/x-flash-video", {"video/flv", "video/x-flv"}},
+            {Demuxer, "video/quicktime", { }},
+            {Demuxer, "video/quicktime, variant=(string)3gpp", {"video/3gpp"}},
+            {Demuxer, "application/x-3gp", { }},
+            {Demuxer, "video/x-ms-asf", { }},
+            {Demuxer, "audio/x-aiff", { }},
+            {Demuxer, "application/x-pn-realaudio", { }},
+            {Demuxer, "application/vnd.rn-realmedia", { }},
+            {Demuxer, "audio/x-wav", {"audio/x-wav", "audio/wav"}},
+            {Demuxer, "application/x-hls", {"application/vnd.apple.mpegurl", "application/x-mpegurl"}}
+        };
+
+        for (auto& current : mapping) {
+            GList* factories = demuxerFactories;
+            if (current.elementType == AudioDecoder)
+                factories = audioDecoderFactories;
+            else if (current.elementType == VideoDecoder)
+                factories = videoDecoderFactories;
+
+            if (gstRegistryHasElementForMediaType(factories, current.capsString)) {
+                if (!current.webkitMimeTypes.isEmpty()) {
+                    for (const auto& mimeType : current.webkitMimeTypes)
+                        set.add(mimeType);
+                } else
+                    set.add(AtomicString(current.capsString));
+            }
+        }
+
+        bool opusSupported = false;
+        if (gstRegistryHasElementForMediaType(audioDecoderFactories, "audio/x-opus")) {
+            opusSupported = true;
+            set.add(AtomicString("audio/opus"));
+        }
+
+        bool vorbisSupported = false;
+        if (gstRegistryHasElementForMediaType(demuxerFactories, "application/ogg")) {
+            set.add(AtomicString("application/ogg"));
+
+            vorbisSupported = gstRegistryHasElementForMediaType(audioDecoderFactories, "audio/x-vorbis");
+            if (vorbisSupported) {
+                set.add(AtomicString("audio/ogg"));
+                set.add(AtomicString("audio/x-vorbis+ogg"));
+            }
+
+            if (gstRegistryHasElementForMediaType(videoDecoderFactories, "video/x-theora"))
+                set.add(AtomicString("video/ogg"));
+        }
+
+        bool audioMpegSupported = false;
+        if (gstRegistryHasElementForMediaType(audioDecoderFactories, "audio/mpeg, mpegversion=(int)1, layer=(int)[1, 3]")) {
+            audioMpegSupported = true;
+            set.add(AtomicString("audio/mp1"));
+            set.add(AtomicString("audio/mp3"));
+            set.add(AtomicString("audio/x-mp3"));
+        }
+
+        if (gstRegistryHasElementForMediaType(audioDecoderFactories, "audio/mpeg, mpegversion=(int){2, 4}")) {
+            audioMpegSupported = true;
+            set.add(AtomicString("audio/aac"));
+            set.add(AtomicString("audio/mp2"));
+            set.add(AtomicString("audio/mp4"));
+            set.add(AtomicString("audio/x-m4a"));
+        }
+
+        if (audioMpegSupported) {
+            set.add(AtomicString("audio/mpeg"));
+            set.add(AtomicString("audio/x-mpeg"));
+        }
+
+        if (gstRegistryHasElementForMediaType(demuxerFactories, "video/x-matroska")) {
+            set.add(AtomicString("video/x-matroska"));
+
+            if (gstRegistryHasElementForMediaType(videoDecoderFactories, "video/x-vp8")
+                || gstRegistryHasElementForMediaType(videoDecoderFactories, "video/x-vp9")
+                || gstRegistryHasElementForMediaType(videoDecoderFactories, "video/x-vp10"))
+                set.add(AtomicString("video/webm"));
+
+            if (vorbisSupported || opusSupported)
+                set.add(AtomicString("audio/webm"));
+        }
+
+        gst_plugin_feature_list_free(audioDecoderFactories);
+        gst_plugin_feature_list_free(videoDecoderFactories);
+        gst_plugin_feature_list_free(demuxerFactories);
         return set;
     }();
-    return cache;
+    return mimeTypes;
 }
 
 void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
-    types = mimeTypeCache();
+    types = mimeTypeSet();
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaEngineSupportParameters& parameters)
@@ -1780,7 +1804,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
         return MediaPlayer::IsNotSupported;
 
     // spec says we should not return "probably" if the codecs string is empty
-    if (mimeTypeCache().contains(parameters.type))
+    if (mimeTypeSet().contains(parameters.type))
         return parameters.codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
     return MediaPlayer::IsNotSupported;
 }

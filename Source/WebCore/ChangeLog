@@ -1,3 +1,32 @@
+2016-05-19  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] unrelated codecs required to play videos
+        https://bugs.webkit.org/show_bug.cgi?id=135972
+
+        Reviewed by Michael Catanzaro.
+
+        Instead of hard-coding the list of supported mime-types, check the
+        decoder and demuxer GStreamer elements available and dynamically
+        build the list of mime-types accordingly. This patch also removes
+        support for under-used and exotic mime-types.
+
+        Based on a patch by Mario Sanchez Prada.
+
+        No new tests, existing media tests cover this change.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::gstRegistryHasElementForMediaType): New function
+        checking the elements registered in the factories have a sink pad
+        matching the caps specified as second argument of the function.
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeSet): Hard-coded list of mime-types replaced by
+        runtime-built list of mime-types that can be supported by the
+        GStreamer decoders and demuxers available on the host machine.
+        (WebCore::MediaPlayerPrivateGStreamer::getSupportedTypes):
+        mimeTypeCache renamed to mimeTypeSet.
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType): Ditto.
+
 2016-05-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Fix Wformat warning in MemoryPressureHandler.cpp
