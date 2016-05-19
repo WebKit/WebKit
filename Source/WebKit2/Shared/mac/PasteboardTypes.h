@@ -36,6 +36,7 @@ public:
     static NSString * const WebURLsWithTitlesPboardType;
     static NSString * const WebURLPboardType;
     static NSString * const WebURLNamePboardType;
+    static NSString * const WebDummyPboardType;
     
     static NSArray *forEditing();
     static NSArray *forURL();

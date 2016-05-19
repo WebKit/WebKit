@@ -2184,6 +2184,11 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     }
 }
 
++ (NSString *)_dummyPasteboardType
+{
+    return @"Apple WebKit dummy pasteboard type";
+}
+
 + (NSArray *)_insertablePasteboardTypes
 {
     static NSArray *types = nil;
@@ -4571,6 +4576,9 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Con
         slideBack:(BOOL)slideBack
 {
     ASSERT(self == [self _topHTMLView]);
+    if (![[pasteboard types] count])
+        [pasteboard setString:@"" forType:[WebHTMLView _dummyPasteboardType]];
+
     [super dragImage:dragImage at:at offset:offset event:event pasteboard:pasteboard source:source slideBack:slideBack];
 }
 
