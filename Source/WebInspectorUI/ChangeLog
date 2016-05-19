@@ -1,5 +1,26 @@
 2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Heap Snapshots taken before timeline view has a zero time do not get shown
+        https://bugs.webkit.org/show_bug.cgi?id=157923
+        <rdar://problem/26377366>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HeapAllocationsTimelineDataGridNode.js:
+        (WebInspector.HeapAllocationsTimelineDataGridNode):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.updateTimestamp):
+        Show emDash for the timestamp if we don't yet have a zero time.
+        Update when we get a zero time.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView):
+        (WebInspector.HeapAllocationsTimelineView.prototype.layout):
+        (WebInspector.HeapAllocationsTimelineView.prototype.reset):
+        Save a list of nodes pre-zero time and update them when we get a zero time.
+
+2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: HeapSnapshot Instances view should remove dead objects
         https://bugs.webkit.org/show_bug.cgi?id=157920
         <rdar://problem/26375866>

@@ -87,6 +87,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
 
         this._pendingRecords = [];
+        this._pendingZeroTimeDataGridNodes = [];
 
         timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._heapAllocationsTimelineRecordAdded, this);
 
@@ -235,12 +236,19 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
 
     layout()
     {
-        // Wait to show records until our zeroTime has been set.
-        // FIXME: Waiting until zero time causes snapshots taken without recording to not show up in the list.
-        if (this._pendingRecords.length && this.zeroTime) {
+        if (this._pendingZeroTimeDataGridNodes.length && this.zeroTime) {
+            for (let dataGridNode of this._pendingZeroTimeDataGridNodes)
+                dataGridNode.updateTimestamp(this.zeroTime);
+            this._pendingZeroTimeDataGridNodes = [];
+            this._dataGrid._sort();
+        }
+
+        if (this._pendingRecords.length) {
             for (let heapAllocationsTimelineRecord of this._pendingRecords) {
                 let dataGridNode = new WebInspector.HeapAllocationsTimelineDataGridNode(heapAllocationsTimelineRecord, this.zeroTime, this);
                 this._dataGrid.addRowInSortOrder(null, dataGridNode);
+                if (!this.zeroTime)
+                    this._pendingZeroTimeDataGridNodes.push(dataGridNode);
             }
 
             this._pendingRecords = [];
@@ -256,6 +264,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
 
         this.showHeapSnapshotList();
         this._pendingRecords = [];
+        this._pendingZeroTimeDataGridNodes = [];
         this._updateCompareHeapSnapshotButton();
     }
 
