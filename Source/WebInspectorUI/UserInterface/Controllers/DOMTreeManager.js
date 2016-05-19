@@ -42,6 +42,7 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
         this._flows = new Map;
         this._contentNodesToFlowsMap = new Map;
         this._restoreSelectedNodeIsAllowed = true;
+        this._loadNodeAttributesTimeout = 0;
 
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
@@ -150,7 +151,7 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
     {
         for (var nodeId of nodeIds)
             this._attributeLoadNodeIds[nodeId] = true;
-        if ("_loadNodeAttributesTimeout" in this)
+        if (this._loadNodeAttributesTimeout)
             return;
         this._loadNodeAttributesTimeout = setTimeout(this._loadNodeAttributes.bind(this), 0);
     }
@@ -171,7 +172,7 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
             }
         }
 
-        this._loadNodeAttributesTimeout = undefined;
+        this._loadNodeAttributesTimeout = 0;
 
         for (var nodeId in this._attributeLoadNodeIds) {
             var nodeIdAsNumber = parseInt(nodeId);

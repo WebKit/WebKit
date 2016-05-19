@@ -1,3 +1,17 @@
+2016-05-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r189385): Web Inspector: CSS properties modified via JS don't update in the Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=157918
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager):
+        (WebInspector.DOMTreeManager.prototype._inlineStyleInvalidated):
+        (WebInspector.DOMTreeManager.prototype._loadNodeAttributes):
+        Set the initial value of _loadNodeAttributesTimeout to be 0,
+        as setTimeout always returns a positive integer.
+
 2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Heap Snapshots taken before timeline view has a zero time do not get shown
