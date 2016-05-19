@@ -298,29 +298,6 @@ RenderObject* RenderObject::lastLeafChild() const
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-// Inspired by Node::traverseNextNode.
-RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin) const
-{
-    RenderObject* child = firstChildSlow();
-    if (child) {
-        ASSERT(!stayWithin || child->isDescendantOf(stayWithin));
-        return child;
-    }
-    if (this == stayWithin)
-        return nullptr;
-    if (nextSibling()) {
-        ASSERT(!stayWithin || nextSibling()->isDescendantOf(stayWithin));
-        return nextSibling();
-    }
-    const RenderObject* n = this;
-    while (n && !n->nextSibling() && (!stayWithin || n->parent() != stayWithin))
-        n = n->parent();
-    if (n) {
-        ASSERT(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
-        return n->nextSibling();
-    }
-    return nullptr;
-}
 
 // Non-recursive version of the DFS search.
 RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction inclusionFunction, int& currentDepth, int& newFixedDepth) const
@@ -370,44 +347,6 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
     return nullptr;
 }
 
-RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, TraverseNextInclusionFunction inclusionFunction) const
-{
-    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling()) {
-        if (inclusionFunction(*child)) {
-            ASSERT(!stayWithin || child->isDescendantOf(stayWithin));
-            return child;
-        }
-    }
-
-    if (this == stayWithin)
-        return nullptr;
-
-    for (RenderObject* sibling = nextSibling(); sibling; sibling = sibling->nextSibling()) {
-        if (inclusionFunction(*sibling)) {
-            ASSERT(!stayWithin || sibling->isDescendantOf(stayWithin));
-            return sibling;
-        }
-    }
-
-    const RenderObject* n = this;
-    while (n) {
-        while (n && !n->nextSibling() && (!stayWithin || n->parent() != stayWithin))
-            n = n->parent();
-        if (n) {
-            for (RenderObject* sibling = n->nextSibling(); sibling; sibling = sibling->nextSibling()) {
-                if (inclusionFunction(*sibling)) {
-                    ASSERT(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
-                    return sibling;
-                }
-            }
-            if ((!stayWithin || n->parent() != stayWithin))
-                n = n->parent();
-            else
-                return nullptr;
-        }
-    }
-    return nullptr;
-}
 #endif // ENABLE(IOS_TEXT_AUTOSIZING)
 
 RenderLayer* RenderObject::enclosingLayer() const

@@ -3706,25 +3706,24 @@ void RenderBlockFlow::materializeRareBlockFlowData()
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-inline static bool isVisibleRenderText(RenderObject* renderer)
+static inline bool isVisibleRenderText(const RenderObject& renderer)
 {
-    if (!is<RenderText>(*renderer))
+    if (!is<RenderText>(renderer))
         return false;
-    RenderText& renderText = downcast<RenderText>(*renderer);
+
+    auto& renderText = downcast<RenderText>(renderer);
     return !renderText.linesBoundingBox().isEmpty() && !renderText.text()->containsOnlyWhitespace();
 }
 
-inline static bool resizeTextPermitted(RenderObject* render)
+static inline bool resizeTextPermitted(const RenderObject& renderer)
 {
     // We disallow resizing for text input fields and textarea to address <rdar://problem/5792987> and <rdar://problem/8021123>
-    auto renderer = render->parent();
-    while (renderer) {
+    for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
         // Get the first non-shadow HTMLElement and see if it's an input.
-        if (is<HTMLElement>(renderer->element()) && !renderer->element()->isInShadowTree()) {
-            const HTMLElement& element = downcast<HTMLElement>(*renderer->element());
+        if (is<HTMLElement>(ancestor->element()) && !ancestor->element()->isInShadowTree()) {
+            auto& element = downcast<HTMLElement>(*ancestor->element());
             return !is<HTMLInputElement>(element) && !is<HTMLTextAreaElement>(element);
         }
-        renderer = renderer->parent();
     }
     return true;
 }
@@ -3742,12 +3741,12 @@ int RenderBlockFlow::lineCountForTextAutosizing()
     return count;
 }
 
-static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject& render)
+static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject& renderer)
 {
-    if (!render.isRenderBlock())
+    if (!renderer.isRenderBlock())
         return true;
-    if (render.isListItem())
-        return render.style().height().type() != Fixed;
+    if (renderer.isListItem())
+        return renderer.style().height().type() != Fixed;
     return false;
 }
 
@@ -3790,29 +3789,37 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
     float actualWidth = m_widthForTextAutosizing != -1 ? static_cast<float>(m_widthForTextAutosizing) : static_cast<float>(width());
     float scale = visibleWidth / actualWidth;
     float minFontSize = roundf(size / scale);
-    
-    for (RenderObject* descendent = traverseNext(this, isNonBlocksOrNonFixedHeightListItems); descendent; descendent = descendent->traverseNext(this, isNonBlocksOrNonFixedHeightListItems)) {
-        if (isVisibleRenderText(descendent) && resizeTextPermitted(descendent)) {
-            auto& text = downcast<RenderText>(*descendent);
-            auto& oldStyle = text.style();
-            auto fontDescription = oldStyle.fontDescription();
-            float specifiedSize = fontDescription.specifiedSize();
-            float scaledSize = roundf(specifiedSize * scale);
-            if (scaledSize > 0 && scaledSize < minFontSize) {
-                // Record the width of the block and the line count the first time we resize text and use it from then on for text resizing.
-                // This makes text resizing consistent even if the block's width or line count changes (which can be caused by text resizing itself 5159915).
-                if (m_lineCountForTextAutosizing == NOT_SET)
-                    m_lineCountForTextAutosizing = lineCount;
-                if (m_widthForTextAutosizing == -1)
-                    m_widthForTextAutosizing = actualWidth;
-                
-                float candidateNewSize = 0;
-                float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(specifiedSize) : textMultiplier(specifiedSize);
-                candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
-                if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
-                    document().addAutoSizingNode(*text.textNode(), candidateNewSize);
-            }
+
+    for (auto* descendant = RenderObjectTraversal::firstChild(*this); descendant; ) {
+        if (!isNonBlocksOrNonFixedHeightListItems(*descendant)) {
+            descendant = RenderObjectTraversal::nextSkippingChildren(*descendant, this);
+            continue;
         }
+        if (!isVisibleRenderText(*descendant) || !resizeTextPermitted(*descendant)) {
+            descendant = RenderObjectTraversal::next(*descendant, this);
+            continue;
+        }
+
+        auto& text = downcast<RenderText>(*descendant);
+        auto& oldStyle = text.style();
+        auto& fontDescription = oldStyle.fontDescription();
+        float specifiedSize = fontDescription.specifiedSize();
+        float scaledSize = roundf(specifiedSize * scale);
+        if (scaledSize > 0 && scaledSize < minFontSize) {
+            // Record the width of the block and the line count the first time we resize text and use it from then on for text resizing.
+            // This makes text resizing consistent even if the block's width or line count changes (which can be caused by text resizing itself 5159915).
+            if (m_lineCountForTextAutosizing == NOT_SET)
+                m_lineCountForTextAutosizing = lineCount;
+            if (m_widthForTextAutosizing == -1)
+                m_widthForTextAutosizing = actualWidth;
+
+            float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(specifiedSize) : textMultiplier(specifiedSize);
+            float candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
+            if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
+                document().addAutoSizingNode(*text.textNode(), candidateNewSize);
+        }
+
+        descendant = RenderObjectTraversal::nextSkippingChildren(text, this);
     }
 }
 #endif // ENABLE(IOS_TEXT_AUTOSIZING)

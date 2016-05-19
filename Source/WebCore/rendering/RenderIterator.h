@@ -124,6 +124,17 @@ inline RenderObject* next(U& current, const RenderObject* stayWithin)
     return nextAncestorSibling(current, stayWithin);
 }
 
+inline RenderObject* nextSkippingChildren(RenderObject& current, const RenderObject* stayWithin)
+{
+    if (&current == stayWithin)
+        return nullptr;
+
+    if (auto* sibling = current.nextSibling())
+        return sibling;
+
+    return nextAncestorSibling(current, stayWithin);
+}
+
 }
 
 namespace RenderTraversal {
