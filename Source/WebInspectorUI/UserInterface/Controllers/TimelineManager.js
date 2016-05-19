@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         this._persistentNetworkTimeline = new WebInspector.NetworkTimeline;
 
         this._isCapturing = false;
+        this._waitingForCapturingStartedEvent = false;
         this._isCapturingPageReload = false;
         this._autoCaptureOnPageLoad = false;
         this._mainResourceForAutoCapturing = null;
@@ -170,6 +171,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (!this._activeRecording || shouldCreateRecording)
             this._loadNewRecording();
 
+        this._waitingForCapturingStartedEvent = true;
+
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.CapturingWillStart);
 
         this._activeRecording.start();
@@ -221,6 +224,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (this._isCapturing)
             return;
 
+        this._waitingForCapturingStartedEvent = false;
         this._isCapturing = true;
 
         this._lastDeadTimeTickle = 0;
@@ -265,7 +269,11 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (this._isCapturing)
             this.stopCapturing();
 
-        this.startCapturing(true);
+        // We may already have an fresh TimelineRecording created if autoCaptureStarted is received
+        // between sending the Timeline.start command and receiving Timeline.capturingStarted event.
+        // In that case, there is no need to call startCapturing again. Reuse the fresh recording.
+        if (!this._waitingForCapturingStartedEvent)
+            this.startCapturing(true);
 
         this._shouldSetAutoCapturingMainResource = true;
     }
