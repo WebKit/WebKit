@@ -575,7 +575,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     }
 
     if (needsToUpdateArrowFunctionContext() && !codeBlock->isArrowFunction()) {
-        initializeArrowFunctionContextScopeIfNeeded();
+        bool canReuseLexicalEnvironment = isSimpleParameterList;
+        initializeArrowFunctionContextScopeIfNeeded(functionSymbolTable, canReuseLexicalEnvironment);
         emitPutThisToArrowFunctionContextScope();
         emitPutNewTargetToArrowFunctionContextScope();
         emitPutDerivedConstructorToArrowFunctionContextScope();
@@ -893,9 +894,36 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
     }
 }
 
-void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded()
+void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable* functionSymbolTable, bool canReuseLexicalEnvironment)
 {
     ASSERT(!m_arrowFunctionContextLexicalEnvironmentRegister);
+
+    if (canReuseLexicalEnvironment && m_lexicalEnvironmentRegister) {
+        RELEASE_ASSERT(!m_codeBlock->isArrowFunction());
+        RELEASE_ASSERT(functionSymbolTable);
+
+        m_arrowFunctionContextLexicalEnvironmentRegister = m_lexicalEnvironmentRegister;
+        
+        ScopeOffset offset;
+        
+        ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
+        if (isThisUsedInInnerArrowFunction()) {
+            offset = functionSymbolTable->takeNextScopeOffset(locker);
+            functionSymbolTable->set(locker, propertyNames().thisIdentifier.impl(), SymbolTableEntry(VarOffset(offset)));
+        }
+
+        if (m_codeType == FunctionCode && isNewTargetUsedInInnerArrowFunction()) {
+            offset = functionSymbolTable->takeNextScopeOffset();
+            functionSymbolTable->set(locker, propertyNames().newTargetLocalPrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
+        }
+        
+        if (isConstructor() && constructorKind() == ConstructorKind::Derived && isSuperUsedInInnerArrowFunction()) {
+            offset = functionSymbolTable->takeNextScopeOffset(locker);
+            functionSymbolTable->set(locker, propertyNames().derivedConstructorPrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
+        }
+
+        return;
+    }
 
     VariableEnvironment environment;
 

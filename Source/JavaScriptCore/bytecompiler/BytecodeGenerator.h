@@ -858,7 +858,7 @@ namespace JSC {
         void initializeParameters(FunctionParameters&);
         void initializeVarLexicalEnvironment(int symbolTableConstantIndex, SymbolTable* functionSymbolTable, bool hasCapturedVariables);
         void initializeDefaultParameterValuesAndSetupFunctionScopeStack(FunctionParameters&, bool isSimpleParameterList, FunctionNode*, SymbolTable*, int symbolTableConstantIndex, const std::function<bool (UniquedStringImpl*)>& captures, bool shouldCreateArgumentsVariableInParameterScope);
-        void initializeArrowFunctionContextScopeIfNeeded();
+        void initializeArrowFunctionContextScopeIfNeeded(SymbolTable* functionSymbolTable = nullptr, bool canReuseLexicalEnvironment = false);
 
     public:
         JSString* addStringConstant(const Identifier&);
