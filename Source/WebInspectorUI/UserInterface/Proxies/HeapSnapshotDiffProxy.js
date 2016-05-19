@@ -62,6 +62,16 @@ WebInspector.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WebInsp
     get totalObjectCount() { return this._totalObjectCount; }
     get categories() { return this._categories; }
 
+    updateForCollectionEvent(event)
+    {
+        if (!event.data.affectedSnapshots.includes(this._snapshot2._identifier))
+            return;
+
+        this.updateCategories(() => {
+            this.dispatchEventToListeners(WebInspector.HeapSnapshotProxy.Event.CollectedNodes, event.data);
+        });
+    }
+
     allocationBucketCounts(bucketSizes, callback)
     {
         WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "allocationBucketCounts", bucketSizes, callback);
@@ -71,6 +81,14 @@ WebInspector.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WebInsp
     {
         WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "instancesWithClassName", className, (serializedNodes) => {
             callback(serializedNodes.map(WebInspector.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId)));
+        });
+    }
+
+    updateCategories(callback)
+    {
+        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "updateCategories", (categories) => {
+            this._categories = Map.fromObject(categories);
+            callback();
         });
     }
 

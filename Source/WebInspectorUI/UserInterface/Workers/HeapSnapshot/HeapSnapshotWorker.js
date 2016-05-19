@@ -33,17 +33,37 @@ HeapSnapshotWorker = class HeapSnapshotWorker
     {
         this._nextObjectId = 1;
         this._objects = new Map;
+        this._snapshots = [];
 
         self.addEventListener("message", this._handleMessage.bind(this));
     }
 
     // Actions
 
+    clearSnapshots()
+    {
+        // FIXME: <https://webkit.org/b/157907> Web Inspector: Snapshots should be cleared at some point
+        // this._objects.clear();
+
+        this._snapshots = [];
+    }
+
     createSnapshot(snapshotString, title)
     {
         let objectId = this._nextObjectId++;
         let snapshot = new HeapSnapshot(objectId, snapshotString, title);
+        this._snapshots.push(snapshot);
         this._objects.set(objectId, snapshot);
+
+        if (this._snapshots.length > 1) {
+            setTimeout(() => {
+                let collectionData = snapshot.updateDeadNodesAndGatherCollectionData(this._snapshots);
+                if (!collectionData.affectedSnapshots.length)
+                    return;
+                this.sendEvent("HeapSnapshot.CollectionEvent", collectionData);
+            }, 0);
+        }
+
         return {objectId, snapshot: snapshot.serialize()};
     }
 
