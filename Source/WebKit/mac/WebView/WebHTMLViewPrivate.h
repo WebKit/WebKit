@@ -67,6 +67,7 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (void)_updateMouseoverWithEvent:(NSEvent *)event;
 
 + (NSArray *)_insertablePasteboardTypes;
++ (NSString *)_dummyPasteboardType;
 + (NSArray *)_selectionPasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
 #endif

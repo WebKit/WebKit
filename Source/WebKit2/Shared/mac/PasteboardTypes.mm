@@ -36,6 +36,7 @@ NSString * const PasteboardTypes::WebArchivePboardType = @"Apple Web Archive pas
 NSString * const PasteboardTypes::WebURLsWithTitlesPboardType = @"WebURLsWithTitlesPboardType";
 NSString * const PasteboardTypes::WebURLPboardType = @"public.url";
 NSString * const PasteboardTypes::WebURLNamePboardType = @"public.url-name";
+NSString * const PasteboardTypes::WebDummyPboardType = @"Apple WebKit dummy pasteboard type";
 
 static inline NSArray *retain(NSArray *array)
 {

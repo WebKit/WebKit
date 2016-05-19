@@ -1,3 +1,19 @@
+2016-05-19  Enrica Casucci  <enrica@apple.com>
+
+        Drag cannot start if no drag data is available in the Pasteboard.
+        https://bugs.webkit.org/show_bug.cgi?id=157911
+        rdar://problem/24577706
+
+        Reviewed by Tim Horton.
+
+        Setting dummy data to allow drag to start.
+
+        * Shared/mac/PasteboardTypes.h:
+        * Shared/mac/PasteboardTypes.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::registerDraggedTypes):
+        (WebKit::WebViewImpl::dragImageForView):
+
 2016-05-19  Jer Noble  <jer.noble@apple.com>
 
         [IOS] Add setting to allow playback to continue inline after exiting fullscreen.

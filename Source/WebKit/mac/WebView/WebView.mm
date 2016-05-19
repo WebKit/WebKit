@@ -771,12 +771,14 @@ static bool shouldRestrictWindowFocus()
 }
 
 #if !PLATFORM(IOS)
+
 - (void)_registerDraggedTypes
 {
     NSArray *editableTypes = [WebHTMLView _insertablePasteboardTypes];
     NSArray *URLTypes = [NSPasteboard _web_dragTypesForURL];
     NSMutableSet *types = [[NSMutableSet alloc] initWithArray:editableTypes];
     [types addObjectsFromArray:URLTypes];
+    [types addObject:[WebHTMLView _dummyPasteboardType]];
     [self registerForDraggedTypes:[types allObjects]];
     [types release];
 }
