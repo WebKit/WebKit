@@ -301,6 +301,7 @@
 		CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5497AB15857D0300B5BC30 /* MediaTime.h */; };
 		CE46516E19DB1FB4003ECA05 /* NSMapTableSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE46516D19DB1FB4003ECA05 /* NSMapTableSPI.h */; };
 		CE73E02519DCB7AB00580D5C /* XPCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE73E02419DCB7AB00580D5C /* XPCSPI.h */; };
+		DCEE22051CEB9869000C2396 /* BackwardsGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE22041CEB9869000C2396 /* BackwardsGraph.h */; };
 		DCEE21FB1CEA7538000C2396 /* CFBundleSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE21FA1CEA7538000C2396 /* CFBundleSPI.h */; };
 		DCEE22001CEA7551000C2396 /* BlockObjCExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE21FC1CEA7551000C2396 /* BlockObjCExceptions.h */; };
 		DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */; };
@@ -627,6 +628,7 @@
 		CD5497AB15857D0300B5BC30 /* MediaTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTime.h; sourceTree = "<group>"; };
 		CE46516D19DB1FB4003ECA05 /* NSMapTableSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSMapTableSPI.h; sourceTree = "<group>"; };
 		CE73E02419DCB7AB00580D5C /* XPCSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCSPI.h; sourceTree = "<group>"; };
+		DCEE22041CEB9869000C2396 /* BackwardsGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackwardsGraph.h; sourceTree = "<group>"; };
 		DCEE21FA1CEA7538000C2396 /* CFBundleSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFBundleSPI.h; path = cf/CFBundleSPI.h; sourceTree = "<group>"; };
 		DCEE21FC1CEA7551000C2396 /* BlockObjCExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockObjCExceptions.h; sourceTree = "<group>"; };
 		DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockObjCExceptions.mm; sourceTree = "<group>"; };
@@ -773,6 +775,7 @@
 				A8A4725D151A825A004123FF /* Atomics.h */,
 				1469419A16EAB10A0024E146 /* AutodrainedPool.h */,
 				1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */,
+				DCEE22041CEB9869000C2396 /* BackwardsGraph.h */,
 				0FB14E18180FA218009B6B4D /* Bag.h */,
 				0FB14E1A1810E1DA009B6B4D /* BagToHashMap.h */,
 				A8A4725F151A825A004123FF /* Bitmap.h */,
@@ -1179,6 +1182,7 @@
 				A8A47391151A825B004123FF /* BumpPointerAllocator.h in Headers */,
 				EB95E1F0161A72410089A2F5 /* ByteOrder.h in Headers */,
 				A8A473AD151A825B004123FF /* cached-powers.h in Headers */,
+				DCEE22051CEB9869000C2396 /* BackwardsGraph.h in Headers */,
 				A8A4745E151A825B004123FF /* CharacterNames.h in Headers */,
 				A8A47394151A825B004123FF /* CheckedArithmetic.h in Headers */,
 				A8A47395151A825B004123FF /* CheckedBoolean.h in Headers */,

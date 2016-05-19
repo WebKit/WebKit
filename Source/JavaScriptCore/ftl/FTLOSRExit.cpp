@@ -92,7 +92,7 @@ RefPtr<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
 {
     unsigned index = state.jitCode->osrExit.size();
     OSRExit& exit = state.jitCode->osrExit.alloc(
-        this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic);
+        this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic, nodeOrigin.wasHoisted);
     RefPtr<OSRExitHandle> handle = adoptRef(new OSRExitHandle(index, exit));
     for (unsigned i = offset; i < params.size(); ++i)
         exit.m_valueReps.append(params[i]);
@@ -101,9 +101,9 @@ RefPtr<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
 }
 
 OSRExit::OSRExit(
-    OSRExitDescriptor* descriptor,
-    ExitKind exitKind, CodeOrigin codeOrigin, CodeOrigin codeOriginForExitProfile)
-    : OSRExitBase(exitKind, codeOrigin, codeOriginForExitProfile)
+    OSRExitDescriptor* descriptor, ExitKind exitKind, CodeOrigin codeOrigin,
+    CodeOrigin codeOriginForExitProfile, bool wasHoisted)
+    : OSRExitBase(exitKind, codeOrigin, codeOriginForExitProfile, wasHoisted)
     , m_descriptor(descriptor)
 {
 }

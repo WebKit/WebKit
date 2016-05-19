@@ -37,7 +37,7 @@
 namespace JSC { namespace DFG {
 
 OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAValueProfile valueProfile, SpeculativeJIT* jit, unsigned streamIndex, unsigned recoveryIndex)
-    : OSRExitBase(kind, jit->m_origin.forExit, jit->m_origin.semantic)
+    : OSRExitBase(kind, jit->m_origin.forExit, jit->m_origin.semantic, jit->m_origin.wasHoisted)
     , m_jsValueSource(jsValueSource)
     , m_valueProfile(valueProfile)
     , m_patchableCodeOffset(0)

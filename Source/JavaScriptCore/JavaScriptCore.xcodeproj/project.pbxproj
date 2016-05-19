@@ -1998,6 +1998,10 @@
 		DC605B601CE26EA700593718 /* ProfilerUID.h in Headers */ = {isa = PBXBuildFile; fileRef = DC605B5C1CE26E9800593718 /* ProfilerUID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC7997831CDE9FA0004D4A09 /* TagRegistersMode.h in Headers */ = {isa = PBXBuildFile; fileRef = DC7997821CDE9F9E004D4A09 /* TagRegistersMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC7997841CDE9FA2004D4A09 /* TagRegistersMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC7997811CDE9F9E004D4A09 /* TagRegistersMode.cpp */; };
+		DCEE22091CEB9895000C2396 /* DFGBackwardsCFG.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE22061CEB9890000C2396 /* DFGBackwardsCFG.h */; };
+		DCEE220A1CEB9895000C2396 /* DFGBackwardsDominators.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE22071CEB9890000C2396 /* DFGBackwardsDominators.h */; };
+		DCEE220B1CEB9895000C2396 /* DFGControlEquivalenceAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE22081CEB9890000C2396 /* DFGControlEquivalenceAnalysis.h */; };
+		DCEE220D1CEBAF75000C2396 /* DFGNullAbstractState.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE220C1CEBAF73000C2396 /* DFGNullAbstractState.h */; };
 		DCF3D5691CD2946D003D5C65 /* LazyClassStructure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCF3D5641CD29468003D5C65 /* LazyClassStructure.cpp */; };
 		DCF3D56A1CD29470003D5C65 /* LazyClassStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5651CD29468003D5C65 /* LazyClassStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DCF3D56B1CD29472003D5C65 /* LazyClassStructureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */; };
@@ -4216,6 +4220,10 @@
 		DC605B5C1CE26E9800593718 /* ProfilerUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerUID.h; path = profiler/ProfilerUID.h; sourceTree = "<group>"; };
 		DC7997811CDE9F9E004D4A09 /* TagRegistersMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagRegistersMode.cpp; sourceTree = "<group>"; };
 		DC7997821CDE9F9E004D4A09 /* TagRegistersMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagRegistersMode.h; sourceTree = "<group>"; };
+		DCEE22061CEB9890000C2396 /* DFGBackwardsCFG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBackwardsCFG.h; path = dfg/DFGBackwardsCFG.h; sourceTree = "<group>"; };
+		DCEE22071CEB9890000C2396 /* DFGBackwardsDominators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBackwardsDominators.h; path = dfg/DFGBackwardsDominators.h; sourceTree = "<group>"; };
+		DCEE22081CEB9890000C2396 /* DFGControlEquivalenceAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGControlEquivalenceAnalysis.h; path = dfg/DFGControlEquivalenceAnalysis.h; sourceTree = "<group>"; };
+		DCEE220C1CEBAF73000C2396 /* DFGNullAbstractState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNullAbstractState.h; path = dfg/DFGNullAbstractState.h; sourceTree = "<group>"; };
 		DCF3D5641CD29468003D5C65 /* LazyClassStructure.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LazyClassStructure.cpp; sourceTree = "<group>"; };
 		DCF3D5651CD29468003D5C65 /* LazyClassStructure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyClassStructure.h; sourceTree = "<group>"; };
 		DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyClassStructureInlines.h; sourceTree = "<group>"; };
@@ -6131,6 +6139,8 @@
 				0F666EC31835672B00D017F1 /* DFGAvailability.h */,
 				0F2B9CD619D0BA7D00B1D1B5 /* DFGAvailabilityMap.cpp */,
 				0F2B9CD719D0BA7D00B1D1B5 /* DFGAvailabilityMap.h */,
+				DCEE22061CEB9890000C2396 /* DFGBackwardsCFG.h */,
+				DCEE22071CEB9890000C2396 /* DFGBackwardsDominators.h */,
 				0F714CA116EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.cpp */,
 				0F714CA216EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.h */,
 				A7D89CE317A0B8CC00773AD8 /* DFGBasicBlock.cpp */,
@@ -6177,6 +6187,7 @@
 				0F3B3A18153E68EF003ED0FF /* DFGConstantFoldingPhase.h */,
 				0FED67B71B26256D0066CE15 /* DFGConstantHoistingPhase.cpp */,
 				0FED67B81B26256D0066CE15 /* DFGConstantHoistingPhase.h */,
+				DCEE22081CEB9890000C2396 /* DFGControlEquivalenceAnalysis.h */,
 				0FBE0F6B16C1DB010082C5E8 /* DFGCPSRethreadingPhase.cpp */,
 				0FBE0F6C16C1DB010082C5E8 /* DFGCPSRethreadingPhase.h */,
 				A7D89CE617A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.cpp */,
@@ -6288,6 +6299,7 @@
 				0F5D085C1B8CF99D001143B4 /* DFGNodeOrigin.cpp */,
 				0F300B7718AB051100A6D72E /* DFGNodeOrigin.h */,
 				0FA581B9150E952A00B9A2D9 /* DFGNodeType.h */,
+				DCEE220C1CEBAF73000C2396 /* DFGNullAbstractState.h */,
 				0F2B9CDA19D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.cpp */,
 				0F2B9CDB19D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.h */,
 				0F2B9CDC19D0BA7D00B1D1B5 /* DFGObjectMaterializationData.cpp */,
@@ -6955,6 +6967,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0FFA549816B8835300B3A982 /* A64DOpcode.h in Headers */,
+				DCEE220A1CEB9895000C2396 /* DFGBackwardsDominators.h in Headers */,
 				0F1FE51C1922A3BC006987C5 /* AbortReason.h in Headers */,
 				860161E30F3A83C100F84710 /* AbstractMacroAssembler.h in Headers */,
 				0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */,
@@ -6999,6 +7012,7 @@
 				BC18C3E50E16F5CD00B34460 /* APICast.h in Headers */,
 				FE3A06BE1C11041200390FDD /* JITLeftShiftGenerator.h in Headers */,
 				BCF605140E203EF800B9A64D /* ArgList.h in Headers */,
+				DCEE22091CEB9895000C2396 /* DFGBackwardsCFG.h in Headers */,
 				0FE050141AA9091100D33B33 /* ArgumentsMode.h in Headers */,
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
@@ -7912,6 +7926,7 @@
 				0FF729B9166AD360000F5BA3 /* ProfilerBytecodes.h in Headers */,
 				0F13912A16771C36009CCB07 /* ProfilerBytecodeSequence.h in Headers */,
 				0FB387901BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h in Headers */,
+				DCEE220D1CEBAF75000C2396 /* DFGNullAbstractState.h in Headers */,
 				0FF729BA166AD360000F5BA3 /* ProfilerCompilation.h in Headers */,
 				0FF729BB166AD360000F5BA3 /* ProfilerCompilationKind.h in Headers */,
 				0F4A38FA1C8E13DF00190318 /* SuperSampler.h in Headers */,
@@ -8056,6 +8071,7 @@
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				2684D4381C00161C0081D663 /* AirLiveness.h in Headers */,
 				0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */,
+				DCEE220B1CEB9895000C2396 /* DFGControlEquivalenceAnalysis.h in Headers */,
 				0F2D4DE919832DAC007D4B19 /* ToThisStatus.h in Headers */,
 				0F952ABD1B487A7700C367C5 /* TrackedReferences.h in Headers */,
 				0F2B670617B6B5AB00A7AE3F /* TypedArrayAdaptors.h in Headers */,

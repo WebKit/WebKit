@@ -1,3 +1,61 @@
+2016-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::LICMPhase shouldn't hoist type checks unless it knows that the check will succeed at the loop pre-header
+        https://bugs.webkit.org/show_bug.cgi?id=144527
+
+        Reviewed by Saam Barati.
+        
+        This adds an adaptor for graphs called BackwardsGraph. The WTF graph framework is based on
+        passing around a Graph template argument that follows the protocol shared by DFG::CFG,
+        B3::CFG, and Air::CFG. These graphs always have a single root node but may have many leaf
+        nodes. This new BackwardsGraph adaptor reverses the graph by creating a synthetic return
+        node that it uses as the root in the inverted graph. This currently may resort to some
+        heuristics in programs that have an infinite loop, but other than that, it'll work well in
+        the general case.
+        
+        This allows us to say Dominators<BackwardsGraph<some graph type>> as a way of computing
+        backwards dominators, which then allows us to easily answer control flow equivalence
+        queries.
+
+        * CMakeLists.txt:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BackwardsGraph.h: Added.
+        (WTF::BackwardsGraph::Node::Node):
+        (WTF::BackwardsGraph::Node::root):
+        (WTF::BackwardsGraph::Node::operator==):
+        (WTF::BackwardsGraph::Node::operator!=):
+        (WTF::BackwardsGraph::Node::operator bool):
+        (WTF::BackwardsGraph::Node::isRoot):
+        (WTF::BackwardsGraph::Node::node):
+        (WTF::BackwardsGraph::Set::Set):
+        (WTF::BackwardsGraph::Set::add):
+        (WTF::BackwardsGraph::Set::remove):
+        (WTF::BackwardsGraph::Set::contains):
+        (WTF::BackwardsGraph::Set::dump):
+        (WTF::BackwardsGraph::Map::Map):
+        (WTF::BackwardsGraph::Map::clear):
+        (WTF::BackwardsGraph::Map::size):
+        (WTF::BackwardsGraph::Map::operator[]):
+        (WTF::BackwardsGraph::BackwardsGraph):
+        (WTF::BackwardsGraph::root):
+        (WTF::BackwardsGraph::newMap):
+        (WTF::BackwardsGraph::successors):
+        (WTF::BackwardsGraph::predecessors):
+        (WTF::BackwardsGraph::index):
+        (WTF::BackwardsGraph::node):
+        (WTF::BackwardsGraph::numNodes):
+        (WTF::BackwardsGraph::dump):
+        * wtf/Dominators.h:
+        (WTF::Dominators::Dominators):
+        (WTF::Dominators::dump):
+        (WTF::Dominators::LengauerTarjan::computeDepthFirstPreNumbering):
+        * wtf/GraphNodeWorklist.h:
+        (WTF::GraphNodeWith::GraphNodeWith):
+        (WTF::GraphNodeWith::operator bool):
+        * wtf/StdLibExtras.h:
+        (WTF::callStatelessLambda):
+        (WTF::checkAndSet):
+
 2016-05-18  Saam barati  <sbarati@apple.com>
 
         StringBuilder::appendQuotedJSONString doesn't properly protect against the math it's doing. Make the math fit the assertion.

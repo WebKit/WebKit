@@ -40,9 +40,10 @@ struct Node;
 // and the FTL.
 
 struct OSRExitBase {
-    OSRExitBase(ExitKind kind, CodeOrigin origin, CodeOrigin originForProfile)
+    OSRExitBase(ExitKind kind, CodeOrigin origin, CodeOrigin originForProfile, bool wasHoisted)
         : m_kind(kind)
         , m_count(0)
+        , m_wasHoisted(wasHoisted)
         , m_codeOrigin(origin)
         , m_codeOriginForExitProfile(originForProfile)
     {
@@ -52,6 +53,7 @@ struct OSRExitBase {
     
     ExitKind m_kind;
     uint32_t m_count;
+    bool m_wasHoisted;
     
     CodeOrigin m_codeOrigin;
     CodeOrigin m_codeOriginForExitProfile;

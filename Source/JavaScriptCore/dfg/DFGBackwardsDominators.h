@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGOSRExitBase.h"
+#ifndef DFGBackwardsDominators_h
+#define DFGBackwardsDominators_h
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
-#include "DFGBasicBlock.h"
-#include "DFGNode.h"
-#include "InlineCallFrame.h"
-#include "JSCInlines.h"
+#include "DFGBackwardsCFG.h"
+#include <wtf/Dominators.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC { namespace DFG {
 
-void OSRExitBase::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
-{
-    CodeBlock* sourceProfiledCodeBlock =
-        baselineCodeBlockForOriginAndBaselineCodeBlock(
-            m_codeOriginForExitProfile, profiledCodeBlock);
-    if (sourceProfiledCodeBlock) {
-        FrequentExitSite site;
-        if (m_wasHoisted)
-            site = FrequentExitSite(HoistingFailed, jitType);
-        else
-            site = FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind, jitType);
-        sourceProfiledCodeBlock->addFrequentExitSite(site);
+class BackwardsDominators : public WTF::Dominators<BackwardsCFG> {
+    WTF_MAKE_NONCOPYABLE(BackwardsDominators);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    BackwardsDominators(Graph& graph)
+        : WTF::Dominators<BackwardsCFG>(graph.ensureBackwardsCFG())
+    {
     }
-}
+};
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
+#endif // DFGDominators_h

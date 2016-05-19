@@ -299,6 +299,15 @@ ResultType callStatelessLambda(ArgumentTypes&&... arguments)
     return (*bitwise_cast<Func*>(data))(std::forward<ArgumentTypes>(arguments)...);
 }
 
+template<typename T, typename U>
+bool checkAndSet(T& left, U right)
+{
+    if (left == right)
+        return false;
+    left = right;
+    return true;
+}
+
 } // namespace WTF
 
 // This version of placement new omits a 0 check.
@@ -409,17 +418,18 @@ ALWAYS_INLINE constexpr typename remove_reference<T>::type&& move(T&& value)
 
 using WTF::KB;
 using WTF::MB;
-using WTF::isCompilationThread;
-using WTF::insertIntoBoundedVector;
-using WTF::isPointerAligned;
-using WTF::is8ByteAligned;
-using WTF::binarySearch;
-using WTF::tryBinarySearch;
 using WTF::approximateBinarySearch;
+using WTF::binarySearch;
 using WTF::bitwise_cast;
-using WTF::safeCast;
-using WTF::isStatelessLambda;
 using WTF::callStatelessLambda;
+using WTF::checkAndSet;
+using WTF::insertIntoBoundedVector;
+using WTF::isCompilationThread;
+using WTF::isPointerAligned;
+using WTF::isStatelessLambda;
+using WTF::is8ByteAligned;
+using WTF::safeCast;
+using WTF::tryBinarySearch;
 
 #if COMPILER_SUPPORTS(CXX_USER_LITERALS)
 // We normally don't want to bring in entire std namespaces, but literals are an exception.

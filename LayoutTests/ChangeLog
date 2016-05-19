@@ -1,3 +1,25 @@
+2016-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::LICMPhase shouldn't hoist type checks unless it knows that the check will succeed at the loop pre-header
+        https://bugs.webkit.org/show_bug.cgi?id=144527
+
+        Reviewed by Saam Barati.
+        
+        Add tests for LICM hoisting things that would only exit if hoisted.
+
+        * js/regress/licm-dragons-expected.txt: Added.
+        * js/regress/licm-dragons-out-of-bounds-expected.txt: Added.
+        * js/regress/licm-dragons-out-of-bounds.html: Added.
+        * js/regress/licm-dragons-overflow-expected.txt: Added.
+        * js/regress/licm-dragons-overflow.html: Added.
+        * js/regress/licm-dragons.html: Added.
+        * js/regress/script-tests/licm-dragons-out-of-bounds.js: Added.
+        (foo):
+        * js/regress/script-tests/licm-dragons-overflow.js: Added.
+        (foo):
+        * js/regress/script-tests/licm-dragons.js: Added.
+        (foo):
+
 2016-05-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: use a consistent prefix for injected scripts

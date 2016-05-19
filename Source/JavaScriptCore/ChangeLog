@@ -1,3 +1,98 @@
+2016-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::LICMPhase shouldn't hoist type checks unless it knows that the check will succeed at the loop pre-header
+        https://bugs.webkit.org/show_bug.cgi?id=144527
+
+        Reviewed by Saam Barati.
+        
+        This adds a control flow equivalence analysis (called ControlEquivalenceAnalysis) based on
+        dominator analysis over the backwards CFG. Two basic blocks are control flow equivalent if
+        the execution of one implies that the other one must also execute. It means that the two
+        blocks' forward and backward dominance are reciprocated: (A dom B and B backdom A) or (B dom
+        A and A backdom B). LICM now uses it to become more conservative about hoisting checks, if
+        this has caused problems in the past. If we hoist something that may exit from a block that
+        was not control equivalent to the pre-header then it's possible that the node's speculation
+        will fail even though it wouldn't have if it wasn't hoisted. So, we flag these nodes'
+        origins as being "wasHoisted" and we track all of their exits as "HoistingFailed". LICM will
+        turn off such speculative hoisting if the CodeBlock from which we are hoisting had the
+        HoistingFailed exit kind.
+        
+        Note that this deliberately still allows us to hoist things that may exit even if they are
+        not control equivalent to the pre-header. This is necessary because the profitability of
+        hoisting is so huge in all of the cases that we're aware of that it's worth giving it a
+        shot.
+        
+        This is neutral on macrobenchmarks since none of the benchmarks we track have a hoistable
+        operation that would exit only if hoisted. I added microbenchmarks to illustrate the problem
+        and two of them speed up by ~40% while one of them is neutral (Int52 saves us from having
+        problems on that program even though LICM previously did the wrong thing).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * dfg/DFGAtTailAbstractState.h:
+        (JSC::DFG::AtTailAbstractState::operator bool):
+        (JSC::DFG::AtTailAbstractState::initializeTo):
+        * dfg/DFGBackwardsCFG.h: Added.
+        (JSC::DFG::BackwardsCFG::BackwardsCFG):
+        * dfg/DFGBackwardsDominators.h: Added.
+        (JSC::DFG::BackwardsDominators::BackwardsDominators):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::checkAndSet): Deleted.
+        * dfg/DFGControlEquivalenceAnalysis.h: Added.
+        (JSC::DFG::ControlEquivalenceAnalysis::ControlEquivalenceAnalysis):
+        (JSC::DFG::ControlEquivalenceAnalysis::dominatesEquivalently):
+        (JSC::DFG::ControlEquivalenceAnalysis::areEquivalent):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (JSC::DFG::Graph::invalidateCFG):
+        (JSC::DFG::Graph::substituteGetLocal):
+        (JSC::DFG::Graph::handleAssertionFailure):
+        (JSC::DFG::Graph::ensureDominators):
+        (JSC::DFG::Graph::ensurePrePostNumbering):
+        (JSC::DFG::Graph::ensureNaturalLoops):
+        (JSC::DFG::Graph::ensureBackwardsCFG):
+        (JSC::DFG::Graph::ensureBackwardsDominators):
+        (JSC::DFG::Graph::ensureControlEquivalenceAnalysis):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::hasDebuggerEnabled):
+        * dfg/DFGInPlaceAbstractState.h:
+        (JSC::DFG::InPlaceAbstractState::operator bool):
+        (JSC::DFG::InPlaceAbstractState::createValueForNode):
+        (JSC::DFG::InPlaceAbstractState::forNode):
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGMayExit.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGNodeOrigin.cpp:
+        (JSC::DFG::NodeOrigin::dump):
+        * dfg/DFGNodeOrigin.h:
+        (JSC::DFG::NodeOrigin::takeValidExit):
+        (JSC::DFG::NodeOrigin::withWasHoisted):
+        (JSC::DFG::NodeOrigin::forInsertingAfter):
+        * dfg/DFGNullAbstractState.h: Added.
+        (JSC::DFG::NullAbstractState::NullAbstractState):
+        (JSC::DFG::NullAbstractState::operator bool):
+        (JSC::DFG::NullAbstractState::forNode):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExitBase.cpp:
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::OSRExitBase):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        (JSC::FTL::OSRExit::OSRExit):
+        * ftl/FTLOSRExit.h:
+
 2016-05-19  Mark Lam  <mark.lam@apple.com>
 
         Code that null checks the VM pointer before any use should ref the VM.

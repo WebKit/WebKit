@@ -88,7 +88,7 @@ public:
     bool run()
     {
         ASSERT(m_graph.m_form == ThreadedCPS);
-
+        
         clearVariableVotes();
         identifyRedundantStructureChecks();
         disableHoistingForVariablesWithInsufficientVotes<StructureTypeCheck>();

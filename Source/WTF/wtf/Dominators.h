@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@ class Dominators {
 public:
     Dominators(Graph& graph, bool selfCheck = false)
         : m_graph(graph)
+        , m_data(graph.template newMap<BlockData>())
     {
         LengauerTarjan lengauerTarjan(m_graph);
         lengauerTarjan.compute();
@@ -67,7 +68,7 @@ public:
     
         // Plain stack-based worklist because we are guaranteed to see each block exactly once anyway.
         Vector<GraphNodeWithOrder<typename Graph::Node>> worklist;
-        worklist.append(GraphNodeWithOrder<typename Graph::Node>(m_graph.node(0), GraphVisitOrder::Pre));
+        worklist.append(GraphNodeWithOrder<typename Graph::Node>(m_graph.root(), GraphVisitOrder::Pre));
         while (!worklist.isEmpty()) {
             GraphNodeWithOrder<typename Graph::Node> item = worklist.takeLast();
             switch (item.order) {
@@ -279,10 +280,10 @@ public:
             if (m_data[blockIndex].preNumber == UINT_MAX)
                 continue;
             
-            out.print("    Block #", blockIndex, ": idom = ", pointerDump(m_data[blockIndex].idomParent), ", idomKids = [");
+            out.print("    Block #", blockIndex, ": idom = ", m_graph.dump(m_data[blockIndex].idomParent), ", idomKids = [");
             CommaPrinter comma;
             for (unsigned i = 0; i < m_data[blockIndex].idomKids.size(); ++i)
-                out.print(comma, *m_data[blockIndex].idomKids[i]);
+                out.print(comma, m_graph.dump(m_data[blockIndex].idomKids[i]));
             out.print("], pre/post = ", m_data[blockIndex].preNumber, "/", m_data[blockIndex].postNumber, "\n");
         }
     }
@@ -347,7 +348,7 @@ private:
             // of not noticing A->C until we're done processing B.
 
             ExtendedGraphNodeWorklist<typename Graph::Node, unsigned, typename Graph::Set> worklist;
-            worklist.push(m_graph.node(0), 0);
+            worklist.push(m_graph.root(), 0);
         
             while (GraphNodeWith<typename Graph::Node, unsigned> item = worklist.pop()) {
                 typename Graph::Node block = item.node;

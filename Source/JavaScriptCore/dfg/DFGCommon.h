@@ -255,15 +255,6 @@ enum class PlanStage {
     AfterFixup
 };
 
-template<typename T, typename U>
-bool checkAndSet(T& left, U right)
-{
-    if (left == right)
-        return false;
-    left = right;
-    return true;
-}
-
 // If possible, this will acquire a lock to make sure that if multiple threads
 // start crashing at the same time, you get coherent dump output. Use this only
 // when you're forcing a crash with diagnostics.

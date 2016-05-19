@@ -2,6 +2,7 @@ set(WTF_HEADERS
     ASCIICType.h
     Assertions.h
     Atomics.h
+    BackwardsGraph.h
     Bag.h
     BagToHashMap.h
     BitVector.h

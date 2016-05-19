@@ -83,7 +83,7 @@ struct GraphNodeWith {
     {
     }
 
-    explicit operator bool() const { return node; }
+    explicit operator bool() const { return !!node; }
     
     Node node;
     T data;

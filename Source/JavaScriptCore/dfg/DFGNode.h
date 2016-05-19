@@ -2299,7 +2299,7 @@ struct Node {
 
 private:
     unsigned m_op : 10; // real type is NodeType
-    unsigned m_flags : 22;
+    unsigned m_flags : 20;
     // The virtual register number (spill location) associated with this .
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).

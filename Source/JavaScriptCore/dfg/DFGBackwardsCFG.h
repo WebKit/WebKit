@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGOSRExitBase.h"
+#ifndef DFGBackwardsCFG_h
+#define DFGBackwardsCFG_h
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
-#include "DFGBasicBlock.h"
-#include "DFGNode.h"
-#include "InlineCallFrame.h"
-#include "JSCInlines.h"
+#include "DFGCFG.h"
+#include <wtf/BackwardsGraph.h>
 
 namespace JSC { namespace DFG {
 
-void OSRExitBase::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
-{
-    CodeBlock* sourceProfiledCodeBlock =
-        baselineCodeBlockForOriginAndBaselineCodeBlock(
-            m_codeOriginForExitProfile, profiledCodeBlock);
-    if (sourceProfiledCodeBlock) {
-        FrequentExitSite site;
-        if (m_wasHoisted)
-            site = FrequentExitSite(HoistingFailed, jitType);
-        else
-            site = FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind, jitType);
-        sourceProfiledCodeBlock->addFrequentExitSite(site);
+class BackwardsCFG : public BackwardsGraph<CFG> {
+    WTF_MAKE_NONCOPYABLE(BackwardsCFG);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    BackwardsCFG(Graph& graph)
+        : BackwardsGraph<CFG>(*graph.m_cfg)
+    {
     }
-}
+};
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGBackwardsCFG_h
 
