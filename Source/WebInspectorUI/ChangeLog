@@ -1,3 +1,54 @@
+2016-05-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: timelines should not update via requestAnimationFrame unless Web Inspector is visible
+        https://bugs.webkit.org/show_bug.cgi?id=157897
+        <rdar://problem/26330802>
+
+        Reviewed by Timothy Hatcher.
+
+        The timelines overview tries to animate using requestAnimationFrame, even if the
+        inspector frontend is not really visible. When it does this, requestAnimationFrame
+        simply stalls out until the inspector becomes visible. If a recording is started
+        while the inspector is not visible, then when it is shown again, the timeline will
+        start to animate from 0s instead of the current time. This happens because the
+        requestAnimationFrame was requested when the current time actually was 0, and it
+        finally executes some time later, when the current time is no longer accurate.
+        Since the timelines animate by calculating time elapsed since the previous frame
+        rather than using event timestamps, there is no way for the timelines to skip forward
+        in their animations in scenarios where the current time becomes arbitrarily skewed.
+
+        To fix this, consider the visibility state of the frontend as reported by the UIProcess.
+        Fire a global notification when visibility state changes, and start or stop updating
+        the current time as the frontend becomes visible or not shown.
+
+        This does not affect most other uses of requestAnimationFrame, which are used as
+        timers to call updateLayout at an appropriate time. The timelines case is different
+        because the current time is fixed prior to requesting an animation frame, and
+        later animation frames are only triggered by earlier requests, so there's nothing to
+        coalesce.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded): Initialize WebInspector.visible.
+
+        * UserInterface/Base/Object.js: Add new event.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setIsVisible): Added.
+
+        * UserInterface/Test/Test.js:
+        (WebInspector.updateVisibilityState): Add a stub.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype._inspectorVisibilityStateChanged):
+        If visibility state changes while capturing, then start or stop updating the
+        current time as appropriate. Otherwise, refresh the timelines with updated
+        times so that they know about the recording's updated start/current/end time.
+
+        (WebInspector.TimelineRecordingContentView.prototype._startUpdatingCurrentTime):
+        Bail out if the Web Inspector frontend is not visible to the user and won't be
+        able to service requestAnimationFrames immediately.
+
 2016-05-18  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Classes toggle wraps in some localizations

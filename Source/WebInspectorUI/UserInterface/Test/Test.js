@@ -95,6 +95,7 @@ WebInspector.UIString = (string) => string;
 // Add stubs that are called by the frontend API.
 WebInspector.updateDockedState = () => {};
 WebInspector.updateDockingAvailability = () => {};
+WebInspector.updateVisibilityState = () => {};
 
 window.InspectorTest = new FrontendTestHarness();
 

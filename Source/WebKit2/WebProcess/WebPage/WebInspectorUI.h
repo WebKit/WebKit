@@ -74,6 +74,8 @@ public:
     void setDockSide(DockSide);
     void setDockingUnavailable(bool);
 
+    void setIsVisible(bool);
+
     void didSave(const String& url);
     void didAppend(const String& url);
 
@@ -126,6 +128,7 @@ private:
     uint64_t m_inspectedPageIdentifier { 0 };
     bool m_underTest { false };
     bool m_dockingUnavailable { false };
+    bool m_isVisible { false };
     DockSide m_dockSide { DockSide::Undocked };
     unsigned m_inspectionLevel { 1 };
 

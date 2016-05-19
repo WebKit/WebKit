@@ -95,6 +95,7 @@ void WebInspectorUI::frontendLoaded()
     // cleared due to a reload, the dock state won't be resent from UIProcess.
     setDockingUnavailable(m_dockingUnavailable);
     setDockSide(m_dockSide);
+    setIsVisible(m_isVisible);
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::FrontendLoaded(), m_inspectedPageIdentifier);
 
@@ -178,8 +179,16 @@ void WebInspectorUI::setDockSide(DockSide side)
 
 void WebInspectorUI::setDockingUnavailable(bool unavailable)
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setDockingUnavailable"), unavailable);
     m_dockingUnavailable = unavailable;
+
+    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setDockingUnavailable"), unavailable);
+}
+
+void WebInspectorUI::setIsVisible(bool visible)
+{
+    m_isVisible = visible;
+
+    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setIsVisible"), visible);
 }
 
 void WebInspectorUI::changeAttachedWindowHeight(unsigned height)

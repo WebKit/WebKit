@@ -91,6 +91,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         WebInspector.TimelineView.addEventListener(WebInspector.TimelineView.Event.RecordWasFiltered, this._recordWasFiltered, this);
 
+        WebInspector.notifications.addEventListener(WebInspector.Notification.VisibilityStateDidChange, this._inspectorVisibilityStateChanged, this);
+
         for (let instrument of this._recording.instruments)
             this._instrumentAdded(instrument);
 
@@ -341,6 +343,33 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange);
     }
 
+    _inspectorVisibilityStateChanged()
+    {
+        if (WebInspector.timelineManager.activeRecording !== this._recording)
+            return;
+
+        // Stop updating since the results won't be rendered anyway.
+        if (!WebInspector.visible && this._updating) {
+            this._stopUpdatingCurrentTime();
+            return;
+        }
+
+        // Nothing else to do if the current time was not being updated.
+        if (!WebInspector.visible)
+            return;
+
+        let {startTime, endTime} = this.representedObject;
+        if (!WebInspector.timelineManager.isCapturing()) {
+            // Force the overview to render data from the entire recording.
+            // This is necessary if the recording was started when the inspector was not
+            // visible because the views were never updated with currentTime/endTime.
+            this._updateTimes(startTime, endTime, endTime);
+            return;
+        }
+
+        this._startUpdatingCurrentTime(endTime);
+    }
+
     _update(timestamp)
     {
         if (this._waitingToResetCurrentTime) {
@@ -401,9 +430,13 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (this._updating)
             return;
 
-        if (typeof startTime === "number")
+        // Don't update the current time if the Inspector is not visible, as the requestAnimationFrames won't work.
+        if (!WebInspector.visible)
+            return;
+
+        if (typeof startTime === "number" && !isNaN(this._currentTime))
             this._currentTime = startTime;
-        else if (!isNaN(this._currentTime)) {
+        else {
             // This happens when you stop and later restart recording.
             // COMPATIBILITY (iOS 9): Timeline.recordingStarted events did not include a timestamp.
             // We likely need to jump into the future to a better current time which we can

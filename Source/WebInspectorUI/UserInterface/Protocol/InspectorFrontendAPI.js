@@ -68,6 +68,11 @@ InspectorFrontendAPI = {
         WebInspector.updateDockedState(side);
     },
 
+    setIsVisible: function(visible)
+    {
+        WebInspector.updateVisibilityState(visible);
+    },
+
     showConsole: function()
     {
         WebInspector.showConsoleTab();

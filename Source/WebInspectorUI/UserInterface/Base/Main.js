@@ -176,6 +176,8 @@ WebInspector.loaded = function()
         y: 0
     };
 
+    this.visible = false;
+
     this._windowKeydownListeners = [];
 };
 
@@ -710,6 +712,12 @@ WebInspector.updateDockedState = function(side)
 
     this._updateDockNavigationItems();
 };
+
+WebInspector.updateVisibilityState = function(visible)
+{
+    this.visible = visible;
+    this.notifications.dispatchEventToListeners(WebInspector.Notification.VisibilityStateDidChange);
+}
 
 WebInspector.handlePossibleLinkClick = function(event, frame, alwaysOpenExternally)
 {

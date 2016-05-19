@@ -581,6 +581,7 @@ void WebInspectorProxy::open()
         return;
 
     m_isVisible = true;
+    m_inspectorPage->process().send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->pageID());
 
     platformOpen();
 }
@@ -590,12 +591,13 @@ void WebInspectorProxy::didClose()
     if (!m_inspectorPage)
         return;
 
-    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID());
-
     m_isVisible = false;
     m_isProfilingPage = false;
     m_showMessageSent = false;
     m_ignoreFirstBringToFront = false;
+
+    m_inspectorPage->process().send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->pageID());
+    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID());
 
     if (m_isAttached)
         platformDetach();
