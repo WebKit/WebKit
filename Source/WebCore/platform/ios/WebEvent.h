@@ -87,6 +87,7 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
     WebEventFlags _modifierFlags;
     BOOL _keyRepeating;
     NSUInteger _keyboardFlags;
+    NSString *_inputManagerHint;
     uint16_t _keyCode;
     BOOL _tabKey;
     
@@ -125,6 +126,7 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
                         gestureScale:(float)gestureScale
                      gestureRotation:(float)gestureRotation;
 
+// FIXME: this needs to be removed when UIKit adopts the other initializer.
 - (WebEvent *)initWithKeyEventType:(WebEventType)type
                          timeStamp:(CFTimeInterval)timeStamp
                         characters:(NSString *)characters
@@ -135,6 +137,17 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
                            keyCode:(uint16_t)keyCode
                           isTabKey:(BOOL)tabKey
                       characterSet:(WebEventCharacterSet)characterSet;
+
+- (WebEvent *)initWithKeyEventType:(WebEventType)type
+                         timeStamp:(CFTimeInterval)timeStamp
+                        characters:(NSString *)characters
+       charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers
+                         modifiers:(WebEventFlags)modifiers
+                       isRepeating:(BOOL)repeating
+                         withFlags:(NSUInteger)flags
+              withInputManagerHint:(NSString *)hint
+                           keyCode:(uint16_t)keyCode
+                          isTabKey:(BOOL)tabKey;
 
 @property(nonatomic, readonly) WebEventType type;
 @property(nonatomic, readonly) CFTimeInterval timestamp;
@@ -147,6 +160,7 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
 @property(nonatomic, readonly, retain) NSString *charactersIgnoringModifiers;
 @property(nonatomic, readonly) WebEventFlags modifierFlags;
 @property(nonatomic, readonly, getter = isKeyRepeating) BOOL keyRepeating;
+@property(nonatomic, readonly, retain) NSString *inputManagerHint;
 
 @property(nonatomic, readonly) NSUInteger keyboardFlags;
 @property(nonatomic, readonly) uint16_t keyCode;

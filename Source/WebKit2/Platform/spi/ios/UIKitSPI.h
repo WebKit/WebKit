@@ -223,6 +223,7 @@ typedef enum {
 + (UIKeyboardImpl *)sharedInstance;
 + (CGSize)defaultSizeForInterfaceOrientation:(UIInterfaceOrientation)orientation;
 - (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags;
+- (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags withInputManagerHint:(NSString *)hint;
 - (BOOL)autocorrectSpellingEnabled;
 - (void)deleteFromInput;
 - (void)deleteFromInputWithFlags:(NSUInteger)flags;

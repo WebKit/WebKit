@@ -1,3 +1,22 @@
+2016-05-16  Enrica Casucci  <enrica@apple.com>
+
+        No candidate punctuation when typing punctuation in WK2 text field.
+        https://bugs.webkit.org/show_bug.cgi?id=157773
+        rdar://problem/23084603
+
+        Reviewed by Sam Weinig.
+
+        We need to keep the inputManagerHint as part of the platform key event
+        information. Adding a new initializer for the task and a property to retrieve
+        the stored hint.
+
+        * platform/ios/WebEvent.h:
+        * platform/ios/WebEvent.mm:
+        (-[WebEvent initWithKeyEventType:timeStamp:characters:charactersIgnoringModifiers:modifiers:isRepeating:withFlags:keyCode:isTabKey:characterSet:]):
+        (-[WebEvent initWithKeyEventType:timeStamp:characters:charactersIgnoringModifiers:modifiers:isRepeating:withFlags:withInputManagerHint:keyCode:isTabKey:]):
+        (-[WebEvent dealloc]):
+        (-[WebEvent inputManagerHint]):
+
 2016-05-19  Brady Eidson  <beidson@apple.com>
 
         Finishing off: Modern IDB: Website data store management.

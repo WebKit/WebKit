@@ -229,6 +229,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 - (void)didHandleWebKeyEvent;
 - (void)didHandleWebKeyEvent:(WebIOSEvent *)event;
 - (void)deleteFromInputWithFlags:(NSUInteger)flags;
+- (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags withInputManagerHint:(NSString *)hint;
 @end
 
 @interface UIView (UIViewInternalHack)
@@ -3263,7 +3264,10 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
     case kWebSpaceKey:
         if (contentEditable && isCharEvent) {
-            [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
+            if ([keyboard respondsToSelector:@selector(addInputString:withFlags:withInputManagerHint:)])
+                [keyboard addInputString:event.characters withFlags:event.keyboardFlags withInputManagerHint:event.inputManagerHint];
+            else
+                [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
             return YES;
         }
         break;
@@ -3283,7 +3287,10 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
     default:
         if (contentEditable && isCharEvent) {
-            [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
+            if ([keyboard respondsToSelector:@selector(addInputString:withFlags:withInputManagerHint:)])
+                [keyboard addInputString:event.characters withFlags:event.keyboardFlags withInputManagerHint:event.inputManagerHint];
+            else
+                [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
             return YES;
         }
         break;

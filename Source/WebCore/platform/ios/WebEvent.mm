@@ -121,6 +121,7 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     return windowsKeyCodeForCharCode(charCode);
 }
 
+// FIXME: to be removed when the adoption of the new initializer is complete.
 - (WebEvent *)initWithKeyEventType:(WebEventType)type
                          timeStamp:(CFTimeInterval)timeStamp
                         characters:(NSString *)characters
@@ -163,10 +164,53 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     return self;
 }
 
+- (WebEvent *)initWithKeyEventType:(WebEventType)type
+                         timeStamp:(CFTimeInterval)timeStamp
+                        characters:(NSString *)characters
+       charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers
+                         modifiers:(WebEventFlags)modifiers
+                       isRepeating:(BOOL)repeating
+                         withFlags:(NSUInteger)flags
+              withInputManagerHint:(NSString *)hint
+                           keyCode:(uint16_t)keyCode
+                          isTabKey:(BOOL)tabKey
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    _type = type;
+    _timestamp = timeStamp;
+    
+    _characters = [characters retain];
+    _charactersIgnoringModifiers = [charactersIgnoringModifiers retain];
+    _modifierFlags = modifiers;
+    _keyRepeating = repeating;
+    _keyboardFlags = flags;
+    _inputManagerHint = [hint retain];
+    _tabKey = tabKey;
+    
+    if (keyCode)
+        _keyCode = windowsKeyCodeForKeyCode(keyCode);
+    
+    // NOTE: this preserves the original semantics which used the
+    // characters string for the keyCode. This should be changed in iOS 4.0 to
+    // allow the client to explicitly specify a keyCode, otherwise default to
+    // mapping the characters string to a keyCode.
+    // e.g. add an 'else' before this 'if'.
+    if ([charactersIgnoringModifiers length] == 1) {
+        unichar ch = [charactersIgnoringModifiers characterAtIndex:0];
+        _keyCode = windowsKeyCodeForCharCodeIOS(ch);
+    }
+    
+    return self;
+}
+
 - (void)dealloc
 {
     [_characters release];
     [_charactersIgnoringModifiers release];
+    [_inputManagerHint release];
 
     [_touchLocations release];
     [_touchIdentifiers release];
@@ -333,6 +377,11 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
 {
     ASSERT(_type == WebEventKeyDown || _type == WebEventKeyUp);
     return [[_charactersIgnoringModifiers retain] autorelease];
+}
+
+- (NSString *)inputManagerHint
+{
+    return [[_inputManagerHint retain] autorelease];
 }
 
 - (WebEventFlags)modifierFlags
