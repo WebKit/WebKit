@@ -63,8 +63,6 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
     if (s1 != s2) {
         if (s1.inheritedNotEqual(&s2))
             return Inherit;
-        if (s1.hasExplicitlyInheritedProperties() || s2.hasExplicitlyInheritedProperties())
-            return Inherit;
 
         return NoInherit;
     }

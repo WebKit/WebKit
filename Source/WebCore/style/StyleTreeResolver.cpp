@@ -32,6 +32,8 @@
 #include "ComposedTreeIterator.h"
 #include "ElementIterator.h"
 #include "HTMLBodyElement.h"
+#include "HTMLMeterElement.h"
+#include "HTMLProgressElement.h"
 #include "HTMLSlotElement.h"
 #include "LoaderStrategy.h"
 #include "MainFrame.h"
@@ -198,13 +200,15 @@ ElementUpdate TreeResolver::resolveElement(Element& element)
     if (element.styleChangeType() == SyntheticStyleChange)
         update.isSynthetic = true;
 
+    auto* existingStyle = element.renderStyle();
+
     if (&element == m_document.documentElement()) {
         m_documentElementStyle = RenderStyle::clonePtr(*update.style);
         scope().styleResolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 
         // If "rem" units are used anywhere in the document, and if the document element's font size changes, then force font updating
         // all the way down the tree. This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
-        if (m_document.authorStyleSheets().usesRemUnits() && update.change != NoChange && element.renderer() && element.renderer()->style().fontSize() != update.style->fontSize()) {
+        if (m_document.authorStyleSheets().usesRemUnits() && update.change != NoChange && existingStyle && existingStyle->fontSize() != update.style->fontSize()) {
             // Cached RenderStyles may depend on the rem units.
             scope().styleResolver.invalidateMatchedPropertiesCache();
             update.change = Force;
@@ -215,6 +219,12 @@ ElementUpdate TreeResolver::resolveElement(Element& element)
     // FIXME: We shouldn't mutate document when resolving style.
     if (&element == m_document.body())
         m_document.setTextColor(update.style->visitedDependentColor(CSSPropertyColor));
+
+    // FIXME: These elements should not change renderer based on appearance property.
+    if (is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element)) {
+        if (existingStyle && update.style->appearance() != existingStyle->appearance())
+            update.change = Detach;
+    }
 
     if (update.change != Detach && (parent().change == Force || element.styleChangeType() >= FullStyleChange))
         update.change = Force;
@@ -341,13 +351,41 @@ void TreeResolver::popParentsToDepth(unsigned depth)
         popParent();
 }
 
-static bool shouldResolvePseudoElement(PseudoElement* pseudoElement)
+static bool shouldResolvePseudoElement(const PseudoElement* pseudoElement)
 {
     if (!pseudoElement)
         return false;
-    bool needsStyleRecalc = pseudoElement->needsStyleRecalc();
-    pseudoElement->clearNeedsStyleRecalc();
-    return needsStyleRecalc;
+    return pseudoElement->needsStyleRecalc();
+}
+
+static bool shouldResolveElement(const Element& element, Style::Change parentChange)
+{
+    if (parentChange >= Inherit)
+        return true;
+    if (parentChange == NoInherit) {
+        auto* existingStyle = element.renderStyle();
+        if (existingStyle && existingStyle->hasExplicitlyInheritedProperties())
+            return true;
+    }
+    if (element.needsStyleRecalc())
+        return true;
+    if (element.hasDisplayContents())
+        return true;
+    if (shouldResolvePseudoElement(element.beforePseudoElement()))
+        return true;
+    if (shouldResolvePseudoElement(element.afterPseudoElement()))
+        return true;
+
+    return false;
+}
+
+static void clearNeedsStyleResolution(Element& element)
+{
+    element.clearNeedsStyleRecalc();
+    if (auto* before = element.beforePseudoElement())
+        before->clearNeedsStyleRecalc();
+    if (auto* after = element.afterPseudoElement())
+        after->clearNeedsStyleRecalc();
 }
 
 void TreeResolver::resolveComposedTree()
@@ -395,12 +433,10 @@ void TreeResolver::resolveComposedTree()
         if (element.needsStyleRecalc() || parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle)
             parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle = element.affectsNextSiblingElementStyle();
 
-        bool shouldResolveForPseudoElement = shouldResolvePseudoElement(element.beforePseudoElement()) || shouldResolvePseudoElement(element.afterPseudoElement());
+        auto* style = element.renderStyle();
+        auto change = NoChange;
 
-        const RenderStyle* style;
-        Change change;
-
-        bool shouldResolve = parent.change >= Inherit || element.needsStyleRecalc() || shouldResolveForPseudoElement || affectedByPreviousSibling || element.hasDisplayContents();
+        bool shouldResolve = shouldResolveElement(element, parent.change) || affectedByPreviousSibling;
         if (shouldResolve) {
 #if PLATFORM(IOS)
             CheckForVisibilityChangeOnRecalcStyle checkForVisibilityChange(&element, element.renderStyle());
@@ -428,10 +464,7 @@ void TreeResolver::resolveComposedTree()
             if (elementUpdate.style)
                 m_update->addElement(element, parent.element, WTFMove(elementUpdate));
 
-            element.clearNeedsStyleRecalc();
-        } else {
-            style = element.renderStyle();
-            change = NoChange;
+            clearNeedsStyleResolution(element);
         }
 
         if (!style) {

@@ -1255,7 +1255,7 @@ static bool isCacheableInMatchedPropertiesCache(const Element& element, const Re
     if (style->writingMode() != RenderStyle::initialWritingMode() || style->direction() != RenderStyle::initialDirection())
         return false;
     // The cache assumes static knowledge about which properties are inherited.
-    if (parentStyle->hasExplicitlyInheritedProperties())
+    if (style->hasExplicitlyInheritedProperties())
         return false;
     return true;
 }
@@ -1636,8 +1636,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
         return;
     }
 
-    if (isInherit && !state.parentStyle()->hasExplicitlyInheritedProperties() && !CSSProperty::isInheritedProperty(id))
-        const_cast<RenderStyle*>(state.parentStyle())->setHasExplicitlyInheritedProperties();
+    if (isInherit && !CSSProperty::isInheritedProperty(id))
+        state.style()->setHasExplicitlyInheritedProperties();
     
     if (id == CSSPropertyCustom) {
         CSSCustomPropertyValue* customProperty = &downcast<CSSCustomPropertyValue>(*valueToApply);

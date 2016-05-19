@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 235x18
             text run at (0,0) width 235: "Removing appearance dynamically: "
-          RenderProgress {PROGRESS} at (234,1) size 161x17
+          RenderBlock {PROGRESS} at (234,1) size 161x17
             RenderProgress {DIV} at (0,0) size 160x16
               RenderBlock {DIV} at (0,0) size 160x16 [bgcolor=#808080]
                 RenderBlock {DIV} at (0,0) size 112x16 [bgcolor=#008000]
