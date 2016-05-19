@@ -7,6 +7,8 @@
         testRunner.dumpAsText()
         testRunner.waitUntilDone();
     }
+    if (window.performance)
+        console.log("current entries: " + performance.getEntriesByType('resource').length);
 </script>
 <script src="../../resources/js-test-pre.js"></script>
 <img src="../../resources/square100.png">
@@ -15,6 +17,7 @@
     var runTest = function() {
         var resources = performance.getEntriesByType('resource');
         for (var i = 0; i < resources.length; ++i) {
+            console.log("entry: " + resources[i].name);
             if (resources[i].name.indexOf("square") != -1)
                 ++foundResource;
         };

@@ -1,3 +1,15 @@
+2016-05-19  Yoav Weiss  <yoav@yoav.ws>
+
+        REGRESSION (r200887): LayoutTest http/tests/performance/performance-resource-timing-cached-entries.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=157816
+
+        Reviewed by Alexey Proskuryakov.
+
+        Mark the test as flaky, and add console logs to try to figure out the cause for flakiness.
+
+        * TestExpectations: Mark the test as flaky.
+        * http/tests/performance/performance-resource-timing-cached-entries.html: Add prints to better identify the flakiness root cause.
+
 2016-05-18  Jer Noble  <jer.noble@apple.com>
 
         webkitEnterFullscreen() does not require a user gesture when RequireUserGestureForAudioRateChange is set.
@@ -2677,7 +2689,7 @@
         Unreviewed test gardening.
 
         Remove failure expectation for passing tests, move some to more specific ports, and remove expectations
-		for tests that are no longer in the tree.
+        for tests that are no longer in the tree.
 
         * platform/ios-simulator-wk1/TestExpectations:
         * platform/ios-simulator-wk2/TestExpectations:
@@ -4215,9 +4227,9 @@
 
         Unreviewed test gardening.
 
-		I evaluated all of the unexpected passes from ios-simulator-wk2 and removed failure
-		expectations where appropriate. Some of the tests only pass on wk2, so some expectations
-		were moved to the ios-simulator-wk1 file.
+        I evaluated all of the unexpected passes from ios-simulator-wk2 and removed failure
+        expectations where appropriate. Some of the tests only pass on wk2, so some expectations
+        were moved to the ios-simulator-wk1 file.
 
         * platform/ios-simulator-wk1/TestExpectations:
         * platform/ios-simulator-wk2/TestExpectations:
