@@ -1,5 +1,18 @@
 2016-05-19  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: REGRESSION: Search magnifying glass shifted in Search tab input field
+        https://bugs.webkit.org/show_bug.cgi?id=157913
+        rdar://problem/26374424
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search > .search-bar > input[type="search"]): Removed padding-left.
+        (.sidebar > .panel.navigation.search > .search-bar > input[type="search"]::-webkit-search-results-button):
+        Added. Add margin-right here instead.
+
+2016-05-19  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Timelines "Edit" button should be right-aligned
         https://bugs.webkit.org/show_bug.cgi?id=157909
         rdar://problem/26373969

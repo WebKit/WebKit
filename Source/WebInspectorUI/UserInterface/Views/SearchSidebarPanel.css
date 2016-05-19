@@ -46,5 +46,8 @@
     flex: 1;
 
     margin: 3px 6px;
-    padding-left: 4px;
+}
+
+.sidebar > .panel.navigation.search > .search-bar > input[type="search"]::-webkit-search-results-button {
+    margin-right: 4px;
 }
