@@ -205,6 +205,8 @@ private:
     LayoutRect collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>*);
 
     void node() const = delete;
+    void container() const = delete; // Use parent() instead.
+    void container(const RenderLayerModelObject&, bool&) const = delete; // Use parent() instead.
 
     // We put the bitfield first to minimize padding on 64-bit.
     unsigned m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.

@@ -1278,7 +1278,7 @@ LayoutRect RenderInline::computeRectForRepaint(const LayoutRect& rect, const Ren
         return adjustedRect;
 
     bool containerSkipped;
-    RenderElement* container = this->container(repaintContainer, &containerSkipped);
+    RenderElement* container = this->container(repaintContainer, containerSkipped);
     if (!container)
         return adjustedRect;
 
@@ -1342,7 +1342,7 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintCont
     }
 
     bool containerSkipped;
-    RenderElement* container = this->container(repaintContainer, &containerSkipped);
+    RenderElement* container = this->container(repaintContainer, containerSkipped);
     if (!container)
         return;
 
@@ -1380,7 +1380,7 @@ const RenderObject* RenderInline::pushMappingToContainer(const RenderLayerModelO
     ASSERT(ancestorToStopAt != this);
 
     bool ancestorSkipped;
-    RenderElement* container = this->container(ancestorToStopAt, &ancestorSkipped);
+    RenderElement* container = this->container(ancestorToStopAt, ancestorSkipped);
     if (!container)
         return nullptr;
 

@@ -1,3 +1,32 @@
+2016-05-19  Zalan Bujtas  <zalan@apple.com>
+
+        Cleanup RenderObject::container()
+        https://bugs.webkit.org/show_bug.cgi?id=157914
+
+        Reviewed by David Hyatt.
+
+        1. Now we have a dedicated method for the optional, repaintContainerSkipped branch. The container finding
+        logic is moved to a static inline function so the compiler can optimize out the repaintContainerSkipped branches, when
+        container() is called instead of container(repaintContainer, isRepaintContainerSkipped).
+        2. Use helper functions like canContainAbsolutelyPositionedObjects()
+        3. Remove stale comments.
+
+        No behaviour change.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::pushMappingToContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeRectForRepaint):
+        (WebCore::RenderInline::mapLocalToContainer):
+        (WebCore::RenderInline::pushMappingToContainer):
+        * rendering/RenderObject.cpp:
+        (WebCore::containerForElement):
+        (WebCore::RenderObject::container):
+        * rendering/RenderObject.h:
+        * rendering/RenderText.h:
+
 2016-05-16  Enrica Casucci  <enrica@apple.com>
 
         No candidate punctuation when typing punctuation in WK2 text field.

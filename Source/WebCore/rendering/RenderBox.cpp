@@ -2004,7 +2004,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     }
 
     bool containerSkipped;
-    RenderElement* container = this->container(repaintContainer, &containerSkipped);
+    RenderElement* container = this->container(repaintContainer, containerSkipped);
     if (!container)
         return;
 
@@ -2052,7 +2052,7 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     ASSERT(ancestorToStopAt != this);
 
     bool ancestorSkipped;
-    RenderElement* container = this->container(ancestorToStopAt, &ancestorSkipped);
+    RenderElement* container = this->container(ancestorToStopAt, ancestorSkipped);
     if (!container)
         return nullptr;
 
@@ -2241,7 +2241,7 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     }
 
     bool containerSkipped;
-    auto* renderer = container(repaintContainer, &containerSkipped);
+    auto* renderer = container(repaintContainer, containerSkipped);
     if (!renderer)
         return adjustedRect;
     
