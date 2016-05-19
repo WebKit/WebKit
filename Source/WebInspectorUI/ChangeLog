@@ -1,5 +1,24 @@
 2016-05-18  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: unable to switch between navigation tree outlines using up/down arrow keys
+        https://bugs.webkit.org/show_bug.cgi?id=157713
+        <rdar://problem/26287086>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        Listen for TreeOutline focus changes, and associate trees and their DOM
+        elements for quick lookup when handling focus events.
+
+        (WebInspector.NavigationSidebarPanel.prototype._contentTreeOutlineDidFocus):
+        (WebInspector.NavigationSidebarPanel.prototype._contentTreeOutlineTreeSelectionDidChange):
+        When selecting a tree element causes an element in a different tree outline
+        to be deselected, remember the old selection so that it can be restored
+        the next time the tree outline get the focus.
+
+2016-05-18  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Checkbox disappears when unchecking CSS property with value containing a semicolon
         https://bugs.webkit.org/show_bug.cgi?id=157862
         <rdar://problem/16214480>

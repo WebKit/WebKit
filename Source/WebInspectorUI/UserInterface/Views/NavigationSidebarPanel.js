@@ -153,6 +153,10 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         contentTreeOutline.hidden = !dontHideByDefault;
         contentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName);
         contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._contentTreeOutlineTreeSelectionDidChange, this);
+        contentTreeOutline.element.addEventListener("focus", this._contentTreeOutlineDidFocus, this);
+
+        // FIXME Remove ContentTreeOutlineSymbol once <https://webkit.org/b/157825> is finished.
+        contentTreeOutline.element[WebInspector.NavigationSidebarPanel.ContentTreeOutlineSymbol] = contentTreeOutline;
 
         this.contentView.element.appendChild(contentTreeOutline.element);
 
@@ -646,22 +650,35 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this.soon._updateContentOverflowShadowVisibility();
     }
 
-    _contentTreeOutlineTreeSelectionDidChange(event)
+    _contentTreeOutlineDidFocus(event)
     {
-        let treeElement = event.data.selectedElement;
-        if (!treeElement)
+        let treeOutline = event.target[WebInspector.NavigationSidebarPanel.ContentTreeOutlineSymbol];
+        if (!treeOutline)
             return;
 
-        this._selectedContentTreeOutline = treeElement.treeOutline;
+        let previousSelectedTreeElement = treeOutline[WebInspector.NavigationSidebarPanel.PreviousSelectedTreeElementSymbol];
+        if (!previousSelectedTreeElement)
+            return;
 
-        // Deselect any other tree elements to prevent two selections in the sidebar.
-        for (let treeOutline of this.visibleContentTreeOutlines) {
-            if (treeOutline === this._selectedContentTreeOutline)
-                continue;
+        previousSelectedTreeElement.select();
+    }
 
-            if (treeOutline.selectedTreeElement)
-                treeOutline.selectedTreeElement.deselect();
-        }
+    _contentTreeOutlineTreeSelectionDidChange(event)
+    {
+        let {selectedElement, deselectedElement} = event.data;
+        if (deselectedElement)
+            deselectedElement.treeOutline[WebInspector.NavigationSidebarPanel.PreviousSelectedTreeElementSymbol] = deselectedElement;
+
+        if (!selectedElement)
+            return;
+
+        // Prevent two selections in the sidebar, if the selected tree outline is changing.
+        let treeOutline = selectedElement.treeOutline;
+        if (this._selectedContentTreeOutline && this._selectedContentTreeOutline !== treeOutline)
+            this._selectedContentTreeOutline.selectedTreeElement.deselect();
+
+        treeOutline[WebInspector.NavigationSidebarPanel.PreviousSelectedTreeElementSymbol] = null;
+        this._selectedContentTreeOutline = treeOutline;
     }
 
     _checkForStaleResourcesIfNeeded()
@@ -790,6 +807,8 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
     }
 };
 
+WebInspector.NavigationSidebarPanel.ContentTreeOutlineSymbol = Symbol("content-tree-outline");
+WebInspector.NavigationSidebarPanel.PreviousSelectedTreeElementSymbol = Symbol("previous-selected-tree-element");
 WebInspector.NavigationSidebarPanel.SuppressFilteringSymbol = Symbol("suppress-filtering");
 WebInspector.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol = Symbol("was-expanded-during-filtering");
 
