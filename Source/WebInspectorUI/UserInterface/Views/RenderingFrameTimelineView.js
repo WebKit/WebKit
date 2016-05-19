@@ -293,7 +293,7 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
 
     _scopeBarSelectionDidChange()
     {
-        this.filterDidChange();
+        this._dataGrid.filterDidChange();
     }
 };
 
