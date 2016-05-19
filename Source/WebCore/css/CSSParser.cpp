@@ -13456,7 +13456,7 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
 }
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-Ref<StyleRuleBase> CSSParser::createViewportRule()
+Ref<StyleRuleViewport> CSSParser::createViewportRule()
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
 

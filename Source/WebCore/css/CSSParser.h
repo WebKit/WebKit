@@ -67,6 +67,7 @@ class StyleKeyframe;
 class StylePropertyShorthand;
 class StyleRuleBase;
 class StyleRuleKeyframes;
+class StyleRuleViewport;
 class StyleKeyframe;
 class StyleSheetContents;
 class StyledElement;
@@ -462,7 +463,7 @@ public:
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     void markViewportRuleBodyStart() { m_inViewport = true; }
     void markViewportRuleBodyEnd() { m_inViewport = false; }
-    Ref<StyleRuleBase> createViewportRule();
+    Ref<StyleRuleViewport> createViewportRule();
 #endif
 
     Ref<CSSPrimitiveValue> createPrimitiveNumericValue(ValueWithCalculation&);

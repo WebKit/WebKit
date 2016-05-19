@@ -1,3 +1,14 @@
+2016-05-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the build with GCC 4.9 in CSSParser.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=157887
+
+        Reviewed by Chris Dumez.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createViewportRule):
+        * css/CSSParser.h:
+
 2016-05-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: use a consistent prefix for injected scripts
