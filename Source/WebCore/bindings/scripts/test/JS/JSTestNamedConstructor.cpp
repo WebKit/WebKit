@@ -100,7 +100,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::
         setDOMException(state, ec);
         return JSValue::encode(JSValue());
     }
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), WTFMove(object))));
+    return JSValue::encode(asObject(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object))));
 }
 
 template<> JSValue JSTestNamedConstructorNamedConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

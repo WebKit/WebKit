@@ -474,6 +474,7 @@ sub ShouldGenerateToJSDeclaration
     return 0 if $interface->extendedAttributes->{"CustomProxyToJSObject"};
     return 1 if (!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"} or $interface->extendedAttributes->{"CustomToJSObject"});
     return 1 if $interface->parent && $interface->parent eq "EventTarget";
+    return 1 if $interface->extendedAttributes->{"Constructor"} or $interface->extendedAttributes->{"NamedConstructor"};
     return 0;
 }
 
@@ -5154,7 +5155,7 @@ END
                  push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
 
-            push(@$outputArray, "    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), WTFMove(object))));\n");
+            push(@$outputArray, "    return JSValue::encode(asObject(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object))));\n");
             push(@$outputArray, "}\n\n");
         }
     }

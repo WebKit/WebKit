@@ -1,3 +1,49 @@
+2016-05-19  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Make binding DOM constructor use toJSNewlyCreated instead of toJS
+        https://bugs.webkit.org/show_bug.cgi?id=157832
+
+        Reviewed by Chris Dumez.
+
+        Using toJSNewlyCreated in generated constructors instead of toJS.
+        Enabling generation of toJS and toJSNewlyCreated for constructable DOM objects.
+        This ensures that toJSNewlyCreated call in constructor will compile properly.
+
+        Updating some custom code to implement toJSNewlyCreated.
+
+        Covered by existing tests.
+
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldGenerateToJSDeclaration):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::construct):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorNamedConstructor::construct):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::construct):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestNode.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors2):
+        (WebCore::constructJSTestOverloadedConstructors3):
+        (WebCore::constructJSTestOverloadedConstructors4):
+        (WebCore::constructJSTestOverloadedConstructors5):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+
 2016-05-18  Zalan Bujtas  <zalan@apple.com>
 
         Make LayoutUnit::operator bool() explicit.
