@@ -1,3 +1,22 @@
+2016-05-19  Jer Noble  <jer.noble@apple.com>
+
+        [IOS] Add setting to allow playback to continue inline after exiting fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=157912
+
+        Reviewed by Eric Carlson.
+
+        Add a preference to control whether media should be allowed to continue playing inline when
+        exiting fullscreen.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences allowsInlineMediaPlaybackAfterFullscreen]):
+        (-[WebPreferences setAllowsInlineMediaPlaybackAfterFullscreen:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2016-05-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Make TestRunner.clearAllDatabases also delete IndexedDB databases (once doing so is supported).

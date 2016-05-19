@@ -71,6 +71,7 @@
 #define DEFAULT_SHOULD_RESPECT_IMAGE_ORIENTATION true
 #define DEFAULT_PASSWORD_ECHO_ENABLED true
 #define DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK false
+#define DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK_AFTER_FULLSCREEN true
 #define DEFAULT_INLINE_MEDIA_PLAYBACK_REQUIRES_PLAYS_INLINE_ATTRIBUTE true
 #define DEFAULT_INVISIBLE_AUTOPLAY_NOT_PERMITTED true
 #define DEFAULT_MEDIA_DATA_LOADS_AUTOMATICALLY false
@@ -86,6 +87,7 @@
 #define DEFAULT_SHOULD_RESPECT_IMAGE_ORIENTATION false
 #define DEFAULT_PASSWORD_ECHO_ENABLED false
 #define DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK true
+#define DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK_AFTER_FULLSCREEN false
 #define DEFAULT_INLINE_MEDIA_PLAYBACK_REQUIRES_PLAYS_INLINE_ATTRIBUTE false
 #define DEFAULT_INVISIBLE_AUTOPLAY_NOT_PERMITTED false
 #define DEFAULT_MEDIA_DATA_LOADS_AUTOMATICALLY true
@@ -155,6 +157,7 @@
     macro(RequiresUserGestureForAudioPlayback, requiresUserGestureForAudioPlayback, Bool, bool, DEFAULT_REQUIRES_USER_GESTURE_FOR_AUDIO_PLAYBACK, "", "") \
     macro(MainContentUserGestureOverrideEnabled, mainContentUserGestureOverrideEnabled, Bool, bool, false, "", "") \
     macro(AllowsInlineMediaPlayback, allowsInlineMediaPlayback, Bool, bool, DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK, "", "") \
+    macro(AllowsInlineMediaPlaybackAfterFullscreen, allowsInlineMediaPlaybackAfterFullscreen, Bool, bool, DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK_AFTER_FULLSCREEN, "", "") \
     macro(InlineMediaPlaybackRequiresPlaysInlineAttribute, inlineMediaPlaybackRequiresPlaysInlineAttribute, Bool, bool, DEFAULT_INLINE_MEDIA_PLAYBACK_REQUIRES_PLAYS_INLINE_ATTRIBUTE, "", "") \
     macro(InvisibleAutoplayNotPermitted, invisibleAutoplayNotPermitted, Bool, bool, DEFAULT_INVISIBLE_AUTOPLAY_NOT_PERMITTED, "", "") \
     macro(MediaDataLoadsAutomatically, mediaDataLoadsAutomatically, Bool, bool, DEFAULT_MEDIA_DATA_LOADS_AUTOMATICALLY, "", "") \

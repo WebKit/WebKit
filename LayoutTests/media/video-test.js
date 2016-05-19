@@ -396,7 +396,10 @@ function runWithKeyDown(fn)
 
     function thunk() {
         document.removeEventListener(eventName, thunk, false);
-        fn();
+        if (typeof fn === 'function')
+            fn();
+        else
+            run(fn);
     }
     document.addEventListener(eventName, thunk, false);
 

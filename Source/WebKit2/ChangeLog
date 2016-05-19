@@ -1,3 +1,38 @@
+2016-05-19  Jer Noble  <jer.noble@apple.com>
+
+        [IOS] Add setting to allow playback to continue inline after exiting fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=157912
+
+        Reviewed by Eric Carlson.
+
+        Add a preference and configuration property to control whether media should be allowed to continue
+        playing inline when exiting fullscreen.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _allowsInlineMediaPlaybackAfterFullscreen]):
+        (-[WKWebViewConfiguration _setAllowsInlineMediaPlaybackAfterFullscreen:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (disableScreenUpdates):
+        (enableScreenUpdates):
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-05-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: timelines should not update via requestAnimationFrame unless Web Inspector is visible

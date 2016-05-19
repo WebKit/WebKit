@@ -1,3 +1,18 @@
+2016-05-19  Jer Noble  <jer.noble@apple.com>
+
+        [IOS] Add setting to allow playback to continue inline after exiting fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=157912
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-fullscreen-return-to-inline.html
+
+        Allow playback to continue when exiting fullscreen via settings.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        * page/Settings.in:
+
 2016-05-19  Dave Hyatt  <hyatt@apple.com>
 
         Fix childrenInline() check in markAllDescendantsWithFloatsForLayout()

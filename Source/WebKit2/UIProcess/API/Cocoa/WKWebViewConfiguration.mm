@@ -108,6 +108,7 @@ private:
     BOOL _alwaysRunsAtForegroundPriority;
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
+    BOOL _allowsInlineMediaPlaybackAfterFullscreen;
 #endif
 
     BOOL _invisibleAutoplayNotPermitted;
@@ -135,6 +136,7 @@ private:
     _allowsPictureInPictureMediaPlayback = YES;
     _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
+    _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = NO;
     if (linkedOnOrAfter(WebKit::LibraryVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
@@ -203,6 +205,7 @@ private:
 #if PLATFORM(IOS)
     [coder encodeInteger:self.dataDetectorTypes forKey:@"dataDetectorTypes"];
     [coder encodeBool:self.allowsInlineMediaPlayback forKey:@"allowsInlineMediaPlayback"];
+    [coder encodeBool:self._allowsInlineMediaPlaybackAfterFullscreen forKey:@"allowsInlineMediaPlaybackAfterFullscreen"];
     [coder encodeBool:self.mediaTypesRequiringUserActionForPlayback forKey:@"mediaTypesRequiringUserActionForPlayback"];
     [coder encodeInteger:self.selectionGranularity forKey:@"selectionGranularity"];
     [coder encodeBool:self.allowsPictureInPictureMediaPlayback forKey:@"allowsPictureInPictureMediaPlayback"];
@@ -228,6 +231,7 @@ private:
 #if PLATFORM(IOS)
     self.dataDetectorTypes = [coder decodeIntegerForKey:@"dataDetectorTypes"];
     self.allowsInlineMediaPlayback = [coder decodeBoolForKey:@"allowsInlineMediaPlayback"];
+    self._allowsInlineMediaPlaybackAfterFullscreen = [coder decodeBoolForKey:@"allowsInlineMediaPlaybackAfterFullscreen"];
     self.mediaTypesRequiringUserActionForPlayback = [coder decodeBoolForKey:@"mediaTypesRequiringUserActionForPlayback"];
     self.selectionGranularity = static_cast<WKSelectionGranularity>([coder decodeIntegerForKey:@"selectionGranularity"]);
     self.allowsPictureInPictureMediaPlayback = [coder decodeBoolForKey:@"allowsPictureInPictureMediaPlayback"];
@@ -275,6 +279,7 @@ private:
 
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
+    configuration->_allowsInlineMediaPlaybackAfterFullscreen = self->_allowsInlineMediaPlaybackAfterFullscreen;
     configuration->_inlineMediaPlaybackRequiresPlaysInlineAttribute = self->_inlineMediaPlaybackRequiresPlaysInlineAttribute;
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
     configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
@@ -562,6 +567,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)requires
 {
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = requires;
+}
+
+- (BOOL)_allowsInlineMediaPlaybackAfterFullscreen
+{
+    return _allowsInlineMediaPlaybackAfterFullscreen;
+}
+
+- (void)_setAllowsInlineMediaPlaybackAfterFullscreen:(BOOL)allows
+{
+    _allowsInlineMediaPlaybackAfterFullscreen = allows;
 }
 #endif // PLATFORM(IOS)
 
