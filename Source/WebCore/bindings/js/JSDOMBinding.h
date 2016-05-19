@@ -154,9 +154,7 @@ bool clearInlineCachedWrapper(DOMWrapperWorld&, void*, JSDOMObject*);
 bool clearInlineCachedWrapper(DOMWrapperWorld&, ScriptWrappable*, JSDOMObject* wrapper);
 bool clearInlineCachedWrapper(DOMWrapperWorld&, JSC::ArrayBuffer*, JSC::JSArrayBuffer* wrapper);
 
-template<typename DOMClass, typename T> Ref<DOMClass> inline castDOMObjectForWrapperCreation(T& object) { return Ref<DOMClass>(*static_cast<DOMClass*>(&object)); }
 template<typename DOMClass, typename T> Ref<DOMClass> inline castDOMObjectForWrapperCreation(Ref<T>&& object) { return static_reference_cast<DOMClass>(WTFMove(object)); }
-
 #define CREATE_DOM_WRAPPER(globalObject, className, object) createWrapper<JS##className, className>(globalObject, castDOMObjectForWrapperCreation<className>(object))
 
 template<typename DOMClass> JSC::JSObject* getCachedWrapper(DOMWrapperWorld&, DOMClass&);
