@@ -44,7 +44,7 @@ namespace JSC {
 // EncodedJSValue in JSVALUE32_64 is a 64-bit integer. When being compiled in ARM EABI, it must be aligned even-numbered register (r0, r2 or [sp]).
 // To avoid assemblies from using wrong registers, let's occupy r1 or r3 with a dummy argument when necessary.
 #if (COMPILER_SUPPORTS(EABI) && CPU(ARM)) || CPU(MIPS)
-#define EABI_32BIT_DUMMY_ARG      TrustedImm32(0),
+#define EABI_32BIT_DUMMY_ARG      CCallHelpers::TrustedImm32(0),
 #else
 #define EABI_32BIT_DUMMY_ARG
 #endif
@@ -53,7 +53,7 @@ namespace JSC {
 // To avoid this, let's occupy the 4th argument register (r7) with a dummy argument when necessary. This must only be done when there
 // is no other 32-bit value argument behind this 64-bit JSValue.
 #if CPU(SH4)
-#define SH4_32BIT_DUMMY_ARG      TrustedImm32(0),
+#define SH4_32BIT_DUMMY_ARG      CCallHelpers::TrustedImm32(0),
 #else
 #define SH4_32BIT_DUMMY_ARG
 #endif

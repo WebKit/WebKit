@@ -1,3 +1,13 @@
+2016-05-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Remove redefined macro after r200606
+        https://bugs.webkit.org/show_bug.cgi?id=157890
+
+        Reviewed by Michael Saboff.
+
+        * bytecode/PolymorphicAccess.cpp:
+        * jit/CCallHelpers.h:
+
 2016-05-18  Saam barati  <sbarati@apple.com>
 
         Function with default parameter values that are arrow functions that capture this isn't working
