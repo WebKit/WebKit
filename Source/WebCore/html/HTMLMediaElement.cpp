@@ -500,9 +500,6 @@ HTMLMediaElement::~HTMLMediaElement()
     setShouldDelayLoadEvent(false);
     unregisterWithDocument(document());
 
-    if (document().page())
-        document().page()->chrome().client().clearPlaybackControlsManager(*this);
-
 #if ENABLE(VIDEO_TRACK)
     if (m_audioTracks) {
         m_audioTracks->clearElement();
@@ -562,6 +559,9 @@ HTMLMediaElement::~HTMLMediaElement()
     m_pauseAfterDetachedTaskQueue.close();
 
     m_completelyLoaded = true;
+
+    m_player = nullptr;
+    updatePlaybackControlsManager();
 }
 
 void HTMLMediaElement::registerWithDocument(Document& document)
@@ -3353,6 +3353,8 @@ void HTMLMediaElement::setMuted(bool muted)
 #endif
     }
 #endif
+
+    updatePlaybackControlsManager();
 }
 
 void HTMLMediaElement::togglePlayState()
@@ -4835,8 +4837,7 @@ void HTMLMediaElement::updatePlayState()
     LOG(Media, "HTMLMediaElement::updatePlayState(%p) - shouldBePlaying = %s, playerPaused = %s", this, boolString(shouldBePlaying), boolString(playerPaused));
 
     if (shouldBePlaying) {
-        if (document().page() && m_mediaSession->canControlControlsManager(*this))
-            document().page()->chrome().client().setUpPlaybackControlsManager(*this);
+        updatePlaybackControlsManager();
 
         setDisplayMode(Video);
         invalidateCachedTime();
@@ -4870,8 +4871,7 @@ void HTMLMediaElement::updatePlayState()
         startPlaybackProgressTimer();
         setPlaying(true);
     } else {
-        if (endedPlayback() && document().page())
-            document().page()->chrome().client().clearPlaybackControlsManager(*this);
+        updatePlaybackControlsManager();
 
         if (!playerPaused)
             m_player->pause();
@@ -5008,10 +5008,8 @@ void HTMLMediaElement::clearMediaPlayer(DelayedActionType flags)
         document().removeMediaCanStartListener(this);
     }
 
-    if (document().page())
-        document().page()->chrome().client().clearPlaybackControlsManager(*this);
-
     m_player = nullptr;
+    updatePlaybackControlsManager();
 
     stopPeriodicTimers();
     m_pendingActionTimer.stop();
@@ -5047,9 +5045,7 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
     if (m_videoFullscreenMode != VideoFullscreenModeNone)
         exitFullscreen();
 
-    if (document().page())
-        document().page()->chrome().client().clearPlaybackControlsManager(*this);
-
+    updatePlaybackControlsManager();
     m_inActiveDocument = false;
 
     // Stop the playback without generating events
@@ -5890,11 +5886,8 @@ void HTMLMediaElement::createMediaPlayer()
 #if ENABLE(VIDEO_TRACK)
     forgetResourceSpecificTracks();
 #endif
-
-    if (document().page())
-        document().page()->chrome().client().clearPlaybackControlsManager(*this);
-
     m_player = std::make_unique<MediaPlayer>(static_cast<MediaPlayerClient&>(*this));
+    updatePlaybackControlsManager();
 
 #if ENABLE(WEB_AUDIO)
     if (m_audioSourceNode) {
@@ -7017,6 +7010,18 @@ void HTMLMediaElement::updateShouldPlay()
         pauseInternal();
     else if (canTransitionFromAutoplayToPlay())
         play();
+}
+
+void HTMLMediaElement::updatePlaybackControlsManager()
+{
+    Page* page = document().page();
+    if (!page)
+        return;
+
+    if (m_mediaSession->canControlControlsManager(*this))
+        page->chrome().client().setUpPlaybackControlsManager(*this);
+    else
+        page->chrome().client().clearPlaybackControlsManager(*this);
 }
 
 }

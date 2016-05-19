@@ -216,6 +216,15 @@ bool MediaElementSession::canControlControlsManager(const HTMLMediaElement& elem
     if (!element.hasAudio())
         return false;
 
+    if (element.muted())
+        return false;
+
+    if (element.ended())
+        return false;
+
+    if (element.document().activeDOMObjectsAreSuspended())
+        return false;
+
     if (!playbackPermitted(element))
         return false;
 

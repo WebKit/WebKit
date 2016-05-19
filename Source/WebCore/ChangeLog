@@ -1,3 +1,32 @@
+2016-05-18  Jer Noble  <jer.noble@apple.com>
+
+        Playback controls should not be active for muted media elements.
+        https://bugs.webkit.org/show_bug.cgi?id=157876
+        <rdar://problem/26007525>
+
+        Reviewed by Eric Carlson.
+
+        Consolidate calls to setUpPlaybackControlsManager() and clearUpPlaybackControlsManager()
+        into a new method, updatePlaybackControlsManager(), which checks with the MediaElementSession
+        whether the media element can currently control the playback controls manager, and call
+        one or the other method conditionally.
+
+        That means more logic needs to be moved into MediaElementSession::canControlControlsManager(),
+        such as whether the element is muted(), has ended(), or whether the element's document has
+        been suspended.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        (WebCore::HTMLMediaElement::updatePlaybackControlsManager):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canControlControlsManager):
+
 2016-05-19  Chris Dumez  <cdumez@apple.com>
 
         Kill JSDOMBindings' createNewWrapper()

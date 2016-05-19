@@ -784,6 +784,7 @@ private:
     void updateShouldAutoplay();
 
     void pauseAfterDetachedTask();
+    void updatePlaybackControlsManager();
 
     Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
