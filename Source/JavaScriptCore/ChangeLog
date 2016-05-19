@@ -1,3 +1,17 @@
+2016-05-19  Guillaume Emont  <guijemont@igalia.com>
+
+        JSC: DFG::SpeculativeJIT::compile special case for MIPS for PutByValWithThis
+        https://bugs.webkit.org/show_bug.cgi?id=157741
+
+        Reviewed by Saam Barati.
+
+        The PutByValWithThis case needs a special case for MIPS because we
+        don't have enough registers. The special case needs to be different
+        from the x86 one because we have a different ABI.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2016-05-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: use a consistent prefix for injected scripts
