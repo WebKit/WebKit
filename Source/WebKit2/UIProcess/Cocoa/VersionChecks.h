@@ -39,6 +39,7 @@ namespace WebKit {
 */
 enum class LibraryVersion {
     FirstWithNetworkCache = 0x02590116, // 601.1.22
+    FirstWithMediaTypesRequiringUserActionForPlayback = 0x025A0121, // 602.1.33
 };
 
 bool linkedOnOrAfter(LibraryVersion);
