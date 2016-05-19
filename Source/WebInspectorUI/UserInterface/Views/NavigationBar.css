@@ -43,6 +43,6 @@
     align-items: center;
     flex-wrap: wrap;
 
-    height: 28px;
+    height: auto;
     outline: none;
 }

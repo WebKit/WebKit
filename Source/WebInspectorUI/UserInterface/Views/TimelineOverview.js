@@ -64,6 +64,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
         let instrumentsNavigationBar = new WebInspector.NavigationBar;
         instrumentsNavigationBar.element.classList.add("timelines");
+        instrumentsNavigationBar.addNavigationItem(new WebInspector.FlexibleSpaceNavigationItem);
         instrumentsNavigationBar.addNavigationItem(this._editInstrumentsButton);
         this.addSubview(instrumentsNavigationBar);
 
