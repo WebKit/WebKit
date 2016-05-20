@@ -2937,6 +2937,7 @@ fast/table/collapsed-border-with-odd-pixel-width.html [ ImageOnlyFailure ]
 # Uncategorized reftest failures, uncovered once we made reftests work. Needs triage.
 css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 fast/backgrounds/background-image-large-float-intrinsic-ratio.html [ ImageOnlyFailure ]
 fast/block/positioning/fixed-container-with-relative-parent.html [ ImageOnlyFailure ]
 fast/borders/border-image-fill-inline-no-border.html [ ImageOnlyFailure ]

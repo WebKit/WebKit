@@ -1,5 +1,13 @@
 2016-05-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Test gardening after r201203
+
+        Unreviewed.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-05-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Add John Daggett's font variant synthesis test
         https://bugs.webkit.org/show_bug.cgi?id=157935
         <rdar://problem/24133521>
