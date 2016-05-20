@@ -68,6 +68,7 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case Clz:
     case Trunc:
     case IToD:
+    case IToF:
     case FloatToDouble:
     case DoubleToFloat:
     case Check:

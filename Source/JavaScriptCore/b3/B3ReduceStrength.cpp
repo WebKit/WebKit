@@ -1324,6 +1324,24 @@ private:
             }
             break;
 
+        case IToD:
+            // Turn this: IToD(constant)
+            // Into this: ConstDouble(constant)
+            if (Value* constant = m_value->child(0)->iToDConstant(m_proc)) {
+                replaceWithNewValue(constant);
+                break;
+            }
+            break;
+
+        case IToF:
+            // Turn this: IToF(constant)
+            // Into this: ConstFloat(constant)
+            if (Value* constant = m_value->child(0)->iToFConstant(m_proc)) {
+                replaceWithNewValue(constant);
+                break;
+            }
+            break;
+
         case FloatToDouble:
             // Turn this: FloatToDouble(constant)
             // Into this: ConstDouble(constant)

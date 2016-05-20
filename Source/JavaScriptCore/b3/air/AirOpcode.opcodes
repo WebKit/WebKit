@@ -480,6 +480,15 @@ ConvertInt32ToDouble U:G:32, D:F:64
 
 64: ConvertInt64ToDouble U:G:64, D:F:64
     Tmp, Tmp
+    x86_64: Addr, Tmp
+
+ConvertInt32ToFloat U:G:32, D:F:32
+    Tmp, Tmp
+    x86: Addr, Tmp
+
+64: ConvertInt64ToFloat U:G:64, D:F:32
+    Tmp, Tmp
+    x86_64: Addr, Tmp
 
 CountLeadingZeros32 U:G:32, ZD:G:32
     Tmp, Tmp

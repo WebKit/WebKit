@@ -267,6 +267,16 @@ Value* Value::bitwiseCastConstant(Procedure&) const
     return nullptr;
 }
 
+Value* Value::iToDConstant(Procedure&) const
+{
+    return nullptr;
+}
+
+Value* Value::iToFConstant(Procedure&) const
+{
+    return nullptr;
+}
+
 Value* Value::doubleToFloatConstant(Procedure&) const
 {
     return nullptr;
@@ -368,6 +378,7 @@ bool Value::isRounded() const
     case Floor:
     case Ceil:
     case IToD:
+    case IToF:
         return true;
 
     case ConstDouble: {
@@ -470,6 +481,7 @@ Effects Value::effects() const
     case ZExt32:
     case Trunc:
     case IToD:
+    case IToF:
     case FloatToDouble:
     case DoubleToFloat:
     case Equal:
@@ -553,6 +565,7 @@ ValueKey Value::key() const
     case Clz:
     case Trunc:
     case IToD:
+    case IToF:
     case FloatToDouble:
     case DoubleToFloat:
     case Check:
@@ -690,6 +703,7 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case IToD:
         return Double;
     case DoubleToFloat:
+    case IToF:
         return Float;
     case BitwiseCast:
         switch (firstChild->type()) {

@@ -150,6 +150,7 @@ Vector<Operand<FloatType>> floatingPointOperands()
 static Vector<Int64Operand> int64Operands()
 {
     Vector<Int64Operand> operands;
+    operands.append({ "0", 0 });
     operands.append({ "1", 1 });
     operands.append({ "-1", -1 });
     operands.append({ "42", 42 });
@@ -4753,6 +4754,201 @@ void testFroundMem(double value)
     root->appendNew<ControlValue>(proc, Return, Origin(), asDouble);
 
     CHECK(isIdentical(compileAndRun<double>(proc, &value), static_cast<double>(static_cast<float>(value))));
+}
+
+void testIToD64Arg()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* src = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* srcAsDouble = root->appendNew<Value>(proc, IToD, Origin(), src);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsDouble);
+
+    auto code = compile(proc);
+    for (auto testValue : int64Operands())
+        CHECK(isIdentical(invoke<double>(*code, testValue.value), static_cast<double>(testValue.value)));
+}
+
+void testIToF64Arg()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* src = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* srcAsFloat = root->appendNew<Value>(proc, IToF, Origin(), src);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsFloat);
+
+    auto code = compile(proc);
+    for (auto testValue : int64Operands())
+        CHECK(isIdentical(invoke<float>(*code, testValue.value), static_cast<float>(testValue.value)));
+}
+
+void testIToD32Arg()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* src = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* srcAsDouble = root->appendNew<Value>(proc, IToD, Origin(), src);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsDouble);
+
+    auto code = compile(proc);
+    for (auto testValue : int32Operands())
+        CHECK(isIdentical(invoke<double>(*code, testValue.value), static_cast<double>(testValue.value)));
+}
+
+void testIToF32Arg()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* src = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* srcAsFloat = root->appendNew<Value>(proc, IToF, Origin(), src);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsFloat);
+
+    auto code = compile(proc);
+    for (auto testValue : int32Operands())
+        CHECK(isIdentical(invoke<float>(*code, testValue.value), static_cast<float>(testValue.value)));
+}
+
+void testIToD64Mem()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadedSrc = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* srcAsDouble = root->appendNew<Value>(proc, IToD, Origin(), loadedSrc);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsDouble);
+
+    auto code = compile(proc);
+    int64_t inMemoryValue;
+    for (auto testValue : int64Operands()) {
+        inMemoryValue = testValue.value;
+        CHECK(isIdentical(invoke<double>(*code, &inMemoryValue), static_cast<double>(testValue.value)));
+        CHECK(inMemoryValue == testValue.value);
+    }
+}
+
+void testIToF64Mem()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadedSrc = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* srcAsFloat = root->appendNew<Value>(proc, IToF, Origin(), loadedSrc);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsFloat);
+
+    auto code = compile(proc);
+    int64_t inMemoryValue;
+    for (auto testValue : int64Operands()) {
+        inMemoryValue = testValue.value;
+        CHECK(isIdentical(invoke<float>(*code, &inMemoryValue), static_cast<float>(testValue.value)));
+        CHECK(inMemoryValue == testValue.value);
+    }
+}
+
+void testIToD32Mem()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadedSrc = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* srcAsDouble = root->appendNew<Value>(proc, IToD, Origin(), loadedSrc);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsDouble);
+
+    auto code = compile(proc);
+    int32_t inMemoryValue;
+    for (auto testValue : int32Operands()) {
+        inMemoryValue = testValue.value;
+        CHECK(isIdentical(invoke<double>(*code, &inMemoryValue), static_cast<double>(testValue.value)));
+        CHECK(inMemoryValue == testValue.value);
+    }
+}
+
+void testIToF32Mem()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadedSrc = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* srcAsFloat = root->appendNew<Value>(proc, IToF, Origin(), loadedSrc);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsFloat);
+
+    auto code = compile(proc);
+    int32_t inMemoryValue;
+    for (auto testValue : int32Operands()) {
+        inMemoryValue = testValue.value;
+        CHECK(isIdentical(invoke<float>(*code, &inMemoryValue), static_cast<float>(testValue.value)));
+        CHECK(inMemoryValue == testValue.value);
+    }
+}
+
+void testIToD64Imm(int64_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* src = root->appendNew<Const64Value>(proc, Origin(), value);
+    Value* srcAsFloatingPoint = root->appendNew<Value>(proc, IToD, Origin(), src);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsFloatingPoint);
+    CHECK(isIdentical(compileAndRun<double>(proc), static_cast<double>(value)));
+}
+
+void testIToF64Imm(int64_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* src = root->appendNew<Const64Value>(proc, Origin(), value);
+    Value* srcAsFloatingPoint = root->appendNew<Value>(proc, IToF, Origin(), src);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsFloatingPoint);
+    CHECK(isIdentical(compileAndRun<float>(proc), static_cast<float>(value)));
+}
+
+void testIToD32Imm(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* src = root->appendNew<Const32Value>(proc, Origin(), value);
+    Value* srcAsFloatingPoint = root->appendNew<Value>(proc, IToD, Origin(), src);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsFloatingPoint);
+    CHECK(isIdentical(compileAndRun<double>(proc), static_cast<double>(value)));
+}
+
+void testIToF32Imm(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* src = root->appendNew<Const32Value>(proc, Origin(), value);
+    Value* srcAsFloatingPoint = root->appendNew<Value>(proc, IToF, Origin(), src);
+    root->appendNew<ControlValue>(proc, Return, Origin(), srcAsFloatingPoint);
+    CHECK(isIdentical(compileAndRun<float>(proc), static_cast<float>(value)));
+}
+
+void testIToDReducedToIToF64Arg()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* src = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* srcAsDouble = root->appendNew<Value>(proc, IToD, Origin(), src);
+    Value* floatResult = root->appendNew<Value>(proc, DoubleToFloat, Origin(), srcAsDouble);
+    root->appendNew<ControlValue>(proc, Return, Origin(), floatResult);
+
+    auto code = compile(proc);
+    for (auto testValue : int64Operands())
+        CHECK(isIdentical(invoke<float>(*code, testValue.value), static_cast<float>(testValue.value)));
+}
+
+void testIToDReducedToIToF32Arg()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* src = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* srcAsDouble = root->appendNew<Value>(proc, IToD, Origin(), src);
+    Value* floatResult = root->appendNew<Value>(proc, DoubleToFloat, Origin(), srcAsDouble);
+    root->appendNew<ControlValue>(proc, Return, Origin(), floatResult);
+
+    auto code = compile(proc);
+    for (auto testValue : int32Operands())
+        CHECK(isIdentical(invoke<float>(*code, testValue.value), static_cast<float>(testValue.value)));
 }
 
 void testStore32(int value)
@@ -12539,6 +12735,21 @@ void run(const char* filter)
     RUN_UNARY(testLoadFloatConvertDoubleConvertFloatStoreFloat, floatingPointOperands<float>());
     RUN_UNARY(testFroundArg, floatingPointOperands<double>());
     RUN_UNARY(testFroundMem, floatingPointOperands<double>());
+
+    RUN(testIToD64Arg());
+    RUN(testIToF64Arg());
+    RUN(testIToD32Arg());
+    RUN(testIToF32Arg());
+    RUN(testIToD64Mem());
+    RUN(testIToF64Mem());
+    RUN(testIToD32Mem());
+    RUN(testIToF32Mem());
+    RUN_UNARY(testIToD64Imm, int64Operands());
+    RUN_UNARY(testIToF64Imm, int64Operands());
+    RUN_UNARY(testIToD32Imm, int32Operands());
+    RUN_UNARY(testIToF32Imm, int32Operands());
+    RUN(testIToDReducedToIToF64Arg());
+    RUN(testIToDReducedToIToF32Arg());
 
     RUN(testStore32(44));
     RUN(testStoreConstant(49));

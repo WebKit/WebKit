@@ -133,6 +133,8 @@ public:
     virtual Value* sShrConstant(Procedure&, const Value* other) const;
     virtual Value* zShrConstant(Procedure&, const Value* other) const;
     virtual Value* bitwiseCastConstant(Procedure&) const;
+    virtual Value* iToDConstant(Procedure&) const;
+    virtual Value* iToFConstant(Procedure&) const;
     virtual Value* doubleToFloatConstant(Procedure&) const;
     virtual Value* floatToDoubleConstant(Procedure&) const;
     virtual Value* absConstant(Procedure&) const;

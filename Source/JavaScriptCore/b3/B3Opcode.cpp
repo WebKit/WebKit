@@ -188,6 +188,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case IToD:
         out.print("IToD");
         return;
+    case IToF:
+        out.print("IToF");
+        return;
     case FloatToDouble:
         out.print("FloatToDouble");
         return;

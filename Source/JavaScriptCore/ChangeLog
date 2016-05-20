@@ -1,5 +1,87 @@
 2016-05-19  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Improve int->float conversion in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=157936
+
+        Reviewed by Filip Pizlo.
+
+        The integer -> floating point lowering was very barebone.
+
+        For example, converting a constant integer to double
+        was doing:
+            mov #const, %eax
+            xor %xmm0, %xmm0
+            cvtsi2sd %eax, %xmm0
+
+        Conversion from integer to float was also missing.
+        We were always converting to double then rounding the double
+        to float.
+
+        This patch adds the basics:
+        -Constant folding.
+        -Integer to Float opcode.
+        -Reducing int->double to int->float when used by DoubleToFloat.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::convertInt32ToFloat):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::convertInt64ToDouble):
+        (JSC::MacroAssemblerX86_64::convertInt64ToFloat):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cvtsi2ss_rr):
+        (JSC::X86Assembler::cvtsi2ssq_rr):
+        (JSC::X86Assembler::cvtsi2sdq_mr):
+        (JSC::X86Assembler::cvtsi2ssq_mr):
+        (JSC::X86Assembler::cvtsi2ss_mr):
+        * assembler/MacroAssemblerARM64.h:
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::iToDConstant):
+        (JSC::B3::Const32Value::iToFConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::iToDConstant):
+        (JSC::B3::Const64Value::iToFConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::iToDConstant):
+        (JSC::B3::Value::iToFConstant):
+        (JSC::B3::Value::isRounded):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::materialize):
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::int64Operands):
+        (JSC::B3::testIToD64Arg):
+        (JSC::B3::testIToF64Arg):
+        (JSC::B3::testIToD32Arg):
+        (JSC::B3::testIToF32Arg):
+        (JSC::B3::testIToD64Mem):
+        (JSC::B3::testIToF64Mem):
+        (JSC::B3::testIToD32Mem):
+        (JSC::B3::testIToF32Mem):
+        (JSC::B3::testIToD64Imm):
+        (JSC::B3::testIToF64Imm):
+        (JSC::B3::testIToD32Imm):
+        (JSC::B3::testIToF32Imm):
+        (JSC::B3::testIToDReducedToIToF64Arg):
+        (JSC::B3::testIToDReducedToIToF32Arg):
+        (JSC::B3::run):
+
+2016-05-19  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] FTL can crash on stack overflow
         https://bugs.webkit.org/show_bug.cgi?id=157881
         rdar://problem/24665964

@@ -2150,6 +2150,11 @@ private:
             return;
         }
 
+        case IToF: {
+            appendUnOp<ConvertInt32ToFloat, ConvertInt64ToFloat>(m_value->child(0));
+            return;
+        }
+
         case B3::CCall: {
             CCallValue* cCall = m_value->as<CCallValue>();
 

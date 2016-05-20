@@ -1543,6 +1543,18 @@ public:
         m_assembler.cvtsi2sd_mr(src.offset, src.base, dest);
     }
 
+    void convertInt32ToFloat(RegisterID src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.cvtsi2ss_rr(src, dest);
+    }
+
+    void convertInt32ToFloat(Address src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.cvtsi2ss_mr(src.offset, src.base, dest);
+    }
+
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
     {
         ASSERT(isSSE2Present());

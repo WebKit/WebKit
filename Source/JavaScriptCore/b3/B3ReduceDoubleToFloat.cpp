@@ -311,6 +311,13 @@ private:
                     }
                     break;
                 }
+                case IToD: {
+                    Value* iToF = insertionSet.insert<Value>(index, IToF, value->origin(), value->child(0));
+                    value->setType(Float);
+                    value->replaceWithIdentity(iToF);
+                    m_convertedValue.add(value);
+                    break;
+                }
                 case FloatToDouble:
                     // This happens if we round twice.
                     // Typically, this is indirect through Phi-Upsilons.

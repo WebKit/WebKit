@@ -1233,6 +1233,21 @@ public:
         m_assembler.cvtsi2sdq_rr(src, dest);
     }
 
+    void convertInt64ToDouble(Address src, FPRegisterID dest)
+    {
+        m_assembler.cvtsi2sdq_mr(src.offset, src.base, dest);
+    }
+
+    void convertInt64ToFloat(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.cvtsi2ssq_rr(src, dest);
+    }
+
+    void convertInt64ToFloat(Address src, FPRegisterID dest)
+    {
+        m_assembler.cvtsi2ssq_mr(src.offset, src.base, dest);
+    }
+
     static bool supportsFloatingPoint() { return true; }
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }

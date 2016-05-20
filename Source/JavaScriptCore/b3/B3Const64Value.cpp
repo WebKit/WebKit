@@ -166,6 +166,16 @@ Value* Const64Value::bitwiseCastConstant(Procedure& proc) const
     return proc.add<ConstDoubleValue>(origin(), bitwise_cast<double>(m_value));
 }
 
+Value* Const64Value::iToDConstant(Procedure& proc) const
+{
+    return proc.add<ConstDoubleValue>(origin(), static_cast<double>(m_value));
+}
+
+Value* Const64Value::iToFConstant(Procedure& proc) const
+{
+    return proc.add<ConstFloatValue>(origin(), static_cast<float>(m_value));
+}
+
 TriState Const64Value::equalConstant(const Value* other) const
 {
     if (!other->hasInt64())
