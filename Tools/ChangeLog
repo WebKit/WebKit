@@ -1,3 +1,14 @@
+2016-05-19  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Add JSON results to 32-bit and CLoop JSC tests
+        https://bugs.webkit.org/show_bug.cgi?id=157929
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunLLINTCLoopTests): Change command-line parameters to run-javascriptcore-tests in order to get JSON output.
+        (Run32bitJSCTests): Change command-line parameters to run-javascriptcore-tests in order to get JSON output.
+
 2016-05-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Typo fix in import-test262-tests
