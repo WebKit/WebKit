@@ -211,7 +211,7 @@ if ($runTestAPI) {
 
     if (defined($jsonFileName)) {
         my $apiStatus = ($exitStatus == 0)? JSON::PP::true: JSON::PP::false;
-        $jsonData{'apiTestResult'} = $apiStatus;
+        $jsonData{'allApiTestsPassed'} = $apiStatus;
     }
 
     if ($testapiResult && $failFast) {
@@ -349,7 +349,7 @@ sub runJSCStressTests
     print "\n";
 
     if (defined($jsonFileName)) {
-        $jsonData{'failures'} = \@jscStressFailList;
+        $jsonData{'stressTestFailures'} = \@jscStressFailList;
     }
 
     writeJsonDataIfApplicable();

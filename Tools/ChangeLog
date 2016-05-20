@@ -1,3 +1,15 @@
+2016-05-20  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Use clearer names for JSON output of javascriptcore test results
+        https://bugs.webkit.org/show_bug.cgi?id=157921
+
+        Reviewed by Alexey Proskuryakov.
+
+        "failures" and "apiTestResult" were somewhat ambiguous names. 
+        
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): "failures" -> "stressFailures", "apiTestResult" -> "allApiTestsPassed".
+
 2016-05-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix API test introduced in r201213.
