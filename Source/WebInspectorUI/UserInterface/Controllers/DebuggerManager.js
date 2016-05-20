@@ -521,7 +521,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this._activeCallFrame = this._callFrames[0];
 
         if (!this._activeCallFrame) {
-            console.warn("We should always have one call frame. This could indicate we are hitting an exception or debugger statement in an internal injected script.");
+            // This indicates we were pausing in internal scripts only (Injected Scripts, built-ins).
+            // Just resume and skip past this pause.
+            DebuggerAgent.resume();
             this._didResumeInternal();
             return;
         }
@@ -916,7 +918,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
     _didResumeInternal()
     {
-        if (!this._activeCallFrame)
+        if (!this._paused)
             return;
 
         if (this._delayedResumeTimeout) {

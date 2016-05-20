@@ -1,5 +1,31 @@
 2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Can't resume Debugger after breaking on exception in Promise
+        https://bugs.webkit.org/show_bug.cgi?id=157240
+        <rdar://problem/26030890>
+
+        Reviewed by Timothy Hatcher.
+
+        If we pause but have no source code to show we paused in purely internal
+        code. In such cases we were attempting to resume without actually
+        telling the backend to resume, so the backend and frontend were out of
+        sync. The frontend thinking it is "paused" without an activeCallFrame
+        and the backend actually being paused.
+
+        This change more gracefully handles this situation. It actually resumes
+        both the frontend and the backend.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        Resume the backend and the frontend.
+
+        (WebInspector.DebuggerManager.prototype._didResumeInternal):
+        Don't look at the active call frame, look at the paused state.
+        This may issue a Resumed event without actually triggering a
+        Paused event if this was the only pause, but that is harmless.
+
+2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Main Resource with <scripts> not showing up in debugger sidebar after reload
         https://bugs.webkit.org/show_bug.cgi?id=157939
         <rdar://problem/26385691>
