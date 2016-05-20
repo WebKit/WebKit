@@ -1,0 +1,3 @@
+This test verifies that comparing two CSSAnimationTriggerScrollValues without end values does not crash.
+
+

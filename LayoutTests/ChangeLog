@@ -1,3 +1,13 @@
+2016-05-20  Alex Christensen  <achristensen@webkit.org>
+
+        Fix null dereferencing in CSSAnimationTriggerScrollValue::equals
+        https://bugs.webkit.org/show_bug.cgi?id=157930
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/compare-animation-trigger-expected.txt: Added.
+        * fast/css/compare-animation-trigger.html: Added.
+
 2016-05-20  Dave Hyatt  <hyatt@apple.com>
 
         Scrolling broken in iTunes connect pages

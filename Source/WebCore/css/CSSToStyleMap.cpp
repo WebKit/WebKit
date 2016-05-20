@@ -531,8 +531,8 @@ void CSSToStyleMap::mapAnimationTrigger(Animation& animation, const CSSValue& va
     if (value.isAnimationTriggerScrollValue()) {
         auto& scrollTrigger = downcast<CSSAnimationTriggerScrollValue>(value);
 
-        const CSSPrimitiveValue* startValue = downcast<CSSPrimitiveValue>(scrollTrigger.startValue());
-        Length startLength = startValue->computeLength<Length>(m_resolver->state().cssToLengthConversionData());
+        const CSSPrimitiveValue& startValue = downcast<CSSPrimitiveValue>(scrollTrigger.startValue());
+        Length startLength = startValue.computeLength<Length>(m_resolver->state().cssToLengthConversionData());
 
         Length endLength;
         if (scrollTrigger.hasEndValue()) {

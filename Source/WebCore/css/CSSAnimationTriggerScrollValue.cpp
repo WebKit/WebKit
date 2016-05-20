@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "CSSAnimationTriggerScrollValue.h"
+#include <wtf/PointerComparison.h>
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
 
@@ -47,7 +48,7 @@ String CSSAnimationTriggerScrollValue::customCSSText() const
 
 bool CSSAnimationTriggerScrollValue::equals(const CSSAnimationTriggerScrollValue& other) const
 {
-    return m_startValue->equals(*other.m_startValue.get()) && m_endValue->equals(*other.m_endValue.get());
+    return m_startValue->equals(other.m_startValue.get()) && arePointingToEqualData(m_endValue.get(), other.m_endValue.get());
 }
 
 } // namespace WebCore

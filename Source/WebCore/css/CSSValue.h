@@ -138,6 +138,7 @@ public:
     bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
 
     bool equals(const CSSValue&) const;
+    bool operator==(const CSSValue& other) const { return equals(other); }
 
 protected:
 

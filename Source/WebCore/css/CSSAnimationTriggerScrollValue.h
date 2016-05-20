@@ -38,13 +38,14 @@ public:
         return adoptRef(*new CSSAnimationTriggerScrollValue(WTFMove(startValue), WTFMove(endValue)));
     }
 
-    const CSSValue* startValue() const { return m_startValue.get(); }
+    const CSSValue& startValue() const { return m_startValue.get(); }
     const CSSValue* endValue() const { return m_endValue.get(); }
     bool hasEndValue() const { return m_endValue; }
 
     String customCSSText() const;
 
     bool equals(const CSSAnimationTriggerScrollValue&) const;
+    bool operator==(const CSSAnimationTriggerScrollValue& other) const { return equals(other); }
 
 private:
     CSSAnimationTriggerScrollValue(Ref<CSSValue>&& startValue, RefPtr<CSSValue>&& endValue)
@@ -54,7 +55,7 @@ private:
     {
     }
 
-    RefPtr<CSSValue> m_startValue;
+    Ref<CSSValue> m_startValue;
     RefPtr<CSSValue> m_endValue;
 };
 
