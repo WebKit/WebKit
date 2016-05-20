@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GenericCachedHTMLCollection.h"
 
+#include "HTMLAppletElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLOptionElement.h"

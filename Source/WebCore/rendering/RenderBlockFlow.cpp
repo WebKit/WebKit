@@ -29,6 +29,8 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLElement.h"
+#include "HTMLInputElement.h"
+#include "HTMLTextAreaElement.h"
 #include "HitTestLocation.h"
 #include "InlineTextBox.h"
 #include "LayoutRepainter.h"

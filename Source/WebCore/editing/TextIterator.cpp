@@ -31,9 +31,14 @@
 #include "ExceptionCodePlaceholder.h"
 #include "FontCascade.h"
 #include "Frame.h"
+#include "HTMLBodyElement.h"
 #include "HTMLElement.h"
+#include "HTMLInputElement.h"
+#include "HTMLLegendElement.h"
+#include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "HTMLParagraphElement.h"
+#include "HTMLProgressElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineTextBox.h"
 #include "NodeTraversal.h"
@@ -263,7 +268,7 @@ bool isRendererReplacedElement(RenderObject* renderer)
 
     if (is<Element>(renderer->node())) {
         Element& element = downcast<Element>(*renderer->node());
-        if (is<HTMLFormControlElement>(element) || is<HTMLLegendElement>(element) || is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element))
+        if (is<HTMLFormControlElement>(element) || is<HTMLLegendElement>(element) || is<HTMLProgressElement>(element) || element.hasTagName(meterTag))
             return true;
         if (equalLettersIgnoringASCIICase(element.fastGetAttribute(roleAttr), "img"))
             return true;

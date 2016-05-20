@@ -55,14 +55,14 @@ struct TypeCastTraits<ExpectedType, ArgType, true /* isBaseType */> {
 template <typename ExpectedType, typename ArgType>
 inline bool is(ArgType& source)
 {
-    static_assert(!std::is_base_of<ExpectedType, ArgType>::value, "Unnecessary type check");
+    static_assert(std::is_base_of<ArgType, ExpectedType>::value, "Unnecessary type check");
     return TypeCastTraits<const ExpectedType, const ArgType>::isOfType(source);
 }
 
 template <typename ExpectedType, typename ArgType>
 inline bool is(ArgType* source)
 {
-    static_assert(!std::is_base_of<ExpectedType, ArgType>::value, "Unnecessary type check");
+    static_assert(std::is_base_of<ArgType, ExpectedType>::value, "Unnecessary type check");
     return source && TypeCastTraits<const ExpectedType, const ArgType>::isOfType(*source);
 }
 
@@ -76,14 +76,16 @@ struct match_constness {
 template<typename Target, typename Source>
 inline typename match_constness<Source, Target>::type& downcast(Source& source)
 {
-    static_assert(!std::is_base_of<Target, Source>::value, "Unnecessary cast");
+    static_assert(!std::is_same<Source, Target>::value, "Unnecessary cast to same type");
+    static_assert(std::is_base_of<Source, Target>::value, "Should be a downcast");
     ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
     return static_cast<typename match_constness<Source, Target>::type&>(source);
 }
 template<typename Target, typename Source>
 inline typename match_constness<Source, Target>::type* downcast(Source* source)
 {
-    static_assert(!std::is_base_of<Target, Source>::value, "Unnecessary cast");
+    static_assert(!std::is_same<Source, Target>::value, "Unnecessary cast to same type");
+    static_assert(std::is_base_of<Source, Target>::value, "Should be a downcast");
     ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
     return static_cast<typename match_constness<Source, Target>::type*>(source);
 }

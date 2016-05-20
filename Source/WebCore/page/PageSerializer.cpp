@@ -44,6 +44,7 @@
 #include "HTMLLinkElement.h"
 #include "HTMLMetaCharsetParser.h"
 #include "HTMLNames.h"
+#include "HTMLObjectElement.h"
 #include "HTMLStyleElement.h"
 #include "HTTPParsers.h"
 #include "Image.h"

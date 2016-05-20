@@ -61,6 +61,7 @@
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
+#include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/JSCSSStyleDeclaration.h>

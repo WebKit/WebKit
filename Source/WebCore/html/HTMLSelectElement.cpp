@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLFormElement.h"
+#include "HTMLHRElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"

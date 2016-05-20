@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "ExtensionStyleSheets.h"
+#include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "MediaList.h"

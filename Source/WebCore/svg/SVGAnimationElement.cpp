@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "FloatConversion.h"
 #include "RenderObject.h"
+#include "SVGAnimateColorElement.h"
 #include "SVGAnimateElement.h"
 #include "SVGElement.h"
 #include "SVGNames.h"

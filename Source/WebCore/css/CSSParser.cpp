@@ -73,6 +73,7 @@
 #include "Document.h"
 #include "FloatConversion.h"
 #include "GridArea.h"
+#include "HTMLOptGroupElement.h"
 #include "HTMLParserIdioms.h"
 #include "HashTools.h"
 #include "MediaList.h"

@@ -1,3 +1,66 @@
+2016-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Improve compile-time assertions in is<>() / downcast<>()
+        https://bugs.webkit.org/show_bug.cgi?id=157817
+
+        Reviewed by Darin Adler.
+
+        Add missing includes and drop unnecessary is<WebVTTElement>() check
+        in SharingResolver::canShareStyleWithElement() that was identified
+        by the new assertions. WebVTTElement inherits Element but the check
+        was done on a StyledElement.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        * accessibility/AccessibilitySVGElement.cpp:
+        * css/CSSDefaultStyleSheets.cpp:
+        * css/CSSParser.cpp:
+        * css/CSSStyleSheet.cpp:
+        * css/StyleResolver.cpp:
+        * cssjit/SelectorCompiler.cpp:
+        * dom/Document.cpp:
+        * dom/Element.cpp:
+        * dom/Node.cpp:
+        * dom/Position.cpp:
+        * editing/ApplyStyleCommand.cpp:
+        * editing/FrameSelection.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/TextIterator.cpp:
+        * editing/VisiblePosition.cpp:
+        * editing/VisibleUnits.cpp:
+        * editing/cocoa/HTMLConverter.mm:
+        * editing/htmlediting.cpp:
+        * editing/markup.cpp:
+        * html/GenericCachedHTMLCollection.cpp:
+        * html/HTMLBodyElement.cpp:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLLIElement.cpp:
+        * html/HTMLNameCollection.cpp:
+        * html/HTMLSelectElement.cpp:
+        * html/parser/HTMLTreeBuilder.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorStyleSheet.cpp:
+        * loader/SubframeLoader.cpp:
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        * mathml/MathMLElement.cpp:
+        * page/EventHandler.cpp:
+        * page/FrameView.cpp:
+        * page/PageSerializer.cpp:
+        * page/SpatialNavigation.cpp:
+        * page/mac/EventHandlerMac.mm:
+        * rendering/HitTestResult.cpp:
+        * rendering/RenderBlockFlow.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderElement.cpp:
+        * rendering/RenderFieldset.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::canShareStyleWithElement):
+        * svg/SVGAnimationElement.cpp:
+        * svg/SVGFELightElement.cpp:
+        * svg/SVGTextPositioningElement.cpp:
+
 2016-05-19  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup RenderObject::container()

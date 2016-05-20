@@ -33,6 +33,7 @@
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "ImageQualityController.h"

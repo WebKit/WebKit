@@ -33,14 +33,17 @@
 
 #include "ElementIterator.h"
 #include "HTMLElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "MathMLMathElement.h"
 #include "MathMLNames.h"
 #include "MathMLSelectElement.h"
 #include "RenderTableCell.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
+#include "SVGSVGElement.h"
 
 namespace WebCore {
     

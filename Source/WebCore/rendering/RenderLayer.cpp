@@ -74,6 +74,7 @@
 #include "HTMLFormControlElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HitTestingTransformState.h"
 #include "HitTestRequest.h"

@@ -290,12 +290,6 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
 #endif
 
-#if ENABLE(VIDEO_TRACK)
-    // Deny sharing styles between WebVTT and non-WebVTT nodes.
-    if (is<WebVTTElement>(element))
-        return false;
-#endif
-
 #if ENABLE(FULLSCREEN_API)
     if (&element == m_document.webkitCurrentFullScreenElement() || &element == m_document.webkitCurrentFullScreenElement())
         return false;

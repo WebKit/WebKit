@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "FloatQuad.h"
 #include "HTMLElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "Logging.h"

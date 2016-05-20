@@ -28,6 +28,8 @@
 #include "CSSValueKeywords.h"
 #include "ElementAncestorIterator.h"
 #include "HTMLNames.h"
+#include "HTMLOListElement.h"
+#include "HTMLUListElement.h"
 #include "RenderListItem.h"
 
 namespace WebCore {

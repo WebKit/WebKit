@@ -27,6 +27,9 @@
 #include "Position.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "HTMLBRElement.h"
+#include "HTMLBodyElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "InlineElementBox.h"

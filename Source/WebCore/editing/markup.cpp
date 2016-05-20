@@ -47,6 +47,8 @@
 #include "HTMLBRElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDivElement.h"
+#include "HTMLHeadElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"

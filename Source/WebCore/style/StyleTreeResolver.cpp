@@ -33,6 +33,7 @@
 #include "ElementIterator.h"
 #include "HTMLBodyElement.h"
 #include "HTMLMeterElement.h"
+#include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "HTMLSlotElement.h"
 #include "LoaderStrategy.h"
@@ -221,7 +222,7 @@ ElementUpdate TreeResolver::resolveElement(Element& element)
         m_document.setTextColor(update.style->visitedDependentColor(CSSPropertyColor));
 
     // FIXME: These elements should not change renderer based on appearance property.
-    if (is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element)) {
+    if (element.hasTagName(HTMLNames::meterTag) || is<HTMLProgressElement>(element)) {
         if (existingStyle && update.style->appearance() != existingStyle->appearance())
             update.change = Detach;
     }

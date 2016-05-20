@@ -35,6 +35,7 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"

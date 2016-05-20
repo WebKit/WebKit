@@ -24,8 +24,11 @@
 #include "HTMLNameCollection.h"
 
 #include "Element.h"
+#include "HTMLAppletElement.h"
 #include "HTMLDocument.h"
+#include "HTMLEmbedElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"

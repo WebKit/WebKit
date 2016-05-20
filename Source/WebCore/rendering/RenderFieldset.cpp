@@ -27,6 +27,7 @@
 #include "CSSPropertyNames.h"
 #include "GraphicsContext.h"
 #include "HTMLFieldSetElement.h"
+#include "HTMLLegendElement.h"
 #include "HTMLNames.h"
 #include "PaintInfo.h"
 #include "RenderChildIterator.h"

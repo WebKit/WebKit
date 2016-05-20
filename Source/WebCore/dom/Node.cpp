@@ -42,6 +42,7 @@
 #include "EventDispatcher.h"
 #include "EventHandler.h"
 #include "FrameView.h"
+#include "HTMLBodyElement.h"
 #include "HTMLCollection.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"

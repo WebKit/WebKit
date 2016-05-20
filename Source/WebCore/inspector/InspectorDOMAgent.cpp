@@ -61,6 +61,8 @@
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
+#include "HTMLScriptElement.h"
+#include "HTMLStyleElement.h"
 #include "HTMLTemplateElement.h"
 #include "HitTestResult.h"
 #include "InspectorClient.h"

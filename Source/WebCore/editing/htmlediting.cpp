@@ -32,6 +32,8 @@
 #include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "HTMLBRElement.h"
+#include "HTMLBodyElement.h"
+#include "HTMLDListElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLInterchange.h"

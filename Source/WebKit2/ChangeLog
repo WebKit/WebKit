@@ -1,3 +1,15 @@
+2016-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Improve compile-time assertions in is<>() / downcast<>()
+        https://bugs.webkit.org/show_bug.cgi?id=157817
+
+        Reviewed by Darin Adler.
+
+        Add missing includes.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2016-05-19  Tim Horton  <timothy_horton@apple.com>
 
         Mail crashes under TiledCoreAnimationDrawingAreaProxy::createFenceForGeometryUpdate() when the Web process crashes

@@ -34,6 +34,7 @@
 #include "ElementIterator.h"
 #include "Frame.h"
 #include "HTMLFontElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"

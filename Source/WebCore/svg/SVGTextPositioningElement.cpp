@@ -29,6 +29,9 @@
 #include "SVGLengthList.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"
+#include "SVGTRefElement.h"
+#include "SVGTSpanElement.h"
+#include "SVGTextElement.h"
 
 namespace WebCore {
 
