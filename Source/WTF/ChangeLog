@@ -1,3 +1,16 @@
+2016-05-20  Rawinder Singh  <rawinder.singh-webkit@cisra.canon.com.au>
+
+        Implement operator== for WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=157883
+
+        Reviewed by Chris Dumez.
+
+        Implement operator== and operator!= for WeakPtr and update code to use the operators.
+
+        * wtf/WeakPtr.h:
+        (WTF::operator==):
+        (WTF::operator!=):
+
 2016-05-19  Chris Dumez  <cdumez@apple.com>
 
         Improve compile-time assertions in is<>() / downcast<>()

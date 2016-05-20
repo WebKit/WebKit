@@ -136,6 +136,36 @@ private:
     Ref<WeakReference<T>> m_ref;
 };
 
+template<typename T, typename U> inline bool operator==(const WeakPtr<T>& a, const WeakPtr<U>& b)
+{
+    return a.get() == b.get();
+}
+
+template<typename T, typename U> inline bool operator==(const WeakPtr<T>& a, U* b)
+{
+    return a.get() == b;
+}
+
+template<typename T, typename U> inline bool operator==(T* a, const WeakPtr<U>& b)
+{
+    return a == b.get();
+}
+
+template<typename T, typename U> inline bool operator!=(const WeakPtr<T>& a, const WeakPtr<U>& b)
+{
+    return a.get() != b.get();
+}
+
+template<typename T, typename U> inline bool operator!=(const WeakPtr<T>& a, U* b)
+{
+    return a.get() != b;
+}
+
+template<typename T, typename U> inline bool operator!=(T* a, const WeakPtr<U>& b)
+{
+    return a != b.get();
+}
+
 } // namespace WTF
 
 using WTF::WeakPtr;
