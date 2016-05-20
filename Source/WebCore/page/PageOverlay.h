@@ -52,7 +52,6 @@ public:
         virtual ~Client() { }
     
     public:
-        virtual void pageOverlayDestroyed(PageOverlay&) = 0;
         virtual void willMoveToPage(PageOverlay&, Page*) = 0;
         virtual void didMoveToPage(PageOverlay&, Page*) = 0;
         virtual void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) = 0;

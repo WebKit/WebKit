@@ -198,10 +198,6 @@ void WebInspectorClient::elementSelectionChanged(bool active)
         m_page->inspector()->elementSelectionChanged(active);
 }
 
-void WebInspectorClient::pageOverlayDestroyed(PageOverlay&)
-{
-}
-
 void WebInspectorClient::willMoveToPage(PageOverlay&, Page* page)
 {
     if (page)

@@ -262,7 +262,6 @@ private:
         void setVisible(bool, AnimateVisibilityTransition);
 
     private:
-        void pageOverlayDestroyed(WebCore::PageOverlay&) override;
         void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
         void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
         void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;

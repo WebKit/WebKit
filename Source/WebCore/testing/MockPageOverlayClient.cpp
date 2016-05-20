@@ -73,19 +73,6 @@ String MockPageOverlayClient::layerTreeAsText(MainFrame& mainFrame)
     return "View-relative:\n" + mainFrame.pageOverlayController().viewOverlayRootLayer().layerTreeAsText(LayerTreeAsTextIncludePageOverlayLayers) + "\n\nDocument-relative:\n" + mainFrame.pageOverlayController().documentOverlayRootLayer().layerTreeAsText(LayerTreeAsTextIncludePageOverlayLayers);
 }
 
-void MockPageOverlayClient::pageOverlayDestroyed(PageOverlay& overlay)
-{
-    // FIXME: This is dead code, nothing ever calls this function. It's not clear to me what the intention was,
-    // since MockPageOverlayClient has references to MockPageOverlays, not to PageOverlays.
-    // Also, iterating over a set while modifying it is not good.
-    for (auto& mockOverlay : m_overlays) {
-        if (mockOverlay->overlay() == &overlay) {
-            m_overlays.remove(mockOverlay);
-            return;
-        }
-    }
-}
-
 void MockPageOverlayClient::willMoveToPage(PageOverlay&, Page*)
 {
 }

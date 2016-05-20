@@ -1648,10 +1648,6 @@ PDFPlugin::HUD::~HUD()
     mainFrame.pageOverlayController().uninstallPageOverlay(m_overlay.ptr(), PageOverlay::FadeMode::DoNotFade);
 }
 
-void PDFPlugin::HUD::pageOverlayDestroyed(PageOverlay&)
-{
-}
-
 void PDFPlugin::HUD::willMoveToPage(PageOverlay&, Page* page)
 {
 }

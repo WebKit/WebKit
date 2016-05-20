@@ -70,11 +70,6 @@ public:
 
 private:
     // WebPageOverlay::Client.
-    void pageOverlayDestroyed(WebPageOverlay&) override
-    {
-        delete this;
-    }
-
     void willMoveToPage(WebPageOverlay& pageOverlay, WebPage* page) override
     {
         if (!m_client.willMoveToPage)

@@ -221,13 +221,6 @@ ServicesOverlayController::~ServicesOverlayController()
         highlight->invalidate();
 }
 
-void ServicesOverlayController::pageOverlayDestroyed(PageOverlay&)
-{
-    // Before the overlay is destroyed, it should have moved out of the Page,
-    // at which point we already cleared our back pointer.
-    ASSERT(!m_servicesOverlay);
-}
-
 void ServicesOverlayController::willMoveToPage(PageOverlay&, Page* page)
 {
     if (page)

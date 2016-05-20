@@ -84,16 +84,6 @@ void WebPageOverlay::clear()
     m_overlay->clear();
 }
 
-void WebPageOverlay::pageOverlayDestroyed(PageOverlay&)
-{
-    if (m_overlay) {
-        overlayMap().remove(m_overlay.get());
-        m_overlay = nullptr;
-    }
-
-    m_client->pageOverlayDestroyed(*this);
-}
-
 void WebPageOverlay::willMoveToPage(PageOverlay&, Page* page)
 {
     m_client->willMoveToPage(*this, page ? WebPage::fromCorePage(page) : nullptr);

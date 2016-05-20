@@ -423,10 +423,6 @@ Vector<IntRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
     return rects;
 }
 
-void FindController::pageOverlayDestroyed(PageOverlay&)
-{
-}
-
 void FindController::willMoveToPage(PageOverlay&, Page* page)
 {
     if (page)

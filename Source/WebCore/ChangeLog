@@ -1,3 +1,41 @@
+2016-05-20  John Wilander  <wilander@apple.com>
+
+        Remove unnecessary PageOverlay client function pageOverlayDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=157388
+        <rdar://problem/25471523>
+
+        Reviewed by Tim Horton.
+
+        Remove dead PageOverlay code. Almost all of these overrides were empty and
+        never called. In the case of WebPageOverlay it was never called but had a
+        function body, causing confusion. There was a fear of dangling pointers in
+        WebPageOverlay's static hash map between PageOverlays and WebPageOverlays.
+        Only WebPageOverlay's constructor creates its PageOverlay object and adds it
+        to the hash map. Its client object is kept in a unique pointer member which
+        is automatically deleted when the WebPageOverlay object itself is deleted.
+        This explains why PageOverlayClientImpl::pageOverlayDestroyed in
+        WKBundlePageOverlay can safely be removed. Finally, WebPageOverlay's
+        destructor clears the hash map entry for its PageOverlay object. Thus, there
+        is no need to call WebPageOverlay::pageOverlayDestroyed nor a need for
+        WebPageOverlay's destructor to call pageOverlayDestroyed on its client.
+
+        No new tests. I tried to come up with a WebKit API test for this but I
+        wasn't able to test presence/absence of WebPageOverlay's map entries since
+        the map is not exposed.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::RegionOverlay::pageOverlayDestroyed): Deleted.
+        * page/PageOverlay.h:
+        (WebCore::PageOverlay::Client::pageOverlayDestroyed): Deleted.
+        * page/ResourceUsageOverlay.h:
+        (WebCore::ResourceUsageOverlay::pageOverlayDestroyed): Deleted.
+        * page/mac/ServicesOverlayController.h:
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::pageOverlayDestroyed): Deleted.
+        * testing/MockPageOverlayClient.cpp:
+        * testing/MockPageOverlayClient.h:
+        (WebCore::MockPageOverlayClient::pageOverlayDestroyed): Deleted.
+
 2016-05-20  Alex Christensen  <achristensen@webkit.org>
 
         Fix null dereferencing in CSSAnimationTriggerScrollValue::equals

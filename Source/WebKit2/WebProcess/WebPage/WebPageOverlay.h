@@ -47,7 +47,6 @@ public:
     public:
         virtual ~Client() { }
 
-        virtual void pageOverlayDestroyed(WebPageOverlay&) = 0;
         virtual void willMoveToPage(WebPageOverlay&, WebPage*) = 0;
         virtual void didMoveToPage(WebPageOverlay&, WebPage*) = 0;
         virtual void drawRect(WebPageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
@@ -89,7 +88,6 @@ private:
     WebPageOverlay(std::unique_ptr<Client>, WebCore::PageOverlay::OverlayType);
 
     // WebCore::PageOverlay::Client
-    void pageOverlayDestroyed(WebCore::PageOverlay&) override;
     void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;

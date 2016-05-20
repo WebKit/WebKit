@@ -73,7 +73,6 @@ public:
 
 private:
     // PageOverlay::Client.
-    virtual void pageOverlayDestroyed(WebCore::PageOverlay&);
     virtual void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*);
     virtual void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*);
     virtual bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&);

@@ -62,7 +62,6 @@ public:
     static const int normalHeight = 160;
 
 private:
-    void pageOverlayDestroyed(PageOverlay&) override { }
     void willMoveToPage(PageOverlay&, Page*) override { }
     void didMoveToPage(PageOverlay&, Page*) override { }
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect&) override { }
