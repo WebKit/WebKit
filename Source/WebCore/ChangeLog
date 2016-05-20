@@ -1,3 +1,24 @@
+2016-05-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] REGRESSION(r184899): Ascent adjustments are applied to web fonts
+        https://bugs.webkit.org/show_bug.cgi?id=157954
+        <rdar://problem/24204349>
+
+        Reviewed by Dean Jackson.
+
+        There are a few specific fonts which exist on Windows and Cocoa OSes, and we will adjust
+        the ascents of these fonts to better match their counterparts on Windows. However, in
+        r184899, we started applying this adjustment to web fonts too.
+
+        Test: fast/text/ascent-adjustment-webfont.html
+
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformInit):
+        * svg/SVGToOTFFontConversion.cpp: We were reporting the length of font names wrong, so
+        it made the test pass without this patch even when it shouldn't have. Previously, we
+        were recording the number of characters in the font, not the number of bytes (each
+        character is 2 bytes).
+
 2016-05-20  John Wilander  <wilander@apple.com>
 
         Remove unnecessary PageOverlay client function pageOverlayDestroyed

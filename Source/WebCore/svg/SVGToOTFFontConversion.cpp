@@ -486,7 +486,7 @@ void SVGToOTFFontConverter::appendNAMETable()
     append16(3); // Unicode version 2.0 or later
     append16(0); // Language
     append16(1); // Name identifier. 1 = Font family
-    append16(m_fontFamily.length());
+    append16(m_fontFamily.length() * 2);
     append16(0); // Offset into name data
 
     for (auto codeUnit : StringView(m_fontFamily).codeUnits())
