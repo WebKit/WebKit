@@ -1,3 +1,16 @@
+2016-05-20  Jer Noble  <jer.noble@apple.com>
+
+        Inconsistent state in playback controls
+        https://bugs.webkit.org/show_bug.cgi?id=157962
+        <rdar://problem/26397571>
+
+        Reviewed by Beth Dakin.
+
+        Do not use the playbackSessionManager() as the model, that's what the model is for.
+
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::setClient):
+
 2016-05-20  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Properly handle blobs in Workers.
