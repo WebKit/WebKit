@@ -1,3 +1,10 @@
+2016-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix API test introduced in r201213.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-05-20  Rawinder Singh  <rawinder.singh-webkit@cisra.canon.com.au>
 
         Implement operator== for WeakPtr

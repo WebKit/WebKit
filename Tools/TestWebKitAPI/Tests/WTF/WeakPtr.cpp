@@ -78,14 +78,14 @@ TEST(WTF_WeakPtr, MultipleFactories)
     WeakPtr<int> weakPtr2 = factory2->createWeakPtr();
     EXPECT_EQ(weakPtr1.get(), &dummy1);
     EXPECT_EQ(weakPtr2.get(), &dummy2);
+    EXPECT_TRUE(weakPtr1 != weakPtr2);
+    EXPECT_TRUE(weakPtr1 != &dummy2);
+    EXPECT_TRUE(&dummy1 != weakPtr2);
     delete factory1;
     EXPECT_NULL(weakPtr1.get());
     EXPECT_EQ(weakPtr2.get(), &dummy2);
     delete factory2;
     EXPECT_NULL(weakPtr2.get());
-    EXPECT_TRUE(weakPtr1 != weakPtr2);
-    EXPECT_TRUE(weakPtr1 != &dummy2);
-    EXPECT_TRUE(&dummy1 != weakPtr2);
 }
 
 TEST(WTF_WeakPtr, RevokeAll)
