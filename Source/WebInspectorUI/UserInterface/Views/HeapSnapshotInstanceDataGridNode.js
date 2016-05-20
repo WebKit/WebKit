@@ -53,7 +53,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
     static logHeapSnapshotNode(node)
     {
         let heapObjectIdentifier = node.id;
-        let synthetic = true;
+        let shouldRevealConsole = true;
         let text = WebInspector.UIString("Heap Snapshot Object (@%d)").format(heapObjectIdentifier);
 
         node.shortestGCRootPath((gcRootPath) => {
@@ -73,21 +73,19 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
                         heapSnapshotRootPath = heapSnapshotRootPath.appendEdge(component);
                 }
 
-                if (!heapSnapshotRootPath.isFullPathImpossible()) {
-                    synthetic = false;
+                if (!heapSnapshotRootPath.isFullPathImpossible())
                     text = heapSnapshotRootPath.fullPath;
-                }
             }
 
             if (node.className === "string") {
                 HeapAgent.getPreview(heapObjectIdentifier, function(error, string, functionDetails, objectPreviewPayload) {
                     let remoteObject = error ? WebInspector.RemoteObject.fromPrimitiveValue(undefined) : WebInspector.RemoteObject.fromPrimitiveValue(string);
-                    WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, synthetic);
+                    WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, shouldRevealConsole);
                 });
             } else {
                 HeapAgent.getRemoteObject(heapObjectIdentifier, WebInspector.RuntimeManager.ConsoleObjectGroup, function(error, remoteObjectPayload) {
                     let remoteObject = error ? WebInspector.RemoteObject.fromPrimitiveValue(undefined) : WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
-                    WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, synthetic);
+                    WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, shouldRevealConsole);
                 });
             }
         });

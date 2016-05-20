@@ -336,8 +336,8 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
                 if (!remoteObject)
                     return;
                 let specialLogStyles = true;
-                let synthetic = true;
-                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(WebInspector.UIString("Selected Element"), remoteObject, specialLogStyles, synthetic);
+                let shouldRevealConsole = false;
+                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(WebInspector.UIString("Selected Element"), remoteObject, specialLogStyles, shouldRevealConsole);
             });
         }
 

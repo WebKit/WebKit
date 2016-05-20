@@ -1,3 +1,31 @@
+2016-05-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Split Console is auto opening all the time when using Inspect Element context menu
+        https://bugs.webkit.org/show_bug.cgi?id=157910
+        <rdar://problem/26374066>
+
+        Reviewed by Timothy Hatcher.
+
+        Currently, "synthetic" property is only used to decide whether adding a console message should
+        open the console or not. Replace it with "shouldRevealConsole".
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype.inspectNodeObject.nodeAvailable):
+        (WebInspector.DOMTreeManager.prototype.inspectNodeObject):
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.appendImmediateExecutionWithResult.saveResultCallback):
+        (WebInspector.JavaScriptLogViewController.prototype.appendImmediateExecutionWithResult):
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted.printResult):
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted):
+        (WebInspector.JavaScriptLogViewController.prototype._appendConsoleMessageView):
+        * UserInterface/Models/ConsoleCommandResultMessage.js:
+        (WebInspector.ConsoleCommandResultMessage):
+        (WebInspector.ConsoleCommandResultMessage.prototype.get shouldRevealConsole):
+        (WebInspector.ConsoleCommandResultMessage.prototype.get synthetic): Deleted.
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.node.shortestGCRootPath.):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode):
+
 2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Can't resume Debugger after breaking on exception in Promise
