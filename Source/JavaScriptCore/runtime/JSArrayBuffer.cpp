@@ -66,6 +66,13 @@ Structure* JSArrayBuffer::createStructure(
         NonArray);
 }
 
+size_t JSArrayBuffer::estimatedSize(JSCell* cell)
+{
+    JSArrayBuffer* thisObject = jsCast<JSArrayBuffer*>(cell);
+    size_t bufferEstimatedSize = thisObject->impl()->gcSizeEstimateInBytes();
+    return Base::estimatedSize(cell) + bufferEstimatedSize;
+}
+
 bool JSArrayBuffer::getOwnPropertySlot(
     JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {

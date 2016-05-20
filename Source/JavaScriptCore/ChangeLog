@@ -1,3 +1,23 @@
+2016-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: retained size for typed arrays does not count native backing store
+        https://bugs.webkit.org/show_bug.cgi?id=157945
+        <rdar://problem/26392238>
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::estimatedSize):
+        Include an estimatedSize implementation for JSArrayBuffer.
+        ArrayBuffer has a unique path, different from other data
+        stored in the Heap.
+
+        * tests/heapProfiler/typed-array-sizes.js: Added.
+        Test sizes of TypedArray with and without an ArrayBuffer.
+        When the TypedArray is a view wrapping an ArrayBuffer, the
+        ArrayBuffer has the size.
+
 2016-05-20  Geoffrey Garen  <ggaren@apple.com>
 
         reifyAllStaticProperties makes two copies of every string

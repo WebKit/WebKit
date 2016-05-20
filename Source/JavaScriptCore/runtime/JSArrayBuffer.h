@@ -51,6 +51,8 @@ public:
     DECLARE_EXPORT_INFO;
     
 protected:
+
+    static size_t estimatedSize(JSCell*);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
