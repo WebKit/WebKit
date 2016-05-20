@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "CrossThreadCopier.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
@@ -69,19 +70,19 @@ IDBValue::IDBValue(const ThreadSafeDataBuffer& value, const Vector<String>& blob
 {
 }
 
+void IDBValue::setAsIsolatedCopy(const IDBValue& other)
+{
+    ASSERT(m_blobURLs.isEmpty() && m_blobFilePaths.isEmpty());
+
+    m_data = other.m_data;
+    m_blobURLs = CrossThreadCopier<Vector<String>>::copy(other.m_blobURLs);
+    m_blobFilePaths = CrossThreadCopier<Vector<String>>::copy(other.m_blobFilePaths);
+}
+
 IDBValue IDBValue::isolatedCopy() const
 {
     IDBValue result;
-    result.m_data = m_data;
-
-    result.m_blobURLs.reserveInitialCapacity(m_blobURLs.size());
-    for (auto& url : m_blobURLs)
-        result.m_blobURLs.uncheckedAppend(url.isolatedCopy());
-
-    result.m_blobFilePaths.reserveInitialCapacity(m_blobFilePaths.size());
-    for (auto& path : m_blobFilePaths)
-        result.m_blobFilePaths.uncheckedAppend(path.isolatedCopy());
-
+    result.setAsIsolatedCopy(*this);
     return result;
 }
 

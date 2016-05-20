@@ -1,3 +1,27 @@
+2016-05-20  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Properly handle blobs in Workers.
+        https://bugs.webkit.org/show_bug.cgi?id=157947
+
+        Reviewed by Alex Christensen.
+
+        Test: storage/indexeddb/modern/blob-simple-workers.html
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::putOrAddOnServer): Use writeBlobsToDiskForIndexedDBSynchronously from
+          background threads instead of the asynchronous form.
+        
+        Add ability to set an existing empty IDBValue to be an isolated copy of a different IDBValue:
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::setAsIsolatedCopy):
+        (WebCore::IDBValue::isolatedCopy):
+        * Modules/indexeddb/IDBValue.h:
+        
+        Add a method - only to be called from a non-main thread - that synchronously writes blobs to disk:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously):
+        * bindings/js/SerializedScriptValue.h:
+        
 2016-05-20  Anders Carlsson  <andersca@apple.com>
 
         Allow named images on iOS
