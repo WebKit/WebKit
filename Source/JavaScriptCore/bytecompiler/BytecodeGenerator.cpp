@@ -223,7 +223,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     
     SymbolTable* functionSymbolTable = SymbolTable::create(*m_vm);
     functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
-    int symbolTableConstantIndex = addConstantValue(functionSymbolTable)->index();
+    int symbolTableConstantIndex = 0;
 
     FunctionParameters& parameters = *functionNode->parameters(); 
     // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-functiondeclarationinstantiation
@@ -323,6 +323,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     if (shouldCaptureSomeOfTheThings)
         m_lexicalEnvironmentRegister = addVar();
+
+    if (shouldCaptureSomeOfTheThings || vm.typeProfiler())
+        symbolTableConstantIndex = addConstantValue(functionSymbolTable)->index();
 
     // We can allocate the "var" environment if we don't have default parameter expressions. If we have
     // default parameter expressions, we have to hold off on allocating the "var" environment because
@@ -1694,6 +1697,7 @@ void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, const Var
     int symbolTableOrScopeDepth;
     if (var.local() || var.offset().isScope()) {
         flag = ProfileTypeBytecodeLocallyResolved;
+        ASSERT(var.symbolTableConstantIndex());
         symbolTableOrScopeDepth = var.symbolTableConstantIndex();
     } else {
         flag = ProfileTypeBytecodeClosureVar;

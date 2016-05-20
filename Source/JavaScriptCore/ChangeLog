@@ -1,3 +1,21 @@
+2016-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        JSBench regression: CodeBlock linking always copies the symbol table
+        https://bugs.webkit.org/show_bug.cgi?id=157951
+
+        Reviewed by Saam Barati.
+
+        We always put a SymbolTable into the constant pool, even in simple
+        functions in which it won't be used -- i.e., there's on eval and there
+        are no captured variables and so on.
+
+        This is costly because linking must copy any provided symbol tables.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitProfileType): Only add the symbol table
+        as a constant if we will use it at runtime.
+
 2016-05-19  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Improve int->float conversion in FTL
