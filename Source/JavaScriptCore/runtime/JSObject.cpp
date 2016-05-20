@@ -1951,9 +1951,10 @@ void JSObject::reifyAllStaticProperties(ExecState* exec)
 
         for (auto& value : *hashTable) {
             unsigned attributes;
-            PropertyOffset offset = getDirectOffset(vm, Identifier::fromString(&vm, value.m_key), attributes);
+            auto key = Identifier::fromString(&vm, value.m_key);
+            PropertyOffset offset = getDirectOffset(vm, key, attributes);
             if (!isValidOffset(offset))
-                reifyStaticProperty(vm, value, *this);
+                reifyStaticProperty(vm, key, value, *this);
         }
     }
 

@@ -337,12 +337,8 @@ inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSObject* base
     return true;
 }
 
-inline void reifyStaticProperty(VM& vm, const HashTableValue& value, JSObject& thisObj)
+inline void reifyStaticProperty(VM& vm, const Identifier& propertyName, const HashTableValue& value, JSObject& thisObj)
 {
-    if (!value.m_key)
-        return;
-
-    Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(value.m_key), strlen(value.m_key));
     if (value.attributes() & Builtin) {
         if (value.attributes() & Accessor)
             reifyStaticAccessor(vm, value, thisObj, propertyName);
@@ -397,8 +393,12 @@ template<unsigned numberOfValues>
 inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberOfValues], JSObject& thisObj)
 {
     BatchedTransitionOptimizer transitionOptimizer(vm, &thisObj);
-    for (auto& value : values)
-        reifyStaticProperty(vm, value, thisObj);
+    for (auto& value : values) {
+        if (!value.m_key)
+            continue;
+        auto key = Identifier::fromString(&vm, value.m_key);
+        reifyStaticProperty(vm, key, value, thisObj);
+    }
 }
 
 } // namespace JSC

@@ -1,5 +1,25 @@
 2016-05-20  Geoffrey Garen  <ggaren@apple.com>
 
+        reifyAllStaticProperties makes two copies of every string
+        https://bugs.webkit.org/show_bug.cgi?id=157953
+
+        Reviewed by Mark Lam.
+
+        Let's not do that.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::reifyAllStaticProperties): Pass our Identifier to
+        reifyStaticProperty so it doesn't have to make its own.
+
+        * runtime/Lookup.h:
+        (JSC::reifyStaticProperty): No need to null check because callers never
+        pass null anymore. No need to make an identifier because callers pass
+        us one.
+
+        (JSC::reifyStaticProperties): Honor new interface.
+
+2016-05-20  Geoffrey Garen  <ggaren@apple.com>
+
         JSBench regression: CodeBlock linking always copies the symbol table
         https://bugs.webkit.org/show_bug.cgi?id=157951
 
