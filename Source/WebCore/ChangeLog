@@ -1,3 +1,15 @@
+2016-05-19  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r200638): -[DOMHTMLVideoElement play] disappeared from ObjC bindings
+        https://bugs.webkit.org/show_bug.cgi?id=157940
+        <rdar://problem/26385907>
+
+        Reviewed by Dan Bernstein.
+
+        * html/HTMLMediaElement.idl:
+        Drop the return value of play from the ObjC bindings, because the bindings
+        generator doesn't seem to know what to do with a Promise.
+
 2016-05-19  Chris Dumez  <cdumez@apple.com>
 
         Improve compile-time assertions in is<>() / downcast<>()

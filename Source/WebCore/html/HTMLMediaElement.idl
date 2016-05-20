@@ -75,7 +75,11 @@
     readonly attribute boolean ended;
     [Reflect] attribute boolean autoplay;
     [Reflect] attribute boolean loop;
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     Promise play();
+#else
+    void play();
+#endif
     void pause();
     void fastSeek(unrestricted double time);
 
