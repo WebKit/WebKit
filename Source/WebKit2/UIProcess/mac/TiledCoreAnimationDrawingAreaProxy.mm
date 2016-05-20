@@ -160,6 +160,13 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
     if (!rootLayerContext)
         return MachSendRight();
 
+    // Don't fence if we don't have a connection, because the message
+    // will likely get dropped on the floor (if the Web process is terminated)
+    // or queued up until process launch completes, and there's nothing useful
+    // to synchronize in these cases.
+    if (!m_webPageProxy.process().connection())
+        return MachSendRight();
+
     // Don't fence if we have incoming synchronous messages, because we may not
     // be able to reply to the message until the fence times out.
     if (m_webPageProxy.process().connection()->hasIncomingSyncMessage())
