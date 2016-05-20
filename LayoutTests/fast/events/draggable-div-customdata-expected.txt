@@ -1,0 +1,9 @@
+This test checks that we drag a draggable element without setting data to transfer
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS TEST PASSED: square dropped
+
+TEST COMPLETE
+

@@ -1,3 +1,21 @@
+2016-05-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r201227. rdar://problem/24577706
+
+    2016-05-20  Enrica Casucci  <enrica@apple.com>
+
+            Drag cannot start if no drag data or custom data is available in the Pasteboard.
+            https://bugs.webkit.org/show_bug.cgi?id=157911
+            rdar://problem/24577706
+
+            Reviewed by Tim Horton.
+
+            We need to make sure there is always one item in common between source and target
+            of the drag and drop operation.
+
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::dragImageForView):
+
 2016-05-19  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r201187. rdar://problem/25314776
