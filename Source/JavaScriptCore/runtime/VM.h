@@ -445,11 +445,6 @@ public:
     size_t reservedZoneSize() const { return m_reservedZoneSize; }
     size_t updateReservedZoneSize(size_t reservedZoneSize);
 
-#if ENABLE(FTL_JIT)
-    void updateFTLLargestStackSize(size_t);
-    void** addressOfFTLStackLimit() { return &m_ftlStackLimit; }
-#endif
-
 #if !ENABLE(JIT)
     void* jsStackLimit() { return m_jsStackLimit; }
     void setJSStackLimit(void* limit) { m_jsStackLimit = limit; }
@@ -644,10 +639,6 @@ private:
         void* m_stackLimit;
         void* m_jsStackLimit;
     };
-#if ENABLE(FTL_JIT)
-    void* m_ftlStackLimit;
-    size_t m_largestFTLStackSize;
-#endif
 #endif
     void* m_lastStackTop;
     Exception* m_exception { nullptr };

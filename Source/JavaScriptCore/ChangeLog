@@ -1,3 +1,33 @@
+2016-05-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] FTL can crash on stack overflow
+        https://bugs.webkit.org/show_bug.cgi?id=157881
+        rdar://problem/24665964
+
+        Reviewed by Michael Saboff.
+
+        The VM's m_largestFTLStackSize was never set anywhere (updateFTLLargestStackSize()
+        was never called). We forgot to change that when implementing B3.
+
+        Even when it is set, we still have a problem on OSR Exit.
+        If the last frame is a FTL frame and it OSR Exits, the space required for
+        that frame becomes significantly larger. What happens is we crash in the OSR Exit
+        instead of the FTL frame (this is what happens in rdar://problem/24665964).
+
+        This patch changes the stack boundary checks in FTL to be the same as DFG:
+        we verify that we have enough space for the current optimized function but
+        also for the baseline version (including inlining) in case of exit.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::didOverflowStack): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM): Deleted.
+        (JSC::VM::updateStackLimit): Deleted.
+        (JSC::VM::updateFTLLargestStackSize): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::addressOfFTLStackLimit): Deleted.
+
 2016-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::LICMPhase shouldn't hoist type checks unless it knows that the check will succeed at the loop pre-header

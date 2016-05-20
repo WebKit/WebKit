@@ -157,10 +157,7 @@ public:
         m_out.setFrequency(1);
         
         m_prologue = m_out.newBlock();
-        LBasicBlock stackOverflow = m_out.newBlock();
         m_handleExceptions = m_out.newBlock();
-        
-        LBasicBlock checkArguments = m_out.newBlock();
 
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             m_highBlock = m_graph.block(blockIndex);
@@ -173,7 +170,7 @@ public:
         // Back to prologue frequency for any bocks that get sneakily created in the initialization code.
         m_out.setFrequency(1);
         
-        m_out.appendTo(m_prologue, stackOverflow);
+        m_out.appendTo(m_prologue, m_handleExceptions);
         m_out.initializeConstants(m_proc, m_prologue);
         createPhiVariables();
 
@@ -194,44 +191,54 @@ public:
         m_proc.addFastConstant(m_tagMask->key());
         
         m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(JSStack::CodeBlock));
-        
-        m_out.branch(
-            didOverflowStack(), rarely(stackOverflow), usually(checkArguments));
-        
-        m_out.appendTo(stackOverflow, m_handleExceptions);
-        m_out.call(m_out.voidType, m_out.operation(operationThrowStackOverflowError), m_callFrame, m_out.constIntPtr(codeBlock()));
-        m_out.patchpoint(Void)->setGenerator(
-            [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
-                // We are terminal, so we can clobber everything. That's why we don't claim to
-                // clobber scratch.
-                AllowMacroScratchRegisterUsage allowScratch(jit);
-                
-                jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
-                jit.move(CCallHelpers::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
-                jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-                CCallHelpers::Call call = jit.call();
-                jit.jumpToExceptionHandler();
 
-                jit.addLinkTask(
-                    [=] (LinkBuffer& linkBuffer) {
-                        linkBuffer.link(call, FunctionPtr(lookupExceptionHandlerFromCallerFrame));
+        // Stack Overflow Check.
+        unsigned exitFrameSize = m_graph.requiredRegisterCountForExit() * sizeof(Register);
+        MacroAssembler::AbsoluteAddress addressOfStackLimit(vm().addressOfStackLimit());
+        PatchpointValue* stackOverflowHandler = m_out.patchpoint(Void);
+        CallSiteIndex callSiteIndex = callSiteIndexForCodeOrigin(m_ftlState, CodeOrigin(0));
+        stackOverflowHandler->appendSomeRegister(m_callFrame);
+        stackOverflowHandler->clobber(RegisterSet::macroScratchRegisters());
+        stackOverflowHandler->numGPScratchRegisters = 1;
+        stackOverflowHandler->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                GPRReg fp = params[0].gpr();
+                GPRReg scratch = params.gpScratch(0);
+
+                unsigned ftlFrameSize = params.proc().frameSize();
+
+                jit.addPtr(MacroAssembler::TrustedImm32(-std::max(exitFrameSize, ftlFrameSize)), fp, scratch);
+                MacroAssembler::Jump stackOverflow = jit.branchPtr(MacroAssembler::Above, addressOfStackLimit, scratch);
+
+                params.addLatePath([=] (CCallHelpers& jit) {
+                    AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                    stackOverflow.link(&jit);
+                    jit.store32(
+                        MacroAssembler::TrustedImm32(callSiteIndex.bits()),
+                        CCallHelpers::tagFor(VirtualRegister(JSStack::ArgumentCount)));
+                    jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+
+                    jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+                    jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()), GPRInfo::argumentGPR1);
+                    CCallHelpers::Call throwCall = jit.call();
+
+                    jit.move(CCallHelpers::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
+                    jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+                    CCallHelpers::Call lookupExceptionHandlerCall = jit.call();
+                    jit.jumpToExceptionHandler();
+
+                    jit.addLinkTask(
+                        [=] (LinkBuffer& linkBuffer) {
+                            linkBuffer.link(throwCall, FunctionPtr(operationThrowStackOverflowError));
+                            linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr(lookupExceptionHandlerFromCallerFrame));
                     });
+                });
             });
-        m_out.unreachable();
-        
-        m_out.appendTo(m_handleExceptions, checkArguments);
-        Box<CCallHelpers::Label> exceptionHandler = state->exceptionHandler;
-        m_out.patchpoint(Void)->setGenerator(
-            [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
-                CCallHelpers::Jump jump = jit.jump();
-                jit.addLinkTask(
-                    [=] (LinkBuffer& linkBuffer) {
-                        linkBuffer.link(jump, linkBuffer.locationOf(*exceptionHandler));
-                    });
-            });
-        m_out.unreachable();
-        
-        m_out.appendTo(checkArguments, lowBlock(m_graph.block(0)));
+
+        LBasicBlock firstDFGBasicBlock = lowBlock(m_graph.block(0));
+        // Check Arguments.
         availabilityMap().clear();
         availabilityMap().m_locals = Operands<Availability>(codeBlock()->numParameters(), 0);
         for (unsigned i = codeBlock()->numParameters(); i--;) {
@@ -273,8 +280,20 @@ public:
                 break;
             }
         }
-        m_out.jump(lowBlock(m_graph.block(0)));
-        
+        m_out.jump(firstDFGBasicBlock);
+
+        m_out.appendTo(m_handleExceptions, firstDFGBasicBlock);
+        Box<CCallHelpers::Label> exceptionHandler = state->exceptionHandler;
+        m_out.patchpoint(Void)->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+                CCallHelpers::Jump jump = jit.jump();
+                jit.addLinkTask(
+                    [=] (LinkBuffer& linkBuffer) {
+                        linkBuffer.link(jump, linkBuffer.locationOf(*exceptionHandler));
+                    });
+            });
+        m_out.unreachable();
+
         for (DFG::BasicBlock* block : preOrder)
             compileBlock(block);
 
@@ -7055,42 +7074,6 @@ private:
         m_out.store32As8(
             m_out.constInt32(0),
             m_out.address(constructor, m_heaps.RegExpConstructor_cachedResult_reified));
-    }
-
-    LValue didOverflowStack()
-    {
-        // This does a very simple leaf function analysis. The invariant of FTL call
-        // frames is that the caller had already done enough of a stack check to
-        // prove that this call frame has enough stack to run, and also enough stack
-        // to make runtime calls. So, we only need to stack check when making calls
-        // to other JS functions. If we don't find such calls then we don't need to
-        // do any stack checks.
-        
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-            DFG::BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-            
-            for (unsigned nodeIndex = block->size(); nodeIndex--;) {
-                Node* node = block->at(nodeIndex);
-                
-                switch (node->op()) {
-                case GetById:
-                case PutById:
-                case Call:
-                case Construct:
-                    return m_out.below(
-                        m_callFrame,
-                        m_out.loadPtr(
-                            m_out.absolute(vm().addressOfFTLStackLimit())));
-                    
-                default:
-                    break;
-                }
-            }
-        }
-        
-        return m_out.booleanFalse;
     }
     
     struct ArgumentsLength {

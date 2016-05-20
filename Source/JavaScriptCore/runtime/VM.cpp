@@ -188,10 +188,6 @@ VM::VM(VMType vmType, HeapType heapType)
 #if !ENABLE(JIT)
     , m_jsStackLimit(0)
 #endif
-#if ENABLE(FTL_JIT)
-    , m_ftlStackLimit(0)
-    , m_largestFTLStackSize(0)
-#endif
     , m_inDefineOwnProperty(false)
     , m_codeCache(std::make_unique<CodeCache>())
     , m_enabledProfiler(nullptr)
@@ -666,19 +662,9 @@ inline void VM::updateStackLimit()
     if (m_stackPointerAtVMEntry) {
         ASSERT(wtfThreadData().stack().isGrowingDownward());
         char* startOfStack = reinterpret_cast<char*>(m_stackPointerAtVMEntry);
-#if ENABLE(FTL_JIT)
-        m_stackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize + m_largestFTLStackSize);
-        m_ftlStackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize + 2 * m_largestFTLStackSize);
-#else
         m_stackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize);
-#endif
     } else {
-#if ENABLE(FTL_JIT)
-        m_stackLimit = wtfThreadData().stack().recursionLimit(m_reservedZoneSize + m_largestFTLStackSize);
-        m_ftlStackLimit = wtfThreadData().stack().recursionLimit(m_reservedZoneSize + 2 * m_largestFTLStackSize);
-#else
         m_stackLimit = wtfThreadData().stack().recursionLimit(m_reservedZoneSize);
-#endif
     }
 
 #if PLATFORM(WIN)
@@ -686,16 +672,6 @@ inline void VM::updateStackLimit()
         preCommitStackMemory(m_stackLimit);
 #endif
 }
-
-#if ENABLE(FTL_JIT)
-void VM::updateFTLLargestStackSize(size_t stackSize)
-{
-    if (stackSize > m_largestFTLStackSize) {
-        m_largestFTLStackSize = stackSize;
-        updateStackLimit();
-    }
-}
-#endif
 
 #if ENABLE(DFG_JIT)
 void VM::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
