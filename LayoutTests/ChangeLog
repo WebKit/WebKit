@@ -1,3 +1,16 @@
+2016-05-20  Enrica Casucci  <enrica@apple.com>
+
+        Drag cannot start if no drag data or custom data is available in the Pasteboard.
+        https://bugs.webkit.org/show_bug.cgi?id=157911
+        rdar://problem/24577706
+
+        Reviewed by Tim Horton.
+
+        * fast/events/draggable-div-customdata-expected.txt: Added.
+        * fast/events/draggable-div-customdata.html: Added.
+        * platform/ios-simulator/TestExpectations
+        * platform/mac-wk2/TestExpectations
+
 2016-05-20  Alex Christensen  <achristensen@webkit.org>
 
         Fix null dereferencing in CSSAnimationTriggerScrollValue::equals

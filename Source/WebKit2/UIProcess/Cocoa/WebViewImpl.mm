@@ -2935,8 +2935,7 @@ void WebViewImpl::dragImageForView(NSView *view, NSImage *image, CGPoint clientP
     // The call below could release the view.
     RetainPtr<NSView> protector(m_view);
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    if (![[pasteboard types] count])
-        [pasteboard setString:@"" forType:PasteboardTypes::WebDummyPboardType];
+    [pasteboard setString:@"" forType:PasteboardTypes::WebDummyPboardType];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [view dragImage:image
