@@ -31,6 +31,12 @@
     margin-left: 1px;
 }
 
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .visual-style-property-editor-link {
+        margin-left: 0;
+    }
+}
+
 .visual-style-property-editor-link.disabled {
     visibility: hidden;
 }
@@ -85,6 +91,15 @@
 
 .visual-style-property-editor-link.link-all.linked > .visual-style-property-editor-link-border.right {
     right: 0;
+}
+
+.visual-style-property-editor-link.link-vertical {
+    position: relative;
+    top: -1px;
+}
+
+.visual-style-property-editor-link:not(.link-all) {
+    height: 20px;
 }
 
 .visual-style-property-editor-link:not(.link-all) > .visual-style-property-editor-link-border {

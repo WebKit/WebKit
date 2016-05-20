@@ -1,3 +1,24 @@
+2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Visual Style connectors are not always centered properly
+        https://bugs.webkit.org/show_bug.cgi?id=157932
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStylePropertyEditorLink.css:
+        (.visual-style-property-editor-link):
+        Remove the 1px margin on @2x that would cause jitter at different
+        sidebar widths. It is however needed on @1x.
+
+        (.visual-style-property-editor-link:not(.link-all)):
+        Make the height 20 so these both move closer to the center of the
+        <select> elements they are next to. They are not perfectly centered
+        as that would require a half pixel.
+
+        (.visual-style-property-editor-link.link-vertical):
+        Move the top line up a pixel so it is "up 0.5" from center and
+        the bottom one is already "down 0.5" from the center.
+
 2016-05-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r189385): Web Inspector: CSS properties modified via JS don't update in the Styles sidebar
