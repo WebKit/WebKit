@@ -1,3 +1,16 @@
+2016-05-20  Anders Carlsson  <andersca@apple.com>
+
+        Allow named images on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=157960
+        rdar://problem/26396532
+
+        Reviewed by Dean Jackson.
+
+        USE(NEW_THEME) is false on iOS so force named images to be drawn by checking PLATFORM(IOS) as well.
+
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::draw):
+
 2016-05-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] REGRESSION(r184899): Ascent adjustments are applied to web fonts
