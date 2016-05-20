@@ -674,8 +674,10 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         // Prevent two selections in the sidebar, if the selected tree outline is changing.
         let treeOutline = selectedElement.treeOutline;
-        if (this._selectedContentTreeOutline && this._selectedContentTreeOutline !== treeOutline)
-            this._selectedContentTreeOutline.selectedTreeElement.deselect();
+        if (this._selectedContentTreeOutline && this._selectedContentTreeOutline !== treeOutline) {
+            if (this._selectedContentTreeOutline.selectedTreeElement)
+                this._selectedContentTreeOutline.selectedTreeElement.deselect();
+        }
 
         treeOutline[WebInspector.NavigationSidebarPanel.PreviousSelectedTreeElementSymbol] = null;
         this._selectedContentTreeOutline = treeOutline;

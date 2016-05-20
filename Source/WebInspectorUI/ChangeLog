@@ -1,5 +1,35 @@
 2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Main Resource with <scripts> not showing up in debugger sidebar after reload
+        https://bugs.webkit.org/show_bug.cgi?id=157939
+        <rdar://problem/26385691>
+
+        Reviewed by Timothy Hatcher.
+
+        The order of events on a reload are:
+
+            - MainResourceChanged, add main resource
+            - ScriptsCleared, remove all elements
+
+        This change makes it so ScriptsCleared add the main resource (and
+        potentially other resources). This also avoids the work in
+        MainResourceChanged on reloads / navigations that would be wasted if
+        ScriptsCleared were to just remove it. However, this is still needed
+        for initial load where ScriptsCleared does not happen.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._mainResourceDidChange):
+        Only add the main resource tree here when we are first loading.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._scriptsCleared):
+        Add the main resource tree after we remove all children in navigations.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._contentTreeOutlineTreeSelectionDidChange):
+        This was not gracefully handling if there was no selected tree element.
+
+2016-05-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Visual Style connectors are not always centered properly
         https://bugs.webkit.org/show_bug.cgi?id=157932
 

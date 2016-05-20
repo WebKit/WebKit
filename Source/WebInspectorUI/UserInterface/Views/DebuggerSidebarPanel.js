@@ -423,10 +423,12 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             this.contentBrowser.contentViewContainer.closeAllContentViews();
         }
 
-        var resource = event.target.mainResource;
-        this._addTreeElementForSourceCodeToTreeOutline(resource, this._scriptsContentTreeOutline);
-        this._addBreakpointsForSourceCode(resource);
-        this._addIssuesForSourceCode(resource);
+        if (!event.data.oldMainResource) {
+            var resource = event.target.mainResource;
+            this._addTreeElementForSourceCodeToTreeOutline(resource, this._scriptsContentTreeOutline);
+            this._addBreakpointsForSourceCode(resource);
+            this._addIssuesForSourceCode(resource);
+        }
     }
 
     _timelineCapturingWillStart(event)
@@ -500,6 +502,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         }
 
         this._scriptsContentTreeOutline.removeChildren();
+
+        this._addResourcesRecursivelyForFrame(WebInspector.frameResourceManager.mainFrame);
     }
 
     _breakpointAdded(event)
