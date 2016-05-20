@@ -1,3 +1,20 @@
+2016-05-20  Dave Hyatt  <hyatt@apple.com>
+
+        Scrolling broken in iTunes connect pages
+        https://bugs.webkit.org/show_bug.cgi?id=157678
+
+        Reviewed by Zalan Bujtas.
+
+        Added fast/flexbox/nested-columns-min-intrinsic-disabled.html
+
+        Turn off minimum intrinsic size adjustment for flexboxes. This violates the spec,
+        but until we can produce good results that is what we need to do. Blink has also
+        turned off nested columns intrinsic sizing as well, so we match them with this
+        change.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax):
+
 2016-05-20  Rawinder Singh  <rawinder.singh-webkit@cisra.canon.com.au>
 
         Implement operator== for WeakPtr

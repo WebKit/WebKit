@@ -1,3 +1,13 @@
+2016-05-20  Dave Hyatt  <hyatt@apple.com>
+
+        Scrolling broken in iTunes connect pages
+        https://bugs.webkit.org/show_bug.cgi?id=157678
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/flexbox/nested-column-intrinsic-min-disabled-expected.html: Added.
+        * fast/flexbox/nested-column-intrinsic-min-disabled.html: Added.
+
 2016-05-20  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Layout tests related to text alternative computation need to be done differently
