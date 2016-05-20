@@ -5,18 +5,18 @@ This tests that images will fallback to using the title attribute if no other de
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Image1 title: AXTitle: test1
-Image1 description: AXDescription: 
-
-Image2 title: AXTitle: alt
-Image2 description: AXDescription: test2
-
-Image3 title: AXTitle: test3
-Image3 description: AXDescription: 
-
-Image4 title: AXTitle: alt
-Image4 description: AXDescription: test4
-
+Image1:
+	AXTitle: test1
+	AXDescription: 
+Image2:
+	AXTitle: alt
+	AXDescription: test2
+Image3:
+	AXTitle: test3
+	AXDescription: 
+Image4:
+	AXTitle: alt
+	AXDescription: test4
 PASS imagesGroup.childAtIndex(0).childrenCount is 2
 PASS successfullyParsed is true
 

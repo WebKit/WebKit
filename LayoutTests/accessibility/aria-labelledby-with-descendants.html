@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -49,10 +50,7 @@
     if (window.accessibilityController) {
           for (var k = 1; k < 8; k++) {
               var test = accessibilityController.accessibleElementById("test" + k);
-              if (accessibilityController.platformName == "atk")
-                  debug("test " + k + ": aria-labelledby description: " + test.title);
-              else
-                  debug("test " + k + ": aria-labelledby description: " + test.description);
+              debug("test " + k + ": aria-labelledby description: " + platformValueForW3CName(test));
               debug("test " + k + ": expected description: " + document.getElementById("test" + k).getAttribute("data-label") + "\n");
           }
           document.getElementById("content").style.visibility = "hidden";

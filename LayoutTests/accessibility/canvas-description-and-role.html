@@ -2,6 +2,7 @@
 <html>
 <body>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 
 <style>canvas { display: inline; border: 1px solid #000; }</style>
     <!-- No whitespace between canvases on purpose, so there's the same
@@ -21,17 +22,11 @@ if (window.testRunner && window.accessibilityController) {
     shouldBe("axContainer.childrenCount", "2");
 
     var axCanvas1 = axContainer.childAtIndex(0);
-    if (accessibilityController.platformName == "atk")
-        debug('Canvas 1 title: ' + axCanvas1.title);
-    else
-        debug('Canvas 1 description: ' + axCanvas1.description);
+    shouldBeEqualToString("platformValueForW3CName(axCanvas1)", "Canvas label");
     debug('Canvas 1 role: ' + axCanvas1.role);
 
     var axCanvas2 = axContainer.childAtIndex(1);
-    if (accessibilityController.platformName == "atk")
-        debug('Canvas 2 title: ' + axCanvas2.title);
-    else
-        debug('Canvas 2 description: ' + axCanvas2.description);
+    shouldBeEqualToString("platformValueForW3CName(axCanvas2)", "");
     debug('Canvas 2 role: ' + axCanvas2.role);
 }
 

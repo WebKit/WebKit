@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <script>
     if (window.testRunner)
@@ -14,17 +15,14 @@
     <div id="console"></div>
      
     <script>
-        description("This test makes sure that a img acting as an aria button still returns its alt tag as the description");
+        description("This test makes sure that a img acting as an aria button still returns its alt tag as the accessible name");
  
         if (window.accessibilityController) {
             var result = document.getElementById("result");
 
             var body = document.getElementById("body").focus();
             var imgUIElement = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
-            if (accessibilityController.platformName == "atk")
-                debug("imgUIElement.title is " + imgUIElement.title);
-            else
-                debug("imgUIElement.description is " + imgUIElement.description);
+            shouldBeEqualToString("platformValueForW3CName(imgUIElement)", "alternate");
         }
     </script>
     

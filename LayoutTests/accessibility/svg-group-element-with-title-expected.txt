@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Verify that the SVG group is returned as an accessible element.
 PASS group1.role is 'AXRole: AXGroup'
-PASS group1.description is 'AXDescription: SVG TITLE 1'
+PASS platformValueForW3CName(group1) is "SVG TITLE 1"
 
 Verify that you can hit-test to the SVG group.
 PASS hitTestElement.isEqual(group1) is true

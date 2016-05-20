@@ -1,13 +1,11 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<script>
-    if (window.testRunner)
-        testRunner.dumpAsText();
-</script>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
 <body>
-
-    <!-- this test makes sure that the labeled by aria attributes does not start climbing out of itself and 
-         appending on other elements as its own description -->
-
+<div id="content">
     <p>Some <a href="#">focusable content</a> before the application widgets.</p>
     <ul role="toolbar">
     <li><a role="button" href="#" id="get"><span>Get New Mail</span></a></li>
@@ -25,25 +23,20 @@
   <li id="item7" role="listitem" tabindex="-1">Item Seven</li>
 </ul>
 
-    <div id="result"></div>
-    
-    <script>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+        description("This tests that aria-labelledby does not append all sibling to an ARIA name");
+
         if (window.accessibilityController) {
-            var labeledItem = document.getElementById("rep");
-            labeledItem.focus();
-            var result = document.getElementById("result");
-            var resultValue;
-            if (accessibilityController.platformName == "atk")
-                resultValue = accessibilityController.focusedElement.title;
-            else
-                resultValue = accessibilityController.focusedElement.description;
-            if (resultValue.endsWith("Reply Item Five")) {
-               result.innerText = "Passed";
-            }
-            else { 
-               result.innerText = "Failed. Result ==" + resultValue + "==";
-            }
+            var labeledItem = document.getElementById("rep").focus();
+            var axButton = accessibilityController.focusedElement;
+            shouldBeEqualToString("platformValueForW3CName(axButton)", "Reply Item Five");
+
+            document.getElementById("content").style.visibility = "hidden";
         }
-    </script>
+</script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

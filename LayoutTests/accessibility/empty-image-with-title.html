@@ -2,11 +2,11 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
 <img id="image1" src="foo.gif" title="baz" width="100" height="100">
-
 <div id="console"></div>
 
 <script>
@@ -17,10 +17,9 @@
 
           var image1 = accessibilityController.accessibleElementById("image1");
           debug("image1.role is " + image1.role);
-          if (accessibilityController.platformName == "atk")
-              debug("image1.title is " + image1.title);
-          else
-              debug("image1.description is " + image1.description);
+
+          var accNameWithSource = platformValueForW3CName(image1, true);
+          debug("image1's accessible name with source is " + accNameWithSource);
     }
 
 </script>

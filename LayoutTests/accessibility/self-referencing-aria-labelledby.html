@@ -2,10 +2,11 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 <title>Self-Referencing aria-labelledby</title>
 </head>
 <body>
-
+<div id="content">
 <!-- Self-referencing label should be the content text. -->
 <a aria-labelledby="t0 s0 s1" class="test" href="#" id="t0">X</a>
 
@@ -29,7 +30,7 @@
 
 <span id="s0">Y</span>
 <span id="s1">Z</span>
-
+</div>
 <p id="description"></p>
 <div id="console"></div>
 
@@ -40,11 +41,10 @@
         testCount = document.getElementsByClassName("test").length;
         for (var i = 0; i < testCount; ++i) {
             var test = accessibilityController.accessibleElementById("t" + i);
-            if (accessibilityController.platformName == "atk")
-                shouldBe("test.title", "'AXTitle: X Y Z'");
-            else
-                shouldBe("test.description", "'AXDescription: X Y Z'");
+            shouldBeEqualToString("platformValueForW3CName(test)", "X Y Z");
         }
+
+        document.getElementById("content").style.visibility = "hidden";
     }
 </script>
 

@@ -2,6 +2,7 @@
 <html>
 <body>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 
 <div id="container" style="position: relative; top: 100px; left: 600px; width:400px; height: 400px;" role="group" tabindex="0">
 
@@ -34,10 +35,6 @@ function pageY(element) {
     return element.clickPointY - element.height/2;
 }
 
-function label(element) {
-    return accessibilityController.platformName == "atk" ? element.title: element.description;
-}
-
 if (window.testRunner && window.accessibilityController) {
     window.testRunner.dumpAsText();
  
@@ -50,28 +47,28 @@ if (window.testRunner && window.accessibilityController) {
 
     var face = container.childAtIndex(0);
     debug('Face role: ' + face.role);
-    debug('Face label: ' + label(face));
+    debug('Face label: ' + platformValueForW3CName(face, true));
     debug('FaceX: ' + (pageX(face) - x));
     debug('FaceY: ' + Math.abs(pageY(face) - y));
     debug('<br>');
 
     var eye = container.childAtIndex(1);
     debug('Eye role: ' + eye.role);
-    debug('Eye label: ' + label(eye));
+    debug('Eye label: ' + platformValueForW3CName(eye, true));
     debug('EyeX: ' + (pageX(eye) - x));
     debug('EyeY: ' + Math.abs(pageY(eye) - y));
     debug('<br>');
 
     var nose = container.childAtIndex(3);
     debug('Nose role: ' + nose.role);
-    debug('Nose label: ' + label(nose));
+    debug('Nose label: ' + platformValueForW3CName(nose, true));
     debug('NoseX: ' + (pageX(nose) - x));
     debug('NoseY: ' + Math.abs(pageY(nose) - y));
     debug('<br>');
 
     var mouth = container.childAtIndex(4);
     debug('Mouth role: ' + mouth.role);
-    debug('Mouth label: ' + label(mouth));
+    debug('Mouth label: ' + platformValueForW3CName(mouth, true));
     debug('MouthX: ' + (pageX(mouth) - x));
     debug('MouthY: ' + Math.floor(Math.abs(pageY(mouth) - y)));
     debug('<br>');
@@ -88,7 +85,7 @@ if (window.testRunner && window.accessibilityController) {
 
     var image = container.childAtIndex(6);
     debug('Image role: ' + image.role);
-    debug('Image label: ' + label(image));
+    debug('Image label: ' + platformValueForW3CName(image, true));
     debug('ImageX: ' + (pageX(image) - x));
     debug('ImageY: ' + Math.abs(pageY(image) - y));
 }

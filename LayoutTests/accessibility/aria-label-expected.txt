@@ -1,11 +1,10 @@
- test
-This tests that the aria-label attribute works. The input and the A tag should return the appropriate description.
+This tests that the aria-label attribute works on both an input and an anchor.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS succeeded is true
-PASS succeeded is true
+PASS platformValueForW3CName(axInput) is "aria label"
+PASS platformValueForW3CName(axLink) is "aria link"
 PASS successfullyParsed is true
 
 TEST COMPLETE

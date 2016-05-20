@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -28,44 +29,24 @@
         // First image should have a description of "test1" because there is no alt tag (it should use the title).
         // The title should NOT be in the help text.
         var image1 = imagesGroup.childAtIndex(0).childAtIndex(0);
-        if (accessibilityController.platformName == "atk") {
-            debug("Image1 title: " + image1.title);
-            debug("Image1 description: " + image1.description + "<br>");
-        } else {
-            debug("Image1 description: " + image1.description);
-            debug("Image1 help: " + image1.helpText + "<br>");
-        }
+        debug("Image1:");
+        debug(platformTextAlternatives(image1));
 
         // Second image should use the description from the alt tag instead of the title.
         // The help text should reflect what's in the title.
         var image2 = imagesGroup.childAtIndex(0).childAtIndex(1);
-        if (accessibilityController.platformName == "atk") {
-            debug("Image2 title: " + image2.title);
-            debug("Image2 description: " + image2.description + "<br>");
-        } else {
-            debug("Image2 description: " + image2.description);
-            debug("Image2 help: " + image2.helpText + "<br>");
-        }
+        debug("Image2:");
+        debug(platformTextAlternatives(image2));
 
         // Now do the same checks for ARIA type images.
         var image3 = imagesGroup.childAtIndex(1);
-        if (accessibilityController.platformName == "atk") {
-            debug("Image3 title: " + image3.title);
-            debug("Image3 description: " + image3.description + "<br>");
-        } else {
-            debug("Image3 description: " + image3.description);
-            debug("Image3 help: " + image3.helpText + "<br>");
-        }
+        debug("Image3:");
+        debug(platformTextAlternatives(image3));
 
         // Now do the same checks for ARIA type images.
         var image4 = imagesGroup.childAtIndex(2);
-        if (accessibilityController.platformName == "atk") {
-            debug("Image4 title: " + image4.title);
-            debug("Image4 description: " + image4.description + "<br>");
-        } else {
-            debug("Image4 description: " + image4.description);
-            debug("Image4 help: " + image4.helpText + "<br>");
-        }
+        debug("Image4:");
+        debug(platformTextAlternatives(image4));
 
         // Verify that the first image (with an empty alt tag) is ignored
         // by checking the children count of the group containing the native images == 2.

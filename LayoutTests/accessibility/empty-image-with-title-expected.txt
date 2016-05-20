@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 image1.role is AXRole: AXImage
-image1.description is AXDescription: baz
+image1's accessible name with source is AXDescription: baz
 PASS successfullyParsed is true
 
 TEST COMPLETE

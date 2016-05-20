@@ -1,3 +1,120 @@
+2016-05-20  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Layout tests related to text alternative computation need to be done differently
+        https://bugs.webkit.org/show_bug.cgi?id=157187
+
+        Create several utility methods to facilitate retrieval of platform-independent
+        attribute values from platform-specific attributes:
+
+        - platformValueForW3CName() and platformValueForW3CDescription() to retrieve a
+          specific piece of text alternative information, stripping off the platform
+          attribute name by default. These methods should make it possible to share tests
+          and expectations files because the text alternative calculation defined by the
+          W3C accessibility specifications should be the same for all platforms. (The
+          differences are the result of the unique platform mappings.)
+
+        - platformTextAlternatives() to dump out all the text alternative attributes and
+          values, preserving the platform-specific attribute name. This, along with the
+          use of the platformValue* methods with attribute name enabled, should make it
+          possible to have shared tests with platform-specific expectations without the
+          need to check the platform in the test itself.
+
+        - platformRoleForComboBox() and platformRoleForStaticText() to eliminate the
+          need for platform-specific expectations files simply because such an element
+          happens to be included in the test file and verifying that element's role is
+          desired.
+
+        Begin using these methods in the tests related to text alternative computation
+        which had platform-specific checks, update the expectations files when needed,
+        and remove now-obsolete platform-specific expectations files.
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/alt-tag-on-image-with-nonimage-role-expected.txt: Updated.
+        * accessibility/alt-tag-on-image-with-nonimage-role.html: Updated.
+        * accessibility/aria-help-expected.txt: Added.
+        * accessibility/aria-help.html: Updated.
+        * accessibility/aria-label-expected.txt: Updated.
+        * accessibility/aria-label.html: Updated.
+        * accessibility/aria-labeled-with-hidden-node-expected.txt: Updated.
+        * accessibility/aria-labeled-with-hidden-node.html: Updated.
+        * accessibility/aria-labelledby-on-input-expected.txt: Updated.
+        * accessibility/aria-labelledby-on-input.html: Updated.
+        * accessibility/aria-labelledby-overrides-aria-labeledby-expected.txt: Updated.
+        * accessibility/aria-labelledby-overrides-aria-labeledby.html: Updated.
+        * accessibility/aria-labelledby-overrides-label-expected.txt: Updated.
+        * accessibility/aria-labelledby-overrides-label.html: Updated.
+        * accessibility/aria-labelledby-stay-within-expected.txt: Updated.
+        * accessibility/aria-labelledby-stay-within.html: Updated.
+        * accessibility/aria-labelledby-with-descendants-expected.txt: Updated.
+        * accessibility/aria-labelledby-with-descendants.html: Updated.
+        * accessibility/aria-namefrom-author-expected.txt: Updated.
+        * accessibility/aria-namefrom-author.html: Updated.
+        * accessibility/aria-text-role-expected.txt: Updated.
+        * accessibility/aria-text-role.html: Updated.
+        * accessibility/canvas-description-and-role-expected.txt: Updated.
+        * accessibility/canvas-description-and-role.html: Updated.
+        * accessibility/canvas-fallback-content.html: Updated.
+        * accessibility/empty-image-with-title-expected.txt: Updated.
+        * accessibility/empty-image-with-title.html: Updated.
+        * accessibility/fieldset-element-expected.txt: Updated.
+        * accessibility/fieldset-element.html: Updated.
+        * accessibility/focusable-div-expected.txt: Updated.
+        * accessibility/focusable-div.html: Updated.
+        * accessibility/help-text.html: Updated.
+        * accessibility/img-alt-tag-only-whitespace-expected.txt: Updated.
+        * accessibility/img-alt-tag-only-whitespace.html: Updated.
+        * accessibility/img-aria-button-alt-tag-expected.txt: Updated.
+        * accessibility/img-aria-button-alt-tag.html: Updated.
+        * accessibility/img-fallsback-to-title.html: Updated.
+        * accessibility/input-image-alt-expected.txt: Updated.
+        * accessibility/input-image-alt.html: Updated.
+        * accessibility/loading-iframe-sends-notification.html: Updated.
+        * accessibility/self-referencing-aria-labelledby-expected.txt: Updated.
+        * accessibility/self-referencing-aria-labelledby.html: Updated.
+        * accessibility/svg-bounds.html: Updated.
+        * accessibility/svg-group-element-with-title-expected.txt: Updated.
+        * accessibility/svg-group-element-with-title.html: Updated.
+        * accessibility/svg-image-expected.txt: Updated.
+        * accessibility/svg-image.html: Updated.
+        * accessibility/svg-labelledby-expected.txt: Updated.
+        * accessibility/svg-labelledby.html: Updated.
+        * accessibility/svg-remote-element.html: Updated.
+        * accessibility/w3c-svg-description-calculation.html: Updated.
+        * accessibility/w3c-svg-name-calculation.html: Updated.
+        * platform/gtk/accessibility/alt-tag-on-image-with-nonimage-role-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-labeled-with-hidden-node-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-labelledby-on-input-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-labelledby-overrides-aria-labeledby-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-labelledby-overrides-label-expected.txt: Updated.
+        * platform/gtk/accessibility/aria-labelledby-with-descendants-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-namefrom-author-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-text-role-expected.txt: Removed.
+        * platform/gtk/accessibility/canvas-description-and-role-expected.txt: Updated.
+        * platform/gtk/accessibility/empty-image-with-title-expected.txt: Updated.
+        * platform/gtk/accessibility/fieldset-element-expected.txt: Removed.
+        * platform/gtk/accessibility/focusable-div-expected.txt: Removed.
+        * platform/gtk/accessibility/img-alt-tag-only-whitespace-expected.txt: Removed.
+        * platform/gtk/accessibility/img-aria-button-alt-tag-expected.txt: Removed.
+        * platform/gtk/accessibility/img-fallsback-to-title-expected.txt: Updated.
+        * platform/gtk/accessibility/input-image-alt-expected.txt: Removed.
+        * platform/gtk/accessibility/self-referencing-aria-labelledby-expected.txt: Removed.
+        * platform/gtk/accessibility/svg-group-element-with-title-expected.txt: Removed.
+        * platform/gtk/accessibility/svg-image-expected.txt: Removed.
+        * platform/gtk/accessibility/svg-labelledby-expected.txt: Removed.
+        * platform/mac/accessibility/aria-help-expected.txt: Removed.
+        * platform/mac/accessibility/aria-labelledby-overrides-label-expected.txt: Removed.
+        * platform/mac/accessibility/canvas-description-and-role-expected.txt: Updated.
+        * platform/mac/accessibility/fieldset-element-expected.txt: Removed.
+        * platform/mac/accessibility/img-fallsback-to-title-expected.txt: Updated.
+        * platform/win/accessibility/canvas-description-and-role-expected.txt: Updated.
+        * resources/accessibility-helper.js:
+        (platformValueForW3CName): Added.
+        (platformValueForW3CDescription): Added.
+        (platformTextAlternatives): Added.
+        (platformRoleForComboBox): Added.
+        (platformRoleForStaticText): Added.
+
 2016-05-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening after r201203

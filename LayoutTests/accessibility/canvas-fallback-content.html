@@ -2,7 +2,7 @@
 <html>
 <body>
 <script src="../resources/js-test-pre.js"></script>
-
+<script src="../resources/accessibility-helper.js"></script>
 <style>
 myelement {
   display: block;
@@ -52,7 +52,7 @@ if (window.testRunner && window.accessibilityController) {
         debug("");
     }
 
-    var comboBoxRole = accessibilityController.platformName == "atk" ? "AXRole: AXComboBox" : "AXRole: AXPopUpButton";
+    var comboBoxRole = platformRoleForComboBox(accessibilityController.platformName);
 
     // Check rendered controls.
     check("link1", "AXRole: AXLink");

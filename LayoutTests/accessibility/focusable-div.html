@@ -2,6 +2,9 @@
 <html>
 <body>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+
+<div id="content">
 
 <!-- A link always gets its accessible text from contents. -->
 <a id="link" href="#">A</a>
@@ -16,7 +19,7 @@
 <div id="div5" tabindex="0">Initial text before link<a href="#">Link</a></div>
 <div id="div6" tabindex="0"><ul><li>List item</li></ul></div>
 <div id="div7" tabindex="0">Initial text before list<ul><li>List item</li></ul></div>
-
+</div>
 <div id="console"></div>
 <script>
 description("This test makes sure that a generic focusable div can get accessibility focus. It should not get accessible text from its children automatically though.");
@@ -50,10 +53,8 @@ if (window.testRunner && window.accessibilityController) {
     div3.focus();
     shouldBe("document.activeElement == div3", "true");
     window.axDiv3 = accessibilityController.focusedElement;
-    if (accessibilityController.platformName == "atk")
-        shouldBe("lastChar(axDiv3.title)", "\"D\"");
-    else
-        shouldBe("lastChar(axDiv3.description)", "\"D\"");
+    var accNameForDiv3 = platformValueForW3CName(axDiv3);
+    shouldBe("lastChar(accNameForDiv3)", "\"D\"");
 
     var div4 = document.getElementById('div4');
     div4.focus();
@@ -80,6 +81,8 @@ if (window.testRunner && window.accessibilityController) {
     window.axDiv7 = accessibilityController.focusedElement;
     shouldBe("axDiv7.title.indexOf('List item')", "-1");
     shouldBe("axDiv7.title.indexOf('Initial text before list') >= 0", "false");
+
+    document.getElementById("content").style.visibility = "hidden";
 }
 
 </script>

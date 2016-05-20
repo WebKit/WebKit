@@ -2,10 +2,11 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 <title>Fieldset Element</title>
 </head>
 <body>
-
+<div id="content">
 <form>
 <!-- fieldset with aria-label. -->
 <fieldset aria-label="High Score:" class="fieldsetTest" id="f0">
@@ -63,7 +64,7 @@ Name: <input type="text">
 
 <!-- legend outside fieldset. -->
 <legend id="l0">Other:</legend>
-
+</div>
 <p id="description"></p>
 <div id="console"></div>
 
@@ -78,16 +79,17 @@ Name: <input type="text">
         // fieldset tests.
         fieldsetTestCount = document.getElementsByClassName("fieldsetTest").length;
         for (var i = 0; i < fieldsetTestCount; ++i) {
-            if (accessibilityController.platformName == "atk")
-                fieldsetDescription = accessibilityController.accessibleElementById("f" + i).title;
-            else
-                fieldsetDescription = accessibilityController.accessibleElementById("f" + i).description;
-            debug(fieldsetDescription);
+            var accName = platformValueForW3CName(accessibilityController.accessibleElementById("f" + i));
+            debug("element id 'f" + i + "': " +  accName);
         }
-        
+
         // legend tests.
-        legendValue = accessibilityController.accessibleElementById("l0").childAtIndex(0).stringValue;
-        debug(legendValue);
+        var legend = accessibilityController.accessibleElementById("l0");
+        if (legend.childrenCount)
+            legend = legend.childAtIndex(0);
+        debug("element id 'l0': " + legend.stringValue);
+
+        document.getElementById("content").style.visibility = "hidden";
     }
 </script>
 

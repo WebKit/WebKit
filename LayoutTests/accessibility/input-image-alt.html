@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -12,15 +13,11 @@
      
     <script>
         if (window.accessibilityController) {
-            description("This test makes sure that an input image returns its alt tag as the description");
+            description("This test makes sure that an input image returns its alt tag as the accessible name");
 
             var image1 = document.getElementById("image1").focus();
             var img = accessibilityController.focusedElement;
-
-            if (accessibilityController.platformName == "atk")
-                debug("img.title is " + img.title);
-            else
-                debug("img.description is " + img.description);
+            shouldBeEqualToString("platformValueForW3CName(img)", "Submit");
         }
     </script>
 

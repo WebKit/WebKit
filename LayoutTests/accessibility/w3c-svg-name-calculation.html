@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 <div id="content">
@@ -309,24 +310,13 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-    function textAlternatives(axElement) {
-        if (!axElement)
-            return "Element not exposed";
-
-       result = axElement.title + "\n\t" + axElement.description;
-       if (accessibilityController.platformName == "mac")
-           result += "\n\t" + axElement.helpText;
-       result += "\n\tAXTitleUIElement: " + (axElement.titleUIElement() ? "non-null" : "null");
-       return result;
-    }
-
     description("This tests the accessible text alternatives results for SVG.");
     if (window.accessibilityController) {
         for (var i = 1; i <= 46; i++) {
             var element = document.getElementById("test" + i);
             var axElement = accessibilityController.accessibleElementById("test" + i);
-            var result = textAlternatives(axElement);
-            debug("test" + i + ":\n\tExpected " + element.getAttribute("data-expected") + "\n\t" + result);
+            var result = platformTextAlternatives(axElement, true);
+            debug("test" + i + ":\n\tExpected " + element.getAttribute("data-expected") + "\n" + result);
         }
         document.getElementById("content").style.visibility = "hidden";
     }

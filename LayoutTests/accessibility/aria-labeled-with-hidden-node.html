@@ -3,11 +3,12 @@
 <title id="title">TITLE</title>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
-
+<div id="content">
 <button id="button" aria-labelledby="title">Go</button>
-
+</div>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -17,10 +18,9 @@
     
     if (window.accessibilityController) {
        var button = accessibilityController.accessibleElementById("button");
-       if (accessibilityController.platformName == "atk")
-           shouldBe("button.title", "'AXTitle: TITLE'");
-       else
-           shouldBe("button.description", "'AXDescription: TITLE'");
+       shouldBeEqualToString("platformValueForW3CName(button)", "TITLE");
+
+       document.getElementById("content").style.visibility = "hidden";
     }
 </script>
 

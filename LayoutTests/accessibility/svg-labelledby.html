@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -28,10 +29,7 @@
 
     if (window.accessibilityController) {
         var image = accessibilityController.accessibleElementById("Sudan");
-        if (accessibilityController.platformName == "atk")
-            debug("SVG Element: " + image.title);
-        else
-            debug("SVG Element: " + image.description);
+        shouldBeEqualToString("platformValueForW3CName(image)", "Sudan");
     }
 
 </script>

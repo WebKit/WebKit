@@ -1,24 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<script>
-    if (window.testRunner)
-        testRunner.dumpAsText();
-</script>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
 <body>
+<div id="content">
     <span id="message">This computer will self-destruct in</span>
     <input id="time" type="text" value="10" aria-labelledby="message time unit"/>
     <span id="unit"> minutes.</span>
-    <div id="result"></div>
-    
-    <script>
-        if (window.accessibilityController) {
-            var labeledItem = document.getElementById("time");
-            labeledItem.focus();
-            var result = document.getElementById("result");
-            if (accessibilityController.platformName == "atk")
-                result.innerText = "\nThe accessibility title is \"" + accessibilityController.focusedElement.title + "\"";
-            else
-                result.innerText = "\nThe accessibility description is \"" + accessibilityController.focusedElement.description + "\"";
-        }
-    </script>
+</div>
+<div id="console"></div>
+<script>
+    description("This verifies the accessible name of an input with multiple aria-labelledby elements.");
+    if (window.accessibilityController) {
+        var labeledItem = document.getElementById("time").focus();
+        var axInput = accessibilityController.focusedElement;
+        shouldBeEqualToString("platformValueForW3CName(axInput)", "This computer will self-destruct in 10 minutes.");
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

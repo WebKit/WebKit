@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -65,11 +66,7 @@
             var ax = accessibilityController.accessibleElementById(id);
             if (!ax)
                 continue;
-            var output;
-            if (accessibilityController.platformName == "atk")
-                output = ax.description.replace("AXDescription: ", "");
-            else
-                output = ax.helpText.replace("AXHelp: ", "");
+            var output = platformValueForW3CDescription(ax);
             var result = document.getElementById("console");
             if (expectation === output)
                 result.textContent += "PASS: Help text for <" + tag +"> is \"" + output + "\"\n";

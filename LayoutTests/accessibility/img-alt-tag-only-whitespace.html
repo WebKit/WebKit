@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -23,10 +24,7 @@
         document.getElementById("images").focus();
         var imagesGroup = accessibilityController.focusedElement;
         shouldBe("imagesGroup.childrenCount", "1");
-        if (accessibilityController.platformName != "atk")
-            console.log("Image description: " + imagesGroup.childAtIndex(0).description);
-        else
-            console.log("Image title: " + imagesGroup.childAtIndex(0).title);
+        shouldBeEqualToString("platformValueForW3CName(imagesGroup.childAtIndex(0))", "   Image ");
     }
 
 </script>
