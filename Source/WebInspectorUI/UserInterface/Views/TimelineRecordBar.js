@@ -219,7 +219,8 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
             }
             if (newRecord.usesActiveStartTime !== oldRecordUsesActiveStartTime)
                 this._element.classList.toggle("has-inactive-segment", newRecord.usesActiveStartTime);
-        }
+        } else
+            this._element.classList.remove(oldRecordType, oldRecordEventType, "has-inactive-segment");
     }
 
     refresh(graphDataSource)

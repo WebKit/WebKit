@@ -1,3 +1,15 @@
+2016-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r200740): Web Inspector: TimelineRecordBar class lists not properly cleared, bleeding colors when zooming in and out
+        https://bugs.webkit.org/show_bug.cgi?id=157959
+        <rdar://problem/26393067>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.prototype.set records):
+        When records are cleared, clear all classes.
+
 2016-05-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Split Console is auto opening all the time when using Inspect Element context menu
