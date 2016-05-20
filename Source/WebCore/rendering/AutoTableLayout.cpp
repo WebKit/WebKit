@@ -182,9 +182,27 @@ void AutoTableLayout::fullRecalc()
         recalcColumn(i);
 }
 
-// FIXME: This needs to be adapted for vertical writing modes.
-static bool shouldScaleColumns(RenderTable* table)
+static bool shouldScaleColumnsForParent(const RenderTable& table)
 {
+    RenderBlock* containingBlock = table.containingBlock();
+    while (containingBlock && !is<RenderView>(containingBlock)) {
+        // It doesn't matter if our table is auto or fixed: auto means we don't
+        // scale. Fixed doesn't care if we do or not because it doesn't depend
+        // on the cell contents' preferred widths.
+        if (is<RenderTableCell>(containingBlock))
+            return false;
+        containingBlock = containingBlock->containingBlock();
+    }
+    return true;
+}
+
+// FIXME: This needs to be adapted for vertical writing modes.
+static bool shouldScaleColumnsForSelf(RenderTable* table)
+{
+    // Normally, scale all columns to satisfy this from CSS2.2:
+    // "A percentage value for a column width is relative to the table width.
+    // If the table has 'width: auto', a percentage represents a constraint on the column's width"
+
     // A special case.  If this table is not fixed width and contained inside
     // a cell, then don't bloat the maxwidth by examining percentage growth.
     bool scale = true;
@@ -221,7 +239,7 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
     maxWidth = 0;
     float maxPercent = 0;
     float maxNonPercent = 0;
-    bool scaleColumns = shouldScaleColumns(m_table);
+    bool scaleColumnsForSelf = shouldScaleColumnsForSelf(m_table);
 
     // We substitute 0 percent by (epsilon / percentScaleFactor) percent in two places below to avoid division by zero.
     // FIXME: Handle the 0% cases properly.
@@ -231,7 +249,7 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
     for (size_t i = 0; i < m_layoutStruct.size(); ++i) {
         minWidth += m_layoutStruct[i].effectiveMinLogicalWidth;
         maxWidth += m_layoutStruct[i].effectiveMaxLogicalWidth;
-        if (scaleColumns) {
+        if (scaleColumnsForSelf) {
             if (m_layoutStruct[i].effectiveLogicalWidth.isPercent()) {
                 float percent = std::min(m_layoutStruct[i].effectiveLogicalWidth.percent(), remainingPercent);
                 float logicalWidth = m_layoutStruct[i].effectiveMaxLogicalWidth * 100 / std::max(percent, epsilon);
@@ -242,10 +260,12 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
         }
     }
 
-    if (scaleColumns) {
+    if (scaleColumnsForSelf) {
         maxNonPercent = maxNonPercent * 100 / std::max(remainingPercent, epsilon);
-        maxWidth = std::max(maxWidth, LayoutUnit(std::min<float>(maxNonPercent, tableMaxWidth)));
-        maxWidth = std::max(maxWidth, LayoutUnit(std::min<float>(maxPercent, tableMaxWidth)));
+        m_scaledWidthFromPercentColumns = LayoutUnit(std::min<float>(maxNonPercent, tableMaxWidth));
+        m_scaledWidthFromPercentColumns = std::max(m_scaledWidthFromPercentColumns, LayoutUnit(std::min<float>(maxPercent, tableMaxWidth)));
+        if (m_scaledWidthFromPercentColumns > maxWidth && shouldScaleColumnsForParent(*m_table))
+            maxWidth = m_scaledWidthFromPercentColumns;
     }
 
     maxWidth = std::max(maxWidth, LayoutUnit(spanMaxLogicalWidth));

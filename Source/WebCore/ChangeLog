@@ -1,3 +1,27 @@
+2016-05-20  Zalan Bujtas  <zalan@apple.com>
+
+        `width: 1%` on nested table cell causes its table to hog horizontal space
+        https://bugs.webkit.org/show_bug.cgi?id=144696
+        <rdar://problem/20839572>
+
+        Reviewed by David Hyatt and Tim Horton.
+        
+        This patch is based on https://chromium.googlesource.com/chromium/src/+/9428cfb16993a2329e87c65da096ca295132ef0f
+
+        Tests: fast/table/inner-percent-width-affects-outer-floated-div.html
+               fast/table/inner-percent-width-doesnt-affect-ancestor-columns.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::shouldScaleColumnsForParent):
+        (WebCore::shouldScaleColumnsForSelf):
+        (WebCore::AutoTableLayout::computeIntrinsicLogicalWidths):
+        (WebCore::shouldScaleColumns): Deleted.
+        * rendering/AutoTableLayout.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateLogicalWidth):
+        * rendering/TableLayout.h:
+        (WebCore::TableLayout::scaledWidthFromPercentColumns):
+
 2016-05-20  Jer Noble  <jer.noble@apple.com>
 
         Inconsistent state in playback controls
