@@ -111,14 +111,6 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
         this.parentSidebar.selectedSidebarPanel = null;
     }
 
-    toggle()
-    {
-        if (this.visible)
-            this.hide();
-        else
-            this.show();
-    }
-
     added()
     {
         console.assert(this.parentSidebar);
@@ -130,11 +122,6 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
     {
         console.assert(!this.parentSidebar);
 
-        // Implemented by subclasses.
-    }
-
-    willRemove()
-    {
         // Implemented by subclasses.
     }
 

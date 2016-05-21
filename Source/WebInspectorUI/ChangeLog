@@ -1,3 +1,28 @@
+2016-05-21  Matt Baker  <mattbaker@apple.com>
+
+        Assertion Failed: StyleDetailsPanel.markAsNeedsRefresh() called with null domNode
+        https://bugs.webkit.org/show_bug.cgi?id=157955
+        <rdar://problem/26398943>
+
+        Reviewed by Timothy Hatcher.
+
+        CSSStyleDetailsSidebarPanel `visible` is true while the panel is being
+        removed from the details sidebar, even after calling `hidden()`. This
+        causes it to refresh its current StyleDetailsPanel with a null DOM node.
+
+        Unfortunately, SidebarPanel.visible isn't toggled by calling shown/hidden.
+        Since SidebarPanel.visible is only true if the panel is selected, we should
+        deselect panels before removing them.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.removeSidebarPanel):
+        Deselect the panel being removed before calling visibiltyDidChange.
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel.prototype.toggle): Deleted.
+        (WebInspector.SidebarPanel.prototype.willRemove): Deleted.
+        Drive-by update to remove some unused methods.
+
 2016-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r200740): Web Inspector: TimelineRecordBar class lists not properly cleared, bleeding colors when zooming in and out
