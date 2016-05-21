@@ -1,3 +1,21 @@
+2016-05-20  Saam barati  <sbarati@apple.com>
+
+        JSScope::abstractAccess doesn't need to copy the SymbolTableEntry, it can use it by reference
+        https://bugs.webkit.org/show_bug.cgi?id=157956
+
+        Reviewed by Geoffrey Garen.
+
+        A SymbolTableEntry may be a FatEntry. Copying a FatEntry is slow because we have to
+        malloc memory for it, then free the malloced memory once the entry goes out of
+        scope. abstractAccess uses a SymbolTableEntry temporarily when performing scope
+        accesses during bytecode linking. It copies out the SymbolTableEntry every time
+        it does a SymbolTable lookup. This is not cheap when the entry happens to be a
+        FatEntry. We should really just be using a reference to the entry because
+        there is no need to copy it in such a scenario.
+
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+
 2016-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: retained size for typed arrays does not count native backing store
