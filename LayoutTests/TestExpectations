@@ -981,3 +981,4 @@ webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ P
 
 webkit.org/b/157816 http/tests/performance/performance-resource-timing-cached-entries.html [ Pass Failure ]
 
+webkit.org/b/157968 js/regress/string-replace-generic.html [ Pass Failure ]

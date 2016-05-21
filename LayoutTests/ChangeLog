@@ -1,5 +1,11 @@
 2016-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed test gardening after r201237 exposed an issue.
+
+        * TestExpectations:
+
+2016-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Remove LegacyProfiler
         https://bugs.webkit.org/show_bug.cgi?id=153565
 
