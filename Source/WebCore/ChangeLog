@@ -1,3 +1,10 @@
+2016-05-20  Dan Bernstein  <mitz@apple.com>
+
+        Fixed USE(APPLE_INTERNAL_SDK) builds.
+
+        * platform/cocoa/ThemeCocoa.mm:
+        (WebCore::fitContextToBox):
+
 2016-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove LegacyProfiler

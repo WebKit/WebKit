@@ -28,6 +28,10 @@
 
 #import "GraphicsContext.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <dlfcn.h>
+#endif
+
 namespace WebCore {
 
 static void fitContextToBox(GraphicsContext& context, const FloatSize& srcImageSize, const FloatSize& dstSize)
