@@ -1,3 +1,22 @@
+2016-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-benchmark's results should contain Animometer's debug output
+        https://bugs.webkit.org/show_bug.cgi?id=157941
+
+        Reviewed by Stephanie Lewis.
+
+        Modified the Animometer patch to store debug output and made benchmark_runner extract them together as a single array.
+        The result can be dragged and dropped into Animometer's developer.html page.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner._run_one_test): Parse JSON here instead of doing it in multiple call sites.
+        (BenchmarkRunner._run_benchmark): Strip debugOutput from individual test result, and merge them together separately.
+        * Scripts/webkitpy/benchmark_runner/data/patches/Animometer.patch:
+        Modified the patch to store the debug output.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        (ServerControl.render_POST): Fixed a bug that POST to /report results in 500 because getvalue is not defined
+        when the request body is larger than a certain size on twisted.
+
 2016-05-20  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Use clearer names for JSON output of javascriptcore test results

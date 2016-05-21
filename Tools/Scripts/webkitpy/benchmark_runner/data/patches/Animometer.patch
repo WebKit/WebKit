@@ -2,7 +2,7 @@ diff --git a/resources/runner/animometer.js b/resources/runner/animometer.js
 index b20a1c9..e434e89 100644
 --- a/resources/runner/animometer.js
 +++ b/resources/runner/animometer.js
-@@ -320,6 +320,57 @@ window.benchmarkRunnerClient = {
+@@ -320,6 +320,61 @@ window.benchmarkRunnerClient = {
      didFinishLastIteration: function()
      {
          benchmarkController.showResults();
@@ -37,7 +37,11 @@ index b20a1c9..e434e89 100644
 +    {
 +        var results = this.results.results[0];
 +        var iterationReports = this._computeIterationReports(results);
-+        return {"Animometer": {"metrics" : {"Score" : ["Geometric"]}, "tests" : iterationReports } };
++        var debugOutput = {
++            options: benchmarkRunnerClient.results.options,
++            data: benchmarkRunnerClient.results.data,
++        }
++        return {"Animometer": {"metrics" : {"Score" : ["Geometric"]}, "tests" : iterationReports }, "debugOutput": debugOutput};
 +    },
 +
 +    didFinishLastIteration: function()

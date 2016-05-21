@@ -27,7 +27,7 @@ class ServerControl(Resource):
 
     def render_POST(self, request):
         _log.info("Serving request %s" % request)
-        sys.stdout.write(request.content.getvalue())
+        sys.stdout.write(request.content.read())
         sys.stdout.flush()
         reactor.stop()
         return 'OK'

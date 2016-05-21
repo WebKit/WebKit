@@ -531,6 +531,8 @@ Utilities.extendObject(window.benchmarkController, {
             reader.filename = file.name;
             reader.onload = function(e) {
                 var run = JSON.parse(e.target.result);
+                if (run.debugOutput instanceof Array)
+                    run = run.debugOutput[0];
                 benchmarkRunnerClient.results = new ResultsDashboard(run.options, run.data);
                 benchmarkController.showResults();
             };

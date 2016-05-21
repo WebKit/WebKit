@@ -78,10 +78,11 @@ class BenchmarkRunner(object):
             self._browser_driver.close_browsers()
             self._http_server_driver.kill_server()
 
-        return result
+        return json.loads(result)
 
     def _run_benchmark(self, count, web_root):
         results = []
+        debug_outputs = []
         for iteration in xrange(1, count + 1):
             _log.info('Start the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
             try:
@@ -89,14 +90,16 @@ class BenchmarkRunner(object):
 
                 if 'entry_point' in self._plan:
                     result = self._run_one_test(web_root, self._plan['entry_point'])
+                    debug_outputs.append(result.pop('debugOutput', None))
                     assert(result)
-                    results.append(json.loads(result))
+                    results.append(result)
                 elif 'test_files' in self._plan:
                     run_result = {}
                     for test in self._plan['test_files']:
                         result = self._run_one_test(web_root, test)
                         assert(result)
-                        run_result = self._merge(run_result, json.loads(result))
+                        run_result = self._merge(run_result, result)
+                        debug_outputs.append(result.pop('debugOutput', None))
 
                     results.append(run_result)
                 else:
@@ -109,7 +112,8 @@ class BenchmarkRunner(object):
             _log.info('End the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
 
         results = self._wrap(results)
-        self._dump(results, self._output_file if self._output_file else self._plan['output_file'])
+        output_file = self._output_file if self._output_file else self._plan['output_file']
+        self._dump(self._merge({'debugOutput': debug_outputs}, results), output_file)
         self.show_results(results, self._scale_unit)
 
     def execute(self):
