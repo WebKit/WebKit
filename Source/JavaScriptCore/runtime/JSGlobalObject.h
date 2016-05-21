@@ -404,7 +404,6 @@ public:
 
     bool hasDebugger() const;
     bool hasInteractiveDebugger() const;
-    bool hasLegacyProfiler() const;
     const RuntimeFlags& runtimeFlags() const { return m_runtimeFlags; }
 
 protected:

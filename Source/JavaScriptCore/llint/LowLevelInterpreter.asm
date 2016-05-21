@@ -1641,28 +1641,6 @@ _llint_op_throw_static_error:
     dispatch(3)
 
 
-_llint_op_profile_will_call:
-    traceExecution()
-    loadp CodeBlock[cfr], t0
-    loadp CodeBlock::m_vm[t0], t0
-    loadi VM::m_enabledProfiler[t0], t0
-    btpz t0, .opProfilerWillCallDone
-    callSlowPath(_llint_slow_path_profile_will_call)
-.opProfilerWillCallDone:
-    dispatch(2)
-
-
-_llint_op_profile_did_call:
-    traceExecution()
-    loadp CodeBlock[cfr], t0
-    loadp CodeBlock::m_vm[t0], t0
-    loadi VM::m_enabledProfiler[t0], t0
-    btpz t0, .opProfilerDidCallDone
-    callSlowPath(_llint_slow_path_profile_did_call)
-.opProfilerDidCallDone:
-    dispatch(2)
-
-
 _llint_op_debug:
     traceExecution()
     loadp CodeBlock[cfr], t0

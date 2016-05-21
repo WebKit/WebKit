@@ -60,8 +60,6 @@ void computeUsesForBytecodeOffset(
     case op_get_scope:
     case op_to_this:
     case op_check_tdz:
-    case op_profile_will_call:
-    case op_profile_did_call:
     case op_profile_type:
     case op_throw:
     case op_end:
@@ -312,8 +310,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_copy_rest:
     case op_put_to_scope:
     case op_end:
-    case op_profile_will_call:
-    case op_profile_did_call:
     case op_throw:
     case op_throw_static_error:
     case op_save:

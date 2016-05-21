@@ -3,6 +3,127 @@
         Remove LegacyProfiler
         https://bugs.webkit.org/show_bug.cgi?id=153565
 
+        Reviewed by Mark Lam.
+
+        JavaScriptCore now provides a sampling profiler and it is enabled
+        by all ports. Web Inspector switched months ago to using the
+        sampling profiler and displaying its data. Remove the legacy
+        profiler, as it is no longer being used by anything other then
+        console.profile and tests. We will update console.profile's
+        behavior soon to have new behavior and use the sampling data.
+
+        * API/JSProfilerPrivate.cpp: Removed.
+        * API/JSProfilerPrivate.h: Removed.
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset): Deleted.
+        (JSC::computeDefsForBytecodeOffset): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode): Deleted.
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitCallVarargsInTailPosition):
+        (JSC::BytecodeGenerator::emitConstructVarargs):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::CallArguments::profileHookRegister): Deleted.
+        (JSC::BytecodeGenerator::shouldEmitProfileHooks): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::CallArguments::CallArguments): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock): Deleted.
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize): Deleted.
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC): Deleted.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Deleted.
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::callFunctionWithEvalEnabled):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::operator()): Deleted.
+        (JSC::Interpreter::execute): Deleted.
+        (JSC::Interpreter::executeCall): Deleted.
+        (JSC::Interpreter::executeConstruct): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass): Deleted.
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_will_call): Deleted.
+        (JSC::JIT::emit_op_profile_did_call): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_profile_will_call): Deleted.
+        (JSC::JIT::emit_op_profile_did_call): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL): Deleted.
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/ParserModes.h:
+        * profiler/CallIdentifier.h: Removed.
+        * profiler/LegacyProfiler.cpp: Removed.
+        * profiler/LegacyProfiler.h: Removed.
+        * profiler/Profile.cpp: Removed.
+        * profiler/Profile.h: Removed.
+        * profiler/ProfileGenerator.cpp: Removed.
+        * profiler/ProfileGenerator.h: Removed.
+        * profiler/ProfileNode.cpp: Removed.
+        * profiler/ProfileNode.h: Removed.
+        * profiler/ProfilerJettisonReason.cpp:
+        (WTF::printInternal): Deleted.
+        * profiler/ProfilerJettisonReason.h:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getModuleProgramCodeBlock):
+        * runtime/CodeCache.h:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        (JSC::JSGlobalObject::createModuleProgramCodeBlock):
+        (JSC::JSGlobalObject::~JSGlobalObject): Deleted.
+        (JSC::JSGlobalObject::hasLegacyProfiler): Deleted.
+        * runtime/JSGlobalObject.h:
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM): Deleted.
+        (JSC::SetEnabledProfilerFunctor::operator()): Deleted.
+        (JSC::VM::setEnabledProfiler): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::enabledProfiler): Deleted.
+        (JSC::VM::enabledProfilerAddress): Deleted.
+
+2016-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove LegacyProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=153565
+
         Reviewed by Saam Barati.
 
         * inspector/protocol/Timeline.json:

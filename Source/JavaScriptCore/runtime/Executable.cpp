@@ -312,10 +312,9 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
     JSGlobalObject* globalObject = scope->globalObject();
     ParserError error;
     DebuggerMode debuggerMode = globalObject->hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
-    ProfilerMode profilerMode = globalObject->hasLegacyProfiler() ? ProfilerOn : ProfilerOff;
     UnlinkedFunctionCodeBlock* unlinkedCodeBlock = 
         executable->m_unlinkedExecutable->unlinkedCodeBlockFor(
-            *vm, executable->m_source, kind, debuggerMode, profilerMode, error, 
+            *vm, executable->m_source, kind, debuggerMode, error, 
             executable->parseMode());
     recordParse(
         executable->m_unlinkedExecutable->features(), 

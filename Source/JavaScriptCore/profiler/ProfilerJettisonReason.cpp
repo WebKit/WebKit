@@ -47,9 +47,6 @@ void printInternal(PrintStream& out, JettisonReason reason)
     case JettisonDueToDebuggerStepping:
         out.print("DebuggerStepping");
         return;
-    case JettisonDueToLegacyProfiler:
-        out.print("LegacyProfiler");
-        return;
     case JettisonDueToBaselineLoopReoptimizationTrigger:
         out.print("BaselineLoopReoptimizationTrigger");
         return;

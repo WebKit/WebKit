@@ -117,8 +117,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_throw);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_throw_static_error);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_handle_watchdog_timer);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_debug);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_will_call);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_did_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_handle_exception);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_from_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_to_scope);
