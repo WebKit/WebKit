@@ -1,3 +1,15 @@
+2016-05-21  Aakash Jain  <aakash_jain@apple.com>
+
+        Simulator launch fails intermittently due to failure in checking simulator boot status
+        https://bugs.webkit.org/show_bug.cgi?id=157965
+        rdar://problem/26402404
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator.wait_until_device_is_booted): Ignore CalledProcessError exception while checking
+        whether simulator has finished booting.
+
 2016-05-21  Dan Bernstein  <mitz@apple.com>
 
         Silence warnings from svn propget when using newer versions of Subversion.
