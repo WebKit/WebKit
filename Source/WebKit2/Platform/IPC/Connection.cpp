@@ -432,8 +432,12 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
         m_waitingForMessage = &waitingForMessage;
     }
 
+    // Clamp the timeout to however much time is remaining on our clock.
+    auto now = Condition::Clock::now();
+    auto remainingClockTime = std::chrono::duration_cast<std::chrono::milliseconds>(Condition::Clock::time_point::max() - now);
+    auto absoluteTimeout = now + std::min(remainingClockTime, timeout);
+
     // Now wait for it to be set.
-    Condition::Clock::time_point absoluteTimeout = Condition::Clock::now() + timeout;
     while (true) {
         std::unique_lock<Lock> lock(m_waitForMessageMutex);
 

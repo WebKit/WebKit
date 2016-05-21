@@ -1,3 +1,39 @@
+2016-05-21  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r188642): All pages are blank when printing a webpage in iOS Safari
+        https://bugs.webkit.org/show_bug.cgi?id=157924
+        rdar://problem/22524550
+
+        Reviewed by Sam Weinig.
+
+        When UIPrintInteractionController asks WKWebView to print a webpage, it does so in several phases. First we're
+        asked to compute the page count, followed later by a series of messages asking us to draw each page into a
+        provided CGContext.
+
+        When asked for the page count, we send a message to the Web process instructing it to compute and
+        return the page count synchronously and then immediately start drawing the page for printing. If the drawing has
+        finished by the time we're asked to print the first page, then we can do so without waiting. But if it hasn't
+        then we block by calling Connection::waitForMessage(), passing std::chromo::milliseconds::max() as the relative
+        timeout.
+        
+        Prior to r188642, Connection::waitForMessage() called std::condition_variable::wait_for(), which takes a
+        relative timeout value. r188642 replaced this with WTF::Condition::waitUntil(), which takes an absolute timeout
+        instead. To convert from relative to absolute, this line was added to Connection::waitForMessage():
+
+            Condition::Clock::time_point absoluteTimeout = Condition::Clock::now() + timeout;
+
+        std::chrono will convert both operands to a common duration type before performing the addition. When timeout
+        equals something very large, like milliseconds::max(), this conversion results in signed integer overflow,
+        giving absoluteTimeout a value less than Clock::now() and making waitForMessage time out immediately.
+        
+        To fix this, compute how many milliseconds remain on our clock, and add the smaller of that and the timeout
+        value to Clock::now() to arrive at an absolute timeout.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForMessage):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _printedDocument]): Removed an unnecessary nanoseconds-to-milliseconds conversion.
+
 2016-05-20  Enrica Casucci  <enrica@apple.com>
 
         Drag cannot start if no drag data or custom data is available in the Pasteboard.
