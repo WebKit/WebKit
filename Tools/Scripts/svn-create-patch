@@ -172,7 +172,7 @@ sub findMimeType($;$)
     my ($file, $revision) = @_;
     my $args = $revision ? "--revision $revision" : "";
     my $escapedFile = escapeSubversionPath($file);
-    open PROPGET, "svn propget svn:mime-type $args '$escapedFile' |" or die;
+    open PROPGET, "svn propget svn:mime-type $args '$escapedFile' 2> $devNull |" or die;
     my $mimeType = <PROPGET>;
     close PROPGET;
     # svn may output a different EOL sequence than $/, so avoid chomp.

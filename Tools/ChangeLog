@@ -1,3 +1,15 @@
+2016-05-21  Dan Bernstein  <mitz@apple.com>
+
+        Silence warnings from svn propget when using newer versions of Subversion.
+        https://bugs.webkit.org/show_bug.cgi?id=157879
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/prepare-ChangeLog:
+        (attributeCommand): Redirect svn propget stderr to /dev/null.
+        * Scripts/svn-create-patch:
+        (findMimeType): Ditto.
+
 2016-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-benchmark's results should contain Animometer's debug output

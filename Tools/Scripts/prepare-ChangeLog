@@ -124,6 +124,7 @@ use constant SVN => "svn";
 use constant GIT => "git";
 use constant SupportedTestExtensions => {map { $_ => 1 } qw(html shtml svg xml xhtml pl php)};
 
+my $devNull = File::Spec->devnull();
 my %attributeCache;
 
 exit(main());
@@ -1997,7 +1998,7 @@ sub attributeCommand($$)
                 next;
             }
             my $command = SVN . " propget $attr '$subPath'";
-            my $attrib = $attributeCache{$attr}{$subPath} || `$command`;
+            my $attrib = $attributeCache{$attr}{$subPath} || `$command 2> $devNull`;
             chomp $attrib;
             if ($attrib eq "1") {
                 $foundAttribute = 1;
