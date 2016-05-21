@@ -38,6 +38,7 @@ WebInspector.View = class View extends WebInspector.Object
         this._needsLayoutWhenAttachedToRoot = false;
         this._isAttachedToRoot = false;
         this._layoutReason = null;
+        this._didInitialLayout = false;
     }
 
     // Static
@@ -140,7 +141,7 @@ WebInspector.View = class View extends WebInspector.Object
 
     updateLayout(layoutReason)
     {
-        WebInspector.View._cancelScheduledLayoutForView(this);
+        this.cancelLayout();
 
         this._setLayoutReason(layoutReason);
         this._layoutSubtree();
@@ -164,7 +165,14 @@ WebInspector.View = class View extends WebInspector.Object
         WebInspector.View._scheduleLayoutForView(this);
     }
 
+    cancelLayout()
+    {
+        WebInspector.View._cancelScheduledLayoutForView(this);
+    }
+
     // Protected
+
+    get layoutReason() { return this._layoutReason; }
 
     didMoveToWindow(isAttachedToRoot)
     {
@@ -200,11 +208,28 @@ WebInspector.View = class View extends WebInspector.Object
         }
     }
 
+    initialLayout()
+    {
+        // Implemented by subclasses.
+
+        // Called once when the view is shown for the first time.
+        // Views with complex DOM subtrees should create UI elements in
+        // initialLayout rather than at construction time.
+    }
+
     layout()
     {
-        // Overridden by subclasses.
+        // Implemented by subclasses.
+
         // Not responsible for recursing to child views.
         // Should not be called directly; use updateLayout() instead.
+    }
+
+    sizeDidChange()
+    {
+        // Implemented by subclasses.
+
+        // Called after initialLayout, and before layout.
     }
 
     // Private
@@ -214,7 +239,15 @@ WebInspector.View = class View extends WebInspector.Object
         this._dirty = false;
         this._dirtyDescendantsCount = 0;
 
-        this.layout(this._layoutReason);
+        if (!this._didInitialLayout) {
+            this.initialLayout();
+            this._didInitialLayout = true;
+        }
+
+        if (this._layoutReason === WebInspector.View.LayoutReason.Resize)
+            this.sizeDidChange();
+
+        this.layout();
 
         for (let view of this._subviews) {
             view._setLayoutReason(this._layoutReason);

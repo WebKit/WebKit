@@ -30,72 +30,6 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
         super(delegate, WebInspector.ComputedStyleDetailsPanel.StyleClassName, "computed", WebInspector.UIString("Styles \u2014 Computed"));
 
         this._computedStyleShowAllSetting = new WebInspector.Setting("computed-style-show-all", false);
-
-        var computedStyleShowAllLabel = document.createElement("label");
-        computedStyleShowAllLabel.textContent = WebInspector.UIString("Show All");
-
-        this._computedStyleShowAllCheckbox = document.createElement("input");
-        this._computedStyleShowAllCheckbox.type = "checkbox";
-        this._computedStyleShowAllCheckbox.checked = this._computedStyleShowAllSetting.value;
-        this._computedStyleShowAllCheckbox.addEventListener("change", this._computedStyleShowAllCheckboxValueChanged.bind(this));
-        computedStyleShowAllLabel.appendChild(this._computedStyleShowAllCheckbox);
-
-        this._propertiesTextEditor = new WebInspector.CSSStyleDeclarationTextEditor(this);
-        this._propertiesTextEditor.showsImplicitProperties = this._computedStyleShowAllSetting.value;
-        this._propertiesTextEditor.alwaysShowPropertyNames = ["display", "width", "height"];
-        this._propertiesTextEditor.sortProperties = true;
-
-        var propertiesRow = new WebInspector.DetailsSectionRow;
-        var propertiesGroup = new WebInspector.DetailsSectionGroup([propertiesRow]);
-        var propertiesSection = new WebInspector.DetailsSection("computed-style-properties", WebInspector.UIString("Properties"), [propertiesGroup], computedStyleShowAllLabel);
-        propertiesSection.addEventListener(WebInspector.DetailsSection.Event.CollapsedStateChanged, this._handleCollapsedStateChanged, this);
-
-        propertiesRow.element.appendChild(this._propertiesTextEditor.element);
-
-        // Region flow name is used to display the "flow-from" property of the Region Containers.
-        this._regionFlowFragment = document.createElement("span");
-        this._regionFlowFragment.appendChild(document.createElement("img")).className = "icon";
-        this._regionFlowNameLabelValue = this._regionFlowFragment.appendChild(document.createElement("span"));
-
-        var goToRegionFlowButton = this._regionFlowFragment.appendChild(WebInspector.createGoToArrowButton());
-        goToRegionFlowButton.addEventListener("click", this._goToRegionFlowArrowWasClicked.bind(this));
-
-        this._regionFlowNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Region Flow"));
-        this._regionFlowNameRow.element.classList.add("content-flow-link");
-
-        // Content flow name is used to display the "flow-into" property of the Content nodes.
-        this._contentFlowFragment = document.createElement("span");
-        this._contentFlowFragment.appendChild(document.createElement("img")).className = "icon";
-        this._contentFlowNameLabelValue = this._contentFlowFragment.appendChild(document.createElement("span"));
-
-        var goToContentFlowButton = this._contentFlowFragment.appendChild(WebInspector.createGoToArrowButton());
-        goToContentFlowButton.addEventListener("click", this._goToContentFlowArrowWasClicked.bind(this));
-
-        this._contentFlowNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Content Flow"));
-        this._contentFlowNameRow.element.classList.add("content-flow-link");
-
-        var flowNamesGroup = new WebInspector.DetailsSectionGroup([this._regionFlowNameRow, this._contentFlowNameRow]);
-        this._flowNamesSection = new WebInspector.DetailsSection("content-flow", WebInspector.UIString("Flows"), [flowNamesGroup]);
-
-        this._containerRegionsDataGrid = new WebInspector.DOMTreeDataGrid;
-        this._containerRegionsDataGrid.element.classList.add("no-header");
-
-        var containerRegionsRow = new WebInspector.DetailsSectionDataGridRow(this._containerRegionsDataGrid);
-        var containerRegionsGroup = new WebInspector.DetailsSectionGroup([containerRegionsRow]);
-        this._containerRegionsFlowSection = new WebInspector.DetailsSection("container-regions", WebInspector.UIString("Container Regions"), [containerRegionsGroup]);
-
-        this.element.appendChild(propertiesSection.element);
-        this.element.appendChild(this._flowNamesSection.element);
-        this.element.appendChild(this._containerRegionsFlowSection.element);
-
-        this._resetFlowDetails();
-
-        this._boxModelDiagramRow = new WebInspector.BoxModelDetailsSectionRow;
-
-        var boxModelGroup = new WebInspector.DetailsSectionGroup([this._boxModelDiagramRow]);
-        var boxModelSection = new WebInspector.DetailsSection("style-box-model", WebInspector.UIString("Box Model"), [boxModelGroup]);
-
-        this.element.appendChild(boxModelSection.element);
         
         this.cssStyleDeclarationTextEditorShouldAddPropertyGoToArrows = true;
     }
@@ -207,16 +141,75 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
 
     // Protected
 
-    shown()
+    initialLayout()
     {
-        super.shown();
+        let computedStyleShowAllLabel = document.createElement("label");
+        computedStyleShowAllLabel.textContent = WebInspector.UIString("Show All");
 
-        this._propertiesTextEditor.updateLayout();
-    }
+        this._computedStyleShowAllCheckbox = document.createElement("input");
+        this._computedStyleShowAllCheckbox.type = "checkbox";
+        this._computedStyleShowAllCheckbox.checked = this._computedStyleShowAllSetting.value;
+        this._computedStyleShowAllCheckbox.addEventListener("change", this._computedStyleShowAllCheckboxValueChanged.bind(this));
+        computedStyleShowAllLabel.appendChild(this._computedStyleShowAllCheckbox);
 
-    widthDidChange()
-    {
-        this._propertiesTextEditor.updateLayout();
+        this._propertiesTextEditor = new WebInspector.CSSStyleDeclarationTextEditor(this);
+        this._propertiesTextEditor.showsImplicitProperties = this._computedStyleShowAllSetting.value;
+        this._propertiesTextEditor.alwaysShowPropertyNames = ["display", "width", "height"];
+        this._propertiesTextEditor.sortProperties = true;
+
+        let propertiesRow = new WebInspector.DetailsSectionRow;
+        let propertiesGroup = new WebInspector.DetailsSectionGroup([propertiesRow]);
+        let propertiesSection = new WebInspector.DetailsSection("computed-style-properties", WebInspector.UIString("Properties"), [propertiesGroup], computedStyleShowAllLabel);
+        propertiesSection.addEventListener(WebInspector.DetailsSection.Event.CollapsedStateChanged, this._handleCollapsedStateChanged, this);
+
+        this.addSubview(this._propertiesTextEditor);
+
+        propertiesRow.element.appendChild(this._propertiesTextEditor.element);
+
+        // Region flow name is used to display the "flow-from" property of the Region Containers.
+        this._regionFlowFragment = document.createElement("span");
+        this._regionFlowFragment.appendChild(document.createElement("img")).className = "icon";
+        this._regionFlowNameLabelValue = this._regionFlowFragment.appendChild(document.createElement("span"));
+
+        let goToRegionFlowButton = this._regionFlowFragment.appendChild(WebInspector.createGoToArrowButton());
+        goToRegionFlowButton.addEventListener("click", this._goToRegionFlowArrowWasClicked.bind(this));
+
+        this._regionFlowNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Region Flow"));
+        this._regionFlowNameRow.element.classList.add("content-flow-link");
+
+        // Content flow name is used to display the "flow-into" property of the Content nodes.
+        this._contentFlowFragment = document.createElement("span");
+        this._contentFlowFragment.appendChild(document.createElement("img")).className = "icon";
+        this._contentFlowNameLabelValue = this._contentFlowFragment.appendChild(document.createElement("span"));
+
+        let goToContentFlowButton = this._contentFlowFragment.appendChild(WebInspector.createGoToArrowButton());
+        goToContentFlowButton.addEventListener("click", this._goToContentFlowArrowWasClicked.bind(this));
+
+        this._contentFlowNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Content Flow"));
+        this._contentFlowNameRow.element.classList.add("content-flow-link");
+
+        let flowNamesGroup = new WebInspector.DetailsSectionGroup([this._regionFlowNameRow, this._contentFlowNameRow]);
+        this._flowNamesSection = new WebInspector.DetailsSection("content-flow", WebInspector.UIString("Flows"), [flowNamesGroup]);
+
+        this._containerRegionsDataGrid = new WebInspector.DOMTreeDataGrid;
+        this._containerRegionsDataGrid.element.classList.add("no-header");
+
+        let containerRegionsRow = new WebInspector.DetailsSectionDataGridRow(this._containerRegionsDataGrid);
+        let containerRegionsGroup = new WebInspector.DetailsSectionGroup([containerRegionsRow]);
+        this._containerRegionsFlowSection = new WebInspector.DetailsSection("container-regions", WebInspector.UIString("Container Regions"), [containerRegionsGroup]);
+
+        this.element.appendChild(propertiesSection.element);
+        this.element.appendChild(this._flowNamesSection.element);
+        this.element.appendChild(this._containerRegionsFlowSection.element);
+
+        this._resetFlowDetails();
+
+        this._boxModelDiagramRow = new WebInspector.BoxModelDetailsSectionRow;
+
+        let boxModelGroup = new WebInspector.DetailsSectionGroup([this._boxModelDiagramRow]);
+        let boxModelSection = new WebInspector.DetailsSection("style-box-model", WebInspector.UIString("Box Model"), [boxModelGroup]);
+
+        this.element.appendChild(boxModelSection.element);
     }
 
     // Private

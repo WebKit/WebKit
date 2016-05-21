@@ -24,17 +24,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends WebInspector.Object
+WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends WebInspector.View
 {
-    constructor(delegate, style, element)
+    constructor(delegate, style)
     {
         super();
 
-        this._element = element || document.createElement("div");
-        this._element.classList.add(WebInspector.CSSStyleDeclarationTextEditor.StyleClassName);
-        this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
-        this._element.addEventListener("mousedown", this._handleMouseDown.bind(this));
-        this._element.addEventListener("mouseup", this._handleMouseUp.bind(this));
+        this.element.classList.add(WebInspector.CSSStyleDeclarationTextEditor.StyleClassName);
+        this.element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
+        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
+        this.element.addEventListener("mouseup", this._handleMouseUp.bind(this));
 
         this._mouseDownCursorPosition = null;
 
@@ -92,11 +91,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     }
 
     // Public
-
-    get element()
-    {
-        return this._element;
-    }
 
     get delegate()
     {
@@ -192,11 +186,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     refresh()
     {
         this._resetContent();
-    }
-
-    updateLayout(force)
-    {
-        this._codeMirror.refresh();
     }
 
     highlightProperty(property)
@@ -398,6 +387,11 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this._commitChanges();
         else
             this._propertiesChanged();
+    }
+
+    layout()
+    {
+        this._codeMirror.refresh();
     }
 
     // Private

@@ -452,7 +452,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
             delete this._sections[i].style.__rulesSection;
     }
 
-    widthDidChange()
+    sizeDidChange()
     {
         for (var i = 0; i < this._sections.length; ++i)
             this._sections[i].updateLayout();

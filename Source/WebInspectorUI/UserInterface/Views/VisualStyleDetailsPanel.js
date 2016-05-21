@@ -54,7 +54,24 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
             basic: ["%"].concat(this._units.defaultsSansPercent.basic),
             advanced: this._units.defaultsSansPercent.advanced
         };
+    }
 
+    // Public
+
+    refresh(significantChange)
+    {
+        if (significantChange)
+            this._selectorSection.update(this._nodeStyles);
+        else
+            this._updateSections();
+
+        super.refresh();
+    }
+
+    // Protected
+
+    initialLayout()
+    {
         // Selector Section
         this._selectorSection = new WebInspector.VisualStyleSelectorSection(this);
         this._selectorSection.addEventListener(WebInspector.VisualStyleSelectorSection.Event.SelectorChanged, this._updateSections, this);
@@ -102,21 +119,9 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this.element.appendChild(this._sections.effects.element);
     }
 
-    // Public
-
-    refresh(significantChange)
+    sizeDidChange()
     {
-        if (significantChange)
-            this._selectorSection.update(this._nodeStyles);
-        else
-            this._updateSections();
-
-        super.refresh();
-    }
-
-    widthDidChange()
-    {
-        super.widthDidChange();
+        super.sizeDidChange();
 
         let sidebarWidth = this.element.realOffsetWidth;
         for (let key in this._groups) {

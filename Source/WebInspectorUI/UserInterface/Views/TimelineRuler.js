@@ -415,11 +415,8 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     // Protected
 
-    layout(layoutReason)
+    layout()
     {
-        if (layoutReason === WebInspector.View.LayoutReason.Resize)
-            this._cachedClientWidth = this.element.clientWidth;
-
         let visibleWidth = this._recalculate();
         if (visibleWidth <= 0)
             return;
@@ -530,6 +527,11 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
         this._updateMarkers(visibleWidth, duration);
         this._updateSelection(visibleWidth, duration);
+    }
+
+    sizeDidChange()
+    {
+        this._cachedClientWidth = this.element.clientWidth;
     }
 
     // Private

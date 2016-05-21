@@ -1,5 +1,138 @@
 2016-05-21  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Creating the CSSStyleDetailsSidebarPanel takes about 50ms (20%) of main load
+        https://bugs.webkit.org/show_bug.cgi?id=156707
+        <rdar://problem/25780404>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch adds new View concepts, `initialLayout` and `widthDidChange`,
+        making it possible for hidden views to postpone the creation of their
+        UI subtree until they are shown for the first time.
+
+        Sidebar panels get this performance improvement by virtue of SidebarPanel
+        and StyleDetailsPanel, which trigger a layout when shown. This can be
+        removed once <https://webkit.org/b/150741> is fixed, and this is done
+        automatically by View.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor):
+        Should subclass View.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.layout):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.get element): Deleted.
+        Handled in View base class.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.updateLayout): Deleted.
+        Relocate to `layout` override, ignore unused parameter `force`.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        Create the minimum required initial state and UI elements. Relocate
+        anything that can be lazy loaded to `initialLayout`.
+
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.initialLayout):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.sizeDidChange):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.widthDidChange): Deleted.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel):
+        Relocate anything that can be lazy loaded to `initialLayout`.
+        (WebInspector.ComputedStyleDetailsPanel.prototype.initialLayout):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.shown): Deleted.
+        (WebInspector.ComputedStyleDetailsPanel.prototype.widthDidChange): Deleted.
+        Handled in View base class.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.layout):
+        Resize logic can be safely moved to `sizeDidChange`, since columns are
+        always initialized when the width changes.
+        (WebInspector.DataGrid.prototype.sizeDidChange):
+        Reposition headers, scrollbars.
+        (WebInspector.DataGrid.prototype._updateHeaderAndScrollbar):
+        Broke out header repositioning, which needs to be called whenever
+        column widths are initialized or the view size changes.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar.prototype.layout):
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.sizeDidChange):
+        (WebInspector.RulesStyleDetailsPanel.prototype.widthDidChange): Deleted.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype._recalculateWidth):
+        Width changes need to be coordinated by the View base class, since the
+        initial layout must have occurred before handling a width change.
+        Force a layout with a resize layout reason.
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel.prototype.get displayName):
+        Drive-by style fix: add getter so that CSSStyleDetailsSidebarPanel
+        doesn't have to read the private property directly.
+
+        (WebInspector.SidebarPanel.prototype.shown):
+        Force a layout whenever the panel is shown.
+        (WebInspector.SidebarPanel.prototype.sizeDidChange):
+        (WebInspector.SidebarPanel):
+        (WebInspector.SidebarPanel.prototype.widthDidChange): Deleted.
+
+        * UserInterface/Views/StyleDetailsPanel.js:
+        (WebInspector.StyleDetailsPanel.prototype.shown):
+        Schedule a layout when shown. A forced layout isn't necessary.
+        Unlike SidebarPanels, the initial state of style panels doesn't depend
+        on its layout, and can be safely initialized by the next rAF.
+
+        (WebInspector.StyleDetailsPanel.prototype.hidden):
+        Cancel a pending layout if the panel is hidden before the next AF.
+        (WebInspector.StyleDetailsPanel.prototype.widthDidChange): Deleted.
+        Not needed, defined in View base class.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype.sizeDidChange):
+        (WebInspector.TimelineOverview.prototype.layout):
+        Moved resize logic to `sizeDidChange`.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.sizeDidChange):
+        (WebInspector.TimelineRuler.prototype.layout):
+        Moved resize logic to `sizeDidChange`.
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View):
+        (WebInspector.View.prototype.updateLayout):
+        (WebInspector.View.prototype.cancelLayout):
+        Allow a pending layout to be canceled. Useful when a view with a
+        pending layout is hidden before the layout occurs.
+
+        (WebInspector.View.prototype.get layoutReason):
+        Protected getter for subclasses that need to check the layout reason
+        outside `sizeDidChange`.
+
+        (WebInspector.View.prototype.initialLayout):
+        Subclass hook to create UI subtree the first time a layout occurs.
+        Called only once during the lifetime of the View.
+
+        (WebInspector.View.prototype.layout):
+        Drive-by comment fix.
+        (WebInspector.View.prototype.sizeDidChange):
+        New layout cycle hook for subclasses.
+        (WebInspector.View.prototype._layoutSubtree):
+        Do an initial layout the first time layout is called.
+        Call the `sizeDidChange` hook so that subclasses can update state
+        which depends on size/position before doing layout.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel):
+        Create the minimum required initial state and UI elements. Relocate
+        anything that can be lazy loaded to `initialLayout`.
+
+        (WebInspector.VisualStyleDetailsPanel.prototype.refresh):
+        No changes, shifting line numbers confused the diff.
+        (WebInspector.VisualStyleDetailsPanel.prototype.initialLayout):
+        (WebInspector.VisualStyleDetailsPanel.prototype.sizeDidChange):
+        (WebInspector.VisualStyleDetailsPanel.prototype.widthDidChange): Deleted.
+
+2016-05-21  Matt Baker  <mattbaker@apple.com>
+
         Assertion Failed: StyleDetailsPanel.markAsNeedsRefresh() called with null domNode
         https://bugs.webkit.org/show_bug.cgi?id=157955
         <rdar://problem/26398943>

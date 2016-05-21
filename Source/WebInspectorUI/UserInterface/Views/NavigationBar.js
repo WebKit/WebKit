@@ -168,9 +168,9 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.View
         super.needsLayout();
     }
 
-    layout(layoutReason)
+    layout()
     {
-        if (layoutReason !== WebInspector.View.LayoutReason.Resize && !this._forceLayout)
+        if (this.layoutReason !== WebInspector.View.LayoutReason.Resize && !this._forceLayout)
             return;
 
         this._forceLayout = false;
