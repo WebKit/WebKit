@@ -30,7 +30,6 @@
 #define PageConsoleClient_h
 
 #include <inspector/ScriptCallStack.h>
-#include <profiler/Profile.h>
 #include <runtime/ConsoleClient.h>
 #include <wtf/Forward.h>
 
@@ -42,8 +41,6 @@ namespace WebCore {
 
 class Document;
 class Page;
-
-typedef Vector<RefPtr<JSC::Profile>> ProfilesArray;
 
 class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -61,9 +58,6 @@ public:
     void addMessage(MessageSource, MessageLevel, const String& message, RefPtr<Inspector::ScriptCallStack>&&);
     void addMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = nullptr);
 
-    const ProfilesArray& profiles() const { return m_profiles; }
-    void clearProfiles();
-
 protected:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&) override;
     void count(JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&) override;
@@ -76,7 +70,6 @@ protected:
 
 private:
     Page& m_page;
-    ProfilesArray m_profiles;
 };
 
 } // namespace WebCore

@@ -202,38 +202,6 @@ HRESULT WebInspector::toggleProfilingJavaScript()
     return S_OK;
 }
 
-HRESULT WebInspector::isJavaScriptProfilingEnabled(_Out_ BOOL* isProfilingEnabled)
-{
-    if (!isProfilingEnabled)
-        return E_POINTER;
-
-    *isProfilingEnabled = FALSE;
-
-    if (!m_inspectedWebView)
-        return S_OK;
-
-    Page* inspectedPage = m_inspectedWebView->page();
-    if (!inspectedPage)
-        return S_OK;
-
-    *isProfilingEnabled = inspectedPage->inspectorController().legacyProfilerEnabled();
-    return S_OK;
-}
-
-HRESULT WebInspector::setJavaScriptProfilingEnabled(BOOL enabled)
-{
-    if (!m_inspectedWebView)
-        return S_OK;
-
-    Page* inspectedPage = m_inspectedWebView->page();
-    if (!inspectedPage)
-        return S_OK;
-
-    inspectedPage->inspectorController().setLegacyProfilerEnabled(enabled);
-
-    return S_OK;
-}
-
 HRESULT WebInspector::evaluateInFrontend(_In_ BSTR bScript)
 {
     if (!m_inspectedWebView)

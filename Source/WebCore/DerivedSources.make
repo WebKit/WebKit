@@ -504,8 +504,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/html/track/VTTCue.idl \
     $(WebCore)/inspector/CommandLineAPIHost.idl \
     $(WebCore)/inspector/InspectorFrontendHost.idl \
-    $(WebCore)/inspector/ScriptProfile.idl \
-    $(WebCore)/inspector/ScriptProfileNode.idl \
     $(WebCore)/loader/appcache/DOMApplicationCache.idl \
     $(WebCore)/page/AbstractView.idl \
     $(WebCore)/page/BarProp.idl \

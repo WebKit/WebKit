@@ -151,9 +151,6 @@ struct GlobalObjectMethodTable {
     typedef bool (*AllowsAccessFromFunctionPtr)(const JSGlobalObject*, ExecState*);
     AllowsAccessFromFunctionPtr allowsAccessFrom;
 
-    typedef bool (*SupportsLegacyProfilingFunctionPtr)(const JSGlobalObject*);
-    SupportsLegacyProfilingFunctionPtr supportsLegacyProfiling;
-
     typedef bool (*SupportsRichSourceInfoFunctionPtr)(const JSGlobalObject*);
     SupportsRichSourceInfoFunctionPtr supportsRichSourceInfo;
 
@@ -717,7 +714,6 @@ public:
     const GlobalObjectMethodTable* globalObjectMethodTable() const { return m_globalObjectMethodTable; }
 
     static bool allowsAccessFrom(const JSGlobalObject*, ExecState*) { return true; }
-    static bool supportsLegacyProfiling(const JSGlobalObject*) { return false; }
     static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
 
     JS_EXPORT_PRIVATE ExecState* globalExec();

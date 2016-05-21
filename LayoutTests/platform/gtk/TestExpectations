@@ -1203,9 +1203,6 @@ webkit.org/b/136066 animations/missing-keyframe-properties.html [ Crash Pass ]
 webkit.org/b/136066 animations/missing-values-first-keyframe.html [ Crash Pass ]
 webkit.org/b/136066 animations/state-at-end-event.html [ Crash Pass ]
 
-webkit.org/b/136067 fast/profiler/dead-time.html [ Failure Pass ]
-webkit.org/b/136067 fast/profiler/stop-profiling-after-setTimeout.html [ Failure Pass ]
-
 webkit.org/b/136070 fast/forms/label/label-becomes-visible-while-clicking-on-label.html [ Failure Pass ]
 
 webkit.org/b/136580 media/context-menu-actions.html [ Timeout Pass ]

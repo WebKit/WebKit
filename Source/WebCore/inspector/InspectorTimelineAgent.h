@@ -41,10 +41,6 @@
 #include <inspector/ScriptDebugListener.h>
 #include <wtf/Vector.h>
 
-namespace JSC {
-class Profile;
-}
-
 namespace Inspector {
 class InspectorHeapAgent;
 class InspectorScriptProfilerAgent;
@@ -113,8 +109,8 @@ public:
     void didCommitLoad();
 
     // Methods called from WebCore.
-    void startFromConsole(JSC::ExecState*, const String &title);
-    RefPtr<JSC::Profile> stopFromConsole(JSC::ExecState*, const String& title);
+    void startFromConsole(JSC::ExecState*, const String& title);
+    void stopFromConsole(JSC::ExecState*, const String& title);
 
     // InspectorInstrumentation callbacks.
     void didInstallTimer(int timerId, std::chrono::milliseconds timeout, bool singleShot, Frame*);
@@ -204,10 +200,9 @@ private:
     InspectorPageAgent* m_pageAgent;
 
     Vector<TimelineRecordEntry> m_recordStack;
+
     int m_id { 1 };
     int m_maxCallStackDepth { 5 };
-
-    Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;
 
     bool m_enabled { false };
     bool m_enabledFromFrontend { false };

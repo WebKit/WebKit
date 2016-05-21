@@ -40,7 +40,6 @@
 #include "PageGroup.h"
 #include "ScriptController.h"
 #include <heap/StrongInlines.h>
-#include <profiler/Profile.h>
 #include <runtime/JSLock.h>
 #include <runtime/WeakGCMapInlines.h>
 

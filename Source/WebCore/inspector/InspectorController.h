@@ -63,7 +63,6 @@ class InspectorDOMAgent;
 class InspectorFrontendClient;
 class InspectorInstrumentation;
 class InspectorPageAgent;
-class InspectorTimelineAgent;
 class InstrumentingAgents;
 class Node;
 class Page;
@@ -111,9 +110,6 @@ public:
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
     WEBCORE_EXPORT void evaluateForTestInFrontend(const String& script);
 
-    WEBCORE_EXPORT bool legacyProfilerEnabled() const;
-    WEBCORE_EXPORT void setLegacyProfilerEnabled(bool);
-
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
     InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
     InspectorPageAgent* pageAgent() const { return m_pageAgent; }
@@ -148,11 +144,9 @@ private:
     Inspector::InspectorAgent* m_inspectorAgent { nullptr };
     InspectorDOMAgent* m_domAgent { nullptr };
     InspectorPageAgent* m_pageAgent { nullptr };
-    InspectorTimelineAgent* m_timelineAgent { nullptr };
 
     bool m_isUnderTest { false };
     bool m_isAutomaticInspection { false };
-    bool m_legacyProfilerEnabled { false };
 };
 
 } // namespace WebCore

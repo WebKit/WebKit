@@ -1,3 +1,103 @@
+2016-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove LegacyProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=153565
+
+        Reviewed by Saam Barati.
+
+        * fast/profiler/anonymous-event-handler-expected.txt: Removed.
+        * fast/profiler/anonymous-event-handler.html: Removed.
+        * fast/profiler/anonymous-function-called-from-different-contexts-expected.txt: Removed.
+        * fast/profiler/anonymous-function-called-from-different-contexts.html: Removed.
+        * fast/profiler/anonymous-function-calls-built-in-functions-expected.txt: Removed.
+        * fast/profiler/anonymous-function-calls-built-in-functions.html: Removed.
+        * fast/profiler/anonymous-function-calls-eval-expected.txt: Removed.
+        * fast/profiler/anonymous-function-calls-eval.html: Removed.
+        * fast/profiler/anonymous-functions-with-display-names-expected.txt: Removed.
+        * fast/profiler/anonymous-functions-with-display-names.html: Removed.
+        * fast/profiler/apply-expected.txt: Removed.
+        * fast/profiler/apply.html: Removed.
+        * fast/profiler/built-in-function-calls-anonymous-expected.txt: Removed.
+        * fast/profiler/built-in-function-calls-anonymous.html: Removed.
+        * fast/profiler/built-in-function-calls-user-defined-function-expected.txt: Removed.
+        * fast/profiler/built-in-function-calls-user-defined-function.html: Removed.
+        * fast/profiler/call-expected.txt: Removed.
+        * fast/profiler/call-register-leak-expected.txt: Removed.
+        * fast/profiler/call-register-leak.html: Removed.
+        * fast/profiler/call.html: Removed.
+        * fast/profiler/calling-the-function-that-started-the-profiler-from-another-scope-expected.txt: Removed.
+        * fast/profiler/calling-the-function-that-started-the-profiler-from-another-scope.html: Removed.
+        * fast/profiler/compare-multiple-profiles-expected.txt: Removed.
+        * fast/profiler/compare-multiple-profiles.html: Removed.
+        * fast/profiler/constructor-expected.txt: Removed.
+        * fast/profiler/constructor.html: Removed.
+        * fast/profiler/dead-time-expected.txt: Removed.
+        * fast/profiler/dead-time.html: Removed.
+        * fast/profiler/document-dot-write-expected.txt: Removed.
+        * fast/profiler/document-dot-write.html: Removed.
+        * fast/profiler/event-handler-expected.txt: Removed.
+        * fast/profiler/event-handler.html: Removed.
+        * fast/profiler/execution-context-and-eval-on-same-line-expected.txt: Removed.
+        * fast/profiler/execution-context-and-eval-on-same-line.html: Removed.
+        * fast/profiler/inline-event-handler-expected.txt: Removed.
+        * fast/profiler/inline-event-handler.html: Removed.
+        * fast/profiler/many-calls-in-the-same-scope-expected.txt: Removed.
+        * fast/profiler/many-calls-in-the-same-scope.html: Removed.
+        * fast/profiler/multiple-and-different-scoped-anonymous-function-calls-expected.txt: Removed.
+        * fast/profiler/multiple-and-different-scoped-anonymous-function-calls.html: Removed.
+        * fast/profiler/multiple-and-different-scoped-function-calls-expected.txt: Removed.
+        * fast/profiler/multiple-and-different-scoped-function-calls.html: Removed.
+        * fast/profiler/multiple-anonymous-functions-called-from-the-same-function-expected.txt: Removed.
+        * fast/profiler/multiple-anonymous-functions-called-from-the-same-function.html: Removed.
+        * fast/profiler/multiple-frames-expected.txt: Removed.
+        * fast/profiler/multiple-frames.html: Removed.
+        * fast/profiler/named-functions-with-display-names-expected.txt: Removed.
+        * fast/profiler/named-functions-with-display-names.html: Removed.
+        * fast/profiler/nested-anonymous-functon-expected.txt: Removed.
+        * fast/profiler/nested-anonymous-functon.html: Removed.
+        * fast/profiler/nested-start-and-stop-profiler-expected.txt: Removed.
+        * fast/profiler/nested-start-and-stop-profiler.html: Removed.
+        * fast/profiler/no-execution-context-expected.txt: Removed.
+        * fast/profiler/no-execution-context.html: Removed.
+        * fast/profiler/one-execution-context-expected.txt: Removed.
+        * fast/profiler/one-execution-context.html: Removed.
+        * fast/profiler/profile-calls-in-included-file-expected.txt: Removed.
+        * fast/profiler/profile-calls-in-included-file.html: Removed.
+        * fast/profiler/profile-with-no-title-expected.txt: Removed.
+        * fast/profiler/profile-with-no-title.html: Removed.
+        * fast/profiler/profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting-expected.txt: Removed.
+        * fast/profiler/profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting.html: Removed.
+        * fast/profiler/profiling-from-a-nested-location-expected.txt: Removed.
+        * fast/profiler/profiling-from-a-nested-location.html: Removed.
+        * fast/profiler/resources/other-frame.html: Removed.
+        * fast/profiler/resources/other-window.html: Removed.
+        * fast/profiler/resources/profiler-test-JS-resources.js: Removed.
+        * fast/profiler/simple-event-call-expected.txt: Removed.
+        * fast/profiler/simple-event-call.html: Removed.
+        * fast/profiler/simple-no-level-change-expected.txt: Removed.
+        * fast/profiler/simple-no-level-change.html: Removed.
+        * fast/profiler/start-and-stop-profiler-multiple-times-expected.txt: Removed.
+        * fast/profiler/start-and-stop-profiler-multiple-times.html: Removed.
+        * fast/profiler/start-and-stop-profiling-in-the-same-function-expected.txt: Removed.
+        * fast/profiler/start-and-stop-profiling-in-the-same-function.html: Removed.
+        * fast/profiler/start-but-dont-stop-profiling-expected.txt: Removed.
+        * fast/profiler/start-but-dont-stop-profiling.html: Removed.
+        * fast/profiler/stop-profiling-after-setTimeout-expected.txt: Removed.
+        * fast/profiler/stop-profiling-after-setTimeout.html: Removed.
+        * fast/profiler/stop-then-function-call-expected.txt: Removed.
+        * fast/profiler/stop-then-function-call.html: Removed.
+        * fast/profiler/throw-exception-from-eval-expected.txt: Removed.
+        * fast/profiler/throw-exception-from-eval.html-disabled: Removed.
+        * fast/profiler/two-execution-contexts-expected.txt: Removed.
+        * fast/profiler/two-execution-contexts.html: Removed.
+        * fast/profiler/user-defined-function-calls-built-in-functions-expected.txt: Removed.
+        * fast/profiler/user-defined-function-calls-built-in-functions.html: Removed.
+        * fast/profiler/window-dot-eval-expected.txt: Removed.
+        * fast/profiler/window-dot-eval.html: Removed.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-05-20  Zalan Bujtas  <zalan@apple.com>
 
         `width: 1%` on nested table cell causes its table to hog horizontal space
