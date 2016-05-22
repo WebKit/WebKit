@@ -390,7 +390,7 @@ using WTF::is8ByteAligned;
 using WTF::safeCast;
 using WTF::tryBinarySearch;
 
-#if __cplusplus >= 201402L
+#if __cplusplus >= 201400L
 // We normally don't want to bring in entire std namespaces, but literals are an exception.
 using namespace std::literals::chrono_literals;
 #endif

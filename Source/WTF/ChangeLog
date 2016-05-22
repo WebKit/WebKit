@@ -1,5 +1,11 @@
 2016-05-22  Dan Bernstein  <mitz@apple.com>
 
+        Tried to fix the GTK build after r201257.
+
+        * wtf/StdLibExtras.h:
+
+2016-05-22  Dan Bernstein  <mitz@apple.com>
+
         Additional fixes for non-C++14 Apple projects that use WTF.
 
         * wtf/StdLibExtras.h:
