@@ -39,7 +39,7 @@ public:
 
     ~CCallValue();
 
-    Effects effects { Effects::forCall() };
+    Effects effects;
 
 protected:
     Value* cloneImpl() const override;
@@ -50,6 +50,7 @@ private:
     template<typename... Arguments>
     CCallValue(Type type, Origin origin, Arguments... arguments)
         : Value(CheckedOpcode, CCall, type, origin, arguments...)
+        , effects(Effects::forCall())
     {
         RELEASE_ASSERT(numChildren() >= 1);
     }

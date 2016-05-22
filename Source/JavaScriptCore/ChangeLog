@@ -1,5 +1,13 @@
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
+        Attempted Yosemite build fix after http://trac.webkit.org/changeset/201255
+
+        Suggested by and reviewed by Anders Carlsson.
+
+        * b3/B3CCallValue.h: Initialize the effects member more conventionally.
+
+2016-05-22  Brady Eidson  <beidson@apple.com>
+
         Move to C++14.
         https://bugs.webkit.org/show_bug.cgi?id=157948
 
