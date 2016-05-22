@@ -1,5 +1,16 @@
 2016-05-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r201241. rdar://problem/26396532
+
+    2016-05-20  Dan Bernstein  <mitz@apple.com>
+
+            Fixed USE(APPLE_INTERNAL_SDK) builds.
+
+            * platform/cocoa/ThemeCocoa.mm:
+            (WebCore::fitContextToBox):
+
+2016-05-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r201229. rdar://problem/26396532
 
     2016-05-20  Anders Carlsson  <andersca@apple.com>
