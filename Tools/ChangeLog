@@ -1,3 +1,18 @@
+2016-05-22  Alexey Proskuryakov  <ap@apple.com>
+
+        RELEASE_ASSERT(TestController::singleton().isCurrentInvocation(testInvocation)) is sometimes hit when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=157977
+        rdar://problem/20874156
+
+        Reviewed by David Kilzer.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke): Be more certain to launch a new process when there was
+        a timeout detected. If we don't, there is a chance that the process is not quite frozen,
+        and will still send a response that we no longer expect.
+        (WTR::TestInvocation::dumpWebProcessUnresponsiveness): Print timeout details to stderr
+        too, as stdout is not available, at least not in the case that I was observing.
+
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
         Move to C++14.

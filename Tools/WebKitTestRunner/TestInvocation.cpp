@@ -172,13 +172,15 @@ end:
 
     if (m_webProcessIsUnresponsive)
         dumpWebProcessUnresponsiveness();
-    else if (!TestController::singleton().resetStateToConsistentValues(m_options)) {
-        // The process froze while loading about:blank, let's start a fresh one.
-        // It would be nice to report that the previous test froze after dumping results, but we have no way to do that.
-        TestController::singleton().terminateWebContentProcess();
-        // Make sure that we have a process, as invoke() will need one to send bundle messages for the next test.
-        TestController::singleton().reattachPageToWebProcess();
-    }
+    else if (TestController::singleton().resetStateToConsistentValues(m_options))
+        return;
+    else
+        dumpWebProcessUnresponsiveness("TestController::resetStateToConsistentValues failed\n");
+
+    // The process is unresponsive, so let's start a new one.
+    TestController::singleton().terminateWebContentProcess();
+    // Make sure that we have a process, as invoke() will need one to send bundle messages for the next test.
+    TestController::singleton().reattachPageToWebProcess();
 }
 
 void TestInvocation::dumpWebProcessUnresponsiveness()
@@ -188,6 +190,7 @@ void TestInvocation::dumpWebProcessUnresponsiveness()
 
 void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
 {
+    fprintf(stderr, "%s", errorMessage);
     char errorMessageToStderr[1024];
 #if PLATFORM(COCOA)
     pid_t pid = WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page());
