@@ -135,7 +135,7 @@ bool JSTestCallback::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
     return !returnedException;
 }
 
-bool JSTestCallback::callbackWithSerializedScriptValueParam(PassRefPtr<SerializedScriptValue> srzParam, const String& strArg)
+bool JSTestCallback::callbackWithSerializedScriptValueParam(RefPtr<SerializedScriptValue>&& srzParam, const String& strArg)
 {
     if (!canInvokeCallback())
         return true;
@@ -156,7 +156,7 @@ bool JSTestCallback::callbackWithSerializedScriptValueParam(PassRefPtr<Serialize
     return !returnedException;
 }
 
-bool JSTestCallback::callbackWithStringList(PassRefPtr<DOMStringList> listParam)
+bool JSTestCallback::callbackWithStringList(RefPtr<PassRefPtr<DOMStringList>>&& listParam)
 {
     if (!canInvokeCallback())
         return true;

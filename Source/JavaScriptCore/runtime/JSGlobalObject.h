@@ -160,7 +160,7 @@ struct GlobalObjectMethodTable {
     typedef RuntimeFlags (*JavaScriptRuntimeFlagsFunctionPtr)(const JSGlobalObject*);
     JavaScriptRuntimeFlagsFunctionPtr javaScriptRuntimeFlags;
 
-    typedef void (*QueueTaskToEventLoopFunctionPtr)(const JSGlobalObject*, PassRefPtr<Microtask>);
+    typedef void (*QueueTaskToEventLoopFunctionPtr)(const JSGlobalObject*, Ref<Microtask>&&);
     QueueTaskToEventLoopFunctionPtr queueTaskToEventLoop;
 
     typedef bool (*ShouldInterruptScriptBeforeTimeoutPtr)(const JSGlobalObject*);
@@ -721,7 +721,7 @@ public:
     static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }
     static RuntimeFlags javaScriptRuntimeFlags(const JSGlobalObject*) { return RuntimeFlags(); }
 
-    void queueMicrotask(PassRefPtr<Microtask>);
+    void queueMicrotask(Ref<Microtask>&&);
 
     bool evalEnabled() const { return m_evalEnabled; }
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }

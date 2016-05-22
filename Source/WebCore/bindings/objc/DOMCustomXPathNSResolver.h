@@ -29,7 +29,7 @@
 #include "XPathNSResolver.h"
 
 #include "DOMXPathNSResolver.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

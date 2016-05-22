@@ -47,7 +47,7 @@ namespace WebCore {
     protected:
         struct JSDOMGlobalObjectData;
 
-        JSDOMGlobalObject(JSC::VM&, JSC::Structure*, PassRefPtr<DOMWrapperWorld>, const JSC::GlobalObjectMethodTable* = 0);
+        JSDOMGlobalObject(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&, const JSC::GlobalObjectMethodTable* = 0);
         static void destroy(JSC::JSCell*);
         void finishCreation(JSC::VM&);
         void finishCreation(JSC::VM&, JSC::JSObject*);
@@ -66,7 +66,7 @@ namespace WebCore {
 
         static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
 
-        DOMWrapperWorld& world() { return *m_world; }
+        DOMWrapperWorld& world() { return m_world.get(); }
         bool worldIsNormal() const { return m_worldIsNormal; }
 
         JSBuiltinInternalFunctions& builtinInternalFunctions() { return m_builtinInternalFunctions; }
@@ -87,7 +87,7 @@ namespace WebCore {
         JSDOMConstructorMap m_constructors;
 
         Event* m_currentEvent;
-        const RefPtr<DOMWrapperWorld> m_world;
+        Ref<DOMWrapperWorld> m_world;
         bool m_worldIsNormal;
 
     private:

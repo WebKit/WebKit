@@ -1,3 +1,49 @@
+2016-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Remove uses of PassRefPtr in JS bindings code
+        https://bugs.webkit.org/show_bug.cgi?id=157949
+
+        Reviewed by Andreas Kling.
+
+        Remove uses of PassRefPtr in JS bindings code.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsArray):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObject):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        (WebCore::JSGlobalObjectTask::JSGlobalObjectTask):
+        * bindings/js/JSDOMGlobalObjectTask.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::JSDOMWindowMicrotaskCallback::create):
+        (WebCore::JSDOMWindowMicrotaskCallback::call):
+        (WebCore::JSDOMWindowMicrotaskCallback::JSDOMWindowMicrotaskCallback):
+        (WebCore::JSDOMWindowBase::queueTaskToEventLoop):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::finishCreation):
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::create):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase):
+        (WebCore::JSWorkerGlobalScopeBase::queueTaskToEventLoop):
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        * bindings/objc/DOMCustomXPathNSResolver.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetNativeTypeForCallbacks):
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackWithSerializedScriptValueParam):
+        (WebCore::JSTestCallback::callbackWithStringList):
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        (WebCore::JSTestCallbackFunction::callbackWithSerializedScriptValueParam):
+        (WebCore::JSTestCallbackFunction::callbackWithStringList):
+        * bindings/scripts/test/JS/JSTestCallbackFunction.h:
+
 2016-05-20  Dan Bernstein  <mitz@apple.com>
 
         Fixed USE(APPLE_INTERNAL_SDK) builds.

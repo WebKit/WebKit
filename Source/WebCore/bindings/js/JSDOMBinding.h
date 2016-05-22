@@ -265,7 +265,7 @@ JSC::JSValue toJSIteratorEnd(JSC::ExecState&);
 
 template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T, inlineCapacity>&);
 template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T, inlineCapacity>*);
-WEBCORE_EXPORT JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<DOMStringList>);
+WEBCORE_EXPORT JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, DOMStringList*);
 
 JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, JSC::JSValue, JSC::JSValue);
 template<typename FirstType, typename SecondType> JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, const FirstType&, const SecondType&);

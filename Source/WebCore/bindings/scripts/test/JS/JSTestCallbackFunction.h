@@ -44,10 +44,10 @@ public:
     // Functions
     virtual bool callbackWithNoParam();
     virtual bool callbackWithArrayParam(RefPtr<Float32Array> arrayParam);
-    virtual bool callbackWithSerializedScriptValueParam(PassRefPtr<SerializedScriptValue> srzParam, const String& strArg);
+    virtual bool callbackWithSerializedScriptValueParam(RefPtr<SerializedScriptValue>&& srzParam, const String& strArg);
     virtual int32_t callbackWithNonBoolReturnType(const String& strArg);
     virtual int32_t customCallback(Class5* class5Param, Class6* class6Param);
-    virtual bool callbackWithStringList(PassRefPtr<DOMStringList> listParam);
+    virtual bool callbackWithStringList(RefPtr<PassRefPtr<DOMStringList>>&& listParam);
     virtual bool callbackWithBoolean(bool boolParam);
     virtual bool callbackRequiresThisToPass(int32_t longParam, TestNode* testNodeParam);
 

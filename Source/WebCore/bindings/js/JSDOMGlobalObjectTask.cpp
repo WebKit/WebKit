@@ -38,9 +38,9 @@ namespace WebCore {
 
 class JSGlobalObjectCallback final : public RefCounted<JSGlobalObjectCallback>, private ActiveDOMCallback {
 public:
-    static Ref<JSGlobalObjectCallback> create(JSDOMGlobalObject* globalObject, PassRefPtr<Microtask> task)
+    static Ref<JSGlobalObjectCallback> create(JSDOMGlobalObject* globalObject, Ref<Microtask>&& task)
     {
-        return adoptRef(*new JSGlobalObjectCallback(globalObject, task));
+        return adoptRef(*new JSGlobalObjectCallback(globalObject, WTFMove(task)));
     }
 
     void call()
@@ -61,28 +61,28 @@ public:
         // When on the main thread (e.g. the document's thread), we need to make sure to
         // push the current ExecState on to the JSMainThreadExecState stack.
         if (context->isDocument())
-            JSMainThreadExecState::runTask(exec, *m_task.get());
+            JSMainThreadExecState::runTask(exec, m_task);
         else
             m_task->run(exec);
         ASSERT(!exec->hadException());
     }
 
 private:
-    JSGlobalObjectCallback(JSDOMGlobalObject* globalObject, PassRefPtr<Microtask> task)
+    JSGlobalObjectCallback(JSDOMGlobalObject* globalObject, Ref<Microtask>&& task)
         : ActiveDOMCallback(globalObject->scriptExecutionContext())
         , m_globalObject(globalObject->vm(), globalObject)
-        , m_task(task)
+        , m_task(WTFMove(task))
     {
     }
 
     Strong<JSDOMGlobalObject> m_globalObject;
-    RefPtr<Microtask> m_task;
+    Ref<Microtask> m_task;
 };
 
-JSGlobalObjectTask::JSGlobalObjectTask(JSDOMGlobalObject* globalObject, PassRefPtr<Microtask> task)
+JSGlobalObjectTask::JSGlobalObjectTask(JSDOMGlobalObject* globalObject, Ref<Microtask>&& task)
     : ScriptExecutionContext::Task(nullptr)
 {
-    RefPtr<JSGlobalObjectCallback> callback = JSGlobalObjectCallback::create(globalObject, task);
+    RefPtr<JSGlobalObjectCallback> callback = JSGlobalObjectCallback::create(globalObject, WTFMove(task));
     m_task = [callback] (ScriptExecutionContext&) {
         callback->call();
     };

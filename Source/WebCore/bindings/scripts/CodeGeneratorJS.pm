@@ -4307,8 +4307,8 @@ sub GetNativeTypeForCallbacks
 {
     my ($interface, $type) = @_;
 
-    return "PassRefPtr<SerializedScriptValue>" if $type eq "SerializedScriptValue";
-    return "PassRefPtr<DOMStringList>" if $type eq "DOMStringList";
+    return "RefPtr<SerializedScriptValue>&&" if $type eq "SerializedScriptValue";
+    return "RefPtr<PassRefPtr<DOMStringList>>&&" if $type eq "DOMStringList";
     return "const String&" if $type eq "DOMString";
     return GetNativeType($interface, $type);
 }

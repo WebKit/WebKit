@@ -33,7 +33,7 @@ namespace WebCore {
 
 class JSGlobalObjectTask : public ScriptExecutionContext::Task {
 public:
-    JSGlobalObjectTask(JSDOMGlobalObject*, PassRefPtr<JSC::Microtask>);
+    JSGlobalObjectTask(JSDOMGlobalObject*, Ref<JSC::Microtask>&&);
 };
 
 } // namespace WebCore

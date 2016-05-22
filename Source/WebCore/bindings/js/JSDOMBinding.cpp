@@ -146,7 +146,7 @@ double valueToDate(ExecState* exec, JSValue value)
     return static_cast<DateInstance*>(value.toObject(exec))->internalNumber();
 }
 
-JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<DOMStringList> stringList)
+JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMStringList* stringList)
 {
     JSC::MarkedArgumentBuffer list;
     if (stringList) {
