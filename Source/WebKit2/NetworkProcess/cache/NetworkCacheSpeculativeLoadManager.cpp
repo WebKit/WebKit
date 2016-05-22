@@ -46,7 +46,7 @@ namespace NetworkCache {
 
 using namespace WebCore;
 
-static const auto preloadedEntryLifetime = 10_s;
+static const auto preloadedEntryLifetime = 10s;
 
 #if !LOG_DISABLED
 static HashCountedSet<String>& allSpeculativeLoadingDiagnosticMessages()
@@ -114,7 +114,7 @@ static bool responseNeedsRevalidation(const ResourceResponse& response, std::chr
 
     auto age = computeCurrentAge(response, timestamp);
     auto lifetime = computeFreshnessLifetimeForHTTPFamily(response, timestamp);
-    return age - lifetime > 0_ms;
+    return age - lifetime > 0ms;
 }
 
 class SpeculativeLoadManager::ExpiringEntry {

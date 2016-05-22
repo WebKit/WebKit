@@ -1,3 +1,15 @@
+2016-05-22  Brady Eidson  <beidson@apple.com>
+
+        Move to C++14.
+        https://bugs.webkit.org/show_bug.cgi?id=157948
+
+        Reviewed by Michael Catanzaro.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2016-05-21  Aakash Jain  <aakash_jain@apple.com>
 
         Simulator launch fails intermittently due to failure in checking simulator boot status

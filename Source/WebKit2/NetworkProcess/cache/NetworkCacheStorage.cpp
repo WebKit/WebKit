@@ -572,7 +572,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
     m_activeReadOperations.add(WTFMove(readOperationPtr));
 
     // I/O pressure may make disk operations slow. If they start taking very long time we rather go to network.
-    const auto readTimeout = 1500_ms;
+    const auto readTimeout = 1500ms;
     m_readOperationTimeoutTimer.startOneShot(readTimeout);
 
     bool shouldGetBodyBlob = mayContainBlob(readOperation.key);
@@ -795,7 +795,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
 
     // Delay the start of writes a bit to avoid affecting early page load.
     // Completing writes will dispatch more writes without delay.
-    static const auto initialWriteDelay = 1_s;
+    static const auto initialWriteDelay = 1s;
     m_writeOperationDispatchTimer.startOneShot(initialWriteDelay);
 }
 
@@ -935,7 +935,7 @@ static double computeRecordWorth(FileTimes times)
     auto accessAge = times.modification - times.creation;
 
     // For sanity.
-    if (age <= 0_s || accessAge < 0_s || accessAge > age)
+    if (age <= 0s || accessAge < 0s || accessAge > age)
         return 0;
 
     // We like old entries that have been accessed recently.

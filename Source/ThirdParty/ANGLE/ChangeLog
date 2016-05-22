@@ -1,3 +1,12 @@
+2016-05-22  Brady Eidson  <beidson@apple.com>
+
+        Move to C++14.
+        https://bugs.webkit.org/show_bug.cgi?id=157948
+
+        Reviewed by Michael Catanzaro.
+
+        * Configurations/Base.xcconfig:
+
 2016-04-26  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][ANGLE] Display object is not created.

@@ -1,3 +1,20 @@
+2016-05-22  Brady Eidson  <beidson@apple.com>
+
+        Move to C++14.
+        https://bugs.webkit.org/show_bug.cgi?id=157948
+
+        Reviewed by Michael Catanzaro.
+
+        * Configurations/Base.xcconfig:
+        
+        Delete a lot of "stl additions until we can adopt C++14" code:
+        * wtf/StdLibExtras.h:
+        (std::make_unique): Deleted.
+        (std::index_sequence::size): Deleted.
+        (std::exchange): Deleted.
+        (std::literals::chrono_literals::operator _s): Deleted.
+        (std::literals::chrono_literals::operator _ms): Deleted.
+
 2016-05-20  Rawinder Singh  <rawinder.singh-webkit@cisra.canon.com.au>
 
         Implement operator== for WeakPtr

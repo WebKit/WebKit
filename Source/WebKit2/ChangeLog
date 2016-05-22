@@ -1,3 +1,44 @@
+2016-05-22  Brady Eidson  <beidson@apple.com>
+
+        Move to C++14.
+        https://bugs.webkit.org/show_bug.cgi?id=157948
+
+        Reviewed by Michael Catanzaro.
+
+        * Configurations/Base.xcconfig:
+
+        Replace time literal suffixes that have underscores to the forms without
+        (e.g. 0_ms becomes 0ms):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::responseHasExpired):
+        (WebKit::NetworkCache::responseNeedsRevalidation):
+        (WebKit::NetworkCache::makeStoreDecision):
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::responseNeedsRevalidation):
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::store):
+        (WebKit::NetworkCache::computeRecordWorth):
+
+        * Shared/mac/RemoteLayerBackingStoreCollection.mm:
+
+        * UIProcess/ViewGestureController.cpp:
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlushImmediately):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush):
+
 2016-05-21  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r188642): All pages are blank when printing a webpage in iOS Safari

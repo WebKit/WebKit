@@ -195,7 +195,7 @@ void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
 {
     consumeSandboxExtensions();
 
-    if (isSynchronous() || m_parameters.maximumBufferingTime > 0_ms)
+    if (isSynchronous() || m_parameters.maximumBufferingTime > 0ms)
         m_bufferedData = SharedBuffer::create();
 
 #if ENABLE(NETWORK_CACHE)

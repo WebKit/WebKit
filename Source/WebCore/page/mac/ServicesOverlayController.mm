@@ -438,10 +438,10 @@ std::chrono::milliseconds ServicesOverlayController::remainingTimeUntilHighlight
     if (!highlight)
         return std::chrono::milliseconds::zero();
 
-    auto minimumTimeUntilHighlightShouldBeShown = 200_ms;
+    auto minimumTimeUntilHighlightShouldBeShown = 200ms;
     Page* page = m_mainFrame.page();
     if (page && page->focusController().focusedOrMainFrame().selection().selection().isContentEditable())
-        minimumTimeUntilHighlightShouldBeShown = 1000_ms;
+        minimumTimeUntilHighlightShouldBeShown = 1000ms;
 
     bool mousePressed = m_mainFrame.eventHandler().mousePressed();
 
@@ -449,12 +449,12 @@ std::chrono::milliseconds ServicesOverlayController::remainingTimeUntilHighlight
     // by virtue of being expanded to include the entire telephone number. However, we will still avoid highlighting
     // telephone numbers while the mouse is down.
     if (highlight->type() == Highlight::TelephoneNumberType)
-        return mousePressed ? minimumTimeUntilHighlightShouldBeShown : 0_ms;
+        return mousePressed ? minimumTimeUntilHighlightShouldBeShown : 0ms;
 
     auto now = std::chrono::steady_clock::now();
     auto timeSinceLastSelectionChange = now - m_lastSelectionChangeTime;
     auto timeSinceHighlightBecameActive = now - m_nextActiveHighlightChangeTime;
-    auto timeSinceLastMouseUp = mousePressed ? 0_ms : now - m_lastMouseUpTime;
+    auto timeSinceLastMouseUp = mousePressed ? 0ms : now - m_lastMouseUpTime;
 
     auto remainingDelay = minimumTimeUntilHighlightShouldBeShown - std::min(std::min(timeSinceLastSelectionChange, timeSinceHighlightBecameActive), timeSinceLastMouseUp);
     return std::chrono::duration_cast<std::chrono::milliseconds>(remainingDelay);
