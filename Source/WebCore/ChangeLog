@@ -1,3 +1,20 @@
+2016-05-22  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r201233. rdar://problem/26397571
+
+    2016-05-20  Jer Noble  <jer.noble@apple.com>
+
+            Inconsistent state in playback controls
+            https://bugs.webkit.org/show_bug.cgi?id=157962
+            <rdar://problem/26397571>
+
+            Reviewed by Beth Dakin.
+
+            Do not use the playbackSessionManager() as the model, that's what the model is for.
+
+            * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+            (WebCore::WebPlaybackSessionInterfaceMac::setClient):
+
 2016-05-19  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r201187. rdar://problem/25314776

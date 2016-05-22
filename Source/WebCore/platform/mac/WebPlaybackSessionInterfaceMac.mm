@@ -58,10 +58,8 @@ void WebPlaybackSessionInterfaceMac::setClient(WebPlaybackSessionInterfaceMacCli
 {
     m_client = client;
 
-    if (m_client) {
-        float rate = [playBackControlsManager() rate];
-        m_client->rateChanged(!!rate, rate);
-    }
+    if (m_client && m_playbackSessionModel)
+        m_client->rateChanged(m_playbackSessionModel->isPlaying(), m_playbackSessionModel->playbackRate());
 }
 
 void WebPlaybackSessionInterfaceMac::setDuration(double duration)
