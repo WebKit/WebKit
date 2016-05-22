@@ -1,3 +1,17 @@
+2016-05-22  Saam barati  <sbarati@apple.com>
+
+        REGRESSION(r199075): String.prototype.replace fails after being used many times with different replace values
+        https://bugs.webkit.org/show_bug.cgi?id=157968
+        <rdar://problem/26404735>
+
+        Reviewed by Ryosuke Niwa and Filip Pizlo.
+
+        There was a bug in the DFG where we were checking a condition
+        on the wrong variable.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+
 2016-05-22  Chris Dumez  <cdumez@apple.com>
 
         Remove uses of PassRefPtr in JS bindings code

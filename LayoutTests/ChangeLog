@@ -1,3 +1,13 @@
+2016-05-22  Saam barati  <sbarati@apple.com>
+
+        REGRESSION(r199075): String.prototype.replace fails after being used many times with different replace values
+        https://bugs.webkit.org/show_bug.cgi?id=157968
+        <rdar://problem/26404735>
+
+        Reviewed by Ryosuke Niwa and Filip Pizlo.
+
+        * TestExpectations:
+
 2016-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed test gardening after r201237 exposed an issue.

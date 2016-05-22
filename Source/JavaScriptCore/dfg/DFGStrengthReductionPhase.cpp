@@ -639,7 +639,7 @@ private:
             }
 
             String replace = m_node->child3()->tryGetString(m_graph);
-            if (!string)
+            if (!replace)
                 break;
 
             StringBuilder builder;
