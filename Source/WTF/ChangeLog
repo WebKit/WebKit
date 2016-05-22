@@ -1,5 +1,11 @@
 2016-05-22  Dan Bernstein  <mitz@apple.com>
 
+        Another attempt to fix the GTK build after my previous changes.
+
+        * wtf/StdLibExtras.h:
+
+2016-05-22  Dan Bernstein  <mitz@apple.com>
+
         Tried to fix the GTK build after r201257.
 
         * wtf/StdLibExtras.h:

@@ -320,7 +320,7 @@ inline void* operator new(size_t, NotNullTag, void* location)
 
 // This adds various C++14 features for versions of the STL that may not yet have them.
 namespace std {
-#if __cplusplus < 201400L
+#if COMPILER(CLANG) && __cplusplus < 201400L
 template<class T> struct _Unique_if {
     typedef unique_ptr<T> _Single_object;
 };
@@ -390,7 +390,7 @@ using WTF::is8ByteAligned;
 using WTF::safeCast;
 using WTF::tryBinarySearch;
 
-#if __cplusplus >= 201400L
+#if !COMPILER(CLANG) || __cplusplus >= 201400L
 // We normally don't want to bring in entire std namespaces, but literals are an exception.
 using namespace std::literals::chrono_literals;
 #endif
