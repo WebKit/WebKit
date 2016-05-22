@@ -1,5 +1,22 @@
 2016-05-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r201229. rdar://problem/26396532
+
+    2016-05-20  Anders Carlsson  <andersca@apple.com>
+
+            Allow named images on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=157960
+            rdar://problem/26396532
+
+            Reviewed by Dean Jackson.
+
+            USE(NEW_THEME) is false on iOS so force named images to be drawn by checking PLATFORM(IOS) as well.
+
+            * platform/graphics/NamedImageGeneratedImage.cpp:
+            (WebCore::NamedImageGeneratedImage::draw):
+
+2016-05-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r201233. rdar://problem/26397571
 
     2016-05-20  Jer Noble  <jer.noble@apple.com>

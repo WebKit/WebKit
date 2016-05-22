@@ -42,7 +42,7 @@ NamedImageGeneratedImage::NamedImageGeneratedImage(String name, const FloatSize&
 
 void NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
 {
-#if USE(NEW_THEME)
+#if USE(NEW_THEME) || PLATFORM(IOS)
     GraphicsContextStateSaver stateSaver(context);
     context.setCompositeOperation(compositeOp, blendMode);
     context.clip(dstRect);
