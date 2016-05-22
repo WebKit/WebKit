@@ -348,6 +348,16 @@ make_unique(size_t n)
 
 template<class T, class... Args> typename _Unique_if<T>::_Known_bound
 make_unique(Args&&...) = delete;
+
+// std::exchange
+template<class T, class U = T>
+T exchange(T& t, U&& newValue)
+{
+    T oldValue = std::move(t);
+    t = std::forward<U>(newValue);
+
+    return oldValue;
+}
 #endif
 
 template<WTF::CheckMoveParameterTag, typename T>

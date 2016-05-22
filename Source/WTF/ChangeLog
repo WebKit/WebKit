@@ -3,6 +3,13 @@
         Additional fixes for non-C++14 Apple projects that use WTF.
 
         * wtf/StdLibExtras.h:
+        (std::exchange):
+
+2016-05-22  Dan Bernstein  <mitz@apple.com>
+
+        Additional fixes for non-C++14 Apple projects that use WTF.
+
+        * wtf/StdLibExtras.h:
         (std::make_unique):
         (std::move):
 
