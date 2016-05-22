@@ -20,6 +20,11 @@ macro(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
             set(OLD_COMPILE_FLAGS "-Wno-parentheses-equality ${OLD_COMPILE_FLAGS}")
         endif ()
 
+        # Suppress -Wmissing-field-initializers due to a GCC bug, see https://bugs.webkit.org/show_bug.cgi?id=157888 for details.
+        if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION MATCHES "4\\.9")
+            set(OLD_COMPILE_FLAGS "-Wno-missing-field-initializers ${OLD_COMPILE_FLAGS}")
+        endif ()
+
         # Enable warnings by default
         if (NOT ${OPTION_IGNORECXX_WARNINGS})
             set(OLD_COMPILE_FLAGS "-Wall -Wextra -Wcast-align -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wundef -Wwrite-strings ${OLD_COMPILE_FLAGS}")
