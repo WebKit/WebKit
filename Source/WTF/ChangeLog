@@ -1,3 +1,11 @@
+2016-05-22  Dan Bernstein  <mitz@apple.com>
+
+        Build fix for non-C++14 Apple projects that use WTF.
+
+        Rubber-stamped by Anders.
+
+        * wtf/StdLibExtras.h:
+
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
         Move to C++14.

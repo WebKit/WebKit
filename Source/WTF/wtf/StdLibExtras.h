@@ -351,7 +351,9 @@ using WTF::is8ByteAligned;
 using WTF::safeCast;
 using WTF::tryBinarySearch;
 
+#if COMPILER_SUPPORTS(CXX_USER_LITERALS)
 // We normally don't want to bring in entire std namespaces, but literals are an exception.
 using namespace std::literals::chrono_literals;
+#endif
 
 #endif // WTF_StdLibExtras_h
