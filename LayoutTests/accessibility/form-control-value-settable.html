@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/js-test-pre.js"></script>
 
 <div>
   <input id="text1" type="text" value="Value">
@@ -61,17 +61,19 @@ if (window.testRunner && window.accessibilityController) {
     // A slider can set AXValue.
     check("slider1", "slider2", true);
 
-    // Other form controls, even toggleable ones, should have a read-only AXValue -
-    // unless they're inside contentEditable, then everything should have writable AXValue.
-    check("checkbox1", "checkbox2", false);
-    check("radio1", "radio2", false);
+    // Other controls whose contents or state can be user modified should have a read-only
+    // AXValue for non-ATK-based platforms, unless those controls are inside contentEditable,
+    // then everything should have a writable AXValue.
+    isATK = accessibilityController.platformName == "atk";
+    check("checkbox1", "checkbox2", isATK ? true : false);
+    check("radio1", "radio2", isATK ? true : false);
     check("submit1", "submit2", false);
-    check("combobox1", "combobox2", false);
-    check("listbox1", "listbox2", false);
+    check("combobox1", "combobox2", isATK ? true : false);
+    check("listbox1", "listbox2", isATK ? true : false);
 }
 
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

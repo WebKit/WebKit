@@ -1703,7 +1703,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
                 pressed = axObject->isPressed();
             
             if (axObject->isTextControl())
-                readonly = axObject->isReadOnly();
+                readonly = !axObject->canSetValueAttribute();
 
             supportsRequired = axObject->supportsRequiredAttribute();
             if (supportsRequired)

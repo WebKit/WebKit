@@ -97,7 +97,6 @@ public:
     virtual bool isEnabled() const override;
     virtual bool isIndeterminate() const override;
     virtual bool isPressed() const override;
-    virtual bool isReadOnly() const override;
     virtual bool isRequired() const override;
     virtual bool supportsRequiredAttribute() const override;
 
@@ -109,6 +108,8 @@ public:
 
     virtual bool canSetFocusAttribute() const override;
     virtual int headingLevel() const override;
+
+    bool canSetValueAttribute() const override;
 
     virtual String valueDescription() const override;
     virtual float valueForRange() const override;

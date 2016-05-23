@@ -70,7 +70,6 @@ public:
     virtual bool isFocused() const override;
     virtual bool isLoaded() const override;
     virtual bool isOffScreen() const override;
-    virtual bool isReadOnly() const override;
     virtual bool isUnvisited() const override;
     virtual bool isVisited() const override;
     virtual bool isLinked() const override;
@@ -83,7 +82,6 @@ public:
     virtual bool hasUnderline() const override;
 
     virtual bool canSetTextRangeAttributes() const override;
-    virtual bool canSetValueAttribute() const override;
     virtual bool canSetExpandedAttribute() const override;
 
     virtual void setAccessibleName(const AtomicString&) override;
