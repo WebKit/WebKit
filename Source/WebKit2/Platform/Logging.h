@@ -48,6 +48,7 @@ namespace WebKit {
     M(NetworkCache) \
     M(NetworkCacheStorage) \
     M(NetworkCacheSpeculativePreloading) \
+    M(NetworkSession) \
     M(NetworkScheduling) \
     M(Plugins) \
     M(Printing) \

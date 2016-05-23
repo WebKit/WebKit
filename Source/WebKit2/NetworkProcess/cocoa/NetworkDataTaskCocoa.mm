@@ -30,6 +30,7 @@
 
 #import "Download.h"
 #import "DownloadProxyMessages.h"
+#import "Logging.h"
 #import "NetworkProcess.h"
 #import "SessionTracker.h"
 #import "WebCoreArgumentCoders.h"
@@ -109,6 +110,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
         ASSERT(!m_session->m_dataTaskMapWithoutCredentials.contains([m_task taskIdentifier]));
         m_session->m_dataTaskMapWithoutCredentials.add([m_task taskIdentifier], this);
     }
+    LOG(NetworkSession, "%llu Creating NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     String storagePartition = WebCore::cookieStoragePartition(request);
