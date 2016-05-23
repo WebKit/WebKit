@@ -209,7 +209,12 @@ double ViewportConfiguration::minimumScale() const
 
 bool ViewportConfiguration::allowsUserScaling() const
 {
-    return m_forceAlwaysUserScalable || shouldIgnoreScalingConstraints() || m_configuration.allowsUserScaling;
+    return m_forceAlwaysUserScalable || allowsUserScalingIgnoringForceAlwaysScaling();
+}
+    
+bool ViewportConfiguration::allowsUserScalingIgnoringForceAlwaysScaling() const
+{
+    return shouldIgnoreScalingConstraints() || m_configuration.allowsUserScaling;
 }
 
 ViewportConfiguration::Parameters ViewportConfiguration::webpageParameters()

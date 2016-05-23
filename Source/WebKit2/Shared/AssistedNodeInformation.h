@@ -99,6 +99,7 @@ struct AssistedNodeInformation {
     bool isMultiSelect { false };
     bool isReadOnly {false };
     bool allowsUserScaling { false };
+    bool allowsUserScalingIgnoringForceAlwaysScaling { false };
     bool insideFixedPosition { false };
     WebAutocapitalizeType autocapitalizeType { WebAutocapitalizeTypeDefault };
     InputType elementType { InputType::None };

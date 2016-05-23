@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<meta name="viewport">
+<script id="ui-script" type="text/plain">
+    (function() {
+       uiController.uiScriptComplete(uiController.zoomScale);
+    })();
+</script></head>
+
+<body onload="runTest();">
+<p id="result">This test has to run in iOS WebKitTestRunner.</p>
+
+<input type="text" id="textfield">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that when the author does not define a scale or width, that zooming in on focused nodes changes the scale.");
+
+    window.internals.setViewportForceAlwaysUserScalable(true);
+    if (window.testRunner) {
+        window.jsTestIsAsync = true;
+    }
+
+    function runTest()
+    {
+        if (testRunner.runUIScript) {
+            var uiScript = document.getElementById('ui-script').text;
+            window.internals.setViewportForceAlwaysUserScalable(false);
+            document.getElementById("textfield").focus();
+            testRunner.runUIScript(document.getElementById('ui-script').text, function(result) {
+                debug("Maximum zoom scale was: " + Number(result).toFixed(2));
+                finishJSTest();
+            });
+        }
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<meta name="viewport" content="width=device-width, maximum-scale=1">
+<script id="ui-script" type="text/plain">
+    (function() {
+       uiController.uiScriptComplete(uiController.zoomScale);
+    })();
+</script></head>
+
+<body onload="runTest();">
+<p id="result">This test has to run in iOS WebKitTestRunner.</p>
+
+<input type="text" id="textfield">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that even though force user scalable = true, we won't scale if a text field gets focus by default.");
+
+    window.internals.setViewportForceAlwaysUserScalable(true);
+    if (window.testRunner) {
+        window.jsTestIsAsync = true;
+    }
+
+    function runTest()
+    {
+        if (testRunner.runUIScript) {
+            var uiScript = document.getElementById('ui-script').text;
+            window.internals.setViewportForceAlwaysUserScalable(false);
+            document.getElementById("textfield").focus();
+            testRunner.runUIScript(document.getElementById('ui-script').text, function(result) {
+                debug("Maximum zoom scale was: " + result);
+                finishJSTest();
+            });
+        }
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
