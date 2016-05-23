@@ -422,7 +422,7 @@ inline Length Length::blend(const Length& from, double progress) const
         return blendMixedTypes(from, progress);
 
     if (from.isZero() && isZero())
-        return progress ? *this : from; // Pick up 'auto' from 'from' if progress is zero.
+        return *this;
 
     LengthType resultType = type();
     if (isZero())

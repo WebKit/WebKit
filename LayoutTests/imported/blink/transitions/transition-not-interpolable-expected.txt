@@ -1,1 +1,1 @@
-FAIL -- transtion should not apply from 0px to auto
+PASS
