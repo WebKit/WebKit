@@ -1,3 +1,22 @@
+2016-05-23  Dean Jackson  <dino@apple.com>
+
+        Missing/Incomplete timestamp for inline Audio player in ePub book
+        https://bugs.webkit.org/show_bug.cgi?id=157998
+        <rdar://problem/25858437>
+
+        Reviewed by Jon Lee and Tim Horton.
+
+        On iOS it is rare to apply a text-zoom (Safari does not provide
+        UI for it). However, iBooks uses text-zoom to increase the font
+        size. This causes the time displays in the media controls to
+        overflow their containers and be clipped.
+
+        The solution is to simply reset the text zoom for the media controls,
+        which means the time displays will always be a constant size.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-time-remaining-display):
+
 2016-05-23  Zalan Bujtas  <zalan@apple.com>
 
         Changing border color and size simultaneously fails to repaint.

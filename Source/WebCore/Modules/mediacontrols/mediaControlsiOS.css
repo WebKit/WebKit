@@ -461,6 +461,7 @@ audio::-webkit-media-controls-time-remaining-display {
     height: 50px;
     font-size: 13px;
     font-family: -apple-system-monospaced-numbers;
+    -webkit-text-zoom: reset;
 }
 
 audio::-webkit-media-controls-current-time-display,
