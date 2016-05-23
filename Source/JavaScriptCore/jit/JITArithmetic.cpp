@@ -816,8 +816,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     else if (isOperandConstantDouble(op1))
         leftOperand.setConstDouble(getOperandConstantDouble(op1));
 #endif
-
-    if (isOperandConstantInt(op2))
+    else if (isOperandConstantInt(op2))
         rightOperand.setConstInt32(getOperandConstantInt(op2));
 #if USE(JSVALUE64)
     else if (isOperandConstantDouble(op2))

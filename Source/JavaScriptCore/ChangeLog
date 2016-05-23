@@ -1,5 +1,23 @@
 2016-05-23  Saam barati  <sbarati@apple.com>
 
+        The baseline JIT crashes when compiling "(1,1)/1"
+        https://bugs.webkit.org/show_bug.cgi?id=157933
+
+        Reviewed by Benjamin Poulain.
+
+        op_div in the baseline JIT needed to better handle when both the lhs
+        and rhs are constants. It needs to make sure to load either the lhs or
+        the rhs into a register since the div generator can't handle both
+        the lhs and rhs being constants.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_div):
+        * tests/stress/jit-gracefully-handle-double-constants-in-math-operators.js: Added.
+        (assert):
+        (test):
+
+2016-05-23  Saam barati  <sbarati@apple.com>
+
         String template don't handle let initialization properly inside eval
         https://bugs.webkit.org/show_bug.cgi?id=157991
 
