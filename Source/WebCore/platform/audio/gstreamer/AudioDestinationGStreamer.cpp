@@ -28,6 +28,7 @@
 #include "GRefPtrGStreamer.h"
 #include "Logging.h"
 #include "WebKitWebAudioSourceGStreamer.h"
+#include <gst/audio/gstaudiobasesink.h>
 #include <gst/gst.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -40,6 +41,12 @@ const unsigned framesToPull = 128;
 gboolean messageCallback(GstBus*, GstMessage* message, AudioDestinationGStreamer* destination)
 {
     return destination->handleMessage(message);
+}
+
+static void autoAudioSinkChildAddedCallback(GstChildProxy*, GObject* object, gchar*, gpointer)
+{
+    if (GST_IS_AUDIO_BASE_SINK(object))
+        g_object_set(GST_AUDIO_BASE_SINK(object), "buffer-time", static_cast<gint64>(100000), nullptr);
 }
 
 std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
@@ -93,6 +100,8 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
         LOG_ERROR("Failed to create GStreamer autoaudiosink element");
         return;
     }
+
+    g_signal_connect(audioSink.get(), "child-added", G_CALLBACK(autoAudioSinkChildAddedCallback), nullptr);
 
     // Autoaudiosink does the real sink detection in the GST_STATE_NULL->READY transition
     // so it's best to roll it to READY as soon as possible to ensure the underlying platform
