@@ -1,3 +1,15 @@
+2016-05-23  Brady Eidson  <beidson@apple.com>
+
+        check-webkit-style gets flags std::literals::chrono_literals as bad naming.
+        https://bugs.webkit.org/show_bug.cgi?id=157969
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_names):
+
 2016-05-22  Alexey Proskuryakov  <ap@apple.com>
 
         RELEASE_ASSERT(TestController::singleton().isCurrentInvocation(testInvocation)) is sometimes hit when running tests
