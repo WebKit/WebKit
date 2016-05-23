@@ -4076,6 +4076,11 @@ void WebPageProxy::setAllowsMediaDocumentInlinePlayback(bool allows)
 }
 #endif
 
+void WebPageProxy::setHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
+{
+    m_hasHadSelectionChangesFromUserInteraction = hasHadUserSelectionChanges;
+}
+
 // BackForwardList
 
 void WebPageProxy::backForwardAddItem(uint64_t itemID)

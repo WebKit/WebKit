@@ -1108,6 +1108,8 @@ public:
 
     UserInterfaceLayoutDirection userInterfaceLayoutDirection();
 
+    bool hasHadSelectionChangesFromUserInteraction() const { return m_hasHadSelectionChangesFromUserInteraction; }
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1265,6 +1267,7 @@ private:
 
     void editorStateChanged(const EditorState&);
     void compositionWasCanceled(const EditorState&);
+    void setHasHadSelectionChangesFromUserInteraction(bool);
 
     // Back/Forward list management
     void backForwardAddItem(uint64_t itemID);
@@ -1806,6 +1809,8 @@ private:
     WebCore::MediaProducer::MediaStateFlags m_mediaState { WebCore::MediaProducer::IsNotPlaying };
 
     bool m_isResourceCachingDisabled { false };
+
+    bool m_hasHadSelectionChangesFromUserInteraction { false };
 
 #if ENABLE(MEDIA_SESSION)
     bool m_hasMediaSessionWithActiveMediaElements { false };

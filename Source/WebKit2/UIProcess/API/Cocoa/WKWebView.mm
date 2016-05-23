@@ -536,6 +536,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     _page = &_impl->page();
 
     _impl->setAutomaticallyAdjustsContentInsets(true);
+    _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
 #endif
 
     _page->setBackgroundExtendsBeyondPage(true);

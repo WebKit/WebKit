@@ -120,6 +120,7 @@ private:
     BOOL _showsURLsInToolTips;
     BOOL _serviceControlsEnabled;
     BOOL _imageControlsEnabled;
+    BOOL _requiresUserActionForEditingControlsManager;
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -168,6 +169,7 @@ private:
     _showsURLsInToolTips = NO;
     _serviceControlsEnabled = NO;
     _imageControlsEnabled = NO;
+    _requiresUserActionForEditingControlsManager = NO;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -290,6 +292,7 @@ private:
     configuration->_showsURLsInToolTips = self->_showsURLsInToolTips;
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
     configuration->_imageControlsEnabled = self->_imageControlsEnabled;
+    configuration->_requiresUserActionForEditingControlsManager = self->_requiresUserActionForEditingControlsManager;
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS)
     configuration->_dataDetectorTypes = self->_dataDetectorTypes;
@@ -676,6 +679,17 @@ static NSString *defaultApplicationNameForUserAgent()
 {
     _imageControlsEnabled = imageControlsEnabled;
 }
+
+- (BOOL)_requiresUserActionForEditingControlsManager
+{
+    return _requiresUserActionForEditingControlsManager;
+}
+
+- (void)_setRequiresUserActionForEditingControlsManager:(BOOL)requiresUserAction
+{
+    _requiresUserActionForEditingControlsManager = requiresUserAction;
+}
+
 #endif // PLATFORM(MAC)
 
 #if USE(APPLE_INTERNAL_SDK)

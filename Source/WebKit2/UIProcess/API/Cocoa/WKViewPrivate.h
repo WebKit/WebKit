@@ -87,6 +87,8 @@
 @property (strong, nonatomic, setter=_setInspectorAttachmentView:) NSView *_inspectorAttachmentView WK_AVAILABLE(10_11, NA);
 #endif
 
+@property (nonatomic, readwrite, setter=_setRequiresUserActionForEditingControlsManager:) BOOL _requiresUserActionForEditingControlsManager;
+
 - (NSView*)fullScreenPlaceholderView;
 - (NSWindow*)createFullScreenWindow;
 

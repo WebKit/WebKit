@@ -233,6 +233,7 @@ messages -> WebPageProxy {
     # Editor notifications
     EditorStateChanged(struct WebKit::EditorState editorState)
     CompositionWasCanceled(struct WebKit::EditorState editorState)
+    SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
 
     # Find messages
     DidCountStringMatches(String string, uint32_t matchCount)

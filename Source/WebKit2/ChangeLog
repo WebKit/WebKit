@@ -1,3 +1,61 @@
+2016-05-23  Beth Dakin  <bdakin@apple.com>
+
+        Need SPI for clients to require a user action to get an editing controls 
+        manager
+        https://bugs.webkit.org/show_bug.cgi?id=157992
+        -and corresponding-
+        rdar://problem/26379927
+
+        Reviewed by Tim Horton.
+
+        New SPI _setRequiresUserActionForEditingControlsManager. The SPI defaults to 
+        False, which means that by default there is no user action requirement to 
+        have an editing controls manager. The SPI is on WKViewPrivate and 
+        WKWebViewConfigurationPrivate, and it’s implemented in WebViewImpl.
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _requiresUserActionForEditingControlsManager]):
+        (-[WKWebViewConfiguration _setRequiresUserActionForEditingControlsManager:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _requiresUserActionForEditingControlsManager]):
+        (-[WKView _setRequiresUserActionForEditingControlsManager:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::setRequiresUserActionForEditingControlsManager):
+        (WebKit::WebViewImpl::requiresUserActionForEditingControlsManager):
+
+        New message allows the WebProcess to tell the UI process whether the current 
+        web page has had any selection changes based on user interaction.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setHasHadSelectionChangesFromUserInteraction):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::hasHadSelectionChangesFromUserInteraction):
+        * UIProcess/WebPageProxy.messages.in:
+
+        m_userIsInteracting m_hasFocusedDueToUserInteraction used to be iOS only, but 
+        now we want to track them for Mac as well.
+        * WebProcess/WebPage/WebPage.cpp:
+
+        Handling mouse events and key events will toggle m_userIsInteracting.
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::keyEvent):
+
+        m_userIsInteracting is no longer iOS-only.
+        (WebKit::WebPage::setInitialFocus):
+
+        Send a message to the UI process on page transition to re-set 
+        hasHadSelectionChangesFromUserInteraction to false.
+        (WebKit::WebPage::didStartPageTransition):
+
+        Send a message to the UI process if this is the first selection change to 
+        happen as a result of a user action.
+        (WebKit::WebPage::didChangeSelection):
+        * WebProcess/WebPage/WebPage.h:
+
 2016-05-23  Alex Christensen  <achristensen@webkit.org>
 
         Add logging for NSURLSession calls

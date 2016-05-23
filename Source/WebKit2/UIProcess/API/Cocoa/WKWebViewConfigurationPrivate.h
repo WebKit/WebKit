@@ -63,6 +63,7 @@
 @property (nonatomic, setter=_setShowsURLsInToolTips:) BOOL _showsURLsInToolTips WK_AVAILABLE(WK_MAC_TBA, NA);
 @property (nonatomic, setter=_setServiceControlsEnabled:) BOOL _serviceControlsEnabled WK_AVAILABLE(WK_MAC_TBA, NA);
 @property (nonatomic, setter=_setImageControlsEnabled:) BOOL _imageControlsEnabled WK_AVAILABLE(WK_MAC_TBA, NA);
+@property (nonatomic, readwrite, setter=_setRequiresUserActionForEditingControlsManager:) BOOL _requiresUserActionForEditingControlsManager WK_AVAILABLE(WK_MAC_TBA, NA);
 #endif
 
 @property (nonatomic, strong, setter=_setVisitedLinkProvider:) _WKVisitedLinkProvider *_visitedLinkProvider WK_DEPRECATED(10_10, WK_MAC_TBA, 8_0, WK_IOS_TBA, "Please use _visitedLinkStore instead");
