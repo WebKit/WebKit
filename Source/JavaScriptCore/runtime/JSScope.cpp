@@ -56,21 +56,25 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
             op = ResolveOp(Dynamic, 0, 0, 0, 0, 0);
             return true;
         }
+
         SymbolTable* symbolTable = lexicalEnvironment->symbolTable();
-        ConcurrentJITLocker locker(symbolTable->m_lock);
-        auto iter = symbolTable->find(locker, ident.impl());
-        if (iter != symbolTable->end(locker)) {
-            SymbolTableEntry& entry = iter->value;
-            ASSERT(!entry.isNull());
-            if (entry.isReadOnly() && getOrPut == Put) {
-                // We know the property will be at this lexical environment scope, but we don't know how to cache it.
-                op = ResolveOp(Dynamic, 0, 0, 0, 0, 0);
+        {
+            ConcurrentJITLocker locker(symbolTable->m_lock);
+            auto iter = symbolTable->find(locker, ident.impl());
+            if (iter != symbolTable->end(locker)) {
+                SymbolTableEntry& entry = iter->value;
+                ASSERT(!entry.isNull());
+                if (entry.isReadOnly() && getOrPut == Put) {
+                    // We know the property will be at this lexical environment scope, but we don't know how to cache it.
+                    op = ResolveOp(Dynamic, 0, 0, 0, 0, 0);
+                    return true;
+                }
+
+                op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, 0, lexicalEnvironment, entry.watchpointSet(), entry.scopeOffset().offset());
                 return true;
             }
-
-            op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, 0, lexicalEnvironment, entry.watchpointSet(), entry.scopeOffset().offset());
-            return true;
         }
+
         if (scope->type() == ModuleEnvironmentType) {
             JSModuleEnvironment* moduleEnvironment = jsCast<JSModuleEnvironment*>(scope);
             JSModuleRecord* moduleRecord = moduleEnvironment->moduleRecord();

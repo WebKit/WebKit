@@ -1,3 +1,10 @@
+2016-05-22  Saam barati  <sbarati@apple.com>
+
+        Unreviewed. Fixed debug assertion failures from r201235.
+
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
         Attempted Yosemite build fix after http://trac.webkit.org/changeset/201255
