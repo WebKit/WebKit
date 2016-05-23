@@ -594,14 +594,6 @@ void RenderTable::layout()
     clearNeedsLayout();
 }
 
-static inline void markCellDirtyWhenCollapsedBorderChanges(RenderTableCell* cell)
-{
-    if (!cell)
-        return;
-    cell->invalidateHasEmptyCollapsedBorders();
-    cell->setNeedsLayoutAndPrefWidthsRecalc();
-}
-
 void RenderTable::invalidateCollapsedBorders(RenderTableCell* cellWithStyleChange)
 {
     m_collapsedBordersValid = false;
@@ -616,10 +608,14 @@ void RenderTable::invalidateCollapsedBorders(RenderTableCell* cellWithStyleChang
     if (cellWithStyleChange) {
         // It is enough to invalidate just the surrounding cells when cell border style changes.
         cellWithStyleChange->invalidateHasEmptyCollapsedBorders();
-        markCellDirtyWhenCollapsedBorderChanges(cellBelow(cellWithStyleChange));
-        markCellDirtyWhenCollapsedBorderChanges(cellAbove(cellWithStyleChange));
-        markCellDirtyWhenCollapsedBorderChanges(cellBefore(cellWithStyleChange));
-        markCellDirtyWhenCollapsedBorderChanges(cellAfter(cellWithStyleChange));
+        if (auto* below = cellBelow(cellWithStyleChange))
+            below->invalidateHasEmptyCollapsedBorders();
+        if (auto* above = cellAbove(cellWithStyleChange))
+            above->invalidateHasEmptyCollapsedBorders();
+        if (auto* before = cellBefore(cellWithStyleChange))
+            before->invalidateHasEmptyCollapsedBorders();
+        if (auto* after = cellAfter(cellWithStyleChange))
+            after->invalidateHasEmptyCollapsedBorders();
         return;
     }
 
