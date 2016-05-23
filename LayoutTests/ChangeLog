@@ -1,3 +1,16 @@
+2016-05-23  Zalan Bujtas  <zalan@apple.com>
+
+        Changing border color and size simultaneously fails to repaint.
+        https://bugs.webkit.org/show_bug.cgi?id=157967
+        <rdar://problem/26423918>
+
+        Reviewed by David Hyatt.
+
+        This patch ensures that the neighboring tables cells are dirtied when collapsed border change requires layout.
+
+        * fast/table/neighboring-cells-when-collapsed-border-changes-expected.html: Added.
+        * fast/table/neighboring-cells-when-collapsed-border-changes.html: Added.
+
 2016-05-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r200414.
