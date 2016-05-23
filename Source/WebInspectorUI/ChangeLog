@@ -1,3 +1,15 @@
+2016-05-23  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Split console navigation bar doesn't wrap as expected
+        https://bugs.webkit.org/show_bug.cgi?id=157950
+        <rdar://problem/26395573>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Main.css:
+        (#split-content-browser > .navigation-bar .item):
+        Fix the split console and don't touch any other navigation bars.
+
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
         Move to C++14.
