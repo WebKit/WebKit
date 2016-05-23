@@ -74,7 +74,7 @@ public:
     RuleSourceDataList* sourceData() const { return m_sourceData.get(); }
     void setSourceData(std::unique_ptr<RuleSourceDataList>);
     bool hasSourceData() const { return m_sourceData != nullptr; }
-    RefPtr<WebCore::CSSRuleSourceData> ruleSourceDataAt(unsigned) const;
+    WebCore::CSSRuleSourceData* ruleSourceDataAt(unsigned) const;
 
 private:
 
@@ -95,15 +95,15 @@ void ParsedStyleSheet::setText(const String& text)
     setSourceData(nullptr);
 }
 
-static void flattenSourceData(RuleSourceDataList* dataList, RuleSourceDataList* target)
+static void flattenSourceData(RuleSourceDataList& dataList, RuleSourceDataList& target)
 {
-    for (auto& data : *dataList) {
+    for (auto& data : dataList) {
         if (data->type == CSSRuleSourceData::STYLE_RULE)
-            target->append(data);
+            target.append(data.copyRef());
         else if (data->type == CSSRuleSourceData::MEDIA_RULE)
-            flattenSourceData(&data->childRules, target);
+            flattenSourceData(data->childRules, target);
         else if (data->type == CSSRuleSourceData::SUPPORTS_RULE)
-            flattenSourceData(&data->childRules, target);
+            flattenSourceData(data->childRules, target);
     }
 }
 
@@ -119,15 +119,15 @@ void ParsedStyleSheet::setSourceData(std::unique_ptr<RuleSourceDataList> sourceD
     // FIXME: This is a temporary solution to retain the original flat sourceData structure
     // containing only style rules, even though CSSParser now provides the full rule source data tree.
     // Normally, we should just assign m_sourceData = sourceData;
-    flattenSourceData(sourceData.get(), m_sourceData.get());
+    flattenSourceData(*sourceData, *m_sourceData);
 }
 
-RefPtr<WebCore::CSSRuleSourceData> ParsedStyleSheet::ruleSourceDataAt(unsigned index) const
+WebCore::CSSRuleSourceData* ParsedStyleSheet::ruleSourceDataAt(unsigned index) const
 {
     if (!hasSourceData() || index >= m_sourceData->size())
         return nullptr;
 
-    return m_sourceData->at(index);
+    return m_sourceData->at(index).ptr();
 }
 
 using namespace Inspector;
@@ -1366,8 +1366,8 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(CSSRuleSourceDat
         return true;
     }
 
-    RefPtr<MutableStyleProperties> tempDeclaration = MutableStyleProperties::create();
-    createCSSParser(&m_element->document())->parseDeclaration(tempDeclaration.get(), m_styleText, result, &m_element->document().elementSheet().contents());
+    auto tempDeclaration = MutableStyleProperties::create();
+    createCSSParser(&m_element->document())->parseDeclaration(tempDeclaration, m_styleText, result, &m_element->document().elementSheet().contents());
     return true;
 }
 

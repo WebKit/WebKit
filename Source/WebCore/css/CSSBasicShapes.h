@@ -76,32 +76,32 @@ public:
     CSSPrimitiveValue* bottomRightRadius() const { return m_bottomRightRadius.get(); }
     CSSPrimitiveValue* bottomLeftRadius() const { return m_bottomLeftRadius.get(); }
 
-    void setTop(RefPtr<CSSPrimitiveValue>&& top) { m_top = WTFMove(top); }
-    void setRight(RefPtr<CSSPrimitiveValue>&& right) { m_right = WTFMove(right); }
-    void setBottom(RefPtr<CSSPrimitiveValue>&& bottom) { m_bottom = WTFMove(bottom); }
-    void setLeft(RefPtr<CSSPrimitiveValue>&& left) { m_left = WTFMove(left); }
+    void setTop(Ref<CSSPrimitiveValue>&& top) { m_top = WTFMove(top); }
+    void setRight(Ref<CSSPrimitiveValue>&& right) { m_right = WTFMove(right); }
+    void setBottom(Ref<CSSPrimitiveValue>&& bottom) { m_bottom = WTFMove(bottom); }
+    void setLeft(Ref<CSSPrimitiveValue>&& left) { m_left = WTFMove(left); }
 
-    void updateShapeSize4Values(CSSPrimitiveValue* top, CSSPrimitiveValue* right, CSSPrimitiveValue* bottom, CSSPrimitiveValue* left)
+    void updateShapeSize4Values(Ref<CSSPrimitiveValue>&& top, Ref<CSSPrimitiveValue>&& right, Ref<CSSPrimitiveValue>&& bottom, Ref<CSSPrimitiveValue>&& left)
     {
-        setTop(top);
-        setRight(right);
-        setBottom(bottom);
-        setLeft(left);
+        setTop(WTFMove(top));
+        setRight(WTFMove(right));
+        setBottom(WTFMove(bottom));
+        setLeft(WTFMove(left));
     }
 
-    void updateShapeSize1Value(CSSPrimitiveValue* value1)
+    void updateShapeSize1Value(Ref<CSSPrimitiveValue>&& value1)
     {
-        updateShapeSize4Values(value1, value1, value1, value1);
+        updateShapeSize4Values(value1.copyRef(), value1.copyRef(), value1.copyRef(), WTFMove(value1));
     }
 
-    void updateShapeSize2Values(CSSPrimitiveValue* value1,  CSSPrimitiveValue* value2)
+    void updateShapeSize2Values(Ref<CSSPrimitiveValue>&& value1, Ref<CSSPrimitiveValue>&& value2)
     {
-        updateShapeSize4Values(value1, value2, value1, value2);
+        updateShapeSize4Values(value1.copyRef(), value2.copyRef(), WTFMove(value1), WTFMove(value2));
     }
 
-    void updateShapeSize3Values(CSSPrimitiveValue* value1, CSSPrimitiveValue* value2,  CSSPrimitiveValue* value3)
+    void updateShapeSize3Values(Ref<CSSPrimitiveValue>&& value1, Ref<CSSPrimitiveValue>&& value2,  Ref<CSSPrimitiveValue>&& value3)
     {
-        updateShapeSize4Values(value1, value2, value3, value2);
+        updateShapeSize4Values(WTFMove(value1), value2.copyRef(), WTFMove(value3), WTFMove(value2));
     }
 
     void setTopLeftRadius(RefPtr<CSSPrimitiveValue>&& radius) { m_topLeftRadius = WTFMove(radius); }
@@ -135,9 +135,9 @@ public:
     CSSPrimitiveValue* centerY() const { return m_centerY.get(); }
     CSSPrimitiveValue* radius() const { return m_radius.get(); }
 
-    void setCenterX(RefPtr<CSSPrimitiveValue>&& centerX) { m_centerX = WTFMove(centerX); }
-    void setCenterY(RefPtr<CSSPrimitiveValue>&& centerY) { m_centerY = WTFMove(centerY); }
-    void setRadius(RefPtr<CSSPrimitiveValue>&& radius) { m_radius = WTFMove(radius); }
+    void setCenterX(Ref<CSSPrimitiveValue>&& centerX) { m_centerX = WTFMove(centerX); }
+    void setCenterY(Ref<CSSPrimitiveValue>&& centerY) { m_centerY = WTFMove(centerY); }
+    void setRadius(Ref<CSSPrimitiveValue>&& radius) { m_radius = WTFMove(radius); }
 
 private:
     CSSBasicShapeCircle() { }
@@ -160,10 +160,10 @@ public:
     CSSPrimitiveValue* radiusX() const { return m_radiusX.get(); }
     CSSPrimitiveValue* radiusY() const { return m_radiusY.get(); }
 
-    void setCenterX(PassRefPtr<CSSPrimitiveValue> centerX) { m_centerX = centerX; }
-    void setCenterY(PassRefPtr<CSSPrimitiveValue> centerY) { m_centerY = centerY; }
-    void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
-    void setRadiusY(PassRefPtr<CSSPrimitiveValue> radiusY) { m_radiusY = radiusY; }
+    void setCenterX(Ref<CSSPrimitiveValue>&& centerX) { m_centerX = WTFMove(centerX); }
+    void setCenterY(Ref<CSSPrimitiveValue>&& centerY) { m_centerY = WTFMove(centerY); }
+    void setRadiusX(Ref<CSSPrimitiveValue>&& radiusX) { m_radiusX = WTFMove(radiusX); }
+    void setRadiusY(Ref<CSSPrimitiveValue>&& radiusY) { m_radiusY = WTFMove(radiusY); }
 
 private:
     CSSBasicShapeEllipse() { }
@@ -182,15 +182,13 @@ class CSSBasicShapePolygon final : public CSSBasicShape {
 public:
     static Ref<CSSBasicShapePolygon> create() { return adoptRef(*new CSSBasicShapePolygon); }
 
-    void appendPoint(PassRefPtr<CSSPrimitiveValue> x, PassRefPtr<CSSPrimitiveValue> y)
+    void appendPoint(Ref<CSSPrimitiveValue>&& x, Ref<CSSPrimitiveValue>&& y)
     {
-        m_values.append(x);
-        m_values.append(y);
+        m_values.append(WTFMove(x));
+        m_values.append(WTFMove(y));
     }
 
-    RefPtr<CSSPrimitiveValue> getXAt(unsigned i) const { return m_values.at(i * 2); }
-    RefPtr<CSSPrimitiveValue> getYAt(unsigned i) const { return m_values.at(i * 2 + 1); }
-    const Vector<RefPtr<CSSPrimitiveValue>>& values() const { return m_values; }
+    const Vector<Ref<CSSPrimitiveValue>>& values() const { return m_values; }
 
     void setWindRule(WindRule rule) { m_windRule = rule; }
     WindRule windRule() const { return m_windRule; }
@@ -205,7 +203,7 @@ private:
     String cssText() const override;
     bool equals(const CSSBasicShape&) const override;
 
-    Vector<RefPtr<CSSPrimitiveValue>> m_values;
+    Vector<Ref<CSSPrimitiveValue>> m_values;
     WindRule m_windRule;
 };
 

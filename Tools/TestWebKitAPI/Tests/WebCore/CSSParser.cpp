@@ -73,10 +73,10 @@ TEST(CSSPropertyParserTest, GridTrackLimits)
     };
 
     CSSParser parser(strictCSSParserContext());
-    RefPtr<MutableStyleProperties> properties = MutableStyleProperties::create();
+    auto properties = MutableStyleProperties::create();
 
     for (auto& testCase : testCases) {
-        ASSERT_TRUE(parser.parseDeclaration(properties.get(), testCase.input, nullptr, nullptr));
+        ASSERT_TRUE(parser.parseDeclaration(properties, testCase.input, nullptr, nullptr));
         RefPtr<CSSValue> value = properties->getPropertyCSSValue(testCase.propertyID);
 
         ASSERT_TRUE(value->isValueList());

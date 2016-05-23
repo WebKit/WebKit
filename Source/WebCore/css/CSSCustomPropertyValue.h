@@ -34,9 +34,9 @@ namespace WebCore {
 
 class CSSCustomPropertyValue : public CSSValue {
 public:
-    static Ref<CSSCustomPropertyValue> create(const AtomicString& name, RefPtr<CSSValue>& value)
+    static Ref<CSSCustomPropertyValue> create(const AtomicString& name, Ref<CSSValue>&& value)
     {
-        return adoptRef(*new CSSCustomPropertyValue(name, value));
+        return adoptRef(*new CSSCustomPropertyValue(name, WTFMove(value)));
     }
     
     static Ref<CSSCustomPropertyValue> createInvalid()
@@ -65,12 +65,12 @@ public:
     const RefPtr<CSSValue> value() const { return m_value.get(); }
 
 private:
-    CSSCustomPropertyValue(const AtomicString& name, RefPtr<CSSValue>& value)
+    CSSCustomPropertyValue(const AtomicString& name, Ref<CSSValue>&& value)
         : CSSValue(CustomPropertyClass)
         , m_name(name)
-        , m_value(value)
-        , m_containsVariables(value && value->isVariableDependentValue())
-        , m_serialized(!value)
+        , m_value(WTFMove(value))
+        , m_containsVariables(m_value->isVariableDependentValue())
+        , m_serialized(false)
     {
     }
     

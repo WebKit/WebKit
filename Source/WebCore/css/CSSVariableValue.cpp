@@ -69,16 +69,11 @@ bool CSSVariableValue::equals(const CSSVariableValue& other) const
 
 bool CSSVariableValue::buildParserValueListSubstitutingVariables(CSSParserValueList* resultList, const CustomPropertyValueMap& customProperties) const
 {
-    RefPtr<CSSValue> value = customProperties.get(m_name);
-    if (value && value->isValueList()) {
-        auto& variableList = downcast<CSSValueList>(*value);
-        return variableList.buildParserValueListSubstitutingVariables(resultList, customProperties);
-    }
-    
-    if (value && value->isVariableDependentValue()) {
-        auto* variableList = downcast<CSSVariableDependentValue>(*value).valueList();
-        if (variableList)
-            return variableList->buildParserValueListSubstitutingVariables(resultList, customProperties);
+    if (RefPtr<CSSValue> value = customProperties.get(m_name)) {
+        if (value->isValueList())
+            return downcast<CSSValueList>(*value).buildParserValueListSubstitutingVariables(resultList, customProperties);
+        if (value->isVariableDependentValue())
+            return downcast<CSSVariableDependentValue>(*value).valueList().buildParserValueListSubstitutingVariables(resultList, customProperties);
     }
 
     // We failed to substitute the variable. If it has fallback arguments, use those instead.

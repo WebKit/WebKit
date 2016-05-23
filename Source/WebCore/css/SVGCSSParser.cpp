@@ -340,7 +340,7 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
     return true;
 }
 
-RefPtr<CSSValue> CSSParser::parseSVGStrokeDasharray()
+RefPtr<CSSValueList> CSSParser::parseSVGStrokeDasharray()
 {
     RefPtr<CSSValueList> ret = CSSValueList::createCommaSeparated();
     CSSParserValue* value = m_valueList->current();
@@ -364,7 +364,7 @@ RefPtr<CSSValue> CSSParser::parseSVGStrokeDasharray()
     return ret;
 }
 
-RefPtr<CSSValue> CSSParser::parseSVGPaint()
+RefPtr<SVGPaint> CSSParser::parseSVGPaint()
 {
     RGBA32 c = Color::transparent;
     if (!parseColorFromValue(*m_valueList->current(), c))
@@ -372,7 +372,7 @@ RefPtr<CSSValue> CSSParser::parseSVGPaint()
     return SVGPaint::createColor(Color(c));
 }
 
-RefPtr<CSSValue> CSSParser::parseSVGColor()
+RefPtr<SVGColor> CSSParser::parseSVGColor()
 {
     RGBA32 c = Color::transparent;
     if (!parseColorFromValue(*m_valueList->current(), c))
@@ -380,7 +380,7 @@ RefPtr<CSSValue> CSSParser::parseSVGColor()
     return SVGColor::createFromColor(Color(c));
 }
 
-RefPtr<CSSValue> CSSParser::parsePaintOrder()
+RefPtr<CSSValueList> CSSParser::parsePaintOrder()
 {
     CSSParserValue* value = m_valueList->current();
 
@@ -405,7 +405,7 @@ RefPtr<CSSValue> CSSParser::parsePaintOrder()
     // pop a last list items from CSSValueList without bigger cost, we create the
     // list after parsing. 
     CSSValueID firstPaintOrderType = paintTypeList.at(0);
-    RefPtr<CSSValueList> paintOrderList = CSSValueList::createSpaceSeparated();
+    auto paintOrderList = CSSValueList::createSpaceSeparated();
     switch (firstPaintOrderType) {
     case CSSValueFill:
         FALLTHROUGH;
@@ -426,7 +426,7 @@ RefPtr<CSSValue> CSSParser::parsePaintOrder()
     default:
         ASSERT_NOT_REACHED();
     }
-    return paintOrderList;
+    return WTFMove(paintOrderList);
 }
 
 }

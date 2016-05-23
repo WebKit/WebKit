@@ -1,3 +1,367 @@
+2016-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / Modernize the CSS Parser
+        https://bugs.webkit.org/show_bug.cgi?id=157961
+
+        Reviewed by Alex Christensen.
+
+        Clean up / Modernize the CSS Parser.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        (WebCore::convertToLength):
+        (WebCore::convertToLengthSize):
+        (WebCore::basicShapeForValue):
+        * css/BasicShapeFunctions.h:
+        * css/CSSBasicShapes.cpp:
+        (WebCore::CSSBasicShapePolygon::cssText):
+        (WebCore::CSSBasicShapePolygon::equals):
+        * css/CSSBasicShapes.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForReflection):
+        (WebCore::ComputedStyleExtractor::valueForShadow):
+        (WebCore::specifiedValueForGridTrackSize):
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::subimageKnownToBeOpaque):
+        (WebCore::CSSCrossfadeValue::fixedSize):
+        (WebCore::CSSCrossfadeValue::isPending):
+        (WebCore::CSSCrossfadeValue::knownToBeOpaque):
+        (WebCore::CSSCrossfadeValue::loadSubimages):
+        (WebCore::CSSCrossfadeValue::image):
+        (WebCore::CSSCrossfadeValue::blend):
+        (WebCore::CSSCrossfadeValue::equals):
+        (WebCore::CSSCrossfadeValue::equalInputImages):
+        * css/CSSCrossfadeValue.h:
+        (WebCore::CSSCrossfadeValue::create):
+        (WebCore::CSSCrossfadeValue::CSSCrossfadeValue):
+        * css/CSSCustomPropertyValue.h:
+        (WebCore::CSSCustomPropertyValue::create):
+        (WebCore::CSSCustomPropertyValue::CSSCustomPropertyValue):
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::fixedSize):
+        (WebCore::CSSFilterImageValue::isPending):
+        (WebCore::CSSFilterImageValue::loadSubimages):
+        (WebCore::CSSFilterImageValue::image):
+        (WebCore::CSSFilterImageValue::createFilterOperations):
+        (WebCore::CSSFilterImageValue::equals):
+        (WebCore::CSSFilterImageValue::equalInputImages):
+        * css/CSSFilterImageValue.h:
+        (WebCore::CSSFilterImageValue::CSSFilterImageValue):
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::matchingFaces):
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::CSSFunctionValue):
+        * css/CSSFunctionValue.h:
+        (WebCore::CSSFunctionValue::create):
+        * css/CSSGradientValue.h:
+        (WebCore::CSSLinearGradientValue::setAngle):
+        * css/CSSGrammar.y.in:
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::subimageIsPending):
+        (WebCore::CSSImageGeneratorValue::cachedImageForCSSValue):
+        * css/CSSImageGeneratorValue.h:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedOrPendingImage):
+        * css/CSSImageValue.h:
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::StyleRuleKeyframes):
+        (WebCore::StyleRuleKeyframes::parserAppendKeyframe):
+        (WebCore::StyleRuleKeyframes::wrapperAppendKeyframe):
+        (WebCore::CSSKeyframesRule::appendRule):
+        (WebCore::CSSKeyframesRule::findRule):
+        (WebCore::CSSKeyframesRule::item):
+        (WebCore::StyleRuleKeyframes::~StyleRuleKeyframes): Deleted.
+        * css/CSSKeyframesRule.h:
+        (WebCore::StyleRuleKeyframes::keyframes):
+        * css/CSSParser.cpp:
+        (WebCore::parseColorValue):
+        (WebCore::parseSimpleLengthValue):
+        (WebCore::parseKeywordValue):
+        (WebCore::parseTranslateTransformValue):
+        (WebCore::CSSParser::parseFontFaceValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseCustomPropertyValue):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::SourceSize::SourceSize):
+        (WebCore::filterProperties):
+        (WebCore::CSSParser::clearProperties):
+        (WebCore::CSSParser::addExpandedPropertyForValue):
+        (WebCore::CSSParser::parseVariableDependentValue):
+        (WebCore::CSSParser::parseContentDistributionOverflowPosition):
+        (WebCore::CSSParser::parseItemPositionOverflowPosition):
+        (WebCore::CSSParser::parseNonElementSnapPoints):
+        (WebCore::CSSParser::parseScrollSnapDestination):
+        (WebCore::CSSParser::parseScrollSnapCoordinate):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::addAnimationValue):
+        (WebCore::CSSParser::parseAnimationShorthand):
+        (WebCore::CSSParser::parseColumnWidth):
+        (WebCore::CSSParser::parseColumnCount):
+        (WebCore::CSSParser::parseColumnsShorthand):
+        (WebCore::CSSParser::parseTransitionShorthand):
+        (WebCore::CSSParser::parseSize):
+        (WebCore::CSSParser::parseQuotes):
+        (WebCore::CSSParser::parseAlt):
+        (WebCore::CSSParser::parseCustomPropertyDeclaration):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseAttr):
+        (WebCore::CSSParser::parseBackgroundColor):
+        (WebCore::CSSParser::parseFillPositionComponent):
+        (WebCore::CSSParser::parse4ValuesFillPosition):
+        (WebCore::CSSParser::parse3ValuesFillPosition):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseAnimationDelay):
+        (WebCore::CSSParser::parseAnimationDirection):
+        (WebCore::CSSParser::parseAnimationDuration):
+        (WebCore::CSSParser::parseAnimationFillMode):
+        (WebCore::CSSParser::parseAnimationIterationCount):
+        (WebCore::CSSParser::parseAnimationName):
+        (WebCore::CSSParser::parseAnimationPlayState):
+        (WebCore::CSSParser::parseAnimationTrigger):
+        (WebCore::CSSParser::parseAnimationProperty):
+        (WebCore::CSSParser::parseKeyframeSelector):
+        (WebCore::CSSParser::parseGridPosition):
+        (WebCore::gridMissingGridPositionValue):
+        (WebCore::CSSParser::parseGridItemPositionShorthand):
+        (WebCore::CSSParser::parseGridGapShorthand):
+        (WebCore::CSSParser::parseGridTemplateRowsAndAreasAndColumns):
+        (WebCore::CSSParser::parseGridTemplateShorthand):
+        (WebCore::CSSParser::parseGridShorthand):
+        (WebCore::CSSParser::parseGridAreaShorthand):
+        (WebCore::CSSParser::parseGridLineNames):
+        (WebCore::CSSParser::parseGridTrackList):
+        (WebCore::CSSParser::parseGridTrackRepeatFunction):
+        (WebCore::CSSParser::parseGridTrackSize):
+        (WebCore::CSSParser::parseGridAutoFlow):
+        (WebCore::skipCommaInDashboardRegion):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::parseGridTemplateAreasColumnNames):
+        (WebCore::CSSParser::parseCounterContent):
+        (WebCore::CSSParser::parseClipShape):
+        (WebCore::CSSParser::parseInsetRoundedCorners):
+        (WebCore::CSSParser::parseBasicShapeInset):
+        (WebCore::CSSParser::parseBasicShapeCircle):
+        (WebCore::CSSParser::parseBasicShapeEllipse):
+        (WebCore::CSSParser::parseBasicShapePolygon):
+        (WebCore::CSSParser::parseBasicShapePath):
+        (WebCore::CSSParser::parseBasicShapeAndOrBox):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseFontFamily):
+        (WebCore::CSSParser::parseFontSynthesis):
+        (WebCore::CSSParser::parseFontFaceSrcURI):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::CSSParser::parseFontFaceUnicodeRange):
+        (WebCore::parseAlphaValue):
+        (WebCore::ShadowParseContext::commitValue):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::CSSParser::parseFlex):
+        (WebCore::BorderImageParseContext::commitImage):
+        (WebCore::BorderImageParseContext::commitImageSlice):
+        (WebCore::BorderImageParseContext::commitBorderWidth):
+        (WebCore::BorderImageParseContext::commitBorderOutset):
+        (WebCore::BorderImageParseContext::commitRepeat):
+        (WebCore::BorderImageParseContext::commitWebKitBorderImage):
+        (WebCore::BorderImageParseContext::commitBorderImageProperty):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseBorderImageRepeat):
+        (WebCore::BorderImageQuadParseContext::setTop):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::CSSParser::parseDeprecatedGradient):
+        (WebCore::CSSParser::parseDeprecatedLinearGradient):
+        (WebCore::CSSParser::parseDeprecatedRadialGradient):
+        (WebCore::CSSParser::parseLinearGradient):
+        (WebCore::CSSParser::parseRadialGradient):
+        (WebCore::CSSParser::parseFilterImage):
+        (WebCore::CSSParser::parseCrossfade):
+        (WebCore::CSSParser::parseImageResolution):
+        (WebCore::CSSParser::parseImageSet):
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::parseTransformValue):
+        (WebCore::CSSParser::parseFilter):
+        (WebCore::CSSParser::parseTextDecoration):
+        (WebCore::CSSParser::parseTextEmphasisStyle):
+        (WebCore::CSSParser::parseTextEmphasisPosition):
+        (WebCore::CSSParser::parseTextIndent):
+        (WebCore::CSSParser::parseHangingPunctuation):
+        (WebCore::CSSParser::parseFontFeatureSettings):
+        (WebCore::CSSParser::parseWillChange):
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createMediaRule):
+        (WebCore::CSSParser::createEmptyMediaRule):
+        (WebCore::CSSParser::createSupportsRule):
+        (WebCore::CSSParser::markSupportsRuleHeaderStart):
+        (WebCore::CSSParser::popSupportsRuleData):
+        (WebCore::CSSParser::processAndAddNewRuleToSourceTreeIfNeeded):
+        (WebCore::CSSParser::addNewRuleToSourceTree):
+        (WebCore::CSSParser::popRuleData):
+        (WebCore::CSSParser::createKeyframesRule):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::createRegionRule):
+        (WebCore::CSSParser::endDeclarationsForMarginBox):
+        (WebCore::CSSParser::createKeyframe):
+        (WebCore::CSSParser::updateLastMediaLine):
+        (WebCore::fixUnparsedProperties):
+        (WebCore::CSSParser::fixUnparsedPropertyRanges):
+        (WebCore::CSSParser::parseViewportProperty):
+        (WebCore::cssPropertyNameIOSAliasing):
+        (WebCore::isAppleLegacyCssValueKeyword):
+        (WebCore::quoteCSSString):
+        (WebCore::AnimationParseContext::commitFirstAnimation): Deleted.
+        (WebCore::strictCSSParserContext): Deleted.
+        (WebCore::CSSParser::~CSSParser): Deleted.
+        (WebCore::convertToASCIILowercaseInPlace): Deleted.
+        (WebCore::CSSParserString::convertToASCIILowercaseInPlace): Deleted.
+        (WebCore::CSSParser::setupParser): Deleted.
+        (WebCore::isSimpleLengthPropertyID): Deleted.
+        (WebCore::isValidKeywordPropertyAndValue): Deleted.
+        (WebCore::parseTransformTranslateArguments): Deleted.
+        (WebCore::CSSParser::parseColor): Deleted.
+        (WebCore::CSSParser::parseMediaQuery): Deleted.
+        (WebCore::CSSParser::parseSizesAttribute): Deleted.
+        (WebCore::CSSParser::addProperty): Deleted.
+        (WebCore::CSSParser::validateCalculationUnit): Deleted.
+        (WebCore::isItemPositionKeyword): Deleted.
+        (WebCore::CSSParser::parseShorthand): Deleted.
+        (WebCore::CSSParser::parseSizeParameter): Deleted.
+        (WebCore::CSSParser::parseFillImage): Deleted.
+        (WebCore::CSSParser::parsePositionY): Deleted.
+        (WebCore::CSSParser::parse2ValuesFillPosition): Deleted.
+        (WebCore::CSSParser::parseTransformOriginShorthand): Deleted.
+        (WebCore::CSSParser::parseAnimationTimingFunction): Deleted.
+        (WebCore::CSSParser::parseGridTemplateColumns): Deleted.
+        (WebCore::CSSParser::parseSingleGridAreaLonghand): Deleted.
+        (WebCore::allTracksAreFixedSized): Deleted.
+        (WebCore::CSSParser::parseGridBreadth): Deleted.
+        (WebCore::CSSParser::parseGridTemplateAreasRow): Deleted.
+        (WebCore::completeBorderRadii): Deleted.
+        (WebCore::CSSParser::parseShapeRadius): Deleted.
+        (WebCore::isBoxValue): Deleted.
+        (WebCore::CSSParser::parseShapeProperty): Deleted.
+        (WebCore::CSSParser::parseClipPath): Deleted.
+        (WebCore::CSSParser::parseBasicShape): Deleted.
+        (WebCore::FontFamilyValueBuilder::commit): Deleted.
+        (WebCore::CSSParser::parseFontWeight): Deleted.
+        (WebCore::CSSParser::parseFontFaceSrcLocal): Deleted.
+        (WebCore::parseDouble): Deleted.
+        (WebCore::mightBeRGBA): Deleted.
+        (WebCore::mightBeRGB): Deleted.
+        (WebCore::ShadowParseContext::commitColor): Deleted.
+        (WebCore::BorderImageParseContext::BorderImageParseContext): Deleted.
+        (WebCore::BorderImageParseContext::commitForwardSlashOperator): Deleted.
+        (WebCore::BorderImageParseContext::commitBorderImage): Deleted.
+        (WebCore::isBorderImageRepeatKeyword): Deleted.
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice): Deleted.
+        (WebCore::CSSParser::parseBorderImageQuad): Deleted.
+        (WebCore::parseDeprecatedGradientColorStop): Deleted.
+        (WebCore::valueFromSideKeyword): Deleted.
+        (WebCore::CSSParser::isGeneratedImageValue): Deleted.
+        (WebCore::CSSParser::parseCanvas): Deleted.
+        (WebCore::CSSParser::parseNamedImage): Deleted.
+        (WebCore::TransformOperationInfo::TransformOperationInfo): Deleted.
+        (WebCore::CSSParser::isBlendMode): Deleted.
+        (WebCore::filterInfoForName): Deleted.
+        (WebCore::CSSParser::parseFlowThread): Deleted.
+        (WebCore::CSSParser::parseRegionThread): Deleted.
+        (WebCore::CSSParser::parseLineBoxContain): Deleted.
+        (WebCore::CSSParser::parseFontFeatureTag): Deleted.
+        (WebCore::CSSParser::parseFontVariantLigatures): Deleted.
+        (WebCore::isCSSLetter): Deleted.
+        (WebCore::CSSParser::markSupportsRuleHeaderEnd): Deleted.
+        (WebCore::CSSParser::syntaxError): Deleted.
+        (WebCore::CSSParser::logError): Deleted.
+        (WebCore::CSSParser::rewriteSpecifiersWithElementName): Deleted.
+        (WebCore::CSSParser::rewriteSpecifiers): Deleted.
+        (WebCore::CSSParser::invalidBlockHit): Deleted.
+        (WebCore::CSSParser::markRuleHeaderStart): Deleted.
+        (WebCore::CSSParser::setRuleHeaderEnd): Deleted.
+        (WebCore::CSSParser::markRuleHeaderEnd): Deleted.
+        (WebCore::CSSParser::markRuleBodyStart): Deleted.
+        (WebCore::cssPropertyID): Deleted.
+        (WebCore::isCSSTokenizerIdentifier): Deleted.
+        * css/CSSParser.h:
+        (WebCore::CSSParser::ValueWithCalculation::setCalculation): Deleted.
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSPropertySourceData.h:
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::equals):
+        * css/CSSReflectValue.h:
+        (WebCore::CSSReflectValue::create):
+        (WebCore::CSSReflectValue::direction):
+        (WebCore::CSSReflectValue::offset):
+        (WebCore::CSSReflectValue::CSSReflectValue):
+        * css/CSSShadowValue.cpp:
+        (WebCore::CSSShadowValue::CSSShadowValue):
+        (WebCore::CSSShadowValue::customCSSText): Deleted.
+        * css/CSSShadowValue.h:
+        (WebCore::CSSShadowValue::create):
+        * css/CSSValue.h:
+        (WebCore::compareCSSValueVector):
+        * css/CSSVariableDependentValue.cpp:
+        (WebCore::CSSVariableDependentValue::checkVariablesForCycles):
+        * css/CSSVariableDependentValue.h:
+        (WebCore::CSSVariableDependentValue::create):
+        (WebCore::CSSVariableDependentValue::customCSSText):
+        (WebCore::CSSVariableDependentValue::valueList):
+        (WebCore::CSSVariableDependentValue::CSSVariableDependentValue):
+        * css/CSSVariableValue.cpp:
+        (WebCore::CSSVariableValue::buildParserValueListSubstitutingVariables):
+        * css/Counter.h:
+        (WebCore::Counter::create):
+        (WebCore::Counter::identifier):
+        (WebCore::Counter::listStyle):
+        (WebCore::Counter::separator):
+        (WebCore::Counter::listStyleIdent):
+        (WebCore::Counter::setIdentifier):
+        (WebCore::Counter::setListStyle):
+        (WebCore::Counter::setSeparator):
+        (WebCore::Counter::cloneForCSSOM):
+        (WebCore::Counter::Counter):
+        * css/DOMCSSNamespace.cpp:
+        (WebCore::DOMCSSNamespace::supports):
+        * css/FontFace.cpp:
+        (WebCore::FontFace::parseString):
+        (WebCore::FontFace::setVariant):
+        * css/Rect.h:
+        (WebCore::RectBase::RectBase):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGStrokeDasharray):
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        (WebCore::CSSParser::parsePaintOrder):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertReflection):
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::setProperty):
+        (WebCore::MutableStyleProperties::setCustomProperty):
+        (WebCore::MutableStyleProperties::parseDeclaration):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::keyframeStylesForAnimation):
+        (WebCore::StyleResolver::cachedOrPendingFromValue):
+        * css/StyleResolver.h:
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * inspector/InspectorStyleSheet.cpp:
+        (flattenSourceData):
+        (ParsedStyleSheet::setSourceData):
+        (ParsedStyleSheet::ruleSourceDataAt):
+        (WebCore::InspectorStyleSheetForInlineStyle::getStyleAttributeRanges):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::retrieveResourcesForProperties):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::crossfadeBlend):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::checkVariablesInCustomProperties):
+
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
         Move to C++14.

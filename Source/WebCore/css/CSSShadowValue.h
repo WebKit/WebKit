@@ -32,14 +32,14 @@ class CSSPrimitiveValue;
 // Used for text-shadow and box-shadow
 class CSSShadowValue : public CSSValue {
 public:
-    static Ref<CSSShadowValue> create(PassRefPtr<CSSPrimitiveValue> x,
-        PassRefPtr<CSSPrimitiveValue> y,
-        PassRefPtr<CSSPrimitiveValue> blur,
-        PassRefPtr<CSSPrimitiveValue> spread,
-        PassRefPtr<CSSPrimitiveValue> style,
-        PassRefPtr<CSSPrimitiveValue> color)
+    static Ref<CSSShadowValue> create(RefPtr<CSSPrimitiveValue>&& x,
+        RefPtr<CSSPrimitiveValue>&& y,
+        RefPtr<CSSPrimitiveValue>&& blur,
+        RefPtr<CSSPrimitiveValue>&& spread,
+        RefPtr<CSSPrimitiveValue>&& style,
+        RefPtr<CSSPrimitiveValue>&& color)
     {
-        return adoptRef(*new CSSShadowValue(x, y, blur, spread, style, color));
+        return adoptRef(*new CSSShadowValue(WTFMove(x), WTFMove(y), WTFMove(blur), WTFMove(spread), WTFMove(style), WTFMove(color)));
     }
 
     String customCSSText() const;
@@ -54,12 +54,12 @@ public:
     RefPtr<CSSPrimitiveValue> color;
 
 private:
-    CSSShadowValue(PassRefPtr<CSSPrimitiveValue> x,
-        PassRefPtr<CSSPrimitiveValue> y,
-        PassRefPtr<CSSPrimitiveValue> blur,
-        PassRefPtr<CSSPrimitiveValue> spread,
-        PassRefPtr<CSSPrimitiveValue> style,
-        PassRefPtr<CSSPrimitiveValue> color);
+    CSSShadowValue(RefPtr<CSSPrimitiveValue>&& x,
+        RefPtr<CSSPrimitiveValue>&& y,
+        RefPtr<CSSPrimitiveValue>&& blur,
+        RefPtr<CSSPrimitiveValue>&& spread,
+        RefPtr<CSSPrimitiveValue>&& style,
+        RefPtr<CSSPrimitiveValue>&& color);
 };
 
 } // namespace WebCore

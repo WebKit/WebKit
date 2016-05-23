@@ -344,7 +344,7 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
             resolver->document().fontSelector().addFontFaceRule(downcast<StyleRuleFontFace>(*rule.get()), isInitiatingElementInUserAgentShadowTree);
             resolver->invalidateMatchedPropertiesCache();
         } else if (is<StyleRuleKeyframes>(*rule) && resolver)
-            resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(rule.get()));
+            resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(*rule));
         else if (is<StyleRuleSupports>(*rule) && downcast<StyleRuleSupports>(*rule).conditionIsSupported())
             addChildRules(downcast<StyleRuleSupports>(*rule).childRules(), medium, resolver, hasDocumentSecurityOrigin, isInitiatingElementInUserAgentShadowTree, addRuleFlags);
 #if ENABLE(CSS_REGIONS)

@@ -626,10 +626,8 @@ inline RefPtr<StyleReflection> StyleBuilderConverter::convertReflection(StyleRes
     auto& reflectValue = downcast<CSSReflectValue>(value);
 
     auto reflection = StyleReflection::create();
-    reflection->setDirection(*reflectValue.direction());
-
-    if (reflectValue.offset())
-        reflection->setOffset(reflectValue.offset()->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData()));
+    reflection->setDirection(reflectValue.direction());
+    reflection->setOffset(reflectValue.offset().convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData()));
 
     NinePieceImage mask;
     mask.setMaskDefaults();

@@ -41,7 +41,7 @@ public:
 
     StyleCachedImage* cachedImage(CachedResourceLoader&, const ResourceLoaderOptions&);
     // Returns a StyleCachedImage if the image is cached already, otherwise a StylePendingImage.
-    StyleImage* cachedOrPendingImage();
+    StyleImage& cachedOrPendingImage();
 
     const String& url() const { return m_url; }
 

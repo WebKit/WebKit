@@ -280,8 +280,8 @@ static Optional<FontTraitsMask> computeFontTraitsMask(MutableStyleProperties& st
 Vector<std::reference_wrapper<CSSFontFace>> CSSFontFaceSet::matchingFaces(const String& font, const String&, ExceptionCode& ec)
 {
     Vector<std::reference_wrapper<CSSFontFace>> result;
-    Ref<MutableStyleProperties> style = MutableStyleProperties::create();
-    auto parseResult = CSSParser::parseValue(style.ptr(), CSSPropertyFont, font, true, CSSStrictMode, nullptr);
+    auto style = MutableStyleProperties::create();
+    auto parseResult = CSSParser::parseValue(style, CSSPropertyFont, font, true, CSSStrictMode, nullptr);
     if (parseResult == CSSParser::ParseResult::Error) {
         ec = SYNTAX_ERR;
         return result;

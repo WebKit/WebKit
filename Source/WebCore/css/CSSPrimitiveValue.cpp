@@ -1189,7 +1189,7 @@ void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const St
         addSubresourceURL(urls, styleSheet->completeURL(m_value.string));
 }
 
-RefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
 {
     RefPtr<CSSPrimitiveValue> result;
 
@@ -1286,10 +1286,9 @@ RefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
         ASSERT_NOT_REACHED();
         break;
     }
-    if (result)
-        result->setCSSOMSafe();
 
-    return result;
+    result->setCSSOMSafe();
+    return result.releaseNonNull();
 }
 
 bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const

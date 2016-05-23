@@ -44,16 +44,16 @@ public:
     
     ~StyleRuleKeyframes();
     
-    const Vector<RefPtr<StyleKeyframe>>& keyframes() const { return m_keyframes; }
+    const Vector<Ref<StyleKeyframe>>& keyframes() const { return m_keyframes; }
     
-    void parserAppendKeyframe(PassRefPtr<StyleKeyframe>);
-    void wrapperAppendKeyframe(PassRefPtr<StyleKeyframe>);
+    void parserAppendKeyframe(RefPtr<StyleKeyframe>&&);
+    void wrapperAppendKeyframe(Ref<StyleKeyframe>&&);
     void wrapperRemoveKeyframe(unsigned);
 
     String name() const { return m_name; }    
     void setName(const String& name) { m_name = AtomicString(name); }
     
-    int findKeyframeIndex(const String& key) const;
+    size_t findKeyframeIndex(const String& key) const;
 
     Ref<StyleRuleKeyframes> copy() const { return adoptRef(*new StyleRuleKeyframes(*this)); }
 
@@ -61,7 +61,7 @@ private:
     StyleRuleKeyframes();
     StyleRuleKeyframes(const StyleRuleKeyframes&);
 
-    Vector<RefPtr<StyleKeyframe>> m_keyframes;
+    Vector<Ref<StyleKeyframe>> m_keyframes;
     AtomicString m_name;
 };
 

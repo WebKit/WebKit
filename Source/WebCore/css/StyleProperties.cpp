@@ -737,7 +737,7 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    return CSSParser::parseValue(this, propertyID, value, important, cssParserMode(), contextStyleSheet) == CSSParser::ParseResult::Changed;
+    return CSSParser::parseValue(*this, propertyID, value, important, cssParserMode(), contextStyleSheet) == CSSParser::ParseResult::Changed;
 }
 
 bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, bool important, StyleSheetContents* contextStyleSheet)
@@ -749,7 +749,7 @@ bool MutableStyleProperties::setCustomProperty(const String& propertyName, const
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    return CSSParser::parseCustomPropertyValue(this, propertyName, value, important, cssParserMode(), contextStyleSheet) == CSSParser::ParseResult::Changed;
+    return CSSParser::parseCustomPropertyValue(*this, propertyName, value, important, cssParserMode(), contextStyleSheet) == CSSParser::ParseResult::Changed;
 }
 
 void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important)
@@ -812,7 +812,7 @@ bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, St
         context.mode = cssParserMode();
     }
     CSSParser parser(context);
-    parser.parseDeclaration(this, styleDeclaration, 0, contextStyleSheet);
+    parser.parseDeclaration(*this, styleDeclaration, 0, contextStyleSheet);
 
     // We could do better. Just changing property order does not require style invalidation.
     return oldProperties != m_propertyVector;

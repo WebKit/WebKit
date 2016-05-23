@@ -46,8 +46,8 @@ void CSSReflectValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const Styl
 
 bool CSSReflectValue::equals(const CSSReflectValue& other) const
 {
-    return m_direction == other.m_direction
-        && compareCSSValuePtr(m_offset, other.m_offset)
+    return m_direction.ptr() == other.m_direction.ptr()
+        && compareCSSValue(m_offset, other.m_offset)
         && compareCSSValuePtr(m_mask, other.m_mask);
 }
 

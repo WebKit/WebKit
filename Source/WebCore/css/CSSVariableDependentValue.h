@@ -34,16 +34,16 @@ namespace WebCore {
 
 class CSSVariableDependentValue : public CSSValue {
 public:
-    static Ref<CSSVariableDependentValue> create(RefPtr<CSSValueList>& valueList, CSSPropertyID propId)
+    static Ref<CSSVariableDependentValue> create(Ref<CSSValueList>&& valueList, CSSPropertyID propId)
     {
-        return adoptRef(*new CSSVariableDependentValue(valueList, propId));
+        return adoptRef(*new CSSVariableDependentValue(WTFMove(valueList), propId));
     }
     
     String customCSSText() const
     {
         if (!m_serialized) {
             m_serialized = true;
-            m_stringValue = m_valueList ? m_valueList->customCSSText() : emptyString();
+            m_stringValue = m_valueList->customCSSText();
         }
         return m_stringValue;
     }
@@ -54,19 +54,20 @@ public:
     
     CSSPropertyID propertyID() const { return m_propertyID; }
     
-    CSSValueList* valueList() const { return m_valueList.get(); }
+    CSSValueList& valueList() { return m_valueList.get(); }
+    const CSSValueList& valueList() const { return m_valueList.get(); }
 
     bool checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap& customProperties, const HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties);
 
 private:
-    CSSVariableDependentValue(RefPtr<CSSValueList>& valueList, CSSPropertyID propId)
+    CSSVariableDependentValue(Ref<CSSValueList>&& valueList, CSSPropertyID propId)
         : CSSValue(VariableDependentClass)
-        , m_valueList(valueList)
+        , m_valueList(WTFMove(valueList))
         , m_propertyID(propId)
     {
     }
 
-    RefPtr<CSSValueList> m_valueList;
+    Ref<CSSValueList> m_valueList;
     CSSPropertyID m_propertyID;
     mutable String m_stringValue;
     mutable bool m_serialized { false };

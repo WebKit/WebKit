@@ -66,8 +66,8 @@ bool DOMCSSNamespace::supports(const String& property, const String& value)
     if (normalizedValue.isEmpty())
         return false;
 
-    RefPtr<MutableStyleProperties> dummyStyle = MutableStyleProperties::create();
-    return CSSParser::parseValue(dummyStyle.get(), propertyID, normalizedValue, false, CSSStrictMode, nullptr) != CSSParser::ParseResult::Error;
+    auto dummyStyle = MutableStyleProperties::create();
+    return CSSParser::parseValue(dummyStyle, propertyID, normalizedValue, false, CSSStrictMode, nullptr) != CSSParser::ParseResult::Error;
 }
 
 bool DOMCSSNamespace::supports(const String& conditionText)

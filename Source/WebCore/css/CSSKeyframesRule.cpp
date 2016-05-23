@@ -44,25 +44,27 @@ StyleRuleKeyframes::StyleRuleKeyframes()
 
 StyleRuleKeyframes::StyleRuleKeyframes(const StyleRuleKeyframes& o)
     : StyleRuleBase(o)
-    , m_keyframes(o.m_keyframes)
     , m_name(o.m_name)
 {
+    m_keyframes.reserveInitialCapacity(o.keyframes().size());
+    for (auto& keyframe : o.keyframes())
+        m_keyframes.uncheckedAppend(keyframe.copyRef());
 }
 
 StyleRuleKeyframes::~StyleRuleKeyframes()
 {
 }
 
-void StyleRuleKeyframes::parserAppendKeyframe(PassRefPtr<StyleKeyframe> keyframe)
+void StyleRuleKeyframes::parserAppendKeyframe(RefPtr<StyleKeyframe>&& keyframe)
 {
     if (!keyframe)
         return;
-    m_keyframes.append(keyframe);
+    m_keyframes.append(keyframe.releaseNonNull());
 }
 
-void StyleRuleKeyframes::wrapperAppendKeyframe(PassRefPtr<StyleKeyframe> keyframe)
+void StyleRuleKeyframes::wrapperAppendKeyframe(Ref<StyleKeyframe>&& keyframe)
 {
-    m_keyframes.append(keyframe);
+    m_keyframes.append(WTFMove(keyframe));
 }
 
 void StyleRuleKeyframes::wrapperRemoveKeyframe(unsigned index)
@@ -70,7 +72,7 @@ void StyleRuleKeyframes::wrapperRemoveKeyframe(unsigned index)
     m_keyframes.remove(index);
 }
 
-int StyleRuleKeyframes::findKeyframeIndex(const String& key) const
+size_t StyleRuleKeyframes::findKeyframeIndex(const String& key) const
 {
     Vector<double>&& keys = CSSParser::parseKeyframeSelector(key);
 
@@ -79,7 +81,7 @@ int StyleRuleKeyframes::findKeyframeIndex(const String& key) const
             return i;
     }
 
-    return -1;
+    return notFound;
 }
 
 CSSKeyframesRule::CSSKeyframesRule(StyleRuleKeyframes& keyframesRule, CSSStyleSheet* parent)
@@ -118,7 +120,7 @@ void CSSKeyframesRule::appendRule(const String& ruleText)
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_keyframesRule->wrapperAppendKeyframe(keyframe);
+    m_keyframesRule->wrapperAppendKeyframe(keyframe.releaseNonNull());
 
     m_childRuleCSSOMWrappers.grow(length());
 }
@@ -136,8 +138,8 @@ void CSSKeyframesRule::deleteRule(const String& s)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
-    int i = m_keyframesRule->findKeyframeIndex(s);
-    if (i < 0)
+    size_t i = m_keyframesRule->findKeyframeIndex(s);
+    if (i == notFound)
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
@@ -151,8 +153,8 @@ void CSSKeyframesRule::deleteRule(const String& s)
 
 CSSKeyframeRule* CSSKeyframesRule::findRule(const String& s)
 {
-    int i = m_keyframesRule->findKeyframeIndex(s);
-    return (i >= 0) ? item(i) : 0;
+    size_t i = m_keyframesRule->findKeyframeIndex(s);
+    return i != notFound ? item(i) : nullptr;
 }
 
 String CSSKeyframesRule::cssText() const
@@ -180,12 +182,12 @@ unsigned CSSKeyframesRule::length() const
 CSSKeyframeRule* CSSKeyframesRule::item(unsigned index) const
 { 
     if (index >= length())
-        return 0;
+        return nullptr;
 
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
     RefPtr<CSSKeyframeRule>& rule = m_childRuleCSSOMWrappers[index];
     if (!rule)
-        rule = adoptRef(new CSSKeyframeRule(*m_keyframesRule->keyframes()[index], const_cast<CSSKeyframesRule*>(this)));
+        rule = adoptRef(new CSSKeyframeRule(const_cast<StyleKeyframe&>(m_keyframesRule->keyframes()[index].get()), const_cast<CSSKeyframesRule*>(this)));
 
     return rule.get(); 
 }

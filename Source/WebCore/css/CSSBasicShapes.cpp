@@ -286,8 +286,8 @@ String CSSBasicShapePolygon::cssText() const
     Vector<String> points;
     points.reserveInitialCapacity(m_values.size());
 
-    for (size_t i = 0; i < m_values.size(); ++i)
-        points.append(m_values.at(i)->cssText());
+    for (auto& shapeValue : m_values)
+        points.uncheckedAppend(shapeValue->cssText());
 
     return buildPolygonString(m_windRule, points);
 }
@@ -297,8 +297,7 @@ bool CSSBasicShapePolygon::equals(const CSSBasicShape& shape) const
     if (!is<CSSBasicShapePolygon>(shape))
         return false;
 
-    const CSSBasicShapePolygon& rhs = downcast<CSSBasicShapePolygon>(shape);
-    return compareCSSValueVector<CSSPrimitiveValue>(m_values, rhs.m_values);
+    return compareCSSValueVector<CSSPrimitiveValue>(m_values, downcast<CSSBasicShapePolygon>(shape).m_values);
 }
 
 static bool buildInsetRadii(Vector<String>& radii, const String& topLeftRadius, const String& topRightRadius, const String& bottomRightRadius, const String& bottomLeftRadius)

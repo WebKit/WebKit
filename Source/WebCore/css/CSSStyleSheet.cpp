@@ -175,7 +175,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
     if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !owner->authorStyleSheets().activeStyleSheetsContains(this)) {
         if (insertedKeyframesRule) {
             if (StyleResolver* resolver = owner->styleResolverIfExists())
-                resolver->addKeyframeStyle(insertedKeyframesRule);
+                resolver->addKeyframeStyle(*insertedKeyframesRule);
             return;
         }
         owner->scheduleOptimizedStyleSheetUpdate();

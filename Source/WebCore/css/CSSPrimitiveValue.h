@@ -373,7 +373,7 @@ public:
 
     void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
 
-    RefPtr<CSSPrimitiveValue> cloneForCSSOM() const;
+    Ref<CSSPrimitiveValue> cloneForCSSOM() const;
     void setCSSOMSafe() { m_isCSSOMSafe = true; }
 
     bool equals(const CSSPrimitiveValue&) const;

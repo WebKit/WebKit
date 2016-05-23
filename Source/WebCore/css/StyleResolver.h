@@ -205,7 +205,7 @@ public:
     bool hasViewportDependentMediaQueries() const { return !m_viewportDependentMediaQueryResults.isEmpty(); }
     bool hasMediaQueriesAffectedByViewportChange() const;
 
-    void addKeyframeStyle(RefPtr<StyleRuleKeyframes>&&);
+    void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
 
     bool checkRegionStyle(const Element* regionElement);
 
@@ -456,7 +456,7 @@ public:
     State& state() { return m_state; }
 
     RefPtr<StyleImage> styleImage(CSSPropertyID, CSSValue&);
-    RefPtr<StyleImage> cachedOrPendingFromValue(CSSPropertyID, CSSImageValue&);
+    Ref<StyleImage> cachedOrPendingFromValue(CSSPropertyID, CSSImageValue&);
     Ref<StyleImage> generatedOrPendingFromValue(CSSPropertyID, CSSImageGeneratorValue&);
 #if ENABLE(CSS_IMAGE_SET)
     RefPtr<StyleImage> setOrPendingFromValue(CSSPropertyID, CSSImageSetValue&);

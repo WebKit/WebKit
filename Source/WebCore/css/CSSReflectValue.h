@@ -37,14 +37,15 @@ class CSSPrimitiveValue;
 
 class CSSReflectValue : public CSSValue {
 public:
-    static Ref<CSSReflectValue> create(PassRefPtr<CSSPrimitiveValue> direction,
-        PassRefPtr<CSSPrimitiveValue> offset, PassRefPtr<CSSValue> mask)
+    static Ref<CSSReflectValue> create(Ref<CSSPrimitiveValue>&& direction, Ref<CSSPrimitiveValue>&& offset, RefPtr<CSSValue>&& mask)
     {
-        return adoptRef(*new CSSReflectValue(direction, offset, mask));
+        return adoptRef(*new CSSReflectValue(WTFMove(direction), WTFMove(offset), WTFMove(mask)));
     }
 
-    CSSPrimitiveValue* direction() const { return m_direction.get(); }
-    CSSPrimitiveValue* offset() const { return m_offset.get(); }
+    CSSPrimitiveValue& direction() { return m_direction.get(); }
+    CSSPrimitiveValue& offset() { return m_offset.get(); }
+    const CSSPrimitiveValue& direction() const { return m_direction.get(); }
+    const CSSPrimitiveValue& offset() const { return m_offset.get(); }
     CSSValue* mask() const { return m_mask.get(); }
 
     String customCSSText() const;
@@ -54,16 +55,16 @@ public:
     bool equals(const CSSReflectValue&) const;
 
 private:
-    CSSReflectValue(PassRefPtr<CSSPrimitiveValue> direction, PassRefPtr<CSSPrimitiveValue> offset, PassRefPtr<CSSValue> mask)
+    CSSReflectValue(Ref<CSSPrimitiveValue>&& direction, Ref<CSSPrimitiveValue>&& offset, RefPtr<CSSValue>&& mask)
         : CSSValue(ReflectClass)
-        , m_direction(direction)
-        , m_offset(offset)
-        , m_mask(mask)
+        , m_direction(WTFMove(direction))
+        , m_offset(WTFMove(offset))
+        , m_mask(WTFMove(mask))
     {
     }
 
-    RefPtr<CSSPrimitiveValue> m_direction;
-    RefPtr<CSSPrimitiveValue> m_offset;
+    Ref<CSSPrimitiveValue> m_direction;
+    Ref<CSSPrimitiveValue> m_offset;
     RefPtr<CSSValue> m_mask;
 };
 

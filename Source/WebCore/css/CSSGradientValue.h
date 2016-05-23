@@ -138,7 +138,7 @@ public:
         return adoptRef(*new CSSLinearGradientValue(repeat, gradientType));
     }
 
-    void setAngle(RefPtr<CSSPrimitiveValue>&& val) { m_angle = WTFMove(val); }
+    void setAngle(Ref<CSSPrimitiveValue>&& val) { m_angle = WTFMove(val); }
 
     String customCSSText() const;
 

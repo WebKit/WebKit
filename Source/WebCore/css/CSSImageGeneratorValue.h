@@ -54,7 +54,7 @@ public:
     bool isFixedSize() const;
     FloatSize fixedSize(const RenderElement*);
 
-    bool isPending() const;
+    bool isPending();
     bool knownToBeOpaque(const RenderElement*) const;
 
     void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&);
@@ -67,8 +67,8 @@ protected:
     const HashCountedSet<RenderElement*>& clients() const { return m_clients; }
 
     // Helper functions for Crossfade and Filter.
-    static CachedImage* cachedImageForCSSValue(CSSValue*, CachedResourceLoader&, const ResourceLoaderOptions&);
-    static bool subimageIsPending(CSSValue*);
+    static CachedImage* cachedImageForCSSValue(CSSValue&, CachedResourceLoader&, const ResourceLoaderOptions&);
+    static bool subimageIsPending(CSSValue&);
 
 private:
     class CachedGeneratedImage {

@@ -39,7 +39,7 @@ bool CSSVariableDependentValue::checkVariablesForCycles(const AtomicString& name
     HashSet<AtomicString> newSeenProperties = seenProperties;
     newSeenProperties.add(name);
     
-    bool valid = valueList()->checkVariablesForCycles(customProperties, newSeenProperties, invalidProperties);
+    bool valid = valueList().checkVariablesForCycles(customProperties, newSeenProperties, invalidProperties);
     if (!valid)
         invalidProperties.add(name);
 

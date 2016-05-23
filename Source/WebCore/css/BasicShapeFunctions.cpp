@@ -65,7 +65,7 @@ static Ref<CSSPrimitiveValue> basicShapeRadiusToCSSValue(const RenderStyle& styl
     return pool.createIdentifierValue(CSSValueClosestSide);
 }
 
-Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& basicShape)
+Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle& style, const BasicShape& basicShape)
 {
     auto& cssValuePool = CSSValuePool::singleton();
 
@@ -136,12 +136,12 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
     return cssValuePool.createValue(basicShapeValue.releaseNonNull());
 }
 
-static Length convertToLength(const CSSToLengthConversionData& conversionData, CSSPrimitiveValue* value)
+static Length convertToLength(const CSSToLengthConversionData& conversionData, const CSSPrimitiveValue* value)
 {
     return value->convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData);
 }
 
-static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversionData, CSSPrimitiveValue* value)
+static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversionData, const CSSPrimitiveValue* value)
 {
     if (!value)
         return LengthSize(Length(0, Fixed), Length(0, Fixed));
@@ -242,9 +242,9 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         auto polygon = BasicShapePolygon::create();
 
         polygon->setWindRule(polygonValue.windRule());
-        const Vector<RefPtr<CSSPrimitiveValue>>& values = polygonValue.values();
+        auto& values = polygonValue.values();
         for (unsigned i = 0; i < values.size(); i += 2)
-            polygon->appendPoint(convertToLength(conversionData, values.at(i).get()), convertToLength(conversionData, values.at(i + 1).get()));
+            polygon->appendPoint(convertToLength(conversionData, values[i].ptr()), convertToLength(conversionData, values[i + 1].ptr()));
 
         basicShape = WTFMove(polygon);
         break;

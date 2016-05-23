@@ -662,14 +662,14 @@ media_list:
     media_query {
         $$ = &MediaQuerySet::create().leakRef();
         $$->addMediaQuery(std::unique_ptr<MediaQuery>($1));
-        parser->updateLastMediaLine($$);
+        parser->updateLastMediaLine(*$$);
     }
     | media_list ',' maybe_space media_query {
         $$ = $1;
         std::unique_ptr<MediaQuery> mediaQuery($4);
         if ($$) {
             $$->addMediaQuery(WTFMove(mediaQuery));
-            parser->updateLastMediaLine($$);
+            parser->updateLastMediaLine(*$$);
         }
     }
     | media_list error {
@@ -699,10 +699,10 @@ at_rule_header_end_maybe_space:
 
 media:
     before_media_rule MEDIA_SYM maybe_space media_list at_rule_header_end '{' at_rule_body_start maybe_space block_rule_list save_block {
-        $$ = parser->createMediaRule(adoptRef($4), std::unique_ptr<Vector<RefPtr<StyleRuleBase>>>($9).get()).leakRef();
+        $$ = &parser->createMediaRule(adoptRef($4), std::unique_ptr<Vector<RefPtr<StyleRuleBase>>>($9).get()).leakRef();
     }
     | before_media_rule MEDIA_SYM at_rule_header_end_maybe_space '{' at_rule_body_start maybe_space block_rule_list save_block {
-        $$ = parser->createEmptyMediaRule(std::unique_ptr<Vector<RefPtr<StyleRuleBase>>>($7).get()).leakRef();
+        $$ = &parser->createEmptyMediaRule(std::unique_ptr<Vector<RefPtr<StyleRuleBase>>>($7).get()).leakRef();
     }
     | before_media_rule MEDIA_SYM at_rule_header_end_maybe_space ';' {
         $$ = nullptr;
@@ -712,7 +712,7 @@ media:
 
 supports:
     before_supports_rule SUPPORTS_SYM maybe_space supports_condition at_supports_rule_header_end '{' at_rule_body_start maybe_space block_rule_list save_block {
-        $$ = parser->createSupportsRule($4, std::unique_ptr<Vector<RefPtr<StyleRuleBase>>>($9).get()).leakRef();
+        $$ = &parser->createSupportsRule($4, std::unique_ptr<Vector<RefPtr<StyleRuleBase>>>($9).get()).leakRef();
     }
     | before_supports_rule SUPPORTS_SYM supports_error {
         $$ = nullptr;
@@ -806,7 +806,7 @@ before_keyframes_rule:
 
 keyframes:
     before_keyframes_rule KEYFRAMES_SYM maybe_space keyframe_name at_rule_header_end_maybe_space '{' at_rule_body_start maybe_space keyframes_rule closing_brace {
-        $$ = parser->createKeyframesRule($4, std::unique_ptr<Vector<RefPtr<StyleKeyframe>>>($9)).leakRef();
+        $$ = &parser->createKeyframesRule($4, std::unique_ptr<Vector<RefPtr<StyleKeyframe>>>($9)).leakRef();
     }
     ;
 
@@ -1780,7 +1780,7 @@ function:
     FUNCTION maybe_space closing_parenthesis {
         CSSParserFunction* f = new CSSParserFunction;
         f->name = $1;
-        f->args = std::unique_ptr<CSSParserValueList>(new CSSParserValueList);
+        f->args = std::make_unique<CSSParserValueList>();
         $$.id = CSSValueInvalid;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
@@ -1815,7 +1815,7 @@ variable_function:
     | VARFUNCTION maybe_space CUSTOM_PROPERTY maybe_space ',' maybe_space closing_parenthesis {
         CSSParserVariable* var = new CSSParserVariable;
         var->name = $3;
-        var->args = std::unique_ptr<CSSParserValueList>(new CSSParserValueList());
+        var->args = std::make_unique<CSSParserValueList>();
         $$.id = CSSValueInvalid;
         $$.unit = CSSParserValue::Variable;
         $$.variable = var;

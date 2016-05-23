@@ -56,8 +56,8 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
     if (string.isEmpty())
         return;
 
-    RefPtr<MutableStyleProperties> styleDeclaration = MutableStyleProperties::create();
-    if (CSSParser::parseValue(styleDeclaration.get(), CSSPropertyTransform, string, true, CSSStrictMode, nullptr) != CSSParser::ParseResult::Error) {
+    auto styleDeclaration = MutableStyleProperties::create();
+    if (CSSParser::parseValue(styleDeclaration, CSSPropertyTransform, string, true, CSSStrictMode, nullptr) != CSSParser::ParseResult::Error) {
         // Convert to TransformOperations. This can fail if a property
         // requires style (i.e., param uses 'ems' or 'exs')
         RefPtr<CSSValue> value = styleDeclaration->getPropertyCSSValue(CSSPropertyTransform);

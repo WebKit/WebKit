@@ -257,16 +257,16 @@ friend class CSSValueList;
 };
 
 template<typename CSSValueType>
-inline bool compareCSSValueVector(const Vector<RefPtr<CSSValueType>>& firstVector, const Vector<RefPtr<CSSValueType>>& secondVector)
+inline bool compareCSSValueVector(const Vector<Ref<CSSValueType>>& firstVector, const Vector<Ref<CSSValueType>>& secondVector)
 {
     size_t size = firstVector.size();
     if (size != secondVector.size())
         return false;
 
-    for (size_t i = 0; i < size; i++) {
-        const RefPtr<CSSValueType>& firstPtr = firstVector[i];
-        const RefPtr<CSSValueType>& secondPtr = secondVector[i];
-        if (firstPtr == secondPtr || (firstPtr && secondPtr && firstPtr->equals(*secondPtr)))
+    for (size_t i = 0; i < size; ++i) {
+        auto& firstPtr = firstVector[i];
+        auto& secondPtr = secondVector[i];
+        if (firstPtr.ptr() == secondPtr.ptr() || firstPtr->equals(secondPtr))
             continue;
         return false;
     }

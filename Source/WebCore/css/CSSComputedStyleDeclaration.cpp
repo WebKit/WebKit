@@ -683,7 +683,7 @@ static Ref<CSSValue> valueForReflection(const StyleReflection* reflection, const
         break;
     }
 
-    return CSSReflectValue::create(direction.release(), offset.release(), valueForNinePieceImage(reflection->mask()));
+    return CSSReflectValue::create(direction.releaseNonNull(), offset.releaseNonNull(), valueForNinePieceImage(reflection->mask()));
 }
 
 static Ref<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, const FillLayer* layer, const RenderStyle& style)
@@ -907,13 +907,13 @@ Ref<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* shadow, C
 
     auto list = CSSValueList::createCommaSeparated();
     for (const ShadowData* currShadowData = shadow; currShadowData; currShadowData = currShadowData->next()) {
-        RefPtr<CSSPrimitiveValue> x = adjustLengthForZoom(currShadowData->x(), style, adjust);
-        RefPtr<CSSPrimitiveValue> y = adjustLengthForZoom(currShadowData->y(), style, adjust);
-        RefPtr<CSSPrimitiveValue> blur = adjustLengthForZoom(currShadowData->radius(), style, adjust);
-        RefPtr<CSSPrimitiveValue> spread = propertyID == CSSPropertyTextShadow ? PassRefPtr<CSSPrimitiveValue>() : adjustLengthForZoom(currShadowData->spread(), style, adjust);
-        RefPtr<CSSPrimitiveValue> style = propertyID == CSSPropertyTextShadow || currShadowData->style() == Normal ? PassRefPtr<CSSPrimitiveValue>() : cssValuePool.createIdentifierValue(CSSValueInset);
-        RefPtr<CSSPrimitiveValue> color = cssValuePool.createColorValue(currShadowData->color().rgb());
-        list.get().prepend(CSSShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), style.release(), color.release()));
+        auto x = adjustLengthForZoom(currShadowData->x(), style, adjust);
+        auto y = adjustLengthForZoom(currShadowData->y(), style, adjust);
+        auto blur = adjustLengthForZoom(currShadowData->radius(), style, adjust);
+        auto spread = propertyID == CSSPropertyTextShadow ? RefPtr<CSSPrimitiveValue>() : adjustLengthForZoom(currShadowData->spread(), style, adjust);
+        auto style = propertyID == CSSPropertyTextShadow || currShadowData->style() == Normal ? RefPtr<CSSPrimitiveValue>() : cssValuePool.createIdentifierValue(CSSValueInset);
+        auto color = cssValuePool.createColorValue(currShadowData->color().rgb());
+        list->prepend(CSSShadowValue::create(WTFMove(x), WTFMove(y), WTFMove(blur), WTFMove(spread), WTFMove(style), WTFMove(color)));
     }
     return WTFMove(list);
 }
@@ -1029,10 +1029,10 @@ static Ref<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSi
         return specifiedValueForGridTrackBreadth(trackSize.length(), style);
     default:
         ASSERT(trackSize.type() == MinMaxTrackSizing);
-        RefPtr<CSSValueList> minMaxTrackBreadths = CSSValueList::createCommaSeparated();
+        auto minMaxTrackBreadths = CSSValueList::createCommaSeparated();
         minMaxTrackBreadths->append(specifiedValueForGridTrackBreadth(trackSize.minTrackBreadth(), style));
         minMaxTrackBreadths->append(specifiedValueForGridTrackBreadth(trackSize.maxTrackBreadth(), style));
-        return CSSFunctionValue::create("minmax(", minMaxTrackBreadths);
+        return CSSFunctionValue::create("minmax(", WTFMove(minMaxTrackBreadths));
     }
 }
 

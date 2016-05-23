@@ -37,10 +37,10 @@ class BasicShape;
 class BasicShapeCenterCoordinate;
 class CSSBasicShape;
 class CSSToLengthConversionData;
-class CSSValue;
+class CSSPrimitiveValue;
 class RenderStyle;
 
-Ref<CSSValue> valueForBasicShape(const RenderStyle&, const BasicShape&);
+Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle&, const BasicShape&);
 Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData&, const CSSBasicShape&);
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate&, float);
 

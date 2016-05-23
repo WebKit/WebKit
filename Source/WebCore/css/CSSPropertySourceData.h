@@ -76,7 +76,7 @@ struct CSSStyleSourceData : public RefCounted<CSSStyleSourceData> {
 };
 
 struct CSSRuleSourceData;
-typedef Vector<RefPtr<CSSRuleSourceData>> RuleSourceDataList;
+typedef Vector<Ref<CSSRuleSourceData>> RuleSourceDataList;
 typedef Vector<SourceRange> SelectorRangeList;
 
 struct CSSRuleSourceData : public RefCounted<CSSRuleSourceData> {

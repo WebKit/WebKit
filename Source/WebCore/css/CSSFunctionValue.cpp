@@ -35,15 +35,14 @@ namespace WebCore {
 CSSFunctionValue::CSSFunctionValue(CSSParserFunction* function)
     : CSSValue(FunctionClass)
     , m_name(function->name)
+    , m_args(function->args ? RefPtr<CSSValueList>(CSSValueList::createFromParserValueList(*function->args)) : nullptr)
 {
-    if (function->args)
-        m_args = CSSValueList::createFromParserValueList(*function->args);
 }
 
-CSSFunctionValue::CSSFunctionValue(const String& name, PassRefPtr<CSSValueList> args)
+CSSFunctionValue::CSSFunctionValue(const String& name, Ref<CSSValueList>&& args)
     : CSSValue(FunctionClass)
     , m_name(name)
-    , m_args(args)
+    , m_args(WTFMove(args))
 {
 }
 
