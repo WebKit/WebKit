@@ -54,7 +54,7 @@ namespace Sizes {
     static const size_t smallPageLineCount = smallPageSize / smallLineSize;
 
     static const size_t maskSizeClassMax = 512;
-    static const size_t smallMax = 64 * kB;
+    static const size_t smallMax = 32 * kB;
 
     static const size_t pageSizeMax = smallMax * 2;
     static const size_t pageClassCount = pageSizeMax / smallPageSize;
