@@ -1,5 +1,13 @@
 2016-05-22  Dan Bernstein  <mitz@apple.com>
 
+        Added NSEventMaskMouseMoved to AppKitCompatibilityDeclarations.h.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * wtf/mac/AppKitCompatibilityDeclarations.h:
+
+2016-05-22  Dan Bernstein  <mitz@apple.com>
+
         Another attempt to fix the GTK build after my previous changes.
 
         * wtf/StdLibExtras.h:

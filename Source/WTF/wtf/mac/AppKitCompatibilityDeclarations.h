@@ -59,6 +59,7 @@ static const NSEventMask NSEventMaskOtherMouseUp = NSOtherMouseUpMask;
 static const NSEventMask NSEventMaskPeriodic = NSPeriodicMask;
 static const NSEventMask NSEventMaskRightMouseDown = NSRightMouseDownMask;
 static const NSEventMask NSEventMaskRightMouseUp = NSRightMouseUpMask;
+static const NSEventMask NSEventMaskMouseMoved = NSMouseMovedMask;
 static const NSEventMask NSEventMaskScrollWheel = NSScrollWheelMask;
 
 static const NSEventModifierFlags NSEventModifierFlagOption = NSAlternateKeyMask;
