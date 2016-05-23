@@ -91,17 +91,17 @@ public:
 
     void updateShapeSize1Value(Ref<CSSPrimitiveValue>&& value1)
     {
-        updateShapeSize4Values(value1.copyRef(), value1.copyRef(), value1.copyRef(), WTFMove(value1));
+        updateShapeSize4Values(value1.copyRef(), value1.copyRef(), value1.copyRef(), value1.copyRef());
     }
 
     void updateShapeSize2Values(Ref<CSSPrimitiveValue>&& value1, Ref<CSSPrimitiveValue>&& value2)
     {
-        updateShapeSize4Values(value1.copyRef(), value2.copyRef(), WTFMove(value1), WTFMove(value2));
+        updateShapeSize4Values(value1.copyRef(), value2.copyRef(), value1.copyRef(), value2.copyRef());
     }
 
     void updateShapeSize3Values(Ref<CSSPrimitiveValue>&& value1, Ref<CSSPrimitiveValue>&& value2,  Ref<CSSPrimitiveValue>&& value3)
     {
-        updateShapeSize4Values(WTFMove(value1), value2.copyRef(), WTFMove(value3), WTFMove(value2));
+        updateShapeSize4Values(WTFMove(value1), value2.copyRef(), WTFMove(value3), value2.copyRef());
     }
 
     void setTopLeftRadius(RefPtr<CSSPrimitiveValue>&& radius) { m_topLeftRadius = WTFMove(radius); }
