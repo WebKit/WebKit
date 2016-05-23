@@ -238,9 +238,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 #if ENABLE(NETWORK_CACHE)
     parameters.shouldEnableNetworkCache = isNetworkCacheEnabled();
     parameters.shouldEnableNetworkCacheEfficacyLogging = [defaults boolForKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
-#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    parameters.shouldEnableNetworkCacheSpeculativeRevalidation = m_configuration->diskCacheSpeculativeValidationEnabled();
-#endif
 #endif
 
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];

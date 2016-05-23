@@ -1,3 +1,20 @@
+2016-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Disk cache: enable speculative revalidation
+        https://bugs.webkit.org/show_bug.cgi?id=157125
+
+        Reviewed by Sergio Villar Senin.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * config.h:
+
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
         Move to C++14.

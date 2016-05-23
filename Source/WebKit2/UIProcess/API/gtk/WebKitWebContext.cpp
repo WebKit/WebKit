@@ -262,6 +262,7 @@ static void webkitWebContextConstructed(GObject* object)
     API::ProcessPoolConfiguration configuration;
     configuration.setInjectedBundlePath(WebCore::filenameToString(bundleFilename.get()));
     configuration.setMaximumProcessCount(1);
+    configuration.setDiskCacheSpeculativeValidationEnabled(true);
 
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;

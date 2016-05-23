@@ -352,6 +352,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
     parameters.diskCacheDirectory = m_configuration->diskCacheDirectory();
     if (!parameters.diskCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    parameters.shouldEnableNetworkCacheSpeculativeRevalidation = m_configuration->diskCacheSpeculativeValidationEnabled();
+#endif
 
 #if PLATFORM(IOS)
     String cookieStorageDirectory = this->cookieStorageDirectory();
