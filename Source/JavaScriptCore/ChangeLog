@@ -1,3 +1,18 @@
+2016-05-23  Saam barati  <sbarati@apple.com>
+
+        String template don't handle let initialization properly inside eval
+        https://bugs.webkit.org/show_bug.cgi?id=157991
+
+        Reviewed by Oliver Hunt.
+
+        The fix is to make sure we emit TDZ checks. 
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TaggedTemplateNode::emitBytecode):
+        * tests/stress/tagged-template-tdz.js: Added.
+        (shouldThrowTDZ):
+        (test):
+
 2016-05-22  Saam barati  <sbarati@apple.com>
 
         Unreviewed. Fixed debug assertion failures from r201235.

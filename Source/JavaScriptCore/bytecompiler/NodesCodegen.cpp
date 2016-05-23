@@ -292,9 +292,10 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
         expectedFunction = generator.expectedFunctionForIdentifier(identifier);
 
         Variable var = generator.variable(identifier);
-        if (RegisterID* local = var.local())
+        if (RegisterID* local = var.local()) {
+            generator.emitTDZCheckIfNecessary(var, local, nullptr);
             tag = generator.emitMove(generator.newTemporary(), local);
-        else {
+        } else {
             tag = generator.newTemporary();
             base = generator.newTemporary();
 
@@ -302,6 +303,7 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
             generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
             generator.moveToDestinationIfNeeded(base.get(), generator.emitResolveScope(base.get(), var));
             generator.emitGetFromScope(tag.get(), base.get(), var, ThrowIfNotFound);
+            generator.emitTDZCheckIfNecessary(var, tag.get(), nullptr);
         }
     } else if (m_tag->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(m_tag);
