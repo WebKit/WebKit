@@ -16,11 +16,11 @@ class JavaScriptLanguage extends HyperLanguage {
 
         $this->addStates(array(
             'init' => array(
-	            'string', 'char', 'number', 'comment',
-	            'keyword' => array('', 'type', 'modifier','control','literal', 'operator'),
-	            'identifier',
-	            'operator'
-	        )
+                'string', 'char', 'number', 'comment',
+                'keyword' => array('', 'type', 'modifier','control','literal', 'operator'),
+                'identifier',
+                'operator'
+            )
         ));
 
         $this->addRules(array(
@@ -32,22 +32,22 @@ class JavaScriptLanguage extends HyperLanguage {
             'comment' => Rule::C_COMMENT,
             'keyword' => array(
                 array(
-					'super','this','arguments','prototype','constructor'
+                    'super','this','arguments','prototype','constructor'
                 ),
                 'type' => array(
-                    'boolean', 'byte', 'char', 'class', 'double', 'enum', 'float', 'function', 'int', 'interface', 'long', 'short', 'var', 'void'
+                    'boolean', 'byte', 'char', 'class', 'const', 'double', 'enum', 'float', 'function', 'int', 'interface', 'let', 'long', 'short', 'var', 'void'
                 ),
-				'modifier' => array(
-					'const','export','extends','final','implements','native','private','protected','public','static','synchronized','throws','transient','volatile'
-				),
-				'control' => array(
-					'break','case','catch','continue','default','do','else','finally','for','goto','if','import','package','return','switch','throw','try','while'
-				),
+                'modifier' => array(
+                    'const','export','extends','final','implements','native','private','protected','public','static','synchronized','throws','transient','volatile'
+                ),
+                'control' => array(
+                    'break','case','catch','continue','default','do','else','finally','for','goto','if','import','package','return','switch','throw','try','while'
+                ),
                 'literal' => array(
                     'false', 'this', 'true', 'null', 'undefined', 'NaN'
                 ),
                 'operator' => array(
-					'delete','in','instanceof','new','typeof','void','with'
+                    'delete', 'in', 'instanceof', 'new', 'of', 'typeof', 'void', 'with'
                 ),
             ),
             'identifier' => Rule::C_IDENTIFIER,
