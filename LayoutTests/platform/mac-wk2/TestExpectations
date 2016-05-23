@@ -8,7 +8,6 @@
 tiled-drawing [ Pass ]
 swipe [ Pass ]
 
-fast/text-autosizing/ios [ Pass ]
 fast/text-autosizing/mac [ Pass ]
 
 fast/events/cancelled-force-click-link-navigation.html [ Pass ]
@@ -464,3 +463,5 @@ imported/blink/fast/multicol/span/adjacent-spanners-with-margin.html [ Pass Imag
 imported/blink/fast/overflow/hidden-html-auto-body.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/155757 [ Debug ElCapitan ] media/media-document-audio-repaint.html [ Skip ]
+
+webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]

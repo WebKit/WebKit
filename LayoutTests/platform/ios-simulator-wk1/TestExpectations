@@ -1378,3 +1378,5 @@ fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Skip ]
 
 # dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
 fast/loader/iframe-src-invalid-url.html [ Skip ]
+
+webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]

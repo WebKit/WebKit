@@ -1,5 +1,18 @@
 2016-05-23  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking fast/text-autosizing/ios/text-autosizing-after-back.html as a flaky timeout on Mac and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=157589
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2016-05-23  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking fast/frames/crash-during-iframe-load-stop.html as a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=157849
 
