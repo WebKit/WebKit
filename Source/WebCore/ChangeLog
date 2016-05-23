@@ -1,5 +1,17 @@
 2016-05-18  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] webaudio crash on ARM platforms
+        https://bugs.webkit.org/show_bug.cgi?id=157838
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcConstructed): Explicitely cast the integer value
+        of the max-bytes property to guint64 which is the expected type of
+        this property. The compiler can't guess this on its own.
+
+2016-05-18  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] webaudio playback improvements
         https://bugs.webkit.org/show_bug.cgi?id=155228
 
