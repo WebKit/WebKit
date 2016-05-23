@@ -56,6 +56,7 @@ public:
 
         m_low = seed;
         m_high = seed;
+        advance();
     }
 
     unsigned seed() const { return m_seed; }
