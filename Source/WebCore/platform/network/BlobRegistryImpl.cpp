@@ -284,11 +284,11 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
         }
     }
 
-    blobUtilityQueue().dispatch([blobsForWriting, completionHandler]() {
+    blobUtilityQueue().dispatch([blobsForWriting = WTFMove(blobsForWriting), completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<String> filePaths;
 
-        ScopeGuard completionCaller([completionHandler]() {
-            callOnMainThread([completionHandler]() {
+        ScopeGuard completionCaller([completionHandler]() mutable {
+            callOnMainThread([completionHandler = WTFMove(completionHandler)]() {
                 Vector<String> filePaths;
                 completionHandler(filePaths);
             });
@@ -328,7 +328,7 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
         }
 
         completionCaller.disable();
-        callOnMainThread([completionHandler, filePaths]() {
+        callOnMainThread([completionHandler = WTFMove(completionHandler), filePaths = WTFMove(filePaths)]() {
             completionHandler(filePaths);
         });
     });

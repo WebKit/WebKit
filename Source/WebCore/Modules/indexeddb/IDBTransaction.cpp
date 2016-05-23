@@ -959,7 +959,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
             // In that case, we cannot successfully store this record, so we callback with an error.
             RefPtr<IDBClient::TransactionOperation> protectedOperation(&operation);
             auto result = IDBResultData::error(operation.identifier(), { IDBDatabaseException::UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
-            scriptExecutionContext()->postTask([protectedOperation, result](ScriptExecutionContext&) {
+            scriptExecutionContext()->postTask([protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)](ScriptExecutionContext&) {
                 protectedOperation->completed(result);
             });
         }
@@ -968,7 +968,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
 
     RefPtr<IDBTransaction> protectedThis(this);
     RefPtr<IDBClient::TransactionOperation> protectedOperation(&operation);
-    value->writeBlobsToDiskForIndexedDB([protectedThis, this, protectedOperation, key, value, overwriteMode](const IDBValue& idbValue) {
+    value->writeBlobsToDiskForIndexedDB([protectedThis = WTFMove(protectedThis), this, protectedOperation = WTFMove(protectedOperation), key = WTFMove(key), value = WTFMove(value), overwriteMode](const IDBValue& idbValue) mutable {
         ASSERT(currentThread() == originThreadID());
         ASSERT(isMainThread());
         if (idbValue.data().data()) {
@@ -979,7 +979,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
         // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
         // In that case, we cannot successfully store this record, so we callback with an error.
         auto result = IDBResultData::error(protectedOperation->identifier(), { IDBDatabaseException::UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
-        callOnMainThread([protectedThis, this, protectedOperation, result]() {
+        callOnMainThread([protectedThis = WTFMove(protectedThis), this, protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)]() {
             protectedOperation->completed(result);
         });
     });
