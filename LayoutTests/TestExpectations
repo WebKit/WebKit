@@ -980,3 +980,5 @@ webkit.org/b/156631 fast/text/font-face-javascript.html [ Pass Crash Failure ]
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
 
 webkit.org/b/157816 http/tests/performance/performance-resource-timing-cached-entries.html [ Pass Failure ]
+
+webkit.org/b/157849 fast/frames/crash-during-iframe-load-stop.html [ Pass Timeout ]
