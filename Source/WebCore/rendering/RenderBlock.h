@@ -489,6 +489,8 @@ private:
 
     RenderFlowThread* updateCachedFlowThreadContainingBlock(RenderFlowThread*) const;
 
+    void removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle);
+
 private:
     bool hasRareData() const;
     
