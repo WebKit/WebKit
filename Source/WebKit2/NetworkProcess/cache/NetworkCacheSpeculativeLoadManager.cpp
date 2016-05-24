@@ -409,7 +409,7 @@ void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, con
 
 void SpeculativeLoadManager::retrieveEntryFromStorage(const Key& key, const RetrieveCompletionHandler& completionHandler)
 {
-    m_storage.retrieve(key, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler](std::unique_ptr<Storage::Record> record) {
+    m_storage.retrieve(key, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler](auto record) {
         if (!record) {
             completionHandler(nullptr);
             return false;
@@ -537,7 +537,7 @@ void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, st
 {
     ASSERT(storageKey.type() == "resource");
     auto subresourcesStorageKey = makeSubresourcesKey(storageKey);
-    m_storage.retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler](std::unique_ptr<Storage::Record> record) {
+    m_storage.retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler](auto record) {
         if (!record) {
             completionHandler(nullptr);
             return false;

@@ -88,8 +88,8 @@ private:
         ~SharedGLData()
         {
             ASSERT(std::any_of(contextDataMap().begin(), contextDataMap().end(),
-                [this](GLContextDataMap::KeyValuePairType& entry) { return entry.value == this; }));
-            contextDataMap().removeIf([this] (GLContextDataMap::KeyValuePairType& entry) { return entry.value == this; });
+                [this](auto& entry) { return entry.value == this; }));
+            contextDataMap().removeIf([this](auto& entry) { return entry.value == this; });
         }
 
     private:

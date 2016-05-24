@@ -1,3 +1,15 @@
+2016-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Use auto for some of our lambda function parameters
+        https://bugs.webkit.org/show_bug.cgi?id=158001
+
+        Reviewed by Darin Adler.
+
+        Use auto for some of our lambda function parameters now that we build with c++14.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::willDestroyPage):
+
 2016-05-23  Brady Eidson  <beidson@apple.com>
 
         check-webkit-style gets flags std::literals::chrono_literals as bad naming.

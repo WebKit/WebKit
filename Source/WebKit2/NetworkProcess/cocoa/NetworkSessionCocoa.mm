@@ -123,7 +123,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
     auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
     if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials)) {
         auto completionHandlerCopy = Block_copy(completionHandler);
-        networkDataTask->willPerformHTTPRedirection(response, request, [completionHandlerCopy, taskIdentifier](const WebCore::ResourceRequest& request) {
+        networkDataTask->willPerformHTTPRedirection(response, request, [completionHandlerCopy, taskIdentifier](auto& request) {
             LOG(NetworkSession, "%llu willPerformHTTPRedirection completionHandler (%s)", taskIdentifier, request.url().string().utf8().data());
             completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
             Block_release(completionHandlerCopy);
@@ -142,7 +142,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
     auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
     if (auto* networkDataTask = _session->dataTaskForIdentifier(taskIdentifier, storedCredentials)) {
         auto completionHandlerCopy = Block_copy(completionHandler);
-        networkDataTask->willPerformHTTPRedirection(WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil), request, [completionHandlerCopy, taskIdentifier](const WebCore::ResourceRequest& request) {
+        networkDataTask->willPerformHTTPRedirection(WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil), request, [completionHandlerCopy, taskIdentifier](auto& request) {
             LOG(NetworkSession, "%llu _schemeUpgraded completionHandler (%s)", taskIdentifier, request.url().string().utf8().data());
             completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
             Block_release(completionHandlerCopy);

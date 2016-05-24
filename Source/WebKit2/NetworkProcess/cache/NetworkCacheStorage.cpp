@@ -526,7 +526,7 @@ Data Storage::encodeRecord(const Record& record, Optional<BlobStorage::Blob> blo
 void Storage::removeFromPendingWriteOperations(const Key& key)
 {
     while (true) {
-        auto found = m_pendingWriteOperations.findIf([&key](const std::unique_ptr<WriteOperation>& operation) {
+        auto found = m_pendingWriteOperations.findIf([&key](auto& operation) {
             return operation->record.key == key;
         });
 

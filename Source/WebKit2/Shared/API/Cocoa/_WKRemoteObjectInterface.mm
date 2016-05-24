@@ -210,11 +210,11 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
 {
     auto result = adoptNS([[NSMutableString alloc] initWithFormat:@"<%@: %p; protocol = \"%@\"; identifier = \"%@\"\n", NSStringFromClass(self.class), self, _identifier.get(), NSStringFromProtocol(_protocol)]);
 
-    auto descriptionForClasses = [](const Vector<HashSet<Class>>& allowedClasses) {
+    auto descriptionForClasses = [](auto& allowedClasses) {
         auto result = adoptNS([[NSMutableString alloc] initWithString:@"["]);
         bool needsComma = false;
 
-        auto descriptionForArgument = [](const HashSet<Class>& allowedArgumentClasses) {
+        auto descriptionForArgument = [](auto& allowedArgumentClasses) {
             auto result = adoptNS([[NSMutableString alloc] initWithString:@"{"]);
 
             Vector<Class> orderedArgumentClasses;

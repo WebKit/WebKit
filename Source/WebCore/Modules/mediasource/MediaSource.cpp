@@ -141,7 +141,7 @@ MediaTime MediaSource::currentTime() const
 
 std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 {
-    if (m_buffered && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [] (RefPtr<SourceBuffer>& buffer) { return !buffer->isBufferedDirty(); }))
+    if (m_buffered && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [](auto& buffer) { return !buffer->isBufferedDirty(); }))
         return std::make_unique<PlatformTimeRanges>(*m_buffered);
 
     m_buffered = std::make_unique<PlatformTimeRanges>();
@@ -264,7 +264,7 @@ void MediaSource::monitorSourceBuffers()
     // playback position:
     auto begin = m_activeSourceBuffers->begin();
     auto end = m_activeSourceBuffers->end();
-    if (std::all_of(begin, end, [](RefPtr<SourceBuffer>& sourceBuffer) {
+    if (std::all_of(begin, end, [](auto& sourceBuffer) {
         return !sourceBuffer->hasCurrentTime();
     })) {
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
@@ -278,7 +278,7 @@ void MediaSource::monitorSourceBuffers()
 
     // ↳ If buffered for all objects in activeSourceBuffers contain TimeRanges that include the current
     // playback position and enough data to ensure uninterrupted playback:
-    if (std::all_of(begin, end, [](RefPtr<SourceBuffer>& sourceBuffer) {
+    if (std::all_of(begin, end, [](auto& sourceBuffer) {
         return sourceBuffer->hasFutureTime() && sourceBuffer->canPlayThrough();
     })) {
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
@@ -295,7 +295,7 @@ void MediaSource::monitorSourceBuffers()
 
     // ↳ If buffered for all objects in activeSourceBuffers contain a TimeRange that includes
     // the current playback position and some time beyond the current playback position, then run the following steps:
-    if (std::all_of(begin, end, [](RefPtr<SourceBuffer>& sourceBuffer) {
+    if (std::all_of(begin, end, [](auto& sourceBuffer) {
         return sourceBuffer->hasFutureTime();
     })) {
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_FUTURE_DATA.
@@ -426,7 +426,7 @@ void MediaSource::endOfStream(Optional<EndOfStreamError> error, ExceptionCode& e
 
     // 2. If the updating attribute equals true on any SourceBuffer in sourceBuffers, then throw an
     // INVALID_STATE_ERR exception and abort these steps.
-    if (std::any_of(m_sourceBuffers->begin(), m_sourceBuffers->end(), [](RefPtr<SourceBuffer>& sourceBuffer) { return sourceBuffer->updating(); })) {
+    if (std::any_of(m_sourceBuffers->begin(), m_sourceBuffers->end(), [](auto& sourceBuffer) { return sourceBuffer->updating(); })) {
         ec = INVALID_STATE_ERR;
         return;
     }

@@ -3245,7 +3245,7 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
     }
 
     // Get all the rows.
-    auto rowsIteration = [&](const AccessibilityChildrenVector& rows) {
+    auto rowsIteration = [&](auto& rows) {
         for (auto& row : rows) {
             if (row->isSelected()) {
                 result.append(row);

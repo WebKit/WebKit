@@ -5299,7 +5299,7 @@ void Document::validateAutoSizingNodes()
         // candidate size.
         value->adjustNodeSizes();
     }
-    m_textAutoSizedNodes.removeIf([] (TextAutoSizingMap::KeyValuePairType& keyAndValue) {
+    m_textAutoSizedNodes.removeIf([](auto& keyAndValue) {
         return !keyAndValue.value->numNodes();
     });
 }

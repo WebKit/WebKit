@@ -107,7 +107,7 @@ auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vecto
         icons.append({ url, iconType, iconSize });
     }
 
-    std::sort(icons.begin(), icons.end(), [](const LinkIconCollector::Icon& a, const LinkIconCollector::Icon& b) {
+    std::sort(icons.begin(), icons.end(), [](auto& a, auto& b) {
         return compareIcons(a, b) < 0;
     });
 

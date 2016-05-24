@@ -89,8 +89,7 @@ void bubbleSort(IteratorType begin, IteratorType end)
 {
     bubbleSort(
         begin, end,
-        [] (const typename std::iterator_traits<IteratorType>::value_type& left,
-            const typename std::iterator_traits<IteratorType>::value_type& right) -> bool {
+        [](auto& left, auto& right) {
             return left < right;
         });
 }

@@ -454,7 +454,7 @@ void FontCascadeFonts::pruneSystemFallbacks()
     // Mutable glyph pages may reference fallback fonts.
     if (m_cachedPageZero.isMixedFont())
         m_cachedPageZero = { };
-    m_cachedPages.removeIf([](decltype(m_cachedPages)::KeyValuePairType& keyAndValue) {
+    m_cachedPages.removeIf([](auto& keyAndValue) {
         return keyAndValue.value.isMixedFont();
     });
     m_systemFallbackFontSet.clear();

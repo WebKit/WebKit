@@ -69,7 +69,7 @@ void WKKeyValueStorageManagerGetKeyValueStorageOrigins(WKKeyValueStorageManagerR
         return;
     }
 
-    storageManager->getLocalStorageOrigins([context, callback](HashSet<RefPtr<WebCore::SecurityOrigin>>&& securityOrigins) {
+    storageManager->getLocalStorageOrigins([context, callback](auto&& securityOrigins) {
         Vector<RefPtr<API::Object>> webSecurityOrigins;
         webSecurityOrigins.reserveInitialCapacity(securityOrigins.size());
         for (auto& origin : securityOrigins)
@@ -89,7 +89,7 @@ void WKKeyValueStorageManagerGetStorageDetailsByOrigin(WKKeyValueStorageManagerR
         return;
     }
 
-    storageManager->getLocalStorageOriginDetails([context, callback](Vector<LocalStorageDatabaseTracker::OriginDetails> storageDetails) {
+    storageManager->getLocalStorageOriginDetails([context, callback](auto storageDetails) {
         HashMap<String, RefPtr<API::Object>> detailsMap;
         Vector<RefPtr<API::Object>> result;
         result.reserveInitialCapacity(storageDetails.size());

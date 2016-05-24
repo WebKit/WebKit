@@ -107,8 +107,8 @@ bool AnimationControllerPrivate::clear(RenderElement& renderer)
         return info.element == element;
     });
 
-    m_elementChangesToDispatch.removeAllMatching([element] (const Ref<Element>& currElement) {
-        return &currElement.get() == element;
+    m_elementChangesToDispatch.removeAllMatching([element](auto& currentElement) {
+        return currentElement.ptr() == element;
     });
     
     // Return false if we didn't do anything OR we are suspended (so we don't try to

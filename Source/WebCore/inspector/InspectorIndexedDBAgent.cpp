@@ -600,7 +600,7 @@ void InspectorIndexedDBAgent::requestDatabaseNames(ErrorString& errorString, con
         return;
 
     RefPtr<RequestDatabaseNamesCallback> callback = WTFMove(requestCallback);
-    idbFactory->getAllDatabaseNames(*topOrigin, *openingOrigin, [callback](const Vector<String>& databaseNames) {
+    idbFactory->getAllDatabaseNames(*topOrigin, *openingOrigin, [callback](auto& databaseNames) {
         if (!callback->isActive())
             return;
 

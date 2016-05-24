@@ -1,3 +1,15 @@
+2016-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Use auto for some of our lambda function parameters
+        https://bugs.webkit.org/show_bug.cgi?id=158001
+
+        Reviewed by Darin Adler.
+
+        Use auto for some of our lambda function parameters now that we build with c++14.
+
+        * wtf/BubbleSort.h:
+        (WTF::bubbleSort):
+
 2016-05-23  Chris Dumez  <cdumez@apple.com>
 
         Speed up move of vectors of POD types that have an inline buffer

@@ -1,3 +1,54 @@
+2016-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Use auto for some of our lambda function parameters
+        https://bugs.webkit.org/show_bug.cgi?id=158001
+
+        Reviewed by Darin Adler.
+
+        Use auto for some of our lambda function parameters now that we build with c++14.
+
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::didGetRecord):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::clearDiskCacheEntries):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveEntryFromStorage):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveSubresourcesEntry):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::removeFromPendingWriteOperations):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm:
+        (-[_WKRemoteObjectInterface debugDescription]):
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        (WKApplicationCacheManagerGetApplicationCacheOrigins):
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetKeyValueStorageOrigins):
+        (WKKeyValueStorageManagerGetStorageDetailsByOrigin):
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        (WKResourceCacheManagerGetCacheOrigins):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _fetchDataRecordsOfTypes:withOptions:completionHandler:]):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::removeAnimationForKey):
+
 2016-05-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Assertion failure for Reflect.get with Proxy and primitive value as explicit receiver

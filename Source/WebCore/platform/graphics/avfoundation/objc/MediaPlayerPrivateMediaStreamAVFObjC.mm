@@ -531,14 +531,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
     MediaStreamTrackPrivateVector currentTracks = m_mediaStreamPrivate->tracks();
     bool selectedVideoTrackChanged = false;
 
-    std::function<void(RefPtr<AudioTrackPrivateMediaStream>, int)> enableAudioTrack = [this](RefPtr<AudioTrackPrivateMediaStream> track, int index)
+    std::function<void(RefPtr<AudioTrackPrivateMediaStream>, int)> enableAudioTrack = [this](auto track, int index)
     {
         track->setTrackIndex(index);
         track->setEnabled(track->streamTrack()->enabled() && !track->streamTrack()->muted());
     };
     updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Audio, currentTracks, &AudioTrackPrivateMediaStream::create, m_player, &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack, enableAudioTrack);
 
-    std::function<void(RefPtr<VideoTrackPrivateMediaStream>, int)> enableVideoTrack = [this, &selectedVideoTrackChanged](RefPtr<VideoTrackPrivateMediaStream> track, int index)
+    std::function<void(RefPtr<VideoTrackPrivateMediaStream>, int)> enableVideoTrack = [this, &selectedVideoTrackChanged](auto track, int index)
     {
         bool wasSelected = track->selected();
         track->setTrackIndex(index);

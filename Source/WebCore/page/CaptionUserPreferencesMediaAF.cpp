@@ -838,7 +838,7 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu
         tracksForMenu.append(track);
     }
     
-    std::sort(tracksForMenu.begin(), tracksForMenu.end(), [](const RefPtr<AudioTrack>& a, const RefPtr<AudioTrack>& b) {
+    std::sort(tracksForMenu.begin(), tracksForMenu.end(), [](auto& a, auto& b) {
         return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
     });
     

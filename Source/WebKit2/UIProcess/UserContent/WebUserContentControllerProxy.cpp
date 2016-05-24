@@ -189,7 +189,7 @@ void WebUserContentControllerProxy::removeAllUserScripts(API::UserContentWorld& 
     for (WebProcessProxy* process : m_processes)
         process->connection()->send(Messages::WebUserContentController::RemoveAllUserScripts({ world.identifier() }), m_identifier);
 
-    unsigned userScriptsRemoved = m_userScripts->removeAllOfTypeMatching<API::UserScript>([&] (const RefPtr<API::UserScript>& userScript) -> bool {
+    unsigned userScriptsRemoved = m_userScripts->removeAllOfTypeMatching<API::UserScript>([&](const auto& userScript) {
         return &userScript->userContentWorld() == &world;
     });
 
@@ -244,7 +244,7 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets(API::UserContentWor
     for (WebProcessProxy* process : m_processes)
         process->connection()->send(Messages::WebUserContentController::RemoveAllUserStyleSheets({ world.identifier() }), m_identifier);
 
-    unsigned userStyleSheetsRemoved = m_userStyleSheets->removeAllOfTypeMatching<API::UserStyleSheet>([&] (const RefPtr<API::UserStyleSheet>& userStyleSheet) -> bool {
+    unsigned userStyleSheetsRemoved = m_userStyleSheets->removeAllOfTypeMatching<API::UserStyleSheet>([&](const auto& userStyleSheet) {
         return &userStyleSheet->userContentWorld() == &world;
     });
 
@@ -310,7 +310,7 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers(API::UserConten
         process->connection()->send(Messages::WebUserContentController::RemoveAllUserScriptMessageHandlers({ world.identifier() }), m_identifier);
 
     unsigned numberRemoved = 0;
-    m_scriptMessageHandlers.removeIf([&](HashMap<uint64_t, RefPtr<WebScriptMessageHandler>>::KeyValuePairType& entry) {
+    m_scriptMessageHandlers.removeIf([&](auto& entry) {
         if (&entry.value->userContentWorld() == &world) {
             ++numberRemoved;
             return true;

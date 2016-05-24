@@ -83,7 +83,7 @@ MediaQuery::MediaQuery(Restrictor r, const String& mediaType, std::unique_ptr<Ex
         return;
     }
 
-    std::sort(m_expressions->begin(), m_expressions->end(), [](const std::unique_ptr<MediaQueryExp>& a, const std::unique_ptr<MediaQueryExp>& b) {
+    std::sort(m_expressions->begin(), m_expressions->end(), [](auto& a, auto& b) {
         return codePointCompare(a->serialize(), b->serialize()) < 0;
     });
 

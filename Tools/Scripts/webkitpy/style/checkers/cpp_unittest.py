@@ -1769,6 +1769,10 @@ class CppStyleTest(CppStyleTestBase):
             '}\n',
             '')
         self.assert_multi_line_lint(
+            '[]() {\n'
+            '}\n',
+            '')
+        self.assert_multi_line_lint(
             'if (condition\n'
             '    && condition2\n'
             '    && condition3) {\n'

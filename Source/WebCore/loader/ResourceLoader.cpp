@@ -253,7 +253,7 @@ void ResourceLoader::loadDataURL()
     if (auto* scheduledPairs = m_frame->page()->scheduledRunLoopPairs())
         scheduleContext.scheduledPairs = *scheduledPairs;
 #endif
-    DataURLDecoder::decode(url, scheduleContext, [protectedThis, url] (Optional<DataURLDecoder::Result> decodeResult) {
+    DataURLDecoder::decode(url, scheduleContext, [protectedThis, url](auto decodeResult) {
         if (protectedThis->reachedTerminalState())
             return;
         if (!decodeResult) {

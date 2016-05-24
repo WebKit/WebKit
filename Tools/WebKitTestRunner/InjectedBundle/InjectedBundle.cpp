@@ -109,7 +109,7 @@ void InjectedBundle::didCreatePage(WKBundlePageRef page)
 
 void InjectedBundle::willDestroyPage(WKBundlePageRef page)
 {
-    m_pages.removeFirstMatching([page] (const std::unique_ptr<InjectedBundlePage>& current) {
+    m_pages.removeFirstMatching([page](auto& current) {
         return current->page() == page;
     });
 }

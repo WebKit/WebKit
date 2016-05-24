@@ -60,7 +60,7 @@ bool CSSValueList::removeAll(CSSValue* value)
     if (!value)
         return false;
 
-    return m_values.removeAllMatching([value] (const Ref<CSSValue>& current) {
+    return m_values.removeAllMatching([value](auto& current) {
         return current->equals(*value);
     }) > 0;
 }

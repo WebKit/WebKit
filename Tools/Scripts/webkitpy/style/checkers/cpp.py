@@ -2433,6 +2433,7 @@ def check_braces(clean_lines, line_number, error):
     elif (search(r'\)\s*(((const|override)\s*)*\s*)?{\s*$', line)
           and line.count('(') == line.count(')')
           and not search(r'(\s*(if|for|while|switch|NS_ENUM|@synchronized)|} @catch)\b', line)
+          and line.find("](") < 0
           and not match(r'\s+[A-Z_][A-Z_0-9]+\b', line)):
         error(line_number, 'whitespace/braces', 4,
               'Place brace on its own line for function definitions.')

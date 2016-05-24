@@ -244,7 +244,7 @@ void MutationObserver::deliverAllMutations()
         Vector<RefPtr<MutationObserver>> observers;
         copyToVector(activeMutationObservers(), observers);
         activeMutationObservers().clear();
-        std::sort(observers.begin(), observers.end(), [](const RefPtr<MutationObserver>& lhs, const RefPtr<MutationObserver>& rhs) {
+        std::sort(observers.begin(), observers.end(), [](auto& lhs, auto& rhs) {
             return lhs->m_priority < rhs->m_priority;
         });
 

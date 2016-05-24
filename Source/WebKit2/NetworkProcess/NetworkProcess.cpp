@@ -314,7 +314,7 @@ static void fetchDiskCacheEntries(SessionID sessionID, OptionSet<WebsiteDataFetc
     if (NetworkCache::singleton().isEnabled()) {
         auto* originsAndSizes = new HashMap<RefPtr<SecurityOrigin>, uint64_t>();
 
-        NetworkCache::singleton().traverse([fetchOptions, completionHandler, originsAndSizes](const NetworkCache::Cache::TraversalEntry *traversalEntry) {
+        NetworkCache::singleton().traverse([fetchOptions, completionHandler, originsAndSizes](auto* traversalEntry) {
             if (!traversalEntry) {
                 Vector<WebsiteData::Entry> entries;
 
@@ -379,7 +379,7 @@ void NetworkProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteData
         WebsiteData m_websiteData;
     };
 
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator([this, callbackID](WebsiteData websiteData) {
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator([this, callbackID] (WebsiteData websiteData) {
         parentProcessConnection()->send(Messages::NetworkProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
     }));
 
@@ -389,7 +389,7 @@ void NetworkProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteData
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
-        fetchDiskCacheEntries(sessionID, fetchOptions, [callbackAggregator](Vector<WebsiteData::Entry> entries) {
+        fetchDiskCacheEntries(sessionID, fetchOptions, [callbackAggregator](auto entries) {
             callbackAggregator->m_websiteData.entries.appendVector(entries);
         });
     }
@@ -432,8 +432,7 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std
 
         auto* cacheKeysToDelete = new Vector<NetworkCache::Key>;
 
-        NetworkCache::singleton().traverse([completionHandler, originsToDelete, cacheKeysToDelete](const NetworkCache::Cache::TraversalEntry *traversalEntry) {
-
+        NetworkCache::singleton().traverse([completionHandler, originsToDelete, cacheKeysToDelete](auto* traversalEntry) {
             if (traversalEntry) {
                 if (originsToDelete->contains(SecurityOrigin::create(traversalEntry->entry.response().url())))
                     cacheKeysToDelete->append(traversalEntry->entry.key());

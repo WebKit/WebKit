@@ -134,7 +134,7 @@ static bool addIntersectionPoints(Vector<FloatPointGraph::Polygon>& polys, Float
             intersectionPoints.append(graph.findOrCreateNode(intersectionPoint));
         }
 
-        std::sort(intersectionPoints.begin(), intersectionPoints.end(), [edgeA] (FloatPointGraph::Node* a, FloatPointGraph::Node* b) {
+        std::sort(intersectionPoints.begin(), intersectionPoints.end(), [edgeA](auto* a, auto* b) {
             return FloatPoint(*edgeA.first - *b).lengthSquared() > FloatPoint(*edgeA.first - *a).lengthSquared();
         });
 

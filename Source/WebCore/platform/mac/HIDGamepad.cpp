@@ -74,7 +74,7 @@ void HIDGamepad::initElements()
     initElementsFromArray(elements.get());
 
     // Buttons are specified to appear highest priority first in the array.
-    std::sort(m_buttons.begin(), m_buttons.end(), [](const std::unique_ptr<HIDGamepadButton>& a, const std::unique_ptr<HIDGamepadButton>& b) {
+    std::sort(m_buttons.begin(), m_buttons.end(), [](auto& a, auto& b) {
         return a->priority < b->priority;
     });
 

@@ -250,7 +250,7 @@ static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
 
 void pruneUnreferencedEntriesFromFontCascadeCache()
 {
-    fontCascadeCache().removeIf([](FontCascadeCache::KeyValuePairType& entry) {
+    fontCascadeCache().removeIf([](auto& entry) {
         return entry.value->fonts.get().hasOneRef();
     });
 }
