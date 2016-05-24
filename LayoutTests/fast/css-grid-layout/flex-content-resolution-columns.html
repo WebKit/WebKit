@@ -2,12 +2,12 @@
 <html>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
-.gridMinFlexContent {
-    grid-template-columns: minmax(1fr, 50px);
+.gridFlexContent {
+    grid-template-columns: 1fr 1fr;
     grid-template-rows: 50px;
 }
 .gridZeroFlexContent {
-    grid-template-columns: minmax(1fr, 0px);
+    grid-template-columns: minmax(auto, 0px);
     grid-template-rows: 50px;
 }
 .gridMaxFlexContent {
@@ -54,8 +54,15 @@
 <p>Test that resolving auto tracks on grid items works properly.</p>
 
 <div style="width: 0px">
-    <div class="grid gridMinFlexContent">
+    <div class="grid gridFlexContent">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="0" data-expected-height="50"></div>
+    </div>
+</div>
+
+<div style="width: 0px; position: relative;">
+    <div class="grid gridFlexContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="20" data-expected-height="50">XX</div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="20" data-offset-y="0" data-expected-width="30" data-expected-height="50">XXX</div>
     </div>
 </div>
 
@@ -67,14 +74,28 @@
 
 <!-- Allow the extra logical space distribution to occur. -->
 <div style="width: 40px; height: 10px">
-    <div class="grid gridMinFlexContent">
-        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="40" data-expected-height="50"></div>
+    <div class="grid gridFlexContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="20" data-expected-height="50"></div>
+    </div>
+</div>
+
+<div style="width: 40px; height: 10px; position: relative;">
+    <div class="grid gridFlexContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="50">XXX</div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="30" data-offset-y="0" data-expected-width="40" data-expected-height="50">XXXX</div>
     </div>
 </div>
 
 <div style="width: 100px; height: 10px;">
-    <div class="grid gridMinFlexContent">
+    <div class="grid gridFlexContent">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="50"></div>
+    </div>
+</div>
+
+<div style="width: 100px; height: 10px; position: relative;">
+    <div class="grid gridFlexContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50">XXX</div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="50">XXXX</div>
     </div>
 </div>
 

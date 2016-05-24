@@ -240,7 +240,7 @@ public:
     bool parseSingleGridAreaLonghand(RefPtr<CSSValue>&);
     RefPtr<CSSValue> parseGridTrackList();
     bool parseGridTrackRepeatFunction(CSSValueList&, bool& isAutoRepeat);
-    enum TrackSizeRestriction { FixedSizeOnly, AllowAll };
+    enum TrackSizeRestriction { FixedSizeOnly, InflexibleSizeOnly, AllowAll };
     RefPtr<CSSValue> parseGridTrackSize(CSSParserValueList& inputList, TrackSizeRestriction = AllowAll);
     RefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue&, TrackSizeRestriction = AllowAll);
     bool parseGridTemplateAreasRow(NamedGridAreaMap&, const unsigned, unsigned&);

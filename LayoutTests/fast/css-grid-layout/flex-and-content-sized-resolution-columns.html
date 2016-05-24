@@ -15,8 +15,8 @@
      grid-template-columns: minmax(20px, 1fr) -webkit-max-content auto;
 }
 
-.gridMinMaxFlexFixedAndMinContentAndFixed {
-     grid-template-columns: minmax(0.5fr, 35px) -webkit-min-content 25px;
+.gridMinMaxAutoFixedAndMinContentAndFixed {
+     grid-template-columns: minmax(auto, 35px) -webkit-min-content 25px;
 }
 
 .gridMinContentAndMinMaxFixedMinContentAndFlex {
@@ -63,7 +63,7 @@
 </div>
 
 <div style="position: relative; width: 100px;">
-    <div id="gridMinMaxFlexFixedAndMinContentAndFixed" class="grid gridMinMaxFlexFixedAndMinContentAndFixed">
+    <div id="gridMinMaxAutoFixedAndMinContentAndFixed" class="grid gridMinMaxAutoFixedAndMinContentAndFixed">
 	<div style="grid-column: 1 / span 2;">XXXX XXXX</div>
 	<div style="grid-column: 2 / span 2; grid-row: 2;">XXX XXX</div>
 	<div style="grid-column: 1 / -1; grid-row: 3;">XXXXX XXXXX</div>
@@ -100,7 +100,7 @@ checkColumns("gridFixedAndMinContentAndFlex", "20px 30px 50px");
 checkColumns("gridFixedAndMinContentAndFlexMultipleOverlap", "20px 10px 70px");
 checkColumns("gridMinMaxFixedFlexAndMaxContentAndAuto", "60px 20px 20px");
 checkColumns("gridMinMaxFixedFlexAndMaxContentAndAutoNoFlexSpanningItems", "100px 0px 0px");
-checkColumns("gridMinMaxFlexFixedAndMinContentAndFixed", "35px 5px 25px");
+checkColumns("gridMinMaxAutoFixedAndMinContentAndFixed", "35px 20px 25px");
 checkColumns("gridMinContentAndMinMaxFixedMinContentAndFlex", "20px 20px 60px");
 checkColumns("gridMaxContentAndMinMaxFixedMaxContentAndFlex", "70px 20px 10px");
 

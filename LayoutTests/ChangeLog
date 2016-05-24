@@ -1,3 +1,33 @@
+2016-05-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix behavior of flexible track breadths
+        https://bugs.webkit.org/show_bug.cgi?id=157834
+
+        Reviewed by Sergio Villar Senin.
+
+        This patch is fixing 2 issues that are interrelated:
+        1) Flex sizes are invalid as min track sizing function.
+        2) Flex sizes outside minmax() behave as auto minimum.
+
+        The patch includes new test cases checking specifically these 2 issues.
+        In addition several tests results have been updated to reflect
+        the new behavior. Also, some cases that are now invalid and
+        were not testing anything new have been removed.
+
+        * fast/css-grid-layout/flex-and-content-sized-resolution-columns-expected.txt:
+        * fast/css-grid-layout/flex-and-content-sized-resolution-columns.html:
+        * fast/css-grid-layout/flex-content-resolution-columns-expected.txt:
+        * fast/css-grid-layout/flex-content-resolution-columns.html:
+        * fast/css-grid-layout/flex-content-resolution-rows-expected.txt:
+        * fast/css-grid-layout/flex-content-resolution-rows.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-gutters-and-flex-content-expected.txt:
+        * fast/css-grid-layout/grid-gutters-and-flex-content.html:
+        * fast/css-grid-layout/grid-preferred-logical-widths.html:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set.js:
+
 2016-05-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement Fetch redirect mode

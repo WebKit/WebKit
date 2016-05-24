@@ -1,3 +1,37 @@
+2016-05-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix behavior of flexible track breadths
+        https://bugs.webkit.org/show_bug.cgi?id=157834
+
+        Reviewed by Sergio Villar Senin.
+
+        This patch is fixing 2 issues that are interrelated:
+
+        1) Flex sizes are invalid as min track sizing function.
+
+          The syntax has been recently updated on the spec:
+            <track-size> =
+              <track-breadth> |
+              minmax( <inflexible-breadth> , <track-breadth> )
+
+        2) Flex sizes outside minmax() behave as auto minimum.
+
+          Flex sizes outside minmax() were previously behaving like
+          minimum and maximum (e.g. 1fr => minmax(1fr, 1fr)).
+          However the spec changed and now this would be invalid,
+          so they should behave like auto minimum (e.g. minmax(auto, 1fr)).
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTrackSize): Call parseGridBreadth()
+        for min sizing function using "InflexibleSizeOnly" restriction
+        when needed.
+        (WebCore::CSSParser::parseGridBreadth): Add check for
+        "InflexibleSizeOnly" resctriction.
+        * css/CSSParser.h: Add new type of restriction "InflexibleSizeOnly".
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::gridTrackSize): Add new condition to make
+        |minTrackBreadth| auto if it was a flex size.
+
 2016-05-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement Fetch redirect mode

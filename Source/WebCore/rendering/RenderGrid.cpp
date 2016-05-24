@@ -747,6 +747,11 @@ GridTrackSize RenderGrid::gridTrackSize(GridTrackSizingDirection direction, unsi
         }
     }
 
+    // Flex sizes are invalid as a min sizing function. However we still can have a flexible |minTrackBreadth|
+    // if the track size is just a flex size (e.g. "1fr"), the spec says that in this case it implies an automatic minimum.
+    if (minTrackBreadth.isFlex())
+        minTrackBreadth = Length(Auto);
+
     return GridTrackSize(minTrackBreadth, maxTrackBreadth);
 }
 

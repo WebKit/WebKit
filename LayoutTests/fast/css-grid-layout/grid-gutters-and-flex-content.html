@@ -13,7 +13,6 @@
 .gridRowsTwoMaxFlexContent { grid-template: minmax(10px, 1fr) minmax(10px, 2fr) / 50px; }
 .gridRowsTwoDoubleMaxFlexContent { grid-template: minmax(10px, 0.5fr) minmax(10px, 2fr) / 50px; }
 
-.gridMinMaxFlexFixedAndMinContentAndFixed { grid-template-columns: minmax(0.5fr, 35px) -webkit-min-content 25px; }
 .gridMinContentAndMinMaxFixedMinContentAndFlex { grid-template-columns: -webkit-min-content minmax(20px, -webkit-min-content) 2fr; }
 .gridMaxContentAndMinMaxFixedMaxContentAndFlex { grid-template-columns: -webkit-max-content minmax(20px, -webkit-max-content) 1fr; }
 
@@ -74,15 +73,6 @@ div.grid > div { font: 10px/1 Ahem; }
 </div>
 
 <!-- Check that gutters do not interfere with flex content resolution with content sized tracks -->
-
-<div style="position: relative; width: 100px;">
-    <div class="grid gridMinMaxFlexFixedAndMinContentAndFixed gridRowColumnGaps" data-expected-width="100" data-expected-height="199">
-	<div style="grid-column: 1 / span 2;" data-expected-width="54" data-expected-height="20">XXXX XXXX</div>
-	<div style="grid-column: 2 / span 2; grid-row: 2;" data-expected-width="44" data-expected-height="20">XXX XXX</div>
-	<div style="grid-column: 1 / -1; grid-row: 3;" data-expected-width="98" data-expected-height="20">XXXXX XXXXX</div>
-	<div style="grid-column: 2 / span 2; grid-row: 4;" data-expected-width="44" data-expected-height="40">XX XX XX XX</div>
-    </div>
-</div>
 
 <div style="position: relative; width: 100px;">
     <div class="grid gridMinContentAndMinMaxFixedMinContentAndFlex gridRowColumnGaps" data-expected-width="100" data-expected-height="149">

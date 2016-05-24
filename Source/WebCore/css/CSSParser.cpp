@@ -5977,7 +5977,8 @@ RefPtr<CSSValue> CSSParser::parseGridTrackSize(CSSParserValueList& inputList, Tr
         if (!arguments || arguments->size() != 3 || !isComma(arguments->valueAt(1)))
             return nullptr;
 
-        RefPtr<CSSPrimitiveValue> minTrackBreadth = parseGridBreadth(*arguments->valueAt(0), restriction);
+        TrackSizeRestriction minTrackBreadthRestriction = restriction == AllowAll ? InflexibleSizeOnly : restriction;
+        RefPtr<CSSPrimitiveValue> minTrackBreadth = parseGridBreadth(*arguments->valueAt(0), minTrackBreadthRestriction);
         if (!minTrackBreadth)
             return nullptr;
 
@@ -6005,7 +6006,7 @@ RefPtr<CSSPrimitiveValue> CSSParser::parseGridBreadth(CSSParserValue& value, Tra
     }
 
     if (value.unit == CSSPrimitiveValue::CSS_FR) {
-        if (restriction == FixedSizeOnly)
+        if (restriction == FixedSizeOnly || restriction == InflexibleSizeOnly)
             return nullptr;
 
         double flexValue = value.fValue;

@@ -77,6 +77,9 @@ testGridTemplatesSetBadJSValues("minmax(10px 20px)", "minmax(10px)")
 testGridTemplatesSetBadJSValues("minmax(minmax(10px, 20px), 20px)", "minmax(10px, 20px, 30px)");
 // No breadth value and no comma.
 testGridTemplatesSetBadJSValues("minmax()", "minmax(30px 30% 30em)");
+// Flexible lengths are invalid on the min slot of minmax().
+testGridTemplatesSetBadJSValues("minmax(0fr, 100px)", "minmax(.0fr, 200px)");
+testGridTemplatesSetBadJSValues("minmax(1fr, 100px)", "minmax(2.5fr, 200px)");
 
 testGridTemplatesSetBadJSValues("-2fr", "3ffr");
 testGridTemplatesSetBadJSValues("-2.05fr", "+-3fr");
