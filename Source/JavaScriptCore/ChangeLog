@@ -1,3 +1,15 @@
+2016-05-23  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION (196374): deleting a global property is expensive
+        https://bugs.webkit.org/show_bug.cgi?id=158005
+
+        Reviewed by Chris Dumez.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty): We only need to reify static properties
+        if the name being deleted matches a static property. Otherwise, we can
+        be sure that delete won't observe any static properties.
+
 2016-05-23  Saam barati  <sbarati@apple.com>
 
         The baseline JIT crashes when compiling "(1,1)/1"

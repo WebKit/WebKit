@@ -1495,8 +1495,13 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
     if (Optional<uint32_t> index = parseIndex(propertyName))
         return thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, index.value());
 
-    if (!thisObject->staticFunctionsReified())
-        thisObject->reifyAllStaticProperties(exec);
+    if (!thisObject->staticFunctionsReified()) {
+        if (auto* entry = thisObject->findPropertyHashEntry(propertyName)) {
+            if (entry->attributes() & DontDelete)
+                return false;
+            thisObject->reifyAllStaticProperties(exec);
+        }
+    }
 
     unsigned attributes;
     if (isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes))) {
