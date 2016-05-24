@@ -2955,8 +2955,16 @@ begin
   }
   
   JSBENCH = BenchmarkSuite.new("JSBench", :arithmeticMean, 0)
-  [["amazon", "urm"], ["facebook", "urem"], ["google", "urem"], ["twitter", "urem"],
-   ["yahoo", "urem"]].each {
+  [["amazon-chrome", "urem"], ["amazon-chrome-win", "urem"], ["amazon-firefox", "urm"],
+   ["amazon-firefox-win", "urm"], ["amazon-safari", "urem"], ["facebook-chrome", "urem"],
+   ["facebook-chrome-win", "urem"], ["facebook-firefox", "urem"],
+   ["facebook-firefox-win", "urem"], ["facebook-safari", "urem"],
+   ["google-chrome", "urem"], ["google-chrome-win", "urem"], ["google-firefox", "uem"],
+   ["google-firefox-win", "urem"], ["google-safari", "urem"], ["twitter-chrome", "urem"],
+   ["twitter-chrome-win", "rem"], ["twitter-firefox", "urem"],
+   ["twitter-firefox-win", "urem"], ["twitter-safari", "urem"], ["yahoo-chrome", "urem"],
+   ["yahoo-chrome-win", "urem"], ["yahoo-firefox", "urem"], ["yahoo-firefox-win", "urem"],
+   ["yahoo-safari", "urem"]].each {
     | nameAndMode |
     JSBENCH.add JSBenchBenchmark.new(*nameAndMode)
   }

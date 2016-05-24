@@ -1,3 +1,13 @@
+2016-05-20  Keith Miller  <keith_miller@apple.com>
+        We should have JSBench in PerformanceTests
+        https://bugs.webkit.org/show_bug.cgi?id=157952
+
+        Rubber-stamped by Saam Barati.
+
+        This changes the runner to use the layout of the newest version of JSBench.
+
+        * Scripts/run-jsc-benchmarks:
+
 2016-05-24  Chris Dumez  <cdumez@apple.com>
 
         Use auto for some of our lambda function parameters

@@ -1,3 +1,72 @@
+2016-05-17  Keith Miller  <keith_miller@apple.com>
+        We should have JSBench in PerformanceTests
+        https://bugs.webkit.org/show_bug.cgi?id=157952
+
+        Rubber-stamped by Saam Barati.
+
+        There are some slight changes to the layout of the test directory
+        to make it work nicely with run-jsc-benchmarks. Before JSBench
+        had each of the browser specific sub-tests in a sub-directory.
+        These have been flattened e.g. amazon/safari/ has become
+        amazon-safari/.
+
+        * JSBench/amazon-chrome-win/urem.html: Added.
+        * JSBench/amazon-chrome-win/urem.js: Added.
+        * JSBench/amazon-chrome/urem.html: Added.
+        * JSBench/amazon-chrome/urem.js: Added.
+        * JSBench/amazon-firefox-win/urm.html: Added.
+        * JSBench/amazon-firefox-win/urm.js: Added.
+        * JSBench/amazon-firefox/urm.html: Added.
+        * JSBench/amazon-firefox/urm.js: Added.
+        * JSBench/amazon-safari/urem.html: Added.
+        * JSBench/amazon-safari/urem.js: Added.
+        * JSBench/browsercheck.js: Added.
+        * JSBench/facebook-chrome-win/urem.html: Added.
+        * JSBench/facebook-chrome-win/urem.js: Added.
+        * JSBench/facebook-chrome/urem.html: Added.
+        * JSBench/facebook-chrome/urem.js: Added.
+        * JSBench/facebook-firefox-win/urem.html: Added.
+        * JSBench/facebook-firefox-win/urem.js: Added.
+        * JSBench/facebook-firefox/urem.html: Added.
+        * JSBench/facebook-firefox/urem.js: Added.
+        * JSBench/facebook-safari/urem.html: Added.
+        * JSBench/facebook-safari/urem.js: Added.
+        * JSBench/google-chrome-win/urem.html: Added.
+        * JSBench/google-chrome-win/urem.js: Added.
+        * JSBench/google-chrome/urem.html: Added.
+        * JSBench/google-chrome/urem.js: Added.
+        * JSBench/google-firefox-win/urem.html: Added.
+        * JSBench/google-firefox-win/urem.js: Added.
+        * JSBench/google-firefox/uem.html: Added.
+        * JSBench/google-firefox/uem.js: Added.
+        * JSBench/google-safari/urem.html: Added.
+        * JSBench/google-safari/urem.js: Added.
+        * JSBench/harness.html: Added.
+        * JSBench/harness.js: Added.
+        * JSBench/harness.py: Added.
+        * JSBench/index.html: Added.
+        * JSBench/reload.html: Added.
+        * JSBench/twitter-chrome-win/rem.html: Added.
+        * JSBench/twitter-chrome-win/rem.js: Added.
+        * JSBench/twitter-chrome/urem.html: Added.
+        * JSBench/twitter-chrome/urem.js: Added.
+        * JSBench/twitter-firefox-win/urem.html: Added.
+        * JSBench/twitter-firefox-win/urem.js: Added.
+        * JSBench/twitter-firefox/urem.html: Added.
+        * JSBench/twitter-firefox/urem.js: Added.
+        * JSBench/twitter-safari/urem.html: Added.
+        * JSBench/twitter-safari/urem.js: Added.
+        * JSBench/yahoo-chrome-win/urem.html: Added.
+        * JSBench/yahoo-chrome-win/urem.js: Added.
+        * JSBench/yahoo-chrome/urem.html: Added.
+        * JSBench/yahoo-chrome/urem.js: Added.
+        * JSBench/yahoo-firefox-win/urem.html: Added.
+        * JSBench/yahoo-firefox-win/urem.js: Added.
+        * JSBench/yahoo-firefox/urem.html: Added.
+        * JSBench/yahoo-firefox/urem.js: Added.
+        * JSBench/yahoo-safari/urem.html: Added.
+        * JSBench/yahoo-safari/urem.js: Added.
+
 2016-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-benchmark's results should contain Animometer's debug output
