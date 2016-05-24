@@ -1,3 +1,18 @@
+2016-05-23  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null popstate event fired when navigating back to a cached page with a stateless history entry
+        https://bugs.webkit.org/show_bug.cgi?id=157963
+        <rdar://problem/23414840>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/loader/stateobjects/no-popstate-when-back-to-stateless-entry-expected.txt: Added.
+        * fast/loader/stateobjects/no-popstate-when-back-to-stateless-entry-with-page-cache-expected.txt: Added.
+        * fast/loader/stateobjects/no-popstate-when-back-to-stateless-entry-with-page-cache.html: Added.
+        * fast/loader/stateobjects/no-popstate-when-back-to-stateless-entry.html: Added.
+        * fast/loader/stateobjects/resources/no-popstate-when-back-to-stateless-entry-1.html: Added.
+        * fast/loader/stateobjects/resources/no-popstate-when-back-to-stateless-entry-2.html: Added.
+
 2016-05-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/console/console-time.html as a flaky timeout

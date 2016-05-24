@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="description"></div>
+<pre id="console"></pre>
+<script>
+description('No popstate event should be fired when WebKit navigates back to a stateless history entry with page cached.');
+
+var testWindow;
+
+onload = function()
+{
+    if (window.testRunner) {
+        testRunner.setCanOpenWindows();
+        testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
+    }
+    testWindow = window.open('resources/no-popstate-when-back-to-stateless-entry-1.html');
+    if (!testWindow)
+        testFailed('Could not open test window');
+}
+
+var testWindowLoadFireCount = 0;
+
+function onTestWindowLoad(event)
+{
+    debug('load fired');
+    testWindowLoadFireCount++;
+
+    switch (testWindowLoadFireCount) {
+    case 1:
+        debug('going to page 2');
+        // Set the location in a timeout to generate a history entry
+        setTimeout(function() {testWindow.location.href = 'resources/no-popstate-when-back-to-stateless-entry-2.html';}, 0);
+        break;
+    case 2:
+        debug('going back to page 1');
+        setTimeout(function() {testWindow.history.back();}, 0);
+        setTimeout(timeOut, 5);
+        break;
+    default:
+        testFailed('unexpected load event state');
+        break;
+    }
+}
+
+function onTestWindowPopState(event)
+{
+    testFailed('unexpected pop state event state');
+}
+
+function timeOut()
+{
+    if (testWindow.document.body.id == "1") {
+        debug('back at page 1');
+        testWindow.close();
+        finishJSTest();
+    } else
+        setTimeout(timeOut, 5);
+}
+
+var jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

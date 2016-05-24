@@ -127,7 +127,8 @@ void CachedFrameBase::restore()
     m_document->enqueuePageshowEvent(PageshowEventPersisted);
 
     HistoryItem* historyItem = frame.loader().history().currentItem();
-    m_document->enqueuePopstateEvent(historyItem && historyItem->stateObject() ? historyItem->stateObject() : SerializedScriptValue::nullValue());
+    if (historyItem && historyItem->stateObject())
+        m_document->enqueuePopstateEvent(historyItem->stateObject());
 
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     if (m_document->hasTouchEventHandlers())

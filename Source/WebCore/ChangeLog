@@ -1,3 +1,23 @@
+2016-05-23  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null popstate event fired when navigating back to a cached page with a stateless history entry
+        https://bugs.webkit.org/show_bug.cgi?id=157963
+        <rdar://problem/23414840>
+
+        Popstate events are not fired when WebKit navigates back to a history entry that doesn't
+        have a state object if the entry's page is not cached. However, we fire popstate events
+        unconditionally if the page is cached. This results in inconsistent behavior between
+        initial navigations and cached navigations. Align the behavior of initial and cached
+        navigations so that we produce consistent events.
+
+        Reviewed by Brent Fulgham.
+
+        Tests: fast/loader/stateobjects/no-popstate-when-back-to-stateless-entry-with-page-cache.html
+               fast/loader/stateobjects/no-popstate-when-back-to-stateless-entry.html
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+
 2016-05-23  Chris Dumez  <cdumez@apple.com>
 
         Generate bindings code for EventTarget.addEventListener() / removeEventListener()
