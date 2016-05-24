@@ -1,3 +1,27 @@
+2016-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some applications truncates the last closing parenthesis in perf dashboard URL
+        https://bugs.webkit.org/show_bug.cgi?id=157976
+
+        Reviewed by Tim Horton.
+
+        Unfortunately, different applications use different heuristics to determine the end of each URL. Two trailing
+        parentheses, for example, is just fine in Radar as well as Apple Mail if the URL is short enough. Using other
+        characters such as ] and } wouldn't work either because they would be %-escaped. At that point, we might as well
+        as %-escape everything.
+
+        Work around the bug by parsing the URL as if it had one extra ')' if the parsing had failed. Also shorten the charts
+        page's URL by avoid emitting "-null" for each pane when the pane doesn't have a currently selected point or selection.
+        This improves the odds of the entire URL being recognized by various applications.
+
+        We could, in theory, implement some sort of a URL shorter but that can wait until when we support real user accounts.
+
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype.serializeState): Don't serialize the selection or the current point if nothing is selected.
+        * public/v3/pages/page-router.js:
+        (PageRouter.prototype._deserializeHashQueryValue): Try parsing the value again with one extra ] at the end if
+        the JSON parsing had failed.
+
 2016-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard "Add pane" should list first by test, then by machine

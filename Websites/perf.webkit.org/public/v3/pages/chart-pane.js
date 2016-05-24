@@ -15,13 +15,15 @@ class ChartPane extends ChartPaneBase {
 
     serializeState()
     {
-        var selection = this._mainChart ? this._mainChart.currentSelection() : null;
-        var point = this._mainChart ? this._mainChart.currentPoint() : null;
-        return [
-            this._platformId,
-            this._metricId,
-            selection || (point && this._mainChartIndicatorWasLocked ? point.id : null),
-        ];
+        var state = [this._platformId, this._metricId];
+        if (this._mainChart) {
+            var selection = this._mainChart.currentSelection();
+            if (selection)
+                state[2] = selection;
+            else if (this._mainChartIndicatorWasLocked)
+                state[2] = this._mainChart.currentPoint().id;
+        }
+        return state;
     }
 
     updateFromSerializedState(state, isOpen)
