@@ -1,3 +1,86 @@
+2016-05-23  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize CSS code
+        https://bugs.webkit.org/show_bug.cgi?id=157875
+
+        Reviewed by Chris Dumez.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        (WebCore::setJSTestObjPutForwardsNullableAttribute):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackFunctionArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArg):
+        (WebCore::jsTestObjConstructorFunctionStaticMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod5):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+        * css/CSSBasicShapes.cpp:
+        (WebCore::serializePositionOffset):
+        (WebCore::buildSerializablePositionOffset):
+        (WebCore::CSSBasicShapeCircle::cssText):
+        (WebCore::CSSBasicShapeEllipse::cssText):
+        * css/CSSCalculationValue.cpp:
+        (WebCore::determineCategory):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::media):
+        * css/CSSMediaRule.h:
+        * css/CSSOMUtils.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createMediaRule):
+        * css/CSSReflectValue.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::setDisabled):
+        (WebCore::CSSStyleSheet::setMediaQueries):
+        (WebCore::CSSStyleSheet::insertRule):
+        (WebCore::CSSStyleSheet::deleteRule):
+        (WebCore::CSSStyleSheet::isLoading):
+        (WebCore::CSSStyleSheet::media):
+        (WebCore::CSSStyleSheet::parentStyleSheet):
+        (WebCore::CSSStyleSheet::ownerDocument):
+        (WebCore::CSSStyleSheet::clearChildRuleCSSOMWrappers):
+        (WebCore::CSSStyleSheet::RuleMutationScope::RuleMutationScope):
+        * css/CSSStyleSheet.h:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleGroup::wrapperRemoveRule):
+        (WebCore::StyleRuleMedia::StyleRuleMedia):
+        * css/StyleRule.h:
+        (WebCore::StyleRuleBase::deref):
+        (WebCore::StyleRuleBase::StyleRuleBase):
+        (WebCore::StyleRuleMedia::create):
+        (WebCore::StyleRuleMedia::mediaQueries):
+        (WebCore::StyleRuleMedia::copy):
+        (isType):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::create):
+        (WebCore::StyleRuleImport::StyleRuleImport):
+        * css/StyleRuleImport.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::isCacheable):
+        (WebCore::StyleSheetContents::parserAppendRule):
+        (WebCore::StyleSheetContents::ruleAt):
+        (WebCore::StyleSheetContents::parserSetEncodingFromCharsetRule):
+        (WebCore::StyleSheetContents::wrapperInsertRule):
+        * css/StyleSheetContents.h:
+        (WebCore::StyleSheetContents::hasSyntacticallyValidCSSHeader):
+        (WebCore::StyleSheetContents::parserSetUsesRemUnits):
+        (WebCore::StyleSheetContents::parserSetUsesStyleBasedEditability):
+        (WebCore::StyleSheetContents::copy):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        * inspector/InspectorStyleSheet.cpp:
+
 2016-05-23  Zalan Bujtas  <zalan@apple.com>
 
         Changing border color and size simultaneously fails to repaint.

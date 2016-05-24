@@ -129,13 +129,13 @@ bool StyleSheetContents::isCacheable() const
     return true;
 }
 
-void StyleSheetContents::parserAppendRule(PassRefPtr<StyleRuleBase> rule)
+void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
 {
     ASSERT(!rule->isCharsetRule());
-    if (is<StyleRuleImport>(*rule)) {
+    if (is<StyleRuleImport>(rule)) {
         // Parser enforces that @import rules come before anything else except @charset.
         ASSERT(m_childRules.isEmpty());
-        m_importRules.append(downcast<StyleRuleImport>(rule.get()));
+        m_importRules.append(downcast<StyleRuleImport>(rule.ptr()));
         m_importRules.last()->setParentStyleSheet(this);
         m_importRules.last()->requestStyleSheet();
         return;
@@ -143,19 +143,19 @@ void StyleSheetContents::parserAppendRule(PassRefPtr<StyleRuleBase> rule)
 
 #if ENABLE(RESOLUTION_MEDIA_QUERY)
     // Add warning message to inspector if dpi/dpcm values are used for screen media.
-    if (is<StyleRuleMedia>(*rule))
-        reportMediaQueryWarningIfNeeded(singleOwnerDocument(), downcast<StyleRuleMedia>(*rule).mediaQueries());
+    if (is<StyleRuleMedia>(rule))
+        reportMediaQueryWarningIfNeeded(singleOwnerDocument(), downcast<StyleRuleMedia>(rule.get()).mediaQueries());
 #endif
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
     // If we're adding a rule with a huge number of selectors, split it up into multiple rules
-    if (is<StyleRule>(*rule) && downcast<StyleRule>(*rule).selectorList().componentCount() > RuleData::maximumSelectorComponentCount) {
-        Vector<RefPtr<StyleRule>> rules = downcast<StyleRule>(*rule).splitIntoMultipleRulesWithMaximumSelectorComponentCount(RuleData::maximumSelectorComponentCount);
+    if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > RuleData::maximumSelectorComponentCount) {
+        Vector<RefPtr<StyleRule>> rules = downcast<StyleRule>(rule.get()).splitIntoMultipleRulesWithMaximumSelectorComponentCount(RuleData::maximumSelectorComponentCount);
         m_childRules.appendVector(rules);
         return;
     }
 
-    m_childRules.append(rule);
+    m_childRules.append(WTFMove(rule));
 }
 
 StyleRuleBase* StyleSheetContents::ruleAt(unsigned index) const
@@ -207,7 +207,7 @@ void StyleSheetContents::parserSetEncodingFromCharsetRule(const String& encoding
     m_encodingFromCharsetRule = encoding; 
 }
 
-bool StyleSheetContents::wrapperInsertRule(PassRefPtr<StyleRuleBase> rule, unsigned index)
+bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned index)
 {
     ASSERT(m_isMutable);
     ASSERT_WITH_SECURITY_IMPLICATION(index <= ruleCount());
@@ -226,24 +226,24 @@ bool StyleSheetContents::wrapperInsertRule(PassRefPtr<StyleRuleBase> rule, unsig
     
     if (childVectorIndex < m_importRules.size() || (childVectorIndex == m_importRules.size() && rule->isImportRule())) {
         // Inserting non-import rule before @import is not allowed.
-        if (!is<StyleRuleImport>(*rule))
+        if (!is<StyleRuleImport>(rule))
             return false;
-        m_importRules.insert(childVectorIndex, downcast<StyleRuleImport>(rule.get()));
+        m_importRules.insert(childVectorIndex, downcast<StyleRuleImport>(rule.ptr()));
         m_importRules[childVectorIndex]->setParentStyleSheet(this);
         m_importRules[childVectorIndex]->requestStyleSheet();
         // FIXME: Stylesheet doesn't actually change meaningfully before the imported sheets are loaded.
         return true;
     }
     // Inserting @import rule after a non-import rule is not allowed.
-    if (is<StyleRuleImport>(*rule))
+    if (is<StyleRuleImport>(rule))
         return false;
     childVectorIndex -= m_importRules.size();
 
     // If the number of selectors would overflow RuleData, we drop the operation.
-    if (is<StyleRule>(*rule) && downcast<StyleRule>(*rule).selectorList().componentCount() > RuleData::maximumSelectorComponentCount)
+    if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > RuleData::maximumSelectorComponentCount)
         return false;
 
-    m_childRules.insert(childVectorIndex, rule);
+    m_childRules.insert(childVectorIndex, WTFMove(rule));
     return true;
 }
 

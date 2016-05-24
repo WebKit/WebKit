@@ -32,6 +32,7 @@
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
 #include "CSSUnknownRule.h"
+#include "MediaList.h"
 #include "StyleProperties.h"
 #include "StyleRuleImport.h"
 #include "WebKitCSSRegionRule.h"
@@ -45,14 +46,14 @@ struct SameSizeAsStyleRuleBase : public WTF::RefCountedBase {
 
 COMPILE_ASSERT(sizeof(StyleRuleBase) == sizeof(SameSizeAsStyleRuleBase), StyleRuleBase_should_stay_small);
 
-PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet) const
+RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet) const
 {
-    return createCSSOMWrapper(parentSheet, 0);
+    return createCSSOMWrapper(parentSheet, nullptr);
 }
 
-PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSRule* parentRule) const
+RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSRule* parentRule) const
 { 
-    return createCSSOMWrapper(0, parentRule);
+    return createCSSOMWrapper(nullptr, parentRule);
 }
 
 void StyleRuleBase::destroy()
@@ -329,9 +330,9 @@ void StyleRuleGroup::wrapperRemoveRule(unsigned index)
 }
 
 
-StyleRuleMedia::StyleRuleMedia(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<StyleRuleBase>>& adoptRules)
+StyleRuleMedia::StyleRuleMedia(Ref<MediaQuerySet>&& media, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     : StyleRuleGroup(Media, adoptRules)
-    , m_mediaQueries(media)
+    , m_mediaQueries(WTFMove(media))
 {
 }
 

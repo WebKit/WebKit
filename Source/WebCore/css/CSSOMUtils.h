@@ -28,12 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSOMUtils_h
-#define CSSOMUtils_h
+#pragma once
 
-#include <unicode/utypes.h>
+#include <unicode/umachine.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 // Utilities for CSSOM http://dev.w3.org/csswg/cssom/
 
@@ -46,5 +44,3 @@ void serializeIdentifier(const String& identifier, StringBuilder&);
 void serializeString(const String&, StringBuilder&);
 
 } // namespace WebCore
-
-#endif // CSSOMUtils_h

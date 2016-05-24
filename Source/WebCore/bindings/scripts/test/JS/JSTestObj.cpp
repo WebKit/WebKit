@@ -1015,10 +1015,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecStat
         return throwVMError(state, createNotEnoughArgumentsError(state));
     if (UNLIKELY(!state->argument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, 0, "testCallback", "TestObj", nullptr);
-    RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
+    auto testCallback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     if (UNLIKELY(!state->argument(1).isFunction()))
         return throwArgumentMustBeFunctionError(*state, 1, "testCallbackFunction", "TestObj", nullptr);
-    RefPtr<TestCallbackFunction> testCallbackFunction = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
+    auto testCallbackFunction = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
     auto object = TestObj::create(*testCallback, *testCallbackFunction);
     return JSValue::encode(asObject(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object))));
 }
@@ -3852,7 +3852,7 @@ bool setJSTestObjPutForwardsNullableAttribute(ExecState* state, EncodedJSValue t
     if (UNLIKELY(!castedThis)) {
         return throwSetterTypeError(*state, "TestObj", "putForwardsNullableAttribute");
     }
-    RefPtr<TestNode> forwardedImpl = castedThis->wrapped().putForwardsNullableAttribute();
+    auto forwardedImpl = castedThis->wrapped().putForwardsNullableAttribute();
     if (!forwardedImpl)
         return false;
     auto& impl = *forwardedImpl;
@@ -5021,7 +5021,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
         return throwVMError(state, createNotEnoughArgumentsError(state));
     if (UNLIKELY(!state->argument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "methodWithCallbackArg");
-    RefPtr<TestCallback> callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
+    auto callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     impl.methodWithCallbackArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
@@ -5041,7 +5041,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!state->argument(1).isObject()))
         return throwArgumentMustBeFunctionError(*state, 1, "callback", "TestObj", "methodWithNonCallbackArgAndCallbackArg");
-    RefPtr<TestCallback> callback = JSTestCallback::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
+    auto callback = JSTestCallback::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
     impl.methodWithNonCallbackArgAndCallbackArg(WTFMove(nonCallback), WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
@@ -5076,7 +5076,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctio
         return throwVMError(state, createNotEnoughArgumentsError(state));
     if (UNLIKELY(!state->argument(0).isFunction()))
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "methodWithCallbackFunctionArg");
-    RefPtr<TestCallbackFunction> callback = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
+    auto callback = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     impl.methodWithCallbackFunctionArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
@@ -5096,7 +5096,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!state->argument(1).isFunction()))
         return throwArgumentMustBeFunctionError(*state, 1, "callback", "TestObj", "methodWithNonCallbackArgAndCallbackFunctionArg");
-    RefPtr<TestCallbackFunction> callback = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
+    auto callback = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
     impl.methodWithNonCallbackArgAndCallbackFunctionArg(WTFMove(nonCallback), WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
@@ -5137,7 +5137,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
         return throwVMError(state, createNotEnoughArgumentsError(state));
     if (UNLIKELY(!state->argument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "staticMethodWithCallbackArg");
-    RefPtr<TestCallback> callback = createFunctionOnlyCallback<JSTestCallback>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument(0));
+    auto callback = createFunctionOnlyCallback<JSTestCallback>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument(0));
     TestObj::staticMethodWithCallbackArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
@@ -5269,7 +5269,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5(ExecSta
         return throwVMError(state, createNotEnoughArgumentsError(state));
     if (UNLIKELY(!state->argument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "overloadedMethod");
-    RefPtr<TestCallback> callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
+    auto callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     impl.overloadedMethod(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }

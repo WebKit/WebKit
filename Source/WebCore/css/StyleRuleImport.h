@@ -36,7 +36,7 @@ class StyleSheetContents;
 class StyleRuleImport : public StyleRuleBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StyleRuleImport> create(const String& href, PassRefPtr<MediaQuerySet>);
+    static Ref<StyleRuleImport> create(const String& href, Ref<MediaQuerySet>&&);
 
     ~StyleRuleImport();
     
@@ -70,7 +70,7 @@ private:
     void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet*);
     friend class ImportedStyleSheetClient;
 
-    StyleRuleImport(const String& href, PassRefPtr<MediaQuerySet>);
+    StyleRuleImport(const String& href, Ref<MediaQuerySet>&&);
 
     StyleSheetContents* m_parentStyleSheet;
 

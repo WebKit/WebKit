@@ -45,6 +45,7 @@
 #include "HTMLStyleElement.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorPageAgent.h"
+#include "MediaList.h"
 #include "Node.h"
 #include "SVGElement.h"
 #include "SVGNames.h"

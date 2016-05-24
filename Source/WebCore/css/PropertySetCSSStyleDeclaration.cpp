@@ -24,6 +24,7 @@
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSParser.h"
+#include "CSSRule.h"
 #include "CSSStyleSheet.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"

@@ -12805,7 +12805,7 @@ RefPtr<StyleRuleImport> CSSParser::createImportRule(const CSSParserString& url, 
         popRuleData();
         return nullptr;
     }
-    auto rule = StyleRuleImport::create(url, media);
+    auto rule = StyleRuleImport::create(url, media.releaseNonNull());
     processAndAddNewRuleToSourceTreeIfNeeded();
     return WTFMove(rule);
 }
@@ -12820,7 +12820,7 @@ Ref<StyleRuleMedia> CSSParser::createMediaRule(RefPtr<MediaQuerySet>&& media, Ru
         // even when it is syntactically incorrect.
         rule = StyleRuleMedia::create(MediaQuerySet::create(), emptyRules);
     } else
-        rule = StyleRuleMedia::create(media, rules ? *rules : emptyRules);
+        rule = StyleRuleMedia::create(media.releaseNonNull(), rules ? *rules : emptyRules);
     processAndAddNewRuleToSourceTreeIfNeeded();
     return rule.releaseNonNull();
 }

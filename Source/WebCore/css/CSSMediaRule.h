@@ -20,14 +20,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSMediaRule_h
-#define CSSMediaRule_h
+#pragma once
 
 #include "CSSGroupingRule.h"
-#include "MediaList.h"
 
 namespace WebCore {
 
+class MediaList;
 class StyleRuleMedia;
 
 class CSSMediaRule final : public CSSGroupingRule {
@@ -54,5 +53,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSMediaRule, CSSRule::MEDIA_RULE)
-
-#endif // CSSMediaRule_h

@@ -2705,7 +2705,7 @@ sub GenerateImplementation
                     my $jsType = NativeToJSValue($attribute->signature, 0, $interface, "${functionName}(" . join(", ", @arguments) . ")", "castedThis");
                     push(@implContent, "    auto& impl = castedThis->wrapped();\n") if !$attribute->isStatic;
                     if ($codeGenerator->IsSVGAnimatedType($type)) {
-                        push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
+                        push(@implContent, "    auto obj = $jsType;\n");
                         push(@implContent, "    JSValue result = toJS(state, castedThis->globalObject(), obj.get());\n");
                     } else {
                         push(@implContent, "    JSValue result = $jsType;\n");
@@ -2918,7 +2918,7 @@ sub GenerateImplementation
                     if ($putForwards) {
                         my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
                         if ($attribute->signature->isNullable) {
-                            push(@implContent, "    RefPtr<${type}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
+                            push(@implContent, "    auto forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
                             push(@implContent, "    if (!forwardedImpl)\n");
                             push(@implContent, "        return false;\n");
                             push(@implContent, "    auto& impl = *forwardedImpl;\n");
@@ -3659,9 +3659,9 @@ sub GenerateParametersCheck
                 push(@$outputArray, "        return throwArgumentMustBeFunctionError(*state, $argumentIndex, \"$name\", \"$interfaceName\", $quotedFunctionName);\n");
                 if ($function->isStatic) {
                     AddToImplIncludes("CallbackFunction.h");
-                    push(@$outputArray, "    RefPtr<$type> $name = createFunctionOnlyCallback<${callbackClassName}>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument($argumentIndex));\n");
+                    push(@$outputArray, "    auto $name = createFunctionOnlyCallback<${callbackClassName}>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument($argumentIndex));\n");
                 } else {
-                    push(@$outputArray, "    RefPtr<$type> $name = ${callbackClassName}::create(asObject(state->uncheckedArgument($argumentIndex)), castedThis->globalObject());\n");
+                    push(@$outputArray, "    auto $name = ${callbackClassName}::create(asObject(state->uncheckedArgument($argumentIndex)), castedThis->globalObject());\n");
                 }
             }
             $value = "WTFMove($name)";

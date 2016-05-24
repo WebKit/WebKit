@@ -28,23 +28,24 @@
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
 #include "Document.h"
+#include "MediaList.h"
 #include "SecurityOrigin.h"
 #include "StyleSheetContents.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-Ref<StyleRuleImport> StyleRuleImport::create(const String& href, PassRefPtr<MediaQuerySet> media)
+Ref<StyleRuleImport> StyleRuleImport::create(const String& href, Ref<MediaQuerySet>&& media)
 {
-    return adoptRef(*new StyleRuleImport(href, media));
+    return adoptRef(*new StyleRuleImport(href, WTFMove(media)));
 }
 
-StyleRuleImport::StyleRuleImport(const String& href, PassRefPtr<MediaQuerySet> media)
+StyleRuleImport::StyleRuleImport(const String& href, Ref<MediaQuerySet>&& media)
     : StyleRuleBase(Import, 0)
     , m_parentStyleSheet(0)
     , m_styleSheetClient(this)
     , m_strHref(href)
-    , m_mediaQueries(media)
+    , m_mediaQueries(WTFMove(media))
     , m_cachedSheet(0)
     , m_loading(false)
 {
