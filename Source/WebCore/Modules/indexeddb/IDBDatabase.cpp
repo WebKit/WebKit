@@ -49,7 +49,7 @@ Ref<IDBDatabase> IDBDatabase::create(ScriptExecutionContext& context, IDBClient:
 }
 
 IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, const IDBResultData& resultData)
-    : WebCore::ActiveDOMObject(&context)
+    : IDBActiveDOMObject(&context)
     , m_connectionProxy(connectionProxy)
     , m_info(resultData.databaseInfo())
     , m_databaseConnectionIdentifier(resultData.databaseConnectionIdentifier())
@@ -61,31 +61,31 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBClient::IDBConnecti
 
 IDBDatabase::~IDBDatabase()
 {
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
     m_connectionProxy->unregisterDatabaseConnection(*this);
 }
 
 bool IDBDatabase::hasPendingActivity() const
 {
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
     return !m_closedInServer;
 }
 
 const String IDBDatabase::name() const
 {
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
     return m_info.name();
 }
 
 uint64_t IDBDatabase::version() const
 {
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
     return m_info.version();
 }
 
 RefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
 {
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
     for (auto& name : m_info.objectStoreNames())
@@ -104,7 +104,7 @@ RefPtr<WebCore::IDBObjectStore> IDBDatabase::createObjectStore(const String& nam
 {
     LOG(IndexedDB, "IDBDatabase::createObjectStore - (%s %s)", m_info.name().utf8().data(), name.utf8().data());
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
     ASSERT(!m_versionChangeTransaction || m_versionChangeTransaction->isVersionChange());
 
     if (!m_versionChangeTransaction) {
@@ -150,7 +150,7 @@ RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*
 {
     LOG(IndexedDB, "IDBDatabase::transaction");
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     if (m_closePending) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -201,7 +201,7 @@ RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*
 
 RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const String& objectStore, const String& mode, ExceptionCodeWithMessage& ec)
 {
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     Vector<String> objectStores(1);
     objectStores[0] = objectStore;
@@ -212,7 +212,7 @@ void IDBDatabase::deleteObjectStore(const String& objectStoreName, ExceptionCode
 {
     LOG(IndexedDB, "IDBDatabase::deleteObjectStore");
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     if (!m_versionChangeTransaction) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -239,7 +239,7 @@ void IDBDatabase::close()
 {
     LOG(IndexedDB, "IDBDatabase::close - %" PRIu64, m_databaseConnectionIdentifier);
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     m_closePending = true;
     maybeCloseInServer();
@@ -249,7 +249,7 @@ void IDBDatabase::didCloseFromServer(const IDBError& error)
 {
     LOG(IndexedDB, "IDBDatabase::didCloseFromServer - %" PRIu64, m_databaseConnectionIdentifier);
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     m_closePending = true;
     m_closedInServer = true;
@@ -268,7 +268,7 @@ void IDBDatabase::maybeCloseInServer()
 {
     LOG(IndexedDB, "IDBDatabase::maybeCloseInServer - %" PRIu64, m_databaseConnectionIdentifier);
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     if (m_closedInServer)
         return;
@@ -285,13 +285,13 @@ void IDBDatabase::maybeCloseInServer()
 
 const char* IDBDatabase::activeDOMObjectName() const
 {
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
     return "IDBDatabase";
 }
 
 bool IDBDatabase::canSuspendForDocumentSuspension() const
 {
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     // FIXME: This value will sometimes be false when database operations are actually in progress.
     // Such database operations do not yet exist.
@@ -302,7 +302,7 @@ void IDBDatabase::stop()
 {
     LOG(IndexedDB, "IDBDatabase::stop - %" PRIu64, m_databaseConnectionIdentifier);
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     removeAllEventListeners();
 
@@ -325,7 +325,7 @@ Ref<IDBTransaction> IDBDatabase::startVersionChangeTransaction(const IDBTransact
 {
     LOG(IndexedDB, "IDBDatabase::startVersionChangeTransaction %s", info.identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
     ASSERT(!m_versionChangeTransaction);
     ASSERT(info.mode() == IndexedDB::TransactionMode::VersionChange);
     ASSERT(!m_closePending);
@@ -343,7 +343,7 @@ void IDBDatabase::didStartTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::didStartTransaction %s", transaction.info().identifier().loggingString().utf8().data());
     ASSERT(!m_versionChangeTransaction);
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     // It is possible for the client to have aborted a transaction before the server replies back that it has started.
     if (m_abortingTransactions.contains(transaction.info().identifier()))
@@ -356,7 +356,7 @@ void IDBDatabase::willCommitTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::willCommitTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
     ASSERT(refTransaction);
@@ -367,7 +367,7 @@ void IDBDatabase::didCommitTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::didCommitTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     if (m_versionChangeTransaction == &transaction)
         m_info.setVersion(transaction.info().newVersion());
@@ -379,7 +379,7 @@ void IDBDatabase::willAbortTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::willAbortTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
     if (!refTransaction)
@@ -399,7 +399,7 @@ void IDBDatabase::didAbortTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::didAbortTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     if (transaction.isVersionChange()) {
         ASSERT(transaction.originalDatabaseInfo());
@@ -415,7 +415,7 @@ void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::didCommitOrAbortTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     if (m_versionChangeTransaction == &transaction)
         m_versionChangeTransaction = nullptr;
@@ -445,7 +445,7 @@ void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIde
     uint64_t currentVersion = m_info.version();
     LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %" PRIu64 ", requested version %" PRIu64 ", connection %" PRIu64, currentVersion, requestedVersion, m_databaseConnectionIdentifier);
 
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     if (!scriptExecutionContext() || m_closePending) {
         connectionProxy().didFireVersionChangeEvent(m_databaseConnectionIdentifier, requestIdentifier);
@@ -460,7 +460,7 @@ void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIde
 bool IDBDatabase::dispatchEvent(Event& event)
 {
     LOG(IndexedDB, "IDBDatabase::dispatchEvent (%" PRIu64 ")", m_databaseConnectionIdentifier);
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     bool result = EventTargetWithInlineData::dispatchEvent(event);
 
@@ -472,7 +472,7 @@ bool IDBDatabase::dispatchEvent(Event& event)
 
 void IDBDatabase::didCreateIndexInfo(const IDBIndexInfo& info)
 {
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     auto* objectStore = m_info.infoForExistingObjectStore(info.objectStoreIdentifier());
     ASSERT(objectStore);
@@ -481,7 +481,7 @@ void IDBDatabase::didCreateIndexInfo(const IDBIndexInfo& info)
 
 void IDBDatabase::didDeleteIndexInfo(const IDBIndexInfo& info)
 {
-    ASSERT(currentThread() == m_originThreadID);
+    ASSERT(currentThread() == originThreadID());
 
     auto* objectStore = m_info.infoForExistingObjectStore(info.objectStoreIdentifier());
     ASSERT(objectStore);

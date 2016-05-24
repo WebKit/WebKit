@@ -44,11 +44,6 @@ TransactionOperation::TransactionOperation(IDBTransaction& transaction, IDBReque
         m_cursorIdentifier = std::make_unique<IDBResourceIdentifier>(cursor->info().identifier());
 }
 
-ScriptExecutionContext* TransactionOperation::scriptExecutionContext() const
-{
-    return m_transaction->scriptExecutionContext();
-}
-
 } // namespace IDBClient
 } // namespace WebCore
 

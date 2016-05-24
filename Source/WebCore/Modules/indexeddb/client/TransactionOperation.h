@@ -31,7 +31,9 @@
 #include "IDBRequest.h"
 #include "IDBRequestData.h"
 #include "IDBResourceIdentifier.h"
+#include "IDBResultData.h"
 #include "IDBTransaction.h"
+#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -60,6 +62,16 @@ public:
         m_performFunction = { };
     }
 
+    void performCompleteOnOriginThread(const IDBResultData& data)
+    {
+        ASSERT(isMainThread());
+
+        if (m_originThreadID == currentThread())
+            completed(data);
+        else
+            m_transaction->performCallbackOnOriginThread(*this, &TransactionOperation::completed, data);
+    }
+
     void completed(const IDBResultData& data)
     {
         ASSERT(m_originThreadID == currentThread());
@@ -76,8 +88,6 @@ public:
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
 
     ThreadIdentifier originThreadID() const { return m_originThreadID; }
-
-    ScriptExecutionContext* scriptExecutionContext() const;
 
 protected:
     TransactionOperation(IDBTransaction& transaction)

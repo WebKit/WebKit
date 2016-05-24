@@ -123,7 +123,7 @@ Ref<IDBTransaction> IDBTransaction::create(IDBDatabase& database, const IDBTrans
 }
 
 IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& info, IDBOpenDBRequest* request)
-    : WebCore::ActiveDOMObject(database.scriptExecutionContext())
+    : IDBActiveDOMObject(database.scriptExecutionContext())
     , m_database(database)
     , m_info(info)
     , m_operationTimer(*this, &IDBTransaction::operationTimerFired)
@@ -1089,11 +1089,6 @@ void IDBTransaction::deactivate()
         m_state = IndexedDB::TransactionState::Inactive;
 
     scheduleOperationTimer();
-}
-
-ThreadIdentifier IDBTransaction::originThreadID() const
-{
-    return m_database->originThreadID();
 }
 
 void IDBTransaction::connectionClosedFromServer(const IDBError& error)

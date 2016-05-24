@@ -27,8 +27,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "IDBActiveDOMObject.h"
 #include "IDBError.h"
 #include "IDBResourceIdentifier.h"
 #include "IndexedDB.h"
@@ -52,7 +52,7 @@ class IDBConnectionProxy;
 class IDBConnectionToServer;
 }
 
-class IDBRequest : public EventTargetWithInlineData, private ActiveDOMObject, public RefCounted<IDBRequest> {
+class IDBRequest : public EventTargetWithInlineData, public IDBActiveDOMObject, public RefCounted<IDBRequest> {
 public:
     static Ref<IDBRequest> create(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
     static Ref<IDBRequest> create(ScriptExecutionContext&, IDBCursor&, IDBTransaction&);
@@ -103,8 +103,6 @@ public:
     IndexedDB::RequestType requestType() const { return m_requestType; }
 
     bool hasPendingActivity() const final;
-
-    ThreadIdentifier originThreadID() const { return m_originThreadID; }
 
 protected:
     IDBRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&);
@@ -173,8 +171,6 @@ private:
     std::unique_ptr<ScopeGuard> m_cursorRequestNotifier;
 
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
-
-    ThreadIdentifier m_originThreadID { currentThread() };
 };
 
 } // namespace WebCore

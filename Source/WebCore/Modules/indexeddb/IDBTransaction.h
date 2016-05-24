@@ -27,8 +27,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "IDBActiveDOMObject.h"
 #include "IDBError.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBTransactionInfo.h"
@@ -59,7 +59,7 @@ class IDBConnectionProxy;
 class TransactionOperation;
 }
 
-class IDBTransaction : public ThreadSafeRefCounted<IDBTransaction>, public EventTargetWithInlineData, private ActiveDOMObject {
+class IDBTransaction : public ThreadSafeRefCounted<IDBTransaction>, public EventTargetWithInlineData, public IDBActiveDOMObject {
 public:
     static const AtomicString& modeReadOnly();
     static const AtomicString& modeReadWrite();
@@ -142,8 +142,6 @@ public:
     bool isFinished() const { return m_state == IndexedDB::TransactionState::Finished; }
 
     IDBClient::IDBConnectionProxy& connectionProxy();
-
-    ThreadIdentifier originThreadID() const;
 
     void connectionClosedFromServer(const IDBError&);
 

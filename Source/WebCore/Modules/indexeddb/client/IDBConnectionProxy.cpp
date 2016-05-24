@@ -41,23 +41,6 @@
 namespace WebCore {
 namespace IDBClient {
 
-template<typename T, typename... Parameters, typename... Arguments>
-void performCallbackOnCorrectThread(T& object, void (T::*method)(Parameters...), Arguments&&... arguments)
-{
-    ASSERT(isMainThread());
-
-    if (object.originThreadID() == currentThread()) {
-        (object.*method)(arguments...);
-        return;
-    }
-
-    ScriptExecutionContext* context = object.scriptExecutionContext();
-    if (!context)
-        return;
-
-    context->postCrossThreadTask(object, method, arguments...);
-}
-
 IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection)
     : m_connectionToServer(connection)
     , m_serverConnectionIdentifier(connection.identifier())
@@ -142,7 +125,7 @@ void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
 
     ASSERT(request);
 
-    performCallbackOnCorrectThread(*request, &IDBOpenDBRequest::requestCompleted, resultData);
+    request->performCallbackOnOriginThread(*request, &IDBOpenDBRequest::requestCompleted, resultData);
 }
 
 void IDBConnectionProxy::createObjectStore(TransactionOperation& operation, const IDBObjectStoreInfo& info)
@@ -252,7 +235,7 @@ void IDBConnectionProxy::completeOperation(const IDBResultData& resultData)
     if (!operation)
         return;
 
-    performCallbackOnCorrectThread(*operation, &TransactionOperation::completed, resultData);
+    operation->performCompleteOnOriginThread(resultData);
 }
 
 void IDBConnectionProxy::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
@@ -271,7 +254,7 @@ void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdent
     if (!database)
         return;
 
-    performCallbackOnCorrectThread(*database, &IDBDatabase::fireVersionChangeEvent, requestIdentifier, requestedVersion);
+    database->performCallbackOnOriginThread(*database, &IDBDatabase::fireVersionChangeEvent, requestIdentifier, requestedVersion);
 }
 
 void IDBConnectionProxy::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
@@ -291,7 +274,7 @@ void IDBConnectionProxy::notifyOpenDBRequestBlocked(const IDBResourceIdentifier&
 
     ASSERT(request);
 
-    performCallbackOnCorrectThread(*request, &IDBOpenDBRequest::requestBlocked, oldVersion, newVersion);
+    request->performCallbackOnOriginThread(*request, &IDBOpenDBRequest::requestBlocked, oldVersion, newVersion);
 }
 
 void IDBConnectionProxy::openDBRequestCancelled(const IDBRequestData& requestData)
@@ -320,7 +303,7 @@ void IDBConnectionProxy::didStartTransaction(const IDBResourceIdentifier& transa
 
     ASSERT(transaction);
 
-    performCallbackOnCorrectThread(*transaction, &IDBTransaction::didStart, error);
+    transaction->performCallbackOnOriginThread(*transaction, &IDBTransaction::didStart, error);
 }
 
 void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction)
@@ -344,7 +327,7 @@ void IDBConnectionProxy::didCommitTransaction(const IDBResourceIdentifier& trans
 
     ASSERT(transaction);
 
-    performCallbackOnCorrectThread(*transaction, &IDBTransaction::didCommit, error);
+    transaction->performCallbackOnOriginThread(*transaction, &IDBTransaction::didCommit, error);
 }
 
 void IDBConnectionProxy::abortTransaction(IDBTransaction& transaction)
@@ -368,7 +351,7 @@ void IDBConnectionProxy::didAbortTransaction(const IDBResourceIdentifier& transa
 
     ASSERT(transaction);
 
-    performCallbackOnCorrectThread(*transaction, &IDBTransaction::didAbort, error);
+    transaction->performCallbackOnOriginThread(*transaction, &IDBTransaction::didAbort, error);
 }
 
 bool IDBConnectionProxy::hasRecordOfTransaction(const IDBTransaction& transaction) const
@@ -404,7 +387,7 @@ void IDBConnectionProxy::didCloseFromServer(uint64_t databaseConnectionIdentifie
         return;
     }
 
-    performCallbackOnCorrectThread(*database, &IDBDatabase::didCloseFromServer, error);
+    database->performCallbackOnOriginThread(*database, &IDBDatabase::didCloseFromServer, error);
 }
 
 void IDBConnectionProxy::confirmDidCloseFromServer(IDBDatabase& database)
