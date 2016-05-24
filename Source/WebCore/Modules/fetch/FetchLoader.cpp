@@ -68,7 +68,7 @@ void FetchLoader::start(ScriptExecutionContext& context, Blob& blob)
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     m_loader = ThreadableLoader::create(&context, this, request, options);
-    m_isStarted = true;
+    m_isStarted = m_loader;
 }
 
 void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
@@ -82,9 +82,10 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     options.setAllowCredentials(AllowStoredCredentials);
     options.crossOriginRequestPolicy = DenyCrossOriginRequests;
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
+    options.setFetchOptions(request.fetchOptions());
 
     m_loader = ThreadableLoader::create(&context, this, request.internalRequest(), options);
-    m_isStarted = true;
+    m_isStarted = m_loader;
 }
 
 FetchLoader::FetchLoader(Type type, FetchLoaderClient& client)
@@ -96,10 +97,8 @@ FetchLoader::FetchLoader(Type type, FetchLoaderClient& client)
 void FetchLoader::stop()
 {
     m_data = nullptr;
-    if (m_loader) {
-        RefPtr<ThreadableLoader> loader = WTFMove(m_loader);
-        loader->cancel();
-    }
+    if (m_loader)
+        m_loader->cancel();
 }
 
 RefPtr<SharedBuffer> FetchLoader::startStreaming()

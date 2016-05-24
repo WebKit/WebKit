@@ -128,6 +128,12 @@ public:
         return 1280;
     }
 
+    enum class Type { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
+    Type type() const { return m_type; }
+    void setType(Type type) { m_type = type; }
+    bool isRedirected() const { return m_isRedirected; }
+    void setRedirected(bool isRedirected) { m_isRedirected = isRedirected; }
+
     static bool compare(const ResourceResponse&, const ResourceResponse&);
 
     template<class Encoder> void encode(Encoder&) const;
@@ -189,6 +195,9 @@ private:
     mutable bool m_haveParsedContentRangeHeader { false };
 
     Source m_source { Source::Unknown };
+
+    Type m_type { Type::Default };
+    bool m_isRedirected { false };
 };
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
@@ -215,6 +224,8 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     if (m_includesCertificateInfo)
         encoder << m_certificateInfo;
     encoder.encodeEnum(m_source);
+    encoder.encodeEnum(m_type);
+    encoder << m_isRedirected;
 }
 
 template<class Decoder>
@@ -255,6 +266,10 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
     }
     if (!decoder.decodeEnum(response.m_source))
         return false;
+    if (!decoder.decodeEnum(response.m_type))
+        return false;
+    if (!decoder.decode(response.m_isRedirected))
+        return false;
     response.m_isNull = false;
 
     return true;
@@ -273,6 +288,8 @@ public:
     String m_httpVersion;
     std::unique_ptr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
     ResourceLoadTiming m_resourceLoadTiming;
+    ResourceResponseBase::Type m_type;
+    bool m_isRedirected;
 };
 
 } // namespace WebCore

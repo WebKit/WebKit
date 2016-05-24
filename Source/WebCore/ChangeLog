@@ -1,3 +1,56 @@
+2016-05-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Implement Fetch redirect mode
+        https://bugs.webkit.org/show_bug.cgi?id=157837
+
+        Reviewed by Alex Christensen.
+
+        Implementing step 5 of https://fetch.spec.whatwg.org/#http-fetch.
+        Making ResourceLoaderOptions include FetchOptions.
+        This allows SubresourceLoader to follow or not redirections based on that option.
+        CachedResource is made responsible to handle the type of the response (opaqueredirect, opaque, cors, basic...).
+        If redirection is not to be followed, either an error is returned or an empty response is returned.
+
+        Moved Response type and redirected flag from FetchResponse to ResourceResponse.
+        This allows CachedResource to easily communicate that information to FetchResponse.
+
+        Made some clean-up refactoring in ThreadableLoaderOptions.
+
+        http/tests/fetch/caching-with-different-options.html ensures that
+        caching at CachedResourceLoader will not have bad effects on fetch.
+        Covered by updated and rebased tests.
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::start):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::error):
+        (WebCore::FetchResponse::redirect):
+        (WebCore::FetchResponse::FetchResponse):
+        (WebCore::FetchResponse::clone):
+        (WebCore::FetchResponse::startFetching):
+        * Modules/fetch/FetchResponse.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FetchOptions.h: Moved from Source/WebCore/Modules/fetch/FetchOptions.h.
+        * loader/ResourceLoaderOptions.h:
+        (WebCore::ResourceLoaderOptions::fetchOptions):
+        (WebCore::ResourceLoaderOptions::setFetchOptions):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        * loader/ThreadableLoader.cpp:
+        * loader/ThreadableLoader.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::setResponse):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::setOpaqueRedirect):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::type):
+        (WebCore::ResourceResponseBase::setType):
+        (WebCore::ResourceResponseBase::encode):
+        (WebCore::ResourceResponseBase::decode):
+
 2016-05-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Assertion failure for Reflect.get with Proxy and primitive value as explicit receiver

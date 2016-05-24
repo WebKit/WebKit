@@ -6,27 +6,27 @@ PASS Redirect 301 in "manual" mode without location
 PASS Redirect 301 in "follow" mode with invalid location 
 PASS Redirect 301 in "manual" mode with invalid location 
 PASS Redirect 301 in "follow" mode with data location 
-FAIL Redirect 301 in "manual" mode with data location promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Redirect 301 in "manual" mode with data location 
 PASS Redirect 302 in "follow" mode without location 
 PASS Redirect 302 in "manual" mode without location 
 PASS Redirect 302 in "follow" mode with invalid location 
 PASS Redirect 302 in "manual" mode with invalid location 
 PASS Redirect 302 in "follow" mode with data location 
-FAIL Redirect 302 in "manual" mode with data location promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Redirect 302 in "manual" mode with data location 
 PASS Redirect 303 in "follow" mode without location 
 PASS Redirect 303 in "manual" mode without location 
 PASS Redirect 303 in "follow" mode with invalid location 
-TIMEOUT Redirect 303 in "manual" mode with invalid location Test timed out
-TIMEOUT Redirect 303 in "follow" mode with data location Test timed out
-TIMEOUT Redirect 303 in "manual" mode with data location Test timed out
-TIMEOUT Redirect 307 in "follow" mode without location Test timed out
-TIMEOUT Redirect 307 in "manual" mode without location Test timed out
-TIMEOUT Redirect 307 in "follow" mode with invalid location Test timed out
-TIMEOUT Redirect 307 in "manual" mode with invalid location Test timed out
-TIMEOUT Redirect 307 in "follow" mode with data location Test timed out
-TIMEOUT Redirect 307 in "manual" mode with data location Test timed out
-TIMEOUT Redirect 308 in "follow" mode without location Test timed out
-TIMEOUT Redirect 308 in "manual" mode without location Test timed out
+PASS Redirect 303 in "manual" mode with invalid location 
+PASS Redirect 303 in "follow" mode with data location 
+PASS Redirect 303 in "manual" mode with data location 
+PASS Redirect 307 in "follow" mode without location 
+PASS Redirect 307 in "manual" mode without location 
+PASS Redirect 307 in "follow" mode with invalid location 
+PASS Redirect 307 in "manual" mode with invalid location 
+PASS Redirect 307 in "follow" mode with data location 
+PASS Redirect 307 in "manual" mode with data location 
+PASS Redirect 308 in "follow" mode without location 
+PASS Redirect 308 in "manual" mode without location 
 TIMEOUT Redirect 308 in "follow" mode with invalid location Test timed out
 TIMEOUT Redirect 308 in "manual" mode with invalid location Test timed out
 TIMEOUT Redirect 308 in "follow" mode with data location Test timed out

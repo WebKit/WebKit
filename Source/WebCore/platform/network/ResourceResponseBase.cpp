@@ -78,6 +78,7 @@ std::unique_ptr<ResourceResponse> ResourceResponseBase::adopt(std::unique_ptr<Cr
     response->lazyInit(AllFields);
     response->m_httpHeaderFields.adopt(WTFMove(data->m_httpHeaders));
     response->m_resourceLoadTiming = data->m_resourceLoadTiming;
+    response->m_type = data->m_type;
     response->doPlatformAdopt(WTFMove(data));
     return response;
 }
@@ -94,6 +95,7 @@ std::unique_ptr<CrossThreadResourceResponseData> ResourceResponseBase::copyData(
     data->m_httpVersion = httpVersion().isolatedCopy();
     data->m_httpHeaders = httpHeaderFields().copyData();
     data->m_resourceLoadTiming = m_resourceLoadTiming;
+    data->m_type = m_type;
     return asResourceResponse().doPlatformCopyData(WTFMove(data));
 }
 

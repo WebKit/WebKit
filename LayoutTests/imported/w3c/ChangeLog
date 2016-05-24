@@ -1,3 +1,16 @@
+2016-05-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Implement Fetch redirect mode
+        https://bugs.webkit.org/show_bug.cgi?id=157837
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/redirect/redirect-location-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location.js:
+        * web-platform-tests/fetch/api/redirect/redirect-method.js:
+        * web-platform-tests/fetch/api/redirect/redirect-method-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-mode-expected.txt:
+
 2016-05-18  Antti Koivisto  <antti@apple.com>
 
         Cascading order for !important properties in ::slotted and ::host rules is incorrect

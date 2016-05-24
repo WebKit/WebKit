@@ -175,6 +175,17 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
 
     ASSERT(!newRequest.isNull());
     if (!redirectResponse.isNull()) {
+        if (options().fetchOptions().redirect != FetchOptions::Redirect::Follow) {
+            if (options().fetchOptions().redirect == FetchOptions::Redirect::Error) {
+                cancel();
+                return;
+            }
+            m_resource->setOpaqueRedirect();
+            m_resource->responseReceived({ });
+            didFinishLoading(currentTime());
+            return;
+        }
+
         // CachedResources are keyed off their original request URL.
         // Requesting the same original URL a second time can redirect to a unique second resource.
         // Therefore, if a redirect to a different destination URL occurs, we should no longer consider this a revalidation of the first resource.

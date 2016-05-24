@@ -411,6 +411,13 @@ const ResourceResponse& CachedResource::responseForSameOriginPolicyChecks() cons
     return m_redirectResponseForSameOriginPolicyChecks.isNull() ? m_response : m_redirectResponseForSameOriginPolicyChecks;
 }
 
+void CachedResource::setResponse(const ResourceResponse& response)
+{
+    m_response = response;
+    m_response.setType(m_responseType);
+    m_response.setRedirected(m_redirectChainCacheStatus.status != RedirectChainCacheStatus::NoRedirection);
+}
+
 void CachedResource::responseReceived(const ResourceResponse& response)
 {
     setResponse(response);

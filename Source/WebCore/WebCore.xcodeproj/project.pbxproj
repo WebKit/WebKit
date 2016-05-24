@@ -1571,6 +1571,7 @@
 		419BE7591BC7F42B00E1C85B /* WebCoreBuiltinNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BE7521BC7F3DB00E1C85B /* WebCoreBuiltinNames.h */; };
 		41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */; };
 		41A3D58F101C152D00316D07 /* DedicatedWorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */; };
+		41AD753A1CEF6BD100A31486 /* FetchOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 41AD75391CEF6BCE00A31486 /* FetchOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41BF700C0FE86F49005E8DEC /* MessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */; };
 		41BF70100FE86F61005E8DEC /* PlatformMessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF700E0FE86F61005E8DEC /* PlatformMessagePortChannel.h */; };
@@ -9069,6 +9070,7 @@
 		41A023ED1A39DB7900F722DF /* WritableStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WritableStream.idl; sourceTree = "<group>"; };
 		41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DedicatedWorkerThread.cpp; sourceTree = "<group>"; };
 		41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DedicatedWorkerThread.h; sourceTree = "<group>"; };
+		41AD75391CEF6BCE00A31486 /* FetchOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchOptions.h; sourceTree = "<group>"; };
 		41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessagePortChannel.h; sourceTree = "<group>"; };
 		41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformMessagePortChannel.cpp; path = default/PlatformMessagePortChannel.cpp; sourceTree = "<group>"; };
 		41BF700E0FE86F61005E8DEC /* PlatformMessagePortChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformMessagePortChannel.h; path = default/PlatformMessagePortChannel.h; sourceTree = "<group>"; };
@@ -9091,7 +9093,6 @@
 		41F54F831C50C4F600338488 /* FetchHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchHeaders.h; sourceTree = "<group>"; };
 		41F54F841C50C4F600338488 /* FetchHeaders.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchHeaders.idl; sourceTree = "<group>"; };
 		41F54F851C50C4F600338488 /* FetchHeaders.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FetchHeaders.js; sourceTree = "<group>"; };
-		41F54F861C50C4F600338488 /* FetchOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchOptions.h; sourceTree = "<group>"; };
 		41F54F871C50C4F600338488 /* FetchRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchRequest.cpp; sourceTree = "<group>"; };
 		41F54F881C50C4F600338488 /* FetchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchRequest.h; sourceTree = "<group>"; };
 		41F54F891C50C4F600338488 /* FetchRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchRequest.idl; sourceTree = "<group>"; };
@@ -16837,7 +16838,6 @@
 				4147E2B41C89912600A7E715 /* FetchLoader.cpp */,
 				4147E2B51C89912600A7E715 /* FetchLoader.h */,
 				4147E2B61C89912600A7E715 /* FetchLoaderClient.h */,
-				41F54F861C50C4F600338488 /* FetchOptions.h */,
 				41F54F871C50C4F600338488 /* FetchRequest.cpp */,
 				41F54F881C50C4F600338488 /* FetchRequest.h */,
 				41F54F891C50C4F600338488 /* FetchRequest.idl */,
@@ -22726,6 +22726,7 @@
 				9738899F116EA9DC00ADF313 /* DocumentWriter.h */,
 				F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */,
 				B255990D0D00D8B900BB825C /* EmptyClients.h */,
+				41AD75391CEF6BCE00A31486 /* FetchOptions.h */,
 				656D37230ADBA5DE00A4554D /* FormState.cpp */,
 				656D37220ADBA5DE00A4554D /* FormState.h */,
 				41885B9211B6FDA6003383BB /* FormSubmission.cpp */,
@@ -28246,6 +28247,7 @@
 				E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */,
 				0880F70E1282B46D00948505 /* SVGStaticListPropertyTearOff.h in Headers */,
 				0813A4EA1284132600992511 /* SVGStaticPropertyTearOff.h in Headers */,
+				41AD753A1CEF6BD100A31486 /* FetchOptions.h in Headers */,
 				B2227AA90D00BF220071B782 /* SVGStopElement.h in Headers */,
 				B2227AAC0D00BF220071B782 /* SVGStringList.h in Headers */,
 				B2227AB80D00BF220071B782 /* SVGStyleElement.h in Headers */,

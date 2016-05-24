@@ -42,8 +42,6 @@
 namespace WebCore {
 
 ThreadableLoaderOptions::ThreadableLoaderOptions()
-    : preflightPolicy(ConsiderPreflight)
-    , crossOriginRequestPolicy(DenyCrossOriginRequests)
 {
 }
 

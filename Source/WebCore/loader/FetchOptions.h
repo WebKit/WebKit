@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(FETCH_API)
-
 namespace WebCore {
 
 struct FetchOptions {
@@ -56,5 +54,3 @@ struct FetchOptions {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)
