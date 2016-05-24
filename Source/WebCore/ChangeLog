@@ -1,3 +1,17 @@
+2016-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Avoid unnecessary call to Document::completeURL() in HTMLLinkElement::process()
+        https://bugs.webkit.org/show_bug.cgi?id=157993
+
+        Reviewed by Ryosuke Niwa.
+
+        Avoid unnecessary call to Document::completeURL() in HTMLLinkElement::process().
+        The call to getNonEmptyURLAttribute() already calls Document::completeURL()
+        internally so we can just reuse the returned URL.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+
 2016-05-23  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null popstate event fired when navigating back to a cached page with a stateless history entry
