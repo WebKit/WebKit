@@ -76,7 +76,7 @@ public:
             : nullptr;
     }
 
-    bool operator==(const EventListener& other) override;
+    bool operator==(const EventListener& other) const override;
     
     void disconnectAnimation()
     {
@@ -97,7 +97,7 @@ private:
     SVGSMILElement::Condition* m_condition;
 };
 
-bool ConditionEventListener::operator==(const EventListener& listener)
+bool ConditionEventListener::operator==(const EventListener& listener) const
 {
     if (const ConditionEventListener* conditionEventListener = ConditionEventListener::cast(&listener))
         return m_animation == conditionEventListener->m_animation && m_condition == conditionEventListener->m_condition;
@@ -545,7 +545,7 @@ void SVGSMILElement::connectConditions()
                 continue;
             ASSERT(!condition.m_eventListener);
             condition.m_eventListener = ConditionEventListener::create(this, &condition);
-            eventBase->addEventListener(condition.m_name, condition.m_eventListener, false);
+            eventBase->addEventListener(condition.m_name, *condition.m_eventListener, false);
         } else if (condition.m_type == Condition::Syncbase) {
             ASSERT(!condition.m_baseID.isEmpty());
             condition.m_syncbase = treeScope().getElementById(condition.m_baseID);
@@ -577,7 +577,7 @@ void SVGSMILElement::disconnectConditions()
             // our condition event listener, in case it later fires.
             Element* eventBase = eventBaseFor(condition);
             if (eventBase)
-                eventBase->removeEventListener(condition.m_name, condition.m_eventListener.get(), false);
+                eventBase->removeEventListener(condition.m_name, *condition.m_eventListener, false);
             condition.m_eventListener->disconnectAnimation();
             condition.m_eventListener = nullptr;
         } else if (condition.m_type == Condition::Syncbase) {

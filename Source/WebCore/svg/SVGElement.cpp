@@ -528,7 +528,7 @@ bool SVGElement::haveLoadedRequiredResources()
     return true;
 }
 
-bool SVGElement::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
+bool SVGElement::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
 {   
     // Add event listener to regular DOM element
     if (!Node::addEventListener(eventType, listener.copyRef(), useCapture))
@@ -548,7 +548,7 @@ bool SVGElement::addEventListener(const AtomicString& eventType, RefPtr<EventLis
     return true;
 }
 
-bool SVGElement::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
+bool SVGElement::removeEventListener(const AtomicString& eventType, EventListener& listener, bool useCapture)
 {
     if (containingShadowRoot())
         return Node::removeEventListener(eventType, listener, useCapture);
@@ -558,7 +558,7 @@ bool SVGElement::removeEventListener(const AtomicString& eventType, EventListene
     // event listener in a cache. If we want to be able to call removeEventListener() multiple
     // times on different nodes, we have to delay its immediate destruction, which would happen
     // after the first call below.
-    RefPtr<EventListener> protector(listener);
+    Ref<EventListener> protector(listener);
 
     // Remove event listener from regular DOM element
     if (!Node::removeEventListener(eventType, listener, useCapture))
@@ -573,7 +573,7 @@ bool SVGElement::removeEventListener(const AtomicString& eventType, EventListene
             continue;
 
         // This case can only be hit for event listeners created from markup
-        ASSERT(listener->wasCreatedFromMarkup());
+        ASSERT(listener.wasCreatedFromMarkup());
 
         // If the event listener 'listener' has been created from markup and has been fired before
         // then JSLazyEventListener::parseCode() has been called and m_jsFunction of that listener

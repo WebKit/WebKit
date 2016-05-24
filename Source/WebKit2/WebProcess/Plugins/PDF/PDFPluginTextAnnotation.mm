@@ -78,7 +78,7 @@ Ref<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *anno
 
 PDFPluginTextAnnotation::~PDFPluginTextAnnotation()
 {
-    element()->removeEventListener(eventNames().keydownEvent, eventListener(), false);
+    element()->removeEventListener(eventNames().keydownEvent, *eventListener(), false);
 }
 
 PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
@@ -97,7 +97,7 @@ PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
     else
         element = document.createElement(inputTag, false);
 
-    element->addEventListener(eventNames().keydownEvent, eventListener(), false);
+    element->addEventListener(eventNames().keydownEvent, *eventListener(), false);
 
     StyledElement* styledElement = static_cast<StyledElement*>(element.get());
 

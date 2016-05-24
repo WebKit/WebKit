@@ -43,6 +43,14 @@ public:
         return adoptRef(*new JSEventListener(listener, wrapper, isAttribute, world));
     }
 
+    static RefPtr<JSEventListener> create(JSC::JSValue listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)
+    {
+        if (UNLIKELY(!listener.isObject()))
+            return nullptr;
+
+        return adoptRef(new JSEventListener(JSC::asObject(listener), &wrapper, isAttribute, world));
+    }
+
     static const JSEventListener* cast(const EventListener* listener)
     {
         return listener->type() == JSEventListenerType
@@ -52,7 +60,7 @@ public:
 
     virtual ~JSEventListener();
 
-    bool operator==(const EventListener& other) override;
+    bool operator==(const EventListener& other) const override;
 
     // Returns true if this event listener was created for an event handler attribute, like "onload" or "onclick".
     bool isAttribute() const { return m_isAttribute; }
@@ -99,9 +107,6 @@ void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLEleme
 JSC::JSValue documentEventHandlerAttribute(Document&, const AtomicString& eventType);
 void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, Document&, const AtomicString& eventType, JSC::JSValue);
 
-Ref<JSEventListener> createJSEventListenerForAdd(JSC::ExecState&, JSC::JSObject& listener, JSC::JSObject& wrapper);
-Ref<JSEventListener> createJSEventListenerForRemove(JSC::ExecState&, JSC::JSObject& listener, JSC::JSObject& wrapper);
-
 inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* scriptExecutionContext) const
 {
     // initializeJSFunction can trigger code that deletes this event listener
@@ -131,11 +136,6 @@ inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* script
     ASSERT(!m_jsFunction || static_cast<JSC::JSCell*>(m_jsFunction.get())->isObject());
 
     return m_jsFunction.get();
-}
-
-inline Ref<JSEventListener> createJSEventListenerForRemove(JSC::ExecState& state, JSC::JSObject& listener, JSC::JSObject& wrapper)
-{
-    return createJSEventListenerForAdd(state, listener, wrapper);
 }
 
 } // namespace WebCore

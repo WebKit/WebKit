@@ -1,5 +1,104 @@
 2016-05-23  Chris Dumez  <cdumez@apple.com>
 
+        Generate bindings code for EventTarget.addEventListener() / removeEventListener()
+        https://bugs.webkit.org/show_bug.cgi?id=157882
+
+        Reviewed by Darin Adler.
+
+        Generate bindings code for EventTarget.addEventListener() / removeEventListener()
+        instead of hardcoding them in the bindings generator.
+
+        No new tests, rebaselined existing test, no web-exposed behavior change.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::addEventListener):
+        (WebCore::AudioScheduledSourceNode::removeEventListener):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::addEventListener):
+        (WebCore::ScriptProcessorNode::removeEventListener):
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * bindings/gobject/GObjectEventListener.cpp:
+        (WebCore::GObjectEventListener::operator==):
+        * bindings/gobject/GObjectEventListener.h:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::operator==):
+        (WebCore::eventHandlerAttribute): Deleted.
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::create):
+        (WebCore::JSEventListener::cast): Deleted.
+        (WebCore::JSEventListener::jsFunction): Deleted.
+        * bindings/objc/ObjCEventListener.h:
+        * bindings/objc/ObjCEventListener.mm:
+        (WebCore::ObjCEventListener::operator==):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (JSValueToNative):
+        (GetParentClassName): Deleted.
+        (GetCallbackClassName): Deleted.
+        (GetJSCallbackDataType): Deleted.
+        * dom/EventListener.h:
+        * dom/EventListenerMap.cpp:
+        (WebCore::addListenerToVector):
+        (WebCore::EventListenerMap::add):
+        (WebCore::removeListenerFromVector):
+        (WebCore::EventListenerMap::remove):
+        (WebCore::copyListenersNotCreatedFromMarkupToTarget):
+        * dom/EventListenerMap.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::addEventListenerForBindings):
+        (WebCore::EventTarget::removeEventListenerForBindings):
+        (WebCore::EventTarget::removeEventListener):
+        (WebCore::EventTarget::setAttributeEventListener):
+        (WebCore::EventTarget::clearAttributeEventListener):
+        * dom/EventTarget.h:
+        * dom/EventTarget.idl:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::addEventListener):
+        * dom/MessagePort.h:
+        * dom/Node.cpp:
+        (WebCore::tryAddEventListener):
+        (WebCore::Node::addEventListener):
+        (WebCore::tryRemoveEventListener):
+        (WebCore::Node::removeEventListener):
+        * dom/Node.h:
+        * dom/RegisteredEventListener.h:
+        (WebCore::RegisteredEventListener::RegisteredEventListener):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addEventListener):
+        (WebCore::HTMLMediaElement::removeEventListener):
+        * html/HTMLMediaElement.h:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        (WebCore::ImageEventListener::operator==):
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::showClosedCaptionTrackList):
+        (WebCore::MediaControlsApple::hideClosedCaptionTrackList):
+        (WebCore::MediaControlsAppleEventListener::operator==):
+        * html/shadow/MediaControlsApple.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        * page/DOMWindow.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::addEventListener):
+        (WebCore::SVGElement::removeEventListener):
+        * svg/SVGElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefTargetEventListener::attach):
+        (WebCore::SVGTRefTargetEventListener::detach):
+        (WebCore::SVGTRefTargetEventListener::operator==):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::ConditionEventListener::operator==):
+        (WebCore::SVGSMILElement::connectConditions):
+        (WebCore::SVGSMILElement::disconnectConditions):
+
+2016-05-23  Chris Dumez  <cdumez@apple.com>
+
         Fix undefined behavior introduced in r201290.
         https://bugs.webkit.org/show_bug.cgi?id=157961
 

@@ -79,7 +79,7 @@ void ObjCEventListener::handleEvent(ScriptExecutionContext*, Event* event)
     [listener handleEvent:kit(event)];
 }
 
-bool ObjCEventListener::operator==(const EventListener& listener)
+bool ObjCEventListener::operator==(const EventListener& listener) const
 {
     if (const ObjCEventListener* objCEventListener = ObjCEventListener::cast(&listener))
         return m_listener == objCEventListener->m_listener;

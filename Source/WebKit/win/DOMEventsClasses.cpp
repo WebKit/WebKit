@@ -68,7 +68,7 @@ WebEventListener::~WebEventListener()
     m_iDOMEventListener->Release();
 }
 
-bool WebEventListener::operator==(const WebCore::EventListener& other)
+bool WebEventListener::operator==(const WebCore::EventListener& other) const
 {
     return (other.type() == CPPEventListenerType 
         && reinterpret_cast<const WebEventListener*>(&other)->m_iDOMEventListener == m_iDOMEventListener);
@@ -81,9 +81,9 @@ void WebEventListener::handleEvent(WebCore::ScriptExecutionContext* s, WebCore::
     m_iDOMEventListener->handleEvent(domEvent.get());
 }
 
-PassRefPtr<WebEventListener> WebEventListener::create(IDOMEventListener* d)
+Ref<WebEventListener> WebEventListener::create(IDOMEventListener* d)
 {
-    return adoptRef(new WebEventListener(d));
+    return adoptRef(*new WebEventListener(d));
 }
 
 // DOMEvent -------------------------------------------------------------------

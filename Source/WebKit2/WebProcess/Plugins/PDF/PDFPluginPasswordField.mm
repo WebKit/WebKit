@@ -49,14 +49,14 @@ Ref<PDFPluginPasswordField> PDFPluginPasswordField::create(PDFLayerController *p
 
 PDFPluginPasswordField::~PDFPluginPasswordField()
 {
-    element()->removeEventListener(eventNames().keyupEvent, eventListener(), false);
+    element()->removeEventListener(eventNames().keyupEvent, *eventListener(), false);
 }
 
 PassRefPtr<Element> PDFPluginPasswordField::createAnnotationElement()
 {
     RefPtr<Element> element = PDFPluginTextAnnotation::createAnnotationElement();
     element->setAttribute(typeAttr, "password");
-    element->addEventListener(eventNames().keyupEvent, eventListener(), false);
+    element->addEventListener(eventNames().keyupEvent, *eventListener(), false);
     return element;
 }
 

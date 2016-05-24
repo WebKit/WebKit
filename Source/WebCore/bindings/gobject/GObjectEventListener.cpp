@@ -57,9 +57,9 @@ void GObjectEventListener::gobjectDestroyed()
     // and later use-after-free with the m_handler = 0; assignment.
     RefPtr<GObjectEventListener> protectedThis(this);
 
-    m_coreTarget->removeEventListener(m_domEventName.data(), this, m_capture);
-    m_coreTarget = 0;
-    m_handler = 0;
+    m_coreTarget->removeEventListener(m_domEventName.data(), *this, m_capture);
+    m_coreTarget = nullptr;
+    m_handler = nullptr;
 }
 
 void GObjectEventListener::handleEvent(ScriptExecutionContext*, Event* event)
@@ -77,7 +77,7 @@ void GObjectEventListener::handleEvent(ScriptExecutionContext*, Event* event)
     g_value_unset(parameters + 1);
 }
 
-bool GObjectEventListener::operator==(const EventListener& listener)
+bool GObjectEventListener::operator==(const EventListener& listener) const
 {
     if (const GObjectEventListener* gobjectEventListener = GObjectEventListener::cast(&listener))
         return m_target == gobjectEventListener->m_target

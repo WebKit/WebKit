@@ -35,14 +35,14 @@ public:
 
     static bool addEventListener(GObject* target, EventTarget* coreTarget, const char* domEventName, GClosure* handler, bool useCapture)
     {
-        RefPtr<GObjectEventListener> listener(adoptRef(new GObjectEventListener(target, coreTarget, domEventName, handler, useCapture)));
-        return coreTarget->addEventListener(domEventName, listener.release(), useCapture);
+        Ref<GObjectEventListener> listener(adoptRef(*new GObjectEventListener(target, coreTarget, domEventName, handler, useCapture)));
+        return coreTarget->addEventListener(domEventName, WTFMove(listener), useCapture);
     }
 
     static bool removeEventListener(GObject* target, EventTarget* coreTarget, const char* domEventName, GClosure* handler, bool useCapture)
     {
         GObjectEventListener key(target, coreTarget, domEventName, handler, useCapture);
-        return coreTarget->removeEventListener(domEventName, &key, useCapture);
+        return coreTarget->removeEventListener(domEventName, key, useCapture);
     }
 
     static void gobjectDestroyedCallback(GObjectEventListener* listener, GObject*)
@@ -57,7 +57,7 @@ public:
             : 0;
     }
 
-    virtual bool operator==(const EventListener& other);
+    bool operator==(const EventListener& other) const override;
 
 private:
     GObjectEventListener(GObject*, EventTarget*, const char* domEventName, GClosure*, bool capture);

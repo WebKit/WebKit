@@ -46,9 +46,9 @@ class WebEventListener : public WebCore::EventListener {
 public:
     WebEventListener(IDOMEventListener*);
     ~WebEventListener();
-    virtual bool operator==(const EventListener&);
+    virtual bool operator==(const EventListener&) const;
     virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*);
-    static PassRefPtr<WebEventListener> create(IDOMEventListener*);
+    static Ref<WebEventListener> create(IDOMEventListener*);
 private:
     IDOMEventListener* m_iDOMEventListener;
 };

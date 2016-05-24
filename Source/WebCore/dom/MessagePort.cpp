@@ -221,9 +221,9 @@ std::unique_ptr<MessagePortArray> MessagePort::entanglePorts(ScriptExecutionCont
     return portArray;
 }
 
-bool MessagePort::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
+bool MessagePort::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
 {
-    if (listener && listener->isAttribute() && eventType == eventNames().messageEvent)
+    if (listener->isAttribute() && eventType == eventNames().messageEvent)
         start();
     return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), useCapture);
 }

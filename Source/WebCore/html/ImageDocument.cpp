@@ -64,7 +64,7 @@ private:
     {
     }
 
-    bool operator==(const EventListener&) override;
+    bool operator==(const EventListener&) const override;
     void handleEvent(ScriptExecutionContext*, Event*) override;
 
     ImageDocument& m_document;
@@ -237,7 +237,7 @@ void ImageDocument::createDocumentStructure()
         // Set the viewport to be in device pixels (rather than the default of 980).
         processViewport(ASCIILiteral("width=device-width"), ViewportArguments::ImageDocument);
 #else
-        RefPtr<EventListener> listener = ImageEventListener::create(*this);
+        auto listener = ImageEventListener::create(*this);
         if (DOMWindow* window = this->domWindow())
             window->addEventListener("resize", listener.copyRef(), false);
         imageElement->addEventListener("click", WTFMove(listener), false);
@@ -407,7 +407,7 @@ void ImageEventListener::handleEvent(ScriptExecutionContext*, Event* event)
     }
 }
 
-bool ImageEventListener::operator==(const EventListener& other)
+bool ImageEventListener::operator==(const EventListener& other) const
 {
     // All ImageEventListener objects compare as equal; OK since there is only one per document.
     return other.type() == ImageEventListenerType;

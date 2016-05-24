@@ -4390,10 +4390,18 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecStat
         return throwThisTypeError(*state, "TestObj", "addEventListener");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    JSValue listener = state->argument(1);
-    if (UNLIKELY(!listener.isObject()))
+    if (UNLIKELY(state->argumentCount() < 2))
+        return throwVMError(state, createNotEnoughArgumentsError(state));
+    auto type = state->argument(0).toWTFString(state);
+    if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.addEventListener(state->argument(0).toString(state)->toAtomicString(state), createJSEventListenerForAdd(*state, *asObject(listener), *castedThis), state->argument(2).toBoolean(state));
+    auto listener = JSEventListener::create(state->argument(1), *castedThis, false, currentWorld(state));
+    if (UNLIKELY(!listener))
+        return throwArgumentTypeError(*state, 1, "listener", "TestObj", "addEventListener", "EventListener");
+    auto useCapture = state->argument(2).toBoolean(state);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.addEventListener(WTFMove(type), *listener, WTFMove(useCapture));
     return JSValue::encode(jsUndefined());
 }
 
@@ -4405,10 +4413,18 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecS
         return throwThisTypeError(*state, "TestObj", "removeEventListener");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    JSValue listener = state->argument(1);
-    if (UNLIKELY(!listener.isObject()))
+    if (UNLIKELY(state->argumentCount() < 2))
+        return throwVMError(state, createNotEnoughArgumentsError(state));
+    auto type = state->argument(0).toWTFString(state);
+    if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.removeEventListener(state->argument(0).toString(state)->toAtomicString(state), createJSEventListenerForRemove(*state, *asObject(listener), *castedThis).ptr(), state->argument(2).toBoolean(state));
+    auto listener = JSEventListener::create(state->argument(1), *castedThis, false, currentWorld(state));
+    if (UNLIKELY(!listener))
+        return throwArgumentTypeError(*state, 1, "listener", "TestObj", "removeEventListener", "EventListener");
+    auto useCapture = state->argument(2).toBoolean(state);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.removeEventListener(WTFMove(type), *listener, WTFMove(useCapture));
     return JSValue::encode(jsUndefined());
 }
 

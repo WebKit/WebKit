@@ -52,7 +52,7 @@ namespace WebCore {
 
         ObjCEventListener(ObjCListener);
         virtual ~ObjCEventListener();
-        virtual bool operator==(const EventListener&);
+        virtual bool operator==(const EventListener&) const;
         virtual void handleEvent(ScriptExecutionContext*, Event*);
 
         RetainPtr<ObjCListener> m_listener;

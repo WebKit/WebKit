@@ -1,3 +1,24 @@
+2016-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Generate bindings code for EventTarget.addEventListener() / removeEventListener()
+        https://bugs.webkit.org/show_bug.cgi?id=157882
+
+        Reviewed by Darin Adler.
+
+        Generate bindings code for EventTarget.addEventListener() / removeEventListener()
+        instead of hardcoding them in the bindings generator.
+
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        (WebKit::PDFPluginAnnotation::attach):
+        (WebKit::PDFPluginAnnotation::~PDFPluginAnnotation):
+        * WebProcess/Plugins/PDF/PDFPluginPasswordField.mm:
+        (WebKit::PDFPluginPasswordField::~PDFPluginPasswordField):
+        (WebKit::PDFPluginPasswordField::createAnnotationElement):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::~PDFPluginTextAnnotation):
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement):
+
 2016-05-23  Beth Dakin  <bdakin@apple.com>
 
         Need SPI for clients to require a user action to get an editing controls 

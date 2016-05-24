@@ -163,18 +163,11 @@ bool JSEventListener::virtualisAttribute() const
     return m_isAttribute;
 }
 
-bool JSEventListener::operator==(const EventListener& listener)
+bool JSEventListener::operator==(const EventListener& listener) const
 {
     if (const JSEventListener* jsEventListener = JSEventListener::cast(&listener))
         return m_jsFunction == jsEventListener->m_jsFunction && m_isAttribute == jsEventListener->m_isAttribute;
     return false;
-}
-
-Ref<JSEventListener> createJSEventListenerForAdd(JSC::ExecState& state, JSC::JSObject& listener, JSC::JSObject& wrapper)
-{
-    // FIXME: This abstraction is no longer needed. It was part of support for SVGElementInstance.
-    // We should remove it and simplify the bindings generation scripts.
-    return JSEventListener::create(&listener, &wrapper, false, currentWorld(&state));
 }
 
 static inline JSC::JSValue eventHandlerAttribute(EventListener* abstractListener, ScriptExecutionContext& context)

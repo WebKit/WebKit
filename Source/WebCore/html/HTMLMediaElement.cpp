@@ -5216,7 +5216,7 @@ bool HTMLMediaElement::dispatchEvent(Event& event)
     return HTMLElement::dispatchEvent(event);
 }
 
-bool HTMLMediaElement::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
+bool HTMLMediaElement::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
 {
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
         return Node::addEventListener(eventType, WTFMove(listener), useCapture);
@@ -5236,7 +5236,7 @@ bool HTMLMediaElement::addEventListener(const AtomicString& eventType, RefPtr<Ev
     return true;
 }
 
-bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
+bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventListener& listener, bool useCapture)
 {
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
         return Node::removeEventListener(eventType, listener, useCapture);

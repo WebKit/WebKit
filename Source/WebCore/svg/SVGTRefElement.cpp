@@ -73,7 +73,7 @@ private:
     explicit SVGTRefTargetEventListener(SVGTRefElement& trefElement);
 
     void handleEvent(ScriptExecutionContext*, Event*) override;
-    bool operator==(const EventListener&) override;
+    bool operator==(const EventListener&) const override;
 
     SVGTRefElement& m_trefElement;
     RefPtr<Element> m_target;
@@ -92,8 +92,8 @@ void SVGTRefTargetEventListener::attach(RefPtr<Element>&& target)
     ASSERT(target.get());
     ASSERT(target->inDocument());
 
-    target->addEventListener(eventNames().DOMSubtreeModifiedEvent, this, false);
-    target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, this, false);
+    target->addEventListener(eventNames().DOMSubtreeModifiedEvent, *this, false);
+    target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, false);
     m_target = WTFMove(target);
 }
 
@@ -102,12 +102,12 @@ void SVGTRefTargetEventListener::detach()
     if (!isAttached())
         return;
 
-    m_target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, this, false);
-    m_target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, this, false);
+    m_target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, *this, false);
+    m_target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, false);
     m_target = nullptr;
 }
 
-bool SVGTRefTargetEventListener::operator==(const EventListener& listener)
+bool SVGTRefTargetEventListener::operator==(const EventListener& listener) const
 {
     if (const SVGTRefTargetEventListener* targetListener = SVGTRefTargetEventListener::cast(&listener))
         return &m_trefElement == &targetListener->m_trefElement;

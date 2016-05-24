@@ -1902,7 +1902,7 @@ void Node::didMoveToNewDocument(Document* oldDocument)
     }
 }
 
-static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
+static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
 {
     if (!targetNode->EventTarget::addEventListener(eventType, listener.copyRef(), useCapture))
         return false;
@@ -1938,12 +1938,12 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     return true;
 }
 
-bool Node::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
+bool Node::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
 {
     return tryAddEventListener(this, eventType, WTFMove(listener), useCapture);
 }
 
-static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& eventType, EventListener* listener, bool useCapture)
+static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& eventType, EventListener& listener, bool useCapture)
 {
     if (!targetNode->EventTarget::removeEventListener(eventType, listener, useCapture))
         return false;
@@ -1979,7 +1979,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
     return true;
 }
 
-bool Node::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
+bool Node::removeEventListener(const AtomicString& eventType, EventListener& listener, bool useCapture)
 {
     return tryRemoveEventListener(this, eventType, listener, useCapture);
 }

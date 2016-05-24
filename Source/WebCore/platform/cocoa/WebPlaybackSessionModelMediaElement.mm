@@ -90,7 +90,7 @@ void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* medi
 
     if (m_mediaElement && m_isListening) {
         for (auto& eventName : observedEventNames())
-            m_mediaElement->removeEventListener(eventName, this, false);
+            m_mediaElement->removeEventListener(eventName, *this, false);
     }
     m_isListening = false;
 
@@ -100,7 +100,7 @@ void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* medi
         return;
 
     for (auto& eventName : observedEventNames())
-        m_mediaElement->addEventListener(eventName, this, false);
+        m_mediaElement->addEventListener(eventName, *this, false);
     m_isListening = true;
 
     updateForEventName(eventNameAll());

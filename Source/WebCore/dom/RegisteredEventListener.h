@@ -31,8 +31,8 @@ namespace WebCore {
 
     class RegisteredEventListener {
     public:
-        RegisteredEventListener(PassRefPtr<EventListener> listener, bool useCapture)
-            : listener(listener)
+        RegisteredEventListener(Ref<EventListener>&& listener, bool useCapture)
+            : listener(WTFMove(listener))
             , useCapture(useCapture)
         {
         }

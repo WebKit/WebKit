@@ -143,26 +143,6 @@ sub EventHandlerAttributeEventName
     return "eventNames().${eventType}Event";
 }
 
-sub GenerateEventListenerCall
-{
-    my $functionName = shift;
-    my $suffix = ucfirst $functionName;
-    my $passRefPtrHandling = ($functionName eq "add") ? "" : ".ptr()";
-
-    $implIncludes{"JSEventListener.h"} = 1;
-
-    my @GenerateEventListenerImpl = ();
-
-    push(@GenerateEventListenerImpl, <<END);
-    JSValue listener = state->argument(1);
-    if (UNLIKELY(!listener.isObject()))
-        return JSValue::encode(jsUndefined());
-    impl.${functionName}EventListener(state->argument(0).toString(state)->toAtomicString(state), createJSEventListenerFor$suffix(*state, *asObject(listener), *castedThis)$passRefPtrHandling, state->argument(2).toBoolean(state));
-    return JSValue::encode(jsUndefined());
-END
-    return @GenerateEventListenerImpl;
-}
-
 sub GetParentClassName
 {
     my $interface = shift;
@@ -1722,6 +1702,9 @@ sub GetFunctionLength
 {
     my $function = shift;
 
+    # FIXME: EventTarget.addEventListener() / removeEventListener() currently specifies all the parameters as optional.
+    return 2 if $function->signature->name eq "addEventListener" || $function->signature->name eq "removeEventListener";
+
     my $length = 0;
     foreach my $parameter (@{$function->parameters}) {
         # Abort as soon as we find the first optional parameter as no mandatory
@@ -3214,30 +3197,24 @@ END
                         push(@implContent, "            return JSValue::encode(jsUndefined());\n");
                         push(@implContent, "    }\n");
                     }
-                    # For compatibility with legacy content, the EventListener calls are generated without GenerateArgumentsCountCheck.
-                    if ($function->signature->name eq "addEventListener") {
-                        push(@implContent, GenerateEventListenerCall("add"));
-                    } elsif ($function->signature->name eq "removeEventListener") {
-                        push(@implContent, GenerateEventListenerCall("remove"));
-                    } else {
-                        GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                        if ($raisesExceptionWithMessage) {
-                            push(@implContent, "    ExceptionCodeWithMessage ec;\n");
-                        } elsif ($raisesException) {
-                            push(@implContent, "    ExceptionCode ec = 0;\n");
-                        }
+                    GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                        if ($function->signature->extendedAttributes->{"CheckSecurityForNode"}) {
-                            push(@implContent, "    if (!shouldAllowAccessToNode(state, impl." . $function->signature->name . "(" . ($raisesException ? "ec" : "") .")))\n");
-                            push(@implContent, "        return JSValue::encode(jsNull());\n");
-                            $implIncludes{"JSDOMBinding.h"} = 1;
-                        }
-
-                        my $numParameters = @{$function->parameters};
-                        my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $numParameters, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
-                        GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interface);
+                    if ($raisesExceptionWithMessage) {
+                        push(@implContent, "    ExceptionCodeWithMessage ec;\n");
+                    } elsif ($raisesException) {
+                        push(@implContent, "    ExceptionCode ec = 0;\n");
                     }
+
+                    if ($function->signature->extendedAttributes->{"CheckSecurityForNode"}) {
+                        push(@implContent, "    if (!shouldAllowAccessToNode(state, impl." . $function->signature->name . "(" . ($raisesException ? "ec" : "") .")))\n");
+                        push(@implContent, "        return JSValue::encode(jsNull());\n");
+                        $implIncludes{"JSDOMBinding.h"} = 1;
+                    }
+
+                    my $numParameters = @{$function->parameters};
+                    my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $numParameters, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
+                    GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interface);
                 }
             }
 
@@ -4435,6 +4412,9 @@ sub JSValueToNative
     return ("convert<" . GetDictionaryClassName($interface, $type) . ">(*state, $value)", 1) if $codeGenerator->IsDictionaryType($type);
 
     AddToImplIncludes("JS$type.h", $conditional);
+
+    # FIXME: EventListener should be a callback interface.
+    return "JSEventListener::create($value, *castedThis, false, currentWorld(state))" if $type eq "EventListener";
 
     my $extendedAttributes = $codeGenerator->getInterfaceExtendedAttributesFromName($type);
     return ("JS${type}::toWrapped(*state, $value)", 1) if $extendedAttributes->{"JSCustomToNativeObject"};

@@ -112,7 +112,7 @@ public:
 
     virtual ~OpenDatabaseCallback() { }
 
-    bool operator==(const EventListener& other) override
+    bool operator==(const EventListener& other) const override
     {
         return this == &other;
     }
@@ -371,7 +371,7 @@ public:
 
     virtual ~OpenCursorCallback() { }
 
-    bool operator==(const EventListener& other) override
+    bool operator==(const EventListener& other) const override
     {
         return this == &other;
     }
@@ -660,7 +660,7 @@ public:
 
     virtual ~ClearObjectStoreListener() { }
 
-    bool operator==(const EventListener& other) override
+    bool operator==(const EventListener& other) const override
     {
         return this == &other;
     }

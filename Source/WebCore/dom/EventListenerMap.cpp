@@ -95,9 +95,9 @@ Vector<AtomicString> EventListenerMap::eventTypes() const
     return types;
 }
 
-static bool addListenerToVector(EventListenerVector* vector, PassRefPtr<EventListener> listener, bool useCapture)
+static bool addListenerToVector(EventListenerVector* vector, Ref<EventListener>&& listener, bool useCapture)
 {
-    RegisteredEventListener registeredListener(listener, useCapture);
+    RegisteredEventListener registeredListener(WTFMove(listener), useCapture);
 
     if (vector->find(registeredListener) != notFound)
         return false; // Duplicate listener.
@@ -106,20 +106,20 @@ static bool addListenerToVector(EventListenerVector* vector, PassRefPtr<EventLis
     return true;
 }
 
-bool EventListenerMap::add(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
+bool EventListenerMap::add(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
 {
     assertNoActiveIterators();
 
     for (auto& entry : m_entries) {
         if (entry.first == eventType)
-            return addListenerToVector(entry.second.get(), listener, useCapture);
+            return addListenerToVector(entry.second.get(), WTFMove(listener), useCapture);
     }
 
     m_entries.append(std::make_pair(eventType, std::make_unique<EventListenerVector>()));
-    return addListenerToVector(m_entries.last().second.get(), listener, useCapture);
+    return addListenerToVector(m_entries.last().second.get(), WTFMove(listener), useCapture);
 }
 
-static bool removeListenerFromVector(EventListenerVector* listenerVector, EventListener* listener, bool useCapture, size_t& indexOfRemovedListener)
+static bool removeListenerFromVector(EventListenerVector* listenerVector, EventListener& listener, bool useCapture, size_t& indexOfRemovedListener)
 {
     RegisteredEventListener registeredListener(listener, useCapture);
     indexOfRemovedListener = listenerVector->find(registeredListener);
@@ -129,7 +129,7 @@ static bool removeListenerFromVector(EventListenerVector* listenerVector, EventL
     return true;
 }
 
-bool EventListenerMap::remove(const AtomicString& eventType, EventListener* listener, bool useCapture, size_t& indexOfRemovedListener)
+bool EventListenerMap::remove(const AtomicString& eventType, EventListener& listener, bool useCapture, size_t& indexOfRemovedListener)
 {
     assertNoActiveIterators();
 
@@ -185,7 +185,7 @@ static void copyListenersNotCreatedFromMarkupToTarget(const AtomicString& eventT
         // Event listeners created from markup have already been transfered to the shadow tree during cloning.
         if (listener.listener->wasCreatedFromMarkup())
             continue;
-        target->addEventListener(eventType, listener.listener.copyRef(), listener.useCapture);
+        target->addEventListener(eventType, *listener.listener, listener.useCapture);
     }
 }
 

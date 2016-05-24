@@ -60,8 +60,7 @@ public:
     
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
     void updateForEventName(const WTF::AtomicString&);
-    bool operator==(const EventListener& rhs) override
-        {return static_cast<WebCore::EventListener*>(this) == &rhs;}
+    bool operator==(const EventListener& rhs) const override { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 
     WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) override;
     WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) override;

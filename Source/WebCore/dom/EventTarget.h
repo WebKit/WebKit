@@ -121,15 +121,18 @@ public:
     virtual DOMWindow* toDOMWindow();
     virtual bool isMessagePort() const;
 
-    virtual bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture);
-    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+    void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture);
+    void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture);
+    virtual bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, bool useCapture);
+    virtual bool removeEventListener(const AtomicString& eventType, EventListener&, bool useCapture);
+
     virtual void removeAllEventListeners();
     virtual bool dispatchEvent(Event&);
     bool dispatchEventForBindings(Event*, ExceptionCode&); // DOM API
     virtual void uncaughtExceptionInEventHandler();
 
     // Used for legacy "onEvent" attribute APIs.
-    bool setAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
+    bool setAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&&);
     bool clearAttributeEventListener(const AtomicString& eventType);
     EventListener* getAttributeEventListener(const AtomicString& eventType);
 
