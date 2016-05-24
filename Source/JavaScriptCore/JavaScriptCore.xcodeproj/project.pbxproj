@@ -1181,6 +1181,8 @@
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };
 		53F6BF6D1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53FA2AE11CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FA2AE01CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53FA2AE31CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53FA2AE21CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp */; };
 		5D5D8AD10E0D0EBE00F9C692 /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
 		5DBB151B131D0B310056AD36 /* testapi.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 14D857740A4696C80032146C /* testapi.js */; };
 		5DBB1525131D0BD70056AD36 /* minidom.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 1412110D0A48788700480255 /* minidom.js */; };
@@ -3321,6 +3323,8 @@
 		53917E831B791CB8000EBD33 /* TypedArrayPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = TypedArrayPrototype.js; path = builtins/TypedArrayPrototype.js; sourceTree = SOURCE_ROOT; };
 		53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewPrototype.cpp; sourceTree = "<group>"; };
 		53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternalFunctionAllocationProfile.h; sourceTree = "<group>"; };
+		53FA2AE01CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLIntPrototypeLoadAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
+		53FA2AE21CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
 		593D43CCA0BBE06D89C59707 /* MapDataInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapDataInlines.h; sourceTree = "<group>"; };
 		5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libedit.dylib; path = /usr/lib/libedit.dylib; sourceTree = "<absolute>"; };
 		5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = JSC.xcconfig; sourceTree = "<group>"; };
@@ -6575,6 +6579,8 @@
 				0FB5467814F5C468002C2989 /* LazyOperandValueProfile.cpp */,
 				0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */,
 				0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */,
+				53FA2AE21CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp */,
+				53FA2AE01CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h */,
 				0FB5467C14F5CFD3002C2989 /* MethodOfGettingAValueProfile.cpp */,
 				0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */,
 				14CA958C16AB50FA00938A06 /* ObjectAllocationProfile.h */,
@@ -7910,6 +7916,7 @@
 				0FF7168C15A3B235008F5DAA /* PropertyOffset.h in Headers */,
 				BC18C4550E16F5CD00B34460 /* PropertySlot.h in Headers */,
 				0FB7F39C15ED8E4600F167B2 /* PropertyStorage.h in Headers */,
+				53FA2AE11CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h in Headers */,
 				BC18C4560E16F5CD00B34460 /* Protect.h in Headers */,
 				1474C33B16AA2D950062F01D /* PrototypeMap.h in Headers */,
 				0F5780A218FE1E98001E72D9 /* PureNaN.h in Headers */,
@@ -8635,6 +8642,7 @@
 				65C02850171795E200351E35 /* ARMv7Disassembler.cpp in Sources */,
 				65C0285C1717966800351E35 /* ARMv7DOpcode.cpp in Sources */,
 				0F8335B71639C1E6001443B5 /* ArrayAllocationProfile.cpp in Sources */,
+				53FA2AE31CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp in Sources */,
 				A7A8AF3417ADB5F3005AB174 /* ArrayBuffer.cpp in Sources */,
 				0FFC99D4184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.cpp in Sources */,
 				A7A8AF3617ADB5F3005AB174 /* ArrayBufferView.cpp in Sources */,
