@@ -1,3 +1,18 @@
+2016-05-24  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r201336. rdar://problem/26446679
+
+    2016-05-24  Alex Christensen  <achristensen@webkit.org>
+
+            Fix iOS WebGL after r199738
+            https://bugs.webkit.org/show_bug.cgi?id=158024
+            rdar://problem/26446679
+
+            Reviewed by Myles Maxfield.
+
+            * ANGLE.xcodeproj/project.pbxproj:
+            iOS needs the ESSL translator.
+
 2016-04-26  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][ANGLE] Display object is not created.
