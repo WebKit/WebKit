@@ -147,12 +147,7 @@ class PageRouter {
 
             // Some applications don't linkify two consecutive closing parentheses: )).
             // Try fixing adding one extra parenthesis to see if that works.
-            function count(regex)
-            {
-                var match = json.match(regex);
-                return match ? match.length : 0;
-            }
-            var missingClosingBrackets = count(/\[/g) - count(/\]/g);
+            var missingClosingBrackets = this._countOccurrences(json, /\[/g) - this._countOccurrences(json, /\]/g);
             var fix = new Array(missingClosingBrackets).fill(']').join('');
             try {
                 return JSON.parse(json + fix);
@@ -160,5 +155,11 @@ class PageRouter {
 
             return value;
         }
+    }
+
+    _countOccurrences(string, regex)
+    {
+        var match = string.match(regex);
+        return match ? match.length : 0;
     }
 }
