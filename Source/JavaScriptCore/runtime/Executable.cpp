@@ -428,7 +428,7 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
 
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(EvalExecutable) };
 
-EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source, bool isInStrictContext, ThisTDZMode thisTDZMode, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source, bool isInStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
 {
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (!globalObject->evalEnabled()) {
@@ -439,7 +439,7 @@ EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source
     EvalExecutable* executable = new (NotNull, allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext, derivedContextType, isArrowFunctionContext, evalContextType);
     executable->finishCreation(exec->vm());
 
-    UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createEvalCodeBlock(exec, executable, thisTDZMode, variablesUnderTDZ);
+    UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createEvalCodeBlock(exec, executable, variablesUnderTDZ);
     if (!unlinkedEvalCode)
         return 0;
 

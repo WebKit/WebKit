@@ -146,7 +146,6 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     generator.ensureThis();
-    UNUSED_PARAM(m_shouldAlwaysEmitTDZCheck);
     if (dst == generator.ignoredResult())
         return 0;
 

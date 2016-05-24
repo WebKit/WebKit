@@ -195,7 +195,7 @@ void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B
 }
 
 template <typename LexerType>
-Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, SourceParseMode parseMode, SuperBinding superBinding, ConstructorKind defaultConstructorKind, ThisTDZMode thisTDZMode, DerivedContextType derivedContextType, bool isEvalContext, EvalContextType evalContextType)
+Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, SourceParseMode parseMode, SuperBinding superBinding, ConstructorKind defaultConstructorKind, DerivedContextType derivedContextType, bool isEvalContext, EvalContextType evalContextType)
     : m_vm(vm)
     , m_source(&source)
     , m_hasStackOverflow(false)
@@ -206,7 +206,6 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode 
     , m_parsingBuiltin(builtinMode == JSParserBuiltinMode::Builtin)
     , m_superBinding(superBinding)
     , m_defaultConstructorKind(defaultConstructorKind)
-    , m_thisTDZMode(thisTDZMode)
     , m_immediateParentAllowsFunctionDeclarationInStatement(false)
 {
     m_lexer = std::make_unique<LexerType>(vm, builtinMode);
@@ -3718,7 +3717,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         next();
         if (currentScope()->isArrowFunction())
             currentScope()->setInnerArrowFunctionUsesThis();
-        return context.createThisExpr(location, m_thisTDZMode);
+        return context.createThisExpr(location);
     }
     case IDENT: {
     identifierExpression:

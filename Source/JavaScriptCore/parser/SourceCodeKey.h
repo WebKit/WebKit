@@ -33,18 +33,43 @@
 
 namespace JSC {
 
+enum class SourceCodeType { EvalType, ProgramType, FunctionType, ModuleType };
+
+class SourceCodeFlags {
+public:
+    SourceCodeFlags() = default;
+
+    SourceCodeFlags(SourceCodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
+        : m_flags(
+            (static_cast<unsigned>(isArrowFunctionContext) << 7) |
+            (static_cast<unsigned>(evalContextType) << 6) |
+            (static_cast<unsigned>(derivedContextType) << 4) |
+            (static_cast<unsigned>(codeType) << 2) |
+            (static_cast<unsigned>(builtinMode) << 1) |
+            (static_cast<unsigned>(strictMode))
+        )
+    {
+    }
+
+    inline bool operator==(const SourceCodeFlags& rhs) const
+    {
+        return m_flags == rhs.m_flags;
+    }
+
+private:
+    unsigned m_flags { 0 };
+};
+
 class SourceCodeKey {
 public:
-    enum CodeType { EvalType, ProgramType, FunctionType, ModuleType };
-
     SourceCodeKey()
     {
     }
 
-    SourceCodeKey(const SourceCode& sourceCode, const String& name, CodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded)
+    SourceCodeKey(const SourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
         : m_sourceCode(sourceCode)
         , m_name(name)
-        , m_flags((static_cast<unsigned>(codeType) << 3) | (static_cast<unsigned>(builtinMode) << 2) | (static_cast<unsigned>(strictMode) << 1) | static_cast<unsigned>(thisTDZMode))
+        , m_flags(codeType, builtinMode, strictMode, derivedContextType, evalContextType, isArrowFunctionContext)
         , m_hash(sourceCode.hash())
     {
     }
@@ -75,22 +100,22 @@ public:
             && string() == other.string();
     }
 
+    struct Hash {
+        static unsigned hash(const SourceCodeKey& key) { return key.hash(); }
+        static bool equal(const SourceCodeKey& a, const SourceCodeKey& b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
+
+    struct HashTraits : SimpleClassHashTraits<SourceCodeKey> {
+        static const bool hasIsEmptyValueFunction = true;
+        static bool isEmptyValue(const SourceCodeKey& key) { return key.isNull(); }
+    };
+
 private:
     SourceCode m_sourceCode;
     String m_name;
-    unsigned m_flags;
+    SourceCodeFlags m_flags;
     unsigned m_hash;
-};
-
-struct SourceCodeKeyHash {
-    static unsigned hash(const SourceCodeKey& key) { return key.hash(); }
-    static bool equal(const SourceCodeKey& a, const SourceCodeKey& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = false;
-};
-
-struct SourceCodeKeyHashTraits : SimpleClassHashTraits<SourceCodeKey> {
-    static const bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const SourceCodeKey& sourceCodeKey) { return sourceCodeKey.isNull(); }
 };
 
 }

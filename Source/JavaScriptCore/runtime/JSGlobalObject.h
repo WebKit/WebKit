@@ -94,7 +94,6 @@ class RegExpPrototype;
 class SourceCode;
 class UnlinkedModuleProgramCodeBlock;
 class VariableEnvironment;
-enum class ThisTDZMode;
 struct ActivationStackNode;
 struct HashTable;
 
@@ -768,7 +767,7 @@ public:
     unsigned weakRandomInteger() { return m_weakRandom.getUint32(); }
 
     UnlinkedProgramCodeBlock* createProgramCodeBlock(CallFrame*, ProgramExecutable*, JSObject** exception);
-    UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*, ThisTDZMode, const VariableEnvironment*);
+    UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*, const VariableEnvironment*);
     UnlinkedModuleProgramCodeBlock* createModuleProgramCodeBlock(CallFrame*, ModuleProgramExecutable*);
 
     bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }

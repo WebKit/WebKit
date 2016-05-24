@@ -432,7 +432,7 @@ public:
         return m_evalCodeBlock.get();
     }
 
-    static EvalExecutable* create(ExecState*, const SourceCode&, bool isInStrictContext, ThisTDZMode, DerivedContextType, bool isArrowFunctionContext, EvalContextType, const VariableEnvironment*);
+    static EvalExecutable* create(ExecState*, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isArrowFunctionContext, EvalContextType, const VariableEnvironment*);
 
     PassRefPtr<JITCode> generatedJITCode()
     {

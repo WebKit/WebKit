@@ -157,7 +157,7 @@ public:
     ExpressionType createLogicalNot(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createUnaryPlus(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createVoid(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
-    ExpressionType createThisExpr(const JSTokenLocation&, ThisTDZMode) { return ThisExpr; }
+    ExpressionType createThisExpr(const JSTokenLocation&) { return ThisExpr; }
     ExpressionType createSuperExpr(const JSTokenLocation&) { return SuperExpr; }
     ExpressionType createNewTargetExpr(const JSTokenLocation&) { return NewTargetExpr; }
     ALWAYS_INLINE bool isNewTarget(ExpressionType type) { return type == NewTargetExpr; }

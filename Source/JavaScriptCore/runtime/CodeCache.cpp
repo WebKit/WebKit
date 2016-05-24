@@ -64,26 +64,28 @@ template <typename T> struct CacheTypes { };
 
 template <> struct CacheTypes<UnlinkedProgramCodeBlock> {
     typedef JSC::ProgramNode RootNode;
-    static const SourceCodeKey::CodeType codeType = SourceCodeKey::ProgramType;
+    static const SourceCodeType codeType = SourceCodeType::ProgramType;
     static const SourceParseMode parseMode = SourceParseMode::ProgramMode;
 };
 
 template <> struct CacheTypes<UnlinkedEvalCodeBlock> {
     typedef JSC::EvalNode RootNode;
-    static const SourceCodeKey::CodeType codeType = SourceCodeKey::EvalType;
+    static const SourceCodeType codeType = SourceCodeType::EvalType;
     static const SourceParseMode parseMode = SourceParseMode::ProgramMode;
 };
 
 template <> struct CacheTypes<UnlinkedModuleProgramCodeBlock> {
     typedef JSC::ModuleProgramNode RootNode;
-    static const SourceCodeKey::CodeType codeType = SourceCodeKey::ModuleType;
+    static const SourceCodeType codeType = SourceCodeType::ModuleType;
     static const SourceParseMode parseMode = SourceParseMode::ModuleEvaluateMode;
 };
 
 template <class UnlinkedCodeBlockType, class ExecutableType>
-UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
 {
-    SourceCodeKey key = SourceCodeKey(source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, builtinMode, strictMode, thisTDZMode);
+    DerivedContextType derivedContextType = executable->derivedContextType();
+    bool isArrowFunctionContext = executable->isArrowFunctionContext();
+    SourceCodeKey key(source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, builtinMode, strictMode, derivedContextType, evalContextType, isArrowFunctionContext);
     SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
     // FIXME: We should do something smart for TDZ instead of just disabling caching.
     // https://bugs.webkit.org/show_bug.cgi?id=154010
@@ -101,9 +103,8 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
         return unlinkedCodeBlock;
     }
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
-    DerivedContextType derivedContextType = executable->derivedContextType();
     std::unique_ptr<RootNode> rootNode = parse<RootNode>(
-        &vm, source, Identifier(), builtinMode, strictMode, CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, thisTDZMode, derivedContextType, evalContextType);
+        &vm, source, Identifier(), builtinMode, strictMode, CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, derivedContextType, evalContextType);
     if (!rootNode)
         return nullptr;
 
@@ -135,27 +136,31 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
 UnlinkedProgramCodeBlock* CodeCache::getProgramCodeBlock(VM& vm, ProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error)
 {
     VariableEnvironment emptyParentTDZVariables;
-    return getGlobalCodeBlock<UnlinkedProgramCodeBlock>(vm, executable, source, builtinMode, strictMode, ThisTDZMode::CheckIfNeeded, debuggerMode, error, EvalContextType::None, &emptyParentTDZVariables);
+    return getGlobalCodeBlock<UnlinkedProgramCodeBlock>(vm, executable, source, builtinMode, strictMode, debuggerMode, error, EvalContextType::None, &emptyParentTDZVariables);
 }
 
-UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(VM& vm, EvalExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(VM& vm, EvalExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
 {
-    return getGlobalCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, builtinMode, strictMode, thisTDZMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
+    return getGlobalCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, builtinMode, strictMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
 }
 
 UnlinkedModuleProgramCodeBlock* CodeCache::getModuleProgramCodeBlock(VM& vm, ModuleProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, DebuggerMode debuggerMode, ParserError& error)
 {
     VariableEnvironment emptyParentTDZVariables;
-    return getGlobalCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, executable, source, builtinMode, JSParserStrictMode::Strict, ThisTDZMode::CheckIfNeeded, debuggerMode, error, EvalContextType::None, &emptyParentTDZVariables);
+    return getGlobalCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, executable, source, builtinMode, JSParserStrictMode::Strict, debuggerMode, error, EvalContextType::None, &emptyParentTDZVariables);
 }
 
 // FIXME: There's no need to add the function's name to the key here. It's already in the source code.
 UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& vm, const Identifier& name, const SourceCode& source, ParserError& error)
 {
-    SourceCodeKey key = SourceCodeKey(
-        source, name.string(), SourceCodeKey::FunctionType, 
-        JSParserBuiltinMode::NotBuiltin, 
-        JSParserStrictMode::NotStrict);
+    bool isArrowFunctionContext = false;
+    SourceCodeKey key(
+        source, name.string(), SourceCodeType::FunctionType,
+        JSParserBuiltinMode::NotBuiltin,
+        JSParserStrictMode::NotStrict,
+        DerivedContextType::None,
+        EvalContextType::None,
+        isArrowFunctionContext);
     SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
     if (cache) {
         UnlinkedFunctionExecutable* executable = jsCast<UnlinkedFunctionExecutable*>(cache->cell.get());

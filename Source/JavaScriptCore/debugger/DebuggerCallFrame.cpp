@@ -224,7 +224,6 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
     
     DebuggerEvalEnabler evalEnabler(callFrame);
     VM& vm = callFrame->vm();
-    ThisTDZMode thisTDZMode = codeBlock->unlinkedCodeBlock()->constructorKind() == ConstructorKind::Derived ? ThisTDZMode::AlwaysCheck : ThisTDZMode::CheckIfNeeded;
 
     EvalContextType evalContextType;
     
@@ -238,7 +237,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
     VariableEnvironment variablesUnderTDZ;
     JSScope::collectVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ);
 
-    EvalExecutable* eval = EvalExecutable::create(callFrame, makeSource(script), codeBlock->isStrictMode(), thisTDZMode, codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), evalContextType, &variablesUnderTDZ);
+    EvalExecutable* eval = EvalExecutable::create(callFrame, makeSource(script), codeBlock->isStrictMode(), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), evalContextType, &variablesUnderTDZ);
     if (vm.exception()) {
         exception = vm.exception();
         vm.clearException();

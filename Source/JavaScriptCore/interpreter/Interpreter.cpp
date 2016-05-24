@@ -165,8 +165,15 @@ JSValue eval(CallFrame* callFrame)
             : DerivedContextType::DerivedMethodContext;
     }
 
-    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(callerCodeBlock->isStrictMode(), programSource, isArrowFunctionContext, derivedContextType, callerScopeChain);
+    EvalContextType evalContextType;
+    if (isFunctionParseMode(callerUnlinkedCodeBlock->parseMode()))
+        evalContextType = EvalContextType::FunctionEvalContext;
+    else if (callerUnlinkedCodeBlock->codeType() == EvalCode)
+        evalContextType = callerUnlinkedCodeBlock->evalContextType();
+    else
+        evalContextType = EvalContextType::None;
 
+    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(callerCodeBlock->isStrictMode(), programSource, derivedContextType, evalContextType, isArrowFunctionContext, callerScopeChain);
     if (!eval) {
         if (!callerCodeBlock->isStrictMode()) {
             if (programSource.is8Bit()) {
@@ -183,20 +190,7 @@ JSValue eval(CallFrame* callFrame)
         // If the literal parser bailed, it should not have thrown exceptions.
         ASSERT(!callFrame->vm().exception());
 
-        ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded;
-        if (callerUnlinkedCodeBlock->constructorKind() == ConstructorKind::Derived)
-            thisTDZMode = ThisTDZMode::AlwaysCheck;
-
-        EvalContextType evalContextType;
-        
-        if (isFunctionParseMode(callerUnlinkedCodeBlock->parseMode()))
-            evalContextType = EvalContextType::FunctionEvalContext;
-        else if (callerUnlinkedCodeBlock->codeType() == EvalCode)
-            evalContextType = callerUnlinkedCodeBlock->evalContextType();
-        else
-            evalContextType = EvalContextType::None;
-
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, derivedContextType, isArrowFunctionContext, evalContextType, programSource, callerScopeChain);
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), derivedContextType, evalContextType, isArrowFunctionContext, programSource, callerScopeChain);
 
         if (!eval)
             return jsUndefined();

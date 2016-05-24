@@ -1231,7 +1231,7 @@ UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* call
     return unlinkedCodeBlock;
 }
 
-UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame, EvalExecutable* executable, ThisTDZMode thisTDZMode, const VariableEnvironment* variablesUnderTDZ)
+UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame, EvalExecutable* executable, const VariableEnvironment* variablesUnderTDZ)
 {
     ParserError error;
     JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
@@ -1239,7 +1239,7 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame,
     EvalContextType evalContextType = executable->executableInfo().evalContextType();
     
     UnlinkedEvalCodeBlock* unlinkedCodeBlock = vm().codeCache()->getEvalCodeBlock(
-        vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, thisTDZMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
+        vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());

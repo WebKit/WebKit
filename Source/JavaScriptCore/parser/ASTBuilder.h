@@ -168,10 +168,10 @@ public:
         incConstants();
         return new (m_parserArena) VoidNode(location, expr);
     }
-    ExpressionNode* createThisExpr(const JSTokenLocation& location, ThisTDZMode thisTDZMode)
+    ExpressionNode* createThisExpr(const JSTokenLocation& location)
     {
         usesThis();
-        return new (m_parserArena) ThisNode(location, thisTDZMode);
+        return new (m_parserArena) ThisNode(location);
     }
     ExpressionNode* createSuperExpr(const JSTokenLocation& location)
     {

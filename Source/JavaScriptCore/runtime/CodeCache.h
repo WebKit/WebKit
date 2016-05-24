@@ -68,7 +68,7 @@ struct SourceCodeValue {
 
 class CodeCacheMap {
 public:
-    typedef HashMap<SourceCodeKey, SourceCodeValue, SourceCodeKeyHash, SourceCodeKeyHashTraits> MapType;
+    typedef HashMap<SourceCodeKey, SourceCodeValue, SourceCodeKey::Hash, SourceCodeKey::HashTraits> MapType;
     typedef MapType::iterator iterator;
     typedef MapType::AddResult AddResult;
 
@@ -188,7 +188,7 @@ public:
     ~CodeCache();
 
     UnlinkedProgramCodeBlock* getProgramCodeBlock(VM&, ProgramExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ParserError&);
-    UnlinkedEvalCodeBlock* getEvalCodeBlock(VM&, EvalExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, ThisTDZMode, DebuggerMode, ParserError&, EvalContextType, const VariableEnvironment*);
+    UnlinkedEvalCodeBlock* getEvalCodeBlock(VM&, EvalExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ParserError&, EvalContextType, const VariableEnvironment*);
     UnlinkedModuleProgramCodeBlock* getModuleProgramCodeBlock(VM&, ModuleProgramExecutable*, const SourceCode&, JSParserBuiltinMode, DebuggerMode, ParserError&);
     UnlinkedFunctionExecutable* getFunctionExecutableFromGlobalCode(VM&, const Identifier&, const SourceCode&, ParserError&);
 
@@ -199,7 +199,7 @@ public:
 
 private:
     template <class UnlinkedCodeBlockType, class ExecutableType> 
-    UnlinkedCodeBlockType* getGlobalCodeBlock(VM&, ExecutableType*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, ThisTDZMode, DebuggerMode, ParserError&, EvalContextType, const VariableEnvironment*);
+    UnlinkedCodeBlockType* getGlobalCodeBlock(VM&, ExecutableType*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ParserError&, EvalContextType, const VariableEnvironment*);
 
     CodeCacheMap m_sourceCode;
 };

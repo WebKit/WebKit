@@ -1,3 +1,81 @@
+2016-05-24  Saam barati  <sbarati@apple.com> and Yusuke Suzuki <utatane.tea@gmail.com>
+
+        ThisTDZMode is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=157209
+
+        Reviewed by Saam Barati.
+
+        ThisTDZMode is no longer needed because we have ConstructorKind
+        and DerivedContextType. The value of ThisTDZMode is strictly less
+        expressive than the combination of those two values. We were
+        using those values anyways, and this patch just makes it official
+        by removing ThisTDZMode.
+
+        This patch also cleans up caching keys. We extract SourceCodeFlags
+        from SourceCodeKey and use it in EvalCodeCache. It correctly
+        contains needed cache attributes: EvalContextType, DerivedContextType,
+        etc. Here, we still use specialized keys for EvalCodeCache instead
+        of SourceCodeKey for performance; it does not include name String and
+        does not allocate SourceCode.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::CacheKey::CacheKey):
+        (JSC::EvalCodeCache::CacheKey::operator==):
+        (JSC::EvalCodeCache::CacheKey::Hash::equal):
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::getSlow):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode): Deleted.
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createThisExpr):
+        * parser/NodeConstructors.h:
+        (JSC::ThisNode::ThisNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        * parser/Parser.h:
+        (JSC::parse):
+        * parser/ParserModes.h:
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeFlags::SourceCodeFlags):
+        (JSC::SourceCodeFlags::operator==):
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::Hash::hash):
+        (JSC::SourceCodeKey::Hash::equal):
+        (JSC::SourceCodeKey::HashTraits::isEmptyValue):
+        (JSC::SourceCodeKeyHash::hash): Deleted.
+        (JSC::SourceCodeKeyHash::equal): Deleted.
+        (JSC::SourceCodeKeyHashTraits::isEmptyValue): Deleted.
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createThisExpr):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getModuleProgramCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::create):
+        * runtime/Executable.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * tests/stress/code-cache-incorrect-caching.js: Added.
+        (shouldBe):
+        (hello):
+        (catch):
+        (shouldBe.test.hello):
+        (globalEval.ok):
+        (global.hello.hello):
+
 2016-05-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Assertion failure for Reflect.get with Proxy and primitive value as explicit receiver

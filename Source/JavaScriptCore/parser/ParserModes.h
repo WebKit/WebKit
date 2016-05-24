@@ -37,7 +37,6 @@ enum class JSParserCodeType { Program, Function, Module };
 
 enum class ConstructorKind { None, Base, Derived };
 enum class SuperBinding { Needed, NotNeeded };
-enum class ThisTDZMode { AlwaysCheck, CheckIfNeeded };
 
 enum DebuggerMode { DebuggerOff, DebuggerOn };
 

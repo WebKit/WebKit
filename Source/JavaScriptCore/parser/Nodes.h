@@ -542,12 +542,10 @@ namespace JSC {
 
     class ThisNode : public ExpressionNode {
     public:
-        ThisNode(const JSTokenLocation&, ThisTDZMode);
+        ThisNode(const JSTokenLocation&);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
-
-        bool m_shouldAlwaysEmitTDZCheck;
     };
 
     class SuperNode final : public ExpressionNode {
