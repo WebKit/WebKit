@@ -1,3 +1,20 @@
+2016-05-24  Alex Christensen  <achristensen@webkit.org>
+
+        Fix use-after-free after r201318
+        https://bugs.webkit.org/show_bug.cgi?id=158037
+        rdar://problem/26446729
+
+        Reviewed by Brady Eidson.
+
+        This fixes a crash when running fast/dom/navigation-with-sideeffects.html with GuardMalloc.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjPutForwardsNullableAttribute):
+        Changing RefPtr<${type}> to auto caused the type to sometimes be a raw pointer, which does not keep the object alive.
+        In the case of JSDocument.cpp, forwardedImpl was what Document::location returned, which is a Location* and not a RefPtr<Location>.
+
 2016-05-24  Chris Dumez  <cdumez@apple.com>
 
         Use lambda capture with initializer instead of StringCapture

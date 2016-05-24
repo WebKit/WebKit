@@ -3936,7 +3936,7 @@ bool setJSTestObjPutForwardsNullableAttribute(ExecState* state, EncodedJSValue t
     if (UNLIKELY(!castedThis)) {
         return throwSetterTypeError(*state, "TestObj", "putForwardsNullableAttribute");
     }
-    auto forwardedImpl = castedThis->wrapped().putForwardsNullableAttribute();
+    RefPtr<TestNode> forwardedImpl = castedThis->wrapped().putForwardsNullableAttribute();
     if (!forwardedImpl)
         return false;
     auto& impl = *forwardedImpl;

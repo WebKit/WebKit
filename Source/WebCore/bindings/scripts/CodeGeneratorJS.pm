@@ -2919,7 +2919,7 @@ sub GenerateImplementation
                     if ($putForwards) {
                         my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
                         if ($attribute->signature->isNullable) {
-                            push(@implContent, "    auto forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
+                            push(@implContent, "    RefPtr<${type}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
                             push(@implContent, "    if (!forwardedImpl)\n");
                             push(@implContent, "        return false;\n");
                             push(@implContent, "    auto& impl = *forwardedImpl;\n");
