@@ -1,3 +1,25 @@
+2016-05-24  Antoine Quint  <graouts@apple.com>
+
+        Elements with backdrop-filter cannot be clipped with clip-path or mask
+        https://bugs.webkit.org/show_bug.cgi?id=142662
+        <rdar://problem/20150192>
+
+        Reviewed by Dean Jackson.
+
+        We used to only apply the mask to the layer contents but did not account
+        for the fact that a layer backdrop may exist. We now correctly mask the
+        backdrop layer as well as the layer contents.
+
+        Test: css3/filters/backdrop/backdrop-filter-with-clip-path.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateShape):
+        Ensure clones of a layer use the same shape path.
+
+        (WebCore::GraphicsLayerCA::updateMaskLayer):
+        If we have a backdrop layer, ensure that we apply a clone of the mask layer applied to
+        the layer contents.
+
 2016-05-24  Zalan Bujtas  <zalan@apple.com>
 
         fast/table/neighboring-cells-when-collapsed-border-changes.html is flaky.

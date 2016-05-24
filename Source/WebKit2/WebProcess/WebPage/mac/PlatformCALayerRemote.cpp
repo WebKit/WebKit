@@ -133,6 +133,7 @@ void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& c
     clone.setBackgroundColor(backgroundColor());
     clone.setContentsScale(contentsScale());
     clone.setCornerRadius(cornerRadius());
+    clone.setShapePath(shapePath());
 
     if (m_properties.shapeRoundedRect)
         clone.setShapeRoundedRect(*m_properties.shapeRoundedRect);
