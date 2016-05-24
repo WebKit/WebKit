@@ -1,5 +1,18 @@
 2016-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline several tests after r200116.
+
+        We are now correctly positioning RTL scrollbars.
+
+        * platform/gtk/fast/block/float/026-expected.png:
+        * platform/gtk/fast/block/float/026-expected.txt:
+        * platform/gtk/fast/block/float/028-expected.png:
+        * platform/gtk/fast/block/float/028-expected.txt:
+        * platform/gtk/fast/overflow/unreachable-overflow-rtl-bug-expected.png:
+        * platform/gtk/fast/overflow/unreachable-overflow-rtl-bug-expected.txt:
+
+2016-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Fix wrong expectations of fast/harness/sample-fail-mismatch-reftest.html.
 
         The test is flaky, but in this case  Pass means it failed and ImageOnlyFailure that it passed.
