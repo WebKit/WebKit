@@ -1895,3 +1895,5 @@ webkit.org/b/153049 perf/array-binary-search.html [ Pass Failure Timeout ]
 fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html [ Pass Failure ]
 
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
+
+webkit.org/b/157990 [ Release ] mathml/wbr-in-mroot-crash.html [ Pass Timeout ]
