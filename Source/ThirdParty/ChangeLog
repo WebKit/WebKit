@@ -1,3 +1,12 @@
+2016-05-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        woff2_dec.cc triggers -Wsign-compare, -Wunused-but-set-variable
+        https://bugs.webkit.org/show_bug.cgi?id=157732
+
+        Reviewed by Darin Adler.
+
+        * woff2/CMakeLists.txt:
+
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
         Move to C++14.
