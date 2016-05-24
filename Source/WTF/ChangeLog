@@ -1,3 +1,30 @@
+2016-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Speed up move of vectors of POD types that have an inline buffer
+        https://bugs.webkit.org/show_bug.cgi?id=158003
+
+        Reviewed by Benjamin Poulain.
+
+        When moving a vector of POD types that have an inline buffer, we would
+        call std::swap() on the inline buffers. This unnecessarily slow because:
+        1. It does not consider the vector size, and therefore may end up doing
+           more work than necessary when the inline buffer is not full.
+        2. In the "move" case, the destination buffer is completely empty so
+           we don't really want a swap. We merely want the move the content of
+           the source's inline buffer into the destination's one.
+
+        Instead of calling std::swap(), we now call swapInlineBuffers() which
+        was already used for non-POD types. swapInlineBuffers() will do just
+        what we want in the "move" case because swapBound is going to be 0.
+        As a result, we will only move the content of the source buffer into
+        the destination one. Also swapInlineBuffers() is aware of the source
+        vector's size so it will only move what's strictly needed.
+
+        This seems to be a 2% progression on Dromaeo DOM attributes test.
+
+        * wtf/Vector.h:
+        (WTF::VectorBuffer::swapInlineBuffer):
+
 2016-05-22  Dan Bernstein  <mitz@apple.com>
 
         Added NSEventMaskMouseMoved to AppKitCompatibilityDeclarations.h.

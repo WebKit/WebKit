@@ -538,11 +538,7 @@ private:
     {
         // FIXME: We could make swap part of VectorTypeOperations
         // https://bugs.webkit.org/show_bug.cgi?id=128863
-        
-        if (std::is_pod<T>::value)
-            std::swap(m_inlineBuffer, other.m_inlineBuffer);
-        else
-            swapInlineBuffers(inlineBuffer(), other.inlineBuffer(), mySize, otherSize);
+        swapInlineBuffers(inlineBuffer(), other.inlineBuffer(), mySize, otherSize);
     }
     
     static void swapInlineBuffers(T* left, T* right, size_t leftSize, size_t rightSize)
