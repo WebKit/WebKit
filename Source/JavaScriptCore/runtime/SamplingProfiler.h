@@ -152,9 +152,13 @@ public:
     void setStopWatch(const LockHolder&, Ref<Stopwatch>&& stopwatch) { m_stopwatch = WTFMove(stopwatch); }
     void pause(const LockHolder&);
 
-    // Used for debugging in the JSC shell.
+    // Used for debugging in the JSC shell/DRT.
+    void registerForReportAtExit();
+    void reportDataToOptionFile();
     JS_EXPORT_PRIVATE void reportTopFunctions();
+    JS_EXPORT_PRIVATE void reportTopFunctions(PrintStream&);
     JS_EXPORT_PRIVATE void reportTopBytecodes();
+    JS_EXPORT_PRIVATE void reportTopBytecodes(PrintStream&);
 
 private:
     void clearData(const LockHolder&);
@@ -173,6 +177,7 @@ private:
     MachineThreads::Thread* m_jscExecutionThread;
     bool m_isPaused;
     bool m_isShutDown;
+    bool m_needsReportAtExit { false };
     HashSet<JSCell*> m_liveCellPointers;
     Vector<UnprocessedStackFrame> m_currentFrames;
 };

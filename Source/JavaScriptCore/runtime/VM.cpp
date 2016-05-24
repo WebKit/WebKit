@@ -315,6 +315,8 @@ VM::VM(VMType vmType, HeapType heapType)
         Ref<Stopwatch> stopwatch = Stopwatch::create();
         stopwatch->start();
         m_samplingProfiler = adoptRef(new SamplingProfiler(*this, WTFMove(stopwatch)));
+        if (Options::samplingProfilerPath())
+            m_samplingProfiler->registerForReportAtExit();
         m_samplingProfiler->start();
     }
 #endif // ENABLE(SAMPLING_PROFILER)
@@ -335,8 +337,10 @@ VM::~VM()
     heap.incrementDeferralDepth();
 
 #if ENABLE(SAMPLING_PROFILER)
-    if (m_samplingProfiler)
+    if (m_samplingProfiler) {
+        m_samplingProfiler->reportDataToOptionFile();
         m_samplingProfiler->shutdown();
+    }
 #endif // ENABLE(SAMPLING_PROFILER)
     
 #if ENABLE(DFG_JIT)

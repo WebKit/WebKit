@@ -47,6 +47,8 @@
 #include "StructureInlines.h"
 #include "VM.h"
 #include "VMEntryScope.h"
+#include <wtf/HashSet.h>
+#include <wtf/RefPtr.h>
 
 namespace JSC {
 
@@ -760,7 +762,45 @@ String SamplingProfiler::stackTracesAsJSON()
     return json.toString();
 }
 
+void SamplingProfiler::registerForReportAtExit()
+{
+    static StaticLock registrationLock;
+    static HashSet<RefPtr<SamplingProfiler>>* profilesToReport;
+
+    LockHolder holder(registrationLock);
+
+    if (!profilesToReport) {
+        profilesToReport = new HashSet<RefPtr<SamplingProfiler>>();
+        atexit([]() {
+            for (auto profile : *profilesToReport)
+                profile->reportDataToOptionFile();
+        });
+    }
+
+    profilesToReport->add(adoptRef(this));
+    m_needsReportAtExit = true;
+}
+
+void SamplingProfiler::reportDataToOptionFile()
+{
+    if (m_needsReportAtExit) {
+        m_needsReportAtExit = false;
+        const char* path = Options::samplingProfilerPath();
+        StringPrintStream pathOut;
+        pathOut.print(path, "/");
+        pathOut.print("JSCSampilingProfile-", reinterpret_cast<uintptr_t>(this), ".txt");
+        auto out = FilePrintStream::open(pathOut.toCString().data(), "w");
+        reportTopFunctions(*out);
+        reportTopBytecodes(*out);
+    }
+}
+
 void SamplingProfiler::reportTopFunctions()
+{
+    reportTopFunctions(WTF::dataFile());
+}
+
+void SamplingProfiler::reportTopFunctions(PrintStream& out)
 {
     LockHolder locker(m_lock);
 
@@ -794,18 +834,23 @@ void SamplingProfiler::reportTopFunctions()
         return std::make_pair(maxFrameDescription, maxFrameCount);
     };
 
-    dataLog("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
-    dataLog("Hottest functions as <numSamples  'functionName:sourceID'>\n");
+    out.print("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
+    out.print("Hottest functions as <numSamples  'functionName:sourceID'>\n");
     for (size_t i = 0; i < 40; i++) {
         auto pair = takeMax();
         if (pair.first.isEmpty())
             break;
-        dataLogF("%6zu ", pair.second);
-        dataLog("   '", pair.first, "'\n");
+        out.printf("%6zu ", pair.second);
+        out.print("   '", pair.first, "'\n");
     }
 }
 
 void SamplingProfiler::reportTopBytecodes()
+{
+    reportTopBytecodes(WTF::dataFile());
+}
+
+void SamplingProfiler::reportTopBytecodes(PrintStream& out)
 {
     LockHolder locker(m_lock);
 
@@ -852,14 +897,14 @@ void SamplingProfiler::reportTopBytecodes()
         return std::make_pair(maxFrameDescription, maxFrameCount);
     };
 
-    dataLog("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
-    dataLog("Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>\n");
+    out.print("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
+    out.print("Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>\n");
     for (size_t i = 0; i < 80; i++) {
         auto pair = takeMax();
         if (pair.first.isEmpty())
             break;
-        dataLogF("%6zu ", pair.second);
-        dataLog("   '", pair.first, "'\n");
+        out.printf("%6zu ", pair.second);
+        out.print("   '", pair.first, "'\n");
     }
 }
 

@@ -64,7 +64,7 @@ Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
 
 Bytecodes* Database::ensureBytecodesFor(const LockHolder&, CodeBlock* codeBlock)
 {
-    codeBlock = codeBlock->baselineVersion();
+    codeBlock = codeBlock->baselineAlternative();
     
     HashMap<CodeBlock*, Bytecodes*>::iterator iter = m_bytecodesMap.find(codeBlock);
     if (iter != m_bytecodesMap.end())
@@ -182,6 +182,7 @@ void Database::removeDatabaseFromAtExit()
 
 void Database::performAtExitSave() const
 {
+    JSLockHolder lock(m_vm);
     save(m_atExitSaveFilename.data());
 }
 
