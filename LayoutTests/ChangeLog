@@ -1,5 +1,13 @@
 2016-05-23  Zalan Bujtas  <zalan@apple.com>
 
+        Skip fast/table/neighboring-cells-when-collapsed-border-changes on WK1 for now.
+
+        Unreviewed.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-05-23  Zalan Bujtas  <zalan@apple.com>
+
         Changing border color and size simultaneously fails to repaint.
         https://bugs.webkit.org/show_bug.cgi?id=157967
         <rdar://problem/26423918>
