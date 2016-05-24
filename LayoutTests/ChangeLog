@@ -1,3 +1,22 @@
+2016-05-24  Ada Chan  <adachan@apple.com>
+
+        Only set overflow:hidden on -webkit-media-controls when the placeholder is showing.
+        https://bugs.webkit.org/show_bug.cgi?id=157975
+
+        Reviewed by Eric Carlson.
+
+        This is a Mac only test. The media controls panel should still be visible
+        even if the media element's height is very short.
+
+        * TestExpectations:
+        * media/mac/controls-panel-not-clipped-out-expected.html: Added.
+        * media/mac/controls-panel-not-clipped-out.html: Added.
+        * platform/mac/TestExpectations:
+
+        * platform/mac/media/media-document-audio-repaint-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+        Rebaseline tests.
+
 2016-05-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: RTCIceCandidate: Make attributes readonly (and update constructor arg)

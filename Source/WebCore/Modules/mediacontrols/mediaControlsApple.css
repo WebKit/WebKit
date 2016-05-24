@@ -59,6 +59,9 @@ video:-webkit-full-page-media::-webkit-media-controls-panel.no-video {
     font: -webkit-small-control;
     white-space: nowrap;
     -webkit-font-smoothing: subpixel-antialiased;
+}
+
+::-webkit-media-controls.placeholder-showing {
     overflow: hidden;
 }
 

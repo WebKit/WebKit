@@ -115,6 +115,7 @@ Controller.prototype = {
         down: 'down',
         out: 'out',
         pictureInPictureButton: 'picture-in-picture-button',
+        placeholderShowing: 'placeholder-showing',
     },
     KeyCodes: {
         enter: 13,
@@ -871,6 +872,11 @@ Controller.prototype = {
                 this.controls.pictureInPictureButton.classList.remove(this.ClassNames.returnFromPictureInPicture);
                 break;
         }
+
+        if (this.controls.inlinePlaybackPlaceholder.classList.contains(this.ClassNames.hidden))
+            this.base.classList.remove(this.ClassNames.placeholderShowing);
+        else
+            this.base.classList.add(this.ClassNames.placeholderShowing);
 
         this.updateControls();
         this.updateCaptionContainer();

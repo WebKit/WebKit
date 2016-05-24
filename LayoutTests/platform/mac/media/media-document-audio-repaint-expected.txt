@@ -21,13 +21,38 @@ layer at (8,42) size 384x334
       RenderVideo {VIDEO} at (40,164) size 300x2
     layer at (40,165) size 300x1
       RenderFlexibleBox {DIV} at (0,0) size 300x1
-    layer at (40,121) size 300x45 backgroundClip at (40,165) size 300x1 clip at (40,165) size 300x1
+    layer at (40,121) size 300x45
       RenderFlexibleBox {DIV} at (0,-44) size 300x45
-    layer at (40,121) size 300x45 backgroundClip at (40,165) size 300x1 clip at (40,165) size 300x1 isolatesBlending
+    layer at (40,121) size 300x45 isolatesBlending
       RenderBlock (positioned) {DIV} at (0,0) size 300x45
-    layer at (40,121) size 300x45 backgroundClip at (40,165) size 300x1 clip at (40,165) size 300x1
+    layer at (40,121) size 300x45
       RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#1E1E1E73]
-    layer at (40,121) size 300x45 backgroundClip at (40,165) size 300x1 clip at (40,165) size 300x1 blendMode: lighten
+    layer at (40,121) size 300x45 blendMode: lighten
       RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#292929]
-    layer at (318,141) size 14x25 backgroundClip at (40,165) size 300x1 clip at (40,165) size 300x1
+    layer at (48,146) size 12x15 blendMode: plus-lighter
+      RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+    layer at (76,145) size 16x15 blendMode: plus-lighter
+      RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+    layer at (100,145) size 210x17
+      RenderFlexibleBox {DIV} at (60,24) size 210x17
+    layer at (108,146) size 32x13 blendMode: plus-lighter
+      RenderFlexibleBox {DIV} at (8,2) size 32x13 [color=#FFFFFF]
+        RenderBlock (anonymous) at (2,0) size 30x13
+          RenderText {#text} at (0,0) size 30x13
+            text run at (0,0) width 30: "00:00"
+    layer at (150,145) size 105x17
+      RenderFlexibleBox {DIV} at (50,0) size 105x17
+    layer at (150,145) size 105x17 blendMode: plus-lighter
+      RenderSlider {INPUT} at (0,0) size 105x17 [color=#909090]
+        RenderFlexibleBox {DIV} at (0,0) size 105x17
+          RenderBlock {DIV} at (0,1) size 105x15
+            RenderBlock {DIV} at (50,0) size 4x15
+    layer at (265,146) size 37x13 blendMode: plus-lighter
+      RenderFlexibleBox {DIV} at (165,2) size 37x13 [color=#FFFFFF]
+        RenderBlock (anonymous) at (0,0) size 35x13
+          RenderText {#text} at (0,0) size 35x13
+            text run at (0,0) width 35: "-00:00"
+    layer at (318,141) size 14x25
       RenderFlexibleBox {DIV} at (278,20) size 14x25
+    layer at (318,146) size 14x15 blendMode: plus-lighter
+      RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]

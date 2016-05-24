@@ -1,3 +1,31 @@
+2016-05-23  Ada Chan  <adachan@apple.com>
+
+        Only set overflow:hidden on -webkit-media-controls when the placeholder is showing.
+        https://bugs.webkit.org/show_bug.cgi?id=157975
+
+        Reviewed by Eric Carlson.
+
+        Test: media/mac/controls-panel-not-clipped-out.html
+
+        overflow:hidden was added to clip out content contained in -webkit-media-controls
+        that sticks out of the bounds of that container when the inlinePlaybackPlaceholder
+        is showing. However, that style also clips out things that we want to show when the
+        inlinePlaybackPlaceholder is not showing. For example, the volume slider or the
+        controls panel when the video element's height is too short.
+
+        To fix that, we only set overflow:hidden on -webkit-media-controls when the
+        inlinePlaybackPlaceholder is visible.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (::-webkit-media-controls):
+        (::-webkit-media-controls.placeholder-showing):
+        Set overflow:hidden only when the placeholder is showing.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handlePresentationModeChange):
+        Add the placeholderShowing class to -webkit-media-controls only when the
+        inlinePlaybackPlaceholder is not hidden.
+
 2016-05-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r201341.
