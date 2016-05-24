@@ -1,3 +1,23 @@
+2016-05-23  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r200965. rdar://problem/26237934
+
+    2016-05-12  Ada Chan  <adachan@apple.com>
+
+            Don't execute JavaScript within HTMLMediaElement::stop()
+            https://bugs.webkit.org/show_bug.cgi?id=157655
+
+            Reviewed by Chris Dumez.
+
+            * dom/ScriptExecutionContext.cpp:
+            (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+            Move the setting of m_activeDOMObjectsAreSuspended to true earlier so we won't execute
+            any JS while suspending the objects.
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::updateMediaControlsAfterPresentationModeChange):
+            Bail early if the controls script hasn't been injected yet or the DOM object has been
+            stopped or suspended.
+
 2016-05-22  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r201241. rdar://problem/26396532

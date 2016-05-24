@@ -224,6 +224,8 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
         return;
     }
 
+    m_activeDOMObjectsAreSuspended = true;
+
     m_activeDOMObjectAdditionForbidden = true;
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = true;
@@ -242,7 +244,6 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
     m_activeDOMObjectRemovalForbidden = false;
 #endif
 
-    m_activeDOMObjectsAreSuspended = true;
     m_reasonForSuspendingActiveDOMObjects = why;
 }
 
