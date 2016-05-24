@@ -179,6 +179,14 @@ ALWAYS_INLINE bool needsVarInjectionChecks(ResolveType type)
 }
 
 struct ResolveOp {
+    ResolveOp()
+        : depth(0)
+        , structure(nullptr)
+        , lexicalEnvironment(nullptr)
+        , watchpointSet(nullptr)
+        , importedName(nullptr)
+    { }
+
     ResolveOp(ResolveType type, size_t depth, Structure* structure, JSLexicalEnvironment* lexicalEnvironment, WatchpointSet* watchpointSet, uintptr_t operand, UniquedStringImpl* importedName = nullptr)
         : type(type)
         , depth(depth)
