@@ -1,3 +1,18 @@
+2016-05-23  Yoav Weiss  <yoav@yoav.ws>
+
+        Add a few initiator tests to resource timing.
+        https://bugs.webkit.org/show_bug.cgi?id=157986
+
+        Reviewed by Darin Adler.
+
+        Adds tests that make sure that when a resource is requested multiple times by different
+        elements, its initiator type remain the first one that triggered the fetch.
+
+        * http/tests/performance/performance-resource-timing-initiator-css-expected.txt: Added.
+        * http/tests/performance/performance-resource-timing-initiator-css.html: Added.
+        * http/tests/performance/performance-resource-timing-initiator-no-override-expected.txt: Added.
+        * http/tests/performance/performance-resource-timing-initiator-no-override.html: Added.
+
 2016-05-23  Zalan Bujtas  <zalan@apple.com>
 
         Skip fast/table/neighboring-cells-when-collapsed-border-changes on WK1 for now.
