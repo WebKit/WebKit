@@ -92,7 +92,7 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
 
 static const char* s_proxyAlreadyRevokedErrorMessage = "Proxy has already been revoked. No more operations are allowed to be performed on it";
 
-static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
+static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName, JSObject* slotBase)
 {
     VM& vm = exec->vm();
     if (!vm.isSafeToRecurse()) {
@@ -100,20 +100,7 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
         return JSValue::encode(JSValue());
     }
 
-    JSObject* thisObject = jsCast<JSObject*>(JSValue::decode(thisValue)); // This might be a value where somewhere in __proto__ chain lives a ProxyObject.
-    JSObject* proxyObjectAsObject = thisObject;
-    // FIXME: make it so that custom getters take both the |this| value and the slotBase (property holder).
-    // https://bugs.webkit.org/show_bug.cgi?id=154320
-    while (true) {
-        if (LIKELY(proxyObjectAsObject->type() == ProxyObjectType))
-            break;
-
-        JSValue prototype = proxyObjectAsObject->getPrototypeDirect();
-        RELEASE_ASSERT(prototype.isObject());
-        proxyObjectAsObject = asObject(prototype);
-    }
-
-    ProxyObject* proxyObject = jsCast<ProxyObject*>(proxyObjectAsObject);
+    ProxyObject* proxyObject = jsCast<ProxyObject*>(slotBase);
     JSObject* target = proxyObject->target();
 
     if (propertyName == vm.propertyNames->underscoreProto)
@@ -143,7 +130,7 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
-    arguments.append(thisObject);
+    arguments.append(JSValue::decode(thisValue));
     JSValue trapResult = call(exec, getHandler, callType, callData, handler, arguments);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());

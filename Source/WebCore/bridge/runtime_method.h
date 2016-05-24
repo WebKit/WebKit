@@ -66,7 +66,7 @@ protected:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
 private:
-    static EncodedJSValue lengthGetter(ExecState*, EncodedJSValue, PropertyName);
+    static EncodedJSValue lengthGetter(ExecState*, EncodedJSValue, PropertyName, JSObject*);
 
     Bindings::Method* m_method;
 };

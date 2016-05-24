@@ -198,10 +198,8 @@ private:
 
     friend class LLIntOffsetsExtractor;
 
-    static EncodedJSValue argumentsGetter(ExecState*, EncodedJSValue, PropertyName);
-    static EncodedJSValue callerGetter(ExecState*, EncodedJSValue, PropertyName);
-    static EncodedJSValue lengthGetter(ExecState*, EncodedJSValue, PropertyName);
-    static EncodedJSValue nameGetter(ExecState*, EncodedJSValue, PropertyName);
+    static EncodedJSValue argumentsGetter(ExecState*, EncodedJSValue, PropertyName, JSObject*);
+    static EncodedJSValue callerGetter(ExecState*, EncodedJSValue, PropertyName, JSObject*);
 
     WriteBarrier<ExecutableBase> m_executable;
     WriteBarrier<FunctionRareData> m_rareData;

@@ -94,7 +94,12 @@ public:
     {
     }
 
-    typedef EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName);
+    // There are two types of custom properties: custom values and custom accessors.
+    // For the second argument, custom values are passed the slotBase (the property holder), custom accessors are passed the thisVaule (reciever).
+    // And when getting the property descriptor from these properties, custom values return the data descriptor while custom accessors return the accessor descriptor.
+    // FIXME: Remove this slotBase / receiver behavior difference in custom values and custom accessors.
+    // https://bugs.webkit.org/show_bug.cgi?id=158014
+    typedef EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName, JSObject* slotBase);
 
     JSValue getValue(ExecState*, PropertyName) const;
     JSValue getValue(ExecState*, unsigned propertyName) const;

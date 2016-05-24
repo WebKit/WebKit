@@ -51,7 +51,7 @@ EncodedJSValue JSC_HOST_CALL boundSlotBaseFunctionCall(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     const String& name = boundSlotBaseFunction->name();
-    return getter(exec, JSValue::encode(exec->thisValue()), PropertyName(Identifier::fromString(exec, name)));
+    return getter(exec, JSValue::encode(exec->thisValue()), PropertyName(Identifier::fromString(exec, name)), baseObject);
 }
 
 JSBoundSlotBaseFunction::JSBoundSlotBaseFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, const Type type)

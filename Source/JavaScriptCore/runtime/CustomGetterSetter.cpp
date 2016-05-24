@@ -53,6 +53,8 @@ bool callCustomSetter(ExecState* exec, JSValue customGetterSetter, bool isAccess
     // Return false since there is no setter.
     if (!setter)
         return false;
+    // FIXME: Remove this differences in custom values and custom accessors.
+    // https://bugs.webkit.org/show_bug.cgi?id=158014
     if (!isAccessor)
         thisValue = base;
     return callCustomSetter(exec, setter, isAccessor, thisValue, value);

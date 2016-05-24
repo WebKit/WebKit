@@ -1084,15 +1084,18 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // to make some space here.
             jit.makeSpaceOnStackForCCall();
 
-            // getter: EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName);
+            // getter: EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName, JSObject* slotBase);
             // setter: void (*PutValueFunc)(ExecState*, EncodedJSValue thisObject, EncodedJSValue value);
             // Custom values are passed the slotBase (the property holder), custom accessors are passed the thisVaule (reciever).
+            // FIXME: Remove this differences in custom values and custom accessors.
+            // https://bugs.webkit.org/show_bug.cgi?id=158014
             GPRReg baseForCustomValue = m_type == CustomValueGetter || m_type == CustomValueSetter ? baseForAccessGPR : baseForGetGPR;
 #if USE(JSVALUE64)
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 jit.setupArgumentsWithExecState(
                     baseForCustomValue,
-                    CCallHelpers::TrustedImmPtr(ident.impl()));
+                    CCallHelpers::TrustedImmPtr(ident.impl()),
+                    baseForAccessGPR);
             } else
                 jit.setupArgumentsWithExecState(baseForCustomValue, valueRegs.gpr());
 #else
@@ -1100,7 +1103,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.setupArgumentsWithExecState(
                     EABI_32BIT_DUMMY_ARG baseForCustomValue,
                     CCallHelpers::TrustedImm32(JSValue::CellTag),
-                    CCallHelpers::TrustedImmPtr(ident.impl()));
+                    CCallHelpers::TrustedImmPtr(ident.impl()),
+                    baseForAccessGPR);
             } else {
                 jit.setupArgumentsWithExecState(
                     EABI_32BIT_DUMMY_ARG baseForCustomValue,

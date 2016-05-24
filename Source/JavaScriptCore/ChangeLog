@@ -1,3 +1,64 @@
+2016-05-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Assertion failure for Reflect.get with Proxy and primitive value as explicit receiver
+        https://bugs.webkit.org/show_bug.cgi?id=157080
+
+        Reviewed by Saam Barati.
+
+        In custom accessor getter, the argument "thisValue" can be altered by using `Reflect.get`.
+        In this patch, we add a new parameter, "slotBase". This represents the base value offering
+        this custom getter. And use it in ProxyObject's performGet custom accessor getter.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::staticFunctionGetter):
+        (JSC::JSCallbackObject<Parent>::callbackGetter):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        In PolymorphicAccess case, the thisValue and the slotBase are always cells.
+        This is because IC is enabled in the case that the base value is a cell.
+        And slotBase is always on the prototype chain from this base value.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jsc.cpp:
+        (WTF::CustomGetter::customGetter):
+        (WTF::RuntimeArray::lengthGetter):
+        * runtime/CustomGetterSetter.cpp:
+        (JSC::callCustomSetter):
+        * runtime/JSBoundSlotBaseFunction.cpp:
+        (JSC::boundSlotBaseFunctionCall):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::JSFunction::callerGetter):
+        * runtime/JSFunction.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::callbackGetter):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::customGetter):
+        * runtime/PropertySlot.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::regExpConstructorDollar):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        (JSC::regExpConstructorDollar1): Deleted.
+        (JSC::regExpConstructorDollar2): Deleted.
+        (JSC::regExpConstructorDollar3): Deleted.
+        (JSC::regExpConstructorDollar4): Deleted.
+        (JSC::regExpConstructorDollar5): Deleted.
+        (JSC::regExpConstructorDollar6): Deleted.
+        (JSC::regExpConstructorDollar7): Deleted.
+        (JSC::regExpConstructorDollar8): Deleted.
+        (JSC::regExpConstructorDollar9): Deleted.
+        * tests/stress/proxy-get-with-primitive-receiver.js: Added.
+        (shouldBe):
+
 2016-05-23  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION (196374): deleting a global property is expensive
