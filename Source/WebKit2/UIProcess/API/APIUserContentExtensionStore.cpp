@@ -307,8 +307,11 @@ static RefPtr<API::UserContentExtension> createExtension(const String& identifie
 void UserContentExtensionStore::lookupContentExtension(const WTF::String& identifier, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
 {
     RefPtr<UserContentExtensionStore> self(this);
-    m_readQueue->dispatch([self, identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler] {
-        auto path = constructedPath(storePath, identifier);
+    StringCapture identifierCapture(identifier);
+    StringCapture pathCapture(m_storePath);
+
+    m_readQueue->dispatch([self, identifierCapture, pathCapture, completionHandler] {
+        auto path = constructedPath(pathCapture.string(), identifierCapture.string());
         
         ContentExtensionMetaData metaData;
         Data fileData;
@@ -326,8 +329,8 @@ void UserContentExtensionStore::lookupContentExtension(const WTF::String& identi
             return;
         }
         
-        RunLoop::main().dispatch([self, identifier = identifier.isolatedCopy(), fileData, metaData, completionHandler] {
-            RefPtr<API::UserContentExtension> userContentExtension = createExtension(identifier, metaData, fileData);
+        RunLoop::main().dispatch([self, identifierCapture, fileData, metaData, completionHandler] {
+            RefPtr<API::UserContentExtension> userContentExtension = createExtension(identifierCapture.string(), metaData, fileData);
             completionHandler(userContentExtension, { });
         });
     });
@@ -336,12 +339,16 @@ void UserContentExtensionStore::lookupContentExtension(const WTF::String& identi
 void UserContentExtensionStore::compileContentExtension(const WTF::String& identifier, WTF::String&& json, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
 {
     RefPtr<UserContentExtensionStore> self(this);
-    m_compileQueue->dispatch([self, identifier = identifier.isolatedCopy(), json = json.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler] () mutable {
-        auto path = constructedPath(storePath, identifier);
+    StringCapture identifierCapture(identifier);
+    StringCapture jsonCapture(WTFMove(json));
+    StringCapture pathCapture(m_storePath);
+
+    m_compileQueue->dispatch([self, identifierCapture, jsonCapture, pathCapture, completionHandler] () mutable {
+        auto path = constructedPath(pathCapture.string(), identifierCapture.string());
 
         ContentExtensionMetaData metaData;
         Data fileData;
-        auto error = compiledToFile(WTFMove(json), path, metaData, fileData);
+        auto error = compiledToFile(jsonCapture.releaseString(), path, metaData, fileData);
         if (error) {
             RunLoop::main().dispatch([self, error, completionHandler] {
                 completionHandler(nullptr, error);
@@ -349,8 +356,8 @@ void UserContentExtensionStore::compileContentExtension(const WTF::String& ident
             return;
         }
 
-        RunLoop::main().dispatch([self, identifier = identifier.isolatedCopy(), fileData, metaData, completionHandler] {
-            RefPtr<API::UserContentExtension> userContentExtension = createExtension(identifier, metaData, fileData);
+        RunLoop::main().dispatch([self, identifierCapture, fileData, metaData, completionHandler] {
+            RefPtr<API::UserContentExtension> userContentExtension = createExtension(identifierCapture.string(), metaData, fileData);
             completionHandler(userContentExtension, { });
         });
     });
@@ -359,8 +366,11 @@ void UserContentExtensionStore::compileContentExtension(const WTF::String& ident
 void UserContentExtensionStore::removeContentExtension(const WTF::String& identifier, std::function<void(std::error_code)> completionHandler)
 {
     RefPtr<UserContentExtensionStore> self(this);
-    m_removeQueue->dispatch([self, identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler] {
-        auto path = constructedPath(storePath, identifier);
+    StringCapture identifierCapture(identifier);
+    StringCapture pathCapture(m_storePath);
+
+    m_removeQueue->dispatch([self, identifierCapture, pathCapture, completionHandler] {
+        auto path = constructedPath(pathCapture.string(), identifierCapture.string());
 
         if (!WebCore::deleteFile(path)) {
             RunLoop::main().dispatch([self, completionHandler] {

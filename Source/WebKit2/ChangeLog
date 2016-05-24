@@ -1,3 +1,16 @@
+2016-05-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r201341.
+
+        This change may have caused LayoutTests to crash on Mac and
+        iOS
+
+        Reverted changeset:
+
+        "Use lambda capture with initializer instead of StringCapture"
+        https://bugs.webkit.org/show_bug.cgi?id=158010
+        http://trac.webkit.org/changeset/201341
+
 2016-05-24  Alex Christensen  <achristensen@webkit.org>
 
         Fix null pointer dereferencing in WebViewImpl::inputContext
