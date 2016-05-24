@@ -1,5 +1,12 @@
 2016-05-24  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviwed, add a comment to describe the test's failure mode. Suggested by mlam.
+
+        * tests/stress/override-map-constructor.js:
+        (Map):
+
+2016-05-24  Filip Pizlo  <fpizlo@apple.com>
+
         Map should not be in JSGlobalObject's static hashtable because it's initialized eagerly via FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR
         https://bugs.webkit.org/show_bug.cgi?id=158031
         rdar://problem/26353661
