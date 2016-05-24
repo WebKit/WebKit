@@ -1,3 +1,19 @@
+2016-05-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        In accelerated drawing mode, ImageBuffer::putByteArray() should copy the bytes directly to the IOSurface backing store
+        https://bugs.webkit.org/show_bug.cgi?id=157966
+
+        Reviewed by Dean Jackson.
+        
+        Roll out the the change of r106836 in ImageBuffer::putByteArray(). r106836
+        was using CG to draw the image data as a native image in the accelerated
+        drawing mode just to force invalidating the IOSurface cached image. Instead
+        of doing that, we can use a light-weight fix, for now, to force recreating
+        the IOSurface image if it is requested through CGIOSurfaceContextCreateImage().
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::putByteArray):
+
 2016-05-24  Chris Dumez  <cdumez@apple.com>
 
         Use auto for some of our lambda function parameters

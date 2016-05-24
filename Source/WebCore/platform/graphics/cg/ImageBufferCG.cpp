@@ -345,56 +345,22 @@ RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& 
 
 void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
 {
-    if (!context().isAcceleratedContext()) {
-        IntRect scaledSourceRect = sourceRect;
-        IntSize scaledSourceSize = sourceSize;
-        if (coordinateSystem == LogicalCoordinateSystem) {
-            scaledSourceRect.scale(m_resolutionScale);
-            scaledSourceSize.scale(m_resolutionScale);
-        }
+    if (context().isAcceleratedContext())
+        flushContext();
 
-        m_data.putData(source, scaledSourceSize, scaledSourceRect, destPoint, internalSize(), false, multiplied == Unmultiplied, 1);
-        return;
-    }
-
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    // Make a copy of the source to ensure the bits don't change before being drawn
-    IntSize sourceCopySize(sourceRect.width(), sourceRect.height());
-    // FIXME (149431): Should this ImageBuffer be unconditionally unaccelerated? Making it match the context seems to break putData().
-    std::unique_ptr<ImageBuffer> sourceCopy = ImageBuffer::create(sourceCopySize, Unaccelerated, 1, ColorSpaceSRGB);
-    if (!sourceCopy)
-        return;
-
-    sourceCopy->m_data.putData(source, sourceSize, sourceRect, IntPoint(-sourceRect.x(), -sourceRect.y()), sourceCopy->internalSize(), sourceCopy->context().isAcceleratedContext(), multiplied == Unmultiplied, 1);
-
-    // Set up context for using drawImage as a direct bit copy
-    CGContextRef destContext = context().platformContext();
-    CGContextSaveGState(destContext);
-    
+    IntRect scaledSourceRect = sourceRect;
+    IntSize scaledSourceSize = sourceSize;
     if (coordinateSystem == LogicalCoordinateSystem) {
-        if (auto inverse = AffineTransform(getUserToBaseCTM(destContext)).inverse())
-            CGContextConcatCTM(destContext, inverse.value());
-    } else {
-        if (auto inverse = AffineTransform(CGContextGetCTM(destContext)).inverse())
-            CGContextConcatCTM(destContext, inverse.value());
+        scaledSourceRect.scale(m_resolutionScale);
+        scaledSourceSize.scale(m_resolutionScale);
     }
-    CGContextResetClip(destContext);
-    CGContextSetInterpolationQuality(destContext, kCGInterpolationNone);
-    CGContextSetAlpha(destContext, 1.0);
-    CGContextSetBlendMode(destContext, kCGBlendModeCopy);
-    CGContextSetShadowWithColor(destContext, CGSizeZero, 0, 0);
 
-    // Draw the image in CG coordinate space
-    FloatSize scaledDestSize = sizeForDestinationSize(coordinateSystem == LogicalCoordinateSystem ? logicalSize() : internalSize());
-    IntPoint destPointInCGCoords(destPoint.x() + sourceRect.x(), scaledDestSize.height() - (destPoint.y() + sourceRect.y()) - sourceRect.height());
-    IntRect destRectInCGCoords(destPointInCGCoords, sourceCopySize);
-    CGContextClipToRect(destContext, destRectInCGCoords);
-
-    RetainPtr<CGImageRef> sourceCopyImage = sourceCopy->copyNativeImage();
-    FloatRect backingStoreInDestRect = FloatRect(FloatPoint(destPointInCGCoords.x(), destPointInCGCoords.y() + sourceCopySize.height() - (int)CGImageGetHeight(sourceCopyImage.get())), FloatSize(CGImageGetWidth(sourceCopyImage.get()), CGImageGetHeight(sourceCopyImage.get())));
-    CGContextDrawImage(destContext, backingStoreInDestRect, sourceCopyImage.get());
-    CGContextRestoreGState(destContext);
-#endif
+    m_data.putData(source, scaledSourceSize, scaledSourceRect, destPoint, internalSize(), context().isAcceleratedContext(), multiplied == Unmultiplied, 1);
+    
+    // Force recreating the IOSurface cached image if it is requested through CGIOSurfaceContextCreateImage().
+    // See https://bugs.webkit.org/show_bug.cgi?id=157966 for explaining why this is necessary.
+    if (context().isAcceleratedContext())
+        context().fillRect(FloatRect(1, 1, 0, 0));
 }
 
 static inline CFStringRef jpegUTI()
