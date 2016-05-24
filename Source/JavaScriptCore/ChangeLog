@@ -1,5 +1,22 @@
 2016-05-24  Filip Pizlo  <fpizlo@apple.com>
 
+        Map should not be in JSGlobalObject's static hashtable because it's initialized eagerly via FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR
+        https://bugs.webkit.org/show_bug.cgi?id=158031
+        rdar://problem/26353661
+
+        Reviewed by Geoffrey Garen.
+        
+        We were listing Map as being a lazy class structure. It's not. m_mapStructure is a WriteBarrier<>
+        not a LazyClassStructure<> and there is nothing lazy about it.
+
+        * runtime/JSGlobalObject.cpp: The fix is to remove Map here.
+        * runtime/Lookup.cpp: Add some dumping on the assert path.
+        (JSC::setUpStaticFunctionSlot):
+        * tests/stress/override-map-constructor.js: Added. This test used to crash.
+        (Map):
+
+2016-05-24  Filip Pizlo  <fpizlo@apple.com>
+
         LLInt64 should have typed array fast paths for get_by_val
         https://bugs.webkit.org/show_bug.cgi?id=157931
 

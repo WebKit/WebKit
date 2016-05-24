@@ -239,7 +239,6 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &all
   Float64Array          JSGlobalObject::m_typedArrayFloat64          DontEnum|ClassStructure
   DataView              JSGlobalObject::m_typedArrayDataView         DontEnum|ClassStructure
   Set                   JSGlobalObject::m_setStructure               DontEnum|ClassStructure
-  Map                   JSGlobalObject::m_mapStructure               DontEnum|ClassStructure
   Date                  JSGlobalObject::m_dateStructure              DontEnum|ClassStructure
   Boolean               JSGlobalObject::m_booleanObjectStructure     DontEnum|ClassStructure
   Number                JSGlobalObject::m_numberObjectStructure      DontEnum|ClassStructure

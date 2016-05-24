@@ -77,11 +77,16 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashTableValue* entry, JSObj
         } else if (entry->attributes() & PropertyCallback) {
             JSValue result = entry->lazyPropertyCallback()(vm, thisObj);
             thisObj->putDirect(vm, propertyName, result, attributesForStructure(entry->attributes()));
-        } else
+        } else {
+            dataLog("Static hashtable entry for ", propertyName, " has weird attributes: ", entry->attributes(), "\n");
             RELEASE_ASSERT_NOT_REACHED();
+        }
 
         offset = thisObj->getDirectOffset(vm, propertyName, attributes);
-        RELEASE_ASSERT(isValidOffset(offset));
+        if (!isValidOffset(offset)) {
+            dataLog("Static hashtable initialiation for ", propertyName, " did not produce a property.\n");
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     if (isAccessor)
