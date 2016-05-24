@@ -1,3 +1,11 @@
+2016-05-24  Alex Christensen  <achristensen@webkit.org>
+
+        Unskip passing test after r201336
+        https://bugs.webkit.org/show_bug.cgi?id=156812
+
+        * platform/ios-simulator/TestExpectations:
+        compositing/webgl/webgl-reflection.html passes now.
+
 2016-05-24  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt64 should have typed array fast paths for get_by_val
