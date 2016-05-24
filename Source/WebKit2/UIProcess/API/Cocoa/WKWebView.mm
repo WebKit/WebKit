@@ -2648,6 +2648,8 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (NSTextInputContext *)inputContext
 {
+    if (!_impl)
+        return nil;
     return _impl->inputContext();
 }
 
