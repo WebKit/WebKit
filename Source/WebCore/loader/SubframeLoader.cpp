@@ -84,7 +84,7 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, const Str
     } else
         url = completeURL(urlString);
 
-    if (!url.isValid())
+    if (shouldConvertInvalidURLsToBlank() && !url.isValid())
         url = blankURL();
 
     Frame* frame = loadOrRedirectSubframe(ownerElement, url, frameName, lockHistory, lockBackForwardList);
@@ -448,6 +448,13 @@ URL SubframeLoader::completeURL(const String& url) const
 {
     ASSERT(m_frame.document());
     return m_frame.document()->completeURL(url);
+}
+
+bool SubframeLoader::shouldConvertInvalidURLsToBlank() const
+{
+    if (Settings* settings = document() ? document()->settings() : nullptr)
+        return settings->shouldConvertInvalidURLsToBlank();
+    return true;
 }
 
 } // namespace WebCore

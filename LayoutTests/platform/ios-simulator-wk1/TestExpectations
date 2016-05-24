@@ -1366,3 +1366,6 @@ webkit.org/b/137572 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 
 # This test relies on a settings option that we can only set with WKRT.
 js/dom/regress-157246.html
+
+# dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
+fast/loader/iframe-src-invalid-url.html [ Skip ]

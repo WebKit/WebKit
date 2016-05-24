@@ -84,6 +84,8 @@ private:
 
     Document* document() const;
 
+    bool shouldConvertInvalidURLsToBlank() const;
+
     bool m_containsPlugins;
     Frame& m_frame;
 
