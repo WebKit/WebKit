@@ -1,4 +1,18 @@
 ==================
+WebKitGTK+  2.12.3
+==================
+
+What's new in WebKitGTK+ 2.12.3?
+
+  - Improved the detection of supported MIME types supported by the media player.
+  - Fix web process crash when playing adaptive streaming media.
+  - Change the volume while thumb slider is dragged, not only when released.
+  - Fix leaked thread in network process.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Hungarian.
+  - Security fixes: CVE-2016-1857, CVE-2016-1856.
+
+==================
 WebKitGTK+  2.12.2
 ==================
 
