@@ -35,9 +35,9 @@
 #include "Heap.h"
 #include "Interpreter.h"
 #include "JSArray.h"
+#include "JSArrayBufferView.h"
 #include "JSCell.h"
 #include "JSFunction.h"
-#include "VM.h"
 #include "JSEnvironmentRecord.h"
 #include "JSGlobalObject.h"
 #include "JSModuleRecord.h"
@@ -56,6 +56,7 @@
 #include "TypeProfilerLog.h"
 #include "VMEntryRecord.h"
 #include "ValueProfile.h"
+#include "VM.h"
 #include "Watchdog.h"
 #include <wtf/text/StringImpl.h>
 

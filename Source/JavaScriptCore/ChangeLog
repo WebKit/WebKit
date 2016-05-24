@@ -1,3 +1,33 @@
+2016-05-24  Filip Pizlo  <fpizlo@apple.com>
+
+        LLInt64 should have typed array fast paths for get_by_val
+        https://bugs.webkit.org/show_bug.cgi?id=157931
+
+        Reviewed by Keith Miller.
+
+        I think that the LLInt should be able to access typed arrays more quickly than it does now.
+        Ideally we would have fast paths for every major typed array operation and we would use
+        inline cache optimizations. I don't want to do this all in one go, so my plan is to
+        incrementally add support for this as time allows.
+        
+        This change just adds the easy typed array fast paths for get_by_val in the 64-bit version
+        of LLInt.
+        
+        Another bug, https://bugs.webkit.org/show_bug.cgi?id=157922, tracks the overall task of
+        adding all typed array fast paths to both versions of the LLInt.
+        
+        This is a 30% speed-up on typed array benchmarks in LLInt. This is not a speed-up when the
+        JITs are enabled.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/backends.rb:
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSType.h:
+
 2016-05-24  Saam barati  <sbarati@apple.com> and Yusuke Suzuki <utatane.tea@gmail.com>
 
         ThisTDZMode is no longer needed

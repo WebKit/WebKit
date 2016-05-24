@@ -333,6 +333,21 @@ const ObjectType = 20
 const FinalObjectType = 21
 const JSFunctionType = 23
 
+# The typed array types need to be numbered in a particular order because of the manually written
+# switch statement in get_by_val and put_by_val.
+const Int8ArrayType = 100
+const Int16ArrayType = 101
+const Int32ArrayType = 102
+const Uint8ArrayType = 103
+const Uint8ClampedArrayType = 104
+const Uint16ArrayType = 105
+const Uint32ArrayType = 106
+const Float32ArrayType = 107
+const Float64ArrayType = 108
+
+const FirstArrayType = Int8ArrayType
+const LastArrayType = Float64ArrayType
+
 # Type flags constants.
 const MasqueradesAsUndefined = 1
 const ImplementsDefaultHasInstance = 2

@@ -98,14 +98,23 @@ def validBackends
     $validBackends.keys
 end
 
+class LoweringError < StandardError
+    attr_reader :originString
+    
+    def initialize(e, originString)
+        super "#{e} (due to #{originString})"
+        @originString = originString
+        set_backtrace e.backtrace
+    end
+end
+
 class Node
     def lower(name)
         begin
             $activeBackend = name
             send("lower" + name)
         rescue => e
-            e.message << "At #{codeOriginString}"
-            raise e
+            raise LoweringError.new(e, codeOriginString)
         end
     end
 end

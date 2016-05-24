@@ -30,6 +30,8 @@
 
 namespace JSC {
 
+class LLIntOffsetsExtractor;
+
 // This class serves two purposes:
 //
 // 1) It provides those parts of JSGenericTypedArrayView that don't depend
@@ -173,6 +175,8 @@ private:
     static void finalize(JSCell*);
 
 protected:
+    friend class LLIntOffsetsExtractor;
+
     ArrayBuffer* existingBufferInButterfly();
 
     CopyBarrier<char> m_vector; // this is really a void*, but void would not work here.
