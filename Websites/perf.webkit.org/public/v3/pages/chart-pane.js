@@ -18,10 +18,11 @@ class ChartPane extends ChartPaneBase {
         var state = [this._platformId, this._metricId];
         if (this._mainChart) {
             var selection = this._mainChart.currentSelection();
+            var currentPoint = this._mainChart.currentPoint();
             if (selection)
                 state[2] = selection;
-            else if (this._mainChartIndicatorWasLocked)
-                state[2] = this._mainChart.currentPoint().id;
+            else if (this._mainChartIndicatorWasLocked && currentPoint)
+                state[2] = currentPoint.id;
         }
         return state;
     }

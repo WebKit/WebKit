@@ -1,5 +1,12 @@
 2016-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r201307.
+
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype.serializeState):
+
+2016-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Some applications truncates the last closing parenthesis in perf dashboard URL
         https://bugs.webkit.org/show_bug.cgi?id=157976
 
