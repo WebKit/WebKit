@@ -1,3 +1,11 @@
+2016-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Fix wrong expectations of fast/harness/sample-fail-mismatch-reftest.html.
+
+        The test is flaky, but in this case  Pass means it failed and ImageOnlyFailure that it passed.
+
+        * platform/gtk/TestExpectations:
+
 2016-05-24  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix behavior of flexible track breadths

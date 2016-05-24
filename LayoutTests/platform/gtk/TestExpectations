@@ -1301,7 +1301,7 @@ webkit.org/b/153947 imported/w3c/css/css-color-3/t425-hsla-parsing-f.xht [ Image
 
 webkit.org/b/153948 imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Failure Pass ]
 
-webkit.org/b/156436 fast/harness/sample-fail-mismatch-reftest.html [ Failure Pass ]
+webkit.org/b/156436 fast/harness/sample-fail-mismatch-reftest.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
 
