@@ -1,5 +1,14 @@
 2016-05-23  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking inspector/console/console-time.html as a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=158006
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-05-23  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking mathml/wbr-in-mroot-crash.html as a timeout on mac release
         https://bugs.webkit.org/show_bug.cgi?id=157990
 
