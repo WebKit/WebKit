@@ -1,3 +1,23 @@
+2016-05-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: RTCIceCandidate: Make attributes readonly (and update constructor arg)
+        https://bugs.webkit.org/show_bug.cgi?id=157859
+
+        Reviewed by Eric Carlson.
+
+        Make the RTCIceCandidate constructor argument mandatory and the attributes
+        read-only (in accordance with the WebRTC 1.0 specification [1]).
+
+        [1] https://w3c.github.io/webrtc-pc/archives/20160513/webrtc.html#rtcicecandidate-interface
+
+        Updated existing test.
+
+        * Modules/mediastream/RTCIceCandidate.h:
+        (WebCore::RTCIceCandidate::setCandidate): Deleted.
+        (WebCore::RTCIceCandidate::setSdpMid): Deleted.
+        (WebCore::RTCIceCandidate::setSdpMLineIndex): Deleted.
+        * Modules/mediastream/RTCIceCandidate.idl:
+
 2016-05-24  Antoine Quint  <graouts@apple.com>
 
         Elements with backdrop-filter cannot be clipped with clip-path or mask

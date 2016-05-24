@@ -8,6 +8,16 @@ PASS candidate.candidate is "foo"
 PASS candidate.sdpMid is "bar"
 PASS candidate.sdpMLineIndex is 6
 
+Attributes are readonly
+candidate.candidate = "foo-updated"
+PASS candidate.candidate is "foo"
+candidate.sdpMid = "bar-updated"
+PASS candidate.sdpMid is "bar"
+candidate.sdpMLineIndex = 7
+PASS candidate.sdpMLineIndex is 6
+
+Dictionary argument is mandatory.
+PASS new RTCIceCandidate(); threw exception TypeError: Not enough arguments.
 Dictionary member 'candidate' is required.
 PASS new RTCIceCandidate({}); threw exception TypeError: Type error.
 PASS new RTCIceCandidate({sdpMid:"bar", sdpMLineIndex:6}); threw exception TypeError: Type error.
@@ -31,7 +41,7 @@ PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex:-1}); threw exception T
 PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex:65536}); threw exception TypeError: Type error.
 PASS new RTCIceCandidate(5); threw exception TypeError: Type error.
 PASS new RTCIceCandidate("foobar"); threw exception TypeError: Type error.
-PASS new RTCIceCandidate(candidate:""); threw exception SyntaxError: Unexpected token ':'. Expected ')' to end a argument list..
+PASS new RTCIceCandidate(candidate:""); threw exception SyntaxError: Unexpected token ':'. Expected ')' to end an argument list..
 PASS successfullyParsed is true
 
 TEST COMPLETE

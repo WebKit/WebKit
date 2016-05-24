@@ -15,6 +15,18 @@
             shouldBe('candidate.sdpMLineIndex', '6');
             debug("");
 
+            debug("Attributes are readonly");
+            evalAndLog('candidate.candidate = "foo-updated"');
+            shouldBe('candidate.candidate', '"foo"');
+            evalAndLog('candidate.sdpMid = "bar-updated"');
+            shouldBe('candidate.sdpMid', '"bar"');
+            evalAndLog('candidate.sdpMLineIndex = 7');
+            shouldBe('candidate.sdpMLineIndex', '6');
+            debug("");
+
+            debug("Dictionary argument is mandatory.");
+            shouldThrow('new RTCIceCandidate();');
+
             debug("Dictionary member 'candidate' is required.");
             shouldThrow('new RTCIceCandidate({});');
             shouldThrow('new RTCIceCandidate({sdpMid:"bar", sdpMLineIndex:6});');

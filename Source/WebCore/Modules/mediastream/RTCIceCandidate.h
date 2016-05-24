@@ -52,13 +52,8 @@ public:
     virtual ~RTCIceCandidate() { }
 
     const String& candidate() const { return m_candidate; }
-    void setCandidate(const String& candidate) { m_candidate = candidate; }
-
     const String& sdpMid() const { return m_sdpMid; }
-    void setSdpMid(const String& sdpMid) { m_sdpMid = sdpMid; }
-
     Optional<unsigned short> sdpMLineIndex() const { return m_sdpMLineIndex; }
-    void setSdpMLineIndex(Optional<unsigned short> sdpMLineIndex) { m_sdpMLineIndex = sdpMLineIndex; }
 
 private:
     explicit RTCIceCandidate(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex);
