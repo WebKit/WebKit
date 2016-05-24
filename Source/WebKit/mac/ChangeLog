@@ -1,3 +1,17 @@
+2016-05-24  Beth Dakin  <bdakin@apple.com>
+
+        Candidates should work with input methods
+        https://bugs.webkit.org/show_bug.cgi?id=158042
+        -and corresponding-
+        rdar://problem/26205228
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebHTMLView.mm:
+        * WebView/WebView.mm:
+        (-[WebView candidateList]):
+        * WebView/WebViewInternal.h:
+
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
         Move to C++14.

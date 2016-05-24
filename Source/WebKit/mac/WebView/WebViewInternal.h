@@ -299,4 +299,5 @@ OBJC_CLASS NSTextAlternatives;
 - (void)updateWebViewAdditions;
 - (BOOL)shouldRequestCandidates;
 - (void)webViewAdditionsWillDestroyView;
+- (id)candidateList;
 @end

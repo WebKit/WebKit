@@ -7238,6 +7238,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 #endif // PLATFORM(IOS)
 }
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebHTMLViewWebNSTextInputSupportAdditions.mm>
+#endif
+
 @end
 
 @implementation WebHTMLView (WebDocumentPrivateProtocols)
