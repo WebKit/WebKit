@@ -1,3 +1,15 @@
+2016-05-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Update failing RTCPeerConnection and RTCRtpSender tests
+        https://bugs.webkit.org/show_bug.cgi?id=158023
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-add-removeTrack-expected.txt:
+        Update results with more specific TypeError.
+        * fast/mediastream/RTCRtpSender-replaceTrack-expected.txt:
+        Update test to match Promise rejections introduce in r201080.
+
 2016-05-24  Zalan Bujtas  <zalan@apple.com>
 
         fast/table/neighboring-cells-when-collapsed-border-changes.html is flaky.

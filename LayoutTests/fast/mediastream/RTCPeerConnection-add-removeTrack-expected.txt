@@ -21,10 +21,10 @@ PASS pc.getSenders().length is 2
 PASS senderFromPc2 = pc2.addTrack(track, stream) did not throw exception.
 removeTrack() with 'foreign' sender must be ignored (not throw)
 PASS pc.removeTrack(senderFromPc2) did not throw exception.
-PASS pc.addTrack(null); threw exception TypeError: Type error.
-PASS pc.addTrack(undefined); threw exception TypeError: Type error.
-PASS pc.removeTrack(null); threw exception TypeError: Type error.
-PASS pc.removeTrack(undefined); threw exception TypeError: Type error.
+PASS pc.addTrack(null); threw exception TypeError: Argument 1 ('track') to RTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
+PASS pc.addTrack(undefined); threw exception TypeError: Argument 1 ('track') to RTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
+PASS pc.removeTrack(null); threw exception TypeError: Argument 1 ('sender') to RTCPeerConnection.removeTrack must be an instance of RTCRtpSender.
+PASS pc.removeTrack(undefined); threw exception TypeError: Argument 1 ('sender') to RTCPeerConnection.removeTrack must be an instance of RTCRtpSender.
 PASS successfullyParsed is true
 
 TEST COMPLETE
