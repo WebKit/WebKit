@@ -1,3 +1,24 @@
+2016-05-24  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r196629): Safari can get into a state where switching Reader theme doesn't apply to the webpage
+        https://bugs.webkit.org/show_bug.cgi?id=158018
+        <rdar://problem/24732776>
+
+        Reviewed by Darin Adler.
+
+        When a tab goes to background we clear the style resolver. It is recreated lazily when the tab is again active.
+        However style invalidation code tests if the style resolver exists and skips the invalidation if it doesn't.
+        With sufficiently simple document (like in Reader) we may never create one for other reasons and so style
+        invalidation doesn't work.
+
+        No test, don't know how to make one.
+
+        * dom/Element.cpp:
+        (WebCore::Element::needsStyleInvalidation):
+
+            Remove styleResolverIfExists() check and do the invalidation normally.
+            Instead check for forced style recalc. If there is one pending we don't need to bother with invalidation.
+
 2016-05-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, updating binding test results
