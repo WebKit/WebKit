@@ -404,6 +404,13 @@ LayoutUnit RenderTableCell::cellBaselinePosition() const
     return firstLineBaseline().valueOr(borderAndPaddingBefore() + contentLogicalHeight());
 }
 
+static inline void markCellDirtyWhenCollapsedBorderChanges(RenderTableCell* cell)
+{
+    if (!cell)
+        return;
+    cell->setNeedsLayoutAndPrefWidthsRecalc();
+}
+
 void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     ASSERT(style().display() == TABLE_CELL);
@@ -422,8 +429,15 @@ void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
     // If border was changed, notify table.
     RenderTable* table = this->table();
-    if (table && oldStyle && oldStyle->border() != style().border())
+    if (table && oldStyle && oldStyle->border() != style().border()) {
         table->invalidateCollapsedBorders(this);
+        if (table->collapseBorders() && diff == StyleDifferenceLayout) {
+            markCellDirtyWhenCollapsedBorderChanges(table->cellBelow(this));
+            markCellDirtyWhenCollapsedBorderChanges(table->cellAbove(this));
+            markCellDirtyWhenCollapsedBorderChanges(table->cellBefore(this));
+            markCellDirtyWhenCollapsedBorderChanges(table->cellAfter(this));
+        }
+    }
 }
 
 // The following rules apply for resolving conflicts and figuring out which border

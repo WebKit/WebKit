@@ -1,3 +1,23 @@
+2016-05-24  Zalan Bujtas  <zalan@apple.com>
+
+        fast/table/neighboring-cells-when-collapsed-border-changes.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=158009
+
+        Reviewed by David Hyatt.
+
+        RenderTable::invalidateCollapsedBorders() early returns on m_collapsedEmptyBorderIsPresent
+        which prevents us from marking neighboring cells dirty when style changes.
+        Decouple the "invalidate the collapsed borders" and the "mark the neighboring cells dirty" logic.
+
+        Covered by existing tests. (and now we agree with FF on cached-change-cell-border-width.html)
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::invalidateCollapsedBorders):
+        (WebCore::markCellDirtyWhenCollapsedBorderChanges): Deleted.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::markCellDirtyWhenCollapsedBorderChanges):
+        (WebCore::RenderTableCell::styleDidChange):
+
 2016-05-24  Alex Christensen  <achristensen@webkit.org>
 
         Fix use-after-free after r201318

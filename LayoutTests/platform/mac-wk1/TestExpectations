@@ -220,4 +220,3 @@ fast/loader/iframe-src-invalid-url.html [ Skip ]
 
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
 
-webkit.org/b/158009 fast/table/neighboring-cells-when-collapsed-border-changes.html [ Pass ImageOnlyFailure ]

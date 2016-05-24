@@ -1,3 +1,20 @@
+2016-05-24  Zalan Bujtas  <zalan@apple.com>
+
+        fast/table/neighboring-cells-when-collapsed-border-changes.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=158009
+
+        Reviewed by David Hyatt.
+
+        RenderTable::invalidateCollapsedBorders() early returns on m_collapsedEmptyBorderIsPresent
+        which prevents us from marking neighboring cells dirty when style changes.
+        Decouple the "invalidate the collapsed borders" and the "mark the neighboring cells dirty" logic.
+
+        * fast/table/border-collapsing/cached-change-cell-border-width-expected.txt: Progression. FF agrees.
+        * fast/table/neighboring-cells-when-collapsed-border-changes.html:
+        * platform/ios-simulator-wk1/fast/table/border-collapsing/cached-change-cell-border-width-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/fast/table/border-collapsing/cached-change-cell-border-width-expected.txt:
+
 2016-05-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking mathml/wbr-in-mroot-crash.html as flaky on ios-simulator-wk2
