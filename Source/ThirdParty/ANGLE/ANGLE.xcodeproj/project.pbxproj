@@ -1388,6 +1388,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					ANGLE_ENABLE_OPENGL,
 					ANGLE_ENABLE_GLSL,
+					ANGLE_ENABLE_ESSL,
 				);
 			};
 			name = Production;
@@ -1414,6 +1415,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					ANGLE_ENABLE_OPENGL,
 					ANGLE_ENABLE_GLSL,
+					ANGLE_ENABLE_ESSL,
 				);
 			};
 			name = Debug;
@@ -1425,6 +1427,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					ANGLE_ENABLE_OPENGL,
 					ANGLE_ENABLE_GLSL,
+					ANGLE_ENABLE_ESSL,
 				);
 			};
 			name = Release;
