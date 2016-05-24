@@ -1,5 +1,31 @@
 2016-05-24  Chris Dumez  <cdumez@apple.com>
 
+        Use lambda capture with initializer instead of StringCapture
+        https://bugs.webkit.org/show_bug.cgi?id=158010
+
+        Reviewed by Antti Koivisto.
+
+        Use lambda capture with initializer instead of StringCapture now that 
+        we support C++14.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::deleteDumpFile):
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::initialize):
+        (WebKit::NetworkCache::Statistics::shrinkIfNeeded):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::updateFileModificationTime):
+        (WebKit::NetworkCache::Storage::clear):
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::UserContentExtensionStore::lookupContentExtension):
+        (API::UserContentExtensionStore::compileContentExtension):
+        (API::UserContentExtensionStore::removeContentExtension):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+
+2016-05-24  Chris Dumez  <cdumez@apple.com>
+
         Use auto for some of our lambda function parameters
         https://bugs.webkit.org/show_bug.cgi?id=158001
 

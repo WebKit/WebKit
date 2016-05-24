@@ -430,10 +430,9 @@ void WebVideoFullscreenControllerContext::setExternalPlayback(bool enabled, Exte
 {
     ASSERT(WebThreadIsCurrent());
     RefPtr<WebVideoFullscreenControllerContext> protectedThis(this);
-    StringCapture capturedLocalizedDeviceName(localizedDeviceName);
-    dispatch_async(dispatch_get_main_queue(), [protectedThis, this, enabled, type, capturedLocalizedDeviceName] {
+    dispatch_async(dispatch_get_main_queue(), [protectedThis, this, enabled, type, localizedDeviceName = localizedDeviceName.isolatedCopy()] {
         if (m_interface)
-            m_interface->setExternalPlayback(enabled, type, capturedLocalizedDeviceName.string());
+            m_interface->setExternalPlayback(enabled, type, localizedDeviceName);
     });
 }
 

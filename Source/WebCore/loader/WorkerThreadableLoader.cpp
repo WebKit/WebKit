@@ -98,13 +98,12 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     auto* contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(*securityOrigin).release();
     contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
 
-    StringCapture capturedOutgoingReferrer(outgoingReferrer);
-    m_loaderProxy.postTaskToLoader([this, requestData, optionsCopy, contentSecurityPolicyCopy, capturedOutgoingReferrer](ScriptExecutionContext& context) {
+    m_loaderProxy.postTaskToLoader([this, requestData, optionsCopy, contentSecurityPolicyCopy, outgoingReferrer = outgoingReferrer.isolatedCopy()](ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         Document& document = downcast<Document>(context);
 
         auto request = ResourceRequest::adopt(std::unique_ptr<CrossThreadResourceRequestData>(requestData));
-        request->setHTTPReferrer(capturedOutgoingReferrer.string());
+        request->setHTTPReferrer(outgoingReferrer);
 
         auto options = std::unique_ptr<ThreadableLoaderOptions>(optionsCopy);
 

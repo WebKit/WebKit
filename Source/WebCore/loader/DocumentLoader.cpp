@@ -1703,10 +1703,9 @@ void DocumentLoader::installContentFilterUnblockHandler(ContentFilter& contentFi
     String unblockRequestDeniedScript { contentFilter.unblockRequestDeniedScript() };
     if (!unblockRequestDeniedScript.isEmpty() && frame) {
         static_assert(std::is_base_of<ThreadSafeRefCounted<Frame>, Frame>::value, "Frame must be ThreadSafeRefCounted.");
-        StringCapture capturedScript { unblockRequestDeniedScript };
-        unblockHandler.wrapWithDecisionHandler([frame, capturedScript](bool unblocked) {
+        unblockHandler.wrapWithDecisionHandler([frame, unblockRequestDeniedScript = unblockRequestDeniedScript.isolatedCopy()](bool unblocked) {
             if (!unblocked)
-                frame->script().executeScript(capturedScript.string());
+                frame->script().executeScript(unblockRequestDeniedScript);
         });
     }
     frameLoader()->client().contentFilterDidBlockLoad(WTFMove(unblockHandler));

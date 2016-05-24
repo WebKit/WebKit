@@ -1,3 +1,29 @@
+2016-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Use lambda capture with initializer instead of StringCapture
+        https://bugs.webkit.org/show_bug.cgi?id=158010
+
+        Reviewed by Antti Koivisto.
+
+        Use lambda capture with initializer instead of StringCapture now that
+        we support C++14.
+
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::AsyncFileStream::getSize):
+        (WebCore::AsyncFileStream::openForRead):
+        (WebCore::AsyncFileStream::openForWrite):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::installContentFilterUnblockHandler):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::setExternalPlayback):
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::didReceiveHeader):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postExceptionToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postConsoleMessageToWorkerObject):
+
 2016-05-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         In accelerated drawing mode, ImageBuffer::putByteArray() should copy the bytes directly to the IOSurface backing store
