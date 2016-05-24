@@ -1,3 +1,17 @@
+2016-05-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r201323.
+
+        One of the LayoutTests added with this change fails on all
+        platforms. Rolling out until ResourceTiming flakiness fix is
+        landed
+
+        Reverted changeset:
+
+        "Add a few initiator tests to resource timing."
+        https://bugs.webkit.org/show_bug.cgi?id=157986
+        http://trac.webkit.org/changeset/201323
+
 2016-05-24  Alex Christensen  <achristensen@webkit.org>
 
         Unskip passing test after r201336
