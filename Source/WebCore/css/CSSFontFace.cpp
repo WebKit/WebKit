@@ -421,6 +421,8 @@ void CSSFontFace::setStatus(Status newStatus)
 
 void CSSFontFace::fontLoaded(CSSFontFaceSource&)
 {
+    Ref<CSSFontFace> protectedThis(*this);
+
     // If the font is already in the cache, CSSFontFaceSource may report it's loaded before it is added here as a source.
     // Let's not pump the state machine until we've got all our sources. font() and load() are smart enough to act correctly
     // when a source is failed or succeeded before we have asked it to load.

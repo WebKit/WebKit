@@ -1,3 +1,24 @@
+2016-05-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] Crash during font download failure after garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=158013
+        <rdar://problem/25148032>
+
+        Reviewed by Darin Adler.
+
+        Usually, ownership during font loading is top-down - JavaScript owns a JSFontFace,
+        which owns a FontFace, which owns a CSSFontFace. However, when we receive the
+        asynchronous callback that a font finished loading, the call comes in from the
+        bottom - it is delivered from the CSSFontFaceSource to the CSSFontFace, and then
+        to the FontFace. If a garbage collection had previously run, we might remove
+        the last reference to ourself during this asynchronous callback. A simple guard
+        makes sure this doesn't happen.
+
+        Test: fast/text/font-face-crash.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::fontLoaded):
+
 2016-05-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r201349.

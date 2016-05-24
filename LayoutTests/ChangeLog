@@ -1,3 +1,14 @@
+2016-05-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] Crash during font download failure after garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=158013
+        <rdar://problem/25148032>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-face-crash-expected.txt: Added.
+        * fast/text/font-face-crash.html: Added.
+
 201-05-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r201349.
