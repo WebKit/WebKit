@@ -34,8 +34,8 @@ namespace WebCore {
 
 // Attributes
 
-JSC::EncodedJSValue jsattributeReadonly(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue jsattributeConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsattributeReadonly(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName, JSC::JSObject*);
+JSC::EncodedJSValue jsattributeConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName, JSC::JSObject*);
 bool setJSattributeConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSattributePrototype : public JSC::JSNonFinalObject {
@@ -141,10 +141,11 @@ bool JSattribute::getOwnPropertySlot(JSObject* object, ExecState* state, Propert
     return false;
 }
 
-EncodedJSValue jsattributeReadonly(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsattributeReadonly(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
+    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSattribute*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -156,7 +157,7 @@ EncodedJSValue jsattributeReadonly(ExecState* state, EncodedJSValue thisValue, P
 }
 
 
-EncodedJSValue jsattributeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsattributeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     JSattributePrototype* domObject = jsDynamicCast<JSattributePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
