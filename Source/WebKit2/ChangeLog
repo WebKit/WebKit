@@ -1,3 +1,32 @@
+2016-05-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Unix] Potential buffer overrun of m_fileDescriptors in readBytesFromSocket of ConnectionUnix.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=158058
+
+        Reviewed by Carlos Garcia Campos.
+
+        Memcpy does not check the boundary of m_fileDescriptors in
+        readBytesFromSocket of ConnectionUnix.cpp.  This is not a problem
+        in normal cases, but in the case when Web process is hijacked and
+        malicious IPC packets were sent.  WTF::Vector already has two
+        members m_capacity and m_size.  There is no need to have a
+        separate member m_fileDescriptorsSize to remember the number of
+        remaining data.
+
+        * Platform/IPC/Connection.h: Remove members m_readBufferSize and
+        m_fileDescriptorsSize.
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::platformInitialize): Removed initialization of
+        m_readBufferSize and m_fileDescriptorsSize.  Reserve initial
+        capacity for m_readBuffer and m_fileDescriptors.
+        (IPC::Connection::processMessage): Replace m_readBufferSize and
+        m_fileDescriptorsSize with m_readBuffer.size() and
+        m_fileDescriptors.size().  Use Vector::shrink() to reset the
+        number of remaining data in the buffers.
+        (IPC::readBytesFromSocket) : Change argument types to WTF::Vector
+        instead of pointers and sizes.
+        (IPC::Connection::readyReadHandler): Call new readBytesFromSocket
+
 2016-05-25  Chris Dumez  <cdumez@apple.com>
 
         Update constructRevalidationRequest() to stop returning a unique_ptr<ResourceRequest>
