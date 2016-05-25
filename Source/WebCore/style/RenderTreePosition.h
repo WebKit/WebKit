@@ -59,6 +59,7 @@ public:
     bool canInsert(RenderText&) const;
 
     void computeNextSibling(const Node&);
+    void invalidateNextSibling() { m_hasValidNextSibling = false; }
     void invalidateNextSibling(const RenderObject&);
 
     RenderObject* previousSiblingRenderer(const Text&) const;

@@ -1,3 +1,25 @@
+2016-05-25  Antti Koivisto  <antti@apple.com>
+
+        Shadow DOM: RenderTreePosition miscomputed when display:contents value changes
+        https://bugs.webkit.org/show_bug.cgi?id=158072
+        rdar://problem/25766333
+
+        Reviewed by Darin Adler.
+
+        Test: fast/shadow-dom/slot-crash.html
+
+        * style/RenderTreePosition.h:
+        (WebCore::RenderTreePosition::invalidateNextSibling):
+
+            Add unconditional invalidation function.
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+
+            With display:contents rendering siblings may be found from the subtree and the existing cached
+            position may become invalid.
+            If the display:contents value changes invalidate the current render tree position.
+
 2016-05-25  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: IDB objects from a worker thread might be destroyed on the main thread.

@@ -245,7 +245,11 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUp
         tearDownRenderers(element, TeardownType::KeepHoverAndActive);
 
     bool hasDisplayContest = update.style && update.style->display() == CONTENTS;
-    element.setHasDisplayContents(hasDisplayContest);
+    if (hasDisplayContest != element.hasDisplayContents()) {
+        element.setHasDisplayContents(hasDisplayContest);
+        // Render tree position needs to be recomputed as rendering siblings may be found from the display:contents subtree.
+        renderTreePosition().invalidateNextSibling();
+    }
 
     bool shouldCreateNewRenderer = !element.renderer() && update.style && !hasDisplayContest;
     if (shouldCreateNewRenderer) {
