@@ -1,3 +1,28 @@
+2016-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Simplify and inline minimumValueForLength()
+        https://bugs.webkit.org/show_bug.cgi?id=158084
+
+        Reviewed by Zalan Bujtas.
+
+        Simplify and inline minimumValueForLength(). Based on iOS PLT profiles,
+        we spend up to 0.7% of CPU time during page loads in this function.
+
+        The roundPercentages parameter has been dropped because it was false
+        for all call sites.
+
+        * css/LengthFunctions.cpp:
+        (WebCore::minimumIntValueForLength): Deleted.
+        (WebCore::minimumValueForLength): Deleted.
+        * css/LengthFunctions.h:
+        (WebCore::minimumValueForLength):
+        (WebCore::minimumIntValueForLength):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::resolveEdgeRelativeLength):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::minimumValueForLength):
+
 2016-05-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Update <fixed-size> syntax

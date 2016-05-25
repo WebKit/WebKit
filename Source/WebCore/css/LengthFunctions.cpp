@@ -25,48 +25,13 @@
 #include "LengthFunctions.h"
 
 #include "FloatSize.h"
-#include "LayoutUnit.h"
 #include "LengthSize.h"
 
 namespace WebCore {
 
-int minimumIntValueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages)
-{
-    return static_cast<int>(minimumValueForLength(length, maximumValue, roundPercentages));
-}
-
 int intValueForLength(const Length& length, LayoutUnit maximumValue)
 {
     return static_cast<int>(valueForLength(length, maximumValue));
-}
-
-LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages)
-{
-    switch (length.type()) {
-    case Fixed:
-        return length.value();
-    case Percent:
-        if (roundPercentages)
-            return LayoutUnit(round(maximumValue * length.percent() / 100.0f));
-        // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
-        return LayoutUnit(static_cast<float>(maximumValue * length.percent() / 100.0f));
-    case Calculated:
-        return length.nonNanCalculatedValue(maximumValue);
-    case FillAvailable:
-    case Auto:
-        return 0;
-    case Relative:
-    case Intrinsic:
-    case MinIntrinsic:
-    case MinContent:
-    case MaxContent:
-    case FitContent:
-    case Undefined:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue)
