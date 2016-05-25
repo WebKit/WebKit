@@ -1,3 +1,9 @@
+2016-05-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2016-05-25  Chris Dumez  <cdumez@apple.com>
 
         Simplify a few lambda captures in the network cache code

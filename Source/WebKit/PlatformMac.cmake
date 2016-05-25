@@ -1,5 +1,7 @@
+find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(QUARTZ_LIBRARY Quartz)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
+add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 link_directories(../../WebKitLibraries)
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
@@ -313,7 +315,7 @@ set(C99_FILES
 foreach (_file ${WebKit_SOURCES})
     list(FIND C99_FILES ${_file} _c99_index)
     if (${_c99_index} EQUAL -1)
-        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++11")
+        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++14")
     else ()
         set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS -std=c99)
     endif ()

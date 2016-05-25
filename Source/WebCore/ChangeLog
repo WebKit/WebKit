@@ -1,3 +1,11 @@
+2016-05-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+        c++14 is needed since r201255.
+        ColorSync (in ApplicationServices) is needed since r201065.
+
 2016-05-25  Zalan Bujtas  <zalan@apple.com>
 
         Swap search field's cancel and result button for RTL content.

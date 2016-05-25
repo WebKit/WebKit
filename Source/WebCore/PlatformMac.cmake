@@ -10,6 +10,7 @@ endif ()
 link_directories(../../WebKitLibraries)
 
 find_library(ACCELERATE_LIBRARY accelerate)
+find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(AVFOUNDATION_LIBRARY AVFoundation)
 find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
 find_library(AUDIOUNIT_LIBRARY AudioUnit)
@@ -52,6 +53,7 @@ list(APPEND WebCore_LIBRARIES
 
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${AVFOUNDATION_LIBRARY}/Versions/Current/Frameworks)
+add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 
 find_library(DATADETECTORSCORE_FRAMEWORK DataDetectorsCore HINTS /System/Library/PrivateFrameworks)
 if (NOT DATADETECTORSCORE_FRAMEWORK-NOTFOUND)

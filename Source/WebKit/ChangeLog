@@ -1,3 +1,9 @@
+2016-05-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2016-05-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Make TestRunner.clearAllDatabases also delete IndexedDB databases (once doing so is supported).

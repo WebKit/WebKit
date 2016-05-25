@@ -1,17 +1,18 @@
-add_definitions("-ObjC++ -std=c++11")
+add_definitions("-ObjC++ -std=c++14")
 link_directories(../../WebKitLibraries)
-find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
+find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(CARBON_LIBRARY Carbon)
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(AVFOUNDATION_LIBRARY AVFoundation)
 find_library(AVFAUDIO_LIBRARY AVFAudio HINTS ${AVFOUNDATION_LIBRARY}/Versions/*/Frameworks)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${CARBON_LIBRARY}/Frameworks)
+add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-DWK_XPC_SERVICE_SUFFIX=".Development")
 
 list(APPEND WebKit2_LIBRARIES
     PRIVATE WebKit
-    ${APPLICATION_SERVICES_LIBRARY}
+    ${APPLICATIONSERVICES_LIBRARY}
 )
 
 if (NOT AVFAUDIO_LIBRARY-NOTFOUND)
