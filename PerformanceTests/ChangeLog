@@ -1,3 +1,10 @@
+2016-05-25  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, add JSBench to the skipped list for now since it doesn't
+        work currently.
+
+        * Skipped:
+
 2016-05-17  Keith Miller  <keith_miller@apple.com>
         We should have JSBench in PerformanceTests
         https://bugs.webkit.org/show_bug.cgi?id=157952
