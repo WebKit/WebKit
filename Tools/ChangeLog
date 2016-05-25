@@ -1,3 +1,16 @@
+2016-05-24  Aakash Jain  <aakash_jain@apple.com>
+
+        Reorganize dashboard code: move code from _timeIntervalString to base class
+        https://bugs.webkit.org/show_bug.cgi?id=158047
+        rdar://problem/26457274
+
+        Reviewed by Alexey Proskuryakov and Dean Johnson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueView.js:
+        (BubbleQueueView.prototype._timeIntervalString): Moved core logic to base class so as to make it re-usable.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/QueueView.js:
+        (QueueView.prototype._readableTimeString): Same.
+
 2016-05-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][GTK][EFL] Allow run-jsc-benchmark to use WebKitTestRunner in EFL / GTK ports

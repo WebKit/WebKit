@@ -227,5 +227,22 @@ QueueView.prototype = {
             return "r" + revision;
         // Truncating for display. Git traditionally uses seven characters for a short hash.
         return revision.substr(0, 7);
+    },
+
+    _readableTimeString: function(seconds)
+    {
+        var secondsInHour = 60 * 60;
+        var hours = Math.floor(seconds / secondsInHour);
+        var minutes = Math.floor((seconds - hours * secondsInHour) / 60);
+        var hoursPart = "";
+        if (hours === 1)
+            hoursPart = "1\xa0hour and ";
+        else if (hours > 0)
+            hoursPart = hours + "\xa0hours and ";
+        if (!minutes)
+            return "less than a minute";
+        if (minutes === 1)
+            return hoursPart + "1\xa0minute";
+        return hoursPart + minutes + "\xa0minutes";
     }
 };

@@ -97,20 +97,8 @@ BubbleQueueView.prototype = {
 
     _timeIntervalString: function(time)
     {
-        var secondsInHour = 60 * 60;
         var timeDifference = (Date.now() - time.getTime()) / 1000;
-        var hours = Math.floor(timeDifference / secondsInHour);
-        var minutes = Math.floor((timeDifference - hours * secondsInHour) / 60);
-        var hoursPart = "";
-        if (hours === 1)
-            hoursPart = "1\xa0hour and ";
-        else if (hours > 0)
-            hoursPart = hours + "\xa0hours and ";
-        if (!minutes)
-            return "less than a minute";
-        if (minutes === 1)
-            return hoursPart + "1\xa0minute";
-        return hoursPart + minutes + "\xa0minutes";
+        return this._readableTimeString(timeDifference)
     },
 
     _popoverContentForBubbleQueue: function(queue)
