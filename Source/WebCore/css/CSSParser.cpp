@@ -5817,18 +5817,28 @@ bool CSSParser::parseGridLineNames(CSSParserValueList& inputList, CSSValueList& 
     return true;
 }
 
-static bool isGridTrackFixedSized(const CSSValue& value)
+static bool isGridTrackFixedSized(const CSSPrimitiveValue& value)
 {
-    ASSERT(value.isPrimitiveValue() || (value.isFunctionValue() && downcast<CSSFunctionValue>(value).arguments()));
-    const auto& primitiveValue = value.isPrimitiveValue()
-        ? downcast<CSSPrimitiveValue>(value)
-        : downcast<CSSPrimitiveValue>(*downcast<CSSFunctionValue>(value).arguments()->item(0));
-    CSSValueID valueID = primitiveValue.getValueID();
-    if (valueID == CSSValueWebkitMinContent || valueID == CSSValueWebkitMaxContent || valueID == CSSValueAuto || primitiveValue.isFlex())
+    CSSValueID valueID = value.getValueID();
+    if (valueID == CSSValueWebkitMinContent || valueID == CSSValueWebkitMaxContent || valueID == CSSValueAuto || value.isFlex())
         return false;
 
-    ASSERT(primitiveValue.isLength() || primitiveValue.isPercentage() || primitiveValue.isCalculated());
+    ASSERT(value.isLength() || value.isPercentage() || value.isCalculated());
     return true;
+}
+
+static bool isGridTrackFixedSized(const CSSValue& value)
+{
+    if (value.isPrimitiveValue())
+        return isGridTrackFixedSized(downcast<CSSPrimitiveValue>(value));
+
+    ASSERT(value.isFunctionValue());
+    ASSERT(downcast<CSSFunctionValue>(value).arguments());
+    ASSERT(downcast<CSSFunctionValue>(value).arguments()->length() == 2);
+
+    auto& min = downcast<CSSPrimitiveValue>(*downcast<CSSFunctionValue>(value).arguments()->item(0));
+    auto& max = downcast<CSSPrimitiveValue>(*downcast<CSSFunctionValue>(value).arguments()->item(1));
+    return isGridTrackFixedSized(min) || isGridTrackFixedSized(max);
 }
 
 RefPtr<CSSValue> CSSParser::parseGridTrackList()

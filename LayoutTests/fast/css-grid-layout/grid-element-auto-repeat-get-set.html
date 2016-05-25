@@ -13,7 +13,7 @@ body { font-size: 10px; }
     debug("Test auto-repeat syntax.");
     testGridTemplatesSetJSValues("repeat(auto-fill, [foo bar] 200px)", "repeat(auto-fill, 20em [foo bar])", "[foo bar] 200px [foo bar] 200px [foo bar] 200px [foo bar] 200px", "200px [foo bar] 200px [foo bar] 200px [foo bar]");
     testGridTemplatesSetJSValues("repeat(auto-fill, [foo bar] minmax(300px, 1fr))", "repeat(auto-fill, [foo] minmax(175px, -webkit-max-content) [bar])", "[foo bar] 400px [foo bar] 400px", "[foo] 175px [bar foo] 175px [bar foo] 175px [bar]");
-    testGridTemplatesSetJSValues("repeat(auto-fill, minmax(50px, 100px)) repeat(2, 250px)", "repeat(1, 450px) repeat(auto-fill, minmax(5em, -webkit-max-content) [bar]) repeat(2, [foo] 1em)", "100px 100px 100px 250px 250px", "450px 50px [bar] 50px [bar foo] 10px [foo] 10px", "repeat(auto-fill, minmax(50px, 100px)) 250px 250px", "450px repeat(auto-fill, minmax(5em, -webkit-max-content) [bar]) [foo] 1em [foo] 1em");
+    testGridTemplatesSetJSValues("repeat(auto-fill, minmax(50px, 100px)) repeat(2, 250px)", "repeat(1, 450px) repeat(auto-fill, minmax(-webkit-max-content, 5em) [bar]) repeat(2, [foo] 1em)", "100px 100px 100px 250px 250px", "450px 50px [bar] 50px [bar foo] 10px [foo] 10px", "repeat(auto-fill, minmax(50px, 100px)) 250px 250px", "450px repeat(auto-fill, minmax(-webkit-max-content, 5em) [bar]) [foo] 1em [foo] 1em");
     testGridTemplatesSetJSValues("[start] 10% repeat(auto-fill, [foo bar] 200px) [end]", "75px [prev] repeat(auto-fill, 20em [foo bar]) [next] 15em [last end]", "[start] 80px [foo bar] 200px [foo bar] 200px [foo bar] 200px [end]", "75px [prev] 200px [foo bar next] 150px [last end]");
     testGridTemplatesSetJSValues("repeat(auto-fit, [foo bar] 150px)", "repeat(auto-fit, 24em [foo bar])", "none", "none");
     testGridTemplatesSetJSValues("repeat(auto-fit, [foo bar] minmax(270px, 1fr))", "repeat(auto-fit, [foo] minmax(20em, -webkit-max-content) [bar])", "none", "none");
@@ -30,14 +30,12 @@ body { font-size: 10px; }
     }
 
     testInvalidSyntax("repeat(auto-fill, 1fr)");
-    testInvalidSyntax("repeat(auto-fill, minmax(-webkit-min-content, 20px))");
     testInvalidSyntax("repeat(auto-fill, [bar] auto)");
     testInvalidSyntax("repeat(auto-fill, 20px 10px)");
     testInvalidSyntax("repeat(auto-fill, 20px [foo bar] 10px)");
     testInvalidSyntax("repeat(auto-fill,)");
     testInvalidSyntax("repeat(auto-fill, [foo])");
     testInvalidSyntax("repeat(auto-fit, 1fr)");
-    testInvalidSyntax("repeat(auto-fit, minmax(-webkit-min-content, 20px))");
     testInvalidSyntax("repeat(auto-fit, [bar] auto)");
     testInvalidSyntax("repeat(auto-fit, 20px 10px)");
     testInvalidSyntax("repeat(auto-fit, 20px [foo bar] 10px)");

@@ -1227,7 +1227,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
     ASSERT(autoRepeatTracks.size() == 1);
     auto autoTrackSize = autoRepeatTracks.at(0);
     ASSERT(autoTrackSize.minTrackBreadth().isLength());
-    ASSERT(!autoTrackSize.minTrackBreadth().isContentSized());
+    ASSERT(!autoTrackSize.minTrackBreadth().isFlex());
 
     Optional<LayoutUnit> availableSize = isRowAxis ? availableLogicalWidth() : computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), Nullopt);
     if (!isRowAxis || containingBlock()) {

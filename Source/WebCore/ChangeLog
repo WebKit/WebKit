@@ -1,3 +1,28 @@
+2016-05-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Update <fixed-size> syntax
+        https://bugs.webkit.org/show_bug.cgi?id=158063
+
+        Reviewed by Darin Adler.
+
+        The syntax for <fixed-size> has been updated on the spec:
+        https://drafts.csswg.org/css-grid/#typedef-fixed-size
+
+        New syntax is:
+          <fixed-size> =
+            <fixed-breadth> |
+            minmax( <fixed-breadth> , <track-breadth> ) |
+            minmax( <inflexible-breadth> , <fixed-breadth> )
+
+        This means that it's enough to have one <fixed-breadth>,
+        it doesn't matter if it's as minimum or maximum.
+        Before it was required that the minimum was fixed.
+
+        * css/CSSParser.cpp:
+        (WebCore::isGridTrackFixedSized):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeAutoRepeatTracksCount):
+
 2016-05-25  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

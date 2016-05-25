@@ -15,7 +15,7 @@ PASS element.style.gridTemplateRows is "repeat(auto-fill, [foo] minmax(175px, -w
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "100px 100px 100px 250px 250px"
 PASS element.style.gridTemplateColumns is "repeat(auto-fill, minmax(50px, 100px)) 250px 250px"
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "450px 50px [bar] 50px [bar foo] 10px [foo] 10px"
-PASS element.style.gridTemplateRows is "450px repeat(auto-fill, minmax(5em, -webkit-max-content) [bar]) [foo] 1em [foo] 1em"
+PASS element.style.gridTemplateRows is "450px repeat(auto-fill, minmax(-webkit-max-content, 5em) [bar]) [foo] 1em [foo] 1em"
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "[start] 80px [foo bar] 200px [foo bar] 200px [foo bar] 200px [end]"
 PASS element.style.gridTemplateColumns is "[start] 10% repeat(auto-fill, [foo bar] 200px) [end]"
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "75px [prev] 200px [foo bar next] 150px [last end]"
@@ -34,8 +34,6 @@ FAIL getComputedStyle(element, '').getPropertyValue('grid-template-rows') should
 PASS element.style.gridTemplateRows is "10% repeat(auto-fit, minmax(30em, -webkit-max-content) [bar]) [foo] 1em [foo] 1em"
 
 Test invalid repeat syntax.
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
