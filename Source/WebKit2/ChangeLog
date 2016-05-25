@@ -1,3 +1,15 @@
+2016-05-24  Conrad Shultz  <conrad_shultz@apple.com>
+
+        _WKThumbnailView should expose its snapshot size
+        https://bugs.webkit.org/show_bug.cgi?id=158049
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.h:
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView _didTakeSnapshot:]):
+        Update the new snapshotSize property in a KVO-compliant manner.
+
 2016-05-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r201349.

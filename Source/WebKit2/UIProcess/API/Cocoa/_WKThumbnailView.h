@@ -39,6 +39,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 - (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView;
 
 @property (nonatomic) CGFloat scale;
+@property (nonatomic, readonly) CGSize snapshotSize;
 @property (nonatomic) BOOL exclusivelyUsesSnapshot;
 
 // This should be removed when all clients go away; it is always YES now.

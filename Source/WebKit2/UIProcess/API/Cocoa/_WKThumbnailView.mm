@@ -56,6 +56,7 @@ using namespace WebKit;
     double _lastSnapshotScale;
 }
 
+@synthesize snapshotSize=_snapshotSize;
 @synthesize _waitingForSnapshot=_waitingForSnapshot;
 @synthesize exclusivelyUsesSnapshot=_exclusivelyUsesSnapshot;
 
@@ -138,6 +139,9 @@ using namespace WebKit;
 
 - (void)_didTakeSnapshot:(CGImageRef)image
 {
+    [self willChangeValueForKey:@"snapshotSize"];
+
+    _snapshotSize = CGSizeMake(CGImageGetWidth(image), CGImageGetHeight(image));
     _waitingForSnapshot = NO;
     self.layer.sublayers = @[];
     self.layer.contentsGravity = kCAGravityResizeAspectFill;
@@ -148,6 +152,8 @@ using namespace WebKit;
         _snapshotWasDeferred = NO;
         [self _requestSnapshotIfNeeded];
     }
+
+    [self didChangeValueForKey:@"snapshotSize"];
 }
 
 - (void)viewDidMoveToWindow
