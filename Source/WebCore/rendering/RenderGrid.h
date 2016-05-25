@@ -103,7 +103,7 @@ private:
     void computeTrackSizesForDirection(GridTrackSizingDirection, GridSizingData&, LayoutUnit freeSpace);
 
     void layoutGridItems(GridSizingData&);
-    void populateGridPositions(GridSizingData&);
+    void populateGridPositionsForDirection(GridSizingData&, GridTrackSizingDirection);
     void clearGrid();
 
     enum TrackSizeRestriction {
