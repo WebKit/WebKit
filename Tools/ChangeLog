@@ -1,3 +1,15 @@
+2016-05-25  Keith Miller  <keith_miller@apple.com>
+
+        run-jsc-benchmarks should use the new JSBench rather than look for it in the config file.
+        https://bugs.webkit.org/show_bug.cgi?id=158077
+
+        Reviewed by Mark Lam.
+
+        Since we didn't have JSBench in the tree before we needed to lookup the path to it from
+        benchmark config file. That's no longer the case so we should just fix it in the script.
+
+        * Scripts/run-jsc-benchmarks:
+
 2016-05-24  Aakash Jain  <aakash_jain@apple.com>
 
         Reorganize dashboard code: move code from _timeIntervalString to base class

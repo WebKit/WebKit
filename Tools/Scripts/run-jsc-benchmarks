@@ -43,12 +43,14 @@ raise unless SCRIPT_PATH.dirname.basename.to_s == "Scripts"
 raise unless SCRIPT_PATH.dirname.dirname.basename.to_s == "Tools"
 
 OPENSOURCE_PATH = SCRIPT_PATH.dirname.dirname.dirname
+PERFORMANCETESTS_PATH = OPENSOURCE_PATH + "PerformanceTests"
 
-SUNSPIDER_PATH = OPENSOURCE_PATH + "PerformanceTests" + "SunSpider" + "tests" + "sunspider-1.0"
-LONGSPIDER_PATH = OPENSOURCE_PATH + "PerformanceTests" + "LongSpider"
-V8_PATH = OPENSOURCE_PATH + "PerformanceTests" + "SunSpider" + "tests" + "v8-v6"
+SUNSPIDER_PATH = PERFORMANCETESTS_PATH + "SunSpider" + "tests" + "sunspider-1.0"
+LONGSPIDER_PATH = PERFORMANCETESTS_PATH + "LongSpider"
+V8_PATH = PERFORMANCETESTS_PATH + "SunSpider" + "tests" + "v8-v6"
 JSREGRESS_PATH = OPENSOURCE_PATH + "LayoutTests" + "js" + "regress" + "script-tests"
-OCTANE_WRAPPER_PATH = OPENSOURCE_PATH + "PerformanceTests" + "Octane" + "wrappers"
+OCTANE_WRAPPER_PATH = PERFORMANCETESTS_PATH + "Octane" + "wrappers"
+JSBENCH_PATH = PERFORMANCETESTS_PATH + "JSBench"
 
 TEMP_PATH = OPENSOURCE_PATH + "BenchmarkTemp"
 
@@ -2860,7 +2862,6 @@ begin
   DSPJS_JSLINUX_PATH = pathname_if_exist(config["DSPJSLinuxPath"])
   DSPJS_AMMOJS_ASMJS_PATH = pathname_if_exist(config["DSPJSAmmoJSAsmJSPath"])
   DSPJS_AMMOJS_REGULAR_PATH = pathname_if_exist(config["DSPJSAmmoJSRegularPath"])
-  JSBENCH_PATH = pathname_if_exist(config["JSBenchPath"])
   KRAKEN_PATH = pathname_if_exist(config["KrakenPath"])
   
   # If the --dont-copy-vms option was passed, it overrides the --force-vm-copy option.
