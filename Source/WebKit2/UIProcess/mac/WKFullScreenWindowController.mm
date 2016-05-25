@@ -94,16 +94,22 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
 
     NSView *contentView = [window contentView];
-    contentView.wantsLayer = YES;
-    contentView.layer.hidden = YES;
+    contentView.hidden = YES;
     contentView.autoresizesSubviews = YES;
+
+    _backgroundView = adoptNS([[NSView alloc] initWithFrame:contentView.bounds]);
+    _backgroundView.get().layer = [CALayer layer];
+    _backgroundView.get().wantsLayer = YES;
+    _backgroundView.get().autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    [contentView addSubview:_backgroundView.get()];
 
     _clipView = adoptNS([[NSView alloc] initWithFrame:contentView.bounds]);
     [_clipView setWantsLayer:YES];
     [_clipView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-    [contentView addSubview:_clipView.get()];
+    [_backgroundView addSubview:_clipView.get()];
 
     [self windowDidLoad];
+    [window displayIfNeeded];
     _webView = webView;
     _page = &page;
     
@@ -234,7 +240,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     // Then insert the WebView into the full screen window
     NSView *contentView = [[self window] contentView];
     [_clipView addSubview:_webView positioned:NSWindowBelow relativeTo:nil];
-    [_webView setFrame:[contentView bounds]];
+    _webView.frame = NSInsetRect(contentView.bounds, 0, -_page->topContentInset());
 
     makeResponderFirstResponderIfDescendantOfView(self.window, webWindowFirstResponder, _webView);
 
@@ -272,8 +278,7 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
         [self _manager]->didEnterFullScreen();
         [self _manager]->setAnimatingFullScreen(false);
 
-        NSView *contentView = [[self window] contentView];
-        [contentView.layer removeAllAnimations];
+        [_backgroundView.get().layer removeAllAnimations];
         [[_clipView layer] removeAllAnimations];
         [[_clipView layer] setMask:nil];
 
@@ -369,7 +374,8 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     _page->setSuppressVisibilityUpdates(true);
     [[self window] orderOut:self];
     NSView *contentView = [[self window] contentView];
-    contentView.layer.hidden = YES;
+    contentView.hidden = YES;
+    [_backgroundView.get().layer removeAllAnimations];
     [[_webViewPlaceholder window] setAutodisplay:NO];
 
     NSResponder *firstResponder = [[self window] firstResponder];
@@ -576,8 +582,8 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
     [maskLayer addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateIn) forKey:@"fullscreen"];
     [_clipView layer].mask = maskLayer;
 
-    contentView.layer.hidden = NO;
-    [contentView.layer addAnimation:fadeAnimation(duration, AnimateIn) forKey:@"fullscreen"];
+    contentView.hidden = NO;
+    [_backgroundView.get().layer addAnimation:fadeAnimation(duration, AnimateIn) forKey:@"fullscreen"];
 
     NSWindow* window = [self window];
     NSWindowCollectionBehavior behavior = [window collectionBehavior];
@@ -605,8 +611,8 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
     [[_clipView layer].mask addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateOut) forKey:@"fullscreen"];
 
     NSView* contentView = [[self window] contentView];
-    contentView.layer.hidden = NO;
-    [contentView.layer addAnimation:fadeAnimation(duration, AnimateOut) forKey:@"fullscreen"];
+    contentView.hidden = NO;
+    [_backgroundView.get().layer addAnimation:fadeAnimation(duration, AnimateOut) forKey:@"fullscreen"];
 
     _page->setSuppressVisibilityUpdates(false);
     [[self window] setAutodisplay:YES];

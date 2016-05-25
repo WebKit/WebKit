@@ -1,3 +1,37 @@
+2016-05-25  Jer Noble  <jer.noble@apple.com>
+
+        Flashiness and jumpiness when entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=158087
+
+        Reviewed by Beth Dakin.
+
+        Multiple independant sources of jumpiness and flashiness are addressed here:
+
+        - Setting the top content inset on the WKView cause a vertical jump during fullscreen
+        transition. Instead of setting the content inset to 0, take the existing inset into account
+        when placing the WKView in the NSWindow.
+
+        - The enter fullscreen transition causes a white flash due to the NSWindow needing
+        display before ordering onscreen. Ensure the window has a backing by calling -displayIfNeeded
+        before entering fullscreen mode.
+
+        - The exit fullscreen transition causes a white background color flash for an unknown
+        reason, but is solved by not making the window's content view layer-backed. Rather than
+        directly animating the contentView's background color, create a specific background view
+        and animate it's background color instead.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:page:]):
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]):
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::saveScrollPosition): Deleted.
+        (WebKit::WebFullScreenManager::restoreScrollPosition): Deleted.
+
 2016-05-25  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

@@ -49,6 +49,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
     WebKit::WebPageProxy* _page;
     RetainPtr<WebCoreFullScreenPlaceholderView> _webViewPlaceholder;
     RetainPtr<NSView> _clipView;
+    RetainPtr<NSView> _backgroundView;
     NSRect _initialFrame;
     NSRect _finalFrame;
     RetainPtr<NSTimer> _watchdogTimer;
