@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#include "Functional.h"
 #include "HashMap.h"
 #include "HashSet.h"
 #include "Lock.h"

@@ -1,3 +1,12 @@
+2016-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WTF/Functional.h
+        https://bugs.webkit.org/show_bug.cgi?id=158081
+
+        Reviewed by Chris Dumez.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+
 2016-05-25  Brent Fulgham  <bfulgham@apple.com>
 
         [WebSockets] No infrastructure for testing secure web sockets (wss)

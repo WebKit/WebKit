@@ -187,7 +187,6 @@
 		A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472A1151A825A004123FF /* FastMalloc.cpp */; };
 		A8A473C4151A825B004123FF /* FastMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472A2151A825A004123FF /* FastMalloc.h */; };
 		A8A473C8151A825B004123FF /* Forward.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472A6151A825A004123FF /* Forward.h */; };
-		A8A473C9151A825B004123FF /* Functional.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472A7151A825A004123FF /* Functional.h */; };
 		A8A473CA151A825B004123FF /* GetPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472A8151A825A004123FF /* GetPtr.h */; };
 		A8A473D3151A825B004123FF /* HashCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472B3151A825A004123FF /* HashCountedSet.h */; };
 		A8A473D4151A825B004123FF /* HashFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472B4151A825A004123FF /* HashFunctions.h */; };
@@ -301,12 +300,12 @@
 		CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5497AB15857D0300B5BC30 /* MediaTime.h */; };
 		CE46516E19DB1FB4003ECA05 /* NSMapTableSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE46516D19DB1FB4003ECA05 /* NSMapTableSPI.h */; };
 		CE73E02519DCB7AB00580D5C /* XPCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE73E02419DCB7AB00580D5C /* XPCSPI.h */; };
-		DCEE22051CEB9869000C2396 /* BackwardsGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE22041CEB9869000C2396 /* BackwardsGraph.h */; };
 		DCEE21FB1CEA7538000C2396 /* CFBundleSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE21FA1CEA7538000C2396 /* CFBundleSPI.h */; };
 		DCEE22001CEA7551000C2396 /* BlockObjCExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE21FC1CEA7551000C2396 /* BlockObjCExceptions.h */; };
 		DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */; };
 		DCEE22021CEA7551000C2396 /* PlatformUserPreferredLanguages.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE21FE1CEA7551000C2396 /* PlatformUserPreferredLanguages.h */; };
 		DCEE22031CEA7551000C2396 /* PlatformUserPreferredLanguagesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCEE21FF1CEA7551000C2396 /* PlatformUserPreferredLanguagesMac.mm */; };
+		DCEE22051CEB9869000C2396 /* BackwardsGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE22041CEB9869000C2396 /* BackwardsGraph.h */; };
 		DE5A09FC1BA36992003D4424 /* CommonCryptoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DE5A09FB1BA36992003D4424 /* CommonCryptoSPI.h */; };
 		E15556F518A0CC18006F48FB /* CryptographicUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */; };
 		E15556F618A0CC18006F48FB /* CryptographicUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E15556F418A0CC18006F48FB /* CryptographicUtilities.h */; };
@@ -514,7 +513,6 @@
 		A8A472A1151A825A004123FF /* FastMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastMalloc.cpp; sourceTree = "<group>"; };
 		A8A472A2151A825A004123FF /* FastMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastMalloc.h; sourceTree = "<group>"; };
 		A8A472A6151A825A004123FF /* Forward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Forward.h; sourceTree = "<group>"; };
-		A8A472A7151A825A004123FF /* Functional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Functional.h; sourceTree = "<group>"; };
 		A8A472A8151A825A004123FF /* GetPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPtr.h; sourceTree = "<group>"; };
 		A8A472B3151A825A004123FF /* HashCountedSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashCountedSet.h; sourceTree = "<group>"; };
 		A8A472B4151A825A004123FF /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; };
@@ -628,12 +626,12 @@
 		CD5497AB15857D0300B5BC30 /* MediaTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTime.h; sourceTree = "<group>"; };
 		CE46516D19DB1FB4003ECA05 /* NSMapTableSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSMapTableSPI.h; sourceTree = "<group>"; };
 		CE73E02419DCB7AB00580D5C /* XPCSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCSPI.h; sourceTree = "<group>"; };
-		DCEE22041CEB9869000C2396 /* BackwardsGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackwardsGraph.h; sourceTree = "<group>"; };
 		DCEE21FA1CEA7538000C2396 /* CFBundleSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFBundleSPI.h; path = cf/CFBundleSPI.h; sourceTree = "<group>"; };
 		DCEE21FC1CEA7551000C2396 /* BlockObjCExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockObjCExceptions.h; sourceTree = "<group>"; };
 		DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockObjCExceptions.mm; sourceTree = "<group>"; };
 		DCEE21FE1CEA7551000C2396 /* PlatformUserPreferredLanguages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformUserPreferredLanguages.h; sourceTree = "<group>"; };
 		DCEE21FF1CEA7551000C2396 /* PlatformUserPreferredLanguagesMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformUserPreferredLanguagesMac.mm; sourceTree = "<group>"; };
+		DCEE22041CEB9869000C2396 /* BackwardsGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackwardsGraph.h; sourceTree = "<group>"; };
 		DE5A09FB1BA36992003D4424 /* CommonCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoSPI.h; sourceTree = "<group>"; };
 		E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptographicUtilities.cpp; sourceTree = "<group>"; };
 		E15556F418A0CC18006F48FB /* CryptographicUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptographicUtilities.h; sourceTree = "<group>"; };
@@ -826,7 +824,6 @@
 				0F9D335C165DBA73005AD387 /* FilePrintStream.h */,
 				0F2B66A517B6B4F700A7AE3F /* FlipBytes.h */,
 				A8A472A6151A825A004123FF /* Forward.h */,
-				A8A472A7151A825A004123FF /* Functional.h */,
 				1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */,
 				1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */,
 				A8A472A8151A825A004123FF /* GetPtr.h */,
@@ -1221,7 +1218,6 @@
 				A8A473B6151A825B004123FF /* fixed-dtoa.h in Headers */,
 				0F2B66A717B6B4FD00A7AE3F /* FlipBytes.h in Headers */,
 				A8A473C8151A825B004123FF /* Forward.h in Headers */,
-				A8A473C9151A825B004123FF /* Functional.h in Headers */,
 				1A1D8B9C173186CE00141DA4 /* FunctionDispatcher.h in Headers */,
 				A8A473CA151A825B004123FF /* GetPtr.h in Headers */,
 				0FEC84AF1BD825310080FF74 /* GraphNodeWorklist.h in Headers */,

@@ -1,3 +1,31 @@
+2016-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WTF/Functional.h
+        https://bugs.webkit.org/show_bug.cgi?id=158081
+
+        Reviewed by Chris Dumez.
+
+        This is no longer used, and removing it will free up the name for a new Functional.h implementation.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Functional.h: Removed.
+        (WTF::RefAndDeref::ref): Deleted.
+        (WTF::RefAndDeref::deref): Deleted.
+        (WTF::ParamStorageTraits::wrap): Deleted.
+        (WTF::ParamStorageTraits::unwrap): Deleted.
+        (WTF::ParamStorageTraits<PassRefPtr<T>>::wrap): Deleted.
+        (WTF::ParamStorageTraits<PassRefPtr<T>>::unwrap): Deleted.
+        (WTF::ParamStorageTraits<RefPtr<T>>::wrap): Deleted.
+        (WTF::ParamStorageTraits<RefPtr<T>>::unwrap): Deleted.
+        (WTF::ParamStorageTraits<RetainPtr<T>>::wrap): Deleted.
+        (WTF::ParamStorageTraits<RetainPtr<T>>::unwrap): Deleted.
+        (WTF::FunctionImplBase::~FunctionImplBase): Deleted.
+        (WTF::FunctionBase::isNull): Deleted.
+        (WTF::FunctionBase::FunctionBase): Deleted.
+        (WTF::FunctionBase::impl): Deleted.
+        (WTF::bind): Deleted.
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+
 2016-05-24  Keith Miller  <keith_miller@apple.com>
 
         LLInt should be able to cache prototype loads for values in GetById

@@ -260,7 +260,6 @@
 		7CCE7F311A411B8E00447C4C /* CheckedArithmeticOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */; };
 		7CCE7F321A411B8E00447C4C /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26A2C72E15E2E73C005B1A14 /* CString.cpp */; };
 		7CCE7F331A411B8E00447C4C /* Deque.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */; };
-		7CCE7F341A411B8E00447C4C /* Functional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA9E55714980A9900001A8A /* Functional.cpp */; };
 		7CCE7F351A411B8E00447C4C /* HashMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD833414857CE400EA2003 /* HashMap.cpp */; };
 		7CCE7F361A411B8E00447C4C /* HashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B2DFF815BDE599004F691D /* HashSet.cpp */; };
 		7CCE7F371A411B8E00447C4C /* IntegerToStringConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */; };
@@ -547,7 +546,6 @@
 		1A7E8B33181208DE00AEB74A /* FragmentNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FragmentNavigation.mm; sourceTree = "<group>"; };
 		1A7E8B351812093600AEB74A /* FragmentNavigation.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FragmentNavigation.html; sourceTree = "<group>"; };
 		1A9FB6CC1CA34BE500966124 /* EarlyKVOCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EarlyKVOCrash.mm; sourceTree = "<group>"; };
-		1AA9E55714980A9900001A8A /* Functional.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Functional.cpp; sourceTree = "<group>"; };
 		1AAD19F51C7CE20300831E47 /* Coding.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Coding.mm; sourceTree = "<group>"; };
 		1ABC3DED1899BE6D004F0626 /* Navigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Navigation.mm; sourceTree = "<group>"; };
 		1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForceRepaint.cpp; sourceTree = "<group>"; };
@@ -1351,7 +1349,6 @@
 				E40019301ACE9B5C001B0A2A /* BloomFilter.cpp */,
 				7AA021BA1AB09EA70052953F /* DateMath.cpp */,
 				E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */,
-				1AA9E55714980A9900001A8A /* Functional.cpp */,
 				7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */,
 				0BCD833414857CE400EA2003 /* HashMap.cpp */,
 				26B2DFF815BDE599004F691D /* HashSet.cpp */,
@@ -1839,7 +1836,6 @@
 				7CCE7EC01A411A7E00447C4C /* FragmentNavigation.mm in Sources */,
 				7CCE7EF61A411AE600447C4C /* FrameMIMETypeHTML.cpp in Sources */,
 				7CCE7EF71A411AE600447C4C /* FrameMIMETypePNG.cpp in Sources */,
-				7CCE7F341A411B8E00447C4C /* Functional.cpp in Sources */,
 				7CCE7EF81A411AE600447C4C /* Geolocation.cpp in Sources */,
 				7CCE7EE11A411A9A00447C4C /* GetBackingScaleFactor.mm in Sources */,
 				CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */,

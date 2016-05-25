@@ -30,7 +30,6 @@ set(WTF_HEADERS
     FlipBytes.h
     Forward.h
     FunctionDispatcher.h
-    Functional.h
     GetPtr.h
     GraphNodeWorklist.h
     GregorianDateTime.h

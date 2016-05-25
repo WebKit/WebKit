@@ -1,3 +1,33 @@
+2016-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WTF/Functional.h
+        https://bugs.webkit.org/show_bug.cgi?id=158081
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Functional.cpp: Removed.
+        (TestWebKitAPI::returnFortyTwo): Deleted.
+        (TestWebKitAPI::TEST): Deleted.
+        (TestWebKitAPI::multiplyByTwo): Deleted.
+        (TestWebKitAPI::multiplyByOneAndAHalf): Deleted.
+        (TestWebKitAPI::multiply): Deleted.
+        (TestWebKitAPI::subtract): Deleted.
+        (TestWebKitAPI::A::A): Deleted.
+        (TestWebKitAPI::A::f): Deleted.
+        (TestWebKitAPI::A::addF): Deleted.
+        (TestWebKitAPI::B::B): Deleted.
+        (TestWebKitAPI::B::~B): Deleted.
+        (TestWebKitAPI::B::ref): Deleted.
+        (TestWebKitAPI::B::deref): Deleted.
+        (TestWebKitAPI::B::f): Deleted.
+        (TestWebKitAPI::B::g): Deleted.
+        (TestWebKitAPI::Number::create): Deleted.
+        (TestWebKitAPI::Number::~Number): Deleted.
+        (TestWebKitAPI::Number::value): Deleted.
+        (TestWebKitAPI::Number::Number): Deleted.
+        (TestWebKitAPI::multiplyNumberByTwo): Deleted.
+
 2016-05-25  Daniel Bates  <dabates@apple.com> and Brent Fulgham  <bfulgham@apple.com>
 
         [WebSockets] No infrastructure for testing secure web sockets (wss)
