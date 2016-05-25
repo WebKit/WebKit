@@ -1,3 +1,12 @@
+2016-05-25  Zalan Bujtas  <zalan@apple.com>
+
+        Addressing post-review comments on r200971.
+
+        Reviewed by Darin Adler.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+
 2016-05-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Simplify grid track sizes parsing
