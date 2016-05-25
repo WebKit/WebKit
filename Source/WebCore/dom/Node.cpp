@@ -2004,7 +2004,7 @@ EventTargetData& Node::ensureEventTargetData()
         return *eventTargetDataMap().get(this);
 
     setHasEventTargetData(true);
-    return *eventTargetDataMap().set(this, std::make_unique<EventTargetData>()).iterator->value;
+    return *eventTargetDataMap().add(this, std::make_unique<EventTargetData>()).iterator->value;
 }
 
 void Node::clearEventTargetData()

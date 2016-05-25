@@ -1,3 +1,16 @@
+2016-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Use HashMap::add() instead of HashMap::set() in Node::ensureEventTargetData()
+        https://bugs.webkit.org/show_bug.cgi?id=158092
+
+        Reviewed by Ryosuke Niwa.
+
+        Use HashMap::add() instead of HashMap::set() in Node::ensureEventTargetData()
+        as we already checked that the key is not present in the HashMap.
+
+        * dom/Node.cpp:
+        (WebCore::Node::ensureEventTargetData):
+
 2016-05-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION (r191531): Web Inspector: WebSQL databases are no longer shown when first opening Web Inspector
