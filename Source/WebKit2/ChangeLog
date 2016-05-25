@@ -1,3 +1,22 @@
+2016-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Update constructRevalidationRequest() to stop returning a unique_ptr<ResourceRequest>
+        https://bugs.webkit.org/show_bug.cgi?id=158046
+
+        Reviewed by Darin Adler.
+
+        Update constructRevalidationRequest() to stop returning a unique_ptr<ResourceRequest>
+        and to return a ResourceRequest instead. There is no reason for it to return a
+        pointer.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::PreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::revalidationRequest):
+        (WebKit::NetworkCache::SpeculativeLoadManager::addPreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateEntry):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+
 2016-05-25  Antoine Quint  <graouts@apple.com>
 
         Elements with backdrop-filter cannot be clipped with clip-path or mask
