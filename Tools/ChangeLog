@@ -1,3 +1,35 @@
+2016-05-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][GTK][EFL] Allow run-jsc-benchmark to use WebKitTestRunner in EFL / GTK ports
+        https://bugs.webkit.org/show_bug.cgi?id=158016
+
+        Reviewed by Darin Adler.
+
+        This patch easily allows run-jsc-benchmark to run WebKitTestRunner-based tests in GTK / EFL ports.
+        This change encourages us to run tests with the browser-heap in nix environments.
+        Two things are modified.
+
+        1. Add a fall-back to look up the library path in GTK / EFL / JSCOnly environment.
+
+            In GTK / EFL / JSCOnly ports, the hierarchy of the build directory is slightly different from Apple port.
+            For example, the jsc bin locate at "WebKitBuild/XXX/Release/bin/jsc" and the lib path is "WebKitBuild/XXX/Release/lib"
+            while the one of Apple port is "WebKitBuild/XXX/Release/jsc" and "WebKitBuild/XXX/Release/lib".
+            And based on this library path, we configure the required environment variables to run WebKitTestRunner in GTK / EFL ports.
+
+        2. Add --dependencies option to add dependent library paths.
+
+            While Apple ports does not require any additional dependent library path, GTK and EFL ports require this path,
+            typically WebKitBuild/DependenciesGTK and WebKitBuild/DependenciesEFL respectively. So we need to add such paths to LD_LIBRARY_PATH.
+            Instead of adding platform options like --gtk / --efl, we add --dependencies option to add the additional dependent library paths.
+            The platform options still require the build path to look up the dependent library directory. So we pass it directly through --dependencies.
+            Multiple additional dependent library paths can be added by using --dependencies multiple times.
+
+        By using these change, we can run benchmarks that require WebKitTestRunner in GTK / EFL ports (If you would like to run them in a headless manner, you can use xvbuf.).
+        Example:
+            `Tools/Scripts/run-jsc-benchmarks baseline:WebKitBuild/baseline/Release/bin/WebKitTestRunner patched:WebKitBuild/patched/Release/bin/WebKitTestRunner --dependencies WebKitBuild/DependenciesGTK/Root/lib --js-bench`
+
+        * Scripts/run-jsc-benchmarks:
+
 2016-05-20  Keith Miller  <keith_miller@apple.com>
         We should have JSBench in PerformanceTests
         https://bugs.webkit.org/show_bug.cgi?id=157952

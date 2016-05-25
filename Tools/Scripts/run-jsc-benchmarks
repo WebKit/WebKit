@@ -233,6 +233,7 @@ $alsoLocal=false
 $sshOptions=[]
 $vms = []
 $environment = {}
+$dependencies = []
 $needToCopyVMs = false
 $dontCopyVMs = false
 $allDRT = true
@@ -348,6 +349,7 @@ def usage
   puts "                     be used for particular VMs and benchmarks."
   puts "--config <path>      Specify the path of the configuration file. Defaults to"
   puts "                     ~/.run-jsc-benchmarks"
+  puts "--dependencies       Additional dependent library paths."
   puts "--help or -h         Display this message."
   puts
   puts "Example:"
@@ -1292,6 +1294,10 @@ class VM
       @libPath, @relativeBinPath = [$~.pre_match+"/Release"], "./#{$1}"
     elsif @path =~ /\/Debug\/([a-zA-Z]+)$/
       @libPath, @relativeBinPath = [$~.pre_match+"/Debug"], "./#{$1}"
+    elsif @path =~ /\/Release\/bin\/([a-zA-Z]+)$/
+      @libPath, @relativeBinPath = [$~.pre_match+"/Release/lib"], "./#{$1}"
+    elsif @path =~ /\/Debug\/bin\/([a-zA-Z]+)$/
+      @libPath, @relativeBinPath = [$~.pre_match+"/Debug/lib"], "./#{$1}"
     elsif @path =~ /\/Contents\/Resources\/([a-zA-Z]+)$/
       @libPath = [$~.pre_match + "/Contents/Resources", $~.pre_match + "/Contents/Frameworks"]
     elsif @path =~ /\/JavaScriptCore.framework\/Resources\/([a-zA-Z]+)$/
@@ -1299,6 +1305,7 @@ class VM
     elsif @path =~ /(DumpRenderTree|webkitTestRunner|jsc)$/
       @libPath, @relativeBinPath = [$~.pre_match+"/"], "./#{$1}"
     end
+    @libPath += $dependencies
   end
   
   def canCopyIntoBenchPath
@@ -1388,6 +1395,14 @@ class VM
     }
     $script.puts "export DYLD_LIBRARY_PATH=#{Shellwords.shellescape(myLibPath.join(':').to_s)}"
     $script.puts "export DYLD_FRAMEWORK_PATH=#{Shellwords.shellescape(myLibPath.join(':').to_s)}"
+    $script.puts "export LD_LIBRARY_PATH=#{Shellwords.shellescape(myLibPath.join(':').to_s)}"
+
+    unless myLibPath.empty?
+        primaryLibPath = myLibPath.first
+        $script.puts "export TEST_RUNNER_TEST_PLUGIN_PATH=#{Shellwords.shellescape(Pathname.new(primaryLibPath).join('plugins').to_s)}"
+        $script.puts "export TEST_RUNNER_INJECTED_BUNDLE_FILENAME=#{Shellwords.shellescape(Pathname.new(primaryLibPath).join('libTestRunnerInjectedBundle.so').to_s)}"
+    end
+
     @extraEnv.each_pair {
       | key, val |
       $script.puts "export #{Shellwords.shellescape(key)}=#{Shellwords.shellescape(val)}"
@@ -2671,6 +2686,7 @@ begin
                  ['--vms', GetoptLong::REQUIRED_ARGUMENT],
                  ['--output-name', GetoptLong::REQUIRED_ARGUMENT],
                  ['--environment', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--dependencies', GetoptLong::REQUIRED_ARGUMENT],
                  ['--config', GetoptLong::REQUIRED_ARGUMENT],
                  ['--help', '-h', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
@@ -2804,6 +2820,8 @@ begin
       }
     when '--environment'
       $environment = JSON::parse(IO::read(arg))
+    when '--dependencies'
+      $dependencies.push(Pathname.new(arg).realpath)
     when '--config'
       $configPath = Pathname.new(arg)
     when '--help'
