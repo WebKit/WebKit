@@ -1,3 +1,17 @@
+2016-05-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION (r191531): Web Inspector: WebSQL databases are no longer shown when first opening Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=158096
+        <rdar://problem/26454671>
+
+        Reviewed by Brian Burg.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didOpenDatabase):
+        Remove the fast return errantly added in r191531. InspectorDatabaseAgent
+        wants to track databases, even before a frontend may be open, so that
+        on first open it can inform the frontend about open databases.
+
 2016-05-25  Zalan Bujtas  <zalan@apple.com>
 
         Setting overflow:hidden does not always repaint clipped content.

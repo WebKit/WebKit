@@ -1040,7 +1040,6 @@ inline void InspectorInstrumentation::willDestroyCachedResource(CachedResource& 
 
 inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* context, RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
 {
-    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         didOpenDatabaseImpl(*instrumentingAgents, WTFMove(database), domain, name, version);
 }
