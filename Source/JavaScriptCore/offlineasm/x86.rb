@@ -648,7 +648,7 @@ class Instruction
             $asm.puts "xchg#{x86Suffix(:ptr)} #{operand.x86Operand(:ptr)}, #{ax.x86Operand(:ptr)}"
             $asm.puts "#{setOpcode} #{ax.x86Operand(:byte)}"
             if !isIntelSyntax
-		$asm.puts "movzbl #{ax.x86Operand(:byte)}, #{ax.x86Operand(:int)}"
+                $asm.puts "movzbl #{ax.x86Operand(:byte)}, #{ax.x86Operand(:int)}"
             else
                 $asm.puts "movzx #{ax.x86Operand(:int)}, #{ax.x86Operand(:byte)}"
             end
@@ -954,7 +954,11 @@ class Instruction
                 $asm.puts "movzx #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(:int))}"
             end
         when "loadbs"
-            $asm.puts "movsbl #{operands[0].x86Operand(:byte)}, #{operands[1].x86Operand(:int)}"
+            if !isIntelSyntax
+                $asm.puts "movsbl #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(:int))}"
+            else
+                $asm.puts "movsx #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(:int))}"
+            end
         when "loadh"
             if !isIntelSyntax
                 $asm.puts "movzwl #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:int))}"
@@ -962,7 +966,11 @@ class Instruction
                 $asm.puts "movzx #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:int))}"
             end
         when "loadhs"
-            $asm.puts "movswl #{operands[0].x86Operand(:half)}, #{operands[1].x86Operand(:int)}"
+            if !isIntelSyntax
+                $asm.puts "movswl #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:int))}"
+            else
+                $asm.puts "movsx #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:int))}"
+            end
         when "storeb"
             $asm.puts "mov#{x86Suffix(:byte)} #{x86Operands(:byte, :byte)}"
         when "loadd"

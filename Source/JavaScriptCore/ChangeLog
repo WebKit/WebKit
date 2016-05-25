@@ -1,3 +1,13 @@
+2016-05-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Win64 build after r201335
+        https://bugs.webkit.org/show_bug.cgi?id=158078
+
+        Reviewed by Mark Lam.
+
+        * offlineasm/x86.rb:
+        Add intel implementations for loadbs and loadhs
+
 2016-05-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r201066): [GTK] Several intl tests started to fail in GTK+ bot after r201066
