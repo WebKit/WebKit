@@ -217,7 +217,7 @@ void TextTrackList::remove(TrackBase& track, bool scheduleEvent)
 
     invalidateTrackIndexesAfterTrack(textTrack);
 
-    ASSERT(!track.mediaElement() || track.mediaElement() == element());
+    ASSERT(!track.mediaElement() || !element() || track.mediaElement() == element());
     track.setMediaElement(nullptr);
 
     Ref<TrackBase> trackRef = *(*tracks)[index];
