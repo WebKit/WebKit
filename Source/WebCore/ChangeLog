@@ -1,3 +1,32 @@
+2016-05-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebSockets] No infrastructure for testing secure web sockets (wss)
+        https://bugs.webkit.org/show_bug.cgi?id=157884
+        <rdar://problem/26477197>
+
+        Reviewed by Andy Estes.
+
+        Add a new test-only flag used to tell CFNetwork that we do not wish to
+        validate the SLL certificate chain. This allows us to use self-signed
+        certificates in test cases.
+
+        Tests: http/tests/websocket/tests/hybi/simple-wss.html
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setAllowsAnySSLCertificate): Added.
+        (WebCore::Settings::allowsAnySSLCertificate): Added. This defaults
+        to False.
+        * page/Settings.h:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::createStreams): When running under our
+        testing infrastructure, do not require full certificate validation.
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::setAllowsAnySSLCertificate): Added.
+        * testing/js/WebCoreTestSupport.h:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setAllowsAnySSLCertificate): Added.
+        * testing/InternalSettings.h:
+
 2016-05-25  Jer Noble  <jer.noble@apple.com>
 
         CRASH at WebCore::WebPlaybackSessionModelMediaElement::selectAudioMediaOption() + 104

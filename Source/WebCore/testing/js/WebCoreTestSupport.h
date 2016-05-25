@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +54,7 @@ void clearWheelEventTestTrigger(WebCore::Frame&) TEST_SUPPORT_EXPORT;
 
 void setLogChannelToAccumulate(const WTF::String& name) TEST_SUPPORT_EXPORT;
 void initializeLoggingChannelsIfNecessary() TEST_SUPPORT_EXPORT;
+void setAllowsAnySSLCertificate(bool) TEST_SUPPORT_EXPORT;
 
 } // namespace WebCore
 

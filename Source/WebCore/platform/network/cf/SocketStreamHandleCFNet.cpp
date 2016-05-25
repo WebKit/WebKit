@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009-2016 Apple Inc.  All rights reserved.
  * Copyright (C) 2009 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@
 #include "Logging.h"
 #include "NetworkingContext.h"
 #include "ProtectionSpace.h"
+#include "Settings.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 #include <wtf/Condition.h>
@@ -340,8 +341,9 @@ void SocketStreamHandle::createStreams()
     }
 
     if (shouldUseSSL()) {
-        const void* keys[] = { kCFStreamSSLPeerName, kCFStreamSSLLevel };
-        const void* values[] = { host.get(), kCFStreamSocketSecurityLevelNegotiatedSSL };
+        CFBooleanRef validateCertificateChain = Settings::allowsAnySSLCertificate() ? kCFBooleanFalse : kCFBooleanTrue;
+        const void* keys[] = { kCFStreamSSLPeerName, kCFStreamSSLLevel, kCFStreamSSLValidatesCertificateChain };
+        const void* values[] = { host.get(), kCFStreamSocketSecurityLevelNegotiatedSSL, validateCertificateChain };
         RetainPtr<CFDictionaryRef> settings = adoptCF(CFDictionaryCreate(0, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFReadStreamSetProperty(m_readStream.get(), kCFStreamPropertySSLSettings, settings.get());
         CFWriteStreamSetProperty(m_writeStream.get(), kCFStreamPropertySSLSettings, settings.get());

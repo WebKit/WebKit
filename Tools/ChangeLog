@@ -1,3 +1,48 @@
+2016-05-25  Daniel Bates  <dabates@apple.com> and Brent Fulgham  <bfulgham@apple.com>
+
+        [WebSockets] No infrastructure for testing secure web sockets (wss)
+        https://bugs.webkit.org/show_bug.cgi?id=157884
+        <rdar://problem/26477197>
+
+        Reviewed by Andy Estes.
+
+        Add support to webkitpy to start and stop a secure Web Socket server running on port 9323
+        using the certificate, private-key from file LayoutTests/http/conf/webkit-httpd.pem. Also
+        teaches run-webkit-httpd to start and stop the Web Socket servers.
+
+        Modify DumpRenderTree and WebKitTestRunner to understand a new testRunner method,
+        'setAllowsAnySSLCertificate', which allows us to use the same self-signed test certificate
+        we do for our HTTPS tests.
+        
+        * DumpRenderTree/TestRunner.cpp:
+        (setAllowsAnySSLCertificateCallback):
+        (TestRunner::setAllowsAnySSLCertificate):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting): Make sure we turn off the new flag between tests.
+        * Scripts/run-webkit-httpd:
+        (main): Start the websocket server at launch.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__): Remove dead code.
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        (PyWebSocket.__init__): Cleanup code.
+        (PyWebSocket): Pass '--tls-client-ca' to start command.
+        (PyWebSocket._prepare_config): Cleanups.
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.start_http_server):
+        (Port.to):
+        (Port.to._extract_certificate_from_pem): Added.
+        (Port.to._extract_private_key_from_pem): Added.
+        (Port.to.start_websocket_server): Start secure socket server.
+        (Port.to.stop_websocket_server): Stop secure socket server.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: Add new API.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::setAllowsAnySSLCertificate): Added.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setAllowsAnySSLCertificate): Added.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2016-05-25  Keith Miller  <keith_miller@apple.com>
 
         run-jsc-benchmarks should use the new JSBench rather than look for it in the config file.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -285,7 +285,10 @@ public:
 
     WEBCORE_EXPORT void setForcePendingWebGLPolicy(bool);
     bool isForcePendingWebGLPolicy() const { return m_forcePendingWebGLPolicy; }
-    
+
+    WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
+    static bool allowsAnySSLCertificate();
+
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/SettingsGettersAndSetters.h>
 #endif
@@ -381,6 +384,7 @@ private:
 
     static bool gLowPowerVideoAudioBufferSizeEnabled;
     static bool gResourceLoadStatisticsEnabledEnabled;
+    static bool gAllowsAnySSLCertificate;
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/SettingsMembers.h>

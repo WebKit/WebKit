@@ -127,6 +127,8 @@ public:
     void setPageVisibility(const char*);
     void resetPageVisibility();
 
+    static void setAllowsAnySSLCertificate(bool);
+
     void waitForPolicyDelegate();
     size_t webHistoryItemCount();
     int windowCount();

@@ -184,6 +184,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #endif
     settings.setUserInterfaceDirectionPolicy(m_userInterfaceDirectionPolicy);
     settings.setSystemLayoutDirection(m_systemLayoutDirection);
+    Settings::setAllowsAnySSLCertificate(false);
 }
 
 class InternalSettingsWrapper : public Supplement<Page> {
@@ -616,6 +617,11 @@ void InternalSettings::setSystemLayoutDirection(const String& direction, Excepti
         return;
     }
     ec = INVALID_ACCESS_ERR;
+}
+
+void InternalSettings::setAllowsAnySSLCertificate(bool allowsAnyCertificate)
+{
+    Settings::setAllowsAnySSLCertificate(allowsAnyCertificate);
 }
 
 // If you add to this list, make sure that you update the Backup class for test reproducability!

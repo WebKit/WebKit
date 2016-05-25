@@ -66,12 +66,14 @@ def main(argv, stdout, stderr):
         print "Starting httpd on <http://127.0.0.1:%s>" % http_port
 
     port.start_http_server()
+    port.start_websocket_server()
 
     try:
         tail = subprocess.Popen(['tail', '-F', log_file.name], stdout=subprocess.PIPE)
         while True:
             sys.stdout.write(tail.stdout.readline())
     except KeyboardInterrupt:
+        port.stop_websocket_server()
         port.stop_http_server()
 
 if __name__ == '__main__':

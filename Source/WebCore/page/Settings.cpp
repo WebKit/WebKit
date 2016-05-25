@@ -101,6 +101,7 @@ bool Settings::gShouldUseHighResolutionTimers = true;
 bool Settings::gShouldRespectPriorityInCSSAttributeSetters = false;
 bool Settings::gLowPowerVideoAudioBufferSizeEnabled = false;
 bool Settings::gResourceLoadStatisticsEnabledEnabled = false;
+bool Settings::gAllowsAnySSLCertificate = false;
 
 #if PLATFORM(IOS)
 bool Settings::gNetworkDataUsageTrackingEnabled = false;
@@ -752,6 +753,16 @@ bool Settings::globalConstRedeclarationShouldThrow()
 #else
     return true;
 #endif
+}
+
+void Settings::setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
+{
+    gAllowsAnySSLCertificate = allowAnySSLCertificate;
+}
+
+bool Settings::allowsAnySSLCertificate()
+{
+    return gAllowsAnySSLCertificate;
 }
 
 } // namespace WebCore

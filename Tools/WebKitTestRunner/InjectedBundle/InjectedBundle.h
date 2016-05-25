@@ -123,6 +123,8 @@ public:
 
     unsigned imageCountInGeneralPasteboard() const;
 
+    void setAllowsAnySSLCertificate(bool);
+    
 private:
     InjectedBundle();
     ~InjectedBundle();

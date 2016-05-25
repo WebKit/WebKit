@@ -78,16 +78,10 @@ class Manager(object):
         self._options = options
         self._printer = printer
         self._expectations = None
-
         self.HTTP_SUBDIR = 'http' + port.TEST_PATH_SEPARATOR
         self.WEBSOCKET_SUBDIR = 'websocket' + port.TEST_PATH_SEPARATOR
         self.web_platform_test_subdir = self._port.web_platform_test_server_doc_root()
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
-
-        # disable wss server. need to install pyOpenSSL on buildbots.
-        # self._websocket_secure_server = websocket_server.PyWebSocket(
-        #        options.results_directory, use_tls=True, port=9323)
-
         self._results_directory = self._port.results_directory()
         self._finder = LayoutTestFinder(self._port, self._options)
         self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow)

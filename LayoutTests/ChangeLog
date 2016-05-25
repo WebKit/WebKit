@@ -1,3 +1,14 @@
+2016-05-25  Daniel Bates  <dabates@apple.com> and Brent Fulgham  <bfulgham@apple.com>
+
+        [WebSockets] No infrastructure for testing secure web sockets (wss)
+        https://bugs.webkit.org/show_bug.cgi?id=157884
+        <rdar://problem/26477197>
+
+        Reviewed by Andy Estes.
+
+        * http/tests/websocket/tests/hybi/simple-wss-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/simple-wss.html: Added.
+
 2016-05-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/css/shared-stylesheet-mutation.html as flaky

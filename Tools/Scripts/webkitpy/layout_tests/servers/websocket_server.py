@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -39,8 +40,8 @@ from webkitpy.layout_tests.servers import http_server_base
 _log = logging.getLogger(__name__)
 
 
-_WS_LOG_PREFIX = 'pywebsocket.ws.log-'
-_WSS_LOG_PREFIX = 'pywebsocket.wss.log-'
+_WS_LOG_NAME = 'pywebsocket.ws.log'
+_WSS_LOG_NAME = 'pywebsocket.wss.log'
 
 
 _DEFAULT_WS_PORT = 8880
@@ -102,13 +103,12 @@ class PyWebSocket(http_server.Lighttpd):
                 self._web_socket_tests = None
 
         if self._use_tls:
-            self._log_prefix = _WSS_LOG_PREFIX
+            self._log_prefix = _WSS_LOG_NAME
         else:
-            self._log_prefix = _WS_LOG_PREFIX
+            self._log_prefix = _WS_LOG_NAME
 
     def _prepare_config(self):
-        time_str = time.strftime('%d%b%Y-%H%M%S')
-        log_file_name = self._log_prefix + time_str
+        log_file_name = self._log_prefix
         # FIXME: Doesn't Executive have a devnull, so that we don't have to use os.devnull directly?
         self._wsin = open(os.devnull, 'r')
 
@@ -145,7 +145,7 @@ class PyWebSocket(http_server.Lighttpd):
             start_cmd.extend(['-t', '-k', self._private_key,
                               '-c', self._certificate])
             if self._ca_certificate:
-                start_cmd.append('--ca-certificate')
+                start_cmd.append('--tls-client-ca')
                 start_cmd.append(self._ca_certificate)
 
         self._start_cmd = start_cmd

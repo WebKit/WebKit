@@ -369,6 +369,11 @@ void TestRunner::setDownloadAttributeEnabled(bool enabled)
     WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), key.get(), enabled);
 }
 
+void TestRunner::setAllowsAnySSLCertificate(bool enabled)
+{
+    InjectedBundle::singleton().setAllowsAnySSLCertificate(enabled);
+}
+
 void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     auto& injectedBundle = InjectedBundle::singleton();
