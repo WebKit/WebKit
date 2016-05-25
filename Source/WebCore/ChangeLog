@@ -1,3 +1,17 @@
+2016-05-25  Jer Noble  <jer.noble@apple.com>
+
+        CRASH at WebCore::WebPlaybackSessionModelMediaElement::selectAudioMediaOption() + 104
+        https://bugs.webkit.org/show_bug.cgi?id=158090
+        <rdar://problem/26388936>
+
+        Reviewed by Eric Carlson.
+
+        Null-check m_mediaElement before using.
+
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebPlaybackSessionModelMediaElement::selectAudioMediaOption):
+        (WebPlaybackSessionModelMediaElement::selectLegibleMediaOption):
+
 2016-05-25  Brady Eidson  <beidson@apple.com>
 
         Race condition calling back to an IDBOpenDBRequest during WorkerThread shutdown.
