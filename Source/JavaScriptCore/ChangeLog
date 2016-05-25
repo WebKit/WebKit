@@ -1,3 +1,20 @@
+2016-05-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r201066): [GTK] Several intl tests started to fail in GTK+ bot after r201066
+        https://bugs.webkit.org/show_bug.cgi?id=158066
+
+        Reviewed by Darin Adler.
+
+        run-javascriptcore-tests does $ENV{LANG}="en_US.UTF-8"; but we are not actually honoring the environment
+        variables at all when using jsc binary. We are using setlocale() with a nullptr locale to get the current one, but
+        the current one is always "C", because to set the locale according to the environment variables we need to call
+        setlocale with an empty string as locale. That's done by gtk_init(), which is called by all our binaries (web
+        process, network process, etc.), but not by jsc (because jsc doesn't depend on GTK+). The reason why it has
+        always worked for EFL is because they call ecore_init() in jsc that calls setlocale.
+
+        * jsc.cpp:
+        (main): Call setlocale(LC_ALL, "") on GTK+.
+
 2016-05-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Fix the Wcast-align warning in LinkBuffer.cpp
