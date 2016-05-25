@@ -100,9 +100,13 @@ function getAbsoluteRect(element) {
     return rect;
 }
 
-function searchCancelButtonPosition(element) {
+function searchCancelButtonPositionRTL(element) {
+	return searchCancelButtonPosition(element, true);
+}
+
+function searchCancelButtonPosition(element, isRTL = false) {
     var pos = {};
-    pos.x = element.offsetLeft + element.offsetWidth - 9;
+    pos.x = element.offsetLeft + (isRTL ? 9 : (element.offsetWidth - 9));
     pos.y = element.offsetTop + element.offsetHeight / 2;
     return pos;
 }

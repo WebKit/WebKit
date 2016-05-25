@@ -1,3 +1,24 @@
+2016-05-25  Zalan Bujtas  <zalan@apple.com>
+
+        Swap search field's cancel and result button for RTL content.
+        https://bugs.webkit.org/show_bug.cgi?id=158007
+
+        Reviewed by Dean Jackson.
+
+        * fast/forms/resources/common.js:
+        (searchCancelButtonPositionRTL):
+        (searchCancelButtonPosition):
+        * fast/forms/search-input-rtl.html: Added.
+        * fast/forms/search-rtl.html:
+        * platform/ios-simulator-wk2/fast/forms/search-rtl-expected.txt:
+        * platform/ios-simulator/fast/css/text-overflow-input-expected.txt:
+        * platform/ios-simulator/fast/forms/search-input-rtl-expected.txt: Added.
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.txt:
+        * platform/mac/fast/forms/search-input-rtl-expected.png: Added.
+        * platform/mac/fast/forms/search-input-rtl-expected.txt: Added.
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+
 2016-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Font Loading] ASSERT if calling FontFace.loaded twice with a garbage collection between them

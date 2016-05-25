@@ -1739,6 +1739,14 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const Pa
     float zoomLevel = box.style().effectiveZoom();
 
     FloatRect localBounds = adjustedCancelButtonRect([search cancelButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))]);
+    // Adjust position based on the content direction.
+    float adjustedXPosition;
+    if (box.style().direction() == RTL)
+        adjustedXPosition = inputBox.contentBoxRect().x();
+    else
+        adjustedXPosition = inputBox.contentBoxRect().maxX() - localBounds.size().width();
+    
+    localBounds.setX(adjustedXPosition);
     FloatPoint paintingPos = convertToPaintingPosition(inputBox, box, localBounds.location(), r.location());
 
     FloatRect unzoomedRect(paintingPos, localBounds.size());
@@ -1868,6 +1876,13 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderBox& box, const P
     float zoomLevel = box.style().effectiveZoom();
 
     FloatRect localBounds = adjustedResultButtonRect([search searchButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))]);
+    // Adjust position based on the content direction.
+    float adjustedXPosition;
+    if (box.style().direction() == RTL)
+        adjustedXPosition = inputBox.contentBoxRect().maxX() - localBounds.size().width();
+    else
+        adjustedXPosition = inputBox.contentBoxRect().x();
+    localBounds.setX(adjustedXPosition);
     FloatPoint paintingPos = convertToPaintingPosition(inputBox, box, localBounds.location(), r.location());
     
     FloatRect unzoomedRect(paintingPos, localBounds.size());

@@ -22,7 +22,7 @@
     <script>
         if (window.eventSender) {
             var target = $("target");
-            var pos = searchCancelButtonPosition(target);
+            var pos = searchCancelButtonPositionRTL(target);
             eventSender.mouseMoveTo(pos.x, pos.y);
             eventSender.mouseDown();
             eventSender.mouseUp();

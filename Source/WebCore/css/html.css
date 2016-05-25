@@ -411,10 +411,6 @@ input::-webkit-textfield-decoration-container {
     content: none !important;
 }
 
-input[type="search"]::-webkit-textfield-decoration-container {
-    direction: ltr;
-}
-
 input::-webkit-clear-button {
     -webkit-appearance: searchfield-cancel-button;
     display: inline-block;

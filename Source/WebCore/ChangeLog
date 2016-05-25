@@ -1,3 +1,18 @@
+2016-05-25  Zalan Bujtas  <zalan@apple.com>
+
+        Swap search field's cancel and result button for RTL content.
+        https://bugs.webkit.org/show_bug.cgi?id=158007
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/forms/search-input-rtl.html
+
+        * css/html.css:
+        (input[type="search"]::-webkit-textfield-decoration-container): Deleted.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+
 2016-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Font Loading] ASSERT if calling FontFace.loaded twice with a garbage collection between them
