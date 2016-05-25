@@ -66,6 +66,7 @@ public:
     LoadStatus status() const;
 
     typedef DOMPromise<FontFace&> Promise;
+    Optional<Promise>& promise() { return m_promise; }
     void registerLoaded(Promise&&);
 
     void load();

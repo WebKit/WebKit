@@ -1,3 +1,13 @@
+2016-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] ASSERT if calling FontFace.loaded twice with a garbage collection between them
+        https://bugs.webkit.org/show_bug.cgi?id=158015
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-face-crash-2-expected.txt: Added.
+        * fast/text/font-face-crash-2.html: Added.
+
 2016-05-25  Antti Koivisto  <antti@apple.com>
 
         Shadow DOM: RenderTreePosition should determine if element has display:contents from new style

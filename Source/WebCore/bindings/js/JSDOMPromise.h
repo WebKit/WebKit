@@ -165,6 +165,8 @@ public:
 
     template<typename... ErrorType> void reject(ErrorType&&... error) { m_wrapper.reject(std::forward<ErrorType>(error)...); }
 
+    DeferredWrapper& deferredWrapper() { return m_wrapper; }
+
 private:
     DeferredWrapper m_wrapper;
 };

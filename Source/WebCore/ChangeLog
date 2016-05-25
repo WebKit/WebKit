@@ -1,3 +1,35 @@
+2016-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] ASSERT if calling FontFace.loaded twice with a garbage collection between them
+        https://bugs.webkit.org/show_bug.cgi?id=158015
+
+        Reviewed by Darin Adler.
+
+        The following scenario may occur:
+
+        1. We create a FontFace object
+        2. We create an associated JSFontFace object
+        3. We start loading the FontFace, which causes an extra ref to hang around until loading finishes
+        4. Javascript calls the "loaded" attribute on the FontFace, which saves a promise inside the FontFace
+        5. The FontFace goes out of scope in Javascript
+        6. A garbage collection occurs, causing us to delete the JSFontFace object
+        7. Javascript then encounters the FontFace object without first going through a reference to a JSFontFace.
+        It can do this via iterating through a FontFaceSet. We respond to this situation by creating a new
+        JSFontFace object and associating it with the existing FontFace.
+        8. Javascript calls the "loaded" attribute
+
+        In this situation, the newer JSFontFace object is out of sync with the older FontFace object. In
+        particular, the FontFace has a saved promise, but the JSFontFace doesn't know about it. Therefore,
+        the JSFontFace should be flexible to the presence of this member.
+
+        Test: fast/text/font-face-crash-2.html
+
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DOMPromise::deferredWrapper):
+        * bindings/js/JSFontFaceCustom.cpp:
+        (WebCore::JSFontFace::loaded):
+        * css/FontFace.h:
+
 2016-05-25  Antti Koivisto  <antti@apple.com>
 
         Shadow DOM: RenderTreePosition miscomputed when display:contents value changes
