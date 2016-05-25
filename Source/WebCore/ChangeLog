@@ -1,3 +1,19 @@
+2016-05-25  Zalan Bujtas  <zalan@apple.com>
+
+        Setting overflow:hidden does not always repaint clipped content.
+        https://bugs.webkit.org/show_bug.cgi?id=116994
+        rdar://problem/26476697
+
+        Issue repaint for both layout and visual overflow rects when the container starts
+        clipping overflow content.
+
+        Reviewed by David Hyatt.
+
+        Test: fast/repaint/overflow-hidden-repaint.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateFromStyle):
+
 2016-05-25  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WTF/Functional.h

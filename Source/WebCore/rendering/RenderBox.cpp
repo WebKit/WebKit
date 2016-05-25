@@ -516,17 +516,19 @@ void RenderBox::updateFromStyle()
                 boxHasOverflowClip = false;
             }
         }
-        
         // Check for overflow clip.
         // It's sufficient to just check one direction, since it's illegal to have visible on only one overflow value.
         if (boxHasOverflowClip) {
-            if (!s_hadOverflowClip)
-                // Erase the overflow
-                repaint();
+            if (!s_hadOverflowClip && hasRenderOverflow()) {
+                // Erase the overflow.
+                // Overflow changes have to result in immediate repaints of the entire layout overflow area because
+                // repaints issued by removal of descendants get clipped using the updated style when they shouldn't.
+                repaintRectangle(visualOverflowRect());
+                repaintRectangle(layoutOverflowRect());
+            }
             setHasOverflowClip();
         }
     }
-
     setHasTransformRelatedProperty(styleToUse.hasTransformRelatedProperty());
     setHasReflection(styleToUse.boxReflect());
 }
