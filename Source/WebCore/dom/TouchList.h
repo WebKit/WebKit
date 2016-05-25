@@ -22,9 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef TouchList_h
-#define TouchList_h
+#pragma once
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/TouchListIOS.h>
@@ -48,16 +46,15 @@ public:
     Touch* item(unsigned);
     const Touch* item(unsigned) const;
 
-    void append(const PassRefPtr<Touch> touch) { m_values.append(touch); }
+    void append(RefPtr<Touch>&& touch) { m_values.append(WTFMove(touch)); }
 
 private:
     TouchList() {}
 
-    Vector<RefPtr<Touch> > m_values;
+    Vector<RefPtr<Touch>> m_values;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(TOUCH_EVENTS)
 
-#endif /* TouchList_h */
