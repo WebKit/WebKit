@@ -1,3 +1,42 @@
+2016-05-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Simplify grid track sizes parsing
+        https://bugs.webkit.org/show_bug.cgi?id=158021
+
+        Reviewed by Sergio Villar Senin.
+
+        Previously once we saw an auto-repeat function,
+        we passed the "FixedSizeOnly" restriction to the rest of methods.
+        That way we were sure that all the tracks after the auto-repeat
+        had fixed sizes.
+        But we needed to call allTracksAreFixedSized() to be sure that
+        the tracks before the auto-repeat had fixed sizes too.
+
+        Now we're introducing a new boolean |allTracksAreFixedSized|,
+        to check in advance if the declaration contains any track not fixed.
+        If that's the case and we found an auto-repeat method,
+        we consider it invalid.
+        With this approach we avoid the loop to verify
+        that all the tracks (before and after the auto-repeat) are fixed.
+        It also allows us to simplify the code and avoid passing
+        the restriction to all the methods parsing the track size.
+
+        No new tests, no change of behavior.
+
+        * css/CSSParser.cpp:
+        (WebCore::isGridTrackFixedSized): New method to check if a grid track
+        size is fixed or not (based on old allTracksAreFixedSized()).
+        (WebCore::CSSParser::parseGridTrackList): Add new boolean to detect
+        if any track has not a fixed size.
+        (WebCore::CSSParser::parseGridTrackRepeatFunction): Ditto.
+        (WebCore::CSSParser::parseGridTrackSize): Remove usage of
+        TrackSizeRestriction enum.
+        Check here if |minTrackBreadth| is a flexible size.
+        (WebCore::CSSParser::parseGridBreadth): Remove usage of
+        TrackSizeRestriction enum.
+        (WebCore::allTracksAreFixedSized): Deleted.
+        * css/CSSParser.h: Remove TrackSizeRestriction enum and update headers.
+
 2016-05-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Refactor populateGridPositions()
