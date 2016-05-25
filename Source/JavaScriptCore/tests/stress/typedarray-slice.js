@@ -16,6 +16,7 @@ debug("1.0 Test Basic Functionality");
 shouldBeTrue("testPrototypeFunction('slice', '(2, 3)', [12, 5, 8, 13, 44], [8], [12, 5, 8, 13, 44])");
 shouldBeTrue("testPrototypeFunction('slice', '(5, 5)', [12, 5, 8, 13, 44], [])");
 shouldBeTrue("testPrototypeFunction('slice', '(0, 5)', [12, 5, 8, 13, 44], [12, 5, 8, 13, 44])");
+shouldBeTrue("testPrototypeFunction('slice', '()', [12, 5, 8, 13, 44], [12, 5, 8, 13, 44])");
 shouldBeTrue("testPrototypeFunction('slice', '(0, -5)', [12, 5, 8, 13, 44], [])");
 shouldBeTrue("testPrototypeFunction('slice', '(-3, -2)', [12, 5, 8, 13, 44], [8])");
 shouldBeTrue("testPrototypeFunction('slice', '(4, 2)', [12, 5, 8, 13, 44], [])");

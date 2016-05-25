@@ -370,9 +370,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSlice(ExecState* exec
     if (thisObject->isNeutered())
         return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
 
-    if (!exec->argumentCount())
-        return throwVMError(exec, createTypeError(exec, "Expected at least one argument"));
-
     unsigned thisLength = thisObject->length();
 
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, thisLength);
