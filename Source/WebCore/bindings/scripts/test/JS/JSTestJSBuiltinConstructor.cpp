@@ -132,11 +132,10 @@ void JSTestJSBuiltinConstructor::destroy(JSC::JSCell* cell)
     thisObject->JSTestJSBuiltinConstructor::~JSTestJSBuiltinConstructor();
 }
 
-EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -146,11 +145,10 @@ EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(ExecState* state, E
 }
 
 
-EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {

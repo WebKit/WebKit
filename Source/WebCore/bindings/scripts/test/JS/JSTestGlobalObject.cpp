@@ -154,11 +154,10 @@ bool JSTestGlobalObject::getOwnPropertySlot(JSObject* object, ExecState* state, 
     return false;
 }
 
-EncodedJSValue jsTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestGlobalObject*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -171,11 +170,10 @@ EncodedJSValue jsTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSVal
 
 
 #if ENABLE(TEST_FEATURE)
-EncodedJSValue jsTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestGlobalObject*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {

@@ -1,3 +1,27 @@
+2016-05-25  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        Remove unused slotBase parameter in bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=158068
+
+        Reviewed by Darin Adler.
+
+        Remove unused slotBase parameter from attribute Getter functions.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+
 2016-05-25  Alex Christensen  <achristensen@webkit.org>
 
         Include fewer headers from headers

@@ -176,11 +176,10 @@ void JSTestEventConstructor::destroy(JSC::JSCell* cell)
     thisObject->JSTestEventConstructor::~JSTestEventConstructor();
 }
 
-EncodedJSValue jsTestEventConstructorAttr1(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestEventConstructorAttr1(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestEventConstructor*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -192,11 +191,10 @@ EncodedJSValue jsTestEventConstructorAttr1(ExecState* state, EncodedJSValue this
 }
 
 
-EncodedJSValue jsTestEventConstructorAttr2(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestEventConstructorAttr2(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestEventConstructor*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -209,11 +207,10 @@ EncodedJSValue jsTestEventConstructorAttr2(ExecState* state, EncodedJSValue this
 
 
 #if ENABLE(SPECIAL_EVENT)
-EncodedJSValue jsTestEventConstructorAttr3(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestEventConstructorAttr3(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestEventConstructor*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {

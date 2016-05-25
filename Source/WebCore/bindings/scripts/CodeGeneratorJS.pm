@@ -2538,12 +2538,11 @@ sub GenerateImplementation
             my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
-            push(@implContent, "EncodedJSValue ${getFunctionName}(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)\n");
+            push(@implContent, "EncodedJSValue ${getFunctionName}(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)\n");
             push(@implContent, "{\n");
 
             push(@implContent, "    UNUSED_PARAM(state);\n");
             push(@implContent, "    UNUSED_PARAM(thisValue);\n");
-            push(@implContent, "    UNUSED_PARAM(slotBase);\n");
 
             if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
                 push(@implContent, "    JSValue decodedThisValue = JSValue::decode(thisValue);\n");

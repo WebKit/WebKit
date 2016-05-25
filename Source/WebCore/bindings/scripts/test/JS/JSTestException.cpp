@@ -141,11 +141,10 @@ bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* state, Pro
     return false;
 }
 
-EncodedJSValue jsTestExceptionName(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestExceptionName(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestException*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {

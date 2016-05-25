@@ -218,11 +218,10 @@ bool JSTestTypedefs::getOwnPropertySlot(JSObject* object, ExecState* state, Prop
     return false;
 }
 
-EncodedJSValue jsTestTypedefsUnsignedLongLongAttr(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestTypedefsUnsignedLongLongAttr(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestTypedefs*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -234,11 +233,10 @@ EncodedJSValue jsTestTypedefsUnsignedLongLongAttr(ExecState* state, EncodedJSVal
 }
 
 
-EncodedJSValue jsTestTypedefsImmutableSerializedScriptValue(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestTypedefsImmutableSerializedScriptValue(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestTypedefs*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -250,11 +248,10 @@ EncodedJSValue jsTestTypedefsImmutableSerializedScriptValue(ExecState* state, En
 }
 
 
-EncodedJSValue jsTestTypedefsConstructorTestSubObj(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestTypedefsConstructorTestSubObj(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestTypedefs*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -264,11 +261,10 @@ EncodedJSValue jsTestTypedefsConstructorTestSubObj(ExecState* state, EncodedJSVa
 }
 
 
-EncodedJSValue jsTestTypedefsAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestTypedefsAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestTypedefs*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -282,11 +278,10 @@ EncodedJSValue jsTestTypedefsAttrWithGetterException(ExecState* state, EncodedJS
 }
 
 
-EncodedJSValue jsTestTypedefsAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestTypedefsAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestTypedefs*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -298,11 +293,10 @@ EncodedJSValue jsTestTypedefsAttrWithSetterException(ExecState* state, EncodedJS
 }
 
 
-EncodedJSValue jsTestTypedefsStringAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestTypedefsStringAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestTypedefs*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
@@ -316,11 +310,10 @@ EncodedJSValue jsTestTypedefsStringAttrWithGetterException(ExecState* state, Enc
 }
 
 
-EncodedJSValue jsTestTypedefsStringAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestTypedefsStringAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestTypedefs*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {

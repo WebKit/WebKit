@@ -149,11 +149,10 @@ bool JSTestActiveDOMObject::getOwnPropertySlot(JSObject* object, ExecState* stat
     return false;
 }
 
-EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {

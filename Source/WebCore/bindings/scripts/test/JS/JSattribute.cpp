@@ -141,11 +141,10 @@ bool JSattribute::getOwnPropertySlot(JSObject* object, ExecState* state, Propert
     return false;
 }
 
-EncodedJSValue jsattributeReadonly(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsattributeReadonly(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSattribute*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {

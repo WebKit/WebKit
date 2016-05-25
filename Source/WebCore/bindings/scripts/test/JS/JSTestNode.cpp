@@ -135,11 +135,10 @@ JSObject* JSTestNode::prototype(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSTestNode>(vm, globalObject);
 }
 
-EncodedJSValue jsTestNodeName(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject* slotBase)
+EncodedJSValue jsTestNodeName(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(slotBase);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestNode*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
