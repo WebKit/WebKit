@@ -343,9 +343,8 @@ HeapSnapshot = class HeapSnapshot
     {
         let previousSnapshotIndex = snapshots.indexOf(this) - 1;
         let previousSnapshot = snapshots[previousSnapshotIndex];
-        console.assert(previousSnapshot instanceof HeapSnapshot);
         if (!previousSnapshot)
-            return;
+            return null;
 
         let lastNodeIdentifier = previousSnapshot._lastNodeIdentifier;
 

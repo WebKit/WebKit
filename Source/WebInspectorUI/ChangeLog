@@ -1,3 +1,17 @@
+2016-05-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught Exception: TypeError: undefined is not an object (evaluating 'collectionData.affectedSnapshots')
+        https://bugs.webkit.org/show_bug.cgi?id=158051
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshot.js:
+        (HeapSnapshot.prototype.updateDeadNodesAndGatherCollectionData):
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshotWorker.js:
+        (HeapSnapshotWorker.prototype.createSnapshot):
+        If by the time the timeout fires we had cleared our snapshot list, then
+        updateDeadNodesAndGatherCollectionData could bail. Handle gracefully.
+
 2016-05-23  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Split console navigation bar doesn't wrap as expected

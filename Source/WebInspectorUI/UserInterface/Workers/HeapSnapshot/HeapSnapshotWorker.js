@@ -58,7 +58,7 @@ HeapSnapshotWorker = class HeapSnapshotWorker
         if (this._snapshots.length > 1) {
             setTimeout(() => {
                 let collectionData = snapshot.updateDeadNodesAndGatherCollectionData(this._snapshots);
-                if (!collectionData.affectedSnapshots.length)
+                if (!collectionData || !collectionData.affectedSnapshots.length)
                     return;
                 this.sendEvent("HeapSnapshot.CollectionEvent", collectionData);
             }, 0);
