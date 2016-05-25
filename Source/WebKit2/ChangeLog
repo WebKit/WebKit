@@ -1,3 +1,21 @@
+2016-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Simplify a couple of lambda captures in the network cache code
+        https://bugs.webkit.org/show_bug.cgi?id=158053
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        Just capture subResourceInfo instead of allocating a new copy
+        on the heap. There is no reason we cannot simply capture
+        subResourceInfo here.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::clear):
+        Use new C++14 capture with initialization to make the code a
+        bit nicer.
+
 2016-05-24  Conrad Shultz  <conrad_shultz@apple.com>
 
         _WKThumbnailView should expose its snapshot size

@@ -898,10 +898,8 @@ void Storage::clear(const String& type, std::chrono::system_clock::time_point mo
         m_blobFilter->clear();
     m_approximateRecordsSize = 0;
 
-    // Avoid non-thread safe std::function copies.
-    auto* completionHandlerPtr = completionHandler ? new std::function<void ()>(WTFMove(completionHandler)) : nullptr;
     StringCapture typeCapture(type);
-    ioQueue().dispatch([this, modifiedSinceTime, completionHandlerPtr, typeCapture] {
+    ioQueue().dispatch([this, modifiedSinceTime, completionHandler = WTFMove(completionHandler), typeCapture] () mutable {
         auto recordsPath = this->recordsPath();
         traverseRecordsFiles(recordsPath, typeCapture.string(), [modifiedSinceTime](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             auto filePath = WebCore::pathByAppendingComponent(recordDirectoryPath, fileName);
@@ -918,10 +916,9 @@ void Storage::clear(const String& type, std::chrono::system_clock::time_point mo
         // This cleans unreferenced blobs.
         m_blobStorage.synchronize();
 
-        if (completionHandlerPtr) {
-            RunLoop::main().dispatch([completionHandlerPtr] {
-                (*completionHandlerPtr)();
-                delete completionHandlerPtr;
+        if (completionHandler) {
+            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
+                completionHandler();
             });
         }
     });

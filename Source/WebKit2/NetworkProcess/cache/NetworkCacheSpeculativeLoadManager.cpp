@@ -493,9 +493,7 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
         return;
 
     m_pendingPreloads.add(key, nullptr);
-    auto* subResourceInfoPtr = new SubresourceInfo(subResourceInfo);
-    retrieveEntryFromStorage(key, [this, key, subResourceInfoPtr, frameID](std::unique_ptr<Entry> entry) {
-        auto subResourceInfo = std::unique_ptr<SubresourceInfo>(subResourceInfoPtr);
+    retrieveEntryFromStorage(key, [this, key, subResourceInfo, frameID](std::unique_ptr<Entry> entry) {
         ASSERT(!m_pendingPreloads.get(key));
         bool removed = m_pendingPreloads.remove(key);
         ASSERT_UNUSED(removed, removed);
@@ -510,7 +508,7 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
             return;
 
         if (entry->needsValidation())
-            revalidateEntry(WTFMove(entry), *subResourceInfo, frameID);
+            revalidateEntry(WTFMove(entry), subResourceInfo, frameID);
         else
             addPreloadedEntry(WTFMove(entry), frameID);
     });
