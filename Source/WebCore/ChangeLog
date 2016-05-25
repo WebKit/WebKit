@@ -1,3 +1,18 @@
+2016-05-25  Brady Eidson  <beidson@apple.com>
+
+        Race condition calling back to an IDBOpenDBRequest during WorkerThread shutdown.
+        https://bugs.webkit.org/show_bug.cgi?id=158089
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Only seen randomly under GuardMalloc).
+
+        Crash was seen once running under GuardMalloc. The error is obvious.
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::completeOpenDBRequest): Don't get a raw pointer out of the map.
+          Instead store off as a RefPtr, as the map might be cleared out from the worker thread.
+
 2016-05-25  Chris Dumez  <cdumez@apple.com>
 
         Simplify and inline minimumValueForLength()

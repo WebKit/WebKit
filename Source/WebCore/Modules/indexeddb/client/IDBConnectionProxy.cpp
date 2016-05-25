@@ -104,7 +104,7 @@ void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
 {
     ASSERT(isMainThread());
 
-    IDBOpenDBRequest* request;
+    RefPtr<IDBOpenDBRequest> request;
     {
         Locker<Lock> locker(m_openDBRequestMapLock);
         request = m_openDBRequestMap.get(resultData.requestIdentifier());
