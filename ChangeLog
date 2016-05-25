@@ -1,3 +1,16 @@
+2016-05-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Turn on ENABLE_CSS_GRID_LAYOUT by default
+        https://bugs.webkit.org/show_bug.cgi?id=158060
+
+        Reviewed by Darin Adler.
+
+        The runtime flag is disabled by default,
+        but we want to build CSS Grid Layout by default.
+        Otherwise the runtime flag would be useless.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
         Move to C++14.
