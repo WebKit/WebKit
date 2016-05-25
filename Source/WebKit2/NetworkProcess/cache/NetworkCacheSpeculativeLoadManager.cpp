@@ -311,7 +311,7 @@ bool SpeculativeLoadManager::canUsePendingPreload(const SpeculativeLoad& load, c
     return requestsHeadersMatch(load.originalRequest(), actualRequest);
 }
 
-bool SpeculativeLoadManager::retrieve(const GlobalFrameID& frameID, const Key& storageKey, const WebCore::ResourceRequest& request, const RetrieveCompletionHandler& completionHandler)
+bool SpeculativeLoadManager::retrieve(const GlobalFrameID& frameID, const Key& storageKey, const WebCore::ResourceRequest& request, RetrieveCompletionHandler&& completionHandler)
 {
     // Check already preloaded entries.
     if (auto preloadedEntry = m_preloadedEntries.take(storageKey)) {
@@ -348,10 +348,8 @@ bool SpeculativeLoadManager::retrieve(const GlobalFrameID& frameID, const Key& s
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Retrieval: revalidation already in progress for '%s':", storageKey.identifier().utf8().data());
 
     // FIXME: This breaks incremental loading when the revalidation is not successful.
-    auto addResult = m_pendingRetrieveRequests.add(storageKey, nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = std::make_unique<Vector<RetrieveCompletionHandler>>();
-    addResult.iterator->value->append(completionHandler);
+    auto addResult = m_pendingRetrieveRequests.ensure(storageKey, [] { return std::make_unique<Vector<RetrieveCompletionHandler>>(); });
+    addResult.iterator->value->append(WTFMove(completionHandler));
     return true;
 }
 
@@ -407,9 +405,9 @@ void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, con
     }));
 }
 
-void SpeculativeLoadManager::retrieveEntryFromStorage(const Key& key, const RetrieveCompletionHandler& completionHandler)
+void SpeculativeLoadManager::retrieveEntryFromStorage(const Key& key, RetrieveCompletionHandler&& completionHandler)
 {
-    m_storage.retrieve(key, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler](auto record) {
+    m_storage.retrieve(key, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler = WTFMove(completionHandler)](auto record) {
         if (!record) {
             completionHandler(nullptr);
             return false;
@@ -530,11 +528,11 @@ void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& f
     }
 }
 
-void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)> completionHandler)
+void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>&& completionHandler)
 {
     ASSERT(storageKey.type() == "resource");
     auto subresourcesStorageKey = makeSubresourcesKey(storageKey);
-    m_storage.retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler](auto record) {
+    m_storage.retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler = WTFMove(completionHandler)](auto record) {
         if (!record) {
             completionHandler(nullptr);
             return false;

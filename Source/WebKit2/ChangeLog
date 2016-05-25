@@ -1,3 +1,27 @@
+2016-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Simplify a few lambda captures in the network cache code
+        https://bugs.webkit.org/show_bug.cgi?id=158076
+
+        Reviewed by Antti Koivisto.
+
+        Simplify a few lambda captures in the network cache code by WTFMoving
+        upon capture.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieve):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveEntryFromStorage):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveSubresourcesEntry):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::bootstrapFromNetworkCache):
+        (WebKit::NetworkCache::Statistics::recordNotUsingCacheForRequest):
+        (WebKit::NetworkCache::Statistics::recordRetrievalFailure):
+        (WebKit::NetworkCache::Statistics::writeTimerFired):
+        (WebKit::NetworkCache::Statistics::addHashesToDatabase):
+        (WebKit::NetworkCache::Statistics::addStoreDecisionsToDatabase):
+        * NetworkProcess/cache/NetworkCacheStatistics.h:
+
 2016-05-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Unix] Potential buffer overrun of m_fileDescriptors in readBytesFromSocket of ConnectionUnix.cpp

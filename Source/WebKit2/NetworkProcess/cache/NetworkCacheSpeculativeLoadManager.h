@@ -52,17 +52,17 @@ public:
     void registerLoad(const GlobalFrameID&, const WebCore::ResourceRequest&, const Key& resourceKey);
 
     typedef std::function<void (std::unique_ptr<Entry>)> RetrieveCompletionHandler;
-    bool retrieve(const GlobalFrameID&, const Key& storageKey, const WebCore::ResourceRequest&, const RetrieveCompletionHandler&);
+    bool retrieve(const GlobalFrameID&, const Key& storageKey, const WebCore::ResourceRequest&, RetrieveCompletionHandler&&);
 
 private:
     class PreloadedEntry;
 
     void addPreloadedEntry(std::unique_ptr<Entry>, const GlobalFrameID&, Optional<WebCore::ResourceRequest>&& revalidationRequest = Nullopt);
     void preloadEntry(const Key&, const SubresourceInfo&, const GlobalFrameID&);
-    void retrieveEntryFromStorage(const Key&, const RetrieveCompletionHandler&);
+    void retrieveEntryFromStorage(const Key&, RetrieveCompletionHandler&&);
     void revalidateEntry(std::unique_ptr<Entry>, const SubresourceInfo&, const GlobalFrameID&);
     bool satisfyPendingRequests(const Key&, Entry*);
-    void retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>);
+    void retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>&&);
     void startSpeculativeRevalidation(const GlobalFrameID&, SubresourcesEntry&);
 
     static bool canUsePreloadedEntry(const PreloadedEntry&, const WebCore::ResourceRequest& actualRequest);

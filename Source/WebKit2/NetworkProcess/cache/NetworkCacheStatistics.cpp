@@ -143,7 +143,7 @@ void Statistics::bootstrapFromNetworkCache(const String& networkCachePath)
 
     LOG(NetworkCache, "(NetworkProcess) Bootstrapping the network cache statistics database from the network cache...");
 
-    Vector<StringCapture> hashes;
+    HashSet<String> hashes;
     traverseRecordsFiles(networkCachePath, ASCIILiteral("resource"), [&hashes](const String& fileName, const String& hashString, const String& type, bool isBodyBlob, const String& recordDirectoryPath) {
         if (isBodyBlob)
             return;
@@ -152,7 +152,7 @@ void Statistics::bootstrapFromNetworkCache(const String& networkCachePath)
         if (!Key::stringToHash(hashString, hash))
             return;
 
-        hashes.append(hashString);
+        hashes.add(hashString);
     });
 
     WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
@@ -219,9 +219,8 @@ void Statistics::recordNotUsingCacheForRequest(uint64_t webPageID, const Key& ke
 {
     ASSERT(retrieveDecision != RetrieveDecision::Yes);
 
-    String hash = key.hashAsString();
-    WebCore::URL requestURL = request.url();
-    queryWasEverRequested(hash, NeedUncachedReason::No, [this, hash, requestURL, webPageID, retrieveDecision](bool wasEverRequested, const Optional<StoreDecision>&) {
+    auto hash = key.hashAsString();
+    queryWasEverRequested(hash, NeedUncachedReason::No, [this, hash, requestURL = request.url(), webPageID, retrieveDecision](bool wasEverRequested, const Optional<StoreDecision>&) {
         if (wasEverRequested) {
             String diagnosticKey = retrieveDecisionToDiagnosticKey(retrieveDecision);
             LOG(NetworkCache, "(NetworkProcess) webPageID %" PRIu64 ": %s was previously requested but we are not using the cache, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
@@ -260,9 +259,8 @@ static String storeDecisionToDiagnosticKey(StoreDecision storeDecision)
 
 void Statistics::recordRetrievalFailure(uint64_t webPageID, const Key& key, const WebCore::ResourceRequest& request)
 {
-    String hash = key.hashAsString();
-    WebCore::URL requestURL = request.url();
-    queryWasEverRequested(hash, NeedUncachedReason::Yes, [this, hash, requestURL, webPageID](bool wasPreviouslyRequested, const Optional<StoreDecision>& storeDecision) {
+    auto hash = key.hashAsString();
+    queryWasEverRequested(hash, NeedUncachedReason::Yes, [this, hash, requestURL = request.url(), webPageID](bool wasPreviouslyRequested, const Optional<StoreDecision>& storeDecision) {
         if (wasPreviouslyRequested) {
             String diagnosticKey = storeDecisionToDiagnosticKey(storeDecision.value());
             LOG(NetworkCache, "(NetworkProcess) webPageID %" PRIu64 ": %s was previously request but is not in the cache, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
@@ -333,17 +331,7 @@ void Statistics::writeTimerFired()
 {
     ASSERT(RunLoop::isMain());
 
-    Vector<StringCapture> hashesToAdd;
-    copyToVector(m_hashesToAdd, hashesToAdd);
-    m_hashesToAdd.clear();
-
-    Vector<std::pair<StringCapture, StoreDecision>> storeDecisionsToAdd;
-    copyToVector(m_storeDecisionsToAdd, storeDecisionsToAdd);
-    m_storeDecisionsToAdd.clear();
-
-    shrinkIfNeeded();
-
-    serialBackgroundIOQueue().dispatch([this, hashesToAdd, storeDecisionsToAdd] {
+    serialBackgroundIOQueue().dispatch([this, hashesToAdd = WTFMove(m_hashesToAdd), storeDecisionsToAdd = WTFMove(m_storeDecisionsToAdd)] {
         if (!m_database.isOpen())
             return;
 
@@ -356,6 +344,8 @@ void Statistics::writeTimerFired()
 
         writeTransaction.commit();
     });
+
+    shrinkIfNeeded();
 }
 
 void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason needUncachedReason, const RequestedCompletionHandler& completionHandler)
@@ -422,7 +412,7 @@ void Statistics::clear()
     });
 }
 
-void Statistics::addHashesToDatabase(const Vector<StringCapture>& hashes)
+void Statistics::addHashesToDatabase(const HashSet<String>& hashes)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(WebCore::SQLiteDatabaseTracker::hasTransactionInProgress());
@@ -433,14 +423,14 @@ void Statistics::addHashesToDatabase(const Vector<StringCapture>& hashes)
         return;
 
     for (auto& hash : hashes) {
-        statement.bindText(1, hash.string());
+        statement.bindText(1, hash);
         if (executeSQLStatement(statement))
             ++m_approximateEntryCount;
         statement.reset();
     }
 }
 
-void Statistics::addStoreDecisionsToDatabase(const Vector<std::pair<StringCapture, StoreDecision>>& storeDecisions)
+void Statistics::addStoreDecisionsToDatabase(const HashMap<String, NetworkCache::StoreDecision>& storeDecisions)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(WebCore::SQLiteDatabaseTracker::hasTransactionInProgress());
@@ -451,8 +441,8 @@ void Statistics::addStoreDecisionsToDatabase(const Vector<std::pair<StringCaptur
         return;
 
     for (auto& pair : storeDecisions) {
-        statement.bindText(1, pair.first.string());
-        statement.bindInt(2, static_cast<int>(pair.second));
+        statement.bindText(1, pair.key);
+        statement.bindInt(2, static_cast<int>(pair.value));
         executeSQLStatement(statement);
         statement.reset();
     }
