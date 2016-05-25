@@ -1,3 +1,16 @@
+2016-05-25  Antoine Quint  <graouts@apple.com>
+
+        Elements with backdrop-filter cannot be clipped with clip-path or mask
+        https://bugs.webkit.org/show_bug.cgi?id=142662
+        <rdar://problem/20150192>
+
+        Reviewed by Dean Jackson.
+
+        Ensure layer clones are set up with the same shape path as their original layer.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::updateClonedLayerProperties):
+
 2016-05-24  Chris Dumez  <cdumez@apple.com>
 
         Simplify a couple of lambda captures in the network cache code

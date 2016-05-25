@@ -1979,6 +1979,11 @@ void GraphicsLayerCA::updateBlendMode()
 void GraphicsLayerCA::updateShape()
 {
     m_layer->setShapePath(m_shapeLayerPath);
+
+    if (LayerMap* layerCloneMap = primaryLayerClones()) {
+        for (auto& layer : layerCloneMap->values())
+            layer->setShapePath(m_shapeLayerPath);
+    }
 }
 
 void GraphicsLayerCA::updateWindRule()
@@ -2454,6 +2459,15 @@ void GraphicsLayerCA::updateMaskLayer()
 {
     PlatformCALayer* maskCALayer = m_maskLayer ? downcast<GraphicsLayerCA>(*m_maskLayer).primaryLayer() : nullptr;
     m_layer->setMask(maskCALayer);
+
+    if (m_backdropLayer) {
+        if (m_maskLayer) {
+            ReplicaState replicaState(ReplicaState::ChildBranch);
+            RefPtr<PlatformCALayer> maskClone = downcast<GraphicsLayerCA>(*m_maskLayer).fetchCloneLayers(this, replicaState, IntermediateCloneLevel);
+            m_backdropLayer->setMask(maskClone.get());
+        } else
+            m_backdropLayer->setMask(nullptr);
+    }
 
     LayerMap* maskLayerCloneMap = m_maskLayer ? downcast<GraphicsLayerCA>(*m_maskLayer).primaryLayerClones() : nullptr;
     
