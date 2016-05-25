@@ -1,3 +1,30 @@
+2016-05-25  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: IDB objects from a worker thread might be destroyed on the main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=158004
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Spuriously reproduces on the bots, but I've been unable to construct a reliable test).
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::completeOpenDBRequest):
+        (WebCore::IDBClient::IDBConnectionProxy::notifyOpenDBRequestBlocked):
+        (WebCore::IDBClient::IDBConnectionProxy::didCommitTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didAbortTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::unregisterDatabaseConnection):
+        (WebCore::IDBClient::removeItemsMatchingCurrentThread):
+        (WebCore::IDBClient::IDBConnectionProxy::forgetActivityForCurrentThread): Clear out all objects that originated on this thread.
+        (WebCore::IDBClient::IDBConnectionProxy::takeIDBOpenDBRequest): Deleted.
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::stopIndexedDatabase):
+        * workers/WorkerGlobalScope.h:
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::stop):
+
 2016-05-25  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Remove unused slotBase parameter in bindings generator

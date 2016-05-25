@@ -208,6 +208,10 @@ void WorkerThread::stop()
         m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
             WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
 
+#if ENABLE(INDEXED_DATABASE)
+            workerGlobalScope.stopIndexedDatabase();
+#endif
+
             workerGlobalScope.stopActiveDOMObjects();
             workerGlobalScope.notifyObserversOfStop();
 

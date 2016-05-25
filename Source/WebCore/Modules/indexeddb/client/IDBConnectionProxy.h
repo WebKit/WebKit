@@ -110,9 +110,8 @@ public:
     void registerDatabaseConnection(IDBDatabase&);
     void unregisterDatabaseConnection(IDBDatabase&);
 
-    RefPtr<IDBOpenDBRequest> takeIDBOpenDBRequest(IDBOpenDBRequest&);
-
     void forgetActiveOperations(const Vector<RefPtr<TransactionOperation>>&);
+    void forgetActivityForCurrentThread();
 
 private:
     void completeOpenDBRequest(const IDBResultData&);
