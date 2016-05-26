@@ -304,7 +304,7 @@ struct TermChain {
 
 
 struct YarrPattern {
-    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, RegExpFlags flags, const char** error);
+    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, RegExpFlags, const char** error, void* stackLimit = nullptr);
 
     void reset()
     {
@@ -428,7 +428,7 @@ struct YarrPattern {
     Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;
 
 private:
-    const char* compile(const String& patternString);
+    const char* compile(const String& patternString, void* stackLimit);
 
     CharacterClass* newlineCached;
     CharacterClass* digitsCached;

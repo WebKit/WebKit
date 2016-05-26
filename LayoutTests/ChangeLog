@@ -1,3 +1,23 @@
+2016-05-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] RegExp with deeply nested subexpressions overflow the stack in Yarr
+        https://bugs.webkit.org/show_bug.cgi?id=158011
+        rdar://problem/25946592
+
+        Reviewed by Saam Barati.
+
+        * js/script-tests/stack-overflow-arrity-catch.js:
+        With the new failure, this test can fail on allocating
+        the RegExp for a valid reason.
+
+        The new expression should not have this issue.
+        * js/script-tests/stack-overflow-regexp.js: Added.
+        (shouldThrow.recursiveCall):
+        (shouldThrow):
+        (recursiveCall):
+        * js/stack-overflow-regexp-expected.txt: Added.
+        * js/stack-overflow-regexp.html: Added.
+
 2016-05-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/blink/http/tests/plugins/get-url-notify-on-removal.html as a flaky timeout

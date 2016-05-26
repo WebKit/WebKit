@@ -1,3 +1,33 @@
+2016-05-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] RegExp with deeply nested subexpressions overflow the stack in Yarr
+        https://bugs.webkit.org/show_bug.cgi?id=158011
+        rdar://problem/25946592
+
+        Reviewed by Saam Barati.
+
+        When generating the meta-data required for compilation,
+        Yarr uses a recursive function over the various expression in the pattern.
+
+        If you have many nested expressions, you can run out of stack
+        and crash the WebProcess.
+        This patch changes that into a soft failure. The expression is just
+        considered invalid.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::finishCreation):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::YarrPatternConstructor):
+        (JSC::Yarr::YarrPatternConstructor::setupOffsets):
+        (JSC::Yarr::YarrPatternConstructor::isSafeToRecurse):
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        (JSC::Yarr::YarrPatternConstructor::setupAlternativeOffsets): Deleted.
+        (JSC::Yarr::YarrPatternConstructor::setupDisjunctionOffsets): Deleted.
+        * yarr/YarrPattern.h:
+
 2016-05-25  Alex Christensen  <achristensen@webkit.org>
 
         Fix Win64 build after r201335

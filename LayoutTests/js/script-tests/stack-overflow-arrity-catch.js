@@ -17,7 +17,7 @@ function test1()
         // Should get here because of stack overflow,
         // now cause a stack overflow exception due to arrity processing
         try {
-            var dummy = new RegExp('a|b|c');
+            var dummy = new Float64Array(128);
         } catch(err) {
             gotWrongCatch1 = true;
         }
