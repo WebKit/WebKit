@@ -727,12 +727,15 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         let endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
 
         if (entireRangeSelected) {
-            // Clamp selection to the end of the recording (with padding), so that OverviewTimelineView
-            // displays an autosized graph without a lot of horizontal white space or tiny graph bars.
-            if (isNaN(this._recording.endTime))
-                endTime = this._currentTime;
-            else
-                endTime = Math.min(endTime, this._recording.endTime + timelineRuler.minimumSelectionDuration);
+            if (timelineView instanceof WebInspector.RenderingFrameTimelineView) {
+                endTime = this._renderingFrameTimeline.records.length;
+            } else {
+                // Clamp selection to the end of the recording (with padding),
+                // so graph views will show an auto-sized graph without a lot of
+                // empty space at the end.
+                endTime = isNaN(this._recording.endTime) ? this._recording.currentTime : this._recording.endTime;
+                endTime += timelineRuler.minimumSelectionDuration;
+            }
         }
 
         timelineView.startTime = this._timelineOverview.selectionStartTime;

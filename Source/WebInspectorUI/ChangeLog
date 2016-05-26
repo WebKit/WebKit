@@ -1,3 +1,15 @@
+2016-05-26  Matt Baker  <mattbaker@apple.com>
+
+        Uncaught Exception: TypeError: undefined is not an object (evaluating 'records[endIndex].endTime')
+        https://bugs.webkit.org/show_bug.cgi?id=158057
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimelineViewTimes):
+        When the entire recording is selected, rendering frames should use the
+        record count as its end time instead of the recording's end time.
+
 2016-05-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught Exception: TypeError: undefined is not an object (evaluating 'collectionData.affectedSnapshots')
