@@ -266,7 +266,6 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)timerFired
 {
-    ASSERT(gTestRunner->isGeolocationPermissionSet());
     m_timer = 0;
     NSEnumerator* enumerator = [m_pendingGeolocationPermissionListeners objectEnumerator];
     id<WebAllowDenyPolicyListener> listener;

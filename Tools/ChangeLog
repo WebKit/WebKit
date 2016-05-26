@@ -1,3 +1,18 @@
+2016-05-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after r201427.
+        https://bugs.webkit.org/show_bug.cgi?id=157423
+        <rdar://problem/23751632>
+
+        A debug assertion was firing during some test runs due to the Geolocation permission
+        being turned off during the test. The timer logic was originally written to assert
+        if the timer fired when permissions were disabled. But this is no longer valid,
+        because we expect the Geolocation system to be active and become deactivated if the
+        browsing context violates one of the security criteria.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate timerFired]): Remove invalid assertion.
+
 2016-05-26  Filip Pizlo  <fpizlo@apple.com>
 
         ScopedLambda should have a lifetime story that makes sense to the compiler
