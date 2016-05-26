@@ -288,6 +288,17 @@ inline bool getStaticValueSlot(ExecState* exec, const HashTable& table, ThisImp*
     return true;
 }
 
+inline bool replaceStaticPropertySlot(VM& vm, JSObject* thisObject, PropertyName propertyName, JSValue value)
+{
+    if (!thisObject->putDirect(vm, propertyName, value))
+        return false;
+
+    if (!thisObject->staticFunctionsReified())
+        thisObject->JSObject::setStructure(vm, Structure::attributeChangeTransition(vm, thisObject->structure(), propertyName, 0));
+
+    return true;
+}
+
 // 'base' means the object holding the property (possibly in the prototype chain of the object put was called on).
 // 'thisValue' is the object that put is being applied to (in the case of a proxy, the proxy target).
 // 'slot.thisValue()' is the object the put was originally performed on (in the case of a proxy, the proxy itself).

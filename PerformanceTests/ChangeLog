@@ -1,3 +1,20 @@
+2016-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        replaceable own properties seem to ignore replacement after property caching
+        https://bugs.webkit.org/show_bug.cgi?id=158091
+
+        Reviewed by Darin Adler.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj:
+        * MallocBench/MallocBench/Benchmark.cpp:
+        * MallocBench/MallocBench/Interpreter.cpp:
+        (Interpreter::doMallocOp):
+        * MallocBench/MallocBench/Interpreter.h:
+        * MallocBench/MallocBench/fastMallocLog.63316.ops: Added.
+        * MallocBench/MallocBench/jetstream.cpp: Added.
+        (benchmark_jetstream):
+        * MallocBench/MallocBench/jetstream.h: Added.
+
 2016-05-25  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, add JSBench to the skipped list for now since it doesn't

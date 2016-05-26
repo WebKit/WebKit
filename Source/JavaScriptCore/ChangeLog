@@ -1,3 +1,15 @@
+2016-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        replaceable own properties seem to ignore replacement after property caching
+        https://bugs.webkit.org/show_bug.cgi?id=158091
+
+        Reviewed by Darin Adler.
+
+        * runtime/Lookup.h:
+        (JSC::replaceStaticPropertySlot): New helper function for replacing a
+        static property with a direct property. We need to do an attribute changed
+        transition because client code might have cached our static property.
+
 2016-05-25  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] RegExp with deeply nested subexpressions overflow the stack in Yarr

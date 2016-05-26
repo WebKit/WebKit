@@ -1,3 +1,15 @@
+2016-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        replaceable own properties seem to ignore replacement after property caching
+        https://bugs.webkit.org/show_bug.cgi?id=158091
+
+        Reviewed by Darin Adler.
+
+        * js/cached-window-properties.html: Augmneted this test to enter cacheable
+        dictionary mode in order to demonstrate a bug that is not visible otherwise.
+
+        Factored out a helper test function.
+
 2016-05-26  Pranjal Jumde  <pjumde@apple.com>
 
         Sites served over insecure connections should not be allowed to use geolocation.

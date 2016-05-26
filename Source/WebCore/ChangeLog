@@ -1,3 +1,18 @@
+2016-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        replaceable own properties seem to ignore replacement after property caching
+        https://bugs.webkit.org/show_bug.cgi?id=158091
+
+        Reviewed by Darin Adler.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Use our new replacement helper if we're replacing
+        an own static property with an own direct property. Because we advertise
+        that our own static properties are cacheable, we need to do a structure
+        transition to indicate when they change. (Only own properties need this 
+        special treatment because JSC considers it normal to shadow a prototype
+        property with an own property.)
+
 2016-05-26  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
         BitmapImage::checkForSolidColor() cleanup
