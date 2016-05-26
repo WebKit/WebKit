@@ -938,6 +938,9 @@ failedJSONP:
     if (UNLIKELY(vm.shouldTriggerTermination(callFrame)))
         return throwTerminatedExecutionException(callFrame);
 
+    if (scope->structure()->isUncacheableDictionary())
+        scope->flattenDictionaryObject(vm);
+
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
 
     ProtoCallFrame protoCallFrame;
@@ -1186,6 +1189,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         }
     }
 
+    if (variableObject->structure()->isUncacheableDictionary())
+        variableObject->flattenDictionaryObject(vm);
+
     if (numVariables || numFunctions) {
         BatchedTransitionOptimizer optimizer(vm, variableObject);
         if (variableObject->next())
@@ -1242,6 +1248,9 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
 
     if (UNLIKELY(vm.shouldTriggerTermination(callFrame)))
         return throwTerminatedExecutionException(callFrame);
+
+    if (scope->structure()->isUncacheableDictionary())
+        scope->flattenDictionaryObject(vm);
 
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
 

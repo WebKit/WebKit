@@ -28,11 +28,14 @@
 
 namespace JSC {
 
+#define InvalidPrototypeChain (std::numeric_limits<size_t>::max())
+
 NEVER_INLINE JSValue jsAddSlowCase(CallFrame*, JSValue, JSValue);
 JSValue jsTypeStringForValue(CallFrame*, JSValue);
 JSValue jsTypeStringForValue(VM&, JSGlobalObject*, JSValue);
 bool jsIsObjectTypeOrNull(CallFrame*, JSValue);
 bool jsIsFunctionType(JSValue);
+size_t normalizePrototypeChain(CallFrame*, Structure*);
 
 ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
 {
@@ -190,30 +193,6 @@ ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
 
     // All other cases are pretty uncommon
     return jsAddSlowCase(callFrame, v1, v2);
-}
-
-#define InvalidPrototypeChain (std::numeric_limits<size_t>::max())
-
-inline size_t normalizePrototypeChain(CallFrame* callFrame, Structure* structure)
-{
-    VM& vm = callFrame->vm();
-    size_t count = 0;
-    while (1) {
-        if (structure->isProxy())
-            return InvalidPrototypeChain;
-        JSValue v = structure->prototypeForLookup(callFrame);
-        if (v.isNull())
-            return count;
-
-        JSCell* base = v.asCell();
-        structure = base->structure(vm);
-        // Since we're accessing a prototype in a loop, it's a good bet that it
-        // should not be treated as a dictionary.
-        if (structure->isDictionary())
-            structure->flattenDictionaryStructure(vm, asObject(base));
-
-        ++count;
-    }
 }
 
 } // namespace JSC

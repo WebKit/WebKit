@@ -263,10 +263,13 @@ ObjectPropertyConditionSet generateConditions(
         JSObject* object = jsCast<JSObject*>(value);
         structure = object->structure(vm);
         
-        // Since we're accessing a prototype repeatedly, it's a good bet that it should not be
-        // treated as a dictionary.
         if (structure->isDictionary()) {
             if (concurrency == MainThread) {
+                if (structure->hasBeenFlattenedBefore()) {
+                    if (verbose)
+                        dataLog("Dictionary has been flattened before, so invalid.\n");
+                    return ObjectPropertyConditionSet::invalid();
+                }
                 if (verbose)
                     dataLog("Flattening ", pointerDump(structure));
                 structure->flattenDictionaryStructure(vm, object);

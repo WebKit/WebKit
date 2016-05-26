@@ -1,3 +1,49 @@
+2016-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION: JSBench spends a lot of time transitioning to/from dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=158045
+
+        Reviewed by Saam Barati.
+
+        15% speedup on jsbench-amazon-firefox, possibly 5% speedup overall on jsbench.
+
+        This regression seems to have two parts:
+
+        (1) Transitioning the window object to/from dictionary is more expensive
+        than it used to be to because the window object has lots more properties.
+        The window object has more properties because, for WebIDL compatibility,
+        we reify DOM APIs as properties when you delete.
+
+        (2) DOM prototypes transition to/from dictionary upon creation
+        because, once again for WebIDL compatibility, we reify their static
+        APIs eagerly.
+
+        The solution is to chill out a bit on dictionary transitions.
+
+        * bytecode/ObjectPropertyConditionSet.cpp: Don't flatten a dictionary
+        if we've already done so before. This avoids pathological churn, and it
+        is our idiom in other places.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute): Do flatten the global object unconditionally
+        if it is an uncacheable dictionary because the global object is super
+        important.
+
+        * runtime/BatchedTransitionOptimizer.h:
+        (JSC::BatchedTransitionOptimizer::BatchedTransitionOptimizer):
+        (JSC::BatchedTransitionOptimizer::~BatchedTransitionOptimizer): Deleted.
+        Don't transition away from dictionary after a batched set of property
+        puts because normal dictionaries are cacheable and that's a perfectly
+        fine state to be in -- and the transition is expensive.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Do start the global object out as a cacheable
+        dictionary because it will inevitably have enough properties to become
+        a dictionary.
+
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChain): Same as ObjectPropertyConditionSet.cpp.
+
 2016-05-25  Geoffrey Garen  <ggaren@apple.com>
 
         replaceable own properties seem to ignore replacement after property caching
