@@ -39,52 +39,52 @@
 
 namespace WebCore {
 
-static bool verifyType(const String& type)
+static bool parseTypeString(const String& string, RTCSessionDescription::SdpType& outType)
 {
-    return type == "offer" || type == "pranswer" || type == "answer";
+    if (string == "offer")
+        outType = RTCSessionDescription::SdpType::Offer;
+    else if (string == "pranswer")
+        outType = RTCSessionDescription::SdpType::Pranswer;
+    else if (string == "answer")
+        outType = RTCSessionDescription::SdpType::Answer;
+    else if (string == "rollback")
+        outType = RTCSessionDescription::SdpType::Rollback;
+    else
+        return false;
+
+    return true;
 }
 
 RefPtr<RTCSessionDescription> RTCSessionDescription::create(const Dictionary& dictionary, ExceptionCode& ec)
 {
-    String type;
-    bool ok = dictionary.get("type", type);
-    if (ok && !verifyType(type)) {
-        ec = TYPE_MISMATCH_ERR;
+    String typeString;
+    // Dictionary member type is required.
+    if (!dictionary.get("type", typeString)) {
+        ec = TypeError;
+        return nullptr;
+    }
+
+    SdpType type;
+    if (!parseTypeString(typeString, type)) {
+        ec = TypeError;
         return nullptr;
     }
 
     String sdp;
-    ok = dictionary.get("sdp", sdp);
-    if (ok && sdp.isEmpty()) {
-        ec = TYPE_MISMATCH_ERR;
-        return nullptr;
-    }
+    dictionary.get("sdp", sdp);
 
     return adoptRef(new RTCSessionDescription(type, sdp));
 }
 
-Ref<RTCSessionDescription> RTCSessionDescription::create(const RTCSessionDescription* description)
-{
-    return adoptRef(*new RTCSessionDescription(description->type(), description->sdp()));
-}
-
-Ref<RTCSessionDescription> RTCSessionDescription::create(const String& type, const String& sdp)
+Ref<RTCSessionDescription> RTCSessionDescription::create(SdpType type, const String& sdp)
 {
     return adoptRef(*new RTCSessionDescription(type, sdp));
 }
 
-RTCSessionDescription::RTCSessionDescription(const String& type, const String& sdp)
+RTCSessionDescription::RTCSessionDescription(SdpType type, const String& sdp)
     : m_type(type)
     , m_sdp(sdp)
 {
-}
-
-void RTCSessionDescription::setType(const String& type, ExceptionCode& ec)
-{
-    if (verifyType(type))
-        m_type = type;
-    else
-        ec = TYPE_MISMATCH_ERR;
 }
 
 } // namespace WebCore

@@ -31,10 +31,16 @@
 
 [
     Conditional=WEB_RTC,
-    CustomConstructor(optional Dictionary dictionary),
+    Constructor(Dictionary dictionary),
     ConstructorRaisesException
 ] interface RTCSessionDescription {
-    [SetterRaisesException] attribute DOMString type;
-    attribute DOMString sdp;
+    [SetterRaisesException] readonly attribute RTCSdpType type;
+    readonly attribute DOMString sdp;
 };
 
+enum RTCSdpType {
+    "offer",
+    "pranswer",
+    "answer",
+    "rollback"
+};

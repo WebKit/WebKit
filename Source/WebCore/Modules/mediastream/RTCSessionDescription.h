@@ -45,21 +45,26 @@ class Dictionary;
 
 class RTCSessionDescription : public RefCounted<RTCSessionDescription>, public ScriptWrappable {
 public:
+    enum class SdpType {
+        Offer,
+        Pranswer,
+        Answer,
+        Rollback
+    };
+
     static RefPtr<RTCSessionDescription> create(const Dictionary&, ExceptionCode&);
-    static Ref<RTCSessionDescription> create(const RTCSessionDescription*);
-    static Ref<RTCSessionDescription> create(const String& type, const String& sdp);
+    static Ref<RTCSessionDescription> create(SdpType, const String& sdp);
     virtual ~RTCSessionDescription() { }
 
-    const String& type() const { return m_type; }
-    void setType(const String&, ExceptionCode&);
+    SdpType type() const { return m_type; }
 
     const String& sdp() const { return m_sdp; }
     void setSdp(const String& sdp) { m_sdp = sdp; }
 
 private:
-    explicit RTCSessionDescription(const String& type, const String& sdp);
+    explicit RTCSessionDescription(SdpType, const String& sdp);
 
-    String m_type;
+    SdpType m_type;
     String m_sdp;
 };
 

@@ -1,3 +1,36 @@
+2016-05-26  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: RTCSessionDescription: Make attributes readonly (and remove custom binding)
+        https://bugs.webkit.org/show_bug.cgi?id=157858
+
+        Reviewed by Eric Carlson.
+
+        Align RTCSessionDescription type with WebRTC 1.0 specification [1].
+        - Make constructor dictionary member mandatory
+        - Align constructor dictionary argument (RTCSessionDescriptionInit) with [1]
+        - Use RTCSdpType enum for the type attribute
+        - Remove custom binding
+
+        [1] https://w3c.github.io/webrtc-pc/archives/20160513/webrtc.html
+
+        Updated existing test.
+
+        * CMakeLists.txt:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        (WebCore::parseTypeString):
+        (WebCore::RTCSessionDescription::create):
+        (WebCore::RTCSessionDescription::RTCSessionDescription):
+        (WebCore::verifyType): Deleted.
+        (WebCore::RTCSessionDescription::setType): Deleted.
+        * Modules/mediastream/RTCSessionDescription.h:
+        (WebCore::RTCSessionDescription::type):
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSRTCSessionDescriptionCustom.cpp: Removed.
+        (WebCore::constructJSRTCSessionDescription): Deleted.
+
 2016-05-26  Alejandro G. Castro  <alex@igalia.com>
 
         NativeToJSValue is harcoding the $thisValue in some strings

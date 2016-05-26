@@ -160,7 +160,7 @@ void MediaEndpointPeerConnection::createOfferTask(RTCOfferOptions&, SessionDescr
         return;
     }
 
-    promise.resolve(RTCSessionDescription::create("offer", sdpString));
+    promise.resolve(RTCSessionDescription::create(RTCSessionDescription::SdpType::Offer, sdpString));
 }
 
 void MediaEndpointPeerConnection::createAnswer(RTCAnswerOptions& options, SessionDescriptionPromise&& promise)
