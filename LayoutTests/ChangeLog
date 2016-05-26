@@ -1,3 +1,17 @@
+2016-05-26  Pranjal Jumde  <pjumde@apple.com>
+
+        Sites served over insecure connections should not be allowed to use geolocation.
+        https://bugs.webkit.org/show_bug.cgi?id=157423
+        <rdar://problem/23751632>
+
+        Reviewed by Brent Fulgham.
+
+        Add missing test content from r201423.
+
+        * http/tests/security/resources/geolocation-over-insecure-content.html: Added.
+        * http/tests/security/resources/geolocation-over-mixed-content-block.html: Added.
+        * http/tests/security/resources/geolocation-over-mixed-content.html: Added.
+
 2016-05-26  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update test expectation for imported blink test.
