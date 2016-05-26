@@ -245,7 +245,8 @@ private:
     
     bool isSVGImage() const;
     void detachRemoteSVGRoot();
-    AccessibilitySVGRoot* remoteSVGRootElement() const;
+    enum CreationChoice { Create, Retrieve };
+    AccessibilitySVGRoot* remoteSVGRootElement(CreationChoice createIfNecessary) const;
     AccessibilityObject* remoteSVGElementHitTest(const IntPoint&) const;
     void offsetBoundingBoxForRemoteSVGElement(LayoutRect&) const;
     bool supportsPath() const override;

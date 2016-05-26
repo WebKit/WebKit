@@ -1,3 +1,24 @@
+2016-05-26  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: crash at AccessibilityRenderObject::remoteSVGRootElement const
+        https://bugs.webkit.org/show_bug.cgi?id=158098
+
+        Reviewed by Joanmarie Diggs.
+
+        What looks like happens here is that when a document is torn down and we try to detach, we end up creating an accessibility element during detachment phase.
+        So instead of just clearing the callback pointer on an existing AXObject, we make a new object and access properties of an object being deallocated.
+
+        I tried very hard to make a test but it looks like this can really only be triggered during document tear down which also tears down the AXObjectCache. I didn't
+        have luck reproducing because of that.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::remoteSVGElementHitTest):
+        (WebCore::AccessibilityRenderObject::isSVGImage):
+        (WebCore::AccessibilityRenderObject::detachRemoteSVGRoot):
+        (WebCore::AccessibilityRenderObject::remoteSVGRootElement):
+        (WebCore::AccessibilityRenderObject::addRemoteSVGChildren):
+        * accessibility/AccessibilityRenderObject.h:
+
 2016-05-25  Antti Koivisto  <antti@apple.com>
 
         Invalidate style for newly added nodes in Node::insertedInto
