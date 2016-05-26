@@ -70,22 +70,23 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& state, Document& document, con
         dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
     }
 
-    result->setStyle(descriptors.style, ec);
+    // These ternaries match the default strings inside the FontFaceDescriptors dictionary inside FontFace.idl.
+    result->setStyle(descriptors.style.isEmpty() ? ASCIILiteral("normal") : descriptors.style, ec);
     if (ec)
         return nullptr;
-    result->setWeight(descriptors.weight, ec);
+    result->setWeight(descriptors.weight.isEmpty() ? ASCIILiteral("normal") : descriptors.weight, ec);
     if (ec)
         return nullptr;
-    result->setStretch(descriptors.stretch, ec);
+    result->setStretch(descriptors.stretch.isEmpty() ? ASCIILiteral("normal") : descriptors.stretch, ec);
     if (ec)
         return nullptr;
-    result->setUnicodeRange(descriptors.unicodeRange, ec);
+    result->setUnicodeRange(descriptors.unicodeRange.isEmpty() ? ASCIILiteral("U+0-10FFFF") : descriptors.unicodeRange, ec);
     if (ec)
         return nullptr;
-    result->setVariant(descriptors.variant, ec);
+    result->setVariant(descriptors.variant.isEmpty() ? ASCIILiteral("normal") : descriptors.variant, ec);
     if (ec)
         return nullptr;
-    result->setFeatureSettings(descriptors.featureSettings, ec);
+    result->setFeatureSettings(descriptors.featureSettings.isEmpty() ? ASCIILiteral("normal") : descriptors.featureSettings, ec);
     if (ec)
         return nullptr;
 
@@ -136,6 +137,11 @@ RefPtr<CSSValue> FontFace::parseString(const String& string, CSSPropertyID prope
 
 void FontFace::setFamily(const String& family, ExceptionCode& ec)
 {
+    if (family.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
     bool success = false;
     if (auto value = parseString(family, CSSPropertyFontFamily))
         success = m_backing->setFamilies(*value);
@@ -145,6 +151,11 @@ void FontFace::setFamily(const String& family, ExceptionCode& ec)
 
 void FontFace::setStyle(const String& style, ExceptionCode& ec)
 {
+    if (style.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
     bool success = false;
     if (auto value = parseString(style, CSSPropertyFontStyle))
         success = m_backing->setStyle(*value);
@@ -154,6 +165,11 @@ void FontFace::setStyle(const String& style, ExceptionCode& ec)
 
 void FontFace::setWeight(const String& weight, ExceptionCode& ec)
 {
+    if (weight.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
     bool success = false;
     if (auto value = parseString(weight, CSSPropertyFontWeight))
         success = m_backing->setWeight(*value);
@@ -168,6 +184,11 @@ void FontFace::setStretch(const String&, ExceptionCode&)
 
 void FontFace::setUnicodeRange(const String& unicodeRange, ExceptionCode& ec)
 {
+    if (unicodeRange.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
     bool success = false;
     if (auto value = parseString(unicodeRange, CSSPropertyUnicodeRange))
         success = m_backing->setUnicodeRange(*value);
@@ -177,6 +198,11 @@ void FontFace::setUnicodeRange(const String& unicodeRange, ExceptionCode& ec)
 
 void FontFace::setVariant(const String& variant, ExceptionCode& ec)
 {
+    if (variant.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
     auto style = MutableStyleProperties::create();
     auto result = CSSParser::parseValue(style, CSSPropertyFontVariant, variant, true, CSSStrictMode, nullptr);
     if (result == CSSParser::ParseResult::Error) {
@@ -229,6 +255,11 @@ void FontFace::setVariant(const String& variant, ExceptionCode& ec)
 
 void FontFace::setFeatureSettings(const String& featureSettings, ExceptionCode& ec)
 {
+    if (featureSettings.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
     auto value = parseString(featureSettings, CSSPropertyFontFeatureSettings);
     if (!value) {
         ec = SYNTAX_ERR;

@@ -1,3 +1,13 @@
+2016-05-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] Allow empty strings in FontFace constructor
+        https://bugs.webkit.org/show_bug.cgi?id=158112
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-face-empty-string-expected.txt: Added.
+        * fast/text/font-face-empty-string.html: Added.
+
 2016-05-26  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: RTCSessionDescription: Make attributes readonly (and remove custom binding)

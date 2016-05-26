@@ -1,0 +1,25 @@
+This test makes sure that constructing a FontFace with empty strings is the same as omitting those strings.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fontface = new FontFace('WebFont', 'url(\'asdf\')', {style: ''}) did not throw exception.
+PASS fontface.style is "normal"
+PASS fontface.style = '' threw exception Error: SyntaxError: DOM Exception 12.
+PASS fontface = new FontFace('WebFont', 'url(\'asdf\')', {weight: ''}) did not throw exception.
+PASS fontface.weight is "normal"
+PASS fontface.weight = '' threw exception Error: SyntaxError: DOM Exception 12.
+PASS fontface = new FontFace('WebFont', 'url(\'asdf\')', {unicodeRange: ''}) did not throw exception.
+PASS fontface.unicodeRange is "U+0-10ffff"
+PASS fontface.unicodeRange = '' threw exception Error: SyntaxError: DOM Exception 12.
+PASS fontface = new FontFace('WebFont', 'url(\'asdf\')', {variant: ''}) did not throw exception.
+PASS fontface.variant is "normal"
+PASS fontface.variant = '' threw exception Error: SyntaxError: DOM Exception 12.
+PASS fontface = new FontFace('WebFont', 'url(\'asdf\')', {featureSettings: ''}) did not throw exception.
+PASS fontface.featureSettings is "normal"
+PASS fontface.featureSettings = '' threw exception Error: SyntaxError: DOM Exception 12.
+PASS fontface.family = '' threw exception Error: SyntaxError: DOM Exception 12.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

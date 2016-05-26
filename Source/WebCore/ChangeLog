@@ -1,3 +1,25 @@
+2016-05-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] Allow empty strings in FontFace constructor
+        https://bugs.webkit.org/show_bug.cgi?id=158112
+
+        Reviewed by Darin Adler.
+
+        Other browsers accept empty strings and parse them as if they are omitted.
+        We should do the same. However, this is only true for the constructor. Setting
+        an attribute to an empty string should still throw an exception.
+
+        Test: fast/text/font-face-empty-string.html
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        (WebCore::FontFace::setFamily):
+        (WebCore::FontFace::setStyle):
+        (WebCore::FontFace::setWeight):
+        (WebCore::FontFace::setUnicodeRange):
+        (WebCore::FontFace::setVariant):
+        (WebCore::FontFace::setFeatureSettings):
+
 2016-05-26  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: RTCSessionDescription: Make attributes readonly (and remove custom binding)

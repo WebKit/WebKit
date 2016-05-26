@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test makes sure that constructing a FontFace with empty strings is the same as omitting those strings.");
+
+var fontface;
+shouldNotThrow("fontface = new FontFace('WebFont', 'url(\\\'asdf\\\')', {style: ''})");
+shouldBeEqualToString("fontface.style", "normal");
+shouldThrow("fontface.style = ''");
+shouldNotThrow("fontface = new FontFace('WebFont', 'url(\\\'asdf\\\')', {weight: ''})");
+shouldBeEqualToString("fontface.weight", "normal");
+shouldThrow("fontface.weight = ''");
+shouldNotThrow("fontface = new FontFace('WebFont', 'url(\\\'asdf\\\')', {unicodeRange: ''})");
+shouldBeEqualToString("fontface.unicodeRange", "U+0-10ffff");
+shouldThrow("fontface.unicodeRange = ''");
+shouldNotThrow("fontface = new FontFace('WebFont', 'url(\\\'asdf\\\')', {variant: ''})");
+shouldBeEqualToString("fontface.variant", "normal");
+shouldThrow("fontface.variant = ''");
+shouldNotThrow("fontface = new FontFace('WebFont', 'url(\\\'asdf\\\')', {featureSettings: ''})");
+shouldBeEqualToString("fontface.featureSettings", "normal");
+shouldThrow("fontface.featureSettings = ''");
+
+shouldThrow("fontface.family = ''");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
