@@ -1,5 +1,20 @@
 2016-05-25  Yoav Weiss  <yoav@yoav.ws>
 
+        Fix ResourceTiming multiple entries per resource and test initiator
+        https://bugs.webkit.org/show_bug.cgi?id=158094
+
+        Reviewed by Alex Christensen.
+
+        Make sure that CachedResource that was needed by two different elements only adds one entry, with the right (first) initiatorType.
+
+        * http/tests/performance/performance-resource-timing-initiator-css.html: Added. Makes sure css has the right initiator type.
+        * http/tests/performance/performance-resource-timing-initiator-css-expected.txt: Added.
+        * http/tests/performance/performance-resource-timing-initiator-no-override.html: Added. Makes sure that only one entry is added and
+        that its initiator info doesn't get overriden.
+        * http/tests/performance/performance-resource-timing-initiator-no-override-expected.txt: Added.
+
+2016-05-25  Yoav Weiss  <yoav@yoav.ws>
+
         Fix ResourceTiming XHR flakiness
         https://bugs.webkit.org/show_bug.cgi?id=158019
 

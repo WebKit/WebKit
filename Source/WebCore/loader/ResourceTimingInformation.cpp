@@ -44,7 +44,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource* resource, Docu
     if (resource && resource->response().isHTTP()
         && ((!resource->errorOccurred() && !resource->wasCanceled()) || resource->response().httpStatusCode() == 304)) {
         HashMap<CachedResource*, InitiatorInfo>::iterator initiatorIt = m_initiatorMap.find(resource);
-        if (initiatorIt != m_initiatorMap.end()) {
+        if (initiatorIt != m_initiatorMap.end() && initiatorIt->value.added == NotYetAdded) {
             ASSERT(document);
             Document* initiatorDocument = document;
             if (resource->type() == CachedResource::MainResource)
@@ -54,7 +54,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource* resource, Docu
             ASSERT(initiatorDocument->domWindow()->performance());
             const InitiatorInfo& info = initiatorIt->value;
             initiatorDocument->domWindow()->performance()->addResourceTiming(info.name, initiatorDocument, resource->resourceRequest(), resource->response(), info.startTime, resource->loadFinishTime());
-            m_initiatorMap.remove(initiatorIt);
+            initiatorIt->value.added = Added;
         }
     }
 }
@@ -67,11 +67,11 @@ void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const Ca
         // <iframe>s should report the initial navigation requested by the parent document, but not subsequent navigations.
         ASSERT(frame);
         if (frame->ownerElement()) {
-            InitiatorInfo info = { frame->ownerElement()->localName(), monotonicallyIncreasingTime() };
+            InitiatorInfo info = { frame->ownerElement()->localName(), monotonicallyIncreasingTime(), NotYetAdded };
             m_initiatorMap.add(resource.get(), info);
         }
     } else {
-        InitiatorInfo info = { request.initiatorName(), monotonicallyIncreasingTime() };
+        InitiatorInfo info = { request.initiatorName(), monotonicallyIncreasingTime(), NotYetAdded };
         m_initiatorMap.add(resource.get(), info);
     }
 }
