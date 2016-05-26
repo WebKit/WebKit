@@ -1,3 +1,15 @@
+2016-05-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Update test expectation for imported blink test.
+        https://bugs.webkit.org/show_bug.cgi?id=158122
+
+        Reviewed by Alex Christensen.
+
+        The crash on imported/blink/compositing/perspective-origin-overflow-hidden.html
+        was fixed in https://trac.webkit.org/changeset/192166.
+
+        * platform/win/TestExpectations:
+
 2016-05-26  Brady Eidson  <beidson@apple.com>
 
         Release JSC test test-observegc.js.layout failing.
