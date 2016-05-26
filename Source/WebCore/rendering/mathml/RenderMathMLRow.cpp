@@ -51,7 +51,7 @@ RenderMathMLRow::RenderMathMLRow(Document& document, RenderStyle&& style)
 
 void RenderMathMLRow::updateOperatorProperties()
 {
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (is<RenderMathMLBlock>(*child)) {
             if (auto* renderOperator = downcast<RenderMathMLBlock>(*child).unembellishedOperator())
                 renderOperator->updateOperatorProperties();
@@ -84,8 +84,8 @@ void RenderMathMLRow::computeLineVerticalStretch(LayoutUnit& ascent, LayoutUnit&
         LayoutUnit childHeightAboveBaseline = ascentForChild(*child);
         LayoutUnit childDepthBelowBaseline = child->logicalHeight() - childHeightAboveBaseline;
 
-        ascent = std::max<LayoutUnit>(ascent, childHeightAboveBaseline);
-        descent = std::max<LayoutUnit>(descent, childDepthBelowBaseline);
+        ascent = std::max(ascent, childHeightAboveBaseline);
+        descent = std::max(descent, childDepthBelowBaseline);
     }
 
     // We ensure a minimal stretch size.

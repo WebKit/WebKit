@@ -1,3 +1,29 @@
+2016-05-26  Frederic Wang  <fwang@igalia.com>
+
+        Small improvements to RenderBox/LayoutUnit casting in MathML
+        https://bugs.webkit.org/show_bug.cgi?id=157943
+
+        Reviewed by Darin Adler.
+
+        This is a small follow-up of the RenderMathMLRow/RenderMathMLUnderOver/RenderMathMLFraction
+        refactoring. Since these MathML renderers can only contain other MathML renderers, we can
+        just considerer RenderBox children and avoid unnecessary casts. Similarly, when the two
+        arguments of std::max are LayoutUnit's, we do not need to specialize to std::max<LayoutUnit>.
+
+        No new tests, behavior is not changed.
+
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::layoutBlock): Do not to specialize to std::max<LayoutUnit>.
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::updateOperatorProperties): Browse the list of RenderBox children
+        and use auto*.
+        (WebCore::RenderMathMLRow::computeLineVerticalStretch): Do not to specialize to std::max<LayoutUnit>.
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::unembellishedOperator): Get the RenderBox child and use auto*.
+        (WebCore::RenderMathMLUnderOver::computeOperatorsHorizontalStretch): Browse the list of
+        RenderBox children, use auto* and remove unnecessary casts. Do not to specialize to
+        std::max<LayoutUnit>.
+
 2016-05-26  Chris Fleizach  <cfleizach@apple.com>
 
         AX: crash at AccessibilityRenderObject::remoteSVGRootElement const

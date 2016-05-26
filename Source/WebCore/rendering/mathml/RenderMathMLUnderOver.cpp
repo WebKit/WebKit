@@ -55,7 +55,7 @@ RenderMathMLUnderOver::RenderMathMLUnderOver(Element& element, RenderStyle&& sty
 
 RenderMathMLOperator* RenderMathMLUnderOver::unembellishedOperator()
 {
-    RenderObject* base = firstChild();
+    auto* base = firstChildBox();
     if (!is<RenderMathMLBlock>(base))
         return nullptr;
     return downcast<RenderMathMLBlock>(*base).unembellishedOperator();
@@ -75,7 +75,7 @@ void RenderMathMLUnderOver::computeOperatorsHorizontalStretch()
     LayoutUnit stretchWidth = 0;
     Vector<RenderMathMLOperator*, 2> renderOperators;
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (child->needsLayout()) {
             if (is<RenderMathMLBlock>(child)) {
                 if (auto renderOperator = downcast<RenderMathMLBlock>(*child).unembellishedOperator()) {
@@ -86,13 +86,12 @@ void RenderMathMLUnderOver::computeOperatorsHorizontalStretch()
                 }
             }
 
-            downcast<RenderElement>(*child).layout();
+            child->layout();
         }
 
         // Skipping the embellished op does not work for nested structures like
         // <munder><mover><mo>_</mo>...</mover> <mo>_</mo></munder>.
-        if (is<RenderBox>(*child))
-            stretchWidth = std::max<LayoutUnit>(stretchWidth, downcast<RenderBox>(*child).logicalWidth());
+        stretchWidth = std::max(stretchWidth, child->logicalWidth());
     }
 
     // Set the sizes of (possibly embellished) stretchy operator children.
