@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,6 +71,32 @@ public:
         , m_functor(std::forward<PassedFunctor>(functor))
     {
     }
+    
+    // We need to make sure that copying and moving ScopedLambdaFunctor results in a ScopedLambdaFunctor
+    // whose ScopedLambda supertype still points to this rather than other.
+    ScopedLambdaFunctor(const ScopedLambdaFunctor& other)
+        : ScopedLambda<ResultType (ArgumentTypes...)>(implFunction, this)
+        , m_functor(other.m_functor)
+    {
+    }
+
+    ScopedLambdaFunctor(ScopedLambdaFunctor&& other)
+        : ScopedLambda<ResultType (ArgumentTypes...)>(implFunction, this)
+        , m_functor(WTFMove(other.m_functor))
+    {
+    }
+    
+    ScopedLambdaFunctor& operator=(const ScopedLambdaFunctor& other)
+    {
+        m_functor = other.m_functor;
+        return *this;
+    }
+    
+    ScopedLambdaFunctor& operator=(ScopedLambdaFunctor&& other)
+    {
+        m_functor = WTFMove(other.m_functor);
+        return *this;
+    }
 
 private:
     static ResultType implFunction(void* argument, ArgumentTypes... arguments)
@@ -81,10 +107,23 @@ private:
     Functor m_functor;
 };
 
+// Can't simply rely on perfect forwarding because then the ScopedLambdaFunctor would point to the functor
+// by const reference. This would be surprising in situations like:
+//
+// auto scopedLambda = scopedLambda<Foo(Bar)>([&] (Bar) -> Foo { ... });
+//
+// We expected scopedLambda to be valid for its entire lifetime, but if it computed the lambda by reference
+// then it would be immediately invalid.
+template<typename FunctionType, typename Functor>
+ScopedLambdaFunctor<FunctionType, Functor> scopedLambda(const Functor& functor)
+{
+    return ScopedLambdaFunctor<FunctionType, Functor>(functor);
+}
+
 template<typename FunctionType, typename Functor>
 ScopedLambdaFunctor<FunctionType, Functor> scopedLambda(Functor&& functor)
 {
-    return ScopedLambdaFunctor<FunctionType, Functor>(std::forward<Functor>(functor));
+    return ScopedLambdaFunctor<FunctionType, Functor>(WTFMove(functor));
 }
 
 } // namespace WTF

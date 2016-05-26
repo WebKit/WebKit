@@ -29,6 +29,7 @@
 #include <chrono>
 #include <functional>
 #include <wtf/Atomics.h>
+#include <wtf/ScopedLambda.h>
 #include <wtf/Threading.h>
 
 namespace WTF {
@@ -60,8 +61,8 @@ public:
     {
         return parkConditionallyImpl(
             address,
-            std::function<bool()>(std::forward<ValidationFunctor>(validation)),
-            std::function<void()>(std::forward<BeforeSleepFunctor>(beforeSleep)),
+            scopedLambda<bool()>(std::forward<ValidationFunctor>(validation)),
+            scopedLambda<void()>(std::forward<BeforeSleepFunctor>(beforeSleep)),
             timeout);
     }
 
@@ -100,9 +101,11 @@ public:
     // that race - see Rusty Russel's well-known usersem library - but it's not pretty. This form
     // allows that race to be completely avoided, since there is no way that a thread can be parked
     // while the callback is running.
-    WTF_EXPORT_PRIVATE static void unparkOne(
-        const void* address,
-        std::function<void(ParkingLot::UnparkResult)> callback);
+    template<typename Callback>
+    static void unparkOne(const void* address, Callback&& callback)
+    {
+        unparkOneImpl(address, scopedLambda<void(UnparkResult)>(std::forward<Callback>(callback)));
+    }
 
     // Unparks every thread from the queue associated with the given address, which cannot be null.
     WTF_EXPORT_PRIVATE static void unparkAll(const void* address);
@@ -125,12 +128,12 @@ public:
 private:
     WTF_EXPORT_PRIVATE static bool parkConditionallyImpl(
         const void* address,
-        std::function<bool()> validation,
-        std::function<void()> beforeSleep,
+        const ScopedLambda<bool()>& validation,
+        const ScopedLambda<void()>& beforeSleep,
         Clock::time_point timeout);
     
     WTF_EXPORT_PRIVATE static void unparkOneImpl(
-        const void* address, std::function<void(UnparkResult)> callback);
+        const void* address, const ScopedLambda<void(UnparkResult)>& callback);
 
     WTF_EXPORT_PRIVATE static void forEachImpl(const std::function<void(ThreadIdentifier, const void*)>&);
 };

@@ -1,3 +1,41 @@
+2016-05-26  Filip Pizlo  <fpizlo@apple.com>
+
+        ScopedLambda should have a lifetime story that makes sense to the compiler
+        https://bugs.webkit.org/show_bug.cgi?id=158118
+
+        Reviewed by Mark Lam.
+
+        Prior to this change, there were two lifetime bugs in ScopedLambda:
+        
+        - scopedLambda(Functor&&) would bind Functor to const lambda&, so the resulting ScopedLambdaFunctor
+          would hold a reference to the original lambda. This would have surprising behavior; for example
+          it meant that this code was wrong:
+          
+          auto l = scopedLambda<things>([&] ...);
+          
+          The solution is to have explicit copy/move versions of scopedLambda() rather than rely on perfect
+          forwarding.
+        
+        - ScopedLambdaFunctor did not override its copy or move operations, so if the compiler did not RVO
+          scopedLambda(), it would return a ScopedLambdaFunctor whose m_arg points to a dead temporary
+          ScopedLambdaFunctor instance. The solution is to have explicit copy/move constructors and
+          operators, which preserve the invariant that ScopedLambda::m_arg points to this.
+        
+        One nice side-effect of all of these constructors and operators being explicit is that we can rely
+        on WTFMove's excellent assertions, which helped catch the first issue.
+        
+        This reverts ParkingLot to use ScopedLambda again.
+
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionallyImpl):
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::unparkOneImpl):
+        * wtf/ParkingLot.h:
+        (WTF::ParkingLot::parkConditionally):
+        (WTF::ParkingLot::unparkOne):
+        * wtf/ScopedLambda.h:
+        (WTF::scopedLambda):
+
 2016-05-25  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WTF/Functional.h

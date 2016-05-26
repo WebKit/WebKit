@@ -1,3 +1,17 @@
+2016-05-26  Filip Pizlo  <fpizlo@apple.com>
+
+        ScopedLambda should have a lifetime story that makes sense to the compiler
+        https://bugs.webkit.org/show_bug.cgi?id=158118
+
+        Reviewed by Mark Lam.
+        
+        Added a test case. This test crashes before the fix and now it passes.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/ScopedLambda.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2016-05-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Build fix

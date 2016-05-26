@@ -532,8 +532,8 @@ bool dequeue(
 
 NEVER_INLINE bool ParkingLot::parkConditionallyImpl(
     const void* address,
-    std::function<bool()> validation,
-    std::function<void()> beforeSleep,
+    const ScopedLambda<bool()>& validation,
+    const ScopedLambda<void()>& beforeSleep,
     Clock::time_point timeout)
 {
     if (verbose)
@@ -649,9 +649,9 @@ NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
     return result;
 }
 
-NEVER_INLINE void ParkingLot::unparkOne(
+NEVER_INLINE void ParkingLot::unparkOneImpl(
     const void* address,
-    std::function<void(ParkingLot::UnparkResult)> callback)
+    const ScopedLambda<void(ParkingLot::UnparkResult)>& callback)
 {
     if (verbose)
         dataLog(toString(currentThread(), ": unparking one the hard way.\n"));
