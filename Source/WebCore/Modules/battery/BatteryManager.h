@@ -46,8 +46,8 @@ public:
     double dischargingTime();
     double level();
 
-    void didChangeBatteryStatus(Event&, PassRefPtr<BatteryStatus>);
-    void updateBatteryStatus(PassRefPtr<BatteryStatus>);
+    void didChangeBatteryStatus(Event&, RefPtr<BatteryStatus>&&);
+    void updateBatteryStatus(RefPtr<BatteryStatus>&&);
     void batteryControllerDestroyed() { m_batteryController = nullptr; }
 
     using RefCounted<BatteryManager>::ref;

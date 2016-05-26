@@ -1,3 +1,30 @@
+2016-05-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Purge PassRefPtr in Modules/battery
+        https://bugs.webkit.org/show_bug.cgi?id=157062
+
+        Reviewed by Darin Adler.
+
+        Use RefPtr<>& to reduce uses of PassRefPtr in WebKit.
+
+        * Modules/battery/BatteryClient.h:
+        * Modules/battery/BatteryController.cpp:
+        (WebCore::BatteryController::BatteryController):
+        (WebCore::BatteryController::~BatteryController):
+        (WebCore::BatteryController::addListener):
+        (WebCore::BatteryController::removeListener):
+        (WebCore::BatteryController::updateBatteryStatus):
+        (WebCore::BatteryController::didChangeBatteryStatus):
+        (WebCore::provideBatteryTo):
+        * Modules/battery/BatteryController.h:
+        * Modules/battery/BatteryManager.cpp:
+        (WebCore::BatteryManager::didChangeBatteryStatus):
+        (WebCore::BatteryManager::updateBatteryStatus):
+        * Modules/battery/BatteryManager.h:
+        * Modules/battery/BatteryStatus.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setBatteryStatus):
+
 2016-05-25  Ada Chan  <adachan@apple.com>
 
         Add WebKitAdditions extension point in HTMLMediaElement.

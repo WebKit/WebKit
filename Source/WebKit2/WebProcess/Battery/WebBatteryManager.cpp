@@ -75,21 +75,21 @@ void WebBatteryManager::unregisterWebPage(WebPage* page)
 
 void WebBatteryManager::didChangeBatteryStatus(const WTF::AtomicString& eventType, const WebBatteryStatus::Data& data)
 {
-    RefPtr<BatteryStatus> status = BatteryStatus::create(data.isCharging, data.chargingTime, data.dischargingTime, data.level);
+    auto status = BatteryStatus::create(data.isCharging, data.chargingTime, data.dischargingTime, data.level);
 
     for (auto* page : m_pageSet) {
         if (page->corePage())
-            BatteryController::from(page->corePage())->didChangeBatteryStatus(eventType, status.get());
+            BatteryController::from(page->corePage())->didChangeBatteryStatus(eventType, status.ptr());
     }
 }
 
 void WebBatteryManager::updateBatteryStatus(const WebBatteryStatus::Data& data)
 {
-    RefPtr<BatteryStatus> status = BatteryStatus::create(data.isCharging, data.chargingTime, data.dischargingTime, data.level);
+    auto status = BatteryStatus::create(data.isCharging, data.chargingTime, data.dischargingTime, data.level);
 
     for (auto* page : m_pageSet) {
         if (page->corePage())
-            BatteryController::from(page->corePage())->updateBatteryStatus(status.get());
+            BatteryController::from(page->corePage())->updateBatteryStatus(status.copyRef());
     }
 }
 

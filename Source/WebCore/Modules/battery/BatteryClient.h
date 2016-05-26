@@ -35,7 +35,7 @@ public:
     virtual void batteryControllerDestroyed() = 0;
 };
 
-void provideBatteryTo(Page*, BatteryClient*);
+void provideBatteryTo(Page&, BatteryClient&);
 
 }
 

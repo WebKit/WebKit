@@ -29,26 +29,25 @@
 
 namespace WebCore {
 
-BatteryController::BatteryController(BatteryClient* client)
+BatteryController::BatteryController(BatteryClient& client)
     : m_client(client)
 {
-    ASSERT(m_client);
 }
 
 BatteryController::~BatteryController()
 {
     for (auto& listener : m_listeners)
         listener->batteryControllerDestroyed();
-    m_client->batteryControllerDestroyed();
+    m_client.batteryControllerDestroyed();
 }
 
 void BatteryController::addListener(BatteryManager* batteryManager)
 {
     m_listeners.append(batteryManager);
-    m_client->startUpdating();
+    m_client.startUpdating();
 
     if (m_batteryStatus)
-        batteryManager->updateBatteryStatus(m_batteryStatus);
+        batteryManager->updateBatteryStatus(WTFMove(m_batteryStatus));
 }
 
 void BatteryController::removeListener(BatteryManager* batteryManager)
@@ -58,36 +57,34 @@ void BatteryController::removeListener(BatteryManager* batteryManager)
         return;
     m_listeners.remove(pos);
     if (m_listeners.isEmpty())
-        m_client->stopUpdating();
+        m_client.stopUpdating();
 }
 
-void BatteryController::updateBatteryStatus(PassRefPtr<BatteryStatus> batteryStatus)
+void BatteryController::updateBatteryStatus(RefPtr<BatteryStatus>&& batteryStatus)
 {
-    RefPtr<BatteryStatus> status = batteryStatus;
     if (m_batteryStatus) {
-        if (m_batteryStatus->charging() != status->charging())
-            didChangeBatteryStatus(WebCore::eventNames().chargingchangeEvent, status);
-        else if (status->charging() && m_batteryStatus->chargingTime() != status->chargingTime())
-            didChangeBatteryStatus(WebCore::eventNames().chargingtimechangeEvent, status);
-        else if (!status->charging() && m_batteryStatus->dischargingTime() != status->dischargingTime())
-            didChangeBatteryStatus(WebCore::eventNames().dischargingtimechangeEvent, status);
+        if (m_batteryStatus->charging() != batteryStatus->charging())
+            didChangeBatteryStatus(WebCore::eventNames().chargingchangeEvent, batteryStatus.get());
+        else if (batteryStatus->charging() && m_batteryStatus->chargingTime() != batteryStatus->chargingTime())
+            didChangeBatteryStatus(WebCore::eventNames().chargingtimechangeEvent, batteryStatus.get());
+        else if (!batteryStatus->charging() && m_batteryStatus->dischargingTime() != batteryStatus->dischargingTime())
+            didChangeBatteryStatus(WebCore::eventNames().dischargingtimechangeEvent, batteryStatus.get());
 
-        if (m_batteryStatus->level() != status->level())
-            didChangeBatteryStatus(WebCore::eventNames().levelchangeEvent, status);
+        if (m_batteryStatus->level() != batteryStatus->level())
+            didChangeBatteryStatus(WebCore::eventNames().levelchangeEvent, batteryStatus.get());
     } else {
         for (auto& listener : m_listeners)
-            listener->updateBatteryStatus(status);
+            listener->updateBatteryStatus(batteryStatus.copyRef());
     }
 
-    m_batteryStatus = status.release();
+    m_batteryStatus = WTFMove(batteryStatus);
 }
 
-void BatteryController::didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus> batteryStatus)
+void BatteryController::didChangeBatteryStatus(const AtomicString& eventType, RefPtr<BatteryStatus>&& batteryStatus)
 {
     Ref<Event> event = Event::create(eventType, false, false);
-    RefPtr<BatteryStatus> battery = batteryStatus;
     for (auto& listener : m_listeners)
-        listener->didChangeBatteryStatus(event, battery);
+        listener->didChangeBatteryStatus(event, batteryStatus.copyRef());
 }
 
 const char* BatteryController::supplementName()
@@ -95,9 +92,9 @@ const char* BatteryController::supplementName()
     return "BatteryController";
 }
 
-void provideBatteryTo(Page* page, BatteryClient* client)
+void provideBatteryTo(Page& page, BatteryClient& client)
 {
-    Supplement<Page>::provideTo(page, BatteryController::supplementName(), std::make_unique<BatteryController>(client));
+    Supplement<Page>::provideTo(&page, BatteryController::supplementName(), std::make_unique<BatteryController>(client));
 }
 
 }

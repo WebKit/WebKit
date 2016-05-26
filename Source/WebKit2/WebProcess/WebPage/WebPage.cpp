@@ -432,7 +432,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_drawingArea->updatePreferences(parameters.store);
 
 #if ENABLE(BATTERY_STATUS)
-    WebCore::provideBatteryTo(m_page.get(), new WebBatteryClient(this));
+    WebCore::provideBatteryTo(*m_page, *new WebBatteryClient(this));
 #endif
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(m_page.get(), new WebGeolocationClient(this));

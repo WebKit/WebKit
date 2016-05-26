@@ -77,15 +77,15 @@ double BatteryManager::level()
     return m_batteryStatus ? m_batteryStatus->level() : 1;
 }
 
-void BatteryManager::didChangeBatteryStatus(Event& event, PassRefPtr<BatteryStatus> batteryStatus)
+void BatteryManager::didChangeBatteryStatus(Event& event, RefPtr<BatteryStatus>&& batteryStatus)
 {
-    updateBatteryStatus(batteryStatus);
+    updateBatteryStatus(WTFMove(batteryStatus));
     dispatchEvent(event);
 }
 
-void BatteryManager::updateBatteryStatus(PassRefPtr<BatteryStatus> batteryStatus)
+void BatteryManager::updateBatteryStatus(RefPtr<BatteryStatus>&& batteryStatus)
 {
-    m_batteryStatus = batteryStatus;
+    m_batteryStatus = WTFMove(batteryStatus);
 }
 
 bool BatteryManager::canSuspendForDocumentSuspension() const
