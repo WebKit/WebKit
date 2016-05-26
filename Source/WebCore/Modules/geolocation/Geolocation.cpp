@@ -43,6 +43,7 @@
 #include "SecurityOrigin.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -172,7 +173,7 @@ bool Geolocation::canSuspendForDocumentSuspension() const
 {
     return true;
 }
-
+    
 void Geolocation::suspend(ReasonForSuspension reason)
 {
     if (reason == ActiveDOMObject::PageCache) {
@@ -337,12 +338,44 @@ int Geolocation::watchPosition(RefPtr<PositionCallback>&& successCallback, RefPt
     return watchID;
 }
 
+static void logError(const String& target, const bool isSecure, const bool isMixedContent, Document* document)
+{
+    StringBuilder message;
+    message.append("[blocked] Access to geolocation was blocked over");
+    
+    if (!isSecure)
+        message.append(" insecure connection to ");
+    else if (isMixedContent)
+        message.append(" secure connection with mixed content to ");
+    else
+        return;
+    
+    message.append(target);
+    message.append(".\n");
+    document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message.toString());
+}
+
+bool Geolocation::shouldBlockGeolocationRequests()
+{
+    bool isSecure = SecurityOrigin::isSecure(document()->url());
+    bool hasMixedContent = document()->foundMixedContent();
+    bool isLocalFile = document()->url().isLocalFile();
+    if (securityOrigin()->canRequestGeolocation()) {
+        if (isLocalFile || (isSecure && !hasMixedContent))
+            return false;
+    }
+    
+    logError(securityOrigin()->toString(), isSecure, hasMixedContent, document());
+    return true;
+}
+
 void Geolocation::startRequest(GeoNotifier* notifier)
 {
-    if (!securityOrigin()->canRequestGeolocation()) {
+    if (shouldBlockGeolocationRequests()) {
         notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, ASCIILiteral(originCannotRequestGeolocationErrorMessage)));
         return;
     }
+    document()->setGeolocationAccessed();
 
     // Check whether permissions have already been denied. Note that if this is the case,
     // the permission state can not change again in the lifetime of this page.

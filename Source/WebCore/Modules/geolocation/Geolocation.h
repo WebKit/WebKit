@@ -72,6 +72,7 @@ public:
 
     void positionChanged();
     void setError(GeolocationError*);
+    bool shouldBlockGeolocationRequests();
 
 private:
     explicit Geolocation(ScriptExecutionContext*);

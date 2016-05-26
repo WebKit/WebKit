@@ -1,3 +1,38 @@
+2016-05-26  Pranjal Jumde  <pjumde@apple.com>
+
+        Sites served over insecure connections should not be allowed to use geolocation.
+        https://bugs.webkit.org/show_bug.cgi?id=157423
+        <rdar://problem/23751632>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/security/insecure-geolocation.html
+               http/tests/security/mixedcontent-geolocation-block-insecure-content.html
+               http/tests/security/mixedcontent-geolocation.html
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::logError):
+        Logs an error to the console if geolocation is blocked.
+        (WebCore::Geolocation::startRequest):
+        Access to Geolocation will be blocked if site is not secure. An error will be logged when access to Geolocation is blocked.
+        (WebCore::Geolocation::shouldBlockGeolocationRequests)
+        Returns true if the access to geolocation should be blocked.
+        * Modules/geolocation/Geolocation.h:
+        * dom/SecurityContext.h:
+        (WebCore::SecurityContext::foundMixedContent):
+        Returns true if insecure content was accessed over secure connection.
+        (WebCore::SecurityContext::setFoundMixedContent):
+        Sets m_foundMixedContent to true if insecure content is accessed over secure connection.
+        (WebCore::SecurityContext::geolocationAccessed):
+        Returns true if geolocation was accessed
+        (WebCore::SecurityContext::setGeolocationAccessed):
+        Sets m_geolocationAccessed to true if geolocation was accessed.
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::canDisplayInsecureContent):
+        Insecure content will be blocked if geolocation was accessed by the page. Updates document to keep track of mixed content.
+        (WebCore::MixedContentChecker::canRunInsecureContent):
+        Insecure content will be blocked if geolocation was accessed by the page. Updates document to keep track of mixed content.
+
 2016-05-26  Brady Eidson  <beidson@apple.com>
 
         Implement internals.observeGC to get called back when a Javascript object is GC'ed.

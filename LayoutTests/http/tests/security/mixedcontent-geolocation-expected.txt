@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 2: The page at https://127.0.0.1:8443/security/resources/geolocation-over-mixed-content.html was allowed to display insecure content from http://127.0.0.1:8080/security/resources/compass.jpg.
+
+CONSOLE MESSAGE: line 5: [blocked] Access to geolocation was blocked over secure connection with mixed content to https://127.0.0.1:8443.
+
+This test loads a secure frame with mixed content that tries to access geolocation. Access to geolocation is blocked over secure connections with mixed content.
