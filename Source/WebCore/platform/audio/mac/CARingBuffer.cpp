@@ -29,7 +29,6 @@
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
 #include <CoreAudio/CoreAudioTypes.h>
-#include <libkern/OSAtomic.h>
 #include <wtf/MathExtras.h>
 
 const uint32_t kGeneralRingTimeBoundsQueueSize = 32;
@@ -201,19 +200,19 @@ CARingBuffer::Error CARingBuffer::store(const AudioBufferList* list, size_t fram
 void CARingBuffer::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
 {
     LockHolder locker(m_currentFrameBoundsLock);
-    uint32_t nextPtr = m_timeBoundsQueuePtr + 1;
+    uint32_t nextPtr = m_timeBoundsQueuePtr.load() + 1;
     uint32_t index = nextPtr & kGeneralRingTimeBoundsQueueMask;
 
     m_timeBoundsQueue[index].m_startFrame = startTime;
     m_timeBoundsQueue[index].m_endFrame = endTime;
     m_timeBoundsQueue[index].m_updateCounter = nextPtr;
-    OSAtomicIncrement32Barrier(static_cast<int32_t*>(&m_timeBoundsQueuePtr));
+    m_timeBoundsQueuePtr++;
 }
 
 void CARingBuffer::getCurrentFrameBounds(uint64_t &startTime, uint64_t &endTime)
 {
     LockHolder locker(m_currentFrameBoundsLock);
-    uint32_t curPtr = m_timeBoundsQueuePtr;
+    uint32_t curPtr = m_timeBoundsQueuePtr.load();
     uint32_t index = curPtr & kGeneralRingTimeBoundsQueueMask;
     CARingBuffer::TimeBounds& bounds = m_timeBoundsQueue[index];
 
@@ -240,13 +239,13 @@ void CARingBuffer::clipTimeBounds(uint64_t& startRead, uint64_t& endRead)
 
 uint64_t CARingBuffer::currentStartFrame() const
 {
-    uint32_t index = m_timeBoundsQueuePtr & kGeneralRingTimeBoundsQueueMask;
+    uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
     return m_timeBoundsQueue[index].m_startFrame;
 }
 
 uint64_t CARingBuffer::currentEndFrame() const
 {
-    uint32_t index = m_timeBoundsQueuePtr & kGeneralRingTimeBoundsQueueMask;
+    uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
     return m_timeBoundsQueue[index].m_endFrame;
 }
 

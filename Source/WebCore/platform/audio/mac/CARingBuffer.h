@@ -85,7 +85,7 @@ private:
     
     Vector<TimeBounds> m_timeBoundsQueue;
     Lock m_currentFrameBoundsLock;
-    int32_t m_timeBoundsQueuePtr;
+    std::atomic<int32_t> m_timeBoundsQueuePtr;
 };
 
 }

@@ -1,3 +1,19 @@
+2016-05-26  Jer Noble  <jer.noble@apple.com>
+
+        Use std::atomic<> rather than OSAtomicIncrement in CARingBuffer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=158129
+
+        Reviewed by Eric Carlson.
+
+        std::atomic is a more portable atomic primitive than OSAtomicIncrement.
+
+        * platform/audio/mac/CARingBuffer.cpp:
+        (WebCore::CARingBuffer::setCurrentFrameBounds):
+        (WebCore::CARingBuffer::getCurrentFrameBounds):
+        (WebCore::CARingBuffer::currentStartFrame):
+        (WebCore::CARingBuffer::currentEndFrame):
+        * platform/audio/mac/CARingBuffer.h:
+
 2016-05-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline bindings tests after r201428
