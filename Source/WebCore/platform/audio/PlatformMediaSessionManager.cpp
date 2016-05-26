@@ -280,7 +280,7 @@ PlatformMediaSession* PlatformMediaSessionManager::currentSession()
     
 bool PlatformMediaSessionManager::sessionCanLoadMedia(const PlatformMediaSession& session) const
 {
-    return session.state() == PlatformMediaSession::Playing || !session.isHidden() || session.isPlayingToWirelessPlaybackTarget();
+    return session.state() == PlatformMediaSession::Playing || !session.isHidden() || session.shouldOverrideBackgroundLoadingRestriction();
 }
 
 void PlatformMediaSessionManager::applicationWillEnterBackground() const

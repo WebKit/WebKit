@@ -152,6 +152,10 @@
 #include <bindings/ScriptObject.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/HTMLMediaElementAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 static const double SeekRepeatDelay = 0.1;
@@ -7023,6 +7027,23 @@ void HTMLMediaElement::updatePlaybackControlsManager()
     else
         page->chrome().client().clearPlaybackControlsManager(*this);
 }
+
+#if !USE(APPLE_INTERNAL_SDK)
+bool HTMLMediaElement::shouldOverrideBackgroundLoadingRestriction() const
+{
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (isPlayingToWirelessPlaybackTarget())
+        return true;
+#endif
+
+    return false;
+}
+
+void HTMLMediaElement::fullscreenModeChanged(VideoFullscreenMode mode)
+{
+    m_videoFullscreenMode = mode;
+}
+#endif
 
 }
 

@@ -1,3 +1,36 @@
+2016-05-25  Ada Chan  <adachan@apple.com>
+
+        Add WebKitAdditions extension point in HTMLMediaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=158097
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::shouldOverrideBackgroundLoadingRestriction):
+        We need to load data in the background if playing to wireless playback target.
+        (WebCore::HTMLMediaElement::fullscreenModeChanged):
+        Moved from header file.
+        * html/HTMLMediaElement.h:
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::clientWillPausePlayback):
+        The code to start m_clientDataBufferingTimer is also in visibilityChanged().
+        Moved that code to PlatformMediaSession::scheduleClientDataBufferingCheck() and call
+        that method here.
+        (WebCore::PlatformMediaSession::visibilityChanged):
+        Call PlatformMediaSession::scheduleClientDataBufferingCheck().
+        (WebCore::PlatformMediaSession::scheduleClientDataBufferingCheck):
+        Start m_clientDataBufferingTimer if it's not already active.
+        (WebCore::PlatformMediaSession::shouldOverrideBackgroundLoadingRestriction):
+        Call the client.
+
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSessionClient::shouldOverrideBackgroundLoadingRestriction):
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::sessionCanLoadMedia):
+        Call the new PlatformMediaSession::shouldOverrideBackgroundLoadingRestriction().
+
 2016-05-26  Jer Noble  <jer.noble@apple.com>
 
         Use std::atomic<> rather than OSAtomicIncrement in CARingBuffer.cpp

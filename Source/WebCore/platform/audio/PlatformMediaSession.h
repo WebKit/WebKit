@@ -137,6 +137,8 @@ public:
 
     bool isHidden() const;
 
+    bool shouldOverrideBackgroundLoadingRestriction() const;
+
     virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
     virtual bool isPlayingToWirelessPlaybackTarget() const { return m_isPlayingToWirelessPlaybackTarget; }
     void isPlayingToWirelessPlaybackTargetChanged(bool);
@@ -155,6 +157,8 @@ public:
     bool activeAudioSessionRequired();
     bool canProduceAudio() const { return m_canProduceAudio; }
     void setCanProduceAudio(bool);
+
+    void scheduleClientDataBufferingCheck();
 
 protected:
     PlatformMediaSessionClient& client() const { return m_client; }
@@ -203,6 +207,7 @@ public:
     virtual bool elementIsHidden() const { return false; }
 
     virtual bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const = 0;
+    virtual bool shouldOverrideBackgroundLoadingRestriction() const { return false; }
 
     virtual void wirelessRoutesAvailableDidChange() { }
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) { }

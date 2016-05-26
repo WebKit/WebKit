@@ -186,8 +186,7 @@ bool PlatformMediaSession::clientWillPausePlayback()
     
     setState(Paused);
     PlatformMediaSessionManager::sharedManager().sessionWillEndPlayback(*this);
-    if (!m_clientDataBufferingTimer.isActive())
-        m_clientDataBufferingTimer.startOneShot(kClientDataBufferingTimerThrottleDelay);
+    scheduleClientDataBufferingCheck();
     return true;
 }
 
@@ -248,6 +247,11 @@ void PlatformMediaSession::didReceiveRemoteControlCommand(RemoteControlCommandTy
 
 void PlatformMediaSession::visibilityChanged()
 {
+    scheduleClientDataBufferingCheck();
+}
+
+void PlatformMediaSession::scheduleClientDataBufferingCheck()
+{
     if (!m_clientDataBufferingTimer.isActive())
         m_clientDataBufferingTimer.startOneShot(kClientDataBufferingTimerThrottleDelay);
 }
@@ -281,6 +285,11 @@ void PlatformMediaSession::updateClientDataBuffering()
 bool PlatformMediaSession::isHidden() const
 {
     return m_client.elementIsHidden();
+}
+
+bool PlatformMediaSession::shouldOverrideBackgroundLoadingRestriction() const
+{
+    return m_client.shouldOverrideBackgroundLoadingRestriction();
 }
 
 void PlatformMediaSession::isPlayingToWirelessPlaybackTargetChanged(bool isWireless)
