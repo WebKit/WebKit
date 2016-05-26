@@ -1,3 +1,17 @@
+2016-05-26  Brady Eidson  <beidson@apple.com>
+
+        Release JSC test test-observegc.js.layout failing.
+        https://bugs.webkit.org/show_bug.cgi?id=158126
+
+        Unreviewed.
+
+        Move this test to a directory that is less... "special"
+        
+        * fast/misc/resources/test-observegc.js: Renamed from LayoutTests/js/script-tests/test-observegc.js.
+        * fast/misc/test-observegc-expected.txt: Renamed from LayoutTests/js/test-observegc-expected.txt.
+        * fast/misc/test-observegc.html: Added.
+        * js/test-observegc.html: Removed.
+
 2016-05-26  Pranjal Jumde  <pjumde@apple.com>
 
         Sites served over insecure connections should not be allowed to use geolocation.
