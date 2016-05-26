@@ -1,3 +1,56 @@
+2016-05-26  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        BitmapImage::checkForSolidColor() cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=157750
+
+        Reviewed by Darin Adler.
+
+        Have a single implementation for BitmapImage::checkForSolidColor(). Create
+        a new function named NativeImage::solidColor() and call it from the former
+        one. The goal is to have the platform files contain only the platform dependent
+        code rather than repeating the platform independent code multiple times.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyMetadataAndNotify): Invalidate m_solidColor.
+        (WebCore::BitmapImage::singlePixelSolidColor): Combine mayFillWithSolidColor(),
+        checkForSolidColor() and solidColor() in one function to guarantee the validity
+        of the returned value. Before, if solidColor() is called without calling
+        mayFillWithSolidColor() or checkForSolidColor(), the returned value would be
+        incorrect.
+        
+        (WebCore::BitmapImage::dump): Use the m_solidColor Optional and Color states.
+        (WebCore::BitmapImage::mayFillWithSolidColor): Deleted.
+        (WebCore::BitmapImage::solidColor): Deleted.
+        
+        * platform/graphics/BitmapImage.h: Delete m_checkedForSolidColor and
+        m_isSolidColor and change m_solidColor to be Optional<Color>.
+        
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled): Use singlePixelSolidColor() and check the returned
+        value to know whether the singe pixel solid color optimization applies or not.
+        
+        * platform/graphics/Image.h:
+        (WebCore::Image::singlePixelSolidColor):
+        (WebCore::Image::mayFillWithSolidColor): Deleted.
+        (WebCore::Image::solidColor): Deleted.
+        Replace mayFillWithSolidColor() and solidColor() with a single function named
+        singlePixelSolidColor(). isValid() of the returned Color can be used to tell
+        whether the singe pixel solid color optimization applies or not.
+        
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::NativeImage::singlePixelSolidColor):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::checkForSolidColor): Deleted.
+        Delete the platform dependent BitmapImage::checkForSolidColor() and add
+        the new platform dependent function NativeImage::singlePixelSolidColor() and
+        use to know whether the singe pixel solid color optimization applies or not.
+        
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::NativeImage::singlePixelSolidColor):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::checkForSolidColor): Deleted.
+        Ditto.
+
 2016-05-26  Pranjal Jumde  <pjumde@apple.com>
 
         Sites served over insecure connections should not be allowed to use geolocation.

@@ -48,8 +48,6 @@ namespace WebCore {
 
 BitmapImage::BitmapImage(ImageObserver* observer)
     : Image(observer)
-    , m_isSolidColor(false)
-    , m_checkedForSolidColor(false)
     , m_animationFinished(false)
     , m_allDataReceived(false)
     , m_haveSize(false)
@@ -63,8 +61,6 @@ BitmapImage::BitmapImage(NativeImagePtr&& image, ImageObserver* observer)
     : Image(observer)
     , m_source(image)
     , m_frameCount(1)
-    , m_isSolidColor(false)
-    , m_checkedForSolidColor(false)
     , m_animationFinished(true)
     , m_allDataReceived(true)
     , m_haveSize(true)
@@ -81,8 +77,6 @@ BitmapImage::BitmapImage(NativeImagePtr&& image, ImageObserver* observer)
     m_frames[0].m_hasAlpha = NativeImage::hasAlpha(image);
     m_frames[0].m_haveMetadata = true;
     m_frames[0].m_image = WTFMove(image);
-    
-    checkForSolidColor();
 }
 
 BitmapImage::~BitmapImage()
@@ -167,8 +161,7 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
 
 void BitmapImage::destroyMetadataAndNotify(unsigned frameBytesCleared, ClearedSource clearedSource)
 {
-    m_isSolidColor = false;
-    m_checkedForSolidColor = false;
+    m_solidColor = Nullopt;
     invalidatePlatformData();
 
     ASSERT(m_decodedSize >= frameBytesCleared);
@@ -195,8 +188,6 @@ void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, Im
     if (frameCaching == CacheMetadataAndFrame) {
         m_frames[index].m_image = m_source.createFrameImageAtIndex(index, subsamplingLevel);
         m_frames[index].m_subsamplingLevel = subsamplingLevel;
-        if (numFrames == 1 && m_frames[index].m_image)
-            checkForSolidColor();
     }
 
     m_frames[index].m_orientation = m_source.orientationAtIndex(index);
@@ -689,18 +680,30 @@ bool BitmapImage::internalAdvanceAnimation(AnimationAdvancement advancement)
     return advancedAnimation;
 }
 
-bool BitmapImage::mayFillWithSolidColor()
+Color BitmapImage::singlePixelSolidColor()
 {
-    if (!m_checkedForSolidColor && frameCount() > 0) {
-        checkForSolidColor();
-        ASSERT(m_checkedForSolidColor);
-    }
-    return m_isSolidColor && !m_currentFrame;
-}
+    // If the image size is not available yet or if the image will be animating don't use the solid color optimization.
+    if (frameCount() != 1)
+        return Color();
+    
+    if (m_solidColor)
+        return m_solidColor.value();
 
-Color BitmapImage::solidColor() const
-{
-    return m_solidColor;
+    // If the frame image is not loaded, first use the decoder to get the size of the image.
+    if (!haveFrameImageAtIndex(0) && m_source.frameSizeAtIndex(0, 0) != IntSize(1, 1)) {
+        m_solidColor = Color();
+        return m_solidColor.value();
+    }
+
+    // Cache the frame image. The size will be calculated from the NativeImagePtr.
+    if (!ensureFrameIsCached(0))
+        return Color();
+    
+    ASSERT(m_frames.size());
+    m_solidColor = NativeImage::singlePixelSolidColor(m_frames[0].m_image.get());
+    
+    ASSERT(m_solidColor);
+    return m_solidColor.value();
 }
     
 bool BitmapImage::canAnimate()
@@ -720,8 +723,8 @@ void BitmapImage::dump(TextStream& ts) const
         ts.dumpProperty("current-frame", m_currentFrame);
     }
     
-    if (m_isSolidColor)
-        ts.dumpProperty("solid-color", m_isSolidColor);
+    if (m_solidColor)
+        ts.dumpProperty("solid-color", m_solidColor.value());
     
     m_source.dump(ts);
 }

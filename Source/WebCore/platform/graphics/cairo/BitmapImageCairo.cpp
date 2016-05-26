@@ -50,6 +50,20 @@ bool hasAlpha(const RefPtr<cairo_surface_t>& image)
     return cairo_surface_get_content(image.get()) != CAIRO_CONTENT_COLOR;
 }
 
+Color singlePixelSolidColor(const RefPtr<cairo_surface_t>& image)
+{
+    ASSERT(image);
+    
+    if (NativeImage::size(image) != IntSize(1, 1))
+        return Color();
+
+    if (cairo_surface_get_type(image.get()) != CAIRO_SURFACE_TYPE_IMAGE)
+        return Color();
+
+    RGBA32* pixel = reinterpret_cast_ptr<RGBA32*>(cairo_image_surface_get_data(image.get()));
+    return colorFromPremultipliedARGB(*pixel);
+}
+
 }
 
 void BitmapImage::draw(GraphicsContext& context, const FloatRect& dst, const FloatRect& src, CompositeOperator op,
@@ -64,8 +78,9 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& dst, const Flo
     if (!surface) // If it's too early we won't have an image yet.
         return;
 
-    if (mayFillWithSolidColor()) {
-        fillWithSolidColor(context, dst, solidColor(), op);
+    Color color = singlePixelSolidColor();
+    if (color.isValid()) {
+        fillWithSolidColor(context, dst, color, op);
         return;
     }
 
@@ -108,32 +123,6 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& dst, const Flo
 
     if (imageObserver())
         imageObserver()->didDraw(this);
-}
-
-void BitmapImage::checkForSolidColor()
-{
-    m_isSolidColor = false;
-    m_checkedForSolidColor = true;
-
-    if (frameCount() > 1)
-        return;
-
-    auto surface = frameImageAtIndex(m_currentFrame);
-    if (!surface) // If it's too early we won't have an image yet.
-        return;
-
-    if (cairo_surface_get_type(surface.get()) != CAIRO_SURFACE_TYPE_IMAGE)
-        return;
-
-    IntSize size = cairoSurfaceSize(surface.get());
-
-    if (size.width() != 1 || size.height() != 1)
-        return;
-
-    unsigned* pixelColor = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(surface.get()));
-    m_solidColor = colorFromPremultipliedARGB(*pixelColor);
-
-    m_isSolidColor = true;
 }
 
 bool FrameData::clear(bool clearMetadata)

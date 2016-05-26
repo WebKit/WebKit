@@ -194,8 +194,7 @@ protected:
     void drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, CompositeOperator);
 
     // Supporting tiled drawing
-    virtual bool mayFillWithSolidColor() { return false; }
-    virtual Color solidColor() const { return Color(); }
+    virtual Color singlePixelSolidColor() { return Color(); }
     
 private:
     RefPtr<SharedBuffer> m_encodedImageData;

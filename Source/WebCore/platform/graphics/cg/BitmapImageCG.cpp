@@ -54,6 +54,7 @@ namespace NativeImage {
 
 IntSize size(const RetainPtr<CGImageRef>& image)
 {
+    ASSERT(image);
     return IntSize(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
 }
 
@@ -61,6 +62,29 @@ bool hasAlpha(const RetainPtr<CGImageRef>&)
 {
     // FIXME: Answer correctly the question: does the CGImageRef have alpha channnel?
     return true;
+}
+    
+Color singlePixelSolidColor(const RetainPtr<CGImageRef>& image)
+{
+    ASSERT(image);
+    
+    if (NativeImage::size(image) != IntSize(1, 1))
+        return Color();
+    
+    unsigned char pixel[4]; // RGBA
+    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), sRGBColorSpaceRef(),
+        kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+
+    if (!bitmapContext)
+        return Color();
+    
+    CGContextSetBlendMode(bitmapContext.get(), kCGBlendModeCopy);
+    CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, 1, 1), image.get());
+    
+    if (!pixel[3])
+        return Color(0, 0, 0, 0);
+
+    return Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }
 
 }
@@ -80,49 +104,6 @@ bool FrameData::clear(bool clearMetadata)
         return true;
     }
     return false;
-}
-
-void BitmapImage::checkForSolidColor()
-{
-    m_checkedForSolidColor = true;
-    m_isSolidColor = false;
-
-    if (frameCount() > 1)
-        return;
-
-    if (!haveFrameImageAtIndex(0)) {
-        IntSize size = m_source.frameSizeAtIndex(0, 0);
-        if (size.width() != 1 || size.height() != 1)
-            return;
-
-        if (!ensureFrameIsCached(0))
-            return;
-    }
-
-    CGImageRef image = nullptr;
-    if (m_frames.size())
-        image = m_frames[0].m_image.get();
-
-    if (!image)
-        return;
-
-    // Currently we only check for solid color in the important special case of a 1x1 image.
-    if (CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
-        unsigned char pixel[4]; // RGBA
-        RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), sRGBColorSpaceRef(),
-            kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
-        if (!bitmapContext)
-            return;
-        GraphicsContext(bitmapContext.get()).setCompositeOperation(CompositeCopy);
-        CGRect destinationRect = CGRectMake(0, 0, 1, 1);
-        CGContextDrawImage(bitmapContext.get(), destinationRect, image);
-        if (!pixel[3])
-            m_solidColor = Color(0, 0, 0, 0);
-        else
-            m_solidColor = Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
-
-        m_isSolidColor = true;
-    }
 }
 
 CGImageRef BitmapImage::getCGImageRef()
@@ -179,8 +160,9 @@ void BitmapImage::draw(GraphicsContext& ctxt, const FloatRect& destRect, const F
     if (!image) // If it's too early we won't have an image yet.
         return;
     
-    if (mayFillWithSolidColor()) {
-        fillWithSolidColor(ctxt, destRect, solidColor(), compositeOp);
+    Color color = singlePixelSolidColor();
+    if (color.isValid()) {
+        fillWithSolidColor(ctxt, destRect, color, compositeOp);
         return;
     }
 

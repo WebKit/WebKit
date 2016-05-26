@@ -63,6 +63,7 @@ class Timer;
 namespace NativeImage {
     IntSize size(const NativeImagePtr&);
     bool hasAlpha(const NativeImagePtr&);
+    Color singlePixelSolidColor(const NativeImagePtr&);
 }
 
 // ================================================
@@ -274,13 +275,7 @@ protected:
     // Handle platform-specific data
     void invalidatePlatformData();
 
-    // Checks to see if the image is a 1x1 solid color. We optimize these images and just do a fill rect instead.
-    // This check should happen regardless whether m_checkedForSolidColor is already set, as the frame may have
-    // changed.
-    void checkForSolidColor();
-
-    bool mayFillWithSolidColor() override;
-    Color solidColor() const override;
+    Color singlePixelSolidColor() override;
 
 #if !ASSERT_DISABLED
     bool notSolidColor() override;
@@ -312,7 +307,10 @@ private:
     mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for frame 0. Only built lazily if someone queries for one.
 #endif
 
-    Color m_solidColor;  // If we're a 1x1 solid color, this is the color to use to fill.
+    // The value of this data member is a missing value if we haven’t analyzed to check for a solid color or not, but an invalid
+    // color if we have analyzed and decided it’s not a solid color, and a valid color if we have analyzed and decide that the
+    // solid color optimization applies. The analysis, we do, handles only the case of 1x1 solid color images.
+    Optional<Color> m_solidColor;
 
     unsigned m_decodedSize { 0 }; // The current size of all decoded frames.
     mutable unsigned m_decodedPropertiesSize { 0 }; // The size of data decoded by the source to determine image properties (e.g. size, frame count, etc).
@@ -323,9 +321,6 @@ private:
     double m_progressiveLoadChunkTime { 0 };
     uint16_t m_progressiveLoadChunkCount { 0 };
 #endif
-    bool m_isSolidColor : 1; // Whether or not we are a 1x1 solid image.
-    bool m_checkedForSolidColor : 1; // Whether we've checked the frame for solid color.
-
     bool m_animationFinished : 1; // Whether or not we've completed the entire animation.
 
     bool m_allDataReceived : 1; // Whether or not we've received all our data.
