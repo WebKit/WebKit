@@ -1,3 +1,16 @@
+2016-05-26  Brent Fulgham  <bfulgham@apple.com>
+
+        DOM mutation methods fail to re-check validity of node insertion after removing nodes from old parent
+        https://bugs.webkit.org/show_bug.cgi?id=81991
+        <rdar://problem/11120506>
+
+        Reviewed by Chris Dumez.
+
+        Add a test case for an old DOM mutation bug that was fixed long ago.
+
+        * fast/dom/circular-dom-tree-crash-expected.txt: Added.
+        * fast/dom/circular-dom-tree-crash.html: Added.
+
 2016-05-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking js/function-apply.html as a flaky timeout on mac debug wk2
