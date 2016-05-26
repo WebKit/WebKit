@@ -1,3 +1,11 @@
+2016-05-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Build fix
+
+        Rubber stamped by Lucas Forschler.
+
+        * Configurations/DebugRelease.xcconfig:
+
 2016-05-24  Beth Dakin  <bdakin@apple.com>
 
         Candidates should work with input methods
