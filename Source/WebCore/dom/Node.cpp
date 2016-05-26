@@ -1162,6 +1162,9 @@ Node::InsertionNotificationRequest Node::insertedInto(ContainerNode& insertionPo
         setFlag(InDocumentFlag);
     if (parentOrShadowHostNode()->isInShadowTree())
         setFlag(IsInShadowTreeFlag);
+
+    setNeedsStyleRecalc(ReconstructRenderTree);
+
     return InsertionDone;
 }
 

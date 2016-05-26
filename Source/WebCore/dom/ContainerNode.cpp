@@ -376,8 +376,6 @@ void ContainerNode::parserInsertBefore(Node& newChild, Node& nextChild)
     newChild.updateAncestorConnectedSubframeCountForInsertion();
 
     notifyChildInserted(newChild, ChildChangeSourceParser);
-
-    newChild.setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
 bool ContainerNode::replaceChild(Node& newChild, Node& oldChild, ExceptionCode& ec)
@@ -721,8 +719,6 @@ void ContainerNode::parserAppendChild(Node& newChild)
     newChild.updateAncestorConnectedSubframeCountForInsertion();
 
     notifyChildInserted(newChild, ChildChangeSourceParser);
-
-    newChild.setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
 void ContainerNode::childrenChanged(const ChildChange& change)
@@ -813,8 +809,6 @@ void ContainerNode::updateTreeAfterInsertion(Node& child)
     ASSERT(child.refCount());
 
     notifyChildInserted(child, ChildChangeSourceAPI);
-
-    child.setNeedsStyleRecalc(ReconstructRenderTree);
 
     dispatchChildInsertionEvents(child);
 }
