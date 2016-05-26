@@ -465,3 +465,5 @@ imported/blink/fast/overflow/hidden-html-auto-body.html [ Pass ImageOnlyFailure 
 webkit.org/b/155757 [ Debug ElCapitan ] media/media-document-audio-repaint.html [ Skip ]
 
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
+
+webkit.org/b/158133 [ Debug ] js/function-apply.html [ Pass Timeout ]
