@@ -1,3 +1,19 @@
+2016-05-25  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix ResourceTiming XHR flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=158019
+
+        Reviewed by Alex Christensen.
+
+        Remove XHR specific ResourceTiming information store and addition as it is not needed.
+
+        Test: http/tests/performance/performance-resource-timing-xhr-single-entry.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest): Removed XHR-specific initiator info storage.
+        (WebCore::DocumentThreadableLoader::didFinishLoading): Removed XHR-specific RT entry addition.
+        * loader/DocumentThreadableLoader.h:
+
 2016-05-25  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Deduplicate make-js-file-arrays usage and make it work on Windows.

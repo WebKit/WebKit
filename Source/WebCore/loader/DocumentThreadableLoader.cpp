@@ -325,11 +325,6 @@ void DocumentThreadableLoader::notifyFinished(CachedResource* resource)
 
 void DocumentThreadableLoader::didFinishLoading(unsigned long identifier, double finishTime)
 {
-#if ENABLE(WEB_TIMING)
-    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        m_resourceTimingInfo.addResourceTiming(m_resource.get(), &m_document);
-#endif
-
     if (m_actualRequest) {
         InspectorInstrumentation::didFinishLoading(m_document.frame(), m_document.frame()->loader().documentLoader(), identifier, finishTime);
 
@@ -395,14 +390,8 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
             newRequest.setInitiator(m_options.initiator);
         ASSERT(!m_resource);
         m_resource = m_document.cachedResourceLoader().requestRawResource(newRequest);
-        if (m_resource) {
+        if (m_resource)
             m_resource->addClient(this);
-
-#if ENABLE(WEB_TIMING)
-            if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-                m_resourceTimingInfo.storeResourceTimingInitiatorInformation(m_resource, newRequest, m_document.frame());
-#endif
-        }
 
         return;
     }

@@ -1,3 +1,18 @@
+2016-05-25  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix ResourceTiming XHR flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=158019
+
+        Reviewed by Alex Christensen.
+
+        Test fixes and additions that make sure XHR tests are not run as part of XHR's onload event, as ResourceTiming entries are added
+        after it.
+
+        * TestExpectations:
+        * http/tests/performance/performance-resource-timing-cached-entries.html: Avoid running the tests as part of the XHR's load event.
+        * http/tests/performance/performance-resource-timing-xhr-single-entry-expected.txt: Added.
+        * http/tests/performance/performance-resource-timing-xhr-single-entry.html: Test that XHR fetch adds a single entry with correct initiatorType.
+
 2016-05-25  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] RegExp with deeply nested subexpressions overflow the stack in Yarr

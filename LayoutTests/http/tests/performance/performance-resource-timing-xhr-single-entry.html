@@ -7,41 +7,32 @@
         testRunner.dumpAsText()
         testRunner.waitUntilDone();
     }
-    if (window.performance)
-        console.log("current entries: " + performance.getEntriesByType('resource').length);
 </script>
 <script src="../../resources/js-test-pre.js"></script>
-<img src="../../resources/square100.png">
 <script>
     var foundResource = 0;
+    var initiator;
     var runTest = function() {
         var resources = performance.getEntriesByType('resource');
         for (var i = 0; i < resources.length; ++i) {
-            console.log("entry: " + resources[i].name);
-            if (resources[i].name.indexOf("square") != -1)
+            if (resources[i].name.indexOf("square") != -1) {
                 ++foundResource;
+                initiator = resources[i].initiatorType;
+            }
         };
-        shouldBe("foundResource", "2");
+        shouldBe("foundResource", "1");
+        shouldBeEqualToString("initiator", "xmlhttprequest");
         if (window.internals)
             window.internals.setResourceTimingSupport(false);
         if (window.testRunner)
             testRunner.notifyDone();
     };
-    var windowLoaded = false;
-    var xhrLoaded = false;
     var xhr = new XMLHttpRequest();
     xhr.addEventListener("load", function() {
-        if (windowLoaded)
-            setTimeout(runTest, 0);
-        xhrLoaded = true;
+        setTimeout(runTest, 0);
     });
     xhr.open("GET", "../../resources/square100.png");
     xhr.send();
-    window.addEventListener("load", function() {
-        if (xhrLoaded)
-            runTest();
-        windowLoaded = true;
-    });
 </script>
 </body>
 </html>
