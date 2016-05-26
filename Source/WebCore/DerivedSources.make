@@ -535,6 +535,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/plugins/DOMPluginArray.idl \
     $(WebCore)/storage/Storage.idl \
     $(WebCore)/storage/StorageEvent.idl \
+    $(WebCore)/testing/GCObservation.idl \
     $(WebCore)/testing/Internals.idl \
     $(WebCore)/testing/InternalSettings.idl \
     $(WebCore)/testing/MallocStatistics.idl \

@@ -2071,6 +2071,10 @@
 		517139071BF64DEF000D5F01 /* MemoryCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517139011BF64DE3000D5F01 /* MemoryCursor.cpp */; };
 		517139081BF64DEF000D5F01 /* MemoryCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 517139021BF64DE3000D5F01 /* MemoryCursor.h */; };
 		51714EA81CF4E4B1004723C4 /* IDBActiveDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EA71CF4DE87004723C4 /* IDBActiveDOMObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51714EAC1CF65951004723C4 /* GCObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EA91CF65899004723C4 /* GCObservation.cpp */; };
+		51714EAD1CF65951004723C4 /* GCObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EAA1CF65899004723C4 /* GCObservation.h */; };
+		51714EB01CF665CE004723C4 /* JSGCObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EAE1CF6654A004723C4 /* JSGCObservation.cpp */; };
+		51714EB11CF665CE004723C4 /* JSGCObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EAF1CF6654A004723C4 /* JSGCObservation.h */; };
 		51741D0F0B07259A00ED442C /* BackForwardClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0B0B07259A00ED442C /* BackForwardClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0E0B07259A00ED442C /* HistoryItem.cpp */; };
@@ -9662,6 +9666,11 @@
 		517139031BF64DE3000D5F01 /* MemoryObjectStoreCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryObjectStoreCursor.cpp; sourceTree = "<group>"; };
 		517139041BF64DE3000D5F01 /* MemoryObjectStoreCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObjectStoreCursor.h; sourceTree = "<group>"; };
 		51714EA71CF4DE87004723C4 /* IDBActiveDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBActiveDOMObject.h; sourceTree = "<group>"; };
+		51714EA91CF65899004723C4 /* GCObservation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCObservation.cpp; sourceTree = "<group>"; };
+		51714EAA1CF65899004723C4 /* GCObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCObservation.h; sourceTree = "<group>"; };
+		51714EAB1CF65899004723C4 /* GCObservation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GCObservation.idl; sourceTree = "<group>"; };
+		51714EAE1CF6654A004723C4 /* JSGCObservation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGCObservation.cpp; sourceTree = "<group>"; };
+		51714EAF1CF6654A004723C4 /* JSGCObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGCObservation.h; sourceTree = "<group>"; };
 		51741D0B0B07259A00ED442C /* BackForwardClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardClient.h; sourceTree = "<group>"; };
 		51741D0D0B07259A00ED442C /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
 		51741D0E0B07259A00ED442C /* HistoryItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItem.cpp; sourceTree = "<group>"; };
@@ -16719,6 +16728,9 @@
 			isa = PBXGroup;
 			children = (
 				41815C1B138319630057AAA4 /* js */,
+				51714EA91CF65899004723C4 /* GCObservation.cpp */,
+				51714EAA1CF65899004723C4 /* GCObservation.h */,
+				51714EAB1CF65899004723C4 /* GCObservation.idl */,
 				417DA4CF13734326007C57FB /* Internals.cpp */,
 				417DA4CE13734326007C57FB /* Internals.h */,
 				41813F9113818AD60057AAA4 /* Internals.idl */,
@@ -16752,6 +16764,8 @@
 		417DA71213735D90007C57FB /* Testing */ = {
 			isa = PBXGroup;
 			children = (
+				51714EAE1CF6654A004723C4 /* JSGCObservation.cpp */,
+				51714EAF1CF6654A004723C4 /* JSGCObservation.h */,
 				417DA71B13735DFA007C57FB /* JSInternals.cpp */,
 				417DA71C13735DFA007C57FB /* JSInternals.h */,
 				A7B4EA7814C9348400C8F5BF /* JSInternalSettings.cpp */,
@@ -24987,6 +25001,7 @@
 				A7BF7EE014C9175A0014489D /* InternalSettings.h in Headers */,
 				53E29E5F167A8A1900586D3D /* InternalSettingsGenerated.h in Headers */,
 				417DA71E13735DFA007C57FB /* JSInternals.h in Headers */,
+				51714EB11CF665CE004723C4 /* JSGCObservation.h in Headers */,
 				A740B5A514C935AB00A77FA4 /* JSInternalSettings.h in Headers */,
 				53ED3FDF167A88E7006762E6 /* JSInternalSettingsGenerated.h in Headers */,
 				A740B59514C935AB00A77FA4 /* JSMallocStatistics.h in Headers */,
@@ -24996,6 +25011,7 @@
 				CDC26B41160A8CCE0026757B /* MockCDM.h in Headers */,
 				A1BF6B831AA96C7D00AF4A8A /* MockContentFilter.h in Headers */,
 				A1B5B29F1AAA846F008B6042 /* MockContentFilterSettings.h in Headers */,
+				51714EAD1CF65951004723C4 /* GCObservation.h in Headers */,
 				2D6F3E911C1ECB2F0061DBD4 /* MockPageOverlay.h in Headers */,
 				2D97F04819DD4140001EE9C3 /* MockPageOverlayClient.h in Headers */,
 				AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */,
@@ -28966,10 +28982,12 @@
 				53E29E5E167A8A1900586D3D /* InternalSettingsGenerated.cpp in Sources */,
 				417DA71D13735DFA007C57FB /* JSInternals.cpp in Sources */,
 				A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */,
+				51714EAC1CF65951004723C4 /* GCObservation.cpp in Sources */,
 				53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */,
 				A740B59714C935AF00A77FA4 /* JSMallocStatistics.cpp in Sources */,
 				CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */,
 				A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */,
+				51714EB01CF665CE004723C4 /* JSGCObservation.cpp in Sources */,
 				A1E5B31F1AAD1DA4006EBEFB /* JSMockContentFilterSettingsCustom.cpp in Sources */,
 				2D4150DE1C1F868C000A3BA2 /* JSMockPageOverlay.cpp in Sources */,
 				EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */,

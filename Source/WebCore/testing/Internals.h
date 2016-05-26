@@ -46,6 +46,7 @@ class Document;
 class Element;
 class File;
 class Frame;
+class GCObservation;
 class HTMLImageElement;
 class HTMLInputElement;
 class HTMLLinkElement;
@@ -481,6 +482,8 @@ public:
 #endif
 
     bool isProcessingUserGesture();
+
+    RefPtr<GCObservation> observeGC(JSC::JSValue);
 
 private:
     explicit Internals(Document&);

@@ -455,4 +455,6 @@ enum AutoFillButtonType {
     void setResourceTimingSupport(boolean scalable);
     
     boolean isProcessingUserGesture();
+
+    GCObservation observeGC(any observed);
 };

@@ -1,3 +1,26 @@
+2016-05-26  Brady Eidson  <beidson@apple.com>
+
+        Implement internals.observeGC to get called back when a Javascript object is GC'ed.
+        https://bugs.webkit.org/show_bug.cgi?id=158093
+
+        Reviewed by Geoffrey Garen.
+
+        Test: js/test-observegc.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * testing/GCObservation.cpp: Added.
+        (WebCore::GCObservation::GCObservation):
+        * testing/GCObservation.h: Added.
+        * testing/GCObservation.idl: Added.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::observeGC):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-05-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Font Loading] Allow empty strings in FontFace constructor
