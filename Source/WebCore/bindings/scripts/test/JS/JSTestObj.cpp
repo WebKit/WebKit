@@ -3751,7 +3751,7 @@ bool setJSTestObjReplaceableAttribute(ExecState* state, EncodedJSValue thisValue
     if (UNLIKELY(!castedThis)) {
         return throwSetterTypeError(*state, "TestObj", "replaceableAttribute");
     }
-    // Shadowing a built-in object.
+    // Shadowing a built-in property.
     return castedThis->putDirect(state->vm(), Identifier::fromString(state, "replaceableAttribute"), value);
 }
 

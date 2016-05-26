@@ -1,3 +1,12 @@
+2016-05-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline bindings tests after r201428
+
+        Unreviewed test gardening.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjReplaceableAttribute):
+
 2016-05-25  Geoffrey Garen  <ggaren@apple.com>
 
         replaceable own properties seem to ignore replacement after property caching
