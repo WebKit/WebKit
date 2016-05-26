@@ -1,3 +1,12 @@
+2016-05-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Build fix
+
+        Rubber stamped by Lucas Forschler.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+
 2016-05-25  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WTF/Functional.h
