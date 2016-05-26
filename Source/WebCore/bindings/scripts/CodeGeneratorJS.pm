@@ -4486,7 +4486,7 @@ sub NativeToJSValue
 
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
-        return "$value ? $value->deserialize(state, castedThis->globalObject(), 0) : jsNull()";
+        return "$value ? $value->deserialize(state, $thisValue->globalObject(), 0) : jsNull()";
     }
 
     AddToImplIncludes("StyleProperties.h", $conditional) if $type eq "CSSStyleDeclaration";
@@ -4514,7 +4514,7 @@ sub NativeToJSValue
             if ($selfIsTearOffType) {
                 # FIXME: Why SVGMatrix specifically?
                 AddToImplIncludes("SVGMatrixTearOff.h", $conditional);
-                $value = "SVGMatrixTearOff::create(castedThis->wrapped(), $value)";
+                $value = "SVGMatrixTearOff::create($thisValue->wrapped(), $value)";
             } else {
                 AddToImplIncludes("SVGStaticPropertyTearOff.h", $conditional);
                 my $interfaceName = $interface->name;

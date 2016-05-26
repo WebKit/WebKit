@@ -1,3 +1,22 @@
+2016-05-26  Alejandro G. Castro  <alex@igalia.com>
+
+        NativeToJSValue is harcoding the $thisValue in some strings
+        https://bugs.webkit.org/show_bug.cgi?id=158113
+
+        Reviewed by Darin Adler.
+
+        Replaced the string with the variable value.
+
+        Updated the tests results in the bindings.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): Replaced the hardcoded string with the variable
+        value.
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackWithSerializedScriptValueParam):
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        (WebCore::JSTestCallbackFunction::callbackWithSerializedScriptValueParam):
+
 2016-05-26  Frederic Wang  <fwang@igalia.com>
 
         Small improvements to RenderBox/LayoutUnit casting in MathML
