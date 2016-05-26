@@ -1,3 +1,14 @@
+2016-05-25  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Deduplicate make-js-file-arrays usage and make it work on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=157997
+
+        Reviewed by Alex Christensen.
+
+        No new tests needed.
+
+        * CMakeLists.txt: Use new MAKE_JS_FILE_ARRAYS macro.
+
 2016-05-25  Chris Dumez  <cdumez@apple.com>
 
         Use HashMap::add() instead of HashMap::set() in Node::ensureEventTargetData()

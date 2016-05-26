@@ -351,6 +351,23 @@ macro(GENERATE_WEBKIT2_MESSAGE_SOURCES _output_source _input_files)
     endforeach ()
 endmacro()
 
+macro(MAKE_JS_FILE_ARRAYS _output_cpp _output_h _scripts _scripts_dependencies)
+    if (WIN32)
+        set(_python_path set "PYTHONPATH=${JavaScriptCore_SCRIPTS_DIR}" COMMAND)
+    else ()
+        set(_python_path "PYTHONPATH=${JavaScriptCore_SCRIPTS_DIR}")
+    endif ()
+
+    add_custom_command(
+        OUTPUT ${_output_h} ${_output_cpp}
+        MAIN_DEPENDENCY ${WEBCORE_DIR}/Scripts/make-js-file-arrays.py
+        DEPENDS ${${_scripts}}
+        COMMAND ${_python_path} ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/Scripts/make-js-file-arrays.py ${_output_h} ${_output_cpp} ${${_scripts}}
+        VERBATIM)
+    list(APPEND WebCore_DERIVED_SOURCES ${_output_cpp})
+    ADD_SOURCE_DEPENDENCIES(${${_scripts_dependencies}} ${_output_h} ${_output_cpp})
+endmacro()
+
 # Helper macro for using all-in-one builds
 # This macro removes the sources included in the _all_in_one_file from the input _file_list.
 # _file_list is a list of source files
