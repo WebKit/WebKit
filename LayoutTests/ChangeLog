@@ -1,3 +1,29 @@
+2016-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in TreeScope::focusedElement
+        https://bugs.webkit.org/show_bug.cgi?id=158108
+
+        Reviewed by Enrica Casucci.
+
+        Added a regression test for accessing shadowRoot.activeElement after re-focusing an element
+        inside DOMNodeRemovedFromDocument event and unload events.
+
+        This patch also restores the expected result of fast/events/onblur-remove.html to that of when
+        the test was in r15720 and updated in r19014. The expected result was changed in r85495 as it was
+        converted to a eventSender test.
+
+        * fast/dom/Range/range-created-during-remove-children-expected.txt:
+        * fast/dom/Range/range-created-during-remove-children.html: Update the test to use unload event
+        of an iframe since we no longer fire blur event when removing a focused element.
+        * fast/dom/adopt-node-prevented-expected.txt:
+        * fast/dom/adopt-node-prevented.html: Ditto.
+        * fast/dom/remove-body-during-body-replacement2.html: Ditto. Use DOMNodeRemoved instead.
+        * fast/events/nested-event-remove-node-crash.html: Ditto. Use DOMNodeRemovedFromDocument instead.
+        * fast/events/onblur-remove-expected.txt:
+        * fast/events/onblur-remove.html: See above.
+        * fast/shadow-dom/shadow-root-active-element-crash-expected.txt: Added.
+        * fast/shadow-dom/shadow-root-active-element-crash.html: Added.
+
 2016-05-27  Brent Fulgham  <bfulgham@apple.com>
 
         CSP: Fire 'load' events even when blocking loads via 'frame-src'.

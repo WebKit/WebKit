@@ -17,7 +17,7 @@ else {
     }
 
     setTimeout(function () {
-        document.addEventListener('DOMFocusOut', function () { crash(); }, true);
+        document.addEventListener('DOMNodeRemoved', function () { crash(); }, true);
         document.addEventListener('DOMSubtreeModified', function () { /* noop */ }, false);
         document.designMode = "on";
         document.execCommand("SelectAll");

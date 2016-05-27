@@ -5,7 +5,7 @@
         if (window.testRunner)
             testRunner.waitUntilDone();
 
-        var numBlurs = 0;
+        var blurEventCount = 0;
 
         window.onload = function() { document.getElementById("input").focus(); }
 
@@ -14,10 +14,7 @@
 
             f.innerHTML = '';
 
-            if (numBlurs)
-                testFailed('Onblur handler called.');
-            else
-                testPassed('Onblur handler not called.');
+            shouldBe("blurEventCount", "0");
 
             debug('<br /><span class="pass">TEST COMPLETE</span>');
             if (window.testRunner)
@@ -28,12 +25,11 @@
 <body>
     <p id="description"></p>
     <form id='f'>
-      <input id="input" onblur="numBlurs++" onfocus="setTimeout('finish()', 0)">
+      <input id="input" onblur="blurEventCount++" onfocus="setTimeout('finish()', 0)">
     </form>
     <div id="console"></div>
     <script>
-        description("This tests that elements shouldn't emit any onblur events when they are being removed from the document. <br>" +
-                    "Note, this test is expected to fail as of 04/25/2011. See bug #59379.");
+        description("This tests that elements shouldn't emit any onblur events when they are being removed from the document.");
     </script>
   </body>
 </html>

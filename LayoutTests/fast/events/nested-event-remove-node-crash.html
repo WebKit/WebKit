@@ -34,7 +34,9 @@ function test()
     3. the focused node's onblur will fire
     4. the onblur event handler will send off an XHR who's handler will remove the node
 */
-    document.getElementById("theSelect").focus();
+    var select = document.getElementById("theSelect");
+    select.addEventListener('DOMNodeRemovedFromDocument', function () { sendXHR();GC(); });
+    select.focus();
     sendXHR();
     
     if (window.testRunner) {

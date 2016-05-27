@@ -3700,7 +3700,7 @@ void Document::removeFocusedNodeOfSubtree(Node* node, bool amongChildrenOnly)
         nodeInSubtree = (focusedElement == node) || focusedElement->isDescendantOf(node);
     
     if (nodeInSubtree)
-        setFocusedElement(nullptr);
+        setFocusedElement(nullptr, FocusDirectionNone, FocusRemovalEventsMode::DoNotDispatch);
 }
 
 void Document::hoveredElementDidDetach(Element* element)
@@ -3738,7 +3738,7 @@ void Document::setAnnotatedRegions(const Vector<AnnotatedRegionValue>& regions)
 }
 #endif
 
-bool Document::setFocusedElement(Element* element, FocusDirection direction)
+bool Document::setFocusedElement(Element* element, FocusDirection direction, FocusRemovalEventsMode eventsMode)
 {
     RefPtr<Element> newFocusedElement = element;
     // Make sure newFocusedElement is actually in this document
@@ -3761,33 +3761,36 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction)
 
         oldFocusedElement->setFocus(false);
 
-        // Dispatch a change event for form control elements that have been edited.
-        if (is<HTMLFormControlElement>(*oldFocusedElement)) {
-            HTMLFormControlElement& formControlElement = downcast<HTMLFormControlElement>(*oldFocusedElement);
-            if (formControlElement.wasChangedSinceLastFormControlChangeEvent())
-                formControlElement.dispatchFormControlChangeEvent();
-        }
+        if (eventsMode == FocusRemovalEventsMode::Dispatch) {
+            // Dispatch a change event for form control elements that have been edited.
+            if (is<HTMLFormControlElement>(*oldFocusedElement)) {
+                HTMLFormControlElement& formControlElement = downcast<HTMLFormControlElement>(*oldFocusedElement);
+                if (formControlElement.wasChangedSinceLastFormControlChangeEvent())
+                    formControlElement.dispatchFormControlChangeEvent();
+            }
 
-        // Dispatch the blur event and let the node do any other blur related activities (important for text fields)
-        oldFocusedElement->dispatchBlurEvent(newFocusedElement.copyRef());
+            // Dispatch the blur event and let the node do any other blur related activities (important for text fields)
+            oldFocusedElement->dispatchBlurEvent(newFocusedElement.copyRef());
 
-        if (m_focusedElement) {
-            // handler shifted focus
-            focusChangeBlocked = true;
-            newFocusedElement = nullptr;
-        }
-        
-        oldFocusedElement->dispatchFocusOutEvent(eventNames().focusoutEvent, newFocusedElement.copyRef()); // DOM level 3 name for the bubbling blur event.
-        // FIXME: We should remove firing DOMFocusOutEvent event when we are sure no content depends
-        // on it, probably when <rdar://problem/8503958> is resolved.
-        oldFocusedElement->dispatchFocusOutEvent(eventNames().DOMFocusOutEvent, newFocusedElement.copyRef()); // DOM level 2 name for compatibility.
+            if (m_focusedElement) {
+                // handler shifted focus
+                focusChangeBlocked = true;
+                newFocusedElement = nullptr;
+            }
 
-        if (m_focusedElement) {
-            // handler shifted focus
-            focusChangeBlocked = true;
-            newFocusedElement = nullptr;
-        }
-            
+            oldFocusedElement->dispatchFocusOutEvent(eventNames().focusoutEvent, newFocusedElement.copyRef()); // DOM level 3 name for the bubbling blur event.
+            // FIXME: We should remove firing DOMFocusOutEvent event when we are sure no content depends
+            // on it, probably when <rdar://problem/8503958> is resolved.
+            oldFocusedElement->dispatchFocusOutEvent(eventNames().DOMFocusOutEvent, newFocusedElement.copyRef()); // DOM level 2 name for compatibility.
+
+            if (m_focusedElement) {
+                // handler shifted focus
+                focusChangeBlocked = true;
+                newFocusedElement = nullptr;
+            }
+        } else
+            ASSERT(!m_focusedElement);
+
         if (oldFocusedElement->isRootEditableElement())
             frame()->editor().didEndEditing();
 
@@ -3967,6 +3970,14 @@ void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 {
+    NoEventDispatchAssertion assertNoEventDispatch;
+
+    removeFocusedNodeOfSubtree(&container, true /* amongChildrenOnly */);
+
+#if ENABLE(FULLSCREEN_API)
+    removeFullScreenElementOfSubtree(&container, true /* amongChildrenOnly */);
+#endif
+
     for (auto* range : m_ranges)
         range->nodeChildrenWillBeRemoved(container);
 
@@ -3991,6 +4002,14 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 
 void Document::nodeWillBeRemoved(Node& n)
 {
+    NoEventDispatchAssertion assertNoEventDispatch;
+
+    removeFocusedNodeOfSubtree(&n);
+
+#if ENABLE(FULLSCREEN_API)
+    removeFullScreenElementOfSubtree(&n);
+#endif
+
     for (auto* it : m_nodeIterators)
         it->nodeWillBeRemoved(n);
 

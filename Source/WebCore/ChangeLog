@@ -1,3 +1,45 @@
+2016-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in TreeScope::focusedElement
+        https://bugs.webkit.org/show_bug.cgi?id=158108
+
+        Reviewed by Enrica Casucci.
+
+        The bug was caused by a flawed sequence of steps we took to remove an element. When an element is removed,
+        willRemoveChild and willRemoveChildren fire blur events on removed focused element and its ancestors and
+        unload event on any removed iframes. However, it was possible to focus an element on which we had fired blur
+        during an unload event, leaving m_focusedElement point to an element that's not in the document anymore.
+
+        Changing the order doesn't help because that would make it possible to insert the removed iframes back into
+        the document inside a event listener of the blur event, which was specifically fixed by r127534 four years ago.
+
+        Instead, fix the bug by not firing blur and change events on removed nodes. New behavior matches Firefox and HTML5
+        specification: https://html.spec.whatwg.org/multipage/interaction.html#focus-fixup-rule-one
+
+        Test: fast/shadow-dom/shadow-root-active-element-crash.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::willRemoveChild): Made this function static local since it didn't need to have access to any private
+        member variables. Call Document::nodeWillBeRemoved after disconnecting iframes since unload event handler could
+        allocate new Ranges just like mutation events.
+        (WebCore::willRemoveChildren): Ditto.
+        (WebCore::ContainerNode::removeChild): Removed the calls to removeFullScreenElementOfSubtree and
+        removeFocusedNodeOfSubtree as they're now called in Document::nodeWillBeRemoved.
+        (WebCore::ContainerNode::removeChildren): Ditto.
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::removeFocusedNodeOfSubtree): Don't dispatch blur and change events when a node is removed.
+        (WebCore::Document::setFocusedElement): Added FocusRemovalEventsMode as the third argument. Avoid dispatching blur
+        and change events when FocusRemovalEventsMode::Dispatch is set.
+        (WebCore::Document::nodeChildrenWillBeRemoved): Added calls to removeFullScreenElementOfSubtree and
+        removeFocusedNodeOfSubtree. Also assert that no events are fired within this function. If we ever fire an event here,
+        "unloaded" iframes can be inserted back into a document before ContainerNode::removeChild actually removes them.
+        (WebCore::Document::nodeWillBeRemoved): Ditto.
+        * dom/Document.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::focusedElement): Added a release assertion to make sure the focused element is in the document
+        of the tree scope, and added an explicit type check just in case.
+
 2016-05-27  Brent Fulgham  <bfulgham@apple.com>
 
         CSP: Fire 'load' events even when blocking loads via 'frame-src'.

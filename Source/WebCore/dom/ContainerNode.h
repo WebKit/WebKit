@@ -130,8 +130,6 @@ private:
 
     bool isContainerNode() const = delete;
 
-    void willRemoveChild(Node& child);
-
     Node* m_firstChild { nullptr };
     Node* m_lastChild { nullptr };
 };

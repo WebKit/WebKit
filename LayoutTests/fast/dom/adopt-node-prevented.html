@@ -5,14 +5,14 @@
 </head>
 <body>
   <div id="newParent"></div>
-  <a href="#" id="target"></a>
+  <iframe href="#" id="target"></iframe>
 <script>
 description("Test that adoptNode fails safely if prevented by a DOM mutation.");
 
 function run() {
     newParent = document.getElementById("newParent");
     target = document.getElementById("target");
-    target.addEventListener("blur", function () { newParent.appendChild(target); }, false);
+    target.contentWindow.addEventListener("unload", function () { newParent.appendChild(target); }, false);
     target.focus();
     var anotherDocument = document.implementation.createDocument("", "", null);
 
