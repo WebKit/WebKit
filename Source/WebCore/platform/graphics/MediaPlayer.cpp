@@ -660,9 +660,9 @@ PlatformLayer* MediaPlayer::platformLayer() const
 }
     
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-void MediaPlayer::setVideoFullscreenLayer(PlatformLayer* layer)
+void MediaPlayer::setVideoFullscreenLayer(PlatformLayer* layer, std::function<void()> completionHandler)
 {
-    m_private->setVideoFullscreenLayer(layer);
+    m_private->setVideoFullscreenLayer(layer, completionHandler);
 }
 
 void MediaPlayer::setVideoFullscreenFrame(FloatRect frame)

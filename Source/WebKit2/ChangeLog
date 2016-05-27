@@ -1,3 +1,19 @@
+2016-05-27  Jeremy Jones  <jeremyj@apple.com>
+
+        Decrease flicker when changing video presentation mode.
+        https://bugs.webkit.org/show_bug.cgi?id=158148
+        rdar://problem/24476949
+
+        Reviewed by Tim Horton.
+
+        Prevent flicker by using setVideoFullscreenLayer with a completion handler to delay 
+        enter fullscreen and cleanup fullscreen until the video layer has completely been
+        installed or removed.
+
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::didSetupFullscreen):
+        (WebKit::WebVideoFullscreenManager::didExitFullscreen):
+
 2016-05-27  Chris Dumez  <cdumez@apple.com>
 
         WorkQueue::dispatch() / RunLoop::dispatch() should not copy captured lambda variables

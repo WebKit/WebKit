@@ -133,8 +133,11 @@ public:
 
     WEBCORE_EXPORT PlatformMedia platformMedia() const;
     PlatformLayer* platformLayer() const;
+    bool isVideoLayerInline();
+    void setPreparedForInline(bool);
+    void waitForPreparedForInlineThen(std::function<void()> completionHandler = [] { });
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    void setVideoFullscreenLayer(PlatformLayer*);
+    void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler = [] { });
     PlatformLayer* videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
     void setVideoFullscreenFrame(FloatRect);
     void setVideoFullscreenGravity(MediaPlayerEnums::VideoGravity);
@@ -847,6 +850,8 @@ private:
     RefPtr<Node> m_nextChildNodeToConsider;
 
     VideoFullscreenMode m_videoFullscreenMode;
+    bool m_preparedForInline;
+    std::function<void()> m_preparedForInlineCompletionHandler;
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     FloatRect m_videoFullscreenFrame;

@@ -120,10 +120,12 @@ void WebVideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicSt
         m_videoFullscreenInterface->setVideoDimensions(true, m_videoElement->videoWidth(), m_videoElement->videoHeight());
 }
 
-void WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer* videoLayer)
+void WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer* videoLayer, std::function<void()> completionHandler)
 {
-    if (m_videoFullscreenLayer == videoLayer)
+    if (m_videoFullscreenLayer == videoLayer) {
+        completionHandler();
         return;
+    }
     
     m_videoFullscreenLayer = videoLayer;
 #if PLATFORM(MAC)
@@ -133,8 +135,22 @@ void WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer*
 #endif
     [m_videoFullscreenLayer setBounds:m_videoFrame];
     
-    if (m_videoElement)
-        m_videoElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
+    if (!m_videoElement) {
+        completionHandler();
+        return;
+    }
+
+    m_videoElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get(), completionHandler);
+}
+
+void WebVideoFullscreenModelVideoElement::waitForPreparedForInlineThen(std::function<void()> completionHandler)
+{
+    if (!m_videoElement) {
+        completionHandler();
+        return;
+    }
+
+    m_videoElement->waitForPreparedForInlineThen(completionHandler);
 }
 
 void WebVideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)

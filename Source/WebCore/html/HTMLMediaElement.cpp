@@ -5471,15 +5471,42 @@ PlatformLayer* HTMLMediaElement::platformLayer() const
     return m_player ? m_player->platformLayer() : nullptr;
 }
 
+void HTMLMediaElement::setPreparedForInline(bool value)
+{
+    m_preparedForInline = value;
+    if (m_preparedForInline && m_preparedForInlineCompletionHandler) {
+        m_preparedForInlineCompletionHandler();
+        m_preparedForInlineCompletionHandler = nullptr;
+    }
+}
+
+void HTMLMediaElement::waitForPreparedForInlineThen(std::function<void()> completionHandler)
+{
+    ASSERT(!m_preparedForInlineCompletionHandler);
+    if (m_preparedForInline)  {
+        completionHandler();
+        return;
+    }
+    
+    m_preparedForInlineCompletionHandler = completionHandler;
+}
+
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer)
+bool HTMLMediaElement::isVideoLayerInline()
+{
+    return !m_videoFullscreenLayer;
+};
+    
+void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer, std::function<void()> completionHandler)
 {
     m_videoFullscreenLayer = platformLayer;
-    if (!m_player)
+    if (!m_player) {
+        completionHandler();
         return;
+    }
     
-    m_player->setVideoFullscreenLayer(platformLayer);
+    m_player->setVideoFullscreenLayer(platformLayer, completionHandler);
     setNeedsStyleRecalc(SyntheticStyleChange);
 #if ENABLE(VIDEO_TRACK)
     updateTextTrackDisplay();
@@ -5499,6 +5526,13 @@ void HTMLMediaElement::setVideoFullscreenGravity(MediaPlayer::VideoGravity gravi
     if (m_player)
         m_player->setVideoFullscreenGravity(gravity);
 }
+    
+#else
+    
+bool HTMLMediaElement::isVideoLayerInline()
+{
+    return true;
+};
 
 #endif
 

@@ -42,9 +42,11 @@ enum DeviceType {
     readonly attribute TextTrack captionMenuAutomaticItem;
     readonly attribute DOMString captionDisplayMode;
     void setSelectedTextTrack(TextTrack? track);
+    void setPreparedForInline(boolean prepared);
     readonly attribute HTMLElement textTrackContainer;
     readonly attribute boolean allowsInlineMediaPlayback;
     readonly attribute boolean supportsFullscreen;
+    readonly attribute boolean isVideoLayerInline;
     readonly attribute boolean userGestureRequired;
 
     readonly attribute DOMString externalDeviceDisplayName;

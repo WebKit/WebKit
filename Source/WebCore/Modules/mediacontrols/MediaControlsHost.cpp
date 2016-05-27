@@ -210,6 +210,16 @@ bool MediaControlsHost::supportsFullscreen()
     return m_mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard);
 }
 
+bool MediaControlsHost::isVideoLayerInline()
+{
+    return m_mediaElement->isVideoLayerInline();
+}
+
+void MediaControlsHost::setPreparedForInline(bool value)
+{
+    m_mediaElement->setPreparedForInline(value);
+}
+
 bool MediaControlsHost::userGestureRequired() const
 {
     return !m_mediaElement->mediaSession().playbackPermitted(*m_mediaElement);

@@ -770,7 +770,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::addDisplayLayer(AVSampleBufferDisplay
     m_player->firstVideoFrameAvailable();
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    m_videoFullscreenLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size());
+    m_videoFullscreenLayerManager->setVideoLayers(m_sampleBufferDisplayLayer.get(), nil, snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size());
 #endif
 }
 
@@ -828,9 +828,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsChanged()
 }
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer)
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, std::function<void()> completionHandler)
 {
-    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer);
+    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, completionHandler);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame(FloatRect frame)

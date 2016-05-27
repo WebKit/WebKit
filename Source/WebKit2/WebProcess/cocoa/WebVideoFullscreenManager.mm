@@ -369,14 +369,16 @@ void WebVideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
     interface->layerHostingContext()->setRootLayer(videoLayer);
-    model->setVideoFullscreenLayer(videoLayer);
-
-    [CATransaction commit];
 
     RefPtr<WebVideoFullscreenManager> strongThis(this);
-    dispatch_async(dispatch_get_main_queue(), [strongThis, this, contextId] {
-        m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(contextId), m_page->pageID());
+    
+    model->setVideoFullscreenLayer(videoLayer, [strongThis, this, contextId] {
+        dispatch_async(dispatch_get_main_queue(), [strongThis, this, contextId] {
+            m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(contextId), m_page->pageID());
+        });
     });
+    
+    [CATransaction commit];
 }
     
 void WebVideoFullscreenManager::didEnterFullscreen(uint64_t contextId)
@@ -407,17 +409,21 @@ void WebVideoFullscreenManager::didExitFullscreen(uint64_t contextId)
     RefPtr<WebVideoFullscreenModelVideoElement> model;
     RefPtr<WebVideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
-
-    model->setVideoFullscreenLayer(nil);
-
     RefPtr<WebVideoFullscreenManager> strongThis(this);
-    dispatch_async(dispatch_get_main_queue(), [strongThis, contextId, interface] {
-        if (interface->layerHostingContext()) {
-            interface->layerHostingContext()->setRootLayer(nullptr);
-            interface->setLayerHostingContext(nullptr);
-        }
-        if (strongThis->m_page)
-            strongThis->m_page->send(Messages::WebVideoFullscreenManagerProxy::CleanupFullscreen(contextId), strongThis->m_page->pageID());
+    
+    model->waitForPreparedForInlineThen([strongThis, this, contextId, interface, model] {
+        dispatch_async(dispatch_get_main_queue(), [strongThis, this, contextId, interface, model] {
+            model->setVideoFullscreenLayer(nil, [strongThis, this, contextId, interface] {
+                dispatch_async(dispatch_get_main_queue(), [strongThis, this, contextId, interface] {
+                    if (interface->layerHostingContext()) {
+                        interface->layerHostingContext()->setRootLayer(nullptr);
+                        interface->setLayerHostingContext(nullptr);
+                    }
+                    if (strongThis->m_page)
+                        strongThis->m_page->send(Messages::WebVideoFullscreenManagerProxy::CleanupFullscreen(contextId), strongThis->m_page->pageID());
+                });
+            });
+        });
     });
 }
     

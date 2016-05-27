@@ -1,3 +1,72 @@
+2016-05-27  Jeremy Jones  <jeremyj@apple.com>
+
+        Decrease flicker when changing video presentation mode.
+        https://bugs.webkit.org/show_bug.cgi?id=158148
+        rdar://problem/24476949
+
+        Reviewed by Jer Noble.
+
+        No new tests because there is no behavior change. This change is about the timing of
+        moving AVPlayerLayers between layers to prevent flicker.
+
+        1) Moving an AVPlayerLayer between CAContexts can flicker. So always keep two
+        AVPlayerLayers around and add and remove them from the inline and fullscreen contexts.
+        2) Wait to show the inline placeholder until the fullscreen video layer has been installed.
+        3) Wait to remove the fullscreen video layer until the placeholder has been removed.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::isVideoLayerInline): Expose isVideoLayerInline to the shadow DOM.
+        (WebCore::MediaControlsHost::setPreparedForInline): Expose setPreparedForInline to the shadow DOM.
+        * Modules/mediacontrols/MediaControlsHost.h: Add setPreparedForInline and isVideoLayerInline
+        * Modules/mediacontrols/MediaControlsHost.idl: Add setPreparedForInline and isVideoLayerInline
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.showInlinePlaybackPlaceholderWhenSafe): Wait to show placeholder when entering fullscreen.
+        (Controller.prototype.handlePresentationModeChange): Wait to show placeholder, and notify when placeholder is removed.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setPreparedForInline):
+        (WebCore::HTMLMediaElement::waitForPreparedForInlineThen): Used to delay fullscreen cleanup until placeholder is removed.
+        (WebCore::HTMLMediaElement::setVideoFullscreenLayer): Add a callback so we can wait until this completes before continuing.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::isVideoLayerInline):
+        (WebCore::HTMLMediaElement::waitForPreparedForInlineThen):
+        (WebCore::HTMLMediaElement::setVideoFullscreenLayer): Add completionHandler.
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.h:
+        (WebCore::WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer): Add completionHandler.
+        (WebCore::WebVideoFullscreenModelVideoElement::waitForPreparedForInlineThen): Added.
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer): Add completionHandler.
+        (WebVideoFullscreenModelVideoElement::waitForPreparedForInlineThen):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setVideoFullscreenLayer): Add completionHandler.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::setVideoFullscreenLayer): Add completionHandler.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setVideoFullscreenLayer): Add completionHandler.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer): Create two video layers.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer): Allow two video layers.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer): Add completionHandler.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity): Allow two video layers.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addDisplayLayer): Allow two video layers.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer): Add completionHandler.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::createPreviewLayers): Allow two video layers.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer): Add completionHandler.
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.h:
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.mm:
+        (WebCore::VideoFullscreenLayerManager::setVideoLayers): Allow two video layers.
+        (WebCore::VideoFullscreenLayerManager::setVideoFullscreenLayer): Add completionHandler.
+        (WebCore::VideoFullscreenLayerManager::setVideoFullscreenFrame): Allow two video layers.
+        (WebCore::VideoFullscreenLayerManager::didDestroyVideoLayer): Allow two video layers.
+        (WebCore::VideoFullscreenLayerManager::setVideoLayer): Deleted.
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::didSetupFullscreen): Use completionHandler. 
+        (WebVideoFullscreenControllerContext::didExitFullscreen): Use completionHandler.
+
 2016-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in TreeScope::focusedElement

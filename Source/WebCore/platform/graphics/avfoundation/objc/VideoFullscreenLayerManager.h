@@ -31,6 +31,7 @@
 #include "FloatRect.h"
 #include "IntSize.h"
 #include "PlatformLayer.h"
+#include <functional>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -43,8 +44,8 @@ public:
     PlatformLayer *videoInlineLayer() const { return m_videoInlineLayer.get(); }
     PlatformLayer *videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
     FloatRect videoFullscreenFrame() const { return m_videoFullscreenFrame; }
-    void setVideoLayer(PlatformLayer *, IntSize contentSize);
-    void setVideoFullscreenLayer(PlatformLayer *);
+    void setVideoLayers(PlatformLayer *, PlatformLayer *, IntSize contentSize);
+    void setVideoFullscreenLayer(PlatformLayer *, std::function<void()> completionHandler);
     void setVideoFullscreenFrame(FloatRect);
     void didDestroyVideoLayer();
 
@@ -54,6 +55,7 @@ private:
     RetainPtr<PlatformLayer> m_videoInlineLayer;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     RetainPtr<PlatformLayer> m_videoLayer;
+    RetainPtr<PlatformLayer> m_secondaryVideoLayer;
     FloatRect m_videoFullscreenFrame;
 };
 

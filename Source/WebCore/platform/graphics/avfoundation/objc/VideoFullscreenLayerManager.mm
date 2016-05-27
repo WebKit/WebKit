@@ -66,55 +66,97 @@ VideoFullscreenLayerManager::VideoFullscreenLayerManager()
 {
 }
 
-void VideoFullscreenLayerManager::setVideoLayer(PlatformLayer *videoLayer, IntSize contentSize)
+void VideoFullscreenLayerManager::setVideoLayers(PlatformLayer *videoLayer, PlatformLayer *secondaryVideoLayer, IntSize contentSize)
 {
     m_videoLayer = videoLayer;
+    m_secondaryVideoLayer = secondaryVideoLayer;
 
     [m_videoLayer web_disableAllActions];
+    [m_secondaryVideoLayer web_disableAllActions];
     m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
 #ifndef NDEBUG
     [m_videoInlineLayer setName:@"WebVideoContainerLayer"];
 #endif
     [m_videoInlineLayer setFrame:CGRectMake(0, 0, contentSize.width(), contentSize.height())];
     if (m_videoFullscreenLayer) {
-        [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
-        [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
+        [m_videoLayer removeFromSuperlayer];
+        PlatformLayer *activeLayer = secondaryVideoLayer ? secondaryVideoLayer : videoLayer;
+        [activeLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+        [m_videoFullscreenLayer insertSublayer:activeLayer atIndex:0];
     } else {
         [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
         [m_videoLayer setFrame:m_videoInlineLayer.get().bounds];
+        [m_secondaryVideoLayer removeFromSuperlayer];
     }
 }
 
-void VideoFullscreenLayerManager::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer)
+void VideoFullscreenLayerManager::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, std::function<void()> completionHandler)
 {
-    if (m_videoFullscreenLayer == videoFullscreenLayer)
+    if (m_videoFullscreenLayer == videoFullscreenLayer) {
+        completionHandler();
         return;
+    }
 
     m_videoFullscreenLayer = videoFullscreenLayer;
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    CAContext *oldContext = [m_videoLayer context];
-    CAContext *newContext = nil;
+    if (m_secondaryVideoLayer && m_videoLayer) {
+        if (m_videoFullscreenLayer) {
+            [m_videoFullscreenLayer insertSublayer:m_secondaryVideoLayer.get() atIndex:0];
+            [m_secondaryVideoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+        } else if (m_videoInlineLayer) {
+            [m_videoLayer setFrame:[m_videoInlineLayer bounds]];
+            [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
+        }
 
-    if (m_videoFullscreenLayer && m_videoLayer) {
-        [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
-        [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
-        newContext = [m_videoFullscreenLayer context];
-    } else if (m_videoInlineLayer && m_videoLayer) {
-        [m_videoLayer setFrame:[m_videoInlineLayer bounds]];
-        [m_videoLayer removeFromSuperlayer];
-        [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
-        newContext = [m_videoInlineLayer context];
-    } else if (m_videoLayer)
-        [m_videoLayer removeFromSuperlayer];
+        RetainPtr<PlatformLayer> fullscreenLayer = m_videoFullscreenLayer;
+        RetainPtr<PlatformLayer> videoLayer = m_videoLayer;
+        RetainPtr<PlatformLayer> secondaryVideoLayer = m_secondaryVideoLayer;
 
-    if (oldContext && newContext && oldContext != newContext) {
-        mach_port_t fencePort = [oldContext createFencePort];
-        [newContext setFencePort:fencePort];
-        mach_port_deallocate(mach_task_self(), fencePort);
+        [CATransaction setCompletionBlock:[completionHandler, fullscreenLayer, videoLayer, secondaryVideoLayer] {
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
+            
+            if (fullscreenLayer)
+                [videoLayer removeFromSuperlayer];
+            else
+                [secondaryVideoLayer removeFromSuperlayer];
+
+            [CATransaction setCompletionBlock:[completionHandler] {
+                completionHandler();
+            }];
+            [CATransaction commit];
+        }];
+    } else if (m_videoLayer) {
+        if (m_videoFullscreenLayer) {
+            [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
+            [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+        } else if (m_videoInlineLayer) {
+            [m_videoLayer setFrame:[m_videoInlineLayer bounds]];
+            [m_videoLayer removeFromSuperlayer];
+            [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
+        } else
+            [m_videoLayer removeFromSuperlayer];
+
+        CAContext *oldContext = [m_videoFullscreenLayer context];
+        CAContext *newContext = [m_videoInlineLayer context];
+        if (oldContext && newContext && oldContext != newContext) {
+            mach_port_t fencePort = [oldContext createFencePort];
+            [newContext setFencePort:fencePort];
+            mach_port_deallocate(mach_task_self(), fencePort);
+        }
+
+        [CATransaction setCompletionBlock:[completionHandler] {
+            completionHandler();
+        }];
+    } else {
+        [CATransaction setCompletionBlock:[completionHandler] {
+            completionHandler();
+        }];
     }
+
     [CATransaction commit];
 }
 
@@ -124,17 +166,18 @@ void VideoFullscreenLayerManager::setVideoFullscreenFrame(FloatRect videoFullscr
     if (!m_videoFullscreenLayer)
         return;
 
-    if (m_videoLayer)
-        [m_videoLayer setFrame:CGRectMake(0, 0, videoFullscreenFrame.width(), videoFullscreenFrame.height())];
+    PlatformLayer *activeLayer = m_secondaryVideoLayer.get() ? m_secondaryVideoLayer.get() : m_videoLayer.get();
+    [activeLayer setFrame:CGRectMake(0, 0, videoFullscreenFrame.width(), videoFullscreenFrame.height())];
 }
 
 void VideoFullscreenLayerManager::didDestroyVideoLayer()
 {
-    if (m_videoFullscreenLayer)
-        [m_videoLayer removeFromSuperlayer];
+    [m_videoLayer removeFromSuperlayer];
+    [m_secondaryVideoLayer removeFromSuperlayer];
 
     m_videoInlineLayer = nil;
     m_videoLayer = nil;
+    m_secondaryVideoLayer = nil;
 }
 
 }
