@@ -328,7 +328,7 @@ bool IDBTransaction::hasPendingActivity() const
 
 void IDBTransaction::stop()
 {
-    LOG(IndexedDB, "IDBTransaction::stop");
+    LOG(IndexedDB, "IDBTransaction::stop - %s", m_info.loggingString().utf8().data());
     ASSERT(currentThread() == m_database->originThreadID());
 
     // IDBDatabase::stop() calls IDBTransaction::stop() for each of its active transactions.

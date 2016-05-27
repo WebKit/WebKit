@@ -1241,6 +1241,15 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
     if (!pendingTransactions.isEmpty())
         m_pendingTransactions.swap(pendingTransactions);
 
+    Deque<RefPtr<UniqueIDBDatabaseTransaction>> transactionsToAbort;
+    for (auto& transaction : m_inProgressTransactions.values()) {
+        if (&transaction->databaseConnection() == &connection)
+            transactionsToAbort.append(transaction);
+    }
+
+    for (auto& transaction : transactionsToAbort)
+        transaction->abortWithoutCallback();
+
     if (m_currentOpenDBRequest)
         notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(connection.identifier());
 
@@ -1404,6 +1413,10 @@ template<typename T> bool scopesOverlap(const T& aScopes, const Vector<uint64_t>
 RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransaction(bool& hadDeferredTransactions)
 {
     hadDeferredTransactions = false;
+
+    if (m_pendingTransactions.isEmpty())
+        return nullptr;
+
     if (!m_backingStoreSupportsSimultaneousTransactions && hasUnfinishedTransactions()) {
         LOG(IndexedDB, "UniqueIDBDatabase::takeNextRunnableTransaction - Backing store only supports 1 transaction, and we already have 1");
         return nullptr;

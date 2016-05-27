@@ -1,3 +1,15 @@
+2016-05-27  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: After closing a Netflix video, trying to watch it again fails.
+        <rdar://problem/25092473> and https://bugs.webkit.org/show_bug.cgi?id=158160
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebProcessKillIDBCleanup-1.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebProcessKillIDBCleanup-2.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebProcessKillIDBCleanup.mm: Added.
+
 2016-05-27  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] accessibility/gtk/no-notification-for-unrendered-iframe-children.html began failing after r201416

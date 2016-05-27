@@ -1,3 +1,20 @@
+2016-05-27  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: After closing a Netflix video, trying to watch it again fails.
+        <rdar://problem/25092473> and https://bugs.webkit.org/show_bug.cgi?id=158160
+
+        Reviewed by Alex Christensen.
+
+        New APITest: IndexedDB.WebProcessKillIDBCleanup
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::stop):
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient): All active transactions need to be aborted
+          (without callback, since there's no connection to callback to).
+        (WebCore::IDBServer::UniqueIDBDatabase::takeNextRunnableTransaction):
+
 2016-05-27  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Update RTCPeerConnection overloaded legacy operations to return a Promise
