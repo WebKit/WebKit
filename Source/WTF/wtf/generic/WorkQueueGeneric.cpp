@@ -81,18 +81,18 @@ void WorkQueue::platformInvalidate()
     }
 }
 
-void WorkQueue::dispatch(std::function<void()> function)
+void WorkQueue::dispatch(NoncopyableFunction&& function)
 {
     RefPtr<WorkQueue> protect(this);
-    m_runLoop->dispatch([protect, function] {
+    m_runLoop->dispatch([protect, function = WTFMove(function)] {
         function();
     });
 }
 
-void WorkQueue::dispatchAfter(std::chrono::nanoseconds delay, std::function<void()> function)
+void WorkQueue::dispatchAfter(std::chrono::nanoseconds delay, NoncopyableFunction&& function)
 {
     RefPtr<WorkQueue> protect(this);
-    m_runLoop->dispatchAfter(delay, [protect, function] {
+    m_runLoop->dispatchAfter(delay, [protect, function = WTFMove(function)] {
         function();
     });
 }

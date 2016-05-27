@@ -50,13 +50,6 @@ Watchdog::Watchdog()
     , m_callbackData2(0)
     , m_timerQueue(WorkQueue::create("jsc.watchdog.queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
 {
-    m_timerHandler = [this] {
-        {
-            LockHolder locker(m_lock);
-            this->m_timerDidFire = true;
-        }
-        this->deref();
-    };
 }
 
 void Watchdog::setTimeLimit(std::chrono::microseconds limit,
@@ -177,7 +170,13 @@ void Watchdog::startTimer(LockHolder&, std::chrono::microseconds timeLimit)
     this->ref(); // m_timerHandler will deref to match later.
     m_wallClockDeadline = wallClockDeadline;
 
-    m_timerQueue->dispatchAfter(std::chrono::nanoseconds(timeLimit), m_timerHandler);
+    m_timerQueue->dispatchAfter(std::chrono::nanoseconds(timeLimit), [this] {
+        {
+            LockHolder locker(m_lock);
+            m_timerDidFire = true;
+        }
+        deref();
+    });
 }
 
 void Watchdog::stopTimer(LockHolder&)

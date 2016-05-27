@@ -29,6 +29,7 @@
 
 #include <Windows.h>
 #include <functional>
+#include <wtf/FunctionDispatcher.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -38,30 +39,30 @@ class WorkQueue;
 
 class WorkItemWin : public ThreadSafeRefCounted<WorkItemWin> {
 public:
-    static RefPtr<WorkItemWin> create(std::function<void()>, WorkQueue*);
+    static RefPtr<WorkItemWin> create(NoncopyableFunction&&, WorkQueue*);
     virtual ~WorkItemWin();
 
-    std::function<void()>& function() { return m_function; }
+    NoncopyableFunction& function() { return m_function; }
     WorkQueue* queue() const { return m_queue.get(); }
 
 protected:
-    WorkItemWin(std::function<void()>, WorkQueue*);
+    WorkItemWin(NoncopyableFunction&&, WorkQueue*);
 
 private:
-    std::function<void()> m_function;
+    NoncopyableFunction m_function;
     RefPtr<WorkQueue> m_queue;
 };
 
 class HandleWorkItem : public WorkItemWin {
 public:
-    static RefPtr<HandleWorkItem> createByAdoptingHandle(HANDLE, const std::function<void()>&, WorkQueue*);
+    static RefPtr<HandleWorkItem> createByAdoptingHandle(HANDLE, NoncopyableFunction&&, WorkQueue*);
     virtual ~HandleWorkItem();
 
     void setWaitHandle(HANDLE waitHandle) { m_waitHandle = waitHandle; }
     HANDLE waitHandle() const { return m_waitHandle; }
 
 private:
-    HandleWorkItem(HANDLE, const std::function<void()>&, WorkQueue*);
+    HandleWorkItem(HANDLE, NoncopyableFunction&&, WorkQueue*);
 
     HANDLE m_handle;
     HANDLE m_waitHandle;

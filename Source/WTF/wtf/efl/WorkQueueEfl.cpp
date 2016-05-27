@@ -54,20 +54,20 @@ void WorkQueue::unregisterSocketEventHandler(int fileDescriptor)
     m_dispatchQueue->clearSocketEventHandler();
 }
 
-void WorkQueue::dispatch(std::function<void ()> function)
+void WorkQueue::dispatch(NoncopyableFunction&& function)
 {
     if (!m_dispatchQueue)
         return;
 
-    m_dispatchQueue->dispatch(std::make_unique<WorkItem>(this, WTFMove(function)));
+    m_dispatchQueue->dispatch(std::make_unique<WorkItem>(*this, WTFMove(function)));
 }
 
-void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<void ()> function)
+void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, NoncopyableFunction&& function)
 {
     if (!m_dispatchQueue)
         return;
 
-    m_dispatchQueue->dispatch(TimerWorkItem::create(this, WTFMove(function), duration));
+    m_dispatchQueue->dispatch(TimerWorkItem::create(*this, WTFMove(function), duration));
 }
 
 }

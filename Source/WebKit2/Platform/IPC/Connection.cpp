@@ -681,7 +681,7 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
         std::lock_guard<Lock> lock(m_incomingSyncMessageCallbackMutex);
 
         for (auto& callback : m_incomingSyncMessageCallbacks.values())
-            m_incomingSyncMessageCallbackQueue->dispatch(callback);
+            m_incomingSyncMessageCallbackQueue->dispatch(WTFMove(callback));
 
         m_incomingSyncMessageCallbacks.clear();
     }

@@ -239,11 +239,11 @@ void RunLoop::scheduleAndWakeUp(RefPtr<TimerBase::ScheduledTask> task)
     wakeUp(locker);
 }
 
-void RunLoop::dispatchAfter(std::chrono::nanoseconds delay, std::function<void()> function)
+void RunLoop::dispatchAfter(std::chrono::nanoseconds delay, NoncopyableFunction&& function)
 {
     LockHolder locker(m_loopLock);
     bool repeating = false;
-    schedule(locker, TimerBase::ScheduledTask::create(function, delay.count() / 1000.0 / 1000.0 / 1000.0, repeating));
+    schedule(locker, TimerBase::ScheduledTask::create(WTFMove(function), delay.count() / 1000.0 / 1000.0 / 1000.0, repeating));
     wakeUp(locker);
 }
 

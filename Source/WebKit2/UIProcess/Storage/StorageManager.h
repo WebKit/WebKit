@@ -59,17 +59,17 @@ public:
     void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
     void applicationWillTerminate();
 
-    void getSessionStorageOrigins(std::function<void (HashSet<RefPtr<WebCore::SecurityOrigin>>&&)> completionHandler);
-    void deleteSessionStorageOrigins(std::function<void ()> completionHandler);
-    void deleteSessionStorageEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&, std::function<void ()> completionHandler);
+    void getSessionStorageOrigins(std::function<void (HashSet<RefPtr<WebCore::SecurityOrigin>>&&)>&& completionHandler);
+    void deleteSessionStorageOrigins(std::function<void ()>&& completionHandler);
+    void deleteSessionStorageEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&, std::function<void ()>&& completionHandler);
 
-    void getLocalStorageOrigins(std::function<void (HashSet<RefPtr<WebCore::SecurityOrigin>>&&)> completionHandler);
+    void getLocalStorageOrigins(std::function<void (HashSet<RefPtr<WebCore::SecurityOrigin>>&&)>&& completionHandler);
     void deleteLocalStorageEntriesForOrigin(const WebCore::SecurityOrigin&);
 
-    void deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point, std::function<void ()> completionHandler);
-    void deleteLocalStorageEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&, std::function<void ()> completionHandler);
+    void deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point, std::function<void ()>&& completionHandler);
+    void deleteLocalStorageEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&, std::function<void ()>&& completionHandler);
 
-    void getLocalStorageOriginDetails(std::function<void (Vector<LocalStorageDatabaseTracker::OriginDetails>)> completionHandler);
+    void getLocalStorageOriginDetails(std::function<void (Vector<LocalStorageDatabaseTracker::OriginDetails>)>&& completionHandler);
 
 private:
     explicit StorageManager(const String& localStorageDirectory);

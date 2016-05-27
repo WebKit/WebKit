@@ -1,3 +1,70 @@
+2016-05-27  Chris Dumez  <cdumez@apple.com>
+
+        WorkQueue::dispatch() / RunLoop::dispatch() should not copy captured lambda variables
+        https://bugs.webkit.org/show_bug.cgi?id=158111
+
+        Reviewed by Darin Adler.
+
+        WorkQueue::dispatch() / RunLoop::dispatch() should not copy captured lambda variables.
+        These are often used cross-thread and copying the captured lambda variables can be
+        dangerous (e.g. we do not want to copy a String after calling isolatedCopy() upon
+        capture).
+
+        This patch introduces a new NoncopyableFunction type that behaves similarly to
+        std::function but guarantees that the passed-in lambda (and its captured variables)
+        cannot be copied. This new NoncopyableFunction type is now used for
+        WorkQueue / RunLoop's dispatch() / dispatchAfter() which are commonly used
+        cross-thread. This should now allow us to call WorkQueue::dispatch() with a lambda
+        that captures a String like so:
+        [str = str.isolatedCopy()]() { }
+
+        Also note that even though this is not leveraged in this patch, NoncopyableFunction
+        would allow us to capture move-only types such as std::unique_ptr as so:
+        [p = WTFMove(p)]() { }
+        This does not work if we convert the lambda into an std::function because
+        std::function requires the lambda to be copyable, NoncopyableFunction does not.
+
+        * wtf/FunctionDispatcher.h:
+        (WTF::CallableWrapperBase::~CallableWrapperBase):
+        (WTF::NoncopyableFunction::NoncopyableFunction):
+        (WTF::NoncopyableFunction::operator()):
+        (WTF::NoncopyableFunction::operator bool):
+        (WTF::NoncopyableFunction::operator=):
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::performWork):
+        (WTF::RunLoop::dispatch):
+        * wtf/RunLoop.h:
+        * wtf/WorkQueue.h:
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+        * wtf/efl/DispatchQueueWorkItemEfl.h:
+        (WorkItem::WorkItem):
+        (TimerWorkItem::create):
+        (TimerWorkItem::TimerWorkItem):
+        * wtf/efl/WorkQueueEfl.cpp:
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::dispatchAfter):
+        * wtf/generic/WorkQueueGeneric.cpp:
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfter):
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::DispatchAfterContext::DispatchAfterContext):
+        (WTF::RunLoop::dispatchAfter):
+        * wtf/win/WorkItemWin.cpp:
+        (WTF::WorkItemWin::WorkItemWin):
+        (WTF::WorkItemWin::create):
+        (WTF::HandleWorkItem::HandleWorkItem):
+        (WTF::HandleWorkItem::createByAdoptingHandle):
+        * wtf/win/WorkItemWin.h:
+        (WTF::WorkItemWin::function):
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::timerCallback):
+        (WTF::WorkQueue::dispatchAfter):
+
 2016-05-26  Filip Pizlo  <fpizlo@apple.com>
 
         ScopedLambda should have a lifetime story that makes sense to the compiler

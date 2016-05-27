@@ -129,11 +129,11 @@ void WorkQueue::platformInvalidate()
     ::DeleteTimerQueueEx(m_timerQueue, 0);
 }
 
-void WorkQueue::dispatch(std::function<void()> function)
+void WorkQueue::dispatch(NoncopyableFunction&& function)
 {
     MutexLocker locker(m_workItemQueueLock);
     ref();
-    m_workItemQueue.append(WorkItemWin::create(function, this));
+    m_workItemQueue.append(WorkItemWin::create(WTFMove(function), this));
 
     // Spawn a work thread to perform the work we just added. As an optimization, we avoid
     // spawning the thread if a work thread is already registered. This prevents multiple work
@@ -149,7 +149,7 @@ struct TimerContext : public ThreadSafeRefCounted<TimerContext> {
     static RefPtr<TimerContext> create() { return adoptRef(new TimerContext); }
 
     WorkQueue* queue;
-    std::function<void()> function;
+    NoncopyableFunction function;
     Mutex timerMutex;
     HANDLE timer;
 
@@ -169,7 +169,7 @@ void WorkQueue::timerCallback(void* context, BOOLEAN timerOrWaitFired)
     // Balanced by leakRef in scheduleWorkAfterDelay.
     RefPtr<TimerContext> timerContext = adoptRef(static_cast<TimerContext*>(context));
 
-    timerContext->queue->dispatch(timerContext->function);
+    timerContext->queue->dispatch(WTFMove(timerContext->function));
 
     MutexLocker lock(timerContext->timerMutex);
     ASSERT(timerContext->timer);
@@ -180,14 +180,14 @@ void WorkQueue::timerCallback(void* context, BOOLEAN timerOrWaitFired)
     }
 }
 
-void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<void()> function)
+void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, NoncopyableFunction&& function)
 {
     ASSERT(m_timerQueue);
     ref();
 
     RefPtr<TimerContext> context = TimerContext::create();
     context->queue = this;
-    context->function = function;
+    context->function = WTFMove(function);
 
     {
         // The timer callback could fire before ::CreateTimerQueueTimer even returns, so we protect

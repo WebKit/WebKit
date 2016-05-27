@@ -32,32 +32,32 @@
 
 namespace WTF {
 
-WorkItemWin::WorkItemWin(std::function<void()> function, WorkQueue* queue)
-    : m_function(function)
+WorkItemWin::WorkItemWin(NoncopyableFunction&& function, WorkQueue* queue)
+    : m_function(WTFMove(function))
     , m_queue(queue)
 {
 }
 
-RefPtr<WorkItemWin> WorkItemWin::create(std::function<void()> function, WorkQueue* queue)
+RefPtr<WorkItemWin> WorkItemWin::create(NoncopyableFunction&& function, WorkQueue* queue)
 {
-    return adoptRef(new WorkItemWin(function, queue));
+    return adoptRef(new WorkItemWin(WTFMove(function), queue));
 }
 
 WorkItemWin::~WorkItemWin()
 {
 }
 
-HandleWorkItem::HandleWorkItem(HANDLE handle, const std::function<void()>& function, WorkQueue* queue)
-    : WorkItemWin(function, queue)
+HandleWorkItem::HandleWorkItem(HANDLE handle, NoncopyableFunction&& function, WorkQueue* queue)
+    : WorkItemWin(WTFMove(function), queue)
     , m_handle(handle)
     , m_waitHandle(0)
 {
     ASSERT_ARG(handle, handle);
 }
 
-RefPtr<HandleWorkItem> HandleWorkItem::createByAdoptingHandle(HANDLE handle, const std::function<void()>& function, WorkQueue* queue)
+RefPtr<HandleWorkItem> HandleWorkItem::createByAdoptingHandle(HANDLE handle, NoncopyableFunction&& function, WorkQueue* queue)
 {
-    return adoptRef(new HandleWorkItem(handle, function, queue));
+    return adoptRef(new HandleWorkItem(handle, WTFMove(function), queue));
 }
 
 HandleWorkItem::~HandleWorkItem()

@@ -1,3 +1,33 @@
+2016-05-27  Chris Dumez  <cdumez@apple.com>
+
+        WorkQueue::dispatch() / RunLoop::dispatch() should not copy captured lambda variables
+        https://bugs.webkit.org/show_bug.cgi?id=158111
+
+        Reviewed by Darin Adler.
+
+        WorkQueue::dispatch() / RunLoop::dispatch() should not copy captured lambda variables.
+        These are often used cross-thread and copying the captured lambda variables can be
+        dangerous (e.g. we do not want to copy a String after calling isolatedCopy() upon
+        capture).
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::clearDiskCacheEntries):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::clear):
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::runTaskInQueue):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::processIncomingMessage):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::getSessionStorageOrigins):
+        (WebKit::StorageManager::deleteSessionStorageOrigins):
+        (WebKit::StorageManager::deleteSessionStorageEntriesForOrigins):
+        (WebKit::StorageManager::getLocalStorageOrigins):
+        (WebKit::StorageManager::getLocalStorageOriginDetails):
+        (WebKit::StorageManager::deleteLocalStorageOriginsModifiedSince):
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigins):
+        * UIProcess/Storage/StorageManager.h:
+
 2016-05-27  Alex Christensen  <achristensen@webkit.org>
 
         Expose content extension failure error codes in SPI

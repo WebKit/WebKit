@@ -91,7 +91,6 @@ private:
     void* m_callbackData2;
 
     Ref<WorkQueue> m_timerQueue;
-    std::function<void ()> m_timerHandler;
 
     friend class LLIntOffsetsExtractor;
 };

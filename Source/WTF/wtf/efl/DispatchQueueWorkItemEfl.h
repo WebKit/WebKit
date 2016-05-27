@@ -28,13 +28,14 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/FunctionDispatcher.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WorkQueue.h>
 
 class WorkItem {
 public:
-    WorkItem(PassRefPtr<WorkQueue> workQueue, std::function<void ()> function)
-        : m_workQueue(workQueue)
+    WorkItem(Ref<WorkQueue>&& workQueue, NoncopyableFunction&& function)
+        : m_workQueue(WTFMove(workQueue))
         , m_function(WTFMove(function))
     {
     }
@@ -42,23 +43,23 @@ public:
     void dispatch() { m_function(); }
 
 private:
-    RefPtr<WorkQueue> m_workQueue;
-    std::function<void ()> m_function;
+    Ref<WorkQueue> m_workQueue;
+    NoncopyableFunction m_function;
 };
 
 class TimerWorkItem : public WorkItem {
 public:
-    static std::unique_ptr<TimerWorkItem> create(PassRefPtr<WorkQueue> workQueue, std::function<void ()> function, std::chrono::nanoseconds delayNanoSeconds)
+    static std::unique_ptr<TimerWorkItem> create(Ref<WorkQueue>&& workQueue, NoncopyableFunction&& function, std::chrono::nanoseconds delayNanoSeconds)
     {
         ASSERT(delayNanoSeconds.count() >= 0);
-        return std::unique_ptr<TimerWorkItem>(new TimerWorkItem(workQueue, WTFMove(function), monotonicallyIncreasingTime() * 1000000000.0 + delayNanoSeconds.count()));
+        return std::unique_ptr<TimerWorkItem>(new TimerWorkItem(WTFMove(workQueue), WTFMove(function), monotonicallyIncreasingTime() * 1000000000.0 + delayNanoSeconds.count()));
     }
     double expirationTimeNanoSeconds() const { return m_expirationTimeNanoSeconds; }
     bool hasExpired(double currentTimeNanoSeconds) const { return currentTimeNanoSeconds >= m_expirationTimeNanoSeconds; }
 
 protected:
-    TimerWorkItem(PassRefPtr<WorkQueue> workQueue, std::function<void ()> function, double expirationTimeNanoSeconds)
-        : WorkItem(workQueue, WTFMove(function))
+    TimerWorkItem(Ref<WorkQueue>&& workQueue, NoncopyableFunction&& function, double expirationTimeNanoSeconds)
+        : WorkItem(WTFMove(workQueue), WTFMove(function))
         , m_expirationTimeNanoSeconds(expirationTimeNanoSeconds)
     {
     }

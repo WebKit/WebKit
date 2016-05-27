@@ -31,6 +31,62 @@
 
 namespace WTF {
 
+// FIXME: Move this to its own header (e.g. Functional.h).
+// FIXME: We could make this templated to support other lambdas than void() and make this more reusable.
+class NoncopyableFunction {
+public:
+    NoncopyableFunction() = default;
+
+    template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
+    NoncopyableFunction(CallableType&& callable)
+        : m_callableWrapper(std::make_unique<CallableWrapper<CallableType>>(WTFMove(callable)))
+    {
+    }
+
+    void operator()() const
+    {
+        if (m_callableWrapper)
+            m_callableWrapper->call();
+    }
+
+    explicit operator bool() const { return !!m_callableWrapper; }
+
+    template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
+    NoncopyableFunction& operator=(CallableType&& callable)
+    {
+        m_callableWrapper = std::make_unique<CallableWrapper<CallableType>>(WTFMove(callable));
+        return *this;
+    }
+
+private:
+    class CallableWrapperBase {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        virtual ~CallableWrapperBase() { }
+
+        virtual void call() = 0;
+    };
+
+    template<typename CallableType>
+    class CallableWrapper final : public CallableWrapperBase {
+    public:
+        explicit CallableWrapper(CallableType&& callable)
+            : m_callable(WTFMove(callable))
+        {
+        }
+
+        CallableWrapper(const CallableWrapper&) = delete;
+        CallableWrapper& operator=(const CallableWrapper&) = delete;
+
+        void call() final { m_callable(); }
+
+    private:
+        CallableType m_callable;
+    };
+
+    std::unique_ptr<CallableWrapperBase> m_callableWrapper;
+};
+
 // FunctionDispatcher is an abstract representation of something that functions can be
 // dispatched to. This can for example be a run loop or a work queue.
 
@@ -38,7 +94,7 @@ class FunctionDispatcher : public ThreadSafeRefCounted<FunctionDispatcher> {
 public:
     WTF_EXPORT_PRIVATE virtual ~FunctionDispatcher();
 
-    virtual void dispatch(std::function<void ()>) = 0;
+    virtual void dispatch(NoncopyableFunction&&) = 0;
 
 protected:
     WTF_EXPORT_PRIVATE FunctionDispatcher();
@@ -47,5 +103,6 @@ protected:
 } // namespace WTF
 
 using WTF::FunctionDispatcher;
+using WTF::NoncopyableFunction;
 
 #endif // FunctionDispatcher_h

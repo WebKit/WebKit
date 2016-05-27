@@ -421,7 +421,7 @@ void NetworkProcess::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDat
     completionHandler();
 }
 
-static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std::function<void ()> completionHandler)
+static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std::function<void ()>&& completionHandler)
 {
 #if ENABLE(NETWORK_CACHE)
     if (NetworkCache::singleton().isEnabled()) {
@@ -432,7 +432,7 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std
 
         auto* cacheKeysToDelete = new Vector<NetworkCache::Key>;
 
-        NetworkCache::singleton().traverse([completionHandler, originsToDelete, cacheKeysToDelete](auto* traversalEntry) {
+        NetworkCache::singleton().traverse([completionHandler = WTFMove(completionHandler), originsToDelete, cacheKeysToDelete](auto* traversalEntry) mutable {
             if (traversalEntry) {
                 if (originsToDelete->contains(SecurityOrigin::create(traversalEntry->entry.response().url())))
                     cacheKeysToDelete->append(traversalEntry->entry.key());
@@ -446,7 +446,7 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std
 
             delete cacheKeysToDelete;
 
-            RunLoop::main().dispatch(completionHandler);
+            RunLoop::main().dispatch(WTFMove(completionHandler));
             return;
         });
 

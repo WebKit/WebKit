@@ -91,7 +91,7 @@ void RunLoop::performWork()
 
     size_t functionsToHandle = 0;
     {
-        std::function<void()> function;
+        NoncopyableFunction function;
         {
             MutexLocker locker(m_functionQueueLock);
             functionsToHandle = m_functionQueue.size();
@@ -106,7 +106,7 @@ void RunLoop::performWork()
     }
 
     for (size_t functionsHandled = 1; functionsHandled < functionsToHandle; ++functionsHandled) {
-        std::function<void()> function;
+        NoncopyableFunction function;
         {
             MutexLocker locker(m_functionQueueLock);
 
@@ -123,7 +123,7 @@ void RunLoop::performWork()
     }
 }
 
-void RunLoop::dispatch(std::function<void ()> function)
+void RunLoop::dispatch(NoncopyableFunction&& function)
 {
     {
         MutexLocker locker(m_functionQueueLock);

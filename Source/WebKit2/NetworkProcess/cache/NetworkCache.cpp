@@ -632,7 +632,7 @@ void Cache::clear(std::chrono::system_clock::time_point modifiedSince, std::func
         m_statistics->clear();
 
     if (!m_storage) {
-        RunLoop::main().dispatch(completionHandler);
+        RunLoop::main().dispatch(WTFMove(completionHandler));
         return;
     }
     String anyType;

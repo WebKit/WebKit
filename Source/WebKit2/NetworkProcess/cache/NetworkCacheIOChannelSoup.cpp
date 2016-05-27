@@ -69,10 +69,10 @@ Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
     return adoptRef(*new IOChannel(filePath, type));
 }
 
-static inline void runTaskInQueue(std::function<void ()> task, WorkQueue* queue)
+static inline void runTaskInQueue(NoncopyableFunction&& task, WorkQueue* queue)
 {
     if (queue) {
-        queue->dispatch(task);
+        queue->dispatch(WTFMove(task));
         return;
     }
 
