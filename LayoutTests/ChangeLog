@@ -1,3 +1,16 @@
+2016-05-26  Yoav Weiss  <yoav@yoav.ws>
+
+        Preload single download tests.
+        https://bugs.webkit.org/show_bug.cgi?id=157988
+
+        Reviewed by Alex Christensen.
+
+        Make sure preload is only downloading a single resource, which is properly reused.
+
+        * http/tests/preload/resources/single_download_preload.html: Added.
+        * http/tests/preload/single_download_preload_runner-expected.txt: Added.
+        * http/tests/preload/single_download_preload_runner.html: Added.
+
 2016-05-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed EFL gardening.

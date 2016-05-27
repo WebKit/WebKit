@@ -41,7 +41,7 @@ namespace WebCore {
 void ResourceTimingInformation::addResourceTiming(CachedResource* resource, Document* document)
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
-    if (resource && resource->response().isHTTP()
+    if (resource && resource->resourceRequest().url().protocolIsInHTTPFamily()
         && ((!resource->errorOccurred() && !resource->wasCanceled()) || resource->response().httpStatusCode() == 304)) {
         HashMap<CachedResource*, InitiatorInfo>::iterator initiatorIt = m_initiatorMap.find(resource);
         if (initiatorIt != m_initiatorMap.end() && initiatorIt->value.added == NotYetAdded) {

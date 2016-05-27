@@ -1,3 +1,18 @@
+2016-05-26  Yoav Weiss  <yoav@yoav.ws>
+
+        Preload single download tests.
+        https://bugs.webkit.org/show_bug.cgi?id=157988
+
+        Reviewed by Alex Christensen.
+
+        ResourceTiming entries for some subresource weren't registered as resource->response().isHTTP() was false, since
+        resource->response().url() was empty. I switched the check to use resource->resourceRequest().url() directly instead.
+
+        Test: http/tests/preload/single_download_preload_runner.html
+
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::addResourceTiming):
+
 2016-05-26  Nan Wang  <n_wang@apple.com>
 
         AX: Wrong CharacterOffset from VisiblePosition with composed characters
