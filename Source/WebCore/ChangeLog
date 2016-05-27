@@ -1,3 +1,19 @@
+2016-05-27  Andreas Kling  <akling@apple.com>
+
+        Document abandons its EventTargetData.
+        <https://webkit.org/b/158158>
+
+        Reviewed by Darin Adler.
+
+        Node::willBeDeletedFrom() is called when destroying all Node types *except* Document.
+        If a Document had an associated EventTargetData, it would not get cleaned up.
+
+        This patch moves the EventTargetData cleanup to ~Node() where it's guaranteed to run.
+
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::willBeDeletedFrom):
+
 2016-05-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Attempt to fix the iOS build.
