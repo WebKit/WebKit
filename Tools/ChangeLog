@@ -1,3 +1,16 @@
+2016-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        New intl-numberformat.js test fails on many Linux platforms
+        https://bugs.webkit.org/show_bug.cgi?id=154530
+
+        Reviewed by Darin Adler.
+
+        The test is actually failing because of a bug in the icu version installed in the bots, using a newer version of
+        icu makes the tests pass and explains why it worked for some people. So, let's add icu 55.1 to the internal
+        jhbuild to ensure JSC tests pass in the bots no matter what the icu version installed is.
+
+        * gtk/jhbuild.modules:
+
 2016-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Allow JSBench to use precise time

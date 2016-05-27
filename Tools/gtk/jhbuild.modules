@@ -20,6 +20,7 @@
       <dep package="gnome-icon-theme-symbolic"/>
       <dep package="gnome-themes-standard"/>
       <dep package="gtk-doc"/>
+      <dep package="icu"/>
       <dep package="libsoup"/>
       <dep package="atk"/>
       <dep package="gstreamer"/>
@@ -69,6 +70,8 @@
       href="http://people.freedesktop.org"/>
   <repository type="tarball" name="llvm.org"
       href="http://llvm.org"/>
+  <repository type="tarball" name="icu"
+      href="http://download.icu-project.org/files/icu4c/"/>
 
   <autotools id="cairo">
     <if condition-set="linux">
@@ -119,6 +122,9 @@
   </autotools>
 
   <autotools id="harfbuzz" autogen-sh="configure">
+    <dependencies>
+      <dep package="icu"/>
+    </dependencies>
     <branch module="software/harfbuzz/release/harfbuzz-0.9.35.tar.bz2"
             version="0.9.35"
             checkoutdir="harfbuzz-0.9.35"
@@ -483,7 +489,16 @@
       <patch file="shared-mime-info-xhtml-magic.patch" strip="1"/>
     </branch>
   </autotools>
-  
+
+  <autotools id="icu"
+             autogen-sh="./source/configure"
+             autogenargs="--disable-samples --enable-weak-threads">
+    <branch module="55.1/icu4c-55_1-src.tgz" version="55.1" checkoutdir="icu"
+            repo="icu"
+            hash="sha256:e16b22cbefdd354bec114541f7849a12f8fc2015320ca5282ee4fd787571457b">
+    </branch>
+  </autotools>
+
   <!-- Dependencies listed below this point are not thought to affect test results, and are only
        included because they themselves depend on other dependencies built by jhbuild. -->
 
