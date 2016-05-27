@@ -1,3 +1,22 @@
+2016-05-27  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Deduplicated bmalloc/Zone.cpp handling.
+        https://bugs.webkit.org/show_bug.cgi?id=158154
+
+        Reviewed by Alex Christensen.
+
+        File bmalloc/Zone.cpp is required on Darwin irrespectively from what
+        port is being built.
+
+        Also I removed WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS() because it's
+        unlikely that bmalloc will ever need port-specific customizations (as
+        opposed to OS-specific customizations which should be done in
+        CMakeLists.txt).
+
+        * CMakeLists.txt: Added bmalloc/Zone.cpp for Darwin.
+        * PlatformGTK.cmake: Removed.
+        * PlatformMac.cmake: Removed.
+
 2016-05-22  Brady Eidson  <beidson@apple.com>
 
         Move to C++14.
