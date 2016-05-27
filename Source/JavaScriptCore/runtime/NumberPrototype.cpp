@@ -89,11 +89,6 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
 }
 
-bool NumberPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<NumberObject>(exec, numberPrototypeTable, jsCast<NumberPrototype*>(object), propertyName, slot);
-}
-
 // ------------------------------ Functions ---------------------------
 
 static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double& x)

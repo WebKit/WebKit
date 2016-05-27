@@ -37,7 +37,7 @@ private:
     ModuleLoaderObject(VM&, Structure*);
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     enum Status {
         Fetch = 1,
@@ -76,8 +76,6 @@ public:
 
     // Additional platform dependent hooked APIs.
     JSValue evaluate(ExecState*, JSValue key, JSValue moduleRecord);
-
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
 protected:
     void finishCreation(VM&, JSGlobalObject*);

@@ -33,7 +33,7 @@ namespace JSC {
 class GeneratorPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static GeneratorPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
     {
@@ -48,8 +48,6 @@ public:
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
-
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
 private:
     GeneratorPrototype(VM& vm, Structure* structure)

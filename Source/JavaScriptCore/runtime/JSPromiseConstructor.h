@@ -37,14 +37,12 @@ class GetterSetter;
 class JSPromiseConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static JSPromiseConstructor* create(VM&, Structure*, JSPromisePrototype*, GetterSetter* speciesSymbol);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
-
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
 protected:
     JSPromiseConstructor(VM&, Structure*);

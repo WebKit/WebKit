@@ -62,11 +62,6 @@ void ErrorPrototype::finishCreation(VM& vm)
     putDirect(vm, vm.propertyNames->message, jsEmptyString(&vm), DontEnum);
 }
 
-bool ErrorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<ErrorInstance>(exec, errorPrototypeTable, jsCast<ErrorPrototype*>(object), propertyName, slot);
-}
-
 // ------------------------------ Functions ---------------------------
 
 // ECMA-262 5.1, 15.11.4.4

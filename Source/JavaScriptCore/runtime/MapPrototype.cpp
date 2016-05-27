@@ -89,11 +89,6 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_GETTER(vm.propertyNames->size, mapProtoFuncSize, DontEnum | Accessor);
 }
 
-bool MapPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<Base>(exec, mapPrototypeTable, jsCast<MapPrototype*>(object), propertyName, slot);
-}
-
 ALWAYS_INLINE static JSMap* getMap(CallFrame* callFrame, JSValue thisValue)
 {
     if (!thisValue.isObject()) {

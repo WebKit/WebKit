@@ -33,7 +33,7 @@ namespace JSC {
 class JSDataViewPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
 protected:
     JSDataViewPrototype(VM&, Structure*);
@@ -46,9 +46,6 @@ public:
     DECLARE_INFO;
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
-
-protected:
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
 } // namespace JSC

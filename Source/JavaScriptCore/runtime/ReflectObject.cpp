@@ -89,11 +89,6 @@ void ReflectObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->getOwnPropertyDescriptorPrivateName, reflectObjectGetOwnPropertyDescriptor, DontEnum | DontDelete | ReadOnly, 2);
 }
 
-bool ReflectObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<Base>(exec, reflectObjectTable, jsCast<ReflectObject*>(object), propertyName, slot);
-}
-
 // ------------------------------ Functions --------------------------------
 
 // https://tc39.github.io/ecma262/#sec-reflect.construct

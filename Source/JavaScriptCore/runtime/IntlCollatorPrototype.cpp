@@ -79,11 +79,6 @@ void IntlCollatorPrototype::finishCreation(VM& vm)
     Base::finishCreation(vm);
 }
 
-bool IntlCollatorPrototype::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<JSObject>(state, collatorPrototypeTable, jsCast<IntlCollatorPrototype*>(object), propertyName, slot);
-}
-
 static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* state)
 {
     // 10.3.4 Collator Compare Functions (ECMA-402 2.0)

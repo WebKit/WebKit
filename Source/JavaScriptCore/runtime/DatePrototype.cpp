@@ -504,11 +504,6 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     // The constructor will be added later, after DateConstructor has been built.
 }
 
-bool DatePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<JSObject>(exec, dateTable, jsCast<DatePrototype*>(object), propertyName, slot);
-}
-
 // Functions
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToString(ExecState* exec)

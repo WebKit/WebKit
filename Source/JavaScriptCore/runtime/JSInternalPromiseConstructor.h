@@ -36,7 +36,7 @@ class JSInternalPromisePrototype;
 class JSInternalPromiseConstructor : public JSPromiseConstructor {
 public:
     typedef JSPromiseConstructor Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static JSInternalPromiseConstructor* create(VM&, Structure*, JSInternalPromisePrototype*, GetterSetter*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -47,7 +47,6 @@ private:
     JSInternalPromiseConstructor(VM&, Structure*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
 } // namespace JSC

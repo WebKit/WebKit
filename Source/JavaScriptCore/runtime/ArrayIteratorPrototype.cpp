@@ -55,11 +55,6 @@ void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject*)
     vm.prototypeMap.addPrototype(this);
 }
 
-bool ArrayIteratorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<Base>(exec, arrayIteratorPrototypeTable, jsCast<ArrayIteratorPrototype*>(object), propertyName, slot);
-}
-
 // ------------------------------ Array Functions ----------------------------
 
 } // namespace JSC

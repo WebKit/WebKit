@@ -64,11 +64,6 @@ void InspectorInstrumentationObject::finishCreation(VM& vm, JSGlobalObject*)
     putDirectWithoutTransition(vm, vm.propertyNames->isEnabled, jsBoolean(false));
 }
 
-bool InspectorInstrumentationObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<Base>(exec, inspectorInstrumentationObjectTable, jsCast<InspectorInstrumentationObject*>(object), propertyName, slot);
-}
-
 bool InspectorInstrumentationObject::isEnabled(VM& vm) const
 {
     return getDirect(vm, vm.propertyNames->isEnabled).asBoolean();

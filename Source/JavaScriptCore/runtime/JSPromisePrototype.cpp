@@ -85,9 +85,4 @@ void JSPromisePrototype::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObjec
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().thenPrivateName(), promisePrototypeThenCodeGenerator, DontEnum | DontDelete | ReadOnly);
 }
 
-bool JSPromisePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<Base>(exec, promisePrototypeTable, jsCast<JSPromisePrototype*>(object), propertyName, slot);
-}
-
 } // namespace JSC

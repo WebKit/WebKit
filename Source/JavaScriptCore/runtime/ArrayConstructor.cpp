@@ -71,11 +71,6 @@ void ArrayConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Arra
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isArray, arrayConstructorIsArray, DontEnum, 1);
 }
 
-bool ArrayConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<InternalFunction>(exec, arrayConstructorTable, jsCast<ArrayConstructor*>(object), propertyName, slot);
-}
-
 // ------------------------------ Functions ---------------------------
 
 JSObject* constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, JSValue length, JSValue newTarget)

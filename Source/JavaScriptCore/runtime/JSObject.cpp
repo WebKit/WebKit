@@ -1674,6 +1674,17 @@ bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue& resu
     return !result.isString();
 }
 
+bool JSObject::getOwnStaticPropertySlot(VM& vm, PropertyName propertyName, PropertySlot& slot)
+{
+    for (auto* info = classInfo(); info; info = info->parentClass) {
+        if (auto* table = info->staticPropHashTable) {
+            if (getStaticPropertySlotFromTable(vm, *table, this, propertyName, slot))
+                return true;
+        }
+    }
+    return false;
+}
+
 const HashTableValue* JSObject::findPropertyHashEntry(PropertyName propertyName) const
 {
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {

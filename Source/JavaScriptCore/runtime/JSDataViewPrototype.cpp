@@ -119,14 +119,6 @@ Structure* JSDataViewPrototype::createStructure(
         vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-bool JSDataViewPrototype::getOwnPropertySlot(
-    JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<JSObject>(
-        exec, dataViewTable, jsCast<JSDataViewPrototype*>(object),
-        propertyName, slot);
-}
-
 template<typename Adaptor>
 EncodedJSValue getData(ExecState* exec)
 {

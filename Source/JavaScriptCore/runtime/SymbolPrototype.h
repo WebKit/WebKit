@@ -36,7 +36,7 @@ namespace JSC {
 class SymbolPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static SymbolPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
@@ -55,9 +55,6 @@ public:
 protected:
     SymbolPrototype(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
-
-private:
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(SymbolPrototype);
 

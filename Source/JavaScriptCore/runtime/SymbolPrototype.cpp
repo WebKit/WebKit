@@ -65,11 +65,6 @@ void SymbolPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION(vm.propertyNames->toPrimitiveSymbol, symbolProtoFuncValueOf, DontEnum | ReadOnly, 1);
 }
 
-bool SymbolPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<Base>(exec, symbolPrototypeTable, jsCast<SymbolPrototype*>(object), propertyName, slot);
-}
-
 // ------------------------------ Functions ---------------------------
 
 static const char* SymbolToStringTypeError = "Symbol.prototype.toString requires that |this| be a symbol or a symbol object";

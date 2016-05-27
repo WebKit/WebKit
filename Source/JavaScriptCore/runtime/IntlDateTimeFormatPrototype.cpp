@@ -80,11 +80,6 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, Structure*)
     Base::finishCreation(vm);
 }
 
-bool IntlDateTimeFormatPrototype::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<JSObject>(state, dateTimeFormatPrototypeTable, jsCast<IntlDateTimeFormatPrototype*>(object), propertyName, slot);
-}
-
 static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecState* state)
 {
     // 12.3.4 DateTime Format Functions (ECMA-402 2.0)

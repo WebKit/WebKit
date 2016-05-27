@@ -58,9 +58,4 @@ void StringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject*)
     vm.prototypeMap.addPrototype(this);
 }
 
-bool StringIteratorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<Base>(exec, stringIteratorPrototypeTable, jsCast<StringIteratorPrototype*>(object), propertyName, slot);
-}
-
 } // namespace JSC

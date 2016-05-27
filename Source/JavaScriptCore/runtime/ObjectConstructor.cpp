@@ -113,11 +113,6 @@ JSFunction* ObjectConstructor::addDefineProperty(ExecState* exec, JSGlobalObject
     return definePropertyFunction;
 }
 
-bool ObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<JSObject>(exec, objectConstructorTable, jsCast<ObjectConstructor*>(object), propertyName, slot);
-}
-
 // ES 19.1.1.1 Object([value])
 static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, JSValue newTarget)
 {

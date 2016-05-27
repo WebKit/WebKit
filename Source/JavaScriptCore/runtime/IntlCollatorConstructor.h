@@ -38,7 +38,7 @@ class IntlCollatorPrototype;
 class IntlCollatorConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static IntlCollatorConstructor* create(VM&, Structure*, IntlCollatorPrototype*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -54,7 +54,6 @@ private:
     IntlCollatorConstructor(VM&, Structure*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void visitChildren(JSCell*, SlotVisitor&);
     
     WriteBarrier<Structure> m_collatorStructure;

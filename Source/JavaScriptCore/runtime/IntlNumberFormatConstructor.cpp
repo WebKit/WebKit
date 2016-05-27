@@ -135,11 +135,6 @@ CallType IntlNumberFormatConstructor::getCallData(JSCell*, CallData& callData)
     return CallType::Host;
 }
 
-bool IntlNumberFormatConstructor::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<InternalFunction>(state, numberFormatConstructorTable, jsCast<IntlNumberFormatConstructor*>(object), propertyName, slot);
-}
-
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(ExecState* state)
 {
     // 11.2.2 Intl.NumberFormat.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)

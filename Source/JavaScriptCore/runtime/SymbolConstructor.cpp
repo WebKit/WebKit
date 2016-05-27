@@ -73,11 +73,6 @@ void SymbolConstructor::finishCreation(VM& vm, SymbolPrototype* prototype)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_WELL_KNOWN_SYMBOLS)
 }
 
-bool SymbolConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<Base>(exec, symbolConstructorTable, jsCast<SymbolConstructor*>(object), propertyName, slot);
-}
-
 // ------------------------------ Functions ---------------------------
 
 static EncodedJSValue JSC_HOST_CALL callSymbol(ExecState* exec)

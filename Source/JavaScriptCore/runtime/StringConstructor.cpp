@@ -64,11 +64,6 @@ void StringConstructor::finishCreation(VM& vm, StringPrototype* stringPrototype)
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
-bool StringConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<InternalFunction>(exec, stringConstructorTable, jsCast<StringConstructor*>(object), propertyName, slot);
-}
-
 // ------------------------------ Functions --------------------------------
 
 static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec)

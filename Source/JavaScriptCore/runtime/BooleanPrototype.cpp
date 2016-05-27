@@ -63,11 +63,6 @@ void BooleanPrototype::finishCreation(VM& vm, JSGlobalObject*)
     ASSERT(inherits(info()));
 }
 
-bool BooleanPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<BooleanObject>(exec, booleanPrototypeTable, jsCast<BooleanPrototype*>(object), propertyName, slot);
-}
-
 // ------------------------------ Functions ---------------------------
 
 EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec)

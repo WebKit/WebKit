@@ -135,11 +135,6 @@ CallType IntlDateTimeFormatConstructor::getCallData(JSCell*, CallData& callData)
     return CallType::Host;
 }
 
-bool IntlDateTimeFormatConstructor::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<InternalFunction>(state, dateTimeFormatConstructorTable, jsCast<IntlDateTimeFormatConstructor*>(object), propertyName, slot);
-}
-
 EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf(ExecState* state)
 {
     // 12.2.2 Intl.DateTimeFormat.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)

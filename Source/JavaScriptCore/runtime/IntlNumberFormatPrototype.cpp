@@ -78,11 +78,6 @@ void IntlNumberFormatPrototype::finishCreation(VM& vm, Structure*)
     Base::finishCreation(vm);
 }
 
-bool IntlNumberFormatPrototype::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<JSObject>(state, numberFormatPrototypeTable, jsCast<IntlNumberFormatPrototype*>(object), propertyName, slot);
-}
-
 static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(ExecState* state)
 {
     // 11.3.4 Format Number Functions (ECMA-402 2.0)

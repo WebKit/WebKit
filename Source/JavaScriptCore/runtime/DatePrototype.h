@@ -33,7 +33,7 @@ private:
 
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static DatePrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
@@ -41,7 +41,6 @@ public:
         prototype->finishCreation(vm, globalObject);
         return prototype;
     }
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
     DECLARE_INFO;
 

@@ -38,7 +38,7 @@ class ObjectPrototype;
 class ObjectConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static ObjectConstructor* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objectPrototype)
     {
@@ -46,8 +46,6 @@ public:
         constructor->finishCreation(vm, globalObject, objectPrototype);
         return constructor;
     }
-
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
     DECLARE_INFO;
 

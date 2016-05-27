@@ -34,7 +34,7 @@ namespace JSC {
 class StringIteratorPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static StringIteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
@@ -56,7 +56,6 @@ private:
     {
     }
     void finishCreation(VM&, JSGlobalObject*);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
 }

@@ -189,11 +189,6 @@ StringPrototype* StringPrototype::create(VM& vm, JSGlobalObject* globalObject, S
     return prototype;
 }
 
-bool StringPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<Base>(exec, stringPrototypeTable, jsCast<StringPrototype*>(object), propertyName, slot);
-}
-
 // ------------------------------ Functions --------------------------
 
 static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, StringView source, const int* ovector, RegExp* reg, size_t i)

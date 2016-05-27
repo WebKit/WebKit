@@ -30,7 +30,7 @@ class ObjectPrototype;
 class ErrorPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static ErrorPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
     {
@@ -49,9 +49,6 @@ public:
 protected:
     ErrorPrototype(VM&, Structure*);
     void finishCreation(VM&);
-
-private:
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
 } // namespace JSC

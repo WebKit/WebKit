@@ -27,9 +27,9 @@
 
 namespace JSC {
 
-void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObj, PropertyName propertyName)
+void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObject, PropertyName propertyName)
 {
-    JSGlobalObject* globalObject = thisObj.globalObject();
+    JSGlobalObject* globalObject = thisObject.globalObject();
     GetterSetter* accessor = GetterSetter::create(vm, globalObject);
     if (value.accessorGetter()) {
         String getterName = WTF::tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
@@ -39,50 +39,49 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObj,
             ? JSFunction::createBuiltinFunction(vm, value.builtinAccessorGetterGenerator()(vm), globalObject, getterName)
             : JSFunction::create(vm, globalObject, 0, getterName, value.accessorGetter()));
     }
-    thisObj.putDirectNonIndexAccessor(vm, propertyName, accessor, attributesForStructure(value.attributes()));
+    thisObject.putDirectNonIndexAccessor(vm, propertyName, accessor, attributesForStructure(value.attributes()));
 }
 
-bool setUpStaticFunctionSlot(ExecState* exec, const HashTableValue* entry, JSObject* thisObj, PropertyName propertyName, PropertySlot& slot)
+bool setUpStaticFunctionSlot(VM& vm, const HashTableValue* entry, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
 {
-    ASSERT(thisObj->globalObject());
+    ASSERT(thisObject->globalObject());
     ASSERT(entry->attributes() & BuiltinOrFunctionOrAccessorOrLazyProperty);
-    VM& vm = exec->vm();
     unsigned attributes;
     bool isAccessor = entry->attributes() & Accessor;
-    PropertyOffset offset = thisObj->getDirectOffset(vm, propertyName, attributes);
+    PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);
 
     if (!isValidOffset(offset)) {
         // If a property is ever deleted from an object with a static table, then we reify
         // all static functions at that time - after this we shouldn't be re-adding anything.
-        if (thisObj->staticFunctionsReified())
+        if (thisObject->staticFunctionsReified())
             return false;
 
         if (entry->attributes() & Builtin)
-            thisObj->putDirectBuiltinFunction(vm, thisObj->globalObject(), propertyName, entry->builtinGenerator()(vm), attributesForStructure(entry->attributes()));
+            thisObject->putDirectBuiltinFunction(vm, thisObject->globalObject(), propertyName, entry->builtinGenerator()(vm), attributesForStructure(entry->attributes()));
         else if (entry->attributes() & Function) {
-            thisObj->putDirectNativeFunction(
-                vm, thisObj->globalObject(), propertyName, entry->functionLength(),
+            thisObject->putDirectNativeFunction(
+                vm, thisObject->globalObject(), propertyName, entry->functionLength(),
                 entry->function(), entry->intrinsic(), attributesForStructure(entry->attributes()));
         } else if (isAccessor)
-            reifyStaticAccessor(vm, *entry, *thisObj, propertyName);
+            reifyStaticAccessor(vm, *entry, *thisObject, propertyName);
         else if (entry->attributes() & CellProperty) {
             LazyCellProperty* property = bitwise_cast<LazyCellProperty*>(
-                bitwise_cast<char*>(thisObj) + entry->lazyCellPropertyOffset());
-            JSCell* result = property->get(thisObj);
-            thisObj->putDirect(vm, propertyName, result, attributesForStructure(entry->attributes()));
+                bitwise_cast<char*>(thisObject) + entry->lazyCellPropertyOffset());
+            JSCell* result = property->get(thisObject);
+            thisObject->putDirect(vm, propertyName, result, attributesForStructure(entry->attributes()));
         } else if (entry->attributes() & ClassStructure) {
             LazyClassStructure* structure = bitwise_cast<LazyClassStructure*>(
-                bitwise_cast<char*>(thisObj) + entry->lazyClassStructureOffset());
-            structure->get(jsCast<JSGlobalObject*>(thisObj));
+                bitwise_cast<char*>(thisObject) + entry->lazyClassStructureOffset());
+            structure->get(jsCast<JSGlobalObject*>(thisObject));
         } else if (entry->attributes() & PropertyCallback) {
-            JSValue result = entry->lazyPropertyCallback()(vm, thisObj);
-            thisObj->putDirect(vm, propertyName, result, attributesForStructure(entry->attributes()));
+            JSValue result = entry->lazyPropertyCallback()(vm, thisObject);
+            thisObject->putDirect(vm, propertyName, result, attributesForStructure(entry->attributes()));
         } else {
             dataLog("Static hashtable entry for ", propertyName, " has weird attributes: ", entry->attributes(), "\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        offset = thisObj->getDirectOffset(vm, propertyName, attributes);
+        offset = thisObject->getDirectOffset(vm, propertyName, attributes);
         if (!isValidOffset(offset)) {
             dataLog("Static hashtable initialiation for ", propertyName, " did not produce a property.\n");
             RELEASE_ASSERT_NOT_REACHED();
@@ -90,9 +89,9 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashTableValue* entry, JSObj
     }
 
     if (isAccessor)
-        slot.setCacheableGetterSlot(thisObj, attributes, jsCast<GetterSetter*>(thisObj->getDirect(offset)), offset);
+        slot.setCacheableGetterSlot(thisObject, attributes, jsCast<GetterSetter*>(thisObject->getDirect(offset)), offset);
     else
-        slot.setValue(thisObj, attributes, thisObj->getDirect(offset), offset);
+        slot.setValue(thisObject, attributes, thisObject->getDirect(offset), offset);
     return true;
 }
 

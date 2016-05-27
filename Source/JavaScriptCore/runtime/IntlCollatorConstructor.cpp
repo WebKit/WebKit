@@ -135,11 +135,6 @@ CallType IntlCollatorConstructor::getCallData(JSCell*, CallData& callData)
     return CallType::Host;
 }
 
-bool IntlCollatorConstructor::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<InternalFunction>(state, collatorConstructorTable, jsCast<IntlCollatorConstructor*>(object), propertyName, slot);
-}
-
 EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(ExecState* state)
 {
     // 10.2.2 Intl.Collator.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)

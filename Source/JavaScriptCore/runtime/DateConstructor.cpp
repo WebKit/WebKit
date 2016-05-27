@@ -107,11 +107,6 @@ void DateConstructor::finishCreation(VM& vm, DatePrototype* datePrototype)
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(7), ReadOnly | DontEnum | DontDelete);
 }
 
-bool DateConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<InternalFunction>(exec, dateConstructorTable, jsCast<DateConstructor*>(object), propertyName, slot);
-}
-
 static double millisecondsFromComponents(ExecState* exec, const ArgList& args, WTF::TimeType timeType)
 {
     double doubleArguments[] = {

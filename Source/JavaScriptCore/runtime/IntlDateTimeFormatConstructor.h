@@ -38,7 +38,7 @@ class IntlDateTimeFormatPrototype;
 class IntlDateTimeFormatConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static IntlDateTimeFormatConstructor* create(VM&, Structure*, IntlDateTimeFormatPrototype*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -54,7 +54,6 @@ private:
     IntlDateTimeFormatConstructor(VM&, Structure*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void visitChildren(JSCell*, SlotVisitor&);
     
     WriteBarrier<Structure> m_dateTimeFormatStructure;

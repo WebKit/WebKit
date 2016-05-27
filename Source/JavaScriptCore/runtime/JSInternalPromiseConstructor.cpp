@@ -85,9 +85,4 @@ CallType JSInternalPromiseConstructor::getCallData(JSCell*, CallData& callData)
     return CallType::Host;
 }
 
-bool JSInternalPromiseConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<Base>(exec, internalPromiseConstructorTable, jsCast<JSInternalPromiseConstructor*>(object), propertyName, slot);
-}
-
 } // namespace JSC

@@ -1,3 +1,243 @@
+2016-05-26  Gavin & Ellie Barraclough  <barraclough@apple.com>
+
+        Static table property lookup should not require getOwnPropertySlot override.
+        https://bugs.webkit.org/show_bug.cgi?id=158059
+
+        Reviewed by Darin Adler.
+
+        Currently JSObject does not handle property lookup of entries in the static
+        table. Each subclass with static properties mut override getOwnPropertySlot,
+        and explicitly call the lookup functions. This has the following drawbacks:
+
+        - Performance: for any class with static properties, property acces becomes
+          virtual (via method table).
+        - Poor encapsulation: implementation detail of static property access is
+          spread throughout & cross projects, rather than being contained in JSObject.
+        - Code size: this results in a great many additional functions.
+        - Inconsistency: static table presence has to be be taken into account in many
+          other operations, e.g. presence of read-only properties for put.
+        - Memory: in order to avoid the virtual lookup, DOM prototypes eagerly reify
+          all properties. This is likely suboptimal.
+
+        Instead, JSObject::getPropertySlot / JSObject::getOwnPropertySlot should be
+        able to handle static properties.
+
+        This is actually a fairly small & simple change.
+
+        The common pattern is for subclasses of JObject to override getOwnPropertySlot
+        to first defer to JSObject for property storage lookup, and only if this fails
+        consult the static table. They just want the static tables to be consulted after
+        regular property storgae lookup. So just add a fast flag in TypeInfo for JSObject
+        to check, and where it is set, do so. Then it's just a question of switching
+        classes over to start setting this flag, and drop the override.
+
+        The new mechanism does change static table lookup order from oldest-ancestor
+        first to most-derived first. The new ordering makes more sense (means derived
+        class static tables can now override entries from parents), and shoudn't affect
+        any existing code (since overriding didn't previously work, there likely aren't
+        shadowing properties in more derived types).
+
+        This patch changes all classes in JavaScriptCore over to using the new mechanism,
+        except JSGlobalObject. I'll move classes in WebCore over as a separate patch
+        (this is also why I've not moved JSGlobalObject in this patch - doing so would
+        move JSDOMWindow, and I'd rather handle that separately).
+
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::hasStaticPropertyTable):
+            - Add HasStaticPropertyTable flag.
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+            - Change setUpStaticFunctionSlot to take a VM&.
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertySlotFromTable):
+            - Added helper function to perform static lookup alone.
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticFunctionSlot):
+            - setUpStaticFunctionSlot changed to take a VM&.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnStaticPropertySlot):
+            - Added, walks ClassInfo chain looking for static properties.
+        * runtime/JSObject.h:
+        (JSC::JSObject::getOwnNonIndexPropertySlot):
+            - getOwnNonIndexPropertySlot is used internally by getPropertySlot
+              & getOwnPropertySlot. If property is not present in storage array
+              then check the static table.
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        (JSC::constructArrayWithSizeQuirk):
+        (JSC::ArrayConstructor::getOwnPropertySlot): Deleted.
+        * runtime/ArrayConstructor.h:
+        (JSC::ArrayConstructor::create):
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        (JSC::ArrayIteratorPrototype::getOwnPropertySlot): Deleted.
+        * runtime/ArrayIteratorPrototype.h:
+        (JSC::ArrayIteratorPrototype::create):
+        (JSC::ArrayIteratorPrototype::ArrayIteratorPrototype):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::finishCreation):
+        (JSC::booleanProtoFuncToString):
+        (JSC::BooleanPrototype::getOwnPropertySlot): Deleted.
+        * runtime/BooleanPrototype.h:
+        (JSC::BooleanPrototype::create):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::finishCreation):
+        (JSC::millisecondsFromComponents):
+        (JSC::DateConstructor::getOwnPropertySlot): Deleted.
+        * runtime/DateConstructor.h:
+        (JSC::DateConstructor::create):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+        (JSC::dateProtoFuncToString):
+        (JSC::DatePrototype::getOwnPropertySlot): Deleted.
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::create):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::finishCreation):
+        (JSC::ErrorPrototype::getOwnPropertySlot): Deleted.
+        * runtime/ErrorPrototype.h:
+        (JSC::ErrorPrototype::create):
+        * runtime/GeneratorPrototype.cpp:
+        (JSC::GeneratorPrototype::finishCreation):
+        (JSC::GeneratorPrototype::getOwnPropertySlot): Deleted.
+        * runtime/GeneratorPrototype.h:
+        (JSC::GeneratorPrototype::create):
+        (JSC::GeneratorPrototype::createStructure):
+        (JSC::GeneratorPrototype::GeneratorPrototype):
+        * runtime/InspectorInstrumentationObject.cpp:
+        (JSC::InspectorInstrumentationObject::finishCreation):
+        (JSC::InspectorInstrumentationObject::isEnabled):
+        (JSC::InspectorInstrumentationObject::getOwnPropertySlot): Deleted.
+        * runtime/InspectorInstrumentationObject.h:
+        (JSC::InspectorInstrumentationObject::create):
+        (JSC::InspectorInstrumentationObject::createStructure):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::getCallData):
+        (JSC::IntlCollatorConstructorFuncSupportedLocalesOf):
+        (JSC::IntlCollatorConstructor::getOwnPropertySlot): Deleted.
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototype::finishCreation):
+        (JSC::IntlCollatorFuncCompare):
+        (JSC::IntlCollatorPrototype::getOwnPropertySlot): Deleted.
+        * runtime/IntlCollatorPrototype.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::getCallData):
+        (JSC::IntlDateTimeFormatConstructorFuncSupportedLocalesOf):
+        (JSC::IntlDateTimeFormatConstructor::getOwnPropertySlot): Deleted.
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        (JSC::IntlDateTimeFormatFuncFormatDateTime):
+        (JSC::IntlDateTimeFormatPrototype::getOwnPropertySlot): Deleted.
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::getCallData):
+        (JSC::IntlNumberFormatConstructorFuncSupportedLocalesOf):
+        (JSC::IntlNumberFormatConstructor::getOwnPropertySlot): Deleted.
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        (JSC::IntlNumberFormatFuncFormatNumber):
+        (JSC::IntlNumberFormatPrototype::getOwnPropertySlot): Deleted.
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSDataViewPrototype::createStructure):
+        (JSC::getData):
+        (JSC::JSDataViewPrototype::getOwnPropertySlot): Deleted.
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSInternalPromiseConstructor.cpp:
+        (JSC::JSInternalPromiseConstructor::getCallData):
+        (JSC::JSInternalPromiseConstructor::getOwnPropertySlot): Deleted.
+        * runtime/JSInternalPromiseConstructor.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::Walker):
+        (JSC::JSONObject::getOwnPropertySlot): Deleted.
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::create):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::getCallData):
+        (JSC::JSPromiseConstructor::getOwnPropertySlot): Deleted.
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::addOwnInternalSlots):
+        (JSC::JSPromisePrototype::getOwnPropertySlot): Deleted.
+        * runtime/JSPromisePrototype.h:
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        (JSC::getMap):
+        (JSC::MapPrototype::getOwnPropertySlot): Deleted.
+        * runtime/MapPrototype.h:
+        (JSC::MapPrototype::create):
+        (JSC::MapPrototype::MapPrototype):
+        * runtime/ModuleLoaderObject.cpp:
+        (JSC::ModuleLoaderObject::finishCreation):
+        (JSC::printableModuleKey):
+        (JSC::ModuleLoaderObject::getOwnPropertySlot): Deleted.
+        * runtime/ModuleLoaderObject.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::finishCreation):
+        (JSC::toThisNumber):
+        (JSC::NumberPrototype::getOwnPropertySlot): Deleted.
+        * runtime/NumberPrototype.h:
+        (JSC::NumberPrototype::create):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::addDefineProperty):
+        (JSC::constructObject):
+        (JSC::ObjectConstructor::getOwnPropertySlot): Deleted.
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::create):
+        (JSC::ObjectConstructor::createStructure):
+        * runtime/ReflectObject.cpp:
+        (JSC::ReflectObject::finishCreation):
+        (JSC::ReflectObject::getOwnPropertySlot): Deleted.
+        * runtime/ReflectObject.h:
+        (JSC::ReflectObject::create):
+        (JSC::ReflectObject::createStructure):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getRightContext):
+        (JSC::regExpConstructorDollar):
+        (JSC::RegExpConstructor::getOwnPropertySlot): Deleted.
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::create):
+        (JSC::RegExpConstructor::createStructure):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        (JSC::getSet):
+        (JSC::SetPrototype::getOwnPropertySlot): Deleted.
+        * runtime/SetPrototype.h:
+        (JSC::SetPrototype::create):
+        (JSC::SetPrototype::SetPrototype):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::finishCreation):
+        (JSC::stringFromCharCodeSlowCase):
+        (JSC::StringConstructor::getOwnPropertySlot): Deleted.
+        * runtime/StringConstructor.h:
+        (JSC::StringConstructor::create):
+        * runtime/StringIteratorPrototype.cpp:
+        (JSC::StringIteratorPrototype::finishCreation):
+        (JSC::StringIteratorPrototype::getOwnPropertySlot): Deleted.
+        * runtime/StringIteratorPrototype.h:
+        (JSC::StringIteratorPrototype::create):
+        (JSC::StringIteratorPrototype::StringIteratorPrototype):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::create):
+        (JSC::substituteBackreferencesSlow):
+        (JSC::StringPrototype::getOwnPropertySlot): Deleted.
+        * runtime/StringPrototype.h:
+        * runtime/SymbolConstructor.cpp:
+        (JSC::SymbolConstructor::finishCreation):
+        (JSC::callSymbol):
+        (JSC::SymbolConstructor::getOwnPropertySlot): Deleted.
+        * runtime/SymbolConstructor.h:
+        (JSC::SymbolConstructor::create):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::SymbolPrototype::finishCreation):
+        (JSC::SymbolPrototype::getOwnPropertySlot): Deleted.
+        * runtime/SymbolPrototype.h:
+        (JSC::SymbolPrototype::create):
+            - remove getOwnPropertySlot, replace OverridesGetOwnPropertySlot flag with HasStaticPropertyTable.
+
 2016-05-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201436.

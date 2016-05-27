@@ -119,11 +119,6 @@ void ModuleLoaderObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "registry"), JSMap::create(vm, globalObject->mapStructure()));
 }
 
-bool ModuleLoaderObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<Base>(exec, moduleLoaderObjectTable, jsCast<ModuleLoaderObject*>(object), propertyName, slot);
-}
-
 // ------------------------------ Functions --------------------------------
 
 static String printableModuleKey(ExecState* exec, JSValue key)

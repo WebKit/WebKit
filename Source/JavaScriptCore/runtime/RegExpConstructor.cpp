@@ -145,11 +145,6 @@ JSValue RegExpConstructor::getRightContext(ExecState* exec)
 {
     return m_cachedResult.rightContext(exec, this);
 }
-    
-bool RegExpConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<RegExpConstructor, InternalFunction>(exec, regExpConstructorTable, jsCast<RegExpConstructor*>(object), propertyName, slot);
-}
 
 template<int N>
 EncodedJSValue regExpConstructorDollar(ExecState* exec, EncodedJSValue thisValue, PropertyName, JSObject*)

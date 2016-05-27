@@ -36,7 +36,7 @@ namespace JSC {
 class IntlDateTimeFormatPrototype : public IntlDateTimeFormat {
 public:
     typedef IntlDateTimeFormat Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static IntlDateTimeFormatPrototype* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -48,7 +48,6 @@ protected:
 
 private:
     IntlDateTimeFormatPrototype(VM&, Structure*);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
 } // namespace JSC

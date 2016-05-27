@@ -83,12 +83,6 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_GETTER(vm.propertyNames->size, setProtoFuncSize, DontEnum | Accessor);
 }
 
-bool SetPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<Base>(exec, setPrototypeTable, jsCast<SetPrototype*>(object), propertyName, slot);
-}
-
-
 ALWAYS_INLINE static JSSet* getSet(CallFrame* callFrame, JSValue thisValue)
 {
     if (!thisValue.isObject()) {

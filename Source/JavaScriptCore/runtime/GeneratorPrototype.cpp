@@ -54,9 +54,4 @@ void GeneratorPrototype::finishCreation(VM& vm)
     vm.prototypeMap.addPrototype(this);
 }
 
-bool GeneratorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<Base>(exec, generatorPrototypeTable, jsCast<GeneratorPrototype*>(object), propertyName, slot);
-}
-
 } // namespace JSC

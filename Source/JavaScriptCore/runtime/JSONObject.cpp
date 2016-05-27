@@ -552,11 +552,6 @@ const ClassInfo JSONObject::s_info = { "JSON", &JSNonFinalObject::s_info, &jsonT
 
 // ECMA 15.8
 
-bool JSONObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<JSObject>(exec, jsonTable, jsCast<JSONObject*>(object), propertyName, slot);
-}
-
 class Walker {
 public:
     Walker(ExecState* exec, Handle<JSObject> function, CallType callType, CallData callData)
