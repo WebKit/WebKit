@@ -1,3 +1,15 @@
+2016-05-27  Brent Fulgham  <bfulgham@apple.com>
+
+        CSP: Fire 'load' events even when blocking loads via 'frame-src'.
+        https://bugs.webkit.org/show_bug.cgi?id=153150
+        <rdar://problem/24383162>
+
+        Reviewed by Daniel Bates.
+
+        * TestExpectations: Unskip the cross-origin load test.
+        * http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load-expected.txt: Update to match
+        our message format.
+
 2016-05-27  Saam barati  <sbarati@apple.com>
 
         ShadowChicken/DebuggerCallFrame don't properly handle when the entry stack frame is a tail deleted frame

@@ -1,3 +1,24 @@
+2016-05-27  Brent Fulgham  <bfulgham@apple.com>
+
+        CSP: Fire 'load' events even when blocking loads via 'frame-src'.
+        https://bugs.webkit.org/show_bug.cgi?id=153150
+        <rdar://problem/24383162>
+
+        Reviewed by Daniel Bates.
+
+        Always fire a load event, even when the load is blocked by CSP rules, so that
+        attackers cannot gain knowledge about the URL in the frame by blocking the
+        load and waiting long enough to be sure that a 'load' event would have
+        fired if the load wasn't blocked.
+
+        Inspired by Blink patch:
+        <https://src.chromium.org/viewvc/blink?view=rev&revision=165743>
+
+        Tests: http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+
 2016-05-27  Andreas Kling  <akling@apple.com>
 
         Document abandons its EventTargetData.

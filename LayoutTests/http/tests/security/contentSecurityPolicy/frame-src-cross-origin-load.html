@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/js-test-pre.js"></script>
     <meta http-equiv="Content-Security-Policy" content="frame-src 'self' http://localhost:8080">
     <script>
-        window.jsTestIsAsync = true;
-        window.wasPostTestScriptParsed = true;
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         
         description("IFrames blocked by CSP should generate a 'load' event, regardless of blocked state. This means they appear to be normal cross-origin loads, thereby not leaking URL information directly to JS.");
 
@@ -13,8 +13,10 @@
         function loadEvent() {
             loads++;
             testPassed("IFrame #" + loads + " generated a 'load' event.");
-            if (loads == 3)
-                finishJSTest();
+            if (loads == 3) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
         }
     </script>
 </head>
@@ -22,5 +24,6 @@
     <iframe src="/security/contentSecurityPolicy/resources/alert-pass.html" onload="loadEvent()"></iframe>
     <iframe src="http://localhost:8080/security/contentSecurityPolicy/resources/alert-pass.html" onload="loadEvent()"></iframe>
     <iframe src="https://localhost:8443/security/contentSecurityPolicy/resources/alert-fail.html" onload="loadEvent()"></iframe>
+    <script src="/js-test-resources/js-test-post.js"></script>
 </body>
 </html>
