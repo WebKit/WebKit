@@ -73,7 +73,10 @@ public:
     template<typename T>
     T dynamicCast()
     {
-        return jsDynamicCast<T>(value());
+        JSValue theValue = value();
+        if (!theValue)
+            return nullptr;
+        return jsDynamicCast<T>(theValue);
     }
     template<typename T>
     T cast()

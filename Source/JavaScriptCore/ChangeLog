@@ -1,5 +1,28 @@
 2016-05-27  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::LazyJSValue::tryGetStringImpl() crashes for empty values
+        https://bugs.webkit.org/show_bug.cgi?id=158170
+
+        Reviewed by Michael Saboff.
+
+        The problem here is that jsDynamicCast<>() is evil! It avoids checking for the empty
+        value, presumably because this makes it soooper fast. In DFG IR, empty values can appear
+        anywhere because of TDZ.
+        
+        This patch doesn't change jsDynamicCast<>(), but it hardens our wrappers for it in the DFG
+        and it has the affected code use one of those wrappers.
+        
+        * dfg/DFGFrozenValue.h:
+        (JSC::DFG::FrozenValue::dynamicCast): Harden this.
+        (JSC::DFG::FrozenValue::cast):
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::tryGetStringImpl): Use the hardened wrapper.
+        * tests/stress/strcat-emtpy.js: Added. This used to crash every time.
+        (foo):
+        (i.catch):
+
+2016-05-27  Filip Pizlo  <fpizlo@apple.com>
+
         regExpProtoFuncSplitFast should OOM before it swaps
         https://bugs.webkit.org/show_bug.cgi?id=158157
 

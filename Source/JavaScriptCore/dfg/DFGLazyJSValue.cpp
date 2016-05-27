@@ -95,7 +95,7 @@ const StringImpl* LazyJSValue::tryGetStringImpl() const
         return u.stringImpl;
 
     case KnownValue:
-        if (JSString* string = jsDynamicCast<JSString*>(value()->value()))
+        if (JSString* string = value()->dynamicCast<JSString*>())
             return string->tryGetValueImpl();
         return nullptr;
 
