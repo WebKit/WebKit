@@ -454,7 +454,9 @@ void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRe
         return;
     }
 #endif
-    m_networkLoad->continueWillSendRequest(newRequest);
+
+    if (m_networkLoad)
+        m_networkLoad->continueWillSendRequest(newRequest);
 }
 
 void NetworkResourceLoader::continueDidReceiveResponse()
@@ -642,7 +644,8 @@ void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(const Pro
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
-    m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(result);
+    if (m_networkLoad)
+        m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(result);
 }
 #endif
 
