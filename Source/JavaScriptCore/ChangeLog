@@ -1,3 +1,12 @@
+2016-05-27  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed unused headers from ExecutableAllocatorFixedVMPool.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=158159
+
+        Reviewed by Darin Adler.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+
 2016-05-27  Keith Miller  <keith_miller@apple.com>
 
         get_by_id should support caching unset properties in the LLInt

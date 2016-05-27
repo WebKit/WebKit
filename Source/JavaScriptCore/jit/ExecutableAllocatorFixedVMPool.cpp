@@ -32,20 +32,11 @@
 
 #include "CodeProfiling.h"
 #include "ExecutableAllocationFuzz.h"
-#include <errno.h>
-#if !PLATFORM(WIN)
-#include <unistd.h>
-#endif
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageReservation.h>
-#include <wtf/VMTags.h>
 
 #if OS(DARWIN)
 #include <sys/mman.h>
-#endif
-
-#if OS(LINUX)
-#include <stdio.h>
 #endif
 
 #include "LinkBuffer.h"
