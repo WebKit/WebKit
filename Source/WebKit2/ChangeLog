@@ -1,3 +1,30 @@
+2016-05-27  Alex Christensen  <achristensen@webkit.org>
+
+        Expose content extension failure error codes in SPI
+        https://bugs.webkit.org/show_bug.cgi?id=158095
+        rdar://problem/26475651
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::UserContentExtensionStore::synchronousRemoveAllContentExtensions):
+        (API::UserContentExtensionStore::invalidateContentExtensionVersion):
+        Added for testing.
+        (API::userContentExtensionStoreErrorCategory):
+        * UIProcess/API/APIUserContentExtensionStore.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.h:
+        Added the new enum, _WKUserContentExtensionStoreErrorCode.
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm:
+        (-[_WKUserContentExtensionStore compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]):
+        Sometimes the error code returned by UserContentExtensionStore::compileContentExtension has the error code from compileRuleList.
+        When this happens, we want to get the message from the internal compiler error, but we want the NSError's code to always be CompileFailed.
+        (-[_WKUserContentExtensionStore lookupContentExtensionForIdentifier:completionHandler:]):
+        (-[_WKUserContentExtensionStore removeContentExtensionForIdentifier:completionHandler:]):
+        (-[_WKUserContentExtensionStore _removeAllContentExtensions]):
+        (-[_WKUserContentExtensionStore _invalidateContentExtensionVersionForIdentifier:]):
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStorePrivate.h:
+        Added new invalidator for testing.
+
 2016-05-27  Zalan Bujtas  <zalan@apple.com>
 
         Regression(r200972): Webcore::Range::collectSelectionsRects() asserts in startContainer() while selecting text.

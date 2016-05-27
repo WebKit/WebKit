@@ -1,3 +1,16 @@
+2016-05-26  Alex Christensen  <achristensen@webkit.org>
+
+        Expose content extension failure error codes in SPI
+        https://bugs.webkit.org/show_bug.cgi?id=158095
+        rdar://problem/26475651
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/_WKUserContentExtensionStore.mm:
+        (checkDomain):
+        (TEST_F):
+        Add tests that use the new enum.
+
 2016-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         New intl-numberformat.js test fails on many Linux platforms

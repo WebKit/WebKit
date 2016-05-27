@@ -58,6 +58,11 @@ TEST_F(_WKUserContentExtensionStoreTest, Compile)
 
 static NSString *invalidFilter = @"[";
 
+static void checkDomain(NSError *error)
+{
+    EXPECT_STREQ([[error domain] UTF8String], [_WKUserContentExtensionsDomain UTF8String]);
+}
+
 TEST_F(_WKUserContentExtensionStoreTest, InvalidExtension)
 {
     __block bool doneCompiling = false;
@@ -65,6 +70,8 @@ TEST_F(_WKUserContentExtensionStoreTest, InvalidExtension)
     
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
+        checkDomain(error);
+        EXPECT_EQ(error.code, _WKUserContentExtensionStoreErrorCompileFailed);
         EXPECT_STREQ("Extension compilation failed: Failed to parse the JSON String.", [[error helpAnchor] UTF8String]);
 
         doneCompiling = true;
@@ -102,8 +109,40 @@ TEST_F(_WKUserContentExtensionStoreTest, NonExistingIdentifierLookup)
     
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
+        checkDomain(error);
+        EXPECT_EQ(error.code, _WKUserContentExtensionStoreErrorLookupFailed);
         EXPECT_STREQ("Extension lookup failed: Unspecified error during lookup.", [[error helpAnchor] UTF8String]);
+        
+        doneLookingUp = true;
+    }];
+    TestWebKitAPI::Util::run(&doneLookingUp);
+}
 
+TEST_F(_WKUserContentExtensionStoreTest, VersionMismatch)
+{
+    __block bool doneCompiling = false;
+    [[_WKUserContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestExtension" encodedContentExtension:basicFilter completionHandler:^(_WKUserContentFilter *filter, NSError *error)
+    {
+        
+        EXPECT_NOT_NULL(filter);
+        EXPECT_NULL(error);
+        
+        doneCompiling = true;
+    }];
+    TestWebKitAPI::Util::run(&doneCompiling);
+
+    [[_WKUserContentExtensionStore defaultStore] _invalidateContentExtensionVersionForIdentifier:@"TestExtension"];
+    
+    __block bool doneLookingUp = false;
+    [[_WKUserContentExtensionStore defaultStore] lookupContentExtensionForIdentifier:@"TestExtension" completionHandler:^(_WKUserContentFilter *filter, NSError *error)
+    {
+        
+        EXPECT_NULL(filter);
+        EXPECT_NOT_NULL(error);
+        checkDomain(error);
+        EXPECT_EQ(error.code, _WKUserContentExtensionStoreErrorVersionMismatch);
+        EXPECT_STREQ("Extension lookup failed: Version of file does not match version of interpreter.", [[error helpAnchor] UTF8String]);
+        
         doneLookingUp = true;
     }];
     TestWebKitAPI::Util::run(&doneLookingUp);
@@ -135,6 +174,8 @@ TEST_F(_WKUserContentExtensionStoreTest, NonExistingIdentifierRemove)
     __block bool doneRemoving = false;
     [[_WKUserContentExtensionStore defaultStore] removeContentExtensionForIdentifier:@"DoesNotExist" completionHandler:^(NSError *error) {
         EXPECT_NOT_NULL(error);
+        checkDomain(error);
+        EXPECT_EQ(error.code, _WKUserContentExtensionStoreErrorRemoveFailed);
         EXPECT_STREQ("Extension removal failed: Unspecified error during remove.", [[error helpAnchor] UTF8String]);
 
         doneRemoving = true;

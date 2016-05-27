@@ -66,6 +66,7 @@ public:
 
     // For testing only.
     void synchronousRemoveAllContentExtensions();
+    void invalidateContentExtensionVersion(const WTF::String& identifier);
 
 private:
     WTF::String defaultStorePath();

@@ -32,6 +32,8 @@
 #import "_WKUserContentFilterInternal.h"
 #import <string>
 
+NSString * const _WKUserContentExtensionsDomain = @"_WKUserContentExtensionsDomain";
+
 @implementation _WKUserContentExtensionStore
 
 - (void)dealloc
@@ -65,7 +67,10 @@
             auto rawHandler = (void (^)(_WKUserContentFilter *, NSError *))handler.get();
             
             auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Extension compilation failed: %s", error.message().c_str()]};
-            rawHandler(nil, [NSError errorWithDomain:@"ContentExtensionsDomain" code:error.value() userInfo:userInfo]);
+
+            // error.value() could have a specific compiler error that is not equal to _WKUserContentExtensionStoreErrorCompileFailed.
+            // We want to use error.message, but here we want to only pass on CompileFailed.
+            rawHandler(nil, [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorCompileFailed userInfo:userInfo]);
             return;
         }
 
@@ -83,7 +88,8 @@
             auto rawHandler = (void (^)(_WKUserContentFilter *, NSError *))handler.get();
 
             auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Extension lookup failed: %s", error.message().c_str()]};
-            rawHandler(nil, [NSError errorWithDomain:@"ContentExtensionsDomain" code:error.value() userInfo:userInfo]);
+            ASSERT(error.value() == _WKUserContentExtensionStoreErrorLookupFailed || error.value() == _WKUserContentExtensionStoreErrorVersionMismatch);
+            rawHandler(nil, [NSError errorWithDomain:_WKUserContentExtensionsDomain code:error.value() userInfo:userInfo]);
             return;
         }
 
@@ -101,7 +107,8 @@
             auto rawHandler = (void (^)(NSError *))handler.get();
 
             auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Extension removal failed: %s", error.message().c_str()]};
-            rawHandler([NSError errorWithDomain:@"ContentExtensionsDomain" code:error.value() userInfo:userInfo]);
+            ASSERT(error.value() == _WKUserContentExtensionStoreErrorRemoveFailed);
+            rawHandler([NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorRemoveFailed userInfo:userInfo]);
             return;
         }
 
@@ -126,6 +133,11 @@
 - (void)_removeAllContentExtensions
 {
     _userContentExtensionStore->synchronousRemoveAllContentExtensions();
+}
+
+- (void)_invalidateContentExtensionVersionForIdentifier:(NSString *)identifier
+{
+    _userContentExtensionStore->invalidateContentExtensionVersion(identifier);
 }
 
 @end

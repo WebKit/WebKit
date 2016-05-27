@@ -391,6 +391,17 @@ void UserContentExtensionStore::synchronousRemoveAllContentExtensions()
         WebCore::deleteFile(path);
 }
 
+void UserContentExtensionStore::invalidateContentExtensionVersion(const WTF::String& identifier)
+{
+    auto file = WebCore::openFile(constructedPath(m_storePath, identifier), WebCore::OpenForWrite);
+    if (file == WebCore::invalidPlatformFileHandle)
+        return;
+    ContentExtensionMetaData invalidHeader = {0, 0, 0, 0, 0};
+    auto bytesWritten = WebCore::writeToFile(file, reinterpret_cast<const char*>(&invalidHeader), sizeof(invalidHeader));
+    ASSERT_UNUSED(bytesWritten, bytesWritten == sizeof(invalidHeader));
+    WebCore::closeFile(file);
+}
+    
 const std::error_category& userContentExtensionStoreErrorCategory()
 {
     class UserContentExtensionStoreErrorCategory : public std::error_category {

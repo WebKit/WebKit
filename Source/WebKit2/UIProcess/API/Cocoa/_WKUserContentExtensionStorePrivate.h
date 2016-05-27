@@ -31,6 +31,7 @@
 
 // For testing only.
 - (void)_removeAllContentExtensions;
+- (void)_invalidateContentExtensionVersionForIdentifier:(NSString *)identifier;
 
 @end
 
