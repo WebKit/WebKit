@@ -349,6 +349,9 @@ void CodeBlock::printGetByIdOp(PrintStream& out, ExecState* exec, int location, 
     case op_get_by_id_proto_load:
         op = "get_by_id_proto_load";
         break;
+    case op_get_by_id_unset:
+        op = "get_by_id_unset";
+        break;
     case op_get_array_length:
         op = "array_length";
         break;
@@ -1119,6 +1122,7 @@ void CodeBlock::dumpBytecode(
         }
         case op_get_by_id:
         case op_get_by_id_proto_load:
+        case op_get_by_id_unset:
         case op_get_array_length: {
             printGetByIdOp(out, exec, location, it);
             printGetByIdCacheStatus(out, exec, location, stubInfos);
@@ -2806,7 +2810,8 @@ void CodeBlock::finalizeLLIntInlineCaches()
         Instruction* curInstruction = &instructions()[propertyAccessInstructions[i]];
         switch (interpreter->getOpcodeID(curInstruction[0].u.opcode)) {
         case op_get_by_id:
-        case op_get_by_id_proto_load: {
+        case op_get_by_id_proto_load:
+        case op_get_by_id_unset: {
             StructureID oldStructureID = curInstruction[4].u.structureID;
             if (!oldStructureID || Heap::isMarked(m_vm->heap.structureIDTable().get(oldStructureID)))
                 break;

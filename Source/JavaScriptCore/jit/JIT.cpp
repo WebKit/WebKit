@@ -241,6 +241,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_try_get_by_id)
         case op_get_array_length:
         case op_get_by_id_proto_load:
+        case op_get_by_id_unset:
         DEFINE_OP(op_get_by_id)
         DEFINE_OP(op_get_by_id_with_this)
         DEFINE_OP(op_get_by_val)
@@ -424,6 +425,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_try_get_by_id)
         case op_get_array_length:
         case op_get_by_id_proto_load:
+        case op_get_by_id_unset:
         DEFINE_SLOWCASE_OP(op_get_by_id)
         DEFINE_SLOWCASE_OP(op_get_by_val)
         DEFINE_SLOWCASE_OP(op_instanceof)

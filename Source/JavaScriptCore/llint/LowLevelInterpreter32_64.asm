@@ -1337,8 +1337,9 @@ end
 # opcode for own properties. We also allow for the cache to change anytime it fails,
 # since ping-ponging is free. At best we get lucky and the get_by_id will continue
 # to take fast path on the new cache. At worst we take slow path, which is what
-# we would have been doing anyway. For prototype properties, we will attempt to
-# convert opcode into a get_by_id_proto_load after a execution counter hits zero.
+# we would have been doing anyway. For prototype/unset properties, we will attempt to
+# convert opcode into a get_by_id_proto_load/get_by_id_unset, respectively, after an
+# execution counter hits zero.
 
 _llint_op_get_by_id:
     traceExecution()
@@ -1359,7 +1360,6 @@ _llint_op_get_by_id:
     dispatch(9)
 
 
-
 _llint_op_get_by_id_proto_load:
     traceExecution()
     loadi 8[PC], t0
@@ -1376,6 +1376,23 @@ _llint_op_get_by_id_proto_load:
     dispatch(9)
 
 .opGetByIdProtoSlow:
+    callSlowPath(_llint_slow_path_get_by_id)
+    dispatch(9)
+
+
+_llint_op_get_by_id_unset:
+    traceExecution()
+    loadi 8[PC], t0
+    loadi 16[PC], t1
+    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetByIdUnsetSlow)
+    bineq JSCell::m_structureID[t3], t1, .opGetByIdUnsetSlow
+    loadi 4[PC], t2
+    storei UndefinedTag, TagOffset[cfr, t2, 8]
+    storei 0, PayloadOffset[cfr, t2, 8]
+    valueProfile(UndefinedTag, 0, 32, t2)
+    dispatch(9)
+
+.opGetByIdUnsetSlow:
     callSlowPath(_llint_slow_path_get_by_id)
     dispatch(9)
 

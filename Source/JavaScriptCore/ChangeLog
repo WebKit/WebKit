@@ -1,3 +1,48 @@
+2016-05-27  Keith Miller  <keith_miller@apple.com>
+
+        get_by_id should support caching unset properties in the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=158136
+
+        Reviewed by Benjamin Poulain.
+
+        Recently, we started supporting prototype load caching for get_by_id
+        in the LLInt. This patch extends that to caching unset properties.
+        While it is uncommon in general for a program to see a single structure
+        without a given property, the Array.prototype.concat function needs to
+        lookup the Symbol.isConcatSpreadable property. For any existing code
+        That property will never be set as it did not exist prior to ES6.
+
+        Similarly to the get_by_id_proto_load bytecode, this patch adds a new
+        bytecode, get_by_id_unset that checks the structureID of the base and
+        assigns undefined to the result.
+
+        There are no new tests here since we already have many tests that
+        incidentally cover this change.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2016-05-26  Filip Pizlo  <fpizlo@apple.com>
 
         Bogus uses of regexp matching should realize that they will OOM before they start swapping

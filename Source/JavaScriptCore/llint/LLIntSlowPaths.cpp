@@ -589,7 +589,11 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc,
     if (structure->typeInfo().prohibitsPropertyCaching() || structure->isDictionary())
         return;
 
-    ObjectPropertyConditionSet conditions = generateConditionsForPrototypePropertyHit(vm, codeBlock, exec, structure, slot.slotBase(), ident.impl());
+    ObjectPropertyConditionSet conditions;
+    if (slot.isUnset())
+        conditions = generateConditionsForPropertyMiss(vm, codeBlock, exec, structure, ident.impl());
+    else
+        conditions = generateConditionsForPrototypePropertyHit(vm, codeBlock, exec, structure, slot.slotBase(), ident.impl());
 
     if (!conditions.isValid())
         return;
@@ -604,16 +608,22 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc,
             offset = condition.condition().offset();
         result.iterator->value.add(condition, pc)->install();
     }
-    ASSERT(offset != invalidOffset);
+    ASSERT((offset == invalidOffset) == slot.isUnset());
 
     ConcurrentJITLocker locker(codeBlock->m_lock);
+
+    if (slot.isUnset()) {
+        pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_unset);
+        pc[4].u.structureID = structure->id();
+        return;
+    }
+    ASSERT(slot.isValue());
 
     pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_proto_load);
     pc[4].u.structureID = structure->id();
     pc[5].u.operand = offset;
-    // We know that this pointer will remain valid because it is the prototype of some structure, s,
-    // watchpointed above. If any object with structure s were to change prototypes then the conditions
-    // for this cache would fail and this value will never be used again.
+    // We know that this pointer will remain valid because it will be cleared by either a watchpoint fire or
+    // during GC when we clear the LLInt caches.
     pc[6].u.pointer = slot.slotBase();
 }
 
@@ -632,11 +642,11 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     
     if (!LLINT_ALWAYS_ACCESS_SLOW
         && baseValue.isCell()
-        && slot.isCacheableValue()) {
+        && slot.isCacheable()) {
 
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure();
-        if (slot.slotBase() == baseValue) {
+        if (slot.isValue() && slot.slotBase() == baseValue) {
             // Start out by clearing out the old cache.
             pc[0].u.opcode = LLInt::getOpcode(op_get_by_id);
             pc[4].u.pointer = nullptr; // old structure
@@ -653,7 +663,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
                 pc[4].u.structureID = structure->id();
                 pc[5].u.operand = slot.cachedOffset();
             }
-        } else if (UNLIKELY(pc[7].u.operand)) {
+        } else if (UNLIKELY(pc[7].u.operand && (slot.isValue() || slot.isUnset()))) {
             ASSERT(slot.slotBase() != baseValue);
 
             if (!(--pc[7].u.operand))

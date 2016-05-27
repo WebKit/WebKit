@@ -159,6 +159,7 @@ void computeUsesForBytecodeOffset(
     case op_try_get_by_id:
     case op_get_by_id:
     case op_get_by_id_proto_load:
+    case op_get_by_id_unset:
     case op_get_array_length:
     case op_typeof:
     case op_is_empty:
@@ -394,6 +395,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_try_get_by_id:
     case op_get_by_id:
     case op_get_by_id_proto_load:
+    case op_get_by_id_unset:
     case op_get_by_id_with_this:
     case op_get_by_val_with_this:
     case op_get_array_length:
