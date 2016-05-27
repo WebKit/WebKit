@@ -94,6 +94,11 @@ static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue
 }
 
 // Helper that tries to use the JSString substring sharing mechanism if 'originalValue' is a JSString.
+// FIXME: It would be even better if toString returned a JSString*, or if anyone who called
+// toString with the intent of later calling this functon first created a jsString from the String
+// that toString returned. That way, we'd get the substring optimization even when the input was
+// not a JSString.
+// https://bugs.webkit.org/show_bug.cgi?id=158140
 static inline JSString* jsSubstring(ExecState* exec, JSValue originalValue, const String& string, unsigned offset, unsigned length)
 {
     if (originalValue.isString()) {

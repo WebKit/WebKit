@@ -1,3 +1,37 @@
+2016-05-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Bogus uses of regexp matching should realize that they will OOM before they start swapping
+        https://bugs.webkit.org/show_bug.cgi?id=158142
+
+        Reviewed by Michael Saboff.
+        
+        Refactored the RegExpObject::matchGlobal() code so that there is less duplication. Took
+        advantage of this to make the code more resilient in case of absurd situations: if the
+        result array gets large, it proceeds with a dry run to detect how many matches there will
+        be. This allows it to OOM before it starts swapping.
+        
+        This also improves the overall performance of the code by using lightweight substrings and
+        skipping the whole intermediate argument array.
+        
+        This makes some jsfunfuzz tests run a lot faster and use a lot less memory.
+        
+        * builtins/RegExpPrototype.js:
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/MatchResult.cpp: Added.
+        (JSC::MatchResult::dump):
+        * runtime/MatchResult.h:
+        (JSC::MatchResult::empty):
+        (MatchResult::empty): Deleted.
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+        (JSC::collectMatches):
+        (JSC::RegExpObject::matchGlobal):
+        * runtime/StringObject.h:
+        (JSC::jsStringWithReuse):
+        (JSC::jsSubstring):
+        * tests/stress/big-match.js: Added. Make sure that this optimization doesn't break big matches.
+
 2016-05-26  Gavin & Ellie Barraclough  <barraclough@apple.com>
 
         Static table property lookup should not require getOwnPropertySlot override.

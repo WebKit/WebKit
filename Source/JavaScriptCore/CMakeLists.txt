@@ -744,6 +744,7 @@ set(JavaScriptCore_SOURCES
     runtime/MapConstructor.cpp
     runtime/MapIteratorPrototype.cpp
     runtime/MapPrototype.cpp
+    runtime/MatchResult.cpp
     runtime/MathCommon.cpp
     runtime/MathObject.cpp
     runtime/MemoryStatistics.cpp

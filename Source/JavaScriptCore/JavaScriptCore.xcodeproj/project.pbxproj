@@ -1987,6 +1987,7 @@
 		DC605B5E1CE26EA200593718 /* ProfilerEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DC605B5A1CE26E9800593718 /* ProfilerEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC605B5F1CE26EA500593718 /* ProfilerUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC605B5B1CE26E9800593718 /* ProfilerUID.cpp */; };
 		DC605B601CE26EA700593718 /* ProfilerUID.h in Headers */ = {isa = PBXBuildFile; fileRef = DC605B5C1CE26E9800593718 /* ProfilerUID.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DC69AA661CF7A1F200C6272F /* MatchResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC69AA651CF7A1EF00C6272F /* MatchResult.cpp */; };
 		DC7997831CDE9FA0004D4A09 /* TagRegistersMode.h in Headers */ = {isa = PBXBuildFile; fileRef = DC7997821CDE9F9E004D4A09 /* TagRegistersMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC7997841CDE9FA2004D4A09 /* TagRegistersMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC7997811CDE9F9E004D4A09 /* TagRegistersMode.cpp */; };
 		DCEE22091CEB9895000C2396 /* DFGBackwardsCFG.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE22061CEB9890000C2396 /* DFGBackwardsCFG.h */; };
@@ -4200,6 +4201,7 @@
 		DC605B5A1CE26E9800593718 /* ProfilerEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerEvent.h; path = profiler/ProfilerEvent.h; sourceTree = "<group>"; };
 		DC605B5B1CE26E9800593718 /* ProfilerUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerUID.cpp; path = profiler/ProfilerUID.cpp; sourceTree = "<group>"; };
 		DC605B5C1CE26E9800593718 /* ProfilerUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerUID.h; path = profiler/ProfilerUID.h; sourceTree = "<group>"; };
+		DC69AA651CF7A1EF00C6272F /* MatchResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MatchResult.cpp; sourceTree = "<group>"; };
 		DC7997811CDE9F9E004D4A09 /* TagRegistersMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagRegistersMode.cpp; sourceTree = "<group>"; };
 		DC7997821CDE9F9E004D4A09 /* TagRegistersMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagRegistersMode.h; sourceTree = "<group>"; };
 		DCEE22061CEB9890000C2396 /* DFGBackwardsCFG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBackwardsCFG.h; path = dfg/DFGBackwardsCFG.h; sourceTree = "<group>"; };
@@ -5504,12 +5506,6 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
-				708EBE231CE8F35000453146 /* IntlObjectInlines.h */,
-				DCF3D5641CD29468003D5C65 /* LazyClassStructure.cpp */,
-				DCF3D5651CD29468003D5C65 /* LazyClassStructure.h */,
-				DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */,
-				DCF3D5671CD29468003D5C65 /* LazyProperty.h */,
-				DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				0FE0500C1AA9091100D33B33 /* ArgumentsMode.h */,
@@ -5684,6 +5680,7 @@
 				A1D792FB1B43864B004516F5 /* IntlNumberFormatPrototype.h */,
 				A12BBFF31B044A9800664B69 /* IntlObject.cpp */,
 				A12BBFF11B044A8B00664B69 /* IntlObject.h */,
+				708EBE231CE8F35000453146 /* IntlObjectInlines.h */,
 				86BF642A148DB2B5004DE36A /* Intrinsic.h */,
 				FE4D55B71AE716CA0052E459 /* IterationStatus.h */,
 				70113D491A8DB093003848C4 /* IteratorOperations.cpp */,
@@ -5839,6 +5836,11 @@
 				1442566015EDE98D0066A49B /* JSWithScope.h */,
 				65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */,
 				65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */,
+				DCF3D5641CD29468003D5C65 /* LazyClassStructure.cpp */,
+				DCF3D5651CD29468003D5C65 /* LazyClassStructure.h */,
+				DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */,
+				DCF3D5671CD29468003D5C65 /* LazyProperty.h */,
+				DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */,
 				A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */,
 				A7E2EA690FB460CF00601F06 /* LiteralParser.h */,
 				F692A8680255597D01FF60F7 /* Lookup.cpp */,
@@ -5851,6 +5853,7 @@
 				A74DEF8E182D991400522C22 /* MapIteratorPrototype.h */,
 				A700873B17CBE8D300C3E643 /* MapPrototype.cpp */,
 				A700873C17CBE8D300C3E643 /* MapPrototype.h */,
+				DC69AA651CF7A1EF00C6272F /* MatchResult.cpp */,
 				8612E4CB1522918400C836BE /* MatchResult.h */,
 				4340A4821A9051AF00D73CCA /* MathCommon.cpp */,
 				4340A4831A9051AF00D73CCA /* MathCommon.h */,
@@ -9223,6 +9226,7 @@
 				14469DE1107EC7E700650446 /* NativeErrorPrototype.cpp in Sources */,
 				E33E8D201B9013DE00346B52 /* NativeStdFunctionCell.cpp in Sources */,
 				148F21B7107EC5470042EC2C /* Nodes.cpp in Sources */,
+				DC69AA661CF7A1F200C6272F /* MatchResult.cpp in Sources */,
 				E3963CEE1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp in Sources */,
 				655EB29B10CE2581001A990E /* NodesCodegen.cpp in Sources */,
 				6546F5211A32B313006F07D5 /* NullGetterFunction.cpp in Sources */,

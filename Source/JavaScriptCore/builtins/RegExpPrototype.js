@@ -98,6 +98,9 @@ function match(strArg)
     regexp.lastIndex = 0;
     let resultList = [];
 
+    // FIXME: It would be great to implement a solution similar to what we do in
+    // RegExpObject::matchGlobal(). It's not clear if this is possible, since this loop has
+    // effects. https://bugs.webkit.org/show_bug.cgi?id=158145
     const maximumReasonableMatchSize = 100000000;
 
     while (true) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,64 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MatchResult_h
-#define MatchResult_h
-
-#include <wtf/PrintStream.h>
-#include <wtf/Vector.h> // for notFound
+#include "config.h"
+#include "MatchResult.h"
 
 namespace JSC {
 
-typedef uint64_t EncodedMatchResult;
-
-struct MatchResult {
-    MatchResult()
-        : start(WTF::notFound)
-        , end(0)
-    {
-    }
-    
-    ALWAYS_INLINE MatchResult(size_t start, size_t end)
-        : start(start)
-        , end(end)
-    {
-    }
-
-    explicit ALWAYS_INLINE MatchResult(EncodedMatchResult encoded)
-    {
-        union u {
-            uint64_t encoded;
-            struct s {
-                size_t start;
-                size_t end;
-            } split;
-        } value;
-        value.encoded = encoded;
-        start = value.split.start;
-        end = value.split.end;
-    }
-
-    ALWAYS_INLINE static MatchResult failed()
-    {
-        return MatchResult();
-    }
-
-    ALWAYS_INLINE explicit operator bool() const
-    {
-        return start != WTF::notFound;
-    }
-
-    ALWAYS_INLINE bool empty()
-    {
-        return start == end;
-    }
-    
-    void dump(PrintStream&) const;
-
-    size_t start;
-    size_t end;
-};
+void MatchResult::dump(PrintStream& out) const
+{
+    if (start == WTF::notFound)
+        out.print("notFound");
+    else
+        out.print(start, "...", end);
+}
 
 } // namespace JSC
 
-#endif

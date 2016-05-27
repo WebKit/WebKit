@@ -169,6 +169,65 @@ MatchResult RegExpObject::match(ExecState* exec, JSGlobalObject* globalObject, J
     return matchInline(exec, globalObject, string);
 }
 
+template<typename FixEndFunc>
+JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& s, RegExpConstructor* constructor, RegExp* regExp, const FixEndFunc& fixEnd)
+{
+    MatchResult result = constructor->performMatch(vm, regExp, string, s, 0);
+    if (!result)
+        return jsNull();
+    
+    static unsigned maxSizeForDirectPath = 100000;
+    
+    JSArray* array = constructEmptyArray(exec, nullptr);
+
+    auto iterate = [&] () {
+        size_t end = result.end;
+        size_t length = end - result.start;
+        array->push(exec, JSRopeString::createSubstringOfResolved(vm, string, result.start, length));
+        if (!length)
+            end = fixEnd(end);
+        result = constructor->performMatch(vm, regExp, string, s, end);
+    };
+    
+    do {
+        if (array->length() >= maxSizeForDirectPath) {
+            // First do a throw-away match to see how many matches we'll get.
+            unsigned matchCount = 0;
+            MatchResult savedResult = result;
+            do {
+                if (array->length() + matchCount >= MAX_STORAGE_VECTOR_LENGTH) {
+                    throwOutOfMemoryError(exec);
+                    return jsUndefined();
+                }
+                
+                size_t end = result.end;
+                matchCount++;
+                if (result.empty())
+                    end = fixEnd(end);
+                
+                // Using RegExpConstructor::performMatch() instead of calling RegExp::match()
+                // directly is a surprising but profitable choice: it means that when we do OOM, we
+                // will leave the cached result in the state it ought to have had just before the
+                // OOM! On the other hand, if this loop concludes that the result is small enough,
+                // then the iterate() loop below will overwrite the cached result anyway.
+                result = constructor->performMatch(vm, regExp, string, s, end);
+            } while (result);
+            
+            // OK, we have a sensible number of matches. Now we can create them for reals.
+            result = savedResult;
+            do
+                iterate();
+            while (result);
+            
+            return array;
+        }
+        
+        iterate();
+    } while (result);
+    
+    return array;
+}
+
 JSValue RegExpObject::matchGlobal(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
     RegExp* regExp = this->regExp();
@@ -183,52 +242,21 @@ JSValue RegExpObject::matchGlobal(ExecState* exec, JSGlobalObject* globalObject,
 
     String s = string->value(exec);
     RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
-    MatchResult result = regExpConstructor->performMatch(*vm, regExp, string, s, 0);
-
-    // return array of matches
-    MarkedArgumentBuffer list;
-    // We defend ourselves from crazy.
-    const size_t maximumReasonableMatchSize = 1000000000;
-
+    
     if (regExp->unicode()) {
         unsigned stringLength = s.length();
-        while (result) {
-            if (list.size() > maximumReasonableMatchSize) {
-                throwOutOfMemoryError(exec);
-                return jsUndefined();
-            }
-
-            size_t end = result.end;
-            size_t length = end - result.start;
-            list.append(jsSubstring(exec, s, result.start, length));
-            if (!length)
-                end = advanceStringUnicode(s, stringLength, end);
-            result = regExpConstructor->performMatch(*vm, regExp, string, s, end);
-        }
-    } else {
-        while (result) {
-            if (list.size() > maximumReasonableMatchSize) {
-                throwOutOfMemoryError(exec);
-                return jsUndefined();
-            }
-
-            size_t end = result.end;
-            size_t length = end - result.start;
-            list.append(jsSubstring(exec, s, result.start, length));
-            if (!length)
-                ++end;
-            result = regExpConstructor->performMatch(*vm, regExp, string, s, end);
-        }
+        return collectMatches(
+            *vm, exec, string, s, regExpConstructor, regExp,
+            [&] (size_t end) -> size_t {
+                return advanceStringUnicode(s, stringLength, end);
+            });
     }
-
-    if (list.isEmpty()) {
-        // if there are no matches at all, it's important to return
-        // Null instead of an empty array, because this matches
-        // other browsers and because Null is a false value.
-        return jsNull();
-    }
-
-    return constructArray(exec, static_cast<ArrayAllocationProfile*>(0), list);
+    
+    return collectMatches(
+        *vm, exec, string, s, regExpConstructor, regExp,
+        [&] (size_t end) -> size_t {
+            return end + 1;
+        });
 }
 
 } // namespace JSC
