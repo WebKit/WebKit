@@ -1,3 +1,17 @@
+2016-05-27  Antoine Quint  <graouts@apple.com>
+
+        Video play glyph not visible if initially invisible when contained in a "-webkit-overflow-scrolling: touch" container
+        https://bugs.webkit.org/show_bug.cgi?id=158146
+        <rdar://problem/25816307>
+
+        Reviewed by Dean Jackson.
+
+        Testing that on iOS the play glyph for <video> controls when play button would be initially invisible when contained
+        in a scrollable container is indeed composited.
+
+        * platform/ios-simulator/media/video-play-glyph-composited-outside-overflow-scrolling-touch-container-expected.txt: Added.
+        * platform/ios-simulator/media/video-play-glyph-composited-outside-overflow-scrolling-touch-container.html: Added.
+
 2016-05-26  Yoav Weiss  <yoav@yoav.ws>
 
         Preload single download tests.

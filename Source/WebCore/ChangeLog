@@ -1,3 +1,20 @@
+2016-05-27  Antoine Quint  <graouts@apple.com>
+
+        Video play glyph not visible if initially invisible when contained in a "-webkit-overflow-scrolling: touch" container
+        https://bugs.webkit.org/show_bug.cgi?id=158146
+        <rdar://problem/25816307>
+
+        Reviewed by Dean Jackson.
+
+        We now force the <video> controls play glyph into being composited due to webkit.org/b/158147. In most scenarios,
+        this element gets composited anyway, this is just to ensure that this happens in all cases until we get the
+        general fix for webkit.org/b/158147.
+
+        Test: platform/ios-simulator/media/video-play-glyph-composited-outside-overflow-scrolling-touch-container.html
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (video::-webkit-media-controls-start-playback-button .webkit-media-controls-start-playback-glyph):
+
 2016-05-26  Yoav Weiss  <yoav@yoav.ws>
 
         Preload single download tests.

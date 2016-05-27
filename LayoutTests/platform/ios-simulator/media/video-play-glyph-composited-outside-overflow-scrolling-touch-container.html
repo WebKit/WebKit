@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+<style>
+
+    .scrolling {
+        width: 300px;
+        height: 300px;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    video {
+        width: 300px;
+        height: 672px;
+    }
+
+</style>
+</head>
+<body>
+    <div class="scrolling">
+        <video controls poster="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=">
+    </div>
+    <pre id="console"></pre>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            document.getElementById("console").appendChild(document.createTextNode(window.internals.layerTreeAsText(document)));
+        }
+    </script>
+</body>
