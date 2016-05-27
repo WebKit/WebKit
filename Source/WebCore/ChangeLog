@@ -1,3 +1,19 @@
+2016-05-26  Nan Wang  <n_wang@apple.com>
+
+        AX: Wrong CharacterOffset from VisiblePosition with composed characters
+        https://bugs.webkit.org/show_bug.cgi?id=158138
+
+        Reviewed by Chris Fleizach.
+
+        The conversion logic is not correct when the text node contains composed characters. 
+        We should use VisiblePosition's offset directly for text nodes so we won't mess things up.
+
+        Test: accessibility/mac/character-offset-visible-position-conversion-with-emoji.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::visiblePositionFromCharacterOffset):
+        (WebCore::AXObjectCache::characterOffsetFromVisiblePosition):
+
 2016-05-26  Darin Adler  <darin@apple.com>
 
         Media queries and platform screen modernization and streamlining

@@ -1952,21 +1952,10 @@ VisiblePosition AXObjectCache::visiblePositionFromCharacterOffset(const Characte
     if (characterOffset.isNull())
         return VisiblePosition();
     
-    RefPtr<AccessibilityObject> obj = this->getOrCreate(characterOffset.node);
-    if (!obj)
-        return VisiblePosition();
-    
-    // nextVisiblePosition means advancing one character. Use this to calculate the character offset.
-    VisiblePositionRange vpRange = obj->visiblePositionRange();
-    VisiblePosition start = vpRange.start;
-    
-    // Sometimes vpRange.start will be the previous node's end position and VisiblePosition will count the leading line break as 1 offset.
-    int characterCount = start.deepEquivalent().deprecatedNode() == characterOffset.node ? characterOffset.offset : characterOffset.offset + characterOffset.startIndex;
-    VisiblePosition result = start;
-    for (int i = 0; i < characterCount; i++)
-        result = obj->nextVisiblePosition(result);
-    
-    return result;
+    // Create a collapsed range and use that to form a VisiblePosition, so that the case with
+    // composed characters will be covered.
+    RefPtr<Range> range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
+    return VisiblePosition(range->startPosition());
 }
 
 CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisiblePosition& visiblePos)
@@ -1977,6 +1966,9 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
     Position deepPos = visiblePos.deepEquivalent();
     Node* domNode = deepPos.deprecatedNode();
     ASSERT(domNode);
+    
+    if (domNode->offsetInCharacters())
+        return CharacterOffset(domNode, 0, deepPos.deprecatedEditingOffset(), 0);
     
     RefPtr<AccessibilityObject> obj = this->getOrCreate(domNode);
     if (!obj)

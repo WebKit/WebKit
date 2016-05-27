@@ -1,3 +1,13 @@
+2016-05-26  Nan Wang  <n_wang@apple.com>
+
+        AX: Wrong CharacterOffset from VisiblePosition with composed characters
+        https://bugs.webkit.org/show_bug.cgi?id=158138
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/character-offset-visible-position-conversion-with-emoji-expected.txt: Added.
+        * accessibility/mac/character-offset-visible-position-conversion-with-emoji.html: Added.
+
 2016-05-26  Brent Fulgham  <bfulgham@apple.com>
 
         DOM mutation methods fail to re-check validity of node insertion after removing nodes from old parent
