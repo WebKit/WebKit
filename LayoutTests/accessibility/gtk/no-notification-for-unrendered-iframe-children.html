@@ -19,9 +19,9 @@ function runTest() {
         // Generate the hierarchy before registering a listener so that we only see new notifications.
         touchAccessibilityTree(axWebArea);
 
-        accessibilityController.addNotificationListener(function(element, notification) {
+        accessibilityController.addNotificationListener(function(element, notification, child) {
             if (notification == "AXChildrenAdded" && element.role == "AXRole: AXGroup")
-                debug(notification + " on " + element.title);
+                debug(notification + " on " + element.title + " (" + (child ? child.title : "null") + ")");
         });
     }
 

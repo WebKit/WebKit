@@ -1,3 +1,17 @@
+2016-05-27  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] accessibility/gtk/no-notification-for-unrendered-iframe-children.html began failing after r201416
+        https://bugs.webkit.org/show_bug.cgi?id=158152
+
+        Reviewed by Chris Fleizach.
+
+        The failure is actually a bug fix because only one child is being added, but two
+        notifications were being emitted. Now there is only one notification. To verify
+        this was the case, we really should examine the child reportedly being added. That
+        child is the ATK event's any_data, so pass along that child to the listener.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+
 2016-05-26  Alex Christensen  <achristensen@webkit.org>
 
         Expose content extension failure error codes in SPI

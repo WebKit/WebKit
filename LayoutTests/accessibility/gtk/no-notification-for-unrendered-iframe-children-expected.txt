@@ -4,8 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 
-AXChildrenAdded on AXTitle: inner body
-AXChildrenAdded on AXTitle: inner body
+AXChildrenAdded on AXTitle: inner body (AXTitle: inner iframe)
 PASS successfullyParsed is true
 
 TEST COMPLETE

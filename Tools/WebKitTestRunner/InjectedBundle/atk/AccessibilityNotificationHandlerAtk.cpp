@@ -81,6 +81,9 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
     } else if (!g_strcmp0(signalQuery.signal_name, "children-changed")) {
         const gchar* childrenChangedDetail = g_quark_to_string(signalHint->detail);
         notificationName = !g_strcmp0(childrenChangedDetail, "add") ? "AXChildrenAdded" : "AXChildrenRemoved";
+        gpointer child = g_value_get_pointer(&paramValues[2]);
+        if (ATK_IS_OBJECT(child))
+            extraArgs.append(toJS(jsContext, WTF::getPtr(WTR::AccessibilityUIElement::create(ATK_OBJECT(child)))));
     } else if (!g_strcmp0(signalQuery.signal_name, "property-change")) {
         if (!g_strcmp0(g_quark_to_string(signalHint->detail), "accessible-value"))
             notificationName = "AXValueChanged";
