@@ -1,3 +1,13 @@
+2016-05-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Attempt to fix the iOS build.
+
+        Unreviewed build fix.
+
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.mm:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer layoutSublayers]):
+
 2016-05-27  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: After closing a Netflix video, trying to watch it again fails.

@@ -261,7 +261,7 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
     } else
         ASSERT_NOT_REACHED();
 
-    UIView *view = [_videoSublayer delegate];
+    UIView *view = (UIView *)[_videoSublayer delegate];
     CGAffineTransform transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
     [view setTransform:transform];
     

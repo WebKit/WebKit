@@ -32,6 +32,8 @@
 #include "GraphicsContextCG.h"
 #include "IntRect.h"
 
+#import <WebCore/QuartzCoreSPI.h>
+
 #if PLATFORM(IOS)
 #include "WebCoreThread.h"
 #include "WebCoreThreadRun.h"
@@ -39,7 +41,7 @@
 
 using namespace WebCore;
 
-@interface WebCoreTextTrackRepresentationCocoaHelper : NSObject {
+@interface WebCoreTextTrackRepresentationCocoaHelper : NSObject <CALayerDelegate> {
     TextTrackRepresentationCocoa* _parent;
 }
 - (id)initWithParent:(TextTrackRepresentationCocoa*)parent;
