@@ -58,18 +58,17 @@ void HTMLResourcePreloader::preload(PreloadRequestStream requests)
         preload(WTFMove(request));
 }
 
-static bool mediaAttributeMatches(Frame* frame, const RenderStyle* renderStyle, const String& attributeValue)
+static bool mediaAttributeMatches(Document& document, const RenderStyle* renderStyle, const String& attributeValue)
 {
-    RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
-    MediaQueryEvaluator mediaQueryEvaluator("screen", frame, renderStyle);
-    return mediaQueryEvaluator.eval(mediaQueries.get());
+    auto mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
+    return MediaQueryEvaluator { "screen", document, renderStyle }.evaluate(mediaQueries.get());
 }
 
 void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
 {
     ASSERT(m_document.frame());
     ASSERT(m_document.renderView());
-    if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document.frame(), &m_document.renderView()->style(), preload->media()))
+    if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document, &m_document.renderView()->style(), preload->media()))
         return;
 
     CachedResourceRequest request = preload->resourceRequest(m_document);

@@ -25,32 +25,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaQueryExp_h
-#define MediaQueryExp_h
+#pragma once
 
 #include "CSSValue.h"
-#include "MediaFeatureNames.h"
 #include <memory>
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
 class CSSParserValueList;
 
-class MediaQueryExp {
+// FIXME: Rename the file to match this class's name.
+class MediaQueryExpression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit MediaQueryExp(const AtomicString& mediaFeature = emptyAtom, CSSParserValueList* values = nullptr);
+    explicit MediaQueryExpression(const AtomicString& mediaFeature = emptyAtom, CSSParserValueList* values = nullptr);
 
     const AtomicString& mediaFeature() const;
     CSSValue* value() const;
 
     bool isValid() const;
-    bool isViewportDependent() const;
 
     String serialize() const;
 
-    bool operator==(const MediaQueryExp&) const;
+    bool operator==(const MediaQueryExpression&) const;
 
 private:
     AtomicString m_mediaFeature;
@@ -59,42 +56,25 @@ private:
     mutable String m_serializationCache;
 };
 
-inline const AtomicString& MediaQueryExp::mediaFeature() const
+inline const AtomicString& MediaQueryExpression::mediaFeature() const
 {
     return m_mediaFeature;
 }
 
-inline CSSValue* MediaQueryExp::value() const
+inline CSSValue* MediaQueryExpression::value() const
 {
     return m_value.get();
 }
 
-inline bool MediaQueryExp::operator==(const MediaQueryExp& other) const
+inline bool MediaQueryExpression::operator==(const MediaQueryExpression& other) const
 {
-    return (other.m_mediaFeature == m_mediaFeature)
-        && ((!other.m_value && !m_value)
-            || (other.m_value && m_value && other.m_value->equals(*m_value)));
+    return other.m_mediaFeature == m_mediaFeature
+        && ((!m_value && !other.m_value) || (m_value && other.m_value && *m_value == *other.m_value));
 }
 
-inline bool MediaQueryExp::isValid() const
+inline bool MediaQueryExpression::isValid() const
 {
     return m_isValid;
 }
 
-inline bool MediaQueryExp::isViewportDependent() const
-{
-    return m_mediaFeature == MediaFeatureNames::widthMediaFeature
-        || m_mediaFeature == MediaFeatureNames::heightMediaFeature
-        || m_mediaFeature == MediaFeatureNames::min_widthMediaFeature
-        || m_mediaFeature == MediaFeatureNames::min_heightMediaFeature
-        || m_mediaFeature == MediaFeatureNames::max_widthMediaFeature
-        || m_mediaFeature == MediaFeatureNames::max_heightMediaFeature
-        || m_mediaFeature == MediaFeatureNames::orientationMediaFeature
-        || m_mediaFeature == MediaFeatureNames::aspect_ratioMediaFeature
-        || m_mediaFeature == MediaFeatureNames::min_aspect_ratioMediaFeature
-        || m_mediaFeature == MediaFeatureNames::max_aspect_ratioMediaFeature;
-}
-
 } // namespace
-
-#endif

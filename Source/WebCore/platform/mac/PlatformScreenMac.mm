@@ -30,7 +30,6 @@
 #import "FloatRect.h"
 #import "FrameView.h"
 #import "HostWindow.h"
-
 #import <ColorSync/ColorSync.h>
 
 extern "C" {
@@ -40,102 +39,99 @@ bool CGDisplayUsesForceToGray(void);
 
 namespace WebCore {
 
-static PlatformDisplayID displayIDFromScreen(NSScreen *screen)
-{
-    return (PlatformDisplayID)[[[screen deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
-}
-
 // These functions scale between screen and page coordinates because JavaScript/DOM operations
 // assume that the screen and the page share the same coordinate system.
 
-static PlatformDisplayID displayFromWidget(Widget* widget)
+static PlatformDisplayID displayID(NSScreen *screen)
+{
+    return [[[screen deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
+}
+
+static PlatformDisplayID displayID(Widget* widget)
 {
     if (!widget)
         return 0;
 
-    FrameView* view = widget->root();
+    auto* view = widget->root();
     if (!view)
         return 0;
 
-    return view->hostWindow()->displayID();
+    auto* hostWindow = view->hostWindow();
+    if (!hostWindow)
+        return 0;
+
+    return hostWindow->displayID();
 }
 
-static NSScreen *screenForWidget(Widget* widget, NSWindow *window)
+// Screen containing the menubar.
+static NSScreen *firstScreen()
 {
-    // Widget is in an NSWindow, use its screen.
-    if (window)
-        return screenForWindow(window);
+    NSArray *screens = [NSScreen screens];
+    if (![screens count])
+        return nil;
+    return [screens objectAtIndex:0];
+}
 
-    // Didn't get an NSWindow; probably WebKit2. Try using the Widget's display ID.
-    if (NSScreen *screen = screenForDisplayID(displayFromWidget(widget)))
-        return screen;
+static NSWindow *window(Widget* widget)
+{
+    if (!widget)
+        return nil;
+    return widget->platformWidget().window;
+}
 
-    // Widget's window is offscreen, or no screens. Fall back to the first screen if available.
-    return screenForWindow(nil);
+static NSScreen *screen(Widget* widget)
+{
+    // If the widget is in a window, use that, otherwise use the display ID from the host window.
+    // First case is for when the NSWindow is in the same process, second case for when it's not.
+    if (auto screenFromWindow = window(widget).screen)
+        return screenFromWindow;
+    return screen(displayID(widget));
 }
 
 int screenDepth(Widget* widget)
 {
-    NSWindow *window = widget ? [widget->platformWidget() window] : nil;
-    NSScreen *screen = screenForWidget(widget, window);
-    return NSBitsPerPixelFromDepth(screen.depth);
+    return NSBitsPerPixelFromDepth(screen(widget).depth);
 }
 
 int screenDepthPerComponent(Widget* widget)
 {
-    NSWindow *window = widget ? [widget->platformWidget() window] : nil;
-    NSScreen *screen = screenForWidget(widget, window);
-    return NSBitsPerSampleFromDepth(screen.depth);
+    return NSBitsPerSampleFromDepth(screen(widget).depth);
 }
 
 bool screenIsMonochrome(Widget*)
 {
-    // At the moment this is a system-wide accessibility setting,
-    // so we don't need to check the screen we're using.
+    // This is a system-wide accessibility setting, same on all screens.
     return CGDisplayUsesForceToGray();
 }
 
 bool screenHasInvertedColors()
 {
-    // At the moment this is a system-wide accessibility setting,
-    // so we don't need to check the screen we're using.
+    // This is a system-wide accessibility setting, same on all screens.
     return CGDisplayUsesInvertedPolarity();
 }
 
 FloatRect screenRect(Widget* widget)
 {
-    NSWindow *window = widget ? [widget->platformWidget() window] : nil;
-    NSScreen *screen = screenForWidget(widget, window);
-    return toUserSpace([screen frame], window);
+    return toUserSpace([screen(widget) frame], window(widget));
 }
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-    NSWindow *window = widget ? [widget->platformWidget() window] : nil;
-    NSScreen *screen = screenForWidget(widget, window);
-    return toUserSpace([screen visibleFrame], window);
+    return toUserSpace([screen(widget) visibleFrame], window(widget));
 }
 
-NSScreen *screenForWindow(NSWindow *window)
+NSScreen *screen(NSWindow *window)
 {
-    NSScreen *screen = [window screen]; // nil if the window is off-screen
-    if (screen)
-        return screen;
-
-    NSArray *screens = [NSScreen screens];
-    if ([screens count] > 0)
-        return [screens objectAtIndex:0]; // screen containing the menubar
-
-    return nil;
+    return [window screen] ?: firstScreen();
 }
 
-NSScreen *screenForDisplayID(PlatformDisplayID displayID)
+NSScreen *screen(PlatformDisplayID displayID)
 {
     for (NSScreen *screen in [NSScreen screens]) {
-        if (displayIDFromScreen(screen) == displayID)
+        if (WebCore::displayID(screen) == displayID)
             return screen;
     }
-    return nil;
+    return firstScreen();
 }
 
 bool screenSupportsExtendedColor(Widget* widget)
@@ -147,19 +143,14 @@ bool screenSupportsExtendedColor(Widget* widget)
     if (!widget)
         return false;
 
-    NSWindow *window = [widget->platformWidget() window];
-    NSScreen *screen = screenForWidget(widget, window);
-    CGColorSpaceRef colorSpace = screen.colorSpace.CGColorSpace;
+    auto colorSpace = screen(widget).colorSpace.CGColorSpace;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     return CGColorSpaceIsWideGamutRGB(colorSpace);
 #else
-    bool isWideGamut = false;
-    RetainPtr<CFDataRef> iccData = adoptCF(CGColorSpaceCopyICCProfile(colorSpace));
-    RetainPtr<ColorSyncProfileRef> profile = adoptCF(ColorSyncProfileCreate(iccData.get(), NULL));
-    if (profile)
-        isWideGamut = ColorSyncProfileIsWideGamut(profile.get());
-    return isWideGamut;
+    auto iccData = adoptCF(CGColorSpaceCopyICCProfile(colorSpace));
+    auto profile = adoptCF(ColorSyncProfileCreate(iccData.get(), nullptr));
+    return profile && ColorSyncProfileIsWideGamut(profile.get());
 #endif
 #endif
 }
@@ -167,14 +158,14 @@ bool screenSupportsExtendedColor(Widget* widget)
 FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)
 {
     FloatRect userRect = rect;
-    userRect.setY(NSMaxY([screenForWindow(destination) frame]) - (userRect.y() + userRect.height())); // flip
+    userRect.setY(NSMaxY([screen(destination) frame]) - (userRect.y() + userRect.height())); // flip
     return userRect;
 }
 
 NSRect toDeviceSpace(const FloatRect& rect, NSWindow *source)
 {
     FloatRect deviceRect = rect;
-    deviceRect.setY(NSMaxY([screenForWindow(source) frame]) - (deviceRect.y() + deviceRect.height())); // flip
+    deviceRect.setY(NSMaxY([screen(source) frame]) - (deviceRect.y() + deviceRect.height())); // flip
     return deviceRect;
 }
 

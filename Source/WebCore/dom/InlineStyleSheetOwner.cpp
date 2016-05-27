@@ -150,7 +150,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     MediaQueryEvaluator screenEval(ASCIILiteral("screen"), true);
     MediaQueryEvaluator printEval(ASCIILiteral("print"), true);
-    if (!screenEval.eval(mediaQueries.get()) && !printEval.eval(mediaQueries.get()))
+    if (!screenEval.evaluate(*mediaQueries) && !printEval.evaluate(*mediaQueries))
         return;
 
     authorStyleSheetsForElement(element).addPendingSheet();

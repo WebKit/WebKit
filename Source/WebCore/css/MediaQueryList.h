@@ -17,8 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef MediaQueryList_h
-#define MediaQueryList_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -38,28 +37,27 @@ class MediaQuerySet;
 
 class MediaQueryList : public RefCounted<MediaQueryList> {
 public:
-    static Ref<MediaQueryList> create(PassRefPtr<MediaQueryMatcher>, PassRefPtr<MediaQuerySet>, bool);
+    static Ref<MediaQueryList> create(MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool);
     ~MediaQueryList();
 
     String media() const;
     bool matches();
 
-    void addListener(PassRefPtr<MediaQueryListListener>);
-    void removeListener(PassRefPtr<MediaQueryListListener>);
+    void addListener(RefPtr<MediaQueryListListener>&&);
+    void removeListener(RefPtr<MediaQueryListListener>&&);
 
-    void evaluate(MediaQueryEvaluator*, bool& notificationNeeded);
+    void evaluate(MediaQueryEvaluator&, bool& notificationNeeded);
 
 private:
-    MediaQueryList(PassRefPtr<MediaQueryMatcher>, PassRefPtr<MediaQuerySet>, bool matches);
+    MediaQueryList(MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool matches);
+
     void setMatches(bool);
 
-    RefPtr<MediaQueryMatcher> m_matcher;
-    RefPtr<MediaQuerySet> m_media;
+    Ref<MediaQueryMatcher> m_matcher;
+    Ref<MediaQuerySet> m_media;
     unsigned m_evaluationRound; // Indicates if the query has been evaluated after the last style selector change.
     unsigned m_changeRound; // Used to know if the query has changed in the last style selector change.
     bool m_matches;
 };
 
 }
-
-#endif // MediaQueryList_h

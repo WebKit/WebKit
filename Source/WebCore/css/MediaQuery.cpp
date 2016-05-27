@@ -29,7 +29,6 @@
 #include "config.h"
 #include "MediaQuery.h"
 
-#include "MediaQueryExp.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -37,84 +36,60 @@ namespace WebCore {
 // http://dev.w3.org/csswg/cssom/#serialize-a-media-query
 String MediaQuery::serialize() const
 {
-    StringBuilder result;
-    if (!m_ignored) {
-        switch (m_restrictor) {
-        case MediaQuery::Only:
-            result.appendLiteral("only ");
-            break;
-        case MediaQuery::Not:
-            result.appendLiteral("not ");
-            break;
-        case MediaQuery::None:
-            break;
-        }
-
-        if (m_expressions->isEmpty()) {
-            result.append(m_mediaType);
-            return result.toString();
-        }
-
-        if (m_mediaType != "all" || m_restrictor != None) {
-            result.append(m_mediaType);
-            result.appendLiteral(" and ");
-        }
-
-        result.append(m_expressions->at(0)->serialize());
-        for (size_t i = 1; i < m_expressions->size(); ++i) {
-            result.appendLiteral(" and ");
-            result.append(m_expressions->at(i)->serialize());
-        }
-    } else {
+    if (m_ignored) {
         // If query is invalid, serialized text should turn into "not all".
-        result.appendLiteral("not all");
+        return ASCIILiteral("not all");
+    }
+
+    bool shouldOmitMediaType = false;
+    StringBuilder result;
+    switch (m_restrictor) {
+    case MediaQuery::Only:
+        result.appendLiteral("only ");
+        break;
+    case MediaQuery::Not:
+        result.appendLiteral("not ");
+        break;
+    case MediaQuery::None:
+        shouldOmitMediaType = !m_expressions.isEmpty() && m_mediaType == "all";
+        break;
+    }
+    bool needsAnd = false;
+    if (!shouldOmitMediaType) {
+        result.append(m_mediaType);
+        needsAnd = true;
+    }
+    for (auto& expression : m_expressions) {
+        if (needsAnd)
+            result.appendLiteral(" and ");
+        result.append(expression.serialize());
+        needsAnd = true;
     }
     return result.toString();
 }
 
-MediaQuery::MediaQuery(Restrictor r, const String& mediaType, std::unique_ptr<ExpressionVector> exprs)
-    : m_restrictor(r)
+MediaQuery::MediaQuery(Restrictor restrictor, const String& mediaType, Vector<MediaQueryExpression>&& expressions)
+    : m_restrictor(restrictor)
     , m_mediaType(mediaType.convertToASCIILowercase())
-    , m_expressions(WTFMove(exprs))
-    , m_ignored(false)
+    , m_expressions(WTFMove(expressions))
 {
-    if (!m_expressions) {
-        m_expressions = std::make_unique<ExpressionVector>();
-        return;
-    }
-
-    std::sort(m_expressions->begin(), m_expressions->end(), [](auto& a, auto& b) {
-        return codePointCompare(a->serialize(), b->serialize()) < 0;
+    std::sort(m_expressions.begin(), m_expressions.end(), [](auto& a, auto& b) {
+        return codePointCompare(a.serialize(), b.serialize()) < 0;
     });
 
-    // remove all duplicated expressions
+    // Remove all duplicated expressions.
     String key;
-    for (int i = m_expressions->size() - 1; i >= 0; --i) {
+    for (int i = m_expressions.size() - 1; i >= 0; --i) {
 
-        // if not all of the expressions is valid the media query must be ignored.
+        // If any expression is invalid the media query must be ignored.
         if (!m_ignored)
-            m_ignored = !m_expressions->at(i)->isValid();
+            m_ignored = !m_expressions[i].isValid();
 
-        if (m_expressions->at(i)->serialize() == key)
-            m_expressions->remove(i);
+        if (m_expressions[i].serialize() == key)
+            m_expressions.remove(i);
         else
-            key = m_expressions->at(i)->serialize();
+            key = m_expressions[i].serialize();
     }
-}
-
-MediaQuery::MediaQuery(const MediaQuery& o)
-    : m_restrictor(o.m_restrictor)
-    , m_mediaType(o.m_mediaType)
-    , m_expressions(std::make_unique<ExpressionVector>(o.m_expressions->size()))
-    , m_ignored(o.m_ignored)
-    , m_serializationCache(o.m_serializationCache)
-{
-    for (unsigned i = 0; i < m_expressions->size(); ++i)
-        (*m_expressions)[i] = std::make_unique<MediaQueryExp>(*o.m_expressions->at(i));
-}
-
-MediaQuery::~MediaQuery()
-{
 }
 
 // http://dev.w3.org/csswg/cssom/#compare-media-queries
@@ -124,11 +99,10 @@ bool MediaQuery::operator==(const MediaQuery& other) const
 }
 
 // http://dev.w3.org/csswg/cssom/#serialize-a-list-of-media-queries
-String MediaQuery::cssText() const
+const String& MediaQuery::cssText() const
 {
     if (m_serializationCache.isNull())
-        const_cast<MediaQuery*>(this)->m_serializationCache = serialize();
-
+        m_serializationCache = serialize();
     return m_serializationCache;
 }
 

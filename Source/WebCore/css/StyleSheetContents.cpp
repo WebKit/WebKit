@@ -132,6 +132,7 @@ bool StyleSheetContents::isCacheable() const
 void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
 {
     ASSERT(!rule->isCharsetRule());
+
     if (is<StyleRuleImport>(rule)) {
         // Parser enforces that @import rules come before anything else except @charset.
         ASSERT(m_childRules.isEmpty());
@@ -141,17 +142,13 @@ void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
         return;
     }
 
-#if ENABLE(RESOLUTION_MEDIA_QUERY)
-    // Add warning message to inspector if dpi/dpcm values are used for screen media.
     if (is<StyleRuleMedia>(rule))
         reportMediaQueryWarningIfNeeded(singleOwnerDocument(), downcast<StyleRuleMedia>(rule.get()).mediaQueries());
-#endif
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
     // If we're adding a rule with a huge number of selectors, split it up into multiple rules
     if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > RuleData::maximumSelectorComponentCount) {
-        Vector<RefPtr<StyleRule>> rules = downcast<StyleRule>(rule.get()).splitIntoMultipleRulesWithMaximumSelectorComponentCount(RuleData::maximumSelectorComponentCount);
-        m_childRules.appendVector(rules);
+        m_childRules.appendVector(downcast<StyleRule>(rule.get()).splitIntoMultipleRulesWithMaximumSelectorComponentCount(RuleData::maximumSelectorComponentCount));
         return;
     }
 

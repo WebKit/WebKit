@@ -23,10 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformScreen_h
-#define PlatformScreen_h
-
-#include <wtf/Vector.h>
+#pragma once
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSScreen;
@@ -44,44 +41,44 @@ typedef struct _NSPoint NSPoint;
 OBJC_CLASS UIScreen;
 #endif
 
-typedef uint32_t PlatformDisplayID;
-
-typedef WTF::Vector<char> ColorProfile;
-
 namespace WebCore {
 
-    class FloatRect;
-    class FloatSize;
-    class Widget;
+class FloatRect;
+class FloatSize;
+class Widget;
 
-    int screenDepth(Widget*);
-    int screenDepthPerComponent(Widget*);
-    bool screenIsMonochrome(Widget*);
+using PlatformDisplayID = uint32_t;
 
-    bool screenHasInvertedColors();
+int screenDepth(Widget*);
+int screenDepthPerComponent(Widget*);
+bool screenIsMonochrome(Widget*);
 
-    FloatRect screenRect(Widget*);
-    FloatRect screenAvailableRect(Widget*);
+bool screenHasInvertedColors();
 
-    WEBCORE_EXPORT bool screenSupportsExtendedColor(Widget* widget = nullptr);
+FloatRect screenRect(Widget*);
+FloatRect screenAvailableRect(Widget*);
+
+WEBCORE_EXPORT bool screenSupportsExtendedColor(Widget* = nullptr);
 
 #if PLATFORM(MAC)
-    NSScreen *screenForWindow(NSWindow *);
-    NSScreen *screenForDisplayID(PlatformDisplayID);
 
-    WEBCORE_EXPORT FloatRect toUserSpace(const NSRect&, NSWindow *destination);
-    WEBCORE_EXPORT NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
+NSScreen *screen(NSWindow *);
+NSScreen *screen(PlatformDisplayID);
 
-    NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
+WEBCORE_EXPORT FloatRect toUserSpace(const NSRect&, NSWindow *destination);
+WEBCORE_EXPORT NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
+
+NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
+
 #endif
 
 #if PLATFORM(IOS)
-    float screenPPIFactor();
-    WEBCORE_EXPORT FloatSize screenSize();
-    WEBCORE_EXPORT FloatSize availableScreenSize();
-    WEBCORE_EXPORT float screenScaleFactor(UIScreen * = nullptr);
+
+float screenPPIFactor();
+WEBCORE_EXPORT FloatSize screenSize();
+WEBCORE_EXPORT FloatSize availableScreenSize();
+WEBCORE_EXPORT float screenScaleFactor(UIScreen * = nullptr);
+
 #endif
 
 } // namespace WebCore
-
-#endif // PlatformScreen_h

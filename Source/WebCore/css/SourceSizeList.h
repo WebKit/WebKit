@@ -18,18 +18,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SourceSizeList_h
-#define SourceSizeList_h
+#pragma once
 
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class Frame;
-class RenderView;
+class Document;
 
-float parseSizesAttribute(StringView sizesAttribute, RenderView*, Frame*);
+float parseSizesAttribute(Document&, StringView sizesAttribute);
 
 } // namespace WebCore
-
-#endif // SourceSizeList_h

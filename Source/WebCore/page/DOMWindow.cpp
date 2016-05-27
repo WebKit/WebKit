@@ -79,7 +79,6 @@
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
 #include "Performance.h"
-#include "PlatformScreen.h"
 #include "ResourceLoadInfo.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"

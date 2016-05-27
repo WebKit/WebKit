@@ -26,49 +26,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaQuery_h
-#define MediaQuery_h
+#pragma once
 
-#include <memory>
+#include "MediaQueryExp.h"
 #include <wtf/Vector.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class MediaQueryExp;
 
 class MediaQuery {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum Restrictor {
-        Only, Not, None
-    };
+    enum Restrictor { Only, Not, None };
 
-    typedef Vector<std::unique_ptr<MediaQueryExp>> ExpressionVector;
-
-    MediaQuery(Restrictor, const String& mediaType, std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>> exprs);
-    MediaQuery(const MediaQuery&);
-    ~MediaQuery();
+    MediaQuery(Restrictor, const String& mediaType, Vector<MediaQueryExpression>&&);
 
     Restrictor restrictor() const { return m_restrictor; }
-    const Vector<std::unique_ptr<MediaQueryExp>>& expressions() const { return *m_expressions; }
-    String mediaType() const { return m_mediaType; }
-    bool operator==(const MediaQuery& other) const;
-    String cssText() const;
+    const Vector<MediaQueryExpression>& expressions() const { return m_expressions; }
+    const String& mediaType() const { return m_mediaType; }
     bool ignored() const { return m_ignored; }
 
-    std::unique_ptr<MediaQuery> copy() const { return std::make_unique<MediaQuery>(*this); }
+    const String& cssText() const;
 
- private:
+    bool operator==(const MediaQuery& other) const;
+
+private:
+    String serialize() const;
+
     Restrictor m_restrictor;
     String m_mediaType;
-    std::unique_ptr<ExpressionVector> m_expressions;
-    bool m_ignored;
-    String m_serializationCache;
-
-    String serialize() const;
+    Vector<MediaQueryExpression> m_expressions;
+    bool m_ignored { false };
+    mutable String m_serializationCache;
 };
 
 } // namespace
-
-#endif

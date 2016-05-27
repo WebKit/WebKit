@@ -1,3 +1,321 @@
+2016-05-26  Darin Adler  <darin@apple.com>
+
+        Media queries and platform screen modernization and streamlining
+        https://bugs.webkit.org/show_bug.cgi?id=158067
+
+        Reviewed by Alex Christensen.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMHTMLLinkElement _mediaQueryMatches]): Use references, use fastGetAttribute,
+        pass a document instead of a frame to the media query evaluator and a reference instead
+        of a pointer.
+
+        * css/CSSGrammar.y.in: Use "expression" instead of "exp" for media query expressions.
+        Update vectors and arguments to move media query expressions instead of using unique_ptr.
+
+        * css/CSSImportRule.h: Use pragma once. Removed unneeded forward declarations.
+        Made more overrides private and marked them final.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::SourceSize::SourceSize): Added missing WTFMove to avoid reference
+        count churn. Changed type of expression to no longer use unique_ptr.
+        (WebCore::CSSParser::sourceSize): Ditto.
+
+        * css/CSSParser.h: Changed SourceSize::expression to no longer use unique_ptr.
+        Also changed SourceSize::length to be Ref instead of RefPtr.
+
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::appendAuthorStyleSheets): Updated for changes to
+        MediaQueryEvaluator.
+
+        * css/MediaFeatureNames.cpp:
+        (WebCore::MediaFeatureNames::init): Streamlined a bit. Removed "MediaFeature" suffix from
+        names of media feature strings.
+
+        * css/MediaFeatureNames.h: Use pragma once. Changed media feature name globals
+        to use normal WebKit naming style instead of all lowercase with underscores.
+        Sorted alphabetically. Removed "MediaFeature" suffix from names of media feature strings.
+
+        * css/MediaList.cpp:
+        (WebCore::MediaQuerySet::MediaQuerySet): Simplified copy constructor since the queries
+        vector can now be copied normally.
+        (WebCore::parseMediaDescriptor): Normalized types and changed to use isASCIIAlphanumeric.
+        The old code was not handling '0' the way the comment said it did.
+        (WebCore::MediaQuerySet::internalParse): Added. Helper function to cut down on redundant
+        code in functions below.
+        (WebCore::MediaQuerySet::parse): Use stripLeadingAndTrailingHTMLSpaces instead of
+        stripWhiteSpace. Streamlined logic using helper function. Updated to use a vector of
+        queries instead of a vector of unique_ptr.
+        (WebCore::MediaQuerySet::add): Use internalParse.
+        (WebCore::MediaQuerySet::remove): Ditto.
+        (WebCore::MediaQuerySet::addMediaQuery): Changed argument type to not be unique_ptr.
+        (WebCore::MediaQuerySet::mediaText): Use modern for loop.
+        (WebCore::MediaList::MediaList): Initialize pointers to null in the class definition
+        rather than in these constructors.
+        (WebCore::MediaList::setMediaText): Removed unhelpful local variable.
+        (WebCore::MediaList::item): Updated since queries no longer use unique_ptr.
+        (WebCore::addResolutionWarningMessageToConsole): Changed argument types to references
+        instead of pointers with assertions.
+        (WebCore::reportMediaQueryWarningIfNeeded): Updated to modernize.
+
+        * css/MediaList.h: Use pragma once. Removed unneeded includes and forward declarations.
+        Changed vector to contain media queries instead of unique_ptr. Use nullptr instead of 0.
+        Initialize pointers to null here.
+
+        * css/MediaQuery.cpp: Deleted now-unneeded copy constructor and destructor. Both are
+        correctly generated without us writing them explicitly.
+        (WebCore::MediaQuery::serialize): Rewrote to streamline.
+        (WebCore::MediaQuery::MediaQuery): Updates since expressions are no longer unique_ptr.
+        (WebCore::MediaQuery::cssText): Changed return type to reference.
+
+        * css/MediaQuery.h: Use pragma once. Added include since this now includes media query
+        expressions, not just unique_ptr. Deleted the unneeded copy function.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::isViewportDependent): Moved this here. It used to be a member function of
+        MediaQueryExp, but this file has a lot more functions about specific features and how
+        they are evaluated, so it really belongs here.
+        (WebCore::MediaQueryEvaluator::MediaQueryEvaluator): Changed constructor to take a
+        document instead of a frame. Initialize the fallback result in the class definition.
+        (WebCore::MediaQueryEvaluator::evaluate): Changed the argument type to a reference.
+        (WebCore::compareValue): Made both of the arguments separate template types. This
+        helps us compare an integer to a double without lots of type casts.
+        (WebCore::compareAspectRatioValue): Changed to use early return style and got rid of
+        the casts to int so we will do the work in double instead.
+        (WebCore::doubleValue): Replaced the old numberValue function with this. Since values
+        are stored as doubles, it's much better to use double rather than float.
+        (WebCore::zeroEvaluate): Added. Helpful for the many functions that just need to
+        evaluate as 0.
+        (WebCore::oneEvaluate): Ditto.
+        (WebCore::colorEvaluate): Renamed this and all the functions below. Simplified the logic
+        to use the new doubleValue function.
+        (WebCore::colorIndexEvaluate): Use zeroEvaluate.
+        (WebCore::colorGamutEvaluate): No longer use page just to get from the frame to the
+        main frame.
+        (WebCore::monochromeEvaluate): Simplify logic using zeroEvaluate.
+        (WebCore::invertedColorsEvaluate): Use auto for the keyword; easier to read.
+        (WebCore::orientationEvaluate): Use early return style.
+        (WebCore::aspectRatioEvaluate): Ditto.
+        (WebCore::deviceAspectRatioEvaluate): Simplified logic and removed type casts.
+        (WebCore::evaluateResolution): Added a couple null checks.
+        (WebCore::devicePixelRatioEvaluate): Renamed. Added missing type check.
+        (WebCore::resolutionEvaluate): Ditto.
+        (WebCore::gridEvaluate): Use zeroEvaluate.
+        (WebCore::computeLength): Added a null check.
+        (WebCore::deviceHeightEvaluate): Use early return.
+        (WebCore::deviceWidthEvaluate): Ditto.
+        (WebCore::heightEvaluate): Ditto.
+        (WebCore::widthEvaluate): Ditto.
+        (WebCore::minColorEvaluate): Updated name only.
+        (WebCore::maxColorEvaluate): Ditto.
+        (WebCore::minColorIndexEvaluate): Ditto.
+        (WebCore::maxColorIndexEvaluate): Ditto.
+        (WebCore::minMonochromeEvaluate): Ditto.
+        (WebCore::maxMonochromeEvaluate): Ditto.
+        (WebCore::minAspectRatioEvaluate): Ditto.
+        (WebCore::maxAspectRatioEvaluate): Ditto.
+        (WebCore::minDeviceAspectRatioEvaluate): Ditto.
+        (WebCore::maxDeviceAspectRatioEvaluate): Ditto.
+        (WebCore::minDevicePixelRatioEvaluate): Ditto.
+        (WebCore::maxDevicePixelRatioEvaluate): Ditto.
+        (WebCore::minHeightEvaluate): Ditto.
+        (WebCore::maxHeightEvaluate): Ditto.
+        (WebCore::minWidthEvaluate): Ditto.
+        (WebCore::maxWidthEvaluate): Ditto.
+        (WebCore::minDeviceHeightEvaluate): Ditto.
+        (WebCore::maxDeviceHeightEvaluate): Ditto.
+        (WebCore::minDeviceWidthEvaluate): Ditto.
+        (WebCore::maxDeviceWidthEvaluate): Ditto.
+        (WebCore::minResolutionEvaluate): Ditto.
+        (WebCore::maxResolutionEvaluate): Ditto.
+        (WebCore::animationEvaluate): Use oneEvaluate.
+        (WebCore::transitionEvaluate): Ditto.
+        (WebCore::transform2dEvaluate): Ditto.
+        (WebCore::transform3dEvaluate): Simplify using zeroEvaluate and oneEvaluate.
+        (WebCore::viewModeEvaluate): Simplified logic with fewer local variables and the name "keyword".
+        (WebCore::videoPlayableInlineEvaluate): Use reference.
+        (WebCore::hoverEvaluate): Simplify using keyword.
+        (WebCore::anyHoverEvaluate): Just updated name.
+        (WebCore::pointerEvaluate): Simplify using keyword.
+        (WebCore::anyPointerEvaluate): Just updated name.
+        (WebCore::add): Added. Helper for building up the media query function map.
+        (WebCore::MediaQueryEvaluator::evaluate): Moved code to build the function map in here in
+        a lambda, rather than having it in a separate global function.
+
+        * css/MediaQueryEvaluator.h: Use pragma once. Removed uneeded includes. Simplified comments and
+        modernized their style.
+
+        * css/MediaQueryExp.cpp:
+        (WebCore::isFeatureValidWithIdentifier): Renamed to make it clearer what this does. Updated
+        to take a reference and use te new feature names.
+        (WebCore::isFeatureValidWithNonNegativeLengthOrNumber): Ditto.
+        (WebCore::isFeatureValidWithDensity): Ditto.
+        (WebCore::isFeatureValidWithNonNegativeInteger): Ditto.
+        (WebCore::isFeatureValidWithNonNegativeNumber): Ditto.
+        (WebCore::isFeatureValidWithZeroOrOne): Ditto.
+        (WebCore::isAspectRatioFeature): Ditto.
+        (WebCore::isFeatureValidWithoutValue): Ditto.
+        (WebCore::isFeatureValidWithNumberWithUnit): Added. Helper that calls multiple functions above.
+        (WebCore::isFeatureValidWithNumber): Ditto.
+        (WebCore::isSlash): Added. Helper to make aspect ratio code below easier to read.
+        (WebCore::isPositiveIntegerValue): Ditto.
+        (WebCore::MediaQueryExpression::MediaQueryExpression): Rearranged code to be much less wordy and
+        to not use current/next.
+
+        * css/MediaQueryExp.h: Use pragma once. Renamed class to MediaQueryExpression. Removed
+        the isViewportDependent function, now part of MediaQueryEvaluator. Removed unneeded includes.
+
+        * css/MediaQueryList.cpp:
+        (WebCore::MediaQueryList::MediaQueryList): Marked this inline. Use a reference and a Ref&&
+        instead of PassRefPtr.
+        (WebCore::MediaQueryList::create): Updated argument types.
+        (WebCore::MediaQueryList::addListener): Updated argument type and use releaseNonNull.
+        (WebCore::MediaQueryList::removeListener): Updated argument types.
+        (WebCore::MediaQueryList::evaluate): Ditto.
+        (WebCore::MediaQueryList::matches): More of the same.
+
+        * css/MediaQueryList.h: Use pragma once. Changed types to use references, RefPtr&& and Ref&&.
+
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::MediaQueryMatcher): Take a reference.
+        (WebCore::MediaQueryMatcher::documentDestroyed): Use nullptr.
+        (WebCore::MediaQueryMatcher::documentElementUserAgentStyle): Use auto.
+        (WebCore::MediaQueryMatcher::evaluate): Take a reference. Updated for changes to MediaQueryEvaluator.
+        (WebCore::MediaQueryMatcher::matchMedia): Updated for above changes.
+        (WebCore::MediaQueryMatcher::addListener): Use Ref&& and reference for arguments. Simplify code.
+        (WebCore::MediaQueryMatcher::removeListener): Ditto.
+        (WebCore::MediaQueryMatcher::styleResolverChanged): Moved the logic for evaluating each query here.
+        Updated for changes to MediaQueryEvaluator.
+
+        * css/MediaQueryMatcher.h: Use pragma once. Changed create to take a reference. Tightened argument
+        types for addListener and removeListener. Made the private Listener a simple struct rather than a
+        class. Initialized m_evaluationRound.
+
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addChildRules): Updated for changes to MediaQueryEvaluator.
+        (WebCore::RuleSet::addRulesFromSheet): Ditto.
+
+        * css/SourceSizeList.cpp:
+        (WebCore::match): Updated to use MediaQueryEvaluator in a simpler way.
+        (WebCore::defaultLength): Use a reference and simpler syntax.
+        (WebCore::computeLength): Ditto.
+        (WebCore::parseSizesAttribute): Changed arguments to take a Document instead of both a
+        RenderView and a Frame.
+
+        * css/SourceSizeList.h: Use #pragma once. Change parseSizesAttribute to take a Document.
+
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium): Update for changes to MediaQueryEvaluator.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver): Use a MediaQueryEvaluator instead of a unique_ptr
+        to one.
+        (WebCore::StyleResolver::appendAuthorStyleSheets): Ditto.
+        (WebCore::StyleResolver::styleForElement): Ditto.
+        (WebCore::StyleResolver::pseudoStyleForElement): Ditto.
+        (WebCore::StyleResolver::pseudoStyleRulesForElement): Ditto.
+        (WebCore::StyleResolver::addViewportDependentMediaQueryResult): Use references instead of
+        ponters, and use a vector of MediaQueryResult instead of unique_ptr.
+        (WebCore::StyleResolver::hasMediaQueriesAffectedByViewportChange): Use a modern for loop.
+
+        * css/StyleResolver.h: Use a MediaQueryEvaluator instead of a unique_ptr to one.
+        Use a vector of MediaQueryResult instead of a vector of unique_ptr.
+
+        * dom/Document.cpp:
+        (WebCore::Document::mediaQueryMatcher): Pass a reference instead of a pointer.
+
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet): Updated for changes to MediaQueryEvaluator.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::advance): Removed a stray space (unrelated to
+        the rest of the patch).
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement): Updated for changes to the
+        MediaQueryEvaluator class. Also use auto a bit more and eliminated a double hash table
+        lookup in code that used hasAttribute followed by fastGetAttribute.
+        (WebCore::HTMLImageElement::selectImageSource): Updated for changes to parseSizesAttribute.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process): Updated for changes to MediaQueryEvaluator.
+        (WebCore::HTMLLinkElement::setCSSStyleSheet): Use auto.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Updated for changes to MediaQueryEvaluator.
+
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::viewportChangeAffectedPicture): Updated for changes to
+        MediaQueryEvaluator.
+
+        * html/HTMLPictureElement.h: Use #pragma once. Changed viewport dependent media query results
+        vector to be a vector of results, not of unique_ptr.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes): Updated for changes to
+        parseSizesAttribute.
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute): Updated for changes to
+        MediaQueryEvaluator.
+
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::mediaAttributeMatches): Updated for changes to MediaQueryEvaluator.
+        (WebCore::HTMLResourcePreloader::preload): Ditto.
+
+        * page/DOMWindow.cpp: Removed unneeded include of PlatformScreen.h.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::effectiveMousePositionForSelectionAutoscroll): Simplified code and
+        updated for changes to PlatformScreenMac functions.
+
+        * platform/PlatformScreen.h: Use #pragma once. Use using instad of typedef. Put the typedef
+        for PlatformDisplayID inside the WebCore namespace. Removed the typedef for ColorProfile.
+        Renamed the functions that find a screen to just "screen".
+
+        * platform/graphics/DisplayRefreshMonitorClient.cpp:
+        (WebCore::DisplayRefreshMonitorClient::DisplayRefreshMonitorClient): Moved initialization
+        of booleans to the class definition.
+
+        * platform/graphics/DisplayRefreshMonitorClient.h: Use pragma once. Removed unneeded
+        forward declarations. Changed display ID data member to be an Optional instead of a boolean
+        paired with another data member.
+
+        * platform/graphics/GraphicsLayerUpdater.h: Use pragma once. Removed unneeded include of
+        PlatformScreen.h.
+
+        * platform/image-decoders/ImageDecoder.h: Use pragma once. Moved ColorProfile here from
+        PlatformScreen.h, since it's not used there. and is used here.
+
+        * platform/mac/PlatformEventFactoryMac.h: Use parma once. Changed reutrn type of the
+        globalPoint function to NSPoint. Tweaked comments and formatting a bit.
+
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::globalPoint): Changed return type to NSPoint and so removed the explicit
+        conversion to IntPoint.
+        (WebCore::globalPointForEvent): Changed return type to NSPoint.
+        (WebCore::PlatformMouseEventBuilder::PlatformMouseEventBuilder): Moved conversion to
+        IntPoint in here. Also got rid of special indenting style and just indented normally.
+        (WebCore::PlatformWheelEventBuilder::PlatformWheelEventBuilder): Ditto.
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder): Ditto.
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::displayID): Renamed from displayIDFromScreen and displayFromWidget since this
+        is C++ and we have overloading to determine the types of arguments. Added a null check
+        of the how dinwo pointer.
+        (WebCore::firstScreen): Added. Helper used below.
+        (WebCore::window): Added. Helper used below.
+        (WebCore::screen): Renamed from screenForWidget and screenFromWindow and removed the
+        unneeded window argument from the widget version.
+        (WebCore::screenDepth): Simplified, using new helpers.
+        (WebCore::screenDepthPerComponent): Ditto.
+        (WebCore::screenIsMonochrome): Tweaked comment.
+        (WebCore::screenHasInvertedColors): Ditto.
+        (WebCore::screenRect): Simplified using new elpers.
+        (WebCore::screenAvailableRect): Ditto.
+        (WebCore::screenSupportsExtendedColor): Streamlined using fewer local variables and
+        using auto for types of the results of adoptCF.
+        (WebCore::toUserSpace): Updated for function name changes.
+        (WebCore::toDeviceSpace): Ditto.
+
 2016-05-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Purge PassRefPtr in Modules/battery

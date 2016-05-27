@@ -17,8 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef MediaQueryMatcher_h
-#define MediaQueryMatcher_h
+#pragma once
 
 #include <memory>
 #include <wtf/Forward.h>
@@ -37,53 +36,43 @@ class RenderStyle;
 // MediaQueryMatcher class is responsible for keeping a vector of pairs
 // MediaQueryList x MediaQueryListListener. It is responsible for evaluating the queries
 // whenever it is needed and to call the listeners if the corresponding query has changed.
-// The listeners must be called in the very same order in which they have been added.
+// The listeners must be called in the order in which they were added.
 
 class MediaQueryMatcher : public RefCounted<MediaQueryMatcher> {
 public:
-    static Ref<MediaQueryMatcher> create(Document* document) { return adoptRef(*new MediaQueryMatcher(document)); }
+    static Ref<MediaQueryMatcher> create(Document& document) { return adoptRef(*new MediaQueryMatcher(document)); }
     ~MediaQueryMatcher();
+
     void documentDestroyed();
 
-    void addListener(PassRefPtr<MediaQueryListListener>, PassRefPtr<MediaQueryList>);
-    void removeListener(MediaQueryListListener*, MediaQueryList*);
+    void addListener(Ref<MediaQueryListListener>&&, MediaQueryList&);
+    void removeListener(MediaQueryListListener&, MediaQueryList&);
 
     RefPtr<MediaQueryList> matchMedia(const String&);
 
     unsigned evaluationRound() const { return m_evaluationRound; }
+
     void styleResolverChanged();
-    bool evaluate(const MediaQuerySet*);
+
+    bool evaluate(const MediaQuerySet&);
 
 private:
-    class Listener {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        Listener(PassRefPtr<MediaQueryListListener>, PassRefPtr<MediaQueryList>);
-        ~Listener();
-
-        void evaluate(MediaQueryEvaluator*);
-
-        MediaQueryListListener* listener() { return m_listener.get(); }
-        MediaQueryList* query() { return m_query.get(); }
-
-    private:
-        RefPtr<MediaQueryListListener> m_listener;
-        RefPtr<MediaQueryList> m_query;
+    struct Listener {
+        Ref<MediaQueryListListener> listener;
+        Ref<MediaQueryList> query;
     };
 
-    MediaQueryMatcher(Document*);
+    explicit MediaQueryMatcher(Document&);
     std::unique_ptr<RenderStyle> documentElementUserAgentStyle() const;
     String mediaType() const;
 
     Document* m_document;
-    Vector<std::unique_ptr<Listener>> m_listeners;
+    Vector<Listener> m_listeners;
 
     // This value is incremented at style selector changes.
     // It is used to avoid evaluating queries more then once and to make sure
     // that a media query result change is notified exactly once.
-    unsigned m_evaluationRound;
+    unsigned m_evaluationRound { 1 };
 };
 
 } // namespace WebCore
-
-#endif // MediaQueryMatcher_h

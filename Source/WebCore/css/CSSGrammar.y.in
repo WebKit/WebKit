@@ -37,9 +37,9 @@
     MediaQuerySet* mediaList;
     MediaQuery* mediaQuery;
     MediaQuery::Restrictor mediaQueryRestrictor;
-    MediaQueryExp* mediaQueryExp;
+    MediaQueryExpression* mediaQueryExpression;
     Vector<CSSParser::SourceSize>* sourceSizeList;
-    Vector<std::unique_ptr<MediaQueryExp>>* mediaQueryExpList;
+    Vector<MediaQueryExpression>* mediaQueryExpressionList;
     StyleKeyframe* keyframe;
     Vector<RefPtr<StyleKeyframe>>* keyframeRuleList;
     CSSPropertyID id;
@@ -271,20 +271,20 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 
 %type <mediaQueryRestrictor> maybe_media_restrictor
 
-%type <mediaQueryExp> media_query_exp base_media_query_exp
-%destructor { delete $$; } media_query_exp base_media_query_exp
+%type <mediaQueryExpression> media_query_expression base_media_query_expression
+%destructor { delete $$; } media_query_expression base_media_query_expression
 
 %type <sourceSizeList> source_size_list
 %destructor { delete $$; } source_size_list
 
-%type <mediaQueryExp> maybe_source_media_query_exp
-%destructor { delete $$; } maybe_source_media_query_exp
+%type <mediaQueryExpression> maybe_source_media_query_expression
+%destructor { delete $$; } maybe_source_media_query_expression
 
 %type <value> source_size_length
 %destructor { destroy($$); } source_size_length
 
-%type <mediaQueryExpList> media_query_exp_list maybe_and_media_query_exp_list
-%destructor { delete $$; } media_query_exp_list maybe_and_media_query_exp_list
+%type <mediaQueryExpressionList> media_query_expression_list maybe_and_media_query_expression_list
+%destructor { delete $$; } media_query_expression_list maybe_and_media_query_expression_list
 
 %type <string> keyframe_name
 
@@ -576,59 +576,63 @@ webkit_source_size_list:
     ;
 
 source_size_list:
-    maybe_source_media_query_exp source_size_length {
+    maybe_source_media_query_expression source_size_length {
         $$ = new Vector<CSSParser::SourceSize>;
-        $$->append(parser->sourceSize(std::unique_ptr<MediaQueryExp>($1), $2));
+        $$->append(parser->sourceSize(WTFMove(*$1), $2));
+        delete $1;
     }
-    | source_size_list maybe_space ',' maybe_space maybe_source_media_query_exp source_size_length {
+    | source_size_list maybe_space ',' maybe_space maybe_source_media_query_expression source_size_length {
         $$ = $1;
-        $$->append(parser->sourceSize(std::unique_ptr<MediaQueryExp>($5), $6));
+        $$->append(parser->sourceSize(WTFMove(*$5), $6));
+        delete $5;
     }
     ;
 
-maybe_source_media_query_exp:
+maybe_source_media_query_expression:
     /* empty */ {
-        $$ = new MediaQueryExp;
+        $$ = new MediaQueryExpression;
     }
-    | base_media_query_exp maybe_space;
+    | base_media_query_expression maybe_space;
 
 source_size_length: unary_term | calc_function;
 
-base_media_query_exp: '(' maybe_space IDENT maybe_space maybe_media_value ')' {
+base_media_query_expression: '(' maybe_space IDENT maybe_space maybe_media_value ')' {
         std::unique_ptr<CSSParserValueList> mediaValue($5);
         $3.convertToASCIILowercaseInPlace();
-        $$ = new MediaQueryExp($3, mediaValue.get());
+        $$ = new MediaQueryExpression($3, mediaValue.get());
     }
     ;
 
-media_query_exp:
-    maybe_media_restrictor maybe_space base_media_query_exp maybe_space {
+media_query_expression:
+    maybe_media_restrictor maybe_space base_media_query_expression maybe_space {
         if ($1 != MediaQuery::None) {
             // If restrictor is specified, media query expression is invalid.
             // Create empty media query expression and continue parsing media query.
             delete $3;
-            $$ = new MediaQueryExp;
+            $$ = new MediaQueryExpression;
         } else
             $$ = $3;
     }
     ;
 
-media_query_exp_list:
-    media_query_exp {
-        $$ = new Vector<std::unique_ptr<MediaQueryExp>>;
-        $$->append(std::unique_ptr<MediaQueryExp>($1));
+media_query_expression_list:
+    media_query_expression {
+        $$ = new Vector<MediaQueryExpression>;
+        $$->append(WTFMove(*$1));
+        delete $1;
     }
-    | media_query_exp_list maybe_space MEDIA_AND maybe_space media_query_exp {
+    | media_query_expression_list maybe_space MEDIA_AND maybe_space media_query_expression {
         $$ = $1;
-        $$->append(std::unique_ptr<MediaQueryExp>($5));
+        $$->append(WTFMove(*$5));
+        delete $5;
     }
     ;
 
-maybe_and_media_query_exp_list:
+maybe_and_media_query_expression_list:
     /*empty*/ {
-        $$ = new Vector<std::unique_ptr<MediaQueryExp>>;
+        $$ = new Vector<MediaQueryExpression>;
     }
-    | MEDIA_AND maybe_space media_query_exp_list {
+    | MEDIA_AND maybe_space media_query_expression_list {
         $$ = $3;
     }
     ;
@@ -646,13 +650,15 @@ maybe_media_restrictor:
     ;
 
 media_query:
-    media_query_exp_list {
-        $$ = new MediaQuery(MediaQuery::None, "all", std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>>($1));
+    media_query_expression_list {
+        $$ = new MediaQuery(MediaQuery::None, "all", WTFMove(*$1));
+        delete $1;
     }
     |
-    maybe_media_restrictor maybe_space IDENT maybe_space maybe_and_media_query_exp_list {
+    maybe_media_restrictor maybe_space IDENT maybe_space maybe_and_media_query_expression_list {
         $3.convertToASCIILowercaseInPlace();
-        $$ = new MediaQuery($1, $3, std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>>($5));
+        $$ = new MediaQuery($1, $3, WTFMove(*$5));
+        delete $5;
     }
     ;
 
@@ -661,16 +667,17 @@ maybe_media_list: /* empty */ { $$ = &MediaQuerySet::create().leakRef(); } | med
 media_list:
     media_query {
         $$ = &MediaQuerySet::create().leakRef();
-        $$->addMediaQuery(std::unique_ptr<MediaQuery>($1));
+        $$->addMediaQuery(WTFMove(*$1));
+        delete $1;
         parser->updateLastMediaLine(*$$);
     }
     | media_list ',' maybe_space media_query {
         $$ = $1;
-        std::unique_ptr<MediaQuery> mediaQuery($4);
         if ($$) {
-            $$->addMediaQuery(WTFMove(mediaQuery));
+            $$->addMediaQuery(WTFMove(*$4));
             parser->updateLastMediaLine(*$$);
         }
+        delete $4;
     }
     | media_list error {
         $$ = nullptr;

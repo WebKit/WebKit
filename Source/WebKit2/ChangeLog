@@ -1,3 +1,29 @@
+2016-05-26  Darin Adler  <darin@apple.com>
+
+        Media queries and platform screen modernization and streamlining
+        https://bugs.webkit.org/show_bug.cgi?id=158067
+
+        Reviewed by Alex Christensen.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::screenForWindow): Deleted.
+        (WebKit::flipScreenPoint): Deleted.
+        (WebKit::globalPoint): Deleted.
+        (WebKit::globalPointForEvent): Use globalPoint function from WebCore so we don't need
+        copies of everything in here.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::windowDidChangeScreen): Removed unneeded type cast.
+        (WebKit::WebViewImpl::draggedImage): Added type cast since globalPoint now returns an
+        NSPoint rather than an IntPoint.
+
+        * UIProcess/WebPageProxy.h: Use pragma once. Add a WebCore prefix to a use of
+        PlatformDisplayID, since that is now inside the WebCore namespace.
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Ditto.
+        * WebProcess/WebPage/Cocoa/RemoteLayerTreeDisplayRefreshMonitor.h: Ditto.
+        * WebProcess/WebPage/DrawingArea.h: Ditto.
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h: Ditto.
+
 2016-05-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Purge PassRefPtr in Modules/battery

@@ -26,8 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageDecoder_h
-#define ImageDecoder_h
+#pragma once
 
 #include "IntRect.h"
 #include "ImageSource.h"
@@ -40,6 +39,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+using ColorProfile = Vector<char>;
 
     // ImageFrame represents the decoded image data.  This buffer is what all
     // decoders write a single frame into.
@@ -411,5 +412,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif

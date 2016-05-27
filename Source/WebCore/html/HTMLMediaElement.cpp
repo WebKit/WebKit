@@ -4180,13 +4180,12 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
             goto check_again;
         
         if (source->fastHasAttribute(mediaAttr)) {
-            MediaQueryEvaluator screenEval("screen", document().frame(), renderer() ? &renderer()->style() : nullptr);
-            RefPtr<MediaQuerySet> media = source->mediaQuerySet();
+            auto media = source->mediaQuerySet();
 #if !LOG_DISABLED
             if (shouldLog)
                 LOG(Media, "HTMLMediaElement::selectNextSourceChild(%p) - 'media' is %s", this, source->media().utf8().data());
 #endif
-            if (!screenEval.eval(media.get())) 
+            if (media && !MediaQueryEvaluator { "screen", document(), renderer() ? &renderer()->style() : nullptr }.evaluate(*media))
                 goto check_again;
         }
 

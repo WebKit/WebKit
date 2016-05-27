@@ -57,16 +57,16 @@ Ref<HTMLPictureElement> HTMLPictureElement::create(const QualifiedName& tagName,
 
 void HTMLPictureElement::sourcesChanged()
 {
-    for (auto& imageElement : childrenOfType<HTMLImageElement>(*this))
-        imageElement.selectImageSource();
+    for (auto& element : childrenOfType<HTMLImageElement>(*this))
+        element.selectImageSource();
 }
 
-bool HTMLPictureElement::viewportChangeAffectedPicture()
+bool HTMLPictureElement::viewportChangeAffectedPicture() const
 {
-    MediaQueryEvaluator evaluator(document().printing() ? "print" : "screen", document().frame(), document().documentElement() ? document().documentElement()->computedStyle() : nullptr);
-    unsigned numResults = m_viewportDependentMediaQueryResults.size();
-    for (unsigned i = 0; i < numResults; i++) {
-        if (evaluator.eval(&m_viewportDependentMediaQueryResults[i]->m_expression) != m_viewportDependentMediaQueryResults[i]->m_result)
+    auto* documentElement = document().documentElement();
+    MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
+    for (auto& result : m_viewportDependentMediaQueryResults) {
+        if (evaluator.evaluate(result.expression) != result.result)
             return true;
     }
     return false;

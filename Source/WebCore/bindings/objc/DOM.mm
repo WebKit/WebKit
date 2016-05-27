@@ -762,7 +762,9 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 @end
 
 #if PLATFORM(IOS)
+
 @implementation DOMHTMLLinkElement (WebPrivate)
+
 - (BOOL)_mediaQueryMatchesForOrientation:(int)orientation
 {
     Document& document = static_cast<HTMLLinkElement*>(core(self))->document();
@@ -790,18 +792,19 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
 - (BOOL)_mediaQueryMatches
 {
-    HTMLLinkElement* link = static_cast<HTMLLinkElement*>(core(self));
-    String media = link->getAttribute(HTMLNames::mediaAttr);
+    HTMLLinkElement& link = *static_cast<HTMLLinkElement*>(core(self));
+
+    auto& media = link.fastGetAttribute(HTMLNames::mediaAttr);
     if (media.isEmpty())
         return true;
-    Document& document = link->document();
 
-    RefPtr<MediaQuerySet> mediaQuerySet = MediaQuerySet::createAllowingDescriptionSyntax(media);
-    MediaQueryEvaluator screenEval("screen", document.frame(), document.renderView() ? &document.renderView()->style() : 0);
-
-    return screenEval.eval(mediaQuerySet.get());
+    Document& document = link.document();
+    auto mediaQuerySet = MediaQuerySet::createAllowingDescriptionSyntax(media);
+    return MediaQueryEvaluator { "screen", document, document.renderView() ? &document.renderView()->style() : nullptr }.evaluate(mediaQuerySet.get());
 }
+
 @end
+
 #endif
 
 //------------------------------------------------------------------------------------------

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTreeDrawingArea_h
-#define RemoteLayerTreeDrawingArea_h
+#pragma once
 
 #include "DrawingArea.h"
 #include "GraphicsLayerCARemote.h"
@@ -74,7 +73,7 @@ private:
 
     void addTransactionCallbackID(uint64_t callbackID) override;
 
-    RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) override;
+    RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
     void willDestroyDisplayRefreshMonitor(WebCore::DisplayRefreshMonitor*);
 
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) override;
@@ -179,5 +178,3 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(RemoteLayerTreeDrawingArea, DrawingAreaTypeRemoteLayerTree)
-
-#endif // RemoteLayerTreeDrawingArea_h

@@ -337,7 +337,7 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
             addPageRule(downcast<StyleRulePage>(rule.get()));
         else if (is<StyleRuleMedia>(*rule)) {
             auto& mediaRule = downcast<StyleRuleMedia>(*rule);
-            if ((!mediaRule.mediaQueries() || medium.eval(mediaRule.mediaQueries(), resolver)))
+            if ((!mediaRule.mediaQueries() || medium.evaluate(*mediaRule.mediaQueries(), resolver)))
                 addChildRules(mediaRule.childRules(), medium, resolver, hasDocumentSecurityOrigin, isInitiatingElementInUserAgentShadowTree, addRuleFlags);
         } else if (is<StyleRuleFontFace>(*rule) && resolver) {
             // Add this font face to our set.
@@ -363,7 +363,7 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
 void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvaluator& medium, StyleResolver* resolver)
 {
     for (auto& rule : sheet.importRules()) {
-        if (rule->styleSheet() && (!rule->mediaQueries() || medium.eval(rule->mediaQueries(), resolver)))
+        if (rule->styleSheet() && (!rule->mediaQueries() || medium.evaluate(*rule->mediaQueries(), resolver)))
             addRulesFromSheet(*rule->styleSheet(), medium, resolver);
     }
 

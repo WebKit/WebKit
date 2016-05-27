@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageProxy_h
-#define WebPageProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include "APISession.h"
@@ -666,7 +665,7 @@ public:
     float deviceScaleFactor() const;
     void setIntrinsicDeviceScaleFactor(float);
     void setCustomDeviceScaleFactor(float);
-    void windowScreenDidChange(PlatformDisplayID);
+    void windowScreenDidChange(WebCore::PlatformDisplayID);
 
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
@@ -1831,5 +1830,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebPageProxy_h

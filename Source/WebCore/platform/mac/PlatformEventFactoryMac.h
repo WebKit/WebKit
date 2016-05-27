@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformEventFactoryMac_h
-#define PlatformEventFactoryMac_h
+#pragma once
 
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
@@ -40,16 +39,15 @@ public:
 };
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
-// FIXME: This doesn't really belong here.
-WEBCORE_EXPORT IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
 
-// FIXME: WebKit2 has a lot of code copy/pasted from PlatformEventFactoryMac in WebEventFactory. It should be carefully shared with WebCore.
-WEBCORE_EXPORT int windowsKeyCodeForKeyEvent(NSEvent*);
-WEBCORE_EXPORT String keyIdentifierForKeyEvent(NSEvent*);
-WEBCORE_EXPORT double eventTimeStampSince1970(NSEvent*);
+// FIXME: This function doesn't really belong in this header.
+WEBCORE_EXPORT NSPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
+
+// FIXME: WebKit2 has a lot of code copied and pasted from PlatformEventFactoryMac in WebEventFactory. More of it should be shared with WebCore.
+WEBCORE_EXPORT int windowsKeyCodeForKeyEvent(NSEvent *);
+WEBCORE_EXPORT String keyIdentifierForKeyEvent(NSEvent *);
+WEBCORE_EXPORT double eventTimeStampSince1970(NSEvent *);
 
 #endif
 
 } // namespace WebCore
-
-#endif // PlatformEventFactoryMac_h

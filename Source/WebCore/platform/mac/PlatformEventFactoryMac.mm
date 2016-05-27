@@ -38,15 +38,15 @@
 
 namespace WebCore {
 
-IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *window)
+NSPoint globalPoint(const NSPoint& windowPoint, NSWindow *window)
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return IntPoint(flipScreenPoint([window convertBaseToScreen:windowPoint], screenForWindow(window)));
+    return flipScreenPoint([window convertBaseToScreen:windowPoint], screen(window));
 #pragma clang diagnostic pop
 }
 
-static IntPoint globalPointForEvent(NSEvent *event)
+static NSPoint globalPointForEvent(NSEvent *event)
 {
     switch ([event type]) {
 #if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
@@ -70,7 +70,7 @@ static IntPoint globalPointForEvent(NSEvent *event)
 #pragma clang diagnostic pop
             return globalPoint([event locationInWindow], [event window]);
         default:
-            return IntPoint();
+            return { 0, 0 };
     }
 }
 
@@ -485,7 +485,7 @@ public:
 
         // PlatformMouseEvent
         m_position = pointForEvent(event, windowView);
-        m_globalPosition = globalPointForEvent(event);
+        m_globalPosition = IntPoint(globalPointForEvent(event));
         m_button = mouseButtonForEvent(event);
         m_clickCount = clickCountForEvent(event);
 
@@ -514,14 +514,14 @@ public:
     PlatformWheelEventBuilder(NSEvent *event, NSView *windowView)
     {
         // PlatformEvent
-        m_type                              = PlatformEvent::Wheel;
-        m_modifiers                         = modifiersForEvent(event);
-        m_timestamp                         = eventTimeStampSince1970(event);
+        m_type = PlatformEvent::Wheel;
+        m_modifiers = modifiersForEvent(event);
+        m_timestamp = eventTimeStampSince1970(event);
 
         // PlatformWheelEvent
-        m_position                          = pointForEvent(event, windowView);
-        m_globalPosition                    = globalPointForEvent(event);
-        m_granularity                       = ScrollByPixelWheelEvent;
+        m_position = pointForEvent(event, windowView);
+        m_globalPosition = IntPoint(globalPointForEvent(event));
+        m_granularity = ScrollByPixelWheelEvent;
 
         BOOL continuous;
         wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &continuous);
@@ -535,10 +535,10 @@ public:
             m_deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
         }
 
-        m_phase                             = phaseForEvent(event);
-        m_momentumPhase                     = momentumPhaseForEvent(event);
-        m_hasPreciseScrollingDeltas         = continuous;
-        m_directionInvertedFromDevice       = [event isDirectionInvertedFromDevice];
+        m_phase = phaseForEvent(event);
+        m_momentumPhase = momentumPhaseForEvent(event);
+        m_hasPreciseScrollingDeltas = continuous;
+        m_directionInvertedFromDevice = [event isDirectionInvertedFromDevice];
     }
 };
 
@@ -553,23 +553,23 @@ public:
     PlatformKeyboardEventBuilder(NSEvent *event)
     {
         // PlatformEvent
-        m_type                              = isKeyUpEvent(event) ? PlatformEvent::KeyUp : PlatformEvent::KeyDown;
-        m_modifiers                         = modifiersForEvent(event);
-        m_timestamp                         = eventTimeStampSince1970(event);
+        m_type = isKeyUpEvent(event) ? PlatformEvent::KeyUp : PlatformEvent::KeyDown;
+        m_modifiers = modifiersForEvent(event);
+        m_timestamp = eventTimeStampSince1970(event);
 
         // PlatformKeyboardEvent
-        m_text                              = textFromEvent(event);
-        m_unmodifiedText                    = unmodifiedTextFromEvent(event);
-        m_keyIdentifier                     = keyIdentifierForKeyEvent(event);
-        m_windowsVirtualKeyCode             = windowsKeyCodeForKeyEvent(event);
-        m_nativeVirtualKeyCode              = [event keyCode];
-        m_macCharCode                       = wkGetNSEventKeyChar(event);
+        m_text = textFromEvent(event);
+        m_unmodifiedText = unmodifiedTextFromEvent(event);
+        m_keyIdentifier = keyIdentifierForKeyEvent(event);
+        m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event);
+        m_nativeVirtualKeyCode = [event keyCode];
+        m_macCharCode = wkGetNSEventKeyChar(event);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        m_autoRepeat                        = ([event type] != NSFlagsChanged) && [event isARepeat];
+        m_autoRepeat = [event type] != NSFlagsChanged && [event isARepeat];
 #pragma clang diagnostic pop
-        m_isKeypad                          = isKeypadEvent(event);
-        m_isSystemKey                       = false; // SystemKey is always false on the Mac.
+        m_isKeypad = isKeypadEvent(event);
+        m_isSystemKey = false; // SystemKey is always false on the Mac.
 
         // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
         if (m_windowsVirtualKeyCode == VK_RETURN) {

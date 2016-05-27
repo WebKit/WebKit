@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLPictureElement_h
-#define HTMLPictureElement_h
+#pragma once
 
 #include "HTMLElement.h"
 #include "MediaQueryEvaluator.h"
@@ -34,28 +33,25 @@ namespace WebCore {
 class HTMLPictureElement final : public HTMLElement {
 public:
     static Ref<HTMLPictureElement> create(const QualifiedName&, Document&);
-    ~HTMLPictureElement();
+    virtual ~HTMLPictureElement();
 
     void sourcesChanged();
 
     void clearViewportDependentResults() { m_viewportDependentMediaQueryResults.clear(); }
     bool hasViewportDependentResults() const { return m_viewportDependentMediaQueryResults.size(); }
-    Vector<std::unique_ptr<MediaQueryResult>>& viewportDependentResults() { return m_viewportDependentMediaQueryResults; }
+    Vector<MediaQueryResult>& viewportDependentResults() { return m_viewportDependentMediaQueryResults; }
 
-    void didMoveToNewDocument(Document* oldDocument);
-    
-    bool viewportChangeAffectedPicture();
+    bool viewportChangeAffectedPicture() const;
 
     WeakPtr<HTMLPictureElement> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
 private:
     HTMLPictureElement(const QualifiedName&, Document&);
-    
-    WeakPtrFactory<HTMLPictureElement> m_weakFactory { this };
-    Vector<std::unique_ptr<MediaQueryResult>> m_viewportDependentMediaQueryResults;
 
+    void didMoveToNewDocument(Document* oldDocument) final;
+
+    WeakPtrFactory<HTMLPictureElement> m_weakFactory { this };
+    Vector<MediaQueryResult> m_viewportDependentMediaQueryResults;
 };
 
 } // namespace WebCore
-
-#endif // HTMLPictureElement_h

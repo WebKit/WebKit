@@ -41,7 +41,6 @@
 #include "MediaFeatureNames.h"
 #include "MediaList.h"
 #include "MediaQuery.h"
-#include "MediaQueryExp.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformScreen.h"
@@ -58,42 +57,40 @@
 
 namespace WebCore {
 
-using namespace MediaFeatureNames;
-
 enum MediaFeaturePrefix { MinPrefix, MaxPrefix, NoPrefix };
 
-typedef bool (*EvalFunc)(CSSValue*, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix);
-typedef HashMap<AtomicStringImpl*, EvalFunc> FunctionMap;
-static FunctionMap* gFunctionMap;
+typedef bool (*MediaQueryFunction)(CSSValue*, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix);
+typedef HashMap<AtomicStringImpl*, MediaQueryFunction> MediaQueryFunctionMap;
 
-/*
- * FIXME: following media features are not implemented: scan
- *
- * scan: The "scan" media feature describes the scanning process of
- * tv output devices. It's unknown how to retrieve this information from
- * the platform
- */
+static bool isViewportDependent(const AtomicString& mediaFeature)
+{
+    return mediaFeature == MediaFeatureNames::width
+        || mediaFeature == MediaFeatureNames::height
+        || mediaFeature == MediaFeatureNames::minWidth
+        || mediaFeature == MediaFeatureNames::minHeight
+        || mediaFeature == MediaFeatureNames::maxWidth
+        || mediaFeature == MediaFeatureNames::maxHeight
+        || mediaFeature == MediaFeatureNames::orientation
+        || mediaFeature == MediaFeatureNames::aspectRatio
+        || mediaFeature == MediaFeatureNames::minAspectRatio
+        || mediaFeature == MediaFeatureNames::maxAspectRatio;
+}
 
 MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
-    : m_expResult(mediaFeatureResult)
+    : m_fallbackResult(mediaFeatureResult)
 {
 }
 
 MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult)
     : m_mediaType(acceptedMediaType)
-    , m_expResult(mediaFeatureResult)
+    , m_fallbackResult(mediaFeatureResult)
 {
 }
 
-MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, Frame* frame, const RenderStyle* style)
+MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, Document& document, const RenderStyle* style)
     : m_mediaType(acceptedMediaType)
-    , m_frame(frame)
+    , m_frame(document.frame())
     , m_style(style)
-    , m_expResult(false) // doesn't matter when we have m_frame and m_style
-{
-}
-
-MediaQueryEvaluator::~MediaQueryEvaluator()
 {
 }
 
@@ -118,82 +115,74 @@ static bool applyRestrictor(MediaQuery::Restrictor r, bool value)
     return r == MediaQuery::Not ? !value : value;
 }
 
-bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* styleResolver) const
+bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, StyleResolver* styleResolver) const
 {
-    if (!querySet)
-        return true;
-
-    auto& queries = querySet->queryVector();
+    auto& queries = querySet.queryVector();
     if (!queries.size())
         return true; // empty query list evaluates to true
 
     // iterate over queries, stop if any of them eval to true (OR semantics)
     bool result = false;
     for (size_t i = 0; i < queries.size() && !result; ++i) {
-        MediaQuery* query = queries[i].get();
+        auto& query = queries[i];
 
-        if (query->ignored() || (!query->expressions().size() && query->mediaType().isEmpty()))
+        if (query.ignored() || (!query.expressions().size() && query.mediaType().isEmpty()))
             continue;
 
-        if (mediaTypeMatch(query->mediaType())) {
-            auto& expressions = query->expressions();
-            // iterate through expressions, stop if any of them eval to false
-            // (AND semantics)
+        if (mediaTypeMatch(query.mediaType())) {
+            auto& expressions = query.expressions();
+            // iterate through expressions, stop if any of them eval to false (AND semantics)
             size_t j = 0;
             for (; j < expressions.size(); ++j) {
-                bool exprResult = eval(expressions.at(j).get());
-                if (styleResolver && expressions.at(j)->isViewportDependent())
-                    styleResolver->addViewportDependentMediaQueryResult(expressions.at(j).get(), exprResult);
-                if (!exprResult)
+                bool expressionResult = evaluate(expressions[j]);
+                if (styleResolver && isViewportDependent(expressions[j].mediaFeature()))
+                    styleResolver->addViewportDependentMediaQueryResult(expressions[j], expressionResult);
+                if (!expressionResult)
                     break;
             }
 
             // assume true if we are at the end of the list,
             // otherwise assume false
-            result = applyRestrictor(query->restrictor(), expressions.size() == j);
+            result = applyRestrictor(query.restrictor(), expressions.size() == j);
         } else
-            result = applyRestrictor(query->restrictor(), false);
+            result = applyRestrictor(query.restrictor(), false);
     }
 
     return result;
 }
 
-bool MediaQueryEvaluator::evalCheckingViewportDependentResults(const MediaQuerySet* querySet, Vector<std::unique_ptr<MediaQueryResult>>& results)
+bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, Vector<MediaQueryResult>& results) const
 {
-    if (!querySet)
-        return true;
-
-    auto& queries = querySet->queryVector();
+    auto& queries = querySet.queryVector();
     if (!queries.size())
         return true;
 
     bool result = false;
     for (size_t i = 0; i < queries.size() && !result; ++i) {
-        MediaQuery* query = queries[i].get();
+        auto& query = queries[i];
 
-        if (query->ignored())
+        if (query.ignored())
             continue;
 
-        if (mediaTypeMatch(query->mediaType())) {
-            auto& expressions = query->expressions();
+        if (mediaTypeMatch(query.mediaType())) {
+            auto& expressions = query.expressions();
             size_t j = 0;
             for (; j < expressions.size(); ++j) {
-                bool exprResult = eval(expressions.at(j).get());
-                if (expressions.at(j)->isViewportDependent())
-                    results.append(std::make_unique<MediaQueryResult>(*expressions.at(j), exprResult));
-                if (!exprResult)
+                bool expressionResult = evaluate(expressions[j]);
+                if (isViewportDependent(expressions[j].mediaFeature()))
+                    results.append({ expressions[j], expressionResult });
+                if (!expressionResult)
                     break;
             }
-            result = applyRestrictor(query->restrictor(), expressions.size() == j);
+            result = applyRestrictor(query.restrictor(), expressions.size() == j);
         } else
-            result = applyRestrictor(query->restrictor(), false);
+            result = applyRestrictor(query.restrictor(), false);
     }
 
     return result;
 }
 
-template<typename T>
-bool compareValue(T a, T b, MediaFeaturePrefix op)
+template<typename T, typename U> bool compareValue(T a, U b, MediaFeaturePrefix op)
 {
     switch (op) {
     case MinPrefix:
@@ -208,45 +197,49 @@ bool compareValue(T a, T b, MediaFeaturePrefix op)
 
 static bool compareAspectRatioValue(CSSValue* value, int width, int height, MediaFeaturePrefix op)
 {
-    if (is<CSSAspectRatioValue>(*value)) {
-        CSSAspectRatioValue& aspectRatio = downcast<CSSAspectRatioValue>(*value);
-        return compareValue(width * static_cast<int>(aspectRatio.denominatorValue()), height * static_cast<int>(aspectRatio.numeratorValue()), op);
-    }
-
-    return false;
-}
-
-static bool numberValue(CSSValue* value, float& result)
-{
-    if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isNumber()) {
-        result = downcast<CSSPrimitiveValue>(*value).getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
-        return true;
-    }
-    return false;
-}
-
-static bool colorMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix op)
-{
-    int bitsPerComponent = screenDepthPerComponent(frame->page()->mainFrame().view());
-    float number;
-    if (value)
-        return numberValue(value, number) && compareValue(bitsPerComponent, static_cast<int>(number), op);
-
-    return bitsPerComponent != 0;
-}
-
-static bool color_indexMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix op)
-{
-    // FIXME: It's unknown how to retrieve the information if the display mode is indexed
-    // Assume we don't support indexed display.
-    if (!value)
+    if (!is<CSSAspectRatioValue>(value))
         return false;
-
-    float number;
-    return numberValue(value, number) && compareValue(0, static_cast<int>(number), op);
+    auto& aspectRatio = downcast<CSSAspectRatioValue>(*value);
+    return compareValue(width * aspectRatio.denominatorValue(), height * aspectRatio.numeratorValue(), op);
 }
 
-static bool color_gamutMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix)
+static Optional<double> doubleValue(CSSValue* value)
+{
+    if (!is<CSSPrimitiveValue>(value) || !downcast<CSSPrimitiveValue>(*value).isNumber())
+        return Nullopt;
+    return downcast<CSSPrimitiveValue>(*value).getDoubleValue(CSSPrimitiveValue::CSS_NUMBER);
+}
+
+static bool zeroEvaluate(CSSValue* value, MediaFeaturePrefix op)
+{
+    auto numericValue = doubleValue(value);
+    return numericValue && compareValue(0, numericValue.value(), op);
+}
+
+static bool oneEvaluate(CSSValue* value, MediaFeaturePrefix op)
+{
+    if (!value)
+        return true;
+    auto numericValue = doubleValue(value);
+    return numericValue && compareValue(1, numericValue.value(), op);
+}
+
+static bool colorEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
+{
+    int bitsPerComponent = screenDepthPerComponent(frame.mainFrame().view());
+    auto numericValue = doubleValue(value);
+    if (!numericValue)
+        return bitsPerComponent;
+    return compareValue(bitsPerComponent, numericValue.value(), op);
+}
+
+static bool colorIndexEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix op)
+{
+    // Always return false for indexed display.
+    return zeroEvaluate(value, op);
+}
+
+static bool colorGamutEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
     if (!value)
         return true;
@@ -255,12 +248,10 @@ static bool color_gamutMediaFeatureEval(CSSValue* value, const CSSToLengthConver
     case CSSValueSrgb:
         return true;
     case CSSValueP3:
-        // FIXME: For the moment we'll just assume an "extended
-        // color" display is at least as good as P3.
-        return screenSupportsExtendedColor(frame->page()->mainFrame().view());
+        // FIXME: For the moment we just assume any "extended color" display is at least as good as P3.
+        return screenSupportsExtendedColor(frame.mainFrame().view());
     case CSSValueRec2020:
-        // FIXME: At some point we should start detecting displays that
-        // support more colors.
+        // FIXME: At some point we should start detecting displays that support more colors.
         return false;
     default:
         ASSERT_NOT_REACHED();
@@ -268,90 +259,82 @@ static bool color_gamutMediaFeatureEval(CSSValue* value, const CSSToLengthConver
     }
 }
 
-static bool monochromeMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix op)
+static bool monochromeEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
 {
-    if (!screenIsMonochrome(frame->page()->mainFrame().view())) {
-        if (value) {
-            float number;
-            return numberValue(value, number) && compareValue(0, static_cast<int>(number), op);
-        }
-        return false;
-    }
-
-    return colorMediaFeatureEval(value, conversionData, frame, op);
+    if (!screenIsMonochrome(frame.mainFrame().view()))
+        return zeroEvaluate(value, op);
+    return colorEvaluate(value, conversionData, frame, op);
 }
 
-static bool inverted_colorsMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix)
+static bool invertedColorsEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix)
 {
     bool isInverted = screenHasInvertedColors();
-
     if (!value)
         return isInverted;
-
-    const CSSValueID id = downcast<CSSPrimitiveValue>(*value).getValueID();
-    return (isInverted && id == CSSValueInverted) || (!isInverted && id == CSSValueNone);
+    return downcast<CSSPrimitiveValue>(*value).getValueID() == (isInverted ? CSSValueInverted : CSSValueNone);
 }
 
-static bool orientationMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix)
+static bool orientationEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
-    FrameView* view = frame->view();
+    FrameView* view = frame.view();
     if (!view)
         return false;
 
-    int width = view->layoutWidth();
-    int height = view->layoutHeight();
-    if (is<CSSPrimitiveValue>(value)) {
-        const CSSValueID id = downcast<CSSPrimitiveValue>(*value).getValueID();
-        if (width > height) // Square viewport is portrait.
-            return CSSValueLandscape == id;
-        return CSSValuePortrait == id;
+    auto width = view->layoutWidth();
+    auto height = view->layoutHeight();
+
+    if (!is<CSSPrimitiveValue>(value)) {
+        // Expression (orientation) evaluates to true if width and height >= 0.
+        return height >= 0 && width >= 0;
     }
 
-    // Expression (orientation) evaluates to true if width and height >= 0.
-    return height >= 0 && width >= 0;
+    auto keyword = downcast<CSSPrimitiveValue>(*value).getValueID();
+    if (width > height) // Square viewport is portrait.
+        return keyword == CSSValueLandscape;
+    return keyword == CSSValuePortrait;
 }
 
-static bool aspect_ratioMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix op)
+static bool aspectRatioEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
 {
-    FrameView* view = frame->view();
+    // ({,min-,max-}aspect-ratio)
+    // assume if we have a device, its aspect ratio is non-zero
+    if (!value)
+        return true;
+
+    FrameView* view = frame.view();
     if (!view)
         return true;
 
-    if (value)
-        return compareAspectRatioValue(value, view->layoutWidth(), view->layoutHeight(), op);
-
-    // ({,min-,max-}aspect-ratio)
-    // assume if we have a device, its aspect ratio is non-zero
-    return true;
+    return compareAspectRatioValue(value, view->layoutWidth(), view->layoutHeight(), op);
 }
 
-static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix op)
+static bool deviceAspectRatioEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
 {
-    if (value) {
-        FloatRect sg = screenRect(frame->page()->mainFrame().view());
-        return compareAspectRatioValue(value, static_cast<int>(sg.width()), static_cast<int>(sg.height()), op);
-    }
-
     // ({,min-,max-}device-aspect-ratio)
     // assume if we have a device, its aspect ratio is non-zero
-    return true;
+    if (!value)
+        return true;
+
+    auto size = screenRect(frame.mainFrame().view()).size();
+    return compareAspectRatioValue(value, size.width(), size.height(), op);
 }
 
-static bool evalResolution(CSSValue* value, Frame* frame, MediaFeaturePrefix op)
+static bool evaluateResolution(CSSValue* value, Frame& frame, MediaFeaturePrefix op)
 {
     // FIXME: Possible handle other media types than 'screen' and 'print'.
-    FrameView* view = frame->view();
+    FrameView* view = frame.view();
     if (!view)
         return false;
 
     float deviceScaleFactor = 0;
+
     // This checks the actual media type applied to the document, and we know
     // this method only got called if this media type matches the one defined
     // in the query. Thus, if if the document's media type is "print", the
     // media type of the query will either be "print" or "all".
     String mediaType = view->mediaType();
     if (equalLettersIgnoringASCIICase(mediaType, "screen"))
-        deviceScaleFactor = frame->page()->deviceScaleFactor();
+        deviceScaleFactor = frame.page() ? frame.page()->deviceScaleFactor() : 1;
     else if (equalLettersIgnoringASCIICase(mediaType, "print")) {
         // The resolution of images while printing should not depend on the dpi
         // of the screen. Until we support proper ways of querying this info
@@ -362,22 +345,22 @@ static bool evalResolution(CSSValue* value, Frame* frame, MediaFeaturePrefix op)
     if (!value)
         return !!deviceScaleFactor;
 
-    if (!is<CSSPrimitiveValue>(*value))
+    if (!is<CSSPrimitiveValue>(value))
         return false;
 
-    CSSPrimitiveValue& resolution = downcast<CSSPrimitiveValue>(*value);
+    auto& resolution = downcast<CSSPrimitiveValue>(*value);
     return compareValue(deviceScaleFactor, resolution.isNumber() ? resolution.getFloatValue() : resolution.getFloatValue(CSSPrimitiveValue::CSS_DPPX), op);
 }
 
-static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix op)
+static bool devicePixelRatioEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
 {
-    return (!value || downcast<CSSPrimitiveValue>(*value).isNumber()) && evalResolution(value, frame, op);
+    return (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isNumber())) && evaluateResolution(value, frame, op);
 }
 
-static bool resolutionMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix op)
+static bool resolutionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
 {
 #if ENABLE(RESOLUTION_MEDIA_QUERY)
-    return (!value || downcast<CSSPrimitiveValue>(*value).isResolution()) && evalResolution(value, frame, op);
+    return (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isResolution())) && evaluateResolution(value, frame, op);
 #else
     UNUSED_PARAM(value);
     UNUSED_PARAM(frame);
@@ -386,22 +369,17 @@ static bool resolutionMediaFeatureEval(CSSValue* value, const CSSToLengthConvers
 #endif
 }
 
-static bool gridMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix op)
+static bool gridEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix op)
 {
-    // if output device is bitmap, grid: 0 == true
-    // assume we have bitmap device
-    float number;
-    if (value && numberValue(value, number))
-        return compareValue(static_cast<int>(number), 0, op);
-    return false;
+    return zeroEvaluate(value, op);
 }
 
 static bool computeLength(CSSValue* value, bool strict, const CSSToLengthConversionData& conversionData, int& result)
 {
-    if (!is<CSSPrimitiveValue>(*value))
+    if (!is<CSSPrimitiveValue>(value))
         return false;
 
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
     if (primitiveValue.isNumber()) {
         result = primitiveValue.getIntValue();
@@ -416,271 +394,227 @@ static bool computeLength(CSSValue* value, bool strict, const CSSToLengthConvers
     return false;
 }
 
-static bool device_heightMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix op)
+static bool deviceHeightEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
 {
-    if (value) {
-        FloatRect sg = screenRect(frame->page()->mainFrame().view());
-        int length;
-        long height = sg.height();
-        return computeLength(value, !frame->document()->inQuirksMode(), conversionData, length) && compareValue(static_cast<int>(height), length, op);
-    }
     // ({,min-,max-}device-height)
     // assume if we have a device, assume non-zero
-    return true;
+    if (!value)
+        return true;
+    int length;
+    auto height = screenRect(frame.mainFrame().view()).height();
+    return computeLength(value, !frame.document()->inQuirksMode(), conversionData, length) && compareValue(height, length, op);
 }
 
-static bool device_widthMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix op)
+static bool deviceWidthEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
 {
-    if (value) {
-        FloatRect sg = screenRect(frame->page()->mainFrame().view());
-        int length;
-        long width = sg.width();
-        return computeLength(value, !frame->document()->inQuirksMode(), conversionData, length) && compareValue(static_cast<int>(width), length, op);
-    }
     // ({,min-,max-}device-width)
     // assume if we have a device, assume non-zero
-    return true;
+    if (!value)
+        return true;
+    int length;
+    auto width = screenRect(frame.mainFrame().view()).width();
+    return computeLength(value, !frame.document()->inQuirksMode(), conversionData, length) && compareValue(width, length, op);
 }
 
-static bool heightMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix op)
+static bool heightEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
 {
-    FrameView* view = frame->view();
+    FrameView* view = frame.view();
     if (!view)
         return false;
-
-    if (value) {
-        int height = view->layoutHeight();
-        if (RenderView* renderView = frame->document()->renderView())
-            height = adjustForAbsoluteZoom(height, *renderView);
-        int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), conversionData, length) && compareValue(height, length, op);
-    }
-
-    return view->layoutHeight() != 0;
+    int height = view->layoutHeight();
+    if (!value)
+        return height;
+    if (auto* renderView = frame.document()->renderView())
+        height = adjustForAbsoluteZoom(height, *renderView);
+    int length;
+    return computeLength(value, !frame.document()->inQuirksMode(), conversionData, length) && compareValue(height, length, op);
 }
 
-static bool widthMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix op)
+static bool widthEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
 {
-    FrameView* view = frame->view();
+    FrameView* view = frame.view();
     if (!view)
         return false;
-
-    if (value) {
-        int width = view->layoutWidth();
-        if (RenderView* renderView = frame->document()->renderView())
-            width = adjustForAbsoluteZoom(width, *renderView);
-        int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), conversionData, length) && compareValue(width, length, op);
-    }
-
-    return view->layoutWidth() != 0;
+    int width = view->layoutWidth();
+    if (!value)
+        return width;
+    if (auto* renderView = frame.document()->renderView())
+        width = adjustForAbsoluteZoom(width, *renderView);
+    int length;
+    return computeLength(value, !frame.document()->inQuirksMode(), conversionData, length) && compareValue(width, length, op);
 }
 
-// rest of the functions are trampolines which set the prefix according to the media feature expression used
-
-static bool min_colorMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minColorEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return colorMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return colorEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_colorMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxColorEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return colorMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return colorEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool min_color_indexMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minColorIndexEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return color_indexMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return colorIndexEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_color_indexMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxColorIndexEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return color_indexMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return colorIndexEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool min_monochromeMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minMonochromeEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return monochromeMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return monochromeEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_monochromeMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxMonochromeEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return monochromeMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return monochromeEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool min_aspect_ratioMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minAspectRatioEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return aspect_ratioMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return aspectRatioEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_aspect_ratioMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxAspectRatioEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return aspect_ratioMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return aspectRatioEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool min_device_aspect_ratioMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minDeviceAspectRatioEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return device_aspect_ratioMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return deviceAspectRatioEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_device_aspect_ratioMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxDeviceAspectRatioEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return device_aspect_ratioMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return deviceAspectRatioEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool min_device_pixel_ratioMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minDevicePixelRatioEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return device_pixel_ratioMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return devicePixelRatioEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_device_pixel_ratioMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxDevicePixelRatioEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return device_pixel_ratioMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return devicePixelRatioEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool min_heightMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minHeightEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return heightMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return heightEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_heightMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxHeightEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return heightMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return heightEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool min_widthMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minWidthEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return widthMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return widthEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_widthMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxWidthEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return widthMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return widthEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool min_device_heightMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minDeviceHeightEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return device_heightMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return deviceHeightEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_device_heightMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxDeviceHeightEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return device_heightMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return deviceHeightEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool min_device_widthMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minDeviceWidthEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return device_widthMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return deviceWidthEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_device_widthMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxDeviceWidthEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return device_widthMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return deviceWidthEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool min_resolutionMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool minResolutionEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return resolutionMediaFeatureEval(value, conversionData, frame, MinPrefix);
+    return resolutionEvaluate(value, conversionData, frame, MinPrefix);
 }
 
-static bool max_resolutionMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame* frame, MediaFeaturePrefix)
+static bool maxResolutionEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)
 {
-    return resolutionMediaFeatureEval(value, conversionData, frame, MaxPrefix);
+    return resolutionEvaluate(value, conversionData, frame, MaxPrefix);
 }
 
-static bool animationMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix op)
+static bool animationEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix op)
 {
-    if (value) {
-        float number;
-        return numberValue(value, number) && compareValue(1, static_cast<int>(number), op);
-    }
-    return true;
+    return oneEvaluate(value, op);
 }
 
-static bool transitionMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix op)
+static bool transitionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix op)
 {
-    if (value) {
-        float number;
-        return numberValue(value, number) && compareValue(1, static_cast<int>(number), op);
-    }
-    return true;
+    return oneEvaluate(value, op);
 }
 
-static bool transform_2dMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix op)
+static bool transform2dEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix op)
 {
-    if (value) {
-        float number;
-        return numberValue(value, number) && compareValue(1, static_cast<int>(number), op);
-    }
-    return true;
+    return oneEvaluate(value, op);
 }
 
-static bool transform_3dMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix op)
+static bool transform3dEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
 {
-    bool returnValueIfNoParameter;
-    int have3dRendering;
-
 #if ENABLE(3D_TRANSFORMS)
-    bool threeDEnabled = false;
-    if (RenderView* view = frame->contentRenderer())
-        threeDEnabled = view->compositor().canRender3DTransforms();
-
-    returnValueIfNoParameter = threeDEnabled;
-    have3dRendering = threeDEnabled ? 1 : 0;
+    auto* view = frame.contentRenderer();
+    return view && view->compositor().canRender3DTransforms() ? oneEvaluate(value, op) : zeroEvaluate(value, op);
 #else
     UNUSED_PARAM(frame);
-    returnValueIfNoParameter = false;
-    have3dRendering = 0;
+    return zeroEvaluate(value, op);
 #endif
-
-    if (value) {
-        float number;
-        return numberValue(value, number) && compareValue(have3dRendering, static_cast<int>(number), op);
-    }
-    return returnValueIfNoParameter;
 }
 
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
-static bool view_modeMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix op)
+
+static bool viewModeEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
-    UNUSED_PARAM(op);
     if (!value)
         return true;
 
-    const int viewModeCSSKeywordID = downcast<CSSPrimitiveValue>(*value).getValueID();
-    const Page::ViewMode viewMode = frame->page()->viewMode();
-    bool result = false;
-    switch (viewMode) {
+    auto keyword = downcast<CSSPrimitiveValue>(*value).getValueID();
+
+    switch (frame.page()->viewMode()) {
     case Page::ViewModeWindowed:
-        result = viewModeCSSKeywordID == CSSValueWindowed;
-        break;
+        return keyword == CSSValueWindowed;
     case Page::ViewModeFloating:
-        result = viewModeCSSKeywordID == CSSValueFloating;
-        break;
+        return keyword == CSSValueFloating;
     case Page::ViewModeFullscreen:
-        result = viewModeCSSKeywordID == CSSValueFullscreen;
-        break;
+        return keyword == CSSValueFullscreen;
     case Page::ViewModeMaximized:
-        result = viewModeCSSKeywordID == CSSValueMaximized;
-        break;
+        return keyword == CSSValueMaximized;
     case Page::ViewModeMinimized:
-        result = viewModeCSSKeywordID == CSSValueMinimized;
-        break;
+        return keyword == CSSValueMinimized;
     default:
-        result = false;
         break;
     }
 
-    return result;
+    return false;
 }
+
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
-static bool video_playable_inlineMediaFeatureEval(CSSValue*, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix)
+static bool videoPlayableInlineEvaluate(CSSValue*, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
-    return frame->settings().allowsInlineMediaPlayback();
+    return frame.settings().allowsInlineMediaPlayback();
 }
 
-static bool hoverMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix)
+static bool hoverEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix)
 {
     if (!is<CSSPrimitiveValue>(value)) {
 #if ENABLE(TOUCH_EVENTS)
@@ -690,70 +624,65 @@ static bool hoverMediaFeatureEval(CSSValue* value, const CSSToLengthConversionDa
 #endif
     }
 
-    int hoverCSSKeywordID = downcast<CSSPrimitiveValue>(*value).getValueID();
+    auto keyword = downcast<CSSPrimitiveValue>(*value).getValueID();
 #if ENABLE(TOUCH_EVENTS)
-    return hoverCSSKeywordID == CSSValueNone;
+    return keyword == CSSValueNone;
 #else
-    return hoverCSSKeywordID == CSSValueHover;
+    return keyword == CSSValueHover;
 #endif
 }
 
-static bool any_hoverMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& cssToLengthConversionData, Frame* frame, MediaFeaturePrefix prefix)
+static bool anyHoverEvaluate(CSSValue* value, const CSSToLengthConversionData& cssToLengthConversionData, Frame& frame, MediaFeaturePrefix prefix)
 {
-    return hoverMediaFeatureEval(value, cssToLengthConversionData, frame, prefix);
+    return hoverEvaluate(value, cssToLengthConversionData, frame, prefix);
 }
 
-static bool pointerMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix)
+static bool pointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix)
 {
     if (!is<CSSPrimitiveValue>(value))
         return true;
 
-    int pointerCSSKeywordID = downcast<CSSPrimitiveValue>(*value).getValueID();
+    auto keyword = downcast<CSSPrimitiveValue>(*value).getValueID();
 #if ENABLE(TOUCH_EVENTS)
-    return pointerCSSKeywordID == CSSValueCoarse;
+    return keyword == CSSValueCoarse;
 #else
-    return pointerCSSKeywordID == CSSValueFine;
+    return keyword == CSSValueFine;
 #endif
 }
 
-static bool any_pointerMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& cssToLengthConversionData, Frame* frame, MediaFeaturePrefix prefix)
+static bool anyPointerEvaluate(CSSValue* value, const CSSToLengthConversionData& cssToLengthConversionData, Frame& frame, MediaFeaturePrefix prefix)
 {
-    return pointerMediaFeatureEval(value, cssToLengthConversionData, frame, prefix);
+    return pointerEvaluate(value, cssToLengthConversionData, frame, prefix);
 }
 
-static void createFunctionMap()
+// Use this function instead of calling add directly to avoid inlining.
+static void add(MediaQueryFunctionMap& map, AtomicStringImpl* key, MediaQueryFunction value)
 {
-    // Create the table.
-    gFunctionMap = new FunctionMap;
-#define ADD_TO_FUNCTIONMAP(name, str)  \
-    gFunctionMap->set(name##MediaFeature.impl(), name##MediaFeatureEval);
-    CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(ADD_TO_FUNCTIONMAP);
-#undef ADD_TO_FUNCTIONMAP
+    map.add(key, value);
 }
 
-bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
+bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
 {
     if (!m_frame || !m_frame->view() || !m_style)
-        return m_expResult;
+        return m_fallbackResult;
 
-    if (!expr->isValid())
+    if (!expression.isValid())
         return false;
 
-    if (!gFunctionMap)
-        createFunctionMap();
+    static NeverDestroyed<MediaQueryFunctionMap> map = [] {
+        MediaQueryFunctionMap map;
+#define ADD_TO_FUNCTIONMAP(name, str) add(map, MediaFeatureNames::name.impl(), name##Evaluate);
+        CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(ADD_TO_FUNCTIONMAP);
+#undef ADD_TO_FUNCTIONMAP
+        return map;
+    }();
 
-    // call the media feature evaluation function. Assume no prefix
-    // and let trampoline functions override the prefix if prefix is
-    // used
-    EvalFunc func = gFunctionMap->get(expr->mediaFeature().impl());
-    if (func) {
-        CSSToLengthConversionData conversionData(m_style,
-            m_frame->document()->documentElement()->renderStyle(),
-            m_frame->document()->renderView(), 1, false);
-        return func(expr->value(), conversionData, m_frame, NoPrefix);
-    }
+    auto function = map.get().get(expression.mediaFeature().impl());
+    if (!function)
+        return false;
 
-    return false;
+    Document& document = *m_frame->document();
+    return function(expression.value(), { m_style, document.documentElement()->renderStyle(), document.renderView(), 1, false }, *m_frame, NoPrefix);
 }
 
 } // namespace

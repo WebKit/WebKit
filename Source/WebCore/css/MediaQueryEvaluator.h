@@ -25,83 +25,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaQueryEvaluator_h
-#define MediaQueryEvaluator_h
+#pragma once
 
 #include "MediaQueryExp.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class Document;
 class Frame;
-class MediaQueryExp;
 class MediaQuerySet;
 class RenderStyle;
 class StyleResolver;
 
-class MediaQueryResult {
-    WTF_MAKE_NONCOPYABLE(MediaQueryResult); WTF_MAKE_FAST_ALLOCATED;
-public:
-    MediaQueryResult(const MediaQueryExp& expr, bool result)
-        : m_expression(expr)
-        , m_result(result)
-    {
-    }
-
-    MediaQueryExp m_expression;
-    bool m_result;
+struct MediaQueryResult {
+    MediaQueryExpression expression;
+    bool result;
 };
 
-/**
- * Class that evaluates css media queries as defined in
- * CSS3 Module "Media Queries" (http://www.w3.org/TR/css3-mediaqueries/)
- * Special constructors are needed, if simple media queries are to be
- * evaluated without knowledge of the medium features. This can happen
- * for example when parsing UA stylesheets, if evaluation is done
- * right after parsing.
- *
- * the boolean parameter is used to approximate results of evaluation, if
- * the device characteristics are not known. This can be used to prune the loading
- * of stylesheets to only those which are probable to match.
- */
+// Some of the constructors are used for cases where the device characteristics are not known.
+// These  can be used to prune the loading of stylesheets to only those which are not already known to not match.
+
 class MediaQueryEvaluator {
-     WTF_MAKE_NONCOPYABLE(MediaQueryEvaluator); WTF_MAKE_FAST_ALLOCATED;
 public:
-    /** Creates evaluator which evaluates only simple media queries
-     *  Evaluator returns true for "all", and returns value of \mediaFeatureResult
-     *  for any media features
-     */
+    // Creates evaluator which evaluates only simple media queries.
+    // Evaluator returns true for "all", and returns value of \mediaFeatureResult for any media features.
     explicit MediaQueryEvaluator(bool mediaFeatureResult = false);
 
-    /** Creates evaluator which evaluates only simple media queries
-     *  Evaluator  returns true for acceptedMediaType and returns value of \mediafeatureResult
-     *  for any media features
-     */
+    // Creates evaluator which evaluates only simple media queries.
+    // Evaluator returns true for acceptedMediaType and returns value of \mediaFeatureResult for any media features.
     MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult = false);
 
-    /** Creates evaluator which evaluates full media queries
-     */
-    MediaQueryEvaluator(const String& acceptedMediaType, Frame*, const RenderStyle*);
-
-    ~MediaQueryEvaluator();
+    // Creates evaluator which evaluates full media queries.
+    MediaQueryEvaluator(const String& acceptedMediaType, Document&, const RenderStyle*);
 
     bool mediaTypeMatch(const String& mediaTypeToMatch) const;
     bool mediaTypeMatchSpecific(const char* mediaTypeToMatch) const;
 
-    /** Evaluates a list of media queries */
-    bool eval(const MediaQuerySet*, StyleResolver* = 0) const;
+    // Evaluates a list of media queries.
+    bool evaluate(const MediaQuerySet&, StyleResolver* = nullptr) const;
 
-    /** Evaluates media query subexpression, ie "and (media-feature: value)" part */
-    bool eval(const MediaQueryExp*) const;
-    
-    /* Evaluates a list of media queries and fills in a vector with any viewport-dependent results found. */
-    bool evalCheckingViewportDependentResults(const MediaQuerySet*, Vector<std::unique_ptr<MediaQueryResult>>&);
+    // Evaluates media query subexpression, ie "and (media-feature: value)" part.
+    bool evaluate(const MediaQueryExpression&) const;
+
+    // Evaluates a list of media queries and fills in a vector with any viewport-dependent results found.
+    bool evaluate(const MediaQuerySet&, Vector<MediaQueryResult>&) const;
 
 private:
     String m_mediaType;
     Frame* m_frame { nullptr }; // not owned
     const RenderStyle* m_style { nullptr };
-    bool m_expResult;
+    bool m_fallbackResult { false };
 };
 
 } // namespace
-#endif

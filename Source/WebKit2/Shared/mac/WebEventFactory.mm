@@ -137,34 +137,6 @@ static int clickCountForEvent(NSEvent *event)
 #pragma clang diagnostic pop
 }
 
-static NSScreen *screenForWindow(NSWindow *window)
-{
-    NSScreen *screen = [window screen]; // nil if the window is off-screen
-    if (screen)
-        return screen;
-    
-    NSArray *screens = [NSScreen screens];
-    if ([screens count] > 0)
-        return [screens objectAtIndex:0]; // screen containing the menubar
-    
-    return nil;
-}
-
-static NSPoint flipScreenPoint(const NSPoint& screenPoint, NSScreen *screen)
-{
-    NSPoint flippedPoint = screenPoint;
-    flippedPoint.y = NSMaxY([screen frame]) - flippedPoint.y;
-    return flippedPoint;
-}
-
-static NSPoint globalPoint(const NSPoint& windowPoint, NSWindow *window)
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return flipScreenPoint([window convertBaseToScreen:windowPoint], screenForWindow(window));
-#pragma clang diagnostic pop
-}
-
 static NSPoint globalPointForEvent(NSEvent *event)
 {
     switch ([event type]) {
@@ -187,7 +159,7 @@ static NSPoint globalPointForEvent(NSEvent *event)
     case NSRightMouseUp:
     case NSScrollWheel:
 #pragma clang diagnostic pop
-        return globalPoint([event locationInWindow], [event window]);
+        return WebCore::globalPoint([event locationInWindow], [event window]);
     default:
         return NSZeroPoint;
     }

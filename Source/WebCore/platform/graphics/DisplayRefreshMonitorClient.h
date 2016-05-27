@@ -23,18 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DisplayRefreshMonitorClient_h
-#define DisplayRefreshMonitorClient_h
+#pragma once
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 
 #include "PlatformScreen.h"
+#include <wtf/Forward.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
 
 class DisplayRefreshMonitor;
-class DisplayRefreshMonitorManager;
 
 class DisplayRefreshMonitorClient {
 public:
@@ -46,13 +45,9 @@ public:
 
     virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const = 0;
 
-    PlatformDisplayID displayID() const { return m_displayID; }
-    bool hasDisplayID() const { return m_displayIDIsSet; }
-    void setDisplayID(PlatformDisplayID displayID)
-    {
-        m_displayID = displayID;
-        m_displayIDIsSet = true;
-    }
+    PlatformDisplayID displayID() const { return m_displayID.value(); }
+    bool hasDisplayID() const { return !!m_displayID; }
+    void setDisplayID(PlatformDisplayID displayID) { m_displayID = displayID; }
 
     void setIsScheduled(bool isScheduled) { m_scheduled = isScheduled; }
     bool isScheduled() const { return m_scheduled; }
@@ -60,13 +55,10 @@ public:
     void fireDisplayRefreshIfNeeded(double timestamp);
 
 private:
-    bool m_scheduled;
-    bool m_displayIDIsSet;
-    PlatformDisplayID m_displayID;
+    bool m_scheduled { false };
+    Optional<PlatformDisplayID> m_displayID;
 };
 
 }
 
 #endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
-#endif

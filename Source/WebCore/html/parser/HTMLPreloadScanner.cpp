@@ -118,7 +118,7 @@ public:
         }
         
         if (m_tagId == TagId::Source && !pictureState.isEmpty() && !pictureState.last() && m_mediaMatched && !m_srcSetAttribute.isEmpty()) {
-            float sourceSize = parseSizesAttribute(m_sizesAttribute, document.renderView(), document.frame());
+            float sourceSize = parseSizesAttribute(document, m_sizesAttribute);
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             if (!imageCandidate.isEmpty()) {
                 pictureState.last() = true;
@@ -128,7 +128,7 @@ public:
         
         // Resolve between src and srcSet if we have them and the tag is img.
         if (m_tagId == TagId::Img && !m_srcSetAttribute.isEmpty()) {
-            float sourceSize = parseSizesAttribute(m_sizesAttribute, document.renderView(), document.frame());
+            float sourceSize = parseSizesAttribute(document, m_sizesAttribute);
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             setUrlToLoad(imageCandidate.string.toString(), true);
         }
@@ -198,10 +198,9 @@ private:
             }
             if (match(attributeName, mediaAttr) && m_mediaAttribute.isNull()) {
                 m_mediaAttribute = attributeValue;
-                Ref<MediaQuerySet> mediaSet = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
-                Vector<std::unique_ptr<MediaQueryResult>> viewportDependentMediaQueryResults;
-                MediaQueryEvaluator evaluator(document.printing() ? "print" : "screen", document.frame(), document.documentElement() ? document.documentElement()->computedStyle() : nullptr);
-                m_mediaMatched = evaluator.evalCheckingViewportDependentResults(mediaSet.ptr(), viewportDependentMediaQueryResults);
+                auto mediaSet = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
+                auto* documentElement = document.documentElement();
+                m_mediaMatched = MediaQueryEvaluator { document.printing() ? "print" : "screen", document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());
             }
             break;
         case TagId::Script:

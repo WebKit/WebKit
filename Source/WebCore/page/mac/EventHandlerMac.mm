@@ -1175,10 +1175,8 @@ IntPoint EventHandler::effectiveMousePositionForSelectionAutoscroll() const
     if (!page)
         return m_lastKnownMousePosition;
 
-    NSScreen *screen = screenForDisplayID(page->chrome().displayID());
-    IntSize autoscrollAdjustmentFactor = autoscrollAdjustmentFactorForScreenBoundaries(m_lastKnownMouseGlobalPosition, toUserSpace(screen.frame, nil));
-
-    return m_lastKnownMousePosition + autoscrollAdjustmentFactor;
+    auto frame = toUserSpace(screen(page->chrome().displayID()).frame, nil);
+    return m_lastKnownMousePosition + autoscrollAdjustmentFactorForScreenBoundaries(m_lastKnownMouseGlobalPosition, frame);
 }
 
 }

@@ -241,8 +241,7 @@ void HTMLLinkElement::process()
             if (document().hasLivingRenderTree())
                 documentStyle = Style::resolveForDocument(document());
             auto media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
-            MediaQueryEvaluator evaluator(document().frame()->view()->mediaType(), document().frame(), documentStyle ? &*documentStyle : nullptr);
-            mediaQueryMatches = evaluator.eval(media.ptr());
+            mediaQueryMatches = MediaQueryEvaluator { document().frame()->view()->mediaType(), document(), documentStyle ? &*documentStyle : nullptr }.evaluate(media.get());
         }
 
         // Don't hold up render tree construction and script execution on stylesheets
@@ -361,7 +360,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
         return;
     }
 
-    Ref<StyleSheetContents> styleSheet(StyleSheetContents::create(href, parserContext));
+    auto styleSheet = StyleSheetContents::create(href, parserContext);
     m_sheet = CSSStyleSheet::create(styleSheet.copyRef(), this);
     m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
     m_sheet->setTitle(title());

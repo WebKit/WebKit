@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RemoteLayerTreeDisplayRefreshMonitor_h
-#define RemoteLayerTreeDisplayRefreshMonitor_h
+#pragma once
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 
@@ -35,7 +34,7 @@ namespace WebKit {
 
 class RemoteLayerTreeDisplayRefreshMonitor : public WebCore::DisplayRefreshMonitor {
 public:
-    static Ref<RemoteLayerTreeDisplayRefreshMonitor> create(PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
+    static Ref<RemoteLayerTreeDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
     {
         return adoptRef(*new RemoteLayerTreeDisplayRefreshMonitor(displayID, drawingArea));
     }
@@ -47,7 +46,7 @@ public:
     void didUpdateLayers();
 
 private:
-    explicit RemoteLayerTreeDisplayRefreshMonitor(PlatformDisplayID, RemoteLayerTreeDrawingArea&);
+    explicit RemoteLayerTreeDisplayRefreshMonitor(WebCore::PlatformDisplayID, RemoteLayerTreeDrawingArea&);
 
     WeakPtr<RemoteLayerTreeDrawingArea> m_drawingArea;
 };
@@ -55,5 +54,3 @@ private:
 }
 
 #endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
-#endif // RemoteLayerTreeDisplayRefreshMonitor_h

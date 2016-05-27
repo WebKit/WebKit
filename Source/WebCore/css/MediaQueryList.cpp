@@ -27,18 +27,18 @@
 
 namespace WebCore {
 
-Ref<MediaQueryList> MediaQueryList::create(PassRefPtr<MediaQueryMatcher> vector, PassRefPtr<MediaQuerySet> media, bool matches)
-{
-    return adoptRef(*new MediaQueryList(vector, media, matches));
-}
-
-MediaQueryList::MediaQueryList(PassRefPtr<MediaQueryMatcher> vector, PassRefPtr<MediaQuerySet> media, bool matches)
-    : m_matcher(vector)
-    , m_media(media)
+inline MediaQueryList::MediaQueryList(MediaQueryMatcher& matcher, Ref<MediaQuerySet>&& media, bool matches)
+    : m_matcher(matcher)
+    , m_media(WTFMove(media))
     , m_evaluationRound(m_matcher->evaluationRound())
-    , m_changeRound(m_evaluationRound - 1) // m_evaluationRound and m_changeRound initial values must be different.
+    , m_changeRound(m_evaluationRound - 1) // Any value that is not the same as m_evaluationRound would do.
     , m_matches(matches)
 {
+}
+
+Ref<MediaQueryList> MediaQueryList::create(MediaQueryMatcher& matcher, Ref<MediaQuerySet>&& media, bool matches)
+{
+    return adoptRef(*new MediaQueryList(matcher, WTFMove(media), matches));
 }
 
 MediaQueryList::~MediaQueryList()
@@ -50,26 +50,26 @@ String MediaQueryList::media() const
     return m_media->mediaText();
 }
 
-void MediaQueryList::addListener(PassRefPtr<MediaQueryListListener> listener)
+void MediaQueryList::addListener(RefPtr<MediaQueryListListener>&& listener)
 {
     if (!listener)
         return;
 
-    m_matcher->addListener(listener, this);
+    m_matcher->addListener(listener.releaseNonNull(), *this);
 }
 
-void MediaQueryList::removeListener(PassRefPtr<MediaQueryListListener> listener)
+void MediaQueryList::removeListener(RefPtr<MediaQueryListListener>&& listener)
 {
     if (!listener)
         return;
 
-    m_matcher->removeListener(listener.get(), this);
+    m_matcher->removeListener(*listener, *this);
 }
 
-void MediaQueryList::evaluate(MediaQueryEvaluator* evaluator, bool& notificationNeeded)
+void MediaQueryList::evaluate(MediaQueryEvaluator& evaluator, bool& notificationNeeded)
 {
-    if (m_evaluationRound != m_matcher->evaluationRound() && evaluator)
-        setMatches(evaluator->eval(m_media.get()));
+    if (m_evaluationRound != m_matcher->evaluationRound())
+        setMatches(evaluator.evaluate(m_media.get()));
     notificationNeeded = m_changeRound == m_matcher->evaluationRound();
 }
 

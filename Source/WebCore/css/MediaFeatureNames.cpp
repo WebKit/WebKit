@@ -30,8 +30,7 @@
 namespace WebCore {
 namespace MediaFeatureNames {
 
-#define DEFINE_MEDIAFEATURE_GLOBAL(name, str) \
-    DEFINE_GLOBAL(AtomicString, name##MediaFeature, str)
+#define DEFINE_MEDIAFEATURE_GLOBAL(name, string) DEFINE_GLOBAL(AtomicString, name)
 CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(DEFINE_MEDIAFEATURE_GLOBAL)
 #undef DEFINE_MEDIAFEATURE_GLOBAL
 
@@ -39,10 +38,9 @@ void init()
 {
     static bool initialized;
     if (!initialized) {
-       // Use placement new to initialize the globals.
-
+        // Use placement new to initialize the globals.
         AtomicString::init();
-#define INITIALIZE_GLOBAL(name, str) new (NotNull, (void*)&name##MediaFeature) AtomicString(str, AtomicString::ConstructFromLiteral);
+#define INITIALIZE_GLOBAL(name, string) new (NotNull, (void*)&name) AtomicString(string, AtomicString::ConstructFromLiteral);
         CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(INITIALIZE_GLOBAL)
 #undef INITIALIZE_GLOBAL
         initialized = true;

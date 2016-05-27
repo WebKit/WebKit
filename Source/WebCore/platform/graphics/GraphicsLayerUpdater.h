@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GraphicsLayerUpdater_h
-#define GraphicsLayerUpdater_h
+#pragma once
 
 #include "DisplayRefreshMonitorClient.h"
 #include "PlatformScreen.h"
@@ -68,5 +67,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // GraphicsLayerUpdater_h

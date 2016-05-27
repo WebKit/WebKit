@@ -17,80 +17,78 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef MediaFeatureNames_h
-#define MediaFeatureNames_h
+
+#pragma once
 
 #include <wtf/text/AtomicString.h>
 
-namespace WebCore {
-    namespace MediaFeatureNames {
-
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
-#define CSS_MEDIAQUERY_VIEW_MODE(macro) macro(view_mode, "-webkit-view-mode")
+#define CSS_MEDIAQUERY_VIEW_MODE(macro) macro(viewMode, "-webkit-view-mode")
 #else
 #define CSS_MEDIAQUERY_VIEW_MODE(macro)
 #endif
 
 #define CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(macro) \
-    macro(any_hover, "any-hover") \
-    macro(any_pointer, "any-pointer") \
+    macro(animation, "-webkit-animation") \
+    macro(anyHover, "any-hover") \
+    macro(anyPointer, "any-pointer") \
+    macro(aspectRatio, "aspect-ratio") \
     macro(color, "color") \
-    macro(color_index, "color-index") \
-    macro(color_gamut, "color-gamut") \
+    macro(colorGamut, "color-gamut") \
+    macro(colorIndex, "color-index") \
+    macro(deviceAspectRatio, "device-aspect-ratio") \
+    macro(deviceHeight, "device-height") \
+    macro(devicePixelRatio, "-webkit-device-pixel-ratio") \
+    macro(deviceWidth, "device-width") \
     macro(grid, "grid") \
-    macro(monochrome, "monochrome") \
     macro(height, "height") \
     macro(hover, "hover") \
-    macro(width, "width") \
+    macro(invertedColors, "inverted-colors") \
+    macro(maxAspectRatio, "max-aspect-ratio") \
+    macro(maxColor, "max-color") \
+    macro(maxColorIndex, "max-color-index") \
+    macro(maxDeviceAspectRatio, "max-device-aspect-ratio") \
+    macro(maxDeviceHeight, "max-device-height") \
+    macro(maxDevicePixelRatio, "-webkit-max-device-pixel-ratio") \
+    macro(maxDeviceWidth, "max-device-width") \
+    macro(maxHeight, "max-height") \
+    macro(maxMonochrome, "max-monochrome") \
+    macro(maxResolution, "max-resolution") \
+    macro(maxWidth, "max-width") \
+    macro(minAspectRatio, "min-aspect-ratio") \
+    macro(minColor, "min-color") \
+    macro(minColorIndex, "min-color-index") \
+    macro(minDeviceAspectRatio, "min-device-aspect-ratio") \
+    macro(minDeviceHeight, "min-device-height") \
+    macro(minDevicePixelRatio, "-webkit-min-device-pixel-ratio") \
+    macro(minDeviceWidth, "min-device-width") \
+    macro(minHeight, "min-height") \
+    macro(minMonochrome, "min-monochrome") \
+    macro(minResolution, "min-resolution") \
+    macro(minWidth, "min-width") \
+    macro(monochrome, "monochrome") \
     macro(orientation, "orientation") \
-    macro(aspect_ratio, "aspect-ratio") \
-    macro(device_aspect_ratio, "device-aspect-ratio") \
-    macro(device_pixel_ratio, "-webkit-device-pixel-ratio") \
-    macro(device_height, "device-height") \
-    macro(device_width, "device-width") \
-    macro(inverted_colors, "inverted-colors") \
-    macro(max_color, "max-color") \
-    macro(max_color_index, "max-color-index") \
-    macro(max_aspect_ratio, "max-aspect-ratio") \
-    macro(max_device_aspect_ratio, "max-device-aspect-ratio") \
-    macro(max_device_pixel_ratio, "-webkit-max-device-pixel-ratio") \
-    macro(max_device_height, "max-device-height") \
-    macro(max_device_width, "max-device-width") \
-    macro(max_height, "max-height") \
-    macro(max_monochrome, "max-monochrome") \
-    macro(max_width, "max-width") \
-    macro(max_resolution, "max-resolution") \
-    macro(min_color, "min-color") \
-    macro(min_color_index, "min-color-index") \
-    macro(min_aspect_ratio, "min-aspect-ratio") \
-    macro(min_device_aspect_ratio, "min-device-aspect-ratio") \
-    macro(min_device_pixel_ratio, "-webkit-min-device-pixel-ratio") \
-    macro(min_device_height, "min-device-height") \
-    macro(min_device_width, "min-device-width") \
-    macro(min_height, "min-height") \
-    macro(min_monochrome, "min-monochrome") \
-    macro(min_width, "min-width") \
-    macro(min_resolution, "min-resolution") \
     macro(pointer, "pointer") \
     macro(resolution, "resolution") \
-    macro(transform_2d, "-webkit-transform-2d") \
-    macro(transform_3d, "-webkit-transform-3d") \
+    macro(transform2d, "-webkit-transform-2d") \
+    macro(transform3d, "-webkit-transform-3d") \
     macro(transition, "-webkit-transition") \
-    macro(animation, "-webkit-animation") \
-    macro(video_playable_inline, "-webkit-video-playable-inline") \
+    macro(videoPlayableInline, "-webkit-video-playable-inline") \
+    macro(width, "width") \
     CSS_MEDIAQUERY_VIEW_MODE(macro)
 
 // end of macro
 
+namespace WebCore {
+namespace MediaFeatureNames {
+
 #ifndef CSS_MEDIAQUERY_NAMES_HIDE_GLOBALS
-    #define CSS_MEDIAQUERY_NAMES_DECLARE(name, str) extern const AtomicString name##MediaFeature;
+#define CSS_MEDIAQUERY_NAMES_DECLARE(name, string) extern const AtomicString name;
     CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(CSS_MEDIAQUERY_NAMES_DECLARE)
-    #undef CSS_MEDIAQUERY_NAMES_DECLARE
+#undef CSS_MEDIAQUERY_NAMES_DECLARE
 #endif
 
-        void init();
+    void init();
 
-    } // namespace MediaFeatureNames
+} // namespace MediaFeatureNames
 } // namespace WebCore
-
-#endif // MediaFeatureNames_h

@@ -34,8 +34,6 @@
 namespace WebCore {
 
 DisplayRefreshMonitorClient::DisplayRefreshMonitorClient()
-    : m_scheduled(false)
-    , m_displayIDIsSet(false)
 {
 }
 

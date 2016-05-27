@@ -1529,19 +1529,20 @@ Vector<CSSParser::SourceSize> CSSParser::parseSizesAttribute(StringView string)
 
 // FIXME(141289): The following two constructors are only needed because of a bug in MSVC 2013 (and prior).
 // We should remove this code as soon as a Visual Studio update that fixes this problem is released.
+
 CSSParser::SourceSize::SourceSize(CSSParser::SourceSize&& original)
     : expression(WTFMove(original.expression))
-    , length(original.length)
+    , length(WTFMove(original.length))
 {
 }
 
-CSSParser::SourceSize::SourceSize(std::unique_ptr<MediaQueryExp>&& origExp, RefPtr<CSSValue>&& value)
-    : expression(WTFMove(origExp))
+CSSParser::SourceSize::SourceSize(MediaQueryExpression&& expression, Ref<CSSValue>&& value)
+    : expression(WTFMove(expression))
     , length(WTFMove(value))
 {
 }
 
-CSSParser::SourceSize CSSParser::sourceSize(std::unique_ptr<MediaQueryExp>&& expression, CSSParserValue& parserValue)
+CSSParser::SourceSize CSSParser::sourceSize(MediaQueryExpression&& expression, CSSParserValue& parserValue)
 {
     RefPtr<CSSValue> value;
     if (isCalculation(parserValue)) {
@@ -1554,7 +1555,7 @@ CSSParser::SourceSize CSSParser::sourceSize(std::unique_ptr<MediaQueryExp>&& exp
     destroy(parserValue);
     // FIXME: Calling the constructor explicitly here to work around an MSVC bug.
     // For other compilers, we did not need to define the constructors and we could use aggregate initialization syntax.
-    return SourceSize(WTFMove(expression), WTFMove(value));
+    return SourceSize(WTFMove(expression), value.releaseNonNull());
 }
 
 static inline void filterProperties(bool important, const ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenCustomProperties)
