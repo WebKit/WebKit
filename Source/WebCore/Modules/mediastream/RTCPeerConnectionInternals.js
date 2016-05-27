@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ function enqueueOperation(peerConnection, operation)
     if (!peerConnection.@operations)
         peerConnection.@operations = [];
 
-    var operations = peerConnection.@operations;
+    const operations = peerConnection.@operations;
 
     function runNext() {
         operations.@shift();
@@ -57,71 +57,74 @@ function enqueueOperation(peerConnection, operation)
     });
 }
 
-function createOfferOrAnswer(peerConnection, targetFunction, functionName, args)
+function objectAndCallbacksOverload(args, functionName, objectInfo, promiseMode, legacyMode)
 {
     "use strict";
 
-    var options = {};
+    let argsCount = args.length;
+    let objectArg = args[0];
+    let objectArgOk = false;
+
+    if (!argsCount) {
+        if (!objectInfo.defaultsToNull)
+            return @Promise.@reject(new @TypeError("Not enough arguments"));
+
+        objectArg = null;
+        objectArgOk = true;
+        argsCount = 1;
+    } else {
+        const hasMatchingType = objectArg instanceof objectInfo.constructor;
+        objectArgOk = objectInfo.defaultsToNull ? (objectArg === null || typeof objectArg === "undefined" || hasMatchingType) : hasMatchingType;
+    }
+
+    if (!objectArgOk)
+        return @Promise.@reject(new @TypeError(`Argument 1 ('${objectInfo.argName}') to RTCPeerConnection.${functionName} must be an instance of ${objectInfo.argType}`));
+
+    if (argsCount === 1)
+        return promiseMode(objectArg);
+
+    // More than one argument: Legacy mode
+    if (argsCount < 3)
+        return @Promise.@reject(new @TypeError("Not enough arguments"));
+
+    const successCallback = args[1];
+    const errorCallback = args[2];
+
+    if (typeof successCallback !== "function")
+        return @Promise.@reject(new @TypeError(`Argument 2 ('successCallback') to RTCPeerConnection.${functionName} must be a function`));
+
+    if (typeof errorCallback !== "function")
+        return @Promise.@reject(new @TypeError(`Argument 3 ('errorCallback') to RTCPeerConnection.${functionName} must be a function`));
+
+    return legacyMode(objectArg, successCallback, errorCallback);
+}
+
+function callbacksAndDictionaryOverload(args, functionName, promiseMode, legacyMode)
+{
+    "use strict";
 
     if (args.length <= 1) {
-        // Promise mode
-        if (args.length && @isDictionary(args[0]))
-            options = args[0]
+        // Zero or one arguments: Promise mode
+        const options = args[0];
+        if (args.length && !@isDictionary(options))
+            return @Promise.@reject(new @TypeError(`Argument 1 ('options') to RTCPeerConnection.${functionName} must be a Dictionary`));
 
-        return @enqueueOperation(peerConnection, function () {
-            return targetFunction.@call(peerConnection, options);
-        });
+        return promiseMode(options);
     }
 
-    // Legacy callbacks mode (2 or 3 arguments)
-    var successCallback = @extractCallbackArg(args, 0, "successCallback", functionName);
-    var errorCallback = @extractCallbackArg(args, 1, "errorCallback", functionName);
+    // More than one argument: Legacy mode
+    const successCallback = args[0];
+    const errorCallback = args[1];
+    const options = args[2];
 
-    if (args.length > 2 && @isDictionary(args[2]))
-        options = args[2];
+    if (typeof successCallback !== "function")
+        return @Promise.@reject(new @TypeError(`Argument 1 ('successCallback') to RTCPeerConnection.${functionName} must be a function`));
 
-    @enqueueOperation(peerConnection, function () {
-        return targetFunction.@call(peerConnection, options).then(successCallback, errorCallback);
-    });
-}
+    if (typeof errorCallback !== "function")
+        return @Promise.@reject(new @TypeError(`Argument 2 ('errorCallback') to RTCPeerConnection.${functionName} must be a function`));
 
-function setLocalOrRemoteDescription(peerConnection, targetFunction, functionName, args)
-{
-    "use strict";
+    if (args.length > 2 && !@isDictionary(options))
+        return @Promise.@reject(new @TypeError(`Argument 3 ('options') to RTCPeerConnection.${functionName} must be a Dictionary`));
 
-    if (args.length < 1)
-        throw new @TypeError("Not enough arguments");
-
-    var description = args[0];
-    if (!(description instanceof @RTCSessionDescription))
-        throw new @TypeError("Argument 1 ('description') to RTCPeerConnection." + functionName + " must be an instance of RTCSessionDescription");
-
-    if (args.length == 1) {
-        // Promise mode
-        return @enqueueOperation(peerConnection, function () {
-            return targetFunction.@call(peerConnection, description);
-        });
-    }
-
-    // Legacy callbacks mode (3 arguments)
-    if (args.length < 3)
-        throw new @TypeError("Not enough arguments");
-
-    var successCallback = @extractCallbackArg(args, 1, "successCallback", functionName);
-    var errorCallback = @extractCallbackArg(args, 2, "errorCallback", functionName);
-
-    @enqueueOperation(peerConnection, function () {
-        return targetFunction.@call(peerConnection, description).then(successCallback, errorCallback);
-    });
-}
-
-function extractCallbackArg(args, index, name, parentFunctionName)
-{
-    "use strict";
-
-    var callback = args[index];
-    if (typeof callback !== "function")
-        throw new @TypeError("Argument " + (index + 1) + " ('" + name + "') to RTCPeerConnection." + parentFunctionName + " must be a Function");
-
-    return callback;
+    return legacyMode(successCallback, errorCallback, args[2]);
 }

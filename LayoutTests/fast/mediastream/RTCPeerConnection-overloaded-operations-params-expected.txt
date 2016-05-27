@@ -4,120 +4,142 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]}); did not throw exception.
-PASS pc.createOffer() did not throw exception.
-PASS pc.createOffer(emptyFunc, emptyFunc) did not throw exception.
-PASS pc.createOffer(null) did not throw exception.
-PASS pc.createOffer(emptyFunc, emptyFunc, null) did not throw exception.
-PASS pc.createOffer(undefined) did not throw exception.
-PASS pc.createOffer(emptyFunc, emptyFunc, undefined) did not throw exception.
-PASS pc.createOffer({}) did not throw exception.
-PASS pc.createOffer(emptyFunc, emptyFunc, {}) did not throw exception.
-
+*** Test createOffer
+PASS promise pc.createOffer() did not reject with TypeError.
+PASS promise pc.createOffer(emptyFunc, emptyFunc) did not reject with TypeError.
+PASS promise pc.createOffer(null) did not reject with TypeError.
+PASS promise pc.createOffer(undefined) did not reject with TypeError.
+PASS promise pc.createOffer({}) did not reject with TypeError.
+PASS promise pc.createOffer(emptyFunc, emptyFunc, null) did not reject with TypeError.
+PASS promise pc.createOffer(emptyFunc, emptyFunc, undefined) did not reject with TypeError.
+PASS promise pc.createOffer(emptyFunc, emptyFunc, {}) did not reject with TypeError.
 *** Options object must be last
-PASS pc.createOffer({}, emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createOffer must be a Function.
+PASS promise pc.createOffer({}, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createOffer must be a function
 *** Callbacks are not nullable
-PASS pc.createOffer(null, emptyFunc) threw exception TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createOffer must be a Function.
-PASS pc.createOffer(emptyFunc, null) threw exception TypeError: Argument 2 ('errorCallback') to RTCPeerConnection.createOffer must be a Function.
-PASS pc.createOffer(null, null) threw exception TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createOffer must be a Function.
+PASS promise pc.createOffer(emptyFunc, null) rejected with TypeError: Argument 2 ('errorCallback') to RTCPeerConnection.createOffer must be a function
+PASS promise pc.createOffer(null, emptyFunc) rejected with TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createOffer must be a function
+PASS promise pc.createOffer(null, null) rejected with TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createOffer must be a function
+*** Bad input
+PASS promise pc.createOffer({}, emptyFunc) rejected with TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createOffer must be a function
+PASS promise pc.createOffer(emptyFunc, {}) rejected with TypeError: Argument 2 ('errorCallback') to RTCPeerConnection.createOffer must be a function
+PASS promise pc.createOffer(1) rejected with TypeError: Argument 1 ('options') to RTCPeerConnection.createOffer must be a Dictionary
+PASS promise pc.createOffer(emptyFunc, emptyFunc, 1) rejected with TypeError: Argument 3 ('options') to RTCPeerConnection.createOffer must be a Dictionary
 
-PASS pc.createAnswer() did not throw exception.
-PASS pc.createAnswer(emptyFunc, emptyFunc) did not throw exception.
-PASS pc.createAnswer(null) did not throw exception.
-PASS pc.createAnswer(emptyFunc, emptyFunc, null) did not throw exception.
-PASS pc.createAnswer(undefined) did not throw exception.
-PASS pc.createAnswer(emptyFunc, emptyFunc, undefined) did not throw exception.
-PASS pc.createAnswer({}) did not throw exception.
-PASS pc.createAnswer(emptyFunc, emptyFunc, {}) did not throw exception.
-
+*** Test createAnswer
+PASS promise pc.createAnswer() did not reject with TypeError.
+PASS promise pc.createAnswer(emptyFunc, emptyFunc) did not reject with TypeError.
+PASS promise pc.createAnswer(null) did not reject with TypeError.
+PASS promise pc.createAnswer(undefined) did not reject with TypeError.
+PASS promise pc.createAnswer({}) did not reject with TypeError.
+PASS promise pc.createAnswer(emptyFunc, emptyFunc, null) did not reject with TypeError.
+PASS promise pc.createAnswer(emptyFunc, emptyFunc, undefined) did not reject with TypeError.
+PASS promise pc.createAnswer(emptyFunc, emptyFunc, {}) did not reject with TypeError.
 *** Options object must be last
-PASS pc.createAnswer({}, emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createAnswer must be a Function.
+PASS promise pc.createAnswer({}, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createAnswer must be a function
 *** Callbacks are not nullable
-PASS pc.createAnswer(null, emptyFunc) threw exception TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createAnswer must be a Function.
-PASS pc.createAnswer(emptyFunc, null) threw exception TypeError: Argument 2 ('errorCallback') to RTCPeerConnection.createAnswer must be a Function.
-PASS pc.createAnswer(null, null) threw exception TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createAnswer must be a Function.
+PASS promise pc.createAnswer(emptyFunc, null) rejected with TypeError: Argument 2 ('errorCallback') to RTCPeerConnection.createAnswer must be a function
+PASS promise pc.createAnswer(null, emptyFunc) rejected with TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createAnswer must be a function
+PASS promise pc.createAnswer(null, null) rejected with TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createAnswer must be a function
+*** Bad input
+PASS promise pc.createAnswer({}, emptyFunc) rejected with TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createAnswer must be a function
+PASS promise pc.createAnswer(emptyFunc, {}) rejected with TypeError: Argument 2 ('errorCallback') to RTCPeerConnection.createAnswer must be a function
+PASS promise pc.createAnswer(1) rejected with TypeError: Argument 1 ('options') to RTCPeerConnection.createAnswer must be a Dictionary
+PASS promise pc.createAnswer(emptyFunc, emptyFunc, 1) rejected with TypeError: Argument 3 ('options') to RTCPeerConnection.createAnswer must be a Dictionary
 
-PASS desc = new RTCSessionDescription({type:'offer', sdp:'x'}); did not throw exception.
-PASS pc.setLocalDescription(desc) did not throw exception.
-PASS pc.setLocalDescription(desc, emptyFunc, emptyFunc) did not throw exception.
-
+*** Test setLocalDescription
+PASS promise pc.setLocalDescription(desc) did not reject with TypeError.
+PASS promise pc.setLocalDescription(desc, emptyFunc, emptyFunc) did not reject with TypeError.
 *** desc is not optional
-PASS pc.setLocalDescription() threw exception TypeError: Not enough arguments.
+PASS promise pc.setLocalDescription() rejected with TypeError: Not enough arguments
 *** desc is not nullable
-PASS pc.setLocalDescription(null) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription.
-PASS pc.setLocalDescription(null, emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription.
+PASS promise pc.setLocalDescription(null) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
+PASS promise pc.setLocalDescription(null, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
+PASS promise pc.setLocalDescription(1) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
 *** Error callback is mandatory
-PASS pc.setLocalDescription(desc, emptyFunc) threw exception TypeError: Not enough arguments.
-PASS pc.setLocalDescription(desc, null) threw exception TypeError: Not enough arguments.
+PASS promise pc.setLocalDescription(desc, emptyFunc) rejected with TypeError: Not enough arguments
 *** Callbacks are not nullable
-PASS pc.setLocalDescription(desc, emptyFunc, null) threw exception TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.setLocalDescription must be a Function.
-PASS pc.setLocalDescription(desc, null, emptyFunc) threw exception TypeError: Argument 2 ('successCallback') to RTCPeerConnection.setLocalDescription must be a Function.
-PASS pc.setLocalDescription(desc, null, null) threw exception TypeError: Argument 2 ('successCallback') to RTCPeerConnection.setLocalDescription must be a Function.
+PASS promise pc.setLocalDescription(desc, emptyFunc, null) rejected with TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.setLocalDescription must be a function
+PASS promise pc.setLocalDescription(desc, null, emptyFunc) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.setLocalDescription must be a function
+PASS promise pc.setLocalDescription(desc, null, null) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.setLocalDescription must be a function
 *** Bad input as desc
-PASS pc.setLocalDescription('foo') threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription.
-PASS pc.setLocalDescription('foo', emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription.
-PASS pc.setLocalDescription(1) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription.
-PASS pc.setLocalDescription(1, emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription.
+PASS promise pc.setLocalDescription('foo') rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
+PASS promise pc.setLocalDescription('foo', emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
+PASS promise pc.setLocalDescription(1) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
+PASS promise pc.setLocalDescription(1, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
+*** Bad input for callback arguments
+PASS promise pc.setLocalDescription(desc, {}, emptyFunc) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.setLocalDescription must be a function
+PASS promise pc.setLocalDescription(desc, emptyFunc, {}) rejected with TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.setLocalDescription must be a function
 
-PASS pc.setRemoteDescription(desc) did not throw exception.
-PASS pc.setRemoteDescription(desc, emptyFunc, emptyFunc) did not throw exception.
-
+*** Test setRemoteDescription
+PASS promise pc.setRemoteDescription(desc) did not reject with TypeError.
+PASS promise pc.setRemoteDescription(desc, emptyFunc, emptyFunc) did not reject with TypeError.
 *** desc is not optional
-PASS pc.setRemoteDescription() threw exception TypeError: Not enough arguments.
+PASS promise pc.setRemoteDescription() rejected with TypeError: Not enough arguments
 *** desc is not nullable
-PASS pc.setRemoteDescription(null) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription.
-PASS pc.setRemoteDescription(null, emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription.
+PASS promise pc.setRemoteDescription(null) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+PASS promise pc.setRemoteDescription(null, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+PASS promise pc.setRemoteDescription(1) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
 *** Error callback is mandatory
-PASS pc.setRemoteDescription(desc, emptyFunc) threw exception TypeError: Not enough arguments.
-PASS pc.setRemoteDescription(desc, null) threw exception TypeError: Not enough arguments.
+PASS promise pc.setRemoteDescription(desc, emptyFunc) rejected with TypeError: Not enough arguments
 *** Callbacks are not nullable
-PASS pc.setRemoteDescription(desc, emptyFunc, null) threw exception TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.setRemoteDescription must be a Function.
-PASS pc.setRemoteDescription(desc, null, emptyFunc) threw exception TypeError: Argument 2 ('successCallback') to RTCPeerConnection.setRemoteDescription must be a Function.
-PASS pc.setRemoteDescription(desc, null, null) threw exception TypeError: Argument 2 ('successCallback') to RTCPeerConnection.setRemoteDescription must be a Function.
+PASS promise pc.setRemoteDescription(desc, emptyFunc, null) rejected with TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.setRemoteDescription must be a function
+PASS promise pc.setRemoteDescription(desc, null, emptyFunc) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.setRemoteDescription must be a function
+PASS promise pc.setRemoteDescription(desc, null, null) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.setRemoteDescription must be a function
 *** Bad input as desc
-PASS pc.setRemoteDescription('foo') threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription.
-PASS pc.setRemoteDescription('foo', emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription.
-PASS pc.setRemoteDescription(1) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription.
-PASS pc.setRemoteDescription(1, emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription.
+PASS promise pc.setRemoteDescription('foo') rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+PASS promise pc.setRemoteDescription('foo', emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+PASS promise pc.setRemoteDescription(1) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+PASS promise pc.setRemoteDescription(1, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+*** Bad input for callback arguments
+PASS promise pc.setRemoteDescription(desc, {}, emptyFunc) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.setRemoteDescription must be a function
+PASS promise pc.setRemoteDescription(desc, emptyFunc, {}) rejected with TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.setRemoteDescription must be a function
 
-PASS pc.addIceCandidate(candidate) did not throw exception.
-PASS pc.addIceCandidate(candidate, emptyFunc, emptyFunc) did not throw exception.
-
+*** Test addIceCandidate
+PASS promise pc.addIceCandidate(candidate) did not reject with TypeError.
+PASS promise pc.addIceCandidate(candidate, emptyFunc, emptyFunc) did not reject with TypeError.
 *** candidate is not optional
-PASS pc.addIceCandidate() threw exception TypeError: Not enough arguments.
+PASS promise pc.addIceCandidate() rejected with TypeError: Not enough arguments
 *** candidate is not nullable
-PASS pc.addIceCandidate(null) threw exception TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate.
-PASS pc.addIceCandidate(null, emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate.
+PASS promise pc.addIceCandidate(null) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
+PASS promise pc.addIceCandidate(null, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
+PASS promise pc.addIceCandidate(1) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
 *** Error callback is mandatory
-PASS pc.addIceCandidate(candidate, emptyFunc) threw exception TypeError: Not enough arguments.
-PASS pc.addIceCandidate(candidate, null) threw exception TypeError: Not enough arguments.
+PASS promise pc.addIceCandidate(candidate, emptyFunc) rejected with TypeError: Not enough arguments
 *** Callbacks are not nullable
-PASS pc.addIceCandidate(candidate, emptyFunc, null) threw exception TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.addIceCandidate must be a Function.
-PASS pc.addIceCandidate(candidate, null, emptyFunc) threw exception TypeError: Argument 2 ('successCallback') to RTCPeerConnection.addIceCandidate must be a Function.
-PASS pc.addIceCandidate(candidate, null, null) threw exception TypeError: Argument 2 ('successCallback') to RTCPeerConnection.addIceCandidate must be a Function.
+PASS promise pc.addIceCandidate(candidate, emptyFunc, null) rejected with TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.addIceCandidate must be a function
+PASS promise pc.addIceCandidate(candidate, null, emptyFunc) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.addIceCandidate must be a function
+PASS promise pc.addIceCandidate(candidate, null, null) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.addIceCandidate must be a function
 *** Bad input as candidate
-PASS pc.addIceCandidate('foo') threw exception TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate.
-PASS pc.addIceCandidate('foo', emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate.
-PASS pc.addIceCandidate(1) threw exception TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate.
-PASS pc.addIceCandidate(1, emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate.
+PASS promise pc.addIceCandidate('foo') rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
+PASS promise pc.addIceCandidate('foo', emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
+PASS promise pc.addIceCandidate(1) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
+PASS promise pc.addIceCandidate(1, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
+*** Bad input for callback arguments
+PASS promise pc.addIceCandidate(candidate, {}, emptyFunc) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.addIceCandidate must be a function
+PASS promise pc.addIceCandidate(candidate, emptyFunc, {}) rejected with TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.addIceCandidate must be a function
 
-PASS pc.getStats() did not throw exception.
-PASS pc.getStats(null) did not throw exception.
-PASS pc.getStats(track) did not throw exception.
-PASS pc.getStats(null, emptyFunc, emptyFunc) did not throw exception.
-PASS pc.getStats(track, emptyFunc, emptyFunc) did not throw exception.
-
+*** Test getStats
+PASS promise pc.getStats() did not reject with TypeError.
+PASS promise pc.getStats(null) did not reject with TypeError.
+PASS promise pc.getStats(selector) did not reject with TypeError.
+PASS promise pc.getStats(null, emptyFunc, emptyFunc) did not reject with TypeError.
+PASS promise pc.getStats(selector, emptyFunc, emptyFunc) did not reject with TypeError.
+PASS promise pc.getStats(1) rejected with TypeError: Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack
 *** Error callback is mandatory
-PASS pc.getStats(track, emptyFunc) threw exception TypeError: Not enough arguments.
-PASS pc.getStats(track, null) threw exception TypeError: Not enough arguments.
+PASS promise pc.getStats(selector, emptyFunc) rejected with TypeError: Not enough arguments
 *** Callbacks are not nullable
-PASS pc.getStats(track, emptyFunc, null) threw exception TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.getStats must be a Function.
-PASS pc.getStats(track, null, emptyFunc) threw exception TypeError: Argument 2 ('successCallback') to RTCPeerConnection.getStats must be a Function.
-PASS pc.getStats(track, null, null) threw exception TypeError: Argument 2 ('successCallback') to RTCPeerConnection.getStats must be a Function.
-*** Bad input as track
-PASS pc.getStats('foo') threw exception TypeError: Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack.
-PASS pc.getStats('foo', emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack.
-PASS pc.getStats(1) threw exception TypeError: Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack.
-PASS pc.getStats(1, emptyFunc, emptyFunc) threw exception TypeError: Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack.
+PASS promise pc.getStats(selector, emptyFunc, null) rejected with TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.getStats must be a function
+PASS promise pc.getStats(selector, null, emptyFunc) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.getStats must be a function
+PASS promise pc.getStats(selector, null, null) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.getStats must be a function
+*** Bad input as selector
+PASS promise pc.getStats('foo') rejected with TypeError: Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack
+PASS promise pc.getStats('foo', emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack
+PASS promise pc.getStats(1) rejected with TypeError: Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack
+PASS promise pc.getStats(1, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack
+*** Bad input for callback arguments
+PASS promise pc.getStats(selector, {}, emptyFunc) rejected with TypeError: Argument 2 ('successCallback') to RTCPeerConnection.getStats must be a function
+PASS promise pc.getStats(selector, emptyFunc, {}) rejected with TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.getStats must be a function
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

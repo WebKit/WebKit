@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,59 +34,119 @@ function createOffer()
 {
     "use strict";
 
-    return @createOfferOrAnswer(this, this.@queuedCreateOffer, "createOffer", arguments);
+    const peerConnection = this;
+
+    return @callbacksAndDictionaryOverload(arguments, "createOffer", function (options) {
+        // Promise mode
+        return @enqueueOperation(peerConnection, function () {
+            return peerConnection.@queuedCreateOffer(options);
+        });
+    }, function (successCallback, errorCallback, options) {
+        // Legacy callbacks mode
+        @enqueueOperation(peerConnection, function () {
+            return peerConnection.@queuedCreateOffer(options).then(successCallback, errorCallback);
+        });
+
+        return @Promise.@resolve(@undefined);
+    });
 }
 
 function createAnswer()
 {
     "use strict";
 
-    return @createOfferOrAnswer(this, this.@queuedCreateAnswer, "createAnswer", arguments);
+    const peerConnection = this;
+
+    return @callbacksAndDictionaryOverload(arguments, "createAnswer", function (options) {
+        // Promise mode
+        return @enqueueOperation(peerConnection, function () {
+            return peerConnection.@queuedCreateAnswer(options);
+        });
+    }, function (successCallback, errorCallback, options) {
+        // Legacy callbacks mode
+        @enqueueOperation(peerConnection, function () {
+            return peerConnection.@queuedCreateAnswer(options).then(successCallback, errorCallback);
+        });
+
+        return @Promise.@resolve(@undefined);
+    });
 }
 
 function setLocalDescription()
 {
     "use strict";
 
-    return @setLocalOrRemoteDescription(this, this.@queuedSetLocalDescription, "setLocalDescription", arguments);
+    const peerConnection = this;
+
+    const objectInfo = {
+        "constructor": @RTCSessionDescription,
+        "argName": "description",
+        "argType": "RTCSessionDescription"
+    };
+    return @objectAndCallbacksOverload(arguments, "setLocalDescription", objectInfo, function (description) {
+        // Promise mode
+        return @enqueueOperation(peerConnection, function () {
+            return peerConnection.@queuedSetLocalDescription(description);
+        });
+    }, function (description, successCallback, errorCallback) {
+        // Legacy callbacks mode
+        @enqueueOperation(peerConnection, function () {
+            return peerConnection.@queuedSetLocalDescription(description).then(successCallback, errorCallback);
+        });
+
+        return @Promise.@resolve(@undefined);
+    });
 }
 
 function setRemoteDescription()
 {
     "use strict";
 
-    return @setLocalOrRemoteDescription(this, this.@queuedSetRemoteDescription, "setRemoteDescription", arguments);
+    const peerConnection = this;
+
+    const objectInfo = {
+        "constructor": @RTCSessionDescription,
+        "argName": "description",
+        "argType": "RTCSessionDescription"
+    };
+    return @objectAndCallbacksOverload(arguments, "setRemoteDescription", objectInfo, function (description) {
+        // Promise mode
+        return @enqueueOperation(peerConnection, function () {
+            return peerConnection.@queuedSetRemoteDescription(description);
+        });
+    }, function (description, successCallback, errorCallback) {
+        // Legacy callbacks mode
+        @enqueueOperation(peerConnection, function () {
+            return peerConnection.@queuedSetRemoteDescription(description).then(successCallback, errorCallback);
+        });
+
+        return @Promise.@resolve(@undefined);
+    });
 }
 
 function addIceCandidate()
 {
     "use strict";
 
-    var peerConnection = this;
+    const peerConnection = this;
 
-    if (arguments.length < 1)
-        throw new @TypeError("Not enough arguments");
-
-    var candidate = arguments[0];
-    if (!(candidate instanceof @RTCIceCandidate))
-        throw new @TypeError("Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate");
-
-    if (arguments.length == 1) {
+    const objectInfo = {
+        "constructor": @RTCIceCandidate,
+        "argName": "candidate",
+        "argType": "RTCIceCandidate"
+    };
+    return @objectAndCallbacksOverload(arguments, "addIceCandidate", objectInfo, function (candidate) {
         // Promise mode
         return @enqueueOperation(peerConnection, function () {
             return peerConnection.@queuedAddIceCandidate(candidate);
         });
-    }
+    }, function (candidate, successCallback, errorCallback) {
+        // Legacy callbacks mode
+        @enqueueOperation(peerConnection, function () {
+            return peerConnection.@queuedAddIceCandidate(candidate).then(successCallback, errorCallback);
+        });
 
-    // Legacy callbacks mode (3 arguments)
-    if (arguments.length < 3)
-        throw new @TypeError("Not enough arguments");
-
-    var successCallback = @extractCallbackArg(arguments, 1, "successCallback", "addIceCandidate");
-    var errorCallback = @extractCallbackArg(arguments, 2, "errorCallback", "addIceCandidate");
-
-    @enqueueOperation(peerConnection, function () {
-        return peerConnection.@queuedAddIceCandidate(candidate).then(successCallback, errorCallback);
+        return @Promise.@resolve(@undefined);
     });
 }
 
@@ -94,26 +154,21 @@ function getStats()
 {
     "use strict";
 
-    var peerConnection = this;
-    var selector = null;
+    const peerConnection = this;
 
-    if (arguments.length) {
-        selector = arguments[0];
-        if (selector != null && !(selector instanceof @MediaStreamTrack))
-            throw new @TypeError("Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack");
-    }
-
-    if (arguments.length <= 1) {
+    const objectInfo = {
+        "constructor": @MediaStreamTrack,
+        "argName": "selector",
+        "argType": "MediaStreamTrack",
+        "defaultsToNull": true
+    };
+    return @objectAndCallbacksOverload(arguments, "getStats", objectInfo, function (selector) {
         // Promise mode
         return peerConnection.@privateGetStats(selector);
-    }
+    }, function (selector, successCallback, errorCallback) {
+        // Legacy callbacks mode
+        peerConnection.@privateGetStats(selector).then(successCallback, errorCallback);
 
-    // Legacy callbacks mode (3 arguments)
-    if (arguments.length < 3)
-        throw new @TypeError("Not enough arguments");
-
-    var successCallback = @extractCallbackArg(arguments, 1, "successCallback", "getStats");
-    var errorCallback = @extractCallbackArg(arguments, 2, "errorCallback", "getStats");
-
-    peerConnection.@privateGetStats(selector).then(successCallback, errorCallback);
+        return @Promise.@resolve(@undefined);
+    });
 }

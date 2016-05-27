@@ -26,10 +26,10 @@
                 shouldBeType("result", "Promise");
 
                 shouldNotThrow("result = pc." + functionName + "(emptyFunc, emptyFunc)");
-                shouldBeUndefined("result");
+                shouldBeType("result", "Promise");
 
                 shouldNotThrow("result = pc." + functionName + "(emptyFunc, emptyFunc, {})");
-                shouldBeUndefined("result");
+                shouldBeType("result", "Promise");
             }
 
             // Test setLocal/RemoteDescription()
@@ -43,7 +43,7 @@
                 shouldBeType("result", "Promise");
 
                 shouldNotThrow("result = pc." + functionName + "(desc, emptyFunc, emptyFunc)");
-                shouldBeUndefined("result");
+                shouldBeType("result", "Promise");
             }
 
             // Test addIceCandidate()
@@ -53,7 +53,7 @@
             shouldBeType("result", "Promise");
 
             shouldNotThrow("result = pc.addIceCandidate(candidate, emptyFunc, emptyFunc)");
-            shouldBeUndefined("result");
+            shouldBeType("result", "Promise");
 
             // Test getStats()
             shouldNotThrow("result = pc.getStats()");
@@ -63,7 +63,7 @@
             shouldBeType("result", "Promise");
 
             shouldNotThrow("result = pc.getStats(null, emptyFunc, emptyFunc)");
-            shouldBeUndefined("result");
+            shouldBeType("result", "Promise");
 
             function emptyFunc() { }
 

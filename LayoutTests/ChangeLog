@@ -1,3 +1,24 @@
+2016-05-27  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Update RTCPeerConnection overloaded legacy operations to return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=158114
+
+        Reviewed by Eric Carlson.
+
+        Updated existing tests (see below).
+
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-expected.txt:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-params-expected.txt:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-params.html:
+        Test various combinations of good and bad arguments and verify that no errors are thrown.
+        * fast/mediastream/RTCPeerConnection-overloaded-operations.html:
+        Test that all overloaded versions return a promise.
+        * fast/mediastream/resources/promise-utils.js: Added.
+        Shared utils to make it easier to test async promise APIs.
+        (ensurePromise):
+        (promiseShouldReject):
+        (promiseShouldNotRejectWithTypeError.):
+
 2016-05-27  Antoine Quint  <graouts@apple.com>
 
         Video play glyph not visible if initially invisible when contained in a "-webkit-overflow-scrolling: touch" container
