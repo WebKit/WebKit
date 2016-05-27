@@ -1,3 +1,44 @@
+2016-05-27  Saam barati  <sbarati@apple.com>
+
+        ShadowChicken/DebuggerCallFrame don't properly handle when the entry stack frame is a tail deleted frame
+        https://bugs.webkit.org/show_bug.cgi?id=158131
+
+        Reviewed by Yusuke Suzuki.
+
+        There were bugs both in DebuggerCallFrame and ShadowChicken when the entry stack
+        frame(s) are tail deleted.
+
+        DebuggerCallFrame had an assertion saying that the entry frame shouldn't be
+        tail deleted. This is clearly wrong. The following program proves that this assertion
+        was misguided:
+        ```
+        "use strict";
+        setTimeout(function foo() { return bar(); }, 0);
+        ```
+
+        ShadowChicken had a very subtle bug when creating the shadow stack when 
+        the entry frames of the stack were tail deleted. Because it places frames into its shadow
+        stack by walking the machine frame and looking up entries in the log,
+        the machine frame doesn't have any notion of those tail deleted frames
+        at the entry of execution. ShadowChicken would never find those frames
+        because it would look for tail deleted frames *before* consulting the
+        current machine frame. This is wrong because if the entry frames
+        are tail deleted, then there is no machine frame for them because there
+        is no machine frame before them! Therefore, we must search for tail deleted
+        frames *after* consulting a machine frame. This is sound because we will always
+        have at least one machine frame on the stack (when we are using StackVisitor on a valid ExecState).
+        So when we consult the machine frame that is the entry frame on the machine stack,
+        we will search for tail deleted frames that come before it in the shadow stack.
+        This will allow us to find those tail deleted frames that are the entry frames
+        for the shadow stack.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::create):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::Packet::dump):
+        (JSC::ShadowChicken::update):
+        (JSC::ShadowChicken::dump):
+
 2016-05-27  Chris Dumez  <cdumez@apple.com>
 
         WorkQueue::dispatch() / RunLoop::dispatch() should not copy captured lambda variables

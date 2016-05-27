@@ -50,7 +50,7 @@ void ShadowChicken::Packet::dump(PrintStream& out) const
     }
     
     if (isTail()) {
-        out.print("tail:{frame = ", RawPointer(frame), "}");
+        out.print("tail-packet:{frame = ", RawPointer(frame), "}");
         return;
     }
     
@@ -271,15 +271,36 @@ void ShadowChicken::update(VM&, ExecState* exec)
                 // https://bugs.webkit.org/show_bug.cgi?id=155686
                 return StackVisitor::Continue;
             }
+
             CallFrame* callFrame = visitor->callFrame();
             if (verbose)
                 dataLog("    Examining ", RawPointer(callFrame), "\n");
-            if (!toPush.isEmpty() && indexInLog < logCursorIndex
+            if (callFrame == highestPointSinceLastTime) {
+                if (verbose)
+                    dataLog("    Bailing at ", RawPointer(callFrame), " because it's the highest point since last time.\n");
+                return StackVisitor::Done;
+            }
+
+            bool foundFrame = advanceIndexInLogTo(callFrame, callFrame->callee(), callFrame->callerFrame());
+            bool isTailDeleted = false;
+            JSScope* scope = nullptr;
+            CodeBlock* codeBlock = callFrame->codeBlock();
+            if (codeBlock && codeBlock->wasCompiledWithDebuggingOpcodes() && codeBlock->scopeRegister().isValid()) {
+                scope = callFrame->scope(codeBlock->scopeRegister().offset());
+                RELEASE_ASSERT(scope->inherits(JSScope::info()));
+            } else if (foundFrame) {
+                scope = m_log[indexInLog].scope;
+                if (scope)
+                    RELEASE_ASSERT(scope->inherits(JSScope::info()));
+            }
+            toPush.append(Frame(visitor->callee(), callFrame, isTailDeleted, callFrame->thisValue(), scope, codeBlock, callFrame->callSiteIndex()));
+
+            if (indexInLog < logCursorIndex
                 // This condition protects us from the case where advanceIndexInLogTo didn't find
                 // anything.
                 && m_log[indexInLog].frame == toPush.last().frame) {
                 if (verbose)
-                    dataLog("    Going to loop through things with indexInLog = ", indexInLog, " and push-stack top = ", toPush.last(), "\n");
+                    dataLog("    Going to loop through to find tail deleted frames with indexInLog = ", indexInLog, " and push-stack top = ", toPush.last(), "\n");
                 for (;;) {
                     ASSERT(m_log[indexInLog].frame == toPush.last().frame);
                     
@@ -303,6 +324,8 @@ void ShadowChicken::update(VM&, ExecState* exec)
                     indexInLog--; // Skip over the tail packet.
                     
                     if (!advanceIndexInLogTo(tailPacket.frame, nullptr, nullptr)) {
+                        if (verbose)
+                            dataLog("Can't find prologue packet for tail: ", RawPointer(tailPacket.frame), "\n");
                         // We were unable to locate the prologue packet for this tail packet.
                         // This is rare but can happen in a situation like:
                         // function foo() {
@@ -317,24 +340,7 @@ void ShadowChicken::update(VM&, ExecState* exec)
                     toPush.append(Frame(packet.callee, packet.frame, isTailDeleted, tailPacket.thisValue, tailPacket.scope, tailPacket.codeBlock, tailPacket.callSiteIndex));
                 }
             }
-            if (callFrame == highestPointSinceLastTime) {
-                if (verbose)
-                    dataLog("    Bailing at ", RawPointer(callFrame), " because it's the highest point since last time.\n");
-                return StackVisitor::Done;
-            }
-            bool foundFrame = advanceIndexInLogTo(callFrame, callFrame->callee(), callFrame->callerFrame());
-            bool isTailDeleted = false;
-            JSScope* scope = nullptr;
-            CodeBlock* codeBlock = callFrame->codeBlock();
-            if (codeBlock && codeBlock->wasCompiledWithDebuggingOpcodes() && codeBlock->scopeRegister().isValid()) {
-                scope = callFrame->scope(codeBlock->scopeRegister().offset());
-                RELEASE_ASSERT(scope->inherits(JSScope::info()));
-            } else if (foundFrame) {
-                scope = m_log[indexInLog].scope;
-                if (scope)
-                    RELEASE_ASSERT(scope->inherits(JSScope::info()));
-            }
-            toPush.append(Frame(visitor->callee(), callFrame, isTailDeleted, callFrame->thisValue(), scope, codeBlock, callFrame->callSiteIndex()));
+
             return StackVisitor::Continue;
         });
 
@@ -421,8 +427,9 @@ void ShadowChicken::dump(PrintStream& out) const
     
     CommaPrinter comma;
     unsigned limit = static_cast<unsigned>(m_logCursor - m_log);
+    out.print("\n");
     for (unsigned i = 0; i < limit; ++i)
-        out.print(comma, m_log[i]);
+        out.print("\t", comma, m_log[i], "\n");
     out.print("]}");
 }
 

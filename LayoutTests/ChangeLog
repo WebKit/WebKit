@@ -1,3 +1,16 @@
+2016-05-27  Saam barati  <sbarati@apple.com>
+
+        ShadowChicken/DebuggerCallFrame don't properly handle when the entry stack frame is a tail deleted frame
+        https://bugs.webkit.org/show_bug.cgi?id=158131
+
+        Reviewed by Yusuke Suzuki.
+
+        * inspector/debugger/resources/tail-deleted-frames-from-vm-entry.js: Added.
+        (timeout):
+        (bar):
+        * inspector/debugger/tail-deleted-frames-from-vm-entry-expected.txt: Added.
+        * inspector/debugger/tail-deleted-frames-from-vm-entry.html: Added.
+
 2016-05-27  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] accessibility/gtk/no-notification-for-unrendered-iframe-children.html began failing after r201416

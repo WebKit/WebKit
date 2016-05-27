@@ -69,16 +69,15 @@ Ref<DebuggerCallFrame> DebuggerCallFrame::create(CallFrame* callFrame)
     });
 
     RELEASE_ASSERT(frames.size());
-    RELEASE_ASSERT(!frames[0].isTailDeleted); // The top frame should never be tail deleted.
-    RELEASE_ASSERT(!frames[frames.size() - 1].isTailDeleted); // The first frame should never be tail deleted.
+    ASSERT(!frames[0].isTailDeleted); // The top frame should never be tail deleted.
 
     RefPtr<DebuggerCallFrame> currentParent = nullptr;
-    ExecState* exec = nullptr;
+    ExecState* exec = callFrame->lexicalGlobalObject()->globalExec();
+    // This walks the stack from the entry stack frame to the top of the stack.
     for (unsigned i = frames.size(); i--; ) {
         const ShadowChicken::Frame& frame = frames[i];
         if (!frame.isTailDeleted)
             exec = frame.frame;
-        ASSERT(exec);
         Ref<DebuggerCallFrame> currentFrame = adoptRef(*new DebuggerCallFrame(exec, frame));
         currentFrame->m_caller = currentParent;
         currentParent = WTFMove(currentFrame);
