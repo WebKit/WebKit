@@ -1,3 +1,164 @@
+2016-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Allow JSBench to use precise time
+        https://bugs.webkit.org/show_bug.cgi?id=158050
+
+        Reviewed by Geoffrey Garen.
+
+        * JSBench/amazon-chrome-win/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/amazon-chrome/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/amazon-firefox-win/urm.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/amazon-firefox/urm.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/amazon-safari/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/facebook-chrome-win/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/facebook-chrome/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/facebook-firefox-win/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/facebook-firefox/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/facebook-safari/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/google-chrome-win/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/google-chrome/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/google-firefox-win/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/google-firefox/uem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/google-safari/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/harness.js:
+        (runBenchmark.window.currentTimeInMS):
+        (runBenchmark.else.window.currentTimeInMS):
+        * JSBench/twitter-chrome-win/rem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/twitter-chrome/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/twitter-firefox-win/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/twitter-firefox/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/twitter-safari/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/yahoo-chrome-win/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/yahoo-chrome/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/yahoo-firefox-win/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/yahoo-firefox/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+        * JSBench/yahoo-safari/urem.js:
+        (else.window.performance.window.performance.now.currentTimeInMS):
+        (else.else.typeof.preciseTime.string_appeared_here.currentTimeInMS):
+        (else.else.currentTimeInMS):
+        (onload.cb):
+        (onload):
+
 2016-05-25  Geoffrey Garen  <ggaren@apple.com>
 
         replaceable own properties seem to ignore replacement after property caching

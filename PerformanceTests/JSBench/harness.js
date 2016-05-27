@@ -151,6 +151,14 @@
         if (!(benchmark in results)) results[benchmark] = {};
         if (!(mode in results[benchmark])) results[benchmark][mode] = [];
 
+        // Expose time measuring function.
+        if (window.performance && window.performance.now)
+            window.currentTimeInMS = function() { return window.performance.now() };
+        else if (typeof preciseTime !== 'undefined')
+            window.currentTimeInMS = function() { return preciseTime() * 1000; };
+        else
+            window.currentTimeInMS = function() { return Date.now(); };
+
         // set up the receiver
         if (/v/.test(mode)) {
             // verification mode, we only care if there's an error

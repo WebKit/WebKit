@@ -186,6 +186,18 @@ if (Object.defineProperty) {
         }
     };
 
+    var currentTimeInMS;
+    if (inharness) {
+        currentTimeInMS = window.parent.currentTimeInMS;
+    } else {
+        if (window.performance && window.performance.now)
+            currentTimeInMS = function() { return window.performance.now() };
+        else if (typeof preciseTime !== 'undefined')
+            currentTimeInMS = function() { return preciseTime() * 1000; };
+        else
+            currentTimeInMS = function() { return Date.now(); };
+    }
+
     // the actual replay runner
     function onload() {
         try {
@@ -194,7 +206,7 @@ if (Object.defineProperty) {
 
         var jr = JSBNG_Replay$;
         var cb = function() {
-            var end = new Date().getTime();
+            var end = currentTimeInMS();
             finished = true;
 
             var msg = "Time: " + (end - st) + "ms";
@@ -227,7 +239,7 @@ if (Object.defineProperty) {
         jr(false);
 
         // then time it
-        var st = new Date().getTime();
+        var st = currentTimeInMS();
         while (jr !== null) {
             jr = jr(true, cb);
         }
