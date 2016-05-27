@@ -1,3 +1,29 @@
+2016-05-27  Saam barati  <sbarati@apple.com>
+
+        DebuggerCallFrame crashes when updated with the globalExec because neither ShadowChicken's algorithm nor StackVisitor's algorithm reasons about the globalExec
+        https://bugs.webkit.org/show_bug.cgi?id=158104
+
+        Reviewed by Filip Pizlo.
+
+        I think globalExec is a special enough case that it should be handled
+        at the layers above ShadowChicken and StackVisitor. Those APIs should
+        deal with real stack frames on the machine stack, not a heap constructed frame.
+
+        This patch makes DebuggerCallFrame::create aware that it may be
+        created with the globalObject->globalExec() by having it construct
+        a single DebuggerCallFrame that wraps the globalExec.
+
+        This fixes a crasher because we will construct a DebuggerCallFrame
+        with the globalExec when the Inspector is set to pause on all uncaught
+        exceptions and the JS program has a syntax error. Because the program
+        hasn't begun execution, there is no machine JS stack frame yet. So
+        DebuggerCallFrame is created with globalExec, which will cause it
+        to hit an assertion that dictates that the stack have size greater
+        than zero.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::create):
+
 2016-05-27  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::LazyJSValue::tryGetStringImpl() crashes for empty values

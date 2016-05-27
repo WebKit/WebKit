@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 2: SyntaxError: Cannot declare a let variable twice: 'duplicate'.
+Making sure we don't crash when having a top-level syntax error.
+
+
+== Running test suite: TopLevelSyntaxError
+-- Running test case: TopLevelSyntaxErrorDontCrash
+PASS: Paused on the breakpoint after syntax error at top level without crashing.
+

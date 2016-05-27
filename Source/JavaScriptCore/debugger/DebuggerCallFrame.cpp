@@ -62,6 +62,12 @@ private:
 
 Ref<DebuggerCallFrame> DebuggerCallFrame::create(CallFrame* callFrame)
 {
+    if (UNLIKELY(callFrame == callFrame->lexicalGlobalObject()->globalExec())) {
+        ShadowChicken::Frame emptyFrame;
+        RELEASE_ASSERT(!emptyFrame.isTailDeleted);
+        return adoptRef(*new DebuggerCallFrame(callFrame, emptyFrame));
+    }
+
     Vector<ShadowChicken::Frame> frames;
     callFrame->vm().shadowChicken().iterate(callFrame->vm(), callFrame, [&] (const ShadowChicken::Frame& frame) -> bool {
         frames.append(frame);

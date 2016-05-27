@@ -1,3 +1,14 @@
+2016-05-27  Saam barati  <sbarati@apple.com>
+
+        DebuggerCallFrame crashes when updated with the globalExec because neither ShadowChicken's algorithm nor StackVisitor's algorithm reasons about the globalExec
+        https://bugs.webkit.org/show_bug.cgi?id=158104
+
+        Reviewed by Filip Pizlo.
+
+        * inspector/debugger/breakpoint-syntax-error-top-level-expected.txt: Added.
+        * inspector/debugger/breakpoint-syntax-error-top-level.html: Added.
+        * inspector/debugger/resources/file-with-syntax-error.js: Added.
+
 2016-05-27  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r201468.
