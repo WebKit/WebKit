@@ -84,6 +84,9 @@ JS_EXPORT_PRIVATE StringObject* constructString(VM&, JSGlobalObject*, JSValue);
 // Helper for producing a JSString for 'string', where 'string' was been produced by
 // calling ToString on 'originalValue'. In cases where 'originalValue' already was a
 // string primitive we can just use this, otherwise we need to allocate a new JSString.
+// FIXME: Basically any use of this is bad. toString() returns a JSString* so we don't need to
+// pass around the originalValue; we could just pass around the JSString*. Then you don't need
+// this function. You just use the JSString* that toString() returned.
 static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue, const String& string)
 {
     if (originalValue.isString()) {
@@ -94,10 +97,9 @@ static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue
 }
 
 // Helper that tries to use the JSString substring sharing mechanism if 'originalValue' is a JSString.
-// FIXME: It would be even better if toString returned a JSString*, or if anyone who called
-// toString with the intent of later calling this functon first created a jsString from the String
-// that toString returned. That way, we'd get the substring optimization even when the input was
-// not a JSString.
+// FIXME: Basically any use of this is bad. toString() returns a JSString* so we don't need to
+// pass around the originalValue; we could just pass around the JSString*. And since we've
+// resolved it, we know that we can just allocate the substring cell directly.
 // https://bugs.webkit.org/show_bug.cgi?id=158140
 static inline JSString* jsSubstring(ExecState* exec, JSValue originalValue, const String& string, unsigned offset, unsigned length)
 {

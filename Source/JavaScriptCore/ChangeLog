@@ -1,3 +1,30 @@
+2016-05-27  Filip Pizlo  <fpizlo@apple.com>
+
+        regExpProtoFuncSplitFast should OOM before it swaps
+        https://bugs.webkit.org/show_bug.cgi?id=158157
+
+        Reviewed by Mark Lam.
+        
+        This is a huge speed-up on some jsfunfuzz test cases because it makes us realize much
+        sooner that running a regexp split will result in swapping. It uses the same basic
+        approach as http://trac.webkit.org/changeset/201451: if the result array crosses a certain
+        size threshold, we proceed with a dry run to see how big the array will get before
+        allocating anything else. This way, bogus uses of split that would have OOMed only after
+        killing the user's machine will now OOM before killing the user's machine.
+        
+        This is an enormous speed-up on some jsfunfuzz tests: they go from running for a long
+        time to running instantly.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::advanceStringIndex):
+        (JSC::genericSplit):
+        (JSC::regExpProtoFuncSplitFast):
+        * runtime/StringObject.h:
+        (JSC::jsStringWithReuse):
+        (JSC::jsSubstring):
+        * tests/stress/big-split-captures.js: Added.
+        * tests/stress/big-split.js: Added.
+
 2016-05-27  Saam barati  <sbarati@apple.com>
 
         ShadowChicken/DebuggerCallFrame don't properly handle when the entry stack frame is a tail deleted frame

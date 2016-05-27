@@ -457,6 +457,84 @@ static inline unsigned advanceStringIndex(String str, unsigned strSize, unsigned
     return RegExpObject::advanceStringUnicode(str, strSize, index);
 }
 
+enum SplitControl {
+    ContinueSplit,
+    AbortSplit
+};
+
+template<typename ControlFunc, typename PushFunc>
+void genericSplit(
+    VM& vm, RegExp* regexp, const String& input, unsigned inputSize, unsigned& position,
+    unsigned& matchPosition, bool regExpIsSticky, bool regExpIsUnicode,
+    const ControlFunc& control, const PushFunc& push)
+{
+    while (matchPosition < inputSize) {
+        if (control() == AbortSplit)
+            return;
+        
+        Vector<int, 32> ovector;
+
+        // a. Perform ? Set(splitter, "lastIndex", q, true).
+        // b. Let z be ? RegExpExec(splitter, S).
+        int mpos = regexp->match(vm, input, matchPosition, ovector);
+
+        // c. If z is null, let q be AdvanceStringIndex(S, q, unicodeMatching).
+        if (mpos < 0) {
+            if (!regExpIsSticky)
+                break;
+            matchPosition = advanceStringIndex(input, inputSize, matchPosition, regExpIsUnicode);
+            continue;
+        }
+        if (static_cast<unsigned>(mpos) >= inputSize) {
+            // The spec redoes the RegExpExec starting at the next character of the input.
+            // But in our case, mpos < 0 means that the native regexp already searched all permutations
+            // and know that we won't be able to find a match for the separator even if we redo the
+            // RegExpExec starting at the next character of the input. So, just bail.
+            break;
+        }
+
+        // d. Else, z is not null
+        //    i. Let e be ? ToLength(? Get(splitter, "lastIndex")).
+        //   ii. Let e be min(e, size).
+        matchPosition = mpos;
+        unsigned matchEnd = ovector[1];
+
+        //  iii. If e = p, let q be AdvanceStringIndex(S, q, unicodeMatching).
+        if (matchEnd == position) {
+            matchPosition = advanceStringIndex(input, inputSize, matchPosition, regExpIsUnicode);
+            continue;
+        }
+        // if matchEnd == 0 then position should also be zero and thus matchEnd should equal position.
+        ASSERT(matchEnd);
+
+        //   iv. Else e != p,
+        unsigned numberOfCaptures = regexp->numSubpatterns();
+        
+        // 1. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through q (exclusive).
+        // 2. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
+        if (push(true, position, matchPosition - position) == AbortSplit)
+            return;
+        
+        // 5. Let p be e.
+        position = matchEnd;
+        
+        // 6. Let numberOfCaptures be ? ToLength(? Get(z, "length")).
+        // 7. Let numberOfCaptures be max(numberOfCaptures-1, 0).
+        // 8. Let i be 1.
+        // 9. Repeat, while i <= numberOfCaptures,
+        for (unsigned i = 1; i <= numberOfCaptures; ++i) {
+            // a. Let nextCapture be ? Get(z, ! ToString(i)).
+            // b. Perform ! CreateDataProperty(A, ! ToString(lengthA), nextCapture).
+            int sub = ovector[i * 2];
+            if (push(sub >= 0, sub, ovector[i * 2 + 1] - sub) == AbortSplit)
+                return;
+        }
+        
+        // 10. Let q be p.
+        matchPosition = position;
+    }
+}
+
 // ES 21.2.5.11 RegExp.prototype[@@split](string, limit)
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
 {
@@ -468,7 +546,8 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
     RegExp* regexp = asRegExpObject(thisValue)->regExp();
 
     // 3. [handled by JS builtin] Let S be ? ToString(string).
-    String input = exec->argument(0).toString(exec)->value(exec);
+    JSString* inputString = exec->argument(0).toString(exec);
+    String input = inputString->value(exec);
     if (vm.exception())
         return JSValue::encode(jsUndefined());
     ASSERT(!input.isNull());
@@ -507,7 +586,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
         // c. Perform ! CreateDataProperty(A, "0", S).
         // d. Return A.
         if (!regexp->match(vm, input, 0))
-            result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
+            result->putDirectIndex(exec, 0, inputString);
         return JSValue::encode(result);
     }
 
@@ -516,99 +595,79 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
     // 19. Repeat, while q < size
     bool regExpIsSticky = regexp->sticky();
     bool regExpIsUnicode = regexp->unicode();
-    while (matchPosition < inputSize) {
-        Vector<int, 32> ovector;
-
-        // a. Perform ? Set(splitter, "lastIndex", q, true).
-        // b. Let z be ? RegExpExec(splitter, S).
-        int mpos = regexp->match(vm, input, matchPosition, ovector);
-
-        // c. If z is null, let q be AdvanceStringIndex(S, q, unicodeMatching).
-        if (mpos < 0) {
-            if (!regExpIsSticky)
-                break;
-            matchPosition = advanceStringIndex(input, inputSize, matchPosition, regExpIsUnicode);
-            continue;
-        }
-        if (static_cast<unsigned>(mpos) >= inputSize) {
-            // The spec redoes the RegExpExec starting at the next character of the input.
-            // But in our case, mpos < 0 means that the native regexp already searched all permutations
-            // and know that we won't be able to find a match for the separator even if we redo the
-            // RegExpExec starting at the next character of the input. So, just bail.
-            break;
-        }
-
-        // d. Else, z is not null
-        //    i. Let e be ? ToLength(? Get(splitter, "lastIndex")).
-        //   ii. Let e be min(e, size).
-        matchPosition = mpos;
-        unsigned matchEnd = ovector[1];
-
-        //  iii. If e = p, let q be AdvanceStringIndex(S, q, unicodeMatching).
-        if (matchEnd == position) {
-            matchPosition = advanceStringIndex(input, inputSize, matchPosition, regExpIsUnicode);
-            continue;
-        }
-        // if matchEnd == 0 then position should also be zero and thus matchEnd should equal position.
-        ASSERT(matchEnd);
-
-        //   iv. Else e != p,
-        {
-            unsigned numberOfCaptures = regexp->numSubpatterns();
-            unsigned newResultLength = resultLength + numberOfCaptures + 1;
-            if (newResultLength < numberOfCaptures || newResultLength >= MAX_STORAGE_VECTOR_INDEX) {
-                // Let's consider what's best for users here. We're about to increase the length of
-                // the split array beyond the maximum length that we can support efficiently. This
-                // will cause us to use a HashMap for the new entries after this point. That's going
-                // to result in a very long running time of this function and very large memory
-                // usage. In my experiments, JSC will sit spinning for minutes after getting here and
-                // it was using >4GB of memory and eventually grew to 8GB. It kept running without
-                // finishing until I killed it. That's probably not what the user wanted. The user,
-                // or the program that the user is running, probably made a mistake by calling this
-                // method in such a way that it resulted in such an obnoxious array. Therefore, to
-                // protect ourselves, we bail at this point.
-                throwOutOfMemoryError(exec);
-                return JSValue::encode(jsUndefined());
-            }
-
-            // 1. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through q (exclusive).
-            // 2. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
-            result->putDirectIndex(exec, resultLength, jsSubstring(exec, thisValue, input, position, matchPosition - position));
-
-            // 3. Let lengthA be lengthA + 1.
-            // 4. If lengthA = lim, return A.
-            if (++resultLength == limit)
-                return JSValue::encode(result);
-
-            // 5. Let p be e.
-            position = matchEnd;
-
-            // 6. Let numberOfCaptures be ? ToLength(? Get(z, "length")).
-            // 7. Let numberOfCaptures be max(numberOfCaptures-1, 0).
-            // 8. Let i be 1.
-            // 9. Repeat, while i <= numberOfCaptures,
-            for (unsigned i = 1; i <= numberOfCaptures; ++i) {
-                // a. Let nextCapture be ? Get(z, ! ToString(i)).
-                // b. Perform ! CreateDataProperty(A, ! ToString(lengthA), nextCapture).
-                int sub = ovector[i * 2];
-                result->putDirectIndex(exec, resultLength, sub < 0 ? jsUndefined() : jsSubstring(exec, thisValue, input, sub, ovector[i * 2 + 1] - sub));
-
-                // c. Let i be i + 1.
-                // d. Let lengthA be lengthA + 1.
-                // e. If lengthA = lim, return A.
-                if (++resultLength == limit)
-                    return JSValue::encode(result);
-            }
-
-            // 10. Let q be p.
-            matchPosition = position;
-        }
+    
+    unsigned maxSizeForDirectPath = 100000;
+    
+    genericSplit(
+        vm, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
+        [&] () -> SplitControl {
+            if (resultLength >= maxSizeForDirectPath)
+                return AbortSplit;
+            return ContinueSplit;
+        },
+        [&] (bool isDefined, unsigned start, unsigned length) -> SplitControl {
+            result->putDirectIndex(exec, resultLength++, isDefined ? JSRopeString::createSubstringOfResolved(vm, inputString, start, length) : jsUndefined());
+            if (resultLength >= limit)
+                return AbortSplit;
+            return ContinueSplit;
+        });
+    
+    if (resultLength >= limit)
+        return JSValue::encode(result);
+    if (resultLength < maxSizeForDirectPath) {
+        // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
+        // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
+        result->putDirectIndex(exec, resultLength, JSRopeString::createSubstringOfResolved(vm, inputString, position, inputSize - position));
+        
+        // 22. Return A.
+        return JSValue::encode(result);
     }
-
+    
+    // Now do a dry run to see how big things get. Give up if they get absurd.
+    unsigned savedPosition = position;
+    unsigned savedMatchPosition = matchPosition;
+    unsigned dryRunCount = 0;
+    genericSplit(
+        vm, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
+        [&] () -> SplitControl {
+            if (resultLength + dryRunCount >= MAX_STORAGE_VECTOR_LENGTH)
+                return AbortSplit;
+            return ContinueSplit;
+        },
+        [&] (bool, unsigned, unsigned) -> SplitControl {
+            dryRunCount++;
+            if (resultLength + dryRunCount >= limit)
+                return AbortSplit;
+            return ContinueSplit;
+        });
+    
+    if (resultLength + dryRunCount >= MAX_STORAGE_VECTOR_LENGTH) {
+        throwOutOfMemoryError(exec);
+        return JSValue::encode(jsUndefined());
+    }
+    
+    // OK, we know that if we finish the split, we won't have to OOM.
+    position = savedPosition;
+    matchPosition = savedMatchPosition;
+    
+    genericSplit(
+        vm, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
+        [&] () -> SplitControl {
+            return ContinueSplit;
+        },
+        [&] (bool isDefined, unsigned start, unsigned length) -> SplitControl {
+            result->putDirectIndex(exec, resultLength++, isDefined ? JSRopeString::createSubstringOfResolved(vm, inputString, start, length) : jsUndefined());
+            if (resultLength >= limit)
+                return AbortSplit;
+            return ContinueSplit;
+        });
+    
+    if (resultLength >= limit)
+        return JSValue::encode(result);
+    
     // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
     // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
-    result->putDirectIndex(exec, resultLength++, jsSubstring(exec, thisValue, input, position, inputSize - position));
-
+    result->putDirectIndex(exec, resultLength, JSRopeString::createSubstringOfResolved(vm, inputString, position, inputSize - position));
     // 22. Return A.
     return JSValue::encode(result);
 }
