@@ -553,9 +553,8 @@ void Storage::remove(const Key& key)
 
 void Storage::updateFileModificationTime(const String& path)
 {
-    StringCapture filePathCapture(path);
-    serialBackgroundIOQueue().dispatch([filePathCapture] {
-        updateFileModificationTimeIfNeeded(filePathCapture.string());
+    serialBackgroundIOQueue().dispatch([path = path.isolatedCopy()] {
+        updateFileModificationTimeIfNeeded(path);
     });
 }
 
@@ -893,10 +892,9 @@ void Storage::clear(const String& type, std::chrono::system_clock::time_point mo
         m_blobFilter->clear();
     m_approximateRecordsSize = 0;
 
-    StringCapture typeCapture(type);
-    ioQueue().dispatch([this, modifiedSinceTime, completionHandler = WTFMove(completionHandler), typeCapture] () mutable {
+    ioQueue().dispatch([this, modifiedSinceTime, completionHandler = WTFMove(completionHandler), type = type.isolatedCopy()] () mutable {
         auto recordsPath = this->recordsPath();
-        traverseRecordsFiles(recordsPath, typeCapture.string(), [modifiedSinceTime](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
+        traverseRecordsFiles(recordsPath, type, [modifiedSinceTime](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             auto filePath = WebCore::pathByAppendingComponent(recordDirectoryPath, fileName);
             if (modifiedSinceTime > std::chrono::system_clock::time_point::min()) {
                 auto times = fileTimes(filePath);

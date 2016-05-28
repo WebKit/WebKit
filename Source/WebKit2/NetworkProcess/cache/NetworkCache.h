@@ -104,8 +104,8 @@ public:
     bool isEnabled() const { return !!m_storage; }
 
     // Completion handler may get called back synchronously on failure.
-    void retrieve(const WebCore::ResourceRequest&, const GlobalFrameID&, std::function<void (std::unique_ptr<Entry>)>);
-    std::unique_ptr<Entry> store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, std::function<void (MappedBody&)>);
+    void retrieve(const WebCore::ResourceRequest&, const GlobalFrameID&, std::function<void (std::unique_ptr<Entry>)>&&);
+    std::unique_ptr<Entry> store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, std::function<void (MappedBody&)>&&);
     std::unique_ptr<Entry> storeRedirect(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest);
     std::unique_ptr<Entry> update(const WebCore::ResourceRequest&, const GlobalFrameID&, const Entry&, const WebCore::ResourceResponse& validatingResponse);
 
@@ -113,7 +113,7 @@ public:
         const Entry& entry;
         const Storage::RecordInfo& recordInfo;
     };
-    void traverse(const std::function<void (const TraversalEntry*)>&);
+    void traverse(std::function<void (const TraversalEntry*)>&&);
     void remove(const Key&);
     void remove(const WebCore::ResourceRequest&);
 

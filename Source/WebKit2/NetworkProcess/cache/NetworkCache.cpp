@@ -345,7 +345,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     return StoreDecision::Yes;
 }
 
-void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, std::function<void (std::unique_ptr<Entry>)> completionHandler)
+void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, std::function<void (std::unique_ptr<Entry>)>&& completionHandler)
 {
     ASSERT(isEnabled());
     ASSERT(request.url().protocolIsInHTTPFamily());
@@ -384,7 +384,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     auto startTime = std::chrono::system_clock::now();
     auto priority = static_cast<unsigned>(request.priority());
 
-    m_storage->retrieve(storageKey, priority, [this, request, completionHandler, startTime, storageKey, frameID](std::unique_ptr<Storage::Record> record) {
+    m_storage->retrieve(storageKey, priority, [this, request, completionHandler = WTFMove(completionHandler), startTime, storageKey, frameID](std::unique_ptr<Storage::Record> record) {
         if (!record) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
 
@@ -422,7 +422,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     });
 }
 
-std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, std::function<void (MappedBody&)> completionHandler)
+std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, std::function<void (MappedBody&)>&& completionHandler)
 {
     ASSERT(isEnabled());
     ASSERT(responseData);
@@ -446,11 +446,10 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
         return nullptr;
     }
 
-    std::unique_ptr<Entry> cacheEntry = std::make_unique<Entry>(makeCacheKey(request), response, WTFMove(responseData), collectVaryingRequestHeaders(request, response));
-
+    auto cacheEntry = std::make_unique<Entry>(makeCacheKey(request), response, WTFMove(responseData), collectVaryingRequestHeaders(request, response));
     auto record = cacheEntry->encodeAsStorageRecord();
 
-    m_storage->store(record, [completionHandler](const Data& bodyData) {
+    m_storage->store(record, [completionHandler = WTFMove(completionHandler)](const Data& bodyData) {
         MappedBody mappedBody;
 #if ENABLE(SHAREABLE_RESOURCE)
         if (RefPtr<SharedMemory> sharedMemory = bodyData.tryCreateSharedMemory()) {
@@ -521,7 +520,7 @@ void Cache::remove(const WebCore::ResourceRequest& request)
     remove(makeCacheKey(request));
 }
 
-void Cache::traverse(const std::function<void (const TraversalEntry*)>& traverseHandler)
+void Cache::traverse(std::function<void (const TraversalEntry*)>&& traverseHandler)
 {
     ASSERT(isEnabled());
 
@@ -530,7 +529,7 @@ void Cache::traverse(const std::function<void (const TraversalEntry*)>& traverse
     if (m_traverseCount >= maximumTraverseCount) {
         WTFLogAlways("Maximum parallel cache traverse count exceeded. Ignoring traversal request.");
 
-        RunLoop::main().dispatch([traverseHandler] {
+        RunLoop::main().dispatch([traverseHandler = WTFMove(traverseHandler)] {
             traverseHandler(nullptr);
         });
         return;
@@ -538,7 +537,7 @@ void Cache::traverse(const std::function<void (const TraversalEntry*)>& traverse
 
     ++m_traverseCount;
 
-    m_storage->traverse(resourceType(), 0, [this, traverseHandler](const Storage::Record* record, const Storage::RecordInfo& recordInfo) {
+    m_storage->traverse(resourceType(), 0, [this, traverseHandler = WTFMove(traverseHandler)](const Storage::Record* record, const Storage::RecordInfo& recordInfo) {
         if (!record) {
             --m_traverseCount;
             traverseHandler(nullptr);

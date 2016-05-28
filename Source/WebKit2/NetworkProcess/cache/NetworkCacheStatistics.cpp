@@ -94,12 +94,9 @@ void Statistics::initialize(const String& databasePath)
 
     auto startTime = std::chrono::system_clock::now();
 
-    StringCapture databasePathCapture(databasePath);
-    StringCapture networkCachePathCapture(singleton().recordsPath());
-    serialBackgroundIOQueue().dispatch([this, databasePathCapture, networkCachePathCapture, startTime] {
+    serialBackgroundIOQueue().dispatch([this, databasePath = databasePath.isolatedCopy(), networkCachePath = singleton().recordsPath().isolatedCopy(), startTime] {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
 
-        String databasePath = databasePathCapture.string();
         if (!WebCore::makeAllDirectories(WebCore::directoryName(databasePath)))
             return;
 
@@ -128,7 +125,7 @@ void Statistics::initialize(const String& databasePath)
         LOG(NetworkCache, "(NetworkProcess) Network cache statistics database load complete, entries=%lu time=%" PRIi64 "ms", static_cast<size_t>(m_approximateEntryCount), elapsedMS);
 
         if (!m_approximateEntryCount) {
-            bootstrapFromNetworkCache(networkCachePathCapture.string());
+            bootstrapFromNetworkCache(networkCachePath);
 #if !LOG_DISABLED
             elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
 #endif
@@ -176,9 +173,8 @@ void Statistics::shrinkIfNeeded()
 
     clear();
 
-    StringCapture networkCachePathCapture(singleton().recordsPath());
-    serialBackgroundIOQueue().dispatch([this, networkCachePathCapture] {
-        bootstrapFromNetworkCache(networkCachePathCapture.string());
+    serialBackgroundIOQueue().dispatch([this, networkCachePath = singleton().recordsPath().isolatedCopy()] {
+        bootstrapFromNetworkCache(networkCachePath);
         LOG(NetworkCache, "(NetworkProcess) statistics cache shrink completed m_approximateEntryCount=%lu", static_cast<size_t>(m_approximateEntryCount));
     });
 }
@@ -348,7 +344,7 @@ void Statistics::writeTimerFired()
     shrinkIfNeeded();
 }
 
-void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason needUncachedReason, const RequestedCompletionHandler& completionHandler)
+void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason needUncachedReason, RequestedCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -364,7 +360,7 @@ void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason ne
     }
 
     // Query the database.
-    auto everRequestedQuery = std::make_unique<EverRequestedQuery>(EverRequestedQuery { hash, needUncachedReason == NeedUncachedReason::Yes, completionHandler });
+    auto everRequestedQuery = std::make_unique<EverRequestedQuery>(EverRequestedQuery { hash, needUncachedReason == NeedUncachedReason::Yes, WTFMove(completionHandler) });
     auto& query = *everRequestedQuery;
     m_activeQueries.add(WTFMove(everRequestedQuery));
     serialBackgroundIOQueue().dispatch([this, wasAlreadyRequested, &query] () mutable {

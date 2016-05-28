@@ -1,3 +1,29 @@
+2016-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Modernize lambda captures in the network disk cache implementation
+        https://bugs.webkit.org/show_bug.cgi?id=158179
+
+        Reviewed by Darin Adler.
+
+        Modernize lambda captures in the network disk cache implementation.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::traverse):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::inputStreamReadReadyCallback):
+        (WebKit::NetworkCache::outputStreamWriteReadyCallback):
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::initialize):
+        (WebKit::NetworkCache::Statistics::shrinkIfNeeded):
+        (WebKit::NetworkCache::Statistics::queryWasEverRequested):
+        * NetworkProcess/cache/NetworkCacheStatistics.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::updateFileModificationTime):
+        (WebKit::NetworkCache::Storage::clear):
+
 2016-05-27  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] implement async functions proposal
