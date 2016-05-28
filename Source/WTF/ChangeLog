@@ -1,3 +1,9 @@
+2016-05-28  Dan Bernstein  <mitz@apple.com>
+
+        Build fix for projects that include MainThread.h without including FastMalloc.h.
+
+        * wtf/NoncopyableFunction.h: Include FastMalloc.h from here.
+
 2016-05-27  Chris Dumez  <cdumez@apple.com>
 
         callOnMainThread() should not copy captured lambda variables
