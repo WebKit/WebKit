@@ -87,7 +87,7 @@
             "tools", 
             "wptserve"
         ], 
-        "url": "https://github.com/w3c/wptserve/archive/01ed915048fae7a57b81d9f424889eb1ab6ece79.tar.gz", 
-        "url_subpath": "wptserve-01ed915048fae7a57b81d9f424889eb1ab6ece79"
+        "url": "https://github.com/youennf/wptserve/archive/9c84ebd90130bef40d440981e0f55947418678b3.tar.gz",
+        "url_subpath": "wptserve-9c84ebd90130bef40d440981e0f55947418678b3"
     }
 ]

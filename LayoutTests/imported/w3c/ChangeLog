@@ -1,3 +1,12 @@
+2016-05-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Adding wptserve logging for 404 file-serving responses
+        https://bugs.webkit.org/show_bug.cgi?id=158183
+
+        Reviewed by Alexey Proskuryakov.
+
+        * resources/web-platform-tests-modules.json: Modifying wptserve module to log 404 FileHandler exceptions.
+
 2016-05-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement Fetch redirect mode
