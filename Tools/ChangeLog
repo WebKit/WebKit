@@ -1,3 +1,108 @@
+2016-05-27  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Display failing JSC stress tests in buildbot dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=156595
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.javaScriptCoreTestFailuresURLForIteration):
+        (Buildbot.prototype.javaScriptCoreTestStdioUrlForIteration):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotCombinedQueueView.js:
+        (BuildbotCombinedQueueView.prototype.update):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration):
+        (BuildbotIteration.prototype._parseData):
+        (BuildbotIteration.prototype.loadLayoutTestResults):
+        (BuildbotIteration.prototype.):
+        (BuildbotIteration.prototype.loadJavaScriptCoreTestResults):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._createLoadingIndicator):
+        (BuildbotQueueView.prototype.):
+        (BuildbotQueueView.prototype._onPopoverCopy):
+        (BuildbotQueueView.prototype._popoverContentForJavaScriptCoreTestRegressions):
+        (BuildbotQueueView.prototype._presentPopoverForJavaScriptCoreTestRegressions):
+        (BuildbotQueueView.prototype._addIterationHeadingToPopover):
+        (BuildbotQueueView.prototype._testStepFailureDescription):
+        (BuildbotQueueView.prototype._testStepFailureDescriptionWithCount):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTestResults.js:
+        (BuildbotTestResults.prototype.addJavaScriptCoreTestFailures):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.appendBuilderQueueStatus):
+        (BuildbotTesterQueueView.prototype.update):
+        (BuildbotTesterQueueView.prototype._popoverContentForLayoutTestRegressions):
+        (BuildbotTesterQueueView.prototype._presentPopoverForLayoutTestRegressions):
+        (BuildbotTesterQueueView.prototype._testStepFailureDescription): Deleted.
+        (BuildbotTesterQueueView.prototype._testStepFailureDescriptionWithCount): Deleted.
+        (BuildbotTesterQueueView.prototype.): Deleted.
+        (BuildbotTesterQueueView.prototype.content.oncopy): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/index.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbot.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbotQueue.js.
+        (MockBuildbot):
+        (MockBuildbot.prototype.buildPageURLForIteration):
+        (MockBuildbot.prototype.javaScriptCoreTestFailuresURLForIteration):
+        (MockBuildbot.prototype.javaScriptCoreTestStdioUrlForIteration):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbotQueue.js:
+        (MockBuildbotQueue):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbotTestResults.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbotQueue.js.
+        (MockBuildbotTestResults):
+        (MockBuildbotTestResults.prototype.addJavaScriptCoreTestFailures):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/test-jsc-results.json: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/tests.js:
+
+2016-05-27  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Display failing JSC stress tests in buildbot dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=156595
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.javaScriptCoreTestFailuresURLForIteration): Generate the URL for raw JSON output of
+        JSC tests.
+        (Buildbot.prototype.javaScriptCoreTestStdioURLForIteration): Generate the URL for human-readable stdio output
+        of JSC tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotCombinedQueueView.js:
+        (BuildbotCombinedQueueView.prototype.update): Display JSC test results in popover.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration): Add javaScriptCoreTestResults variable.
+        (BuildbotIteration.prototype.): Check for javascriptcore tests step.
+        (BuildbotIteration.prototype.loadLayoutTestResults): Add comma at closing brace.
+        (BuildbotIteration.prototype.loadJavaScriptCoreTestResults): Fetch JSON from Buildbot server.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._createLoadingIndicator): Reusable function.
+        (BuildbotQueueView.prototype._onPopoverCopy): Reusable copy event handler to allow accurate copying of text
+        from popovers.
+        (BuildbotQueueView.prototype._popoverContentForJavaScriptCoreTestRegressions): Generates the popover bubble's
+        inner HTML from the JSC failure data.
+        (BuildbotQueueView.prototype._presentPopoverForJavaScriptCoreTestRegressions): Generate the popover bubble
+        for JSC results and handle request failures.
+        (BuildbotQueueView.prototype._testStepFailureDescription): Moved from subclass.
+        (BuildbotQueueView.prototype._testStepFailureDescriptionWithCount): Moved from subclass.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTestResults.js:
+        (BuildbotTestResults.prototype.addJavaScriptCoreTestFailures): Parse JSON into a list of failing tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.appendBuilderQueueStatus): Instantiate PopoverTrackers for builds whose 
+        only failures are JSC tests.
+        (BuildbotTesterQueueView.prototype._popoverContentForLayoutTestRegressions): Use _onPopoverCopy.
+        (BuildbotTesterQueueView.prototype._presentPopoverForLayoutTestRegressions): Use _createLoadingIndicator.
+        (BuildbotTesterQueueView.prototype._testStepFailureDescription): Deleted. Moved to superclass.
+        (BuildbotTesterQueueView.prototype._testStepFailureDescriptionWithCount): Deleted. Moved to superclass.
+        (BuildbotTesterQueueView.prototype.content.oncopy): Deleted. Using superclass's reusable function as copy handler instead.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/index.html: Add new script files.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbot.js: Added.
+        (MockBuildbot): Mocked version of Buildbot, only containing URL methods.
+        (MockBuildbot.prototype.buildPageURLForIteration): Same as real Buildbot.js
+        (MockBuildbot.prototype.javaScriptCoreTestFailuresURLForIteration): Points to local file containing JSON for test.
+        (MockBuildbot.prototype.javaScriptCoreTestStdioURLForIteration): Same as real Buildbot.js
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbotQueue.js:
+        (MockBuildbotQueue): Use a MockBuildbot() instead of a string.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbotTestResults.js: Added.
+        (MockBuildbotTestResults): Mocked version of BuildbotTestResults.
+        (MockBuildbotTestResults.prototype.addJavaScriptCoreTestFailures): Sets the 'regressions' variable.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/test-jsc-results.json: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/tests.js: Add four groups of tests.
+
 2016-05-27  Chris Dumez  <cdumez@apple.com>
 
         WorkQueue::dispatch() / RunLoop::dispatch() should not copy captured lambda variables

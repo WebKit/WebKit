@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple, Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-MockBuildbotQueue = function()
-{
-    info = {
-        branches: "",
-        platform: "",
-        debug: "",
-        builder: "",
-        tester: "",
-        performance: "",
-        staticAnalyzer: "",
-        leaks: "",
-        architecture: "",
-        testCategory: "",
-        heading: "",
-        crashesOnly: ""
-    };
-    BuildbotQueue.call(this, new MockBuildbot(), "id", info);
-};
+MockBuildbot = function() {};
 
-BaseObject.addConstructorFunctions(MockBuildbotQueue);
+MockBuildbot.prototype = {
+    constructor: MockBuildbot,
 
-MockBuildbotQueue.prototype = {
-    constructor: MockBuildbotQueue,
-    __proto__: BuildbotQueue.prototype
+    buildPageURLForIteration: function(iteration)
+    {
+        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id;
+    },
+
+    javaScriptCoreTestFailuresURLForIteration: function(iteration, name)
+    {
+        return "resources/test-jsc-results.json";
+    },
+
+    javaScriptCoreTestStdioUrlForIteration: function(iteration, name)
+    {
+        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/" + name + "/logs/stdio";
+
+    },
 }

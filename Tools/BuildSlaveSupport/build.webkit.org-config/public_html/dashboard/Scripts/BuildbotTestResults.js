@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -183,5 +183,10 @@ BuildbotTestResults.prototype = {
         // data.num_missing is not always equal to the size of testsWithMissingResults array,
         // because buildbot counts regressions that had missing pixel results on retry (e.g. "TEXT MISSING").
         console.assert(data.num_missing >= this.testsWithMissingResults.length);
+    },
+
+    addJavaScriptCoreTestFailures: function(data)
+    {
+        this.regressions = data.stressTestFailures;
     },
 };

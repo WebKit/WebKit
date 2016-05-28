@@ -263,6 +263,90 @@ test("_formatRevisionForDisplay Git", function()
     strictEqual(this.view._formatRevisionForDisplay("0e498db5d8e5b5a342631", repository), "0e498db", "Should be 0e498db");
 });
 
+test("_popoverContentForJavaScriptCoreTestRegressions load failure UI test", function()
+{
+    var finished = false;
+    var iteration = new BuildbotIteration(this.queue, 1, finished);
+    iteration.javaScriptCoreTestResults = new MockBuildbotTestResults();
+
+    var view = new BuildbotQueueView();
+    var content = view._popoverContentForJavaScriptCoreTestRegressions(iteration);
+
+    var numChildrenInEmptyPopoverContent = 2;
+    strictEqual(content.childNodes.length, 1 + numChildrenInEmptyPopoverContent);
+    strictEqual(content.childNodes[numChildrenInEmptyPopoverContent].className, "loading-failure", "Popover for loading failure must have the appropriate class");
+    strictEqual(content.childNodes[numChildrenInEmptyPopoverContent].textContent, "Test results couldn\u2019t be loaded", "Popover for loading failure must use the correct text");
+});
+
+test("_presentPopoverForJavaScriptCoreTestRegressions including loading", function()
+{
+    var finished = false;
+    var element = document.createElement("div");
+    var popover = new Dashboard.Popover();
+    var iteration = new BuildbotIteration(this.queue, 1, finished);
+    iteration.javaScriptCoreTestResults = new MockBuildbotTestResults();
+
+    var view = new BuildbotQueueView();
+    view._presentPopoverForJavaScriptCoreTestRegressions(element, popover, iteration, "jscore-test");
+
+    JSON.load("resources/test-jsc-results.json", function(data)
+    {
+        var testRegressions = data.stressTestFailures;
+        var numChildrenInEmptyPopoverContent = 2;
+        strictEqual(popover._content.childNodes.length - numChildrenInEmptyPopoverContent,
+            testRegressions.length,
+            "Number of failures in popover must be equal to number of failed tests");
+
+        for (var i = 0; i < testRegressions.length; i++)
+        {
+            strictEqual(popover._content.childNodes[i+numChildrenInEmptyPopoverContent].childNodes[0].textContent,
+                testRegressions[i],
+                "Names of failures must match"
+            );
+        }
+    });
+});
+
+test("_createLoadingIndicator", function()
+{
+    var finished = false;
+    var iteration = new BuildbotIteration(this.queue, 1, finished);
+
+    var view = new BuildbotQueueView();
+    var heading = "Fair is foul, and foul is fair";
+    var content = view._createLoadingIndicator(iteration, heading);
+
+    var numChildrenInEmptyPopoverContent = 2;
+    strictEqual(content.childNodes.length, 1 + numChildrenInEmptyPopoverContent);
+    strictEqual(content.childNodes[numChildrenInEmptyPopoverContent].className, "loading-indicator", "Popover for loading indicator must have the appropriate class");
+    strictEqual(content.childNodes[numChildrenInEmptyPopoverContent].textContent, "Loading\u2026", "Popover for loading failure must use the correct text");
+});
+
+test("_presentPopoverForJavaScriptCoreTestRegressions already loaded", function()
+{
+    var finished = false;
+    var element = document.createElement("div");
+    var popover = new Dashboard.Popover();
+    var iteration = new BuildbotIteration(this.queue, 1, finished);
+    iteration.javaScriptCoreTestResults = {"regressions": ["uno", "dos", "tres"]};
+
+    var view = new BuildbotQueueView();
+    view._presentPopoverForJavaScriptCoreTestRegressions(element, popover, iteration, "jscore-test");
+
+    var numChildrenInEmptyPopoverContent = 2;
+    strictEqual(popover._content.childNodes.length - numChildrenInEmptyPopoverContent,
+        iteration.javaScriptCoreTestResults.regressions.length,
+        "Number of failures in popover must be equal to number of failed tests");
+
+    for (var i = 0; i < iteration.javaScriptCoreTestResults.regressions.length; i++)
+    {
+        strictEqual(popover._content.childNodes[i+numChildrenInEmptyPopoverContent].childNodes[0].textContent,
+            iteration.javaScriptCoreTestResults.regressions[i],
+            "Names of failures must match"
+        );
+    }
+});
+
 module("BuildBotQueue", {
     setup: function() {
         Dashboard.Repository.OpenSource.trac = new MockTrac();

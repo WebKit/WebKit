@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,6 +105,9 @@ BuildbotTesterQueueView.prototype = {
                     if (failedStep.name === "layout-test") {
                         var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), failedStep.tooManyFailures ? failedStep.failureCount + "\uff0b" : failedStep.failureCount, iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
                         new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
+                    } else if (failedStep.name in ["jscore-test", "webkit-32bit-jsc-test", "webkit-jsc-cloop-test"]) {
+                        var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), failedStep.failureCount, iteration.queue.buildbot.javaScriptCoreTestStdioUrlForIteration(iteration, failedStep.name));
+                        new PopoverTracker(status.statusBubbleElement, this._presentPopoverForJavaScriptCoreTestRegressions.bind(this, failedStep.name), iteration);
                     } else {
                         var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), failedStep.failureCount ? failedStep.failureCount : undefined, failedStep.URL);
                         new PopoverTracker(status.statusBubbleElement, this._presentPopoverForGenericTestFailures.bind(this), iteration);
@@ -128,27 +131,6 @@ BuildbotTesterQueueView.prototype = {
 
         this.appendBuildStyle.call(this, this.releaseQueues, "Release", appendBuilderQueueStatus);
         this.appendBuildStyle.call(this, this.debugQueues, "Debug", appendBuilderQueueStatus);
-    },
-
-    _testStepFailureDescription: function(failedStep)
-    {
-        if (!failedStep.failureCount)
-            return BuildbotIteration.TestSteps[failedStep.name] + " failed";
-        if (failedStep.failureCount === 1)
-            return BuildbotIteration.TestSteps[failedStep.name] + " failure";
-        return BuildbotIteration.TestSteps[failedStep.name] + " failures";
-    },
-
-    _testStepFailureDescriptionWithCount: function(failedStep)
-    {
-        if (!failedStep.failureCount)
-            return this._testStepFailureDescription(failedStep);
-        if (failedStep.tooManyFailures) {
-            // E.g. "50+ layout test failures", preventing line breaks around the "+".
-            return failedStep.failureCount + "\ufeff\uff0b\u00a0" + this._testStepFailureDescription(failedStep);
-        }
-        // E.g. "1 layout test failure", preventing line break after the number.
-        return failedStep.failureCount + "\u00a0" + this._testStepFailureDescription(failedStep);
     },
 
     _popoverContentForLayoutTestRegressions: function(iteration)
@@ -229,31 +211,7 @@ BuildbotTesterQueueView.prototype = {
             content.appendChild(rowElement);
         }
 
-        // Work around bug 80159: -webkit-user-select:none not respected when copying content.
-        // We set clipboard data manually, temporarily making non-selectable content hidden
-        // to easily get accurate selection text.
-        content.oncopy = function(event) {
-            var iterator = document.createNodeIterator(
-                event.currentTarget,
-                NodeFilter.SHOW_ELEMENT,
-                {
-                    acceptNode: function(element) {
-                        if (window.getComputedStyle(element).webkitUserSelect !== "none")
-                            return NodeFilter.FILTER_ACCEPT;
-                        return NodeFilter.FILTER_SKIP;
-                    }
-                }
-            );
-
-            while ((node = iterator.nextNode()))
-                node.style.visibility = "visible";
-
-            event.currentTarget.style.visibility = "hidden";
-            event.clipboardData.setData('text', window.getSelection());
-            event.currentTarget.style.visibility = "";
-            return false;
-        }
-
+        content.oncopy = this._onPopoverCopy;
         return content;
     },
 
@@ -262,16 +220,7 @@ BuildbotTesterQueueView.prototype = {
         if (iteration.layoutTestResults.regressions)
             var content = this._popoverContentForLayoutTestRegressions(iteration);
         else {
-            var content = document.createElement("div");
-            content.className = "test-results-popover";
-
-            this._addIterationHeadingToPopover(iteration, content, "layout test failures");
-            this._addDividerToPopover(content);
-
-            var loadingIndicator = document.createElement("div");
-            loadingIndicator.className = "loading-indicator";
-            loadingIndicator.textContent = "Loading\u2026";
-            content.appendChild(loadingIndicator);
+            var content = this._createLoadingIndicator(iteration, "layout test failures");
 
             iteration.loadLayoutTestResults(function() {
                 popover.content = this._popoverContentForLayoutTestRegressions(iteration);

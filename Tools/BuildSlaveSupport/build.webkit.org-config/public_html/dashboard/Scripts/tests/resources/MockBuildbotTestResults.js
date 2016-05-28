@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple, Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-MockBuildbotQueue = function()
-{
-    info = {
-        branches: "",
-        platform: "",
-        debug: "",
-        builder: "",
-        tester: "",
-        performance: "",
-        staticAnalyzer: "",
-        leaks: "",
-        architecture: "",
-        testCategory: "",
-        heading: "",
-        crashesOnly: ""
-    };
-    BuildbotQueue.call(this, new MockBuildbot(), "id", info);
+MockBuildbotTestResults = function() {};
+
+MockBuildbotTestResults.prototype = {
+    constructor: MockBuildbotTestResults,
+
+    addJavaScriptCoreTestFailures: function(data)
+    {
+         this.regressions = data.stressTestFailures;
+    },
 };
-
-BaseObject.addConstructorFunctions(MockBuildbotQueue);
-
-MockBuildbotQueue.prototype = {
-    constructor: MockBuildbotQueue,
-    __proto__: BuildbotQueue.prototype
-}
