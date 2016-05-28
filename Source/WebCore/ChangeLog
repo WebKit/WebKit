@@ -1,3 +1,16 @@
+2016-05-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Use COMPILER(MSVC) instead of PLATFORM(WIN) for MSVC-specific workaround
+        https://bugs.webkit.org/show_bug.cgi?id=158169
+
+        Reviewed by Darin Adler.
+
+        No new tests needed.
+
+        * platform/PlatformMouseEvent.h:
+        * platform/win/PlatformMouseEventWin.cpp: Moved operators'
+        implementations to PlatformMouseEvent.h
+
 2016-05-27  Chris Dumez  <cdumez@apple.com>
 
         callOnMainThread() should not copy captured lambda variables
