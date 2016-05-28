@@ -1,3 +1,13 @@
+2016-05-28  Aakash Jain  <aakash_jain@apple.com>
+
+        tests fail if display sleeps while run-webkit-tests is running
+        https://bugs.webkit.org/show_bug.cgi?id=153919
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (addDisplaySleepAssertion): Use PreventUserIdleSystemSleep flag, same as set by caffeinate tool.
+
 2016-05-27  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Display failing JSC stress tests in buildbot dashboard

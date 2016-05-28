@@ -244,7 +244,7 @@ void addDisplaySleepAssertion()
 {
     CFStringRef assertionName = CFSTR("WebKit LayoutTestHelper");
     CFStringRef assertionDetails = CFSTR("WebKit layout-test helper tool is preventing sleep.");
-    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep,
+    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleSystemSleep,
         assertionName, assertionDetails, assertionDetails, NULL, 0, NULL, &assertionID);
 }
 
