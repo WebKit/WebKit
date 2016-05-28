@@ -1,3 +1,18 @@
+2016-05-28  Skachkov Oleksandr  <gskachkov@gmail.com>
+        [ESNext] Trailing commas in function parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=158020
+
+        Reviewed by Keith Miller.
+
+        ESNext allow to add trailing commas in function parameters and function arguments.
+        Link to spec - https://jeffmo.github.io/es-trailing-function-commas 
+        Example of using - (function (a, b,) { return a + b; })(1,2,);
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::Parser<LexerType>::parseArguments):
+        * tests/stress/trailing-comma-in-function-paramters.js: Added.
+
 2016-05-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] op_new_arrow_func_exp is no longer necessary
