@@ -62,6 +62,7 @@ fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
 fast/events/wheel-event-destroys-frame.html [ Skip ]
 fast/events/wheel-event-destroys-overflow.html [ Skip ]
 fast/events/wheel-event-outside-body.html [ Skip ]
+fast/scrolling/scroll-container-horizontally.html [ Failure ]
 
 # Not supported on iOS
 batterystatus

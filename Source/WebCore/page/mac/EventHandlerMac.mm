@@ -817,7 +817,7 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, floa
         if (box && box->canBeScrolledAndHasScrollableArea()) {
             if (ScrollableArea* scrollableArea = scrollableAreaForBox(*box)) {
                 if (((deltaY > 0) && !scrollableArea->scrolledToTop()) || ((deltaY < 0) && !scrollableArea->scrolledToBottom())
-                    || ((deltaX > 0) && !scrollableArea->scrolledToRight()) || ((deltaX < 0) && !scrollableArea->scrolledToLeft())) {
+                    || ((deltaX > 0) && !scrollableArea->scrolledToLeft()) || ((deltaX < 0) && !scrollableArea->scrolledToRight())) {
                     return candidate;
                 }
             }

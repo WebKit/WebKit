@@ -127,6 +127,7 @@ webkit.org/b/147683 fast/scrolling/latching/scroll-div-with-nested-nonscrollable
 
 fast/scrolling/iframe-scrollable-after-back.html [ Skip ]
 fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
+fast/scrolling/scroll-container-horizontally.html [ Failure ]
 
 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
 

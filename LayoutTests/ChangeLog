@@ -1,3 +1,20 @@
+2016-05-27  Zalan Bujtas  <zalan@apple.com>
+
+        EventHandler finds incorrect scrollable container.
+        https://bugs.webkit.org/show_bug.cgi?id=158132
+        <rdar://problem/26423126>
+
+        Reviewed by Brent Fulgham.
+
+        Fix the logic that checks whether we are at the beginning or at the end of the container (horizontally).
+        While scrolling to the right, deltaX has negative values. So in case of deltaX < 0, we need to check if
+        the container is not scrolled all the way to the right.
+
+        * fast/scrolling/scroll-container-horizontally-expected.txt: Added.
+        * fast/scrolling/scroll-container-horizontally.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2016-05-27  Saam barati  <sbarati@apple.com>
 
         DebuggerCallFrame crashes when updated with the globalExec because neither ShadowChicken's algorithm nor StackVisitor's algorithm reasons about the globalExec

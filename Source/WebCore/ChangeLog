@@ -1,3 +1,20 @@
+2016-05-27  Zalan Bujtas  <zalan@apple.com>
+
+        EventHandler finds incorrect scrollable container.
+        https://bugs.webkit.org/show_bug.cgi?id=158132
+        <rdar://problem/26423126>
+
+        Reviewed by Brent Fulgham.
+
+        Fix the logic that checks whether we are at the beginning or at the end of the container (horizontally).
+        While scrolling to the right, deltaX has negative values. So in case of deltaX < 0, we need to check if
+        the container is not scrolled all the way to the right.
+
+        Test: fast/scrolling/scroll-container-horizontally.html
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::findEnclosingScrollableContainer):
+
 2016-05-27  Jeremy Jones  <jeremyj@apple.com>
 
         Decrease flicker when changing video presentation mode.

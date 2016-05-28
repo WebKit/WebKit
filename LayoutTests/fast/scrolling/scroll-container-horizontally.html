@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we scroll the correct(second) container horizontally.</title>
+<style>
+  .slider{
+    overflow-x: scroll;
+  }
+
+  .scrollable {
+    width: 2000px;
+    height: 500px;
+    border: 1px solid green;  
+  }
+</style>
+</head>
+<body>
+<div class=slider id=firstcontainer>
+  <div class=scrollable>This should not scroll while the bottom green box is being hovered.</div>
+</div>
+<div class=slider id=secondcontainer>
+  <div class=scrollable></div>
+</div>
+<script>
+  if (window.eventSender && window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    eventSender.monitorWheelEvents();
+    // Scroll vertically to reach the bottom scrollable container.
+    eventSender.mouseMoveTo(10, 499);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+    eventSender.callAfterScrollingCompletes(function() {
+      // Scroll horizontally to check if we scroll the bottom scrollable container.
+      eventSender.monitorWheelEvents();
+      eventSender.mouseMoveTo(10, 510);
+      eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
+      eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
+      eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
+      eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none'); 
+      
+      eventSender.callAfterScrollingCompletes(function() {
+        var firstOffset = document.getElementById("firstcontainer").scrollLeft;
+        var secondOffset = document.getElementById("secondcontainer").scrollLeft;
+        document.body.innerText = !firstOffset && secondOffset ? "PASS" : "FAIL";  
+        testRunner.notifyDone();
+        }); 
+	});
+  }
+</script>
+</body>
+</html>
