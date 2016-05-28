@@ -163,10 +163,9 @@ void RealtimeMediaSourceCenterMac::createMediaStream(MediaStreamCreationClient* 
 bool RealtimeMediaSourceCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)
 {
     RefPtr<MediaStreamTrackSourcesRequestClient> requestClient = prpClient;
-
     TrackSourceInfoVector sources = AVCaptureDeviceManager::singleton().getSourcesInfo(requestClient->requestOrigin());
 
-    callOnMainThread([this, requestClient, sources] {
+    callOnMainThread([this, requestClient = WTFMove(requestClient), sources = WTFMove(sources)] {
         requestClient->didCompleteTrackSourceInfoRequest(sources);
     });
 

@@ -92,7 +92,7 @@ void MediaDevicesRequest::didCompletePermissionCheck(const String& salt, bool ca
     m_idHashSalt = salt;
     m_havePersistentPermission = canAccess;
 
-    callOnMainThread([this, permissionCheckProtector] {
+    callOnMainThread([this, permissionCheckProtector = WTFMove(permissionCheckProtector)] {
         RealtimeMediaSourceCenter::singleton().getMediaStreamTrackSources(this);
     });
 }
@@ -160,8 +160,7 @@ void MediaDevicesRequest::didCompleteTrackSourceInfoRequest(const TrackSourceInf
         devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
     }
 
-    RefPtr<MediaDevicesRequest> protectedThis(this);
-    callOnMainThread([protectedThis, devices] {
+    callOnMainThread([protectedThis = Ref<MediaDevicesRequest>(*this), devices = WTFMove(devices)]() mutable {
         protectedThis->m_promise.resolve(devices);
     });
     m_protector = nullptr;

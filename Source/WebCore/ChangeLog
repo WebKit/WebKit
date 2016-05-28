@@ -1,3 +1,143 @@
+2016-05-27  Chris Dumez  <cdumez@apple.com>
+
+        callOnMainThread() should not copy captured lambda variables
+        https://bugs.webkit.org/show_bug.cgi?id=158166
+
+        Reviewed by Brady Eidson.
+
+        callOnMainThread() should not copy captured lambda variables. This 
+        function is usually called cross-thread with a lambda and copying
+        the lambda (and its captured variables) can lead to thread-safety
+        issues.
+
+        This patch updates callOnMainThread() to take a NoncopyableFunction&&
+        in parameter instead of a std::function. The call sites of
+        callOnMainThread() have also been updated to use C++14's lambda
+        capture with initializer.
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::putOrAddOnServer):
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::didCompletePermissionCheck):
+        (WebCore::MediaDevicesRequest::didCompleteTrackSourceInfoRequest):
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::runTask):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::constraintsValidated):
+        (WebCore::UserMediaRequest::userMediaAccessGranted):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::scheduleNodeDeletion):
+        (WebCore::AudioContext::isPlayingAudioDidChange):
+        * dom/Document.cpp:
+        (WebCore::Document::postTask):
+        (WebCore::Document::pendingTasksTimerFired): Deleted.
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript):
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::callOnFileThread):
+        (WebCore::AsyncFileStream::~AsyncFileStream):
+        (WebCore::AsyncFileStream::perform):
+        * fileapi/AsyncFileStream.h:
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerFileBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURLForSlice):
+        (WebCore::ThreadableBlobRegistry::blobSize):
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked): Deleted.
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread):
+        (WebCore::IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread):
+        * page/ResourceUsageThread.cpp:
+        (WebCore::ResourceUsageThread::notifyObservers):
+        (WebCore::ResourceUsageThread::threadBody):
+        * page/ResourceUsageThread.h:
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::dispatch):
+        (WebCore::ScrollingThread::dispatchBarrier):
+        (WebCore::ScrollingThread::dispatchFunctionsFromScrollingThread):
+        * page/scrolling/ScrollingThread.h:
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::invalidate):
+        (WebCore::ScrollingTreeIOS::scrollingTreeNodeDidScroll):
+        (WebCore::ScrollingTreeIOS::currentSnapPointIndicesDidChange):
+        (WebCore::ScrollingTreeIOS::createScrollingTreeNode): Deleted.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::releaseReferencesToScrollerImpsOnTheMainThread):
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper dealloc]):
+        (-[WebMediaSessionHelper startMonitoringAirPlayRoutes]):
+        (-[WebMediaSessionHelper stopMonitoringAirPlayRoutes]):
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::prepare):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification):
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (-[WebCDMSessionAVFoundationObjCListener observeValueForKeyPath:ofObject:change:context:]):
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (-[WebAVOutputDeviceMenuControllerHelper observeValueForKeyPath:ofObject:change:context:]):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (-[WebCoreAVFMovieObserver legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:]):
+        (-[WebCoreAVFMovieObserver outputSequenceWasFlushed:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:shouldWaitForLoadingOfRequestedResource:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:shouldWaitForResponseToAuthenticationChallenge:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:didCancelLoadingRequest:]):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CMTimebaseEffectiveRateChangedCallback):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::play):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pause):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:withDiscontinuity:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didFailToParseStreamDataWithError:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideMediaData:forTrackID:mediaType:flags:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didReachEndOfTrackWithTrackID:mediaType:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeyRequestInitializationData:forTrackID:]):
+        (-[WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebAVSampleBufferErrorListener layerFailedToDecode:]):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::patternReleaseCallback):
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::patternReleaseCallback):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::endCreatedMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endGetEvent):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNotify):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::scheduleDeferredTask):
+        * platform/mediastream/MediaStreamPrivate.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::scheduleDeferredTask):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::getMediaStreamTrackSources):
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::prepare):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::getMediaStreamTrackSources):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::start):
+        (WebCore::BlobResourceHandle::notifyFinish):
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::decode):
+        * platform/network/DataURLDecoder.h:
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession dealloc]):
+        (-[WebCoreNSURLSessionDataTask cancel]):
+        (-[WebCoreNSURLSessionDataTask suspend]):
+        (-[WebCoreNSURLSessionDataTask resume]):
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::didReceiveHeader):
+        (WebCore::CurlDownload::didReceiveData): Deleted.
+
 2016-05-27  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r190574): Swipe snapshots are always black on iPhone 5

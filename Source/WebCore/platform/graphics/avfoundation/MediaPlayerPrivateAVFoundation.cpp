@@ -806,8 +806,7 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
     if (delayDispatch && !m_mainThreadCallPending) {
         m_mainThreadCallPending = true;
 
-        auto weakThis = createWeakPtr();
-        callOnMainThread([weakThis] {
+        callOnMainThread([weakThis = createWeakPtr()] {
             if (!weakThis)
                 return;
 
@@ -844,8 +843,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         }
         
         if (!m_queuedNotifications.isEmpty() && !m_mainThreadCallPending) {
-            auto weakThis = createWeakPtr();
-            callOnMainThread([weakThis] {
+            callOnMainThread([weakThis = createWeakPtr()] {
                 if (!weakThis)
                     return;
 

@@ -486,8 +486,7 @@ bool MediaPlayerPrivateMediaFoundation::endCreatedMediaSource(IMFAsyncResult* as
     hr = asyncResult->GetStatus();
     m_loadingProgress = SUCCEEDED(hr);
 
-    auto weakPtr = m_weakPtrFactory.createWeakPtr();
-    callOnMainThread([weakPtr] {
+    callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr()] {
         if (!weakPtr)
             return;
         weakPtr->onCreatedMediaSource();
@@ -516,8 +515,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
 
     switch (mediaEventType) {
     case MESessionTopologySet: {
-        auto weakPtr = m_weakPtrFactory.createWeakPtr();
-        callOnMainThread([weakPtr] {
+        callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr()] {
             if (!weakPtr)
                 return;
             weakPtr->onTopologySet();
@@ -526,8 +524,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
     }
 
     case MEBufferingStarted: {
-        auto weakPtr = m_weakPtrFactory.createWeakPtr();
-        callOnMainThread([weakPtr] {
+        callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr()] {
             if (!weakPtr)
                 return;
             weakPtr->onBufferingStarted();
@@ -536,8 +533,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
     }
 
     case MEBufferingStopped: {
-        auto weakPtr = m_weakPtrFactory.createWeakPtr();
-        callOnMainThread([weakPtr] {
+        callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr()] {
             if (!weakPtr)
                 return;
             weakPtr->onBufferingStopped();
@@ -546,8 +542,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
     }
 
     case MESessionEnded: {
-        auto weakPtr = m_weakPtrFactory.createWeakPtr();
-        callOnMainThread([weakPtr] {
+        callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr()] {
             if (!weakPtr)
                 return;
             weakPtr->onSessionEnded();
@@ -1675,8 +1670,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNot
     
     // Invalidate the video area
     if (m_mediaPlayer) {
-        auto weakPtr = m_mediaPlayer->m_weakPtrFactory.createWeakPtr();
-        callOnMainThread([weakPtr] {
+        callOnMainThread([weakPtr = m_mediaPlayer->m_weakPtrFactory.createWeakPtr()] {
             if (weakPtr)
                 weakPtr->invalidateFrameView();
         });

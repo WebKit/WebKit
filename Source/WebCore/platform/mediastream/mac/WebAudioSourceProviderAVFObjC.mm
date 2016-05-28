@@ -214,10 +214,10 @@ void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription* f
     memset(m_list.get(), 0, m_listBufferSize);
     m_list->mNumberBuffers = numberOfChannels;
 
-    RefPtr<WebAudioSourceProviderAVFObjC> strongThis = this;
-    callOnMainThread([strongThis, numberOfChannels, sampleRate] {
-        if (strongThis->m_client)
-            strongThis->m_client->setFormat(numberOfChannels, sampleRate);
+    RefPtr<WebAudioSourceProviderAVFObjC> protectedThis = this;
+    callOnMainThread([protectedThis = WTFMove(protectedThis), numberOfChannels, sampleRate] {
+        if (protectedThis->m_client)
+            protectedThis->m_client->setFormat(numberOfChannels, sampleRate);
     });
 }
 

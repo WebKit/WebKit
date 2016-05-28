@@ -514,10 +514,8 @@ void StorageAreaSync::deleteEmptyDatabase()
         query.finalize();
         m_database.close();
         if (StorageTracker::tracker().isActive()) {
-            StringImpl* databaseIdentifierCopy = &m_databaseIdentifier.impl()->isolatedCopy().leakRef();
-            callOnMainThread([databaseIdentifierCopy] {
-                StorageTracker::tracker().deleteOriginWithIdentifier(databaseIdentifierCopy);
-                databaseIdentifierCopy->deref();
+            callOnMainThread([databaseIdentifier = m_databaseIdentifier.isolatedCopy()] {
+                StorageTracker::tracker().deleteOriginWithIdentifier(databaseIdentifier);
             });
         } else {
             String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);

@@ -129,8 +129,7 @@ namespace WebCore {
 static void CMTimebaseEffectiveRateChangedCallback(CMNotificationCenterRef, const void *listener, CFStringRef, const void *, CFTypeRef)
 {
     MediaPlayerPrivateMediaSourceAVFObjC* player = (MediaPlayerPrivateMediaSourceAVFObjC*)listener;
-    auto weakThis = player->createWeakPtr();
-    callOnMainThread([weakThis]{
+    callOnMainThread([weakThis = player->createWeakPtr()] {
         if (!weakThis)
             return;
         weakThis.get()->effectiveRateChanged();
@@ -312,8 +311,7 @@ PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::play()
 {
-    auto weakThis = createWeakPtr();
-    callOnMainThread([weakThis]{
+    callOnMainThread([weakThis = createWeakPtr()] {
         if (!weakThis)
             return;
         weakThis.get()->playInternal();
@@ -332,8 +330,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pause()
 {
-    auto weakThis = createWeakPtr();
-    callOnMainThread([weakThis]{
+    callOnMainThread([weakThis = createWeakPtr()] {
         if (!weakThis)
             return;
         weakThis.get()->pauseInternal();

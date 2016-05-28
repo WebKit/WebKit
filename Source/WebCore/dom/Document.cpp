@@ -5386,12 +5386,8 @@ SecurityOrigin* Document::topOrigin() const
 
 void Document::postTask(Task task)
 {
-    Task* taskPtr = std::make_unique<Task>(WTFMove(task)).release();
-    WeakPtr<Document> documentReference(m_weakFactory.createWeakPtr());
-
-    callOnMainThread([=] {
+    callOnMainThread([documentReference = m_weakFactory.createWeakPtr(), task = WTFMove(task)]() mutable {
         ASSERT(isMainThread());
-        std::unique_ptr<Task> task(taskPtr);
 
         Document* document = documentReference.get();
         if (!document)
@@ -5399,9 +5395,9 @@ void Document::postTask(Task task)
 
         Page* page = document->page();
         if ((page && page->defersLoading() && document->activeDOMObjectsAreSuspended()) || !document->m_pendingTasks.isEmpty())
-            document->m_pendingTasks.append(WTFMove(*task.release()));
+            document->m_pendingTasks.append(WTFMove(task));
         else
-            task->performTask(*document);
+            task.performTask(*document);
     });
 }
 

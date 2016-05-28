@@ -168,25 +168,21 @@ static void decodeEscaped(DecodeTask& task)
     task.result.data = SharedBuffer::adoptVector(buffer);
 }
 
-void decode(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler completionHandler)
+void decode(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler&& completionHandler)
 {
     ASSERT(url.protocolIsData());
 
     auto decodeTask = createDecodeTask(url, scheduleContext, WTFMove(completionHandler));
-    auto* decodeTaskPtr = decodeTask.release();
-    decodeQueue().dispatch([decodeTaskPtr] {
-        auto& decodeTask = *decodeTaskPtr;
-
-        if (decodeTask.isBase64)
-            decodeBase64(decodeTask);
+    decodeQueue().dispatch([decodeTask = WTFMove(decodeTask)]() mutable {
+        if (decodeTask->isBase64)
+            decodeBase64(*decodeTask);
         else
-            decodeEscaped(decodeTask);
+            decodeEscaped(*decodeTask);
 
 #if HAVE(RUNLOOP_TIMER)
-        DecodingResultDispatcher::dispatch(std::unique_ptr<DecodeTask>(decodeTaskPtr));
+        DecodingResultDispatcher::dispatch(WTFMove(decodeTask));
 #else
-        callOnMainThread([decodeTaskPtr] {
-            std::unique_ptr<DecodeTask> decodeTask(decodeTaskPtr);
+        callOnMainThread([decodeTask = WTFMove(decodeTask)] {
             if (!decodeTask->result.data) {
                 decodeTask->completionHandler({ });
                 return;

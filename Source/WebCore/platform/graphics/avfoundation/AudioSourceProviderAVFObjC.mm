@@ -323,9 +323,8 @@ void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStrea
     memset(m_list.get(), 0, bufferListSize);
     m_list->mNumberBuffers = numberOfChannels;
 
-    RefPtr<AudioSourceProviderAVFObjC> strongThis = this;
-    callOnMainThread([strongThis, numberOfChannels, sampleRate] {
-        strongThis->m_client->setFormat(numberOfChannels, sampleRate);
+    callOnMainThread([protectedThis = Ref<AudioSourceProviderAVFObjC>(*this), numberOfChannels, sampleRate] {
+        protectedThis->m_client->setFormat(numberOfChannels, sampleRate);
     });
 }
 

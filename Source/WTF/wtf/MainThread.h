@@ -32,6 +32,7 @@
 
 #include <functional>
 #include <stdint.h>
+#include <wtf/NoncopyableFunction.h>
 
 namespace WTF {
 
@@ -40,7 +41,7 @@ typedef uint32_t ThreadIdentifier;
 // Must be called from the main thread.
 WTF_EXPORT_PRIVATE void initializeMainThread();
 
-WTF_EXPORT_PRIVATE void callOnMainThread(std::function<void ()>);
+WTF_EXPORT_PRIVATE void callOnMainThread(NoncopyableFunction&&);
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)());

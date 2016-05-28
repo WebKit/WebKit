@@ -1,3 +1,26 @@
+2016-05-27  Chris Dumez  <cdumez@apple.com>
+
+        callOnMainThread() should not copy captured lambda variables
+        https://bugs.webkit.org/show_bug.cgi?id=158166
+
+        Reviewed by Brady Eidson.
+
+        callOnMainThread() should not copy captured lambda variables. This 
+        function is usually called cross-thread with a lambda and copying
+        the lambda (and its captured variables) can lead to thread-safety
+        issues.
+
+        This patch updates callOnMainThread() to take a NoncopyableFunction&&
+        in parameter instead of a std::function. The call sites of
+        callOnMainThread() have also been updated to use C++14's lambda
+        capture with initializer.
+
+        * Storage/WebDatabaseManagerClient.mm:
+        (DidModifyOriginData::dispatchToMainThread):
+        (DidModifyOriginData::DidModifyOriginData): Deleted.
+        * Storage/WebStorageTrackerClient.mm:
+        (WebStorageTrackerClient::dispatchDidModifyOrigin):
+
 2016-05-27  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] implement async functions proposal

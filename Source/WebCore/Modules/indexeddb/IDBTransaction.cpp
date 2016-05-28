@@ -979,7 +979,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
         // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
         // In that case, we cannot successfully store this record, so we callback with an error.
         auto result = IDBResultData::error(protectedOperation->identifier(), { IDBDatabaseException::UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
-        callOnMainThread([protectedThis = WTFMove(protectedThis), this, protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)]() {
+        callOnMainThread([protectedThis = WTFMove(protectedThis), protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)]() {
             protectedOperation->completed(result);
         });
     });

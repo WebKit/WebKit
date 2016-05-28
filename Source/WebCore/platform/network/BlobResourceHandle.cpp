@@ -187,10 +187,8 @@ void BlobResourceHandle::start()
         return;
     }
 
-    RefPtr<BlobResourceHandle> protectedThis(this);
-
     // Finish this async call quickly and return.
-    callOnMainThread([protectedThis] {
+    callOnMainThread([protectedThis = Ref<BlobResourceHandle>(*this)]() mutable {
         protectedThis->doStart();
     });
 }
@@ -665,9 +663,8 @@ void BlobResourceHandle::notifyFinish()
 
     // Schedule to notify the client from a standalone function because the client might dispose the handle immediately from the callback function
     // while we still have BlobResourceHandle calls in the stack.
-    RefPtr<BlobResourceHandle> protectedThis(this);
-    callOnMainThread([protectedThis] {
-        doNotifyFinish(*protectedThis);
+    callOnMainThread([protectedThis = Ref<BlobResourceHandle>(*this)]() mutable {
+        doNotifyFinish(protectedThis);
     });
 
 }

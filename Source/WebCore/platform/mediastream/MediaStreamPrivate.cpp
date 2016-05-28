@@ -299,11 +299,10 @@ void MediaStreamPrivate::trackEnded(MediaStreamTrackPrivate&)
     });
 }
 
-void MediaStreamPrivate::scheduleDeferredTask(std::function<void()> function)
+void MediaStreamPrivate::scheduleDeferredTask(NoncopyableFunction&& function)
 {
     ASSERT(function);
-    auto weakThis = createWeakPtr();
-    callOnMainThread([weakThis, function] {
+    callOnMainThread([weakThis = createWeakPtr(), function = WTFMove(function)] {
         if (!weakThis)
             return;
 

@@ -280,8 +280,7 @@ bool ScriptElement::requestScript(const String& sourceUrl)
     if (m_cachedScript)
         return true;
 
-    RefPtr<Element> element = &m_element;
-    callOnMainThread([this, element] {
+    callOnMainThread([this, element = Ref<Element>(m_element)] {
         dispatchErrorEvent();
     });
     return false;

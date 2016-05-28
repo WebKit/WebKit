@@ -95,14 +95,14 @@ MediaEndpointPeerConnection::MediaEndpointPeerConnection(PeerConnectionBackendCl
     m_mediaEndpoint->generateDtlsInfo();
 }
 
-void MediaEndpointPeerConnection::runTask(std::function<void()> task)
+void MediaEndpointPeerConnection::runTask(NoncopyableFunction&& task)
 {
     if (m_dtlsFingerprint.isNull()) {
         // Only one task needs to be deferred since it will hold off any others until completed.
         ASSERT(!m_initialDeferredTask);
-        m_initialDeferredTask = task;
+        m_initialDeferredTask = WTFMove(task);
     } else
-        callOnMainThread(task);
+        callOnMainThread(WTFMove(task));
 }
 
 void MediaEndpointPeerConnection::startRunningTasks()

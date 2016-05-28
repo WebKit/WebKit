@@ -56,9 +56,7 @@ static void patternCallback(void* info, CGContextRef context)
 
 static void patternReleaseCallback(void* info)
 {
-    auto image = static_cast<CGImageRef>(info);
-
-    callOnMainThread([image] {
+    callOnMainThread([image = static_cast<CGImageRef>(info)] {
         CGImageRelease(image);
     });
 }

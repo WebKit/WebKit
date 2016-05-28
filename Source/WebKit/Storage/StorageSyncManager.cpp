@@ -63,13 +63,13 @@ String StorageSyncManager::fullDatabaseFilename(const String& databaseIdentifier
     return pathByAppendingComponent(m_path, databaseIdentifier + ".localstorage");
 }
 
-void StorageSyncManager::dispatch(const std::function<void ()>& function)
+void StorageSyncManager::dispatch(NoncopyableFunction&& function)
 {
     ASSERT(isMainThread());
     ASSERT(m_thread);
 
     if (m_thread)
-        m_thread->dispatch(function);
+        m_thread->dispatch(WTFMove(function));
 }
 
 void StorageSyncManager::close()

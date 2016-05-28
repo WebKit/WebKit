@@ -56,7 +56,7 @@ public:
 
 private:
     void start();
-    void perform(std::function<std::function<void(FileStreamClient&)>(FileStream&)>);
+    void perform(std::function<std::function<void(FileStreamClient&)>(FileStream&)>&&);
 
     struct Internals;
     std::unique_ptr<Internals> m_internals;

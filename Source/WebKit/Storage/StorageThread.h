@@ -29,7 +29,7 @@
 #include <functional>
 #include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/NoncopyableFunction.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -46,7 +46,7 @@ public:
     bool start();
     void terminate();
 
-    void dispatch(const std::function<void()>&);
+    void dispatch(NoncopyableFunction&&);
 
     static void releaseFastMallocFreeMemoryInAllThreads();
 
@@ -59,7 +59,7 @@ private:
     void performTerminate();
 
     ThreadIdentifier m_threadID;
-    MessageQueue<std::function<void()>> m_queue;
+    MessageQueue<NoncopyableFunction> m_queue;
 };
 
 } // namespace WebCore

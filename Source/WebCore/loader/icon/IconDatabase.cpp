@@ -2090,10 +2090,9 @@ void IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread(const String& 
     ASSERT_ICON_SYNC_THREAD();
     ++m_mainThreadCallbackCount;
 
-    String pageURLCopy = pageURL.isolatedCopy();
-    callOnMainThread([this, pageURLCopy] {
+    callOnMainThread([this, pageURL = pageURL.isolatedCopy()] {
         if (m_client)
-            m_client->didImportIconURLForPageURL(pageURLCopy);
+            m_client->didImportIconURLForPageURL(pageURL);
         checkClosedAfterMainThreadCallback();
     });
 }
@@ -2103,10 +2102,9 @@ void IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread(const String&
     ASSERT_ICON_SYNC_THREAD();
     ++m_mainThreadCallbackCount;
 
-    String pageURLCopy = pageURL.isolatedCopy();
-    callOnMainThread([this, pageURLCopy] {
+    callOnMainThread([this, pageURL = pageURL.isolatedCopy()] {
         if (m_client)
-            m_client->didImportIconDataForPageURL(pageURLCopy);
+            m_client->didImportIconDataForPageURL(pageURL);
         checkClosedAfterMainThreadCallback();
     });
 }

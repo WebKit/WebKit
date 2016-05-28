@@ -39,6 +39,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/NoncopyableFunction.h>
 
 namespace WebCore {
 
@@ -63,12 +64,12 @@ inline AsyncFileStream::Internals::Internals(FileStreamClient& client)
 #endif
 }
 
-static void callOnFileThread(std::function<void()>&& function)
+static void callOnFileThread(NoncopyableFunction&& function)
 {
     ASSERT(isMainThread());
     ASSERT(function);
 
-    static NeverDestroyed<MessageQueue<std::function<void()>>> queue;
+    static NeverDestroyed<MessageQueue<NoncopyableFunction>> queue;
 
     static std::once_flag createFileThreadOnce;
     std::call_once(createFileThreadOnce, [] {
@@ -89,7 +90,7 @@ static void callOnFileThread(std::function<void()>&& function)
         });
     });
 
-    queue.get().append(std::make_unique<std::function<void()>>(WTFMove(function)));
+    queue.get().append(std::make_unique<NoncopyableFunction>(WTFMove(function)));
 }
 
 AsyncFileStream::AsyncFileStream(FileStreamClient& client)
@@ -102,33 +103,28 @@ AsyncFileStream::~AsyncFileStream()
 {
     ASSERT(isMainThread());
 
-    // Release so that we can control the timing of deletion below.
-    auto& internals = *m_internals.release();
-
     // Set flag to prevent client callbacks and also prevent queued operations from starting.
-    internals.destroyed = true;
+    m_internals->destroyed = true;
 
     // Call through file thread and back to main thread to make sure deletion happens
     // after all file thread functions and all main thread functions called from them.
-    callOnFileThread([&internals] {
-        callOnMainThread([&internals] {
-            delete &internals;
+    callOnFileThread([internals = WTFMove(m_internals)]() mutable {
+        callOnMainThread([internals = WTFMove(internals)] {
         });
     });
 }
 
-void AsyncFileStream::perform(std::function<std::function<void(FileStreamClient&)>(FileStream&)> operation)
+void AsyncFileStream::perform(std::function<std::function<void(FileStreamClient&)>(FileStream&)>&& operation)
 {
     auto& internals = *m_internals;
-    callOnFileThread([&internals, operation] {
+    callOnFileThread([&internals, operation = WTFMove(operation)] {
         // Don't do the operation if stop was already called on the main thread. Note that there is
         // a race here, but since skipping the operation is an optimization it's OK that we can't
         // guarantee exactly which operations are skipped. Note that this is also the only reason
         // we use an atomic_bool rather than just a bool for destroyed.
         if (internals.destroyed)
             return;
-        auto mainThreadWork = operation(internals.stream);
-        callOnMainThread([&internals, mainThreadWork] {
+        callOnMainThread([&internals, mainThreadWork = operation(internals.stream)] {
             if (internals.destroyed)
                 return;
             mainThreadWork(internals.client);

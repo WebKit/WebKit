@@ -103,20 +103,19 @@ class DidModifyOriginData {
 public:
     static void dispatchToMainThread(WebDatabaseManagerClient* client, SecurityOrigin* origin)
     {
-        DidModifyOriginData* context = new DidModifyOriginData(client, origin->isolatedCopy());
-        callOnMainThread([context] {
+        auto context = std::make_unique<DidModifyOriginData>(client, origin->isolatedCopy());
+        callOnMainThread([context = WTFMove(context)] {
             context->client->dispatchDidModifyOrigin(context->origin.get());
-            delete context;
         });
     }
 
-private:
     DidModifyOriginData(WebDatabaseManagerClient* client, PassRefPtr<SecurityOrigin> origin)
         : client(client)
         , origin(origin)
     {
     }
 
+private:
     WebDatabaseManagerClient* client;
     RefPtr<SecurityOrigin> origin;
 };

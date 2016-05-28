@@ -92,10 +92,7 @@ NS_ASSUME_NONNULL_END
     for (auto& task : _dataTasks)
         task.get().session = nil;
 
-    // FIXME(C++14): When we can move RefPtrs directly into blocks, replace this with a RefPtr&&:
-    WebCore::PlatformMediaResourceLoader* loader = _loader.leakRef();
-    callOnMainThread([loader] {
-        loader->deref();
+    callOnMainThread([loader = WTFMove(_loader)] {
     });
     [super dealloc];
 }
@@ -466,34 +463,31 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 - (void)cancel
 {
     self.state = NSURLSessionTaskStateCanceling;
-    RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    callOnMainThread([strongSelf] {
-        [strongSelf _cancel];
-        [strongSelf _finish];
+    callOnMainThread([protectedSelf = RetainPtr<WebCoreNSURLSessionDataTask>(self)] {
+        [protectedSelf _cancel];
+        [protectedSelf _finish];
     });
 }
 
 - (void)suspend
 {
-    RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    callOnMainThread([strongSelf] {
+    callOnMainThread([protectedSelf = RetainPtr<WebCoreNSURLSessionDataTask>(self)] {
         // NSURLSessionDataTasks must start over after suspending, so while
         // we could defer loading at this point, instead cancel and restart
         // upon resume so as to adhere to NSURLSessionDataTask semantics.
-        [strongSelf _cancel];
-        strongSelf.get().state = NSURLSessionTaskStateSuspended;
+        [protectedSelf _cancel];
+        protectedSelf.get().state = NSURLSessionTaskStateSuspended;
     });
 }
 
 - (void)resume
 {
-    RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    callOnMainThread([strongSelf] {
-        if (strongSelf.get().state != NSURLSessionTaskStateSuspended)
+    callOnMainThread([protectedSelf = RetainPtr<WebCoreNSURLSessionDataTask>(self)] {
+        if (protectedSelf.get().state != NSURLSessionTaskStateSuspended)
             return;
 
-        [strongSelf _restart];
-        strongSelf.get().state = NSURLSessionTaskStateRunning;
+        [protectedSelf _restart];
+        protectedSelf.get().state = NSURLSessionTaskStateRunning;
     });
 }
 

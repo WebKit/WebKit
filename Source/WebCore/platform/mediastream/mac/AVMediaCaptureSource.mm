@@ -240,12 +240,10 @@ void AVMediaCaptureSource::setAudioSampleBufferDelegate(AVCaptureAudioDataOutput
     [audioOutput setSampleBufferDelegate:m_objcObserver.get() queue:globaAudioCaptureSerialQueue()];
 }
 
-void AVMediaCaptureSource::scheduleDeferredTask(std::function<void ()> function)
+void AVMediaCaptureSource::scheduleDeferredTask(NoncopyableFunction&& function)
 {
     ASSERT(function);
-
-    auto weakThis = createWeakPtr();
-    callOnMainThread([weakThis, function] {
+    callOnMainThread([weakThis = createWeakPtr(), function = WTFMove(function)] {
         if (!weakThis)
             return;
 

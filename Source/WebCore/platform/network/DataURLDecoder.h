@@ -55,7 +55,7 @@ struct ScheduleContext {
 #endif
 };
 
-void decode(const URL&, const ScheduleContext&, DecodeCompletionHandler);
+void decode(const URL&, const ScheduleContext&, DecodeCompletionHandler&&);
 
 }
 

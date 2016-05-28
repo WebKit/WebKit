@@ -797,8 +797,7 @@ void AudioContext::scheduleNodeDeletion()
 
         m_isDeletionScheduled = true;
 
-        RefPtr<AudioContext> protectedThis(this);
-        callOnMainThread([protectedThis] {
+        callOnMainThread([protectedThis = Ref<AudioContext>(*this)]() mutable {
             protectedThis->deleteMarkedNodes();
         });
     }
@@ -1002,8 +1001,7 @@ void AudioContext::isPlayingAudioDidChange()
 {
     // Make sure to call Document::updateIsPlayingMedia() on the main thread, since
     // we could be on the audio I/O thread here and the call into WebCore could block.
-    RefPtr<AudioContext> protectedThis(this);
-    callOnMainThread([protectedThis] {
+    callOnMainThread([protectedThis = Ref<AudioContext>(*this)] {
         if (protectedThis->document())
             protectedThis->document()->updateIsPlayingMedia();
     });

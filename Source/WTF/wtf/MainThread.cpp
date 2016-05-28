@@ -47,9 +47,9 @@ static ThreadIdentifier mainThreadIdentifier;
 
 static StaticLock mainThreadFunctionQueueMutex;
 
-static Deque<std::function<void ()>>& functionQueue()
+static Deque<NoncopyableFunction>& functionQueue()
 {
-    static NeverDestroyed<Deque<std::function<void ()>>> functionQueue;
+    static NeverDestroyed<Deque<NoncopyableFunction>> functionQueue;
     return functionQueue;
 }
 
@@ -120,7 +120,7 @@ void dispatchFunctionsFromMainThread()
 
     auto startTime = std::chrono::steady_clock::now();
 
-    std::function<void ()> function;
+    NoncopyableFunction function;
 
     while (true) {
         {
@@ -144,7 +144,7 @@ void dispatchFunctionsFromMainThread()
     }
 }
 
-void callOnMainThread(std::function<void ()> function)
+void callOnMainThread(NoncopyableFunction&& function)
 {
     ASSERT(function);
 

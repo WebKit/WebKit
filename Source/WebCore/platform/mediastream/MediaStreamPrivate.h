@@ -41,6 +41,7 @@
 #include "MediaStreamTrackPrivate.h"
 #include <wtf/HashMap.h>
 #include <wtf/MediaTime.h>
+#include <wtf/NoncopyableFunction.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -111,7 +112,7 @@ private:
     void characteristicsChanged();
     void updateActiveVideoTrack();
 
-    void scheduleDeferredTask(std::function<void()>);
+    void scheduleDeferredTask(NoncopyableFunction&&);
 
     WeakPtrFactory<MediaStreamPrivate> m_weakPtrFactory;
     Vector<Observer*> m_observers;

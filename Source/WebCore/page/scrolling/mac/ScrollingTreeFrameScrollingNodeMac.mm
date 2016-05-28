@@ -75,11 +75,7 @@ void ScrollingTreeFrameScrollingNodeMac::releaseReferencesToScrollerImpsOnTheMai
     if (m_verticalScrollerImp || m_horizontalScrollerImp) {
         // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
         // on a non-main thread. rdar://problem/24535055
-        NSScrollerImp *retainedVerticalScrollerImp = m_verticalScrollerImp.leakRef();
-        NSScrollerImp *retainedHorizontalScrollerImp = m_horizontalScrollerImp.leakRef();
-        WTF::callOnMainThread([retainedVerticalScrollerImp, retainedHorizontalScrollerImp] {
-            [retainedVerticalScrollerImp release];
-            [retainedHorizontalScrollerImp release];
+        WTF::callOnMainThread([verticalScrollerImp = WTFMove(m_verticalScrollerImp), horizontalScrollerImp = WTFMove(m_horizontalScrollerImp)] {
         });
     }
 }

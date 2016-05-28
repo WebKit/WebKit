@@ -84,10 +84,10 @@ SOFT_LINK_CLASS(AVFoundation, AVAssetResourceLoadingRequest)
     if ([keyPath isEqualTo:@"outputObscuredDueToInsufficientExternalProtection"]) {
         if ([[change valueForKey:NSKeyValueChangeNewKey] intValue] == 1) {
             RetainPtr<NSError> error = [NSError errorWithDomain:@"com.apple.WebKit" code:'HDCP' userInfo:nil];
-            RetainPtr<WebCDMSessionAVFoundationObjCListener> strongSelf = { self };
-            callOnMainThread([strongSelf, error] {
-                if (strongSelf->_parent)
-                    strongSelf->_parent->playerDidReceiveError(error.get());
+            RetainPtr<WebCDMSessionAVFoundationObjCListener> protectedSelf = { self };
+            callOnMainThread([protectedSelf = WTFMove(protectedSelf), error = WTFMove(error)] {
+                if (protectedSelf->_parent)
+                    protectedSelf->_parent->playerDidReceiveError(error.get());
             });
         }
     } else

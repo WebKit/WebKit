@@ -402,11 +402,9 @@ void CurlDownload::didReceiveHeader(const String& header)
         CURLcode err = curl_easy_getinfo(m_curlHandle, CURLINFO_RESPONSE_CODE, &httpCode);
 
         if (httpCode >= 200 && httpCode < 300) {
-            URLCapture capturedUrl(getCurlEffectiveURL(m_curlHandle));
-            RefPtr<CurlDownload> protectedThis(this);
-
-            callOnMainThread([this, capturedUrl, protectedThis] {
-                m_response.setURL(capturedUrl.url());
+            URL url = getCurlEffectiveURL(m_curlHandle);
+            callOnMainThread([this, url = url.isolatedCopy(), protectedThis = Ref<CurlDownload>(*this)] {
+                m_response.setURL(url);
                 m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
                 m_response.setTextEncodingName(extractCharsetFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
 
@@ -414,14 +412,10 @@ void CurlDownload::didReceiveHeader(const String& header)
             });
         }
     } else {
-        StringCapture capturedHeader(header);
-
-        RefPtr<CurlDownload> protectedThis(this);
-
-        callOnMainThread([this, capturedHeader, protectedThis] {
-            int splitPos = capturedHeader.string().find(":");
+        callOnMainThread([this, header = header.isolatedCopy(), protectedThis = Ref<CurlDownload>(*this)] {
+            int splitPos = header.string().find(":");
             if (splitPos != -1)
-                m_response.setHTTPHeaderField(capturedHeader.string().left(splitPos), capturedHeader.string().substring(splitPos + 1).stripWhiteSpace());
+                m_response.setHTTPHeaderField(header.string().left(splitPos), header.string().substring(splitPos + 1).stripWhiteSpace());
         });
     }
 }

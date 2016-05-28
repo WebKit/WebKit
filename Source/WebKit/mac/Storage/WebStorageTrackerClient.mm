@@ -58,15 +58,15 @@ void WebStorageTrackerClient::dispatchDidModifyOrigin(PassRefPtr<SecurityOrigin>
 
 void WebStorageTrackerClient::dispatchDidModifyOrigin(const String& originIdentifier)
 {
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
+    auto origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
 
     if (isMainThread()) {
-        dispatchDidModifyOrigin(origin);
+        dispatchDidModifyOrigin(WTFMove(origin));
         return;
     }
 
-    callOnMainThread([origin] {
-        WebStorageTrackerClient::sharedWebStorageTrackerClient()->dispatchDidModifyOrigin(origin.get());
+    callOnMainThread([origin = WTFMove(origin)]() mutable {
+        WebStorageTrackerClient::sharedWebStorageTrackerClient()->dispatchDidModifyOrigin(WTFMove(origin));
     });
 }
 

@@ -159,7 +159,7 @@ bool MockRealtimeMediaSourceCenter::getMediaStreamTrackSources(PassRefPtr<MediaS
     sources.append(MockRealtimeMediaSource::trackSourceWithUID(MockRealtimeMediaSource::mockAudioSourcePersistentID(), nullptr));
     sources.append(MockRealtimeMediaSource::trackSourceWithUID(MockRealtimeMediaSource::mockVideoSourcePersistentID(), nullptr));
 
-    callOnMainThread([this, requestClient, sources] {
+    callOnMainThread([this, requestClient = WTFMove(requestClient), sources = WTFMove(sources)] {
         requestClient->didCompleteTrackSourceInfoRequest(sources);
     });
 

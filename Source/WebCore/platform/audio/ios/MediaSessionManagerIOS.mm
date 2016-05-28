@@ -396,10 +396,7 @@ void MediaSessionManageriOS::applicationWillEnterForeground(bool isSuspendedUnde
     LOG(Media, "-[WebMediaSessionHelper dealloc]");
 
     if (!isMainThread()) {
-        auto volumeView = WTFMove(_volumeView);
-        auto routingController = WTFMove(_airPlayPresenceRoutingController);
-
-        callOnMainThread([volumeView, routingController] () mutable {
+        callOnMainThread([volumeView = WTFMove(_volumeView), routingController = WTFMove(_airPlayPresenceRoutingController)] () mutable {
             LOG(Media, "-[WebMediaSessionHelper dealloc] - dipatched to MainThread");
 
             volumeView.clear();
@@ -435,15 +432,14 @@ void MediaSessionManageriOS::applicationWillEnterForeground(bool isSuspendedUnde
 
     LOG(Media, "-[WebMediaSessionHelper startMonitoringAirPlayRoutes]");
 
-    RetainPtr<WebMediaSessionHelper> strongSelf = self;
-    callOnMainThread([strongSelf] () {
+    callOnMainThread([protectedSelf = RetainPtr<WebMediaSessionHelper>(self)] () {
         LOG(Media, "-[WebMediaSessionHelper startMonitoringAirPlayRoutes] - dipatched to MainThread");
 
-        if (strongSelf->_airPlayPresenceRoutingController)
+        if (protectedSelf->_airPlayPresenceRoutingController)
             return;
 
-        strongSelf->_airPlayPresenceRoutingController = adoptNS([allocMPAVRoutingControllerInstance() initWithName:@"WebCore - HTML media element checking for AirPlay route presence"]);
-        [strongSelf->_airPlayPresenceRoutingController setDiscoveryMode:MPRouteDiscoveryModePresence];
+        protectedSelf->_airPlayPresenceRoutingController = adoptNS([allocMPAVRoutingControllerInstance() initWithName:@"WebCore - HTML media element checking for AirPlay route presence"]);
+        [protectedSelf->_airPlayPresenceRoutingController setDiscoveryMode:MPRouteDiscoveryModePresence];
     });
 }
 
@@ -454,15 +450,14 @@ void MediaSessionManageriOS::applicationWillEnterForeground(bool isSuspendedUnde
 
     LOG(Media, "-[WebMediaSessionHelper stopMonitoringAirPlayRoutes]");
 
-    RetainPtr<WebMediaSessionHelper> strongSelf = self;
-    callOnMainThread([strongSelf] () {
+    callOnMainThread([protectedSelf = RetainPtr<WebMediaSessionHelper>(self)] () {
         LOG(Media, "-[WebMediaSessionHelper stopMonitoringAirPlayRoutes] - dipatched to MainThread");
 
-        if (!strongSelf->_airPlayPresenceRoutingController)
+        if (!protectedSelf->_airPlayPresenceRoutingController)
             return;
 
-        [strongSelf->_airPlayPresenceRoutingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
-        strongSelf->_airPlayPresenceRoutingController = nil;
+        [protectedSelf->_airPlayPresenceRoutingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
+        protectedSelf->_airPlayPresenceRoutingController = nil;
     });
 }
 

@@ -56,7 +56,7 @@ private:
     static ResourceUsageThread& singleton();
 
     void waitUntilObservers();
-    void notifyObservers(ResourceUsageData&);
+    void notifyObservers(ResourceUsageData&&);
 
     void createThreadIfNeeded();
     static void threadCallback(void* scrollingThread);

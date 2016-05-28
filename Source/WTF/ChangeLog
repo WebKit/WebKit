@@ -1,3 +1,35 @@
+2016-05-27  Chris Dumez  <cdumez@apple.com>
+
+        callOnMainThread() should not copy captured lambda variables
+        https://bugs.webkit.org/show_bug.cgi?id=158166
+
+        Reviewed by Brady Eidson.
+
+        callOnMainThread() should not copy captured lambda variables. This
+        function is usually called cross-thread with a lambda and copying
+        the lambda (and its captured variables) can lead to thread-safety
+        issues.
+
+        This patch updates callOnMainThread() to take a NoncopyableFunction&&
+        in parameter instead of a std::function. The call sites of
+        callOnMainThread() have also been updated to use C++14's lambda
+        capture with initializer.
+
+        * WTF.xcodeproj/project.pbxproj:
+
+        * wtf/FunctionDispatcher.h:
+        * wtf/NoncopyableFunction.h:
+        - Moved NoncopyableFunction from FunctionDispatcher.h to
+          NoncopyableFunction.h.
+        - Add a new operator=(nullptr_t) operator to NoncopyableFunction to
+          match std::function, as one of the call sites needed it.
+
+        * wtf/MainThread.cpp:
+        (WTF::functionQueue):
+        (WTF::dispatchFunctionsFromMainThread):
+        (WTF::callOnMainThread):
+        * wtf/MainThread.h:
+
 2016-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for JSCOnly port.

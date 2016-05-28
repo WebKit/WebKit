@@ -185,16 +185,16 @@ void MediaPlaybackTargetPickerMac::invalidatePlaybackTargets()
     if (![keyPath isEqualToString:externalOutputDeviceAvailableKeyName] && ![keyPath isEqualToString:externalOutputDevicePickedKeyName])
         return;
 
-    RetainPtr<WebAVOutputDeviceMenuControllerHelper> strongSelf = self;
-    RetainPtr<NSString> strongKeyPath = keyPath;
-    callOnMainThread([strongSelf, strongKeyPath] {
-        MediaPlaybackTargetPickerMac* callback = strongSelf->m_callback;
+    RetainPtr<WebAVOutputDeviceMenuControllerHelper> protectedSelf = self;
+    RetainPtr<NSString> protectedKeyPath = keyPath;
+    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedKeyPath = WTFMove(protectedKeyPath)] {
+        MediaPlaybackTargetPickerMac* callback = protectedSelf->m_callback;
         if (!callback)
             return;
 
-        if ([strongKeyPath isEqualToString:externalOutputDeviceAvailableKeyName])
+        if ([protectedKeyPath isEqualToString:externalOutputDeviceAvailableKeyName])
             callback->availableDevicesDidChange();
-        else if ([strongKeyPath isEqualToString:externalOutputDevicePickedKeyName])
+        else if ([protectedKeyPath isEqualToString:externalOutputDevicePickedKeyName])
             callback->currentDeviceDidChange();
     });
 }

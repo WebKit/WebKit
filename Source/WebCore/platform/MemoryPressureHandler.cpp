@@ -172,7 +172,9 @@ void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchro
         // FastMalloc has lock-free thread specific caches that can only be cleared from the thread itself.
         WorkerThread::releaseFastMallocFreeMemoryInAllThreads();
 #if ENABLE(ASYNC_SCROLLING) && !PLATFORM(IOS)
-        ScrollingThread::dispatch(WTF::releaseFastMallocFreeMemory);
+        ScrollingThread::dispatch([]() {
+            WTF::releaseFastMallocFreeMemory();
+        });
 #endif
         WTF::releaseFastMallocFreeMemory();
     }
