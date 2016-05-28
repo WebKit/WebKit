@@ -32,7 +32,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if !PLATFORM(WIN)
+#if !OS(WINDOWS)
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -195,20 +195,20 @@ String decodeFromFilename(const String& inputString)
 
 String lastComponentOfPathIgnoringTrailingSlash(const String& path)
 {
-#if PLATFORM(WIN)
-    char pathSeperator = '\\';
+#if OS(WINDOWS)
+    char pathSeparator = '\\';
 #else
-    char pathSeperator = '/';
+    char pathSeparator = '/';
 #endif
 
-    auto position = path.reverseFind(pathSeperator);
+    auto position = path.reverseFind(pathSeparator);
     if (position == notFound)
         return path;
 
     size_t endOfSubstring = path.length() - 1;
     if (position == endOfSubstring) {
         --endOfSubstring;
-        position = path.reverseFind(pathSeperator, endOfSubstring);
+        position = path.reverseFind(pathSeparator, endOfSubstring);
     }
 
     return path.substring(position + 1, endOfSubstring - position);
@@ -265,7 +265,7 @@ bool excludeFromBackup(const String&)
 
 MappedFileData::~MappedFileData()
 {
-#if !PLATFORM(WIN)
+#if !OS(WINDOWS)
     if (!m_fileData)
         return;
     munmap(m_fileData, m_fileSize);
@@ -274,7 +274,7 @@ MappedFileData::~MappedFileData()
 
 MappedFileData::MappedFileData(const String& filePath, bool& success)
 {
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
     // FIXME: Implement mapping
     success = false;
 #else

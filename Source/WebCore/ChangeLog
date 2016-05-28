@@ -1,5 +1,21 @@
 2016-05-28  Konstantin Tokarev  <annulen@yandex.ru>
 
+        FileSystem: use OS(WINDOWS) instead of PLATFORM(WIN).
+        https://bugs.webkit.org/show_bug.cgi?id=158168
+
+        Reviewed by Darin Adler.
+
+        No new tests needed.
+
+        * platform/FileSystem.cpp:
+        (WebCore::lastComponentOfPathIgnoringTrailingSlash):
+        (WebCore::MappedFileData::~MappedFileData):
+        (WebCore::MappedFileData::MappedFileData):
+        * platform/FileSystem.h: Removed unused PlatformFilePathSeparator
+        constant.
+
+2016-05-28  Konstantin Tokarev  <annulen@yandex.ru>
+
         Use COMPILER(MSVC) instead of PLATFORM(WIN) for MSVC-specific workaround
         https://bugs.webkit.org/show_bug.cgi?id=158169
 
