@@ -50,6 +50,7 @@ namespace JSC {
 class FunctionMetadataNode;
 class FunctionExecutable;
 class ParserError;
+class RuntimeFlags;
 class SourceCode;
 class SourceProvider;
 class UnlinkedFunctionCodeBlock;
@@ -101,7 +102,7 @@ public:
     void setInvalidTypeProfilingOffsets();
 
     UnlinkedFunctionCodeBlock* unlinkedCodeBlockFor(
-        VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode,
+        VM&, const RuntimeFlags&, const SourceCode&, CodeSpecializationKind, DebuggerMode,
         ParserError&, SourceParseMode);
 
     static UnlinkedFunctionExecutable* fromGlobalCode(

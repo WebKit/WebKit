@@ -28,6 +28,7 @@
 #define SourceCodeKey_h
 
 #include "ParserModes.h"
+#include "RuntimeFlags.h"
 #include "SourceCode.h"
 #include <wtf/HashTraits.h>
 
@@ -66,11 +67,12 @@ public:
     {
     }
 
-    SourceCodeKey(const SourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
+    SourceCodeKey(const SourceCode& sourceCode, const RuntimeFlags& runtimeFlags, const String& name, SourceCodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
         : m_sourceCode(sourceCode)
         , m_name(name)
         , m_flags(codeType, builtinMode, strictMode, derivedContextType, evalContextType, isArrowFunctionContext)
         , m_hash(sourceCode.hash())
+        , m_runtimeFlags(runtimeFlags)
     {
     }
 
@@ -91,13 +93,16 @@ public:
     // providers cache their strings to make this efficient.
     StringView string() const { return m_sourceCode.view(); }
 
+    const RuntimeFlags& runtimeFlags() const { return m_runtimeFlags; }
+
     bool operator==(const SourceCodeKey& other) const
     {
         return m_hash == other.m_hash
             && length() == other.length()
             && m_flags == other.m_flags
             && m_name == other.m_name
-            && string() == other.string();
+            && string() == other.string()
+            && m_runtimeFlags == other.runtimeFlags();
     }
 
     struct Hash {
@@ -116,6 +121,7 @@ private:
     String m_name;
     SourceCodeFlags m_flags;
     unsigned m_hash;
+    RuntimeFlags m_runtimeFlags;
 };
 
 }

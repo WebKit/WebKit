@@ -314,7 +314,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
     DebuggerMode debuggerMode = globalObject->hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
     UnlinkedFunctionCodeBlock* unlinkedCodeBlock = 
         executable->m_unlinkedExecutable->unlinkedCodeBlockFor(
-            *vm, executable->m_source, kind, debuggerMode, error, 
+            *vm, globalObject->runtimeFlags(), executable->m_source, kind, debuggerMode, error, 
             executable->parseMode());
     recordParse(
         executable->m_unlinkedExecutable->features(), 
@@ -569,7 +569,7 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     VM* vm = &exec->vm();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     std::unique_ptr<ProgramNode> programNode = parse<ProgramNode>(
-        vm, m_source, Identifier(), JSParserBuiltinMode::NotBuiltin, 
+        vm, lexicalGlobalObject->runtimeFlags(), m_source, Identifier(), JSParserBuiltinMode::NotBuiltin, 
         JSParserStrictMode::NotStrict, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error);
     if (programNode)
         return 0;

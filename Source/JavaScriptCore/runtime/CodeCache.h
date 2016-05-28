@@ -49,6 +49,7 @@ class UnlinkedFunctionExecutable;
 class UnlinkedModuleProgramCodeBlock;
 class UnlinkedProgramCodeBlock;
 class VM;
+class RuntimeFlags;
 class VariableEnvironment;
 
 struct SourceCodeValue {
@@ -187,10 +188,10 @@ public:
     CodeCache();
     ~CodeCache();
 
-    UnlinkedProgramCodeBlock* getProgramCodeBlock(VM&, ProgramExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ParserError&);
-    UnlinkedEvalCodeBlock* getEvalCodeBlock(VM&, EvalExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ParserError&, EvalContextType, const VariableEnvironment*);
-    UnlinkedModuleProgramCodeBlock* getModuleProgramCodeBlock(VM&, ModuleProgramExecutable*, const SourceCode&, JSParserBuiltinMode, DebuggerMode, ParserError&);
-    UnlinkedFunctionExecutable* getFunctionExecutableFromGlobalCode(VM&, const Identifier&, const SourceCode&, ParserError&);
+    UnlinkedProgramCodeBlock* getProgramCodeBlock(VM&, const RuntimeFlags&, ProgramExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ParserError&);
+    UnlinkedEvalCodeBlock* getEvalCodeBlock(VM&, const RuntimeFlags&, EvalExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ParserError&, EvalContextType, const VariableEnvironment*);
+    UnlinkedModuleProgramCodeBlock* getModuleProgramCodeBlock(VM&, const RuntimeFlags&, ModuleProgramExecutable*, const SourceCode&, JSParserBuiltinMode, DebuggerMode, ParserError&);
+    UnlinkedFunctionExecutable* getFunctionExecutableFromGlobalCode(VM&, const RuntimeFlags&, const Identifier&, const SourceCode&, ParserError&);
 
     void clear()
     {
@@ -199,7 +200,7 @@ public:
 
 private:
     template <class UnlinkedCodeBlockType, class ExecutableType> 
-    UnlinkedCodeBlockType* getGlobalCodeBlock(VM&, ExecutableType*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ParserError&, EvalContextType, const VariableEnvironment*);
+    UnlinkedCodeBlockType* getGlobalCodeBlock(VM&, const RuntimeFlags&, ExecutableType*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ParserError&, EvalContextType, const VariableEnvironment*);
 
     CodeCacheMap m_sourceCode;
 };

@@ -1,3 +1,342 @@
+2016-05-27  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] implement async functions proposal
+        https://bugs.webkit.org/show_bug.cgi?id=156147
+
+        Reviewed by Yusuke Suzuki.
+
+        Adds support for `async` functions, proposed in https://tc39.github.io/ecmascript-asyncawait/.
+
+        On the front-end side, "await" becomes a contextual keyword when used within an async function,
+        which triggers parsing an AwaitExpression. "await" becomes an illegal identifier name within
+        these contexts. The bytecode generated from an "await" expression is identical to that generated
+        in a "yield" expression in a Generator, as AsyncFunction reuses generator's state machine mechanism.
+
+        There are numerous syntactic forms for language features, including a variation on ArrowFunctions,
+        requiring the keyword `async` to precede ArrowFormalParameters, and similarly, MethodDefinitions,
+        which are ordinary MethodDefinitions preceded by the keyword `async`.
+
+        An async function desugars to the following:
+
+        ```
+        async function asyncFn() {
+        }
+
+        becomes:
+
+        function asyncFn() {
+            let generator = {
+                @generatorNext: function(@generator, @generatorState, @generatorValue, @generatorResumeMode) {
+                  // generator state machine stuff here
+                },
+                @generatorState: 0,
+                @generatorThis: this,
+                @generatorFrame: null
+            };
+            return @asyncFunctionResume(generator, undefined, GeneratorResumeMode::NormalMode);
+        }
+        ```
+
+        `@asyncFunctionResume()` is similar to `@generatorResume`, with the exception that it will wrap the
+        result of invoking `@generatorNext()` in a Promise, and will avoid allocating an iterator result
+        object.
+
+        If the generator has yielded (an AwaitExpression has occurred), resumption will occur automatically
+        once the await-expression operand is finished, via Promise chaining.
+
+        * API/JSScriptRef.cpp:
+        (parseScript):
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/AsyncFunctionPrototype.js: Added.
+        (asyncFunctionResume):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutable):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::isArrowFunction):
+        (JSC::UnlinkedCodeBlock::isOrdinaryArrowFunction):
+        (JSC::UnlinkedCodeBlock::isAsyncArrowFunction):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunctionExpressionCommon):
+        (JSC::BytecodeGenerator::emitNewArrowFunctionExpression):
+        (JSC::BytecodeGenerator::emitNewMethodDefinition):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::parse):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitNewFuncCommon):
+        (JSC::JIT::emit_op_new_async_func):
+        (JSC::JIT::emitNewFuncExprCommon):
+        (JSC::JIT::emit_op_new_async_func_exp):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        (runInteractive):
+        (printUsageStatement):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createAsyncFunctionBody):
+        * parser/Keywords.table:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        (JSC::Parser<LexerType>::parseAsyncFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseFunctionDeclarationStatement):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseExpressionOrLabelStatement):
+        (JSC::Parser<LexerType>::parseImportClauseItem):
+        (JSC::Parser<LexerType>::parseImportDeclaration):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseAwaitExpression):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parseAsyncFunctionExpression):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::parseArrowFunctionExpression):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        (JSC::Parser<LexerType>::printUnexpectedTokenText):
+        * parser/Parser.h:
+        (JSC::isIdentifierOrKeyword):
+        (JSC::Scope::Scope):
+        (JSC::Scope::setSourceParseMode):
+        (JSC::Scope::isAsyncFunction):
+        (JSC::Scope::isAsyncFunctionBoundary):
+        (JSC::Scope::isModule):
+        (JSC::Scope::setIsFunction):
+        (JSC::Scope::setIsAsyncArrowFunction):
+        (JSC::Scope::setIsAsyncFunction):
+        (JSC::Scope::setIsAsyncFunctionBody):
+        (JSC::Scope::setIsAsyncArrowFunctionBody):
+        (JSC::Parser::ExpressionErrorClassifier::forceClassifyExpressionError):
+        (JSC::Parser::ExpressionErrorClassifier::propagateExpressionErrorClass):
+        (JSC::Parser::ExpressionErrorClassifier::indicatesPossibleAsyncArrowFunction):
+        (JSC::Parser::forceClassifyExpressionError):
+        (JSC::Parser::declarationTypeToVariableKind):
+        (JSC::Parser::closestParentOrdinaryFunctionNonLexicalScope):
+        (JSC::Parser::pushScope):
+        (JSC::Parser::popScopeInternal):
+        (JSC::Parser::matchSpecIdentifier):
+        (JSC::Parser::isDisallowedIdentifierAwait):
+        (JSC::Parser::disallowedIdentifierAwaitReason):
+        (JSC::parse):
+        * parser/ParserModes.h:
+        (JSC::isFunctionParseMode):
+        (JSC::isAsyncFunctionParseMode):
+        (JSC::isAsyncArrowFunctionParseMode):
+        (JSC::isAsyncFunctionWrapperParseMode):
+        (JSC::isAsyncFunctionBodyParseMode):
+        (JSC::isModuleParseMode):
+        (JSC::isProgramParseMode):
+        (JSC::constructAbilityForParseMode):
+        * parser/ParserTokens.h:
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::runtimeFlags):
+        (JSC::SourceCodeKey::operator==):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createAsyncFunctionBody):
+        * runtime/AsyncFunctionConstructor.cpp: Added.
+        (JSC::AsyncFunctionConstructor::AsyncFunctionConstructor):
+        (JSC::AsyncFunctionConstructor::finishCreation):
+        (JSC::callAsyncFunctionConstructor):
+        (JSC::constructAsyncFunctionConstructor):
+        (JSC::AsyncFunctionConstructor::getCallData):
+        (JSC::AsyncFunctionConstructor::getConstructData):
+        * runtime/AsyncFunctionConstructor.h: Added.
+        (JSC::AsyncFunctionConstructor::create):
+        (JSC::AsyncFunctionConstructor::createStructure):
+        * runtime/AsyncFunctionPrototype.cpp: Added.
+        (JSC::AsyncFunctionPrototype::AsyncFunctionPrototype):
+        (JSC::AsyncFunctionPrototype::finishCreation):
+        * runtime/AsyncFunctionPrototype.h: Added.
+        (JSC::AsyncFunctionPrototype::create):
+        (JSC::AsyncFunctionPrototype::createStructure):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getModuleProgramCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::checkModuleSyntax):
+        * runtime/Completion.h:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ProgramExecutable::checkSyntax):
+        * runtime/Executable.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+        * runtime/JSAsyncFunction.cpp: Added.
+        (JSC::JSAsyncFunction::JSAsyncFunction):
+        (JSC::JSAsyncFunction::createImpl):
+        (JSC::JSAsyncFunction::create):
+        (JSC::JSAsyncFunction::createWithInvalidatedReallocationWatchpoint):
+        * runtime/JSAsyncFunction.h: Added.
+        (JSC::JSAsyncFunction::allocationSize):
+        (JSC::JSAsyncFunction::createStructure):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        (JSC::JSGlobalObject::createModuleProgramCodeBlock):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::asyncFunctionPrototype):
+        (JSC::JSGlobalObject::asyncFunctionStructure):
+        * runtime/ModuleLoaderObject.cpp:
+        (JSC::moduleLoaderObjectParseModule):
+        * runtime/RuntimeFlags.h:
+        (JSC::RuntimeFlags::operator==):
+        (JSC::RuntimeFlags::operator!=):
+        * tests/stress/async-await-basic.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (shouldThrow):
+        (shouldThrowAsync):
+        (let.AsyncFunction.async):
+        (async.asyncFunctionForProto):
+        (Object.getPrototypeOf.async):
+        (Object.getPrototypeOf.async.method):
+        (async):
+        (async.method):
+        (async.asyncNonConstructorDecl):
+        (shouldThrow.new.async):
+        (shouldThrow.new.async.nonConstructor):
+        (async.asyncDecl):
+        (async.f):
+        (MyError):
+        (async.asyncDeclThrower):
+        (shouldThrowAsync.async):
+        (resolveLater):
+        (rejectLater):
+        (async.resumeAfterNormal):
+        (O.async.resumeAfterNormal):
+        (resumeAfterNormalArrow.async):
+        (async.resumeAfterThrow):
+        (O.async.resumeAfterThrow):
+        (resumeAfterThrowArrow.async):
+        (catch):
+        * tests/stress/async-await-module-reserved-word.js: Added.
+        (shouldThrow):
+        (SyntaxError.Canstring_appeared_hereawait.checkModuleSyntaxError.String.raw.await):
+        (checkModuleSyntaxError.String.raw.await):
+        (checkModuleSyntaxError.String.raw.async.await):
+        (SyntaxError.Cannot.declare.named):
+        * tests/stress/async-await-mozilla.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (shouldThrow):
+        (shouldThrowAsync):
+        (assert):
+        (shouldThrowSyntaxError):
+        (mozSemantics.async.empty):
+        (mozSemantics.async.simpleReturn):
+        (mozSemantics.async.simpleAwait):
+        (mozSemantics.async.simpleAwaitAsync):
+        (mozSemantics.async.returnOtherAsync):
+        (mozSemantics.async.simpleThrower):
+        (mozSemantics.async.delegatedThrower):
+        (mozSemantics.async.tryCatch):
+        (mozSemantics.async.tryCatchThrow):
+        (mozSemantics.async.wellFinally):
+        (mozSemantics.async.finallyMayFail):
+        (mozSemantics.async.embedded.async.inner):
+        (mozSemantics.async.embedded):
+        (mozSemantics.async.fib):
+        (mozSemantics.async.isOdd.async.isEven):
+        (mozSemantics.async.isOdd):
+        (mozSemantics.hardcoreFib.async.fib2):
+        (mozSemantics.namedAsyncExpr.async.simple):
+        (mozSemantics.async.executionOrder.async.first):
+        (mozSemantics.async.executionOrder.async.second):
+        (mozSemantics.async.executionOrder.async.third):
+        (mozSemantics.async.executionOrder):
+        (mozSemantics.async.miscellaneous):
+        (mozSemantics.thrower):
+        (mozSemantics.async.defaultArgs):
+        (mozSemantics.shouldThrow):
+        (mozSemantics):
+        (mozMethods.X):
+        (mozMethods.X.prototype.async.getValue):
+        (mozMethods.X.prototype.setValue):
+        (mozMethods.X.prototype.async.increment):
+        (mozMethods.X.prototype.async.getBaseClassName):
+        (mozMethods.X.async.getStaticValue):
+        (mozMethods.Y.prototype.async.getBaseClassName):
+        (mozMethods.Y):
+        (mozFunctionNameInferrence.async.test):
+        (mozSyntaxErrors):
+        * tests/stress/async-await-reserved-word.js: Added.
+        (assert):
+        (shouldThrowSyntaxError):
+        (AsyncFunction.async):
+        * tests/stress/async_arrow_functions_lexical_arguments_binding.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (shouldThrowAsync):
+        (noArgumentsArrow2.async):
+        * tests/stress/async_arrow_functions_lexical_new.target_binding.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (shouldThrowAsync):
+        (C1):
+        (C2):
+        (shouldThrowAsync.async):
+        * tests/stress/async_arrow_functions_lexical_super_binding.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (BaseClass.prototype.baseClassValue):
+        (BaseClass):
+        (ChildClass.prototype.asyncSuperProp):
+        (ChildClass.prototype.asyncSuperProp2):
+        (ChildClass):
+        * tests/stress/async_arrow_functions_lexical_this_binding.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (d.y):
+
 2016-05-27  Saam barati  <sbarati@apple.com>
 
         DebuggerCallFrame crashes when updated with the globalExec because neither ShadowChicken's algorithm nor StackVisitor's algorithm reasons about the globalExec

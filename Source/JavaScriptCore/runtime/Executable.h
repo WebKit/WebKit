@@ -652,6 +652,7 @@ public:
     ConstructAbility constructAbility() const { return m_unlinkedExecutable->constructAbility(); }
     bool isClass() const { return !classSource().isNull(); }
     bool isArrowFunction() const { return parseMode() == SourceParseMode::ArrowFunctionMode; }
+    bool isAsyncFunction() const { return isAsyncFunctionParseMode(parseMode()); }
     bool isGetter() const { return parseMode() == SourceParseMode::GetterMode; }
     bool isSetter() const { return parseMode() == SourceParseMode::SetterMode; }
     DerivedContextType derivedContextType() const { return m_unlinkedExecutable->derivedContextType(); }

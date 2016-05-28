@@ -118,7 +118,9 @@ public:
     bool isStrictMode() const { return m_isStrictMode; }
     bool usesEval() const { return m_usesEval; }
     SourceParseMode parseMode() const { return m_parseMode; }
-    bool isArrowFunction() const { return m_parseMode == SourceParseMode::ArrowFunctionMode; }
+    bool isArrowFunction() const { return isOrdinaryArrowFunction() || isAsyncArrowFunction(); }
+    bool isOrdinaryArrowFunction() const { return m_parseMode == SourceParseMode::ArrowFunctionMode; }
+    bool isAsyncArrowFunction() const { return m_parseMode == SourceParseMode::AsyncArrowFunctionMode; }
     DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
     EvalContextType evalContextType() const { return static_cast<EvalContextType>(m_evalContextType); }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }

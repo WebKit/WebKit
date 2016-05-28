@@ -1,3 +1,13 @@
+2016-05-27  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] implement async functions proposal
+        https://bugs.webkit.org/show_bug.cgi?id=156147
+
+        Reviewed by Yusuke Suzuki.
+
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2016-05-27  Chris Dumez  <cdumez@apple.com>
 
         Improve lambda capture in NetworkCache::Storage::synchronize()

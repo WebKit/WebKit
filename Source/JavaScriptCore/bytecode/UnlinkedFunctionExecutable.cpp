@@ -48,7 +48,7 @@ static_assert(sizeof(UnlinkedFunctionExecutable) <= 256, "UnlinkedFunctionExecut
 const ClassInfo UnlinkedFunctionExecutable::s_info = { "UnlinkedFunctionExecutable", 0, 0, CREATE_METHOD_TABLE(UnlinkedFunctionExecutable) };
 
 static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
-    VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source,
+    VM& vm, const RuntimeFlags& runtimeFlags, UnlinkedFunctionExecutable* executable, const SourceCode& source,
     CodeSpecializationKind kind, DebuggerMode debuggerMode,
     UnlinkedFunctionKind functionKind, ParserError& error, SourceParseMode parseMode)
 {
@@ -56,7 +56,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     JSParserStrictMode strictMode = executable->isInStrictContext() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     ASSERT(isFunctionParseMode(executable->parseMode()));
     std::unique_ptr<FunctionNode> function = parse<FunctionNode>(
-        &vm, source, executable->name(), builtinMode, strictMode, executable->parseMode(), executable->superBinding(), error, nullptr);
+        &vm, runtimeFlags, source, executable->name(), builtinMode, strictMode, executable->parseMode(), executable->superBinding(), error, nullptr);
 
     if (!function) {
         ASSERT(error.isValid());
@@ -175,7 +175,7 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     ParserError error;
     VM& vm = exec.vm();
     CodeCache* codeCache = vm.codeCache();
-    UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(vm, name, source, error);
+    UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(vm, exec.lexicalGlobalObject()->runtimeFlags(), name, source, error);
 
     auto& globalObject = *exec.lexicalGlobalObject();
     if (globalObject.hasDebugger())
@@ -190,7 +190,7 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
 }
 
 UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
-    VM& vm, const SourceCode& source, CodeSpecializationKind specializationKind, 
+    VM& vm, const RuntimeFlags& runtimeFlags, const SourceCode& source, CodeSpecializationKind specializationKind, 
     DebuggerMode debuggerMode, ParserError& error, SourceParseMode parseMode)
 {
     switch (specializationKind) {
@@ -205,7 +205,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     }
 
     UnlinkedFunctionCodeBlock* result = generateUnlinkedFunctionCodeBlock(
-        vm, this, source, specializationKind, debuggerMode, 
+        vm, runtimeFlags, this, source, specializationKind, debuggerMode,
         isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, 
         error, parseMode);
     

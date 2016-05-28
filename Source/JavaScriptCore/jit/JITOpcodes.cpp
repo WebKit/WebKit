@@ -971,6 +971,8 @@ void JIT::emitNewFuncCommon(Instruction* currentInstruction)
     OpcodeID opcodeID = m_vm->interpreter->getOpcodeID(currentInstruction->u.opcode);
     if (opcodeID == op_new_func)
         callOperation(operationNewFunction, dst, regT0, funcExec);
+    else if (opcodeID == op_new_async_func)
+        callOperation(operationNewAsyncFunction, dst, regT0, funcExec);
     else {
         ASSERT(opcodeID == op_new_generator_func);
         callOperation(operationNewGeneratorFunction, dst, regT0, funcExec);
@@ -983,6 +985,11 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
 }
 
 void JIT::emit_op_new_generator_func(Instruction* currentInstruction)
+{
+    emitNewFuncCommon(currentInstruction);
+}
+
+void JIT::emit_op_new_async_func(Instruction* currentInstruction)
 {
     emitNewFuncCommon(currentInstruction);
 }
@@ -1008,6 +1015,8 @@ void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
 
     if (opcodeID == op_new_func_exp || opcodeID == op_new_arrow_func_exp)
         callOperation(operationNewFunction, dst, regT0, function);
+    else if (opcodeID == op_new_async_func_exp)
+        callOperation(operationNewAsyncFunction, dst, regT0, function);
     else {
         ASSERT(opcodeID == op_new_generator_func_exp);
         callOperation(operationNewGeneratorFunction, dst, regT0, function);
@@ -1025,6 +1034,12 @@ void JIT::emit_op_new_generator_func_exp(Instruction* currentInstruction)
 {
     emitNewFuncExprCommon(currentInstruction);
 }
+
+void JIT::emit_op_new_async_func_exp(Instruction* currentInstruction)
+{
+    emitNewFuncExprCommon(currentInstruction);
+}
+
 
 void JIT::emit_op_new_arrow_func_exp(Instruction* currentInstruction)
 {

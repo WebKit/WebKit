@@ -351,7 +351,7 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     if (thisObject->isHostOrBuiltinFunction())
         return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 
-    if (propertyName == exec->propertyNames().prototype && !thisObject->jsExecutable()->isArrowFunction()) {
+    if (propertyName == exec->propertyNames().prototype && !thisObject->jsExecutable()->isArrowFunction() && !thisObject->jsExecutable()->isAsyncFunction()) {
         VM& vm = exec->vm();
         unsigned attributes;
         PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);

@@ -53,6 +53,7 @@ typedef enum {
 } WebStorageBlockingPolicy;
 
 typedef enum {
+    WebKitJavaScriptRuntimeFlagsAsyncAwaitEnabled = 1u << 0,
     WebKitJavaScriptRuntimeFlagsAllEnabled = 0
 } WebKitJavaScriptRuntimeFlags;
 

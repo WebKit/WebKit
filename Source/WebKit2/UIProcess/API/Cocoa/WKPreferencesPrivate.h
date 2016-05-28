@@ -43,6 +43,7 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
 } WK_ENUM_AVAILABLE(10_11, 9_0);
 
 typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
+    _WKJavaScriptRuntimeFlagsAsyncAwaitEnabled = 1 << 0,
     _WKJavaScriptRuntimeFlagsAllEnabled = 0
 } WK_ENUM_AVAILABLE(10_11, 9_0);
 

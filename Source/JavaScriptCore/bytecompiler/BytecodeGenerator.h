@@ -822,7 +822,7 @@ namespace JSC {
         {
             DerivedContextType newDerivedContextType = DerivedContextType::None;
 
-            if (metadata->parseMode() == SourceParseMode::ArrowFunctionMode) {
+            if (metadata->parseMode() == SourceParseMode::ArrowFunctionMode || metadata->parseMode() == SourceParseMode::AsyncArrowFunctionMode) {
                 if (constructorKind() == ConstructorKind::Derived || isDerivedConstructorContext())
                     newDerivedContextType = DerivedContextType::DerivedConstructorContext;
                 else if (m_codeBlock->isClassContext() || isDerivedClassContext())
@@ -836,7 +836,7 @@ namespace JSC {
             // https://bugs.webkit.org/show_bug.cgi?id=151547
             SourceParseMode parseMode = metadata->parseMode();
             ConstructAbility constructAbility = ConstructAbility::CanConstruct;
-            if (parseMode == SourceParseMode::GetterMode || parseMode == SourceParseMode::SetterMode || parseMode == SourceParseMode::ArrowFunctionMode || parseMode == SourceParseMode::GeneratorWrapperFunctionMode)
+            if (parseMode == SourceParseMode::GetterMode || parseMode == SourceParseMode::SetterMode || parseMode == SourceParseMode::ArrowFunctionMode || parseMode == SourceParseMode::GeneratorWrapperFunctionMode || isAsyncFunctionParseMode(parseMode))
                 constructAbility = ConstructAbility::CannotConstruct;
             else if (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() == ConstructorKind::None)
                 constructAbility = ConstructAbility::CannotConstruct;

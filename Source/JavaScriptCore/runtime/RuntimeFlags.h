@@ -30,8 +30,9 @@
 
 namespace JSC {
 
-// macro(name, isEnabledFlag)
-#define JSC_RUNTIME_FLAG(macro)
+// macro(name, flagName, isEnabledFlag)
+#define JSC_RUNTIME_FLAG(macro) \
+    macro(AsyncAwaitEnabled, true)
 
 class RuntimeFlags {
 private:
@@ -88,6 +89,16 @@ public:
 #undef JSC_USE_RUNTIME_FLAG
             0u
         );
+    }
+
+    bool operator==(const RuntimeFlags& other) const
+    {
+        return m_flags == other.m_flags;
+    }
+
+    bool operator!=(const RuntimeFlags& other) const
+    {
+        return m_flags != other.m_flags;
     }
 
 private:

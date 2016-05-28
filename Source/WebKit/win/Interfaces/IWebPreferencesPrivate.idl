@@ -32,6 +32,7 @@ import "ocidl.idl";
 #endif
 
 typedef enum WebKitJavaScriptRuntimeFlags {
+    WebKitJavaScriptRuntimeFlagsAsyncAwaitEnabled = 1, // 1u << 0
     WebKitJavaScriptRuntimeFlagsAllEnabled = 0
 } WebKitJavaScriptRuntimeFlags;
 
