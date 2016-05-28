@@ -1185,17 +1185,6 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_func_exp)
     LLINT_RETURN(JSAsyncFunction::create(vm, executable, scope));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_new_arrow_func_exp)
-{
-    LLINT_BEGIN();
-    
-    CodeBlock* codeBlock = exec->codeBlock();
-    JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
-    FunctionExecutable* executable = codeBlock->functionExpr(pc[3].u.operand);
-    
-    LLINT_RETURN(JSFunction::create(vm, executable, scope));
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_set_function_name)
 {
     LLINT_BEGIN();

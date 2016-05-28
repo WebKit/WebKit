@@ -1013,7 +1013,7 @@ void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
     FunctionExecutable* function = m_codeBlock->functionExpr(currentInstruction[3].u.operand);
     OpcodeID opcodeID = m_vm->interpreter->getOpcodeID(currentInstruction->u.opcode);
 
-    if (opcodeID == op_new_func_exp || opcodeID == op_new_arrow_func_exp)
+    if (opcodeID == op_new_func_exp)
         callOperation(operationNewFunction, dst, regT0, function);
     else if (opcodeID == op_new_async_func_exp)
         callOperation(operationNewAsyncFunction, dst, regT0, function);
@@ -1040,12 +1040,6 @@ void JIT::emit_op_new_async_func_exp(Instruction* currentInstruction)
     emitNewFuncExprCommon(currentInstruction);
 }
 
-
-void JIT::emit_op_new_arrow_func_exp(Instruction* currentInstruction)
-{
-    emitNewFuncExprCommon(currentInstruction);
-}
-    
 void JIT::emit_op_new_array(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;

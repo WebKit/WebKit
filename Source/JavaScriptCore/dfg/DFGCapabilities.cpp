@@ -227,7 +227,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_new_func_exp:
     case op_new_generator_func:
     case op_new_generator_func_exp:
-    case op_new_arrow_func_exp:
     case op_set_function_name:
     case op_create_lexical_environment:
     case op_get_parent_scope:

@@ -151,7 +151,6 @@ void computeUsesForBytecodeOffset(
     case op_new_func_exp:
     case op_new_async_func_exp:
     case op_new_generator_func_exp:
-    case op_new_arrow_func_exp:
     case op_to_index_string:
     case op_create_lexical_environment:
     case op_resolve_scope:
@@ -387,7 +386,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_new_async_func_exp:
     case op_new_generator_func:
     case op_new_generator_func_exp:
-    case op_new_arrow_func_exp:
     case op_call_varargs:
     case op_tail_call_varargs:
     case op_construct_varargs:

@@ -1,3 +1,36 @@
+2016-05-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] op_new_arrow_func_exp is no longer necessary
+        https://bugs.webkit.org/show_bug.cgi?id=158180
+
+        Reviewed by Saam Barati.
+
+        This patch removes op_new_arrow_func_exp bytecode since
+        what op_new_arrow_func_exp is doing is completely the same to op_new_func_exp.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset): Deleted.
+        (JSC::computeDefsForBytecodeOffset): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewFunctionExpressionCommon):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass): Deleted.
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitNewFuncExprCommon):
+        (JSC::JIT::emit_op_new_arrow_func_exp): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL): Deleted.
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+
 2016-05-27  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] implement async functions proposal

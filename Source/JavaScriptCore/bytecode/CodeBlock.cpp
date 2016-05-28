@@ -1439,14 +1439,6 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
             break;
         }
-        case op_new_arrow_func_exp: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int f0 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "op_new_arrow_func_exp");
-            out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
-            break;
-        }
         case op_new_func_exp: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;

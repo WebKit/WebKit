@@ -2951,21 +2951,17 @@ void BytecodeGenerator::emitNewFunctionExpressionCommon(RegisterID* dst, Functio
 
     OpcodeID opcodeID = op_new_func_exp;
     switch (function->parseMode()) {
-    case SourceParseMode::GeneratorWrapperFunctionMode: {
+    case SourceParseMode::GeneratorWrapperFunctionMode:
         opcodeID = op_new_generator_func_exp;
         break;
-    }
-    case SourceParseMode::ArrowFunctionMode: {
-        opcodeID = op_new_arrow_func_exp;
-        break;
-    }
-    default: {
-        break;
-    }
+
     case SourceParseMode::AsyncFunctionMode:
     case SourceParseMode::AsyncMethodMode:
     case SourceParseMode::AsyncArrowFunctionMode:
         opcodeID = op_new_async_func_exp;
+        break;
+
+    default:
         break;
     }
     
