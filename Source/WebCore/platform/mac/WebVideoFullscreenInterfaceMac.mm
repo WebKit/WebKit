@@ -111,6 +111,9 @@ void WebVideoFullscreenInterfaceMac::rateChanged(bool isPlaying, float playbackR
 {
 #if USE(APPLE_INTERNAL_SDK)
     [videoFullscreenInterfaceObjC() updateIsPlaying:isPlaying newPlaybackRate:playbackRate];
+#else
+    UNUSED_PARAM(isPlaying);
+    UNUSED_PARAM(playbackRate);
 #endif
 }
 
@@ -170,6 +173,10 @@ void WebVideoFullscreenInterfaceMac::setVideoDimensions(bool, float, float)
 bool WebVideoFullscreenInterfaceMac::isPlayingVideoInEnhancedFullscreen() const
 {
     return false;
+}
+
+void WebVideoFullscreenInterfaceMac::setExternalPlayback(bool, ExternalPlaybackTargetType, String)
+{
 }
 
 bool supportsPictureInPicture()

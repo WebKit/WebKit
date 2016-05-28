@@ -29,6 +29,7 @@
 #if !PLATFORM(IOS)
 
 #include <WebCore/DynamicLinkerInterposing.h>
+#include <mutex>
 
 extern "C" CFDictionaryRef _CFHTTPCookieStorageCopyRequestHeaderFieldsForURL(CFAllocatorRef inAllocator, CFHTTPCookieStorageRef inCookieStorage, CFURLRef inRequestURL);
 
@@ -80,12 +81,8 @@ void WebKitCookieStorageShimInitialize(const CookieStorageShimCallbacks& callbac
 {
     // Because the value of cookieStorageShimCallbacks will be read from mulitple threads,
     // only allow it to be initialized once.
-    static int initialized = 0;
-    if (!OSAtomicCompareAndSwapInt(0, 1, &initialized)) {
-        return;
-    }
-
-    cookieStorageShimCallbacks = callbacks;
+    static std::once_flag initializeCallbacksOnceFlag;
+    std::call_once(initializeCallbacksOnceFlag, [&callbacks] { cookieStorageShimCallbacks = callbacks; });
 }
     
 }

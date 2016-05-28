@@ -48,10 +48,6 @@
 
 using namespace WebCore;
 
-@interface NSURLRequest (Details) 
-+ (void)setAllowsSpecificHTTPSCertificate:(NSArray *)allow forHost:(NSString *)host;
-@end
-
 namespace WebKit {
 
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)

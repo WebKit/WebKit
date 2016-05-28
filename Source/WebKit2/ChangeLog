@@ -1,3 +1,16 @@
+2016-05-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix the build with newer clang and other custom configuration options
+        https://bugs.webkit.org/show_bug.cgi?id=158161
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/ios/NetworkProcessIOS.mm: -setAllowsSpecificHTTPSCertificate:forHost:
+        is now in CFNetworkSPI.h
+        * NetworkProcess/mac/NetworkProcessMac.mm: Ditto.
+        * Shared/mac/CookieStorageShimLibrary.cpp:
+        (WebKit::WebKitCookieStorageShimInitialize): Use more portable std::call_once.
+
 2016-05-28  Chris Dumez  <cdumez@apple.com>
 
         Modernize lambda captures in the network disk cache implementation

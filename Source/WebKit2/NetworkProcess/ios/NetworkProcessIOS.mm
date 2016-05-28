@@ -33,15 +33,12 @@
 #import "ResourceCachesToClear.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
 
 #define ENABLE_MANUAL_NETWORK_SANDBOXING 0
-
-@interface NSURLRequest (WKDetails)
-+ (void)setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
-@end
 
 using namespace WebCore;
 

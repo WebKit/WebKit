@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma clang system_header
+
 #ifndef CFNetworkSPI_h
 #define CFNetworkSPI_h
 
@@ -85,6 +87,8 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 
 #if defined(__OBJC__)
 @interface NSURLRequest ()
++ (NSArray *)allowsSpecificHTTPSCertificateForHost:(NSString *)host;
++ (void)setAllowsSpecificHTTPSCertificate:(NSArray *)allow forHost:(NSString *)host;
 - (void)_setProperty:(id)value forKey:(NSString *)key;
 @end
 

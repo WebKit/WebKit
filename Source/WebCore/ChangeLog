@@ -1,3 +1,20 @@
+2016-05-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix the build with newer clang and other custom configuration options
+        https://bugs.webkit.org/show_bug.cgi?id=158161
+
+        Reviewed by Dan Bernstein.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (WebCore::WebVideoFullscreenInterfaceMac::rateChanged): Added UNUSED_PARAMs for the
+        case where this function is unimplemented.
+        (WebCore::WebVideoFullscreenInterfaceMac::setExternalPlayback): Added a non-additions
+        version of this function.
+        * platform/spi/cf/CFNetworkSPI.h: Silence nullability-completeness (and other) warnings.
+        I doubt that it's practical to get these right for every SDK version at this time. Added
+        functions for overriding HTTPS certicate behavior that we used to declare in .m files.
+        * platform/spi/mac/AVFoundationSPI.h: Define AVAssetCache conditionally.
+
 2016-05-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Autocorrection makes it hard to type "doesn't" and to type @ in email addresses
