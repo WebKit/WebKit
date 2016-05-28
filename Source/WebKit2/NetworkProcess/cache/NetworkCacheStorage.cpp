@@ -278,12 +278,7 @@ void Storage::synchronize()
             ++count;
         });
 
-        auto* recordFilterPtr = recordFilter.release();
-        auto* blobFilterPtr = blobFilter.release();
-        RunLoop::main().dispatch([this, recordFilterPtr, blobFilterPtr, recordsSize] {
-            auto recordFilter = std::unique_ptr<ContentsFilter>(recordFilterPtr);
-            auto blobFilter = std::unique_ptr<ContentsFilter>(blobFilterPtr);
-
+        RunLoop::main().dispatch([this, recordFilter = WTFMove(recordFilter), blobFilter = WTFMove(blobFilter), recordsSize]() mutable {
             for (auto& recordFilterKey : m_recordFilterHashesAddedDuringSynchronization)
                 recordFilter->add(recordFilterKey);
             m_recordFilterHashesAddedDuringSynchronization.clear();

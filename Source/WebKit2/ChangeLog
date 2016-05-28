@@ -1,3 +1,19 @@
+2016-05-27  Chris Dumez  <cdumez@apple.com>
+
+        Improve lambda capture in NetworkCache::Storage::synchronize()
+        https://bugs.webkit.org/show_bug.cgi?id=158176
+
+        Reviewed by Brady Eidson.
+
+        Improve lambda capture in NetworkCache::Storage::synchronize(). We can
+        now capture the std::unique_ptr<> variables directly thanks to:
+        1. C++14's support for initializer's in lambda captures
+        2. RunLoop::dispatch() now takes a NoncopyableFunction in instead of
+           a std::function, allowing us to capture non-copyable variables.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::synchronize):
+
 2016-05-27  Jeremy Jones  <jeremyj@apple.com>
 
         Decrease flicker when changing video presentation mode.
