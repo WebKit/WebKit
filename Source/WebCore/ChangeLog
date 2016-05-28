@@ -1,3 +1,27 @@
+2016-05-27  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r190574): Swipe snapshots are always black on iPhone 5
+        https://bugs.webkit.org/show_bug.cgi?id=158171
+        <rdar://problem/24639709>
+
+        Reviewed by Beth Dakin.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (optionsForBiplanarSurface):
+        (optionsFor32BitSurface):
+        (IOSurface::IOSurface):
+        (IOSurface::format):
+        We are supposed to be using bi-planar 422f, not yuvf. They're the same
+        size, but different formats, and 422f is supported in more places.
+
+        Clean up the IOSurface constructor so we don't have a switch inside an if
+        with random ASSERT_NOT_REACHED, making helper functions to build the
+        options dictionary for arbitrary-size biplanar and 32-bit single-planar
+        surfaces.
+
+        I don't know how to write a test because IOSurface is not supported
+        in the simulator.
+
 2016-05-27  Zalan Bujtas  <zalan@apple.com>
 
         EventHandler finds incorrect scrollable container.
