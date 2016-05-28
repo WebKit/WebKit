@@ -197,7 +197,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
         for (let p = this.parent; p; p = p.parent) {
             if (p === this._base)
                 return false;
-            if (this._node.dominatorNodeIdentifier === this.parent.node.id)
+            if (this._node.dominatorNodeIdentifier === p.node.id)
                 return true;
         }
 

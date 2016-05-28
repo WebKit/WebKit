@@ -1,3 +1,14 @@
+2016-05-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Not all transitively dominated nodes display their retained size
+        https://bugs.webkit.org/show_bug.cgi?id=158174
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._isDominatedByNonBaseParent):
+        Use the parent reference changing in the loop instead of always using the same parent.
+
 2016-05-27  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add indicators to show nesting levels inside DOM Tree
