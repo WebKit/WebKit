@@ -1,3 +1,37 @@
+2016-05-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Autocorrection makes it hard to type "doesn't" and to type @ in email addresses
+        https://bugs.webkit.org/show_bug.cgi?id=158177
+        <rdar://problem/20490862>
+        <rdar://problem/24707954>
+
+        Reviewed by Darin Adler.
+
+        When the user had typed "doesn'", some unified spellchecker may try to autocorrect it to "doesn't" or "does"
+        but we should ignore this for a moment until the next character is typed by the user. The code to deal with
+        this situation which checks the existence of an "ambiguous boundary character" was not robust when the
+        replacement text was longer than the corrected text.
+
+        Fixed this bug by fixing the logic to detect this case. Also added '@' as an ambiguous boundary character
+        since autocorrecting letters that appear right before '@' would not be useful in many cases.
+
+        Tests: ManualTests/autocorrection/autocorrection-at-mark.html
+               ManualTests/autocorrection/autocorrection-contraction-2.html
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::timerFired): Fixed a bug that we can show an empty reversion panel.
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor): When the user had typed "doesn'" and our autocorrection result is
+        "doesn't", resultEndLocation (the end of "doesn't") is larger than selectionOffset (the end of "doesn'").
+        When the correction is "does", resultEndLocation (the end of "does") is one less than selectionOffset.
+        Updated the condition to deal with both of these conditions as well as cases where the correction result
+        contains more than one letter after '.
+        * editing/htmlediting.cpp:
+        (WebCore::isAmbiguousBoundaryCharacter): Moved from the header file since this is not a hot function and
+        doesn't need to be inlined everywhere. Added '@' as an ambiguous boundary character.
+        * editing/htmlediting.h:
+        (WebCore::isAmbiguousBoundaryCharacter): Moved to the cpp file.
+
 2016-05-28  Konstantin Tokarev  <annulen@yandex.ru>
 
         FileSystem: use OS(WINDOWS) instead of PLATFORM(WIN).

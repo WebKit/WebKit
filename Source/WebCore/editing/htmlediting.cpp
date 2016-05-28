@@ -389,6 +389,14 @@ int lastOffsetForEditing(const Node& node)
     return 0;
 }
 
+bool isAmbiguousBoundaryCharacter(UChar character)
+{
+    // These are characters that can behave as word boundaries, but can appear within words.
+    // If they are just typed, i.e. if they are immediately followed by a caret, we want to delay text checking until the next character has been typed.
+    // FIXME: this is required until <rdar://problem/6853027> is fixed and text checking can do this for us.
+    return character == '\'' || character == '@' || character == rightSingleQuotationMark || character == hebrewPunctuationGershayim;
+}
+
 String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfParagraph, bool endIsEndOfParagraph)
 {
     StringBuilder rebalancedString;

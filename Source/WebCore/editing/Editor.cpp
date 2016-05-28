@@ -2524,7 +2524,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
         const int resultLength = results[i].length;
         const int resultEndLocation = resultLocation + resultLength;
         const String& replacement = results[i].replacement;
-        const bool resultEndsAtAmbiguousBoundary = useAmbiguousBoundaryOffset && resultEndLocation == selectionOffset - 1;
+        const bool resultEndsAtAmbiguousBoundary = useAmbiguousBoundaryOffset && selectionOffset - 1 <= resultEndLocation;
 
         // Only mark misspelling if:
         // 1. Current text checking isn't done for autocorrection, in which case shouldMarkSpelling is false.

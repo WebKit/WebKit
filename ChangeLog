@@ -1,3 +1,44 @@
+2016-05-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Autocorrection makes it hard to type "doesn't" and to type @ in email addresses
+        https://bugs.webkit.org/show_bug.cgi?id=158177
+
+        Reviewed by Darin Adler.
+
+        Fixed manual tests for autocorrection panels and added a manual test for . Most of changes are fixing up the path to LayoutTests/editing/editing.js.
+
+        Also wrap many steps to type in a space or delete a character inside setTimeout since autocorrection happens on a timer
+        and the fact WebKit2 communicates with NSSpellChecker via IPC makes the behavior even more indeterministic.
+
+        * ManualTests/autocorrection/autocorrection-at-mark.html: Added.
+        * ManualTests/autocorrection/autocorrection-cancelled-by-ESC.html:
+        * ManualTests/autocorrection/autocorrection-cancelled-by-typing-1.html:
+        * ManualTests/autocorrection/autocorrection-contraction-2.html: Added.
+        * ManualTests/autocorrection/autocorrection-contraction.html:
+        * ManualTests/autocorrection/autocorrection-in-iframe.html:
+        * ManualTests/autocorrection/close-window-when-correction-is-shown.html:
+        * ManualTests/autocorrection/continue-typing-to-dismiss-reversion.html:
+        * ManualTests/autocorrection/delete-to-dismiss-reversion.html:
+        * ManualTests/autocorrection/delete-to-end-of-word-to-show-reversion.html:
+        * ManualTests/autocorrection/dismiss-multiple-guesses.html:
+        * ManualTests/autocorrection/document-for-iframe-test.html: Removed.
+        * ManualTests/autocorrection/move-to-end-of-word-to-show-reversion.html: Type a space and move care in setTimeout as
+        the reversion panel wouldn't show up otherwise.
+        * ManualTests/autocorrection/remove-misspelling-marker-after-appending-letter.html: Delay the typing of a space as well as
+        deleting letters since autocorrection panel wouldn't show up in time otherwise, and deleting character immediately would
+        reject the autocorrection instead of accepting it. Also removed the steps to add back the spellchecking marker and extracted
+        it as a separate test.
+        * ManualTests/autocorrection/removing-misspelling-marker-after-appending-letter-2.html: Copied. This test continues the full
+        scenario in the previous test by typing a space and deleting the character, thereby bringing up spellchecking marker.
+        * ManualTests/autocorrection/resources: Added.
+        * ManualTests/autocorrection/resources/document-for-iframe-test.html: Moved from ManualTests/autocorrection/.
+        * ManualTests/autocorrection/select-from-multiple-guesses.html: Added a missing instruction.
+        * ManualTests/autocorrection/spell-checking-after-reversion.html:
+        * ManualTests/autocorrection/type-whitespace-to-dismiss-reversion.html: Delay the typing of a space and moving the selection
+        since the reversion panel wouldn't show up otherwise.
+        * ManualTests/autocorrection/undo-autocorrection-2.html: Copied. Automated most of steps in the second test case.
+        * ManualTests/autocorrection/undo-autocorrection.html:
+
 2016-05-25  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Deduplicate make-js-file-arrays usage and make it work on Windows.

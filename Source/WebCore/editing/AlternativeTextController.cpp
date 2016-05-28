@@ -340,13 +340,13 @@ void AlternativeTextController::timerFired()
     }
         break;
     case AlternativeTextTypeReversion: {
-        if (!m_alternativeTextInfo.rangeWithAlternative)
+        auto* details = static_cast<const AutocorrectionAlternativeDetails*>(m_alternativeTextInfo.details.get());
+        if (!m_alternativeTextInfo.rangeWithAlternative || !details || details->replacementString().isEmpty())
             break;
         m_alternativeTextInfo.isActive = true;
         m_alternativeTextInfo.originalText = plainText(m_alternativeTextInfo.rangeWithAlternative.get());
         FloatRect boundingBox = rootViewRectForRange(m_alternativeTextInfo.rangeWithAlternative.get());
         if (!boundingBox.isEmpty()) {
-            const AutocorrectionAlternativeDetails* details = static_cast<const AutocorrectionAlternativeDetails*>(m_alternativeTextInfo.details.get());
             if (AlternativeTextClient* client = alternativeTextClient())
                 client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, details->replacementString(), Vector<String>());
         }

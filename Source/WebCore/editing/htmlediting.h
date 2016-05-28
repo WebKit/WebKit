@@ -215,13 +215,7 @@ inline bool deprecatedIsCollapsibleWhitespace(UChar c)
     return c == ' ' || c == '\n';
 }
 
-inline bool isAmbiguousBoundaryCharacter(UChar character)
-{
-    // These are characters that can behave as word boundaries, but can appear within words.
-    // If they are just typed, i.e. if they are immediately followed by a caret, we want to delay text checking until the next character has been typed.
-    // FIXME: this is required until 6853027 is fixed and text checking can do this for us.
-    return character == '\'' || character == rightSingleQuotationMark || character == hebrewPunctuationGershayim;
-}
+bool isAmbiguousBoundaryCharacter(UChar);
 
 inline bool editingIgnoresContent(const Node& node)
 {
