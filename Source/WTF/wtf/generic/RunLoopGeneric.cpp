@@ -32,15 +32,13 @@ namespace WTF {
 class RunLoop::TimerBase::ScheduledTask : public ThreadSafeRefCounted<ScheduledTask> {
 WTF_MAKE_NONCOPYABLE(ScheduledTask);
 public:
-    template<typename Lambda>
-    static RefPtr<ScheduledTask> create(Lambda&& lambda, double interval, bool repeating)
+    static RefPtr<ScheduledTask> create(NoncopyableFunction&& function, double interval, bool repeating)
     {
-        return adoptRef(new ScheduledTask(std::forward<Lambda>(lambda), interval, repeating));
+        return adoptRef(new ScheduledTask(WTFMove(function), interval, repeating));
     }
 
-    template<typename Lambda>
-    ScheduledTask(Lambda&& lambda, double interval, bool repeating)
-        : m_function(std::forward<Lambda>(lambda))
+    ScheduledTask(NoncopyableFunction&& function, double interval, bool repeating)
+        : m_function(WTFMove(function))
         , m_fireInterval(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(interval)))
         , m_isRepeating(repeating)
     {
@@ -92,7 +90,7 @@ public:
     }
 
 private:
-    std::function<void()> m_function;
+    NoncopyableFunction m_function;
     Condition::Clock::time_point m_scheduledTimePoint;
     std::chrono::microseconds m_fireInterval;
     std::atomic<bool> m_isActive { true };

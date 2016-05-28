@@ -1,3 +1,14 @@
+2016-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix for JSCOnly port.
+        https://bugs.webkit.org/show_bug.cgi?id=158111
+
+        Use NoncopyableFunction instead of std::function<>.
+
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::TimerBase::ScheduledTask::create):
+        (WTF::RunLoop::TimerBase::ScheduledTask::ScheduledTask):
+
 2016-05-27  Chris Dumez  <cdumez@apple.com>
 
         WorkQueue::dispatch() / RunLoop::dispatch() should not copy captured lambda variables
