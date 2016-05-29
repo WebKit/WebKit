@@ -48,11 +48,11 @@ class ScrollingThread {
 
 public:
     static bool isCurrentThread();
-    WEBCORE_EXPORT static void dispatch(NoncopyableFunction&&);
+    WEBCORE_EXPORT static void dispatch(NoncopyableFunction<void ()>&&);
 
     // Will dispatch the given function on the main thread once all pending functions
     // on the scrolling thread have finished executing. Used for synchronization purposes.
-    WEBCORE_EXPORT static void dispatchBarrier(NoncopyableFunction&&);
+    WEBCORE_EXPORT static void dispatchBarrier(NoncopyableFunction<void ()>&&);
 
 private:
     friend NeverDestroyed<ScrollingThread>;
@@ -80,7 +80,7 @@ private:
     Lock m_initializeRunLoopMutex;
 
     Lock m_functionsMutex;
-    Vector<NoncopyableFunction> m_functions;
+    Vector<NoncopyableFunction<void ()>> m_functions;
 
 #if PLATFORM(COCOA)
     // FIXME: We should use WebCore::RunLoop here.

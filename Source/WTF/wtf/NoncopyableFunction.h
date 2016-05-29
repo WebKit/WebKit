@@ -30,8 +30,10 @@
 
 namespace WTF {
 
-// FIXME: We could make this templated to support other lambdas than void() and make this more reusable.
-class NoncopyableFunction {
+template<typename> class NoncopyableFunction;
+
+template <typename Out, typename... In>
+class NoncopyableFunction<Out(In...)> {
 public:
     NoncopyableFunction() = default;
 
@@ -41,10 +43,11 @@ public:
     {
     }
 
-    void operator()() const
+    Out operator()(In... in) const
     {
         if (m_callableWrapper)
-            m_callableWrapper->call();
+            return m_callableWrapper->call(std::forward<In>(in)...);
+        return Out();
     }
 
     explicit operator bool() const { return !!m_callableWrapper; }
@@ -68,11 +71,11 @@ private:
     public:
         virtual ~CallableWrapperBase() { }
 
-        virtual void call() = 0;
+        virtual Out call(In...) = 0;
     };
 
     template<typename CallableType>
-    class CallableWrapper final : public CallableWrapperBase {
+    class CallableWrapper : public CallableWrapperBase {
     public:
         explicit CallableWrapper(CallableType&& callable)
             : m_callable(WTFMove(callable))
@@ -82,7 +85,7 @@ private:
         CallableWrapper(const CallableWrapper&) = delete;
         CallableWrapper& operator=(const CallableWrapper&) = delete;
 
-        void call() final { m_callable(); }
+        Out call(In... in) final { return m_callable(std::forward<In>(in)...); }
 
     private:
         CallableType m_callable;

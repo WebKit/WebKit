@@ -112,7 +112,7 @@ private:
     void characteristicsChanged();
     void updateActiveVideoTrack();
 
-    void scheduleDeferredTask(NoncopyableFunction&&);
+    void scheduleDeferredTask(NoncopyableFunction<void ()>&&);
 
     WeakPtrFactory<MediaStreamPrivate> m_weakPtrFactory;
     Vector<Observer*> m_observers;

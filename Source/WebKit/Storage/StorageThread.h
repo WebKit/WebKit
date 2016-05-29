@@ -46,7 +46,7 @@ public:
     bool start();
     void terminate();
 
-    void dispatch(NoncopyableFunction&&);
+    void dispatch(NoncopyableFunction<void ()>&&);
 
     static void releaseFastMallocFreeMemoryInAllThreads();
 
@@ -59,7 +59,7 @@ private:
     void performTerminate();
 
     ThreadIdentifier m_threadID;
-    MessageQueue<NoncopyableFunction> m_queue;
+    MessageQueue<NoncopyableFunction<void ()>> m_queue;
 };
 
 } // namespace WebCore

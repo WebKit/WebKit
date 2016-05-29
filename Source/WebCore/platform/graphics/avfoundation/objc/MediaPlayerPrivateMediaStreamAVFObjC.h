@@ -143,7 +143,7 @@ private:
     void updateTracks();
     void renderingModeChanged();
 
-    void scheduleDeferredTask(NoncopyableFunction&&);
+    void scheduleDeferredTask(NoncopyableFunction<void ()>&&);
 
     enum DisplayMode {
         None,

@@ -39,7 +39,7 @@ class FunctionDispatcher : public ThreadSafeRefCounted<FunctionDispatcher> {
 public:
     WTF_EXPORT_PRIVATE virtual ~FunctionDispatcher();
 
-    virtual void dispatch(NoncopyableFunction&&) = 0;
+    virtual void dispatch(NoncopyableFunction<void ()>&&) = 0;
 
 protected:
     WTF_EXPORT_PRIVATE FunctionDispatcher();

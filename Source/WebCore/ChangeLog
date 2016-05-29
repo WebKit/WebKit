@@ -1,3 +1,41 @@
+2016-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Templatize NoncopyableFunction class similarly to std::function
+        https://bugs.webkit.org/show_bug.cgi?id=158185
+
+        Reviewed by Darin Adler.
+
+        Templatize NoncopyableFunction class similarly to std::function, so
+        that it can be used as a std::function replacement in more places.
+
+        Previously, NoncopyableFunction could only support "void()" lambdas.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::runTask):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::callOnFileThread):
+        (WebCore::AsyncFileStream::perform):
+        (WebCore::AsyncFileStream::getSize):
+        (WebCore::AsyncFileStream::openForRead):
+        (WebCore::AsyncFileStream::openForWrite):
+        (WebCore::AsyncFileStream::write):
+        * fileapi/AsyncFileStream.h:
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::dispatch):
+        (WebCore::ScrollingThread::dispatchBarrier):
+        (WebCore::ScrollingThread::dispatchFunctionsFromScrollingThread):
+        * page/scrolling/ScrollingThread.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::scheduleDeferredTask):
+        * platform/mediastream/MediaStreamPrivate.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::scheduleDeferredTask):
+
 2016-05-28  Alexey Proskuryakov  <ap@apple.com>
 
         Fix the build with newer clang and other custom configuration options

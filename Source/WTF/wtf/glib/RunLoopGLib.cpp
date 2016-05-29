@@ -124,7 +124,7 @@ void RunLoop::wakeUp()
 class DispatchAfterContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DispatchAfterContext(NoncopyableFunction&& function)
+    DispatchAfterContext(NoncopyableFunction<void ()>&& function)
         : m_function(WTFMove(function))
     {
     }
@@ -135,10 +135,10 @@ public:
     }
 
 private:
-    NoncopyableFunction m_function;
+    NoncopyableFunction<void ()> m_function;
 };
 
-void RunLoop::dispatchAfter(std::chrono::nanoseconds duration, NoncopyableFunction&& function)
+void RunLoop::dispatchAfter(std::chrono::nanoseconds duration, NoncopyableFunction<void ()>&& function)
 {
     GRefPtr<GSource> source = adoptGRef(g_timeout_source_new(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()));
     g_source_set_name(source.get(), "[WebKit] RunLoop dispatchAfter");

@@ -1,3 +1,18 @@
+2016-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Templatize NoncopyableFunction class similarly to std::function
+        https://bugs.webkit.org/show_bug.cgi?id=158185
+
+        Reviewed by Darin Adler.
+
+        Templatize NoncopyableFunction class similarly to std::function, so
+        that it can be used as a std::function replacement in more places.
+
+        Previously, NoncopyableFunction could only support "void()" lambdas.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::runTaskInQueue):
+
 2016-05-28  Alexey Proskuryakov  <ap@apple.com>
 
         Fix the build with newer clang and other custom configuration options

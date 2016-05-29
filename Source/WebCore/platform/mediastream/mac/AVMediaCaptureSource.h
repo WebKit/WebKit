@@ -86,7 +86,7 @@ protected:
     void setVideoSampleBufferDelegate(AVCaptureVideoDataOutput*);
     void setAudioSampleBufferDelegate(AVCaptureAudioDataOutput*);
 
-    void scheduleDeferredTask(NoncopyableFunction&&);
+    void scheduleDeferredTask(NoncopyableFunction<void ()>&&);
 
 private:
     void setupSession();

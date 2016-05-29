@@ -43,7 +43,7 @@ public:
     static Ref<StorageSyncManager> create(const String& path);
     ~StorageSyncManager();
 
-    void dispatch(NoncopyableFunction&&);
+    void dispatch(NoncopyableFunction<void ()>&&);
     void close();
 
 private:

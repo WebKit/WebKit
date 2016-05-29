@@ -624,7 +624,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setNetworkState(MediaPlayer::NetworkS
     m_player->networkStateChanged();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask(NoncopyableFunction&& function)
+void MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask(NoncopyableFunction<void ()>&& function)
 {
     ASSERT(function);
     callOnMainThread([weakThis = createWeakPtr(), function = WTFMove(function)] {

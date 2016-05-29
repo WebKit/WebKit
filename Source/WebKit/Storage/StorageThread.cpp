@@ -74,11 +74,11 @@ void StorageThread::threadEntryPoint()
     }
 }
 
-void StorageThread::dispatch(NoncopyableFunction&& function)
+void StorageThread::dispatch(NoncopyableFunction<void ()>&& function)
 {
     ASSERT(isMainThread());
     ASSERT(!m_queue.killed() && m_threadID);
-    m_queue.append(std::make_unique<NoncopyableFunction>(WTFMove(function)));
+    m_queue.append(std::make_unique<NoncopyableFunction<void ()>>(WTFMove(function)));
 }
 
 void StorageThread::terminate()
@@ -90,7 +90,7 @@ void StorageThread::terminate()
     if (!m_threadID)
         return;
 
-    m_queue.append(std::make_unique<NoncopyableFunction>([this] {
+    m_queue.append(std::make_unique<NoncopyableFunction<void ()>>([this] {
         performTerminate();
     }));
     waitForThreadCompletion(m_threadID);

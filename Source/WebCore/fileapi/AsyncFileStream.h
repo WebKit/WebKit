@@ -34,6 +34,7 @@
 
 #include <functional>
 #include <wtf/Forward.h>
+#include <wtf/NoncopyableFunction.h>
 
 namespace WebCore {
 
@@ -56,7 +57,7 @@ public:
 
 private:
     void start();
-    void perform(std::function<std::function<void(FileStreamClient&)>(FileStream&)>&&);
+    void perform(NoncopyableFunction<std::function<void(FileStreamClient&)>(FileStream&)>&&);
 
     struct Internals;
     std::unique_ptr<Internals> m_internals;

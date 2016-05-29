@@ -64,12 +64,12 @@ inline AsyncFileStream::Internals::Internals(FileStreamClient& client)
 #endif
 }
 
-static void callOnFileThread(NoncopyableFunction&& function)
+static void callOnFileThread(NoncopyableFunction<void ()>&& function)
 {
     ASSERT(isMainThread());
     ASSERT(function);
 
-    static NeverDestroyed<MessageQueue<NoncopyableFunction>> queue;
+    static NeverDestroyed<MessageQueue<NoncopyableFunction<void ()>>> queue;
 
     static std::once_flag createFileThreadOnce;
     std::call_once(createFileThreadOnce, [] {
@@ -90,7 +90,7 @@ static void callOnFileThread(NoncopyableFunction&& function)
         });
     });
 
-    queue.get().append(std::make_unique<NoncopyableFunction>(WTFMove(function)));
+    queue.get().append(std::make_unique<NoncopyableFunction<void ()>>(WTFMove(function)));
 }
 
 AsyncFileStream::AsyncFileStream(FileStreamClient& client)
@@ -114,7 +114,7 @@ AsyncFileStream::~AsyncFileStream()
     });
 }
 
-void AsyncFileStream::perform(std::function<std::function<void(FileStreamClient&)>(FileStream&)>&& operation)
+void AsyncFileStream::perform(NoncopyableFunction<std::function<void(FileStreamClient&)>(FileStream&)>&& operation)
 {
     auto& internals = *m_internals;
     callOnFileThread([&internals, operation = WTFMove(operation)] {
@@ -134,11 +134,10 @@ void AsyncFileStream::perform(std::function<std::function<void(FileStreamClient&
 
 void AsyncFileStream::getSize(const String& path, double expectedModificationTime)
 {
-    StringCapture capturedPath(path);
     // FIXME: Explicit return type here and in all the other cases like this below is a workaround for a deficiency
     // in the Windows compiler at the time of this writing. Could remove it if that is resolved.
-    perform([capturedPath, expectedModificationTime](FileStream& stream) -> std::function<void(FileStreamClient&)> {
-        long long size = stream.getSize(capturedPath.string(), expectedModificationTime);
+    perform([path = path.isolatedCopy(), expectedModificationTime](FileStream& stream) -> std::function<void(FileStreamClient&)> {
+        long long size = stream.getSize(path, expectedModificationTime);
         return [size](FileStreamClient& client) {
             client.didGetSize(size);
         };
@@ -147,10 +146,9 @@ void AsyncFileStream::getSize(const String& path, double expectedModificationTim
 
 void AsyncFileStream::openForRead(const String& path, long long offset, long long length)
 {
-    StringCapture capturedPath(path);
     // FIXME: Explicit return type here is a workaround for a deficiency in the Windows compiler at the time of this writing.
-    perform([capturedPath, offset, length](FileStream& stream) -> std::function<void(FileStreamClient&)> {
-        bool success = stream.openForRead(capturedPath.string(), offset, length);
+    perform([path = path.isolatedCopy(), offset, length](FileStream& stream) -> std::function<void(FileStreamClient&)> {
+        bool success = stream.openForRead(path, offset, length);
         return [success](FileStreamClient& client) {
             client.didOpen(success);
         };
@@ -159,9 +157,8 @@ void AsyncFileStream::openForRead(const String& path, long long offset, long lon
 
 void AsyncFileStream::openForWrite(const String& path)
 {
-    StringCapture capturedPath(path);
-    perform([capturedPath](FileStream& stream) -> std::function<void(FileStreamClient&)> {
-        bool success = stream.openForWrite(capturedPath.string());
+    perform([path = path.isolatedCopy()](FileStream& stream) -> std::function<void(FileStreamClient&)> {
+        bool success = stream.openForWrite(path);
         return [success](FileStreamClient& client) {
             client.didOpen(success);
         };
@@ -188,9 +185,8 @@ void AsyncFileStream::read(char* buffer, int length)
 
 void AsyncFileStream::write(const URL& blobURL, long long position, int length)
 {
-    URLCapture capturedURL(blobURL);
-    perform([capturedURL, position, length](FileStream& stream) -> std::function<void(FileStreamClient&)> {
-        int bytesWritten = stream.write(capturedURL.url(), position, length);
+    perform([blobURL = blobURL.isolatedCopy(), position, length](FileStream& stream) -> std::function<void(FileStreamClient&)> {
+        int bytesWritten = stream.write(blobURL, position, length);
         return [bytesWritten](FileStreamClient& client) {
             client.didWrite(bytesWritten);
         };

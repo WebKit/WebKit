@@ -63,7 +63,7 @@ String StorageSyncManager::fullDatabaseFilename(const String& databaseIdentifier
     return pathByAppendingComponent(m_path, databaseIdentifier + ".localstorage");
 }
 
-void StorageSyncManager::dispatch(NoncopyableFunction&& function)
+void StorageSyncManager::dispatch(NoncopyableFunction<void ()>&& function)
 {
     ASSERT(isMainThread());
     ASSERT(m_thread);

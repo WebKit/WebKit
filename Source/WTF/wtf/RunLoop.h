@@ -59,7 +59,7 @@ public:
     WTF_EXPORT_PRIVATE static bool isMain();
     ~RunLoop();
 
-    void dispatch(NoncopyableFunction&&) override;
+    void dispatch(NoncopyableFunction<void ()>&&) override;
 
     WTF_EXPORT_PRIVATE static void run();
     WTF_EXPORT_PRIVATE void stop();
@@ -79,7 +79,7 @@ public:
 #endif
 
 #if USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)
-    WTF_EXPORT_PRIVATE void dispatchAfter(std::chrono::nanoseconds, NoncopyableFunction&&);
+    WTF_EXPORT_PRIVATE void dispatchAfter(std::chrono::nanoseconds, NoncopyableFunction<void ()>&&);
 #endif
 
     class TimerBase {
@@ -155,7 +155,7 @@ private:
     void performWork();
 
     Mutex m_functionQueueLock;
-    Deque<NoncopyableFunction> m_functionQueue;
+    Deque<NoncopyableFunction<void ()>> m_functionQueue;
 
 #if USE(WINDOWS_EVENT_LOOP)
     static bool registerRunLoopMessageWindowClass();

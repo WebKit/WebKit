@@ -95,7 +95,7 @@ MediaEndpointPeerConnection::MediaEndpointPeerConnection(PeerConnectionBackendCl
     m_mediaEndpoint->generateDtlsInfo();
 }
 
-void MediaEndpointPeerConnection::runTask(NoncopyableFunction&& task)
+void MediaEndpointPeerConnection::runTask(NoncopyableFunction<void ()>&& task)
 {
     if (m_dtlsFingerprint.isNull()) {
         // Only one task needs to be deferred since it will hold off any others until completed.
