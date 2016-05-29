@@ -1,3 +1,22 @@
+2016-05-28  Andreas Kling  <akling@apple.com>
+
+        JSGlobalLexicalEnvironment leaks SegmentedVector due to lack of destructor.
+        <https://webkit.org/b/158186>
+
+        Reviewed by Saam Barati.
+
+        Give JSGlobalLexicalEnvironment a destroy() and set up a finalizer for it
+        like we do with JSGlobalObject. (This is needed because they don't inherit
+        from JSDestructibleObjects and thus can't use JSCell::needsDestruction to
+        ask for allocation in destructor space.)
+
+        This stops us from leaking all the SegmentedVector backing stores.
+
+        * runtime/JSGlobalLexicalEnvironment.cpp:
+        (JSC::JSGlobalLexicalEnvironment::destroy):
+        * runtime/JSGlobalLexicalEnvironment.h:
+        (JSC::JSGlobalLexicalEnvironment::create):
+
 2016-05-28  Skachkov Oleksandr  <gskachkov@gmail.com>
         [ESNext] Trailing commas in function parameters.
         https://bugs.webkit.org/show_bug.cgi?id=158020
