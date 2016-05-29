@@ -109,16 +109,16 @@ Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue ne
                 return structure;
 
             // Note, Reflect.construct might cause the profile to churn but we don't care.
-            JSObject* prototype = jsDynamicCast<JSObject*>(newTarget.get(exec, exec->propertyNames().prototype));
-            if (exec->hadException())
+            JSValue prototypeValue = newTarget.get(exec, exec->propertyNames().prototype);
+            if (UNLIKELY(vm.exception()))
                 return nullptr;
-            if (prototype)
+            if (JSObject* prototype = jsDynamicCast<JSObject*>(prototypeValue))
                 return targetFunction->rareData(vm)->createInternalFunctionAllocationStructureFromBase(vm, prototype, baseClass);
         } else {
-            JSObject* prototype = jsDynamicCast<JSObject*>(newTarget.get(exec, exec->propertyNames().prototype));
-            if (exec->hadException())
+            JSValue prototypeValue = newTarget.get(exec, exec->propertyNames().prototype);
+            if (UNLIKELY(vm.exception()))
                 return nullptr;
-            if (prototype) {
+            if (JSObject* prototype = jsDynamicCast<JSObject*>(prototypeValue)) {
                 // This only happens if someone Reflect.constructs our builtin constructor with another builtin constructor as the new.target.
                 // Thus, we don't care about the cost of looking up the structure from our hash table every time.
                 return vm.prototypeMap.emptyStructureForPrototypeFromBaseStructure(prototype, baseClass);

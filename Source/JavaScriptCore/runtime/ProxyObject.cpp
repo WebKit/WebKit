@@ -34,6 +34,9 @@
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 
+// Note that this file is compile with -fno-optimize-sibling-calls because we rely on the machine stack
+// growing larger for throwing OOM errors for when we have an effectively cyclic prototype chain.
+
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ProxyObject);
@@ -95,7 +98,7 @@ static const char* s_proxyAlreadyRevokedErrorMessage = "Proxy has already been r
 static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName, JSObject* slotBase)
 {
     VM& vm = exec->vm();
-    if (!vm.isSafeToRecurse()) {
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
         throwStackOverflowError(exec);
         return JSValue::encode(JSValue());
     }
@@ -155,6 +158,10 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
 bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return false;
+    }
     JSObject* target = this->target();
 
     auto performDefaultGetOwnProperty = [&] {
@@ -257,6 +264,10 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
 bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return false;
+    }
     JSObject* target = this->target();
     slot.setValue(this, None, jsUndefined()); // Nobody should rely on our value, but be safe and protect against any bad actors reading our value.
 
@@ -318,6 +329,10 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
 
 bool ProxyObject::getOwnPropertySlotCommon(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    if (UNLIKELY(!exec->vm().isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return false;
+    }
     slot.disableCaching();
     slot.setIsTaintedByProxy();
     switch (slot.internalMethodType()) {
@@ -353,7 +368,7 @@ template <typename PerformDefaultPutFunction>
 bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValue, PropertyName propertyName, PerformDefaultPutFunction performDefaultPut)
 {
     VM& vm = exec->vm();
-    if (!vm.isSafeToRecurse()) {
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
         throwStackOverflowError(exec);
         return false;
     }
@@ -445,6 +460,10 @@ bool ProxyObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyNam
 static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
 {
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return JSValue::encode(JSValue());
+    }
     ProxyObject* proxy = jsCast<ProxyObject*>(exec->callee());
     JSValue handlerValue = proxy->handler();
     if (handlerValue.isNull())
@@ -490,6 +509,10 @@ CallType ProxyObject::getCallData(JSCell* cell, CallData& callData)
 static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
 {
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return JSValue::encode(JSValue());
+    }
     ProxyObject* proxy = jsCast<ProxyObject*>(exec->callee());
     JSValue handlerValue = proxy->handler();
     if (handlerValue.isNull())
@@ -541,6 +564,10 @@ template <typename DefaultDeleteFunction>
 bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, DefaultDeleteFunction performDefaultDelete)
 {
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return false;
+    }
 
     if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
         return performDefaultDelete();
@@ -613,6 +640,10 @@ bool ProxyObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
 bool ProxyObject::performPreventExtensions(ExecState* exec)
 {
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return false;
+    }
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -661,6 +692,10 @@ bool ProxyObject::preventExtensions(JSObject* object, ExecState* exec)
 bool ProxyObject::performIsExtensible(ExecState* exec)
 {
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return false;
+    }
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -715,6 +750,10 @@ bool ProxyObject::isExtensible(JSObject* object, ExecState* exec)
 bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return false;
+    }
 
     JSObject* target = this->target();
     auto performDefaultDefineOwnProperty = [&] {
@@ -808,6 +847,10 @@ bool ProxyObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyN
 void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray& trapResult, EnumerationMode enumerationMode)
 {
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return;
+    }
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
         throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
@@ -947,6 +990,11 @@ void ProxyObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
     thisObject->performGetOwnPropertyNames(exec, propertyNameArray, enumerationMode);
 }
 
+void ProxyObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
+{
+    JSObject::getPropertyNames(object, exec, propertyNameArray, enumerationMode);
+}
+
 void ProxyObject::getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
 {
     RELEASE_ASSERT_NOT_REACHED();
@@ -968,6 +1016,10 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
     ASSERT(prototype.isObject() || prototype.isNull());
 
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return false;
+    }
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -1028,6 +1080,10 @@ bool ProxyObject::setPrototype(JSObject* object, ExecState* exec, JSValue protot
 JSValue ProxyObject::performGetPrototype(ExecState* exec)
 {
     VM& vm = exec->vm();
+    if (UNLIKELY(!vm.isSafeToRecurse())) {
+        throwStackOverflowError(exec);
+        return JSValue();
+    }
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {

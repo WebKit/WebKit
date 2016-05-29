@@ -845,6 +845,9 @@ set(JavaScriptCore_SOURCES
     yarr/YarrSyntaxChecker.cpp
 )
 
+# Extra flags for compile sources can go here.
+set_source_files_properties(runtime/ProxyObject.cpp PROPERTIES COMPILE_FLAGS -fno-optimize-sibling-calls)
+
 set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/ArrayConstructor.cpp
     runtime/ArrayIteratorPrototype.cpp

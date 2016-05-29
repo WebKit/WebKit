@@ -36,8 +36,6 @@ class ProxyObject : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    // We lie an say we override getPropertyNames() because it prevents
-    // property name enumeration caching.
     const static unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | TypeOfShouldCallGetCallData | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | ProhibitsPropertyCaching;
 
     static ProxyObject* create(ExecState* exec, JSGlobalObject* globalObject, JSValue target, JSValue handler)
@@ -87,6 +85,7 @@ private:
     static bool isExtensible(JSObject*, ExecState*);
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static NO_RETURN_DUE_TO_CRASH void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static NO_RETURN_DUE_TO_CRASH void getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static NO_RETURN_DUE_TO_CRASH void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);

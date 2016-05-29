@@ -282,6 +282,8 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
         PropertySlot toStringTagSlot(thisObject, PropertySlot::InternalMethodType::Get);
         if (thisObject->getPropertySlot(exec, toStringTagSymbol, toStringTagSlot)) {
             JSValue stringTag = toStringTagSlot.getValue(exec, toStringTagSymbol);
+            if (UNLIKELY(vm.exception()))
+                return JSValue::encode(JSValue());
             if (stringTag.isString()) {
                 JSRopeString::RopeBuilder ropeBuilder(vm);
                 ropeBuilder.append(vm.smallStrings.objectStringStart());

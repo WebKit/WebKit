@@ -1288,7 +1288,7 @@
 		799EF7C41C56ED96002B0534 /* B3PCToOriginMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 799EF7C31C56ED96002B0534 /* B3PCToOriginMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79B00CBC1C6AB07E0088C65D /* ProxyConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79B00CB81C6AB07E0088C65D /* ProxyConstructor.cpp */; };
 		79B00CBD1C6AB07E0088C65D /* ProxyConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B00CB91C6AB07E0088C65D /* ProxyConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		79B00CBE1C6AB07E0088C65D /* ProxyObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79B00CBA1C6AB07E0088C65D /* ProxyObject.cpp */; };
+		79B00CBE1C6AB07E0088C65D /* ProxyObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79B00CBA1C6AB07E0088C65D /* ProxyObject.cpp */; settings = {COMPILER_FLAGS = "-fno-optimize-sibling-calls"; }; };
 		79B00CBF1C6AB07E0088C65D /* ProxyObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B00CBB1C6AB07E0088C65D /* ProxyObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79C4B15D1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79C4B15B1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp */; };
 		79C4B15E1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C4B15C1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };

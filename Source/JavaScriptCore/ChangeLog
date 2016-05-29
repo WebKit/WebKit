@@ -1,3 +1,88 @@
+2016-05-29  Saam barati  <sbarati@apple.com>
+
+        Stack overflow crashes with deep or cyclic proxy prototype chains
+        https://bugs.webkit.org/show_bug.cgi?id=157087
+
+        Reviewed by Filip Pizlo and Mark Lam.
+
+        Because a Proxy can call back into the JS runtime in arbitrary
+        ways, we may have effectively cyclic prototype chains and property lookups
+        by using a Proxy. We may also have arbitrarily long Proxy chains
+        where we call into a C frame for each link in the Proxy chain.
+        This means that every Proxy hook must be aware that it can stack overflow.
+        Before, only certain hooks were aware of this fact. That was a bug,
+        all hooks must assume they can stack overflow.
+
+        Also, because we may have effectively cyclic prototype chains, we
+        compile ProxyObject.cpp with -fno-optimize-sibling-calls. This prevents
+        tail call optimization from happening on any of the calls from
+        ProxyObject.cpp. We do this because we rely on the machine stack
+        growing for throwing a stack overflow error. It's better for developers
+        to be able to see a stack overflow error than to have their program
+        infinite loop because the compiler performed TCO.
+
+        This patch also fixes a couple call sites of various methods
+        where we didn't check for an exception.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/JSArray.h:
+        (JSC::getLength):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::getOwnPropertySlotCommon):
+        (JSC::ProxyObject::performPut):
+        (JSC::performProxyCall):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::performIsExtensible):
+        (JSC::ProxyObject::performDefineOwnProperty):
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::getOwnPropertyNames):
+        (JSC::ProxyObject::getPropertyNames):
+        (JSC::ProxyObject::getOwnNonIndexPropertyNames):
+        (JSC::ProxyObject::performSetPrototype):
+        (JSC::ProxyObject::performGetPrototype):
+        * runtime/ProxyObject.h:
+        (JSC::ProxyObject::create):
+        * tests/stress/proxy-stack-overflow-exceptions.js: Added.
+        (shouldThrowStackOverflow):
+        (const.emptyFunction):
+        (makeLongProxyChain):
+        (shouldThrowStackOverflow.longProxyChain):
+        (shouldThrowStackOverflow.effecivelyCyclicProxyProtoChain1):
+        (shouldThrowStackOverflow.effecivelyCyclicProxyProtoChain2):
+        (shouldThrowStackOverflow.effecivelyCyclicProxyProtoChain3):
+        (shouldThrowStackOverflow.longProxyChainBind):
+        (shouldThrowStackOverflow.longProxyChainPropertyAccess):
+        (shouldThrowStackOverflow.longProxyChainReflectConstruct):
+        (shouldThrowStackOverflow.longProxyChainReflectSet):
+        (shouldThrowStackOverflow.longProxyChainReflectOwnKeys):
+        (shouldThrowStackOverflow.longProxyChainGetPrototypeOf):
+        (shouldThrowStackOverflow.longProxyChainSetPrototypeOf):
+        (shouldThrowStackOverflow.longProxyChainGetOwnPropertyDescriptor):
+        (shouldThrowStackOverflow.longProxyChainDefineProperty):
+        (shouldThrowStackOverflow.longProxyChainIsExtensible):
+        (shouldThrowStackOverflow.longProxyChainPreventExtensions):
+        (shouldThrowStackOverflow.longProxyChainDeleteProperty):
+        (shouldThrowStackOverflow.longProxyChainWithScope):
+        (shouldThrowStackOverflow.longProxyChainWithScope2):
+        (shouldThrowStackOverflow.longProxyChainWithScope3):
+        (shouldThrowStackOverflow.longProxyChainArrayPrototypePush):
+        (shouldThrowStackOverflow.longProxyChainWithScope4):
+        (shouldThrowStackOverflow.longProxyChainCall):
+        (shouldThrowStackOverflow.longProxyChainConstruct):
+        (shouldThrowStackOverflow.longProxyChainHas):
+
 2016-05-28  Andreas Kling  <akling@apple.com>
 
         JSGlobalLexicalEnvironment leaks SegmentedVector due to lack of destructor.

@@ -218,7 +218,7 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
         length = jsCast<DirectArguments*>(cell)->length(callFrame);
         break;
     case ScopedArgumentsType:
-        length =jsCast<ScopedArguments*>(cell)->length(callFrame);
+        length = jsCast<ScopedArguments*>(cell)->length(callFrame);
         break;
     case StringType:
         callFrame->vm().throwException(callFrame, createInvalidFunctionApplyParameterError(callFrame,  arguments));
@@ -226,8 +226,11 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
     default:
         ASSERT(arguments.isObject());
         length = getLength(callFrame, jsCast<JSObject*>(cell));
+        if (UNLIKELY(callFrame->hadException()))
+            return 0;
         break;
     }
+
     
     if (length >= firstVarArgOffset)
         length -= firstVarArgOffset;
