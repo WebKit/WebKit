@@ -2519,7 +2519,7 @@ LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(SizeType widthType, Lengt
 static bool flexItemHasStretchAlignment(const RenderBox& flexitem)
 {
     auto parent = flexitem.parent();
-    return RenderStyle::resolveAlignment(parent->style(), flexitem.style(), ItemPositionStretch) == ItemPositionStretch;
+    return flexitem.style().resolvedAlignSelf(parent->style(), ItemPositionStretch).position() == ItemPositionStretch;
 }
 
 static bool isStretchingColumnFlexItem(const RenderBox& flexitem)
@@ -2547,8 +2547,8 @@ bool RenderBox::hasStretchedLogicalWidth() const
         return false;
     }
     if (containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
-        return RenderStyle::resolveAlignment(containingBlock->style(), style, ItemPositionStretch) == ItemPositionStretch;
-    return RenderStyle::resolveJustification(containingBlock->style(), style, ItemPositionStretch) == ItemPositionStretch;
+        return style.resolvedAlignSelf(containingBlock->style(), ItemPositionStretch).position() == ItemPositionStretch;
+    return style.resolvedJustifySelf(containingBlock->style(), ItemPositionStretch).position() == ItemPositionStretch;
 }
 
 bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const

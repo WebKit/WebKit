@@ -468,7 +468,7 @@ filter [ConditionalConverter=FilterOperations]
 -webkit-filter = filter
 align-content [Initial=initialContentAlignment, Converter=ContentAlignmentData]
 -webkit-align-content = align-content
-align-items [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentData]
+align-items [Initial=initialDefaultAlignment, Converter=SelfOrDefaultAlignmentData]
 -webkit-align-items = align-items
 align-self [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentData]
 -webkit-align-self = align-self

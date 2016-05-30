@@ -60,7 +60,7 @@
 
 #alignSelfSelfEndSafe {
     -webkit-align-self: self-end safe;
-}
+x}
 
 #alignSelfSelfStartSafe {
     -webkit-align-self: self-start safe;
@@ -175,7 +175,7 @@ debug("");
 debug("Test initial value of align-self through JS");
 element = document.createElement("div");
 document.body.appendChild(element);
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-align-self')", "'start'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-align-self')", "'normal'");
 
 debug("");
 debug("Test getting and setting align-self through JS");
@@ -202,18 +202,23 @@ element.style.webkitAlignSelf = "self-start";
 checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "self-start", "self-start");
 
 element.style.webkitAlignSelf = "auto";
-checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "start");
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "normal");
 
 container.style.display = "-webkit-flex";
 element.style.webkitAlignSelf = "auto";
-checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "stretch");
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "normal");
 
 container.style.display = "grid";
 element.style.webkitAlignSelf = "auto";
-checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "stretch");
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "normal");
 
 element.style.webkitAlignSelf = "self-end";
 checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "self-end", "self-end");
+
+debug("");
+debug("Test 'auto' value resolution for the root node");
+document.documentElement.style.webkitAlignSelf = "auto";
+checkValues(document.documentElement, "webkitAlignSelf", "-webkit-align-self",  "auto", "normal");
 
 debug("");
 debug("Test bad combinations of align-self");
@@ -250,35 +255,35 @@ checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy left r
 debug("");
 debug("Test the value 'initial'");
 container.style.display = "";
-checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "center", "start");
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "center", "normal");
 
 debug("");
 debug("Test the value 'initial' for grid containers");
-container.style.display = "grid";
-checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "left safe", "stretch");
+container.style.display = "-webkit-grid";
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "left safe", "normal");
 
 debug("");
 debug("Test the value 'initial' for flex containers");
 container.style.display = "-webkit-flex";
-checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "right unsafe", "stretch");
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "right unsafe", "normal");
 
 debug("");
 debug("Test the value 'initial' for positioned elements");
 container.style.display = "";
 element.style.position = "absolute";
-checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "left", "auto");
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "left", "normal");
 
 debug("");
 debug("Test the value 'initial' for positioned elements in grid containers");
 container.style.display = "grid";
 element.style.position = "absolute";
-checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "right", "auto");
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "right", "normal");
 
 debug("");
 debug("Test the value 'initial' for positioned elements in grid containers");
 container.style.display = "-webkit-flex";
 element.style.position = "absolute";
-checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "end", "auto");
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "end", "normal");
 
 debug("");
 debug("Test the value 'inherit'");

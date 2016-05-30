@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<html>
+ <body>
+     <div id="host">
+         <div id="slotted" slot="s1"></div>
+     </div>
+<script src="resources/alignment-parsing-utils.js"></script>
+<script>
+description('Test to verify auto value resolution works as expected in root elements (eg. document root / shadow roots / slotted elements / elements inside&lt;slot&gt;)');
+
+var block = document.getElementById("host");
+
+debug("");
+debug("*** Test 'auto' value resolution for the document root node. ***");
+
+debug("");
+debug("Check out how the DOM's root element resolves the align-self 'auto' values.");
+document.documentElement.style.webkitAlignSelf = "center";
+checkValues(document.documentElement, "webkitAlignSelf", "-webkit-align-self", "center", "center");
+document.documentElement.style.webkitAlignSelf = "auto";
+checkValues(document.documentElement, "webkitAlignSelf", "-webkit-align-self", "auto", "normal");
+
+debug("");
+debug("Check out how the DOM's root element align-items's value is used to resolve its children's align-self 'auto' values.");
+document.documentElement.style.webkitAlignItems = "center";
+checkValues(document.documentElement, "webkitAlignItems", "-webkit-align-items", "center", "center");
+document.body.style.webkitAlignItems = "auto"; // The 'auto' value is not valid for align-items.
+document.body.style.webkitAlignSelf = "auto";
+checkValues(document.body, "webkitAlignItems", "-webkit-align-items", "", "normal");
+checkValues(document.body, "webkitAlignSelf", "-webkit-align-self", "auto", "center");
+block.style.webkitAlignItems = ""; // Default value is 'normal' for align-items.
+block.style.webkitAlignSelf = "auto";
+checkValues(block, "webkitAlignItems", "-webkit-align-items", "", "normal");
+checkValues(block, "webkitAlignSelf", "-webkit-align-self", "auto", "normal");
+
+debug("");
+debug("Check out how the DOM's root element deals with 'auto' value in align-items.");
+document.documentElement.style.webkitAlignItems = "auto"; // The 'auto' value is not valid for align-items.
+checkValues(document.documentElement, "webkitAlignItems", "-webkit-align-items", "center", "center");
+document.documentElement.style.webkitAlignItems = ""; // Default value is 'normal' for align-items.
+checkValues(document.documentElement, "webkitAlignItems", "-webkit-align-items", "", "normal");
+
+debug("");
+debug("Check out how the DOM's root element resolves the justify-self 'auto' values.");
+document.documentElement.style.justifySelf = "left";
+checkValues(document.documentElement, "justifySelf", "justify-self", "left", "left");
+document.documentElement.style.justifySelf = "auto";
+checkValues(document.documentElement, "justifySelf", "justify-self", "auto", "normal");
+
+debug("");
+debug("Check out how the DOM's root element align-items's value is used to resolve its children's align-self 'auto' values.");
+document.documentElement.style.justifyItems = "center";
+checkValues(document.documentElement, "justifyItems", "justify-items", "center", "center");
+document.body.style.justifyItems = "auto";
+document.body.style.justifySelf = "auto";
+checkValues(document.body, "justifyItems", "justify-items", "auto", "normal");
+checkValues(document.body, "justifySelf", "justify-self", "auto", "center");
+block.style.justifyItems = "auto";
+block.style.justifySelf = "auto";
+checkValues(block, "justifyItems", "justify-items",  "auto", "normal");
+checkValues(block, "justifySelf", "justify-self",  "auto", "normal");
+
+debug("");
+debug("Check out how the DOM's root element deals with 'auto' value in justify-items.");
+document.documentElement.style.justifyItems = "auto";
+checkValues(document.documentElement, "justifyItems", "justify-items", "auto", "normal");
+checkValues(document.body, "justifySelf", "justify-self",  "auto", "normal");
+checkValues(block, "justifySelf", "justify-self",  "auto", "normal");
+
+debug("");
+debug("Check out how the DOM's root element justify-items's value with 'legacy' keyword is used to resolve any descendant's justify-items 'auto' values.");
+document.documentElement.style.justifyItems = "legacy center";
+checkValues(document.documentElement, "justifyItems", "justify-items",  "legacy center", "legacy center");
+document.body.style.justifyItems = "auto";
+document.body.style.justifySelf = "auto";
+checkValues(document.body, "justifyItems", "justify-items",  "auto", "legacy center");
+checkValues(document.body, "justifySelf", "justify-self",  "auto", "center");
+block.style.justifyItems = "auto";
+block.style.justifySelf = "auto";
+checkValues(block, "justifyItems", "justify-items",  "auto", "legacy center");
+checkValues(block, "justifySelf", "justify-self",  "auto", "center");
+
+debug("");
+debug("Check out how the DOM's root element recomputes its descendant's style when 'legacy' keyword is removed from its justify-items value.");
+document.documentElement.style.justifyItems = "auto";
+checkValues(document.body, "justifyItems", "justify-items",  "auto", "normal");
+checkValues(document.body, "justifySelf", "justify-self",  "auto", "normal");
+checkValues(block, "justifyItems", "justify-items",  "auto", "normal");
+checkValues(block, "justifySelf", "justify-self",  "auto", "normal");
+
+</script>
+
+</body>
+</html>

@@ -1009,11 +1009,6 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if ((element->hasTagName(SVGNames::foreignObjectTag) || element->hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
             style.setDisplay(BLOCK);
     }
-
-    // If the inherited value of justify-items includes the legacy keyword, 'auto'
-    // computes to the the inherited value.
-    if (parentStyle.justifyItemsPositionType() == LegacyPosition && style.justifyItemsPosition() == ItemPositionAuto)
-        style.setJustifyItems(parentStyle.justifyItems());
 }
 
 bool StyleResolver::checkRegionStyle(const Element* regionElement)

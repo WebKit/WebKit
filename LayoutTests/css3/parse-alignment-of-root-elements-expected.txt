@@ -1,0 +1,83 @@
+Test to verify auto value resolution works as expected in root elements (eg. document root / shadow roots / slotted elements / elements inside<slot>)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+*** Test 'auto' value resolution for the document root node. ***
+
+Check out how the DOM's root element resolves the align-self 'auto' values.
+PASS element.style.webkitAlignSelf is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "center"
+PASS element.style.webkitAlignSelf is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "normal"
+
+Check out how the DOM's root element align-items's value is used to resolve its children's align-self 'auto' values.
+PASS element.style.webkitAlignItems is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "normal"
+PASS element.style.webkitAlignSelf is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "center"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(host, '').getPropertyValue('-webkit-align-items') is "normal"
+PASS element.style.webkitAlignSelf is "auto"
+PASS window.getComputedStyle(host, '').getPropertyValue('-webkit-align-self') is "normal"
+
+Check out how the DOM's root element deals with 'auto' value in align-items.
+PASS element.style.webkitAlignItems is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "normal"
+
+Check out how the DOM's root element resolves the justify-self 'auto' values.
+PASS element.style.justifySelf is "left"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "left"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+
+Check out how the DOM's root element align-items's value is used to resolve its children's align-self 'auto' values.
+PASS element.style.justifyItems is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "center"
+PASS element.style.justifyItems is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "normal"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "center"
+PASS element.style.justifyItems is "auto"
+PASS window.getComputedStyle(host, '').getPropertyValue('justify-items') is "normal"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(host, '').getPropertyValue('justify-self') is "normal"
+
+Check out how the DOM's root element deals with 'auto' value in justify-items.
+PASS element.style.justifyItems is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "normal"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(host, '').getPropertyValue('justify-self') is "normal"
+
+Check out how the DOM's root element justify-items's value with 'legacy' keyword is used to resolve any descendant's justify-items 'auto' values.
+PASS element.style.justifyItems is "legacy center"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy center"
+PASS element.style.justifyItems is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy center"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "center"
+PASS element.style.justifyItems is "auto"
+PASS window.getComputedStyle(host, '').getPropertyValue('justify-items') is "legacy center"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(host, '').getPropertyValue('justify-self') is "center"
+
+Check out how the DOM's root element recomputes its descendant's style when 'legacy' keyword is removed from its justify-items value.
+PASS element.style.justifyItems is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "normal"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifyItems is "auto"
+PASS window.getComputedStyle(host, '').getPropertyValue('justify-items') is "normal"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(host, '').getPropertyValue('justify-self') is "normal"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

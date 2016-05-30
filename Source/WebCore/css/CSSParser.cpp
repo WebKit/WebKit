@@ -3423,16 +3423,19 @@ RefPtr<CSSContentDistributionValue> CSSParser::parseContentDistributionOverflowP
 
 bool CSSParser::parseItemPositionOverflowPosition(CSSPropertyID propId, bool important)
 {
-    // auto | stretch | <baseline-position> | [<item-position> && <overflow-position>? ]
+    // auto | normal | stretch | <baseline-position> | [<item-position> && <overflow-position>? ]
     // <baseline-position> = baseline | last-baseline;
     // <item-position> = center | start | end | self-start | self-end | flex-start | flex-end | left | right;
-    // <overflow-position> = true | safe
+    // <overflow-position> = unsafe | safe
 
     CSSParserValue* value = m_valueList->current();
     if (!value)
         return false;
 
-    if (value->id == CSSValueAuto || value->id == CSSValueStretch || isBaselinePositionKeyword(value->id)) {
+    if (value->id == CSSValueAuto || value->id == CSSValueNormal || value->id == CSSValueStretch || isBaselinePositionKeyword(value->id)) {
+        // align-items property does not allow the 'auto' value.
+        if (value->id == CSSValueAuto && propId == CSSPropertyAlignItems)
+            return false;
         if (m_valueList->next())
             return false;
 

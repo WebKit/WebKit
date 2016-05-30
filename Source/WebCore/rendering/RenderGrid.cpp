@@ -39,6 +39,7 @@
 namespace WebCore {
 
 static const int infinity = -1;
+static constexpr ItemPosition selfAlignmentNormalBehavior = ItemPositionStretch;
 
 class GridTrack {
 public:
@@ -264,35 +265,35 @@ static inline bool defaultAlignmentIsStretch(ItemPosition position)
 
 static inline bool defaultAlignmentChangedToStretchInRowAxis(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
-    return !defaultAlignmentIsStretch(oldStyle.justifyItemsPosition()) && defaultAlignmentIsStretch(newStyle.justifyItemsPosition());
+    return !defaultAlignmentIsStretch(oldStyle.justifyItems().position()) && defaultAlignmentIsStretch(newStyle.justifyItems().position());
 }
 
 static inline bool defaultAlignmentChangedFromStretchInRowAxis(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
-    return defaultAlignmentIsStretch(oldStyle.justifyItemsPosition()) && !defaultAlignmentIsStretch(newStyle.justifyItemsPosition());
+    return defaultAlignmentIsStretch(oldStyle.justifyItems().position()) && !defaultAlignmentIsStretch(newStyle.justifyItems().position());
 }
 
 static inline bool defaultAlignmentChangedFromStretchInColumnAxis(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
-    return defaultAlignmentIsStretch(oldStyle.alignItemsPosition()) && !defaultAlignmentIsStretch(newStyle.alignItemsPosition());
+    return defaultAlignmentIsStretch(oldStyle.alignItems().position()) && !defaultAlignmentIsStretch(newStyle.alignItems().position());
 }
 
 static inline bool selfAlignmentChangedToStretchInRowAxis(const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderStyle& childStyle)
 {
-    return RenderStyle::resolveJustification(oldStyle, childStyle, ItemPositionStretch) != ItemPositionStretch
-        && RenderStyle::resolveJustification(newStyle, childStyle, ItemPositionStretch) == ItemPositionStretch;
+    return childStyle.resolvedJustifySelf(oldStyle, selfAlignmentNormalBehavior).position() != ItemPositionStretch
+        && childStyle.resolvedJustifySelf(newStyle, selfAlignmentNormalBehavior).position() == ItemPositionStretch;
 }
 
 static inline bool selfAlignmentChangedFromStretchInRowAxis(const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderStyle& childStyle)
 {
-    return RenderStyle::resolveJustification(oldStyle, childStyle, ItemPositionStretch) == ItemPositionStretch
-        && RenderStyle::resolveJustification(newStyle, childStyle, ItemPositionStretch) != ItemPositionStretch;
+    return childStyle.resolvedJustifySelf(oldStyle, selfAlignmentNormalBehavior).position() == ItemPositionStretch
+        && childStyle.resolvedJustifySelf(newStyle, selfAlignmentNormalBehavior).position() != ItemPositionStretch;
 }
 
 static inline bool selfAlignmentChangedFromStretchInColumnAxis(const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderStyle& childStyle)
 {
-    return RenderStyle::resolveAlignment(oldStyle, childStyle, ItemPositionStretch) == ItemPositionStretch
-        && RenderStyle::resolveAlignment(newStyle, childStyle, ItemPositionStretch) != ItemPositionStretch;
+    return childStyle.resolvedAlignSelf(oldStyle, selfAlignmentNormalBehavior).position() == ItemPositionStretch
+        && childStyle.resolvedAlignSelf(newStyle, selfAlignmentNormalBehavior).position() != ItemPositionStretch;
 }
 
 void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -1511,7 +1512,7 @@ void RenderGrid::clearGrid()
     m_gridItemArea.clear();
 }
 
-static const StyleContentAlignmentData& normalValueBehaviorGrid()
+static const StyleContentAlignmentData& contentAlignmentNormalBehaviorGrid()
 {
     static const StyleContentAlignmentData normalBehavior = {ContentPositionNormal, ContentDistributionStretch};
     return normalBehavior;
@@ -1522,8 +1523,8 @@ void RenderGrid::applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection 
     Optional<LayoutUnit> freeSpace = sizingData.freeSpaceForDirection(direction);
     if (!freeSpace
         || freeSpace.value() <= 0
-        || (direction == ForColumns && style().resolvedJustifyContentDistribution(normalValueBehaviorGrid()) != ContentDistributionStretch)
-        || (direction == ForRows && style().resolvedAlignContentDistribution(normalValueBehaviorGrid()) != ContentDistributionStretch))
+        || (direction == ForColumns && style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) != ContentDistributionStretch)
+        || (direction == ForRows && style().resolvedAlignContentDistribution(contentAlignmentNormalBehaviorGrid()) != ContentDistributionStretch))
         return;
 
     // Spec defines auto-sized tracks as the ones with an 'auto' max-sizing function.
@@ -1803,7 +1804,7 @@ static inline LayoutUnit computeOverflowAlignmentOffset(OverflowAlignment overfl
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
 bool RenderGrid::needToStretchChildLogicalHeight(const RenderBox& child) const
 {
-    if (RenderStyle::resolveAlignment(style(), child.style(), ItemPositionStretch) != ItemPositionStretch)
+    if (child.style().resolvedAlignSelf(style(), selfAlignmentNormalBehavior).position() != ItemPositionStretch)
         return false;
 
     return isHorizontalWritingMode() && child.style().height().isAuto();
@@ -1852,7 +1853,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     bool isHorizontalMode = isHorizontalWritingMode();
     bool hasAutoSizeInColumnAxis = isHorizontalMode ? childStyle.height().isAuto() : childStyle.width().isAuto();
     bool allowedToStretchChildAlongColumnAxis = hasAutoSizeInColumnAxis && !childStyle.marginBeforeUsing(&gridStyle).isAuto() && !childStyle.marginAfterUsing(&gridStyle).isAuto();
-    if (allowedToStretchChildAlongColumnAxis && RenderStyle::resolveAlignment(gridStyle, childStyle, ItemPositionStretch) == ItemPositionStretch) {
+    if (allowedToStretchChildAlongColumnAxis && childStyle.resolvedAlignSelf(style(), selfAlignmentNormalBehavior).position() == ItemPositionStretch) {
         // TODO (lajava): If the child has orthogonal flow, then it already has an override height set, so use it.
         // TODO (lajava): grid track sizing and positioning do not support orthogonal modes yet.
         if (child.isHorizontalWritingMode() == isHorizontalMode) {
@@ -1933,7 +1934,7 @@ GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) 
     bool hasOrthogonalWritingMode = child.isHorizontalWritingMode() != isHorizontalWritingMode();
     bool hasSameWritingMode = child.style().writingMode() == style().writingMode();
 
-    switch (RenderStyle::resolveAlignment(style(), child.style(), ItemPositionStretch)) {
+    switch (child.style().resolvedAlignSelf(style(), selfAlignmentNormalBehavior).position()) {
     case ItemPositionSelfStart:
         // If orthogonal writing-modes, this computes to 'start'.
         // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
@@ -1969,6 +1970,7 @@ GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) 
         // FIXME: Implement the previous values. For now, we always 'start' align the child.
         return GridAxisStart;
     case ItemPositionAuto:
+    case ItemPositionNormal:
         break;
     }
 
@@ -1982,7 +1984,7 @@ GridAxisPosition RenderGrid::rowAxisPositionForChild(const RenderBox& child) con
     bool hasSameDirection = child.style().direction() == style().direction();
     bool isLTR = style().isLeftToRightDirection();
 
-    switch (RenderStyle::resolveJustification(style(), child.style(), ItemPositionStretch)) {
+    switch (child.style().resolvedJustifySelf(style(), selfAlignmentNormalBehavior).position()) {
     case ItemPositionSelfStart:
         // For orthogonal writing-modes, this computes to 'start'
         // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
@@ -2011,6 +2013,7 @@ GridAxisPosition RenderGrid::rowAxisPositionForChild(const RenderBox& child) con
         // FIXME: Implement the previous values. For now, we always 'start' align the child.
         return GridAxisStart;
     case ItemPositionAuto:
+    case ItemPositionNormal:
         break;
     }
 
@@ -2040,7 +2043,8 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
         if (childEndLine < m_rowPositions.size() - 1)
             endOfRow -= guttersSize(ForRows, 2) + m_offsetBetweenRows;
         LayoutUnit childBreadth = child.logicalHeight() + child.marginLogicalHeight();
-        LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(RenderStyle::resolveAlignmentOverflow(style(), child.style()), endOfRow - startOfRow, childBreadth);
+        auto overflow = child.style().resolvedAlignSelf(style(), selfAlignmentNormalBehavior).overflow();
+        LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(overflow, endOfRow - startOfRow, childBreadth);
         return startPosition + (axisPosition == GridAxisEnd ? offsetFromStartPosition : offsetFromStartPosition / 2);
     }
     }
@@ -2072,7 +2076,8 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
         if (childEndLine < m_columnPositions.size() - 1)
             endOfColumn -= guttersSize(ForColumns, 2) + m_offsetBetweenColumns;
         LayoutUnit childBreadth = child.logicalWidth() + child.marginLogicalWidth();
-        LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(RenderStyle::resolveJustificationOverflow(style(), child.style()), endOfColumn - startOfColumn, childBreadth);
+        auto overflow = child.style().resolvedJustifySelf(style(), selfAlignmentNormalBehavior).overflow();
+        LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(overflow, endOfColumn - startOfColumn, childBreadth);
         return startPosition + (axisPosition == GridAxisEnd ? offsetFromStartPosition : offsetFromStartPosition / 2);
     }
     }
@@ -2134,15 +2139,15 @@ static ContentAlignmentData contentDistributionOffset(const LayoutUnit& availabl
 ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDirection direction, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const
 {
     bool isRowAxis = direction == ForColumns;
-    ContentPosition position = isRowAxis ? style().resolvedJustifyContentPosition(normalValueBehaviorGrid()) : style().resolvedAlignContentPosition(normalValueBehaviorGrid());
-    ContentDistributionType distribution = isRowAxis ? style().resolvedJustifyContentDistribution(normalValueBehaviorGrid()) : style().resolvedAlignContentDistribution(normalValueBehaviorGrid());
+    auto position = isRowAxis ? style().resolvedJustifyContentPosition(contentAlignmentNormalBehaviorGrid()) : style().resolvedAlignContentPosition(contentAlignmentNormalBehaviorGrid());
+    auto distribution = isRowAxis ? style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) : style().resolvedAlignContentDistribution(contentAlignmentNormalBehaviorGrid());
     // If <content-distribution> value can't be applied, 'position' will become the associated
     // <content-position> fallback value.
-    ContentAlignmentData contentAlignment = contentDistributionOffset(availableFreeSpace, position, distribution, numberOfGridTracks);
+    auto contentAlignment = contentDistributionOffset(availableFreeSpace, position, distribution, numberOfGridTracks);
     if (contentAlignment.isValid())
         return contentAlignment;
 
-    OverflowAlignment overflow = isRowAxis ? style().justifyContentOverflowAlignment() : style().alignContentOverflowAlignment();
+    auto overflow = isRowAxis ? style().justifyContentOverflowAlignment() : style().alignContentOverflowAlignment();
     if (availableFreeSpace <= 0 && overflow == OverflowAlignmentSafe)
         return {0, 0};
 

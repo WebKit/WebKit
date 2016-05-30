@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Test getting justify-self set through CSS
 PASS getComputedStyle(justifySelfBaseline, '').getPropertyValue('justify-self') is 'baseline'
+PASS getComputedStyle(justifySelfLastBaseline, '').getPropertyValue('justify-self') is 'last-baseline'
 PASS getComputedStyle(justifySelfStretch, '').getPropertyValue('justify-self') is 'stretch'
 PASS getComputedStyle(justifySelfStart, '').getPropertyValue('justify-self') is 'start'
 PASS getComputedStyle(justifySelfEnd, '').getPropertyValue('justify-self') is 'end'
@@ -13,47 +14,141 @@ PASS getComputedStyle(justifySelfSelfEnd, '').getPropertyValue('justify-self') i
 PASS getComputedStyle(justifySelfSelfStart, '').getPropertyValue('justify-self') is 'self-start'
 PASS getComputedStyle(justifySelfLeft, '').getPropertyValue('justify-self') is 'left'
 PASS getComputedStyle(justifySelfRight, '').getPropertyValue('justify-self') is 'right'
+PASS getComputedStyle(justifySelfFlexStart, '').getPropertyValue('justify-self') is 'flex-start'
+PASS getComputedStyle(justifySelfFlexEnd, '').getPropertyValue('justify-self') is 'flex-end'
 PASS getComputedStyle(justifySelfEndUnsafe, '').getPropertyValue('justify-self') is 'end unsafe'
 PASS getComputedStyle(justifySelfCenterUnsafe, '').getPropertyValue('justify-self') is 'center unsafe'
 PASS getComputedStyle(justifySelfSelfEndSafe, '').getPropertyValue('justify-self') is 'self-end safe'
 PASS getComputedStyle(justifySelfSelfStartSafe, '').getPropertyValue('justify-self') is 'self-start safe'
 PASS getComputedStyle(justifySelfRightSafe, '').getPropertyValue('justify-self') is 'right safe'
 PASS getComputedStyle(justifySelfLeftUnsafe, '').getPropertyValue('justify-self') is 'left unsafe'
+PASS getComputedStyle(justifySelfFlexStartUnsafe, '').getPropertyValue('justify-self') is 'flex-start unsafe'
+PASS getComputedStyle(justifySelfFlexEndSafe, '').getPropertyValue('justify-self') is 'flex-end safe'
 
 Test initial value of justify-self through JS
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
+PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'normal'
 
 Test getting and setting justify-self through JS
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'center'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start unsafe'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
+PASS element.style.justifySelf is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "center"
+PASS element.style.justifySelf is "start unsafe"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "start unsafe"
+PASS element.style.justifySelf is "flex-end safe"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "flex-end safe"
+PASS element.style.justifySelf is "right"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "right"
+PASS element.style.justifySelf is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "center"
+PASS element.style.justifySelf is "self-start"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "self-start"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is "self-end"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "self-end"
 
 Test bad combinations of justify-self
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+PASS element.style.justifySelf is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
 
 Test the value 'initial'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'center'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
+PASS element.style.justifySelf is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "center"
+PASS element.style.justifySelf is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+
+Test the value 'initial' for grid containers
+PASS element.style.justifySelf is "left safe"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "left safe"
+PASS element.style.justifySelf is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+
+Test the value 'initial' for flex containers
+PASS element.style.justifySelf is "right unsafe"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "right unsafe"
+PASS element.style.justifySelf is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+
+Test the value 'initial' for positioned elements
+PASS element.style.justifySelf is "left"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "left"
+PASS element.style.justifySelf is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+
+Test the value 'initial' for positioned elements in grid containers
+PASS element.style.justifySelf is "right"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "right"
+PASS element.style.justifySelf is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
+
+Test the value 'initial' for positioned elements in grid containers
+PASS element.style.justifySelf is "end"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "end"
+PASS element.style.justifySelf is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "normal"
 
 Test the value 'inherit'
-PASS getComputedStyle(parentElement, '').getPropertyValue('justify-self') is 'end'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'end'
+PASS element.style.justifySelf is "end"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "end"
+PASS element.style.justifySelf is "inherit"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "end"
+PASS element.style.justifySelf is "left safe"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "left safe"
+PASS element.style.justifySelf is "inherit"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "left safe"
+PASS element.style.justifySelf is "center unsafe"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "center unsafe"
+PASS element.style.justifySelf is "inherit"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-self') is "center unsafe"
 PASS successfullyParsed is true
 
 TEST COMPLETE

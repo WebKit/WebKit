@@ -1,3 +1,79 @@
+2016-05-30  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Box Alignment] New CSS Value 'normal' for Self Alignment
+        https://bugs.webkit.org/show_bug.cgi?id=156254
+
+        Reviewed by Darin Adler.
+
+        The Box Alignment specification defines a new value 'normal' to be used
+        as default for the different layout models, which will define the
+        specific behavior for each case. This patch adds a new CSS value in the
+        parsing logic and adapts the Self Alignment properties to the new
+        value.
+
+        The 'auto' value is no longer valid for the 'align-items' property and
+        the Computed Value will be always the specified value. Hence, I removed
+        the StyleResolver logic because is not required now; the specific
+        behavior of the 'normal' value will be resolved at layout time.
+
+        Additionally, this patch updates the layout logic as well, for both
+        Flexbox and Grid layout models.
+
+        Test: css3/parse-alignment-of-root-elements.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::resolveLegacyJustifyItems): Added.
+        (WebCore::resolveJustifyItemsAuto): Added.
+        (WebCore::resolveJustifySelfAuto): Added.
+        (WebCore::resolveAlignSelfAuto): Added.
+        (WebCore::valueForItemPositionWithOverflowAlignment): Using a StyleSelfAlignmentData argument.
+        (WebCore::ComputedStyleExtractor::propertyValue): Using the new resolving functions.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseItemPositionOverflowPosition): A new value 'normal' is now valid.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Mappings for the new value 'normal'.
+        (WebCore::CSSPrimitiveValue::operator ItemPosition): Mappings for the new value 'normal'.
+        * css/CSSPropertyNames.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): We don't need to resolve 'legacy" keyword.
+        * rendering/RenderBox.cpp:
+        (WebCore::flexItemHasStretchAlignment):
+        (WebCore::RenderBox::hasStretchedLogicalWidth):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::styleDidChange):
+        (WebCore::RenderFlexibleBox::alignmentForChild):
+        (WebCore::contentAlignmentNormalBehaviorFlexibleBox):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+        (WebCore::RenderFlexibleBox::alignFlexLines):
+        (WebCore::RenderFlexibleBox::alignChildren):
+        * rendering/RenderGrid.cpp:
+        (WebCore::defaultAlignmentChangedToStretchInRowAxis):
+        (WebCore::defaultAlignmentChangedFromStretchInRowAxis):
+        (WebCore::defaultAlignmentChangedFromStretchInColumnAxis):
+        (WebCore::selfAlignmentChangedToStretchInRowAxis):
+        (WebCore::selfAlignmentChangedFromStretchInRowAxis):
+        (WebCore::selfAlignmentChangedFromStretchInColumnAxis):
+        (WebCore::contentAlignmentNormalBehaviorGrid):
+        (WebCore::RenderGrid::applyStretchAlignmentToTracksIfNeeded):
+        (WebCore::RenderGrid::needToStretchChildLogicalHeight):
+        (WebCore::RenderGrid::applyStretchAlignmentToChildIfNeeded):
+        (WebCore::RenderGrid::columnAxisPositionForChild):
+        (WebCore::RenderGrid::rowAxisPositionForChild):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        (WebCore::RenderGrid::computeContentPositionAndDistributionOffset):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::resolvedSelfAlignment):
+        (WebCore::RenderStyle::resolvedAlignItems):
+        (WebCore::RenderStyle::resolvedAlignSelf):
+        (WebCore::RenderStyle::resolvedJustifyItems):
+        (WebCore::RenderStyle::resolvedJustifySelf):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData): align-items uses now a different initial function.
+
 2016-05-29  Brady Eidson  <beidson@apple.com>
 
         Transition various Task/Function queues from std::function to NoncopyableFunction.

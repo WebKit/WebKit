@@ -1,3 +1,36 @@
+2016-05-30  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Box Alignment] New CSS Value 'normal' for Self Alignment
+        https://bugs.webkit.org/show_bug.cgi?id=156254
+
+        Reviewed by Darin Adler.
+
+        Changes in the already defined tests for the alignment properties to
+        consider the new CSS value 'normal', which is the default for align-items
+        and the value to resolve 'auto' when there is no parent.
+
+        Added a new test to verify the Self-Alignment properties work as expected
+        with root elements.
+
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/css-properties.html:
+        * css3/parse-align-items-expected.txt:
+        * css3/parse-align-items.html:
+        * css3/parse-align-self-expected.txt:
+        * css3/parse-align-self.html:
+        * css3/parse-alignment-of-root-elements-expected.txt: Added.
+        * css3/parse-alignment-of-root-elements.html: Added.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/parse-justify-items-expected.txt:
+        * fast/css/parse-justify-items.html:
+        * fast/css/parse-justify-self-expected.txt:
+        * fast/css/parse-justify-self.html:
+        * fast/css/resources/alignment-parsing-utils.js:
+        * svg/css/getComputedStyle-basic-expected.txt:
+        (checkBadValues):
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2016-05-25  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ESNext] Support trailing commas in function param lists
