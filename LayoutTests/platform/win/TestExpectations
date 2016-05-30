@@ -896,9 +896,6 @@ media/encrypted-media/encrypted-media-events.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-not-loaded.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-syntax.html [ Skip ] # [ WontFix ]
 
-# New page cache test introduced in r182901 that often crashes on Windows only.
-webkit.org/b/144057 http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html [ Crash Pass ]
-
 webkit.org/b/103442 media/W3C/video/networkState/networkState_during_progress.html [ Skip ]
 
 # No CORS support for media elements is implemented yet.

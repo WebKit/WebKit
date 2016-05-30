@@ -1,3 +1,12 @@
+2016-05-30  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed test gardening.
+        
+        After the crash fix in r201500, update the test expectations for 
+        http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html.
+
+        * platform/win/TestExpectations:
+
 2016-05-30  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Box Alignment] New CSS Value 'normal' for Self Alignment
