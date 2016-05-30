@@ -1,3 +1,14 @@
+2016-05-30  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Uncaught exception page should pre-populate the bug's URL with the inspected page URL
+        https://bugs.webkit.org/show_bug.cgi?id=158055
+        <rdar://problem/26516693>
+
+        Reviewed by Saam Barati.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        Include the encoded URL in the query string if it is not empty.
+
 2016-05-30  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Right-clicking in Snapshot's DataGrid throws an exception
