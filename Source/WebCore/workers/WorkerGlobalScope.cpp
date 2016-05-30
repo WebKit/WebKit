@@ -173,7 +173,7 @@ WorkerNavigator& WorkerGlobalScope::navigator() const
     return *m_navigator;
 }
 
-void WorkerGlobalScope::postTask(Task task)
+void WorkerGlobalScope::postTask(Task&& task)
 {
     thread().runLoop().postTask(WTFMove(task));
 }

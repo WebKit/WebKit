@@ -975,7 +975,7 @@ public:
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
     void parseDNSPrefetchControlHeader(const String&);
 
-    void postTask(Task) final; // Executes the task on context's thread asynchronously.
+    void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     ScriptedAnimationController* scriptedAnimationController() { return m_scriptedAnimationController.get(); }

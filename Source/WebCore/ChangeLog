@@ -1,3 +1,28 @@
+2016-05-29  Brady Eidson  <beidson@apple.com>
+
+        Make ScriptExecutionContext::Task work in terms of wtf::NoncopyableFunction instead of std::function.
+        https://bugs.webkit.org/show_bug.cgi?id=158187
+
+        Reviewed by Chris Dumez.
+
+        No new tests (Refactor, no behavior change).
+
+        Also make postTask take an rvalue reference.
+
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        (WebCore::JSGlobalObjectTask::JSGlobalObjectTask):
+        
+        * dom/Document.cpp:
+        (WebCore::Document::postTask):
+        * dom/Document.h:
+        
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::Task::Task):
+        
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::postTask):
+        * workers/WorkerGlobalScope.h:
+
 2016-05-28  Chris Dumez  <cdumez@apple.com>
 
         Templatize NoncopyableFunction class similarly to std::function

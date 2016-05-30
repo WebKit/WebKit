@@ -88,7 +88,7 @@ public:
 
     using ScriptExecutionContext::hasPendingActivity;
 
-    void postTask(Task) override; // Executes the task on context's thread asynchronously.
+    void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
 
     // WorkerGlobalScope
     WorkerGlobalScope& self() { return *this; }
