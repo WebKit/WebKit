@@ -448,8 +448,10 @@ void SocketStreamHandle::readStreamCallback(CFReadStreamRef stream, CFStreamEven
         return;
 
 #if PLATFORM(WIN)
+    RefPtr<SocketStreamHandle> protector(handle);
     callOnMainThreadAndWait([&] {
-        handle->readStreamCallback(type);
+        if (handle->m_readStream)
+            handle->readStreamCallback(type);
     });
 #else
     ASSERT(isMainThread());
@@ -466,8 +468,10 @@ void SocketStreamHandle::writeStreamCallback(CFWriteStreamRef stream, CFStreamEv
         return;
 
 #if PLATFORM(WIN)
+    RefPtr<SocketStreamHandle> protector(handle);
     callOnMainThreadAndWait([&] {
-        handle->writeStreamCallback(type);
+        if (handle->m_writeStream)
+            handle->writeStreamCallback(type);
     });
 #else
     ASSERT(isMainThread());

@@ -1,3 +1,17 @@
+2016-05-30  Per Arne Vollan  <pvollan@apple.com>
+
+        http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html crashes on Windows almost all the time
+        https://bugs.webkit.org/show_bug.cgi?id=144057
+
+        Reviewed by Brent Fulgham.
+
+        Protect SocketStreamHandle object before trying to access it on the main thread, and make sure
+        CFWriteStreamRef parameter is valid before calling CFWriteStreamCanAcceptBytes. 
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::readStreamCallback):
+        (WebCore::SocketStreamHandle::writeStreamCallback):
+
 2016-05-30  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Box Alignment] New CSS Value 'normal' for Self Alignment
