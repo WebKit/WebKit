@@ -2466,7 +2466,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         if (!this.hasChildren)
             return false;
         let cell = event.target.enclosingNodeOrSelfWithNodeName("td");
-        if (!cell.classList.contains("disclosure"))
+        if (!cell || !cell.classList.contains("disclosure"))
             return false;
 
         let computedLeftPadding = window.getComputedStyle(cell).getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);

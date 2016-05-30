@@ -1,3 +1,17 @@
+2016-05-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Right-clicking in Snapshot's DataGrid throws an exception
+        https://bugs.webkit.org/show_bug.cgi?id=157934
+        <rdar://problem/26380910>
+
+        Reviewed by Brian Burg.
+
+        Check that click event target is actually a cell, as it can be a row
+        when focusing the table after dismissing a popup menu.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGridNode.prototype.isEventWithinDisclosureTriangle):
+
 2016-05-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Not all transitively dominated nodes display their retained size
