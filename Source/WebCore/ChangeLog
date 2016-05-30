@@ -1,5 +1,39 @@
 2016-05-29  Brady Eidson  <beidson@apple.com>
 
+        Transition various Task/Function queues from std::function to NoncopyableFunction.
+        https://bugs.webkit.org/show_bug.cgi?id=158196
+
+        Reviewed by Chris Dumez.
+
+        No new tests (Refactor, no behavior change).
+
+        * dom/ActiveDOMCallbackMicrotask.cpp:
+        (WebCore::ActiveDOMCallbackMicrotask::ActiveDOMCallbackMicrotask):
+        * dom/ActiveDOMCallbackMicrotask.h:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::layoutSizeChanged):
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::queuePostLayoutCallback):
+        (WebCore::FrameView::flushPostLayoutTasksQueue):
+        * page/FrameView.h:
+
+        * platform/GenericTaskQueue.cpp:
+        (WebCore::TaskDispatcher<Timer>::postTask):
+        (WebCore::TaskDispatcher<Timer>::dispatchOneTask):
+        * platform/GenericTaskQueue.h:
+        (WebCore::TaskDispatcher::postTask):
+        (WebCore::GenericTaskQueue::enqueueTask):
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::postResolutionCallbackQueue):
+        (WebCore::Style::queuePostResolutionCallback):
+        (WebCore::Style::suspendMemoryCacheClientCalls):
+        * style/StyleTreeResolver.h:
+
+2016-05-29  Brady Eidson  <beidson@apple.com>
+
         Make ScriptExecutionContext::Task work in terms of wtf::NoncopyableFunction instead of std::function.
         https://bugs.webkit.org/show_bug.cgi?id=158187
 

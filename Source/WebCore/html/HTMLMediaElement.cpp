@@ -3994,12 +3994,11 @@ void HTMLMediaElement::updateCaptionContainer()
 void HTMLMediaElement::layoutSizeChanged()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    RefPtr<HTMLMediaElement> strongThis = this;
-    std::function<void()> task = [strongThis] {
-        if (ShadowRoot* root = strongThis->userAgentShadowRoot())
+    auto task = [this, protectedThis = Ref<Element>(*this)] {
+        if (ShadowRoot* root = userAgentShadowRoot())
             root->dispatchEvent(Event::create("resize", false, false));
     };
-    m_resizeTaskQueue.enqueueTask(task);
+    m_resizeTaskQueue.enqueueTask(WTFMove(task));
 #endif
 }
 

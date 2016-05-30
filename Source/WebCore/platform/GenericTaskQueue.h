@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GenericTaskQueue_h
-#define GenericTaskQueue_h
+#pragma once
 
 #include "Timer.h"
 #include <wtf/Deque.h>
+#include <wtf/NoncopyableFunction.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -40,9 +40,9 @@ public:
     {
     }
 
-    void postTask(std::function<void()> f)
+    void postTask(NoncopyableFunction<void()>&& f)
     {
-        m_context.postTask(f);
+        m_context.postTask(WTFMove(f));
     }
 
 private:
@@ -53,7 +53,7 @@ template<>
 class TaskDispatcher<Timer> {
 public:
     TaskDispatcher();
-    void postTask(std::function<void()>);
+    void postTask(NoncopyableFunction<void()>&&);
 
 private:
     static Timer& sharedTimer();
@@ -63,7 +63,7 @@ private:
     void dispatchOneTask();
 
     WeakPtrFactory<TaskDispatcher> m_weakPtrFactory;
-    Deque<std::function<void()>> m_pendingTasks;
+    Deque<NoncopyableFunction<void()>> m_pendingTasks;
 };
 
 template <typename T>
@@ -81,16 +81,16 @@ public:
     {
     }
 
-    typedef std::function<void()> TaskFunction;
+    typedef NoncopyableFunction<void()> TaskFunction;
 
-    void enqueueTask(TaskFunction task)
+    void enqueueTask(TaskFunction&& task)
     {
         if (m_isClosed)
             return;
 
         ++m_pendingTasks;
         auto weakThis = m_weakPtrFactory.createWeakPtr();
-        m_dispatcher.postTask([weakThis, task] {
+        m_dispatcher.postTask([weakThis, task = WTFMove(task)] {
             if (!weakThis)
                 return;
             ASSERT(weakThis->m_pendingTasks);
@@ -120,5 +120,3 @@ private:
 };
 
 }
-
-#endif

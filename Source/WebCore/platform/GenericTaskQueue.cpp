@@ -36,7 +36,7 @@ TaskDispatcher<Timer>::TaskDispatcher()
 {
 }
 
-void TaskDispatcher<Timer>::postTask(std::function<void()> function)
+void TaskDispatcher<Timer>::postTask(NoncopyableFunction<void()>&& function)
 {
     m_pendingTasks.append(WTFMove(function));
     pendingDispatchers().append(m_weakPtrFactory.createWeakPtr());
@@ -77,7 +77,7 @@ Deque<WeakPtr<TaskDispatcher<Timer>>>& TaskDispatcher<Timer>::pendingDispatchers
 void TaskDispatcher<Timer>::dispatchOneTask()
 {
     ASSERT(!m_pendingTasks.isEmpty());
-    std::function<void()> task = m_pendingTasks.takeFirst();
+    auto task = m_pendingTasks.takeFirst();
     task();
 }
 
