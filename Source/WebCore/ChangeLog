@@ -1,3 +1,12 @@
+2016-05-31  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r201482.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::didReceiveHeader):
+        header used to be capturedHeader, which was a StringCapture, which needed .string() to get the String.
+        Now it's a WTF::String, so we already have the String.  Hooray for c++14!
+
 2016-05-31  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed build fix.

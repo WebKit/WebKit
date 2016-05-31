@@ -413,9 +413,9 @@ void CurlDownload::didReceiveHeader(const String& header)
         }
     } else {
         callOnMainThread([this, header = header.isolatedCopy(), protectedThis = Ref<CurlDownload>(*this)] {
-            int splitPos = header.string().find(":");
+            int splitPos = header.find(":");
             if (splitPos != -1)
-                m_response.setHTTPHeaderField(header.string().left(splitPos), header.string().substring(splitPos + 1).stripWhiteSpace());
+                m_response.setHTTPHeaderField(header.left(splitPos), header.substring(splitPos + 1).stripWhiteSpace());
         });
     }
 }
