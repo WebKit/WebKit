@@ -1538,15 +1538,6 @@
             "johnnyding"
          ]
       },
-      "Jon Lee" : {
-         "emails" : [
-            "jonlee@apple.com"
-         ],
-         "expertise" : "Forms, Notifications",
-         "nicks" : [
-            "jonlee"
-         ]
-      },
       "Jonathan Davis" : {
          "emails" : [
             "jond@apple.com",
@@ -4417,6 +4408,15 @@
          "expertise" : "WebKit on Windows, Plug-ins, Windows accessibility",
          "nicks" : [
             "jhoneycutt"
+         ]
+      },
+      "Jon Lee" : {
+         "emails" : [
+            "jonlee@apple.com"
+         ],
+         "expertise" : "Forms, Notifications, Media controls",
+         "nicks" : [
+            "jonlee"
          ]
       },
       "Joseph Pecoraro" : {

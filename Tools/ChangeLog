@@ -1,3 +1,9 @@
+2016-05-31  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed: add myself to the reviewers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-05-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Provide alternative mirror for the ICU tarball.
