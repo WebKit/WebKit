@@ -411,26 +411,26 @@ unsigned RenderStyle::hashForTextAutosizing() const
     return hash;
 }
 
-bool RenderStyle::equalForTextAutosizing(const RenderStyle* other) const
+bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
 {
-    return rareNonInheritedData->m_appearance == other->rareNonInheritedData->m_appearance
-        && rareNonInheritedData->marginBeforeCollapse == other->rareNonInheritedData->marginBeforeCollapse
-        && rareNonInheritedData->marginAfterCollapse == other->rareNonInheritedData->marginAfterCollapse
-        && rareNonInheritedData->lineClamp == other->rareNonInheritedData->lineClamp
-        && rareInheritedData->textSizeAdjust == other->rareInheritedData->textSizeAdjust
-        && rareInheritedData->overflowWrap == other->rareInheritedData->overflowWrap
-        && rareInheritedData->nbspMode == other->rareInheritedData->nbspMode
-        && rareInheritedData->lineBreak == other->rareInheritedData->lineBreak
-        && rareInheritedData->textSecurity == other->rareInheritedData->textSecurity
-        && inherited->specifiedLineHeight == other->inherited->specifiedLineHeight
-        && inherited->fontCascade.equalForTextAutoSizing(other->inherited->fontCascade)
-        && inherited->horizontal_border_spacing == other->inherited->horizontal_border_spacing
-        && inherited->vertical_border_spacing == other->inherited->vertical_border_spacing
-        && inherited_flags._box_direction == other->inherited_flags._box_direction
-        && inherited_flags.m_rtlOrdering == other->inherited_flags.m_rtlOrdering
-        && noninherited_flags.position() == other->noninherited_flags.position()
-        && noninherited_flags.floating() == other->noninherited_flags.floating()
-        && rareNonInheritedData->textOverflow == other->rareNonInheritedData->textOverflow;
+    return rareNonInheritedData->m_appearance == other.rareNonInheritedData->m_appearance
+        && rareNonInheritedData->marginBeforeCollapse == other.rareNonInheritedData->marginBeforeCollapse
+        && rareNonInheritedData->marginAfterCollapse == other.rareNonInheritedData->marginAfterCollapse
+        && rareNonInheritedData->lineClamp == other.rareNonInheritedData->lineClamp
+        && rareInheritedData->textSizeAdjust == other.rareInheritedData->textSizeAdjust
+        && rareInheritedData->overflowWrap == other.rareInheritedData->overflowWrap
+        && rareInheritedData->nbspMode == other.rareInheritedData->nbspMode
+        && rareInheritedData->lineBreak == other.rareInheritedData->lineBreak
+        && rareInheritedData->textSecurity == other.rareInheritedData->textSecurity
+        && inherited->specifiedLineHeight == other.inherited->specifiedLineHeight
+        && inherited->fontCascade.equalForTextAutoSizing(other.inherited->fontCascade)
+        && inherited->horizontal_border_spacing == other.inherited->horizontal_border_spacing
+        && inherited->vertical_border_spacing == other.inherited->vertical_border_spacing
+        && inherited_flags._box_direction == other.inherited_flags._box_direction
+        && inherited_flags.m_rtlOrdering == other.inherited_flags.m_rtlOrdering
+        && noninherited_flags.position() == other.noninherited_flags.position()
+        && noninherited_flags.floating() == other.noninherited_flags.floating()
+        && rareNonInheritedData->textOverflow == other.rareNonInheritedData->textOverflow;
 }
 
 #endif // ENABLE(IOS_TEXT_AUTOSIZING)

@@ -1,3 +1,87 @@
+2016-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / modernize iOS text autosizing code
+        https://bugs.webkit.org/show_bug.cgi?id=158217
+
+        Reviewed by Darin Adler.
+
+        Clean up / modernize iOS text autosizing code.
+
+        I think iOS text autosizing code is too intrusive inside the RenderStyle
+        class but I have not updated this part of the code yet to limit patch
+        size. This patch focuses on the TextAutoSizing.* and text autosizing
+        code in the Document class.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::TextAutoSizingTraits::constructDeletedValue): Deleted.
+        (WebCore::TextAutoSizingTraits::isDeletedValue): Deleted.
+        Move TextAutoSizingTraits to the TextAutoSizing header to
+        promote reuse and make the text autosizing code a little less
+        intrusive.
+
+        (WebCore::Document::addAutoSizingNode):
+        - Drop local 'key' variable as it is only used once.
+        - Use std::make_unique<> to construct the TextAutoSizingValue
+          as it is no longer ref-counted.
+
+        (WebCore::Document::validateAutoSizingNodes):
+        Iterate over the textAutosizedNodes HashMap only once instead
+        of twice. TextAutoSizingValue::adjustTextNodeSizes() was updated
+        to return an enum class so we know from that value if we can
+        remove the value from the HashSet or not, without having to rely
+        on TextAutoSizingValue::numNodes(), which I removed in this
+        patch.
+
+        (WebCore::Document::clearAutoSizingNodes):
+        Updated the TextAutoSizingValue destructor to call reset() so
+        we don't have to explicitly call reset() on each value before
+        clearing the textAutosizedNodes HashMap.
+
+        * dom/Document.h:
+        - Move TextAutoSizingTraits to the TextAutosizing header.
+        - Rename resetAutosizingNodes() to clearAutoSizingNodes() as
+          the method now only clears the textAutosizedNodes HashMap
+          and reset() is now an implementation detail for
+          TextAutoSizingValue.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::resetTextAutosizing):
+        Call clearAutoSizingNodes() as it was renamed.
+
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingKey::TextAutoSizingKey):
+        - Use value of -1 for std::unique_ptr m_style member for distinguishing
+        a HashTable deleted value, instead of having an extra m_isDeleted
+        data member for this purpose.
+        - Take RenderStyle parameter by reference and drop the null check as the
+          call site can never pass nullptr.
+
+        (WebCore::TextAutoSizingValue::addTextNode):
+        - Rename addNode() to addTextNode() for clarity.
+
+        (WebCore::TextAutoSizingValue::~TextAutoSizingValue):
+        Update destructor to call reset() so that the Document does not have to
+        call it explicitly and can instead just clear the HashMap, which will
+        destroy the TextAutoSizingValue objects.
+
+        (WebCore::TextAutoSizingValue::reset):
+        Rename text to renderer for clarity.
+
+        * rendering/TextAutoSizing.h:
+        - Make TextAutoSizingValue as fast allocated.
+        - Update TextAutoSizingValue to no longer be refcounted as ownership is never
+          shared. The Document owns those.
+        - Drop the factory function for TextAutoSizingValue and make the constructor
+          public now that the class is no longer refcounted.
+        - Make reset() method private now that it is called from the destructor and
+          the Document is no longer expected to explicitly call it.
+        - Update adjustTextNodeSizes() to return a StillHasNodes enum class and the
+          Document can rely on the determine if it can drop the TextAutoSizingValue
+          from its HashMap (and therefore destroy the object).
+        - Drop numNodes() method as it is no longer needed.
+
+
 2016-05-31  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION(r201040): Repainting of moving overflow:hidden objects is broken.

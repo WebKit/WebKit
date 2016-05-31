@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextAutoSizing_h
-#define TextAutoSizing_h
+#pragma once
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 
@@ -38,22 +37,23 @@ namespace WebCore {
 class Document;
 class Text;
 
+// FIXME: We can probably get rid of this class entirely and use std::unique_ptr<RenderStyle> as key
+// as long as we use the right hash traits.
 class TextAutoSizingKey {
 public:
     TextAutoSizingKey() = default;
     enum DeletedTag { Deleted };
     explicit TextAutoSizingKey(DeletedTag);
-    explicit TextAutoSizingKey(const RenderStyle*);
-    TextAutoSizingKey(TextAutoSizingKey&&) = default;
+    TextAutoSizingKey(const RenderStyle&, unsigned hash);
 
-    TextAutoSizingKey& operator=(TextAutoSizingKey&&) = default;
+    const RenderStyle* style() const { ASSERT(!isDeleted()); return m_style.get(); }
+    bool isDeleted() const { return HashTraits<std::unique_ptr<RenderStyle>>::isDeletedValue(m_style); }
 
-    const RenderStyle* style() const { return m_style.get(); }
-    inline bool isDeleted() const { return m_isDeleted; }
+    unsigned hash() const { return m_hash; }
 
 private:
     std::unique_ptr<RenderStyle> m_style;
-    bool m_isDeleted { false };
+    unsigned m_hash { 0 };
 };
 
 inline bool operator==(const TextAutoSizingKey& a, const TextAutoSizingKey& b)
@@ -62,33 +62,63 @@ inline bool operator==(const TextAutoSizingKey& a, const TextAutoSizingKey& b)
         return false;
     if (!a.style() || !b.style())
         return a.style() == b.style();
-    return a.style()->equalForTextAutosizing(b.style());
+    return a.style()->equalForTextAutosizing(*b.style());
 }
 
 struct TextAutoSizingHash {
-    static unsigned hash(const TextAutoSizingKey& key) { return key.style()->hashForTextAutosizing(); }
+    static unsigned hash(const TextAutoSizingKey& key) { return key.hash(); }
     static bool equal(const TextAutoSizingKey& a, const TextAutoSizingKey& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-class TextAutoSizingValue : public RefCounted<TextAutoSizingValue> {
-public:
-    static Ref<TextAutoSizingValue> create()
+struct TextAutoSizingTraits : WTF::GenericHashTraits<TextAutoSizingKey> {
+    static const bool emptyValueIsZero = true;
+    static void constructDeletedValue(TextAutoSizingKey& slot)
     {
-        return adoptRef(*new TextAutoSizingValue);
+        new (NotNull, &slot) TextAutoSizingKey(TextAutoSizingKey::Deleted);
+    }
+    static bool isDeletedValue(const TextAutoSizingKey& value)
+    {
+        return value.isDeleted();
+    }
+};
+
+struct TextAutoSizingHashTranslator {
+    static unsigned hash(const RenderStyle& style)
+    {
+        return style.hashForTextAutosizing();
     }
 
-    void addNode(Text&, float size);
-    bool adjustNodeSizes();
-    int numNodes() const;
-    void reset();
+    static bool equal(const TextAutoSizingKey& key, const RenderStyle& style)
+    {
+        if (key.isDeleted() || !key.style())
+            return false;
+        return key.style()->equalForTextAutosizing(style);
+    }
+
+    static void translate(TextAutoSizingKey& key, const RenderStyle& style, unsigned hash)
+    {
+        key = { style, hash };
+    }
+};
+
+class TextAutoSizingValue {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    TextAutoSizingValue() = default;
+    ~TextAutoSizingValue();
+
+    void addTextNode(Text&, float size);
+
+    enum class StillHasNodes { No, Yes };
+    StillHasNodes adjustTextNodeSizes();
+
 private:
-    TextAutoSizingValue() { }
+    void reset();
+
     HashSet<RefPtr<Text>> m_autoSizedNodes;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(IOS_TEXT_AUTOSIZING)
-
-#endif // TextAutoSizing_h

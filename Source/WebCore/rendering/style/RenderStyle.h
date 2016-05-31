@@ -1862,7 +1862,7 @@ public:
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     uint32_t hashForTextAutosizing() const;
-    bool equalForTextAutosizing(const RenderStyle *other) const;
+    bool equalForTextAutosizing(const RenderStyle&) const;
 #endif
 
     StyleDifference diff(const RenderStyle&, unsigned& changedContextSensitiveProperties) const;

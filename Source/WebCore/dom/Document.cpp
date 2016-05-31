@@ -223,10 +223,6 @@
 #include "GestureEvent.h"
 #endif
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-#include "TextAutoSizing.h"
-#endif
-
 #if ENABLE(MATHML)
 #include "MathMLElement.h"
 #include "MathMLElementFactory.h"
@@ -424,18 +420,6 @@ static void printNavigationErrorMessage(Frame* frame, const URL& activeURL, cons
 }
 
 uint64_t Document::s_globalTreeVersion = 0;
-
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-void TextAutoSizingTraits::constructDeletedValue(TextAutoSizingKey& slot)
-{
-    new (&slot) TextAutoSizingKey(TextAutoSizingKey::Deleted);
-}
-
-bool TextAutoSizingTraits::isDeletedValue(const TextAutoSizingKey& value)
-{
-    return value.isDeleted();
-}
-#endif
 
 HashSet<Document*>& Document::allDocuments()
 {
@@ -5298,35 +5282,24 @@ HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 
-void Document::addAutoSizingNode(Text& node, float candidateSize)
+void Document::addAutoSizedNode(Text& node, float candidateSize)
 {
-    LOG(TextAutosizing, " addAutoSizingNode %p candidateSize=%f", &node, candidateSize);
-
-    TextAutoSizingKey key(&node.renderer()->style());
-    auto addResult = m_textAutoSizedNodes.ensure(WTFMove(key), [] {
-        return TextAutoSizingValue::create();
-    });
-    addResult.iterator->value->addNode(node, candidateSize);
+    LOG(TextAutosizing, " addAutoSizedNode %p candidateSize=%f", &node, candidateSize);
+    auto addResult = m_textAutoSizedNodes.add<TextAutoSizingHashTranslator>(node.renderer()->style(), nullptr);
+    if (addResult.isNewEntry)
+        addResult.iterator->value = std::make_unique<TextAutoSizingValue>();
+    addResult.iterator->value->addTextNode(node, candidateSize);
 }
 
-void Document::validateAutoSizingNodes()
+void Document::updateAutoSizedNodes()
 {
-    Vector<TextAutoSizingKey> nodesForRemoval;
-    for (auto& keyValuePair : m_textAutoSizedNodes) {
-        TextAutoSizingValue* value = keyValuePair.value.get();
-        // Update all the nodes in the collection to reflect the new
-        // candidate size.
-        value->adjustNodeSizes();
-    }
     m_textAutoSizedNodes.removeIf([](auto& keyAndValue) {
-        return !keyAndValue.value->numNodes();
+        return keyAndValue.value->adjustTextNodeSizes() == TextAutoSizingValue::StillHasNodes::No;
     });
 }
     
-void Document::resetAutoSizingNodes()
+void Document::clearAutoSizedNodes()
 {
-    for (auto& value : m_textAutoSizedNodes.values())
-        value->reset();
     m_textAutoSizedNodes.clear();
 }
 

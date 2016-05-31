@@ -48,79 +48,71 @@ static RenderStyle cloneRenderStyleWithState(const RenderStyle& currentStyle)
 }
 
 TextAutoSizingKey::TextAutoSizingKey(DeletedTag)
-    : m_isDeleted(true)
+{
+    HashTraits<std::unique_ptr<RenderStyle>>::constructDeletedValue(m_style);
+}
+
+TextAutoSizingKey::TextAutoSizingKey(const RenderStyle& style, unsigned hash)
+    : m_style(RenderStyle::clonePtr(style)) // FIXME: This seems very inefficient.
+    , m_hash(hash)
 {
 }
 
-TextAutoSizingKey::TextAutoSizingKey(const RenderStyle* style)
-    : m_style(style ? RenderStyle::clonePtr(*style) : nullptr)
-{
-}
-
-int TextAutoSizingValue::numNodes() const
-{
-    return m_autoSizedNodes.size();
-}
-
-void TextAutoSizingValue::addNode(Text& node, float size)
+void TextAutoSizingValue::addTextNode(Text& node, float size)
 {
     node.renderer()->setCandidateComputedTextSize(size);
     m_autoSizedNodes.add(&node);
 }
 
-#define MAX_SCALE_INCREASE 1.7f
+static const float maxScaleIncrease = 1.7f;
 
-bool TextAutoSizingValue::adjustNodeSizes()
+auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
 {
-    bool didRemoveObjects = false;
-
-    // Remove stale nodes.  Nodes may have had their renderers detached.  We'll
-    // also need to remove the style from the documents m_textAutoSizedNodes
-    // collection.  Return true indicates we need to do that removal.
+    // Remove stale nodes. Nodes may have had their renderers detached. We'll also need to remove the style from the documents m_textAutoSizedNodes
+    // collection. Return true indicates we need to do that removal.
     Vector<Text*> nodesForRemoval;
-    for (auto& node : m_autoSizedNodes) {
-        auto* text = node->renderer();
-        if (!text || !text->style().textSizeAdjust().isAuto() || !text->candidateComputedTextSize()) {
-            nodesForRemoval.append(node.get());
-            didRemoveObjects = true;
-        }
+    for (auto& textNode : m_autoSizedNodes) {
+        auto* renderer = textNode->renderer();
+        if (!renderer || !renderer->style().textSizeAdjust().isAuto() || !renderer->candidateComputedTextSize())
+            nodesForRemoval.append(textNode.get());
     }
 
     for (auto& node : nodesForRemoval)
         m_autoSizedNodes.remove(node);
 
-    // If we only have one piece of text with the style on the page don't
-    // adjust it's size.
-    if (m_autoSizedNodes.size() <= 1)
-        return didRemoveObjects;
+    StillHasNodes stillHasNodes = m_autoSizedNodes.isEmpty() ? StillHasNodes::No : StillHasNodes::Yes;
 
-    // Compute average size
+    // If we only have one piece of text with the style on the page don't adjust it's size.
+    if (m_autoSizedNodes.size() <= 1)
+        return stillHasNodes;
+
+    // Compute average size.
     float cumulativeSize = 0;
     for (auto& node : m_autoSizedNodes)
         cumulativeSize += node->renderer()->candidateComputedTextSize();
 
-    float averageSize = roundf(cumulativeSize / m_autoSizedNodes.size());
+    float averageSize = std::round(cumulativeSize / m_autoSizedNodes.size());
 
-    // Adjust sizes
+    // Adjust sizes.
     bool firstPass = true;
     for (auto& node : m_autoSizedNodes) {
-        auto* text = node->renderer();
-        if (!text || text->style().fontDescription().computedSize() == averageSize)
+        auto& renderer = *node->renderer();
+        if (renderer.style().fontDescription().computedSize() == averageSize)
             continue;
 
-        float specifiedSize = text->style().fontDescription().specifiedSize();
+        float specifiedSize = renderer.style().fontDescription().specifiedSize();
         float scaleChange = averageSize / specifiedSize;
-        if (scaleChange > MAX_SCALE_INCREASE && firstPass) {
+        if (scaleChange > maxScaleIncrease && firstPass) {
             firstPass = false;
-            averageSize = roundf(specifiedSize * MAX_SCALE_INCREASE);
+            averageSize = std::round(specifiedSize * maxScaleIncrease);
             scaleChange = averageSize / specifiedSize;
         }
 
         LOG(TextAutosizing, "  adjust node size %p firstPass=%d averageSize=%f scaleChange=%f", node.get(), firstPass, averageSize, scaleChange);
 
-        auto* parentRenderer = text->parent();
+        auto* parentRenderer = renderer.parent();
 
-        auto style = cloneRenderStyleWithState(text->style());
+        auto style = cloneRenderStyleWithState(renderer.style());
         auto fontDescription = style.fontDescription();
         fontDescription.setComputedSize(averageSize);
         style.setFontDescription(fontDescription);
@@ -161,26 +153,31 @@ bool TextAutoSizingValue::adjustNodeSizes()
         parentRenderer->setStyle(WTFMove(newParentStyle));
     }
 
-    return didRemoveObjects;
+    return stillHasNodes;
+}
+
+TextAutoSizingValue::~TextAutoSizingValue()
+{
+    reset();
 }
 
 void TextAutoSizingValue::reset()
 {
     for (auto& node : m_autoSizedNodes) {
-        auto* text = node->renderer();
-        if (!text)
+        auto* renderer = node->renderer();
+        if (!renderer)
             continue;
 
-        auto* parentRenderer = text->parent();
+        auto* parentRenderer = renderer->parent();
         if (!parentRenderer)
             continue;
 
         // Reset the font size back to the original specified size
-        auto fontDescription = text->style().fontDescription();
+        auto fontDescription = renderer->style().fontDescription();
         float originalSize = fontDescription.specifiedSize();
         if (fontDescription.computedSize() != originalSize) {
             fontDescription.setComputedSize(originalSize);
-            auto style = cloneRenderStyleWithState(text->style());
+            auto style = cloneRenderStyleWithState(renderer->style());
             style.setFontDescription(fontDescription);
             style.fontCascade().update(&node->document().fontSelector());
             parentRenderer->setStyle(WTFMove(style));

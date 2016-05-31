@@ -2214,7 +2214,7 @@ void RenderElement::adjustComputedFontSizesOnBlocks(float size, float visibleWid
     }
 
     // Remove style from auto-sizing table that are no longer valid.
-    document->validateAutoSizingNodes();
+    document->updateAutoSizedNodes();
 }
 
 void RenderElement::resetTextAutosizing()
@@ -2225,7 +2225,7 @@ void RenderElement::resetTextAutosizing()
 
     LOG(TextAutosizing, "RenderElement::resetTextAutosizing()");
 
-    document->resetAutoSizingNodes();
+    document->clearAutoSizedNodes();
 
     Vector<int> depthStack;
     int currentDepth = 0;
