@@ -1,3 +1,14 @@
+2016-05-31  Dave Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r189567): Elements with aspect ratios not handled correctly inside flexbox.
+        https://bugs.webkit.org/show_bug.cgi?id=158040
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/flexbox/aspect-ratio-intrinsic-adjust-expected.html: Added.
+        * fast/flexbox/aspect-ratio-intrinsic-adjust.html: Added.
+        * fast/flexbox/resources/subjects_sm.png: Added.
+
 2016-05-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Empty grid without explicit tracks shouldn't have any size

@@ -86,7 +86,7 @@ private:
     typedef Vector<LayoutRect, 8> ChildFrameRects;
 
     bool isFlexibleBox() const final { return true; }
-    bool hasOrthogonalFlow(RenderBox& child) const;
+    bool hasOrthogonalFlow(const RenderBox& child) const;
     bool isColumnFlow() const;
     bool isLeftToRightFlow() const;
     bool isMultiline() const;
@@ -98,7 +98,7 @@ private:
     LayoutUnit mainAxisExtent() const;
     LayoutUnit crossAxisContentExtent() const;
     LayoutUnit mainAxisContentExtent(LayoutUnit contentLogicalHeight);
-    Optional<LayoutUnit> computeMainAxisExtentForChild(RenderBox& child, SizeType, const Length& size);
+    Optional<LayoutUnit> computeMainAxisExtentForChild(const RenderBox& child, SizeType, const Length& size);
     WritingMode transformedWritingMode() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderEnd() const;
@@ -122,7 +122,7 @@ private:
     LayoutUnit mainAxisBorderAndPaddingExtentForChild(RenderBox& child) const;
     LayoutUnit mainAxisScrollbarExtentForChild(RenderBox& child) const;
     LayoutUnit preferredMainAxisContentExtentForChild(RenderBox& child, bool hasInfiniteLineLength);
-    EOverflow mainAxisOverflowForChild(RenderBox&) const;
+    EOverflow mainAxisOverflowForChild(const RenderBox&) const;
 
     void layoutFlexItems(bool relayoutChildren, Vector<LineContext>&);
     LayoutUnit autoMarginOffsetInMainAxis(const OrderedFlexItemList&, LayoutUnit& availableFreeSpace);
@@ -139,7 +139,8 @@ private:
 
     LayoutUnit computeChildMarginValue(const Length& margin);
     void prepareOrderIteratorAndMargins();
-    LayoutUnit adjustChildSizeForMinAndMax(RenderBox&, LayoutUnit childSize);
+    LayoutUnit adjustChildSizeForMinAndMax(const RenderBox&, LayoutUnit childSize);
+    LayoutUnit adjustChildSizeForAspectRatioCrossAxisMinAndMax(const RenderBox&, LayoutUnit childSize);
     bool computeNextFlexLine(OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, double& totalFlexGrow, double& totalWeightedFlexShrink, LayoutUnit& minMaxAppliedMainAxisExtent, bool& hasInfiniteLineLength);
 
     bool resolveFlexibleLengths(FlexSign, const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalWeightedFlexShrink, InflexibleFlexItemSize&, Vector<LayoutUnit>& childSizes, bool hasInfiniteLineLength);
@@ -158,9 +159,11 @@ private:
     void flipForRightToLeftColumn();
     void flipForWrapReverse(const Vector<LineContext>&, LayoutUnit crossAxisStartEdge);
 
-    bool mainAxisExtentIsDefinite() const;
-    bool mainAxisLengthIsIndefinite(const Length& flexBasis) const;
-
+    bool mainAxisLengthIsDefinite(const RenderBox&, const Length&) const;
+    bool crossAxisLengthIsDefinite(const RenderBox&, const Length&) const;
+    bool useChildAspectRatio(const RenderBox&) const;
+    Optional<LayoutUnit> computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const;
+    
     virtual bool isFlexibleBoxImpl() const { return false; };
 
     mutable OrderIterator m_orderIterator;

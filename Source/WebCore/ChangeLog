@@ -1,3 +1,33 @@
+2016-05-31  Dave Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r189567): Elements with aspect ratios not handled correctly inside flexbox.
+        https://bugs.webkit.org/show_bug.cgi?id=158040
+
+        Reviewed by Zalan Bujtas.
+
+        Added new tests in fast/flexbox.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::clientLogicalBottomAfterRepositioning):
+        (WebCore::RenderFlexibleBox::hasOrthogonalFlow):
+        (WebCore::RenderFlexibleBox::mainAxisContentExtent):
+        (WebCore::RenderFlexibleBox::computeMainAxisExtentForChild):
+        (WebCore::RenderFlexibleBox::mainAxisBorderAndPaddingExtentForChild):
+        (WebCore::RenderFlexibleBox::mainAxisLengthIsDefinite):
+        (WebCore::RenderFlexibleBox::mainAxisScrollbarExtentForChild):
+        (WebCore::RenderFlexibleBox::prepareOrderIteratorAndMargins):
+        (WebCore::RenderFlexibleBox::crossAxisLengthIsDefinite):
+        (WebCore::RenderFlexibleBox::computeMainSizeFromAspectRatioUsing):
+        (WebCore::RenderFlexibleBox::adjustChildSizeForAspectRatioCrossAxisMinAndMax):
+        (WebCore::RenderFlexibleBox::useChildAspectRatio):
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax):
+        (WebCore::RenderFlexibleBox::resetAutoMarginsAndLogicalTopInCrossAxis):
+        (WebCore::RenderFlexibleBox::mainAxisOverflowForChild):
+        (WebCore::RenderFlexibleBox::mainAxisExtentIsDefinite): Deleted.
+        (WebCore::RenderFlexibleBox::mainAxisLengthIsIndefinite): Deleted.
+        * rendering/RenderFlexibleBox.h:
+        (WebCore::RenderFlexibleBox::isFlexibleBoxImpl):
+
 2016-05-31  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r201482.
