@@ -173,20 +173,10 @@ private:
     bool tracksAreWiderThanMinTrackBreadth(GridTrackSizingDirection, GridSizingData&);
 #endif
 
-    bool gridWasPopulated() const { return !m_grid.isEmpty() && !m_grid[0].isEmpty(); }
-
     bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&, GridTrackSizingDirection) const;
 
-    unsigned gridColumnCount() const
-    {
-        ASSERT(gridWasPopulated());
-        return m_grid[0].size();
-    }
-    unsigned gridRowCount() const
-    {
-        ASSERT(gridWasPopulated());
-        return m_grid.size();
-    }
+    unsigned gridColumnCount() const;
+    unsigned gridRowCount() const;
 
     bool hasDefiniteLogicalSize(GridTrackSizingDirection) const;
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
@@ -207,6 +197,8 @@ private:
 
     unsigned m_autoRepeatColumns { 0 };
     unsigned m_autoRepeatRows { 0 };
+
+    bool m_gridIsDirty { true };
 };
 
 size_t inline RenderGrid::autoRepeatCountForDirection(GridTrackSizingDirection direction) const

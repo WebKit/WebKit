@@ -1,3 +1,46 @@
+2016-05-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Empty grid without explicit tracks shouldn't have any size
+        https://bugs.webkit.org/show_bug.cgi?id=155197
+
+        Reviewed by Darin Adler.
+
+        The internal representation of the grid is a Vector of Vector representing rows and
+        columns. Because of that it was not possible to have columns without having at least one
+        row. That forced us to have a 1x1 internal representation of the grid even if it was
+        actually empty. That works for most of the cases except when the grid is actually empty.
+
+        By changing the way we compute the sizes we can overcome that implementation
+        restriction. This allowed us also to thighten the conditions under we could use the
+        GridIterator. From now on it won't be possible to use it on empty grids so callers should
+        enforce that restriction.
+
+        A new bool was added to verify that placeItemsOnGrid() has been already called. The previous
+        code was relying on the fact that there were items in the internal representation, which is
+        wrong, as there might be no items in the grid.
+
+        Test: fast/css-grid-layout/empty-grid.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::GridIterator): Added ASSERTs.
+        (WebCore::RenderGrid::GridIterator::nextGridItem): Ditto.
+        (WebCore::RenderGrid::GridIterator::isEmptyAreaEnough): Ditto.
+        (WebCore::RenderGrid::GridIterator::nextEmptyGridArea): Ditto.
+        (WebCore::RenderGrid::gridColumnCount): Use the style to resolve the number of columns if
+        the internal representation is empty.
+        (WebCore::RenderGrid::gridRowCount):
+        (WebCore::RenderGrid::guttersSize): Allow to pass 0 as span, this permits using the return
+        value of gridColumnCount|gridRowCount directly to call this method.
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths): Use m_gridIsDirty.
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks): Do not examine the contents of grid
+        tracks if there are no items in the grid.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions): Ditto.
+        (WebCore::RenderGrid::placeItemsOnGrid): Set m_gridIsDirty to false.
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::clearGrid):
+        (WebCore::RenderGrid::populateGridPositionsForDirection):
+        * rendering/RenderGrid.h: Moved gridColumnCount/gridRowCount to cpp file.
+
 2016-05-30  Brady Eidson  <beidson@apple.com>
 
         Move CrossThreadCopier/CrossThreadTask to WTF.

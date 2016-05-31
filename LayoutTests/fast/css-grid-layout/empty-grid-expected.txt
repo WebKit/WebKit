@@ -1,0 +1,12 @@
+This test checks that grids with no in-flow items are actually empty.
+
+PASS
+XXXX
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
