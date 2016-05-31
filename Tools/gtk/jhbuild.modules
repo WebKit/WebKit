@@ -70,8 +70,8 @@
       href="http://people.freedesktop.org"/>
   <repository type="tarball" name="llvm.org"
       href="http://llvm.org"/>
-  <repository type="tarball" name="icu"
-      href="http://download.icu-project.org/files/icu4c/"/>
+  <repository type="tarball" name="webkitgtk-jhbuild-mirror"
+      href="http://webkitgtk.org/jhbuild_mirror/"/>
 
   <autotools id="cairo">
     <if condition-set="linux">
@@ -493,8 +493,8 @@
   <autotools id="icu"
              autogen-sh="./source/configure"
              autogenargs="--disable-samples --enable-weak-threads">
-    <branch module="55.1/icu4c-55_1-src.tgz" version="55.1" checkoutdir="icu"
-            repo="icu"
+    <branch module="icu4c-55_1-src.tgz" version="55.1" checkoutdir="icu"
+            repo="webkitgtk-jhbuild-mirror"
             hash="sha256:e16b22cbefdd354bec114541f7849a12f8fc2015320ca5282ee4fd787571457b">
     </branch>
   </autotools>
