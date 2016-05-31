@@ -76,6 +76,6 @@ TEST(Fullscreen, TopContentInset)
     ASSERT_EQ(window.get().screen.frame.size.height + webView.get()._topContentInset, webView.get().frame.size.height);
 }
 
-#endif
-
 } // namespace TestWebKitAPI
+
+#endif

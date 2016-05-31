@@ -1,5 +1,12 @@
 2016-05-31  Jer Noble  <jer.noble@apple.com>
 
+        Yet another unreviewed build fix; move the closing brace of the namespace declaration inside
+        the #if check.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenTopContentInset.mm:
+
+2016-05-31  Jer Noble  <jer.noble@apple.com>
+
         Further unreviewed build fix; only run FullscreenTopContentInset test on Mac.
 
         * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenTopContentInset.mm:
