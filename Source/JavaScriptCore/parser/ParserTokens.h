@@ -82,6 +82,7 @@ enum JSTokenType {
     CLASSTOKEN,
     EXTENDS,
     SUPER,
+    AWAIT,
     OPENBRACE = 0,
     CLOSEBRACE,
     OPENPAREN,
@@ -113,8 +114,6 @@ enum JSTokenType {
     OREQUAL,
     DOTDOTDOT,
     ARROWFUNCTION,
-    // Untagged conditional keywords
-    AWAIT,
     LastUntaggedToken,
 
     // Begin tagged tokens

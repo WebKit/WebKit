@@ -126,7 +126,7 @@ ALWAYS_INLINE static bool isEvalOrArgumentsIdentifier(const VM* vm, const Identi
 }
 ALWAYS_INLINE static bool isIdentifierOrKeyword(const JSToken& token)
 {
-    return token.m_type == IDENT || token.m_type == AWAIT || token.m_type & KeywordTokenFlag;
+    return token.m_type == IDENT || token.m_type & KeywordTokenFlag;
 }
 
 class ModuleScopeData : public RefCounted<ModuleScopeData> {
@@ -1072,6 +1072,12 @@ private:
 
     ALWAYS_INLINE bool isEvalOrArguments(const Identifier* ident) { return isEvalOrArgumentsIdentifier(m_vm, ident); }
 
+    ScopeRef upperScope(unsigned n)
+    {
+        ASSERT(m_scopeStack.size() >= (1 + n));
+        return ScopeRef(&m_scopeStack, m_scopeStack.size() - 1 - n);
+    }
+
     ScopeRef currentScope()
     {
         return ScopeRef(&m_scopeStack, m_scopeStack.size() - 1);
@@ -1445,12 +1451,13 @@ private:
     // http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
     ALWAYS_INLINE bool matchSpecIdentifier(bool inGenerator)
     {
-        return match(IDENT) || isLETMaskedAsIDENT() || isYIELDMaskedAsIDENT(inGenerator) || match(AWAIT);
+        return match(IDENT) || match(AWAIT) || isLETMaskedAsIDENT() || isYIELDMaskedAsIDENT(inGenerator);
     }
 
+    // http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
     ALWAYS_INLINE bool matchSpecIdentifier()
     {
-        return matchSpecIdentifier(currentScope()->isGenerator());
+        return match(IDENT) || match(AWAIT) || isLETMaskedAsIDENT() || isYIELDMaskedAsIDENT(currentScope()->isGenerator());
     }
 
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
@@ -1567,7 +1574,7 @@ private:
 
     bool isDisallowedIdentifierAwait(const JSToken& token)
     {
-        return token.m_type == AWAIT && (currentScope()->isAsyncFunctionBoundary() || currentScope()->isModule() || !m_parserState.allowAwait);
+        return token.m_type == AWAIT && (!m_parserState.allowAwait || currentScope()->isAsyncFunctionBoundary() || currentScope()->isModule());
     }
 
     const char* disallowedIdentifierAwaitReason()

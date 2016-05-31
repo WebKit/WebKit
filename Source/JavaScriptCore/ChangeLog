@@ -1,3 +1,91 @@
+2016-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Recover parser performance regression by async support
+        https://bugs.webkit.org/show_bug.cgi?id=158228
+
+        Reviewed by Saam Barati.
+
+        This patch recovers parser performance regression caused in r201481.
+
+        Compared to the version that reverts r201481, still ~1% regression remains.
+        But compared to ToT, this patch significantly improves the code-load performance.
+
+        In Linux x64 JSCOnly port, with GCC 5.3.1.
+
+        reverted v.s. patched.
+                                 reverted                  patched
+
+        closure              0.61805+-0.00376    ?     0.62280+-0.00525       ?
+        jquery               8.03778+-0.02114          8.03453+-0.04646
+
+        <geometric>          2.22883+-0.00836    ?     2.23688+-0.00995       ? might be 1.0036x slower
+
+        ToT v.s. patched.
+                                 baseline                  patched
+
+        closure              0.65490+-0.00351    ^     0.62473+-0.00363       ^ definitely 1.0483x faster
+        jquery               8.25373+-0.06256    ^     8.04701+-0.03455       ^ definitely 1.0257x faster
+
+        <geometric>          2.32488+-0.00921    ^     2.24210+-0.00592       ^ definitely 1.0369x faster
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        Extend SourceParseMode.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        Do not call `matchSpecIdentifier()` as much as we can. This greatly improves the performance.
+
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        Do not touch `currentScope()->isGenerator()` even if it is unnecessary in parseFunctionInfo.
+        And accidental `syntaxChecker => context` changes are fixed.
+
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseExpressionOrLabelStatement):
+        (JSC::Parser<LexerType>::parseImportClauseItem):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        Do not use matchSpecIdentifier() in the hot paths.
+
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        (JSC::Parser<LexerType>::printUnexpectedTokenText): Deleted.
+        * parser/Parser.h:
+        (JSC::isIdentifierOrKeyword):
+        AWAIT shoud be one of the keywords. This AWAIT check is unnecessary.
+
+        (JSC::Parser::upperScope):
+        (JSC::Parser::matchSpecIdentifier):
+        Touching currentScope() and its member causes significant performance degradation.
+        We carefully remove the above access in the hot paths.
+
+        (JSC::Parser::isDisallowedIdentifierAwait):
+        * parser/ParserModes.h:
+        (JSC::SourceParseModeSet::SourceParseModeSet):
+        (JSC::SourceParseModeSet::contains):
+        (JSC::SourceParseModeSet::mergeSourceParseModes):
+        (JSC::isFunctionParseMode):
+        (JSC::isAsyncFunctionParseMode):
+        (JSC::isAsyncArrowFunctionParseMode):
+        (JSC::isAsyncFunctionWrapperParseMode):
+        (JSC::isAsyncFunctionBodyParseMode):
+        (JSC::isModuleParseMode):
+        (JSC::isProgramParseMode):
+        (JSC::constructAbilityForParseMode):
+        The parser frequently checks SourceParseMode. And variety of SourceParseMode becomes many.
+        So using switch onto SourceParseMode degrades the performance. Instead, we use bit tests to guard against
+        many SourceParseModes. We expect that this will be efficiently compiled into test & jmp.
+
+        * parser/ParserTokens.h:
+        Change AWAIT to one of the keywords, as the same to YIELD / LET.
+
 2016-05-31  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: capturing with Allocations timeline causes GC to take 100x longer and cause frame drops
