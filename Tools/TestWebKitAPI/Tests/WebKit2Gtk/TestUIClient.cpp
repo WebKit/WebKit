@@ -225,8 +225,15 @@ public:
         return TRUE;
     }
 
+    static void permissionResultMessageReceivedCallback(WebKitUserContentManager* userContentManager, WebKitJavascriptResult* javascriptResult, UIClientTest* test)
+    {
+        test->m_permissionResult.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
     UIClientTest()
-        : m_scriptDialogType(WEBKIT_SCRIPT_DIALOG_ALERT)
+        : WebViewTest(webkit_user_content_manager_new())
+        , m_scriptDialogType(WEBKIT_SCRIPT_DIALOG_ALERT)
         , m_scriptDialogConfirmed(true)
         , m_allowPermissionRequests(false)
         , m_verifyMediaTypes(false)
@@ -239,11 +246,17 @@ public:
         g_signal_connect(m_webView, "script-dialog", G_CALLBACK(scriptDialog), this);
         g_signal_connect(m_webView, "mouse-target-changed", G_CALLBACK(mouseTargetChanged), this);
         g_signal_connect(m_webView, "permission-request", G_CALLBACK(permissionRequested), this);
+        WebKitUserContentManager* manager = webkit_web_view_get_user_content_manager(m_webView);
+        webkit_user_content_manager_register_script_message_handler(manager, "permission");
+        g_signal_connect(manager, "script-message-received::permission", G_CALLBACK(permissionResultMessageReceivedCallback), this);
     }
 
     ~UIClientTest()
     {
         g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+        WebKitUserContentManager* manager = webkit_web_view_get_user_content_manager(m_webView);
+        g_signal_handlers_disconnect_matched(manager, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+        webkit_user_content_manager_unregister_script_message_handler(manager, "permission");
     }
 
     static void tryWebViewCloseCallback(UIClientTest* test)
@@ -267,6 +280,13 @@ public:
     void waitUntilMainLoopFinishes()
     {
         g_main_loop_run(m_mainLoop);
+    }
+
+    const char* waitUntilPermissionResultMessageReceived()
+    {
+        m_permissionResult = nullptr;
+        g_main_loop_run(m_mainLoop);
+        return m_permissionResult.get();
     }
 
     void setExpectedWindowProperties(const WindowProperties& windowProperties)
@@ -336,6 +356,7 @@ public:
     HashSet<WTF::String> m_windowPropertiesChanged;
     GRefPtr<WebKitHitTestResult> m_mouseTargetHitTestResult;
     unsigned m_mouseTargetModifiers;
+    GUniquePtr<char> m_permissionResult;
 };
 
 static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
@@ -722,31 +743,33 @@ static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstp
         "  <script>"
         "  function runTest()"
         "  {"
-        "    navigator.geolocation.getCurrentPosition(function(p) { document.title = \"OK\" },"
-        "                                             function(e) { document.title = e.code });"
+        "    navigator.geolocation.getCurrentPosition(function(p) { window.webkit.messageHandlers.permission.postMessage('OK'); },"
+        "                                             function(e) { window.webkit.messageHandlers.permission.postMessage(e.code.toString()); });"
         "  }"
         "  </script>"
         "  <body onload='runTest();'></body>"
         "</html>";
 
-    // Test denying a permission request.
+    // Geolocation is not allowed from insecure connections like HTTP,
+    // POSITION_UNAVAILABLE ('2') is returned in that case without even
+    // asking the API layer.
     test->m_allowPermissionRequests = false;
     test->loadHtml(geolocationRequestHTML, "http://foo.com/bar");
-    test->waitUntilTitleChanged();
+    const gchar* result = test->waitUntilPermissionResultMessageReceived();
+    g_assert_cmpstr(result, ==, "2");
 
-    // According to the Geolocation API specification, '1' is the
-    // error code returned for the PERMISSION_DENIED error.
-    // http://dev.w3.org/geo/api/spec-source.html#position_error_interface
-    const gchar* result = webkit_web_view_get_title(test->m_webView);
+    // Test denying a permission request. PERMISSION_DENIED ('1') is
+    // returned in this case.
+    test->m_allowPermissionRequests = false;
+    test->loadHtml(geolocationRequestHTML, "https://foo.com/bar");
+    result = test->waitUntilPermissionResultMessageReceived();
     g_assert_cmpstr(result, ==, "1");
 
-    // Test allowing a permission request.
+    // Test allowing a permission request. Result should be different
+    // to PERMISSION_DENIED ('1').
     test->m_allowPermissionRequests = true;
-    test->loadHtml(geolocationRequestHTML, 0);
-    test->waitUntilTitleChanged();
-
-    // Check that we did not get the PERMISSION_DENIED error now.
-    result = webkit_web_view_get_title(test->m_webView);
+    test->loadHtml(geolocationRequestHTML, "https://foo.com/bar");
+    result = test->waitUntilPermissionResultMessageReceived();
     g_assert_cmpstr(result, !=, "1");
     test->addLogFatalFlag(G_LOG_LEVEL_WARNING);
 }
