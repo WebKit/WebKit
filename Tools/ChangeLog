@@ -1,5 +1,11 @@
 2016-05-31  Jer Noble  <jer.noble@apple.com>
 
+        Further unreviewed build fix; only run FullscreenTopContentInset test on Mac.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenTopContentInset.mm:
+
+2016-05-31  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed build fix; only run FullscreetTopContentInset test on platforms
         where WK_API_ENABLED is set.
 
