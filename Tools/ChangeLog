@@ -1,5 +1,12 @@
 2016-05-31  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed build fix; only run FullscreetTopContentInset test on platforms
+        where WK_API_ENABLED is set.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenTopContentInset.mm:
+
+2016-05-31  Jer Noble  <jer.noble@apple.com>
+
         REGRESSION (r201405): trailers.apple.com HUD is missing in fullscreen
         https://bugs.webkit.org/show_bug.cgi?id=158156
         <rdar://problem/26519589>

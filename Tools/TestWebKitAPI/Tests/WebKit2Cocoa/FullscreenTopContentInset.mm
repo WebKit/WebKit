@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if WK_API_ENABLED
+
 #import "PlatformUtilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -73,5 +75,7 @@ TEST(Fullscreen, TopContentInset)
     ASSERT_EQ(window.get().screen.frame.size.width, webView.get().frame.size.width);
     ASSERT_EQ(window.get().screen.frame.size.height + webView.get()._topContentInset, webView.get().frame.size.height);
 }
+
+#endif
 
 } // namespace TestWebKitAPI
