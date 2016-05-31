@@ -1,3 +1,37 @@
+2016-05-31  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Better deal with WebProcess suspension due to screen locking
+        https://bugs.webkit.org/show_bug.cgi?id=158229
+        <rdar://problem/17665473>
+        <rdar://problem/26554699>
+
+        Reviewed by Tim Horton.
+
+        When locking the screen while MobileSafari is front-most, we would try keep
+        trying to mark IOSurfaces as volatile until the 30 seconds timeout was
+        reached. This patch deals more cleanly with this situation by only trying
+        to mark IOSurfaces as volatile once if the suspension is due to screen
+        locking. In such case, it is apparently expected that some IOSurfaces cannot
+        be marked as volatile so it is enough to try once and let ourselves get
+        suspended.
+
+        This patch also reduces the timeout from 30 seconds to ~3 seconds in the
+        other suspension cases (e.g. homing out of MobileSafari). If we fail to mark
+        them as purgeable for 3 seconds for a reason or another, it is no use in
+        retrying, it is simply not going to happen and there is no reason to delay
+        process suspension any further.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::callVolatilityCompletionHandlers):
+        (WebKit::WebPage::layerVolatilityTimerFired):
+        (WebKit::WebPage::markLayersVolatileImmediatelyIfPossible):
+        (WebKit::WebPage::markLayersVolatile):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::markLayersVolatile):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationDidEnterBackground):
+        (WebKit::WebPage::applicationWillEnterForeground):
+
 2016-05-31  Brady Eidson  <beidson@apple.com>
 
         Make createCrossThreadTask() functions return on the stack instead of the heap.

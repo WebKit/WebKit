@@ -248,7 +248,7 @@ namespace WebKit {
 
 static const double pageScrollHysteresisSeconds = 0.3;
 static const std::chrono::milliseconds initialLayerVolatilityTimerInterval { 20 };
-static const std::chrono::seconds maximumLayerVolatilityTimerInterval { 10 };
+static const std::chrono::seconds maximumLayerVolatilityTimerInterval { 2 };
 
 #define WEBPAGE_LOG_ALWAYS(...) LOG_ALWAYS(isAlwaysOnLoggingAllowed(), __VA_ARGS__)
 #define WEBPAGE_LOG_ALWAYS_ERROR(...) LOG_ALWAYS_ERROR(isAlwaysOnLoggingAllowed(), __VA_ARGS__)
@@ -2037,32 +2037,34 @@ void WebPage::setLayerTreeStateIsFrozen(bool frozen)
     drawingArea->setLayerTreeStateIsFrozen(frozen);
 }
 
+void WebPage::callVolatilityCompletionHandlers()
+{
+    auto completionHandlers = WTFMove(m_markLayersAsVolatileCompletionHandlers);
+    for (auto& completionHandler : completionHandlers)
+        completionHandler();
+}
+
 void WebPage::layerVolatilityTimerFired()
 {
-    if (markLayersVolatileImmediatelyIfPossible()) {
+    auto newInterval = 2 * m_layerVolatilityTimer.repeatIntervalMS();
+    bool didSucceed = markLayersVolatileImmediatelyIfPossible();
+    if (didSucceed || newInterval > maximumLayerVolatilityTimerInterval) {
         m_layerVolatilityTimer.stop();
+        WEBPAGE_LOG_ALWAYS("%p - WebPage - Attempted to mark surfaces as volatile, success? %d", this, didSucceed);
+        callVolatilityCompletionHandlers();
         return;
     }
 
-    auto newInterval = std::min(2 * m_layerVolatilityTimer.repeatIntervalMS(), std::chrono::duration_cast<std::chrono::milliseconds>(maximumLayerVolatilityTimerInterval));
     WEBPAGE_LOG_ALWAYS_ERROR("%p - WebPage - Failed to mark all layers as volatile, will retry in %lld ms", this, static_cast<long long>(newInterval.count()));
     m_layerVolatilityTimer.startRepeating(newInterval);
 }
 
 bool WebPage::markLayersVolatileImmediatelyIfPossible()
 {
-    bool success = !drawingArea() || drawingArea()->markLayersVolatileImmediatelyIfPossible();
-    if (success) {
-        WEBPAGE_LOG_ALWAYS("%p - WebPage - Successfully marked layers as volatile", this);
-        auto completionHandlers = WTFMove(m_markLayersAsVolatileCompletionHandlers);
-        for (auto& completionHandler : completionHandlers)
-            completionHandler();
-    }
-
-    return success;
+    return !drawingArea() || drawingArea()->markLayersVolatileImmediatelyIfPossible();
 }
 
-void WebPage::markLayersVolatile(std::function<void()> completionHandler)
+void WebPage::markLayersVolatile(std::function<void ()> completionHandler)
 {
     WEBPAGE_LOG_ALWAYS("%p - WebPage::markLayersVolatile()", this);
 
@@ -2072,8 +2074,17 @@ void WebPage::markLayersVolatile(std::function<void()> completionHandler)
     if (completionHandler)
         m_markLayersAsVolatileCompletionHandlers.append(WTFMove(completionHandler));
 
-    if (markLayersVolatileImmediatelyIfPossible())
+    bool didSucceed = markLayersVolatileImmediatelyIfPossible();
+    if (didSucceed || m_isSuspendedUnderLock) {
+        if (didSucceed)
+            WEBPAGE_LOG_ALWAYS("%p - WebPage - Successfully marked layers as volatile", this);
+        else {
+            // If we get suspended when locking the screen, it is expected that some IOSurfaces cannot be marked as purgeable so we do not keep retrying.
+            WEBPAGE_LOG_ALWAYS("%p - WebPage - Did what we could to mark IOSurfaces as purgeable after locking the screen", this);
+        }
+        callVolatilityCompletionHandlers();
         return;
+    }
 
     WEBPAGE_LOG_ALWAYS("%p - Failed to mark all layers as volatile, will retry in %lld ms", this, initialLayerVolatilityTimerInterval.count());
     m_layerVolatilityTimer.startRepeating(initialLayerVolatilityTimerInterval);
