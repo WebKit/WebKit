@@ -1,3 +1,21 @@
+2016-05-31  Dave Hyatt  <hyatt@apple.com>
+
+        REGRESSION(r201040): Repainting of moving overflow:hidden objects is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=158079
+
+        Reviewed by Zalan Bujtas.
+
+        Added new test fast/repaint/overflow-hidden-movement.html
+
+        Change checkForRepaintDuringLayout() to only be true for self-painting layers
+        and not for all layers.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hasSelfPaintingLayer):
+        (WebCore::RenderObject::checkForRepaintDuringLayout):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasSelfPaintingLayer):
+
 2016-05-31  Zalan Bujtas  <zalan@apple.com>
 
         ShowRenderTree: Print location information for relative/sticky inlines.

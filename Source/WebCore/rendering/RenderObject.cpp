@@ -936,9 +936,19 @@ IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const
     return snappedIntRect(absoluteClippedOverflowRect());
 }
 
+bool RenderObject::hasSelfPaintingLayer() const
+{
+    if (!hasLayer())
+        return false;
+    auto* layer = downcast<RenderLayerModelObject>(*this).layer();
+    if (!layer)
+        return false;
+    return layer->isSelfPaintingLayer();
+}
+    
 bool RenderObject::checkForRepaintDuringLayout() const
 {
-    return !document().view()->needsFullRepaint() && !hasLayer() && everHadLayout();
+    return !document().view()->needsFullRepaint() && everHadLayout() && !hasSelfPaintingLayer();
 }
 
 LayoutRect RenderObject::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const

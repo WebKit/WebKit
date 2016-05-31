@@ -1,3 +1,13 @@
+2016-05-31  Dave Hyatt  <hyatt@apple.com>
+
+        REGRESSION(r201040): Repainting of moving overflow:hidden objects is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=158079
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/repaint/overflow-hidden-movement-expected.txt: Added.
+        * fast/repaint/overflow-hidden-movement.html: Added.
+
 2016-05-31  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] AirPlay route is sometimes reset when changing video.src

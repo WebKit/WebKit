@@ -507,6 +507,7 @@ public:
     VisibleInViewportState visibleInViewportState() { return m_bitfields.hasRareData() ? rareData().visibleInViewportState() : VisibilityUnknown; }
 
     bool hasLayer() const { return m_bitfields.hasLayer(); }
+    bool hasSelfPaintingLayer() const;
 
     enum BoxDecorationState {
         NoBoxDecorations,
