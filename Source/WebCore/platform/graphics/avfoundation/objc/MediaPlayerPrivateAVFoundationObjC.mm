@@ -730,17 +730,24 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     m_videoLayer = adoptNS([allocAVPlayerLayerInstance() init]);
     [m_videoLayer setPlayer:m_avPlayer.get()];
     [m_videoLayer setBackgroundColor:cachedCGColor(Color::black)];
+
+    m_secondaryVideoLayer = adoptNS([allocAVPlayerLayerInstance() init]);
+    [m_secondaryVideoLayer setPlayer:m_avPlayer.get()];
+    [m_secondaryVideoLayer setBackgroundColor:cachedCGColor(Color::black)];
+
 #ifndef NDEBUG
     [m_videoLayer setName:@"MediaPlayerPrivate AVPlayerLayer"];
+    [m_secondaryVideoLayer setName:@"MediaPlayerPrivate AVPlayerLayer secondary"];
 #endif
     [m_videoLayer addObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextAVPlayerLayer];
     updateVideoLayerGravity();
     [m_videoLayer setContentsScale:player()->client().mediaPlayerContentsScale()];
+    [m_secondaryVideoLayer setContentsScale:player()->client().mediaPlayerContentsScale()];
     IntSize defaultSize = snappedIntRect(player()->client().mediaPlayerContentBoxRect()).size();
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    m_videoFullscreenLayerManager->setVideoLayer(m_videoLayer.get(), defaultSize);
+    m_videoFullscreenLayerManager->setVideoLayers(m_videoLayer.get(), m_secondaryVideoLayer.get(), defaultSize);
 
 #if PLATFORM(IOS)
     if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
@@ -748,6 +755,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
 #endif
 #else
     [m_videoLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
+    [m_secondaryVideoLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
 #endif
 }
 
@@ -758,14 +766,16 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer(%p) - destroying %p", this, m_videoLayer.get());
 
-    [m_videoLayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay"];
-    [m_videoLayer.get() setPlayer:nil];
+    [m_videoLayer removeObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay"];
+    [m_videoLayer setPlayer:nil];
+    [m_secondaryVideoLayer setPlayer:nil];
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_videoFullscreenLayerManager->didDestroyVideoLayer();
 #endif
 
     m_videoLayer = nil;
+    m_secondaryVideoLayer = nil;
 }
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::getStartDate() const
@@ -1183,12 +1193,14 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 }
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer)
+void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, std::function<void()> completionHandler)
 {
-    if (m_videoFullscreenLayerManager->videoFullscreenLayer() == videoFullscreenLayer)
+    if (m_videoFullscreenLayerManager->videoFullscreenLayer() == videoFullscreenLayer) {
+        completionHandler();
         return;
+    }
 
-    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer);
+    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, completionHandler);
 
     if (m_videoFullscreenLayerManager->videoFullscreenLayer() && m_textTrackRepresentationLayer) {
         syncTextTrackBounds();
@@ -1872,6 +1884,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
     [CATransaction setDisableActions:YES];    
     NSString* gravity = shouldMaintainAspectRatio() ? AVLayerVideoGravityResizeAspect : AVLayerVideoGravityResize;
     [m_videoLayer.get() setVideoGravity:gravity];
+    [m_secondaryVideoLayer.get() setVideoGravity:gravity];
     [CATransaction commit];
 }
 

@@ -34,6 +34,7 @@
 #include "HTMLMediaElementEnums.h"
 #include "PlatformLayer.h"
 #include "WebVideoFullscreenModel.h"
+#include <functional>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -55,7 +56,8 @@ public:
     WEBCORE_EXPORT void setWebVideoFullscreenInterface(WebVideoFullscreenInterface*);
     WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
     WEBCORE_EXPORT HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
-    WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*);
+    WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler = [] { });
+    WEBCORE_EXPORT void waitForPreparedForInlineThen(std::function<void()> completionHandler = [] { });
     WebPlaybackSessionModelMediaElement& playbackSessionModel() { return m_playbackSessionModel; }
     
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;

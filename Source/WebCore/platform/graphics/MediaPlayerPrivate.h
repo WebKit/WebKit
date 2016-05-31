@@ -59,7 +59,7 @@ public:
     virtual PlatformLayer* platformLayer() const { return 0; }
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    virtual void setVideoFullscreenLayer(PlatformLayer*) { }
+    virtual void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler) { completionHandler(); }
     virtual void setVideoFullscreenFrame(FloatRect) { }
     virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity) { }
     virtual void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) { }

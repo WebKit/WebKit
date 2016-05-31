@@ -404,7 +404,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::createPreviewLayers()
         m_videoBackgroundLayer.get().name = @"MediaPlayerPrivateMediaStreamAVFObjC preview background layer";
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-        m_videoFullscreenLayerManager->setVideoLayer(m_videoBackgroundLayer.get(), snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size());
+        m_videoFullscreenLayerManager->setVideoLayers(m_videoBackgroundLayer.get(), nil, snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size());
 #endif
     }
 
@@ -474,9 +474,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::didRemoveTrack(MediaStreamTrackPrivat
 }
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer)
+void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, std::function<void()> completionHandler)
 {
-    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer);
+    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, completionHandler);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenFrame(FloatRect frame)

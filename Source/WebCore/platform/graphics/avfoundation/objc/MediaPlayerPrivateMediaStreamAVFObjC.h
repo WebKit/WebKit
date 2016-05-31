@@ -160,7 +160,7 @@ private:
     void didRemoveTrack(MediaStreamTrackPrivate&) override;
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    void setVideoFullscreenLayer(PlatformLayer*) override;
+    void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
 #endif
 
