@@ -1,3 +1,14 @@
+2016-05-31  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] AirPlay route is sometimes reset when changing video.src
+        https://bugs.webkit.org/show_bug.cgi?id=158226
+        <rdar://problem/24197592>
+
+        Reviewed by Jer Noble.
+
+        * media/airplay-autoplay-expected.txt: Added.
+        * media/airplay-autoplay.html: Added.
+
 2016-05-31  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION (r189567): Elements with aspect ratios not handled correctly inside flexbox.
