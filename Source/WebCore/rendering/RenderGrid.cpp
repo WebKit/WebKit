@@ -616,7 +616,7 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
             for (unsigned i = 0; i < flexibleSizedTracksIndex.size(); ++i) {
                 GridIterator iterator(m_grid, direction, flexibleSizedTracksIndex[i]);
                 while (auto* gridItem = iterator.nextGridItem()) {
-                    GridSpan& span = cachedGridSpan(*gridItem, direction);
+                    GridSpan span = cachedGridSpan(*gridItem, direction);
 
                     // Do not include already processed items.
                     if (i > 0 && span.startLine() <= flexibleSizedTracksIndex[i - 1])
@@ -930,7 +930,7 @@ void RenderGrid::resolveContentBasedTrackSizingFunctions(GridTrackSizingDirectio
 
             while (auto* gridItem = iterator.nextGridItem()) {
                 if (itemsSet.add(gridItem).isNewEntry) {
-                    GridSpan& span = cachedGridSpan(*gridItem, direction);
+                    GridSpan span = cachedGridSpan(*gridItem, direction);
                     if (span.integerSpan() == 1)
                         resolveContentBasedTrackSizingFunctionsForNonSpanningItems(direction, span, *gridItem, track, sizingData);
                     else if (!spanningItemCrossesFlexibleSizedTracks(span, direction))

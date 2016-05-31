@@ -1,3 +1,11 @@
+2016-05-31  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed build fix.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+
 2016-05-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Empty grid without explicit tracks shouldn't have any size
