@@ -1,3 +1,13 @@
+2016-05-31  Zalan Bujtas  <zalan@apple.com>
+
+        ShowRenderTree: Print location information for relative/sticky inlines.
+        https://bugs.webkit.org/show_bug.cgi?id=158235
+
+        Reviewed by David Hyatt.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showRenderObject):
+
 2016-05-31  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; use ASSERT_UNUSED rather than ASSERT to fix release builds.
