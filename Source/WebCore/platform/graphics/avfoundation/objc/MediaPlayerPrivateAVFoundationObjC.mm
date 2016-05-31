@@ -2587,7 +2587,7 @@ void MediaPlayerPrivateAVFoundationObjC::keyAdded()
 
 void MediaPlayerPrivateAVFoundationObjC::removeSession(CDMSession& session)
 {
-    ASSERT(&session == m_session);
+    ASSERT_UNUSED(session, &session == m_session);
     m_session = nullptr;
 }
 

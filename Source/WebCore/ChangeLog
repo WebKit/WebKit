@@ -1,5 +1,12 @@
 2016-05-31  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed build fix; use ASSERT_UNUSED rather than ASSERT to fix release builds.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::removeSession):
+
+2016-05-31  Jer Noble  <jer.noble@apple.com>
+
         [EME] Sound continues playing when video's src is changed
         https://bugs.webkit.org/show_bug.cgi?id=158233
 
