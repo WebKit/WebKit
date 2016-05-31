@@ -35,6 +35,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebsiteData.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/IDBKeyData.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/TextEncoding.h>

@@ -1,3 +1,9 @@
+2016-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ clean build after r201504.
+
+        * DatabaseProcess/DatabaseProcess.cpp: Add missing include.
+
 2016-05-30  Brady Eidson  <beidson@apple.com>
 
         Move CrossThreadCopier/CrossThreadTask to WTF.
