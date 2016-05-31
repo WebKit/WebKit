@@ -431,13 +431,13 @@ void IDBServer::didGetAllDatabaseNames(uint64_t serverConnectionIdentifier, uint
     connection->didGetAllDatabaseNames(callbackID, databaseNames);
 }
 
-void IDBServer::postDatabaseTask(std::unique_ptr<CrossThreadTask>&& task)
+void IDBServer::postDatabaseTask(CrossThreadTask&& task)
 {
     ASSERT(isMainThread());
     m_databaseQueue.append(WTFMove(task));
 }
 
-void IDBServer::postDatabaseTaskReply(std::unique_ptr<CrossThreadTask>&& task)
+void IDBServer::postDatabaseTaskReply(CrossThreadTask&& task)
 {
     ASSERT(!isMainThread());
     m_databaseReplyQueue.append(WTFMove(task));
@@ -467,8 +467,8 @@ void IDBServer::databaseRunLoop()
         Locker<Lock> locker(m_databaseThreadCreationLock);
     }
 
-    while (auto task = m_databaseQueue.waitForMessage())
-        task->performTask();
+    while (!m_databaseQueue.isKilled())
+        m_databaseQueue.waitForMessage().performTask();
 }
 
 void IDBServer::handleTaskRepliesOnMainThread()

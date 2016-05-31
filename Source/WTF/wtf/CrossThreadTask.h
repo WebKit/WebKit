@@ -27,12 +27,14 @@
 
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NoncopyableFunction.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
 class CrossThreadTask {
-    WTF_MAKE_NONCOPYABLE(CrossThreadTask);
 public:
+    CrossThreadTask() = default;
+
     CrossThreadTask(NoncopyableFunction<void ()>&& taskFunction)
         : m_taskFunction(WTFMove(taskFunction))
     {
@@ -45,8 +47,6 @@ public:
     }
 
 protected:
-    CrossThreadTask() { }
-
     NoncopyableFunction<void ()> m_taskFunction;
 };
 
@@ -73,33 +73,33 @@ public:
 };
 
 template<typename T>
-std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+CrossThreadTask createCrossThreadTask(
     T& callee,
     void (T::*method)())
 {
-    return std::make_unique<CrossThreadTaskImpl<T>>(&callee, method);
+    return CrossThreadTaskImpl<T>(&callee, method);
 }
 
 template<typename T, typename P1, typename MP1>
-std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+CrossThreadTask createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1),
     const P1& parameter1)
 {
-    return std::make_unique<CrossThreadTaskImpl<T, MP1>>(
+    return CrossThreadTaskImpl<T, MP1>(
         &callee,
         method,
         WTF::CrossThreadCopier<P1>::copy(parameter1));
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2>
-std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+CrossThreadTask createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2),
     const P1& parameter1,
     const P2& parameter2)
 {
-    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2>>(
+    return CrossThreadTaskImpl<T, MP1, MP2>(
         &callee,
         method,
         WTF::CrossThreadCopier<P1>::copy(parameter1),
@@ -108,14 +108,14 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
-std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+CrossThreadTask createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3),
     const P1& parameter1,
     const P2& parameter2,
     const P3& parameter3)
 {
-    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3>>(
+    return CrossThreadTaskImpl<T, MP1, MP2, MP3>(
         &callee,
         method,
         WTF::CrossThreadCopier<P1>::copy(parameter1),
@@ -124,13 +124,13 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
 }
 
 template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
-std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+CrossThreadTask createCrossThreadTask(
     void (*method)(MP1, MP2, MP3),
     const P1& parameter1,
     const P2& parameter2,
     const P3& parameter3)
 {
-    return std::make_unique<CrossThreadTaskStaticImpl<MP1, MP2, MP3>>(
+    return CrossThreadTaskStaticImpl<MP1, MP2, MP3>(
         method,
         WTF::CrossThreadCopier<P1>::copy(parameter1),
         WTF::CrossThreadCopier<P2>::copy(parameter2),
@@ -138,7 +138,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4>
-std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+CrossThreadTask createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3, MP4),
     const P1& parameter1,
@@ -146,7 +146,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     const P3& parameter3,
     const P4& parameter4)
 {
-    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4>>(
+    return CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4>(
         &callee,
         method,
         WTF::CrossThreadCopier<P1>::copy(parameter1),
@@ -156,7 +156,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5>
-std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+CrossThreadTask createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3, MP4, MP5),
     const P1& parameter1,
@@ -165,7 +165,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     const P4& parameter4,
     const P5& parameter5)
 {
-    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5>>(
+    return CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5>(
         &callee,
         method,
         WTF::CrossThreadCopier<P1>::copy(parameter1),
@@ -176,7 +176,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6>
-std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+CrossThreadTask createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3, MP4, MP5, MP6),
     const P1& parameter1,
@@ -186,7 +186,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     const P5& parameter5,
     const P6& parameter6)
 {
-    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6>>(
+    return CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6>(
         &callee,
         method,
         WTF::CrossThreadCopier<P1>::copy(parameter1),
@@ -198,7 +198,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6, typename P7, typename MP7>
-std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+CrossThreadTask createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3, MP4, MP5, MP6, MP7),
     const P1& parameter1,
@@ -209,7 +209,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     const P6& parameter6,
     const P7& parameter7)
 {
-    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7>>(
+    return CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7>(
         &callee,
         method,
         WTF::CrossThreadCopier<P1>::copy(parameter1),
@@ -222,7 +222,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6, typename P7, typename MP7, typename P8, typename MP8>
-std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+CrossThreadTask createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3, MP4, MP5, MP6, MP7, MP8),
     const P1& parameter1,
@@ -234,7 +234,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     const P7& parameter7,
     const P8& parameter8)
 {
-    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7, MP8>>(
+    return CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7, MP8>(
         &callee,
         method,
         WTF::CrossThreadCopier<P1>::copy(parameter1),

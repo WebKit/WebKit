@@ -31,6 +31,7 @@
 #include "IDBResourceIdentifier.h"
 #include "TransactionOperation.h"
 #include <functional>
+#include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
@@ -157,7 +158,7 @@ private:
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations;
     Lock m_transactionOperationLock;
 
-    MessageQueue<CrossThreadTask> m_mainThreadQueue;
+    CrossThreadQueue<CrossThreadTask> m_mainThreadQueue;
     Lock m_mainThreadTaskLock;
     RefPtr<IDBConnectionToServer> m_mainThreadProtector;
 };

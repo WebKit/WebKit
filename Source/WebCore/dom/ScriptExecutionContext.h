@@ -172,11 +172,8 @@ public:
     template<typename... Arguments>
     void postCrossThreadTask(Arguments&&... arguments)
     {
-        auto crossThreadTask = createCrossThreadTask(arguments...);
-        auto* rawTask = crossThreadTask.release();
-        postTask([=](ScriptExecutionContext&) {
-            std::unique_ptr<CrossThreadTask> task(rawTask);
-            task->performTask();
+        postTask([crossThreadTask = createCrossThreadTask(arguments...)](ScriptExecutionContext&) mutable {
+            crossThreadTask.performTask();
         });
     }
 

@@ -30,7 +30,9 @@
  */
 
 #include "config.h"
-#include "CrossThreadCopier.h"
+#include <wtf/CrossThreadCopier.h>
+
+#include <wtf/CrossThreadTask.h>
 
 namespace WTF {
 
@@ -78,3 +80,4 @@ static_assert((std::is_same<int, CrossThreadCopier<RefPtr<CopierRefCountedTest>>
 static_assert((std::is_same<int, CrossThreadCopier<CopierRefCountedTest*>::Type>::value), "CrossThreadCopier specialization improperly applied to raw pointer of a RefCounted (but not ThreadSafeRefCounted) type");
 
 } // namespace WTF
+

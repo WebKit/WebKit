@@ -143,7 +143,7 @@ String DatabaseProcess::absoluteIndexedDatabasePathFromDatabaseRelativePath(cons
 }
 #endif
 
-void DatabaseProcess::postDatabaseTask(std::unique_ptr<CrossThreadTask> task)
+void DatabaseProcess::postDatabaseTask(CrossThreadTask&& task)
 {
     ASSERT(RunLoop::isMain());
 
@@ -160,14 +160,14 @@ void DatabaseProcess::performNextDatabaseTask()
 {
     ASSERT(!RunLoop::isMain());
 
-    std::unique_ptr<CrossThreadTask> task;
+    CrossThreadTask task;
     {
         LockHolder locker(m_databaseTaskMutex);
         ASSERT(!m_databaseTasks.isEmpty());
         task = m_databaseTasks.takeFirst();
     }
 
-    task->performTask();
+    task.performTask();
 }
 
 void DatabaseProcess::createDatabaseToWebProcessConnection()
@@ -223,7 +223,7 @@ void DatabaseProcess::fetchWebsiteData(SessionID, OptionSet<WebsiteDataType> web
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         // FIXME: Pick the right database store based on the session ID.
-        postDatabaseTask(std::make_unique<CrossThreadTask>([callbackAggregator, websiteDataTypes, this] {
+        postDatabaseTask(CrossThreadTask([callbackAggregator, websiteDataTypes, this] {
 
             Vector<RefPtr<SecurityOrigin>> securityOrigins = indexedDatabaseOrigins();
 

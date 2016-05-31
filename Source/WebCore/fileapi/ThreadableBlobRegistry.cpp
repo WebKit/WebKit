@@ -37,6 +37,7 @@
 #include "BlobURL.h"
 #include "SecurityOrigin.h"
 #include <mutex>
+#include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
@@ -100,12 +101,12 @@ static ThreadSpecific<BlobUrlOriginMap>& originMap()
     return *map;
 }
 
-static MessageQueue<CrossThreadTask>& threadableQueue()
+static CrossThreadQueue<CrossThreadTask>& threadableQueue()
 {
     static std::once_flag onceFlag;
-    static MessageQueue<CrossThreadTask>* queue;
+    static CrossThreadQueue<CrossThreadTask>* queue;
     std::call_once(onceFlag, [] {
-        queue = new MessageQueue<CrossThreadTask>;
+        queue = new CrossThreadQueue<CrossThreadTask>;
     });
 
     return *queue;
