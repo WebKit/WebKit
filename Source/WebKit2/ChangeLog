@@ -1,3 +1,14 @@
+2016-05-31  Beth Dakin  <bdakin@apple.com>
+
+        Add two optional items to WebViewImplDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=158242
+        -and corresponding-
+        rdar://problem/26473095
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+
 2016-05-31  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r201405): trailers.apple.com HUD is missing in fullscreen
