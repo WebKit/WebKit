@@ -240,7 +240,9 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     // Then insert the WebView into the full screen window
     NSView *contentView = [[self window] contentView];
     [_clipView addSubview:_webView positioned:NSWindowBelow relativeTo:nil];
-    _webView.frame = NSInsetRect(contentView.bounds, 0, -_page->topContentInset());
+    NSRect contentViewBounds = contentView.bounds;
+    contentViewBounds.size.height += _page->topContentInset();
+    _webView.frame = contentViewBounds;
 
     makeResponderFirstResponderIfDescendantOfView(self.window, webWindowFirstResponder, _webView);
 

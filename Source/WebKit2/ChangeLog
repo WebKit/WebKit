@@ -1,3 +1,16 @@
+2016-05-31  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r201405): trailers.apple.com HUD is missing in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=158156
+        <rdar://problem/26519589>
+
+        Reviewed by Darin Adler.
+
+        Only increase the frame of the webView (to account for top content inset) in one dimension.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+
 2016-05-31  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Better deal with WebProcess suspension due to screen locking
