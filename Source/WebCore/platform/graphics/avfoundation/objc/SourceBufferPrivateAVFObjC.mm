@@ -275,7 +275,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     RetainPtr<WebAVStreamDataParserListener> protectedSelf = self;
 
     OSObjectPtr<dispatch_semaphore_t> hasSessionSemaphore = adoptOSObject(dispatch_semaphore_create(0));
-    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedInitData = RetainPtr<NSData>(initData), trackID, hasSessionSemaphore = WTFMove(hasSessionSemaphore)] {
+    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedInitData = RetainPtr<NSData>(initData), trackID, hasSessionSemaphore] {
         if (protectedSelf->_parent)
             protectedSelf->_parent->didProvideContentKeyRequestInitializationDataForTrackID(protectedInitData.get(), trackID, hasSessionSemaphore);
     });

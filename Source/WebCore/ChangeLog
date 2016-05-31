@@ -1,3 +1,19 @@
+2016-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r201482): Crash under dispatch_semaphore_wait
+        https://bugs.webkit.org/show_bug.cgi?id=158230
+        <rdar://problem/26534698>
+
+        Reviewed by Eric Carlson.
+
+        Stop moving hasSessionSemaphore in the lambda capture since it is used in
+        dispatch_semaphore_wait() call after the callOnMainThread() call.
+
+        No new tests, already covered by tests that are crashing on the bots.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeyRequestInitializationData:forTrackID:]):
+
 2016-05-31  Brady Eidson  <beidson@apple.com>
 
         Make createCrossThreadTask() functions return on the stack instead of the heap.
