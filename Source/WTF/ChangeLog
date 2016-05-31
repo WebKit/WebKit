@@ -1,3 +1,22 @@
+2016-05-30  Brady Eidson  <beidson@apple.com>
+
+        Move CrossThreadCopier/CrossThreadTask to WTF.
+        https://bugs.webkit.org/show_bug.cgi?id=158207
+
+        Reviewed by Alex Christensen.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+
+        * wtf/CrossThreadCopier.cpp: Renamed from Source/WebCore/platform/CrossThreadCopier.cpp.
+        * wtf/CrossThreadCopier.h: Renamed from Source/WebCore/platform/CrossThreadCopier.h.
+        (WTF::CrossThreadCopierPassThrough::copy):
+        
+        * wtf/CrossThreadTask.h: Renamed from Source/WebCore/platform/CrossThreadTask.h.
+        (WTF::CrossThreadTask::CrossThreadTask):
+        (WTF::CrossThreadTask::performTask):
+        (WTF::createCrossThreadTask):
+
 2016-05-28  Chris Dumez  <cdumez@apple.com>
 
         Templatize NoncopyableFunction class similarly to std::function

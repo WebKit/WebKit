@@ -33,13 +33,12 @@
 #include "DatabaseProcessProxyMessages.h"
 #include "DatabaseToWebProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebCrossThreadCopier.h"
 #include "WebsiteData.h"
-#include <WebCore/CrossThreadTask.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/TextEncoding.h>
+#include <wtf/CrossThreadTask.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;

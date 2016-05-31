@@ -27,7 +27,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "CrossThreadTask.h"
 #include "IDBBackingStore.h"
 #include "IDBBindingUtilities.h"
 #include "IDBDatabaseIdentifier.h"
@@ -38,6 +37,7 @@
 #include "Timer.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseTransaction.h"
+#include <wtf/CrossThreadTask.h>
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>

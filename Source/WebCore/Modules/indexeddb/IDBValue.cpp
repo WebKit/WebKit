@@ -28,8 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "CrossThreadCopier.h"
 #include "SerializedScriptValue.h"
+#include <wtf/CrossThreadTask.h>
 
 namespace WebCore {
 

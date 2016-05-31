@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CrossThreadTask_h
-#define CrossThreadTask_h
+#pragma once
 
-#include "CrossThreadCopier.h"
-#include <functional>
+#include <wtf/CrossThreadCopier.h>
+#include <wtf/NoncopyableFunction.h>
 
-namespace WebCore {
+namespace WTF {
 
 class CrossThreadTask {
     WTF_MAKE_NONCOPYABLE(CrossThreadTask);
 public:
-    CrossThreadTask(const std::function<void ()> taskFunction)
-        : m_taskFunction(taskFunction)
+    CrossThreadTask(NoncopyableFunction<void ()>&& taskFunction)
+        : m_taskFunction(WTFMove(taskFunction))
     {
         ASSERT(taskFunction);
     }
@@ -48,7 +47,7 @@ public:
 protected:
     CrossThreadTask() { }
 
-    std::function<void ()> m_taskFunction;
+    NoncopyableFunction<void ()> m_taskFunction;
 };
 
 template <typename T, typename... Arguments>
@@ -90,7 +89,7 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     return std::make_unique<CrossThreadTaskImpl<T, MP1>>(
         &callee,
         method,
-        WebCore::CrossThreadCopier<P1>::copy(parameter1));
+        WTF::CrossThreadCopier<P1>::copy(parameter1));
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2>
@@ -103,8 +102,8 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2>>(
         &callee,
         method,
-        WebCore::CrossThreadCopier<P1>::copy(parameter1),
-        WebCore::CrossThreadCopier<P2>::copy(parameter2));
+        WTF::CrossThreadCopier<P1>::copy(parameter1),
+        WTF::CrossThreadCopier<P2>::copy(parameter2));
 
 }
 
@@ -119,9 +118,9 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3>>(
         &callee,
         method,
-        WebCore::CrossThreadCopier<P1>::copy(parameter1),
-        WebCore::CrossThreadCopier<P2>::copy(parameter2),
-        WebCore::CrossThreadCopier<P3>::copy(parameter3));
+        WTF::CrossThreadCopier<P1>::copy(parameter1),
+        WTF::CrossThreadCopier<P2>::copy(parameter2),
+        WTF::CrossThreadCopier<P3>::copy(parameter3));
 }
 
 template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
@@ -133,9 +132,9 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
 {
     return std::make_unique<CrossThreadTaskStaticImpl<MP1, MP2, MP3>>(
         method,
-        WebCore::CrossThreadCopier<P1>::copy(parameter1),
-        WebCore::CrossThreadCopier<P2>::copy(parameter2),
-        WebCore::CrossThreadCopier<P3>::copy(parameter3));
+        WTF::CrossThreadCopier<P1>::copy(parameter1),
+        WTF::CrossThreadCopier<P2>::copy(parameter2),
+        WTF::CrossThreadCopier<P3>::copy(parameter3));
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4>
@@ -150,10 +149,10 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4>>(
         &callee,
         method,
-        WebCore::CrossThreadCopier<P1>::copy(parameter1),
-        WebCore::CrossThreadCopier<P2>::copy(parameter2),
-        WebCore::CrossThreadCopier<P3>::copy(parameter3),
-        WebCore::CrossThreadCopier<P4>::copy(parameter4));
+        WTF::CrossThreadCopier<P1>::copy(parameter1),
+        WTF::CrossThreadCopier<P2>::copy(parameter2),
+        WTF::CrossThreadCopier<P3>::copy(parameter3),
+        WTF::CrossThreadCopier<P4>::copy(parameter4));
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5>
@@ -169,11 +168,11 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5>>(
         &callee,
         method,
-        WebCore::CrossThreadCopier<P1>::copy(parameter1),
-        WebCore::CrossThreadCopier<P2>::copy(parameter2),
-        WebCore::CrossThreadCopier<P3>::copy(parameter3),
-        WebCore::CrossThreadCopier<P4>::copy(parameter4),
-        WebCore::CrossThreadCopier<P5>::copy(parameter5));
+        WTF::CrossThreadCopier<P1>::copy(parameter1),
+        WTF::CrossThreadCopier<P2>::copy(parameter2),
+        WTF::CrossThreadCopier<P3>::copy(parameter3),
+        WTF::CrossThreadCopier<P4>::copy(parameter4),
+        WTF::CrossThreadCopier<P5>::copy(parameter5));
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6>
@@ -190,12 +189,12 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6>>(
         &callee,
         method,
-        WebCore::CrossThreadCopier<P1>::copy(parameter1),
-        WebCore::CrossThreadCopier<P2>::copy(parameter2),
-        WebCore::CrossThreadCopier<P3>::copy(parameter3),
-        WebCore::CrossThreadCopier<P4>::copy(parameter4),
-        WebCore::CrossThreadCopier<P5>::copy(parameter5),
-        WebCore::CrossThreadCopier<P6>::copy(parameter6));
+        WTF::CrossThreadCopier<P1>::copy(parameter1),
+        WTF::CrossThreadCopier<P2>::copy(parameter2),
+        WTF::CrossThreadCopier<P3>::copy(parameter3),
+        WTF::CrossThreadCopier<P4>::copy(parameter4),
+        WTF::CrossThreadCopier<P5>::copy(parameter5),
+        WTF::CrossThreadCopier<P6>::copy(parameter6));
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6, typename P7, typename MP7>
@@ -213,13 +212,13 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7>>(
         &callee,
         method,
-        WebCore::CrossThreadCopier<P1>::copy(parameter1),
-        WebCore::CrossThreadCopier<P2>::copy(parameter2),
-        WebCore::CrossThreadCopier<P3>::copy(parameter3),
-        WebCore::CrossThreadCopier<P4>::copy(parameter4),
-        WebCore::CrossThreadCopier<P5>::copy(parameter5),
-        WebCore::CrossThreadCopier<P6>::copy(parameter6),
-        WebCore::CrossThreadCopier<P7>::copy(parameter7));
+        WTF::CrossThreadCopier<P1>::copy(parameter1),
+        WTF::CrossThreadCopier<P2>::copy(parameter2),
+        WTF::CrossThreadCopier<P3>::copy(parameter3),
+        WTF::CrossThreadCopier<P4>::copy(parameter4),
+        WTF::CrossThreadCopier<P5>::copy(parameter5),
+        WTF::CrossThreadCopier<P6>::copy(parameter6),
+        WTF::CrossThreadCopier<P7>::copy(parameter7));
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6, typename P7, typename MP7, typename P8, typename MP8>
@@ -238,16 +237,17 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7, MP8>>(
         &callee,
         method,
-        WebCore::CrossThreadCopier<P1>::copy(parameter1),
-        WebCore::CrossThreadCopier<P2>::copy(parameter2),
-        WebCore::CrossThreadCopier<P3>::copy(parameter3),
-        WebCore::CrossThreadCopier<P4>::copy(parameter4),
-        WebCore::CrossThreadCopier<P5>::copy(parameter5),
-        WebCore::CrossThreadCopier<P6>::copy(parameter6),
-        WebCore::CrossThreadCopier<P7>::copy(parameter7),
-        WebCore::CrossThreadCopier<P8>::copy(parameter8));
+        WTF::CrossThreadCopier<P1>::copy(parameter1),
+        WTF::CrossThreadCopier<P2>::copy(parameter2),
+        WTF::CrossThreadCopier<P3>::copy(parameter3),
+        WTF::CrossThreadCopier<P4>::copy(parameter4),
+        WTF::CrossThreadCopier<P5>::copy(parameter5),
+        WTF::CrossThreadCopier<P6>::copy(parameter6),
+        WTF::CrossThreadCopier<P7>::copy(parameter7),
+        WTF::CrossThreadCopier<P8>::copy(parameter8));
 }
 
-} // namespace WebCore
+} // namespace WTF
 
-#endif // CrossThreadTask_h
+using WTF::CrossThreadTask;
+using WTF::createCrossThreadTask;

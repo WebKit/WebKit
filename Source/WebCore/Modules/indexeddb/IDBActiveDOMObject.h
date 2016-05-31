@@ -26,8 +26,8 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
-#include "CrossThreadCopier.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/CrossThreadTask.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 

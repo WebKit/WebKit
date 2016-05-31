@@ -27,11 +27,11 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "CrossThreadTask.h"
 #include "IDBConnectionToClient.h"
 #include "IDBDatabaseIdentifier.h"
 #include "UniqueIDBDatabase.h"
 #include "UniqueIDBDatabaseConnection.h"
+#include <wtf/CrossThreadTask.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/MessageQueue.h>
@@ -41,7 +41,6 @@
 
 namespace WebCore {
 
-class CrossThreadTask;
 class IDBCursorInfo;
 class IDBRequestData;
 class IDBValue;

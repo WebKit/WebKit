@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,66 +30,9 @@
  */
 
 #include "config.h"
-
 #include "CrossThreadCopier.h"
 
-#include "URL.h"
-#include "ResourceError.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
-#include "SecurityOriginData.h"
-#include "SerializedScriptValue.h"
-#include "SessionID.h"
-#include "ThreadSafeDataBuffer.h"
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebCore {
-
-CrossThreadCopierBase<false, false, URL>::Type CrossThreadCopierBase<false, false, URL>::copy(const URL& url)
-{
-    return url.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, String>::Type CrossThreadCopierBase<false, false, String>::copy(const String& str)
-{
-    return str.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, ResourceError>::Type CrossThreadCopierBase<false, false, ResourceError>::copy(const ResourceError& error)
-{
-    return error.copy();
-}
-
-CrossThreadCopierBase<false, false, ResourceRequest>::Type CrossThreadCopierBase<false, false, ResourceRequest>::copy(const ResourceRequest& request)
-{
-    return request.copyData();
-}
-
-CrossThreadCopierBase<false, false, ResourceResponse>::Type CrossThreadCopierBase<false, false, ResourceResponse>::copy(const ResourceResponse& response)
-{
-    return response.copyData();
-}
-
-CrossThreadCopierBase<false, false, SecurityOriginData>::Type CrossThreadCopierBase<false, false, SecurityOriginData>::copy(const SecurityOriginData& originData)
-{
-    return originData.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, SessionID>::Type CrossThreadCopierBase<false, false, SessionID>::copy(const SessionID& sessionID)
-{
-    return sessionID;
-}
-
-CrossThreadCopierBase<false, false, ThreadSafeDataBuffer>::Type CrossThreadCopierBase<false, false, ThreadSafeDataBuffer>::copy(const ThreadSafeDataBuffer& buffer)
-{
-    return ThreadSafeDataBuffer(buffer);
-}
-
-CrossThreadCopierBase<false, false, std::chrono::system_clock::time_point>::Type CrossThreadCopierBase<false, false, std::chrono::system_clock::time_point>::copy(const std::chrono::system_clock::time_point& timePoint)
-{
-    return timePoint;
-}
+namespace WTF {
 
 // Test CrossThreadCopier using COMPILE_ASSERT.
 
@@ -97,20 +41,20 @@ class CopierThreadSafeRefCountedTest : public ThreadSafeRefCounted<CopierThreadS
 };
 
 COMPILE_ASSERT((std::is_same<
-                  PassRefPtr<CopierThreadSafeRefCountedTest>,
-                  CrossThreadCopier<PassRefPtr<CopierThreadSafeRefCountedTest>>::Type
-                  >::value),
-               PassRefPtrTest);
+                    PassRefPtr<CopierThreadSafeRefCountedTest>,
+                    CrossThreadCopier<PassRefPtr<CopierThreadSafeRefCountedTest>>::Type
+                >::value),
+                PassRefPtrTest);
 COMPILE_ASSERT((std::is_same<
-                  PassRefPtr<CopierThreadSafeRefCountedTest>,
-                  CrossThreadCopier<RefPtr<CopierThreadSafeRefCountedTest>>::Type
-                  >::value),
-               RefPtrTest);
+                    PassRefPtr<CopierThreadSafeRefCountedTest>,
+                    CrossThreadCopier<RefPtr<CopierThreadSafeRefCountedTest>>::Type
+                >::value),
+                RefPtrTest);
 COMPILE_ASSERT((std::is_same<
-                  PassRefPtr<CopierThreadSafeRefCountedTest>,
-                  CrossThreadCopier<CopierThreadSafeRefCountedTest*>::Type
-                  >::value),
-               RawPointerTest);
+                    PassRefPtr<CopierThreadSafeRefCountedTest>,
+                    CrossThreadCopier<CopierThreadSafeRefCountedTest*>::Type
+                >::value),
+                RawPointerTest);
 
 // Add specializations for RefCounted types which will let us verify that no other template matches.
 template<typename T> struct CrossThreadCopierBase<false, false, RefPtr<T>> {
@@ -133,4 +77,4 @@ static_assert((std::is_same<int, CrossThreadCopier<PassRefPtr<CopierRefCountedTe
 static_assert((std::is_same<int, CrossThreadCopier<RefPtr<CopierRefCountedTest>>::Type>::value), "CrossThreadCopier specialization improperly applied to RefPtr<> of a RefCounted (but not ThreadSafeRefCounted) type");
 static_assert((std::is_same<int, CrossThreadCopier<CopierRefCountedTest*>::Type>::value), "CrossThreadCopier specialization improperly applied to raw pointer of a RefCounted (but not ThreadSafeRefCounted) type");
 
-} // namespace WebCore
+} // namespace WTF

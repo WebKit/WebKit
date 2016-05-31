@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseProcess_h
-#define DatabaseProcess_h
+#pragma once
 
 #if ENABLE(DATABASE_PROCESS)
 
@@ -33,10 +32,10 @@
 #include <WebCore/IDBBackingStore.h>
 #include <WebCore/IDBServer.h>
 #include <WebCore/UniqueIDBDatabase.h>
+#include <wtf/CrossThreadTask.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
-class CrossThreadTask;
 class SessionID;
 struct SecurityOriginData;
 }
@@ -69,7 +68,7 @@ public:
 
     WorkQueue& queue() { return m_queue.get(); }
 
-    void postDatabaseTask(std::unique_ptr<WebCore::CrossThreadTask>);
+    void postDatabaseTask(std::unique_ptr<CrossThreadTask>);
 
 #if ENABLE(INDEXED_DATABASE)
     // WebCore::IDBServer::IDBBackingStoreFileHandler
@@ -127,12 +126,10 @@ private:
     HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
     HashMap<uint64_t, std::function<void (const SandboxExtension::HandleArray&)>> m_sandboxExtensionForBlobsCompletionHandlers;
 
-    Deque<std::unique_ptr<WebCore::CrossThreadTask>> m_databaseTasks;
+    Deque<std::unique_ptr<CrossThreadTask>> m_databaseTasks;
     Lock m_databaseTaskMutex;
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(DATABASE_PROCESS)
-
-#endif // DatabaseProcess_h

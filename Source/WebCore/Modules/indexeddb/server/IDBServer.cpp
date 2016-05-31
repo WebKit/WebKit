@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "CrossThreadCopier.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"
@@ -36,6 +35,7 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteIDBBackingStore.h"
 #include "SecurityOrigin.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 

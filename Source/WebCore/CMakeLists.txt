@@ -2097,7 +2097,6 @@ set(WebCore_SOURCES
     platform/ContentType.cpp
     platform/ContextMenu.cpp
     platform/ContextMenuItem.cpp
-    platform/CrossThreadCopier.cpp
     platform/Cursor.cpp
     platform/DateComponents.cpp
     platform/Decimal.cpp
@@ -2142,6 +2141,7 @@ set(WebCore_SOURCES
     platform/URL.cpp
     platform/UUID.cpp
     platform/UserActivity.cpp
+    platform/WebCoreCrossThreadCopier.cpp
     platform/Widget.cpp
 
     platform/animation/Animation.cpp

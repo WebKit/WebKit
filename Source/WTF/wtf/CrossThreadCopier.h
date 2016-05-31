@@ -38,20 +38,7 @@
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-
-class IntRect;
-class IntSize;
-class URL;
-class ResourceError;
-class ResourceRequest;
-class ResourceResponse;
-class SessionID;
-class ThreadSafeDataBuffer;
-struct CrossThreadResourceResponseData;
-struct CrossThreadResourceRequestData;
-struct SecurityOriginData;
-struct ThreadableLoaderOptions;
+namespace WTF {
 
 struct CrossThreadCopierBaseHelper {
     template<typename T> struct RemovePointer {
@@ -92,14 +79,6 @@ template<bool isEnumOrConvertibleToInteger, bool isThreadSafeRefCounted, typenam
 template<typename T> struct CrossThreadCopierBase<true, false, T> : public CrossThreadCopierPassThrough<T> {
 };
 
-// To allow a type to be passed across threads using its copy constructor, add a forward declaration of the type and
-// a CopyThreadCopierBase<false, false, TypeName> : public CrossThreadCopierPassThrough<TypeName> { }; to this file.
-template<> struct CrossThreadCopierBase<false, false, IntRect> : public CrossThreadCopierPassThrough<IntRect> {
-};
-
-template<> struct CrossThreadCopierBase<false, false, IntSize> : public CrossThreadCopierPassThrough<IntSize> {
-};
-
 // Classes that have an isolatedCopy() method get a default specialization.
 template<class T> struct CrossThreadCopierBase<false, false, T> {
     static T copy(const T& value)
@@ -114,55 +93,26 @@ template<typename T> struct CrossThreadCopierBase<false, true, T> {
     static_assert(std::is_convertible<RefCountedType*, ThreadSafeRefCounted<RefCountedType>*>::value, "T is not convertible to ThreadSafeRefCounted!");
 
     typedef PassRefPtr<RefCountedType> Type;
-    WEBCORE_EXPORT static Type copy(const T& refPtr)
+    static Type copy(const T& refPtr)
     {
         return refPtr;
     }
 };
 
-template<> struct CrossThreadCopierBase<false, false, URL> {
-    typedef URL Type;
-    static Type copy(const URL&);
-};
-
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, String> {
-    typedef String Type;
-    static Type copy(const String&);
-};
-
-template<> struct CrossThreadCopierBase<false, false, ResourceError> {
-    typedef ResourceError Type;
-    static Type copy(const ResourceError&);
-};
-
-template<> struct CrossThreadCopierBase<false, false, ResourceRequest> {
-    typedef std::unique_ptr<CrossThreadResourceRequestData> Type;
-    static Type copy(const ResourceRequest&);
-};
-
-template<> struct CrossThreadCopierBase<false, false, ResourceResponse> {
-    typedef std::unique_ptr<CrossThreadResourceResponseData> Type;
-    static Type copy(const ResourceResponse&);
-};
-
-template<> struct CrossThreadCopierBase<false, false, SecurityOriginData> {
-    typedef SecurityOriginData Type;
-    static Type copy(const SecurityOriginData&);
-};
-
-template<> struct CrossThreadCopierBase<false, false, SessionID> {
-    typedef SessionID Type;
-    static Type copy(const SessionID&);
-};
-
-template<> struct CrossThreadCopierBase<false, false, ThreadSafeDataBuffer> {
-    typedef ThreadSafeDataBuffer Type;
-    static Type copy(const ThreadSafeDataBuffer&);
-};
-
 template<> struct CrossThreadCopierBase<false, false, std::chrono::system_clock::time_point> {
     typedef std::chrono::system_clock::time_point Type;
-    static Type copy(const Type& source);
+    static Type copy(const Type& source)
+    {
+        return source;
+    }
+};
+
+template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
+    typedef WTF::ASCIILiteral Type;
+    static Type copy(const Type& source)
+    {
+        return source;
+    }
 };
 
 template<typename T>
@@ -182,4 +132,8 @@ template<typename T> struct CrossThreadCopierBase<false, false, Vector<T>> {
     }
 };
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::CrossThreadCopierBaseHelper;
+using WTF::CrossThreadCopierBase;
+using WTF::CrossThreadCopier;

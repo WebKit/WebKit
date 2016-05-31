@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceResponse_h
-#define ResourceResponse_h
+#pragma once
 
 #include "ResourceResponseBase.h"
 #include <wtf/RetainPtr.h>
@@ -72,6 +71,8 @@ public:
         , m_platformResponseIsUpToDate(false)
     {
     }
+
+    ResourceResponse isolatedCopy() const { return *ResourceResponse::adopt(copyData()); }
 
     unsigned memoryUsage() const
     {
@@ -124,5 +125,3 @@ struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataB
 };
 
 } // namespace WebCore
-
-#endif // ResourceResponse_h

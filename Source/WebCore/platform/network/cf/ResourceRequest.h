@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceRequest_h
-#define ResourceRequest_h
+#pragma once
 
 #include "ResourceRequestBase.h"
 #include <wtf/RetainPtr.h>
@@ -81,6 +80,8 @@ namespace WebCore {
         {
         }
 #endif
+
+        ResourceRequest isolatedCopy() const { return *ResourceRequest::adopt(copyData()); }
 
         WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
 
@@ -162,5 +163,3 @@ namespace WebCore {
 
 
 } // namespace WebCore
-
-#endif // ResourceRequest_h

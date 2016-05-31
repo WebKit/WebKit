@@ -61,6 +61,8 @@ public:
     WEBCORE_EXPORT CFErrorRef cfError() const;
     WEBCORE_EXPORT operator CFErrorRef() const;
 
+    ResourceError isolatedCopy() const { return copy(); }
+
 #if USE(CFNETWORK)
 #if PLATFORM(WIN)
     ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, CFDataRef certificate);
