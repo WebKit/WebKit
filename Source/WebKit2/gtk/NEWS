@@ -1,4 +1,15 @@
 =================
+WebKitGTK+ 2.13.1
+=================
+
+What's new in WebKitGTK+ 2.13.1?
+
+  - CSS Grid Layout has been unprefixed and can be enabled as an experimental feature at runtime.
+  - The HTTP disk cache implements speculative resources revalidation.
+  - Add a new WebKitSetting to allow universal access from file URLs.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.11.5
 =================
 

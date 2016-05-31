@@ -1,5 +1,11 @@
 2016-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.1 release.
+
+        * gtk/NEWS: Add release notes for 2.13.1.
+
+2016-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ clean build after r201504.
 
         * DatabaseProcess/DatabaseProcess.cpp: Add missing include.

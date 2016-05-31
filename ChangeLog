@@ -1,3 +1,9 @@
+2016-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.1 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2016-05-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Autocorrection makes it hard to type "doesn't" and to type @ in email addresses
