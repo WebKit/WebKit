@@ -67,6 +67,7 @@ namespace WebCore {
 
 class AudioSourceProviderAVFObjC;
 class AudioTrackPrivateAVFObjC;
+class CDMSessionAVFoundationObjC;
 class InbandMetadataTextTrackPrivateAVF;
 class InbandTextTrackPrivateAVFObjC;
 class MediaSelectionGroupAVFObjC;
@@ -142,12 +143,20 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void playbackTargetIsWirelessDidChange();
 #endif
-    
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
+#endif
+
 #if ENABLE(AVF_CAPTIONS)
     void notifyTrackModeChanged() override;
     void synchronizeTextTrackState() override;
 #endif
-    
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    void removeSession(CDMSession&);
+#endif
+
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
 private:
@@ -390,6 +399,10 @@ private:
 #if PLATFORM(MAC) && ENABLE(WIRELESS_PLAYBACK_TARGET)
     RetainPtr<AVOutputContext> m_outputContext;
     RefPtr<MediaPlaybackTarget> m_playbackTarget { nullptr };
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    WeakPtr<CDMSessionAVFoundationObjC> m_session;
 #endif
 
     mutable RetainPtr<NSArray> m_cachedSeekableRanges;

@@ -1,3 +1,35 @@
+2016-05-31  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Sound continues playing when video's src is changed
+        https://bugs.webkit.org/show_bug.cgi?id=158233
+
+        Reviewed by Eric Carlson.
+
+        When CDMSessionAVFoundation began listening for outputObscuredDueToInsufficientExternalProtection
+        KVO notifications, it retained the AVPlayer owned by MediaPlayerPrivateAVFoundationObjC, which
+        caused the AVPlayer to outlive its original owner, and to continue playing even after the
+        MediaPlayerPrivateAVFoundationObjC had been destroyed.
+
+        Rather than observe for outputObscuredDueToInsufficientExternalProtection changes in
+        CDMSessionAVFoundation, add a backreference from the media player to the session, listen for changes
+        in the player, and have the player notify the session when the value of that property changes.
+
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        (WebCore::CDMSessionAVFoundationObjC::createWeakPtr):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (WebCore::CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC):
+        (-[WebCDMSessionAVFoundationObjCListener initWithParent:player:]): Deleted.
+        (-[WebCDMSessionAVFoundationObjCListener invalidate]): Deleted.
+        (-[WebCDMSessionAVFoundationObjCListener observeValueForKeyPath:ofObject:change:context:]): Deleted.
+        (WebCore::CDMSessionAVFoundationObjC::~CDMSessionAVFoundationObjC): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::removeSession):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createSession):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        (WebCore::playerKVOProperties):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+
 2016-05-31  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] AirPlay route is sometimes reset when changing video.src

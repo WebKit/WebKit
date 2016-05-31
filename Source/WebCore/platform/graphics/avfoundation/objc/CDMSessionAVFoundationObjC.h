@@ -53,12 +53,14 @@ public:
 
     void playerDidReceiveError(NSError *);
 
+    WeakPtr<CDMSessionAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
 protected:
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;
     CDMSessionClient* m_client;
     String m_sessionId;
     RetainPtr<AVAssetResourceLoadingRequest> m_request;
-    RetainPtr<WebCDMSessionAVFoundationObjCListener> m_listener;
+    WeakPtrFactory<CDMSessionAVFoundationObjC> m_weakPtrFactory;
 };
 
 }
