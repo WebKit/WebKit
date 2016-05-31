@@ -1,3 +1,30 @@
+2016-05-31  Saam Barati  <sbarati@apple.com>
+
+        Web Inspector: capturing with Allocations timeline causes GC to take 100x longer and cause frame drops
+        https://bugs.webkit.org/show_bug.cgi?id=158054
+        <rdar://problem/25280762>
+
+        Reviewed by Joseph Pecoraro.
+
+        HeapSnapshot::sweepCell was taking a long time on 
+        http://bl.ocks.org/syntagmatic/6c149c08fc9cde682635
+        because it has to do a binary search to find if
+        an item is or is not in the list. 90% of the binary searches
+        would not find anything. This resulted in a lot of wasted time.
+
+        This patch adds a TinyBloomFilter member variable to HeapSnapshot.
+        We use this filter to try to bypass doing a binary search when the
+        filter tells us that a particular JSCell is definitely not in our
+        list. This is a 2x speedup on the steady state GC of the above
+        website.
+
+        * heap/HeapSnapshot.cpp:
+        (JSC::HeapSnapshot::appendNode):
+        (JSC::HeapSnapshot::sweepCell):
+        (JSC::HeapSnapshot::shrinkToFit):
+        (JSC::HeapSnapshot::nodeForCell):
+        * heap/HeapSnapshot.h:
+
 2016-05-29  Saam barati  <sbarati@apple.com>
 
         Stack overflow crashes with deep or cyclic proxy prototype chains

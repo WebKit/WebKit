@@ -45,13 +45,15 @@ void HeapSnapshot::appendNode(const HeapSnapshotNode& node)
     ASSERT(!m_previous || !m_previous->nodeForCell(node.cell));
 
     m_nodes.append(node);
+    m_filter.add(bitwise_cast<uintptr_t>(node.cell));
 }
 
 void HeapSnapshot::sweepCell(JSCell* cell)
 {
     ASSERT(cell);
 
-    if (m_finalized && !isEmpty()) {
+    if (m_finalized && !m_filter.ruleOut(bitwise_cast<uintptr_t>(cell))) {
+        ASSERT_WITH_MESSAGE(!isEmpty(), "Our filter should have ruled us out if we are empty.");
         unsigned start = 0;
         unsigned end = m_nodes.size();
         while (start != end) {
@@ -79,9 +81,13 @@ void HeapSnapshot::sweepCell(JSCell* cell)
 void HeapSnapshot::shrinkToFit()
 {
     if (m_finalized && m_hasCellsToSweep) {
+        m_filter.reset();
         m_nodes.removeAllMatching(
             [&] (const HeapSnapshotNode& node) -> bool {
-                return reinterpret_cast<intptr_t>(node.cell) & CellToSweepTag;
+                bool willRemoveCell = bitwise_cast<intptr_t>(node.cell) & CellToSweepTag;
+                if (!willRemoveCell)
+                    m_filter.add(bitwise_cast<uintptr_t>(node.cell));
+                return willRemoveCell;
             });
         m_nodes.shrinkToFit();
         m_hasCellsToSweep = false;
@@ -126,7 +132,8 @@ Optional<HeapSnapshotNode> HeapSnapshot::nodeForCell(JSCell* cell)
 {
     ASSERT(m_finalized);
 
-    if (!isEmpty()) {
+    if (!m_filter.ruleOut(bitwise_cast<uintptr_t>(cell))) {
+        ASSERT_WITH_MESSAGE(!isEmpty(), "Our filter should have ruled us out if we are empty.");
         unsigned start = 0;
         unsigned end = m_nodes.size();
         while (start != end) {

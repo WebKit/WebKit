@@ -27,6 +27,7 @@
 #define HeapSnapshot_h
 
 #include "HeapSnapshotBuilder.h"
+#include "TinyBloomFilter.h"
 #include <wtf/Optional.h>
 
 namespace JSC {
@@ -53,6 +54,7 @@ private:
     static const intptr_t CellToSweepTag = 1;
 
     Vector<HeapSnapshotNode> m_nodes;
+    TinyBloomFilter m_filter;
     HeapSnapshot* m_previous { nullptr };
     unsigned m_firstObjectIdentifier { 0 };
     unsigned m_lastObjectIdentifier { 0 };
