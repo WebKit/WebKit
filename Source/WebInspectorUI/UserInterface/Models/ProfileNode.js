@@ -158,6 +158,10 @@ WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
                 for (var childNode of this._childNodes)
                     childNodesTotalTime += childNode.totalTime;
                 this._selfTime = this._totalTime - childNodesTotalTime;
+                // selfTime can negative or very close to zero due to floating point error.
+                // Since we show at most four decimal places, treat anything less as zero.
+                if (this._selfTime < 0.0001)
+                    this._selfTime = 0.0;
             }
 
             return {

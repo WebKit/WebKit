@@ -1,5 +1,22 @@
 2016-05-30  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: Timelines: "-0.000ms" in Self Time
+        https://bugs.webkit.org/show_bug.cgi?id=158162
+        <rdar://problem/26523350>
+
+        Reviewed by Darin Adler.
+
+        Values such as -0.0000 and +0.00001 seem to indicate there is
+        some floating point error accumulating in profile node data.
+        Since the sampling profiler isn't accurate to that precision,
+        let's clean up the data so near-zero numbers are simply zero.
+
+        * UserInterface/Models/ProfileNode.js:
+        Round selfTime down to zero if it's less than the
+        smallest value we would show in the user interface.
+
+2016-05-30  Brian Burg  <bburg@apple.com>
+
         Web Inspector: Uncaught exception page should pre-populate the bug's URL with the inspected page URL
         https://bugs.webkit.org/show_bug.cgi?id=158055
         <rdar://problem/26516693>
