@@ -67,8 +67,6 @@ public:
     {
         return !m_data || !m_data->vector.isEmpty();
     }
-
-    bool isValidAndWatchable() const;
     
     bool isEmpty() const
     {

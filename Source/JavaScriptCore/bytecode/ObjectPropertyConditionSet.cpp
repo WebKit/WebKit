@@ -167,18 +167,6 @@ void ObjectPropertyConditionSet::dump(PrintStream& out) const
     dumpInContext(out, nullptr);
 }
 
-bool ObjectPropertyConditionSet::isValidAndWatchable() const
-{
-    if (!isValid())
-        return false;
-
-    for (ObjectPropertyCondition condition : m_data->vector) {
-        if (!condition.isWatchable())
-            return false;
-    }
-    return true;
-}
-
 namespace {
 
 bool verbose = false;
@@ -266,11 +254,9 @@ ObjectPropertyConditionSet generateConditions(
         // Since we're accessing a prototype repeatedly, it's a good bet that it should not be
         // treated as a dictionary.
         if (structure->isDictionary()) {
-            if (concurrency == MainThread) {
-                if (verbose)
-                    dataLog("Flattening ", pointerDump(structure));
+            if (concurrency == MainThread)
                 structure->flattenDictionaryStructure(vm, object);
-            } else {
+            else {
                 if (verbose)
                     dataLog("Cannot flatten dictionary when not on main thread, so invalid.\n");
                 return ObjectPropertyConditionSet::invalid();

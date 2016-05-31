@@ -1,3 +1,23 @@
+2016-05-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r201363 and r201456.
+        https://bugs.webkit.org/show_bug.cgi?id=158240
+
+        "40% regression on date-format-xparb" (Requested by
+        keith_miller on #webkit).
+
+        Reverted changesets:
+
+        "LLInt should be able to cache prototype loads for values in
+        GetById"
+        https://bugs.webkit.org/show_bug.cgi?id=158032
+        http://trac.webkit.org/changeset/201363
+
+        "get_by_id should support caching unset properties in the
+        LLInt"
+        https://bugs.webkit.org/show_bug.cgi?id=158136
+        http://trac.webkit.org/changeset/201456
+
 2016-05-31  Brady Eidson  <beidson@apple.com>
 
         Make createCrossThreadTask() functions return on the stack instead of the heap.

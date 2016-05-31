@@ -53,7 +53,6 @@
 #include "LLIntExceptions.h"
 #include "LowLevelInterpreter.h"
 #include "ObjectConstructor.h"
-#include "ObjectPropertyConditionSet.h"
 #include "ProtoCallFrame.h"
 #include "ShadowChicken.h"
 #include "StructureRareDataInlines.h"
@@ -582,53 +581,6 @@ LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
     LLINT_RETURN(slot.getPureResult());
 }
 
-static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc, JSCell* baseCell, PropertySlot& slot, const Identifier& ident)
-{
-    CodeBlock* codeBlock = exec->codeBlock();
-    Structure* structure = baseCell->structure();
-
-    if (structure->typeInfo().prohibitsPropertyCaching() || structure->isDictionary())
-        return;
-
-    ObjectPropertyConditionSet conditions;
-    if (slot.isUnset())
-        conditions = generateConditionsForPropertyMiss(vm, codeBlock, exec, structure, ident.impl());
-    else
-        conditions = generateConditionsForPrototypePropertyHit(vm, codeBlock, exec, structure, slot.slotBase(), ident.impl());
-
-    if (!conditions.isValid())
-        return;
-
-    PropertyOffset offset = invalidOffset;
-    CodeBlock::StructureWatchpointMap& watchpointMap = codeBlock->llintGetByIdWatchpointMap();
-    auto result = watchpointMap.add(structure, Bag<LLIntPrototypeLoadAdaptiveStructureWatchpoint>());
-    for (ObjectPropertyCondition condition : conditions) {
-        if (!condition.isWatchable())
-            return;
-        if (condition.condition().kind() == PropertyCondition::Presence)
-            offset = condition.condition().offset();
-        result.iterator->value.add(condition, pc)->install();
-    }
-    ASSERT((offset == invalidOffset) == slot.isUnset());
-
-    ConcurrentJITLocker locker(codeBlock->m_lock);
-
-    if (slot.isUnset()) {
-        pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_unset);
-        pc[4].u.structureID = structure->id();
-        return;
-    }
-    ASSERT(slot.isValue());
-
-    pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_proto_load);
-    pc[4].u.structureID = structure->id();
-    pc[5].u.operand = offset;
-    // We know that this pointer will remain valid because it will be cleared by either a watchpoint fire or
-    // during GC when we clear the LLInt caches.
-    pc[6].u.pointer = slot.slotBase();
-}
-
-
 LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
 {
     LLINT_BEGIN();
@@ -643,43 +595,37 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     
     if (!LLINT_ALWAYS_ACCESS_SLOW
         && baseValue.isCell()
-        && slot.isCacheable()) {
-
+        && slot.isCacheable()
+        && slot.slotBase() == baseValue
+        && slot.isCacheableValue()) {
+        
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure();
-        if (slot.isValue() && slot.slotBase() == baseValue) {
-            // Start out by clearing out the old cache.
-            pc[0].u.opcode = LLInt::getOpcode(op_get_by_id);
-            pc[4].u.pointer = nullptr; // old structure
-            pc[5].u.pointer = nullptr; // offset
-
-            // Prevent the prototype cache from ever happening.
-            pc[7].u.operand = 0;
         
-            if (structure->propertyAccessesAreCacheable()) {
-                vm.heap.writeBarrier(codeBlock);
-                
-                ConcurrentJITLocker locker(codeBlock->m_lock);
+        // Start out by clearing out the old cache.
+        pc[0].u.opcode = LLInt::getOpcode(op_get_by_id);
+        pc[4].u.pointer = nullptr; // old structure
+        pc[5].u.pointer = nullptr; // offset
+        
+        if (!structure->isUncacheableDictionary()
+            && !structure->typeInfo().prohibitsPropertyCaching()
+            && !structure->typeInfo().newImpurePropertyFiresWatchpoints()) {
+            vm.heap.writeBarrier(codeBlock);
+            
+            ConcurrentJITLocker locker(codeBlock->m_lock);
 
-                pc[4].u.structureID = structure->id();
-                pc[5].u.operand = slot.cachedOffset();
-            }
-        } else if (UNLIKELY(pc[7].u.operand && (slot.isValue() || slot.isUnset()))) {
-            ASSERT(slot.slotBase() != baseValue);
-
-            if (!(--pc[7].u.operand))
-                setupGetByIdPrototypeCache(exec, vm, pc, baseCell, slot, ident);
+            pc[4].u.structureID = structure->id();
+            pc[5].u.operand = slot.cachedOffset();
         }
-    } else if (!LLINT_ALWAYS_ACCESS_SLOW
+    }
+
+    if (!LLINT_ALWAYS_ACCESS_SLOW
         && isJSArray(baseValue)
         && ident == exec->propertyNames().length) {
         pc[0].u.opcode = LLInt::getOpcode(op_get_array_length);
         ArrayProfile* arrayProfile = codeBlock->getOrAddArrayProfile(pc - codeBlock->instructions().begin());
         arrayProfile->observeStructure(baseValue.asCell()->structure());
         pc[4].u.arrayProfile = arrayProfile;
-
-        // Prevent the prototype cache from ever happening.
-        pc[7].u.operand = 0;
     }
 
     pc[OPCODE_LENGTH(op_get_by_id) - 1].u.profile->m_buckets[0] = JSValue::encode(result);
