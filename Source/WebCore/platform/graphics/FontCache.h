@@ -193,8 +193,6 @@ public:
     WEBCORE_EXPORT Ref<Font> fontForPlatformData(const FontPlatformData&);
     RefPtr<Font> similarFont(const FontDescription&, const AtomicString& family);
 
-    void precache(const Vector<AtomicString>& resolvedFamilies, const FontDescription&);
-
     void addClient(FontSelector&);
     void removeClient(FontSelector&);
 
@@ -214,8 +212,6 @@ public:
     RefPtr<OpenTypeVerticalData> verticalData(const FontPlatformData&);
 #endif
 
-    struct PrecacheTask;
-
 private:
     FontCache();
     ~FontCache() = delete;
@@ -230,12 +226,6 @@ private:
     FontPlatformData* getCustomFallbackFont(const UInt32, const FontDescription&);
 #endif
     std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings);
-
-#if PLATFORM(COCOA) && ENABLE(PLATFORM_FONT_LOOKUP)
-    using PrecacheCompletionHandler = std::function<void (std::unique_ptr<FontPlatformData>, bool wasCanceled)>;
-    PrecacheTask& platformPrecache(const AtomicString& family, const FontDescription&, PrecacheCompletionHandler&&);
-    void platformCancelPrecache(PrecacheTask&);
-#endif
 
     Timer m_purgeTimer;
 

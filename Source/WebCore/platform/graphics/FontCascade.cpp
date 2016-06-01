@@ -261,29 +261,6 @@ void pruneSystemFallbackFonts()
         entry->fonts->pruneSystemFallbacks();
 }
 
-static void precachePrimaryFamily(const FontCascadeDescription& fontDescription, FontSelector& fontSelector)
-{
-    Vector<AtomicString> families;
-    for (unsigned i = 0; i < fontDescription.familyCount(); ++i)
-        families.append(fontDescription.familyAt(i));
-
-    // Primary family lookup falls back to the standard family.
-    families.append(standardFamily);
-
-    auto resolvedPrimaryFamilies = fontSelector.resolveFamilies(families, fontDescription, ' ');
-
-    Vector<AtomicString> resolvedPrimaryFamilyNames;
-    for (auto& family : resolvedPrimaryFamilies) {
-        // This doesn't handle web fonts for now.
-        if (family.url)
-            break;
-        resolvedPrimaryFamilyNames.append(family.name);
-    }
-
-    // Asynchronously find first available font and precache it so it is likely to be available when needed.
-    FontCache::singleton().precache(resolvedPrimaryFamilyNames, fontDescription);
-}
-
 static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription& fontDescription, RefPtr<FontSelector>&& fontSelector)
 {
     auto key = makeFontCascadeCacheKey(fontDescription, fontSelector.get());
@@ -292,9 +269,6 @@ static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescripti
     auto addResult = fontCascadeCache().add(hash, nullptr);
     if (!addResult.isNewEntry && keysMatch(addResult.iterator->value->key, key))
         return addResult.iterator->value->fonts.get();
-
-    if (fontSelector)
-        precachePrimaryFamily(fontDescription, *fontSelector);
 
     auto& newEntry = addResult.iterator->value;
     newEntry = std::make_unique<FontCascadeCacheEntry>(WTFMove(key), FontCascadeFonts::create(WTFMove(fontSelector)));

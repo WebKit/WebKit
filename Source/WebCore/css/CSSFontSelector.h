@@ -64,8 +64,6 @@ public:
     size_t fallbackFontCount() override;
     RefPtr<Font> fallbackFontAt(const FontDescription&, size_t) override;
 
-    Vector<ResolvedFontFamily> resolveFamilies(const Vector<AtomicString>&, const FontDescription&, UChar32) override;
-
     void clearDocument();
 
     void addFontFaceRule(StyleRuleFontFace&, bool isInitiatingElementInUserAgentShadowTree);

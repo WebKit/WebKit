@@ -188,13 +188,6 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     return nullptr;
 }
 
-Optional<URL> CSSFontFaceSource::url() const
-{
-    if (!m_font)
-        return Nullopt;
-    return m_font->url();
-}
-
 #if ENABLE(SVG_FONTS)
 bool CSSFontFaceSource::isSVGFontFaceSource() const
 {

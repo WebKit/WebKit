@@ -520,19 +520,6 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
     return nullptr;
 }
 
-Vector<ResolvedFontFamily> CSSFontFace::resolveFamilies() const
-{
-    Vector<ResolvedFontFamily> result;
-    for (auto& source : m_sources) {
-        if (source->familyNameOrURI().isEmpty())
-            continue;
-        if (source->status() == CSSFontFaceSource::Status::Failure)
-            continue;
-        result.append({ source->familyNameOrURI(), source->url() });
-    }
-    return result;
-}
-
 #if ENABLE(SVG_FONTS)
 bool CSSFontFace::hasSVGFontFaceSource() const
 {

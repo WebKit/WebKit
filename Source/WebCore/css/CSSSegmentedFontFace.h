@@ -28,7 +28,6 @@
 
 #include "CSSFontFace.h"
 #include "FontCache.h"
-#include "FontSelector.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -57,8 +56,6 @@ public:
     // CSSFontFace::Client needs to be able to be held in a RefPtr.
     void ref() override { RefCounted<CSSSegmentedFontFace>::ref(); }
     void deref() override { RefCounted<CSSSegmentedFontFace>::deref(); }
-
-    Vector<ResolvedFontFamily> resolveFamilies(UChar32 character) const;
 
 private:
     CSSSegmentedFontFace();

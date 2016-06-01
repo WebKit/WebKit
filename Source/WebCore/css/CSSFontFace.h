@@ -27,7 +27,6 @@
 
 #include "CSSFontFaceRule.h"
 #include "FontFeatureSettings.h"
-#include "FontSelector.h"
 #include "TextFlags.h"
 #include <memory>
 #include <wtf/Forward.h>
@@ -135,8 +134,6 @@ public:
 
     // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
     Ref<FontFace> wrapper();
-
-    Vector<ResolvedFontFamily> resolveFamilies() const;
 
 #if ENABLE(SVG_FONTS)
     bool hasSVGFontFaceSource() const;

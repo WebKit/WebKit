@@ -34,8 +34,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RunLoop.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -662,7 +660,18 @@ void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
         whitelist.add(item);
 }
 
-static RetainPtr<CTFontRef> fontWithFamily(const String& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const TextRenderingMode& textRenderingMode, float size, bool isWhitelisted)
+#if ENABLE(PLATFORM_FONT_LOOKUP)
+static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& family, CTFontSymbolicTraits requestedTraits, FontWeight weight, float size)
+{
+    const auto& whitelist = fontWhitelist();
+    if (whitelist.size() && !whitelist.contains(family))
+        return nullptr;
+
+    return adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), toCoreTextFontWeight(weight), requestedTraits, size));
+}
+#endif
+
+static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const TextRenderingMode& textRenderingMode, float size)
 {
     if (family.isEmpty())
         return nullptr;
@@ -670,11 +679,8 @@ static RetainPtr<CTFontRef> fontWithFamily(const String& family, CTFontSymbolicT
     RetainPtr<CTFontRef> foundFont = platformFontWithFamilySpecialCase(family, weight, desiredTraits, size);
     if (!foundFont) {
 #if ENABLE(PLATFORM_FONT_LOOKUP)
-        if (!isWhitelisted)
-            return nullptr;
-        foundFont = adoptCF(CTFontCreateForCSS(family.createCFString().get(), toCoreTextFontWeight(weight), desiredTraits, size));
+        foundFont = platformFontLookupWithFamily(family, desiredTraits, weight, size);
 #else
-        UNUSED_PARAM(isWhitelisted);
         foundFont = platformFontWithFamily(family, desiredTraits, weight, textRenderingMode, size);
 #endif
     }
@@ -713,24 +719,24 @@ static void autoActivateFont(const String& name, CGFloat size)
 }
 #endif
 
-// This is only thread safe with ENABLE(PLATFORM_FONT_LOOKUP) due to fontWithFamily() implementation
-static std::unique_ptr<FontPlatformData> createFontPlatformDataThreadSafe(const FontDescription& fontDescription, const String& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, bool isWhitelisted, bool shouldAutoActivateIfNeeded)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings)
 {
     CTFontSymbolicTraits traits = computeTraits(fontDescription);
     float size = fontDescription.computedPixelSize();
 
-    RetainPtr<CTFontRef> font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size, isWhitelisted);
+    RetainPtr<CTFontRef> font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
 
 #if PLATFORM(MAC)
-    if (!font && shouldAutoActivateIfNeeded) {
+    if (!font) {
+        if (!shouldAutoActivateFontIfNeeded(family))
+            return nullptr;
+
         // Auto activate the font before looking for it a second time.
         // Ignore the result because we want to use our own algorithm to actually find the font.
-        autoActivateFont(family, size);
+        autoActivateFont(family.string(), size);
 
-        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size, isWhitelisted);
+        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
     }
-#else
-    UNUSED_PARAM(shouldAutoActivateIfNeeded);
 #endif
 
     if (!font)
@@ -740,19 +746,6 @@ static std::unique_ptr<FontPlatformData> createFontPlatformDataThreadSafe(const 
     std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(font.get(), fontDescription).boldObliquePair();
 
     return std::make_unique<FontPlatformData>(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
-}
-
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings)
-{
-    const auto& whitelist = fontWhitelist();
-    bool isWhitelisted = whitelist.isEmpty() || whitelist.contains(family);
-
-    bool shouldAutoActivateIfNeeded = false;
-#if PLATFORM(MAC)
-    shouldAutoActivateIfNeeded = shouldAutoActivateFontIfNeeded(family);
-#endif
-
-    return createFontPlatformDataThreadSafe(fontDescription, family, fontFaceFeatures, fontFaceVariantSettings, isWhitelisted, shouldAutoActivateIfNeeded);
 }
 
 typedef HashSet<RetainPtr<CTFontRef>, WTF::RetainPtrObjectHash<CTFontRef>, WTF::RetainPtrObjectHashTraits<CTFontRef>> FallbackDedupSet;
@@ -802,54 +795,5 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
     return fontForPlatformData(alternateFont);
 }
-
-#if ENABLE(PLATFORM_FONT_LOOKUP)
-struct FontCache::PrecacheTask {
-    String family;
-    FontDescription fontDescription;
-    bool shouldAutoActivateIfNeeded { false };
-    bool isWhitelisted { true };
-    PrecacheCompletionHandler completionHandler;
-
-    std::unique_ptr<FontPlatformData> result;
-    std::atomic_bool isCanceled { false };
-};
-
-FontCache::PrecacheTask& FontCache::platformPrecache(const AtomicString& family, const FontDescription& fontDescription, PrecacheCompletionHandler&& completionHandler)
-{
-    static WorkQueue& queue = WorkQueue::create("org.webkit.font-precache", WorkQueue::Type::Serial, WorkQueue::QOS::UserInitiated).leakRef();
-
-    auto task = std::make_unique<PrecacheTask>();
-    task->family = family;
-    task->fontDescription = fontDescription;
-    const auto& whitelist = fontWhitelist();
-    task->isWhitelisted = whitelist.isEmpty() || whitelist.contains(family);
-#if PLATFORM(MAC)
-    task->shouldAutoActivateIfNeeded = shouldAutoActivateFontIfNeeded(family);
-#endif
-    task->completionHandler = WTFMove(completionHandler);
-
-    auto& resultTask = *task;
-
-    queue.dispatch([task = task.release()] {
-        if (!task->isCanceled) {
-            auto family = task->family.isolatedCopy();
-            task->result = createFontPlatformDataThreadSafe(task->fontDescription, family, nullptr, nullptr, task->isWhitelisted, task->shouldAutoActivateIfNeeded);
-        }
-
-        RunLoop::main().dispatch([task] {
-            std::unique_ptr<PrecacheTask> deleter(task);
-            task->completionHandler(WTFMove(task->result), task->isCanceled);
-        });
-    });
-
-    return resultTask;
-}
-
-void FontCache::platformCancelPrecache(FontCache::PrecacheTask& task)
-{
-    task.isCanceled = true;
-}
-#endif
 
 }
