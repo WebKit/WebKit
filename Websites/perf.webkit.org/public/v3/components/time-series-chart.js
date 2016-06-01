@@ -66,9 +66,20 @@ class TimeSeriesChart extends ComponentBase {
         console.assert(startTime < endTime, 'startTime must be before endTime');
         this._startTime = startTime;
         this._endTime = endTime;
+        this.fetchMeasurementSets(false);
+    }
+
+    setSourceList(sourceList)
+    {
+        this._sourceList = sourceList;
+        this.fetchMeasurementSets(false);
+    }
+
+    fetchMeasurementSets(noCache)
+    {
         for (var source of this._sourceList) {
             if (source.measurementSet)
-                source.measurementSet.fetchBetween(startTime, endTime, this._didFetchMeasurementSet.bind(this, source.measurementSet));
+                source.measurementSet.fetchBetween(this._startTime, this._endTime, this._didFetchMeasurementSet.bind(this, source.measurementSet), noCache);
         }
         this._sampledTimeSeriesData = null;
         this._valueRangeCache = null;
@@ -101,6 +112,14 @@ class TimeSeriesChart extends ComponentBase {
         if (!data)
             return null;
         return data.filter(function (point) { return startTime <= point.time && point.time <= endTime; });
+    }
+
+    firstSampledPointBetweenTime(type, startTime, endTime)
+    {
+        var data = this.sampledTimeSeriesData(type);
+        if (!data)
+            return null;
+        return data.find(function (point) { return startTime <= point.time && point.time <= endTime; });
     }
 
     setAnnotations(annotations)

@@ -61,13 +61,9 @@ TimeSeries = class {
 
     dataBetweenPoints(firstPoint, lastPoint)
     {
-        var data = this._data;
-        var filteredData = [];
-        for (var i = firstPoint.seriesIndex; i <= lastPoint.seriesIndex; i++) {
-            if (!data[i].markedOutlier)
-                filteredData.push(data[i]);
-        }
-        return filteredData;
+        console.assert(firstPoint.series == this);
+        console.assert(lastPoint.series == this);
+        return this._data.slice(firstPoint.seriesIndex, lastPoint.seriesIndex + 1);
     }
 
 };

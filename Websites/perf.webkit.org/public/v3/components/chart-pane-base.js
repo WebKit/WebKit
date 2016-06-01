@@ -10,6 +10,8 @@ class ChartPaneBase extends ComponentBase {
         this._metricId = null;
         this._platform = null;
         this._metric = null;
+        this._disableSampling = false;
+        this._showOutliers = false;
 
         this._overviewChart = null;
         this._mainChart = null;
@@ -20,7 +22,7 @@ class ChartPaneBase extends ComponentBase {
 
     configure(platformId, metricId)
     {
-        var result = ChartStyles.createChartSourceList(platformId, metricId);
+        var result = ChartStyles.resolveConfiguration(platformId, metricId);
         this._errorMessage = result.error;
         this._platformId = platformId;
         this._metricId = metricId;
@@ -39,10 +41,11 @@ class ChartPaneBase extends ComponentBase {
         var formatter = result.metric.makeFormatter(4);
         var self = this;
 
+        var sourceList = ChartStyles.createSourceList(this._platform, this._metric, this._disableSampling, this._showOutliers);
+
         var overviewOptions = ChartStyles.overviewChartOptions(formatter);
         overviewOptions.selection.onchange = this._overviewSelectionDidChange.bind(this);
-
-        this._overviewChart = new InteractiveTimeSeriesChart(result.sourceList, overviewOptions);
+        this._overviewChart = new InteractiveTimeSeriesChart(sourceList, overviewOptions);
         this.renderReplace(this.content().querySelector('.chart-pane-overview'), this._overviewChart);
 
         var mainOptions = ChartStyles.mainChartOptions(formatter);
@@ -51,7 +54,7 @@ class ChartPaneBase extends ComponentBase {
         mainOptions.selection.onzoom = this._mainSelectionDidZoom.bind(this);
         mainOptions.annotations.onclick = this._openAnalysisTask.bind(this);
         mainOptions.ondata = this._didFetchData.bind(this);
-        this._mainChart = new InteractiveTimeSeriesChart(result.sourceList, mainOptions);
+        this._mainChart = new InteractiveTimeSeriesChart(sourceList, mainOptions);
         this.renderReplace(this.content().querySelector('.chart-pane-main'), this._mainChart);
 
         this._mainChartStatus = new ChartPaneStatusView(result.metric, this._mainChart, this._requestOpeningCommitViewer.bind(this));
@@ -59,14 +62,35 @@ class ChartPaneBase extends ComponentBase {
 
         this.content().querySelector('.chart-pane').addEventListener('keyup', this._keyup.bind(this));
 
-        this._fetchAnalysisTasks(platformId, metricId);
+        this.fetchAnalysisTasks(false);
     }
 
-    _fetchAnalysisTasks(platformId, metricId)
+    isSamplingEnabled() { return !this._disableSampling; }
+    setSamplingEnabled(enabled)
+    {
+        this._disableSampling = !enabled;
+        this._updateSourceList();
+    }
+
+    isShowingOutliers() { return this._showOutliers; }
+    setShowOutliers(show)
+    {
+        this._showOutliers = !!show;
+        this._updateSourceList();
+    }
+
+    _updateSourceList()
+    {
+        var sourceList = ChartStyles.createSourceList(this._platform, this._metric, this._disableSampling, this._showOutliers);
+        this._mainChart.setSourceList(sourceList);
+        this._overviewChart.setSourceList(sourceList);
+    }
+
+    fetchAnalysisTasks(noCache)
     {
         // FIXME: we need to update the annotation bars when the change type of tasks change.
         var self = this;
-        AnalysisTask.fetchByPlatformAndMetric(platformId, metricId).then(function (tasks) {
+        AnalysisTask.fetchByPlatformAndMetric(this._platformId, this._metricId, noCache).then(function (tasks) {
             self._tasksForAnnotations = tasks;
             self.render();
         });

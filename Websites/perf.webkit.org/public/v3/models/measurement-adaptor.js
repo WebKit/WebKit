@@ -28,6 +28,11 @@ class MeasurementAdaptor {
         return row[this._idIndex];
     }
 
+    isOutlier(row)
+    {
+        return row[this._markedOutlierIndex];
+    }
+
     applyToAnalysisResults(row)
     {
         var adaptedRow = this.applyTo(row);
@@ -50,6 +55,7 @@ class MeasurementAdaptor {
         var self = this;
         return {
             id: id,
+            markedOutlier: row[this._markedOutlierIndex],
             buildId: buildId,
             metricId: null,
             configType: null,

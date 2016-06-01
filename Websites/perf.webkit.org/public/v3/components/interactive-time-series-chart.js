@@ -18,12 +18,19 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
 
     currentPoint(diff)
     {
-        if (!this._sampledTimeSeriesData)
-            return null;
-
         var id = this._indicatorID;
         if (!id)
             return null;
+
+        if (!this._sampledTimeSeriesData) {
+            this._ensureFetchedTimeSeries();
+            for (var series of this._fetchedTimeSeries) {
+                var point = series.findById(id);
+                if (point)
+                    return point;
+            }
+            return null;
+        }
 
         for (var data of this._sampledTimeSeriesData) {
             if (!data)
@@ -39,6 +46,21 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
     }
 
     currentSelection() { return this._selectionTimeRange; }
+
+    selectedPoints(type)
+    {
+        var selection = this._selectionTimeRange;
+        return selection ? this.sampledDataBetween(type, selection[0], selection[1]) : null;
+    }
+
+    firstSelectedPoint(type)
+    {
+        var selection = this._selectionTimeRange;
+        return selection ? this.firstSampledPointBetweenTime(type, selection[0], selection[1]) : null;
+    }
+
+    lockedIndicator() { return this._indicatorIsLocked ? this.currentPoint() : null; }
+
 
     setIndicator(id, shouldLock)
     {

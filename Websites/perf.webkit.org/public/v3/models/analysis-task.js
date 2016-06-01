@@ -166,9 +166,9 @@ class AnalysisTask extends LabeledObject {
         return this._fetchSubset({buildRequest: id}).then(function (tasks) { return tasks[0]; });
     }
 
-    static fetchByPlatformAndMetric(platformId, metricId)
+    static fetchByPlatformAndMetric(platformId, metricId, noCache)
     {
-        return this._fetchSubset({platform: platformId, metric: metricId}).then(function (data) {
+        return this._fetchSubset({platform: platformId, metric: metricId}, noCache).then(function (data) {
             return AnalysisTask.findByPlatformAndMetric(platformId, metricId);
         });
     }
@@ -198,11 +198,11 @@ class AnalysisTask extends LabeledObject {
         });
     }
 
-    static _fetchSubset(params)
+    static _fetchSubset(params, noCache)
     {
         if (this._fetchAllPromise)
             return this._fetchAllPromise;
-        return this.cachedFetch('../api/analysis-tasks', params).then(this._constructAnalysisTasksFromRawData.bind(this));
+        return this.cachedFetch('../api/analysis-tasks', params, noCache).then(this._constructAnalysisTasksFromRawData.bind(this));
     }
 
     static fetchAll()

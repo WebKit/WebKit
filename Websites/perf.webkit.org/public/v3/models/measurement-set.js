@@ -55,10 +55,14 @@ class MeasurementSet {
         return clusters;
     }
 
-    fetchBetween(startTime, endTime, callback)
+    fetchBetween(startTime, endTime, callback, noCache)
     {
-        if (!this._primaryClusterPromise)
-            this._primaryClusterPromise = this._fetchPrimaryCluster();
+        if (noCache) {
+            this._primaryClusterPromise = null;
+            this._allFetches = {};
+        }
+        if (!this._primaryClusterPromise || noCache)
+            this._primaryClusterPromise = this._fetchPrimaryCluster(noCache);
         var self = this;
         this._primaryClusterPromise.catch(callback);
         return this._primaryClusterPromise.then(function () {
@@ -86,8 +90,16 @@ class MeasurementSet {
         return url;
     }
 
-    _fetchPrimaryCluster() {
+    _fetchPrimaryCluster(noCache)
+    {
         var self = this;
+        if (noCache) {
+            return RemoteAPI.getJSONWithStatus(self._constructUrl(false, null)).then(function (data) {
+                self._didFetchJSON(true, data);
+                self._allFetches[self._primaryClusterEndTime] = self._primaryClusterPromise;
+            });
+        }
+
         return RemoteAPI.getJSONWithStatus(self._constructUrl(true, null)).then(function (data) {
             if (+data['lastModified'] < self._lastModified)
                 return RemoteAPI.getJSONWithStatus(self._constructUrl(false, null));
@@ -102,7 +114,8 @@ class MeasurementSet {
         });
     }
 
-    _fetchSecondaryCluster(endTime) {
+    _fetchSecondaryCluster(endTime)
+    {
         var self = this;
         return RemoteAPI.getJSONWithStatus(self._constructUrl(true, endTime)).then(function (data) {
             self._didFetchJSON(false, data);
@@ -111,8 +124,6 @@ class MeasurementSet {
 
     _didFetchJSON(isPrimaryCluster, response, clusterEndTime)
     {
-        console.assert(isPrimaryCluster);
-
         if (isPrimaryCluster) {
             this._primaryClusterEndTime = response['endTime'];
             this._clusterCount = response['clusterCount'];
@@ -126,10 +137,14 @@ class MeasurementSet {
 
     _addFetchedCluster(cluster)
     {
+        for (var clusterIndex = 0; clusterIndex < this._sortedClusters.length; clusterIndex++) {
+            var startTime = this._sortedClusters[clusterIndex].startTime();
+            if (cluster.startTime() <= startTime) {
+                this._sortedClusters.splice(clusterIndex, startTime == cluster.startTime() ? 1 : 0, cluster);
+                return;
+            }
+        }
         this._sortedClusters.push(cluster);
-        this._sortedClusters = this._sortedClusters.sort(function (c1, c2) {
-            return c1.startTime() - c2.startTime();
-        });
     }
 
     hasFetchedRange(startTime, endTime)

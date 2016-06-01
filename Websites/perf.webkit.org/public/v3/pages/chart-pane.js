@@ -6,7 +6,7 @@ class ChartPane extends ChartPaneBase {
 
         this._mainChartIndicatorWasLocked = false;
         this._chartsPage = chartsPage;
-        this._paneOpenedByClick = null;
+        this._lockedPopover = null;
 
         this.content().querySelector('close-button').component().setCallback(chartsPage.closePane.bind(chartsPage, this));
 
@@ -24,6 +24,16 @@ class ChartPane extends ChartPaneBase {
             else if (this._mainChartIndicatorWasLocked && currentPoint)
                 state[2] = currentPoint.id;
         }
+
+        var graphOptions = new Set;
+        if (!this.isSamplingEnabled())
+            graphOptions.add('noSampling');
+        if (this.isShowingOutliers())
+            graphOptions.add('showOutliers');
+
+        if (graphOptions.size)
+            state[3] = graphOptions;
+
         return state;
     }
 
@@ -40,6 +50,18 @@ class ChartPane extends ChartPaneBase {
             this._mainChartIndicatorWasLocked = true;
         } else
             this._mainChart.setIndicator(null, false);
+
+        // FIXME: This forces sourceList to be set twice. First in configure inside the constructor then here.
+        var graphOptions = state[3];
+        if (graphOptions instanceof Set) {
+            this.setSamplingEnabled(!graphOptions.has('nosampling'));
+            this.setShowOutliers(graphOptions.has('showoutliers'));
+        }
+
+        // FIXME: Show full y-axis when graphOptions is true to be compatible with v2 UI.
+        // FIXME: state[4] specifies moving average in v2 UI
+        // FIXME: state[5] specifies envelope in v2 UI
+        // FIXME: state[6] specifies change detection algorithm in v2 UI
     }
 
     setOverviewSelection(selection)
@@ -90,6 +112,35 @@ class ChartPane extends ChartPaneBase {
         super._indicatorDidChange(indicatorID, isLocked);
     }
 
+    _analyzeRange(pointsRangeForAnalysis)
+    {
+        var router = this._chartsPage.router();
+        var newWindow = window.open(router.url('analysis/task/create'), '_blank');
+
+        var analyzePopover = this.content().querySelector('.chart-pane-analyze-popover');
+        var name = analyzePopover.querySelector('input').value;
+        var self = this;
+        AnalysisTask.create(name, pointsRangeForAnalysis.startPointId, pointsRangeForAnalysis.endPointId).then(function (data) {
+            newWindow.location.href = router.url('analysis/task/' + data['taskId']);
+            self.fetchAnalysisTasks(true);
+            // FIXME: Refetch the list of analysis tasks.
+        }, function (error) {
+            newWindow.location.href = router.url('analysis/task/create', {error: error});
+        });
+    }
+
+    _markAsOutlier(markAsOutlier, points)
+    {
+        var self = this;
+        return Promise.all(points.map(function (point) {
+            return PrivilegedAPI.sendRequest('update-run-status', {'run': point.id, 'markedOutlier': markAsOutlier});
+        })).then(function () {
+            self._mainChart.fetchMeasurementSets(true /* noCache */);
+        }, function (error) {
+            alert('Failed to update the outlier status: ' + error);
+        }).catch();
+    }
+
     render()
     {
         if (this._platform && this._metric) {
@@ -122,113 +173,138 @@ class ChartPane extends ChartPaneBase {
             })));
         }
 
-        var platformPane = this.content().querySelector('.chart-pane-alternative-platforms');
+        var platformPopover = this.content().querySelector('.chart-pane-alternative-platforms');
         var alternativePlatforms = this._chartsPage.alternatePlatforms(platform, metric);
         if (alternativePlatforms.length) {
-            this.renderReplace(platformPane, Platform.sortByName(alternativePlatforms).map(function (platform) {
+            this.renderReplace(platformPopover, Platform.sortByName(alternativePlatforms).map(function (platform) {
                 return element('li', link(platform.label(), function () {
                     self._chartsPage.insertPaneAfter(platform, metric, self);
                 }));
             }));
 
-            actions.push(element('li', {class: this._paneOpenedByClick == platformPane ? 'selected' : ''},
-                this._makeAnchorToOpenPane(platformPane, 'Other Platforms', true)));
-        } else {
-            platformPane.style.display = 'none';
-        }
+            actions.push(this._makePopoverActionItem(platformPopover, 'Other Platforms', true));
+        } else
+            platformPopover.style.display = 'none';
 
-        var analyzePane = this.content().querySelector('.chart-pane-analyze-pane');
+        var analyzePopover = this.content().querySelector('.chart-pane-analyze-popover');
         var pointsRangeForAnalysis = this._mainChartStatus.pointsRangeForAnalysis();
         if (pointsRangeForAnalysis) {
-            actions.push(element('li', {class: this._paneOpenedByClick == analyzePane ? 'selected' : ''},
-                this._makeAnchorToOpenPane(analyzePane, 'Analyze', false)));
-
-            var router = this._chartsPage.router();
-            analyzePane.onsubmit = function (event) {
+            actions.push(this._makePopoverActionItem(analyzePopover, 'Analyze', false));
+            analyzePopover.onsubmit = function (event) {
                 event.preventDefault();
-                var newWindow = window.open(router.url('analysis/task/create'), '_blank');
-
-                var name = analyzePane.querySelector('input').value;
-                AnalysisTask.create(name, pointsRangeForAnalysis.startPointId, pointsRangeForAnalysis.endPointId).then(function (data) {
-                    newWindow.location.href = router.url('analysis/task/' + data['taskId']);
-                    // FIXME: Refetch the list of analysis tasks.
-                }, function (error) {
-                    newWindow.location.href = router.url('analysis/task/create', {error: error});
-                });
+                self._analyzeRange(pointsRangeForAnalysis);
             }
         } else {
-            analyzePane.style.display = 'none';
-            analyzePane.onsubmit = function (event) { event.preventDefault(); }
+            analyzePopover.style.display = 'none';
+            analyzePopover.onsubmit = function (event) { event.preventDefault(); }
         }
 
-        this._paneOpenedByClick = null;
+        var filteringOptions = this.content().querySelector('.chart-pane-filtering-options');
+        actions.push(this._makePopoverActionItem(filteringOptions, 'Filtering', true));
+
+        this._renderFilteringPopover();
+
+        this._lockedPopover = null;
         this.renderReplace(this.content().querySelector('.chart-pane-action-buttons'), actions);
     }
 
-    _makeAnchorToOpenPane(pane, label, shouldRespondToHover)
+    _makePopoverActionItem(popover, label, shouldRespondToHover)
     {
-        var anchor = null;
-        var ignoreMouseLeave = false;
         var self = this;
-        var setPaneVisibility = function (pane, shouldShow) {
-            var anchor = pane.anchor;
-            if (shouldShow) {
-                var width = anchor.offsetParent.offsetWidth;
-                pane.style.top = anchor.offsetTop + anchor.offsetHeight + 'px';
-                pane.style.right = (width - anchor.offsetLeft - anchor.offsetWidth) + 'px';
-            }
-            pane.style.display = shouldShow ? null : 'none';
-            anchor.parentNode.className = shouldShow ? 'selected' : '';
-            if (self._paneOpenedByClick == pane && !shouldShow)
-                self._paneOpenedByClick = null;
+        popover.anchor = ComponentBase.createLink(label, function () {
+            var makeVisible = self._lockedPopover != popover;
+            self._setPopoverVisibility(popover, makeVisible);
+            if (makeVisible)
+                self._lockedPopover = popover;
+        });
+        if (shouldRespondToHover)
+            this._makePopoverOpenOnHover(popover);
+
+        return ComponentBase.createElement('li', {class: this._lockedPopover == popover ? 'selected' : ''}, popover.anchor);
+    }
+
+    _makePopoverOpenOnHover(popover)
+    {
+        var mouseIsInAnchor = false;
+        var mouseIsInPopover = false;
+
+        var self = this;
+        var closeIfNeeded = function () {
+            setTimeout(function () {
+                if (self._lockedPopover != popover && !mouseIsInAnchor && !mouseIsInPopover)
+                    self._setPopoverVisibility(popover, false);
+            }, 0);
         }
 
-        var attributes = {
-            href: '#',
-            onclick: function (event) {
-                event.preventDefault();
-                var shouldShowPane = pane.style.display == 'none';
-                if (shouldShowPane) {
-                    if (self._paneOpenedByClick)
-                        setPaneVisibility(self._paneOpenedByClick, false);
-                    self._paneOpenedByClick = pane;
-                }
-                setPaneVisibility(pane, shouldShowPane);
-            },
-        };
-        if (shouldRespondToHover) {
-            var mouseIsInAnchor = false;
-            var mouseIsInPane = false;
-
-            attributes.onmouseenter = function () {
-                if (self._paneOpenedByClick)
-                    return;
-                mouseIsInAnchor = true;
-                setPaneVisibility(pane, true);
-            }
-            attributes.onmouseleave = function () {
-                setTimeout(function () {
-                    if (!mouseIsInPane)
-                        setPaneVisibility(pane, false);
-                }, 0);
-                mouseIsInAnchor = false;                
-            }
-
-            pane.onmouseleave = function () {
-                setTimeout(function () {
-                    if (!mouseIsInAnchor)
-                        setPaneVisibility(pane, false);
-                }, 0);
-                mouseIsInPane = false;
-            }
-            pane.onmouseenter = function () {
-                mouseIsInPane = true;
-            }
+        popover.anchor.onmouseenter = function () {
+            if (self._lockedPopover)
+                return;
+            mouseIsInAnchor = true;
+            self._setPopoverVisibility(popover, true);
+        }
+        popover.anchor.onmouseleave = function () {
+            mouseIsInAnchor = false;
+            closeIfNeeded();         
         }
 
-        var anchor = ComponentBase.createElement('a', attributes, label);
-        pane.anchor = anchor;
-        return anchor;
+        popover.onmouseenter = function () {
+            mouseIsInPopover = true;
+        }
+        popover.onmouseleave = function () {
+            mouseIsInPopover = false;
+            closeIfNeeded();
+        }
+    }
+
+    _setPopoverVisibility(popover, visible)
+    {
+        var anchor = popover.anchor;
+        if (visible) {
+            var width = anchor.offsetParent.offsetWidth;
+            popover.style.top = anchor.offsetTop + anchor.offsetHeight + 'px';
+            popover.style.right = (width - anchor.offsetLeft - anchor.offsetWidth) + 'px';
+        }
+        popover.style.display = visible ? null : 'none';
+        anchor.parentNode.className = visible ? 'selected' : '';
+
+        if (this._lockedPopover && this._lockedPopover != popover && visible)
+            this._setPopoverVisibility(this._lockedPopover, false);
+
+        if (this._lockedPopover == popover && !visible)
+            this._lockedPopover = null;
+    }
+
+    _renderFilteringPopover()
+    {
+        var enableSampling = this.content().querySelector('.enable-sampling');
+        enableSampling.checked = this.isSamplingEnabled();
+        enableSampling.onchange = function () {
+            self.setSamplingEnabled(enableSampling.checked);
+            self._chartsPage.graphOptionsDidChange();
+        }
+
+        var showOutliers = this.content().querySelector('.show-outliers');
+        showOutliers.checked = this.isShowingOutliers();
+        showOutliers.onchange = function () {
+            self.setShowOutliers(showOutliers.checked);
+            self._chartsPage.graphOptionsDidChange();
+        }
+
+        var markAsOutlierButton = this.content().querySelector('.mark-as-outlier');
+        var firstSelectedPoint = this._mainChart.lockedIndicator();
+        if (!firstSelectedPoint)
+            firstSelectedPoint = this._mainChart.firstSelectedPoint('current');
+        var alreayMarkedAsOutlier = firstSelectedPoint && firstSelectedPoint.markedOutlier;
+
+        var self = this;
+        markAsOutlierButton.textContent = (alreayMarkedAsOutlier ? 'Unmark' : 'Mark') + ' selected points as outlier';
+        markAsOutlierButton.onclick = function () {
+            var selectedPoints = [firstSelectedPoint];
+            if (self._mainChart.currentSelection('current'))
+                selectedPoints = self._mainChart.selectedPoints('current');
+            self._markAsOutlier(!alreayMarkedAsOutlier, selectedPoints);
+        }
+        markAsOutlierButton.disabled = !firstSelectedPoint;
     }
 
     static paneHeaderTemplate()
@@ -241,11 +317,16 @@ class ChartPane extends ChartPaneBase {
                         <li class="close"><close-button></close-button></li>
                     </ul>
                     <ul class="chart-pane-action-buttons buttoned-toolbar"></ul>
-                    <ul class="chart-pane-alternative-platforms" style="display:none"></ul>
-                    <form class="chart-pane-analyze-pane" style="display:none">
+                    <ul class="chart-pane-alternative-platforms popover" style="display:none"></ul>
+                    <form class="chart-pane-analyze-popover popover" style="display:none">
                         <input type="text" required>
                         <button>Create</button>
                     </form>
+                    <ul class="chart-pane-filtering-options popover" style="display:none">
+                        <li><label><input type="checkbox" class="enable-sampling">Sampling</label></li>
+                        <li><label><input type="checkbox" class="show-outliers">Show outliers</label></li>
+                        <li><button class="mark-as-outlier">Mark selected points as outlier</button></li>
+                    </ul>
                 </nav>
             </header>
         `;
@@ -309,8 +390,7 @@ class ChartPane extends ChartPaneBase {
                 line-height: 0.9rem;
             }
 
-            .chart-pane-actions .chart-pane-alternative-platforms,
-            .chart-pane-analyze-pane {
+            .chart-pane-actions .popover {
                 position: absolute;
                 top: 0;
                 right: 0;
@@ -325,10 +405,10 @@ class ChartPane extends ChartPaneBase {
                 margin-right: -0.2rem;
             }
 
-            .chart-pane-alternative-platforms li {
+            .chart-pane-actions .popover li {
             }
 
-            .chart-pane-alternative-platforms li a {
+            .chart-pane-actions .popover li a {
                 display: block;
                 text-decoration: none;
                 color: inherit;
@@ -336,16 +416,20 @@ class ChartPane extends ChartPaneBase {
                 padding: 0.2rem 0.5rem;
             }
 
-            .chart-pane-alternative-platforms a:hover,
-            .chart-pane-analyze-pane input:focus {
+            .chart-pane-actions .popover a:hover,
+            .chart-pane-actions .popover input:focus {
                 background: rgba(204, 153, 51, 0.1);
             }
 
-            .chart-pane-analyze-pane {
+            .chart-pane-actions .chart-pane-analyze-popover {
                 padding: 0.5rem;
             }
 
-            .chart-pane-analyze-pane input {
+            .chart-pane-actions .popover label {
+                font-size: 0.9rem;
+            }
+
+            .chart-pane-actions .popover input[type=text] {
                 font-size: 1rem;
                 width: 15rem;
                 outline: none;

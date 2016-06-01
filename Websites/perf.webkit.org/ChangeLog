@@ -1,3 +1,119 @@
+2016-05-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        v3 UI should support marking and unmarking outliers as well as hiding them
+        https://bugs.webkit.org/show_bug.cgi?id=158248
+
+        Rubber-stamped by Chris Dumez.
+
+        Added the support for marking and unmarking a sequence of points as outliers. Unlike v2, we now support marking
+        multiple points as outliers in a single click. Also fixed a bug that outliers are never explicitly hidden in v3 UI.
+
+        This patch splits ChartStyles.createChartSourceList into two functions: resolveConfiguration and createSourceList
+        to separate the work of resolving platform and metric IDs to their respective model objects, and creating a source
+        list used by TimeSeriesChart to fetch measurement sets. createSourceList is called again when filtering options are
+        changed.
+
+        It also adds noCache option to TimeSeriesChart's fetchMeasurementSets, MeasurementSet's fetchBetween and
+        _fetchPrimaryCluster to update the measurement sets after marking or unmarking points as outliers. In addition, it
+        fixes a bug that the annotation bars for analysis tasks are not updated in charts page after creating an analysis
+        task by adding noCache option to ChartPaneBase's fetchAnalysisTasks, AnalysisTask's fetchByPlatformAndMetric and
+        _fetchSubset.
+
+        Finally, this patch splits ChartPane._makeAnchorToOpenPane into _makePopoverActionItem, _makePopoverOpenOnHover and
+        _setPopoverVisibility for clarity.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase): Added _disableSampling and _showOutliers as instance variables.
+        (ChartPaneBase.prototype.configure):
+        (ChartPaneBase.prototype.isSamplingEnabled): Added.
+        (ChartPaneBase.prototype.setSamplingEnabled): Added. When a filtering option is updated, recreate the source list
+        so that TimeSeriesChart.setSourceList can re-fetch the measurement set JSONs.
+        (ChartPaneBase.prototype.isShowingOutliers): Added.
+        (ChartPaneBase.prototype.setShowOutliers): Added. Ditto for calling _updateSourceList.
+        (ChartPaneBase.prototype._updateSourceList): Added.
+        (ChartPaneBase.prototype.fetchAnalysisTasks): Renamed from _fetchAnalysisTasks. Now takes noCache as an argument
+        instead of platform and metric IDs since they're on instance variables.
+
+        * public/v3/components/chart-styles.js:
+        (ChartStyles.resolveConfiguration): Renamed from createChartSourceList. Just resolves platform and metric IDs.
+        (ChartStyles.createSourceList): Extracted from createChartSourceList since it needs to be called when a filtering
+        option is changed as well as when ChartPaneBase.prototype.configure is called.
+        (ChartStyles.baselineStyle): Now takes filtering options.
+        (ChartStyles.targetStyle): Ditto.
+        (ChartStyles.currentStyle): Ditto.
+
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype.currentPoint): Find the point in _fetchedTimeSeries when
+        _sampledTimeSeriesData hasn't been computed yet as a fallback (e.g. when the chart hasn't been rendered yet).
+        (InteractiveTimeSeriesChart.prototype.selectedPoints): Added.
+        (InteractiveTimeSeriesChart.prototype.firstSelectedPoint): Added.
+        (InteractiveTimeSeriesChart.prototype.lockedIndicator): Added. Returns the current point if it's locked.
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype.setDomain):
+        (TimeSeriesChart.prototype.setSourceList): Added. Re-create _fetchedTimeSeries when filtering options have changed.
+        Don't re-fetch measurement set JSONs here since showing outliers can be done entirely in the front end.
+        (TimeSeriesChart.prototype.fetchMeasurementSets): Extracted out of setDomain. Now takes noCache as an argument.
+        ChartPane._markAsOutlier
+        (TimeSeriesChart.prototype.firstSampledPointBetweenTime): Added.
+
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.fetchByPlatformAndMetric): Added noCache as an argument.
+        (AnalysisTask._fetchSubset): Ditto.
+
+        * public/v3/models/measurement-adaptor.js:
+        (MeasurementAdaptor.prototype.isOutlier): Added.
+        (MeasurementAdaptor.prototype.applyToAnalysisResults): Add markedOutlier as a property on each point.
+
+        * public/v3/models/measurement-cluster.js:
+        (MeasurementCluster.prototype.addToSeries): Fixed the bug that filtering outliers was broken as _markedOutlierIndex
+        is undefined here. Use MeasurementAdaptor's isOutlier instead.
+
+        * public/v3/models/measurement-set.js:
+        (MeasurementSet.prototype.fetchBetween): Added noCache as an argument. Reset _primaryClusterPromise and _allFetches
+        when noCache is true since we need to re-fetch the primary cluster as well as all secondary clusters now.
+        (MeasurementSet.prototype._fetchPrimaryCluster): Added noCache as an argument. Directly invoke the JSON API at
+        /api/measurement-set to re-generate all clusters' JSON files instead of first fetching the cached version.
+        (MeasurementSet.prototype._fetchSecondaryCluster):
+        (MeasurementSet.prototype._didFetchJSON): Removed a bogus assertion since this function is called on secondary
+        clusters as well as primary clusters.
+        (MeasurementSet.prototype._addFetchedCluster): Reimplemented this function using an insertion sort. Also remove the
+        existing entry if the fetch cluster should replace it.
+
+        * public/v3/models/time-series.js:
+        (TimeSeries.prototype.dataBetweenPoints): Removed the dead code to filter out outliers. This is done in addToSeries
+        of MeasurementCluster instead.
+
+        * public/v3/pages/chart-pane.js:
+        (ChartPane): Renamed pane to popover since it was confusing to have a pane inside a pane class. As such, renamed
+        _paneOpenedByClick to _lockedPopover.
+        (ChartPane.prototype.serializeState): Added the code to serialize filtering options in the serialized state URL.
+        (ChartPane.prototype.updateFromSerializedState): Ditto for parsing.
+        (ChartPane.prototype._analyzeRange): Extracted out of render(). Also fixed a bug that the charts page don't show
+        the newly created analysis task by invoking fetchAnalysisTasks with noCache set to true.
+        (ChartPane.prototype._markAsOutlier): Added.
+        (ChartPane.prototype._renderActionToolbar): A bunch of changes due to pane -> popover rename. Also added a popover
+        for filtering options.
+        (ChartPane.prototype._makePopoverActionItem): Extracted from _makeAnchorToOpenPane.
+        (ChartPane.prototype._makePopoverOpenOnHover): Ditto.
+        (ChartPane.prototype._setPopoverVisibility): Ditto.
+        (ChartPane.prototype._renderFilteringPopover): Added.
+        (ChartPane.htmlTemplate): Added a popover for specifying filtering options. Also added .popover on each popover.
+        (ChartPane.cssTemplate): Updated the style to make use of .popover.
+
+        * public/v3/pages/charts-page.js:
+        (ChartsPage.prototype.graphOptionsDidChange): Added. Updates the URL state when a filtering option is modified.
+
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage.prototype._createChartForCell):
+
+        * public/v3/pages/page-router.js:
+        (PageRouter.prototype._serializeHashQueryValue): Serialize a set of strings as | separated tokens.
+        (PageRouter.prototype._deserializeHashQueryValue): Rewrote the function as the serialized URL can no longer be
+        parsed as a JSON as | separated tokens can't be converted into a valid JSON construct with a simple regex.
+
+        * unit-tests/measurement-set-tests.js: Added a test case for fetchBetween with noCache=true.
+
 2016-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix after r201307.

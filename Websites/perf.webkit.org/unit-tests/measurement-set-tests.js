@@ -290,6 +290,100 @@ describe('MeasurementSet', function () {
             });
         });
 
+        it('should request the uncached primary cluster when noCache is true', function (done) {
+            var set = MeasurementSet.findSet(1, 1, 3000);
+            var callCount = 0;
+            set.fetchBetween(1000, 3000, function () {
+                callCount++;
+            });
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
+
+            requests[0].resolve({
+                'clusterStart': 1000,
+                'clusterSize': 1000,
+                'formatMap': [],
+                'configurations': {current: []},
+                'startTime': 2000,
+                'endTime': 3000,
+                'lastModified': 3000,
+                'clusterCount': 2,
+                'status': 'OK'});
+
+            var noCacheFetchCount = 0;
+            waitForMeasurementSet().then(function () {
+                assert.equal(callCount, 1);
+                assert.equal(noCacheFetchCount, 0);
+                assert.equal(set._sortedClusters.length, 1);
+                assert.equal(requests.length, 2);
+                assert.equal(requests[1].url, '../data/measurement-set-1-1-2000.json');
+
+                requests[1].resolve({
+                    'clusterStart': 1000,
+                    'clusterSize': 1000,
+                    'formatMap': [],
+                    'configurations': {current: []},
+                    'startTime': 1000,
+                    'endTime': 2000,
+                    'lastModified': 3000,
+                    'clusterCount': 2,
+                    'status': 'OK'});
+
+                set.fetchBetween(1000, 3000, function () {
+                    noCacheFetchCount++;
+                }, true /* noCache */);
+
+                return waitForMeasurementSet();
+            }).then(function () {
+                assert.equal(callCount, 2);
+                assert.equal(noCacheFetchCount, 0);
+                assert.equal(set._sortedClusters.length, 2);
+                assert.equal(requests.length, 3);
+                assert.equal(requests[2].url, '../api/measurement-set?platform=1&metric=1');
+
+                requests[2].resolve({
+                    'clusterStart': 1000,
+                    'clusterSize': 1000,
+                    'formatMap': [],
+                    'configurations': {current: []},
+                    'startTime': 2000,
+                    'endTime': 3000,
+                    'lastModified': 3000,
+                    'clusterCount': 2,
+                    'status': 'OK'});
+
+                return waitForMeasurementSet();
+            }).then(function () {
+                assert.equal(callCount, 2);
+                assert.equal(noCacheFetchCount, 1);
+                assert.equal(set._sortedClusters.length, 2);
+                assert.equal(requests.length, 4);
+                assert.equal(requests[3].url, '../data/measurement-set-1-1-2000.json');
+
+                requests[3].resolve({
+                    'clusterStart': 1000,
+                    'clusterSize': 1000,
+                    'formatMap': [],
+                    'configurations': {current: []},
+                    'startTime': 1000,
+                    'endTime': 2000,
+                    'lastModified': 3000,
+                    'clusterCount': 2,
+                    'status': 'OK'});
+
+                return waitForMeasurementSet();
+            }).then(function () {
+                assert.equal(callCount, 2);
+                assert.equal(noCacheFetchCount, 2);
+                assert.equal(set._sortedClusters.length, 2);
+                assert.equal(requests.length, 4);
+
+                done();
+            }).catch(function (error) {
+                done(error);
+            });
+        });
+
         it('should not request the primary cluster twice when multiple clients request it but should invoke all callbacks', function (done) {
             var set = MeasurementSet.findSet(1, 1, 3000);
             var callCount = 0;

@@ -21,7 +21,7 @@ class MeasurementCluster {
             var id = self._adaptor.extractId(row);
             if (id in idMap)
                 return;
-            if (row[self._markedOutlierIndex] && !includeOutliers)
+            if (self._adaptor.isOutlier(row) && !includeOutliers)
                 return;
 
             idMap[id] = true;

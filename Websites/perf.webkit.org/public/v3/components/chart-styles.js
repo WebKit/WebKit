@@ -1,6 +1,6 @@
 
 class ChartStyles {
-    static createChartSourceList(platformId, metricId)
+    static resolveConfiguration(platformId, metricId)
     {
         var platform = Platform.findById(platformId);
         var metric = Metric.findById(metricId);
@@ -11,26 +11,35 @@ class ChartStyles {
         if (!lastModified)
             return {platform: platform, metric: metric, error: `No results on ${platform.name()}`};
 
-        var measurementSet = MeasurementSet.findSet(platform.id(), metric.id(), lastModified);
-        var sourceList = [
-            this.baselineStyle(measurementSet, 'baseline'),
-            this.targetStyle(measurementSet, 'target'),
-            this.currentStyle(measurementSet, 'current'),
-        ];
-
         return {
             platform: platform,
             metric: metric,
-            sourceList: sourceList,
         };
     }
 
-    static baselineStyle(measurementSet)
+    static createSourceList(platform, metric, disableSampling, includeOutlier)
+    {
+        console.assert(platform instanceof Platform);
+        console.assert(metric instanceof Metric);
+
+        var lastModified = platform.lastModified(metric);
+        console.assert(lastModified);
+
+        var measurementSet = MeasurementSet.findSet(platform.id(), metric.id(), lastModified);
+        return [
+            this.baselineStyle(measurementSet, disableSampling, includeOutlier),
+            this.targetStyle(measurementSet, disableSampling, includeOutlier),
+            this.currentStyle(measurementSet, disableSampling, includeOutlier),
+        ];
+    }
+
+    static baselineStyle(measurementSet, disableSampling, includeOutlier)
     {
         return {
             measurementSet: measurementSet,
             extendToFuture: true,
-            sampleData: true,
+            sampleData: !disableSampling,
+            includeOutliers: includeOutlier,
             type: 'baseline',
             pointStyle: '#f33',
             pointRadius: 2,
@@ -41,12 +50,13 @@ class ChartStyles {
         };
     }
 
-    static targetStyle(measurementSet)
+    static targetStyle(measurementSet, disableSampling, includeOutlier)
     {
         return {
             measurementSet: measurementSet,
             extendToFuture: true,
-            sampleData: true,
+            sampleData: !disableSampling,
+            includeOutliers: includeOutlier,
             type: 'target',
             pointStyle: '#33f',
             pointRadius: 2,
@@ -57,11 +67,12 @@ class ChartStyles {
         };
     }
 
-    static currentStyle(measurementSet)
+    static currentStyle(measurementSet, disableSampling, includeOutlier)
     {
         return {
             measurementSet: measurementSet,
-            sampleData: true,
+            sampleData: !disableSampling,
+            includeOutliers: includeOutlier,
             type: 'current',
             pointStyle: '#333',
             pointRadius: 2,

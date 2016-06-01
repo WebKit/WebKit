@@ -185,6 +185,11 @@ class ChartsPage extends PageWithHeading {
             this.scheduleUrlStateUpdate();
     }
 
+    graphOptionsDidChange(pane)
+    {
+        this.scheduleUrlStateUpdate();
+    }
+
     setOpenRepository(repository)
     {
         this._currentRepositoryId = repository ? repository.id() : null;
