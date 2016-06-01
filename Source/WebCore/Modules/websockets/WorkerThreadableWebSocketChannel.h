@@ -80,10 +80,7 @@ public:
     class Peer : public WebSocketChannelClient {
         WTF_MAKE_NONCOPYABLE(Peer); WTF_MAKE_FAST_ALLOCATED;
     public:
-        static Peer* create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode)
-        {
-            return new Peer(clientWrapper, loaderProxy, context, taskMode);
-        }
+        Peer(RefPtr<ThreadableWebSocketChannelClientWrapper>&&, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode);
         ~Peer();
 
         void connect(const URL&, const String& protocol);
@@ -107,8 +104,6 @@ public:
         void didReceiveMessageError() override;
 
     private:
-        Peer(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode);
-
         RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         WorkerLoaderProxy& m_loaderProxy;
         RefPtr<ThreadableWebSocketChannel> m_mainWebSocketChannel;
@@ -152,7 +147,7 @@ private:
         static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
 
         // Executed on the main thread to create a Peer for this bridge.
-        static void mainThreadInitialize(ScriptExecutionContext&, WorkerLoaderProxy*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, const String& taskMode);
+        static void mainThreadInitialize(ScriptExecutionContext&, WorkerLoaderProxy*, RefPtr<ThreadableWebSocketChannelClientWrapper>&&, const String& taskMode);
 
         // Executed on the worker context's thread.
         void clearClientWrapper();

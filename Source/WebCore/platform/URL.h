@@ -330,20 +330,6 @@ WEBCORE_EXPORT String encodeWithURLEscapeSequences(const String&);
 WEBCORE_EXPORT void enableURLSchemeCanonicalization(bool);
 #endif
 
-// Like StringCapture, but for URLs.
-class URLCapture {
-public:
-    explicit URLCapture(const URL&);
-    explicit URLCapture(URL&&);
-    URLCapture(const URLCapture&);
-    const URL& url() const;
-    URL releaseURL();
-
-private:
-    void operator=(const URLCapture&) = delete;
-    URL m_URL;
-};
-
 // Inlines.
 
 inline bool operator==(const URL& a, const URL& b)
@@ -432,31 +418,6 @@ inline unsigned URL::pathEnd() const
 inline unsigned URL::pathAfterLastSlash() const
 {
     return m_pathAfterLastSlash;
-}
-
-inline URLCapture::URLCapture(const URL& url)
-    : m_URL(url)
-{
-}
-
-inline URLCapture::URLCapture(URL&& url)
-    : m_URL(url)
-{
-}
-
-inline URLCapture::URLCapture(const URLCapture& other)
-    : m_URL(other.m_URL.isolatedCopy())
-{
-}
-
-inline const URL& URLCapture::url() const
-{
-    return m_URL;
-}
-
-inline URL URLCapture::releaseURL()
-{
-    return WTFMove(m_URL);
 }
 
 } // namespace WebCore

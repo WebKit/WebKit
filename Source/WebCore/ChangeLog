@@ -1,3 +1,39 @@
+2016-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Modernize lambda captures in WorkerThreadableWebSocketChannel
+        https://bugs.webkit.org/show_bug.cgi?id=158246
+
+        Reviewed by Brady Eidson.
+
+        Modernize lambda captures in WorkerThreadableWebSocketChannel and drop
+        legacy URLCapture as it is no longer needed / used.
+
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessage):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::initialize):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::close):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::fail):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::disconnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::suspend):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::resume):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::setMethodNotCompleted): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion): Deleted.
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * platform/URL.h:
+        (WebCore::operator==): Deleted.
+
 2016-05-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ReportExtraMemoryCost IDL attribute should also be used to generate estimatedSize method
