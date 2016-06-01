@@ -63,7 +63,7 @@
 }
 
 .data-grid > .header-wrapper {
-    border-bottom: 0.5px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .data-grid.no-header > .header-wrapper > table.header {

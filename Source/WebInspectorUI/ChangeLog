@@ -1,5 +1,18 @@
 2016-05-31  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Storage DataGrids have a half-pixel transparent/white border below the header
+        https://bugs.webkit.org/show_bug.cgi?id=156699
+        <rdar://problem/25778260>
+
+        Reviewed by Timothy Hatcher.
+
+        Increase the width of the border below the DataGrid's header to match the border in the left sidebar.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid > .header-wrapper):
+
+2016-05-31  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Snapshot List scroll bar occludes border of containing view in top-right
         https://bugs.webkit.org/show_bug.cgi?id=158219
         <rdar://problem/26545018>
