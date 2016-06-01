@@ -100,11 +100,11 @@ try{
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 try{
-	eval("function __func(arg1, arg2, arg3,,){return arguments.length;}");
-	testFailed('#3: eval("function __func(arg1, arg2, arg3,,){return arguments.length;}") lead to throwing exception')
+	eval("function __func(arg1, arg2, arg3,){return arguments.length;}");
+	testFailed('#3: eval("function __func(arg1, arg2, arg3,){return arguments.length;}") lead to throwing exception')
 } catch(e){
 	if(!(e instanceof SyntaxError)){
-		testFailed('#3.1: eval("function __func(arg1, arg2, arg3,,){return arguments.length;}") lead to throwing exception of SyntaxError. Actual: exception is '+e);
+		testFailed('#3.1: eval("function __func(arg1, arg2, arg3,){return arguments.length;}") lead to throwing exception of SyntaxError. Actual: exception is '+e);
 	}
 }
 //

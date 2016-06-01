@@ -1,3 +1,17 @@
+2016-06-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r201488.
+        https://bugs.webkit.org/show_bug.cgi?id=158268
+
+        Caused 23% regression on JetStream's crypto-md5 (Requested by
+        rniwa on #webkit).
+
+        Reverted changeset:
+
+        "[ESNext] Support trailing commas in function param lists"
+        https://bugs.webkit.org/show_bug.cgi?id=158020
+        http://trac.webkit.org/changeset/201488
+
 2016-06-01  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         POST request on a blob resource should return a "network error" instead of HTTP 500 response
