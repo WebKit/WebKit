@@ -1,4 +1,4 @@
-This test checks that positioned grid items are placed properly (ignoring implicit tracks) even if the grid has implicit tracks.
+This test checks that positioned grid items are placed properly (including implicit tracks) even if the grid has implicit tracks.
 
 PASS
 PASS

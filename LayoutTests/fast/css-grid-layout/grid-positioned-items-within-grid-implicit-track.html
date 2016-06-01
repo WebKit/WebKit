@@ -35,7 +35,7 @@
 <script src="../../resources/check-layout.js"></script>
 <body onload="checkLayout('.grid')">
 
-<p>This test checks that positioned grid items are placed properly (ignoring implicit tracks) even if the grid has implicit tracks.</p>
+<p>This test checks that positioned grid items are placed properly (including implicit tracks) even if the grid has implicit tracks.</p>
 
 <div class="grid">
     <div class="sixRowsAndSixColumns"
@@ -78,7 +78,7 @@
         data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
     </div>
     <div class="absolute" style="grid-column: -4 / 1; grid-row: -4 / 1;"
-        data-offset-x="0" data-offset-y="0" data-expected-width="215" data-expected-height="115">
+        data-offset-x="115" data-offset-y="65" data-expected-width="100" data-expected-height="50">
     </div>
 </div>
 
@@ -87,7 +87,7 @@
         data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
     </div>
     <div class="absolute" style="grid-column: -4 / 2; grid-row: -4 / 2;"
-        data-offset-x="0" data-offset-y="0" data-expected-width="415" data-expected-height="265">
+        data-offset-x="115" data-offset-y="65" data-expected-width="300" data-expected-height="200">
     </div>
 </div>
 
@@ -96,7 +96,7 @@
         data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
     </div>
     <div class="absolute" style="grid-column: 3 / 4; grid-row: 3 / 4;"
-        data-offset-x="715" data-offset-y="515" data-expected-width="115" data-expected-height="115">
+        data-offset-x="715" data-offset-y="515" data-expected-width="100" data-expected-height="50">
     </div>
 </div>
 
@@ -105,7 +105,7 @@
         data-offset-x="15" data-offset-y="15" data-expected-width="900" data-expected-height="600">
     </div>
     <div class="absolute" style="grid-column: 2 / 4; grid-row: 2 / 4;"
-        data-offset-x="415" data-offset-y="265" data-expected-width="415" data-expected-height="365">
+        data-offset-x="415" data-offset-y="265" data-expected-width="400" data-expected-height="300">
     </div>
 </div>
 
@@ -150,7 +150,7 @@
         data-offset-x="-85" data-offset-y="15" data-expected-width="900" data-expected-height="600">
     </div>
     <div class="absolute" style="grid-column: -4 / 1; grid-row: -4 / 1;"
-        data-offset-x="615" data-offset-y="0" data-expected-width="215" data-expected-height="115">
+        data-offset-x="615" data-offset-y="65" data-expected-width="100" data-expected-height="50">
     </div>
 </div>
 
@@ -159,7 +159,7 @@
         data-offset-x="-85" data-offset-y="15" data-expected-width="900" data-expected-height="600">
     </div>
     <div class="absolute" style="grid-column: -4 / 2; grid-row: -4 / 2;"
-        data-offset-x="415" data-offset-y="0" data-expected-width="415" data-expected-height="265">
+        data-offset-x="415" data-offset-y="65" data-expected-width="300" data-expected-height="200">
     </div>
 </div>
 
@@ -168,7 +168,7 @@
         data-offset-x="-85" data-offset-y="15" data-expected-width="900" data-expected-height="600">
     </div>
     <div class="absolute" style="grid-column: 3 / 4; grid-row: 3 / 4;"
-        data-offset-x="0" data-offset-y="515" data-expected-width="115" data-expected-height="115">
+        data-offset-x="15" data-offset-y="515" data-expected-width="100" data-expected-height="50">
     </div>
 </div>
 
@@ -177,7 +177,7 @@
         data-offset-x="-85" data-offset-y="15" data-expected-width="900" data-expected-height="600">
     </div>
     <div class="absolute" style="grid-column: 2 / 4; grid-row: 2 / 4;"
-        data-offset-x="0" data-offset-y="265" data-expected-width="415" data-expected-height="365">
+        data-offset-x="15" data-offset-y="265" data-expected-width="400" data-expected-height="300">
     </div>
 </div>
 

@@ -1683,17 +1683,16 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
 
     GridPosition startPosition = isRowAxis ? child.style().gridItemColumnStart() : child.style().gridItemRowStart();
     GridPosition endPosition = isRowAxis ? child.style().gridItemColumnEnd() : child.style().gridItemRowEnd();
-    int firstExplicitLine = smallestStart;
-    int lastExplicitLine = (isRowAxis ? GridPositionsResolver::explicitGridColumnCount(style(), autoRepeatCount) : GridPositionsResolver::explicitGridRowCount(style(), autoRepeatCount)) + smallestStart;
+    int lastLine = isRowAxis ? gridColumnCount() : gridRowCount();
 
     bool startIsAuto = startPosition.isAuto()
         || (startPosition.isNamedGridArea() && !NamedLineCollection::isValidNamedLineOrArea(startPosition.namedGridLine(), style(), (direction == ForColumns) ? ColumnStartSide : RowStartSide))
-        || (startLine < firstExplicitLine)
-        || (startLine > lastExplicitLine);
+        || (startLine < 0)
+        || (startLine > lastLine);
     bool endIsAuto = endPosition.isAuto()
         || (endPosition.isNamedGridArea() && !NamedLineCollection::isValidNamedLineOrArea(endPosition.namedGridLine(), style(), (direction == ForColumns) ? ColumnEndSide : RowEndSide))
-        || (endLine < firstExplicitLine)
-        || (endLine > lastExplicitLine);
+        || (endLine < 0)
+        || (endLine > lastLine);
 
     // We're normalizing the positions to avoid issues with RTL (as they're stored in the same order than LTR but adding an offset).
     LayoutUnit start;
@@ -1718,7 +1717,7 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
             end = m_rowPositions[endLine] - borderBefore();
 
         // These vectors store line positions including gaps, but we shouldn't consider them for the edges of the grid.
-        if (endLine > firstExplicitLine && endLine < lastExplicitLine) {
+        if (endLine > 0 && endLine < lastLine) {
             end -= guttersSize(direction, 2);
             end -= isRowAxis ? m_offsetBetweenColumns : m_offsetBetweenRows;
         }
@@ -1735,7 +1734,7 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
         else {
             offset = translateRTLCoordinate(m_columnPositions[endLine]) - borderLogicalLeft();
 
-            if (endLine > firstExplicitLine && endLine < lastExplicitLine) {
+            if (endLine > 0 && endLine < lastLine) {
                 offset += guttersSize(direction, 2);
                 offset += isRowAxis ? m_offsetBetweenColumns : m_offsetBetweenRows;
             }

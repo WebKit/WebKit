@@ -1,3 +1,15 @@
+2016-06-01  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Positioned items can be placed on the implicit grid
+        https://bugs.webkit.org/show_bug.cgi?id=158197
+
+        Reviewed by Sergio Villar Senin.
+
+        Updated the test to follow the expected behavior.
+
+        * fast/css-grid-layout/grid-positioned-items-within-grid-implicit-track-expected.txt:
+        * fast/css-grid-layout/grid-positioned-items-within-grid-implicit-track.html:
+
 2016-05-31  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION(r201040): Repainting of moving overflow:hidden objects is broken.

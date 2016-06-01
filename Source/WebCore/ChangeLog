@@ -1,3 +1,22 @@
+2016-06-01  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Positioned items can be placed on the implicit grid
+        https://bugs.webkit.org/show_bug.cgi?id=158197
+
+        Reviewed by Sergio Villar Senin.
+
+        The old code wrongly assumed that positioned items couldn't be placed
+        on the implicit grid. However, the spec doesn't mention anything about this.
+
+        The patch fixes this issue, so now positioned items can be actually
+        placed on the implicit tracks.
+
+        Test: fast/css-grid-layout/grid-positioned-items-within-grid-implicit-track.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild): Use the lines
+        of the implicit grid instead of the explicit one.
+
 2016-05-31  Chris Dumez  <cdumez@apple.com>
 
         Modernize lambda captures in WorkerThreadableWebSocketChannel
