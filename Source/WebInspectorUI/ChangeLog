@@ -1,3 +1,17 @@
+2016-05-31  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Snapshot List scroll bar occludes border of containing view in top-right
+        https://bugs.webkit.org/show_bug.cgi?id=158219
+        <rdar://problem/26545018>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.data-grid.timeline th): Deleted.
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-browser > .navigation-bar):
+        Make the border line span across the whole navigation bar, not just its table cells.
+
 2016-05-30  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Timelines: "-0.000ms" in Self Time

@@ -50,7 +50,7 @@
 
 .content-view.timeline-recording > .content-browser > .navigation-bar {
     background-color: var(--panel-background-color);
-    border-bottom: none;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple {
