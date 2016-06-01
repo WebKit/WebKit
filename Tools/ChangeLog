@@ -1,3 +1,12 @@
+2016-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Skip media permission request GTK+ unit tests.
+
+        They are timing out in the bots.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2016-05-31  Jer Noble  <jer.noble@apple.com>
 
         Yet another unreviewed build fix; move the closing brace of the namespace declaration inside
