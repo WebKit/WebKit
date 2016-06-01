@@ -687,7 +687,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(co
 CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, CachedResourceRequest& request)
 {
     auto& memoryCache = MemoryCache::singleton();
-    ASSERT(!memoryCache.resourceForRequest(request.resourceRequest(), sessionID()));
+    ASSERT(!request.allowsCaching() || !memoryCache.resourceForRequest(request.resourceRequest(), sessionID()));
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().stringCenterEllipsizedToLength().latin1().data());
 

@@ -1,3 +1,15 @@
+2016-05-31  Alex Christensen  <achristensen@webkit.org>
+
+        Fix assertion after r201447
+        https://bugs.webkit.org/show_bug.cgi?id=158244
+
+        Reviewed by Jer Noble.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::loadResource):
+        If we are loading media using WebCoreNSURLSession, we could be making a request for a
+        resource we already have in the memory cache because we are ignoring all caches.
+
 2016-05-31  Chris Dumez  <cdumez@apple.com>
 
         Clean up / modernize iOS text autosizing code
