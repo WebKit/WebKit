@@ -78,7 +78,7 @@ SubresourceLoader::SubresourceLoader(Frame* frame, CachedResource* resource, con
     , m_resource(resource)
     , m_loadingMultipartContent(false)
     , m_state(Uninitialized)
-    , m_requestCountTracker(std::make_unique<RequestCountTracker>(frame->document()->cachedResourceLoader(), resource))
+    , m_requestCountTracker(InPlace, frame->document()->cachedResourceLoader(), resource)
 {
 #ifndef NDEBUG
     subresourceLoaderCounter.increment();
@@ -283,7 +283,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         m_loadingMultipartContent = true;
 
         // We don't count multiParts in a CachedResourceLoader's request count
-        m_requestCountTracker = nullptr;
+        m_requestCountTracker = Nullopt;
         if (!m_resource->isImage()) {
             cancel();
             return;
@@ -514,7 +514,7 @@ void SubresourceLoader::notifyDone()
     if (reachedTerminalState())
         return;
 
-    m_requestCountTracker = nullptr;
+    m_requestCountTracker = Nullopt;
 #if PLATFORM(IOS)
     m_documentLoader->cachedResourceLoader().loadDone(m_resource, m_state != CancelledWhileInitializing);
 #else
