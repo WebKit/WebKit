@@ -1,3 +1,9 @@
+2016-06-01  Dean Jackson  <dino@apple.com>
+
+        Fix iOS build.
+
+        * platform/spi/cg/CoreGraphicsSPI.h: No ColorSync on iOS.
+
 2016-06-01  Chris Dumez  <cdumez@apple.com>
 
         Crash under eventTargetRespectingTargetRules()

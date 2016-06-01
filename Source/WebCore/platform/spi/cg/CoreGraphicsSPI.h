@@ -39,7 +39,9 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#if PLATFORM(MAC)
 #include <ColorSync/ColorSyncPriv.h>
+#endif
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
 
