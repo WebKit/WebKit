@@ -968,7 +968,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
 
     RefPtr<IDBTransaction> protectedThis(this);
     RefPtr<IDBClient::TransactionOperation> protectedOperation(&operation);
-    value->writeBlobsToDiskForIndexedDB([protectedThis = WTFMove(protectedThis), this, protectedOperation = WTFMove(protectedOperation), key = WTFMove(key), value = WTFMove(value), overwriteMode](const IDBValue& idbValue) mutable {
+    value->writeBlobsToDiskForIndexedDB([protectedThis = WTFMove(protectedThis), this, protectedOperation = WTFMove(protectedOperation), key = WTFMove(key), overwriteMode](const IDBValue& idbValue) mutable {
         ASSERT(currentThread() == originThreadID());
         ASSERT(isMainThread());
         if (idbValue.data().data()) {

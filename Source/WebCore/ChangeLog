@@ -1,3 +1,15 @@
+2016-06-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win][IndexedDB] Crash when running blob test.
+        https://bugs.webkit.org/show_bug.cgi?id=158224
+
+        Reviewed by Brady Eidson.
+
+        Avoid calling WTFMove(x) before calling x->method().
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::putOrAddOnServer):
+
 2016-06-01  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Positioned items can be placed on the implicit grid
