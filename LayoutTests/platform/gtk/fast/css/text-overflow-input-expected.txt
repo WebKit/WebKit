@@ -38,18 +38,18 @@ layer at (0,0) size 800x442
           text run at (195,83) width 4: " "
         RenderTextControl {INPUT} at (201,79) size 211x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 205x20
-            RenderBlock {DIV} at (0,10) size 0x0
-            RenderBlock {DIV} at (0,1) size 185x18
-            RenderBlock {DIV} at (185,0) size 20x20
+            RenderBlock {DIV} at (205,10) size 0x0
+            RenderBlock {DIV} at (20,1) size 185x18
+            RenderBlock {DIV} at (0,0) size 20x20
         RenderText {#text} at (414,83) size 4x17
           text run at (414,83) width 4: " "
         RenderTextControl {INPUT} at (420,80) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,109) size 211x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 205x20
-            RenderBlock {DIV} at (0,10) size 0x0
-            RenderBlock {DIV} at (0,1) size 185x18
-            RenderBlock {DIV} at (185,0) size 20x20
+            RenderBlock {DIV} at (205,10) size 0x0
+            RenderBlock {DIV} at (20,1) size 185x18
+            RenderBlock {DIV} at (0,0) size 20x20
         RenderText {#text} at (215,113) size 4x17
           text run at (215,113) width 4: " "
         RenderTextControl {INPUT} at (221,110) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
@@ -88,18 +88,18 @@ layer at (0,0) size 800x442
           text run at (195,83) width 4: " "
         RenderTextControl {INPUT} at (201,79) size 211x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 205x20
-            RenderBlock {DIV} at (0,10) size 0x0
-            RenderBlock {DIV} at (0,1) size 185x18
-            RenderBlock {DIV} at (185,0) size 20x20
+            RenderBlock {DIV} at (205,10) size 0x0
+            RenderBlock {DIV} at (20,1) size 185x18
+            RenderBlock {DIV} at (0,0) size 20x20
         RenderText {#text} at (414,83) size 4x17
           text run at (414,83) width 4: " "
         RenderTextControl {INPUT} at (420,80) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,109) size 211x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 205x20
-            RenderBlock {DIV} at (0,10) size 0x0
-            RenderBlock {DIV} at (0,1) size 185x18
-            RenderBlock {DIV} at (185,0) size 20x20
+            RenderBlock {DIV} at (205,10) size 0x0
+            RenderBlock {DIV} at (20,1) size 185x18
+            RenderBlock {DIV} at (0,0) size 20x20
         RenderText {#text} at (215,113) size 4x17
           text run at (215,113) width 4: " "
         RenderTextControl {INPUT} at (221,110) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
@@ -158,17 +158,17 @@ layer at (13,132) size 185x17 scrollX 198 scrollWidth 383
       text run at (-198,0) width 383: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (13,132) size 185x17
   RenderBlock {DIV} at (3,3) size 185x17
-layer at (212,133) size 185x17 scrollX 198 scrollWidth 383
-  RenderBlock {DIV} at (3,4) size 185x18 [color=#A9A9A9]
+layer at (232,133) size 185x17 scrollX 198 scrollWidth 383
+  RenderBlock {DIV} at (23,4) size 185x18 [color=#A9A9A9]
     RenderText {#text} at (-198,0) size 383x17
       text run at (-198,0) width 383: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (212,133) size 185x17
+layer at (232,133) size 185x17
   RenderBlock {DIV} at (0,0) size 185x17
 layer at (431,132) size 185x17 scrollX 198 scrollWidth 383
   RenderBlock {DIV} at (3,3) size 185x17
     RenderText {#text} at (-198,0) size 383x17
       text run at (-198,0) width 383: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (13,163) size 185x17 scrollX 198 scrollWidth 383
+layer at (33,163) size 185x17 scrollX 198 scrollWidth 383
   RenderBlock {DIV} at (0,0) size 185x17
     RenderText {#text} at (-198,0) size 383x17
       text run at (-198,0) width 383: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -206,17 +206,17 @@ layer at (13,285) size 185x17 scrollX 198 scrollWidth 383
       text run at (-198,0) width 383: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (13,285) size 185x17
   RenderBlock {DIV} at (3,3) size 185x17
-layer at (212,286) size 185x17 scrollX 198 scrollWidth 383
-  RenderBlock {DIV} at (3,4) size 185x18 [color=#A9A9A9]
+layer at (232,286) size 185x17 scrollX 198 scrollWidth 383
+  RenderBlock {DIV} at (23,4) size 185x18 [color=#A9A9A9]
     RenderText {#text} at (-198,0) size 383x17
       text run at (-198,0) width 383: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (212,286) size 185x17
+layer at (232,286) size 185x17
   RenderBlock {DIV} at (0,0) size 185x17
 layer at (431,285) size 185x17 scrollX 198 scrollWidth 383
   RenderBlock {DIV} at (3,3) size 185x17
     RenderText {#text} at (-198,0) size 383x17
       text run at (-198,0) width 383: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (13,316) size 185x17 scrollX 198 scrollWidth 383
+layer at (33,316) size 185x17 scrollX 198 scrollWidth 383
   RenderBlock {DIV} at (0,0) size 185x17
     RenderText {#text} at (-198,0) size 383x17
       text run at (-198,0) width 383: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"

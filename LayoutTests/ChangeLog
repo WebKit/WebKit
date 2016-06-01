@@ -1,3 +1,14 @@
+2016-06-01  Javier Fernandez  <jfernandez@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline several tests after r201397.
+
+        We correctly render search field's cancel and result button for RTL content.
+
+        * fast/forms/search-input-rtl-expected.txt: Added.
+        * platform/gtk/fast/css/text-overflow-input-expected.txt:
+        * platform/gtk/fast/forms/placeholder-position-expected.txt:
+        * platform/gtk/fast/forms/search-rtl-expected.txt:
+
 2016-06-01  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add RTCRtpTransceiver interface and RTCPeerConnection.addTransceiver()
