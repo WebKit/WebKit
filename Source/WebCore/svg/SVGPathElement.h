@@ -99,6 +99,8 @@ public:
 
     void animatedPropertyWillBeDeleted();
 
+    size_t approximateMemoryCost() const override;
+
 private:
     SVGPathElement(const QualifiedName&, Document&);
 

@@ -38,6 +38,8 @@ public:
 
     static const SVGPropertyInfo* pointsPropertyInfo();
 
+    size_t approximateMemoryCost() const override;
+
 protected:
     SVGPolyElement(const QualifiedName&, Document&);
 

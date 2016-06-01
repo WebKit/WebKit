@@ -87,6 +87,8 @@ private:
 
     virtual bool dataChanged(bool allDataReceived) override;
 
+    void reportApproximateMemoryCost() const;
+
     // FIXME: SVGImages will be unable to prune because this function is not implemented yet.
     virtual void destroyDecodedData(bool) override { }
 
