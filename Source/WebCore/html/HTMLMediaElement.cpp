@@ -497,6 +497,7 @@ HTMLMediaElement::~HTMLMediaElement()
 {
     LOG(Media, "HTMLMediaElement::~HTMLMediaElement(%p)", this);
 
+    beginIgnoringTrackDisplayUpdateRequests();
     allMediaElements().remove(this);
 
     m_asyncEventQueue.close();

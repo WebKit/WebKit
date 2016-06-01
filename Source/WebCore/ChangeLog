@@ -1,3 +1,17 @@
+2016-06-01  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION(r201385) ASSERT in WebCore::HTMLMediaElement::updateActiveTextTrackCues + 5688
+        https://bugs.webkit.org/show_bug.cgi?id=158164
+        <rdar://problem/26498634>
+
+        Reviewed by Jer Noble.
+
+        No new tests, this prevents an assert in existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Call beginIgnoringTrackDisplayUpdateRequests
+          so we avoid doing unnecessary work triggered by destruction.
+
 2016-06-01  Dean Jackson  <dino@apple.com>
 
         Fix iOS build.
