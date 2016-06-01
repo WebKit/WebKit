@@ -91,7 +91,7 @@ EventPath::EventPath(Node& originalTarget, Event& event)
     bool isTouchEvent = event.isTouchEvent();
 #endif
     Node* node = nodeOrHostIfPseudoElement(&originalTarget);
-    Node* target = eventTargetRespectingTargetRules(*node);
+    Node* target = node ? eventTargetRespectingTargetRules(*node) : nullptr;
     while (node) {
         while (node) {
             EventTarget* currentTarget = eventTargetRespectingTargetRules(*node);

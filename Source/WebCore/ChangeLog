@@ -1,3 +1,21 @@
+2016-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Crash under eventTargetRespectingTargetRules()
+        https://bugs.webkit.org/show_bug.cgi?id=158273
+        <rdar://problem/26343998>
+
+        Reviewed by Alex Christensen.
+
+        The code would call nodeOrHostIfPseudoElement(), which can return null
+        and then dereference it in eventTargetRespectingTargetRules() without
+        null check. This patch adds a null check. When the node is null, the
+        while loop after will do nothing and thus the target will not be used.
+
+        No new tests, we do not have a good reproduction case.
+
+        * dom/EventPath.cpp:
+        (WebCore::EventPath::EventPath):
+
 2016-06-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201551 and r201552.
