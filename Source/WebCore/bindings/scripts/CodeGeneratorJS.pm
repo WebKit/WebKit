@@ -735,6 +735,12 @@ sub InstanceNeedsVisitChildren
         || IsJSBuiltinConstructor($interface)
 }
 
+sub InstanceNeedsEstimatedSize
+{
+    my $interface = shift;
+    return $interface->extendedAttributes->{"ReportExtraMemoryCost"};
+}
+
 sub GetImplClassName
 {
     my $name = shift;
@@ -1316,6 +1322,10 @@ sub GenerateHeader
         push(@headerContent, "    static void visitChildren(JSCell*, JSC::SlotVisitor&);\n");
         push(@headerContent, "    void visitAdditionalChildren(JSC::SlotVisitor&);\n") if $interface->extendedAttributes->{"JSCustomMarkFunction"};
         push(@headerContent, "\n");
+    }
+
+    if (InstanceNeedsEstimatedSize($interface)) {
+        push(@headerContent, "    static size_t estimatedSize(JSCell*);\n");
     }
 
     if ($numCustomAttributes > 0) {
@@ -3258,6 +3268,14 @@ END
                 }
             }
         }
+        push(@implContent, "}\n\n");
+    }
+
+    if (InstanceNeedsEstimatedSize($interface)) {
+        push(@implContent, "size_t ${className}::estimatedSize(JSCell* cell)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
+        push(@implContent, "    return Base::estimatedSize(thisObject) + thisObject->wrapped().memoryCost();\n");
         push(@implContent, "}\n\n");
     }
 

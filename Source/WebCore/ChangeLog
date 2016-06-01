@@ -1,3 +1,65 @@
+2016-05-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ReportExtraMemoryCost IDL attribute should also be used to generate estimatedSize method
+        https://bugs.webkit.org/show_bug.cgi?id=158144
+
+        Reviewed by Darin Adler.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InstanceNeedsEstimatedSize):
+        (GenerateHeader):
+        (GenerateImplementation):
+        When an interface includes ReportExtraMemoryCost, generate an estimatedSize
+        method which includes the Base::estimatedSize and the memoryCost().
+
+        * bindings/scripts/test/GObject/WebKitDOMInterfaceName.cpp: Added.
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapInterfaceName):
+        (webkit_dom_interface_name_finalize):
+        (webkit_dom_interface_name_constructor):
+        (webkit_dom_interface_name_class_init):
+        (webkit_dom_interface_name_init):
+        * bindings/scripts/test/GObject/WebKitDOMInterfaceName.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMInterfaceNamePrivate.h: Added.
+        * bindings/scripts/test/JS/JSInterfaceName.cpp: Added.
+        (WebCore::JSInterfaceNamePrototype::create):
+        (WebCore::JSInterfaceNamePrototype::createStructure):
+        (WebCore::JSInterfaceNamePrototype::JSInterfaceNamePrototype):
+        (WebCore::JSInterfaceNameConstructor::prototypeForStructure):
+        (WebCore::JSInterfaceNameConstructor::initializeProperties):
+        (WebCore::JSInterfaceNamePrototype::finishCreation):
+        (WebCore::JSInterfaceName::JSInterfaceName):
+        (WebCore::JSInterfaceName::createPrototype):
+        (WebCore::JSInterfaceName::prototype):
+        (WebCore::JSInterfaceName::destroy):
+        (WebCore::jsInterfaceNameConstructor):
+        (WebCore::setJSInterfaceNameConstructor):
+        (WebCore::JSInterfaceName::getConstructor):
+        (WebCore::JSInterfaceName::visitChildren):
+        (WebCore::JSInterfaceName::estimatedSize):
+        (WebCore::JSInterfaceNameOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSInterfaceNameOwner::finalize):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSInterfaceName::toWrapped):
+        * bindings/scripts/test/JS/JSInterfaceName.h: Added.
+        (WebCore::JSInterfaceName::create):
+        (WebCore::JSInterfaceName::createStructure):
+        (WebCore::JSInterfaceName::finishCreation):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperKey):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/ObjC/DOMInterfaceName.h: Added.
+        * bindings/scripts/test/ObjC/DOMInterfaceName.mm: Added.
+        (-[DOMInterfaceName dealloc]):
+        (core):
+        (kit):
+        * bindings/scripts/test/ObjC/DOMInterfaceNameInternal.h: Added.
+        * bindings/scripts/test/TestReportExtraMemoryCost.idl: Added.
+        Include a test for the ReportExtraMemoryCost attribute.
+
 2016-05-31  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertion after r201447
