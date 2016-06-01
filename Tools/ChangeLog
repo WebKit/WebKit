@@ -1,5 +1,17 @@
 2016-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Mark GTK+ test /webkit2/WebKitWebInspectorServer/test-open-debugging-session as slow.
+
+        It's timing out in the bots, but it seems to pass when running run-gtk-tests with no timeout. For GLib tests the
+        timeout is applied per tester program not per test case, so we need to mark the whole test
+        WebKit2Gtk/TestInspectorServer as slow.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+        (TestRunner._run_test_glib):
+
+2016-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Skip media permission request GTK+ unit tests.
 
         They are timing out in the bots.

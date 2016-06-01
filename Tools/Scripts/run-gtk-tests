@@ -88,7 +88,8 @@ class TestRunner:
 
     SLOW = [
         "WTF_Lock.ContendedShortSection",
-        "WTF_WordLock.ContendedShortSection"
+        "WTF_WordLock.ContendedShortSection",
+        "WebKit2Gtk/TestInspectorServer",
     ]
 
     def __init__(self, options, tests=[]):
@@ -325,8 +326,12 @@ class TestRunner:
         for test_case in self._test_cases_to_skip(test_program):
             tester_command.extend(['-s', test_case])
         tester_command.append(test_program)
+        timeout = self._options.timeout
+        test = os.path.join(os.path.basename(os.path.dirname(test_program)), os.path.basename(test_program))
+        if test in TestRunner.SLOW:
+            timeout *= 5
 
-        return self._run_test_command(tester_command, self._options.timeout)
+        return self._run_test_command(tester_command, timeout)
 
     def _get_tests_from_google_test_suite(self, test_program):
         try:
