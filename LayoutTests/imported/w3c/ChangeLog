@@ -1,3 +1,14 @@
+2016-06-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Close wptserve response file handles explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=158253
+
+        Reviewed by Alexey Proskuryakov.
+
+        See https://github.com/youennf/wptserve/commit/fc902e97a21b8470dcdaab8c70691aea1fecbc12
+
+        * resources/web-platform-tests-modules.json: Updating wptserve module to close response file handles once written.
+
 2016-05-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Adding wptserve logging for 404 file-serving responses
