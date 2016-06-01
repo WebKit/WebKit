@@ -319,6 +319,8 @@ void JSGlobalObject::init(VM& vm)
 {
     ASSERT(vm.currentThreadIsHoldingAPILock());
 
+    Base::setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure()));
+
     JSGlobalObject::globalExec()->init(0, 0, CallFrame::noCaller(), 0, 0);
 
     m_debugger = 0;

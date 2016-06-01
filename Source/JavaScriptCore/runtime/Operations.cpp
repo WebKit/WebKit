@@ -120,4 +120,27 @@ bool jsIsFunctionType(JSValue v)
     return false;
 }
 
+size_t normalizePrototypeChain(CallFrame* callFrame, Structure* structure)
+{
+    VM& vm = callFrame->vm();
+    size_t count = 0;
+    while (1) {
+        if (structure->isProxy())
+            return InvalidPrototypeChain;
+        JSValue v = structure->prototypeForLookup(callFrame);
+        if (v.isNull())
+            return count;
+
+        JSCell* base = v.asCell();
+        structure = base->structure(vm);
+        if (structure->isDictionary()) {
+            if (structure->hasBeenFlattenedBefore())
+                return InvalidPrototypeChain;
+            structure->flattenDictionaryStructure(vm, asObject(base));
+        }
+
+        ++count;
+    }
+}
+
 } // namespace JSC
