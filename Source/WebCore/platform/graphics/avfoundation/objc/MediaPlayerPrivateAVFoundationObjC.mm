@@ -1219,7 +1219,9 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::VideoGravity gravity)
 {
     m_videoFullscreenGravity = gravity;
-    if (!m_videoLayer)
+
+    auto activeLayer = m_secondaryVideoLayer.get() ?: m_videoLayer.get();
+    if (!activeLayer)
         return;
 
     NSString *videoGravity = AVLayerVideoGravityResizeAspect;
@@ -1232,10 +1234,10 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::
     else
         ASSERT_NOT_REACHED();
     
-    if ([m_videoLayer videoGravity] == videoGravity)
+    if ([activeLayer videoGravity] == videoGravity)
         return;
 
-    [m_videoLayer setVideoGravity:videoGravity];
+    [activeLayer setVideoGravity:videoGravity];
     syncTextTrackBounds();
 }
 
