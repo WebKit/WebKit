@@ -1179,12 +1179,6 @@
 		53529A4C1C457B75000B49C6 /* APIUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 53529A4B1C457B75000B49C6 /* APIUtils.h */; };
 		5370B4F51BF26202005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */; };
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
-		5BD3A0671CAE325700F84BA3 /* AsyncFunctionConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BD3A0611CAE325700F84BA3 /* AsyncFunctionConstructor.cpp */; };
-		5BD3A0681CAE325700F84BA3 /* AsyncFunctionConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD3A0621CAE325700F84BA3 /* AsyncFunctionConstructor.h */; };
-		5BD3A0691CAE325700F84BA3 /* AsyncFunctionPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BD3A0631CAE325700F84BA3 /* AsyncFunctionPrototype.cpp */; };
-		5BD3A06A1CAE325700F84BA3 /* AsyncFunctionPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD3A0641CAE325700F84BA3 /* AsyncFunctionPrototype.h */; };
-		5BD3A06B1CAE325700F84BA3 /* JSAsyncFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BD3A0651CAE325700F84BA3 /* JSAsyncFunction.cpp */; };
-		5BD3A06E1CAE35BF00F84BA3 /* JSAsyncFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD3A06D1CAE35BF00F84BA3 /* JSAsyncFunction.h */; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };
 		53F6BF6D1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D5D8AD10E0D0EBE00F9C692 /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
@@ -3329,13 +3323,6 @@
 		53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewPrototype.cpp; sourceTree = "<group>"; };
 		53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternalFunctionAllocationProfile.h; sourceTree = "<group>"; };
 		593D43CCA0BBE06D89C59707 /* MapDataInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapDataInlines.h; sourceTree = "<group>"; };
-		5BD3A0611CAE325700F84BA3 /* AsyncFunctionConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncFunctionConstructor.cpp; sourceTree = "<group>"; };
-		5BD3A0621CAE325700F84BA3 /* AsyncFunctionConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFunctionConstructor.h; sourceTree = "<group>"; };
-		5BD3A0631CAE325700F84BA3 /* AsyncFunctionPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncFunctionPrototype.cpp; sourceTree = "<group>"; };
-		5BD3A0641CAE325700F84BA3 /* AsyncFunctionPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFunctionPrototype.h; sourceTree = "<group>"; };
-		5BD3A0651CAE325700F84BA3 /* JSAsyncFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAsyncFunction.cpp; sourceTree = "<group>"; };
-		5BD3A06D1CAE35BF00F84BA3 /* JSAsyncFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAsyncFunction.h; sourceTree = "<group>"; };
-		5BF474881CB1C5DB0002BAD7 /* AsyncFunctionPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = AsyncFunctionPrototype.js; sourceTree = "<group>"; };
 		5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libedit.dylib; path = /usr/lib/libedit.dylib; sourceTree = "<absolute>"; };
 		5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = JSC.xcconfig; sourceTree = "<group>"; };
 		5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntDesiredOffsets.h; path = LLIntOffsets/LLIntDesiredOffsets.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5533,10 +5520,6 @@
 				F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */,
 				F692A84E0255597D01FF60F7 /* ArrayPrototype.h */,
 				0FB7F38A15ED8E3800F167B2 /* ArrayStorage.h */,
-				5BD3A0611CAE325700F84BA3 /* AsyncFunctionConstructor.cpp */,
-				5BD3A0621CAE325700F84BA3 /* AsyncFunctionConstructor.h */,
-				5BD3A0631CAE325700F84BA3 /* AsyncFunctionPrototype.cpp */,
-				5BD3A0641CAE325700F84BA3 /* AsyncFunctionPrototype.h */,
 				52678F8C1A031009006A306D /* BasicBlockLocation.cpp */,
 				52678F8D1A031009006A306D /* BasicBlockLocation.h */,
 				147B83AA0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h */,
@@ -5713,8 +5696,6 @@
 				0F2B66BC17B6B5AB00A7AE3F /* JSArrayBufferViewInlines.h */,
 				A7BDAEC417F4EA1400F6140C /* JSArrayIterator.cpp */,
 				A7BDAEC517F4EA1400F6140C /* JSArrayIterator.h */,
-				5BD3A0651CAE325700F84BA3 /* JSAsyncFunction.cpp */,
-				5BD3A06D1CAE35BF00F84BA3 /* JSAsyncFunction.h */,
 				86FA9E8F142BBB2D001773B7 /* JSBoundFunction.cpp */,
 				86FA9E90142BBB2E001773B7 /* JSBoundFunction.h */,
 				46D4DCBB1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.cpp */,
@@ -6868,7 +6849,6 @@
 		A7D8019F1880D66E0026C39B /* builtins */ = {
 			isa = PBXGroup;
 			children = (
-				5BF474881CB1C5DB0002BAD7 /* AsyncFunctionPrototype.js */,
 				A7D801A01880D66E0026C39B /* ArrayPrototype.js */,
 				7CF9BC581B65D9A3009DB1EF /* ArrayConstructor.js */,
 				7CF9BC591B65D9A3009DB1EF /* ArrayIteratorPrototype.js */,
@@ -7186,7 +7166,6 @@
 				0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */,
 				0F2B66DF17B6B5AB00A7AE3F /* DataView.h in Headers */,
 				BCD2034A0E17135E002C7E82 /* DateConstructor.h in Headers */,
-				5BD3A0681CAE325700F84BA3 /* AsyncFunctionConstructor.h in Headers */,
 				996B731A1BDA08D100331B84 /* DateConstructor.lut.h in Headers */,
 				41359CF30FDD89AD00206180 /* DateConversion.h in Headers */,
 				BC1166020E1997B4008066DD /* DateInstance.h in Headers */,
@@ -7544,7 +7523,6 @@
 				FE187A0D1C030D5C0038BBCA /* JITDivGenerator.h in Headers */,
 				2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */,
 				A5339EC91BB4B4600054F005 /* HeapObserver.h in Headers */,
-				5BD3A06A1CAE325700F84BA3 /* AsyncFunctionPrototype.h in Headers */,
 				2A6F462617E959CE00C45C98 /* HeapOperation.h in Headers */,
 				14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */,
 				C24D31E3161CD695002AA4DB /* HeapStatistics.h in Headers */,
@@ -8088,7 +8066,6 @@
 				A7B601821639FD2A00372BA3 /* UnlinkedCodeBlock.h in Headers */,
 				14142E511B796ECE00F4BF4B /* UnlinkedFunctionExecutable.h in Headers */,
 				0F2E892C16D028AD009E4FD2 /* UnusedPointer.h in Headers */,
-				5BD3A06E1CAE35BF00F84BA3 /* JSAsyncFunction.h in Headers */,
 				99DA00B11BD5994E00F4575C /* UpdateContents.py in Headers */,
 				0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */,
 				0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */,
@@ -8655,7 +8632,6 @@
 				0FEC858B1BDACDC70080FF74 /* AirStackSlot.cpp in Sources */,
 				0FEC858D1BDACDC70080FF74 /* AirTmp.cpp in Sources */,
 				0FEC85901BDACDC70080FF74 /* AirValidate.cpp in Sources */,
-				5BD3A06B1CAE325700F84BA3 /* JSAsyncFunction.cpp in Sources */,
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
 				0F743BAA16B88249009F9277 /* ARM64Disassembler.cpp in Sources */,
 				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,
@@ -9269,7 +9245,6 @@
 				0FF729AE166AD35C000F5BA3 /* ProfilerBytecodes.cpp in Sources */,
 				0F13912916771C33009CCB07 /* ProfilerBytecodeSequence.cpp in Sources */,
 				0FF729AF166AD35C000F5BA3 /* ProfilerCompilation.cpp in Sources */,
-				5BD3A0671CAE325700F84BA3 /* AsyncFunctionConstructor.cpp in Sources */,
 				0FF729B0166AD35C000F5BA3 /* ProfilerCompilationKind.cpp in Sources */,
 				0FF729B1166AD35C000F5BA3 /* ProfilerCompiledBytecode.cpp in Sources */,
 				0FF729B2166AD35C000F5BA3 /* ProfilerDatabase.cpp in Sources */,
@@ -9404,7 +9379,6 @@
 				0F919D2515853CE0004A4E7D /* Watchpoint.cpp in Sources */,
 				1ACF7377171CA6FB00C9BB1E /* Weak.cpp in Sources */,
 				14E84F9E14EE1ACC00D6D5D4 /* WeakBlock.cpp in Sources */,
-				5BD3A0691CAE325700F84BA3 /* AsyncFunctionPrototype.cpp in Sources */,
 				14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */,
 				A7CA3AE317DA41AE006538AF /* WeakMapConstructor.cpp in Sources */,
 				0F338DF91BE96AA80013C88F /* B3CCallValue.cpp in Sources */,

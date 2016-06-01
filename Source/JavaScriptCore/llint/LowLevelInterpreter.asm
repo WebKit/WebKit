@@ -1240,12 +1240,6 @@ _llint_op_new_func:
     dispatch(4)
 
 
-_llint_op_new_async_func:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_async_func)
-    dispatch(4)
-
-
 _llint_op_new_generator_func:
     traceExecution()
     callSlowPath(_llint_slow_path_new_generator_func)
@@ -1501,6 +1495,7 @@ _llint_op_switch_string:
     callSlowPath(_llint_slow_path_switch_string)
     dispatch(0)
 
+
 _llint_op_new_func_exp:
     traceExecution()
     callSlowPath(_llint_slow_path_new_func_exp)
@@ -1509,11 +1504,6 @@ _llint_op_new_func_exp:
 _llint_op_new_generator_func_exp:
     traceExecution()
     callSlowPath(_llint_slow_path_new_generator_func_exp)
-    dispatch(4)
-
-_llint_op_new_async_func_exp:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_async_func_exp)
     dispatch(4)
 
 _llint_op_set_function_name:

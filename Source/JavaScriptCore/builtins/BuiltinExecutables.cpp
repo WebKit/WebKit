@@ -79,7 +79,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     UnlinkedFunctionKind kind = isParsingDefaultConstructor ? UnlinkedNormalFunction : UnlinkedBuiltinFunction;
     RefPtr<SourceProvider> sourceOverride = isParsingDefaultConstructor ? source.provider() : nullptr;
     std::unique_ptr<ProgramNode> program = parse<ProgramNode>(
-        &vm, RuntimeFlags(), source, Identifier(), builtinMode,
+        &vm, source, Identifier(), builtinMode,
         JSParserStrictMode::NotStrict, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error,
         &positionBeforeLastNewline, constructorKind);
 

@@ -48,7 +48,7 @@ static_assert(sizeof(UnlinkedFunctionExecutable) <= 256, "UnlinkedFunctionExecut
 const ClassInfo UnlinkedFunctionExecutable::s_info = { "UnlinkedFunctionExecutable", 0, 0, CREATE_METHOD_TABLE(UnlinkedFunctionExecutable) };
 
 static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
-    VM& vm, const RuntimeFlags& runtimeFlags, UnlinkedFunctionExecutable* executable, const SourceCode& source,
+    VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source,
     CodeSpecializationKind kind, DebuggerMode debuggerMode,
     UnlinkedFunctionKind functionKind, ParserError& error, SourceParseMode parseMode)
 {
@@ -56,7 +56,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     JSParserStrictMode strictMode = executable->isInStrictContext() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     ASSERT(isFunctionParseMode(executable->parseMode()));
     std::unique_ptr<FunctionNode> function = parse<FunctionNode>(
-        &vm, runtimeFlags, source, executable->name(), builtinMode, strictMode, executable->parseMode(), executable->superBinding(), error, nullptr);
+        &vm, source, executable->name(), builtinMode, strictMode, executable->parseMode(), executable->superBinding(), error, nullptr);
 
     if (!function) {
         ASSERT(error.isValid());
@@ -91,7 +91,6 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_typeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
     , m_parameterCount(node->parameterCount())
     , m_features(0)
-    , m_sourceParseMode(node->parseMode())
     , m_isInStrictContext(node->isInStrictContext())
     , m_hasCapturedVariables(false)
     , m_isBuiltinFunction(kind == UnlinkedBuiltinFunction)
@@ -100,6 +99,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_functionMode(static_cast<unsigned>(node->functionMode()))
     , m_superBinding(static_cast<unsigned>(node->superBinding()))
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
+    , m_sourceParseMode(static_cast<unsigned>(node->parseMode()))
     , m_name(node->ident())
     , m_ecmaName(node->ecmaName())
     , m_inferredName(node->inferredName())
@@ -112,6 +112,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     ASSERT(m_functionMode == static_cast<unsigned>(node->functionMode()));
     ASSERT(m_superBinding == static_cast<unsigned>(node->superBinding()));
     ASSERT(m_derivedContextType == static_cast<unsigned>(derivedContextType));
+    ASSERT(m_sourceParseMode == static_cast<unsigned>(node->parseMode()));
 
     m_parentScopeTDZVariables.swap(parentScopeTDZVariables);
 }
@@ -174,7 +175,7 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     ParserError error;
     VM& vm = exec.vm();
     CodeCache* codeCache = vm.codeCache();
-    UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(vm, exec.lexicalGlobalObject()->runtimeFlags(), name, source, error);
+    UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(vm, name, source, error);
 
     auto& globalObject = *exec.lexicalGlobalObject();
     if (globalObject.hasDebugger())
@@ -189,7 +190,7 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
 }
 
 UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
-    VM& vm, const RuntimeFlags& runtimeFlags, const SourceCode& source, CodeSpecializationKind specializationKind, 
+    VM& vm, const SourceCode& source, CodeSpecializationKind specializationKind, 
     DebuggerMode debuggerMode, ParserError& error, SourceParseMode parseMode)
 {
     switch (specializationKind) {
@@ -204,7 +205,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     }
 
     UnlinkedFunctionCodeBlock* result = generateUnlinkedFunctionCodeBlock(
-        vm, runtimeFlags, this, source, specializationKind, debuggerMode,
+        vm, this, source, specializationKind, debuggerMode, 
         isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, 
         error, parseMode);
     

@@ -59,7 +59,6 @@ private:
 enum class FunctionConstructionMode {
     Function,
     Generator,
-    Async
 };
 
 JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, const Identifier& functionName, const String& sourceURL, const WTF::TextPosition&, FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());

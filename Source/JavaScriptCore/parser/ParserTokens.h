@@ -82,7 +82,6 @@ enum JSTokenType {
     CLASSTOKEN,
     EXTENDS,
     SUPER,
-    AWAIT,
     OPENBRACE = 0,
     CLOSEBRACE,
     OPENPAREN,

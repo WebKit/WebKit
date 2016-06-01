@@ -75,7 +75,7 @@ private:
 static bool parseScript(VM* vm, const SourceCode& source, ParserError& error)
 {
     return !!JSC::parse<JSC::ProgramNode>(
-        vm, RuntimeFlags(), source, Identifier(), JSParserBuiltinMode::NotBuiltin,
+        vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::NotStrict, SourceParseMode::ProgramMode, SuperBinding::NotNeeded,
         error);
 }

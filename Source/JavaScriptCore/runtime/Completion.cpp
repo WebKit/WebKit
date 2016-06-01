@@ -39,7 +39,6 @@
 #include "ModuleAnalyzer.h"
 #include "ModuleLoaderObject.h"
 #include "Parser.h"
-#include "RuntimeFlags.h"
 #include "ScriptProfilingScope.h"
 #include <wtf/WTFThreadData.h>
 
@@ -61,12 +60,12 @@ bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedExc
     return true;
 }
     
-bool checkSyntax(VM& vm, const RuntimeFlags& runtimeFlags, const SourceCode& source, ParserError& error)
+bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
 {
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     return !!parse<ProgramNode>(
-        &vm, runtimeFlags, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
+        &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::NotStrict, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error);
 }
 
@@ -76,7 +75,7 @@ bool checkModuleSyntax(ExecState* exec, const SourceCode& source, ParserError& e
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
-        &vm, exec->lexicalGlobalObject()->runtimeFlags(), source, Identifier(), JSParserBuiltinMode::NotBuiltin,
+        &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::Strict, SourceParseMode::ModuleAnalyzeMode, SuperBinding::NotNeeded, error);
     if (!moduleProgramNode)
         return false;

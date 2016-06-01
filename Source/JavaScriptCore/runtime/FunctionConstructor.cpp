@@ -95,18 +95,14 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
     // See https://bugs.webkit.org/show_bug.cgi?id=24350.
     String program;
     if (args.isEmpty())
-        program = makeString("{", functionConstructionMode == FunctionConstructionMode::Async ? "async function " : "function ", functionConstructionMode == FunctionConstructionMode::Generator ? "*" : "", functionName.string(), "() {\n\n}}");
+        program = makeString("{function ", functionConstructionMode == FunctionConstructionMode::Generator ? "*" : "", functionName.string(), "() {\n\n}}");
     else if (args.size() == 1)
-        program = makeString("{", functionConstructionMode == FunctionConstructionMode::Async ? "async function " : "function ", functionConstructionMode == FunctionConstructionMode::Generator ? "*" : "", functionName.string(), "() {\n", args.at(0).toString(exec)->value(exec), "\n}}");
+        program = makeString("{function ", functionConstructionMode == FunctionConstructionMode::Generator ? "*" : "", functionName.string(), "() {\n", args.at(0).toString(exec)->value(exec), "\n}}");
     else {
         StringBuilder builder;
-        if (functionConstructionMode == FunctionConstructionMode::Async)
-            builder.appendLiteral("{async function ");
-        else {
-            builder.appendLiteral("{function ");
-            if (functionConstructionMode == FunctionConstructionMode::Generator)
-                builder.append('*');
-        }
+        builder.appendLiteral("{function ");
+        if (functionConstructionMode == FunctionConstructionMode::Generator)
+            builder.append('*');
         builder.append(functionName.string());
         builder.append('(');
         builder.append(args.at(0).toString(exec)->view(exec).get());

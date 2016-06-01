@@ -2097,7 +2097,7 @@ static void runInteractive(GlobalObject* globalObject)
                 break;
             source = source + line;
             source = source + '\n';
-            checkSyntax(globalObject->vm(), globalObject->runtimeFlags(), makeSource(source, interpreterName), error);
+            checkSyntax(globalObject->vm(), makeSource(source, interpreterName), error);
             if (!line[0])
                 break;
             add_history(line);
@@ -2160,7 +2160,6 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  --options                  Dumps all JSC VM options and exits\n");
     fprintf(stderr, "  --dumpOptions              Dumps all non-default JSC VM options before continuing\n");
     fprintf(stderr, "  --<jsc VM option>=<value>  Sets the specified JSC VM option\n");
-
     fprintf(stderr, "\n");
 
     jscExit(help ? EXIT_SUCCESS : EXIT_FAILURE);

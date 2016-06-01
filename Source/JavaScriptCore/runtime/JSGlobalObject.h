@@ -56,7 +56,6 @@ class JSGlobalObjectInspectorController;
 namespace JSC {
 
 class ArrayPrototype;
-class AsyncFunctionPrototype;
 class BooleanPrototype;
 class ConsoleClient;
 class Debugger;
@@ -257,7 +256,6 @@ public:
     WriteBarrier<ObjectPrototype> m_objectPrototype;
     WriteBarrier<FunctionPrototype> m_functionPrototype;
     WriteBarrier<ArrayPrototype> m_arrayPrototype;
-    WriteBarrier<AsyncFunctionPrototype> m_asyncFunctionPrototype;
     WriteBarrier<RegExpPrototype> m_regExpPrototype;
     WriteBarrier<IteratorPrototype> m_iteratorPrototype;
     WriteBarrier<GeneratorFunctionPrototype> m_generatorFunctionPrototype;
@@ -299,7 +297,6 @@ public:
     PropertyOffset m_functionNameOffset;
     WriteBarrier<Structure> m_privateNameStructure;
     WriteBarrier<Structure> m_regExpStructure;
-    WriteBarrier<Structure> m_asyncFunctionStructure;
     WriteBarrier<Structure> m_generatorFunctionStructure;
     WriteBarrier<Structure> m_dollarVMStructure;
     WriteBarrier<Structure> m_iteratorResultObjectStructure;
@@ -504,7 +501,6 @@ public:
     ObjectPrototype* objectPrototype() const { return m_objectPrototype.get(); }
     FunctionPrototype* functionPrototype() const { return m_functionPrototype.get(); }
     ArrayPrototype* arrayPrototype() const { return m_arrayPrototype.get(); }
-    AsyncFunctionPrototype* asyncFunctionPrototype() const { return m_asyncFunctionPrototype.get(); }
     JSObject* booleanPrototype() const { return m_booleanObjectStructure.prototype(this); }
     StringPrototype* stringPrototype() const { return m_stringPrototype.get(); }
     SymbolPrototype* symbolPrototype() const { return m_symbolPrototype.get(); }
@@ -573,7 +569,6 @@ public:
     Structure* privateNameStructure() const { return m_privateNameStructure.get(); }
     Structure* mapStructure() const { return m_mapStructure.get(); }
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
-    Structure* asyncFunctionStructure() const { return m_asyncFunctionStructure.get(); }
     Structure* generatorFunctionStructure() const { return m_generatorFunctionStructure.get(); }
     Structure* setStructure() const { return m_setStructure.get(this); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }

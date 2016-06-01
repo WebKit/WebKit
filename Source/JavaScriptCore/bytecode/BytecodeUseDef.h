@@ -149,7 +149,6 @@ void computeUsesForBytecodeOffset(
     case op_get_property_enumerator:
     case op_get_enumerable_length:
     case op_new_func_exp:
-    case op_new_async_func_exp:
     case op_new_generator_func_exp:
     case op_to_index_string:
     case op_create_lexical_environment:
@@ -180,7 +179,6 @@ void computeUsesForBytecodeOffset(
     case op_del_by_id:
     case op_unsigned:
     case op_new_func:
-    case op_new_async_func:
     case op_new_generator_func:
     case op_get_parent_scope:
     case op_create_scoped_arguments:
@@ -380,8 +378,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_new_regexp:
     case op_new_func:
     case op_new_func_exp:
-    case op_new_async_func:
-    case op_new_async_func_exp:
     case op_new_generator_func:
     case op_new_generator_func_exp:
     case op_call_varargs:

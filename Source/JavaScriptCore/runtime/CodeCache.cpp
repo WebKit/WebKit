@@ -81,11 +81,11 @@ template <> struct CacheTypes<UnlinkedModuleProgramCodeBlock> {
 };
 
 template <class UnlinkedCodeBlockType, class ExecutableType>
-UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, const RuntimeFlags& runtimeFlags, ExecutableType* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
 {
     DerivedContextType derivedContextType = executable->derivedContextType();
     bool isArrowFunctionContext = executable->isArrowFunctionContext();
-    SourceCodeKey key(source, runtimeFlags, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, builtinMode, strictMode, derivedContextType, evalContextType, isArrowFunctionContext);
+    SourceCodeKey key(source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, builtinMode, strictMode, derivedContextType, evalContextType, isArrowFunctionContext);
     SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
     // FIXME: We should do something smart for TDZ instead of just disabling caching.
     // https://bugs.webkit.org/show_bug.cgi?id=154010
@@ -104,7 +104,7 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, const RuntimeFlags&
     }
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
     std::unique_ptr<RootNode> rootNode = parse<RootNode>(
-        &vm, runtimeFlags, source, Identifier(), builtinMode, strictMode, CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, derivedContextType, evalContextType);
+        &vm, source, Identifier(), builtinMode, strictMode, CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, derivedContextType, evalContextType);
     if (!rootNode)
         return nullptr;
 
@@ -133,29 +133,29 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, const RuntimeFlags&
     return unlinkedCodeBlock;
 }
 
-UnlinkedProgramCodeBlock* CodeCache::getProgramCodeBlock(VM& vm, const RuntimeFlags& runtimeFlags, ProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error)
+UnlinkedProgramCodeBlock* CodeCache::getProgramCodeBlock(VM& vm, ProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error)
 {
     VariableEnvironment emptyParentTDZVariables;
-    return getGlobalCodeBlock<UnlinkedProgramCodeBlock>(vm, runtimeFlags, executable, source, builtinMode, strictMode, debuggerMode, error, EvalContextType::None, &emptyParentTDZVariables);
+    return getGlobalCodeBlock<UnlinkedProgramCodeBlock>(vm, executable, source, builtinMode, strictMode, debuggerMode, error, EvalContextType::None, &emptyParentTDZVariables);
 }
 
-UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(VM& vm, const RuntimeFlags& runtimeFlags, EvalExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(VM& vm, EvalExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
 {
-    return getGlobalCodeBlock<UnlinkedEvalCodeBlock>(vm, runtimeFlags, executable, source, builtinMode, strictMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
+    return getGlobalCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, builtinMode, strictMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
 }
 
-UnlinkedModuleProgramCodeBlock* CodeCache::getModuleProgramCodeBlock(VM& vm, const RuntimeFlags& runtimeFlags, ModuleProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, DebuggerMode debuggerMode, ParserError& error)
+UnlinkedModuleProgramCodeBlock* CodeCache::getModuleProgramCodeBlock(VM& vm, ModuleProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, DebuggerMode debuggerMode, ParserError& error)
 {
     VariableEnvironment emptyParentTDZVariables;
-    return getGlobalCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, runtimeFlags, executable, source, builtinMode, JSParserStrictMode::Strict, debuggerMode, error, EvalContextType::None, &emptyParentTDZVariables);
+    return getGlobalCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, executable, source, builtinMode, JSParserStrictMode::Strict, debuggerMode, error, EvalContextType::None, &emptyParentTDZVariables);
 }
 
 // FIXME: There's no need to add the function's name to the key here. It's already in the source code.
-UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& vm, const RuntimeFlags& runtimeFlags, const Identifier& name, const SourceCode& source, ParserError& error)
+UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& vm, const Identifier& name, const SourceCode& source, ParserError& error)
 {
     bool isArrowFunctionContext = false;
     SourceCodeKey key(
-        source, runtimeFlags, name.string(), SourceCodeType::FunctionType,
+        source, name.string(), SourceCodeType::FunctionType,
         JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::NotStrict,
         DerivedContextType::None,
@@ -171,7 +171,7 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
 
     JSTextPosition positionBeforeLastNewline;
     std::unique_ptr<ProgramNode> program = parse<ProgramNode>(
-        &vm, runtimeFlags, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
+        &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::NotStrict, SourceParseMode::ProgramMode, SuperBinding::NotNeeded,
         error, &positionBeforeLastNewline);
     if (!program) {
@@ -201,9 +201,7 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
     metadata->setEndPosition(positionBeforeLastNewline);
     // The Function constructor only has access to global variables, so no variables will be under TDZ.
     VariableEnvironment emptyTDZVariables;
-
-    ConstructAbility constructAbility = constructAbilityForParseMode(metadata->parseMode());
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, UnlinkedNormalFunction, constructAbility, emptyTDZVariables, DerivedContextType::None);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, UnlinkedNormalFunction, ConstructAbility::CanConstruct, emptyTDZVariables, DerivedContextType::None);
 
     functionExecutable->setSourceURLDirective(source.provider()->sourceURL());
     functionExecutable->setSourceMappingURLDirective(source.provider()->sourceMappingURL());

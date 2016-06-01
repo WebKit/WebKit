@@ -7,7 +7,6 @@ true		TRUETOKEN
 false		FALSETOKEN
 
 # Keywords.
-await           AWAIT
 break		BREAK
 case		CASE
 catch		CATCH

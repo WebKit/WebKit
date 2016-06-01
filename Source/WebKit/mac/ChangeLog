@@ -1,3 +1,10 @@
+2016-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, roll out r201481, r201523: 0.3% regression in Octane code-load
+        https://bugs.webkit.org/show_bug.cgi?id=158249
+
+        * WebView/WebPreferencesPrivate.h:
+
 2016-05-27  Chris Dumez  <cdumez@apple.com>
 
         callOnMainThread() should not copy captured lambda variables

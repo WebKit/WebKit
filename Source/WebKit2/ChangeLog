@@ -1,3 +1,11 @@
+2016-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, roll out r201481, r201523: 0.3% regression in Octane code-load
+        https://bugs.webkit.org/show_bug.cgi?id=158249
+
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2016-05-31  Beth Dakin  <bdakin@apple.com>
 
         Add two optional items to WebViewImplDelegate

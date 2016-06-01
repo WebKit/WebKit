@@ -46,7 +46,6 @@
 #include "JIT.h"
 #include "JITExceptions.h"
 #include "JITToDFGDeferredCompilationCallback.h"
-#include "JSAsyncFunction.h"
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
@@ -1101,16 +1100,6 @@ EncodedJSValue JIT_OPERATION operationNewFunction(ExecState* exec, JSScope* scop
 EncodedJSValue JIT_OPERATION operationNewFunctionWithInvalidatedReallocationWatchpoint(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
 {
     return operationNewFunctionCommon<JSFunction>(exec, scope, functionExecutable, true);
-}
-
-EncodedJSValue JIT_OPERATION operationNewAsyncFunction(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
-{
-    return operationNewFunctionCommon<JSAsyncFunction>(exec, scope, functionExecutable, false);
-}
-
-EncodedJSValue JIT_OPERATION operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
-{
-    return operationNewFunctionCommon<JSAsyncFunction>(exec, scope, functionExecutable, true);
 }
 
 EncodedJSValue JIT_OPERATION operationNewGeneratorFunction(ExecState* exec, JSScope* scope, JSCell* functionExecutable)

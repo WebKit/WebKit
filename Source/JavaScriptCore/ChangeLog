@@ -1,3 +1,308 @@
+2016-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, roll out r201481, r201523: 0.3% regression in Octane code-load
+        https://bugs.webkit.org/show_bug.cgi?id=158249
+
+        * API/JSScriptRef.cpp:
+        (parseScript):
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/AsyncFunctionPrototype.js: Removed.
+        (asyncFunctionResume): Deleted.
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutable):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset): Deleted.
+        (JSC::computeDefsForBytecodeOffset): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::dumpBytecode): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::isArrowFunction):
+        (JSC::UnlinkedCodeBlock::isOrdinaryArrowFunction): Deleted.
+        (JSC::UnlinkedCodeBlock::isAsyncArrowFunction): Deleted.
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewArrowFunctionExpression):
+        (JSC::BytecodeGenerator::emitNewMethodDefinition):
+        (JSC::BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitNewFunctionExpressionCommon): Deleted.
+        (JSC::BytecodeGenerator::emitNewFunction): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode): Deleted.
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::parse):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass): Deleted.
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitNewFuncCommon): Deleted.
+        (JSC::JIT::emit_op_new_async_func): Deleted.
+        (JSC::JIT::emitNewFuncExprCommon): Deleted.
+        (JSC::JIT::emit_op_new_async_func_exp): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        (runInteractive):
+        (printUsageStatement): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL): Deleted.
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createAsyncFunctionBody): Deleted.
+        * parser/Keywords.table:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseImportClauseItem):
+        (JSC::Parser<LexerType>::parseImportDeclaration):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::parseArrowFunctionExpression):
+        (JSC::Parser<LexerType>::printUnexpectedTokenText):
+        (JSC::Parser<LexerType>::parseAsyncFunctionSourceElements): Deleted.
+        (JSC::Parser<LexerType>::parseVariableDeclarationList): Deleted.
+        (JSC::Parser<LexerType>::parseDestructuringPattern): Deleted.
+        (JSC::Parser<LexerType>::parseFunctionDeclarationStatement): Deleted.
+        (JSC::Parser<LexerType>::parseFormalParameters): Deleted.
+        (JSC::stringForFunctionMode): Deleted.
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration): Deleted.
+        (JSC::Parser<LexerType>::parseExpressionOrLabelStatement): Deleted.
+        (JSC::Parser<LexerType>::parseAwaitExpression): Deleted.
+        (JSC::Parser<LexerType>::parseAsyncFunctionExpression): Deleted.
+        (JSC::Parser<LexerType>::parseUnaryExpression): Deleted.
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Parser::ExpressionErrorClassifier::propagateExpressionErrorClass):
+        (JSC::Parser::closestParentOrdinaryFunctionNonLexicalScope):
+        (JSC::Parser::pushScope):
+        (JSC::Parser::popScopeInternal):
+        (JSC::Parser::matchSpecIdentifier):
+        (JSC::parse):
+        (JSC::Scope::setSourceParseMode): Deleted.
+        (JSC::Scope::isAsyncFunction): Deleted.
+        (JSC::Scope::isAsyncFunctionBoundary): Deleted.
+        (JSC::Scope::isModule): Deleted.
+        (JSC::Scope::setIsFunction): Deleted.
+        (JSC::Scope::setIsAsyncArrowFunction): Deleted.
+        (JSC::Scope::setIsAsyncFunction): Deleted.
+        (JSC::Scope::setIsAsyncFunctionBody): Deleted.
+        (JSC::Scope::setIsAsyncArrowFunctionBody): Deleted.
+        (JSC::Parser::ExpressionErrorClassifier::forceClassifyExpressionError): Deleted.
+        (JSC::Parser::ExpressionErrorClassifier::indicatesPossibleAsyncArrowFunction): Deleted.
+        (JSC::Parser::forceClassifyExpressionError): Deleted.
+        (JSC::Parser::declarationTypeToVariableKind): Deleted.
+        (JSC::Parser::upperScope): Deleted.
+        (JSC::Parser::isDisallowedIdentifierAwait): Deleted.
+        (JSC::Parser::disallowedIdentifierAwaitReason): Deleted.
+        * parser/ParserModes.h:
+        (JSC::isFunctionParseMode):
+        (JSC::isModuleParseMode):
+        (JSC::isProgramParseMode):
+        (JSC::SourceParseModeSet::SourceParseModeSet): Deleted.
+        (JSC::SourceParseModeSet::contains): Deleted.
+        (JSC::SourceParseModeSet::mergeSourceParseModes): Deleted.
+        (JSC::isAsyncFunctionParseMode): Deleted.
+        (JSC::isAsyncArrowFunctionParseMode): Deleted.
+        (JSC::isAsyncFunctionWrapperParseMode): Deleted.
+        (JSC::isAsyncFunctionBodyParseMode): Deleted.
+        (JSC::constructAbilityForParseMode): Deleted.
+        * parser/ParserTokens.h:
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::operator==):
+        (JSC::SourceCodeKey::runtimeFlags): Deleted.
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createAsyncFunctionBody): Deleted.
+        * runtime/AsyncFunctionConstructor.cpp: Removed.
+        (JSC::AsyncFunctionConstructor::AsyncFunctionConstructor): Deleted.
+        (JSC::AsyncFunctionConstructor::finishCreation): Deleted.
+        (JSC::callAsyncFunctionConstructor): Deleted.
+        (JSC::constructAsyncFunctionConstructor): Deleted.
+        (JSC::AsyncFunctionConstructor::getCallData): Deleted.
+        (JSC::AsyncFunctionConstructor::getConstructData): Deleted.
+        * runtime/AsyncFunctionConstructor.h: Removed.
+        (JSC::AsyncFunctionConstructor::create): Deleted.
+        (JSC::AsyncFunctionConstructor::createStructure): Deleted.
+        * runtime/AsyncFunctionPrototype.cpp: Removed.
+        (JSC::AsyncFunctionPrototype::AsyncFunctionPrototype): Deleted.
+        (JSC::AsyncFunctionPrototype::finishCreation): Deleted.
+        * runtime/AsyncFunctionPrototype.h: Removed.
+        (JSC::AsyncFunctionPrototype::create): Deleted.
+        (JSC::AsyncFunctionPrototype::createStructure): Deleted.
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getModuleProgramCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::checkModuleSyntax):
+        * runtime/Completion.h:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ProgramExecutable::checkSyntax):
+        * runtime/Executable.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+        * runtime/JSAsyncFunction.cpp: Removed.
+        (JSC::JSAsyncFunction::JSAsyncFunction): Deleted.
+        (JSC::JSAsyncFunction::createImpl): Deleted.
+        (JSC::JSAsyncFunction::create): Deleted.
+        (JSC::JSAsyncFunction::createWithInvalidatedReallocationWatchpoint): Deleted.
+        * runtime/JSAsyncFunction.h: Removed.
+        (JSC::JSAsyncFunction::allocationSize): Deleted.
+        (JSC::JSAsyncFunction::createStructure): Deleted.
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        (JSC::JSGlobalObject::createModuleProgramCodeBlock):
+        (JSC::JSGlobalObject::init): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::asyncFunctionPrototype): Deleted.
+        (JSC::JSGlobalObject::asyncFunctionStructure): Deleted.
+        * runtime/ModuleLoaderObject.cpp:
+        (JSC::moduleLoaderObjectParseModule):
+        * runtime/RuntimeFlags.h:
+        (JSC::RuntimeFlags::operator==): Deleted.
+        (JSC::RuntimeFlags::operator!=): Deleted.
+        * tests/stress/async-await-basic.js: Removed.
+        (shouldBe): Deleted.
+        (shouldBeAsync): Deleted.
+        (shouldThrow): Deleted.
+        (shouldThrowAsync): Deleted.
+        (shouldThrowSyntaxError): Deleted.
+        (let.AsyncFunction.async): Deleted.
+        (async.asyncFunctionForProto): Deleted.
+        (Object.getPrototypeOf.async): Deleted.
+        (Object.getPrototypeOf.async.method): Deleted.
+        (async): Deleted.
+        (async.method): Deleted.
+        (async.asyncNonConstructorDecl): Deleted.
+        (shouldThrow.new.async): Deleted.
+        (shouldThrow.new.async.nonConstructor): Deleted.
+        (async.asyncDecl): Deleted.
+        (async.f): Deleted.
+        (MyError): Deleted.
+        (async.asyncDeclThrower): Deleted.
+        (shouldThrowAsync.async): Deleted.
+        (resolveLater): Deleted.
+        (rejectLater): Deleted.
+        (async.resumeAfterNormal): Deleted.
+        (O.async.resumeAfterNormal): Deleted.
+        (resumeAfterNormalArrow.async): Deleted.
+        (async.resumeAfterThrow): Deleted.
+        (O.async.resumeAfterThrow): Deleted.
+        (resumeAfterThrowArrow.async): Deleted.
+        (catch): Deleted.
+        * tests/stress/async-await-module-reserved-word.js: Removed.
+        (shouldThrow): Deleted.
+        (SyntaxError.Canstring_appeared_hereawait.checkModuleSyntaxError.String.raw.await): Deleted.
+        (checkModuleSyntaxError.String.raw.await): Deleted.
+        (checkModuleSyntaxError.String.raw.async.await): Deleted.
+        (SyntaxError.Cannot.declare.named): Deleted.
+        * tests/stress/async-await-mozilla.js: Removed.
+        (shouldBe): Deleted.
+        (shouldBeAsync): Deleted.
+        (shouldThrow): Deleted.
+        (shouldThrowAsync): Deleted.
+        (assert): Deleted.
+        (shouldThrowSyntaxError): Deleted.
+        (mozSemantics.async.empty): Deleted.
+        (mozSemantics.async.simpleReturn): Deleted.
+        (mozSemantics.async.simpleAwait): Deleted.
+        (mozSemantics.async.simpleAwaitAsync): Deleted.
+        (mozSemantics.async.returnOtherAsync): Deleted.
+        (mozSemantics.async.simpleThrower): Deleted.
+        (mozSemantics.async.delegatedThrower): Deleted.
+        (mozSemantics.async.tryCatch): Deleted.
+        (mozSemantics.async.tryCatchThrow): Deleted.
+        (mozSemantics.async.wellFinally): Deleted.
+        (mozSemantics.async.finallyMayFail): Deleted.
+        (mozSemantics.async.embedded.async.inner): Deleted.
+        (mozSemantics.async.embedded): Deleted.
+        (mozSemantics.async.fib): Deleted.
+        (mozSemantics.async.isOdd.async.isEven): Deleted.
+        (mozSemantics.async.isOdd): Deleted.
+        (mozSemantics.hardcoreFib.async.fib2): Deleted.
+        (mozSemantics.namedAsyncExpr.async.simple): Deleted.
+        (mozSemantics.async.executionOrder.async.first): Deleted.
+        (mozSemantics.async.executionOrder.async.second): Deleted.
+        (mozSemantics.async.executionOrder.async.third): Deleted.
+        (mozSemantics.async.executionOrder): Deleted.
+        (mozSemantics.async.miscellaneous): Deleted.
+        (mozSemantics.thrower): Deleted.
+        (mozSemantics.async.defaultArgs): Deleted.
+        (mozSemantics.shouldThrow): Deleted.
+        (mozSemantics): Deleted.
+        (mozMethods.X): Deleted.
+        (mozMethods.X.prototype.async.getValue): Deleted.
+        (mozMethods.X.prototype.setValue): Deleted.
+        (mozMethods.X.prototype.async.increment): Deleted.
+        (mozMethods.X.prototype.async.getBaseClassName): Deleted.
+        (mozMethods.X.async.getStaticValue): Deleted.
+        (mozMethods.Y.prototype.async.getBaseClassName): Deleted.
+        (mozMethods.Y): Deleted.
+        (mozFunctionNameInferrence.async.test): Deleted.
+        (mozSyntaxErrors): Deleted.
+        * tests/stress/async-await-reserved-word.js: Removed.
+        (assert): Deleted.
+        (shouldThrowSyntaxError): Deleted.
+        (AsyncFunction.async): Deleted.
+        * tests/stress/async_arrow_functions_lexical_arguments_binding.js: Removed.
+        (shouldBe): Deleted.
+        (shouldBeAsync): Deleted.
+        (shouldThrowAsync): Deleted.
+        (noArgumentsArrow2.async): Deleted.
+        * tests/stress/async_arrow_functions_lexical_new.target_binding.js: Removed.
+        (shouldBe): Deleted.
+        (shouldBeAsync): Deleted.
+        (shouldThrowAsync): Deleted.
+        (C1): Deleted.
+        (C2): Deleted.
+        (shouldThrowAsync.async): Deleted.
+        * tests/stress/async_arrow_functions_lexical_super_binding.js: Removed.
+        (shouldBe): Deleted.
+        (shouldBeAsync): Deleted.
+        (BaseClass.prototype.baseClassValue): Deleted.
+        (BaseClass.prototype.get property): Deleted.
+        (BaseClass): Deleted.
+        (ChildClass.prototype.asyncSuperProp): Deleted.
+        (ChildClass.prototype.asyncSuperProp2): Deleted.
+        (ChildClass): Deleted.
+        (ChildClass2): Deleted.
+        * tests/stress/async_arrow_functions_lexical_this_binding.js: Removed.
+        (shouldBe): Deleted.
+        (shouldBeAsync): Deleted.
+        (d.y): Deleted.
+
 2016-05-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201363 and r201456.

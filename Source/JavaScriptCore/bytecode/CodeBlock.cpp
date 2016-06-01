@@ -1412,22 +1412,6 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
             break;
         }
-        case op_new_async_func: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int f0 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "new_async_func");
-            out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
-            break;
-        }
-        case op_new_async_func_exp: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int f0 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "new_async_func_exp");
-            out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
-            break;
-        }
         case op_new_func_exp: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -2333,7 +2317,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     m_instructions = WTFMove(instructions);
 
     // Perform bytecode liveness analysis to determine which locals are live and should be resumed when executing op_resume.
-    if (unlinkedCodeBlock->parseMode() == SourceParseMode::GeneratorBodyMode || isAsyncFunctionBodyParseMode(unlinkedCodeBlock->parseMode())) {
+    if (unlinkedCodeBlock->parseMode() == SourceParseMode::GeneratorBodyMode) {
         if (size_t count = mergePointBytecodeOffsets.size()) {
             createRareDataIfNecessary();
             BytecodeLivenessAnalysis liveness(this);

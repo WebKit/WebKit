@@ -33,8 +33,6 @@
 #include "ArrayConstructor.h"
 #include "ArrayIteratorPrototype.h"
 #include "ArrayPrototype.h"
-#include "AsyncFunctionConstructor.h"
-#include "AsyncFunctionPrototype.h"
 #include "BooleanConstructor.h"
 #include "BooleanPrototype.h"
 #include "BuiltinNames.h"
@@ -66,7 +64,6 @@
 #include "JSArrayBufferConstructor.h"
 #include "JSArrayBufferPrototype.h"
 #include "JSArrayIterator.h"
-#include "JSAsyncFunction.h"
 #include "JSBoundFunction.h"
 #include "JSBoundSlotBaseFunction.h"
 #include "JSCInlines.h"
@@ -615,11 +612,6 @@ m_ ## lowerName ## Prototype->putDirectWithoutTransition(vm, vm.propertyNames->c
             init.set(NativeErrorConstructor::create(init.vm, init.owner, init.owner->m_nativeErrorStructure.get(), init.owner->m_nativeErrorPrototypeStructure.get(), ASCIILiteral("URIError")));
         });
 
-    m_asyncFunctionPrototype.set(vm, this, AsyncFunctionPrototype::create(vm, AsyncFunctionPrototype::createStructure(vm, this, m_functionPrototype.get())));
-    AsyncFunctionConstructor* asyncFunctionConstructor = AsyncFunctionConstructor::create(vm, AsyncFunctionConstructor::createStructure(vm, this, functionConstructor), m_asyncFunctionPrototype.get());
-    m_asyncFunctionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, asyncFunctionConstructor, DontEnum | ReadOnly);
-    m_asyncFunctionStructure.set(vm, this, JSAsyncFunction::createStructure(vm, this, m_asyncFunctionPrototype.get()));
-
     m_generatorFunctionPrototype.set(vm, this, GeneratorFunctionPrototype::create(vm, GeneratorFunctionPrototype::createStructure(vm, this, m_functionPrototype.get())));
     GeneratorFunctionConstructor* generatorFunctionConstructor = GeneratorFunctionConstructor::create(vm, GeneratorFunctionConstructor::createStructure(vm, this, functionConstructor), m_generatorFunctionPrototype.get());
     m_generatorFunctionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, generatorFunctionConstructor, DontEnum);
@@ -772,8 +764,6 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->builtinNames().generatorResumePrivateName(), JSFunction::createBuiltinFunction(vm, generatorPrototypeGeneratorResumeCodeGenerator(vm), this), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().thisTimeValuePrivateName(), privateFuncThisTimeValue, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().thisNumberValuePrivateName(), privateFuncThisNumberValue, DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->builtinNames().asyncFunctionResumePrivateName(), JSFunction::createBuiltinFunction(vm, asyncFunctionPrototypeAsyncFunctionResumeCodeGenerator(vm), this), DontEnum | DontDelete | ReadOnly),
-
 #if ENABLE(INTL)
         GlobalPropertyInfo(vm.propertyNames->builtinNames().CollatorPrivateName(), intl->getDirect(vm, vm.propertyNames->Collator), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().DateTimeFormatPrivateName(), intl->getDirect(vm, vm.propertyNames->DateTimeFormat), DontEnum | DontDelete | ReadOnly),
@@ -1226,7 +1216,7 @@ UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* call
     JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     DebuggerMode debuggerMode = hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
     UnlinkedProgramCodeBlock* unlinkedCodeBlock = vm().codeCache()->getProgramCodeBlock(
-        vm(), runtimeFlags(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, 
+        vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, 
         debuggerMode, error);
 
     if (hasDebugger())
@@ -1248,7 +1238,7 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame,
     EvalContextType evalContextType = executable->executableInfo().evalContextType();
     
     UnlinkedEvalCodeBlock* unlinkedCodeBlock = vm().codeCache()->getEvalCodeBlock(
-        vm(), runtimeFlags(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
+        vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
@@ -1266,7 +1256,7 @@ UnlinkedModuleProgramCodeBlock* JSGlobalObject::createModuleProgramCodeBlock(Cal
     ParserError error;
     DebuggerMode debuggerMode = hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
     UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = vm().codeCache()->getModuleProgramCodeBlock(
-        vm(), runtimeFlags(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, debuggerMode, error);
+        vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, debuggerMode, error);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
