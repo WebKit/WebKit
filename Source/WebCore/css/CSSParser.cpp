@@ -1609,7 +1609,7 @@ void CSSParser::addProperty(CSSPropertyID propId, RefPtr<CSSValue>&& value, bool
         return;
     }
 
-    Vector<StylePropertyShorthand> shorthands = matchingShorthandsForLonghand(propId);
+    auto shorthands = matchingShorthandsForLonghand(propId);
     if (shorthands.size() == 1)
         m_parsedProperties.append(CSSProperty(propId, WTFMove(value), important, true, CSSPropertyInvalid, m_implicitShorthand || implicit));
     else

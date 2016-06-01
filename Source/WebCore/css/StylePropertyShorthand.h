@@ -61,9 +61,10 @@ StylePropertyShorthand shorthandForProperty(CSSPropertyID);
 
 // Return the list of shorthands for a given longhand.
 // The implementation is generated in StylePropertyShorthandFunctions.cpp.
-Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID);
+using StylePropertyShorthandVector = Vector<StylePropertyShorthand, 4>;
+StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID);
 
-unsigned indexOfShorthandForLonghand(CSSPropertyID, const Vector<StylePropertyShorthand>&);
+unsigned indexOfShorthandForLonghand(CSSPropertyID, const StylePropertyShorthandVector&);
 
 bool isShorthandCSSProperty(CSSPropertyID);
 

@@ -1005,7 +1005,7 @@ print SHORTHANDS_CPP << "EOF";
 EOF
 
 print SHORTHANDS_CPP << "EOF";
-Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID propertyID)
+StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID propertyID)
 {
     switch (propertyID) {
 EOF
@@ -1013,7 +1013,7 @@ EOF
 sub constructShorthandsVector {
   my $shorthands = shift;
 
-  my $vector = "Vector<StylePropertyShorthand>{";
+  my $vector = "StylePropertyShorthandVector{";
   foreach my $i (0 .. $#$shorthands) {
     $vector .= ", " unless $i == 0;
     $vector .= lcfirst($nameToId{$shorthands->[$i]}) . "Shorthand()";

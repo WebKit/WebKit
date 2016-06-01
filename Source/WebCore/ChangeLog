@@ -1,3 +1,24 @@
+2016-06-01  Andreas Kling  <akling@apple.com>
+
+        Use inline capacity for StylePropertyShorthand Vectors.
+        <https://webkit.org/b/158260>
+
+        Reviewed by Antti Koivisto.
+
+        Vector<StylePropertyShorthand> was a huge source of heap allocations,
+        just over 0.5% of all fastMalloc() bytes on PLUM. Giving it an inline capacity
+        of 4 turns all of it into stack allocations.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addProperty):
+        * css/CSSProperty.cpp:
+        (WebCore::StylePropertyMetadata::shorthandID):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::indexOfShorthandForLonghand):
+        * css/StylePropertyShorthand.h:
+        * css/makeprop.pl:
+        (constructShorthandsVector):
+
 2016-06-01  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         POST request on a blob resource should return a "network error" instead of HTTP 500 response

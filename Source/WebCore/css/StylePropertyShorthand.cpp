@@ -68,7 +68,7 @@ bool isShorthandCSSProperty(CSSPropertyID id)
     return shorthandForProperty(id).length();
 }
 
-unsigned indexOfShorthandForLonghand(CSSPropertyID shorthandID, const Vector<StylePropertyShorthand>& shorthands)
+unsigned indexOfShorthandForLonghand(CSSPropertyID shorthandID, const StylePropertyShorthandVector& shorthands)
 {
     for (unsigned i = 0, size = shorthands.size(); i < size; ++i) {
         if (shorthands[i].id() == shorthandID)
