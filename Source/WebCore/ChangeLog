@@ -1,3 +1,28 @@
+2016-06-01  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        POST request on a blob resource should return a "network error" instead of HTTP 500 response
+        https://bugs.webkit.org/show_bug.cgi?id=158022
+
+        Reviewed by Alex Christensen.
+
+        Not allowed HTTP method is notified as failed in BlobResourceHandle as per Fetch
+        specification (5.2 Basic fetch). This behavior is observable in fetch WPT tests.
+
+        The behavior of XHR is slightly changed for asynchronous request on a blob resource with not
+        allowed or invalid HTTP methods. The onError callback is called instead of throwing an
+        exception as per XHR specification (https://xhr.spec.whatwg.org/#request-error-steps).
+
+        WPT tests expected results have been updated for fetch tests on blob resources which are
+        now correct.
+
+        Test: fast/files/xhr-blob-request.html ensures XHR response to requests on a blob resource is
+        correct.
+
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::doStart):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
 2016-06-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove allocation of SubresourceLoader::m_requestCountTracker

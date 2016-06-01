@@ -1,3 +1,16 @@
+2016-06-01  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        POST request on a blob resource should return a "network error" instead of HTTP 500 response
+        https://bugs.webkit.org/show_bug.cgi?id=158022
+
+        Reviewed by Alex Christensen.
+
+        Make sure request on blob resource is correct.
+
+        * web-platform-tests/fetch/api/basic/scheme-blob-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob.js: Add new tests with several HTTP methods.
+
 2016-06-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Close wptserve response file handles explicitly

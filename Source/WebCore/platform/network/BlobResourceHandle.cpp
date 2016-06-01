@@ -202,8 +202,7 @@ void BlobResourceHandle::doStart()
         return;
 
     if (!equalLettersIgnoringASCIICase(firstRequest().httpMethod(), "get")) {
-        m_errorCode = methodNotAllowed;
-        notifyResponse();
+        notifyFail(methodNotAllowed);
         return;
     }
 
