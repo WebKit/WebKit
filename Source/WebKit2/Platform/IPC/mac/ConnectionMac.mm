@@ -518,13 +518,13 @@ void Connection::receiveSourceEventHandler()
     if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "SetExceptionPort") {
         if (m_isServer) {
             // Server connections aren't supposed to have their exception ports overriden. Treat this as an invalid message.
-            RefPtr<Connection> protectedThis(this);
-            StringReference messageReceiverName = decoder->messageReceiverName();
-            StringCapture capturedMessageReceiverName(String(messageReceiverName.data(), messageReceiverName.size()));
-            StringReference messageName = decoder->messageName();
-            StringCapture capturedMessageName(String(messageName.data(), messageName.size()));
-            RunLoop::main().dispatch([protectedThis, capturedMessageReceiverName, capturedMessageName] {
-                protectedThis->dispatchDidReceiveInvalidMessage(capturedMessageReceiverName.string().utf8(), capturedMessageName.string().utf8());
+            StringReference messageReceiverNameReference = decoder->messageReceiverName();
+            String messageReceiverName(String(messageReceiverNameReference.data(), messageReceiverNameReference.size()));
+            StringReference messageNameReference = decoder->messageName();
+            String messageName(String(messageNameReference.data(), messageNameReference.size()));
+
+            RunLoop::main().dispatch([protectedThis = Ref<Connection>(*this), messageReceiverName = WTFMove(messageReceiverName), messageName = WTFMove(messageName)]() mutable {
+                protectedThis->dispatchDidReceiveInvalidMessage(messageReceiverName.utf8(), messageName.utf8());
             });
             return;
         }

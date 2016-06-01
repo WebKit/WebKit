@@ -998,7 +998,7 @@ void WebProcessProxy::isResponsive(std::function<void(bool isWebProcessResponsiv
 {
     if (m_isResponsive == NoOrMaybe::No) {
         if (callback) {
-            RunLoop::main().dispatch([callback] {
+            RunLoop::main().dispatch([callback = WTFMove(callback)] {
                 bool isWebProcessResponsive = false;
                 callback(isWebProcessResponsive);
             });

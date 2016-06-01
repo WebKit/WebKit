@@ -123,10 +123,9 @@ using CompletionHandlerBlock = void(^)(CFDictionaryRef);
         return;
     }
 
-    RetainPtr<NSURLSessionTask> strongTask = task;
     CompletionHandlerBlock completionHandlerCopy = [completionHandler copy];
-    RunLoop::main().dispatch([strongTask, completionHandlerCopy] {
-        RetainPtr<CFDictionaryRef> headers = adoptCF(WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL(nullptr, (CFURLRef)[[strongTask currentRequest] URL]));
+    RunLoop::main().dispatch([task = RetainPtr<NSURLSessionTask>(task), completionHandlerCopy] {
+        RetainPtr<CFDictionaryRef> headers = adoptCF(WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL(nullptr, (CFURLRef)[[task currentRequest] URL]));
         completionHandlerCopy(headers.get());
         [completionHandlerCopy release];
     });

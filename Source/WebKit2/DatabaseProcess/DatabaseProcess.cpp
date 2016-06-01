@@ -194,42 +194,20 @@ void DatabaseProcess::createDatabaseToWebProcessConnection()
 
 void DatabaseProcess::fetchWebsiteData(SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID)
 {
-    struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(std::function<void (WebsiteData)> completionHandler)
-            : m_completionHandler(WTFMove(completionHandler))
-        {
-        }
-
-        ~CallbackAggregator()
-        {
-            ASSERT(RunLoop::isMain());
-
-            auto completionHandler = WTFMove(m_completionHandler);
-            auto websiteData = WTFMove(m_websiteData);
-
-            RunLoop::main().dispatch([completionHandler, websiteData] {
-                completionHandler(websiteData);
-            });
-        }
-
-        std::function<void (WebsiteData)> m_completionHandler;
-        WebsiteData m_websiteData;
-    };
-
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator([this, callbackID](WebsiteData websiteData) {
+    auto completionHandler = [this, callbackID](const WebsiteData& websiteData) {
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
-    }));
+    };
 
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         // FIXME: Pick the right database store based on the session ID.
-        postDatabaseTask(CrossThreadTask([callbackAggregator, websiteDataTypes, this] {
-
-            Vector<RefPtr<SecurityOrigin>> securityOrigins = indexedDatabaseOrigins();
-
-            RunLoop::main().dispatch([callbackAggregator, securityOrigins] {
+        postDatabaseTask(CrossThreadTask([this, websiteDataTypes, completionHandler = WTFMove(completionHandler)]() mutable {
+            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), securityOrigins = indexedDatabaseOrigins()] {
+                WebsiteData websiteData;
                 for (const auto& securityOrigin : securityOrigins)
-                    callbackAggregator->m_websiteData.entries.append(WebsiteData::Entry { securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
+                    websiteData.entries.append({ securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
+
+                completionHandler(websiteData);
             });
         }));
     }
@@ -238,57 +216,25 @@ void DatabaseProcess::fetchWebsiteData(SessionID, OptionSet<WebsiteDataType> web
 
 void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
-    struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(std::function<void ()> completionHandler)
-            : m_completionHandler(WTFMove(completionHandler))
-        {
-        }
-
-        ~CallbackAggregator()
-        {
-            ASSERT(RunLoop::isMain());
-
-            RunLoop::main().dispatch(WTFMove(m_completionHandler));
-        }
-
-        std::function<void ()> m_completionHandler;
-    };
-
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator([this, callbackID]() {
+    auto completionHandler = [this, callbackID]() {
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteData(callbackID), 0);
-    }));
+    };
 
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
-        idbServer().closeAndDeleteDatabasesModifiedSince(modifiedSince, [callbackAggregator] { });
+        idbServer().closeAndDeleteDatabasesModifiedSince(modifiedSince, WTFMove(completionHandler));
 #endif
 }
 
 void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& securityOriginDatas, uint64_t callbackID)
 {
-    struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(std::function<void ()> completionHandler)
-            : m_completionHandler(WTFMove(completionHandler))
-        {
-        }
-
-        ~CallbackAggregator()
-        {
-            ASSERT(RunLoop::isMain());
-
-            RunLoop::main().dispatch(WTFMove(m_completionHandler));
-        }
-
-        std::function<void ()> m_completionHandler;
-    };
-
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator([this, callbackID]() {
+    auto completionHandler = [this, callbackID]() {
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
-    }));
+    };
 
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
-        idbServer().closeAndDeleteDatabasesForOrigins(securityOriginDatas, [callbackAggregator] { });
+        idbServer().closeAndDeleteDatabasesForOrigins(securityOriginDatas, WTFMove(completionHandler));
 #endif
 }
 

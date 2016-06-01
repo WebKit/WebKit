@@ -235,8 +235,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
             if (pendingCallbacks)
                 return;
 
-            RefPtr<CallbackAggregator> callbackAggregator(this);
-            RunLoop::main().dispatch([callbackAggregator] {
+            RunLoop::main().dispatch([callbackAggregator = Ref<CallbackAggregator>(*this)]() mutable {
 
                 WTF::Vector<WebsiteDataRecord> records;
                 records.reserveInitialCapacity(callbackAggregator->m_websiteDataRecords.size());
@@ -265,17 +264,15 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
         callbackAggregator->addPendingCallback();
         m_queue->dispatch([fetchOptions, mediaCacheDirectory, callbackAggregator] {
             HashSet<RefPtr<WebCore::SecurityOrigin>> origins = WebCore::HTMLMediaElement::originsInMediaCache(mediaCacheDirectory.string());
-            WebsiteData* websiteData = new WebsiteData;
+            WebsiteData websiteData;
             
             for (auto& origin : origins) {
                 WebsiteData::Entry entry { origin, WebsiteDataType::DiskCache, 0 };
-                websiteData->entries.append(WTFMove(entry));
+                websiteData.entries.append(WTFMove(entry));
             }
             
-            WTF::RunLoop::main().dispatch([callbackAggregator, origins, websiteData] {
-                callbackAggregator->removePendingCallback(WTFMove(*websiteData));
-                
-                delete websiteData;
+            RunLoop::main().dispatch([callbackAggregator, origins = WTFMove(origins), websiteData = WTFMove(websiteData)]() mutable {
+                callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });
 #endif
@@ -365,7 +362,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
         m_queue->dispatch([fetchOptions, applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName, callbackAggregator] {
             auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), applicationCacheFlatFileSubdirectoryName.string());
 
-            WebsiteData* websiteData = new WebsiteData;
+            WebsiteData websiteData;
 
             HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
             storage->getOriginsWithCache(origins);
@@ -374,13 +371,11 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
                 uint64_t size = fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes) ? storage->diskUsageForOrigin(*origin) : 0;
                 WebsiteData::Entry entry { origin, WebsiteDataType::OfflineWebApplicationCache, size };
 
-                websiteData->entries.append(WTFMove(entry));
+                websiteData.entries.append(WTFMove(entry));
             }
 
-            WTF::RunLoop::main().dispatch([callbackAggregator, origins, websiteData]() mutable {
-                callbackAggregator->removePendingCallback(WTFMove(*websiteData));
-
-                delete websiteData;
+            RunLoop::main().dispatch([callbackAggregator, origins = WTFMove(origins), websiteData = WTFMove(websiteData)]() mutable {
+                callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });
     }
@@ -394,7 +389,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
             Vector<RefPtr<WebCore::SecurityOrigin>> origins;
             WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory.string())->origins(origins);
 
-            RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
+            RunLoop::main().dispatch([callbackAggregator, origins = WTFMove(origins)]() mutable {
                 WebsiteData websiteData;
                 for (auto& origin : origins)
                     websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::WebSQLDatabases, 0 });
@@ -425,7 +420,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
         m_queue->dispatch([mediaKeysStorageDirectory, callbackAggregator] {
             auto origins = mediaKeyOrigins(mediaKeysStorageDirectory.string());
 
-            RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
+            RunLoop::main().dispatch([callbackAggregator, origins = WTFMove(origins)]() mutable {
                 WebsiteData websiteData;
                 for (auto& origin : origins)
                     websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::MediaKeys, 0 });

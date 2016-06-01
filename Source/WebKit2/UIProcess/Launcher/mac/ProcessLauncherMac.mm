@@ -180,9 +180,8 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
             // And the receive right.
             mach_port_mod_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_RECEIVE, -1);
 
-            RefPtr<ProcessLauncher> protector(that);
-            RunLoop::main().dispatch([protector, didFinishLaunchingProcessFunction] {
-                (*protector.*didFinishLaunchingProcessFunction)(0, IPC::Connection::Identifier());
+            RunLoop::main().dispatch([protectedThat = RefPtr<ProcessLauncher>(that), didFinishLaunchingProcessFunction]() mutable {
+                (*protectedThat.*didFinishLaunchingProcessFunction)(0, IPC::Connection::Identifier());
             });
         } else {
             ASSERT(type == XPC_TYPE_DICTIONARY);
@@ -192,9 +191,8 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
             pid_t processIdentifier = xpc_connection_get_pid(connection.get());
 
             // We've finished launching the process, message back to the main run loop. This takes ownership of the connection.
-            RefPtr<ProcessLauncher> protector(that);
-            RunLoop::main().dispatch([protector, didFinishLaunchingProcessFunction, processIdentifier, listeningPort, connection] {
-                (*protector.*didFinishLaunchingProcessFunction)(processIdentifier, IPC::Connection::Identifier(listeningPort, connection));
+            RunLoop::main().dispatch([protectedThat = RefPtr<ProcessLauncher>(that), didFinishLaunchingProcessFunction, processIdentifier, listeningPort, connection] {
+                (*protectedThat.*didFinishLaunchingProcessFunction)(processIdentifier, IPC::Connection::Identifier(listeningPort, connection));
             });
         }
 

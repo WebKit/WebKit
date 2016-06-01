@@ -662,8 +662,7 @@ template <class T> bool retrieveFromMemory(const T& operations, const Key& key, 
     for (auto& operation : operations) {
         if (operation->record.key == key) {
             LOG(NetworkCacheStorage, "(NetworkProcess) found write operation in progress");
-            auto record = operation->record;
-            RunLoop::main().dispatch([record, completionHandler] {
+            RunLoop::main().dispatch([record = operation->record, completionHandler = WTFMove(completionHandler)] {
                 completionHandler(std::make_unique<Storage::Record>(record));
             });
             return true;

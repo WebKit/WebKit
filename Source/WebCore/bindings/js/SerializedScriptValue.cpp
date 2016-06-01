@@ -2823,14 +2823,11 @@ IDBValue SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously()
     ASSERT(!isMainThread());
 
     IDBValue value;
-    IDBValue* valuePtr = &value;
-
     Lock lock;
     Condition condition;
-    Condition* conditionPtr = &condition;
     lock.lock();
 
-    RunLoop::main().dispatch([this, conditionPtr, valuePtr] {
+    RunLoop::main().dispatch([this, conditionPtr = &condition, valuePtr = &value] {
         writeBlobsToDiskForIndexedDB([conditionPtr, valuePtr](const IDBValue& result) {
             ASSERT(isMainThread());
             valuePtr->setAsIsolatedCopy(result);

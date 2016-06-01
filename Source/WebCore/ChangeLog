@@ -1,3 +1,82 @@
+2016-06-01  Brady Eidson  <beidson@apple.com>
+
+        Modernize lambda usage for all callers of RunLoop::dispatch().
+        https://bugs.webkit.org/show_bug.cgi?id=158265
+
+        Reviewed by Chris Dumez.
+
+        No new tests (Refactor, no behavior change).
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::deleteDatabase):
+        (WebCore::InProcessIDBServer::didDeleteDatabase):
+        (WebCore::InProcessIDBServer::openDatabase):
+        (WebCore::InProcessIDBServer::didOpenDatabase):
+        (WebCore::InProcessIDBServer::didAbortTransaction):
+        (WebCore::InProcessIDBServer::didCommitTransaction):
+        (WebCore::InProcessIDBServer::didCreateObjectStore):
+        (WebCore::InProcessIDBServer::didDeleteObjectStore):
+        (WebCore::InProcessIDBServer::didClearObjectStore):
+        (WebCore::InProcessIDBServer::didCreateIndex):
+        (WebCore::InProcessIDBServer::didDeleteIndex):
+        (WebCore::InProcessIDBServer::didPutOrAdd):
+        (WebCore::InProcessIDBServer::didGetRecord):
+        (WebCore::InProcessIDBServer::didGetCount):
+        (WebCore::InProcessIDBServer::didDeleteRecord):
+        (WebCore::InProcessIDBServer::didOpenCursor):
+        (WebCore::InProcessIDBServer::didIterateCursor):
+        (WebCore::InProcessIDBServer::abortTransaction):
+        (WebCore::InProcessIDBServer::commitTransaction):
+        (WebCore::InProcessIDBServer::didFinishHandlingVersionChangeTransaction):
+        (WebCore::InProcessIDBServer::createObjectStore):
+        (WebCore::InProcessIDBServer::deleteObjectStore):
+        (WebCore::InProcessIDBServer::clearObjectStore):
+        (WebCore::InProcessIDBServer::createIndex):
+        (WebCore::InProcessIDBServer::deleteIndex):
+        (WebCore::InProcessIDBServer::putOrAdd):
+        (WebCore::InProcessIDBServer::getRecord):
+        (WebCore::InProcessIDBServer::getCount):
+        (WebCore::InProcessIDBServer::deleteRecord):
+        (WebCore::InProcessIDBServer::openCursor):
+        (WebCore::InProcessIDBServer::iterateCursor):
+        (WebCore::InProcessIDBServer::establishTransaction):
+        (WebCore::InProcessIDBServer::fireVersionChangeEvent):
+        (WebCore::InProcessIDBServer::didStartTransaction):
+        (WebCore::InProcessIDBServer::didCloseFromServer):
+        (WebCore::InProcessIDBServer::notifyOpenDBRequestBlocked):
+        (WebCore::InProcessIDBServer::databaseConnectionClosed):
+        (WebCore::InProcessIDBServer::abortOpenAndUpgradeNeeded):
+        (WebCore::InProcessIDBServer::didFireVersionChangeEvent):
+        (WebCore::InProcessIDBServer::openDBRequestCancelled):
+        (WebCore::InProcessIDBServer::confirmDidCloseFromServer):
+        (WebCore::InProcessIDBServer::getAllDatabaseNames):
+        (WebCore::InProcessIDBServer::didGetAllDatabaseNames):
+        
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously):
+        
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::invalidate):
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+        (WebCore::ThreadedScrollingTree::currentSnapPointIndicesDidChange):
+        (WebCore::ThreadedScrollingTree::handleWheelEventPhase):
+        (WebCore::ThreadedScrollingTree::setActiveScrollSnapIndices):
+        (WebCore::ThreadedScrollingTree::deferTestsForReason):
+        (WebCore::ThreadedScrollingTree::removeTestDeferralForReason):
+        
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::platformPrecache):
+        
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        (WebCore::DisplayRefreshMonitorMac::displayLinkFired):
+        
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::createDecodeTask):
+        (WebCore::DataURLDecoder::decode):
+
 2016-06-01  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION(r201385) ASSERT in WebCore::HTMLMediaElement::updateActiveTextTrackCues + 5688

@@ -67,9 +67,8 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(uint64_t pageID, const Visib
             iterator->value.visibleContentRectUpdateInfo = visibleContentRectUpdateInfo;
     }
     if (updateListWasEmpty) {
-        RefPtr<ViewUpdateDispatcher> protector(this);
-        RunLoop::main().dispatch([protector] {
-            protector->dispatchVisibleContentRectUpdate();
+        RunLoop::main().dispatch([protectedThis = Ref<ViewUpdateDispatcher>(*this)]() mutable {
+            protectedThis->dispatchVisibleContentRectUpdate();
         });
     }
 }

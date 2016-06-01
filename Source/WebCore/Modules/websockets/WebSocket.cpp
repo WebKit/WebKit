@@ -283,7 +283,7 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
             // using the error event. But since this code executes as part of the WebSocket's
             // constructor, we have to wait until the constructor has completed before firing the
             // event; otherwise, users can't connect to the event.
-            RunLoop::main().dispatch([this]() {
+            RunLoop::main().dispatch([this, protectedThis = Ref<WebSocket>(*this)]() {
                 dispatchOrQueueErrorEvent();
                 stop();
             });

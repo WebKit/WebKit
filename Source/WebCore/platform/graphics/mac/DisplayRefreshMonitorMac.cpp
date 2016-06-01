@@ -101,9 +101,9 @@ void DisplayRefreshMonitorMac::displayLinkFired(double nowSeconds, double output
     // FIXME: Should this be using webKitMonotonicNow?
     setMonotonicAnimationStartTime(webKitMonotonicNow + timeUntilOutput);
 
-    auto weakPtr = m_weakFactory.createWeakPtr();
 
-    RunLoop::main().dispatch([weakPtr] {
+    // FIXME: Is it really okay to create a weakPtr on a background thread and then use it on the main thread?
+    RunLoop::main().dispatch([weakPtr = m_weakFactory.createWeakPtr()] {
         if (auto* monitor = weakPtr.get())
             handleDisplayRefreshedNotificationOnMainThread(monitor);
     });
