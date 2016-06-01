@@ -130,4 +130,11 @@ RefPtr<SVGListPropertyTearOff<SVGPointList>> SVGPolyElement::animatedPoints()
     return static_cast<SVGListPropertyTearOff<SVGPointList>*>(static_reference_cast<SVGAnimatedPointList>(lookupOrCreatePointsWrapper(this))->animVal().get());
 }
 
+size_t SVGPolyElement::approximateMemoryCost() const
+{
+    size_t pointsCost = pointList().size() * sizeof(FloatPoint);
+    // We need to account for the memory which is allocated by the RenderSVGPath::m_path.
+    return sizeof(*this) + (renderer() ? pointsCost * 2 + sizeof(RenderSVGPath) : pointsCost);
+}
+
 }

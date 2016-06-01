@@ -89,13 +89,13 @@ void reportMemoryForDocumentIfFrameless(ExecState& state, Document& document)
     if (document.frame())
         return;
 
-    size_t nodeCount = 0;
+    size_t memoryCost = 0;
     for (Node* node = &document; node; node = NodeTraversal::next(*node))
-        ++nodeCount;
+        memoryCost += node->approximateMemoryCost();
 
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
     // https://bugs.webkit.org/show_bug.cgi?id=142595
-    state.heap()->deprecatedReportExtraMemory(nodeCount * sizeof(Node));
+    state.heap()->deprecatedReportExtraMemory(memoryCost);
 }
 
 JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<Document>&& document)

@@ -29,6 +29,7 @@
 #include "SVGImage.h"
 
 #include "Chrome.h"
+#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "ElementIterator.h"
 #include "FrameLoader.h"
@@ -36,6 +37,7 @@
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
+#include "JSDOMWindowBase.h"
 #include "MainFrame.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
@@ -48,6 +50,8 @@
 #include "SVGSVGElement.h"
 #include "Settings.h"
 #include "TextStream.h"
+#include <runtime/JSCInlines.h>
+#include <runtime/JSLock.h>
 
 namespace WebCore {
 
@@ -353,6 +357,21 @@ void SVGImage::resetAnimation()
     stopAnimation();
 }
 
+void SVGImage::reportApproximateMemoryCost() const
+{
+    Document* document = m_page->mainFrame().document();
+    size_t decodedImageMemoryCost = 0;
+
+    for (Node* node = document; node; node = NodeTraversal::next(*node))
+        decodedImageMemoryCost += node->approximateMemoryCost();
+
+    JSC::VM& vm = JSDOMWindowBase::commonVM();
+    JSC::JSLockHolder lock(vm);
+    // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
+    // https://bugs.webkit.org/show_bug.cgi?id=142595
+    vm.heap.deprecatedReportExtraMemory(decodedImageMemoryCost + data()->size());
+}
+
 bool SVGImage::dataChanged(bool allDataReceived)
 {
     // Don't do anything if is an empty image.
@@ -393,6 +412,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
 
         // Set the intrinsic size before a container size is available.
         m_intrinsicSize = containerSize();
+        reportApproximateMemoryCost();
     }
 
     return m_page != nullptr;

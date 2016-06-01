@@ -53,6 +53,8 @@ public:
     virtual void toClipPath(Path&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
+    size_t approximateMemoryCost() const override { return sizeof(*this); }
+
 protected:
     SVGGraphicsElement(const QualifiedName&, Document&);
 

@@ -82,6 +82,7 @@ private:
     bool usesContainerSize() const override { return true; }
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
 
+    void reportApproximateMemoryCost() const;
     bool dataChanged(bool allDataReceived) override;
 
     // FIXME: SVGImages will be unable to prune because this function is not implemented yet.

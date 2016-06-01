@@ -363,6 +363,14 @@ RefPtr<SVGPathSegListPropertyTearOff> SVGPathElement::animatedNormalizedPathSegL
     return nullptr;
 }
 
+size_t SVGPathElement::approximateMemoryCost() const
+{
+    // This is an approximation for path memory cost since the path is parsed on demand.
+    size_t pathMemoryCost = (m_pathByteStream.size() / 10) * sizeof(FloatPoint);
+    // We need to account for the memory which is allocated by the RenderSVGPath::m_path.
+    return sizeof(*this) + (renderer() ? pathMemoryCost * 2 + sizeof(RenderSVGPath) : pathMemoryCost);
+}
+
 void SVGPathElement::pathSegListChanged(SVGPathSegRole role, ListModification listModification)
 {
     switch (role) {

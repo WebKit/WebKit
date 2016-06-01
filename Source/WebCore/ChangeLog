@@ -1,3 +1,53 @@
+2016-06-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGImage should report its memory cost to JS garbage collector
+        https://bugs.webkit.org/show_bug.cgi?id=158139
+
+        Reviewed by Geoffrey Garen.
+
+        Like what we do in HTMLImageLoader::notifyFinished() by reporting the memory
+        cost of the BitmapImage, we need to do something similar for the SVGImage. In
+        SVGImage::dataChange() and when allDataReceived is true, we can calculate
+        the size of all DOM nodes and their renderers. The size of the encoded data
+        has to be added as well to the total memory cost. An approximation for the
+        memory cost has to be used since it is costly to get an accurate number.
+
+        * bindings/js/JSDocumentCustom.cpp: 
+        (WebCore::reportMemoryForDocumentIfFrameless): Use Node::approximateMemoryCost()
+        instead of sizeof(Node). A Node's descendant can override this function and
+        return a more accurate memory cost.
+        
+        * dom/Node.h:
+        (WebCore::Node::approximateMemoryCost): Define this new virtual function in the
+        Node class. Its default value is sizeof(Node) but any descendant can return a
+        more accurate number.
+        
+        * platform/graphics/Image.h:
+        (WebCore::Image::data): Define a const version of data() so it can be called
+        the const function SVGImage::reportApproximateMemoryCost().
+        
+        * svg/SVGGraphicsElement.h: Override approximateMemoryCost() to return 
+        sizeof(SVGGraphicsElement).
+        
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::approximateMemoryCost): Override this function to return
+        the memory cost of the points and the m_path of the renderer.
+        * svg/SVGPathElement.h:
+        
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::approximateMemoryCost): Override this function to return
+        the memory cost of the points and the m_path of the renderer.
+        * svg/SVGPolyElement.h:
+        
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::reportApproximateMemoryCost): Calculate the memory cost of the 
+        nodes in the SVGDocument of an SVGImage. Then report this number to the JS garbage 
+        collector.
+        
+        (WebCore::SVGImage::dataChanged): After loading all the SVG encoded data and building
+        its DOM tree and the render tree, report the total memory cost to the JS garbage collector.
+        * svg/graphics/SVGImage.h:
+
 2016-06-01  Andreas Kling  <akling@apple.com>
 
         Use inline capacity for StylePropertyShorthand Vectors.
