@@ -38,17 +38,16 @@
 
 namespace WebCore {
 
-void ResourceTimingInformation::addResourceTiming(CachedResource* resource, Document* document)
+void ResourceTimingInformation::addResourceTiming(CachedResource* resource, Document& document)
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
     if (resource && resource->resourceRequest().url().protocolIsInHTTPFamily()
         && ((!resource->errorOccurred() && !resource->wasCanceled()) || resource->response().httpStatusCode() == 304)) {
-        HashMap<CachedResource*, InitiatorInfo>::iterator initiatorIt = m_initiatorMap.find(resource);
+        auto initiatorIt = m_initiatorMap.find(resource);
         if (initiatorIt != m_initiatorMap.end() && initiatorIt->value.added == NotYetAdded) {
-            ASSERT(document);
-            Document* initiatorDocument = document;
+            Document* initiatorDocument = &document;
             if (resource->type() == CachedResource::MainResource)
-                initiatorDocument = document->parentDocument();
+                initiatorDocument = document.parentDocument();
             ASSERT(initiatorDocument);
             ASSERT(initiatorDocument->domWindow());
             ASSERT(initiatorDocument->domWindow()->performance());
