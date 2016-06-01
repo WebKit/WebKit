@@ -1,3 +1,32 @@
+2016-05-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Dictionary property access should be fast
+        https://bugs.webkit.org/show_bug.cgi?id=158250
+
+        Reviewed by Keith Miller.
+
+        We have some remnant code that unnecessarily takes a slow path for
+        dictionaries. This caused the Dromaeo regression in r201436. Let's fix
+        that.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID): Attempt to flatten a dictionary if necessary, but
+        not too much. This is our idiom in other places.
+
+        (JSC::tryCachePutByID): See tryCacheGetByID.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache): See tryCacheGetByID.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::fillGetterPropertySlot):
+        * runtime/JSObject.h:
+        (JSC::JSObject::fillCustomGetterPropertySlot): The rules for caching a
+        getter are the same as the rules for caching anything else: We're
+        allowed to cache even in dictionaries, as long as they're cacheable
+        dictionaries. Any transition that would change to/from getter/setter
+        or change other attributes requires a structure transition.
+
 2016-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop "replace" from JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL_NOT_IMPLEMENTED_YET

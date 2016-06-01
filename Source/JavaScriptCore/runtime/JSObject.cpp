@@ -2001,10 +2001,13 @@ bool JSObject::removeDirect(VM& vm, PropertyName propertyName)
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue getterSetter, unsigned attributes, PropertyOffset offset)
 {
-    if (structure()->isDictionary()) {
+    if (structure()->isUncacheableDictionary()) {
         slot.setGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter));
         return;
     }
+
+    // This access is cacheable because Structure requires an attributeChangedTransition
+    // if this property stops being an accessor.
     slot.setCacheableGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter), offset);
 }
 

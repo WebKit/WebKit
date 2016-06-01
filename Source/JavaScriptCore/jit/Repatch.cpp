@@ -297,8 +297,14 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         PropertyOffset offset = slot.isUnset() ? invalidOffset : slot.cachedOffset();
 
         if (slot.isUnset() || slot.slotBase() != baseValue) {
-            if (structure->typeInfo().prohibitsPropertyCaching() || structure->isDictionary())
+            if (structure->typeInfo().prohibitsPropertyCaching())
                 return GiveUpOnCache;
+
+            if (structure->isDictionary()) {
+                if (structure->hasBeenFlattenedBefore())
+                    return GiveUpOnCache;
+                structure->flattenDictionaryStructure(vm, jsCast<JSObject*>(baseCell));
+            }
             
             if (slot.isUnset() && structure->typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence())
                 return GiveUpOnCache;
@@ -445,8 +451,14 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         } else {
             ASSERT(slot.type() == PutPropertySlot::NewProperty);
 
-            if (!structure->isObject() || structure->isDictionary())
+            if (!structure->isObject())
                 return GiveUpOnCache;
+
+            if (structure->isDictionary()) {
+                if (structure->hasBeenFlattenedBefore())
+                    return GiveUpOnCache;
+                structure->flattenDictionaryStructure(vm, jsCast<JSObject*>(baseValue));
+            }
 
             PropertyOffset offset;
             Structure* newStructure =
