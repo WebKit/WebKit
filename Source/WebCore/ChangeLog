@@ -1,3 +1,85 @@
+2016-05-31  Antti Koivisto  <antti@apple.com>
+
+        Precache primary font in a secondary thread
+        https://bugs.webkit.org/show_bug.cgi?id=158243
+
+        Reviewed by Andreas Kling.
+
+        We know the font families and descriptions to use on style resolution. The actual fonts are only needed for
+        layout. There is often time to load and cache fonts asynchronously before they are accessed. This can substantially
+        reduce font related workload in the main thread.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::font):
+        (WebCore::CSSFontFace::resolveFamilies):
+        (WebCore::CSSFontFace::hasSVGFontFaceSource):
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        (WebCore::CSSFontFaceSource::url):
+        (WebCore::CSSFontFaceSource::isSVGFontFaceSource):
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::fallbackFontAt):
+        (WebCore::CSSFontSelector::resolveFamilies):
+
+            Add a function for resolving font families of a cascade to their final values.
+
+        * css/CSSFontSelector.h:
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::fontRanges):
+        (WebCore::CSSSegmentedFontFace::resolveFamilies):
+        * css/CSSSegmentedFontFace.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::fontPlatformDataCache):
+        (WebCore::precacheTasksInProgress):
+        (WebCore::alternateFamilyName):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::invalidate):
+        (WebCore::FontCache::precache):
+
+            Precache fonts by trying to load them asyncronously one by one. On success the font is cached into font platform data cache.
+
+        (WebCore::FontCache::similarFont):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::pruneSystemFallbackFonts):
+        (WebCore::precachePrimaryFamily):
+
+            When initializing a new font cascade resolve any platform fonts to their actual names using FontSelector,
+            then precache the primary font for the cascade.
+
+            Web fonts are ignored for now.
+
+        (WebCore::retrieveOrAddCachedFonts):
+        * platform/graphics/FontSelector.h:
+        (WebCore::FontSelector::~FontSelector):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::setFontWhitelist):
+        (WebCore::fontWithFamily):
+        (WebCore::autoActivateFont):
+        (WebCore::createFontPlatformDataThreadSafe):
+
+            Factor thread safe part of createFontPlatformData to a function.
+
+        (WebCore::FontCache::createFontPlatformData):
+
+            Do the main thread only hash lookups here then call to createFontPlatformDataThreadSafe.
+
+        (WebCore::fallbackDedupSet):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::platformPrecache):
+
+            Try to initialize font asynchronously in a dispatch queue, call completion handler on success or failure.
+
+        (WebCore::FontCache::platformCancelPrecache):
+
+            Cancel ongoing precache operation.
+
+        (WebCore::platformFontLookupWithFamily): Deleted.
+
+            This was inlined to the only client, fontWithFamily.
+
 2016-06-01  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add RTCRtpTransceiver interface and RTCPeerConnection.addTransceiver()

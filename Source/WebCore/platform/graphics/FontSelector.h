@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FontRanges.h"
+#include "URL.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,6 +45,11 @@ public:
     virtual bool isLoading() const = 0;
 };
 
+struct ResolvedFontFamily {
+    AtomicString name;
+    Optional<URL> url;
+};
+
 class FontSelector : public RefCounted<FontSelector> {
 public:
     virtual ~FontSelector() { }
@@ -57,6 +63,8 @@ public:
 
     virtual void registerForInvalidationCallbacks(FontSelectorClient&) = 0;
     virtual void unregisterForInvalidationCallbacks(FontSelectorClient&) = 0;
+
+    virtual Vector<ResolvedFontFamily> resolveFamilies(const Vector<AtomicString>& families, const FontDescription&, UChar32 character) = 0;
 
     virtual unsigned uniqueId() const = 0;
     virtual unsigned version() const = 0;

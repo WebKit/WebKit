@@ -334,4 +334,22 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
     return FontCache::singleton().fontForFamily(fontDescription, settings->pictographFontFamily());
 }
 
+Vector<ResolvedFontFamily> CSSFontSelector::resolveFamilies(const Vector<AtomicString>& families, const FontDescription& fontDescription, UChar32 character)
+{
+    Vector<ResolvedFontFamily> result;
+
+    for (auto& family : families) {
+        if (family.isEmpty())
+            continue;
+        auto* segmentedFace = m_cssFontFaceSet->getFontFace(fontDescription.traitsMask(), family);
+        if (!segmentedFace) {
+            result.append({ resolveGenericFamily(m_document, fontDescription, family), { } });
+            continue;
+        }
+        result.appendVector(segmentedFace->resolveFamilies(character));
+    }
+
+    return result;
+}
+
 }

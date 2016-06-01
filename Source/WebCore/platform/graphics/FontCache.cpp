@@ -106,6 +106,7 @@ public:
         , m_fontFaceFeatures(fontFaceFeatures ? *fontFaceFeatures : FontFeatureSettings())
         , m_fontFaceVariantSettings(fontFaceVariantSettings ? *fontFaceVariantSettings : FontVariantSettings())
     { }
+    FontPlatformDataCacheKey(const FontPlatformDataCacheKey&) = default;
 
     explicit FontPlatformDataCacheKey(HashTableDeletedValueType t)
         : m_fontDescriptionKey(t)
@@ -158,6 +159,16 @@ static FontPlatformDataCache& fontPlatformDataCache()
     static NeverDestroyed<FontPlatformDataCache> cache;
     return cache;
 }
+
+#if PLATFORM(COCOA) && ENABLE(PLATFORM_FONT_LOOKUP)
+using PrecacheMap = HashMap<FontPlatformDataCacheKey, FontCache::PrecacheTask*, FontPlatformDataCacheKeyHash, WTF::SimpleClassHashTraits<FontPlatformDataCacheKey>>;
+
+static PrecacheMap& precacheTasksInProgress()
+{
+    static NeverDestroyed<PrecacheMap> map;
+    return map;
+}
+#endif
 
 static AtomicString alternateFamilyName(const AtomicString& familyName)
 {
@@ -242,6 +253,12 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
     }
 
     FontPlatformDataCacheKey key(familyName, fontDescription, fontFaceFeatures, fontFaceVariantSettings);
+
+#if PLATFORM(COCOA) && ENABLE(PLATFORM_FONT_LOOKUP)
+    auto* precacheTask = precacheTasksInProgress().get(key);
+    if (precacheTask)
+        platformCancelPrecache(*precacheTask);
+#endif
 
     auto addResult = fontPlatformDataCache().add(key, nullptr);
     FontPlatformDataCache::iterator it = addResult.iterator;
@@ -488,6 +505,67 @@ void FontCache::invalidate()
 
     purgeInactiveFontData();
 }
+
+#if PLATFORM(COCOA) && ENABLE(PLATFORM_FONT_LOOKUP)
+void FontCache::precache(const Vector<AtomicString>& resolvedFamilies, const FontDescription& fontDescription)
+{
+    if (resolvedFamilies.isEmpty())
+        return;
+    auto& family = resolvedFamilies.first();
+
+    FontPlatformDataCacheKey key(family, fontDescription, nullptr, nullptr);
+
+    // Maybe we have it already?
+    auto it = fontPlatformDataCache().find(key);
+    if (it != fontPlatformDataCache().end()) {
+        if (it->value)
+            return;
+
+        // We already know this font isn't available. Try the next.
+        Vector<AtomicString> remainingFamilies;
+        remainingFamilies.appendRange(resolvedFamilies.begin() + 1, resolvedFamilies.end());
+        precache(remainingFamilies, fontDescription);
+        return;
+    }
+
+    auto taskAdd = precacheTasksInProgress().add(key, nullptr);
+    if (!taskAdd.isNewEntry)
+        return;
+
+    auto& task = platformPrecache(family, fontDescription, [key, resolvedFamilies, fontDescription] (auto platformData, bool wasCanceled) {
+        precacheTasksInProgress().remove(key);
+
+        if (wasCanceled)
+            return;
+
+        if (platformData) {
+            auto r = fontPlatformDataCache().add(key, WTFMove(platformData));
+            fprintf(stderr, "success %d\n", r.isNewEntry);
+            return;
+        }
+
+        // Didn't find the font. Try the next one.
+        Vector<AtomicString> remainingFamilies;
+
+        auto alternateName = alternateFamilyName(resolvedFamilies.first());
+        if (!alternateName.isNull()) {
+            remainingFamilies = resolvedFamilies;
+            remainingFamilies.first() = alternateName;
+        } else {
+            fontPlatformDataCache().add(key, nullptr);
+            remainingFamilies.appendRange(resolvedFamilies.begin() + 1, resolvedFamilies.end());
+        }
+
+        singleton().precache(remainingFamilies, fontDescription);
+    });
+
+    taskAdd.iterator->value = &task;
+}
+#else
+void FontCache::precache(const Vector<AtomicString>&, const FontDescription&)
+{
+}
+#endif
 
 #if !PLATFORM(COCOA)
 RefPtr<Font> FontCache::similarFont(const FontDescription&, const AtomicString&)

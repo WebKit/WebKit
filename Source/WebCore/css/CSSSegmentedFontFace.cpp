@@ -138,4 +138,20 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
     return result;
 }
 
+Vector<ResolvedFontFamily> CSSSegmentedFontFace::resolveFamilies(UChar32 character) const
+{
+    for (auto& face : m_fontFaces) {
+        bool inRange = face->ranges().isEmpty();
+        for (auto& range : face->ranges()) {
+            if (character >= range.from && character <= range.to) {
+                inRange = true;
+                break;
+            }
+        }
+        if (inRange)
+            return face->resolveFamilies();
+    }
+    return { };
+}
+
 }

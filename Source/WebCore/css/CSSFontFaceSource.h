@@ -28,6 +28,7 @@
 
 #include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
+#include "URL.h"
 #include <runtime/ArrayBufferView.h>
 #include <wtf/text/AtomicString.h>
 
@@ -70,6 +71,8 @@ public:
 #if ENABLE(SVG_FONTS)
     bool isSVGFontFaceSource() const;
 #endif
+
+    Optional<URL> url() const;
 
 private:
     void fontLoaded(CachedFont&) override;
