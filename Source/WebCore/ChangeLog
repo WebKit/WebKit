@@ -1,3 +1,16 @@
+2016-06-01  Jer Noble  <jer.noble@apple.com>
+
+        setVideoFullscreenGravity() has no effect on the fullscreen video layer
+        https://bugs.webkit.org/show_bug.cgi?id=158267
+
+        Reviewed by Eric Carlson.
+
+        When we moved to a 2-AVPlayerLayer solution, we didn't update setVideoFullscreenGravity()
+        to change the correct layer's videoGravity property.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity):
+
 2016-06-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix null dereferencing in ResourceTimingInformation::addResourceTiming
