@@ -1,3 +1,19 @@
+2016-06-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS: VoiceOver can't access attachments in mail messages
+        https://bugs.webkit.org/show_bug.cgi?id=158198
+
+        Reviewed by Joanmarie Diggs.
+
+        Replaced elements, like attachemnts, were not being exposed in the attributed string returned to VoiceOver.
+        Make sure they are exposed with the attachment character, pointing to the actual element.
+
+        Test: accessibility/ios-simulator/attributed-string-for-range.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (AccessibilityUnignoredAncestor):
+        (-[WebAccessibilityObjectWrapper _stringForRange:attributed:]):
+
 2016-06-01  Jer Noble  <jer.noble@apple.com>
 
         setVideoFullscreenGravity() has no effect on the fullscreen video layer

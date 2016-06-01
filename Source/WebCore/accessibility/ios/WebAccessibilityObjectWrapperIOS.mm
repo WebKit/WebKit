@@ -61,6 +61,10 @@
 
 #import <CoreText/CoreText.h>
 
+enum {
+    NSAttachmentCharacter = 0xfffc    /* To denote attachments. */
+};
+
 @interface NSObject (AccessibilityPrivate)
 - (void)_accessibilityUnregister;
 - (NSString *)accessibilityLabel;
@@ -106,6 +110,7 @@ static NSString * const UIAccessibilityTokenBold = @"UIAccessibilityTokenBold";
 static NSString * const UIAccessibilityTokenItalic = @"UIAccessibilityTokenItalic";
 static NSString * const UIAccessibilityTokenUnderline = @"UIAccessibilityTokenUnderline";
 static NSString * const UIAccessibilityTokenLanguage = @"UIAccessibilityTokenLanguage";
+static NSString * const UIAccessibilityTokenAttachment = @"UIAccessibilityTokenAttachment";
 
 static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityObjectWrapper *wrapper)
 {
@@ -2285,10 +2290,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     Class returnClass = attributed ? [NSMutableAttributedString class] : [NSMutableString class];
     id returnValue = [[(NSString *)[returnClass alloc] init] autorelease];
     
+    const unichar attachmentChar = NSAttachmentCharacter;
     NSInteger count = [array count];
     for (NSInteger k = 0; k < count; ++k) {
         id object = [array objectAtIndex:k];
 
+        if (attributed && [object isKindOfClass:[WebAccessibilityObjectWrapper class]])
+            object = [[[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentChar length:1] attributes:@{ UIAccessibilityTokenAttachment : object }] autorelease];
+        
         if (![object isKindOfClass:returnClass])
             continue;
         
@@ -2855,13 +2864,15 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return m_object->clickPoint();
 }
 
-#ifndef NDEBUG
 - (NSString *)description
 {
+#ifndef NDEBUG
     CGRect frame = [self accessibilityFrame];
     return [NSString stringWithFormat:@"Role: (%d) - Text: %@: Value: %@ -- Frame: %f %f %f %f", m_object ? m_object->roleValue() : 0, [self accessibilityLabel], [self accessibilityValue], frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
-}
+#else
+    return [NSString stringWithFormat:@"%@: %@", [self class], [self accessibilityLabel]];
 #endif
+}
 
 @end
 

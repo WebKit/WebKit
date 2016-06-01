@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+var successfullyParsed = false;
+</script>
+<script>
+    if (window.internals)
+        window.internals.settings.setAttachmentElementEnabled(true)
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+hello 
+
+<img src="resources/cake.png" alt="cake"> 
+<attachment id="attachment" title="title" subtitle="subtitle" action="action" progress="0.5"></attachment>
+
+world
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test ensures that attributed string for range works");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.accessibleElementById("content");
+        var text = obj.attributedStringForRange(0, 10);
+        debug("Attributed string: " + text);
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+
