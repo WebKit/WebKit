@@ -60,9 +60,13 @@
 
     sequence<RTCRtpSender> getSenders();
     sequence<RTCRtpReceiver> getReceivers();
+    sequence<RTCRtpTransceiver> getTransceivers();
 
     [StrictTypeChecking, RaisesException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
     [StrictTypeChecking, RaisesException] void removeTrack(RTCRtpSender sender);
+
+    [StrictTypeChecking, RaisesException] RTCRtpTransceiver addTransceiver(MediaStreamTrack track, optional RTCRtpTransceiverInit init);
+    [StrictTypeChecking, RaisesException] RTCRtpTransceiver addTransceiver(DOMString kind, optional RTCRtpTransceiverInit init);
 
     [JSBuiltin] Promise setLocalDescription(RTCSessionDescription description);
     // Legacy signature: Promise setLocalDescription(RTCSessionDescription description
@@ -111,4 +115,11 @@
     attribute EventHandler oniceconnectionstatechange;
     attribute EventHandler onicegatheringstatechange;
     attribute EventHandler ondatachannel;
+};
+
+// This enum is mirrored in RTCRtpTransceiver.idl
+enum RTCRtpTransceiverDirection { "sendrecv", "sendonly", "recvonly", "inactive" };
+
+dictionary RTCRtpTransceiverInit {
+    RTCRtpTransceiverDirection direction = "sendrecv";
 };

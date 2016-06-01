@@ -2386,6 +2386,8 @@
 		5E2C43741BCF0D750001E2BC /* JSRTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */; };
 		5E2C437B1BCF9A570001E2BC /* RTCPeerConnectionBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43791BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5E5E2B131CFC3E70000C0D85 /* RTCRtpTransceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E2B101CFC3E4B000C0D85 /* RTCRtpTransceiver.cpp */; };
+		5E5E2B141CFC3E75000C0D85 /* RTCRtpTransceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5EA3D6DF1C859D7F00300BBB /* MockMediaEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA3D6DE1C859D5300300BBB /* MockMediaEndpoint.h */; };
 		5EA3D6E01C859D8400300BBB /* MockMediaEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EA3D6DD1C859D5300300BBB /* MockMediaEndpoint.cpp */; };
 		5EA3D6E31C859DC100300BBB /* SDPProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EA3D6E11C859DAA00300BBB /* SDPProcessor.cpp */; };
@@ -9991,6 +9993,9 @@
 		5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionBuiltins.h; sourceTree = "<group>"; };
 		5E2C43781BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPeerConnectionInternalsBuiltins.cpp; sourceTree = "<group>"; };
 		5E2C43791BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionInternalsBuiltins.h; sourceTree = "<group>"; };
+		5E5E2B101CFC3E4B000C0D85 /* RTCRtpTransceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCRtpTransceiver.cpp; sourceTree = "<group>"; };
+		5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpTransceiver.h; sourceTree = "<group>"; };
+		5E5E2B121CFC3E4B000C0D85 /* RTCRtpTransceiver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpTransceiver.idl; sourceTree = "<group>"; };
 		5EA3D6DD1C859D5300300BBB /* MockMediaEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockMediaEndpoint.cpp; sourceTree = "<group>"; };
 		5EA3D6DE1C859D5300300BBB /* MockMediaEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockMediaEndpoint.h; sourceTree = "<group>"; };
 		5EA3D6E11C859DAA00300BBB /* SDPProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDPProcessor.cpp; sourceTree = "<group>"; };
@@ -15472,6 +15477,9 @@
 				5E2C435A1BCEE30D0001E2BC /* RTCRtpSender.h */,
 				5E2C435B1BCEE30D0001E2BC /* RTCRtpSender.idl */,
 				5E2C435D1BCEE30D0001E2BC /* RTCRtpSenderReceiverBase.h */,
+				5E5E2B101CFC3E4B000C0D85 /* RTCRtpTransceiver.cpp */,
+				5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */,
+				5E5E2B121CFC3E4B000C0D85 /* RTCRtpTransceiver.idl */,
 				07221B7A17CEC32700848E51 /* RTCSessionDescription.cpp */,
 				07221B7B17CEC32700848E51 /* RTCSessionDescription.h */,
 				07221B7C17CEC32700848E51 /* RTCSessionDescription.idl */,
@@ -27184,6 +27192,7 @@
 				4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */,
 				07A6D1EC1491137700051D0C /* MediaFragmentURIParser.h in Headers */,
 				A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */,
+				5E5E2B141CFC3E75000C0D85 /* RTCRtpTransceiver.h in Headers */,
 				5EBB89311C7777FF00C65D41 /* MediaPayload.h in Headers */,
 				07E3DFD11A9E786500764CA8 /* MediaPlaybackTarget.h in Headers */,
 				079216551AA560AA00A3C049 /* MediaPlaybackTargetClient.h in Headers */,
@@ -30947,6 +30956,7 @@
 				417253AA1354BBBC00360F2A /* MediaControlElements.cpp in Sources */,
 				DEBCCDD516646EB200A452E1 /* MediaControlElementTypes.cpp in Sources */,
 				CD27F6E7145770D30078207D /* MediaController.cpp in Sources */,
+				5E5E2B131CFC3E70000C0D85 /* RTCRtpTransceiver.cpp in Sources */,
 				1F3C3BEA135CAF3C00B8C1AC /* MediaControls.cpp in Sources */,
 				4157AF8112F1FB0400A8C6F5 /* MediaControlsApple.cpp in Sources */,
 				CDAB6D2817C7DE6C00C60B34 /* MediaControlsHost.cpp in Sources */,

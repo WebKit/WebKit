@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2016 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,38 +28,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCRtpSenderReceiverBase_h
-#define RTCRtpSenderReceiverBase_h
+#ifndef RTCRtpTransceiver_h
+#define RTCRtpTransceiver_h
 
 #if ENABLE(WEB_RTC)
 
-#include "MediaStreamTrack.h"
+#include "RTCRtpReceiver.h"
+#include "RTCRtpSender.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class MediaStreamTrack;
-
-class RTCRtpSenderReceiverBase : public RefCounted<RTCRtpSenderReceiverBase>, public ScriptWrappable {
+class RTCRtpTransceiver : public RefCounted<RTCRtpTransceiver>, public ScriptWrappable {
 public:
-    virtual ~RTCRtpSenderReceiverBase() = default;
+    // This enum is mirrored in RTCPeerConnection.h
+    enum class Direction { Sendrecv, Sendonly, Recvonly, Inactive };
 
-    MediaStreamTrack* track() { return m_track.get(); }
+    static Ref<RTCRtpTransceiver> create(RefPtr<RTCRtpSender>&&, RefPtr<RTCRtpReceiver>&&);
+    virtual ~RTCRtpTransceiver() { }
 
-protected:
-    RTCRtpSenderReceiverBase() = default;
+    bool hasSendingDirection() const;
+    void enableSendingDirection();
+    void disableSendingDirection();
 
-    RTCRtpSenderReceiverBase(Ref<MediaStreamTrack>&& track)
-        : m_track(WTFMove(track))
-    { }
+    const String& directionString() const;
+    Direction direction() const { return m_direction; }
+    void setDirection(Direction direction) { m_direction = direction; }
 
-    RefPtr<MediaStreamTrack> m_track;
+    const String& provisionalMid() const { return m_provisionalMid; }
+    void setProvisionalMid(const String& provisionalMid) { m_provisionalMid = provisionalMid; }
+
+    const String& mid() const { return m_mid; }
+    void setMid(const String& mid) { m_mid = mid; }
+
+    RTCRtpSender* sender() const { return m_sender.get(); }
+    RTCRtpReceiver* receiver() const { return m_receiver.get(); }
+
+    bool stopped() const { return m_stopped; }
+    void stop() { m_stopped = true; }
+
+    static String getNextMid();
+
+private:
+    RTCRtpTransceiver(RefPtr<RTCRtpSender>&&, RefPtr<RTCRtpReceiver>&&);
+
+    String m_provisionalMid;
+    String m_mid;
+
+    Direction m_direction;
+
+    RefPtr<RTCRtpSender> m_sender;
+    RefPtr<RTCRtpReceiver> m_receiver;
+
+    bool m_stopped { false };
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
 
-#endif // RTCRtpSenderReceiverBase_h
+#endif // RTCRtpTransceiver_h

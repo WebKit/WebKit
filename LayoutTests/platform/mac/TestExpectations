@@ -187,6 +187,7 @@ fast/mediastream/RTCPeerConnection-add-removeTrack.html
 fast/mediastream/RTCPeerConnection-closed-state.html
 fast/mediastream/RTCPeerConnection-overloaded-operations-params.html
 fast/mediastream/RTCPeerConnection-overloaded-operations.html
+fast/mediastream/RTCPeerConnection-addTransceiver.html
 fast/mediastream/RTCRtpSender-replaceTrack.html
 fast/mediastream/RTCSessionDescription.html
 

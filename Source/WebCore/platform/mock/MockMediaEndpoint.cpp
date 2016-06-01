@@ -34,6 +34,8 @@
 #include "MockMediaEndpoint.h"
 
 #include "MediaPayload.h"
+#include "MockRealtimeAudioSource.h"
+#include "MockRealtimeVideoSource.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -151,6 +153,15 @@ void MockMediaEndpoint::addRemoteCandidate(IceCandidate& candidate, unsigned mde
     UNUSED_PARAM(mdescIndex);
     UNUSED_PARAM(ufrag);
     UNUSED_PARAM(password);
+}
+
+Ref<RealtimeMediaSource> MockMediaEndpoint::createMutedRemoteSource(const String&, RealtimeMediaSource::Type type)
+{
+    if (type == RealtimeMediaSource::Audio)
+        return MockRealtimeAudioSource::createMuted("remote audio");
+
+    ASSERT(type == RealtimeMediaSource::Video);
+    return MockRealtimeVideoSource::createMuted("remote video");
 }
 
 void MockMediaEndpoint::replaceSendSource(RealtimeMediaSource& newSource, unsigned mdescIndex)

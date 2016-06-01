@@ -49,6 +49,7 @@
 #include "RTCOfferAnswerOptions.h"
 #include "RTCSessionDescription.h"
 #include "RTCTrackEvent.h"
+#include "UUID.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/Base64.h>
 
@@ -145,6 +146,58 @@ void RTCPeerConnection::removeTrack(RTCRtpSender& sender, ExceptionCode& ec)
     sender.stop();
 
     m_backend->markAsNeedingNegotiation();
+}
+
+RefPtr<RTCRtpTransceiver> RTCPeerConnection::addTransceiver(Ref<MediaStreamTrack>&& track, const RtpTransceiverInit& init, ExceptionCode& ec)
+{
+    if (m_signalingState == SignalingState::Closed) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    String transceiverMid = RTCRtpTransceiver::getNextMid();
+    const String& trackKind = track->kind();
+    const String& trackId = track->id();
+
+    auto sender = RTCRtpSender::create(WTFMove(track), Vector<String>(), *this);
+    auto receiver = m_backend->createReceiver(transceiverMid, trackKind, trackId);
+    auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), WTFMove(receiver));
+    transceiver->setProvisionalMid(transceiverMid);
+
+    return completeAddTransceiver(WTFMove(transceiver), init);
+}
+
+RefPtr<RTCRtpTransceiver> RTCPeerConnection::addTransceiver(const String& kind, const RtpTransceiverInit& init, ExceptionCode& ec)
+{
+    if (m_signalingState == SignalingState::Closed) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    if (kind != "audio" && kind != "video") {
+        ec = TypeError;
+        return nullptr;
+    }
+
+    String transceiverMid = RTCRtpTransceiver::getNextMid();
+    String trackId = createCanonicalUUIDString();
+
+    auto sender = RTCRtpSender::create(kind, Vector<String>(), *this);
+    auto receiver = m_backend->createReceiver(transceiverMid, kind, trackId);
+    auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), WTFMove(receiver));
+    transceiver->setProvisionalMid(transceiverMid);
+
+    return completeAddTransceiver(WTFMove(transceiver), init);
+}
+
+RefPtr<RTCRtpTransceiver> RTCPeerConnection::completeAddTransceiver(Ref<RTCRtpTransceiver>&& transceiver, const RtpTransceiverInit& init)
+{
+    transceiver->setDirection(static_cast<RTCRtpTransceiver::Direction>(init.direction));
+
+    m_transceiverSet.append(transceiver.copyRef());
+    m_backend->markAsNeedingNegotiation();
+
+    return WTFMove(transceiver);
 }
 
 void RTCPeerConnection::queuedCreateOffer(const Dictionary& offerOptions, SessionDescriptionPromise&& promise)
@@ -369,11 +422,6 @@ bool RTCPeerConnection::canSuspendForDocumentSuspension() const
 {
     // FIXME: We should try and do better here.
     return false;
-}
-
-void RTCPeerConnection::addReceiver(RTCRtpReceiver& receiver)
-{
-    m_receiverSet.append(&receiver);
 }
 
 void RTCPeerConnection::setSignalingState(SignalingState newState)

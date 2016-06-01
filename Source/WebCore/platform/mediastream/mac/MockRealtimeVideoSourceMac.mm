@@ -44,9 +44,9 @@
 
 namespace WebCore {
 
-RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::create()
+Ref<MockRealtimeVideoSource> MockRealtimeVideoSource::create()
 {
-    return adoptRef(new MockRealtimeVideoSourceMac());
+    return adoptRef(*new MockRealtimeVideoSourceMac());
 }
 
 MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac()

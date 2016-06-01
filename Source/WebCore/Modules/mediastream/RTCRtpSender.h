@@ -48,22 +48,26 @@ public:
 
 class RTCRtpSender : public RTCRtpSenderReceiverBase {
 public:
-    static Ref<RTCRtpSender> create(Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
-    {
-        return adoptRef(*new RTCRtpSender(WTFMove(track), WTFMove(mediaStreamIds), client));
-    }
+    static Ref<RTCRtpSender> create(Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
+    static Ref<RTCRtpSender> create(const String& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
 
-    const String& trackId() { return m_trackId; }
+    const String& trackId() const { return m_trackId; }
+    const String& trackKind() const { return m_trackKind; }
+
     const Vector<String>& mediaStreamIds() const { return m_mediaStreamIds; }
+    void setMediaStreamIds(Vector<String>&& mediaStreamIds) { m_mediaStreamIds = WTFMove(mediaStreamIds); }
 
+    bool isStopped() const { return !m_client; }
     void stop() { m_client = nullptr; }
+    void setTrack(RefPtr<MediaStreamTrack>&&);
 
-    void replaceTrack(MediaStreamTrack&, PeerConnection::VoidPromise&&, ExceptionCode&);
+    void replaceTrack(Ref<MediaStreamTrack>&&, PeerConnection::VoidPromise&&, ExceptionCode&);
 
 private:
-    RTCRtpSender(Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
+    RTCRtpSender(RefPtr<MediaStreamTrack>&&, const String& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
 
     String m_trackId;
+    String m_trackKind;
     Vector<String> m_mediaStreamIds;
     RTCRtpSenderClient* m_client;
 };

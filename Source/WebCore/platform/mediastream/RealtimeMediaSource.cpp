@@ -45,11 +45,6 @@ RealtimeMediaSource::RealtimeMediaSource(const String& id, Type type, const Stri
     : m_id(id)
     , m_type(type)
     , m_name(name)
-    , m_stopped(false)
-    , m_muted(false)
-    , m_readonly(false)
-    , m_remote(false)
-    , m_fitnessScore(0)
 {
     // FIXME(147205): Need to implement fitness score for constraints
 

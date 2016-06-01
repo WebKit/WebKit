@@ -1,3 +1,101 @@
+2016-06-01  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add RTCRtpTransceiver interface and RTCPeerConnection.addTransceiver()
+        https://bugs.webkit.org/show_bug.cgi?id=158189
+
+        Reviewed by Darin Adler.
+
+        The RTCRtpTransceiver interface represents a combination of an RTCRtpSender and an
+        RTCRtpReceiver that share a common mid [1].
+
+        RTCPeerConnection.addTransceiver() [2] creates an RTCRtpTransceiver object, either directly
+        from a MediaStreamTrack [3], or with a specific media type (kind).
+
+        This change introduces the RTCRtpTransceiver object, follow-up patches will integrate it
+        into the offer/answer machinery.
+
+        [1] https://w3c.github.io/webrtc-pc/archives/20160513/webrtc.html#rtcrtptransceiver-interface
+        [2] https://w3c.github.io/webrtc-pc/archives/20160513/webrtc.html#dom-rtcpeerconnection-addtransceiver
+        [3] http://w3c.github.io/mediacapture-main/archives/20160513/getusermedia.html#mediastreamtrack
+
+        Test: fast/mediastream/RTCPeerConnection-addTransceiver.html
+
+        * CMakeLists.txt:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        (WebCore::MediaEndpointPeerConnection::createReceiver):
+        An RTCTransceiver always has a receiver (RTCRtpReceiver) with a track (MediaStreamTrack) that
+        can be rendered. Before that remote track is receiving data from the remote peer, it's muted.
+        createReceiver() uses MediaEndponit::createMutedRemoteSource() to create a source to represent
+        future incoming media.
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTransceiver):
+        (WebCore::RTCPeerConnection::completeAddTransceiver):
+        (WebCore::RTCPeerConnection::addReceiver): Deleted.
+        We now create the receiver explicitly with createReceiver.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::create):
+        (WebCore::RTCRtpSender::RTCRtpSender):
+        (WebCore::RTCRtpSender::setTrack):
+        (WebCore::RTCRtpSender::replaceTrack):
+        * Modules/mediastream/RTCRtpSender.h:
+        (WebCore::RTCRtpSender::trackId):
+        (WebCore::RTCRtpSender::trackKind):
+        (WebCore::RTCRtpSender::setMediaStreamIds):
+        (WebCore::RTCRtpSender::isStopped):
+        (WebCore::RTCRtpSender::create): Deleted.
+        * Modules/mediastream/RTCRtpSenderReceiverBase.h:
+        (WebCore::RTCRtpSenderReceiverBase::track):
+        (WebCore::RTCRtpSenderReceiverBase::RTCRtpSenderReceiverBase):
+        * Modules/mediastream/RTCRtpTransceiver.cpp: Added.
+        (WebCore::RTCRtpTransceiver::create):
+        (WebCore::RTCRtpTransceiver::getNextMid):
+        (WebCore::RTCRtpTransceiver::RTCRtpTransceiver):
+        (WebCore::RTCRtpTransceiver::directionString):
+        (WebCore::RTCRtpTransceiver::hasSendingDirection):
+        (WebCore::RTCRtpTransceiver::enableSendingDirection):
+        (WebCore::RTCRtpTransceiver::disableSendingDirection):
+        * Modules/mediastream/RTCRtpTransceiver.h: Added.
+        (WebCore::RTCRtpTransceiver::~RTCRtpTransceiver):
+        (WebCore::RTCRtpTransceiver::direction):
+        (WebCore::RTCRtpTransceiver::setDirection):
+        (WebCore::RTCRtpTransceiver::provisionalMid):
+        (WebCore::RTCRtpTransceiver::setProvisionalMid):
+        (WebCore::RTCRtpTransceiver::mid):
+        (WebCore::RTCRtpTransceiver::setMid):
+        (WebCore::RTCRtpTransceiver::sender):
+        (WebCore::RTCRtpTransceiver::receiver):
+        (WebCore::RTCRtpTransceiver::stopped):
+        (WebCore::RTCRtpTransceiver::stop):
+        * Modules/mediastream/RTCRtpTransceiver.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/MediaEndpoint.h:
+        Added createMutedRemoteSource() that creates a muted remote source that will become unmuted
+        when media arrives from the remote peer.
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::RealtimeMediaSource): Deleted.
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSource::create):
+        Use Ref instead of RefPtr.
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::createMutedRemoteSource):
+        * platform/mock/MockMediaEndpoint.h:
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::create):
+        (WebCore::MockRealtimeAudioSource::createMuted):
+        (WebCore::MockRealtimeAudioSource::MockRealtimeAudioSource):
+        * platform/mock/MockRealtimeAudioSource.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::create):
+        (WebCore::MockRealtimeVideoSource::createMuted):
+        (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource):
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2016-06-01  Per Arne Vollan  <pvollan@apple.com>
 
         [Win][IndexedDB] Crash when running blob test.

@@ -1,3 +1,18 @@
+2016-06-01  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add RTCRtpTransceiver interface and RTCPeerConnection.addTransceiver()
+        https://bugs.webkit.org/show_bug.cgi?id=158189
+
+        Reviewed by Darin Adler.
+
+        Added test for RTCPeerConnection.addTransceiver().
+
+        * fast/mediastream/RTCPeerConnection-addTransceiver-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-addTransceiver.html: Added.
+        Test creating several RTCRtpTransceivers with various configurations and inspect the result.
+        * platform/mac/TestExpectations:
+        Skip the new test since the Mac port currently doesn't build with WebRTC support.
+
 2016-06-01  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Positioned items can be placed on the implicit grid

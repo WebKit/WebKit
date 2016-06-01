@@ -37,7 +37,7 @@
 #include "MediaEndpointSessionConfiguration.h"
 #include "MediaStreamTrack.h"
 #include "RTCOfferAnswerOptions.h"
-#include "RTCRtpSender.h"
+#include "RTCRtpTransceiver.h"
 #include "SDPProcessor.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/Base64.h>
@@ -137,7 +137,7 @@ void MediaEndpointPeerConnection::createOfferTask(RTCOfferOptions&, SessionDescr
     // Add media descriptions for senders.
     for (auto& sender : senders) {
         RefPtr<PeerMediaDescription> mediaDescription = PeerMediaDescription::create();
-        MediaStreamTrack& track = sender->track();
+        MediaStreamTrack& track = *sender->track();
 
         mediaDescription->setMediaStreamId(sender->mediaStreamIds()[0]);
         mediaDescription->setMediaStreamTrackId(track.id());
@@ -253,6 +253,18 @@ void MediaEndpointPeerConnection::getStats(MediaStreamTrack*, PeerConnection::St
     notImplemented();
 
     promise.reject(NOT_SUPPORTED_ERR);
+}
+
+RefPtr<RTCRtpReceiver> MediaEndpointPeerConnection::createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId)
+{
+    RealtimeMediaSource::Type sourceType = trackKind == "audio" ? RealtimeMediaSource::Type::Audio : RealtimeMediaSource::Type::Video;
+
+    // Create a muted remote source that will be unmuted once media starts arriving.
+    auto remoteSource = m_mediaEndpoint->createMutedRemoteSource(transceiverMid, sourceType);
+    auto remoteTrackPrivate = MediaStreamTrackPrivate::create(WTFMove(remoteSource), trackId);
+    auto remoteTrack = MediaStreamTrack::create(*m_client->scriptExecutionContext(), *remoteTrackPrivate);
+
+    return RTCRtpReceiver::create(WTFMove(remoteTrack));
 }
 
 void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, MediaStreamTrack& withTrack, PeerConnection::VoidPromise&& promise)

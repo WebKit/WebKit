@@ -34,6 +34,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "MediaEndpointConfiguration.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -78,6 +79,7 @@ public:
 
     virtual void addRemoteCandidate(IceCandidate&, unsigned mdescIndex, const String& ufrag, const String& password) = 0;
 
+    virtual Ref<RealtimeMediaSource> createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type) = 0;
     virtual void replaceSendSource(RealtimeMediaSource&, unsigned mdescIndex) = 0;
 
     virtual void stop() = 0;

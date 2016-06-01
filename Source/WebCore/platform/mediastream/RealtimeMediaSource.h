@@ -120,19 +120,20 @@ public:
 protected:
     RealtimeMediaSource(const String& id, Type, const String& name);
 
+    bool m_muted { false };
+
 private:
     String m_id;
     String m_persistentID;
     Type m_type;
     String m_name;
-    bool m_stopped;
+    bool m_stopped { false };
     Vector<Observer*> m_observers;
 
-    bool m_muted;
-    bool m_readonly;
-    bool m_remote;
+    bool m_readonly { false };
+    bool m_remote { false };
     
-    unsigned m_fitnessScore;
+    unsigned m_fitnessScore { 0 };
 };
 
 } // namespace WebCore

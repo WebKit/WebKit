@@ -48,6 +48,7 @@ class RTCIceCandidate;
 class RTCOfferOptions;
 class RTCRtpReceiver;
 class RTCRtpSender;
+class RTCRtpTransceiver;
 class RTCSessionDescription;
 class RTCStatsResponse;
 class ScriptExecutionContext;
@@ -63,7 +64,6 @@ public:
     virtual Vector<RefPtr<RTCRtpSender>> getSenders() const = 0;
     virtual void fireEvent(Event&) = 0;
 
-    virtual void addReceiver(RTCRtpReceiver&) = 0;
     virtual void setSignalingState(PeerConnectionStates::SignalingState) = 0;
     virtual void updateIceGatheringState(PeerConnectionStates::IceGatheringState) = 0;
     virtual void updateIceConnectionState(PeerConnectionStates::IceConnectionState) = 0;
@@ -103,6 +103,7 @@ public:
 
     virtual void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) = 0;
 
+    virtual RefPtr<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) = 0;
     virtual void replaceTrack(RTCRtpSender&, MediaStreamTrack&, PeerConnection::VoidPromise&&) = 0;
 
     virtual void stop() = 0;
