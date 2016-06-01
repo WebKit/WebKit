@@ -687,6 +687,9 @@ void WebChromeClient::loadIconForFiles(const Vector<WTF::String>& filenames, Web
 
 void WebChromeClient::setCursor(const Cursor& cursor)
 {
+    if (!cursor.platformCursor())
+        return;
+
     HCURSOR platformCursor = cursor.platformCursor()->nativeCursor();
     if (!platformCursor)
         return;
