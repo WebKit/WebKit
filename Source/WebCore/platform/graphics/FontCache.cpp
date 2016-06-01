@@ -539,8 +539,7 @@ void FontCache::precache(const Vector<AtomicString>& resolvedFamilies, const Fon
             return;
 
         if (platformData) {
-            auto r = fontPlatformDataCache().add(key, WTFMove(platformData));
-            fprintf(stderr, "success %d\n", r.isNewEntry);
+            fontPlatformDataCache().add(key, WTFMove(platformData));
             return;
         }
 
