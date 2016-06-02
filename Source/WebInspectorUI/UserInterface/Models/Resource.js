@@ -650,10 +650,10 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             return Promise.resolve({error: WebInspector.UIString("An error occurred trying to load the resource.")});
 
         if (!this._finishThenRequestContentPromise) {
-            this._finishThenRequestContentPromise = new Promise(function (resolve, reject) {
+            this._finishThenRequestContentPromise = new Promise((resolve, reject) => {
                 this.addEventListener(WebInspector.Resource.Event.LoadingDidFinish, resolve);
                 this.addEventListener(WebInspector.Resource.Event.LoadingDidFail, reject);
-            }.bind(this)).then(WebInspector.SourceCode.prototype.requestContent.bind(this));
+            }).then(WebInspector.SourceCode.prototype.requestContent.bind(this));
         }
 
         return this._finishThenRequestContentPromise;

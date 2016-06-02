@@ -27,13 +27,13 @@ WebInspector.WrappedPromise = class WrappedPromise
 {
     constructor(work)
     {
-        this._promise = new Promise(function(resolve, reject) {
+        this._promise = new Promise((resolve, reject) => {
             this._resolve = resolve;
             this._reject = reject;
 
             if (work && typeof work === "function")
                 work();
-        }.bind(this));
+        });
     }
 
     // Public

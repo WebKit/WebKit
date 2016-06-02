@@ -217,15 +217,14 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
     requestScriptSyntaxTree(callback)
     {
         if (this._scriptSyntaxTree) {
-            setTimeout(function() { callback(this._scriptSyntaxTree); }.bind(this), 0);
+            setTimeout(() => { callback(this._scriptSyntaxTree); }, 0);
             return;
         }
 
-        var makeSyntaxTreeAndCallCallback = function(content)
-        {
+        var makeSyntaxTreeAndCallCallback = () => {
             this._makeSyntaxTree(content);
             callback(this._scriptSyntaxTree);
-        }.bind(this);
+        };
 
         var content = this.content;
         if (!content && this._resource && this._resource.type === WebInspector.Resource.Type.Script && this._resource.finished)

@@ -215,7 +215,7 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
         }
 
         if (!this._boundContextMenuEventHandler && this.treeOutline.oncontextmenu && typeof this.treeOutline.oncontextmenu === "function") {
-            this._boundContextMenuEventHandler = function(event) { this.treeOutline.oncontextmenu(event, this); }.bind(this);
+            this._boundContextMenuEventHandler = (event) => { this.treeOutline.oncontextmenu(event, this); };
             this._listItemNode.addEventListener("contextmenu", this._boundContextMenuEventHandler);
         }
     }

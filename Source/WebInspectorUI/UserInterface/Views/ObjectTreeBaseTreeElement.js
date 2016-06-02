@@ -124,17 +124,17 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
         }
 
         getterElement.title = WebInspector.UIString("Invoke getter");
-        getterElement.addEventListener("click", function(event) {
+        getterElement.addEventListener("click", (event) => {
             event.stopPropagation();
             var lastNonPrototypeObject = this._propertyPath.lastNonPrototypeObject;
             var getterObject = this._property.get;
-            lastNonPrototypeObject.invokeGetter(getterObject, function(error, result, wasThrown) {
+            lastNonPrototypeObject.invokeGetter(getterObject, (error, result, wasThrown) => {
                 this._getterHadError = !!(error || wasThrown);
                 this._getterValue = result;
                 if (this.invokedGetter && typeof this.invokedGetter === "function")
                     this.invokedGetter();
-            }.bind(this));
-        }.bind(this));
+            });
+        });
 
         return getterElement;
     }

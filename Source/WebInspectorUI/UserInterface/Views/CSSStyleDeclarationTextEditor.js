@@ -803,9 +803,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
             if (!this._codeMirror.getOption("readOnly")) {
                 // Look for comments that look like properties and add checkboxes in front of them.
-                this._codeMirror.eachLine(function(lineHandler) {
+                this._codeMirror.eachLine((lineHandler) => {
                     this._createCommentedCheckboxMarker(lineHandler);
-                }.bind(this));
+                });
             }
 
             // Look for swatchable values and make inline swatches.

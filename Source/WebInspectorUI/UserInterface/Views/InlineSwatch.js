@@ -254,10 +254,7 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
             }
         ];
 
-        // FIXME: <https://webkit.org/b/152497> Arrow functions: "this" isn't lexically bound
-        let currentColorIsHEX = hexFormats.some(function(info) {
-            return info.format === this._value.format;
-        }.bind(this));
+        let currentColorIsHEX = hexFormats.some((info) => info.format === this._value.format);
 
         for (let i = 0; i < hexFormats.length; ++i) {
             if (currentColorIsHEX && this._value.format !== hexFormats[i].format)

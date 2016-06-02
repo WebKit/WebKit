@@ -416,7 +416,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         this._popoverCommitted = false;
 
         this._codeMirror.addKeyMap({
-            "Enter": function() { this._popoverCommitted = true; popover.dismiss(); }.bind(this),
+            "Enter": () => { this._popoverCommitted = true; popover.dismiss(); },
         });
 
         let completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror);
@@ -440,11 +440,11 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         presentPopoverOverTargetElement();
 
         // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
-        setTimeout(function() {
+        setTimeout(() => {
             this._codeMirror.refresh();
             this._codeMirror.focus();
             popover.update();
-        }.bind(this), 0);
+        }, 0);
     }
 
     willDismissPopover(popover)
@@ -492,10 +492,10 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         if (objectTreeElement.parent !== objectTreeElement.treeOutline)
             return;
 
-        contextMenu.appendItem(WebInspector.UIString("Remove Watch Expression"), function() {
+        contextMenu.appendItem(WebInspector.UIString("Remove Watch Expression"), () => {
             let expression = objectTreeElement.property.name;
             this._removeWatchExpression(expression);
-        }.bind(this));
+        });
     }
 
     _propertyPathIdentifierForTreeElement(identifier, objectPropertyTreeElement)

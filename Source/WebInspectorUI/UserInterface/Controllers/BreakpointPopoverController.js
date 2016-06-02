@@ -161,10 +161,10 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
         completionController.addExtendedCompletionProvider("javascript", WebInspector.javaScriptRuntimeCompletionProvider);
 
         // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
-        setTimeout(function() {
+        setTimeout(() => {
             this._conditionCodeMirror.refresh();
             this._conditionCodeMirror.focus();
-        }.bind(this), 0);
+        }, 0);
 
         // COMPATIBILITY (iOS 7): Debugger.setBreakpoint did not support options.
         if (DebuggerAgent.setBreakpoint.supports("options")) {

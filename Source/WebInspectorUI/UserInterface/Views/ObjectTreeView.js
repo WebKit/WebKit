@@ -279,10 +279,10 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
         }
 
         // Show the prototype so users can see the API.
-        this._object.getOwnPropertyDescriptor("__proto__", function(propertyDescriptor) {
+        this._object.getOwnPropertyDescriptor("__proto__", (propertyDescriptor) => {
             if (propertyDescriptor)
                 this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
-        }.bind(this));
+        });
     }
 
     _updateProperties(properties, propertyPath)

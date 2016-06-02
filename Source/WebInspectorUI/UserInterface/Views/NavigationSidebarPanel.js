@@ -780,9 +780,9 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
             // Delay clearing the restoringState flag until the next runloop so listeners
             // checking for it in this runloop still know state was being restored.
-            setTimeout(function() {
+            setTimeout(() => {
                 this._restoringState = false;
-            }.bind(this));
+            }, 0);
 
             if (this._finalAttemptToRestoreViewStateTimeout) {
                 clearTimeout(this._finalAttemptToRestoreViewStateTimeout);

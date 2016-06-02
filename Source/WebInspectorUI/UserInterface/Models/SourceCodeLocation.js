@@ -244,10 +244,7 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
         var boundMouseOverOrMove = mouseOverOrMove.bind(this);
         element.addEventListener("mouseover", boundMouseOverOrMove);
         element.addEventListener("mousemove", boundMouseOverOrMove);
-
-        element.addEventListener("mouseout", function(event) {
-            updateDisplayString.call(this, false);
-        }.bind(this));
+        element.addEventListener("mouseout", (event) => { updateDisplayString.call(this, false); });
     }
 
     // Protected

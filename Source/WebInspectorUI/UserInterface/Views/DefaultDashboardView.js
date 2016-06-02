@@ -122,9 +122,9 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
             }
         });
 
-        item.container.addEventListener("click", function(event) {
+        item.container.addEventListener("click", (event) => {
             this._itemWasClicked(name);
-        }.bind(this));
+        });
     }
 
     _itemWasClicked(name)

@@ -127,12 +127,12 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
 
     _calculateDurationRemainder()
     {
-        return Object.keys(WebInspector.RenderingFrameTimelineRecord.TaskType).reduce(function(previousValue, key) {
-            var taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[key];
+        return Object.keys(WebInspector.RenderingFrameTimelineRecord.TaskType).reduce((previousValue, key) => {
+            let taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[key];
             if (taskType === WebInspector.RenderingFrameTimelineRecord.TaskType.Other)
                 return previousValue;
             return previousValue - this.durationForTask(taskType);
-        }.bind(this), this.duration);
+        }, this.duration);
     }
 };
 

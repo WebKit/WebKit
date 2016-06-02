@@ -538,10 +538,9 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
         let title = "";
 
-        // FIXME: <https://webkit.org/b/152497> Arrow functions: "this" isn't lexically bound
-        let dependencies = this._style.nodeStyles.computedStyle.properties.filter(function(property) {
+        let dependencies = this._style.nodeStyles.computedStyle.properties.filter((property) => {
             return this._dependencies.has(property.name) || this._dependencies.has(property.canonicalName);
-        }.bind(this));
+        });
 
         for (let property of dependencies) {
             let dependencyValues = this._dependencies.get(property.name);

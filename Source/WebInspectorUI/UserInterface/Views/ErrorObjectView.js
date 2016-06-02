@@ -88,14 +88,14 @@ WebInspector.ErrorObjectView = class ErrorObjectView extends WebInspector.Object
 
     update()
     {
-        this._object.getOwnPropertyDescriptorsAsObject(function(properties) {
+        this._object.getOwnPropertyDescriptorsAsObject((properties) => {
             console.assert(properties && properties.stack && properties.stack.value);
 
             if (!this._hasStackTrace)
                 this._buildStackTrace(properties.stack.value.value);
 
             this._hasStackTrace = true;
-        }.bind(this));
+        });
     }
 
     expand()

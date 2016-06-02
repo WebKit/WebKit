@@ -522,11 +522,7 @@ WebInspector._updateNewTabButtonState = function(event)
 {
     let allTabs = [...this._knownTabClassesByType.values()];
     let addableTabs = allTabs.filter((tabClass) => !tabClass.isEphemeral());
-
-    // FIXME: Use arrow functions once http://webkit.org/b/152497 is resolved.
-    let canMakeNewTab = addableTabs.some(function(tabClass) {
-        return this.isNewTabWithTypeAllowed(tabClass.Type);
-    }.bind(this));
+    let canMakeNewTab = addableTabs.some((tabClass) => this.isNewTabWithTypeAllowed(tabClass.Type));
     this.tabBar.newTabItem.disabled = !canMakeNewTab;
 };
 
@@ -2368,19 +2364,19 @@ WebInspector.archiveMainFrame = function()
     this._downloadingPage = true;
     this._updateDownloadToolbarButton();
 
-    PageAgent.archive(function(error, data) {
+    PageAgent.archive((error, data) => {
         this._downloadingPage = false;
         this._updateDownloadToolbarButton();
 
         if (error)
             return;
 
-        var mainFrame = WebInspector.frameResourceManager.mainFrame;
-        var archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
-        var url = "web-inspector:///" + encodeURI(archiveName) + ".webarchive";
+        let mainFrame = WebInspector.frameResourceManager.mainFrame;
+        let archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
+        let url = "web-inspector:///" + encodeURI(archiveName) + ".webarchive";
 
         InspectorFrontendHost.save(url, data, true, true);
-    }.bind(this));
+    });
 };
 
 WebInspector.canArchiveMainFrame = function()

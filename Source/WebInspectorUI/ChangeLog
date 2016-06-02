@@ -1,3 +1,76 @@
+2016-06-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Modernize some function expressions that bind(this) to arrow functions
+        https://bugs.webkit.org/show_bug.cgi?id=158315
+
+        Reviewed by Brian Burg.
+
+        Convert a common "function(x) { ... }.bind(this)" pattern to use arrow
+        functions "(x) => { ... }", which lexically binds `this`, slightly faster,
+        and uses less memory.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._updateNewTabButtonState):
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WebInspector.BreakpointPopoverController.prototype._createPopoverContent):
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.TypeTokenAnnotator.prototype.insertAnnotations):
+        (WebInspector.TypeTokenAnnotator.prototype.insertAnnotations.): Deleted.
+        * UserInterface/Models/RenderingFrameTimelineRecord.js:
+        (WebInspector.RenderingFrameTimelineRecord.prototype._calculateDurationRemainder):
+        (WebInspector.RenderingFrameTimelineRecord):
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.requestContent):
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype.requestScriptSyntaxTree):
+        (WebInspector.Script.prototype.requestScriptSyntaxTree.makeSyntaxTreeAndCallCallback): Deleted.
+        * UserInterface/Models/SourceCodeLocation.js:
+        (WebInspector.SourceCodeLocation.prototype.populateLiveDisplayLocationString):
+        * UserInterface/Models/WrappedPromise.js:
+        (WebInspector.WrappedPromise):
+        * UserInterface/Views/BreakpointActionView.js:
+        (WebInspector.BreakpointActionView.prototype._updateBody):
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement.prototype._dataUpdated):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateTextMarkers.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateTextMarkers):
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WebInspector.DefaultDashboardView.prototype._appendElementForNamedItem.set item):
+        (WebInspector.DefaultDashboardView.prototype._appendElementForNamedItem):
+        * UserInterface/Views/ErrorObjectView.js:
+        (WebInspector.ErrorObjectView.prototype.update):
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.onattach):
+        (WebInspector.GeneralTreeElement.prototype.onattach.this._boundContextMenuEventHandler): Deleted.
+        * UserInterface/Views/InlineSwatch.js:
+        (WebInspector.InlineSwatch.prototype._getNextValidHEXFormat):
+        (WebInspector.InlineSwatch):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype.refresh):
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._showPopoverForSelectedNode):
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._contentForPopover):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._mouseup):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._checkElementsForPendingViewStateCookie):
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.createGetterElement):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.createGetterElement.): Deleted.
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateEntries):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView.prototype._updateEntries):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshImageSizeSection):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._addWatchExpressionButtonClicked):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._objectTreeElementAddContextMenuItems):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._addWatchExpressionButtonClicked.this._codeMirror.addKeyMap): Deleted.
+        * UserInterface/Views/TabBar.js:
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor.prototype._checkDependencies):
+
 2016-05-31  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Storage DataGrids have a half-pixel transparent/white border below the header

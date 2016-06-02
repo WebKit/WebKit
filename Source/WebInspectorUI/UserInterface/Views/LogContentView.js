@@ -444,7 +444,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             this._clearMessagesSelection();
 
             // Focus the prompt. Focusing the prompt needs to happen after the click to work.
-            setTimeout(function () { this.prompt.focus(); }.bind(this), 0);
+            setTimeout(() => { this.prompt.focus(); }, 0);
         }
 
         delete this._mouseMoveIsRowSelection;

@@ -96,9 +96,9 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
 
         if (this._tabAnimatedClosedSinceMouseEnter) {
             // Delay adding the new tab until we can expand the tabs after a closed tab.
-            this._finishExpandingTabsAfterClose().then(function() {
+            this._finishExpandingTabsAfterClose().then(() => {
                 this.insertTabBarItem(tabBarItem, index, doNotAnimate);
-            }.bind(this));
+            });
             return;
         }
 

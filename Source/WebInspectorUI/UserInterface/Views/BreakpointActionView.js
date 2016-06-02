@@ -167,11 +167,11 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
             completionController.addExtendedCompletionProvider("javascript", WebInspector.javaScriptRuntimeCompletionProvider);
 
             // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
-            setTimeout(function() {
+            setTimeout(() => {
                 this._codeMirror.refresh();
                 if (!omitFocus)
                     this._codeMirror.focus();
-            }.bind(this), 0);
+            }, 0);
 
             break;
 
