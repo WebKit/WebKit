@@ -56,6 +56,7 @@
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
 #include "LLIntCallLinkInfo.h"
+#include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "LazyOperandValueProfile.h"
 #include "ObjectAllocationProfile.h"
 #include "Options.h"
@@ -678,6 +679,9 @@ public:
         return m_llintExecuteCounter;
     }
 
+    typedef HashMap<Structure*, Bag<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> StructureWatchpointMap;
+    StructureWatchpointMap& llintGetByIdWatchpointMap() { return m_llintGetByIdWatchpointMap; }
+
     // Functions for controlling when tiered compilation kicks in. This
     // controls both when the optimizing compiler is invoked and when OSR
     // entry happens. Two triggers exist: the loop trigger and the return
@@ -1019,6 +1023,7 @@ private:
 
     RefCountedArray<LLIntCallLinkInfo> m_llintCallLinkInfos;
     SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
+    StructureWatchpointMap m_llintGetByIdWatchpointMap;
     RefPtr<JITCode> m_jitCode;
 #if ENABLE(JIT)
     std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
@@ -1308,6 +1313,14 @@ private:
     static void destroy(JSCell*);
 };
 #endif
+
+inline void clearLLIntGetByIdCache(Instruction* instruction)
+{
+    instruction[0].u.opcode = LLInt::getOpcode(op_get_by_id);
+    instruction[4].u.pointer = nullptr;
+    instruction[5].u.pointer = nullptr;
+    instruction[6].u.pointer = nullptr;
+}
 
 inline Register& ExecState::r(int index)
 {

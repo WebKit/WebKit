@@ -168,6 +168,18 @@ void ObjectPropertyConditionSet::dump(PrintStream& out) const
     dumpInContext(out, nullptr);
 }
 
+bool ObjectPropertyConditionSet::isValidAndWatchable() const
+{
+    if (!isValid())
+        return false;
+
+    for (ObjectPropertyCondition condition : m_data->vector) {
+        if (!condition.isWatchable())
+            return false;
+    }
+    return true;
+}
+
 namespace {
 
 bool verbose = false;

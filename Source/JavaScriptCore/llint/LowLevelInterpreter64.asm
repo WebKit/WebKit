@@ -1232,6 +1232,43 @@ _llint_op_get_by_id:
     dispatch(9)
 
 
+_llint_op_get_by_id_proto_load:
+    traceExecution()
+    loadisFromInstruction(2, t0)
+    loadConstantOrVariableCell(t0, t3, .opGetByIdProtoSlow)
+    loadi JSCell::m_structureID[t3], t1
+    loadisFromInstruction(4, t2)
+    bineq t2, t1, .opGetByIdProtoSlow
+    loadisFromInstruction(5, t1)
+    loadpFromInstruction(6, t3)
+    loadisFromInstruction(1, t2)
+    loadPropertyAtVariableOffset(t1, t3, t0)
+    storeq t0, [cfr, t2, 8]
+    valueProfile(t0, 8, t1)
+    dispatch(9)
+
+.opGetByIdProtoSlow:
+    callSlowPath(_llint_slow_path_get_by_id)
+    dispatch(9)
+
+
+_llint_op_get_by_id_unset:
+    traceExecution()
+    loadisFromInstruction(2, t0)
+    loadConstantOrVariableCell(t0, t3, .opGetByIdUnsetSlow)
+    loadi JSCell::m_structureID[t3], t1
+    loadisFromInstruction(4, t2)
+    bineq t2, t1, .opGetByIdUnsetSlow
+    loadisFromInstruction(1, t2)
+    storeq ValueUndefined, [cfr, t2, 8]
+    valueProfile(ValueUndefined, 8, t1)
+    dispatch(9)
+
+.opGetByIdUnsetSlow:
+    callSlowPath(_llint_slow_path_get_by_id)
+    dispatch(9)
+
+
 _llint_op_get_array_length:
     traceExecution()
     loadisFromInstruction(2, t0)

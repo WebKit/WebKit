@@ -1,3 +1,8 @@
+2016-06-02  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, reland r201532. The associated regressions have been fixed
+        by r201584.
+
 2016-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         Use "= delete" for Locker(int) 

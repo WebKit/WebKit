@@ -50,6 +50,7 @@
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
 #include "LLIntEntrypoint.h"
+#include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
 #include "PCToCodeOriginMap.h"
@@ -345,6 +346,12 @@ void CodeBlock::printGetByIdOp(PrintStream& out, ExecState* exec, int location, 
     case op_get_by_id:
         op = "get_by_id";
         break;
+    case op_get_by_id_proto_load:
+        op = "get_by_id_proto_load";
+        break;
+    case op_get_by_id_unset:
+        op = "get_by_id_unset";
+        break;
     case op_get_array_length:
         op = "array_length";
         break;
@@ -405,6 +412,8 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
         out.printf(" llint(");
         dumpStructure(out, "struct", structure, ident);
         out.printf(")");
+        if (exec->interpreter()->getOpcodeID(instruction[0].u.opcode) == op_get_by_id_proto_load)
+            out.printf(" proto(%p)", instruction[6].u.pointer);
     }
 
 #if ENABLE(JIT)
@@ -1112,6 +1121,8 @@ void CodeBlock::dumpBytecode(
             break;
         }
         case op_get_by_id:
+        case op_get_by_id_proto_load:
+        case op_get_by_id_unset:
         case op_get_array_length: {
             printGetByIdOp(out, exec, location, it);
             printGetByIdCacheStatus(out, exec, location, stubInfos);
@@ -2746,14 +2757,15 @@ void CodeBlock::finalizeLLIntInlineCaches()
     for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
         Instruction* curInstruction = &instructions()[propertyAccessInstructions[i]];
         switch (interpreter->getOpcodeID(curInstruction[0].u.opcode)) {
-        case op_get_by_id: {
+        case op_get_by_id:
+        case op_get_by_id_proto_load:
+        case op_get_by_id_unset: {
             StructureID oldStructureID = curInstruction[4].u.structureID;
             if (!oldStructureID || Heap::isMarked(m_vm->heap.structureIDTable().get(oldStructureID)))
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt property access.\n");
-            curInstruction[4].u.structureID = 0;
-            curInstruction[5].u.operand = 0;
+            clearLLIntGetByIdCache(curInstruction);
             break;
         }
         case op_put_by_id: {
@@ -2826,6 +2838,12 @@ void CodeBlock::finalizeLLIntInlineCaches()
             ASSERT_WITH_MESSAGE_UNUSED(opcodeID, false, "Unhandled opcode in CodeBlock::finalizeUnconditionally, %s(%d) at bc %u", opcodeNames[opcodeID], opcodeID, propertyAccessInstructions[i]);
         }
     }
+
+    // We can't just remove all the sets when we clear the caches since we might have created a watchpoint set
+    // then cleared the cache without GCing in between.
+    m_llintGetByIdWatchpointMap.removeIf([](const StructureWatchpointMap::KeyValuePairType& pair) -> bool {
+        return !Heap::isMarked(pair.key);
+    });
 
     for (unsigned i = 0; i < m_llintCallLinkInfos.size(); ++i) {
         if (m_llintCallLinkInfos[i].isLinked() && !Heap::isMarked(m_llintCallLinkInfos[i].callee.get())) {
