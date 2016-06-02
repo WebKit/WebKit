@@ -32,6 +32,9 @@ class AnalysisCategoryPage extends PageWithHeading {
 
     updateFromSerializedState(state, isOpen)
     {
+        if (state.category instanceof Set)
+            state.category = Array.from(state.category.values())[0];
+
         if (this.toolbar().setCategoryIfValid(state.category))
             this._renderedList = false;
 

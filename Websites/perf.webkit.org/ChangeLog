@@ -1,3 +1,13 @@
+2016-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r201564.
+
+        * public/v3/pages/analysis-category-page.js:
+        (AnalysisCategoryPage.prototype.updateFromSerializedState):
+        * public/v3/pages/create-analysis-task-page.js:
+        (CreateAnalysisTaskPage.prototype.updateFromSerializedState):
+        (CreateAnalysisTaskPage.prototype.render):
+
 2016-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         v3 UI should support marking and unmarking outliers as well as hiding them

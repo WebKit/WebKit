@@ -11,6 +11,9 @@ class CreateAnalysisTaskPage extends PageWithHeading {
 
     updateFromSerializedState(state, isOpen)
     {
+        if (state.error instanceof Set)
+            state.error = Array.from(state.error.values())[0];
+
         this._errorMessage = state.error;
         if (!isOpen)
             this.render();
@@ -19,7 +22,6 @@ class CreateAnalysisTaskPage extends PageWithHeading {
     render()
     {
         super.render();
-        console.log(this._errorMessage)
         if (this._errorMessage)
             this.content().querySelector('.message').textContent = this._errorMessage;
     }
