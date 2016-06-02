@@ -655,10 +655,8 @@ void MemoryCache::adjustSize(bool live, int delta)
 void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext& context, const ResourceRequest& request)
 {
     if (is<WorkerGlobalScope>(context)) {
-        CrossThreadResourceRequestData* requestData = request.copyData().release();
-        downcast<WorkerGlobalScope>(context).thread().workerLoaderProxy().postTaskToLoader([requestData] (ScriptExecutionContext& context) {
-            auto request(ResourceRequest::adopt(std::unique_ptr<CrossThreadResourceRequestData>(requestData)));
-            MemoryCache::removeRequestFromSessionCaches(context, *request);
+        downcast<WorkerGlobalScope>(context).thread().workerLoaderProxy().postTaskToLoader([request = request.isolatedCopy()] (ScriptExecutionContext& context) {
+            MemoryCache::removeRequestFromSessionCaches(context, request);
         });
         return;
     }

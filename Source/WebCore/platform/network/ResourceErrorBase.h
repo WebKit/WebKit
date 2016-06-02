@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceErrorBase_h
-#define ResourceErrorBase_h
+#pragma once
 
 #include "URL.h"
 #include <wtf/text/WTFString.h>
@@ -37,8 +36,7 @@ extern const char* const errorDomainWebKitInternal; // Used for errors that won'
 
 class ResourceErrorBase {
 public:
-    // Makes a deep copy. Useful for when you need to use a ResourceError on another thread.
-    ResourceError copy() const;
+    ResourceError isolatedCopy() const;
 
     bool isNull() const { return m_isNull; }
 
@@ -99,5 +97,3 @@ inline bool operator==(const ResourceError& a, const ResourceError& b) { return 
 inline bool operator!=(const ResourceError& a, const ResourceError& b) { return !(a == b); }
 
 } // namespace WebCore
-
-#endif // ResourceErrorBase_h

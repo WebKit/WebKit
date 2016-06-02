@@ -1,3 +1,13 @@
+2016-06-02  Brady Eidson  <beidson@apple.com>
+
+        Overhaul cross-thread use of ResourceRequest, ResourceResponse, and ResourceError.
+        https://bugs.webkit.org/show_bug.cgi?id=158293
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::Entry):
+
 2016-06-02  Chris Dumez  <cdumez@apple.com>
 
         Modernize various lambda captures

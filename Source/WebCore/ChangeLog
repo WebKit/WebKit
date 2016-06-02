@@ -1,3 +1,72 @@
+2016-06-02  Brady Eidson  <beidson@apple.com>
+
+        Overhaul cross-thread use of ResourceRequest, ResourceResponse, and ResourceError.
+        https://bugs.webkit.org/show_bug.cgi?id=158293
+
+        Reviewed by Darin Adler.
+
+        No new tests (Refactor, no behavior change).
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck):
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::removeRequestFromSessionCaches):
+
+        * platform/network/ResourceErrorBase.cpp:
+        (WebCore::ResourceErrorBase::isolatedCopy):
+        (WebCore::ResourceErrorBase::copy): Deleted.
+        * platform/network/ResourceErrorBase.h:
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::isolatedCopy):
+        (WebCore::ResourceRequestBase::setAsIsolatedCopy):
+        (WebCore::ResourceRequestBase::adopt): Deleted.
+        
+        Made copyData private, and made "adopt" be "isolatedCopy".
+        Rest of the changes are all re-indenting the file.
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::responseContentDispositionEncodingFallbackArray):
+        (WebCore::ResourceRequestBase::reportUploadProgress):
+        (WebCore::ResourceRequestBase::setReportUploadProgress):
+        (WebCore::ResourceRequestBase::reportLoadTiming):
+        (WebCore::ResourceRequestBase::setReportLoadTiming):
+        (WebCore::ResourceRequestBase::reportRawHeaders):
+        (WebCore::ResourceRequestBase::setReportRawHeaders):
+        (WebCore::ResourceRequestBase::hiddenFromInspector):
+        (WebCore::ResourceRequestBase::setHiddenFromInspector):
+        (WebCore::ResourceRequestBase::requester):
+        (WebCore::ResourceRequestBase::setRequester):
+        (WebCore::ResourceRequestBase::encodingRequiresPlatformData):
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+        (WebCore::ResourceRequestBase::platformCompare):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::isolatedCopy):
+        (WebCore::ResourceResponseBase::adopt): Deleted.
+        * platform/network/ResourceResponseBase.h:
+
+        * platform/network/cf/ResourceError.h:
+        (WebCore::ResourceError::isolatedCopy): Deleted.
+
+        Removed platform-specific isolatedCopy, and re-indented the header:
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::encodingRequiresPlatformData):
+        (WebCore::ResourceRequest::cachePartition):
+        (WebCore::ResourceRequest::setCachePartition):
+        (WebCore::ResourceRequest::setDomainForCachePartition):
+        (WebCore::ResourceRequest::resourcePrioritiesEnabled):
+        (WebCore::ResourceRequest::isolatedCopy): Deleted.
+
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::isolatedCopy): Deleted.
+
 2016-06-02  Chris Dumez  <cdumez@apple.com>
 
         Modernize various lambda captures

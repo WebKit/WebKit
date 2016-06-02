@@ -96,17 +96,16 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(*securityOrigin);
     contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
 
-    m_loaderProxy.postTaskToLoader([this, requestData = request.copyData(), options = options.isolatedCopy(), contentSecurityPolicyCopy = WTFMove(contentSecurityPolicyCopy), outgoingReferrer = outgoingReferrer.isolatedCopy()](ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskToLoader([this, request = request.isolatedCopy(), options = options.isolatedCopy(), contentSecurityPolicyCopy = WTFMove(contentSecurityPolicyCopy), outgoingReferrer = outgoingReferrer.isolatedCopy()](ScriptExecutionContext& context) mutable {
         ASSERT(isMainThread());
         Document& document = downcast<Document>(context);
 
-        auto request = ResourceRequest::adopt(WTFMove(requestData));
-        request->setHTTPReferrer(outgoingReferrer);
+        request.setHTTPReferrer(outgoingReferrer);
 
         // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
         // will return a 0 value. Either this should return 0 or the other code path should do a callback with
         // a failure.
-        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, *request, *options, WTFMove(contentSecurityPolicyCopy));
+        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, request, *options, WTFMove(contentSecurityPolicyCopy));
         ASSERT(m_mainThreadLoader || m_loadingFinished);
     });
 }
@@ -163,10 +162,9 @@ void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long by
 void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
     Ref<ThreadableLoaderClientWrapper> protectedWorkerClientWrapper = *m_workerClientWrapper;
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = WTFMove(protectedWorkerClientWrapper), identifier, responseData = response.copyData()] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = WTFMove(protectedWorkerClientWrapper), identifier, response = response.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        auto response(ResourceResponse::adopt(WTFMove(responseData)));
-        protectedWorkerClientWrapper->didReceiveResponse(identifier, *response);
+        protectedWorkerClientWrapper->didReceiveResponse(identifier, response);
     }, m_taskMode);
 }
 
@@ -194,20 +192,18 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(unsigned long id
 void WorkerThreadableLoader::MainThreadBridge::didFail(const ResourceError& error)
 {
     m_loadingFinished = true;
-    Ref<ThreadableLoaderClientWrapper> protectedWorkerClientWrapper = *m_workerClientWrapper;
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = WTFMove(protectedWorkerClientWrapper), error = error.copy()] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper = Ref<ThreadableLoaderClientWrapper>(*m_workerClientWrapper), error = error.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        protectedWorkerClientWrapper->didFail(error);
+        workerClientWrapper->didFail(error);
     }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck(const ResourceError& error)
 {
     m_loadingFinished = true;
-    Ref<ThreadableLoaderClientWrapper> protectedWorkerClientWrapper = *m_workerClientWrapper;
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = WTFMove(protectedWorkerClientWrapper), error = error.copy()] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper = Ref<ThreadableLoaderClientWrapper>(*m_workerClientWrapper), error = error.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        protectedWorkerClientWrapper->didFailAccessControlCheck(error);
+        workerClientWrapper->didFailAccessControlCheck(error);
     }, m_taskMode);
 }
 

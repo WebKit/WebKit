@@ -63,23 +63,26 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
 {
 }
 
-std::unique_ptr<ResourceResponse> ResourceResponseBase::adopt(std::unique_ptr<CrossThreadResourceResponseData> data)
+ResourceResponse ResourceResponseBase::isolatedCopy() const
 {
-    auto response = std::make_unique<ResourceResponse>();
-    response->setURL(data->m_url);
-    response->setMimeType(data->m_mimeType);
-    response->setExpectedContentLength(data->m_expectedContentLength);
-    response->setTextEncodingName(data->m_textEncodingName);
+    ResourceResponse response;
+    auto data = copyData();
 
-    response->setHTTPStatusCode(data->m_httpStatusCode);
-    response->setHTTPStatusText(data->m_httpStatusText);
-    response->setHTTPVersion(data->m_httpVersion);
+    response.setURL(data->m_url);
+    response.setMimeType(data->m_mimeType);
+    response.setExpectedContentLength(data->m_expectedContentLength);
+    response.setTextEncodingName(data->m_textEncodingName);
 
-    response->lazyInit(AllFields);
-    response->m_httpHeaderFields.adopt(WTFMove(data->m_httpHeaders));
-    response->m_resourceLoadTiming = data->m_resourceLoadTiming;
-    response->m_type = data->m_type;
-    response->doPlatformAdopt(WTFMove(data));
+    response.setHTTPStatusCode(data->m_httpStatusCode);
+    response.setHTTPStatusText(data->m_httpStatusText);
+    response.setHTTPVersion(data->m_httpVersion);
+
+    response.lazyInit(AllFields);
+    response.m_httpHeaderFields.adopt(WTFMove(data->m_httpHeaders));
+    response.m_resourceLoadTiming = data->m_resourceLoadTiming;
+    response.m_type = data->m_type;
+    response.doPlatformAdopt(WTFMove(data));
+
     return response;
 }
 

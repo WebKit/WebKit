@@ -54,10 +54,12 @@ Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, const We
     , m_timeStamp(std::chrono::system_clock::now())
     , m_response(response)
     , m_varyingRequestHeaders(varyingRequestHeaders)
-    , m_redirectRequest(WebCore::ResourceRequest::adopt(redirectRequest.copyData())) // Don't include the underlying platform request object.
 {
     ASSERT(m_key.type() == "resource");
     // Redirect body is not needed even if exists.
+
+    m_redirectRequest = std::make_unique<WebCore::ResourceRequest>();
+    m_redirectRequest->setAsIsolatedCopy(redirectRequest);
     m_redirectRequest->setHTTPBody(nullptr);
 }
 

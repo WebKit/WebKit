@@ -49,19 +49,27 @@ inline const ResourceRequest& ResourceRequestBase::asResourceRequest() const
     return *static_cast<const ResourceRequest*>(this);
 }
 
-std::unique_ptr<ResourceRequest> ResourceRequestBase::adopt(std::unique_ptr<CrossThreadResourceRequestData> data)
+ResourceRequest ResourceRequestBase::isolatedCopy() const
 {
-    auto request = std::make_unique<ResourceRequest>();
-    request->setURL(data->url);
-    request->setCachePolicy(data->cachePolicy);
-    request->setTimeoutInterval(data->timeoutInterval);
-    request->setFirstPartyForCookies(data->firstPartyForCookies);
-    request->setHTTPMethod(data->httpMethod);
-    request->setPriority(data->priority);
-    request->setRequester(data->requester);
+    ResourceRequest request;
+    request.setAsIsolatedCopy(*this);
+    return request;
+}
 
-    request->updateResourceRequest();
-    request->m_httpHeaderFields.adopt(WTFMove(data->httpHeaders));
+void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequestBase& other)
+{
+    auto data = other.copyData();
+
+    setURL(data->url);
+    setCachePolicy(data->cachePolicy);
+    setTimeoutInterval(data->timeoutInterval);
+    setFirstPartyForCookies(data->firstPartyForCookies);
+    setHTTPMethod(data->httpMethod);
+    setPriority(data->priority);
+    setRequester(data->requester);
+
+    updateResourceRequest();
+    m_httpHeaderFields.adopt(WTFMove(data->httpHeaders));
 
     size_t encodingCount = data->responseContentDispositionEncodingFallbackArray.size();
     if (encodingCount > 0) {
@@ -74,12 +82,12 @@ std::unique_ptr<ResourceRequest> ResourceRequestBase::adopt(std::unique_ptr<Cros
                 encoding3 = data->responseContentDispositionEncodingFallbackArray[2];
         }
         ASSERT(encodingCount <= 3);
-        request->setResponseContentDispositionEncodingFallbackArray(encoding1, encoding2, encoding3);
+        setResponseContentDispositionEncodingFallbackArray(encoding1, encoding2, encoding3);
     }
-    request->setHTTPBody(data->httpBody.copyRef());
-    request->setAllowCookies(data->allowCookies);
-    request->doPlatformAdopt(WTFMove(data));
-    return request;
+    setHTTPBody(data->httpBody.copyRef());
+    setAllowCookies(data->allowCookies);
+
+    const_cast<ResourceRequest&>(asResourceRequest()).doPlatformAdopt(WTFMove(data));
 }
 
 std::unique_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const

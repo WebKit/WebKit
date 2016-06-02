@@ -38,120 +38,118 @@ typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 
 namespace WebCore {
 
-    class ResourceRequest : public ResourceRequestBase {
-    public:
-        ResourceRequest(const String& url) 
-            : ResourceRequestBase(URL(ParsedURLString, url), UseProtocolCachePolicy)
-        {
-        }
+class ResourceRequest : public ResourceRequestBase {
+public:
+    ResourceRequest(const String& url) 
+        : ResourceRequestBase(URL(ParsedURLString, url), UseProtocolCachePolicy)
+    {
+    }
 
-        ResourceRequest(const URL& url) 
-            : ResourceRequestBase(url, UseProtocolCachePolicy)
-        {
-        }
+    ResourceRequest(const URL& url) 
+        : ResourceRequestBase(url, UseProtocolCachePolicy)
+    {
+    }
 
-        ResourceRequest(const URL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy)
-            : ResourceRequestBase(url, policy)
-        {
-            setHTTPReferrer(referrer);
-        }
-        
-        ResourceRequest()
-            : ResourceRequestBase(URL(), UseProtocolCachePolicy)
-        {
-        }
-        
+    ResourceRequest(const URL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy)
+        : ResourceRequestBase(url, policy)
+    {
+        setHTTPReferrer(referrer);
+    }
+    
+    ResourceRequest()
+        : ResourceRequestBase(URL(), UseProtocolCachePolicy)
+    {
+    }
+    
 #if USE(CFNETWORK)
 #if PLATFORM(COCOA)
-        WEBCORE_EXPORT ResourceRequest(NSURLRequest *);
-        void updateNSURLRequest();
-        void clearOrUpdateNSURLRequest();
+    WEBCORE_EXPORT ResourceRequest(NSURLRequest *);
+    void updateNSURLRequest();
+    void clearOrUpdateNSURLRequest();
 #endif
 
-        ResourceRequest(CFURLRequestRef cfRequest)
-            : ResourceRequestBase()
-            , m_cfRequest(cfRequest)
-        {
-        }
+    ResourceRequest(CFURLRequestRef cfRequest)
+        : ResourceRequestBase()
+        , m_cfRequest(cfRequest)
+    {
+    }
 #else
-        ResourceRequest(NSURLRequest *nsRequest)
-            : ResourceRequestBase()
-            , m_nsRequest(nsRequest)
-        {
-        }
+    ResourceRequest(NSURLRequest *nsRequest)
+        : ResourceRequestBase()
+        , m_nsRequest(nsRequest)
+    {
+    }
 #endif
 
-        ResourceRequest isolatedCopy() const { return *ResourceRequest::adopt(copyData()); }
-
-        WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
+    WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
 
 #if PLATFORM(MAC)
-        void applyWebArchiveHackForMail();
+    void applyWebArchiveHackForMail();
 #endif
 #if PLATFORM(COCOA)
 #if USE(CFNETWORK)
-        bool encodingRequiresPlatformData() const { return m_httpBody || m_cfRequest; }
+    bool encodingRequiresPlatformData() const { return m_httpBody || m_cfRequest; }
 #else
-        bool encodingRequiresPlatformData() const { return m_httpBody || m_nsRequest; }
+    bool encodingRequiresPlatformData() const { return m_httpBody || m_nsRequest; }
 #endif
-        WEBCORE_EXPORT NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
+    WEBCORE_EXPORT NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
 
-        WEBCORE_EXPORT static CFStringRef isUserInitiatedKey();
+    WEBCORE_EXPORT static CFStringRef isUserInitiatedKey();
 #endif
 
 #if ENABLE(CACHE_PARTITIONING)
-        WEBCORE_EXPORT static String partitionName(const String& domain);
-        const String& cachePartition() const { return m_cachePartition.isNull() ? emptyString() : m_cachePartition; }
-        void setCachePartition(const String& cachePartition)
-        {
-            ASSERT(cachePartition == partitionName(cachePartition));
-            m_cachePartition = cachePartition;
-        }
-        void setDomainForCachePartition(const String& domain) { m_cachePartition = partitionName(domain); }
+    WEBCORE_EXPORT static String partitionName(const String& domain);
+    const String& cachePartition() const { return m_cachePartition.isNull() ? emptyString() : m_cachePartition; }
+    void setCachePartition(const String& cachePartition)
+    {
+        ASSERT(cachePartition == partitionName(cachePartition));
+        m_cachePartition = cachePartition;
+    }
+    void setDomainForCachePartition(const String& domain) { m_cachePartition = partitionName(domain); }
 #endif
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-        WEBCORE_EXPORT CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const;
-        void setStorageSession(CFURLStorageSessionRef);
+    WEBCORE_EXPORT CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const;
+    void setStorageSession(CFURLStorageSessionRef);
 #endif
 
-        WEBCORE_EXPORT static bool httpPipeliningEnabled();
-        WEBCORE_EXPORT static void setHTTPPipeliningEnabled(bool);
+    WEBCORE_EXPORT static bool httpPipeliningEnabled();
+    WEBCORE_EXPORT static void setHTTPPipeliningEnabled(bool);
 
-        static bool resourcePrioritiesEnabled();
+    static bool resourcePrioritiesEnabled();
 
-    private:
-        friend class ResourceRequestBase;
+private:
+    friend class ResourceRequestBase;
 
-        void doUpdatePlatformRequest();
-        void doUpdateResourceRequest();
-        void doUpdatePlatformHTTPBody();
-        void doUpdateResourceHTTPBody();
+    void doUpdatePlatformRequest();
+    void doUpdateResourceRequest();
+    void doUpdatePlatformHTTPBody();
+    void doUpdateResourceHTTPBody();
 
-        std::unique_ptr<CrossThreadResourceRequestData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceRequestData>) const;
-        void doPlatformAdopt(std::unique_ptr<CrossThreadResourceRequestData>);
+    std::unique_ptr<CrossThreadResourceRequestData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceRequestData>) const;
+    void doPlatformAdopt(std::unique_ptr<CrossThreadResourceRequestData>);
 
 #if USE(CFNETWORK)
-        RetainPtr<CFURLRequestRef> m_cfRequest;
+    RetainPtr<CFURLRequestRef> m_cfRequest;
 #endif
 #if PLATFORM(COCOA)
-        RetainPtr<NSURLRequest> m_nsRequest;
+    RetainPtr<NSURLRequest> m_nsRequest;
 #endif
 #if ENABLE(CACHE_PARTITIONING)
-        String m_cachePartition;
+    String m_cachePartition;
 #endif
 
-        static bool s_httpPipeliningEnabled;
-    };
+    static bool s_httpPipeliningEnabled;
+};
 
-    struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
+struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
 #if ENABLE(CACHE_PARTITIONING)
-        String m_cachePartition;
+    String m_cachePartition;
 #endif
-    };
+};
 
-    inline bool ResourceRequest::resourcePrioritiesEnabled()
-    {
+inline bool ResourceRequest::resourcePrioritiesEnabled()
+{
 #if PLATFORM(MAC)
     return true;
 #elif PLATFORM(IOS)
@@ -159,7 +157,6 @@ namespace WebCore {
 #elif PLATFORM(WIN)
     return false;
 #endif
-    }
-
+}
 
 } // namespace WebCore

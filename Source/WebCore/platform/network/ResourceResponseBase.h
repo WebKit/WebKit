@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceResponseBase_h
-#define ResourceResponseBase_h
+#pragma once
 
 #include "CacheValidation.h"
 #include "CertificateInfo.h"
@@ -47,10 +46,7 @@ struct CrossThreadResourceResponseData;
 class ResourceResponseBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<ResourceResponse> adopt(std::unique_ptr<CrossThreadResourceResponseData>);
-
-    // Gets a copy of the data suitable for passing to another thread.
-    std::unique_ptr<CrossThreadResourceResponseData> copyData() const;
+    ResourceResponse isolatedCopy() const;
 
     bool isNull() const { return m_isNull; }
     WEBCORE_EXPORT bool isHTTP() const;
@@ -162,6 +158,9 @@ private:
     const ResourceResponse& asResourceResponse() const;
     void parseCacheControlDirectives() const;
     void updateHeaderParsedState(HTTPHeaderName);
+
+    // Gets a copy of the data suitable for passing to another thread.
+    std::unique_ptr<CrossThreadResourceResponseData> copyData() const;
 
 protected:
     bool m_isNull;
@@ -293,5 +292,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ResourceResponseBase_h

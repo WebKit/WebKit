@@ -72,8 +72,6 @@ public:
     {
     }
 
-    ResourceResponse isolatedCopy() const { return *ResourceResponse::adopt(copyData()); }
-
     unsigned memoryUsage() const
     {
         // FIXME: Find some programmatic lighweight way to calculate ResourceResponse and associated classes.
