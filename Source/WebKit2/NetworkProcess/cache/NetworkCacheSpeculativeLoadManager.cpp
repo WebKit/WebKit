@@ -269,28 +269,16 @@ static void dumpHTTPHeadersDiff(const HTTPHeaderMap& headersA, const HTTPHeaderM
 
 #endif
 
-static bool requestsHeadersMatch(const ResourceRequest& a, const ResourceRequest& b)
+static bool requestsHeadersMatch(const ResourceRequest& speculativeValidationRequest, const ResourceRequest& actualRequest)
 {
-    static const HTTPHeaderName headersAllowedToMismatch[] = {
-        HTTPHeaderName::IfMatch,
-        HTTPHeaderName::IfModifiedSince,
-        HTTPHeaderName::IfNoneMatch,
-        HTTPHeaderName::IfRange,
-        HTTPHeaderName::IfUnmodifiedSince,
-        HTTPHeaderName::CacheControl
-    };
+    ASSERT(!actualRequest.isConditional());
+    ResourceRequest speculativeRequest = speculativeValidationRequest;
+    speculativeRequest.makeUnconditional();
 
-    HTTPHeaderMap headersA = a.httpHeaderFields();
-    HTTPHeaderMap headersB = b.httpHeaderFields();
-    for (auto headerName : headersAllowedToMismatch) {
-        headersA.remove(headerName);
-        headersB.remove(headerName);
-    }
-
-    if (headersA != headersB) {
+    if (speculativeRequest.httpHeaderFields() != actualRequest.httpHeaderFields()) {
         LOG(NetworkCacheSpeculativePreloading, "Cannot reuse speculatively validated entry because HTTP headers used for validation do not match");
 #if !LOG_DISABLED
-        dumpHTTPHeadersDiff(headersA, headersB);
+        dumpHTTPHeadersDiff(speculativeRequest.httpHeaderFields(), actualRequest.httpHeaderFields());
 #endif
         return false;
     }

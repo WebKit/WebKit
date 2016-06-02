@@ -1,3 +1,23 @@
+2016-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Speculative revalidated request returns 200 instead of 304
+        https://bugs.webkit.org/show_bug.cgi?id=158256
+
+        Reviewed by Antti Koivisto and Carlos Garcia Campos.
+
+        Already conditional requests coming from WebCore should bypass the
+        SpeculativeLoadManager. This is because the validation is requested
+        by WebCore (usually the memory cache) and not our network cache. As
+        a result, we need to pipe the revalidation response (e.g. 304 status
+        code) back to WebCore instead of resolving it as disk cache level.
+
+        This should fix the /webkit2/WebKitWebResource/response unit test.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::requestsHeadersMatch):
+
 2016-06-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Use more references in ResourceLoader related code
