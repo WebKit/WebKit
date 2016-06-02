@@ -70,13 +70,13 @@ void WebCoreAVFResourceLoader::startLoading()
     // FIXME: Skip Content Security Policy check if the element that inititated this request
     // is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505>.
     CachedResourceRequest request(nsRequest, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, ClientDidNotRequestCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::DisallowCaching));
-
     request.mutableResourceRequest().setPriority(ResourceLoadPriority::Low);
-    if (CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader()) {
+    if (auto* loader = m_parent->player()->cachedResourceLoader())
         m_resource = loader->requestMedia(request);
+
+    if (m_resource)
         m_resource->addClient(this);
-    } else {
-        m_resource = nullptr;
+    else {
         LOG_ERROR("Failed to start load for media at url %s", [[[nsRequest URL] absoluteString] UTF8String]);
         [m_avRequest.get() finishLoadingWithError:0];
     }

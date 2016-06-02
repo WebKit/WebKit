@@ -1,5 +1,23 @@
 2016-06-02  Chris Dumez  <cdumez@apple.com>
 
+        Crash under CachedResource::addClientToSet()
+        https://bugs.webkit.org/show_bug.cgi?id=158310
+        <rdar://problem/23643359>
+
+        Reviewed by Eric Carlson.
+
+        Only call CachedResource::addClient() on the resource returned
+        by CachedResourceLoader::requestMedia() if the resource is
+        non-null. CachedResourceLoader::requestMedia() can return null
+        in some cases so we need to handle this properly.
+
+        No new tests, no known reproduction case.
+
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading):
+
+2016-06-02  Chris Dumez  <cdumez@apple.com>
+
         ScriptExecutionContext::Task constructor should take a NoncopyableFunction<void ()> as parameter
         https://bugs.webkit.org/show_bug.cgi?id=158309
 
