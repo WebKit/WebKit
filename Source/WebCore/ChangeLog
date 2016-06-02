@@ -1,3 +1,22 @@
+2016-06-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Wayland] PlatformDisplayWayland destructor is super crashy
+        https://bugs.webkit.org/show_bug.cgi?id=157973
+
+        Reviewed by Michael Catanzaro.
+
+        EGL registers two at exist callbacks one to finish the display and another one to unload drivers, the one to
+        finish the display happens first. When our destructor is called the _eglFiniDisplay callback has already been
+        called, so we have a valid pointer for an already finished display. Then eglTerminate tries to find the display
+        in the global display list, but fails and for some reason it crashes when trying to return an error.
+        If atexit is called after the global PlatformDisplay constructor, the atexit handler is called before the
+        destructor. The atexit callbacks are called in reverse order, so if we register an atexit handler after the
+        global instace has been created and after EGL has been initialized, we could terminate the EGL display before
+        the EGL atexit handlers and the global PlatformDisplay destructor.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::initializeEGLDisplay):
+
 2016-06-01  Brady Eidson  <beidson@apple.com>
 
         Get rid of StringCapture.
