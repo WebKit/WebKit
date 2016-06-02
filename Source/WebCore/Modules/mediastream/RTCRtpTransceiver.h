@@ -86,6 +86,21 @@ private:
     bool m_stopped { false };
 };
 
+class RtpTransceiverSet {
+public:
+    const Vector<RefPtr<RTCRtpTransceiver>>& list() const { return m_transceivers; }
+    void append(RefPtr<RTCRtpTransceiver>&&);
+
+    const Vector<RefPtr<RTCRtpSender>>& getSenders() const { return m_senders; }
+    const Vector<RefPtr<RTCRtpReceiver>>& getReceivers() const { return m_receivers; }
+
+private:
+    Vector<RefPtr<RTCRtpTransceiver>> m_transceivers;
+
+    Vector<RefPtr<RTCRtpSender>> m_senders;
+    Vector<RefPtr<RTCRtpReceiver>> m_receivers;
+};
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

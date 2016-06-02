@@ -61,7 +61,8 @@ typedef DOMPromise<RTCStatsResponse> StatsPromise;
 
 class PeerConnectionBackendClient {
 public:
-    virtual Vector<RefPtr<RTCRtpSender>> getSenders() const = 0;
+    virtual const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const = 0;
+    virtual const Vector<RefPtr<RTCRtpSender>>& getSenders() const = 0;
     virtual void fireEvent(Event&) = 0;
 
     virtual void setSignalingState(PeerConnectionStates::SignalingState) = 0;

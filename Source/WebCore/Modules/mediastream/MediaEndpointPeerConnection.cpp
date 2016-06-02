@@ -132,7 +132,7 @@ void MediaEndpointPeerConnection::createOfferTask(RTCOfferOptions&, SessionDescr
 
     configurationSnapshot->setSessionVersion(m_sdpSessionVersion++);
 
-    RtpSenderVector senders = m_client->getSenders();
+    RtpSenderVector senders = RtpSenderVector(m_client->getSenders());
 
     // Add media descriptions for senders.
     for (auto& sender : senders) {

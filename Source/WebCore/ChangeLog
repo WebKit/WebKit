@@ -1,3 +1,35 @@
+2016-06-02  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Update RTCPeerConnection.addTrack() to create (or reuse) an RTCRtpTransceiver
+        https://bugs.webkit.org/show_bug.cgi?id=158191
+
+        Reviewed by Eric Carlson.
+
+        Update RTCPeerConnection.addTrack to create an RTCRtpTranscevier, or reuse an existing
+        transceiver that has not been used to send [1].
+
+        A new RtpTransceiverSet type is added that wraps a vector of RTCRtpTransceiver objects
+        and internally maintains two lists for efficient access to RTCRtpSender and RTCRtpReceiver
+        objects.
+
+        [1] https://w3c.github.io/webrtc-pc/archives/20160513/webrtc.html#dom-rtcpeerconnection-addtrack
+
+        Updated existing test: fast/mediastream/RTCPeerConnection-add-removeTrack.html
+
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::removeTrack):
+        (WebCore::RTCPeerConnection::completeAddTransceiver):
+        (WebCore::RTCPeerConnection::close):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        (WebCore::RtpTransceiverSet::append):
+        * Modules/mediastream/RTCRtpTransceiver.h:
+        (WebCore::RtpTransceiverSet::list):
+        (WebCore::RtpTransceiverSet::getSenders):
+        (WebCore::RtpTransceiverSet::getReceivers):
+
 2016-06-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Use more references in ResourceLoader related code

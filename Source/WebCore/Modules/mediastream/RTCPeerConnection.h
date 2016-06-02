@@ -63,9 +63,9 @@ public:
     static RefPtr<RTCPeerConnection> create(ScriptExecutionContext&, const Dictionary& rtcConfiguration, ExceptionCode&);
     ~RTCPeerConnection();
 
-    Vector<RefPtr<RTCRtpSender>> getSenders() const override { return m_senderSet; }
-    Vector<RefPtr<RTCRtpReceiver>> getReceivers() const { return m_receiverSet; }
-    const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const { return m_transceiverSet; }
+    const Vector<RefPtr<RTCRtpSender>>& getSenders() const override { return m_transceiverSet->getSenders(); }
+    const Vector<RefPtr<RTCRtpReceiver>>& getReceivers() const { return m_transceiverSet->getReceivers(); }
+    const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const override { return m_transceiverSet->list(); }
 
     RefPtr<RTCRtpSender> addTrack(Ref<MediaStreamTrack>&&, Vector<MediaStream*>, ExceptionCode&);
     void removeTrack(RTCRtpSender&, ExceptionCode&);
@@ -149,9 +149,7 @@ private:
     PeerConnectionStates::IceGatheringState m_iceGatheringState;
     PeerConnectionStates::IceConnectionState m_iceConnectionState;
 
-    Vector<RefPtr<RTCRtpSender>> m_senderSet;
-    Vector<RefPtr<RTCRtpReceiver>> m_receiverSet;
-    Vector<RefPtr<RTCRtpTransceiver>> m_transceiverSet;
+    std::unique_ptr<RtpTransceiverSet> m_transceiverSet { std::unique_ptr<RtpTransceiverSet>(new RtpTransceiverSet()) };
 
     Vector<RefPtr<RTCDataChannel>> m_dataChannels;
 

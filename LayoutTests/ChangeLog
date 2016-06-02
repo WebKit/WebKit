@@ -1,3 +1,16 @@
+2016-06-02  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Update RTCPeerConnection.addTrack() to create (or reuse) an RTCRtpTransceiver
+        https://bugs.webkit.org/show_bug.cgi?id=158191
+
+        Reviewed by Eric Carlson.
+
+        Extend existing test to verify the created RTCRtpTransceiver object.
+
+        * fast/mediastream/RTCPeerConnection-add-removeTrack-expected.txt:
+        * fast/mediastream/RTCPeerConnection-add-removeTrack.html:
+        Add checks for bad argument lists and verify the created RTCRtpTransceiver.
+
 2016-06-02  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed test gardening.

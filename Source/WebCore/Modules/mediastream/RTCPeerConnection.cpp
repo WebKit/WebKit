@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,7 +113,7 @@ RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, 
         return nullptr;
     }
 
-    for (auto& sender : m_senderSet) {
+    for (auto& sender : m_transceiverSet->getSenders()) {
         if (sender->trackId() == track->id()) {
             // FIXME: Spec says InvalidParameter
             ec = INVALID_MODIFICATION_ERR;
@@ -125,8 +125,36 @@ RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, 
     for (auto stream : streams)
         mediaStreamIds.append(stream->id());
 
-    RefPtr<RTCRtpSender> sender = RTCRtpSender::create(WTFMove(track), WTFMove(mediaStreamIds), *this);
-    m_senderSet.append(sender);
+    RTCRtpSender* sender = nullptr;
+
+    // Reuse an existing sender with the same track kind if it has never been used to send before.
+    for (auto& transceiver : m_transceiverSet->list()) {
+        RTCRtpSender& existingSender = *transceiver->sender();
+        if (existingSender.trackKind() == track->kind() && existingSender.trackId().isNull() && !transceiver->hasSendingDirection()) {
+            existingSender.setTrack(WTFMove(track));
+            existingSender.setMediaStreamIds(WTFMove(mediaStreamIds));
+            transceiver->enableSendingDirection();
+            sender = &existingSender;
+            break;
+        }
+    }
+
+    if (!sender) {
+        String transceiverMid = RTCRtpTransceiver::getNextMid();
+        const String& trackKind = track->kind();
+        String trackId = createCanonicalUUIDString();
+
+        auto newSender = RTCRtpSender::create(WTFMove(track), WTFMove(mediaStreamIds), *this);
+        auto receiver = m_backend->createReceiver(transceiverMid, trackKind, trackId);
+        auto transceiver = RTCRtpTransceiver::create(WTFMove(newSender), WTFMove(receiver));
+
+        // This transceiver is not yet associated with an m-line (null mid), but we need a
+        // provisional mid if the transceiver is used to create an offer.
+        transceiver->setProvisionalMid(transceiverMid);
+
+        sender = transceiver->sender();
+        m_transceiverSet->append(WTFMove(transceiver));
+    }
 
     m_backend->markAsNeedingNegotiation();
 
@@ -140,7 +168,7 @@ void RTCPeerConnection::removeTrack(RTCRtpSender& sender, ExceptionCode& ec)
         return;
     }
 
-    if (!m_senderSet.contains(&sender))
+    if (!m_transceiverSet->getSenders().contains(&sender))
         return;
 
     sender.stop();
@@ -194,7 +222,7 @@ RefPtr<RTCRtpTransceiver> RTCPeerConnection::completeAddTransceiver(Ref<RTCRtpTr
 {
     transceiver->setDirection(static_cast<RTCRtpTransceiver::Direction>(init.direction));
 
-    m_transceiverSet.append(transceiver.copyRef());
+    m_transceiverSet->append(transceiver.copyRef());
     m_backend->markAsNeedingNegotiation();
 
     return WTFMove(transceiver);
@@ -404,7 +432,7 @@ void RTCPeerConnection::close()
     m_iceConnectionState = IceConnectionState::Closed;
     m_signalingState = SignalingState::Closed;
 
-    for (auto& sender : m_senderSet)
+    for (auto& sender : m_transceiverSet->getSenders())
         sender->stop();
 }
 
