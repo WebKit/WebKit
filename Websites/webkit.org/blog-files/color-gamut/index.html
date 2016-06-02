@@ -1,48 +1,139 @@
-<style>
-body {
-    text-align: center;
-}
-.flowers {
-    width: 600px;
-    height: 398px;
-}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Examples of various wide-gamut images</title>
+  <style>
+  body {
+      text-align: center;
+      font-family: -apple-system;
+      -webkit-text-selection: none;
+  }
 
-.rose {
-    width: 500px;
-    height: 500px;
-}
-</style>
+  section > h2 {
+      margin: 10px 0;
+  }
 
-<img class="flowers" src="Flowers-sRGB.jpg">
-<br>
-<p>sRGB</p>
+  section > img {
+      margin: 0 auto 15px auto;
+      display: block;
+  }
 
-<img class="flowers" src="Flowers-ProPhoto.jpg">
-<br>
-<p>ProPhoto</p>
+  section.flowers > img {
+      width: 600px;
+      height: 398px;
+  }
 
-<img class="flowers" src="Flowers-AdobeRGB.jpg">
-<br>
-<p>Adobe RGB</p>
+  section.rose > img {
+      width: 500px;
+      height: 500px;
+  }
 
-<img class="flowers" src="Flowers-oog.jpg">
-<br>
-<p>Out of gamut</p>
+  section > div > div {
+      display: inline-block;
+  }
 
-<img class="rose" src="Rose-sRGB.jpg">
-<br>
-<p>sRGB</p>
+  section > div > div > img {
+      margin: 0 auto 10px auto;
+      display: block;
+  }
 
-<img class="rose" src="Rose-ProPhoto.jpg">
-<br>
-<p>ProPhoto</p>
+  section.flowers > div > div > img {
+      width: 200px;
+      height: 133px;
+  }
 
-<img class="rose" src="Rose-AdobeRGB.jpg">
-<br>
-<p>Adobe RGB</p>
+  section.rose > div > div > img {
+      width: 150px;
+      height: 150px;
+  }
 
-<img class="rose" src="Rose-oog.jpg">
-<br>
-<p>Out of gamut</p>
 
+  </style>
+  <script>
+
+  function init() {
+      var sections = Array.from(document.querySelectorAll("section"));
+      sections.forEach(function (section) {
+          var images = Array.from(section.querySelectorAll("div > div > img"));
+          images.forEach(function (image) {
+              image.addEventListener("click", function (event) {
+                  var main = section.querySelector("img");
+                  main.src = event.target.src;
+                  var info = section.querySelector("p");
+                  var imageType = "";
+                  var suffix = event.target.src.match(/.*\-(\w+)\.jpg/)[1];
+                  switch (suffix) {
+                  case "AdobeRGB":
+                      imageType = "Adobe RGB";
+                      break;
+                  case "oog":
+                      imageType = "Out of sRGB Gamut";
+                      break
+                  default:
+                      imageType = suffix;
+                  }
+                  info.textContent = "Currently showing: " + imageType;
+              }, false);
+          });
+      });
+  }
+
+    window.addEventListener("load", init, false);
+
+  </script>
+</head>
+<body>
+
+    <section class="flowers">
+        <h2>Flowers</h2>
+        <img src="Flowers-sRGB.jpg" alt="Lots of red flowers">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="Flowers-sRGB.jpg" alt="Lots of red flowers in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="Flowers-ProPhoto.jpg" alt="Lots of red flowers in the ProPhoto color space">
+                <span>ProPhoto</span>
+            </div>
+            <div>
+                <img src="Flowers-AdobeRGB.jpg" alt="Lots of red flowers in the Adobe RGB color space">
+                <span>Adobe RGB</span>
+            </div>
+            <div>
+                <img src="Flowers-oog.jpg" alt="Lots of red flowers showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="rose">
+        <h2>Rose</h2>
+        <img src="Rose-sRGB.jpg" alt="A red rose">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="Rose-sRGB.jpg" alt="A red rose in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="Rose-ProPhoto.jpg" alt="A red rose in the ProPhoto color space">
+                <span>ProPhoto</span>
+            </div>
+            <div>
+                <img src="Rose-AdobeRGB.jpg" alt="A red rose in the Adobe RGB color space">
+                <span>Adobe RGB</span>
+            </div>
+            <div>
+                <img src="Rose-oog.jpg" alt="A red rose showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
 

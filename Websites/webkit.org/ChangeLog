@@ -1,5 +1,11 @@
 2016-06-02  Dean Jackson  <dino@apple.com>
 
+        Update the example for wider color gamut images.
+
+        * blog-files/color-gamut/index.html:
+
+2016-06-02  Dean Jackson  <dino@apple.com>
+
         Adding some sample images for a blog post on color.
 
         * blog-files/color-gamut/Flowers-AdobeRGB.jpg: Added.
