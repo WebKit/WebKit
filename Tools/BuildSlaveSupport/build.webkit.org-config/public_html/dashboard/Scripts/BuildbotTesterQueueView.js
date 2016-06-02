@@ -105,7 +105,7 @@ BuildbotTesterQueueView.prototype = {
                     if (failedStep.name === "layout-test") {
                         var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), failedStep.tooManyFailures ? failedStep.failureCount + "\uff0b" : failedStep.failureCount, iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
                         new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
-                    } else if (failedStep.name in ["jscore-test", "webkit-32bit-jsc-test", "webkit-jsc-cloop-test"]) {
+                    } else if (["jscore-test", "webkit-32bit-jsc-test", "webkit-jsc-cloop-test"].indexOf(failedStep.name) >= 0) {
                         var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), failedStep.failureCount, iteration.queue.buildbot.javaScriptCoreTestStdioUrlForIteration(iteration, failedStep.name));
                         new PopoverTracker(status.statusBubbleElement, this._presentPopoverForJavaScriptCoreTestRegressions.bind(this, failedStep.name), iteration);
                     } else {

@@ -118,7 +118,7 @@ BuildbotQueueView.prototype = {
         var content = document.createElement("div");
         content.className = "test-results-popover";
 
-        this._addIterationHeadingToPopover(iteration, content, "javascriptcore test failures", iteration.javaScriptCoreTestStdioUrlForIteration(iteration, testName));
+        this._addIterationHeadingToPopover(iteration, content, "javascriptcore test failures", iteration.queue.buildbot.javaScriptCoreTestStdioUrlForIteration(iteration, testName));
         this._addDividerToPopover(content);
 
         if (!iteration.javaScriptCoreTestResults.regressions) {
@@ -148,7 +148,7 @@ BuildbotQueueView.prototype = {
     _presentPopoverForJavaScriptCoreTestRegressions: function(testName, element, popover, iteration)
     {
         if (iteration.javaScriptCoreTestResults.regressions)
-            var content = this._popoverContentForJavaScriptCoreTestRegressions(iteration);
+            var content = this._popoverContentForJavaScriptCoreTestRegressions(iteration, testName);
         else {
             var content = this._createLoadingIndicator(iteration, "javascriptcore test failures");
             iteration.loadJavaScriptCoreTestResults(testName, function() {

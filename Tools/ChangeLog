@@ -1,3 +1,22 @@
+2016-06-02  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Really display failing JSC stress tests in buildbot dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=158324
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotCombinedQueueView.js:
+        (BuildbotCombinedQueueView.prototype.update): Correctly check for string membership in array.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype._parseData): Correctly check for string membership in array.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._popoverContentForJavaScriptCoreTestRegressions): Correctly check for string
+        membership in array.
+        (BuildbotQueueView.prototype._presentPopoverForJavaScriptCoreTestRegressions): Ensure that the correct URL is
+        generated after the first time.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.appendBuilderQueueStatus): Correctly check for string membership in array.
+
 2016-06-02  Michael Saboff  <msaboff@apple.com>
 
         [iOS]: Some JSC stress tests fail running out of executable memory when the LLInt is disabled
