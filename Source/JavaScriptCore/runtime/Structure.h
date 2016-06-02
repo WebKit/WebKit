@@ -274,13 +274,21 @@ public:
         
     // Will just the prototype chain intercept this property access?
     JS_EXPORT_PRIVATE bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
-        
+    
+    bool hasRareData() const
+    {
+        return isRareData(m_previousOrRareData.get());
+    }
+    
     Structure* previousID() const
     {
         ASSERT(structure()->classInfo() == info());
-        if (hasRareData())
-            return rareData()->previousID();
-        return previous();
+        // This is so written because it's used concurrently. We only load from m_previousOrRareData
+        // once, and this load is guaranteed atomic.
+        JSCell* cell = m_previousOrRareData.get();
+        if (isRareData(cell))
+            return static_cast<StructureRareData*>(cell)->previousID();
+        return static_cast<Structure*>(cell);
     }
     bool transitivelyTransitionedFrom(Structure* structureToFind);
 
@@ -602,12 +610,11 @@ public:
     DEFINE_BITFIELD(bool, didPreventExtensions, DidPreventExtensions, 1, 20);
     DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);
     DEFINE_BITFIELD(bool, staticFunctionsReified, StaticFunctionsReified, 1, 22);
-    DEFINE_BITFIELD(bool, hasRareData, HasRareData, 1, 23);
-    DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 24);
-    DEFINE_BITFIELD(bool, hasCustomGetterSetterProperties, HasCustomGetterSetterProperties, 1, 25);
-    DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 26);
-    DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 27);
-    DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 28);
+    DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 23);
+    DEFINE_BITFIELD(bool, hasCustomGetterSetterProperties, HasCustomGetterSetterProperties, 1, 24);
+    DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 25);
+    DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 26);
+    DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 27);
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -693,11 +700,10 @@ private:
     bool isValid(ExecState*, StructureChain* cachedPrototypeChain) const;
         
     void pin();
-
-    Structure* previous() const
+    
+    bool isRareData(JSCell* cell) const
     {
-        ASSERT(!hasRareData());
-        return static_cast<Structure*>(m_previousOrRareData.get());
+        return cell && cell->structureID() != structureID();
     }
 
     StructureRareData* rareData() const

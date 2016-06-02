@@ -1,3 +1,25 @@
+2016-06-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Structure::previousID() races with Structure::allocateRareData()
+        https://bugs.webkit.org/show_bug.cgi?id=158280
+
+        Reviewed by Mark Lam.
+        
+        The problem is that previousID() would test hasRareData() and then either load the
+        previous Structure from the rare data, or load it directly. allocateRareData() would set
+        the hasRareData() bit separately from moving the Structure pointer into the rare data. So
+        we'd have a race that would cause previousID() to sometimes return the rarae data instead
+        of the previous Structure.
+
+        The fix is to get rid of the hasRareData bit. We can use the structureID of the
+        previousOrRareData cell to determine if it's the previousID or the RareData. This fixes the
+        race and it's probably not any slower.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::allocateRareData):
+        * runtime/Structure.h:
+
 2016-06-01  Michael Saboff  <msaboff@apple.com>
 
         Runaway WebContent process CPU & memory @ foxnews.com
