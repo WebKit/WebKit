@@ -217,8 +217,7 @@ static void registerWithAccessibility()
 #if USE(OS_STATE)
 void WebProcess::registerWithStateDumper()
 {
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    os_state_add_handler(queue, ^(os_state_hints_t hints) {
+    os_state_add_handler(dispatch_get_main_queue(), ^(os_state_hints_t hints) {
 
         @autoreleasepool {
             os_state_data_t os_state = nil;

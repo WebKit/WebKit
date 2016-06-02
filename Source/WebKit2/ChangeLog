@@ -1,3 +1,22 @@
+2016-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebProcess::registerWithStateDumper()
+        https://bugs.webkit.org/show_bug.cgi?id=158304
+        <rdar://problem/25329276>
+
+        Reviewed by Anders Carlsson.
+
+        The issue is that the block in registerWithStateDumper() was executed in
+        a background thread and is iterating over m_pageMap HashMap. The crash
+        occurs when a page gets removed from the m_pageMap HashMap while the
+        block is iterating over this same HashMap in another thread.
+
+        The solution proposed is to execute the registerWithStateDumper()'s
+        block in the main thread.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::registerWithStateDumper):
+
 2016-06-02  Brady Eidson  <beidson@apple.com>
 
         Overhaul cross-thread use of ResourceRequest, ResourceResponse, and ResourceError.
