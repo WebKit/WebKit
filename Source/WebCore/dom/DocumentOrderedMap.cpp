@@ -54,7 +54,9 @@ void DocumentOrderedMap::add(const AtomicStringImpl& key, Element& element, cons
 
     if (!element.isInTreeScope())
         return;
-    Map::AddResult addResult = m_map.add(&key, MapEntry(&element));
+    Map::AddResult addResult = m_map.ensure(&key, [&element] {
+        return MapEntry(&element);
+    });
     MapEntry& entry = addResult.iterator->value;
 
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)

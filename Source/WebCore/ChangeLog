@@ -1,3 +1,16 @@
+2016-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Use HashMap::ensure() in DocumentOrderedMap::add()
+        https://bugs.webkit.org/show_bug.cgi?id=158283
+
+        Reviewed by Ryosuke Niwa.
+
+        Use HashMap::ensure() in DocumentOrderedMap::add() to avoid constructing
+        a MapEntry if the key is already present in the HashMap.
+
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::add):
+
 2016-06-01  Alexey Proskuryakov  <ap@apple.com>
 
         Update QuartzCoreSPI.h for <rdar://problem/26584828>.
