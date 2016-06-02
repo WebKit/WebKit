@@ -1,3 +1,10 @@
+2016-06-01  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix ENABLE(IOS_TOUCH_EVENTS) builds.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::touchEvent):
+
 2016-05-31  Darin Adler  <darin@apple.com>
 
         Audit RenderObject casts and fix problems and style issues found

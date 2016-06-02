@@ -190,7 +190,7 @@ void EventDispatcher::touchEvent(uint64_t pageID, const WebKit::WebTouchEvent& t
 
     if (updateListWasEmpty) {
         RunLoop::main().dispatch([protectedThis = Ref<EventDispatcher>(*this)]() mutable {
-            eventDispatcher->dispatchTouchEvents();
+            protectedThis->dispatchTouchEvents();
         });
     }
 }
