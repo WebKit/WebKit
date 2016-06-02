@@ -331,7 +331,7 @@ void RenderSVGRoot::buildLocalToBorderBoxTransform()
     SVGPoint translate = svgSVGElement().currentTranslate();
     LayoutSize borderAndPadding(borderLeft() + paddingLeft(), borderTop() + paddingTop());
     m_localToBorderBoxTransform = svgSVGElement().viewBoxToViewTransform(contentWidth() / scale, contentHeight() / scale);
-    if (borderAndPadding.isEmpty() && scale == 1 && translate == SVGPoint::zero())
+    if (borderAndPadding.isZero() && scale == 1 && translate == SVGPoint::zero())
         return;
     m_localToBorderBoxTransform = AffineTransform(scale, 0, 0, scale, borderAndPadding.width() + translate.x(), borderAndPadding.height() + translate.y()) * m_localToBorderBoxTransform;
 }
