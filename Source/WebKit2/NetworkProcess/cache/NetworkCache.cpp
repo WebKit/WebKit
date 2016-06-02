@@ -616,10 +616,8 @@ void Cache::dumpContentsToFile()
 
 void Cache::deleteDumpFile()
 {
-    auto queue = WorkQueue::create("com.apple.WebKit.Cache.delete");
-    StringCapture dumpFilePathCapture(dumpFilePath());
-    queue->dispatch([dumpFilePathCapture] {
-        WebCore::deleteFile(dumpFilePathCapture.string());
+    WorkQueue::create("com.apple.WebKit.Cache.delete")->dispatch([path = dumpFilePath().isolatedCopy()] {
+        WebCore::deleteFile(path);
     });
 }
 

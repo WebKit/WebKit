@@ -473,43 +473,34 @@ StorageManager::~StorageManager()
 
 void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes)
 {
-    RefPtr<StorageManager> storageManager(this);
+    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), storageNamespaceID, quotaInBytes]() mutable {
+        ASSERT(!m_sessionStorageNamespaces.contains(storageNamespaceID));
 
-    m_queue->dispatch([storageManager, storageNamespaceID, quotaInBytes] {
-        ASSERT(!storageManager->m_sessionStorageNamespaces.contains(storageNamespaceID));
-
-        storageManager->m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create(quotaInBytes));
+        m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create(quotaInBytes));
     });
 }
 
 void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
 {
-    RefPtr<StorageManager> storageManager(this);
-
-    m_queue->dispatch([storageManager, storageNamespaceID] {
-        ASSERT(storageManager->m_sessionStorageNamespaces.contains(storageNamespaceID));
-        storageManager->m_sessionStorageNamespaces.remove(storageNamespaceID);
+    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), storageNamespaceID] {
+        ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
+        m_sessionStorageNamespaces.remove(storageNamespaceID);
     });
 }
 
 void StorageManager::setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection* allowedConnection)
 {
-    RefPtr<StorageManager> storageManager(this);
-    RefPtr<IPC::Connection> connection(allowedConnection);
+    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), connection = RefPtr<IPC::Connection>(allowedConnection), storageNamespaceID]() mutable {
+        ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
 
-    m_queue->dispatch([storageManager, connection, storageNamespaceID] {
-        ASSERT(storageManager->m_sessionStorageNamespaces.contains(storageNamespaceID));
-
-        storageManager->m_sessionStorageNamespaces.get(storageNamespaceID)->setAllowedConnection(connection.get());
+        m_sessionStorageNamespaces.get(storageNamespaceID)->setAllowedConnection(connection.get());
     });
 }
 
 void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
 {
-    RefPtr<StorageManager> storageManager(this);
-
-    m_queue->dispatch([storageManager, storageNamespaceID, newStorageNamespaceID] {
-        SessionStorageNamespace* sessionStorageNamespace = storageManager->m_sessionStorageNamespaces.get(storageNamespaceID);
+    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), storageNamespaceID, newStorageNamespaceID] {
+        SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
         if (!sessionStorageNamespace) {
             // FIXME: We can get into this situation if someone closes the originating page from within a
             // createNewPage callback. We bail for now, but we should really find a way to keep the session storage alive
@@ -517,7 +508,7 @@ void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, u
             return;
         }
 
-        SessionStorageNamespace* newSessionStorageNamespace = storageManager->m_sessionStorageNamespaces.get(newStorageNamespaceID);
+        SessionStorageNamespace* newSessionStorageNamespace = m_sessionStorageNamespaces.get(newStorageNamespaceID);
         ASSERT(newSessionStorageNamespace);
 
         sessionStorageNamespace->cloneTo(*newSessionStorageNamespace);
@@ -533,23 +524,18 @@ void StorageManager::processDidCloseConnection(WebProcessProxy&, IPC::Connection
 {
     connection.removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 
-    RefPtr<StorageManager> storageManager(this);
-    RefPtr<IPC::Connection> protectedConnection(&connection);
-
-    m_queue->dispatch([storageManager, protectedConnection] {
+    m_queue->dispatch([this, protectedThis = Ref<StorageManager>(*this), connection = Ref<IPC::Connection>(connection)]() mutable {
         Vector<std::pair<RefPtr<IPC::Connection>, uint64_t>> connectionAndStorageMapIDPairsToRemove;
-        auto storageAreasByConnection = storageManager->m_storageAreasByConnection;
-
-        for (auto it = storageAreasByConnection.begin(), end = storageAreasByConnection.end(); it != end; ++it) {
-            if (it->key.first != protectedConnection)
+        for (auto& storageArea : m_storageAreasByConnection) {
+            if (storageArea.key.first != connection.ptr())
                 continue;
 
-            it->value->removeListener(*it->key.first, it->key.second);
-            connectionAndStorageMapIDPairsToRemove.append(it->key);
+            storageArea.value->removeListener(*storageArea.key.first, storageArea.key.second);
+            connectionAndStorageMapIDPairsToRemove.append(storageArea.key);
         }
 
-        for (size_t i = 0; i < connectionAndStorageMapIDPairsToRemove.size(); ++i)
-            storageManager->m_storageAreasByConnection.remove(connectionAndStorageMapIDPairsToRemove[i]);
+        for (auto& pair : connectionAndStorageMapIDPairsToRemove)
+            m_storageAreasByConnection.remove(pair);
     });
 }
 

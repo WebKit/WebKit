@@ -117,15 +117,14 @@ void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
     if (!m_resourceLoadStatisticsEnabled)
         return;
 
-    RefPtr<WebResourceLoadStatisticsStore> self(this);
-    m_statisticsQueue->dispatch([self] {
-        self->coreStore().clear();
+    m_statisticsQueue->dispatch([this, protectedThis = Ref<WebResourceLoadStatisticsStore>(*this)] {
+        coreStore().clear();
 
-        auto decoder = self->createDecoderFromDisk("full_browsing_session");
+        auto decoder = createDecoderFromDisk("full_browsing_session");
         if (!decoder)
             return;
 
-        self->coreStore().readDataFromDecoder(*decoder);
+        coreStore().readDataFromDecoder(*decoder);
     });
 }
 

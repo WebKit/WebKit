@@ -1,3 +1,38 @@
+2016-06-01  Brady Eidson  <beidson@apple.com>
+
+        Modernize lambda usage for all callers of RunLoop::dispatch() (take 2).
+        https://bugs.webkit.org/show_bug.cgi?id=158277
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::deleteDumpFile):
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        (IPC::Connection::removeWorkQueueMessageReceiver):
+        (IPC::Connection::invalidate):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::postConnectionDidCloseOnConnectionWorkQueue):
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::LocalStorageDatabaseTracker):
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createSessionStorageNamespace):
+        (WebKit::StorageManager::destroySessionStorageNamespace):
+        (WebKit::StorageManager::setAllowedSessionStorageNamespaceConnection):
+        (WebKit::StorageManager::cloneSessionStorageNamespace):
+        (WebKit::StorageManager::processDidCloseConnection):
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded):
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+
 2016-06-01  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Regression(r200972): Crash under WebKit::WebPage::selectTextWithGranularityAtPoint()
