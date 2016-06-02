@@ -1061,9 +1061,8 @@ void AudioContext::suspend(Promise&& promise)
 
     lazyInitialize();
 
-    RefPtr<AudioContext> protectedThis(this);
-    m_destinationNode->suspend([protectedThis] {
-        protectedThis->setState(State::Suspended);
+    m_destinationNode->suspend([this, protectedThis = Ref<AudioContext>(*this)] {
+        setState(State::Suspended);
     });
 }
 
@@ -1091,9 +1090,8 @@ void AudioContext::resume(Promise&& promise)
 
     lazyInitialize();
 
-    RefPtr<AudioContext> protectedThis(this);
-    m_destinationNode->resume([protectedThis] {
-        protectedThis->setState(State::Running);
+    m_destinationNode->resume([this, protectedThis = Ref<AudioContext>(*this)] {
+        setState(State::Running);
     });
 }
 
@@ -1113,10 +1111,9 @@ void AudioContext::close(Promise&& promise)
 
     lazyInitialize();
 
-    RefPtr<AudioContext> protectedThis(this);
-    m_destinationNode->close([protectedThis] {
-        protectedThis->setState(State::Closed);
-        protectedThis->uninitialize();
+    m_destinationNode->close([this, protectedThis = Ref<AudioContext>(*this)] {
+        setState(State::Closed);
+        uninitialize();
     });
 }
 
@@ -1134,10 +1131,9 @@ void AudioContext::suspendPlayback()
 
     lazyInitialize();
 
-    RefPtr<AudioContext> protectedThis(this);
-    m_destinationNode->suspend([protectedThis] {
-        bool interrupted = protectedThis->m_mediaSession->state() == PlatformMediaSession::Interrupted;
-        protectedThis->setState(interrupted ? State::Interrupted : State::Suspended);
+    m_destinationNode->suspend([this, protectedThis = Ref<AudioContext>(*this)] {
+        bool interrupted = m_mediaSession->state() == PlatformMediaSession::Interrupted;
+        setState(interrupted ? State::Interrupted : State::Suspended);
     });
 }
 
@@ -1156,9 +1152,8 @@ void AudioContext::mayResumePlayback(bool shouldResume)
 
     lazyInitialize();
 
-    RefPtr<AudioContext> protectedThis(this);
-    m_destinationNode->resume([protectedThis] {
-        protectedThis->setState(State::Running);
+    m_destinationNode->resume([this, protectedThis = Ref<AudioContext>(*this)] {
+        setState(State::Running);
     });
 }
 

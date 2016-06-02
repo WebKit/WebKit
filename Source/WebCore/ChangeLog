@@ -1,3 +1,32 @@
+2016-06-02  Chris Dumez  <cdumez@apple.com>
+
+        ScriptExecutionContext::Task constructor should take a NoncopyableFunction<void ()> as parameter
+        https://bugs.webkit.org/show_bug.cgi?id=158309
+
+        Reviewed by Brady Eidson.
+
+        ScriptExecutionContext::Task constructor should take a NoncopyableFunction<void ()>
+        as parameter for consistency with the other constructor and because this can be
+        called cross-thread.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::suspend):
+        (WebCore::AudioContext::resume):
+        (WebCore::AudioContext::close):
+        (WebCore::AudioContext::suspendPlayback):
+        (WebCore::AudioContext::mayResumePlayback):
+        * Modules/webaudio/AudioDestinationNode.h:
+        (WebCore::AudioDestinationNode::resume):
+        (WebCore::AudioDestinationNode::suspend):
+        (WebCore::AudioDestinationNode::close):
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::resume):
+        (WebCore::DefaultAudioDestinationNode::suspend):
+        (WebCore::DefaultAudioDestinationNode::close):
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::Task::Task):
+
 2016-06-02  Darin Adler  <darin@apple.com>
 
         Fix a couple of mistakes in CSSParserValue memory management

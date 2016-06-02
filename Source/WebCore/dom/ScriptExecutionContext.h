@@ -140,8 +140,8 @@ public:
         {
         }
 
-        Task(std::function<void ()> task)
-            : m_task([task](ScriptExecutionContext&) { task(); })
+        Task(NoncopyableFunction<void ()>&& task)
+            : m_task([task = WTFMove(task)](ScriptExecutionContext&) { task(); })
             , m_isCleanupTask(false)
         {
         }
