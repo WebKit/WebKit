@@ -2866,12 +2866,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 
 - (NSString *)description
 {
-#ifndef NDEBUG
-    CGRect frame = [self accessibilityFrame];
-    return [NSString stringWithFormat:@"Role: (%d) - Text: %@: Value: %@ -- Frame: %f %f %f %f", m_object ? m_object->roleValue() : 0, [self accessibilityLabel], [self accessibilityValue], frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
-#else
     return [NSString stringWithFormat:@"%@: %@", [self class], [self accessibilityLabel]];
-#endif
 }
 
 @end

@@ -1,3 +1,15 @@
+2016-06-01  Chris Fleizach  <cfleizach@apple.com>
+
+        LayoutTest accessibility/ios-simulator/attributed-string-for-range.html failing on ios-simulator debug
+        https://bugs.webkit.org/show_bug.cgi?id=158279
+
+        Reviewed by Alexey Proskuryakov.
+
+        Just use the same description for debug and release. We're not getting any benefit from having two.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper description]):
+
 2016-06-01  Chris Dumez  <cdumez@apple.com>
 
         Use HashMap::ensure() in DocumentOrderedMap::add()
