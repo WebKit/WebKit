@@ -56,7 +56,7 @@ typedef uint64_t ResourceLoadIdentifier;
 
 class WebResourceLoader : public RefCounted<WebResourceLoader>, public IPC::MessageSender {
 public:
-    static Ref<WebResourceLoader> create(PassRefPtr<WebCore::ResourceLoader>);
+    static Ref<WebResourceLoader> create(Ref<WebCore::ResourceLoader>&&);
 
     ~WebResourceLoader();
 
@@ -69,7 +69,7 @@ public:
     bool isAlwaysOnLoggingAllowed() const;
 
 private:
-    WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);
+    WebResourceLoader(Ref<WebCore::ResourceLoader>&&);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() override;

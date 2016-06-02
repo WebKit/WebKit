@@ -1012,17 +1012,17 @@ void CachedResourceLoader::performPostLoadActions()
     platformStrategies()->loaderStrategy()->servePendingRequests();
 }
 
-void CachedResourceLoader::incrementRequestCount(const CachedResource* res)
+void CachedResourceLoader::incrementRequestCount(const CachedResource& resource)
 {
-    if (res->ignoreForRequestCount())
+    if (resource.ignoreForRequestCount())
         return;
 
     ++m_requestCount;
 }
 
-void CachedResourceLoader::decrementRequestCount(const CachedResource* res)
+void CachedResourceLoader::decrementRequestCount(const CachedResource& resource)
 {
-    if (res->ignoreForRequestCount())
+    if (resource.ignoreForRequestCount())
         return;
 
     --m_requestCount;

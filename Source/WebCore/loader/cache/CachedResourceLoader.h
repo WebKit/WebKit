@@ -122,8 +122,8 @@ public:
 
     WEBCORE_EXPORT void garbageCollectDocumentResources();
     
-    void incrementRequestCount(const CachedResource*);
-    void decrementRequestCount(const CachedResource*);
+    void incrementRequestCount(const CachedResource&);
+    void decrementRequestCount(const CachedResource&);
     int requestCount() const { return m_requestCount; }
 
     WEBCORE_EXPORT bool isPreloaded(const String& urlString) const;

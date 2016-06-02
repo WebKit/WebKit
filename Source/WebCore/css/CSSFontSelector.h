@@ -78,7 +78,7 @@ public:
 
     Document* document() const { return m_document; }
 
-    void beginLoadingFontSoon(CachedFont*);
+    void beginLoadingFontSoon(CachedFont&);
 
     FontFaceSet& fontFaceSet();
 

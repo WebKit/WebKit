@@ -44,7 +44,7 @@ class SecurityOrigin;
 
 class SubresourceLoader final : public ResourceLoader {
 public:
-    WEBCORE_EXPORT static RefPtr<SubresourceLoader> create(Frame*, CachedResource*, const ResourceRequest&, const ResourceLoaderOptions&);
+    WEBCORE_EXPORT static RefPtr<SubresourceLoader> create(Frame&, CachedResource&, const ResourceRequest&, const ResourceLoaderOptions&);
 
     virtual ~SubresourceLoader();
 
@@ -60,7 +60,7 @@ public:
 #endif
 
 private:
-    SubresourceLoader(Frame*, CachedResource*, const ResourceLoaderOptions&);
+    SubresourceLoader(Frame&, CachedResource&, const ResourceLoaderOptions&);
 
     bool init(const ResourceRequest&) override;
 
@@ -112,11 +112,11 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
 #endif
     public:
-        RequestCountTracker(CachedResourceLoader&, CachedResource*);
+        RequestCountTracker(CachedResourceLoader&, const CachedResource&);
         ~RequestCountTracker();
     private:
         CachedResourceLoader& m_cachedResourceLoader;
-        CachedResource* m_resource;
+        const CachedResource& m_resource;
     };
 
 #if PLATFORM(IOS)

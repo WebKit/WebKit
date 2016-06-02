@@ -262,7 +262,7 @@ void CSSFontSelector::clearDocument()
     CachedResourceLoader& cachedResourceLoader = m_document->cachedResourceLoader();
     for (auto& fontHandle : m_fontsToBeginLoading) {
         // Balances incrementRequestCount() in beginLoadingFontSoon().
-        cachedResourceLoader.decrementRequestCount(fontHandle.get());
+        cachedResourceLoader.decrementRequestCount(*fontHandle);
     }
     m_fontsToBeginLoading.clear();
 
@@ -273,12 +273,12 @@ void CSSFontSelector::clearDocument()
     m_clients.clear();
 }
 
-void CSSFontSelector::beginLoadingFontSoon(CachedFont* font)
+void CSSFontSelector::beginLoadingFontSoon(CachedFont& font)
 {
     if (!m_document)
         return;
 
-    m_fontsToBeginLoading.append(font);
+    m_fontsToBeginLoading.append(&font);
     // Increment the request count now, in order to prevent didFinishLoad from being dispatched
     // after this font has been requested but before it began loading. Balanced by
     // decrementRequestCount() in beginLoadTimerFired() and in clearDocument().
@@ -298,7 +298,7 @@ void CSSFontSelector::beginLoadTimerFired()
     for (auto& fontHandle : fontsToBeginLoading) {
         fontHandle->beginLoadIfNeeded(cachedResourceLoader);
         // Balances incrementRequestCount() in beginLoadingFontSoon().
-        cachedResourceLoader.decrementRequestCount(fontHandle.get());
+        cachedResourceLoader.decrementRequestCount(*fontHandle);
     }
     // Ensure that if the request count reaches zero, the frame loader will know about it.
     cachedResourceLoader.loadDone(nullptr);

@@ -1,3 +1,25 @@
+2016-06-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Use more references in ResourceLoader related code
+        https://bugs.webkit.org/show_bug.cgi?id=158222
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResource):
+        (WebKit::WebLoaderStrategy::schedulePluginStreamLoad):
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::scheduleInternallyFailedLoad):
+        (WebKit::WebLoaderStrategy::startLocalLoad):
+        (WebKit::WebLoaderStrategy::networkProcessCrashed):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::create):
+        (WebKit::WebResourceLoader::WebResourceLoader):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::start):
+
 2016-06-01  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Notify client immediately if network session doesn't exist for a synchronous XHR load.

@@ -43,7 +43,7 @@ public:
     WebLoaderStrategy();
     ~WebLoaderStrategy() override;
     
-    RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame*, WebCore::CachedResource*, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
+    RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame&, WebCore::CachedResource&, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
     void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) override;
 
     void remove(WebCore::ResourceLoader*) override;
@@ -58,13 +58,13 @@ public:
     void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, bool shouldUseCredentialStorage) override;
 
     WebResourceLoader* webResourceLoaderForIdentifier(ResourceLoadIdentifier identifier) const { return m_webResourceLoaders.get(identifier); }
-    RefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame*, WebCore::NetscapePlugInStreamLoaderClient*, const WebCore::ResourceRequest&);
+    RefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame&, WebCore::NetscapePlugInStreamLoaderClient&, const WebCore::ResourceRequest&);
 
     void networkProcessCrashed();
 
 private:
-    void scheduleLoad(WebCore::ResourceLoader*, WebCore::CachedResource*, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
-    void scheduleInternallyFailedLoad(WebCore::ResourceLoader*);
+    void scheduleLoad(WebCore::ResourceLoader&, WebCore::CachedResource*, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
+    void scheduleInternallyFailedLoad(WebCore::ResourceLoader&);
     void internallyFailedLoadTimerFired();
     void startLocalLoad(WebCore::ResourceLoader&);
 

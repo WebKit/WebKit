@@ -46,13 +46,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<WebResourceLoader> WebResourceLoader::create(PassRefPtr<ResourceLoader> coreLoader)
+Ref<WebResourceLoader> WebResourceLoader::create(Ref<ResourceLoader>&& coreLoader)
 {
-    return adoptRef(*new WebResourceLoader(coreLoader));
+    return adoptRef(*new WebResourceLoader(WTFMove(coreLoader)));
 }
 
-WebResourceLoader::WebResourceLoader(PassRefPtr<WebCore::ResourceLoader> coreLoader)
-    : m_coreLoader(coreLoader)
+WebResourceLoader::WebResourceLoader(Ref<WebCore::ResourceLoader>&& coreLoader)
+    : m_coreLoader(WTFMove(coreLoader))
 {
 }
 

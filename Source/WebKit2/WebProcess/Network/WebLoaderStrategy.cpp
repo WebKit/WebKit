@@ -71,19 +71,19 @@ WebLoaderStrategy::~WebLoaderStrategy()
 {
 }
 
-RefPtr<SubresourceLoader> WebLoaderStrategy::loadResource(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
+RefPtr<SubresourceLoader> WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
-        scheduleLoad(loader.get(), resource, frame->document()->referrerPolicy() == ReferrerPolicy::Default);
+        scheduleLoad(*loader, &resource, frame.document()->referrerPolicy() == ReferrerPolicy::Default);
     return loader;
 }
 
-RefPtr<NetscapePlugInStreamLoader> WebLoaderStrategy::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
+RefPtr<NetscapePlugInStreamLoader> WebLoaderStrategy::schedulePluginStreamLoad(Frame& frame, NetscapePlugInStreamLoaderClient& client, const ResourceRequest& request)
 {
     RefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)
-        scheduleLoad(loader.get(), 0, frame->document()->referrerPolicy() == ReferrerPolicy::Default);
+        scheduleLoad(*loader, 0, frame.document()->referrerPolicy() == ReferrerPolicy::Default);
     return loader;
 }
 
@@ -128,39 +128,37 @@ static std::chrono::milliseconds maximumBufferingTime(CachedResource* resource)
     return 0ms;
 }
 
-void WebLoaderStrategy::scheduleLoad(ResourceLoader* resourceLoader, CachedResource* resource, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResource* resource, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
-    ASSERT(resourceLoader);
-
-    ResourceLoadIdentifier identifier = resourceLoader->identifier();
+    ResourceLoadIdentifier identifier = resourceLoader.identifier();
     ASSERT(identifier);
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     // If the DocumentLoader schedules this as an archive resource load,
     // then we should remember the ResourceLoader in our records but not schedule it in the NetworkProcess.
-    if (resourceLoader->documentLoader()->scheduleArchiveLoad(resourceLoader, resourceLoader->request())) {
-        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as an archive resource.", resourceLoader->url().string().utf8().data());
+    if (resourceLoader.documentLoader()->scheduleArchiveLoad(resourceLoader, resourceLoader.request())) {
+        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as an archive resource.", resourceLoader.url().string().utf8().data());
         m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
         return;
     }
 #endif
 
-    if (resourceLoader->documentLoader()->applicationCacheHost()->maybeLoadResource(resourceLoader, resourceLoader->request(), resourceLoader->request().url())) {
-        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be loaded from application cache.", resourceLoader->url().string().utf8().data());
+    if (resourceLoader.documentLoader()->applicationCacheHost()->maybeLoadResource(resourceLoader, resourceLoader.request(), resourceLoader.request().url())) {
+        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be loaded from application cache.", resourceLoader.url().string().utf8().data());
         m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
         return;
     }
 
-    if (resourceLoader->request().url().protocolIsData()) {
-        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be loaded as data.", resourceLoader->url().string().utf8().data());
-        startLocalLoad(*resourceLoader);
+    if (resourceLoader.request().url().protocolIsData()) {
+        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be loaded as data.", resourceLoader.url().string().utf8().data());
+        startLocalLoad(resourceLoader);
         return;
     }
 
 #if USE(QUICK_LOOK)
-    if (resourceLoader->request().url().protocolIs(QLPreviewProtocol())) {
-        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a QuickLook resource.", resourceLoader->url().string().utf8().data());
-        startLocalLoad(*resourceLoader);
+    if (resourceLoader.request().url().protocolIs(QLPreviewProtocol())) {
+        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a QuickLook resource.", resourceLoader.url().string().utf8().data());
+        startLocalLoad(resourceLoader);
         return;
     }
 #endif
@@ -168,22 +166,22 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader* resourceLoader, CachedResou
 #if USE(SOUP)
     // For apps that call g_resource_load in a web extension.
     // https://blogs.gnome.org/alexl/2012/01/26/resources-in-glib/
-    if (resourceLoader->request().url().protocolIs("resource")) {
-        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a GResource.", resourceLoader->url().string().utf8().data());
-        startLocalLoad(*resourceLoader);
+    if (resourceLoader.request().url().protocolIs("resource")) {
+        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a GResource.", resourceLoader.url().string().utf8().data());
+        startLocalLoad(resourceLoader);
         return;
     }
 #endif
 
-    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader->url().string().latin1().data(), static_cast<int>(resourceLoader->request().priority()));
+    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader.url().string().latin1().data(), static_cast<int>(resourceLoader.request().priority()));
 
-    ContentSniffingPolicy contentSniffingPolicy = resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent;
-    StoredCredentials allowStoredCredentials = resourceLoader->shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+    ContentSniffingPolicy contentSniffingPolicy = resourceLoader.shouldSniffContent() ? SniffContent : DoNotSniffContent;
+    StoredCredentials allowStoredCredentials = resourceLoader.shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
 
     // FIXME: Some entities in WebCore use WebCore's "EmptyFrameLoaderClient" instead of having a proper WebFrameLoaderClient.
     // EmptyFrameLoaderClient shouldn't exist and everything should be using a WebFrameLoaderClient,
     // but in the meantime we have to make sure not to mis-cast.
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader->frameLoader()->client());
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client());
     WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
     WebPage* webPage = webFrame ? webFrame->page() : 0;
 
@@ -192,20 +190,20 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader* resourceLoader, CachedResou
     loadParameters.webPageID = webPage ? webPage->pageID() : 0;
     loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
     loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
-    loadParameters.request = resourceLoader->request();
+    loadParameters.request = resourceLoader.request();
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.allowStoredCredentials = allowStoredCredentials;
     // If there is no WebFrame then this resource cannot be authenticated with the client.
-    loadParameters.clientCredentialPolicy = (webFrame && webPage && resourceLoader->isAllowedToAskUserForCredentials()) ? AskClientForAllCredentials : DoNotAskClientForAnyCredentials;
+    loadParameters.clientCredentialPolicy = (webFrame && webPage && resourceLoader.isAllowedToAskUserForCredentials()) ? AskClientForAllCredentials : DoNotAskClientForAnyCredentials;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
-    loadParameters.defersLoading = resourceLoader->defersLoading();
-    loadParameters.needsCertificateInfo = resourceLoader->shouldIncludeCertificateInfo();
+    loadParameters.defersLoading = resourceLoader.defersLoading();
+    loadParameters.needsCertificateInfo = resourceLoader.shouldIncludeCertificateInfo();
     loadParameters.maximumBufferingTime = maximumBufferingTime(resource);
 
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials);
 
     if (!WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
-        WEBLOADERSTRATEGY_LOG_ALWAYS_ERROR("WebLoaderStrategy::scheduleLoad: Unable to schedule resource with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu", static_cast<int>(resourceLoader->request().priority()), static_cast<unsigned long long>(loadParameters.webPageID), static_cast<unsigned long long>(loadParameters.webFrameID));
+        WEBLOADERSTRATEGY_LOG_ALWAYS_ERROR("WebLoaderStrategy::scheduleLoad: Unable to schedule resource with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu", static_cast<int>(resourceLoader.request().priority()), static_cast<unsigned long long>(loadParameters.webPageID), static_cast<unsigned long long>(loadParameters.webFrameID));
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.
         scheduleInternallyFailedLoad(resourceLoader);
@@ -213,13 +211,13 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader* resourceLoader, CachedResou
     }
 
     auto webResourceLoader = WebResourceLoader::create(resourceLoader);
-    WEBLOADERSTRATEGY_LOG_ALWAYS("WebLoaderStrategy::scheduleLoad: Resource will be scheduled with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu, WebResourceLoader = %p", static_cast<int>(resourceLoader->request().priority()), static_cast<unsigned long long>(loadParameters.webPageID), static_cast<unsigned long long>(loadParameters.webFrameID), webResourceLoader.ptr());
+    WEBLOADERSTRATEGY_LOG_ALWAYS("WebLoaderStrategy::scheduleLoad: Resource will be scheduled with the NetworkProcess with priority = %d, pageID = %llu, frameID = %llu, WebResourceLoader = %p", static_cast<int>(resourceLoader.request().priority()), static_cast<unsigned long long>(loadParameters.webPageID), static_cast<unsigned long long>(loadParameters.webFrameID), webResourceLoader.ptr());
     m_webResourceLoaders.set(identifier, WTFMove(webResourceLoader));
 }
 
-void WebLoaderStrategy::scheduleInternallyFailedLoad(WebCore::ResourceLoader* resourceLoader)
+void WebLoaderStrategy::scheduleInternallyFailedLoad(WebCore::ResourceLoader& resourceLoader)
 {
-    m_internallyFailedResourceLoaders.add(resourceLoader);
+    m_internallyFailedResourceLoaders.add(&resourceLoader);
     m_internallyFailedLoadTimer.startOneShot(0);
 }
 
@@ -235,7 +233,7 @@ void WebLoaderStrategy::internallyFailedLoadTimerFired()
 void WebLoaderStrategy::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
 {
     resourceLoader.start();
-    m_webResourceLoaders.set(resourceLoader.identifier(), WebResourceLoader::create(&resourceLoader));
+    m_webResourceLoaders.set(resourceLoader.identifier(), WebResourceLoader::create(resourceLoader));
 }
 
 void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
@@ -296,9 +294,8 @@ void WebLoaderStrategy::resumePendingRequests()
 
 void WebLoaderStrategy::networkProcessCrashed()
 {
-    HashMap<unsigned long, RefPtr<WebResourceLoader>>::iterator end = m_webResourceLoaders.end();
-    for (HashMap<unsigned long, RefPtr<WebResourceLoader>>::iterator i = m_webResourceLoaders.begin(); i != end; ++i)
-        scheduleInternallyFailedLoad(i->value.get()->resourceLoader());
+    for (auto& loader : m_webResourceLoaders)
+        scheduleInternallyFailedLoad(*loader.value->resourceLoader());
 
     m_webResourceLoaders.clear();
 }

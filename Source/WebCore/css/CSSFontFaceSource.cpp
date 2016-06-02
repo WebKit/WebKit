@@ -124,7 +124,8 @@ void CSSFontFaceSource::load(CSSFontSelector& fontSelector)
 {
     setStatus(Status::Loading);
 
-    fontSelector.beginLoadingFontSoon(m_font.get());
+    ASSERT(m_font);
+    fontSelector.beginLoadingFontSoon(*m_font);
 }
 
 RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings)

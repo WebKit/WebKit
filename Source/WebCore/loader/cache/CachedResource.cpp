@@ -215,14 +215,15 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
         failBeforeStarting();
         return;
     }
+    Frame& frame = *cachedResourceLoader.frame();
 
     // Prevent new loads if we are in the PageCache or being added to the PageCache.
-    if (cachedResourceLoader.frame()->page() && cachedResourceLoader.frame()->page()->inPageCache()) {
+    if (frame.page() && frame.page()->inPageCache()) {
         failBeforeStarting();
         return;
     }
 
-    FrameLoader& frameLoader = cachedResourceLoader.frame()->loader();
+    FrameLoader& frameLoader = frame.loader();
     if (options.securityCheck() == DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
         failBeforeStarting();
         return;
@@ -236,7 +237,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
         // When QuickLook is invoked to convert a document, it returns a unique URL in the
         // NSURLReponse for the main document. To make safeQLURLForDocumentURLAndResourceURL()
         // work, we need to use the QL URL not the original URL.
-        const URL& documentURL = cachedResourceLoader.frame() ? cachedResourceLoader.frame()->loader().documentLoader()->response().url() : cachedResourceLoader.document()->url();
+        const URL& documentURL = frameLoader.documentLoader()->response().url();
         m_resourceRequest.setURL(safeQLURLForDocumentURLAndResourceURL(documentURL, url()));
     }
 #endif
@@ -280,7 +281,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
         m_fragmentIdentifierForRequest = String();
     }
 
-    m_loader = platformStrategies()->loaderStrategy()->loadResource(cachedResourceLoader.frame(), this, request, options);
+    m_loader = platformStrategies()->loaderStrategy()->loadResource(frame, *this, request, options);
     if (!m_loader) {
         failBeforeStarting();
         return;

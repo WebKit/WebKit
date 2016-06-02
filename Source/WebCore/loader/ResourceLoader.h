@@ -36,6 +36,10 @@
 #include "ResourceResponse.h"
 #include <wtf/Forward.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "ResourceLoadInfo.h"
+#endif
+
 namespace WTF {
 class SchedulePair;
 }
@@ -50,10 +54,6 @@ class URL;
 
 #if USE(QUICK_LOOK)
 class QuickLookHandle;
-#endif
-
-#if ENABLE(CONTENT_EXTENSIONS)
-enum class ResourceType : uint16_t;
 #endif
 
 class ResourceLoader : public RefCounted<ResourceLoader>, protected ResourceHandleClient {
@@ -93,7 +93,7 @@ public:
     unsigned long identifier() const { return m_identifier; }
 
     virtual void releaseResources();
-    const ResourceResponse& response() const;
+    const ResourceResponse& response() const { return m_response; }
 
     SharedBuffer* resourceData() const { return m_resourceData.get(); }
     void clearResourceData();
@@ -149,7 +149,7 @@ public:
     WEBCORE_EXPORT bool isAlwaysOnLoggingAllowed() const;
 
 protected:
-    ResourceLoader(Frame*, ResourceLoaderOptions);
+    ResourceLoader(Frame&, ResourceLoaderOptions);
 
     void didFinishLoadingOnePart(double finishTime);
     void cleanupForError(const ResourceError&);
@@ -214,10 +214,10 @@ private:
     ResourceRequest m_originalRequest; // Before redirects.
     RefPtr<SharedBuffer> m_resourceData;
     
-    unsigned long m_identifier;
+    unsigned long m_identifier { 0 };
 
-    bool m_reachedTerminalState;
-    bool m_notifiedLoadComplete;
+    bool m_reachedTerminalState { false };
+    bool m_notifiedLoadComplete { false };
 
     enum CancellationStatus {
         NotCancelled,
@@ -225,23 +225,18 @@ private:
         Cancelled,
         FinishedCancel
     };
-    CancellationStatus m_cancellationStatus;
+    CancellationStatus m_cancellationStatus { NotCancelled };
 
     bool m_defersLoading;
     ResourceRequest m_deferredRequest;
     ResourceLoaderOptions m_options;
-    bool m_isQuickLookResource;
+    bool m_isQuickLookResource { false };
 
 #if ENABLE(CONTENT_EXTENSIONS)
 protected:
-    ResourceType m_resourceType;
+    ResourceType m_resourceType { ResourceType::Invalid };
 #endif
 };
-
-inline const ResourceResponse& ResourceLoader::response() const
-{
-    return m_response;
-}
 
 }
 

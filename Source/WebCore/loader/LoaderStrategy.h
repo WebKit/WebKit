@@ -48,7 +48,7 @@ class URL;
 
 class WEBCORE_EXPORT LoaderStrategy {
 public:
-    virtual RefPtr<SubresourceLoader> loadResource(Frame*, CachedResource*, const ResourceRequest&, const ResourceLoaderOptions&) = 0;
+    virtual RefPtr<SubresourceLoader> loadResource(Frame&, CachedResource&, const ResourceRequest&, const ResourceLoaderOptions&) = 0;
     virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data) = 0;
 
     virtual void remove(ResourceLoader*) = 0;

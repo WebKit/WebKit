@@ -290,7 +290,7 @@ void WebNetscapePluginStream::start()
     ASSERT(!m_frameLoader);
     ASSERT(!m_loader);
 
-    m_loader = webResourceLoadScheduler().schedulePluginStreamLoad(core([m_pluginView.get() webFrame]), this, m_request.get());
+    m_loader = webResourceLoadScheduler().schedulePluginStreamLoad(*core([m_pluginView.get() webFrame]), *this, m_request.get());
 }
 
 void WebNetscapePluginStream::stop()

@@ -92,7 +92,7 @@ WebResourceLoadScheduler::~WebResourceLoadScheduler()
 {
 }
 
-RefPtr<SubresourceLoader> WebResourceLoadScheduler::loadResource(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
+RefPtr<SubresourceLoader> WebResourceLoadScheduler::loadResource(Frame& frame, CachedResource& resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
@@ -114,7 +114,7 @@ void WebResourceLoadScheduler::loadResourceSynchronously(NetworkingContext* cont
     ResourceHandle::loadResourceSynchronously(context, request, storedCredentials, error, response, data);
 }
 
-RefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
+RefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginStreamLoad(Frame& frame, NetscapePlugInStreamLoaderClient& client, const ResourceRequest& request)
 {
     RefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)

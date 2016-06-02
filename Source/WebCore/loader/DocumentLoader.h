@@ -160,7 +160,7 @@ namespace WebCore {
         PassRefPtr<Archive> popArchiveForSubframe(const String& frameName, const URL&);
         WEBCORE_EXPORT SharedBuffer* parsedArchiveData() const;
 
-        WEBCORE_EXPORT bool scheduleArchiveLoad(ResourceLoader*, const ResourceRequest&);
+        WEBCORE_EXPORT bool scheduleArchiveLoad(ResourceLoader&, const ResourceRequest&);
 #endif
         void scheduleSubstituteResourceLoad(ResourceLoader&, SubstituteResource&);
 

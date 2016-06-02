@@ -124,7 +124,7 @@ namespace WebCore {
         void finishedLoadingMainResource();
         void failedLoadingMainResource();
 
-        WEBCORE_EXPORT bool maybeLoadResource(ResourceLoader*, const ResourceRequest&, const URL& originalURL);
+        WEBCORE_EXPORT bool maybeLoadResource(ResourceLoader&, const ResourceRequest&, const URL& originalURL);
         WEBCORE_EXPORT bool maybeLoadFallbackForRedirect(ResourceLoader*, ResourceRequest&, const ResourceResponse&);
         WEBCORE_EXPORT bool maybeLoadFallbackForResponse(ResourceLoader*, const ResourceResponse&);
         WEBCORE_EXPORT bool maybeLoadFallbackForError(ResourceLoader*, const ResourceError&);

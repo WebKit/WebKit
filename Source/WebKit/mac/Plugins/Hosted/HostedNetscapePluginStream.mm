@@ -223,7 +223,7 @@ void HostedNetscapePluginStream::start()
     ASSERT(!m_frameLoader);
     ASSERT(!m_loader);
 
-    m_loader = webResourceLoadScheduler().schedulePluginStreamLoad(core([m_instance->pluginView() webFrame]), this, m_request.get());
+    m_loader = webResourceLoadScheduler().schedulePluginStreamLoad(*core([m_instance->pluginView() webFrame]), *this, m_request.get());
 }
 
 void HostedNetscapePluginStream::stop()

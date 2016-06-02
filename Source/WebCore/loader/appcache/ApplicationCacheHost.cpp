@@ -166,7 +166,7 @@ void ApplicationCacheHost::finishedLoadingMainResource()
         group->finishedLoadingMainResource(&m_documentLoader);
 }
 
-bool ApplicationCacheHost::maybeLoadResource(ResourceLoader* loader, const ResourceRequest& request, const URL& originalURL)
+bool ApplicationCacheHost::maybeLoadResource(ResourceLoader& loader, const ResourceRequest& request, const URL& originalURL)
 {
     if (!isApplicationCacheEnabled() && !isApplicationCacheBlockedForRequest(request))
         return false;
@@ -178,7 +178,7 @@ bool ApplicationCacheHost::maybeLoadResource(ResourceLoader* loader, const Resou
     if (!shouldLoadResourceFromApplicationCache(request, resource))
         return false;
 
-    m_documentLoader.scheduleSubstituteResourceLoad(*loader, *resource);
+    m_documentLoader.scheduleSubstituteResourceLoad(loader, *resource);
     return true;
 }
 
