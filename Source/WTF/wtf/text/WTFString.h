@@ -690,25 +690,6 @@ private:
     const char* m_characters;
 };
 
-// For thread-safe lambda capture:
-// StringCapture stringCapture(string);
-// auto lambdaThatRunsInOtherThread = [stringCapture] { String string = stringCapture.string(); ... }
-// FIXME: Remove when we can use C++14 initialized lambda capture: [string = string.isolatedCopy()].
-class StringCapture {
-public:
-    StringCapture() { }
-    StringCapture(const String& string) : m_string(string) { }
-    explicit StringCapture(String&& string) : m_string(string) { }
-    StringCapture(const StringCapture& other) : m_string(other.m_string.isolatedCopy()) { }
-    const String& string() const { return m_string; }
-    String releaseString() { return WTFMove(m_string); }
-
-    void operator=(const StringCapture& other) { m_string = other.m_string.isolatedCopy(); }
-
-private:
-    String m_string;
-};
-
 // Shared global empty string.
 WTF_EXPORT_STRING_API const String& emptyString();
 
@@ -758,7 +739,6 @@ using WTF::isAllSpecialCharacters;
 using WTF::isSpaceOrNewline;
 using WTF::reverseFind;
 using WTF::ASCIILiteral;
-using WTF::StringCapture;
 
 #include <wtf/text/AtomicString.h>
 

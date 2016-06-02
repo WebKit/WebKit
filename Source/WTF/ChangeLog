@@ -1,3 +1,16 @@
+2016-06-01  Brady Eidson  <beidson@apple.com>
+
+        Get rid of StringCapture.
+        https://bugs.webkit.org/show_bug.cgi?id=158285
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/WTFString.h:
+        (WTF::StringCapture::StringCapture): Deleted.
+        (WTF::StringCapture::string): Deleted.
+        (WTF::StringCapture::releaseString): Deleted.
+        (WTF::StringCapture::operator=): Deleted.
+
 2016-06-01  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Some setters for components of Date do not timeClip() their result

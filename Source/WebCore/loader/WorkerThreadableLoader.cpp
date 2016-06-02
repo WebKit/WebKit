@@ -90,28 +90,23 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     , m_loaderProxy(loaderProxy)
     , m_taskMode(taskMode.isolatedCopy())
 {
-    auto* requestData = request.copyData().release();
-    auto* optionsCopy = options.isolatedCopy().release();
-
     ASSERT(securityOrigin);
     ASSERT(contentSecurityPolicy);
-    auto* contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(*securityOrigin).release();
+
+    auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(*securityOrigin);
     contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
 
-    StringCapture capturedOutgoingReferrer(outgoingReferrer);
-    m_loaderProxy.postTaskToLoader([this, requestData, optionsCopy, contentSecurityPolicyCopy, capturedOutgoingReferrer](ScriptExecutionContext& context) {
+    m_loaderProxy.postTaskToLoader([this, requestData = request.copyData(), options = options.isolatedCopy(), contentSecurityPolicyCopy = WTFMove(contentSecurityPolicyCopy), outgoingReferrer = outgoingReferrer.isolatedCopy()](ScriptExecutionContext& context) mutable {
         ASSERT(isMainThread());
         Document& document = downcast<Document>(context);
 
-        auto request = ResourceRequest::adopt(std::unique_ptr<CrossThreadResourceRequestData>(requestData));
-        request->setHTTPReferrer(capturedOutgoingReferrer.string());
-
-        auto options = std::unique_ptr<ThreadableLoaderOptions>(optionsCopy);
+        auto request = ResourceRequest::adopt(WTFMove(requestData));
+        request->setHTTPReferrer(outgoingReferrer);
 
         // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
         // will return a 0 value. Either this should return 0 or the other code path should do a callback with
         // a failure.
-        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, *request, *options, std::unique_ptr<ContentSecurityPolicy>(contentSecurityPolicyCopy));
+        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, *request, *options, WTFMove(contentSecurityPolicyCopy));
         ASSERT(m_mainThreadLoader || m_loadingFinished);
     });
 }

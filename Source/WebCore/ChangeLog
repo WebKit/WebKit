@@ -1,3 +1,36 @@
+2016-06-01  Brady Eidson  <beidson@apple.com>
+
+        Get rid of StringCapture.
+        https://bugs.webkit.org/show_bug.cgi?id=158285
+
+        Reviewed by Chris Dumez.
+
+        No new tests (Refactor, no behavior change).
+
+        * dom/Document.cpp:
+        (WebCore::Document::addConsoleMessage):
+        (WebCore::Document::addMessage):
+        
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask):
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::installContentFilterUnblockHandler):
+        
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::setExternalPlayback):
+        
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::addConsoleMessage):
+        (WebCore::WorkerGlobalScope::addMessage):
+        
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postExceptionToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postConsoleMessageToWorkerObject):
+
 2016-05-31  Darin Adler  <darin@apple.com>
 
         Audit RenderObject casts and fix problems and style issues found
