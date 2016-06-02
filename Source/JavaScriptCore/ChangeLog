@@ -1,5 +1,48 @@
 2016-06-02  Michael Saboff  <msaboff@apple.com>
 
+        REGRESSION(r200694): %ThrowTypeError% is not unique
+        https://bugs.webkit.org/show_bug.cgi?id=158231
+
+        Reviewed by Joseph Pecoraro.
+
+        The ES6 standard in section 9.2.7.1 states that %ThrowTypeError% is unique.  This
+        change reverts the handling of TypeError before r200694 and then rolls in
+        throwTypeErrorGetterSetter() with the renamed throwTypeErrorArgumentsCalleeAndCallerGetterSetter().
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::getOwnPropertySlot):
+        (JSC::ClonedArguments::materializeSpecials):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::finishCreation):
+        (JSC::JSBoundFunction::visitChildren):
+        * runtime/JSFunction.cpp:
+        (JSC::getThrowTypeErrorGetterSetter):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::regExpProtoSymbolReplaceFunction):
+        (JSC::JSGlobalObject::regExpProtoGlobalGetter):
+        (JSC::JSGlobalObject::regExpProtoUnicodeGetter):
+        (JSC::JSGlobalObject::throwTypeErrorArgumentsCalleeAndCallerGetterSetter):
+        (JSC::JSGlobalObject::moduleLoader):
+        (JSC::JSGlobalObject::throwTypeErrorGetterSetter): Deleted.
+        (JSC::JSGlobalObject::throwTypeErrorCalleeAndCallerGetterSetter): Deleted.
+        (JSC::JSGlobalObject::throwTypeErrorArgumentsAndCallerInStrictModeGetterSetter): Deleted.
+        (JSC::JSGlobalObject::throwTypeErrorArgumentsAndCallerInClassContextGetterSetter): Deleted.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncThrowTypeError):
+        (JSC::globalFuncThrowTypeErrorArgumentsCalleeAndCaller):
+        (JSC::globalFuncThrowTypeErrorCalleeAndCaller): Deleted.
+        (JSC::globalFuncThrowTypeErrorArgumentsAndCallerInStrictMode): Deleted.
+        (JSC::globalFuncThrowTypeErrorArgumentsAndCallerInClassContext): Deleted.
+        * runtime/JSGlobalObjectFunctions.h:
+        * tests/stress/reflect-set.js:
+
+2016-06-02  Michael Saboff  <msaboff@apple.com>
+
         [iOS]: Some JSC stress tests fail running out of executable memory when the LLInt is disabled
         https://bugs.webkit.org/show_bug.cgi?id=158317
 

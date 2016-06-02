@@ -1,3 +1,36 @@
+2016-06-02  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r200694): %ThrowTypeError% is not unique
+        https://bugs.webkit.org/show_bug.cgi?id=158231
+
+        Reviewed by Joseph Pecoraro.
+
+        Rebased tests for the new TypeError messages.
+        Added a new test, throw-type-error-is-unique.html.
+
+        * inspector/runtime/getProperties-expected.txt:
+        * js/basic-strict-mode-expected.txt:
+        * js/caller-property-expected.txt:
+        * js/class-method-and-constructor-properties-expected.txt:
+        * js/script-tests/caller-property.js:
+        (strictCaller):
+        (strictTailCaller):
+        * js/script-tests/class-method-and-constructor-properties.js:
+        (F.prototype.getElement):
+        (F):
+        (G.prototype.get item):
+        (G):
+        (H.prototype.arguments):
+        (H):
+        * js/script-tests/throw-type-error-is-unique.js: Added.
+        (ThrowTypeErrorSource):
+        (ThrowTypeErrorSource.prototype.checkTypeErrorFunctions):
+        (A):
+        (strictArguments):
+        (test):
+        * js/throw-type-error-is-unique-expected.txt: Added.
+        * js/throw-type-error-is-unique.html: Added.
+
 2016-06-02  Daniel Bates  <dabates@apple.com>
 
         Fix a couple of mistakes in CSSParserValue memory management

@@ -7,25 +7,25 @@ PASS childHasCallerWhenExecutingGlobalCode is false
 PASS childHasCallerWhenCalledWithoutParent is false
 PASS childHasCallerWhenCalledFromWithinParent is true
 PASS nonStrictCaller(nonStrictCallee) is nonStrictCaller
-PASS nonStrictCaller(strictCallee) threw exception TypeError: 'caller' and 'arguments' cannot be accessed in strict mode..
+PASS nonStrictCaller(strictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
 PASS strictCaller(nonStrictCallee) threw exception TypeError: Function.caller used to retrieve strict caller.
-PASS strictCaller(strictCallee) threw exception TypeError: 'caller' and 'arguments' cannot be accessed in strict mode..
+PASS strictCaller(strictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
 PASS strictTailCaller(nonStrictCallee) is null
-PASS strictTailCaller(strictCallee) threw exception TypeError: 'caller' and 'arguments' cannot be accessed in strict mode..
+PASS strictTailCaller(strictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
 PASS nonStrictCaller(boundNonStrictCallee) is nonStrictCaller
-PASS nonStrictCaller(boundStrictCallee) threw exception TypeError: 'caller' and 'arguments' cannot be accessed in strict mode..
+PASS nonStrictCaller(boundStrictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
 PASS strictCaller(boundNonStrictCallee) threw exception TypeError: Function.caller used to retrieve strict caller.
-PASS strictCaller(boundStrictCallee) threw exception TypeError: 'caller' and 'arguments' cannot be accessed in strict mode..
+PASS strictCaller(boundStrictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
 PASS strictTailCaller(boundNonStrictCallee) is null
-PASS strictTailCaller(boundStrictCallee) threw exception TypeError: 'caller' and 'arguments' cannot be accessed in strict mode..
+PASS strictTailCaller(boundStrictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
 PASS nonStrictGetter(nonStrictAccessor) is nonStrictGetter
 PASS nonStrictSetter(nonStrictAccessor) is true
-PASS nonStrictGetter(strictAccessor) threw exception TypeError: 'caller' and 'arguments' cannot be accessed in strict mode..
-PASS nonStrictSetter(strictAccessor) threw exception TypeError: 'caller' and 'arguments' cannot be accessed in strict mode..
+PASS nonStrictGetter(strictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
+PASS nonStrictSetter(strictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
 PASS strictGetter(nonStrictAccessor) threw exception TypeError: Function.caller used to retrieve strict caller.
 PASS strictSetter(nonStrictAccessor) threw exception TypeError: Function.caller used to retrieve strict caller.
-PASS strictGetter(strictAccessor) threw exception TypeError: 'caller' and 'arguments' cannot be accessed in strict mode..
-PASS strictSetter(strictAccessor) threw exception TypeError: 'caller' and 'arguments' cannot be accessed in strict mode..
+PASS strictGetter(strictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
+PASS strictSetter(strictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
 PASS successfullyParsed is true
 
 TEST COMPLETE

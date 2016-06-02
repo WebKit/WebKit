@@ -3,28 +3,28 @@ Tests for ES6 class method and constructor properties
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS (new A()).constructor.caller:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new A()).constructor.arguments:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new B()).constructor.caller:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new B()).constructor.arguments:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new C()).constructor.caller:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new C()).constructor.arguments:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new D()).constructor.caller:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new D()).constructor.arguments:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new E()).getItem.caller:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new E()).getItem.arguments:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new F()).getItem.caller:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new F()).getItem.arguments:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new F()).getElement.caller:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new F()).getElement.arguments:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
+PASS (new A()).constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new A()).constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new B()).constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new B()).constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new C()).constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new C()).constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new D()).constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new D()).constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new E()).getItem.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new E()).getItem.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new F()).getItem.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new F()).getItem.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new F()).getElement.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new F()).getElement.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
 PASS (new G()).item.caller:::undefined
 PASS (new G()).item.arguments:::undefined
-PASS H.caller:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS H.arguments:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
+PASS H.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS H.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
 PASS (new H()).caller():::"value"
 PASS (new H()).arguments():::"value"
-PASS (new H()).caller.caller:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
-PASS (new H()).caller.arguments:::TypeError: 'caller' and 'arguments' cannot be accessed in class context.
+PASS (new H()).caller.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+PASS (new H()).caller.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
 PASS successfullyParsed:::true
 
 TEST COMPLETE

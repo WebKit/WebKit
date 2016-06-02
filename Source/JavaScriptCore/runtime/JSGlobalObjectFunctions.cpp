@@ -781,20 +781,10 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState* exec)
 {
     return throwVMTypeError(exec);
 }
-
-EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorCalleeAndCaller(ExecState* exec)
+    
+EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsCalleeAndCaller(ExecState* exec)
 {
-    return throwVMTypeError(exec, "'callee' and 'caller' cannot be accessed in strict mode.");
-}
-
-EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsAndCallerInStrictMode(ExecState* exec)
-{
-    return throwVMTypeError(exec, "'caller' and 'arguments' cannot be accessed in strict mode.");
-}
-
-EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsAndCallerInClassContext(ExecState* exec)
-{
-    return throwVMTypeError(exec, "'caller' and 'arguments' cannot be accessed in class context.");
+    return throwVMTypeError(exec, "'arguments', 'callee', and 'caller' cannot be accessed in strict mode.");
 }
 
 class GlobalFuncProtoGetterFunctor {

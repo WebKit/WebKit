@@ -21,8 +21,8 @@ Properties:
   __proto__ function function () {
     [native code]
 }
-  arguments object TypeError: Type error
-  caller object TypeError: Type error
+  arguments object TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+  caller object TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
   length number 0
   name string bound Number
 Internal properties:
@@ -38,8 +38,8 @@ Properties:
   __proto__ function function () {
     [native code]
 }
-  arguments object TypeError: Type error
-  caller object TypeError: Type error
+  arguments object TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+  caller object TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
   length number 0
   name string bound 
 Internal properties:

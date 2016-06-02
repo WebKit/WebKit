@@ -27,9 +27,9 @@ function nonStrictCaller(x) { return x(); }
 function strictCaller(x) { "use strict"; var result = x(); return result; }
 function strictTailCaller(x) { "use strict"; return x(); }
 shouldBe("nonStrictCaller(nonStrictCallee)", "nonStrictCaller");
-shouldThrow("nonStrictCaller(strictCallee)");
-shouldThrow("strictCaller(nonStrictCallee)", '"TypeError: Function.caller used to retrieve strict caller"');
-shouldThrow("strictCaller(strictCallee)");
+shouldThrow("nonStrictCaller(strictCallee)", '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow("strictCaller(nonStrictCallee)");
+shouldThrow("strictCaller(strictCallee)", '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
 shouldBe("strictTailCaller(nonStrictCallee)", "null");
 shouldThrow("strictTailCaller(strictCallee)");
 

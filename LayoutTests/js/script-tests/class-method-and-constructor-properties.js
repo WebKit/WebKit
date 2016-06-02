@@ -33,20 +33,20 @@ class E { getItem() { return 'text';} }
 class F extends E { getElement() { return 'text'}}
 class G extends E { get item() { return 'text'} }
 
-shouldThrow('(new A()).constructor.caller', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new A()).constructor.arguments', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new B()).constructor.caller', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new B()).constructor.arguments', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new C()).constructor.caller', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new C()).constructor.arguments', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new D()).constructor.caller', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new D()).constructor.arguments', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new E()).getItem.caller', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new E()).getItem.arguments', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new F()).getItem.caller', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new F()).getItem.arguments', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new F()).getElement.caller', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new F()).getElement.arguments', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
+shouldThrow('(new A()).constructor.caller', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new A()).constructor.arguments', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new B()).constructor.caller', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new B()).constructor.arguments', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new C()).constructor.caller', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new C()).constructor.arguments', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new D()).constructor.caller', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new D()).constructor.arguments', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new E()).getItem.caller', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new E()).getItem.arguments', '');
+shouldThrow('(new F()).getItem.caller', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new F()).getItem.arguments', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new F()).getElement.caller', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new F()).getElement.arguments', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
 
 shouldBe('(new G()).item.caller', 'undefined');
 shouldBe('(new G()).item.arguments', 'undefined');
@@ -56,14 +56,14 @@ class H {
   arguments() { return 'value'; }
 }
 
-shouldThrow('H.caller', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('H.arguments', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
+shouldThrow('H.caller', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('H.arguments', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
 
 shouldBe('(new H()).caller()', '"value"');
 shouldBe('(new H()).arguments()', '"value"');
 
-shouldThrow('(new H()).caller.caller', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
-shouldThrow('(new H()).caller.arguments', '"TypeError: \'caller\' and \'arguments\' cannot be accessed in class context."');
+shouldThrow('(new H()).caller.caller', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('(new H()).caller.arguments', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
 
 
 var successfullyParsed = true;
