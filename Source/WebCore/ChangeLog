@@ -1,3 +1,9 @@
+2016-06-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Update QuartzCoreSPI.h for <rdar://problem/26584828>.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+
 2016-06-01  Brady Eidson  <beidson@apple.com>
 
         Modernize lambda usage for all callers of RunLoop::dispatch().
