@@ -38,6 +38,10 @@ void computeUsesForBytecodeOffset(
     Instruction* instructionsBegin = codeBlock->instructions().begin();
     Instruction* instruction = &instructionsBegin[bytecodeOffset];
     OpcodeID opcodeID = interpreter->getOpcodeID(instruction->u.opcode);
+
+    if (opcodeID != op_enter && codeBlock->wasCompiledWithDebuggingOpcodes() && codeBlock->scopeRegister().isValid())
+        functor(codeBlock, instruction, opcodeID, codeBlock->scopeRegister().offset());
+
     switch (opcodeID) {
     // No uses.
     case op_new_regexp:

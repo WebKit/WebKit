@@ -1,3 +1,34 @@
+2016-06-02  Saam Barati  <sbarati@apple.com>
+
+        Teach bytecode liveness about the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=158288
+
+        Reviewed by Filip Pizlo.
+
+        There was a bug where we wouldn't always keep the scope register
+        on the stack when the debugger is enabled. The debugger always assumes
+        it can read from the scope. The bug happened in OSR exit from the FTL.
+        The FTL uses bytecode liveness for OSR exit. Bytecode liveness proved
+        that the scope register was dead, so the FTL OSR exit wrote `undefined`
+        into the scope's stack slot when OSR exiting to the baseline.
+
+        To fix this, I taught bytecode liveness' computeUsesForBytecodeOffset() that the
+        scope is used by every instruction except op_enter. This causes the
+        scope to be live-in at every instruction except op_enter.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::blockContainsBytecodeOffset):
+        (JSC::addAlwaysLiveLocals):
+        (JSC::findBasicBlockForBytecodeOffset):
+        (JSC::stepOverInstruction):
+        (JSC::computeLocalLivenessForBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::runLivenessFixpoint):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * tests/stress/shadow-chicken-reading-from-scope-after-ftl-osr-exit-bytecode-liveness.js: Added.
+        (foo):
+        (catch):
+
 2016-06-02  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r200694): %ThrowTypeError% is not unique
