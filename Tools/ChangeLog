@@ -1,3 +1,13 @@
+2016-06-02  Aakash Jain  <aakash_jain@apple.com>
+
+        LayoutTests time out intermittently due to alert about reopening Simulator after it unexpectedly quit
+        https://bugs.webkit.org/show_bug.cgi?id=158305
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.clean_up_test_run): Delete simulator's savedState directories during cleanup.
+
 2016-06-01  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r191907): Can't enter combining diacritic marks in Web Inspector fields
