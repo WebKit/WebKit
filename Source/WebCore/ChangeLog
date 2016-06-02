@@ -1,3 +1,27 @@
+2016-06-02  Darin Adler  <darin@apple.com>
+
+        Fix a couple of mistakes in CSSParserValue memory management
+        https://bugs.webkit.org/show_bug.cgi?id=158307
+        <rdar://problem/26127225>
+
+        Reviewed by Daniel Bates.
+
+        * css/CSSGrammar.y.in: Added a destructor for calc_func_term. This presumably
+        fixes some memory leaks in error cases. Removed an assertion about not needing
+        a call to destroy that was far too limited. Tweaked formatting of the percentage
+        ase in the key production. Indented calc_func_term to make it consistent with
+        other productions nearby.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValueList::~CSSParserValueList): Use a modern for loop.
+        (WebCore::CSSParserValueList::deleteValueAt): Deleted. Unused function, and also
+        would have resulted in a memory leak unless the code already extracted the value
+        from the list.
+        (WebCore::CSSParserValueList::extend): Properly transfer ownership from one value
+        list to the other by setting the unit to 0 in the donor.
+
+        * css/CSSParserValues.h: Removed unused deleteValueAt function.
+
 2016-06-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVG content renders in incorrect vertical position when padding-left is not specified

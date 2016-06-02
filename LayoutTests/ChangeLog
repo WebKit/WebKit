@@ -1,3 +1,14 @@
+2016-06-02  Daniel Bates  <dabates@apple.com>
+
+        Fix a couple of mistakes in CSSParserValue memory management
+        https://bugs.webkit.org/show_bug.cgi?id=158307
+        <rdar://problem/26127225>
+
+        Reviewed by Darin Adler.
+
+        * fast/css/calc-with-two-variables-crash-expected.txt: Added.
+        * fast/css/calc-with-two-variables-crash.html: Added.
+
 2016-06-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVG content renders in incorrect vertical position when padding-left is not specified
