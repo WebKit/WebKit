@@ -1,3 +1,18 @@
+2016-06-01  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Regression(r200972): Crash under WebKit::WebPage::selectTextWithGranularityAtPoint()
+        https://bugs.webkit.org/show_bug.cgi?id=158284
+        <rdar://problem/26573954>
+
+        Reviewed by Ryosuke Niwa.
+
+        range can be null but r200972 started dereferencing it without null
+        check. This patch adds a null check for range and uses the pre-r200972
+        code path if range is null.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+
 2016-06-01  Brady Eidson  <beidson@apple.com>
 
         Modernize lambda usage for all callers of RunLoop::dispatch().

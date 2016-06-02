@@ -1875,8 +1875,8 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, u
         m_blockSelectionDesiredSize.setWidth(blockSelectionStartWidth);
         m_blockSelectionDesiredSize.setHeight(blockSelectionStartHeight);
         m_currentBlockSelection = nullptr;
-        auto* renderer = range->startContainer().renderer();
-        if (renderer->style().preserveNewline())
+        auto* renderer = range ? range->startContainer().renderer() : nullptr;
+        if (renderer && renderer->style().preserveNewline())
             m_blockRectForTextSelection = renderer->absoluteBoundingBoxRect(true);
         else {
             auto paragraphRange = enclosingTextUnitOfGranularity(visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode), ParagraphGranularity, DirectionForward);
