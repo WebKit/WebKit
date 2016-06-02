@@ -1,3 +1,15 @@
+2016-06-02  Javier Fernandez  <jfernandez@igalia.com>
+
+        Unreviewed GTK+ gardening Additional rebaseline after r201397.
+
+        Added reference files for pixel tests.
+
+        * fast/forms/search-input-rtl-expected.txt:
+        * platform/gtk/fast/css/text-overflow-input-expected.png:
+        * platform/gtk/fast/forms/placeholder-position-expected.png:
+        * platform/gtk/fast/forms/search-input-rtl-expected.png: Added.
+        * platform/gtk/fast/forms/search-rtl-expected.png:
+
 2016-06-01  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Some setters for components of Date do not timeClip() their result
