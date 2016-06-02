@@ -2,4 +2,4 @@
 Spec references: 2d.pattern.IDL
 Defined in "Web IDL" (draft)
 Actual output:
-Passed
+Failed assertion: expected exception of type TypeError, got: Error: TypeMismatchError: DOM Exception 17

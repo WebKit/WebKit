@@ -1,3 +1,25 @@
+2016-06-02  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] 'undefined' should be an acceptable value for nullable parameters
+        https://bugs.webkit.org/show_bug.cgi?id=158321
+
+        Reviewed by Ryosuke Niwa.
+
+        'undefined' should be an acceptable value for nullable parameters (and
+        should be converted to null):
+        - https://heycam.github.io/webidl/#es-nullable-type
+
+        Our bindings got most of the cases right but there was a bug in our
+        overload resolution code. This patch fixes it.
+
+        No new tests, already covered by existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheckExpression):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter):
+
 2016-06-02  Brady Eidson  <beidson@apple.com>
 
         Modernize how many platform/network classes do isolatedCopy().

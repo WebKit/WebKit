@@ -5399,9 +5399,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
     JSValue arg0(state->argument(0));
     JSValue arg1(state->argument(1));
-    if ((argsCount == 2 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info()))) && (arg1.isUndefinedOrNull() || arg1.isString() || arg1.isObject())))
+    if ((argsCount == 2 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info()))) && (arg1.isUndefinedOrNull() || arg1.isString() || arg1.isObject())))
         return jsTestObjPrototypeFunctionOverloadedMethod1(state);
-    if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
+    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
         return jsTestObjPrototypeFunctionOverloadedMethod2(state);
     if ((argsCount == 1 && (arg0.isUndefinedOrNull() || arg0.isString() || arg0.isObject())))
         return jsTestObjPrototypeFunctionOverloadedMethod3(state);
@@ -5409,9 +5409,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
         return jsTestObjPrototypeFunctionOverloadedMethod4(state);
     if ((argsCount == 1 && (arg0.isNull() || arg0.isObject())))
         return jsTestObjPrototypeFunctionOverloadedMethod5(state);
-    if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSDOMStringList::info())))))
+    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSDOMStringList::info())))))
         return jsTestObjPrototypeFunctionOverloadedMethod6(state);
-    if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && isJSArray(arg0)))))
+    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || (arg0.isObject() && isJSArray(arg0)))))
         return jsTestObjPrototypeFunctionOverloadedMethod7(state);
     if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
         return jsTestObjPrototypeFunctionOverloadedMethod8(state);
@@ -5467,9 +5467,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptio
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
     JSValue arg0(state->argument(0));
     JSValue arg1(state->argument(1));
-    if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info()))) && (arg1.isUndefined() || arg1.isNull() || (arg1.isObject() && asObject(arg1)->inherits(JSTestObj::info())))))
+    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info()))) && (arg1.isUndefined() || arg1.isUndefinedOrNull() || (arg1.isObject() && asObject(arg1)->inherits(JSTestObj::info())))))
         return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(state);
-    if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
+    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isUndefinedOrNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
         return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
     if (UNLIKELY(argsCount < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));

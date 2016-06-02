@@ -1687,9 +1687,8 @@ sub GenerateParametersCheckExpression
             my $condition = "";
             $condition .= "${value}.isUndefined() || " if $parameter->isOptional;
 
-            # FIXME: WebIDL says that undefined is also acceptable for nullable parameters and should be converted to null:
             # http://heycam.github.io/webidl/#es-nullable-type
-            $condition .= "${value}.isNull() || " if $parameter->isNullable;
+            $condition .= "${value}.isUndefinedOrNull() || " if $parameter->isNullable;
 
             if ($codeGenerator->GetArrayOrSequenceType($type)) {
                 # FIXME: Add proper support for T[], T[]?, sequence<T>.

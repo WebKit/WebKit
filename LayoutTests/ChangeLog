@@ -1,3 +1,14 @@
+2016-06-02  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] 'undefined' should be an acceptable value for nullable parameters
+        https://bugs.webkit.org/show_bug.cgi?id=158321
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline existing test that is now passing.
+
+        * canvas/philip/tests/2d.pattern.image.undefined-expected.txt:
+
 2016-06-02  Oliver Hunt  <oliver@apple.com>
 
         JS parser incorrectly handles invalid utf8 in error messages.

@@ -1,3 +1,18 @@
+2016-06-02  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] 'undefined' should be an acceptable value for nullable parameters
+        https://bugs.webkit.org/show_bug.cgi?id=158321
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline test. The test is failing because the first parameter to
+        createPattern is wrongly marked as nullable in our IDL and because our
+        implementation throws a legacy TYPE_MISMATCH_ERR instead of a standard
+        TypeError when getting null as first parameter. I will fix this bug
+        and this test via Bug 158322.
+
+        * canvas/2d.pattern.image.undefined-expected.txt:
+
 2016-06-01  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         POST request on a blob resource should return a "network error" instead of HTTP 500 response
