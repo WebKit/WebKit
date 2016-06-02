@@ -3127,6 +3127,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             generator.emitNode(dst, m_catchBlock);
         else
             generator.emitNodeInTailPosition(dst, m_catchBlock);
+        generator.emitLoad(thrownValueRegister.get(), jsUndefined());
         generator.emitPopCatchScope(m_lexicalVariables);
         generator.emitLabel(catchEndLabel.get());
     }

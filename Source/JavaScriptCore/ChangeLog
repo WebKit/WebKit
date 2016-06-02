@@ -1,3 +1,23 @@
+2016-06-01  Michael Saboff  <msaboff@apple.com>
+
+        Runaway WebContent process CPU & memory @ foxnews.com
+        https://bugs.webkit.org/show_bug.cgi?id=158290
+
+        Reviewed by Mark Lam.
+
+        Clear the thrown value at the end of the catch block so that the stack scanner won't
+        find the value during GC.
+
+        Added a new stress test.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+        * tests/stress/recursive-try-catch.js: Added.
+        (logError):
+        (tryCallingBadFunction):
+        (recurse):
+        (test):
+
 2016-06-01  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Some setters for components of Date do not timeClip() their result
