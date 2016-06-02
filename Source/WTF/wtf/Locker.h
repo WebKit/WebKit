@@ -28,6 +28,7 @@
 #ifndef Locker_h
 #define Locker_h
 
+#include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 
 namespace WTF {
@@ -46,6 +47,11 @@ public:
     // this often happens when an object is newly allocated and it can not
     // be accessed concurrently.
     Locker(NoLockingNecessaryTag) : m_lockable(nullptr) { }
+    
+    NO_RETURN_DUE_TO_CRASH Locker(int)
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
     ~Locker()
     {

@@ -1,5 +1,14 @@
 2016-06-02  Filip Pizlo  <fpizlo@apple.com>
 
+        Make it harder to accidentally pass an integer to a locker.
+
+        Rubber stamped by Keith Miller.
+
+        * runtime/ConcurrentJITLock.h:
+        (JSC::ConcurrentJITLocker::ConcurrentJITLocker):
+
+2016-06-02  Filip Pizlo  <fpizlo@apple.com>
+
         Make it easier to use NoLockingNecessary
         https://bugs.webkit.org/show_bug.cgi?id=158306
 
