@@ -1,3 +1,29 @@
+2016-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Make it easier to use NoLockingNecessary
+        https://bugs.webkit.org/show_bug.cgi?id=158306
+
+        Reviewed by Keith Miller.
+        
+        Adapt to the new NoLockingNecessary API. More details in the WTF ChangeLog.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        (JSC::BytecodeGenerator::instantiateLexicalVariables):
+        (JSC::BytecodeGenerator::emitPrefillStackTDZVariables):
+        (JSC::BytecodeGenerator::initializeBlockScopedFunctions):
+        (JSC::BytecodeGenerator::hoistSloppyModeFunctionIfNecessary):
+        (JSC::BytecodeGenerator::popLexicalScopeInternal):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::variable):
+        (JSC::BytecodeGenerator::createVariable):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        * runtime/ConcurrentJITLock.h:
+        (JSC::ConcurrentJITLockerBase::ConcurrentJITLockerBase):
+        (JSC::ConcurrentJITLocker::ConcurrentJITLocker):
+
 2016-06-01  Filip Pizlo  <fpizlo@apple.com>
 
         Structure::previousID() races with Structure::allocateRareData()

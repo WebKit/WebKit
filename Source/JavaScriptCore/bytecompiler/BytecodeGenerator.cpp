@@ -368,7 +368,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         // use DirectArguments. With ScopedArguments, we lift all of our arguments into the
         // activation.
         
-        ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
         if (capturesAnyArgumentByName) {
             functionSymbolTable->setArgumentsLength(vm, parameters.size());
             
@@ -377,7 +376,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             // in the symbol table - or it just gets space reserved in the symbol table. Either
             // way we lift the value into the scope.
             for (unsigned i = 0; i < parameters.size(); ++i) {
-                ScopeOffset offset = functionSymbolTable->takeNextScopeOffset(locker);
+                ScopeOffset offset = functionSymbolTable->takeNextScopeOffset(NoLockingNecessary);
                 functionSymbolTable->setArgumentOffset(vm, i, offset);
                 if (UniquedStringImpl* name = visibleNameForParameter(parameters.at(i).first)) {
                     VarOffset varOffset(offset);
@@ -387,7 +386,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     // parameters when "arguments" is in play is unlikely to be super profitable.
                     // So, we just disable it.
                     entry.disableWatching();
-                    functionSymbolTable->set(locker, name, entry);
+                    functionSymbolTable->set(NoLockingNecessary, name, entry);
                 }
                 emitOpcode(op_put_to_scope);
                 instructions().append(m_lexicalEnvironmentRegister->index());
@@ -408,7 +407,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             // that the symbol table knows that this is happening.
             for (unsigned i = 0; i < parameters.size(); ++i) {
                 if (UniquedStringImpl* name = visibleNameForParameter(parameters.at(i).first))
-                    functionSymbolTable->set(locker, name, SymbolTableEntry(VarOffset(DirectArgumentsOffset(i))));
+                    functionSymbolTable->set(NoLockingNecessary, name, SymbolTableEntry(VarOffset(DirectArgumentsOffset(i))));
             }
             
             emitOpcode(op_create_direct_arguments);
@@ -419,7 +418,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         // captured, lift them into the scope. We cannot do this if we have default parameter expressions
         // because when default parameter expressions exist, they belong in their own lexical environment
         // separate from the "var" lexical environment.
-        ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
         for (unsigned i = 0; i < parameters.size(); ++i) {
             UniquedStringImpl* name = visibleNameForParameter(parameters.at(i).first);
             if (!name)
@@ -428,14 +426,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             if (!captures(name)) {
                 // This is the easy case - just tell the symbol table about the argument. It will
                 // be accessed directly.
-                functionSymbolTable->set(locker, name, SymbolTableEntry(VarOffset(virtualRegisterForArgument(1 + i))));
+                functionSymbolTable->set(NoLockingNecessary, name, SymbolTableEntry(VarOffset(virtualRegisterForArgument(1 + i))));
                 continue;
             }
             
-            ScopeOffset offset = functionSymbolTable->takeNextScopeOffset(locker);
+            ScopeOffset offset = functionSymbolTable->takeNextScopeOffset(NoLockingNecessary);
             const Identifier& ident =
                 static_cast<const BindingNode*>(parameters.at(i).first)->boundProperty();
-            functionSymbolTable->set(locker, name, SymbolTableEntry(VarOffset(offset)));
+            functionSymbolTable->set(NoLockingNecessary, name, SymbolTableEntry(VarOffset(offset)));
             
             emitOpcode(op_put_to_scope);
             instructions().append(m_lexicalEnvironmentRegister->index());
@@ -905,20 +903,19 @@ void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable*
         
         ScopeOffset offset;
         
-        ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
         if (isThisUsedInInnerArrowFunction()) {
-            offset = functionSymbolTable->takeNextScopeOffset(locker);
-            functionSymbolTable->set(locker, propertyNames().thisIdentifier.impl(), SymbolTableEntry(VarOffset(offset)));
+            offset = functionSymbolTable->takeNextScopeOffset(NoLockingNecessary);
+            functionSymbolTable->set(NoLockingNecessary, propertyNames().thisIdentifier.impl(), SymbolTableEntry(VarOffset(offset)));
         }
 
         if (m_codeType == FunctionCode && isNewTargetUsedInInnerArrowFunction()) {
             offset = functionSymbolTable->takeNextScopeOffset();
-            functionSymbolTable->set(locker, propertyNames().newTargetLocalPrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
+            functionSymbolTable->set(NoLockingNecessary, propertyNames().newTargetLocalPrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
         }
         
         if (isConstructor() && constructorKind() == ConstructorKind::Derived && isSuperUsedInInnerArrowFunction()) {
-            offset = functionSymbolTable->takeNextScopeOffset(locker);
-            functionSymbolTable->set(locker, propertyNames().derivedConstructorPrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
+            offset = functionSymbolTable->takeNextScopeOffset(NoLockingNecessary);
+            functionSymbolTable->set(NoLockingNecessary, propertyNames().derivedConstructorPrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
         }
 
         return;
@@ -1764,11 +1761,10 @@ bool BytecodeGenerator::instantiateLexicalVariables(const VariableEnvironment& l
 {
     bool hasCapturedVariables = false;
     {
-        ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
         for (auto& entry : lexicalVariables) {
             ASSERT(entry.value.isLet() || entry.value.isConst() || entry.value.isFunction());
             ASSERT(!entry.value.isVar());
-            SymbolTableEntry symbolTableEntry = symbolTable->get(locker, entry.key.get());
+            SymbolTableEntry symbolTableEntry = symbolTable->get(NoLockingNecessary, entry.key.get());
             ASSERT(symbolTableEntry.isNull());
 
             // Imported bindings which are not the namespace bindings are not allocated
@@ -1781,7 +1777,7 @@ bool BytecodeGenerator::instantiateLexicalVariables(const VariableEnvironment& l
             VarKind varKind = lookUpVarKind(entry.key.get(), entry.value);
             VarOffset varOffset;
             if (varKind == VarKind::Scope) {
-                varOffset = VarOffset(symbolTable->takeNextScopeOffset(locker));
+                varOffset = VarOffset(symbolTable->takeNextScopeOffset(NoLockingNecessary));
                 hasCapturedVariables = true;
             } else {
                 ASSERT(varKind == VarKind::Stack);
@@ -1795,7 +1791,7 @@ bool BytecodeGenerator::instantiateLexicalVariables(const VariableEnvironment& l
             }
 
             SymbolTableEntry newEntry(varOffset, entry.value.isConst() ? ReadOnly : 0);
-            symbolTable->add(locker, entry.key.get(), newEntry);
+            symbolTable->add(NoLockingNecessary, entry.key.get(), newEntry);
         }
     }
     return hasCapturedVariables;
@@ -1805,7 +1801,6 @@ void BytecodeGenerator::emitPrefillStackTDZVariables(const VariableEnvironment& 
 {
     // Prefill stack variables with the TDZ empty value.
     // Scope variables will be initialized to the TDZ empty value when JSLexicalEnvironment is allocated.
-    ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
     for (auto& entry : lexicalVariables) {
         // Imported bindings which are not the namespace bindings are not allocated
         // in the module environment as usual variables' way.
@@ -1817,7 +1812,7 @@ void BytecodeGenerator::emitPrefillStackTDZVariables(const VariableEnvironment& 
         if (entry.value.isFunction())
             continue;
 
-        SymbolTableEntry symbolTableEntry = symbolTable->get(locker, entry.key.get());
+        SymbolTableEntry symbolTableEntry = symbolTable->get(NoLockingNecessary, entry.key.get());
         ASSERT(!symbolTableEntry.isNull());
         VarOffset offset = symbolTableEntry.varOffset();
         if (offset.isScope())
@@ -1953,14 +1948,13 @@ void BytecodeGenerator::initializeBlockScopedFunctions(VariableEnvironment& envi
     RegisterID* scope = m_symbolTableStack.last().m_scope;
     RefPtr<RegisterID> temp = newTemporary();
     int symbolTableIndex = constantSymbolTable ? constantSymbolTable->index() : 0;
-    ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
     for (FunctionMetadataNode* function : functionStack) {
         const Identifier& name = function->ident();
         auto iter = environment.find(name.impl());
         RELEASE_ASSERT(iter != environment.end());
         RELEASE_ASSERT(iter->value.isFunction());
         // We purposefully don't hold the symbol table lock around this loop because emitNewFunctionExpressionCommon may GC.
-        SymbolTableEntry entry = symbolTable->get(locker, name.impl()); 
+        SymbolTableEntry entry = symbolTable->get(NoLockingNecessary, name.impl()); 
         RELEASE_ASSERT(!entry.isNull());
         emitNewFunctionExpressionCommon(temp.get(), function);
         bool isLexicallyScoped = true;
@@ -1985,8 +1979,7 @@ void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(const Identifier& fun
         SymbolTableStackEntry& varScope = m_symbolTableStack[*m_varScopeSymbolTableIndex];
         SymbolTable* varSymbolTable = varScope.m_symbolTable;
         ASSERT(varSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope);
-        ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
-        SymbolTableEntry entry = varSymbolTable->get(locker, functionName.impl());
+        SymbolTableEntry entry = varSymbolTable->get(NoLockingNecessary, functionName.impl());
         ASSERT(!entry.isNull());
         bool isLexicallyScoped = false;
         emitPutToScope(varScope.m_scope, variableForLocalEntry(functionName, entry, varScope.m_symbolTableConstantIndex, isLexicallyScoped), currentValue.get(), DoNotThrowIfNotFound, InitializationMode::NotInitialization);
@@ -2012,13 +2005,12 @@ void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment
     SymbolTableStackEntry stackEntry = m_symbolTableStack.takeLast();
     SymbolTable* symbolTable = stackEntry.m_symbolTable;
     bool hasCapturedVariables = false;
-    ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
     for (auto& entry : environment) {
         if (entry.value.isCaptured()) {
             hasCapturedVariables = true;
             continue;
         }
-        SymbolTableEntry symbolTableEntry = symbolTable->get(locker, entry.key.get());
+        SymbolTableEntry symbolTableEntry = symbolTable->get(NoLockingNecessary, entry.key.get());
         ASSERT(!symbolTableEntry.isNull());
         VarOffset offset = symbolTableEntry.varOffset();
         ASSERT(offset.isStack());
@@ -2066,8 +2058,7 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
     {
         activationValuesToCopyOver.reserveInitialCapacity(symbolTable->scopeSize());
 
-        ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
-        for (auto end = symbolTable->end(locker), ptr = symbolTable->begin(locker); ptr != end; ++ptr) {
+        for (auto end = symbolTable->end(NoLockingNecessary), ptr = symbolTable->begin(NoLockingNecessary); ptr != end; ++ptr) {
             if (!ptr->value.varOffset().isScope())
                 continue;
 
@@ -2099,10 +2090,9 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
     emitMove(scopeRegister(), loopScope);
 
     {
-        ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
         for (auto pair : activationValuesToCopyOver) {
             const Identifier& identifier = pair.second;
-            SymbolTableEntry entry = symbolTable->get(locker, identifier.impl());
+            SymbolTableEntry entry = symbolTable->get(NoLockingNecessary, identifier.impl());
             RELEASE_ASSERT(!entry.isNull());
             RegisterID* transitionValue = pair.first;
             emitPutToScope(loopScope, variableForLocalEntry(identifier, entry, loopSymbolTable->index(), true), transitionValue, DoNotThrowIfNotFound, InitializationMode::NotInitialization);
@@ -2137,13 +2127,12 @@ Variable BytecodeGenerator::variable(const Identifier& property, ThisResolutionT
     //         doSomethingWith(x);
     //     }
     // }
-    ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
     for (unsigned i = m_symbolTableStack.size(); i--; ) {
         SymbolTableStackEntry& stackEntry = m_symbolTableStack[i];
         if (stackEntry.m_isWithScope)
             return Variable(property);
         SymbolTable* symbolTable = stackEntry.m_symbolTable;
-        SymbolTableEntry symbolTableEntry = symbolTable->get(locker, property.impl());
+        SymbolTableEntry symbolTableEntry = symbolTable->get(NoLockingNecessary, property.impl());
         if (symbolTableEntry.isNull())
             continue;
         bool resultIsCallee = false;
@@ -2183,8 +2172,7 @@ void BytecodeGenerator::createVariable(
     const Identifier& property, VarKind varKind, SymbolTable* symbolTable, ExistingVariableMode existingVariableMode)
 {
     ASSERT(property != propertyNames().thisIdentifier);
-    ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
-    SymbolTableEntry entry = symbolTable->get(locker, property.impl());
+    SymbolTableEntry entry = symbolTable->get(NoLockingNecessary, property.impl());
     
     if (!entry.isNull()) {
         if (existingVariableMode == IgnoreExisting)
@@ -2208,13 +2196,13 @@ void BytecodeGenerator::createVariable(
     
     VarOffset varOffset;
     if (varKind == VarKind::Scope)
-        varOffset = VarOffset(symbolTable->takeNextScopeOffset(locker));
+        varOffset = VarOffset(symbolTable->takeNextScopeOffset(NoLockingNecessary));
     else {
         ASSERT(varKind == VarKind::Stack);
         varOffset = VarOffset(virtualRegisterForLocal(m_calleeLocals.size()));
     }
     SymbolTableEntry newEntry(varOffset, 0);
-    symbolTable->add(locker, property.impl(), newEntry);
+    symbolTable->add(NoLockingNecessary, property.impl(), newEntry);
     
     if (varKind == VarKind::Stack) {
         RegisterID* local = addVar();
@@ -2267,14 +2255,13 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
         // don't do that already is that m_lexicalEnvironment is required by ConstDeclNode. ConstDeclNode
         // requires weird things because it is a shameful pile of nonsense, but block scoping would make
         // that code sensible and obviate the need for us to do bad things.
-        ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
         for (unsigned i = m_symbolTableStack.size(); i--; ) {
             SymbolTableStackEntry& stackEntry = m_symbolTableStack[i];
             // We should not resolve a variable to VarKind::Scope if a "with" scope lies in between the current
             // scope and the resolved scope.
             RELEASE_ASSERT(!stackEntry.m_isWithScope);
 
-            if (stackEntry.m_symbolTable->get(locker, variable.ident().impl()).isNull())
+            if (stackEntry.m_symbolTable->get(NoLockingNecessary, variable.ident().impl()).isNull())
                 continue;
             
             RegisterID* scope = stackEntry.m_scope;
@@ -3784,8 +3771,7 @@ void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, Re
     pushLexicalScopeInternal(nameScopeEnvironment, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, TDZRequirement::NotUnderTDZ, ScopeType::FunctionNameScope, ScopeRegisterType::Var);
     ASSERT_UNUSED(numVars, m_codeBlock->m_numVars == static_cast<int>(numVars + 1)); // Should have only created one new "var" for the function name scope.
     bool shouldTreatAsLexicalVariable = isStrictMode();
-    ConcurrentJITLocker locker(ConcurrentJITLocker::NoLockingNecessary);
-    Variable functionVar = variableForLocalEntry(property, m_symbolTableStack.last().m_symbolTable->get(locker, property.impl()), m_symbolTableStack.last().m_symbolTableConstantIndex, shouldTreatAsLexicalVariable);
+    Variable functionVar = variableForLocalEntry(property, m_symbolTableStack.last().m_symbolTable->get(NoLockingNecessary, property.impl()), m_symbolTableStack.last().m_symbolTableConstantIndex, shouldTreatAsLexicalVariable);
     emitPutToScope(m_symbolTableStack.last().m_scope, functionVar, callee, ThrowIfNotFound, InitializationMode::NotInitialization);
 }
 

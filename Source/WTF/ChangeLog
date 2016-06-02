@@ -1,3 +1,54 @@
+2016-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Make it easier to use NoLockingNecessary
+        https://bugs.webkit.org/show_bug.cgi?id=158306
+
+        Reviewed by Keith Miller.
+        
+        An idiom that we borrowed from LLVM is that if a function requires a lock to be held, we
+        have it take a const Locker& as its first argument. This may not communicate which lock is
+        to be held, but it does help us to remember that some lock must be held. So far, it's been
+        relatively easy to then figure out which lock. We've had bugs where we forgot to hold a
+        lock but I don't remember the last time we had a bug where we grabbed the wrong lock.
+        
+        But sometimes, we know at the point where we call such a method that we actually don't
+        need to hold any lock. This usually happens during object construction. If we're
+        constructing some object then we usually know that we have not escaped it yet, so we don't
+        need to waste time acquiring its lock. We could solve this by having a separate set of
+        methods that don't do or require locking. This would be cumbersome, since usually for
+        every variant that takes const Locker&, there is already one that doesn't, and that one
+        will grab the lock for you. So this means having a third variant, that also doesn't take a
+        const Locker&, but does no locking. That's pretty weird.
+        
+        So, we introduced NoLockingNecessary for situations like this. The idiom went like so:
+        
+            Locker<Whatever> locker(Locker<Whatever>::NoLockingNecessary)
+            stuff->foo(locker);
+        
+        Usually though, there would be some distance between where the locker is defined and where
+        it's used, so when you just look at stuff->foo(locker) in isolation you don't know if this
+        is a real locker or a NoLockingNecessary cast. Also, requiring two lines for this just
+        adds code.
+        
+        This change makes this easier. Now you can just do:
+        
+            stuff->foo(NoLockingNecessary).
+        
+        This is because NoLockingNecessary has been pulled out into the WTF namespace (and is
+        usinged from the global namespace) and the Locker<> constructor that takes
+        NoLockingNecessaryTag is now implicit.
+        
+        The only possible downside of this change is that people might use this idiom more
+        frequently now that it's easier to use. I don't think that's a bad thing. I'm now
+        convinced that this is not a bad idiom. When I was fixing an unrelated bug, I almost went
+        the way of adding more locking to some core JSC data structures, and in the process, I
+        needed to use NoLockingNecessary. It's clear that this is a general-purpose idiom and we
+        should not impose artificial constraints on its use.
+
+        * wtf/Locker.h:
+        (WTF::Locker::Locker):
+        (WTF::Locker::~Locker):
+
 2016-06-01  Brady Eidson  <beidson@apple.com>
 
         Get rid of StringCapture.

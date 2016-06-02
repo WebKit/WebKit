@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,19 +32,20 @@
 
 namespace WTF {
 
+enum NoLockingNecessaryTag { NoLockingNecessary };
+
 template <typename T> class Locker {
     WTF_MAKE_NONCOPYABLE(Locker);
 public:
     explicit Locker(T& lockable) : m_lockable(&lockable) { lock(); }
     explicit Locker(T* lockable) : m_lockable(lockable) { lock(); }
 
-    enum NoLockingNecessaryTag { NoLockingNecessary };
     // You should be wary of using this constructor. It's only applicable
     // in places where there is a locking protocol for a particular object
     // but it's not necessary to engage in that protocol yet. For example,
     // this often happens when an object is newly allocated and it can not
     // be accessed concurrently.
-    explicit Locker(NoLockingNecessaryTag) : m_lockable(nullptr) { }
+    Locker(NoLockingNecessaryTag) : m_lockable(nullptr) { }
 
     ~Locker()
     {
@@ -70,5 +71,7 @@ private:
 }
 
 using WTF::Locker;
+using WTF::NoLockingNecessaryTag;
+using WTF::NoLockingNecessary;
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,9 +53,8 @@ public:
     {
     }
 
-    enum NoLockingNecessaryTag { NoLockingNecessary };
     explicit ConcurrentJITLockerBase(NoLockingNecessaryTag)
-        : m_locker(ConcurrentJITLockerImpl::NoLockingNecessary)
+        : m_locker(NoLockingNecessary)
     {
     }
 
@@ -125,8 +124,8 @@ public:
     {
     }
 
-    ConcurrentJITLocker(ConcurrentJITLockerBase::NoLockingNecessaryTag)
-        : ConcurrentJITLockerBase(ConcurrentJITLockerBase::NoLockingNecessary)
+    ConcurrentJITLocker(NoLockingNecessaryTag)
+        : ConcurrentJITLockerBase(NoLockingNecessary)
 #if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
         , m_disallowGC(Nullopt)
 #endif
