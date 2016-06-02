@@ -1,3 +1,17 @@
+2016-06-01  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Notify client immediately if network session doesn't exist for a synchronous XHR load.
+        https://bugs.webkit.org/show_bug.cgi?id=158239
+        <rdar://problem/26344251>
+
+        Reviewed by Brady Eidson.
+
+        For a synchronous XHR load, if the network session doesn't exist, we should notify NetworkLoadClient.
+        Otherwise the Web process could hang when waiting for the synchronous load to finish.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+
 2016-05-31  Brian Burg  <bburg@apple.com>
   
         REGRESSION(r191907): Can't enter combining diacritic marks in Web Inspector fields
