@@ -62,7 +62,7 @@ unsigned ObjectPropertyConditionSet::numberOfConditionsWithKind(PropertyConditio
 
 bool ObjectPropertyConditionSet::hasOneSlotBaseCondition() const
 {
-    return numberOfConditionsWithKind(PropertyCondition::Presence) == 1;
+    return (numberOfConditionsWithKind(PropertyCondition::Presence) == 1) != (numberOfConditionsWithKind(PropertyCondition::Equivalence) == 1);
 }
 
 ObjectPropertyCondition ObjectPropertyConditionSet::slotBaseCondition() const
@@ -70,7 +70,8 @@ ObjectPropertyCondition ObjectPropertyConditionSet::slotBaseCondition() const
     ObjectPropertyCondition result;
     unsigned numFound = 0;
     for (const ObjectPropertyCondition& condition : *this) {
-        if (condition.kind() == PropertyCondition::Presence) {
+        if (condition.kind() == PropertyCondition::Presence
+            || condition.kind() == PropertyCondition::Equivalence) {
             result = condition;
             numFound++;
         }
@@ -198,6 +199,15 @@ ObjectPropertyCondition generateCondition(
             vm, owner, object, uid, object->structure()->storedPrototypeObject());
         break;
     }
+    case PropertyCondition::Equivalence: {
+        unsigned attributes;
+        PropertyOffset offset = structure->getConcurrently(uid, attributes);
+        if (offset == invalidOffset)
+            return ObjectPropertyCondition();
+        JSValue value = object->getDirect(offset);
+        result = ObjectPropertyCondition::equivalence(vm, owner, object, uid, value);
+        break;
+    }
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return ObjectPropertyCondition();
@@ -240,7 +250,7 @@ ObjectPropertyConditionSet generateConditions(
         if (value.isNull()) {
             if (!prototype) {
                 if (verbose)
-                    dataLog("Reached end up prototype chain as expected, done.\n");
+                    dataLog("Reached end of prototype chain as expected, done.\n");
                 break;
             }
             if (verbose)
@@ -353,6 +363,21 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
             conditions.append(result);
             return true;
         });
+}
+
+ObjectPropertyConditionSet generateConditionsForPrototypeEquivalenceConcurrently(
+    VM& vm, JSGlobalObject* globalObject, Structure* headStructure, JSObject* prototype, UniquedStringImpl* uid)
+{
+    return generateConditions(vm, globalObject, headStructure, prototype,
+        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+            PropertyCondition::Kind kind =
+                object == prototype ? PropertyCondition::Equivalence : PropertyCondition::Absence;
+            ObjectPropertyCondition result = generateCondition(vm, nullptr, object, uid, kind);
+            if (!result)
+                return false;
+            conditions.append(result);
+            return true;
+        }, Concurrent);
 }
 
 ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(

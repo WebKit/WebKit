@@ -1,3 +1,33 @@
+2016-06-01  Keith Miller  <keith_miller@apple.com>
+
+        canOptimizeStringObjectAccess should use ObjectPropertyConditions rather than structure watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=158291
+
+        Reviewed by Benjamin Poulain.
+
+        The old StringObject primitive access code used structure watchpoints. This meant that
+        if you set a watchpoint on String.prototype prior to tiering up to the DFG then added
+        a new property to String.prototype then we would never use StringObject optimizations.
+        This made property caching in the LLInt bad because it meant we would watchpoint
+        String.prototype very early in the program, which hurt date-format-xpab.js since that
+        benchmark relies on the StringObject optimizations.
+
+        This patch also extends ObjectPropertyConditionSet to be able to handle a slotBase
+        equivalence condition. Since that makes the code for generating the DFG watchpoints
+        significantly cleaner.
+
+        * bytecode/ObjectPropertyCondition.cpp:
+        (JSC::ObjectPropertyCondition::structureEnsuresValidityAssumingImpurePropertyWatchpoint):
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::hasOneSlotBaseCondition):
+        (JSC::ObjectPropertyConditionSet::slotBaseCondition):
+        (JSC::generateConditionsForPrototypeEquivalenceConcurrently):
+        * bytecode/ObjectPropertyConditionSet.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isStringPrototypeMethodSane):
+        (JSC::DFG::Graph::canOptimizeStringObjectAccess):
+        * dfg/DFGGraph.h:
+
 2016-06-01  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling in r201436.
