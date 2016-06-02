@@ -168,7 +168,7 @@ static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 #import "WKViewInternal.h"
 #import <WebCore/ColorMac.h>
 
-@interface WKWebView () <WebViewImplDelegate>
+@interface WKWebView () <WebViewImplDelegate, NSTextInputClient>
 @end
 #endif
 

@@ -1,3 +1,27 @@
+2016-05-31  Brian Burg  <bburg@apple.com>
+  
+        REGRESSION(r191907): Can't enter combining diacritic marks in Web Inspector fields
+        https://bugs.webkit.org/show_bug.cgi?id=158227
+        <rdar://problem/26232464>
+
+        Reviewed by Darin Adler and Alexey Proskuryakov.
+
+        Web Inspector uses a WKWebView subclass for the inspector frontend interface.
+        Since r191907, WKWebView does not have an inner WKView, and instead shares
+        a WebViewImpl to implement the same methods as WKView. So, WKView is no longer
+        involved at all when delivering keystrokes to the Web Inspector interface.
+
+        This caused a subtle regression where some keystrokes were not being interpreted
+        in the same way by AppKit because WKWebView does not conform to NSTextInputClient
+        but WKView does. AppKit won't automatically create a NSTextInputContext for a NSView
+        unless the subclass is declared as conforming to NSTextInputClient. Thus, the keystroke
+        never goes through NSTextInputContext machinery which converts the keystroke into
+        a combining diacritic character.
+
+        This regression is covered by a new API test.
+
+        * UIProcess/API/Cocoa/WKWebView.mm: mark WKWebView as conforming to NSTextInputClient.
+
 2016-06-01  Dan Bernstein  <mitz@apple.com>
 
         Try to fix ENABLE(IOS_TOUCH_EVENTS) builds.

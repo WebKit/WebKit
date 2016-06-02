@@ -1,3 +1,19 @@
+2016-06-01  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r191907): Can't enter combining diacritic marks in Web Inspector fields
+        https://bugs.webkit.org/show_bug.cgi?id=158227
+        <rdar://problem/26232464>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a regression test that runs on Mac only.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewTextInput.mm: Added.
+        (-[DummyNavigationDelegate webView:didFinishNavigation:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/editable-body.html: Added.
+
 2016-06-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: VoiceOver can't access attachments in mail messages
