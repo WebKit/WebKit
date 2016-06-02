@@ -914,6 +914,28 @@ def defaultRun
     end
 end
 
+def defaultNoNoLLIntRun
+    if $quickMode
+        defaultQuickRun
+    else
+        runDefault
+        runAlwaysTriggerCopyPhase
+        if $jitTests
+            runNoCJITValidatePhases
+            runDFGEager
+            runDFGEagerNoCJITValidate
+            runDefaultFTL
+            runFTLNoCJITValidate
+            runFTLNoCJITNoPutStackValidate
+            runFTLNoCJITNoInlineValidate
+            runFTLEager
+            runFTLEagerNoCJITValidate
+            runFTLNoCJITSmallPool
+            runDFGMaximalFlushPhase
+        end
+    end
+end
+
 def defaultQuickRun
     if $enableFTL and $jitTests
         runDefaultFTL

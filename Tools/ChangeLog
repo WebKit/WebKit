@@ -1,3 +1,15 @@
+2016-06-02  Michael Saboff  <msaboff@apple.com>
+
+        [iOS]: Some JSC stress tests fail running out of executable memory when the LLInt is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=158317
+
+        Reviewed by Saam Barati.
+
+        Added defaultNoNoLLIntRun variant to run the default tests with the exception of the no-llint
+        variant.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-06-02  Aakash Jain  <aakash_jain@apple.com>
 
         LayoutTests time out intermittently due to alert about reopening Simulator after it unexpectedly quit

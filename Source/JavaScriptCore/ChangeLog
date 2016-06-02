@@ -1,3 +1,17 @@
+2016-06-02  Michael Saboff  <msaboff@apple.com>
+
+        [iOS]: Some JSC stress tests fail running out of executable memory when the LLInt is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=158317
+
+        Reviewed by Saam Barati.
+
+        Updated these test to not run the "no-llint" variant when running on ARM machines.
+
+        * tests/stress/arrowfunction-lexical-bind-superproperty.js: Skip no-llint for ARM
+        (testCase):
+        * tests/stress/proxy-revoke.js: Skipp no-lint for ARM and ARM64
+        (assert):
+
 2016-06-02  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, reland r201532. The associated regressions have been fixed

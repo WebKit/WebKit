@@ -1,3 +1,5 @@
+//@ defaultNoNoLLIntRun if $architecture == "arm64" or $architecture == "arm"
+
 function assert(b) {
     if (!b)
         throw new Error("bad assertion");
