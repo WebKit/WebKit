@@ -132,14 +132,7 @@ public:
     {
     }
     
-    NO_RETURN_DUE_TO_CRASH ConcurrentJITLocker(int)
-        : ConcurrentJITLockerBase(NoLockingNecessary)
-#if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
-        , m_disallowGC(Nullopt)
-#endif
-    {
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    ConcurrentJITLocker(int) = delete;
 
 #if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
 private:

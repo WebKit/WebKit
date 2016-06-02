@@ -48,10 +48,7 @@ public:
     // be accessed concurrently.
     Locker(NoLockingNecessaryTag) : m_lockable(nullptr) { }
     
-    NO_RETURN_DUE_TO_CRASH Locker(int)
-    {
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    Locker(int) = delete;
 
     ~Locker()
     {

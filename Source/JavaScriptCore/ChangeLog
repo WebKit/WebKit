@@ -1,3 +1,12 @@
+2016-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Use "= delete" for Locker(int) 
+
+        Rubber stamped by Saam Barati.
+
+        * runtime/ConcurrentJITLock.h:
+        (JSC::ConcurrentJITLocker::ConcurrentJITLocker):
+
 2016-06-02  Keith Miller  <keith_miller@apple.com>
 
         ObjectPropertyCondition should have a isStillValidAssumingImpurePropertyWatchpoint function

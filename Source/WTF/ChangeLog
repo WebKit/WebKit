@@ -1,5 +1,17 @@
 2016-06-02  Filip Pizlo  <fpizlo@apple.com>
 
+        Use "= delete" for Locker(int) 
+
+        Rubber stamped by Saam Barati.
+        
+        See discussion: https://bugs.webkit.org/show_bug.cgi?id=158306#c8
+
+        * wtf/Locker.h:
+        (WTF::Locker::Locker):
+        (WTF::Locker::~Locker):
+
+2016-06-02  Filip Pizlo  <fpizlo@apple.com>
+
         Make it harder to accidentally pass an integer to a locker.
 
         Rubber stamped by Keith Miller.
