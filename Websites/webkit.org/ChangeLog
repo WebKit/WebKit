@@ -1,3 +1,24 @@
+2016-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix typos and make some revisions to the B3 docs
+        https://bugs.webkit.org/show_bug.cgi?id=158311
+
+        Reviewed by Michael Saboff.
+        
+        I found typos and fixed them. Also, I clarified some things:
+        
+        - Is B3 IR platform-agnostic? Sort of. I tried to describe when it is (Values usually behave
+          the same way regardless of CPU) and when it isn't (it lets you speak of registers if that's
+          what you want to do, for example).
+        
+        - How does isValidForm really get used? You don't really need to create an Inst to use it.
+        
+        - Some other incremental improvements to make the docs clearer.
+
+        * docs/b3/assembly-intermediate-representation.html:
+        * docs/b3/index.html:
+        * docs/b3/intermediate-representation.html:
+
 2016-05-31  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix an obvious typo: a missing comma.

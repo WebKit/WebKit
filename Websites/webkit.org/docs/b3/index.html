@@ -30,7 +30,8 @@
     <p>Here's a simple example of C++ code that uses B3 to generate a function that adds two to
       its argument and returns it:</p>
 
-    <pre><code>Procedure proc;
+    <pre><code>// Create a Procedure that holds our code.
+Procedure proc;
 BasicBlock* root = proc.addBlock();
 root->appendNew&lt;ControlValue&gt;(
     proc, Return, Origin(),
@@ -39,10 +40,15 @@ root->appendNew&lt;ControlValue&gt;(
         root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
         root->appendNew<Const64Value>(proc, Origin(), 2)));
 
+// Have B3 compile the Procedure into code. The code and all of its artifacts (constant pools, jump tables)
+// will stay alive so long as Compilation stays alive.
 std::unique_ptr&lt;Compilation&gt; compilation = std::make_unique&lt;Compilation&gt;(vm, proc);
+
+// Get a function pointer that we can call. This function pointer points to JIT-generated machine code.
 int64_t (*function)(int64_t) = bitwise_cast&lt;int64_t (*)(int64_t)&gt;(compilation->code().executableAddress());
 
-printf("%lld\n", function(42)); // prints 44</code></pre>
+// Run it and print the result!
+printf("%lld\n", function(42)); // Prints 44.</code></pre>
 
     <p>When compiled, the resulting machine code looks like this:</p>
 
@@ -62,17 +68,18 @@ printf("%lld\n", function(42)); // prints 44</code></pre>
     <p>Clients of B3 usually interact with it using
       <a href="intermediate-representation.html">B3 IR</a>.  It's C-like, in the sense that it
       models heap references as integers and does not attempt to verify memory accesses.  It
-      enforces static single assignment, or SSA for short.  An SSA program will contain only one
-      assignment to each variable, which makes it trivial to trace from a use of a variable to
-      the operation that defined its value.  B3 IR is designed to be easy to generate and cheap
-      to manipulate.</p>
+      enforces <a href="https://en.wikipedia.org/wiki/Static_single_assignment_form">static single
+        assignment</a>, or SSA for short.  An SSA program will contain only one assignment to each
+      variable, which makes it trivial to trace from a use of a variable to the operation that
+      defined its value.  B3 IR is designed to be easy to generate and cheap to manipulate.</p>
 
-    <p>B3 is designed to be used as a backend for JITs, rather than as a tool that programmers
-      use directly.  Therefore, B3 embraces platform-specific concepts like argument registers,
-      stack frame layout, the frame pointer, and the call argument areas.  It's possible to emit
-      B3 IR that defines completely novel calling conventions, both for callers of the procedure
-      being generated and for callees of the procedure's callsites.  B3 also makes it easy to
-      just emit a C call.  There's an opcode for that.</p>
+    <p>In most ways, B3 IR is platform-agnostic. However, since B3 is designed to be used as a
+      backend for JITs, it does embrace some platform-specific concepts whenever it is pragmatic to
+      do so. B3 exposes direct control over argument registers, stack frame layout, the frame
+      pointer, and the call argument areas.  It's possible to emit B3 IR that defines completely
+      novel calling conventions, both for callers of the procedure being generated and for callees of
+      the procedure's callsites.  B3 also makes it easy to just emit a C call.  There's an opcode for
+      that.</p>
 
     <p>See <a href="intermediate-representation.html">the IR documentation</a> for more
       info.</p>
@@ -146,7 +153,7 @@ printf("%lld\n", function(42)); // prints 44</code></pre>
     Add64 $2, %rdi, %rax, @2
     Ret64 %rax, @3</code></pre>
 
-    <h2>B3->Air lowering, also known as Instruction Selection</h2>
+    <h2>B3&rarr;Air lowering, also known as Instruction Selection</h2>
 
     <p>The B3::LowerToAir phase converts B3 into Air by doing pattern-matching.  It processes
       programs backwards.  At each B3 value, it greedily tries to match both the value and as
@@ -193,8 +200,8 @@ Patch &Branch8(3,SameAsRep), LessThan, (%tmp1,%tmp2,2), $42, @10</code></pre>
 
     <h2>Code generation</h2>
 
-    <p>The final form of Air contains no registers or abstract stack slots.  Therefore, it maps
-      directly to machine code.  The final code generation step is a very fast transformation
+    <p>The final form of Air contains no unallocated temporaries or abstract stack slots.  Therefore,
+      it maps directly to machine code.  The final code generation step is a very fast transformation
       from Air's object-oriented way of representing those instructions to the target's machine
       code.  We use JavaScriptCore's macro assembler for this purpose.</p>
 

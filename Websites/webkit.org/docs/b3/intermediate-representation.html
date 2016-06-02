@@ -65,6 +65,16 @@
       <dd>64-bit binary floating point number.</dd>
     </dl>
 
+    <p>B3 does not have a pointer type. Instead, the <code>B3::pointerType()</code> function will
+      return either Int32 or Int64 depending on which kind of integer can be used to represent a
+      pointer on the current platform. It's not a goal of B3 to support hardware targets that require
+      pointers and integers to be segregated. It's not a goal of B3 to support GC (garbage
+      collection) roots as a separate type, since JSC uses
+      <a href="http://www.hpl.hp.com/techreports/Compaq-DEC/WRL-88-2.pdf">Bartlett-style conservative
+        root scanning</a>. This doesn't preclude any mainstream garbage collection algorithms,
+      including copying, generational, or concurrent collectors, and frees up the compiler to perform
+      more optimizations.</p>
+
     <h2>Values</h2>
 
     <p>Variables, and the instructions that define them, are represented using the Value object.
@@ -412,11 +422,12 @@
         the CCallValue class.</dd>
 
       <dt>T1 Patchpoint([T2, [T3, ...]])</dt>
-      <dd>A Patchpoint is a customizable value.  Patchpoints take zero or more values of any
-        type and return any type.  A Patchpoint's behavior is determined by the generator
-        object.  The generator is a C++ lambda that gets called during code generation.  It gets
-        passed an assembler instance (specifically, CCallHelpers&) and an object describing
-        where to find all of the input values and where to put the result.  Here's an example:
+      <dd>
+        <p>A Patchpoint is a customizable value.  Patchpoints take zero or more values of any
+          type and return any type.  A Patchpoint's behavior is determined by the generator
+          object.  The generator is a C++ lambda that gets called during code generation.  It gets
+          passed an assembler instance (specifically, CCallHelpers&) and an object describing
+          where to find all of the input values and where to put the result.  Here's an example:</p>
  
         <pre><code>PatchpointValue* patchpoint = block->appendNew&lt;PatchpointValue&gt;(proc, Int32, Origin());
 patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
