@@ -119,12 +119,13 @@ void ResourceError::platformLazyInit()
     m_dataIsUpToDate = true;
 }
 
-void ResourceError::platformCopy(ResourceError& errorCopy) const
+
+void ResourceError::doPlatformIsolatedCopy(const ResourceError& other)
 {
 #if PLATFORM(WIN)
-    errorCopy.m_certificate = m_certificate;
+    m_certificate = other.m_certificate;
 #else
-    UNUSED_PARAM(errorCopy);
+    UNUSED_PARAM(other);
 #endif
 }
 

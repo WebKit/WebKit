@@ -78,13 +78,9 @@ namespace WebCore {
         void doUpdatePlatformHTTPBody() { }
         void doUpdateResourceHTTPBody() { }
 
-        std::unique_ptr<CrossThreadResourceRequestData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceRequestData> data) const { return data; }
-        void doPlatformAdopt(std::unique_ptr<CrossThreadResourceRequestData>) { }
- 
-        static bool s_httpPipeliningEnabled;
-    };
+        void doPlatformSetAsIsolatedCopy(const ResourceRequest&) { }
 
-    struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
+        static bool s_httpPipeliningEnabled;
     };
 
 } // namespace WebCore

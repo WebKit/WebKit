@@ -69,6 +69,8 @@ public:
     {
     }
 
+    FormDataElement isolatedCopy() const;
+
     template<typename Encoder>
     void encode(Encoder&) const;
     template<typename Decoder>
@@ -205,7 +207,7 @@ public:
     // FIXME: Both these functions perform a deep copy of m_elements, but differ in handling of other data members.
     // How much of that is intentional? We need better names that explain the difference.
     Ref<FormData> copy() const;
-    Ref<FormData> deepCopy() const;
+    Ref<FormData> isolatedCopy() const;
 
     template<typename Encoder>
     void encode(Encoder&) const;
@@ -263,10 +265,10 @@ private:
 
     Vector<FormDataElement> m_elements;
 
-    int64_t m_identifier;
-    bool m_alwaysStream;
+    int64_t m_identifier { 0 };
+    bool m_alwaysStream { false };
     Vector<char> m_boundary;
-    bool m_containsPasswordData;
+    bool m_containsPasswordData { false };
 };
 
 inline bool operator==(const FormData& a, const FormData& b)

@@ -45,8 +45,6 @@ namespace WebCore {
     class ResourceRequest;
     class WorkerGlobalScope;
     class WorkerLoaderProxy;
-    struct CrossThreadResourceResponseData;
-    struct CrossThreadResourceRequestData;
 
     class WorkerThreadableLoader : public RefCounted<WorkerThreadableLoader>, public ThreadableLoader {
         WTF_MAKE_FAST_ALLOCATED;

@@ -54,6 +54,9 @@ public:
     bool hasSSLConnectError() const { return errorCode() == CURLE_SSL_CONNECT_ERROR; }
 
 private:
+    friend class ResourceErrorBase;
+    void doPlatformIsolatedCopy(const ResourceError&) { }
+
     unsigned m_sslErrors;
 };
 

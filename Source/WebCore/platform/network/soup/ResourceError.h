@@ -67,7 +67,8 @@ public:
     static bool platformCompare(const ResourceError& a, const ResourceError& b);
 
 private:
-    void platformCopy(ResourceError&) const;
+    friend class ResourceErrorBase;
+    void doPlatformIsolatedCopy(const ResourceError&);
 
     unsigned m_tlsErrors;
     GRefPtr<GTlsCertificate> m_certificate;

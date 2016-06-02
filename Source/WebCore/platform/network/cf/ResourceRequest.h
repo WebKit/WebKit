@@ -126,8 +126,7 @@ private:
     void doUpdatePlatformHTTPBody();
     void doUpdateResourceHTTPBody();
 
-    std::unique_ptr<CrossThreadResourceRequestData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceRequestData>) const;
-    void doPlatformAdopt(std::unique_ptr<CrossThreadResourceRequestData>);
+    void doPlatformSetAsIsolatedCopy(const ResourceRequest&);
 
 #if USE(CFNETWORK)
     RetainPtr<CFURLRequestRef> m_cfRequest;
@@ -140,12 +139,6 @@ private:
 #endif
 
     static bool s_httpPipeliningEnabled;
-};
-
-struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
-#if ENABLE(CACHE_PARTITIONING)
-    String m_cachePartition;
-#endif
 };
 
 inline bool ResourceRequest::resourcePrioritiesEnabled()

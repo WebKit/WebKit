@@ -97,10 +97,10 @@ ResourceError ResourceError::timeoutError(const URL& failingURL)
     return error;
 }
 
-void ResourceError::platformCopy(ResourceError& errorCopy) const
+void ResourceError::doPlatformIsolatedCopy(const ResourceError& other)
 {
-    errorCopy.m_certificate = m_certificate;
-    errorCopy.m_tlsErrors = m_tlsErrors;
+    m_certificate = other.m_certificate;
+    m_tlsErrors = other.m_tlsErrors;
 }
 
 bool ResourceError::platformCompare(const ResourceError& a, const ResourceError& b)

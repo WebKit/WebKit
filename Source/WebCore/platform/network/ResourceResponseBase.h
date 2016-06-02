@@ -40,7 +40,6 @@
 namespace WebCore {
 
 class ResourceResponse;
-struct CrossThreadResourceResponseData;
 
 // Do not use this class directly, use the class ResponseResponse instead
 class ResourceResponseBase {
@@ -159,9 +158,6 @@ private:
     void parseCacheControlDirectives() const;
     void updateHeaderParsedState(HTTPHeaderName);
 
-    // Gets a copy of the data suitable for passing to another thread.
-    std::unique_ptr<CrossThreadResourceResponseData> copyData() const;
-
 protected:
     bool m_isNull;
     URL m_url;
@@ -273,22 +269,5 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
 
     return true;
 }
-
-struct CrossThreadResourceResponseDataBase {
-    WTF_MAKE_NONCOPYABLE(CrossThreadResourceResponseDataBase); WTF_MAKE_FAST_ALLOCATED;
-public:
-    CrossThreadResourceResponseDataBase() { }
-    URL m_url;
-    String m_mimeType;
-    long long m_expectedContentLength;
-    String m_textEncodingName;
-    int m_httpStatusCode;
-    String m_httpStatusText;
-    String m_httpVersion;
-    std::unique_ptr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
-    ResourceLoadTiming m_resourceLoadTiming;
-    ResourceResponseBase::Type m_type;
-    bool m_isRedirected;
-};
 
 } // namespace WebCore

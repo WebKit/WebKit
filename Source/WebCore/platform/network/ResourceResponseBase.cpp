@@ -66,40 +66,22 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
 ResourceResponse ResourceResponseBase::isolatedCopy() const
 {
     ResourceResponse response;
-    auto data = copyData();
 
-    response.setURL(data->m_url);
-    response.setMimeType(data->m_mimeType);
-    response.setExpectedContentLength(data->m_expectedContentLength);
-    response.setTextEncodingName(data->m_textEncodingName);
+    response.setURL(url().isolatedCopy());
+    response.setMimeType(mimeType().isolatedCopy());
+    response.setExpectedContentLength(expectedContentLength());
+    response.setTextEncodingName(textEncodingName().isolatedCopy());
 
-    response.setHTTPStatusCode(data->m_httpStatusCode);
-    response.setHTTPStatusText(data->m_httpStatusText);
-    response.setHTTPVersion(data->m_httpVersion);
+    response.setHTTPStatusCode(httpStatusCode());
+    response.setHTTPStatusText(httpStatusText().isolatedCopy());
+    response.setHTTPVersion(httpVersion().isolatedCopy());
 
     response.lazyInit(AllFields);
-    response.m_httpHeaderFields.adopt(WTFMove(data->m_httpHeaders));
-    response.m_resourceLoadTiming = data->m_resourceLoadTiming;
-    response.m_type = data->m_type;
-    response.doPlatformAdopt(WTFMove(data));
+    response.m_httpHeaderFields = httpHeaderFields().isolatedCopy();
+    response.m_resourceLoadTiming = m_resourceLoadTiming.isolatedCopy();
+    response.m_type = m_type;
 
     return response;
-}
-
-std::unique_ptr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() const
-{
-    auto data = std::make_unique<CrossThreadResourceResponseData>();
-    data->m_url = url().isolatedCopy();
-    data->m_mimeType = mimeType().isolatedCopy();
-    data->m_expectedContentLength = expectedContentLength();
-    data->m_textEncodingName = textEncodingName().isolatedCopy();
-    data->m_httpStatusCode = httpStatusCode();
-    data->m_httpStatusText = httpStatusText().isolatedCopy();
-    data->m_httpVersion = httpVersion().isolatedCopy();
-    data->m_httpHeaders = httpHeaderFields().copyData();
-    data->m_resourceLoadTiming = m_resourceLoadTiming;
-    data->m_type = m_type;
-    return asResourceResponse().doPlatformCopyData(WTFMove(data));
 }
 
 // FIXME: Name does not make it clear this is true for HTTPS!

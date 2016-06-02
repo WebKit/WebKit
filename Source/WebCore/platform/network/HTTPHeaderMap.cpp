@@ -44,31 +44,17 @@ HTTPHeaderMap::~HTTPHeaderMap()
 {
 }
 
-std::unique_ptr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
+HTTPHeaderMap HTTPHeaderMap::isolatedCopy() const
 {
-    auto data = std::make_unique<CrossThreadHTTPHeaderMapData>();
+    HTTPHeaderMap map;
 
-    data->commonHeaders.reserveInitialCapacity(m_commonHeaders.size());
-    for (const auto& header : m_commonHeaders)
-        data->commonHeaders.uncheckedAppend(std::make_pair(header.key, header.value.isolatedCopy()));
+    for (auto& header : m_commonHeaders)
+        map.m_commonHeaders.set(header.key, header.value.isolatedCopy());
 
-    data->uncommonHeaders.reserveInitialCapacity(m_uncommonHeaders.size());
-    for (const auto& header : m_uncommonHeaders)
-        data->uncommonHeaders.uncheckedAppend(std::make_pair(header.key.isolatedCopy(), header.value.isolatedCopy()));
+    for (auto& header : m_uncommonHeaders)
+        map.m_uncommonHeaders.set(header.key.isolatedCopy(), header.value.isolatedCopy());
 
-    return data;
-}
-
-void HTTPHeaderMap::adopt(std::unique_ptr<CrossThreadHTTPHeaderMapData> data)
-{
-    m_commonHeaders.clear();
-    m_uncommonHeaders.clear();
-
-    for (auto& header : data->commonHeaders)
-        m_commonHeaders.add(header.first, WTFMove(header.second));
-
-    for (auto& header : data->uncommonHeaders)
-        m_uncommonHeaders.add(WTFMove(header.first), WTFMove(header.second));
+    return map;
 }
 
 String HTTPHeaderMap::get(const String& name) const

@@ -1,3 +1,93 @@
+2016-06-02  Brady Eidson  <beidson@apple.com>
+
+        Modernize how many platform/network classes do isolatedCopy().
+        https://bugs.webkit.org/show_bug.cgi?id=158313
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, no behavior change).
+
+        * loader/WorkerThreadableLoader.h:
+        
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::isolatedCopy):
+        (WebCore::FormDataElement::isolatedCopy):
+        (WebCore::FormData::FormData): Deleted.
+        (WebCore::FormData::deepCopy): Deleted.
+        * platform/network/FormData.h:
+        
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::isolatedCopy):
+        (WebCore::HTTPHeaderMap::copyData): Deleted.
+        (WebCore::HTTPHeaderMap::adopt): Deleted.
+        * platform/network/HTTPHeaderMap.h:
+        
+        * platform/network/ResourceErrorBase.cpp:
+        (WebCore::ResourceErrorBase::asResourceError):
+        (WebCore::ResourceErrorBase::isolatedCopy):
+        * platform/network/ResourceErrorBase.h:
+        (WebCore::ResourceErrorBase::platformCopy): Deleted.
+
+        * platform/network/ResourceLoadTiming.h:
+        (WebCore::ResourceLoadTiming::isolatedCopy): Not strictly needed for now, but makes it obvious
+          that changes will be needed if new members are added later.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::isolatedCopy):
+        (WebCore::ResourceRequestBase::setAsIsolatedCopy):
+        (WebCore::ResourceRequestBase::copyData): Deleted.
+        * platform/network/ResourceRequestBase.h:
+        
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::isolatedCopy):
+        (WebCore::ResourceResponseBase::copyData): Deleted.
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::CrossThreadResourceResponseDataBase::CrossThreadResourceResponseDataBase): Deleted.
+        
+        * platform/network/cf/ResourceError.h:
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::doPlatformIsolatedCopy):
+        (WebCore::ResourceError::platformCopy): Deleted.
+        
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doPlatformSetAsIsolatedCopy):
+        (WebCore::ResourceRequest::doPlatformCopyData): Deleted.
+        (WebCore::ResourceRequest::doPlatformAdopt): Deleted.
+        
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::doPlatformCopyData): Deleted.
+        (WebCore::ResourceResponse::doPlatformAdopt): Deleted.
+        
+        * platform/network/curl/ResourceError.h:
+        (WebCore::ResourceError::doPlatformIsolatedCopy):
+        
+        * platform/network/curl/ResourceRequest.h:
+        (WebCore::ResourceRequest::doPlatformSetAsIsolatedCopy):
+        (WebCore::ResourceRequest::doPlatformCopyData): Deleted.
+        (WebCore::ResourceRequest::doPlatformAdopt): Deleted.
+        
+        * platform/network/curl/ResourceResponse.h:
+        (WebCore::ResourceResponse::doPlatformCopyData): Deleted.
+        (WebCore::ResourceResponse::doPlatformAdopt): Deleted.
+        
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::doPlatformIsolatedCopy):
+        
+        * platform/network/soup/ResourceError.h:
+        * platform/network/soup/ResourceErrorSoup.cpp:
+        (WebCore::ResourceError::doPlatformIsolatedCopy):
+        (WebCore::ResourceError::platformCopy): Deleted.
+        
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::doPlatformSetAsIsolatedCopy):
+        (WebCore::ResourceRequest::doPlatformCopyData): Deleted.
+        (WebCore::ResourceRequest::doPlatformAdopt): Deleted.
+        
+        * platform/network/soup/ResourceResponse.h:
+        (WebCore::ResourceResponse::doPlatformCopyData): Deleted.
+        (WebCore::ResourceResponse::doPlatformAdopt): Deleted.
+
 2016-06-02  Chris Dumez  <cdumez@apple.com>
 
         Crash under CachedResource::addClientToSet()

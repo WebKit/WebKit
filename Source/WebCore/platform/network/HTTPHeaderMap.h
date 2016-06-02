@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTTPHeaderMap_h
-#define HTTPHeaderMap_h
+#pragma once
 
 #include "HTTPHeaderNames.h"
 #include <utility>
@@ -37,11 +36,6 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
-
-struct CrossThreadHTTPHeaderMapData {
-    Vector<std::pair<HTTPHeaderName, String>> commonHeaders;
-    Vector<std::pair<String, String>> uncommonHeaders;
-};
 
 // FIXME: Not every header fits into a map. Notably, multiple Set-Cookie header fields are needed to set multiple cookies.
 
@@ -124,8 +118,7 @@ public:
     WEBCORE_EXPORT ~HTTPHeaderMap();
 
     // Gets a copy of the data suitable for passing to another thread.
-    std::unique_ptr<CrossThreadHTTPHeaderMapData> copyData() const;
-    void adopt(std::unique_ptr<CrossThreadHTTPHeaderMapData>);
+    HTTPHeaderMap isolatedCopy() const;
 
     bool isEmpty() const { return m_commonHeaders.isEmpty() && m_uncommonHeaders.isEmpty(); }
     int size() const { return m_commonHeaders.size() + m_uncommonHeaders.size(); }
@@ -215,5 +208,3 @@ bool HTTPHeaderMap::decode(Decoder& decoder, HTTPHeaderMap& headerMap)
 }
 
 } // namespace WebCore
-
-#endif // HTTPHeaderMap_h

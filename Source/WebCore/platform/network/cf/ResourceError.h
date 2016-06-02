@@ -83,7 +83,9 @@ private:
     friend class ResourceErrorBase;
 
     void platformLazyInit();
-    void platformCopy(ResourceError&) const;
+
+    void doPlatformIsolatedCopy(const ResourceError&);
+
     bool m_dataIsUpToDate;
 #if USE(CFNETWORK)
     mutable RetainPtr<CFErrorRef> m_platformError;

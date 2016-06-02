@@ -48,14 +48,13 @@ enum HTTPBodyUpdatePolicy {
 };
 
 class ResourceRequest;
-struct CrossThreadResourceRequestData;
 
 // Do not use this type directly.  Use ResourceRequest instead.
 class ResourceRequestBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ResourceRequest isolatedCopy() const;
-    WEBCORE_EXPORT void setAsIsolatedCopy(const ResourceRequestBase&);
+    WEBCORE_EXPORT void setAsIsolatedCopy(const ResourceRequest&);
 
     WEBCORE_EXPORT bool isNull() const;
     WEBCORE_EXPORT bool isEmpty() const;
@@ -220,9 +219,6 @@ protected:
 private:
     const ResourceRequest& asResourceRequest() const;
 
-    // Gets a copy of the data suitable for passing to another thread.
-    std::unique_ptr<CrossThreadResourceRequestData> copyData() const;
-
     WEBCORE_EXPORT static double s_defaultTimeoutInterval;
 #if PLATFORM(IOS)
     static bool s_defaultAllowCookies;
@@ -233,20 +229,6 @@ bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequest
 
 inline bool operator==(const ResourceRequest& a, const ResourceRequest& b) { return ResourceRequestBase::compare(a, b); }
 inline bool operator!=(ResourceRequest& a, const ResourceRequest& b) { return !(a == b); }
-
-struct CrossThreadResourceRequestDataBase {
-    URL url;
-    ResourceRequestCachePolicy cachePolicy;
-    double timeoutInterval;
-    URL firstPartyForCookies;
-    String httpMethod;
-    std::unique_ptr<CrossThreadHTTPHeaderMapData> httpHeaders;
-    Vector<String> responseContentDispositionEncodingFallbackArray;
-    RefPtr<FormData> httpBody;
-    bool allowCookies;
-    ResourceLoadPriority priority;
-    ResourceRequestBase::Requester requester;
-};
 
 WEBCORE_EXPORT unsigned initializeMaximumHTTPConnectionCountPerHost();
 #if PLATFORM(IOS)

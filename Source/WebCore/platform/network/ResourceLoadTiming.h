@@ -68,6 +68,12 @@ public:
         secureConnectionStart = other.secureConnectionStart;
         return *this;
     }
+
+    ResourceLoadTiming isolatedCopy() const
+    {
+        // There are currently no members that need isolated copies, so we can use the copy constructor.
+        return *this;
+    }
     
     bool operator==(const ResourceLoadTiming& other) const
     {

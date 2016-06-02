@@ -281,6 +281,10 @@ bool ResourceError::platformCompare(const ResourceError& a, const ResourceError&
     return a.nsError() == b.nsError();
 }
 
+void ResourceError::doPlatformIsolatedCopy(const ResourceError&)
+{
+}
+
 NSError *ResourceError::nsError() const
 {
     if (m_isNull) {

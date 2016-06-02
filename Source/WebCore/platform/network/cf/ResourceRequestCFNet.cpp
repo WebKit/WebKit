@@ -366,22 +366,15 @@ String ResourceRequest::partitionName(const String& domain)
 }
 #endif
 
-std::unique_ptr<CrossThreadResourceRequestData> ResourceRequest::doPlatformCopyData(std::unique_ptr<CrossThreadResourceRequestData> data) const
+void ResourceRequest::doPlatformSetAsIsolatedCopy(const ResourceRequest& other)
 {
 #if ENABLE(CACHE_PARTITIONING)
-    data->m_cachePartition = m_cachePartition;
+    m_cachePartition = other.m_cachePartition.isolatedCopy();
+#else
+    UNUSED_PARAM(other);
 #endif
-    return data;
 }
 
-void ResourceRequest::doPlatformAdopt(std::unique_ptr<CrossThreadResourceRequestData> data)
-{
-#if ENABLE(CACHE_PARTITIONING)
-    m_cachePartition = data->m_cachePartition;
-#else
-    UNUSED_PARAM(data);
-#endif
-}
 
 // FIXME: It is confusing that this function both sets connection count and determines maximum request count at network layer. This can and should be done separately.
 unsigned initializeMaximumHTTPConnectionCountPerHost()

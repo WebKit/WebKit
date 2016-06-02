@@ -100,8 +100,8 @@ private:
     String platformSuggestedFilename() const;
     CertificateInfo platformCertificateInfo() const;
 
-    std::unique_ptr<CrossThreadResourceResponseData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceResponseData> data) const { return data; }
-    void doPlatformAdopt(std::unique_ptr<CrossThreadResourceResponseData>) { }
+    void doPlatformSetAsIsolatedCopy(const ResourceResponse&) const;
+
 #if PLATFORM(COCOA)
     void initNSURLResponse() const;
 #endif
@@ -117,9 +117,6 @@ private:
 #if PLATFORM(COCOA)
     mutable RetainPtr<NSURLResponse> m_nsResponse;
 #endif
-};
-
-struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
 };
 
 } // namespace WebCore

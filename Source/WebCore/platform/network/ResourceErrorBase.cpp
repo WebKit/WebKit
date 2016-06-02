@@ -31,6 +31,11 @@ namespace WebCore {
 
 const char* const errorDomainWebKitInternal = "WebKitInternal";
 
+inline const ResourceError& ResourceErrorBase::asResourceError() const
+{
+    return *static_cast<const ResourceError*>(this);
+}
+
 ResourceError ResourceErrorBase::isolatedCopy() const
 {
     lazyInit();
@@ -43,7 +48,9 @@ ResourceError ResourceErrorBase::isolatedCopy() const
     errorCopy.m_isNull = m_isNull;
     errorCopy.m_isCancellation = m_isCancellation;
     errorCopy.m_isTimeout = m_isTimeout;
-    platformCopy(errorCopy);
+
+    errorCopy.doPlatformIsolatedCopy(asResourceError());
+
     return errorCopy;
 }
 

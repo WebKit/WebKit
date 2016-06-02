@@ -90,9 +90,6 @@ private:
     void doUpdateResourceResponse() { }
     String platformSuggestedFilename() const;
     CertificateInfo platformCertificateInfo() const;
-
-    std::unique_ptr<CrossThreadResourceResponseData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceResponseData> data) const { return data; }
-    void doPlatformAdopt(std::unique_ptr<CrossThreadResourceResponseData>) { }
 };
 
 template<class Encoder>
@@ -111,9 +108,6 @@ bool ResourceResponse::decode(Decoder& decoder, ResourceResponse& response)
         return false;
     return true;
 }
-
-struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
-};
 
 } // namespace WebCore
 

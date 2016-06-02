@@ -39,9 +39,6 @@
 namespace WebCore {
 
 inline FormData::FormData()
-    : m_identifier(0)
-    , m_alwaysStream(false)
-    , m_containsPasswordData(false)
 {
 }
 
@@ -115,27 +112,32 @@ Ref<FormData> FormData::copy() const
     return adoptRef(*new FormData(*this));
 }
 
-Ref<FormData> FormData::deepCopy() const
+Ref<FormData> FormData::isolatedCopy() const
 {
-    Ref<FormData> formData(create());
+    // FIXME: isolatedCopy() (historically deepCopy()) only copies certain values from `this`. Why is that?
+    auto formData = create();
 
     formData->m_alwaysStream = m_alwaysStream;
 
     formData->m_elements.reserveInitialCapacity(m_elements.size());
-    for (const FormDataElement& element : m_elements) {
-        switch (element.m_type) {
-        case FormDataElement::Type::Data:
-            formData->m_elements.uncheckedAppend(FormDataElement(element.m_data));
-            break;
-        case FormDataElement::Type::EncodedFile:
-            formData->m_elements.uncheckedAppend(FormDataElement(element.m_filename, element.m_fileStart, element.m_fileLength, element.m_expectedFileModificationTime, element.m_shouldGenerateFile));
-            break;
-        case FormDataElement::Type::EncodedBlob:
-            formData->m_elements.uncheckedAppend(FormDataElement(element.m_url));
-            break;
-        }
-    }
+    for (auto& element : m_elements)
+        formData->m_elements.uncheckedAppend(element.isolatedCopy());
+
     return formData;
+}
+
+FormDataElement FormDataElement::isolatedCopy() const
+{
+    switch (m_type) {
+    case Type::Data:
+        return FormDataElement(m_data);
+    case Type::EncodedFile:
+        return FormDataElement(m_filename.isolatedCopy(), m_fileStart, m_fileLength, m_expectedFileModificationTime, m_shouldGenerateFile);
+    case Type::EncodedBlob:
+        return FormDataElement(m_url.isolatedCopy());
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void FormData::appendData(const void* data, size_t size)

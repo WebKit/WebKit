@@ -59,17 +59,12 @@ public:
 private:
     friend class ResourceResponseBase;
 
-    std::unique_ptr<CrossThreadResourceResponseData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceResponseData> data) const { return data; }
-    void doPlatformAdopt(std::unique_ptr<CrossThreadResourceResponseData>) { }
     String platformSuggestedFilename() const
     {
         return filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
     }
 
     bool m_responseFired;
-};
-
-struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
 };
 
 } // namespace WebCore
