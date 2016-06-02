@@ -1,3 +1,21 @@
+2016-06-02  Keith Miller  <keith_miller@apple.com>
+
+        ObjectPropertyCondition should have a isStillValidAssumingImpurePropertyWatchpoint function
+        https://bugs.webkit.org/show_bug.cgi?id=158308
+
+        Reviewed by Filip Pizlo.
+
+        Recently, structureEnsuresValidityAssumingImpurePropertyWatchpoint was converted to check
+        what should be isStillValidAssumingImpurePropertyWatchpoint. This patch fixes the API so
+        it should work as expected. This patch also changes generateConditions in
+        ObjectPropertyConditionSet to use isStillValidAssumingImpurePropertyWatchpoint.
+
+        * bytecode/ObjectPropertyCondition.cpp:
+        (JSC::ObjectPropertyCondition::structureEnsuresValidityAssumingImpurePropertyWatchpoint):
+        (JSC::ObjectPropertyCondition::isStillValidAssumingImpurePropertyWatchpoint):
+        * bytecode/ObjectPropertyCondition.h:
+        * bytecode/ObjectPropertyConditionSet.cpp:
+
 2016-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         Make it harder to accidentally pass an integer to a locker.

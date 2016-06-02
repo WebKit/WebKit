@@ -186,6 +186,11 @@ public:
     bool validityRequiresImpurePropertyWatchpoint(Structure*) const;
     bool validityRequiresImpurePropertyWatchpoint() const;
 
+    // Checks if the condition still holds setting aside the need for an impure property watchpoint.
+    // Validity might still require watchpoints on the object.
+    bool isStillValidAssumingImpurePropertyWatchpoint(Structure*) const;
+    bool isStillValidAssumingImpurePropertyWatchpoint() const;
+
     // Checks if the condition still holds. May conservatively return false, if the object and
     // structure alone don't guarantee the condition. Note that this may return true if the
     // condition still requires some watchpoints on the object in addition to checking the
