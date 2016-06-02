@@ -43,6 +43,7 @@ public:
     
     WTF_EXPORT_PRIVATE CString toCString();
     WTF_EXPORT_PRIVATE String toString();
+    WTF_EXPORT_PRIVATE String toStringWithLatin1Fallback();
     WTF_EXPORT_PRIVATE void reset();
     
 private:

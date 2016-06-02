@@ -1276,7 +1276,10 @@ private:
 
     void setErrorMessage(const String& message)
     {
+        ASSERT_WITH_MESSAGE(!message.isEmpty(), "Attempted to set the empty string as an error message. Likely caused by invalid UTF8 used when creating the message.");
         m_errorMessage = message;
+        if (m_errorMessage.isEmpty())
+            m_errorMessage = ASCIILiteral("Unparseable script");
     }
     
     NEVER_INLINE void logError(bool);

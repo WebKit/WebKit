@@ -1,3 +1,18 @@
+2016-06-02  Oliver Hunt  <oliver@apple.com>
+
+        JS parser incorrectly handles invalid utf8 in error messages.
+        https://bugs.webkit.org/show_bug.cgi?id=158128
+
+        Reviewed by Saam Barati.
+
+        Add a new toStringWithLatin1Fallback that simply uses
+        String::fromUTF8WithLatin1Fallback, so we can avoid the
+        standard String::fromUTF8 null return.
+
+        * wtf/StringPrintStream.cpp:
+        (WTF::StringPrintStream::toStringWithLatin1Fallback):
+        * wtf/StringPrintStream.h:
+
 2016-06-02  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, reland r201532. The associated regressions have been fixed

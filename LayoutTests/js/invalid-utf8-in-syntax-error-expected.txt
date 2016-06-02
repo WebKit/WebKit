@@ -1,0 +1,10 @@
+Ensures that we correctly propagate the error message for lexer errors containing invalid utf8 code sequences
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ({f("íº­")}) threw exception SyntaxError: Unexpected string literal "Ã­ÂºÂ­". Expected a parameter pattern or a ')' in parameter list..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,15 @@
+2016-06-02  Oliver Hunt  <oliver@apple.com>
+
+        JS parser incorrectly handles invalid utf8 in error messages.
+        https://bugs.webkit.org/show_bug.cgi?id=158128
+
+        Reviewed by Saam Barati.
+
+        Add a testcase.
+
+        * js/invalid-utf8-in-syntax-error-expected.txt: Added.
+        * js/script-tests/invalid-utf8-in-syntax-error.js: Added.
+
 2016-06-02  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r200694): %ThrowTypeError% is not unique

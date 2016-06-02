@@ -1,3 +1,30 @@
+2016-06-02  Oliver Hunt  <oliver@apple.com>
+
+        JS parser incorrectly handles invalid utf8 in error messages.
+        https://bugs.webkit.org/show_bug.cgi?id=158128
+
+        Reviewed by Saam Barati.
+
+        The bug here was caused by us using PrintStream's toString method
+        to produce the error message for a parse error, even though toString
+        may produce a null string in the event of invalid utf8 that causes
+        the error in first case. So when we try to create an error message
+        containing the invalid character code, we set m_errorMessage to the
+        null string, as that signals "no error" we don't stop parsing, and
+        everything goes down hill from there.
+
+        Now we use the new toStringWithLatin1Fallback so that we can always
+        produce an error message, even if it contains invalid unicode. We
+        also add an additional fallback so that we can guarantee an error
+        message is set even if we're given a null string. There's a debug
+        mode assertion to prevent anyone accidentally attempting to clear
+        the message via setErrorMessage.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::logError):
+        * parser/Parser.h:
+        (JSC::Parser::setErrorMessage):
+
 2016-06-02  Saam Barati  <sbarati@apple.com>
 
         Teach bytecode liveness about the debugger

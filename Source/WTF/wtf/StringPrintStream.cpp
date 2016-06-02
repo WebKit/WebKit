@@ -100,6 +100,12 @@ String StringPrintStream::toString()
     return String::fromUTF8(m_buffer, m_next);
 }
 
+String StringPrintStream::toStringWithLatin1Fallback()
+{
+    ASSERT(m_next == strlen(m_buffer));
+    return String::fromUTF8WithLatin1Fallback(m_buffer, m_next);
+}
+
 void StringPrintStream::increaseSize(size_t newSize)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(newSize > m_size);
