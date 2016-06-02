@@ -1,3 +1,17 @@
+2016-06-02  Dean Jackson  <dino@apple.com>
+
+        Adding some sample images for a blog post on color.
+
+        * blog-files/color-gamut/Flowers-AdobeRGB.jpg: Added.
+        * blog-files/color-gamut/Flowers-ProPhoto.jpg: Added.
+        * blog-files/color-gamut/Flowers-oog.jpg: Added.
+        * blog-files/color-gamut/Flowers-sRGB.jpg: Added.
+        * blog-files/color-gamut/Rose-AdobeRGB.jpg: Added.
+        * blog-files/color-gamut/Rose-ProPhoto.jpg: Added.
+        * blog-files/color-gamut/Rose-oog.jpg: Added.
+        * blog-files/color-gamut/Rose-sRGB.jpg: Added.
+        * blog-files/color-gamut/index.html: Added.
+
 2016-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         Fix typos and make some revisions to the B3 docs
