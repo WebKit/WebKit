@@ -116,8 +116,7 @@ class DeleteCallbackDataTask : public ScriptExecutionContext::Task {
 public:
     template <typename CallbackDataType>
     explicit DeleteCallbackDataTask(CallbackDataType* data)
-        : ScriptExecutionContext::Task(ScriptExecutionContext::Task::CleanupTask, [data] (ScriptExecutionContext&) {
-            delete data;
+        : ScriptExecutionContext::Task(ScriptExecutionContext::Task::CleanupTask, [data = std::unique_ptr<CallbackDataType>(data)] (ScriptExecutionContext&) {
         })
     {
     }

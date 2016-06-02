@@ -1,5 +1,26 @@
 2016-06-02  Chris Dumez  <cdumez@apple.com>
 
+        Modernize various lambda captures
+        https://bugs.webkit.org/show_bug.cgi?id=158292
+
+        Reviewed by Brady Eidson.
+
+        Modernize various lambda captures, especially the ones unnecessarily
+        allocating objects on the heap and destroying them in the lambda.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        (WebKit::clearDiskCacheEntries):
+        (WebKit::NetworkProcess::fetchWebsiteData): Deleted.
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::traverse):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::TraverseOperation::TraverseOperation):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
+2016-06-02  Chris Dumez  <cdumez@apple.com>
+
         Speculative revalidated request returns 200 instead of 304
         https://bugs.webkit.org/show_bug.cgi?id=158256
 

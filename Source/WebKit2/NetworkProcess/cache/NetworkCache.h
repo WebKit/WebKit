@@ -32,6 +32,7 @@
 #include "NetworkCacheStorage.h"
 #include "ShareableResource.h"
 #include <WebCore/ResourceResponse.h>
+#include <wtf/NoncopyableFunction.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -113,7 +114,7 @@ public:
         const Entry& entry;
         const Storage::RecordInfo& recordInfo;
     };
-    void traverse(std::function<void (const TraversalEntry*)>&&);
+    void traverse(NoncopyableFunction<void (const TraversalEntry*)>&&);
     void remove(const Key&);
     void remove(const WebCore::ResourceRequest&);
 

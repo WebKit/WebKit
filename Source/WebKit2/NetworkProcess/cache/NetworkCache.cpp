@@ -521,7 +521,7 @@ void Cache::remove(const WebCore::ResourceRequest& request)
     remove(makeCacheKey(request));
 }
 
-void Cache::traverse(std::function<void (const TraversalEntry*)>&& traverseHandler)
+void Cache::traverse(NoncopyableFunction<void (const TraversalEntry*)>&& traverseHandler)
 {
     ASSERT(isEnabled());
 

@@ -544,10 +544,9 @@ void WorkerThreadableWebSocketChannel::Bridge::disconnect()
 {
     clearClientWrapper();
     if (m_peer) {
-        m_loaderProxy.postTaskToLoader([peer = m_peer] (ScriptExecutionContext& context) {
+        m_loaderProxy.postTaskToLoader([peer = std::unique_ptr<Peer>(m_peer)] (ScriptExecutionContext& context) {
             ASSERT(isMainThread());
             ASSERT_UNUSED(context, context.isDocument());
-            delete peer;
         });
         m_peer = nullptr;
     }

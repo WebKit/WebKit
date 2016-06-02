@@ -1,3 +1,39 @@
+2016-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Modernize various lambda captures
+        https://bugs.webkit.org/show_bug.cgi?id=158292
+
+        Reviewed by Brady Eidson.
+
+        Modernize various lambda captures, especially the ones unnecessarily
+        allocating objects on the heap and destroying them in the lambda.
+
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnect):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessage):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageError):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::resume): Deleted.
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::disconnect):
+        * bindings/js/JSCallbackData.h:
+        (WebCore::DeleteCallbackDataTask::DeleteCallbackDataTask):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::destroy):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didSendData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::cancel): Deleted.
+
 2016-06-02  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Update RTCPeerConnection.addTrack() to create (or reuse) an RTCRtpTransceiver
