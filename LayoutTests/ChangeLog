@@ -1,3 +1,11 @@
+2016-06-02  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed test gardening.
+        
+        The test storage/indexeddb/modern/blob-simple.html is passing.
+
+        * platform/win/TestExpectations:
+
 2016-06-02  Javier Fernandez  <jfernandez@igalia.com>
 
         Unreviewed GTK+ gardening Additional rebaseline after r201397.
