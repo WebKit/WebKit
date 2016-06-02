@@ -2230,8 +2230,6 @@ http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Skip ] 
 http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Skip ] # Crash
 http/tests/security/video-cross-origin-accessfailure.html [ Skip ] # Crash
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Skip ] # Crash
-http/tests/websocket/tests/hybi/workers/close-in-worker.html [ Skip ] # Crash
-http/tests/websocket/tests/hybi/workers/close.html [ Skip ] # Crash
 http/tests/webgl/1.0.2/texSubImage2DHTML.html [ Skip ] # Crash
 
 # The following timeout
