@@ -918,8 +918,9 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
         thisDateObj->setInternalValue(vm, result);
         return JSValue::encode(result);
     } 
-    
-    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputTimeType));
+
+    double newUTCDate = gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputTimeType);
+    JSValue result = jsNumber(timeClip(newUTCDate));
     thisDateObj->setInternalValue(vm, result);
     return JSValue::encode(result);
 }
@@ -959,8 +960,9 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
         thisDateObj->setInternalValue(vm, result);
         return JSValue::encode(result);
     } 
-           
-    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputTimeType));
+
+    double newUTCDate = gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputTimeType);
+    JSValue result = jsNumber(timeClip(newUTCDate));
     thisDateObj->setInternalValue(vm, result);
     return JSValue::encode(result);
 }

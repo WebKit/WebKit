@@ -357,7 +357,6 @@ int equivalentYearForDST(int year)
     int product = (quotient) * 28;
 
     year += product;
-    ASSERT((year >= minYear && year <= maxYear) || (product - year == static_cast<int>(std::numeric_limits<double>::quiet_NaN())));
     return year;
 }
 

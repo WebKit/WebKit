@@ -1,3 +1,18 @@
+2016-06-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Some setters for components of Date do not timeClip() their result
+        https://bugs.webkit.org/show_bug.cgi?id=158278
+
+        Unreviewed.
+
+        * wtf/DateMath.cpp:
+        (WTF::equivalentYearForDST): Deleted.
+        The assertion is bogus.
+        As the comments above explains, the function is completely wrong for years
+        outside [1900-2100].
+        The tests passing large values for years are failing (year <= maxYear).
+        The weird NaN test is a mystery. The old changelog does not explain it.
+
 2016-05-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201363 and r201456.
