@@ -25,6 +25,7 @@
 #include "RenderFrame.h"
 
 #include "HTMLFrameElement.h"
+#include "RenderFrameSet.h"
 
 namespace WebCore {
 

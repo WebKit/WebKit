@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLAttachmentElement_h
-#define HTMLAttachmentElement_h
+#pragma once
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
@@ -33,15 +32,19 @@
 namespace WebCore {
 
 class File;
+class RenderAttachment;
 
 class HTMLAttachmentElement final : public HTMLElement {
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
+
     WEBCORE_EXPORT File* file() const;
     void setFile(File*);
 
     WEBCORE_EXPORT String attachmentTitle() const;
     String attachmentType() const;
+
+    RenderAttachment* renderer() const;
 
 private:
     HTMLAttachmentElement(const QualifiedName&, Document&);
@@ -59,4 +62,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
-#endif // HTMLAttachmentElement_h

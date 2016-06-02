@@ -1775,14 +1775,11 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
 static ScrollableArea* enclosingScrollableArea(Node* node)
 {
-    if (!node)
-        return nullptr;
-
-    for (auto element = node; element; element = element->parentOrShadowHostNode()) {
-        if (is<HTMLIFrameElement>(*element) || is<HTMLHtmlElement>(*element) || is<HTMLDocument>(*element))
+    for (auto ancestor = node; ancestor; ancestor = ancestor->parentOrShadowHostNode()) {
+        if (is<HTMLIFrameElement>(*ancestor) || is<HTMLHtmlElement>(*ancestor) || is<HTMLDocument>(*ancestor))
             return nullptr;
 
-        auto renderer = element->renderer();
+        auto renderer = ancestor->renderer();
         if (!renderer)
             continue;
 

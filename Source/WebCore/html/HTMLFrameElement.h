@@ -21,35 +21,33 @@
  *
  */
 
-#ifndef HTMLFrameElement_h
-#define HTMLFrameElement_h
+#pragma once
 
 #include "HTMLFrameElementBase.h"
 
 namespace WebCore {
+
+class RenderFrame;
 
 class HTMLFrameElement final : public HTMLFrameElementBase {
 public:
     static Ref<HTMLFrameElement> create(const QualifiedName&, Document&);
 
     bool hasFrameBorder() const { return m_frameBorder; }
-
     bool noResize() const;
+
+    RenderFrame* renderer() const;
 
 private:
     HTMLFrameElement(const QualifiedName&, Document&);
 
-    void didAttachRenderers() override;
+    void didAttachRenderers() final;
+    bool rendererIsNeeded(const RenderStyle&) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
-    bool rendererIsNeeded(const RenderStyle&) override;
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-
-    bool m_frameBorder;
-    bool m_frameBorderSet;
+    bool m_frameBorder { true };
+    bool m_frameBorderSet { false };
 };
 
 } // namespace WebCore
-
-#endif // HTMLFrameElement_h

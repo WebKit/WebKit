@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLMediaElement_h
-#define HTMLMediaElement_h
+#pragma once
 
 #if ENABLE(VIDEO)
+
 #include "HTMLElement.h"
 #include "ActiveDOMObject.h"
 #include "GenericEventQueue.h"
@@ -55,55 +55,50 @@
 
 namespace WebCore {
 
-#if ENABLE(WEB_AUDIO)
 class AudioSourceProvider;
-class MediaElementAudioSourceNode;
-#endif
+class AudioTrackList;
+class AudioTrackPrivate;
 class DOMError;
 class DisplaySleepDisabler;
 class Event;
 class HTMLSourceElement;
 class HTMLTrackElement;
-class URL;
+class InbandTextTrackPrivate;
 class MediaController;
 class MediaControls;
 class MediaControlsHost;
+class MediaElementAudioSourceNode;
 class MediaError;
-class MediaPlayer;
-class TimeRanges;
-#if ENABLE(ENCRYPTED_MEDIA_V2)
 class MediaKeys;
-#endif
-#if ENABLE(MEDIA_SESSION)
+class MediaPlayer;
 class MediaSession;
-#endif
-#if ENABLE(MEDIA_SOURCE)
 class MediaSource;
+class MediaStream;
+class RenderMedia;
+class ScriptExecutionContext;
 class SourceBuffer;
-class VideoPlaybackQuality;
-#endif
-
-#if ENABLE(VIDEO_TRACK)
-class AudioTrackList;
-class AudioTrackPrivate;
-class InbandTextTrackPrivate;
 class TextTrackList;
+class TimeRanges;
+class URL;
+class VideoPlaybackQuality;
 class VideoTrackList;
 class VideoTrackPrivate;
 
+#if ENABLE(VIDEO_TRACK)
 typedef PODIntervalTree<MediaTime, TextTrackCue*> CueIntervalTree;
 typedef CueIntervalTree::IntervalType CueInterval;
 typedef Vector<CueInterval> CueList;
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-class MediaStream;
-class ScriptExecutionContext;
-#endif
-
 class HTMLMediaElement
     : public HTMLElement
-    , private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface , public PlatformMediaSessionClient, private MediaProducer
+    , public ActiveDOMObject
+    , public MediaControllerInterface
+    , public MediaPlayerSupportsTypeClient
+    , public PlatformMediaSessionClient
+    , private MediaCanStartListener
+    , private MediaPlayerClient
+    , private MediaProducer
 #if ENABLE(VIDEO_TRACK)
     , private AudioTrackClient
     , private TextTrackClient
@@ -466,8 +461,10 @@ public:
     void allowsMediaDocumentInlinePlaybackChanged();
     void updateShouldPlay();
 
+    RenderMedia* renderer() const;
+
 protected:
-    HTMLMediaElement(const QualifiedName&, Document&, bool);
+    HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
@@ -656,7 +653,6 @@ private:
     virtual void scheduleResizeEvent() { }
     virtual void scheduleResizeEventIfSizeChanged() { }
 
-    // loading
     void selectMediaResource();
     void loadResource(const URL&, ContentType&, const String& keySystem);
     void scheduleNextSourceChild();
@@ -745,7 +741,6 @@ private:
     bool ensureMediaControlsInjectedScript();
 #endif
 
-    // PlatformMediaSessionClient Overrides
     PlatformMediaSession::MediaType mediaType() const override;
     PlatformMediaSession::MediaType presentationType() const override;
     PlatformMediaSession::DisplayType displayType() const override;
@@ -776,10 +771,7 @@ private:
     void prepareForDocumentSuspension() final;
     void resumeFromDocumentSuspension() final;
 
-    enum class UpdateMediaState {
-        Asynchronously,
-        Synchronously,
-    };
+    enum class UpdateMediaState { Asynchronously, Synchronously };
     void updateMediaState(UpdateMediaState updateState = UpdateMediaState::Synchronously);
     bool hasPlaybackTargetAvailabilityListeners() const { return m_hasPlaybackTargetAvailabilityListeners; }
 #endif
@@ -789,6 +781,8 @@ private:
 
     void pauseAfterDetachedTask();
     void updatePlaybackControlsManager();
+
+    void updateRenderer();
 
     Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
@@ -852,6 +846,7 @@ private:
     VideoFullscreenMode m_videoFullscreenMode;
     bool m_preparedForInline;
     std::function<void()> m_preparedForInlineCompletionHandler;
+
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     FloatRect m_videoFullscreenFrame;
@@ -1034,5 +1029,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLMediaElement)
     static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif
 #endif

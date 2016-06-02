@@ -707,10 +707,10 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 - (NSImage*)image
 {
     // FIXME: Could we move this function to WebCore::Node and autogenerate?
-    WebCore::RenderObject* renderer = core(self)->renderer();
+    auto* renderer = core(self)->renderer();
     if (!is<RenderImage>(renderer))
         return nil;
-    WebCore::CachedImage* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
+    auto* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
     return cachedImage->imageForRenderer(renderer)->getNSImage();

@@ -33,10 +33,11 @@
 namespace WebCore {
 
 class HTMLImageLoader;
+class RenderVideo;
 
 class HTMLVideoElement final : public HTMLMediaElement {
 public:
-    static Ref<HTMLVideoElement> create(const QualifiedName&, Document&, bool);
+    static Ref<HTMLVideoElement> create(const QualifiedName&, Document&, bool createdByParser);
 
     WEBCORE_EXPORT unsigned videoWidth() const;
     WEBCORE_EXPORT unsigned videoHeight() const;
@@ -90,8 +91,10 @@ public:
     void exitToFullscreenModeWithoutAnimationIfPossible(HTMLMediaElementEnums::VideoFullscreenMode fromMode, HTMLMediaElementEnums::VideoFullscreenMode toMode);
 #endif
 
+    RenderVideo* renderer() const;
+
 private:
-    HTMLVideoElement(const QualifiedName&, Document&, bool);
+    HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
 
     void scheduleResizeEvent() override;
     void scheduleResizeEventIfSizeChanged() override;

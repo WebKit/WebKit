@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLFieldSetElement_h
-#define HTMLFieldSetElement_h
+#pragma once
 
 #include "HTMLFormControlElement.h"
 #include <wtf/HashSet.h>
@@ -31,6 +30,7 @@ namespace WebCore {
 
 class FormAssociatedElement;
 class HTMLFormControlsCollection;
+class RenderFieldSet;
 
 class HTMLFieldSetElement final : public HTMLFormControlElement {
 public:
@@ -46,6 +46,8 @@ public:
 
     void addInvalidDescendant(const HTMLFormControlElement&);
     void removeInvalidDescendant(const HTMLFormControlElement&);
+
+    RenderFieldSet* renderer() const;
 
 private:
     HTMLFieldSetElement(const QualifiedName&, Document&, HTMLFormElement*);
@@ -64,14 +66,13 @@ private:
     bool matchesValidPseudoClass() const override;
     bool matchesInvalidPseudoClass() const override;
 
-    void refreshElementsIfNeeded() const;
+    void updateAssociatedElements() const;
 
     mutable Vector<FormAssociatedElement*> m_associatedElements;
-    // When dom tree is modified, we have to refresh the m_associatedElements array.
-    mutable uint64_t m_documentVersion;
+    // When the DOM tree is modified, we have to refresh the m_associatedElements array.
+    mutable uint64_t m_documentVersion { 0 };
     HashSet<const HTMLFormControlElement*> m_invalidDescendants;
+    bool m_hasDisabledAttribute { false };
 };
 
 } // namespace
-
-#endif

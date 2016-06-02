@@ -1,3 +1,27 @@
+2016-05-31  Darin Adler  <darin@apple.com>
+
+        Audit RenderObject casts and fix problems and style issues found
+        https://bugs.webkit.org/show_bug.cgi?id=158221
+
+        Reviewed by Chris Dumez.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (imageFromElement): Use auto and tighten the logic a bit.
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+        Use auto and added a comment about this not using imageFromElement.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView _windowClipRect]): Consistently cast to
+        RenderEmbeddedObject, which is the class used for renderers for plug-ins.
+        (-[WebBaseNetscapePluginView inFlatteningPaint]): Ditto.
+        (-[WebBaseNetscapePluginView invalidatePluginContentRect:]): Ditto.
+        (-[WebBaseNetscapePluginView actualVisibleRectInWindow]): Ditto.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin): Changed code so it does a null check
+        rather than assuming the renderer is non-null.
+        (WebFrameLoaderClient::createJavaAppletWidget): Ditto.
+
 2016-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, roll out r201481, r201523: 0.3% regression in Octane code-load

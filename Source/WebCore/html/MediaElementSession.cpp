@@ -43,6 +43,7 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
+#include "RenderMedia.h"
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "SourceBuffer.h"
@@ -228,8 +229,7 @@ bool MediaElementSession::canControlControlsManager(const HTMLMediaElement& elem
     if (!playbackPermitted(element))
         return false;
 
-    RenderBox* renderer = downcast<RenderBox>(element.renderer());
-    if (!renderer)
+    if (!element.renderer())
         return false;
 
     if (isElementLargeEnoughForMainContent(element))
@@ -510,7 +510,7 @@ static bool isMainContent(const HTMLMediaElement& element)
         return false;
 
     // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.
-    RenderBox* renderer = downcast<RenderBox>(element.renderer());
+    auto* renderer = element.renderer();
     if (!renderer)
         return false;
 
@@ -520,11 +520,10 @@ static bool isMainContent(const HTMLMediaElement& element)
     // Elements which are hidden by style, or have been scrolled out of view, cannot be main content.
     // But elements which have audio & video and are already playing should not stop playing because
     // they are scrolled off the page.
-    if (renderer->style().visibility() != VISIBLE
-        || (renderer->visibleInViewportState() != RenderElement::VisibleInViewport && !element.isPlaying())
-        ) {
+    if (renderer->style().visibility() != VISIBLE)
         return false;
-    }
+    if (renderer->visibleInViewportState() != RenderElement::VisibleInViewport && !element.isPlaying())
+        return false;
 
     // Main content elements must be in the main frame.
     Document& document = element.document();
@@ -561,7 +560,7 @@ static bool isElementLargeEnoughForMainContent(const HTMLMediaElement& element)
     static const double minimumAspectRatio = .5; // Slightly smaller than 16:9.
 
     // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.
-    RenderBox* renderer = downcast<RenderBox>(element.renderer());
+    auto* renderer = element.renderer();
     if (!renderer)
         return false;
 

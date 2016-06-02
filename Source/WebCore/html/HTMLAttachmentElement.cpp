@@ -65,18 +65,15 @@ void HTMLAttachmentElement::setFile(File* file)
 {
     m_file = file;
 
-    auto* renderer = this->renderer();
-    if (!is<RenderAttachment>(renderer))
-        return;
-
-    downcast<RenderAttachment>(*renderer).invalidate();
+    if (auto* renderer = this->renderer())
+        renderer->invalidate();
 }
 
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if ((name == progressAttr || name == titleAttr || name == subtitleAttr || name == typeAttr) && is<RenderAttachment>(renderer())) {
-        downcast<RenderAttachment>(*renderer()).invalidate();
-        return;
+    if (name == progressAttr || name == subtitleAttr || name == titleAttr || name == typeAttr) {
+        if (auto* renderer = this->renderer())
+            renderer->invalidate();
     }
 
     HTMLElement::parseAttribute(name, value);
@@ -84,7 +81,7 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
 
 String HTMLAttachmentElement::attachmentTitle() const
 {
-    String title = fastGetAttribute(titleAttr);
+    auto& title = fastGetAttribute(titleAttr);
     if (!title.isEmpty())
         return title;
     return m_file ? m_file->name() : String();

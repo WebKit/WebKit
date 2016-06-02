@@ -1,3 +1,27 @@
+2016-05-31  Darin Adler  <darin@apple.com>
+
+        Audit RenderObject casts and fix problems and style issues found
+        https://bugs.webkit.org/show_bug.cgi?id=158221
+
+        Reviewed by Chris Dumez.
+
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::WebRenderObject): Tightened up the code that
+        builds the tree of objects; fewer local variables.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::invalidateRect): Cast to RenderEmbeddedObject since
+        that is the class used for plug-ins.
+        (WebKit::PluginView::pluginProcessCrashed): Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): Ditto.
+        (WebKit::WebPage::plugInIsPrimarySize): Check the renderer for null here.
+        Did not change this to RenderEmbeddedObject, though, because I wasn't
+        absolute certain this is only called with that type of renderer.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition): Tweaked.
+
 2016-06-01  Brady Eidson  <beidson@apple.com>
 
         Modernize lambda usage for all callers of RunLoop::dispatch() (take 2).

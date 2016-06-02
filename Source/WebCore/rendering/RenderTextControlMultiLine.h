@@ -19,14 +19,12 @@
  *
  */
 
-#ifndef RenderTextControlMultiLine_h
-#define RenderTextControlMultiLine_h
+#pragma once
 
+#include "HTMLTextAreaElement.h"
 #include "RenderTextControl.h"
 
 namespace WebCore {
-
-class HTMLTextAreaElement;
 
 class RenderTextControlMultiLine final : public RenderTextControl {
 public:
@@ -50,8 +48,11 @@ private:
     RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
 };
 
+inline RenderTextControlMultiLine* HTMLTextAreaElement::renderer() const
+{
+    return downcast<RenderTextControlMultiLine>(HTMLTextFormControlElement::renderer());
+}
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlMultiLine, isTextArea())
-
-#endif // RenderTextControlMultiLine_h

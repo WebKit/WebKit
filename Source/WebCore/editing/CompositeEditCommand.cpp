@@ -1059,13 +1059,12 @@ RefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* containe
 
     document().updateLayoutIgnorePendingStylesheets();
 
-    RenderObject* renderer = container->renderer();
+    auto* renderer = container->renderer();
     if (!is<RenderBlockFlow>(renderer))
         return nullptr;
     
-    // append the placeholder to make sure it follows
-    // any unrendered blocks
-    RenderBlockFlow& blockFlow = downcast<RenderBlockFlow>(*renderer);
+    // Append the placeholder to make sure it follows any unrendered blocks.
+    auto& blockFlow = downcast<RenderBlockFlow>(*renderer);
     if (!blockFlow.height() || (blockFlow.isListItem() && blockFlow.isEmpty()))
         return appendBlockPlaceholder(container);
 

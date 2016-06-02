@@ -40,7 +40,6 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
-
 #import <WebCore/AuthenticationCF.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BitmapImage.h>
@@ -53,8 +52,8 @@
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/Page.h>
 #import <WebCore/ProtectionSpace.h>
+#import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/RenderView.h>
-#import <WebCore/RenderWidget.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitLegacy/DOMPrivate.h>
@@ -282,10 +281,9 @@ using namespace WebCore;
 - (NSRect)_windowClipRect
 {
     auto* renderer = _element->renderer();
-    if (!renderer)
+    if (!is<RenderEmbeddedObject>(renderer))
         return NSZeroRect;
-
-    return downcast<RenderWidget>(*renderer).windowClipRect();
+    return downcast<RenderEmbeddedObject>(*renderer).windowClipRect();
 }
 
 - (NSRect)visibleRect
@@ -444,11 +442,10 @@ using namespace WebCore;
 
 - (BOOL)inFlatteningPaint
 {
-    RenderObject* renderer = _element->renderer();
-    if (renderer)
-        return renderer->view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers;
-
-    return NO;
+    auto* renderer = _element->renderer();
+    if (!is<RenderEmbeddedObject>(renderer))
+        return NO;
+    return !!(downcast<RenderEmbeddedObject>(*renderer).view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers);
 }
 
 - (BOOL)supportsSnapshotting
@@ -855,23 +852,23 @@ using namespace WebCore;
 
 - (void)invalidatePluginContentRect:(NSRect)rect
 {
-    if (RenderBoxModelObject* renderer = downcast<RenderBoxModelObject>(_element->renderer())) {
-        IntRect contentRect(rect);
-        contentRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
-        
-        renderer->repaintRectangle(contentRect);
-    }
+    auto* renderer = _element->renderer();
+    if (!is<RenderEmbeddedObject>(renderer))
+        return;
+    auto& object = downcast<RenderEmbeddedObject>(*renderer);
+    IntRect contentRect(rect);
+    contentRect.move(object.borderLeft() + object.paddingLeft(), object.borderTop() + object.paddingTop());
+    object.repaintRectangle(contentRect);
 }
 
 - (NSRect)actualVisibleRectInWindow
 {
     auto* renderer = _element->renderer();
-    if (!renderer)
+    if (!is<RenderEmbeddedObject>(renderer))
         return NSZeroRect;
-
-    IntRect widgetRect = renderer->pixelSnappedAbsoluteClippedOverflowRect();
-    widgetRect = renderer->view().frameView().contentsToWindow(widgetRect);
-    return intersection(downcast<RenderWidget>(*renderer).windowClipRect(), widgetRect);
+    auto& object = downcast<RenderEmbeddedObject>(*renderer);
+    auto widgetRect = object.view().frameView().contentsToWindow(object.pixelSnappedAbsoluteClippedOverflowRect());
+    return intersection(object.windowClipRect(), widgetRect);
 }
 
 - (CALayer *)pluginLayer

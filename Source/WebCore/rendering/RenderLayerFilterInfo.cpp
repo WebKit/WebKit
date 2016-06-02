@@ -106,10 +106,13 @@ void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperation
             m_externalSVGReferences.append(cachedSVGDocument);
         } else {
             // Reference is internal; add layer as a client so we can trigger filter repaint on SVG attribute change.
-            Element* filter = m_layer.renderer().document().getElementById(referenceOperation.fragment());
-            if (!filter || !is<RenderSVGResourceFilter>(filter->renderer()))
+            auto* filter = m_layer.renderer().document().getElementById(referenceOperation.fragment());
+            if (!filter)
                 continue;
-            downcast<RenderSVGResourceFilter>(*filter->renderer()).addClientRenderLayer(&m_layer);
+            auto* renderer = filter->renderer();
+            if (!is<RenderSVGResourceFilter>(renderer))
+                continue;
+            downcast<RenderSVGResourceFilter>(*renderer).addClientRenderLayer(&m_layer);
             m_internalSVGReferences.append(filter);
         }
     }

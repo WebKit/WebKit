@@ -40,14 +40,13 @@ using namespace HTMLNames;
 
 inline HTMLFieldSetElement::HTMLFieldSetElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)
-    , m_documentVersion(0)
 {
     ASSERT(hasTagName(fieldsetTag));
 }
 
 HTMLFieldSetElement::~HTMLFieldSetElement()
 {
-    if (fastHasAttribute(disabledAttr))
+    if (m_hasDisabledAttribute)
         document().removeDisabledFieldsetElement();
 }
 
@@ -65,7 +64,7 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
         control = Traversal<HTMLFormControlElement>::firstWithin(startNode);
     while (control) {
         control->setAncestorDisabled(isDisabled);
-        // Don't call setAncestorDisabled(false) on form contorls inside disabled fieldsets.
+        // Don't call setAncestorDisabled(false) on form controls inside disabled fieldsets.
         if (is<HTMLFieldSetElement>(*control) && control->fastHasAttribute(disabledAttr))
             control = Traversal<HTMLFormControlElement>::nextSkippingChildren(*control, &startNode);
         else
@@ -75,10 +74,14 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
 
 void HTMLFieldSetElement::disabledAttributeChanged()
 {
-    if (fastHasAttribute(disabledAttr))
-        document().addDisabledFieldsetElement();
-    else
-        document().removeDisabledFieldsetElement();
+    bool hasDisabledAttribute = fastHasAttribute(disabledAttr);
+    if (m_hasDisabledAttribute != hasDisabledAttribute) {
+        m_hasDisabledAttribute = hasDisabledAttribute;
+        if (hasDisabledAttribute)
+            document().addDisabledFieldsetElement();
+        else
+            document().removeDisabledFieldsetElement();
+    }
 
     HTMLFormControlElement::disabledAttributeChanged();
 }
@@ -113,7 +116,7 @@ void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
     if (!legend)
         return;
 
-    // We only care about the first legend element (in which form contorls are not disabled by this element) changing here.
+    // We only care about the first legend element (in which form controls are not disabled by this element) changing here.
     updateFromControlElementsAncestorDisabledStateUnder(*legend, false /* isDisabled */);
     while ((legend = Traversal<HTMLLegendElement>::nextSibling(*legend)))
         updateFromControlElementsAncestorDisabledStateUnder(*legend, true);
@@ -122,7 +125,7 @@ void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
 void HTMLFieldSetElement::didMoveToNewDocument(Document* oldDocument)
 {
     HTMLFormControlElement::didMoveToNewDocument(oldDocument);
-    if (fastHasAttribute(disabledAttr)) {
+    if (m_hasDisabledAttribute) {
         if (oldDocument)
             oldDocument->removeDisabledFieldsetElement();
         document().addDisabledFieldsetElement();
@@ -170,7 +173,7 @@ Ref<HTMLCollection> HTMLFieldSetElement::elementsForNativeBindings()
     return elements();
 }
 
-void HTMLFieldSetElement::refreshElementsIfNeeded() const
+void HTMLFieldSetElement::updateAssociatedElements() const
 {
     uint64_t documentVersion = document().domTreeVersion();
     if (m_documentVersion == documentVersion)
@@ -180,8 +183,8 @@ void HTMLFieldSetElement::refreshElementsIfNeeded() const
 
     m_associatedElements.clear();
 
-    for (auto& element : descendantsOfType<Element>(const_cast<HTMLFieldSetElement&>(*this))) {
-        if (element.hasTagName(objectTag))
+    for (auto& element : descendantsOfType<HTMLElement>(const_cast<HTMLFieldSetElement&>(*this))) {
+        if (is<HTMLObjectElement>(element))
             m_associatedElements.append(&downcast<HTMLObjectElement>(element));
         else if (is<HTMLFormControlElement>(element))
             m_associatedElements.append(&downcast<HTMLFormControlElement>(element));
@@ -190,15 +193,14 @@ void HTMLFieldSetElement::refreshElementsIfNeeded() const
 
 const Vector<FormAssociatedElement*>& HTMLFieldSetElement::associatedElements() const
 {
-    refreshElementsIfNeeded();
+    updateAssociatedElements();
     return m_associatedElements;
 }
 
 unsigned HTMLFieldSetElement::length() const
 {
-    refreshElementsIfNeeded();
     unsigned length = 0;
-    for (auto& element : m_associatedElements) {
+    for (auto* element : associatedElements()) {
         if (element->isEnumeratable())
             ++length;
     }

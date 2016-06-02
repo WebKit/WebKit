@@ -48,10 +48,9 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include <math.h>
-#include <wtf/RAMSize.h>
-
 #include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
+#include <wtf/RAMSize.h>
 
 #if ENABLE(WEBGL)    
 #include "WebGLContextAttributes.h"
@@ -63,25 +62,33 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // These values come from the WhatWG/W3C HTML spec.
-static const int DefaultWidth = 300;
-static const int DefaultHeight = 150;
+const int defaultWidth = 300;
+const int defaultHeight = 150;
 
 // Firefox limits width/height to 32767 pixels, but slows down dramatically before it
 // reaches that limit. We limit by area instead, giving us larger maximum dimensions,
 // in exchange for a smaller maximum canvas size. The maximum canvas size is in device pixels.
 #if PLATFORM(IOS)
-static const unsigned MaxCanvasArea = 4096 * 4096;
+const unsigned maxCanvasArea = 4096 * 4096;
 #elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
-static const unsigned MaxCanvasArea = 8192 * 8192;
+const unsigned maxCanvasArea = 8192 * 8192;
 #else
-static const unsigned MaxCanvasArea = 16384 * 16384;
+const unsigned maxCanvasArea = 16384 * 16384;
+#endif
+
+#if USE(CG)
+// FIXME: It seems strange that the default quality is not the one that is literally named "default".
+// Should fix names to make this easier to understand, or write an excellent comment here explaining why not.
+const InterpolationQuality defaultInterpolationQuality = InterpolationLow;
+#else
+const InterpolationQuality defaultInterpolationQuality = InterpolationDefault;
 #endif
 
 static size_t activePixelMemory = 0;
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , m_size(DefaultWidth, DefaultHeight)
+    , m_size(defaultWidth, defaultHeight)
 {
     ASSERT(hasTagName(canvasTag));
 }
@@ -127,12 +134,8 @@ void HTMLCanvasElement::parseAttribute(const QualifiedName& name, const AtomicSt
 RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     Frame* frame = document().frame();
-    if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript)) {
-        m_rendererIsCanvas = true;
+    if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript))
         return createRenderer<RenderHTMLCanvas>(*this, WTFMove(style));
-    }
-
-    m_rendererIsCanvas = false;
     return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }
 
@@ -158,12 +161,12 @@ void HTMLCanvasElement::removeObserver(CanvasObserver& observer)
 
 void HTMLCanvasElement::setHeight(unsigned value)
 {
-    setAttributeWithoutSynchronization(heightAttr, AtomicString::number(limitToOnlyHTMLNonNegative(value, DefaultHeight)));
+    setAttributeWithoutSynchronization(heightAttr, AtomicString::number(limitToOnlyHTMLNonNegative(value, defaultHeight)));
 }
 
 void HTMLCanvasElement::setWidth(unsigned value)
 {
-    setAttributeWithoutSynchronization(widthAttr, AtomicString::number(limitToOnlyHTMLNonNegative(value, DefaultWidth)));
+    setAttributeWithoutSynchronization(widthAttr, AtomicString::number(limitToOnlyHTMLNonNegative(value, defaultWidth)));
 }
 
 #if ENABLE(WEBGL)
@@ -336,8 +339,8 @@ void HTMLCanvasElement::reset()
 
     bool hadImageBuffer = hasCreatedImageBuffer();
 
-    int w = limitToOnlyHTMLNonNegative(fastGetAttribute(widthAttr), DefaultWidth);
-    int h = limitToOnlyHTMLNonNegative(fastGetAttribute(heightAttr), DefaultHeight);
+    int w = limitToOnlyHTMLNonNegative(fastGetAttribute(widthAttr), defaultWidth);
+    int h = limitToOnlyHTMLNonNegative(fastGetAttribute(heightAttr), defaultHeight);
 
     if (m_contextStateSaver) {
         // Reset to the initial graphics context state.
@@ -367,16 +370,16 @@ void HTMLCanvasElement::reset()
         static_cast<WebGLRenderingContextBase*>(m_context.get())->reshape(width(), height());
 #endif
 
-    if (auto renderer = this->renderer()) {
-        if (m_rendererIsCanvas) {
-            if (oldSize != size()) {
-                downcast<RenderHTMLCanvas>(*renderer).canvasSizeChanged();
-                if (renderBox() && renderBox()->hasAcceleratedCompositing())
-                    renderBox()->contentChanged(CanvasChanged);
-            }
-            if (hadImageBuffer)
-                renderer->repaint();
+    auto renderer = this->renderer();
+    if (is<RenderHTMLCanvas>(renderer)) {
+        auto& canvasRenderer = downcast<RenderHTMLCanvas>(*renderer);
+        if (oldSize != size()) {
+            canvasRenderer.canvasSizeChanged();
+            if (canvasRenderer.hasAcceleratedCompositing())
+                canvasRenderer.contentChanged(CanvasChanged);
         }
+        if (hadImageBuffer)
+            canvasRenderer.repaint();
     }
 
     for (auto& observer : m_observers)
@@ -636,10 +639,10 @@ void HTMLCanvasElement::createImageBuffer() const
     if (!deviceSize.isExpressibleAsIntSize())
         return;
 
-    if (deviceSize.width() * deviceSize.height() > MaxCanvasArea) {
+    if (deviceSize.width() * deviceSize.height() > maxCanvasArea) {
         StringBuilder stringBuilder;
         stringBuilder.appendLiteral("Canvas area exceeds the maximum limit (width * height > ");
-        stringBuilder.appendNumber(MaxCanvasArea);
+        stringBuilder.appendNumber(maxCanvasArea);
         stringBuilder.appendLiteral(").");
         document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, stringBuilder.toString());
         return;
@@ -666,7 +669,7 @@ void HTMLCanvasElement::createImageBuffer() const
     if (!m_imageBuffer)
         return;
     m_imageBuffer->context().setShadowsIgnoreTransforms(true);
-    m_imageBuffer->context().setImageInterpolationQuality(DefaultInterpolationQuality);
+    m_imageBuffer->context().setImageInterpolationQuality(defaultInterpolationQuality);
     if (document().settings() && !document().settings()->antialiased2dCanvasEnabled())
         m_imageBuffer->context().setShouldAntialias(false);
     m_imageBuffer->context().setStrokeThickness(1);

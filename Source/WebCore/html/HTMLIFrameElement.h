@@ -21,14 +21,14 @@
  *
  */
 
-#ifndef HTMLIFrameElement_h
-#define HTMLIFrameElement_h
+#pragma once
 
 #include "HTMLFrameElementBase.h"
 
 namespace WebCore {
 
 class DOMTokenList;
+class RenderIFrame;
 
 class HTMLIFrameElement final : public HTMLFrameElementBase {
 public:
@@ -36,23 +36,23 @@ public:
 
     DOMTokenList& sandbox();
 
+    RenderIFrame* renderer() const;
+
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 
 #if PLATFORM(IOS)
-    bool isKeyboardFocusable(KeyboardEvent*) const override { return false; }
+    bool isKeyboardFocusable(KeyboardEvent*) const final { return false; }
 #endif
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    bool isPresentationAttribute(const QualifiedName&) const final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
-    bool rendererIsNeeded(const RenderStyle&) override;
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    bool rendererIsNeeded(const RenderStyle&) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     std::unique_ptr<DOMTokenList> m_sandbox;
 };
 
 } // namespace WebCore
-
-#endif // HTMLIFrameElement_h

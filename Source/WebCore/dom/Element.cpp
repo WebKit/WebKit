@@ -675,10 +675,11 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    if (!renderer())
+    auto* renderer = this->renderer();
+    if (!renderer)
         return;
 
-    if (!renderer()->hasOverflowClip())
+    if (!renderer->hasOverflowClip())
         return;
 
     ScrollDirection direction = ScrollDown;
@@ -687,7 +688,7 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
         units = -units;
     }
     Element* stopElement = this;
-    downcast<RenderBox>(*renderer()).scroll(direction, granularity, units, &stopElement);
+    downcast<RenderBox>(*renderer).scroll(direction, granularity, units, &stopElement);
 }
 
 void Element::scrollByLines(int lines)
@@ -1009,8 +1010,9 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
         if (svgElement.getBoundingBox(localRect, SVGLocatable::DisallowStyleUpdate))
             result = LayoutRect(renderer()->localToAbsoluteQuad(localRect, UseTransforms, &includesFixedPositionElements).boundingBox());
     } else {
-        if (is<RenderBox>(renderer())) {
-            RenderBox& box = *downcast<RenderBox>(renderer());
+        auto* renderer = this->renderer();
+        if (is<RenderBox>(renderer)) {
+            auto& box = downcast<RenderBox>(*renderer);
 
             bool computedBounds = false;
             
@@ -1030,7 +1032,7 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
                     // FIXME: this doesn't handle nested columns.
                     RenderElement* multicolContainer = flowThread->parent();
                     if (multicolContainer && is<RenderBox>(multicolContainer)) {
-                        LayoutRect overflowRect = downcast<RenderBox>(multicolContainer)->layoutOverflowRect();
+                        auto overflowRect = downcast<RenderBox>(*multicolContainer).layoutOverflowRect();
                         result = LayoutRect(multicolContainer->localToAbsoluteQuad(FloatRect(overflowRect), UseTransforms, &includesFixedPositionElements).boundingBox());
                         computedBounds = true;
                     }
@@ -1043,7 +1045,7 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
                 boundsIncludeAllDescendantElements = layoutOverflowRectContainsAllDescendants(box);
             }
         } else
-            result = LayoutRect(renderer()->absoluteBoundingBoxRect(true /* useTransforms */, &includesFixedPositionElements));
+            result = LayoutRect(renderer->absoluteBoundingBoxRect(true /* useTransforms */, &includesFixedPositionElements));
     }
 
     return result;
@@ -2967,12 +2969,12 @@ Vector<RefPtr<Range>> Element::webkitGetRegionFlowRanges() const
 {
     Vector<RefPtr<Range>> rangeObjects;
     document().updateLayoutIgnorePendingStylesheets();
-    if (renderer() && renderer()->isRenderNamedFlowFragmentContainer()) {
-        RenderNamedFlowFragment& namedFlowFragment = *downcast<RenderBlockFlow>(*renderer()).renderNamedFlowFragment();
+    auto* renderer = this->renderer();
+    if (renderer && renderer->isRenderNamedFlowFragmentContainer()) {
+        auto& namedFlowFragment = *downcast<RenderBlockFlow>(*renderer).renderNamedFlowFragment();
         if (namedFlowFragment.isValid())
             namedFlowFragment.getRanges(rangeObjects);
     }
-
     return rangeObjects;
 }
 

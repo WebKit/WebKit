@@ -178,13 +178,13 @@ Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Doc
 void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
 {
     // On mousedown, bring up a menu, if needed
-    HTMLInputElement* input = downcast<HTMLInputElement>(shadowHost());
+    auto* input = downcast<HTMLInputElement>(shadowHost());
     if (input && event->type() == eventNames().mousedownEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() == LeftButton) {
         input->focus();
         input->select();
 #if !PLATFORM(IOS)
-        if (RenderObject* renderer = input->renderer()) {
-            RenderSearchField& searchFieldRenderer = downcast<RenderSearchField>(*renderer);
+        if (auto* renderer = input->renderer()) {
+            auto& searchFieldRenderer = downcast<RenderSearchField>(*renderer);
             if (searchFieldRenderer.popupIsVisible())
                 searchFieldRenderer.hidePopup();
             else if (input->maxResults() > 0)

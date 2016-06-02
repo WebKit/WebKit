@@ -914,7 +914,7 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
     if (!currentNode->isTextNode() && !canShrinkToTextSelection(currentNode) && hasCustomLineHeight(*currentNode)) {
         auto* renderer = currentNode->renderer();
         if (is<RenderBlockFlow>(renderer)) {
-            auto *renderText = downcast<RenderBlockFlow>(renderer)->findClosestTextAtAbsolutePoint(point);
+            auto* renderText = downcast<RenderBlockFlow>(*renderer).findClosestTextAtAbsolutePoint(point);
             if (renderText && renderText->textNode())
                 currentNode = renderText->textNode();
         }

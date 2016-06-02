@@ -1,3 +1,265 @@
+2016-05-31  Darin Adler  <darin@apple.com>
+
+        Audit RenderObject casts and fix problems and style issues found
+        https://bugs.webkit.org/show_bug.cgi?id=158221
+
+        Reviewed by Chris Dumez.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMElement image]): Use auto to get more specific types in code getting
+        the renderer for an element instead of dumbing down the type to RenderObject.
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollByUnits): Call renderer only once. The comment in
+        Node advises we should do this since it has a branch in it.
+        (WebCore::Element::absoluteEventBounds): Call renderer only once. Also use
+        auto for a rect type to clarify that we are not changing the type of the
+        rect returned by the fucntion.
+        (WebCore::Element::webkitGetRegionFlowRanges): Call renderer only once.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded): Use auto
+        to get a mroe specific renderer type.
+
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply): Call renderer only once.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_addAttachmentForElement): Add an obviously missing
+        null check for something that is null checked elsewhere.
+        (fileWrapperForURL): Ditto.
+        (fileWrapperForElement): Changed argument type to HTMLImageElement& since
+        the call site already checks the type of the object. Use HTMLImageElement::src
+        instead of repeating the code here. Check the type of the renderer instead of
+        assuming it's a RenderImage.
+        (WebCore::editingAttributedStringFromRange): Pass a reference, not a pointer.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::appendServerMapMousePosition): Take a reference to an event rather
+        than a "known to be non-null" pointer. Call renderer only once. Round the
+        floating point values rather than truncating them.
+        (WebCore::HTMLAnchorElement::handleClick): Pass a reference.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::setFile): Removed the now-unneeded cast since
+        the renderer function returns a pointer of a more specific type now.
+        (WebCore::HTMLAttachmentElement::parseAttribute): Ditto.
+        (WebCore::HTMLAttachmentElement::attachmentTitle): Use auto& to avoid a bit of
+        reference count churn.
+
+        * html/HTMLAttachmentElement.h: Override renderer to return a more specific type.
+        This follows the pattern that ContainerNode::renderer uses.
+
+        * html/HTMLButtonElement.h: Ditto.
+
+        * html/HTMLCanvasElement.cpp: Gave the constants at the top of the file more
+        normal names. Removed unneeded "static" from them. Moved the
+        defaultInterpolationQuality constant here from the header because it doesn't
+        need to be there.
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement): Updated for name changes.
+        (WebCore::HTMLCanvasElement::createElementRenderer): Removed unneeded code to
+        set m_rendererIsCanvas to record renderer type; we can just check the type.
+        (WebCore::HTMLCanvasElement::setHeight): Updated for name changes.
+        (WebCore::HTMLCanvasElement::setWidth): Ditto.
+        (WebCore::HTMLCanvasElement::reset): Check the type of the renderer directly
+        instead of calling m_rendererIsCanvas. This helped make it clear we were
+        do extra unneeded checks since a renderer can't both be a RenderCanvas and
+        not be a RenderBox.
+        (WebCore::HTMLCanvasElement::createImageBuffer): Updated for name changes.
+
+        * html/HTMLCanvasElement.h: Moved DefaultInterpolationQuality into the cpp file.
+        Use nullptr instead of 0. Removed m_rendererIsCanvas.
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::HTMLFieldSetElement): Initialize m_documentVersion
+        in the class definition.
+        (WebCore::HTMLFieldSetElement::~HTMLFieldSetElement): Use m_hasDisabledAttribute.
+        (WebCore::updateFromControlElementsAncestorDisabledStateUnder): Fixed typo.
+        (WebCore::HTMLFieldSetElement::disabledAttributeChanged): Fixed mistake in this
+        function that would cause the number of disabled fieldset elements to be too high
+        if the disabled attribute's value was changed from one value to another. Use a
+        boolean to track the old value; can't think of a solution that works without that.
+        (WebCore::HTMLFieldSetElement::childrenChanged): Fixed typo.
+        (WebCore::HTMLFieldSetElement::didMoveToNewDocument): Use m_hasDisabledAttribute.
+        (WebCore::HTMLFieldSetElement::updateAssociatedElements): Changed name to make it
+        clearer what this function does. Tweaked a bit without changing behavior.
+        (WebCore::HTMLFieldSetElement::associatedElements): Updated for name change.
+        (WebCore::HTMLFieldSetElement::length): Changed to call associatedElements instead of
+        repeating that it does.
+
+        * html/HTMLFieldSetElement.h: Override renderer to return a more specific type.
+        Also updated for other changes mentioned above.
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::HTMLFrameElement): Initialize booleans in the class
+        definition rather than doing it here.
+        (WebCore::HTMLFrameElement::parseAttribute): Call renderer only once.
+
+        * html/HTMLFrameElement.h: Override renderer to return a more specific type.
+        Also initialize some booleans in the class definition.
+
+        * html/HTMLIFrameElement.h: Override renderer to return a more specific type.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateRenderer): Added. Helper for a common idiom.
+        (WebCore::HTMLMediaElement::didAttachRenderers): Use auto to get a more specific
+        type for the renderer.
+        (WebCore::HTMLMediaElement::willDetachRenderers): Call renderer only once.
+        (WebCore::HTMLMediaElement::didRecalcStyle): Use updateRenderer to call renderer
+        only once.
+        (WebCore::HTMLMediaElement::loadResource): Ditto.
+        (WebCore::HTMLMediaElement::waitForSourceChange): Ditto.
+        (WebCore::HTMLMediaElement::noneSupported): Ditto.
+        (WebCore::HTMLMediaElement::setReadyState): Ditto.
+        (WebCore::HTMLMediaElement::progressEventTimerFired): Ditto.
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Renamed goto label to use a style
+        that fits WebKit coding style. Call renderer only once in MediaQuery code.
+        (WebCore::HTMLMediaElement::mediaPlayerRepaint): Call renderer only once.
+        (WebCore::HTMLMediaElement::mediaPlayerSizeChanged): Use updateRenderer to call
+        renderer only once.
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated): Call renderer
+        only once.
+        (WebCore::HTMLMediaElement::mediaPlayerGraphicsDeviceAdapter): Call page only once.
+        (WebCore::HTMLMediaElement::mediaEngineWasUpdated): Use updateRenderer to call
+        renderer only once.
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged): Ditto.
+        (WebCore::HTMLMediaElement::updatePlayState): Ditto.
+        (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer): Ditto.
+        (WebCore::HTMLMediaElement::resume): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerContentBoxRect): Call renderer only once.
+        (WebCore::mediaElementIsAllowedToAutoplay): Use auto to get a more specific type.
+
+        * html/HTMLMediaElement.h: Removed conditionals around forward declarations.
+        Tweaked formatting a bit. Added the updateRender function. Override renderer to
+        return a more specific type.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::optionElementChildrenChanged): Don't use the renderer
+        just to get to the document for the AXObjectCache.
+        (WebCore::HTMLSelectElement::setLength): Use auto for the list items vector.
+        (WebCore::HTMLSelectElement::nextValidIndex): Ditto.
+        (WebCore::HTMLSelectElement::firstSelectableListIndex): Ditto.
+        (WebCore::HTMLSelectElement::nextSelectableListIndexPageAway): Ditto. Also add a
+        null check for the renderer.
+        (WebCore::HTMLSelectElement::updateListBoxSelection): Split an assertion with &&
+        in it into two separate assertions. Use auto for the list items vector and use
+        a reference for the list items.
+        (WebCore::HTMLSelectElement::listBoxOnChange): Use auto for the list items vector
+        and use a reference for the list items.
+        (WebCore::HTMLSelectElement::setRecalcListItems): Don't use the renderer
+        just to get to the document for the AXObjectCache.
+        (WebCore::HTMLSelectElement::selectOption): Use auto for the list items vector.
+        (WebCore::HTMLSelectElement::optionToListIndex): Ditto.
+        (WebCore::HTMLSelectElement::listToOptionIndex): Ditto.
+        (WebCore::HTMLSelectElement::searchOptionsForValue): Ditto.
+        (WebCore::HTMLSelectElement::restoreFormControlState): Ditto.
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent): Call renderer only once.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Split an assertion with
+        && in it into two separate assertions. Use auto for the list items vector. Call
+        renderer only once.
+        (WebCore::HTMLSelectElement::updateSelectedState): Use a reference for the list
+        item.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): Use auto for the list
+        items vvector. Call renderer less often; could not quite get it down to once.
+        (WebCore::HTMLSelectElement::defaultEventHandler): Call renderer only once.
+        (WebCore::HTMLSelectElement::lastSelectedListIndex): Use auto for the list items
+        vector and use a reference for the list items.
+        (WebCore::HTMLSelectElement::optionAtIndex): Use a reference for the list item.
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex): Use auto for the list
+        items vector and use a reference for the list items.
+        (WebCore::HTMLSelectElement::length): Use auto for the list items vector.
+
+        * html/HTMLTextAreaElement.h: Override renderer to return a more specific type.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::didAttachRenderers): Call renderer only once and
+        don't downcast it. There was no obvious type check because the renderer has a
+        guaranteed type, but this is now clearer because it's the renderer function
+        that returns a more specific type.
+        (WebCore::HTMLVideoElement::parseAttribute): Ditto.
+        (WebCore::HTMLVideoElement::setDisplayMode): Ditto.
+
+        * html/HTMLVideoElement.h: Override renderer to return a more specific type.
+        * html/HTMLWBRElement.h: Ditto.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canControlControlsManager): Removed
+        unneeded typecast in code that null checks a renderer.
+        (WebCore::isMainContent): Remove now-unneeded downcast of a renderer
+        obtained from an HTMLMediaElement. Fixed awkward formatting by splitting
+        an if statement into two.
+        (WebCore::isElementLargeEnoughForMainContent): Remove now unneeded downcast
+        of a renderer obtained from an HTMLMediaElement.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent): Call renderer only once.
+        Also use auto more in the code rather than writing out types.
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint): Used the renderBox
+        function more consistently for all the renderers used here; before,
+        some had null checks and others did not.
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler): Use auto
+        a bit more.
+
+        * page/EventHandler.cpp:
+        (WebCore::enclosingScrollableArea): Removed a redundant null check and
+        stopped using the name "element" for a local variable that was not
+        always an element.
+
+        * page/PrintContext.cpp:
+        (WebCore::enclosingBoxModelObject): Rewrote loop to be simpler and tighter.
+        Also marked this inline since it's used only one place.
+        (WebCore::PrintContext::pageNumberForElement): Use auto for the return
+        value rather than writing out the type.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::isScrollableNode): Tighten the code and use auto a bit.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm: Add an include of
+        RenderVideo.h since this gets at the renderer for a video.
+
+        * rendering/RenderAttachment.h:
+        (WebCore::HTMLAttachmentElement::renderer): Added. Function is here because
+        it can only be called by code that includes this header. This matches the
+        pattern of RenderElement.h and ContainerNode::renderer.
+
+        * rendering/RenderFrame.cpp: Added now-needed include.
+
+        * rendering/RenderFrame.h:
+        (WebCore::HTMLFrameElement::renderer): Added. Same logic as above.
+
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients): Use auto
+        a bit and call rendeer only once.
+
+        * rendering/RenderMedia.h:
+        (WebCore::HTMLMediaElement::renderer): Added. Same logic as above.
+        * rendering/RenderTextControlMultiLine.h:
+        (WebCore::HTMLTextAreaElement::renderer): Ditto.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::placeholder): Renamed. Tightened up argument type to match what
+        is passed at all the call sites. Use auto instead of RenderObject.
+        (WebCore::RenderVideo::offsetLeft): Use auto and the renamed function above.
+        (WebCore::RenderVideo::offsetTop): Ditto.
+        (WebCore::RenderVideo::offsetWidth): Ditto.
+        (WebCore::RenderVideo::offsetHeight): Ditto.
+
+        * rendering/RenderVideo.h:
+        (WebCore::HTMLVideoElement::renderer): Added. Same logic as above.
+
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::createElementRenderer): Fixed typo.
+
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::createElementRenderer): Removed
+        non-helpful oblique comment.
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::createElementRenderer): Ditto.
+
 2016-06-01  Chris Fleizach  <cfleizach@apple.com>
 
         LayoutTest accessibility/ios-simulator/attributed-string-for-range.html failing on ios-simulator debug

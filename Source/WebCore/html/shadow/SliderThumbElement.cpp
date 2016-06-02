@@ -253,39 +253,46 @@ void SliderThumbElement::dragFrom(const LayoutPoint& point)
 void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
 {
     RefPtr<HTMLInputElement> input = hostInput();
-    if (!input || !input->renderer() || !renderBox())
+    if (!input)
         return;
 
-    HTMLElement* trackElement = input->sliderTrackElement();
-    if (!trackElement->renderBox())
+    auto* inputRenderer = input->renderBox();
+    if (!inputRenderer)
+        return;
+
+    auto* thumbRenderer = renderBox();
+    if (!thumbRenderer)
+        return;
+
+    ASSERT(input->sliderTrackElement());
+    auto* trackRenderer = input->sliderTrackElement()->renderBox();
+    if (!trackRenderer)
         return;
 
     // Do all the tracking math relative to the input's renderer's box.
-    RenderBox& inputRenderer = downcast<RenderBox>(*input->renderer());
-    RenderBox& trackRenderer = *trackElement->renderBox();
 
     bool isVertical = hasVerticalAppearance(*input);
-    bool isLeftToRightDirection = renderBox()->style().isLeftToRightDirection();
+    bool isLeftToRightDirection = thumbRenderer->style().isLeftToRightDirection();
     
-    LayoutPoint offset(inputRenderer.absoluteToLocal(absolutePoint, UseTransforms));
-    FloatRect trackBoundingBox = trackRenderer.localToContainerQuad(FloatRect(0, 0, trackRenderer.width(), trackRenderer.height()), &inputRenderer).enclosingBoundingBox();
+    auto offset = inputRenderer->absoluteToLocal(absolutePoint, UseTransforms);
+    auto trackBoundingBox = trackRenderer->localToContainerQuad(FloatRect { { }, trackRenderer->size() }, inputRenderer).enclosingBoundingBox();
 
     LayoutUnit trackLength;
     LayoutUnit position;
     if (isVertical) {
-        trackLength = trackRenderer.contentHeight() - renderBox()->height();
-        position = offset.y() - renderBox()->height() / 2 - trackBoundingBox.y() - renderBox()->marginBottom();
+        trackLength = trackRenderer->contentHeight() - thumbRenderer->height();
+        position = offset.y() - thumbRenderer->height() / 2 - trackBoundingBox.y() - thumbRenderer->marginBottom();
     } else {
-        trackLength = trackRenderer.contentWidth() - renderBox()->width();
-        position = offset.x() - renderBox()->width() / 2 - trackBoundingBox.x();
-        position -= isLeftToRightDirection ? renderBox()->marginLeft() : renderBox()->marginRight();
+        trackLength = trackRenderer->contentWidth() - thumbRenderer->width();
+        position = offset.x() - thumbRenderer->width() / 2 - trackBoundingBox.x();
+        position -= isLeftToRightDirection ? thumbRenderer->marginLeft() : thumbRenderer->marginRight();
     }
 
     position = std::max<LayoutUnit>(0, std::min(position, trackLength));
-    const Decimal ratio = Decimal::fromDouble(static_cast<double>(position) / trackLength);
-    const Decimal fraction = isVertical || !isLeftToRightDirection ? Decimal(1) - ratio : ratio;
-    StepRange stepRange(input->createStepRange(RejectAny));
-    Decimal value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
+    auto ratio = Decimal::fromDouble(static_cast<double>(position) / trackLength);
+    auto fraction = isVertical || !isLeftToRightDirection ? Decimal(1) - ratio : ratio;
+    auto stepRange = input->createStepRange(RejectAny);
+    auto value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
 
 #if ENABLE(DATALIST_ELEMENT)
     const LayoutUnit snappingThreshold = renderer()->theme().sliderTickSnappingThreshold();

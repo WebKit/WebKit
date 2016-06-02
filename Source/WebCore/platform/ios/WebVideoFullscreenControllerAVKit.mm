@@ -41,7 +41,7 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLVideoElement.h>
-#import <WebCore/RenderElement.h>
+#import <WebCore/RenderVideo.h>
 #import <WebCore/WebCoreThreadRun.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -81,10 +81,13 @@ using namespace WebCore;
 
 static IntRect elementRectInWindow(HTMLVideoElement* videoElement)
 {
-    if (!videoElement || !videoElement->renderer() || !videoElement->document().view())
-        return IntRect();
-    
-    return videoElement->document().view()->convertToContainingWindow(videoElement->renderer()->absoluteBoundingBoxRect());
+    if (!videoElement)
+        return { };
+    auto* renderer = videoElement->renderer();
+    auto* view = videoElement->document().view();
+    if (!renderer || !view)
+        return { };
+    return view->convertToContainingWindow(renderer->absoluteBoundingBoxRect());
 }
 
 class WebVideoFullscreenControllerContext;

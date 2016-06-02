@@ -219,15 +219,16 @@ static NSArray *_writableTypesForImageWithArchive (void)
 
 static CachedImage* imageFromElement(DOMElement *domElement)
 {
-    Element* element = core(domElement);
+    auto* element = core(domElement);
     if (!element)
         return nullptr;
-    
-    ASSERT(element->renderer());
-    auto& imageRenderer = downcast<RenderImage>(*element->renderer());
-    if (!imageRenderer.cachedImage() || imageRenderer.cachedImage()->errorOccurred())
+    auto* renderer = element->renderer();
+    if (!is<RenderImage>(renderer))
         return nullptr;
-    return imageRenderer.cachedImage();
+    auto* image = downcast<RenderImage>(*renderer).cachedImage();
+    if (!image || image->errorOccurred())
+        return nullptr;
+    return image;
 }
 
 - (void)_web_writeImage:(NSImage *)image
@@ -275,7 +276,8 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
     if (auto* renderer = core(element)->renderer()) {
         if (is<RenderImage>(*renderer)) {
-            if (CachedImage* image = downcast<RenderImage>(*renderer).cachedImage()) {
+            if (auto* image = downcast<RenderImage>(*renderer).cachedImage()) {
+                // FIXME: This doesn't check errorOccured the way imageFromElement does.
                 extension = image->image()->filenameExtension();
                 if (![extension length])
                     return nullptr;

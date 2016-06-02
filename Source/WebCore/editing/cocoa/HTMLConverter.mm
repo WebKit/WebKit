@@ -317,7 +317,7 @@ typedef NSUInteger NSTextTabType;
 
 #else
 static NSFileWrapper *fileWrapperForURL(DocumentLoader *, NSURL *);
-static NSFileWrapper *fileWrapperForElement(Element*);
+static NSFileWrapper *fileWrapperForElement(HTMLImageElement&);
 
 @interface NSTextAttachment (WebCoreNSTextAttachment)
 - (void)setIgnoresOrientation:(BOOL)flag;
@@ -1393,7 +1393,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         if (path)
             fileWrapper = [[[NSFileWrapper alloc] initWithURL:url options:0 error:NULL] autorelease];
     }
-    if (!fileWrapper) {
+    if (!fileWrapper && dataSource) {
         RefPtr<ArchiveResource> resource = dataSource->subresource(url);
         if (!resource)
             resource = dataSource->subresource(url);
@@ -2423,19 +2423,20 @@ Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Range& range
 
 #if !PLATFORM(IOS)
 
-static NSFileWrapper *fileWrapperForURL(DocumentLoader *dataSource, NSURL *URL)
+static NSFileWrapper *fileWrapperForURL(DocumentLoader* dataSource, NSURL *URL)
 {
     if ([URL isFileURL])
         return [[[NSFileWrapper alloc] initWithURL:[URL URLByResolvingSymlinksInPath] options:0 error:nullptr] autorelease];
 
-    RefPtr<ArchiveResource> resource = dataSource->subresource(URL);
-    if (resource) {
-        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()] autorelease];
-        NSString *filename = resource->response().suggestedFilename();
-        if (!filename || ![filename length])
-            filename = suggestedFilenameWithMIMEType(resource->url(), resource->mimeType());
-        [wrapper setPreferredFilename:filename];
-        return wrapper;
+    if (dataSource) {
+        if (RefPtr<ArchiveResource> resource = dataSource->subresource(URL)) {
+            NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()] autorelease];
+            NSString *filename = resource->response().suggestedFilename();
+            if (!filename || ![filename length])
+                filename = suggestedFilenameWithMIMEType(resource->url(), resource->mimeType());
+            [wrapper setPreferredFilename:filename];
+            return wrapper;
+        }
     }
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
@@ -2452,22 +2453,20 @@ static NSFileWrapper *fileWrapperForURL(DocumentLoader *dataSource, NSURL *URL)
     return nil;
 }
 
-static NSFileWrapper *fileWrapperForElement(Element* element)
+static NSFileWrapper *fileWrapperForElement(HTMLImageElement& element)
 {
-    NSFileWrapper *wrapper = nil;
-    
-    const AtomicString& attr = element->getAttribute(srcAttr);
-    if (!attr.isEmpty()) {
-        NSURL *URL = element->document().completeURL(attr);
-        if (DocumentLoader* loader = element->document().loader())
-            wrapper = fileWrapperForURL(loader, URL);
-    }
+    // FIXME: Should this use currentSrc instead of src?
+    auto src = element.src();
+    NSFileWrapper *wrapper = src.isEmpty() ? nil : fileWrapperForURL(element.document().loader(), src);
+
     if (!wrapper) {
-        auto& renderer = downcast<RenderImage>(*element->renderer());
-        if (renderer.cachedImage() && !renderer.cachedImage()->errorOccurred()) {
-            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)(renderer.cachedImage()->imageForRenderer(&renderer)->getTIFFRepresentation())];
-            [wrapper setPreferredFilename:@"image.tiff"];
-            [wrapper autorelease];
+        auto* renderer = element.renderer();
+        if (is<RenderImage>(renderer)) {
+            auto* image = downcast<RenderImage>(*renderer).cachedImage();
+            if (image && !image->errorOccurred()) {
+                wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)image->imageForRenderer(renderer)->getTIFFRepresentation()] autorelease];
+                [wrapper setPreferredFilename:@"image.tiff"];
+            }
         }
     }
 
@@ -2486,6 +2485,7 @@ NSAttributedString *attributedStringFromRange(Range& range)
 }
     
 #if !PLATFORM(IOS)
+
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
 NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImagesInAttributedString includeOrSkipImages)
 {
@@ -2505,8 +2505,8 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
             if (&startContainer == &endContainer && (startOffset == endOffset - 1)) {
                 Node* node = startContainer.traverseToChildAt(startOffset);
                 if (is<HTMLImageElement>(node)) {
-                    NSFileWrapper* fileWrapper = fileWrapperForElement(downcast<HTMLImageElement>(node));
-                    NSTextAttachment* attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
+                    auto fileWrapper = fileWrapperForElement(downcast<HTMLImageElement>(*node));
+                    NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
                     [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];
                     [attachment release];
                 }
@@ -2546,6 +2546,7 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
 
     return [string autorelease];
 }
+
 #endif
     
 }

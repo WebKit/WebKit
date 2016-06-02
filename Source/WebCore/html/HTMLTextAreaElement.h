@@ -21,14 +21,14 @@
  *
  */
 
-#ifndef HTMLTextAreaElement_h
-#define HTMLTextAreaElement_h
+#pragma once
 
 #include "HTMLTextFormControlElement.h"
 
 namespace WebCore {
 
 class BeforeTextInsertedEvent;
+class RenderTextControlMultiLine;
 class VisibleSelection;
 
 class HTMLTextAreaElement final : public HTMLTextFormControlElement {
@@ -62,6 +62,8 @@ public:
     void setRows(unsigned);
 
     bool willRespondToMouseClickEvents() override;
+
+    RenderTextControlMultiLine* renderer() const;
 
 private:
     HTMLTextAreaElement(const QualifiedName&, Document&, HTMLFormElement*);
@@ -132,5 +134,3 @@ private:
 };
 
 } //namespace
-
-#endif

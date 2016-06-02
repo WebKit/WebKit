@@ -138,34 +138,32 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     return hasNonEmptyBox(renderBoxModelObject());
 }
 
-static void appendServerMapMousePosition(StringBuilder& url, Event* event)
+static void appendServerMapMousePosition(StringBuilder& url, Event& event)
 {
-    ASSERT(event);
-    if (!is<MouseEvent>(*event))
+    if (!is<MouseEvent>(event))
         return;
+    auto& mouseEvent = downcast<MouseEvent>(event);
 
-    ASSERT(event->target());
-    Node* target = event->target()->toNode();
+    ASSERT(mouseEvent.target());
+    auto* target = mouseEvent.target()->toNode();
     ASSERT(target);
     if (!is<HTMLImageElement>(*target))
         return;
 
-    HTMLImageElement& imageElement = downcast<HTMLImageElement>(*target);
+    auto& imageElement = downcast<HTMLImageElement>(*target);
     if (!imageElement.isServerMap())
         return;
 
-    if (!is<RenderImage>(imageElement.renderer()))
+    auto* renderer = imageElement.renderer();
+    if (!is<RenderImage>(renderer))
         return;
-    auto& renderer = downcast<RenderImage>(*imageElement.renderer());
 
-    // FIXME: This should probably pass true for useTransforms.
-    FloatPoint absolutePosition = renderer.absoluteToLocal(FloatPoint(downcast<MouseEvent>(*event).pageX(), downcast<MouseEvent>(*event).pageY()));
-    int x = absolutePosition.x();
-    int y = absolutePosition.y();
+    // FIXME: This should probably pass UseTransforms in the MapCoordinatesFlags.
+    auto absolutePosition = downcast<RenderImage>(*renderer).absoluteToLocal(FloatPoint(mouseEvent.pageX(), mouseEvent.pageY()));
     url.append('?');
-    url.appendNumber(x);
+    url.appendNumber(std::lround(absolutePosition.x()));
     url.append(',');
-    url.appendNumber(y);
+    url.appendNumber(std::lround(absolutePosition.y()));
 }
 
 void HTMLAnchorElement::defaultEventHandler(Event* event)
@@ -551,7 +549,7 @@ void HTMLAnchorElement::handleClick(Event* event)
 
     StringBuilder url;
     url.append(stripLeadingAndTrailingHTMLSpaces(fastGetAttribute(hrefAttr)));
-    appendServerMapMousePosition(url, event);
+    appendServerMapMousePosition(url, *event);
     URL kurl = document().completeURL(url.toString());
 
     auto downloadAttribute = nullAtom;

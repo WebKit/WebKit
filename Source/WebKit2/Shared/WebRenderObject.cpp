@@ -113,21 +113,14 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
 
     Vector<RefPtr<API::Object>> children;
 
-    for (RenderObject* coreChild = renderer->firstChildSlow(); coreChild; coreChild = coreChild->nextSibling()) {
-        RefPtr<WebRenderObject> child = adoptRef(new WebRenderObject(coreChild, shouldIncludeDescendants));
-        children.append(WTFMove(child));
-    }
+    for (auto* coreChild = renderer->firstChildSlow(); coreChild; coreChild = coreChild->nextSibling())
+        children.append(adoptRef(*new WebRenderObject(coreChild, shouldIncludeDescendants)));
 
     if (is<RenderWidget>(*renderer)) {
-        if (Widget* widget = downcast<RenderWidget>(*renderer).widget()) {
-            if (is<FrameView>(*widget)) {
-                FrameView& frameView = downcast<FrameView>(*widget);
-                if (RenderView* coreContentRenderer = frameView.frame().contentRenderer()) {
-                    RefPtr<WebRenderObject> contentRenderer = adoptRef(new WebRenderObject(coreContentRenderer, shouldIncludeDescendants));
-
-                    children.append(WTFMove(contentRenderer));
-                }
-            }
+        auto* widget = downcast<RenderWidget>(*renderer).widget();
+        if (is<FrameView>(widget)) {
+            if (auto* coreContentRenderer = downcast<FrameView>(*widget).frame().contentRenderer())
+                children.append(adoptRef(*new WebRenderObject(coreContentRenderer, shouldIncludeDescendants)));
         }
     }
 

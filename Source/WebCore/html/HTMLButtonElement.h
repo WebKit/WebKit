@@ -21,12 +21,13 @@
  *
  */
 
-#ifndef HTMLButtonElement_h
-#define HTMLButtonElement_h
+#pragma once
 
 #include "HTMLFormControlElement.h"
 
 namespace WebCore {
+
+class RenderButton;
 
 class HTMLButtonElement final : public HTMLFormControlElement {
 public:
@@ -37,6 +38,8 @@ public:
     const AtomicString& value() const;
 
     bool willRespondToMouseClickEvents() override;
+
+    RenderButton* renderer() const;
 
 private:
     HTMLButtonElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
@@ -77,5 +80,3 @@ private:
 };
 
 } // namespace
-
-#endif

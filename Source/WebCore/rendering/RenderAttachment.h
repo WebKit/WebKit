@@ -23,16 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderAttachment_h
-#define RenderAttachment_h
+#pragma once
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+#include "HTMLAttachmentElement.h"
 #include "RenderReplaced.h"
 
 namespace WebCore {
-
-class HTMLAttachmentElement;
 
 class RenderAttachment final : public RenderReplaced {
 public:
@@ -54,9 +52,13 @@ private:
     int baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const override;
 };
 
+inline RenderAttachment* HTMLAttachmentElement::renderer() const
+{
+    return downcast<RenderAttachment>(HTMLElement::renderer());
+}
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderAttachment, isAttachment())
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
-#endif // RenderAttachment_h
