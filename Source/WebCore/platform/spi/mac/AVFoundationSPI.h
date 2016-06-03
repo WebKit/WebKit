@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_END
 #if USE(APPLE_INTERNAL_SDK)
 #import <AVFoundation/AVAssetCache_Private.h>
 #else
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000)
 #import <AVFoundation/AVAssetCache.h>
 #else
 @interface AVAssetCache : NSObject

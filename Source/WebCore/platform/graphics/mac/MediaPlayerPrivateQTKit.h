@@ -34,7 +34,7 @@
 #include <wtf/RetainPtr.h>
 
 #ifdef __OBJC__
-#import <QTKit/QTTime.h>
+#import "QTKitSPI.h"
 #else
 class QTTime;
 #endif

@@ -28,8 +28,8 @@
 
 #if PLATFORM(MAC) && USE(QTKIT)
 
-#include <QTKit/QTTime.h>
-#include <wtf/MediaTime.h>
+#import "QTKitSPI.h"
+#import <wtf/MediaTime.h>
 
 namespace WebCore {
 

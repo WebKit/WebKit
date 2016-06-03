@@ -1,3 +1,28 @@
+2016-06-02  Anders Carlsson  <andersca@apple.com>
+
+        Fix build
+        https://bugs.webkit.org/show_bug.cgi?id=158337
+        rdar://problem/26429419
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add QTKitSPI.h header.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/graphics/mac/MediaTimeQTKit.h:
+        * platform/graphics/mac/MediaTimeQTKit.mm:
+        * platform/mac/WebVideoFullscreenController.mm:
+        Include QTKitSPI.h.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+        * platform/spi/mac/AVFoundationSPI.h:
+        Use MAX_ALLOWED instead of MIN_REQUIRED.
+
+        * platform/spi/mac/QTKitSPI.h:
+        Add new QTKit header.
+
 2016-06-02  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
         [iOS] PDFDocumentImage should not create a cached image larger than 4M pixels

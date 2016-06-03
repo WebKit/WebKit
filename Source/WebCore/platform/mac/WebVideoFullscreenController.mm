@@ -39,7 +39,7 @@
 #import <objc/runtime.h>
 
 #if USE(QTKIT)
-#import <QTKit/QTKit.h>
+#import "QTKitSPI.h"
 SOFT_LINK_FRAMEWORK(QTKit)
 SOFT_LINK_CLASS(QTKit, QTMovieLayer)
 SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
