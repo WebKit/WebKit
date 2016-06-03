@@ -1,3 +1,11 @@
+2016-06-03  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: CLOOP build fix (needs a #include).
+
+        Not reviewed.
+
+        * interpreter/StackVisitor.h:
+
 2016-06-03  Andreas Kling  <akling@apple.com>
 
         Eliminate two large sources of temporary StringImpl objects.

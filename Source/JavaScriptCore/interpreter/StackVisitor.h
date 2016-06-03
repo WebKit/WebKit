@@ -27,6 +27,7 @@
 #define StackVisitor_h
 
 #include "VMEntryRecord.h"
+#include <functional>
 #include <wtf/Indenter.h>
 #include <wtf/text/WTFString.h>
 
