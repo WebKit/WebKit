@@ -47,8 +47,7 @@ def transform_relative_paths_to_absolute_paths(arguments, build_path):
         elif argument in FLAGS_PRECEDING_PATHS:
             # Some flags precede the path in the list. For those we make the
             # next argument absolute.
-            if argument == flag:
-                make_next_absolute = True
+            make_next_absolute = True
         else:
             # Some argument contain the flag and the path together. For these
             # we parse the argument out of the path.

@@ -1,3 +1,15 @@
+2016-06-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [GTK] Update YouCompleteMe script to make all include paths absolute
+        https://bugs.webkit.org/show_bug.cgi?id=158301
+
+        Reviewed by Michael Catanzaro.
+
+        Before this patch, some include paths were not made absolute.
+        This could make YouCompleteMe plugin to fail extracting information or validating cpp files.
+
+        * gtk/ycm_extra_conf.py:
+
 2016-06-03  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Unreviewed: add myself to the committers list.
