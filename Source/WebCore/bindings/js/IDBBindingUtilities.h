@@ -62,8 +62,7 @@ void generateIndexKeyForValue(JSC::ExecState&, const IDBIndexInfo&, JSC::JSValue
 JSC::JSValue deserializeIDBValueToJSValue(ScriptExecutionContext&, const IDBValue&);
 JSC::JSValue deserializeIDBValueDataToJSValue(JSC::ExecState&, const ThreadSafeDataBuffer& valueData);
 
-RefPtr<IDBKey> scriptValueToIDBKey(ScriptExecutionContext&, const JSC::JSValue&);
-RefPtr<IDBKey> scriptValueToIDBKey(JSC::ExecState&, const JSC::JSValue&);
+Ref<IDBKey> scriptValueToIDBKey(JSC::ExecState&, const JSC::JSValue&);
 
 }
 

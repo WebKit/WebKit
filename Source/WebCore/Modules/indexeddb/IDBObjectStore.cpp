@@ -165,6 +165,13 @@ RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, JSValue 
     LOG(IndexedDB, "IDBObjectStore::get");
     ASSERT(currentThread() == m_transaction->database().originThreadID());
 
+    auto exec = context.execState();
+    if (!exec) {
+        ec.code = IDBDatabaseException::UnknownError;
+        ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBObjectStore': Script execution context does not have an execution state.");
+        return nullptr;
+    }
+
     if (!m_transaction->isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished.");
@@ -177,14 +184,14 @@ RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, JSValue 
         return nullptr;
     }
 
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
-    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+    Ref<IDBKey> idbKey = scriptValueToIDBKey(*exec, key);
+    if (!idbKey->isValid()) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBObjectStore': The parameter is not a valid key.");
         return nullptr;
     }
 
-    return m_transaction->requestGetRecord(context, *this, idbKey.get());
+    return m_transaction->requestGetRecord(context, *this, idbKey.ptr());
 }
 
 RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
@@ -389,14 +396,21 @@ RefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& contex
 
 RefPtr<IDBRequest> IDBObjectStore::modernDelete(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
 {
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
-    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+    auto exec = context.execState();
+    if (!exec) {
+        ec.code = IDBDatabaseException::UnknownError;
+        ec.message = ASCIILiteral("Failed to execute 'delete' on 'IDBObjectStore': Script execution context does not have an execution state.");
+        return nullptr;
+    }
+
+    Ref<IDBKey> idbKey = scriptValueToIDBKey(*exec, key);
+    if (!idbKey->isValid()) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key.");
         return nullptr;
     }
 
-    return doDelete(context, &IDBKeyRange::create(idbKey.releaseNonNull()).get(), ec);
+    return doDelete(context, &IDBKeyRange::create(WTFMove(idbKey)).get(), ec);
 }
 
 RefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
@@ -580,14 +594,21 @@ RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, JSValu
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
-    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+    auto exec = context.execState();
+    if (!exec) {
+        ec.code = IDBDatabaseException::UnknownError;
+        ec.message = ASCIILiteral("Failed to execute 'count' on 'IDBObjectStore': Script execution context does not have an execution state.");
+        return nullptr;
+    }
+
+    Ref<IDBKey> idbKey = scriptValueToIDBKey(*exec, key);
+    if (!idbKey->isValid()) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'count' on 'IDBObjectStore': The parameter is not a valid key.");
         return nullptr;
     }
 
-    return doCount(context, IDBKeyRangeData(idbKey.get()), ec);
+    return doCount(context, IDBKeyRangeData(idbKey.ptr()), ec);
 }
 
 RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)

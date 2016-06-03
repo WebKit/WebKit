@@ -32,6 +32,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBKey.h"
 #include "IDBKeyData.h"
+#include "ScriptExecutionContext.h"
 #include <runtime/JSCJSValue.h>
 
 using namespace JSC;
@@ -78,13 +79,17 @@ RefPtr<IDBKeyRange> IDBKeyRange::only(ExecState& state, JSValue keyValue, Except
 
 RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext& context, JSValue keyValue, ExceptionCode& ec)
 {
-    return only(scriptValueToIDBKey(context, keyValue), ec);
+    auto exec = context.execState();
+    if (!exec)
+        return nullptr;
+
+    return only(scriptValueToIDBKey(*exec, keyValue), ec);
 }
 
 RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ExecState& state, JSValue boundValue, bool open, ExceptionCode& ec)
 {
     auto bound = scriptValueToIDBKey(state, boundValue);
-    if (!bound || !bound->isValid()) {
+    if (!bound->isValid()) {
         ec = IDBDatabaseException::DataError;
         return nullptr;
     }
@@ -95,7 +100,7 @@ RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ExecState& state, JSValue boundValue
 RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ExecState& state, JSValue boundValue, bool open, ExceptionCode& ec)
 {
     auto bound = scriptValueToIDBKey(state, boundValue);
-    if (!bound || !bound->isValid()) {
+    if (!bound->isValid()) {
         ec = IDBDatabaseException::DataError;
         return nullptr;
     }
@@ -108,7 +113,7 @@ RefPtr<IDBKeyRange> IDBKeyRange::bound(ExecState& state, JSValue lowerValue, JSV
     auto lower = scriptValueToIDBKey(state, lowerValue);
     auto upper = scriptValueToIDBKey(state, upperValue);
 
-    if (!lower || !lower->isValid() || !upper || !upper->isValid()) {
+    if (!lower->isValid() || !upper->isValid()) {
         ec = IDBDatabaseException::DataError;
         return nullptr;
     }
@@ -126,7 +131,7 @@ RefPtr<IDBKeyRange> IDBKeyRange::bound(ExecState& state, JSValue lowerValue, JSV
 
 bool IDBKeyRange::isOnlyKey() const
 {
-    return m_lower && m_upper && !m_isLowerOpen && !m_isUpperOpen && m_lower->isEqual(m_upper.get());
+    return m_lower && m_upper && !m_isLowerOpen && !m_isUpperOpen && m_lower->isEqual(*m_upper);
 }
 
 } // namespace WebCore

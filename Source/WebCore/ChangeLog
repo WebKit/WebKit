@@ -1,3 +1,62 @@
+2016-06-03  Brady Eidson  <beidson@apple.com>
+
+        Miscellaneous IDBBindingUtilities cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=158353
+
+        Reviewed by Tim Horton.
+
+        No new tests (Straight refactor, yo).
+
+        Starting with removing a single form of scriptValueToIDBKey(), and making the return value be
+        Ref<IDBKey> instead of RefPtr<IDBKey>, update a whole bunch of code to understand that the ExecState
+        is non-null and the resulting key is non-null.
+        
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::continueFunction):
+        
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::cmp):
+        
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::count):
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::getKey):
+        
+        * Modules/indexeddb/IDBKey.cpp:
+        (WebCore::IDBKey::compare):
+        (WebCore::IDBKey::isLessThan):
+        (WebCore::IDBKey::isEqual):
+        * Modules/indexeddb/IDBKey.h:
+        (WebCore::IDBKey::createMultiEntryArray):
+        
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        (WebCore::IDBKeyRange::isOnlyKey):
+        
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::modernDelete):
+        (WebCore::IDBObjectStore::count):
+        
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::get):
+        (WebCore::set):
+        (WebCore::createIDBKeyFromValue):
+        (WebCore::getNthValueOnKeyPath):
+        (WebCore::internalCreateIDBKeyFromScriptValueAndKeyPath):
+        (WebCore::ensureNthValueOnKeyPath):
+        (WebCore::canInjectNthValueOnKeyPath):
+        (WebCore::injectIDBKeyIntoScriptValue):
+        (WebCore::maybeCreateIDBKeyFromScriptValueAndKeyPath):
+        (WebCore::canInjectIDBKeyIntoScriptValue):
+        (WebCore::deserializeIDBValueToJSValue):
+        (WebCore::scriptValueToIDBKey):
+        (WebCore::createKeyPathArray):
+        * bindings/js/IDBBindingUtilities.h:
+
 2016-06-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Rename CheckedRadioButtons into RadioButtonGroups

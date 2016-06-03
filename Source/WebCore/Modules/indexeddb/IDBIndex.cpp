@@ -160,14 +160,21 @@ RefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext& context, JSValue key,
 {
     LOG(IndexedDB, "IDBIndex::count");
 
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
-    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+    auto exec = context.execState();
+    if (!exec) {
+        ec.code = IDBDatabaseException::UnknownError;
+        ec.message = ASCIILiteral("Failed to execute 'count' on 'IDBIndex': Script execution context does not have an execution state.");
+        return 0;
+    }
+
+    Ref<IDBKey> idbKey = scriptValueToIDBKey(*exec, key);
+    if (!idbKey->isValid()) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'count' on 'IDBIndex': The parameter is not a valid key.");
         return nullptr;
     }
 
-    return doCount(context, IDBKeyRangeData(idbKey.get()), ec);
+    return doCount(context, IDBKeyRangeData(idbKey.ptr()), ec);
 }
 
 RefPtr<IDBRequest> IDBIndex::doCount(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
@@ -244,14 +251,21 @@ RefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext& context, JSValue key, E
 {
     LOG(IndexedDB, "IDBIndex::get");
 
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
-    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+    auto exec = context.execState();
+    if (!exec) {
+        ec.code = IDBDatabaseException::UnknownError;
+        ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBIndex': Script execution context does not have an execution state.");
+        return nullptr;
+    }
+
+    Ref<IDBKey> idbKey = scriptValueToIDBKey(*exec, key);
+    if (!idbKey->isValid()) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBIndex': The parameter is not a valid key.");
         return nullptr;
     }
 
-    return doGet(context, IDBKeyRangeData(idbKey.get()), ec);
+    return doGet(context, IDBKeyRangeData(idbKey.ptr()), ec);
 }
 
 RefPtr<IDBRequest> IDBIndex::doGet(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
@@ -290,14 +304,21 @@ RefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext& context, JSValue key
 {
     LOG(IndexedDB, "IDBIndex::getKey");
 
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
-    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+    auto exec = context.execState();
+    if (!exec) {
+        ec.code = IDBDatabaseException::UnknownError;
+        ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBIndex': Script execution context does not have an execution state.");
+        return nullptr;
+    }
+
+    Ref<IDBKey> idbKey = scriptValueToIDBKey(*exec, key);
+    if (!idbKey->isValid()) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'getKey' on 'IDBIndex': The parameter is not a valid key.");
         return nullptr;
     }
 
-    return doGetKey(context, IDBKeyRangeData(idbKey.get()), ec);
+    return doGetKey(context, IDBKeyRangeData(idbKey.ptr()), ec);
 }
 
 RefPtr<IDBRequest> IDBIndex::doGetKey(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)

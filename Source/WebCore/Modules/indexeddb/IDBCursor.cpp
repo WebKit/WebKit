@@ -269,9 +269,16 @@ void IDBCursor::advance(unsigned count, ExceptionCodeWithMessage& ec)
 
 void IDBCursor::continueFunction(ScriptExecutionContext& context, JSValue keyValue, ExceptionCodeWithMessage& ec)
 {
+    auto exec = context.execState();
+    if (!exec) {
+        ec.code = IDBDatabaseException::UnknownError;
+        ec.message = ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': Script execution context does not have an execution state.");
+        return;
+    }
+
     RefPtr<IDBKey> key;
     if (!keyValue.isUndefined())
-        key = scriptValueToIDBKey(context, keyValue);
+        key = scriptValueToIDBKey(*exec, keyValue);
 
     continueFunction(key.get(), ec);
 }
