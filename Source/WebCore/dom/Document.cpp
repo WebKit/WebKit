@@ -4610,8 +4610,6 @@ void Document::setInPageCache(bool flag)
         }
         m_styleRecalcTimer.stop();
 
-        clearStyleResolver();
-        clearSelectorQueryCache();
         clearSharedObjectPool();
     } else {
         if (childNeedsStyleRecalc())

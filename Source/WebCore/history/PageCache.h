@@ -61,6 +61,9 @@ public:
     unsigned pageCount() const { return m_items.size(); }
     WEBCORE_EXPORT unsigned frameCount() const;
 
+    WEBCORE_EXPORT void markPagesForVisitedLinkStyleRecalc();
+    // Will mark all cached pages associated with the given page as needing style recalc.
+    void markPagesForFullStyleRecalc(Page&);
     void markPagesForDeviceOrPageScaleChanged(Page&);
     void markPagesForContentsSizeChanged(Page&);
 #if ENABLE(VIDEO_TRACK)

@@ -1,3 +1,13 @@
+2016-06-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, roll out r196633 as it broke PageCache on iOS for WebKit.org
+        <rdar://problem/26521101>
+
+        * WebCoreSupport/WebVisitedLinkStore.mm:
+        (WebVisitedLinkStore::removeAllVisitedLinks):
+        (WebVisitedLinkStore::removeVisitedLink):
+        (WebVisitedLinkStore::addVisitedLinkHash):
+
 2016-06-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Add WebIDL special operation support: serializer
