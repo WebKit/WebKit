@@ -1,3 +1,14 @@
+2016-06-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] IndexedDB worker tests are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=158341
+
+        Reviewed by Alex Christensen.
+
+        Enable IndexedDB in workers.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2016-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.1 release.
