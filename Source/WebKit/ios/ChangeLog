@@ -1,3 +1,15 @@
+2016-06-02  David Kilzer  <ddkilzer@apple.com>
+
+        Fix typo in -[WebDefaultUIKitDelegate deleteFromInputwithFlags:]
+        <https://webkit.org/b/158323>
+        <rdar://problem/26549165>
+
+        Reviewed by Andy Estes.
+
+        * DefaultDelegates/WebDefaultUIKitDelegate.m:
+        (-[WebDefaultUIKitDelegate deleteFromInputwithFlags:]): Rename...
+        (-[WebDefaultUIKitDelegate deleteFromInputWithFlags:]): ...to this.
+
 2016-05-15  Darin Adler  <darin@apple.com>
 
         More CTTE and other cleanups for HTML editing header

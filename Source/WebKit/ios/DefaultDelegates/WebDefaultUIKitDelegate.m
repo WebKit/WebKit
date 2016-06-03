@@ -170,7 +170,7 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 {
 }
 
-- (void)deleteFromInputwithFlags:(NSUInteger)flags
+- (void)deleteFromInputWithFlags:(NSUInteger)flags
 {
 }
 
