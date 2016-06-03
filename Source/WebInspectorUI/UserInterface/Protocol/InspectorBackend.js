@@ -71,6 +71,8 @@ InspectorBackendClass = class InspectorBackendClass
 
     set dumpInspectorTimeStats(value)
     {
+        this._dumpInspectorTimeStats = !!value;
+
         if (!this.dumpInspectorProtocolMessages)
             this.dumpInspectorProtocolMessages = true;
 
