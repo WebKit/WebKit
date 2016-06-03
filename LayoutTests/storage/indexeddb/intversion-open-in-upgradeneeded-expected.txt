@@ -19,7 +19,6 @@ db.onversionchange = onVersionChange
 request = indexedDB.open(dbname, 3)
 request.onupgradeneeded = upgradeNeeded2
 request.onsuccess = openSuccess2
-request.onblocked = onBlocked
 
 transactionOnComplete():
 sawTransactionComplete = true
@@ -33,8 +32,6 @@ transaction = db.transaction('os')
 
 onVersionChange():
 db.close()
-
-onBlocked():
 
 upgradeNeeded2():
 db = event.target.result

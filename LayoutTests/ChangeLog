@@ -1,3 +1,18 @@
+2016-06-03  Brady Eidson  <beidson@apple.com>
+
+        storage/indexeddb/intversion-open-in-upgradeneeded.html is flaky on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=155050
+
+        Reviewed by Alex Christensen.
+
+        The test no longer crashes/times out, but it does have text failures.
+        Resolve them by removing a race in the test itself.
+        
+        * platform/mac-wk2/TestExpectations:
+        * storage/indexeddb/intversion-open-in-upgradeneeded-expected.txt:
+        * storage/indexeddb/intversion-open-in-upgradeneeded-private-expected.txt:
+        * storage/indexeddb/resources/intversion-open-in-upgradeneeded.js:
+
 2016-06-03  Antoine Quint  <graouts@apple.com>
 
         Reflection of element does not respect backdrop-filter property
