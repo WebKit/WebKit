@@ -1,3 +1,14 @@
+2016-06-03  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: WebGL doesn't show up in CSS reflections
+        https://bugs.webkit.org/show_bug.cgi?id=76489
+
+        Reviewed by Dean Jackson.
+
+        Update the expected rendering to contain the reflected WebGL <canvas>.
+
+        * platform/mac/compositing/webgl/webgl-reflection-expected.png:
+
 2016-06-02  Zalan Bujtas  <zalan@apple.com>
 
         Repaint issue with vertical text in an out of flow container.
