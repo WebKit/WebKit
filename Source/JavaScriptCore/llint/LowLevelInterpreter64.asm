@@ -2440,7 +2440,7 @@ _llint_op_log_shadow_chicken_prologue:
     storep cfr, ShadowChicken::Packet::frame[t0]
     loadp CallerFrame[cfr], t1
     storep t1, ShadowChicken::Packet::callerFrame[t0]
-    loadp Callee + PayloadOffset[cfr], t1
+    loadp Callee[cfr], t1
     storep t1, ShadowChicken::Packet::callee[t0]
     loadVariable(1, t1)
     storep t1, ShadowChicken::Packet::scope[t0]
