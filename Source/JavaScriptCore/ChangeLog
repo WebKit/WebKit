@@ -1,3 +1,45 @@
+2016-06-03  Mark Lam  <mark.lam@apple.com>
+
+        Clean up how StackVisitor dumps its frames.
+        https://bugs.webkit.org/show_bug.cgi?id=158316
+
+        Reviewed by Keith Miller.
+
+        1. Updated to do dumping to a PrintStream.
+        2. Added support for printing a prefix for each frame.
+           This is currently used by JSDollarVMPrototype to print frame numbers.
+        3. Fix the incrementing of the frame index in StackVisitor.
+           It was initialized but never incremented before when iterating the frames.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::gotoNextFrame):
+        (JSC::StackVisitor::Frame::codeType):
+        (JSC::StackVisitor::Frame::functionName):
+        (JSC::StackVisitor::Frame::sourceURL):
+        (JSC::StackVisitor::Frame::toString):
+        (JSC::StackVisitor::Frame::createArguments):
+        (JSC::StackVisitor::Frame::computeLineAndColumn):
+        (JSC::StackVisitor::Frame::retrieveExpressionInfo):
+        (JSC::StackVisitor::Frame::setToEnd):
+        (JSC::StackVisitor::Frame::dump):
+        (JSC::StackVisitor::Indent::dump):
+        (JSC::printIndents): Deleted.
+        (JSC::log): Deleted.
+        (JSC::logF): Deleted.
+        (JSC::StackVisitor::Frame::print): Deleted.
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Indent::Indent):
+        (JSC::StackVisitor::Indent::operator++):
+        (JSC::StackVisitor::Indent::operator--):
+        (JSC::StackVisitor::Frame::isJSFrame):
+        (JSC::StackVisitor::Frame::isInlinedFrame):
+        (JSC::StackVisitor::Frame::vmEntryFrame):
+        (JSC::StackVisitor::Frame::callFrame):
+        (JSC::StackVisitor::Frame::Frame):
+        (JSC::StackVisitor::Frame::~Frame):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::PrintFrameFunctor::operator()):
+
 2016-06-02  Saam Barati  <sbarati@apple.com>
 
         global lexical environment variables are not accessible through functions created using the function constructor

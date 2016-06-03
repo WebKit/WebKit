@@ -1,3 +1,19 @@
+2016-06-03  Mark Lam  <mark.lam@apple.com>
+
+        Clean up how StackVisitor dumps its frames.
+        https://bugs.webkit.org/show_bug.cgi?id=158316
+
+        Reviewed by Keith Miller.
+
+        Added an Indenter class what works with dataLog.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Indenter.h: Added.
+        (WTF::Indenter::Indenter):
+        (WTF::Indenter::dump):
+        (WTF::Indenter::operator++):
+        (WTF::Indenter::operator--):
+
 2016-06-02  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
         [iOS] PDFDocumentImage should not create a cached image larger than 4M pixels

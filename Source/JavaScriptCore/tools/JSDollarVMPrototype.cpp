@@ -326,9 +326,11 @@ public:
     StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         m_currentFrame++;
-        if (m_currentFrame > m_framesToSkip)
-            visitor->print(2);
-        
+        if (m_currentFrame > m_framesToSkip) {
+            visitor->dump(WTF::dataFile(), Indenter(2), [&] (PrintStream& out) {
+                out.print("[", (m_currentFrame - m_framesToSkip - 1), "] ");
+            });
+        }
         if (m_action == PrintOne && m_currentFrame > m_framesToSkip)
             return StackVisitor::Done;
         return StackVisitor::Continue;

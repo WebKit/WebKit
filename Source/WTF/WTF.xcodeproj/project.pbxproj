@@ -319,6 +319,7 @@
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
 		EB95E1F0161A72410089A2F5 /* ByteOrder.h in Headers */ = {isa = PBXBuildFile; fileRef = EB95E1EF161A72410089A2F5 /* ByteOrder.h */; };
 		FE8225311B2A1E5B00BA68FD /* NakedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8225301B2A1E5B00BA68FD /* NakedPtr.h */; };
+		FE8925B01D00DAEC0046907E /* Indenter.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8925AF1D00DAEC0046907E /* Indenter.h */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDACD3C1630F83F00C69634 /* StackStats.h */; };
 /* End PBXBuildFile section */
@@ -650,6 +651,7 @@
 		E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueCocoa.cpp; sourceTree = "<group>"; };
 		EB95E1EF161A72410089A2F5 /* ByteOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteOrder.h; sourceTree = "<group>"; };
 		FE8225301B2A1E5B00BA68FD /* NakedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedPtr.h; sourceTree = "<group>"; };
+		FE8925AF1D00DAEC0046907E /* Indenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Indenter.h; sourceTree = "<group>"; };
 		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
 		FEDACD3C1630F83F00C69634 /* StackStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackStats.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -855,6 +857,7 @@
 				A8A472B9151A825A004123FF /* HashTable.h */,
 				A8A472BA151A825A004123FF /* HashTraits.h */,
 				A8A472BB151A825A004123FF /* HexNumber.h */,
+				FE8925AF1D00DAEC0046907E /* Indenter.h */,
 				2684D4351C000D400081D663 /* IndexSparseSet.h */,
 				A8A472BC151A825A004123FF /* InlineASM.h */,
 				A70DA0821799F04D00529A9B /* Insertion.h */,
@@ -1360,6 +1363,7 @@
 				149EF16316BBFE0D000A4331 /* TriState.h in Headers */,
 				83FBA93219DF459700F30ADB /* TypeCasts.h in Headers */,
 				1AFDE648195201C300C48FFA /* TypeCastsCF.h in Headers */,
+				FE8925B01D00DAEC0046907E /* Indenter.h in Headers */,
 				A8A4746D151A825B004123FF /* UnionFind.h in Headers */,
 				70ECA60F1B02426800449739 /* UniquedStringImpl.h in Headers */,
 				A8A4746A151A825B004123FF /* UTF8.h in Headers */,

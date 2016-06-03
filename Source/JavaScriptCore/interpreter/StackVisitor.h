@@ -27,6 +27,7 @@
 #define StackVisitor_h
 
 #include "VMEntryRecord.h"
+#include <wtf/Indenter.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -74,26 +75,27 @@ public:
         bool isJSFrame() const { return !!codeBlock(); }
         bool isInlinedFrame() const { return !!inlineCallFrame(); }
 
-        JS_EXPORT_PRIVATE String functionName();
-        JS_EXPORT_PRIVATE String sourceURL();
-        JS_EXPORT_PRIVATE String toString();
+        JS_EXPORT_PRIVATE String functionName() const;
+        JS_EXPORT_PRIVATE String sourceURL() const;
+        JS_EXPORT_PRIVATE String toString() const;
 
         intptr_t sourceID();
 
         CodeType codeType() const;
-        JS_EXPORT_PRIVATE void computeLineAndColumn(unsigned& line, unsigned& column);
+        JS_EXPORT_PRIVATE void computeLineAndColumn(unsigned& line, unsigned& column) const;
 
         ClonedArguments* createArguments();
         VMEntryFrame* vmEntryFrame() const { return m_VMEntryFrame; }
         CallFrame* callFrame() const { return m_callFrame; }
         
-        JS_EXPORT_PRIVATE void print(int indentLevel);
+        void dump(PrintStream&, Indenter = Indenter()) const;
+        void dump(PrintStream&, Indenter, std::function<void(PrintStream&)> prefix) const;
 
     private:
         Frame() { }
         ~Frame() { }
 
-        void retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column);
+        void retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
         void setToEnd();
 
         size_t m_index;
