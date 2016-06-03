@@ -1744,22 +1744,18 @@ RefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float x0, 
     return WTFMove(gradient);
 }
 
-RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* imageElement,
+RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement& imageElement,
     const String& repetitionType, ExceptionCode& ec)
 {
-    if (!imageElement) {
-        ec = TYPE_MISMATCH_ERR;
-        return nullptr;
-    }
     bool repeatX, repeatY;
     ec = 0;
     CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
     if (ec)
         return nullptr;
 
-    CachedImage* cachedImage = imageElement->cachedImage();
+    CachedImage* cachedImage = imageElement.cachedImage();
     // If the image loading hasn't started or the image is not complete, it is not fully decodable.
-    if (!cachedImage || !imageElement->complete())
+    if (!cachedImage || !imageElement.complete())
         return nullptr;
 
     if (cachedImage->status() == CachedResource::LoadError) {
@@ -1767,7 +1763,7 @@ RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* 
         return nullptr;
     }
 
-    if (!imageElement->cachedImage()->imageForRenderer(imageElement->renderer()))
+    if (!imageElement.cachedImage()->imageForRenderer(imageElement.renderer()))
         return CanvasPattern::create(Image::nullImage(), repeatX, repeatY, true);
 
     bool originClean = cachedImage->isOriginClean(canvas()->securityOrigin());
@@ -1781,17 +1777,13 @@ RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* 
     if (cachedImage->image()->isSVGImage())
         originClean = false;
 
-    return CanvasPattern::create(cachedImage->imageForRenderer(imageElement->renderer()), repeatX, repeatY, originClean);
+    return CanvasPattern::create(cachedImage->imageForRenderer(imageElement.renderer()), repeatX, repeatY, originClean);
 }
 
-RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElement* canvas,
+RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElement& canvas,
     const String& repetitionType, ExceptionCode& ec)
 {
-    if (!canvas) {
-        ec = TYPE_MISMATCH_ERR;
-        return nullptr;
-    }
-    if (!canvas->width() || !canvas->height() || !canvas->buffer()) {
+    if (!canvas.width() || !canvas.height() || !canvas.buffer()) {
         ec = INVALID_STATE_ERR;
         return nullptr;
     }
@@ -1801,7 +1793,7 @@ RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElement*
     CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
     if (ec)
         return nullptr;
-    return CanvasPattern::create(canvas->copiedImage(), repeatX, repeatY, canvas->originClean());
+    return CanvasPattern::create(canvas.copiedImage(), repeatX, repeatY, canvas.originClean());
 }
 
 void CanvasRenderingContext2D::didDrawEntireCanvas()
@@ -2016,31 +2008,23 @@ RefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordinate
     return ImageData::create(imageDataRect.size(), byteArray.releaseNonNull());
 }
 
-void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy, ExceptionCode& ec)
+void CanvasRenderingContext2D::putImageData(ImageData& data, float dx, float dy, ExceptionCode& ec)
 {
-    if (!data) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-    putImageData(data, dx, dy, 0, 0, data->width(), data->height(), ec);
+    putImageData(data, dx, dy, 0, 0, data.width(), data.height(), ec);
 }
 
-void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData* data, float dx, float dy, ExceptionCode& ec)
+void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData& data, float dx, float dy, ExceptionCode& ec)
 {
-    if (!data) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-    webkitPutImageDataHD(data, dx, dy, 0, 0, data->width(), data->height(), ec);
+    webkitPutImageDataHD(data, dx, dy, 0, 0, data.width(), data.height(), ec);
 }
 
-void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy, float dirtyX, float dirtyY,
+void CanvasRenderingContext2D::putImageData(ImageData& data, float dx, float dy, float dirtyX, float dirtyY,
                                             float dirtyWidth, float dirtyHeight, ExceptionCode& ec)
 {
     putImageData(data, ImageBuffer::LogicalCoordinateSystem, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight, ec);
 }
 
-void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData* data, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode& ec)
+void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData& data, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode& ec)
 {
     putImageData(data, ImageBuffer::BackingStoreCoordinateSystem, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight, ec);
 }
@@ -2066,13 +2050,9 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
     context->drawFocusRing(path, 1, 1, RenderTheme::focusRingColor());
 }
 
-void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::CoordinateSystem coordinateSystem, float dx, float dy, float dirtyX, float dirtyY,
+void CanvasRenderingContext2D::putImageData(ImageData& data, ImageBuffer::CoordinateSystem coordinateSystem, float dx, float dy, float dirtyX, float dirtyY,
                                             float dirtyWidth, float dirtyHeight, ExceptionCode& ec)
 {
-    if (!data) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
     if (!std::isfinite(dx) || !std::isfinite(dy) || !std::isfinite(dirtyX) || !std::isfinite(dirtyY) || !std::isfinite(dirtyWidth) || !std::isfinite(dirtyHeight)) {
         ec = NOT_SUPPORTED_ERR;
         return;
@@ -2093,7 +2073,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::Coordi
     }
 
     FloatRect clipRect(dirtyX, dirtyY, dirtyWidth, dirtyHeight);
-    clipRect.intersect(IntRect(0, 0, data->width(), data->height()));
+    clipRect.intersect(IntRect(0, 0, data.width(), data.height()));
     IntSize destOffset(static_cast<int>(dx), static_cast<int>(dy));
     IntRect destRect = enclosingIntRect(clipRect);
     destRect.move(destOffset);
@@ -2103,7 +2083,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::Coordi
     IntRect sourceRect(destRect);
     sourceRect.move(-destOffset);
 
-    buffer->putByteArray(Unmultiplied, data->data(), IntSize(data->width(), data->height()), sourceRect, IntPoint(destOffset), coordinateSystem);
+    buffer->putByteArray(Unmultiplied, data.data(), IntSize(data.width(), data.height()), sourceRect, IntPoint(destOffset), coordinateSystem);
 
     didDraw(destRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
 }

@@ -1,3 +1,31 @@
+2016-06-03  Chris Dumez  <cdumez@apple.com>
+
+        CanvasRenderingContext2D.createPattern() / putImageData() throw wrong exception type
+        https://bugs.webkit.org/show_bug.cgi?id=158322
+
+        Reviewed by Ryosuke Niwa.
+
+        CanvasRenderingContext2D.createPattern() / putImageData() were throwing the wrong
+        exception type when the first parameter was null. It should throw a TypeError
+        but it was throwing a legacy TYPE_MISMATCH_ERR:
+        - http://www.w3.org/TR/2dcontext/#canvasrenderingcontext2d
+        - http://www.w3.org/TR/2dcontext/#canvasimagesource
+
+        This patch aligns our behavior with the specification.
+
+        No new tests, covered by existing tests.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::CanvasRenderingContext2D::putImageData):
+        (WebCore::CanvasRenderingContext2D::webkitPutImageDataHD):
+        (WebCore::CanvasRenderingContext2D::didDraw): Deleted.
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeeded): Deleted.
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeededInternal): Deleted.
+        (WebCore::CanvasRenderingContext2D::font): Deleted.
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2016-06-03  Anders Carlsson  <andersca@apple.com>
 
         Rename NoncopyableFunction to Function

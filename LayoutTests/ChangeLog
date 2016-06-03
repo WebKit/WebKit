@@ -1,3 +1,16 @@
+2016-06-03  Chris Dumez  <cdumez@apple.com>
+
+        CanvasRenderingContext2D.createPattern() / putImageData() throw wrong exception type
+        https://bugs.webkit.org/show_bug.cgi?id=158322
+
+        Reviewed by Ryosuke Niwa.
+
+        Update several outdated layout tests.
+
+        * canvas/philip/tests/2d.imageData.put.null.html:
+        * canvas/philip/tests/2d.pattern.image.null.html:
+        * canvas/philip/tests/2d.pattern.image.undefined.html:
+
 2016-06-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/scrolling/scroll-container-horizontally.html as flaky on mac-wk2 and ios-simulator-wk1

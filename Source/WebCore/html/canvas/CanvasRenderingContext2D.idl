@@ -169,14 +169,14 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void setShadow(float width, unrestricted float height, unrestricted float blur, unrestricted float c, unrestricted float m, 
         unrestricted float y, unrestricted float k, unrestricted float a);
 
-    [RaisesException] void putImageData(ImageData? imagedata, float dx, float dy);
-    [RaisesException] void putImageData(ImageData? imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
+    [RaisesException] void putImageData(ImageData imagedata, float dx, float dy);
+    [RaisesException] void putImageData(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
-    [RaisesException] void webkitPutImageDataHD(ImageData? imagedata, float dx, float dy);
-    [RaisesException] void webkitPutImageDataHD(ImageData? imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
+    [RaisesException] void webkitPutImageDataHD(ImageData imagedata, float dx, float dy);
+    [RaisesException] void webkitPutImageDataHD(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
-    [RaisesException] CanvasPattern createPattern(HTMLCanvasElement? canvas, [TreatNullAs=EmptyString] DOMString repetitionType);
-    [RaisesException] CanvasPattern createPattern(HTMLImageElement? image, [TreatNullAs=EmptyString] DOMString repetitionType);
+    [RaisesException] CanvasPattern createPattern(HTMLCanvasElement canvas, [TreatNullAs=EmptyString] DOMString repetitionType);
+    [RaisesException] CanvasPattern createPattern(HTMLImageElement image, [TreatNullAs=EmptyString] DOMString repetitionType);
     [RaisesException] ImageData createImageData(ImageData? imagedata);
     [RaisesException] ImageData createImageData(float sw, float sh);
 

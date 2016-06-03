@@ -180,17 +180,17 @@ public:
 
     RefPtr<CanvasGradient> createLinearGradient(float x0, float y0, float x1, float y1, ExceptionCode&);
     RefPtr<CanvasGradient> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1, ExceptionCode&);
-    RefPtr<CanvasPattern> createPattern(HTMLImageElement*, const String& repetitionType, ExceptionCode&);
-    RefPtr<CanvasPattern> createPattern(HTMLCanvasElement*, const String& repetitionType, ExceptionCode&);
+    RefPtr<CanvasPattern> createPattern(HTMLImageElement&, const String& repetitionType, ExceptionCode&);
+    RefPtr<CanvasPattern> createPattern(HTMLCanvasElement&, const String& repetitionType, ExceptionCode&);
 
     RefPtr<ImageData> createImageData(RefPtr<ImageData>&&, ExceptionCode&) const;
     RefPtr<ImageData> createImageData(float width, float height, ExceptionCode&) const;
     RefPtr<ImageData> getImageData(float sx, float sy, float sw, float sh, ExceptionCode&) const;
     RefPtr<ImageData> webkitGetImageDataHD(float sx, float sy, float sw, float sh, ExceptionCode&) const;
-    void putImageData(ImageData*, float dx, float dy, ExceptionCode&);
-    void putImageData(ImageData*, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
-    void webkitPutImageDataHD(ImageData*, float dx, float dy, ExceptionCode&);
-    void webkitPutImageDataHD(ImageData*, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
+    void putImageData(ImageData&, float dx, float dy, ExceptionCode&);
+    void putImageData(ImageData&, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
+    void webkitPutImageDataHD(ImageData&, float dx, float dy, ExceptionCode&);
+    void webkitPutImageDataHD(ImageData&, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
 
     void drawFocusIfNeeded(Element*);
     void drawFocusIfNeeded(DOMPath&, Element*);
@@ -370,7 +370,7 @@ private:
     void prepareGradientForDashboard(CanvasGradient& gradient) const;
 
     RefPtr<ImageData> getImageData(ImageBuffer::CoordinateSystem, float sx, float sy, float sw, float sh, ExceptionCode&) const;
-    void putImageData(ImageData*, ImageBuffer::CoordinateSystem, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
+    void putImageData(ImageData&, ImageBuffer::CoordinateSystem, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
 
     bool is2d() const override { return true; }
     bool isAccelerated() const override;
