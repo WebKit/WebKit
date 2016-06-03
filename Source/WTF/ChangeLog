@@ -1,3 +1,12 @@
+2016-06-02  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        [iOS] PDFDocumentImage should not create a cached image larger than 4M pixels
+        https://bugs.webkit.org/show_bug.cgi?id=157857
+
+        Reviewed by Darin Adler.
+
+        * wtf/StdLibExtras.h: Add a constant value for GB (2^30).
+
 2016-06-02  Oliver Hunt  <oliver@apple.com>
 
         JS parser incorrectly handles invalid utf8 in error messages.

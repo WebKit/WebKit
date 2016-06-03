@@ -606,7 +606,7 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, 
         return;
     }
     if (!m_cachedImage) {
-        std::unique_ptr<ImageBuffer> buffer = ctxt.createCompatibleBuffer(expandedIntSize(tileRect.size()));
+        auto buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(tileRect.size()), ctxt);
         if (!buffer)
             return;
 

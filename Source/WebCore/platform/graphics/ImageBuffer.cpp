@@ -164,9 +164,37 @@ bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, GC3Denum, Platform3D
 }
 #endif
 
+std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, const GraphicsContext& context, bool hasAlpha)
+{
+    if (size.isEmpty())
+        return nullptr;
+
+    FloatSize scaledSize = ImageBuffer::compatibleBufferSize(size, context);
+
+    auto buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(scaledSize), 1, ColorSpaceSRGB, context, hasAlpha);
+    if (!buffer)
+        return nullptr;
+
+    // Set up a corresponding scale factor on the graphics context.
+    buffer->context().scale(context.scaleFactor());
+    return buffer;
+}
+
 std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const GraphicsContext& context, bool)
 {
     return create(size, context.renderingMode(), resolutionScale, colorSpace);
+}
+
+FloatSize ImageBuffer::compatibleBufferSize(const FloatSize& size, const GraphicsContext& context)
+{
+    // Enlarge the buffer size if the context's transform is scaling it so we need a higher
+    // resolution than one pixel per unit.
+    return size * context.scaleFactor();
+}
+
+bool ImageBuffer::isCompatibleWithContext(const GraphicsContext& context) const
+{
+    return areEssentiallyEqual(context.scaleFactor(), this->context().scaleFactor());
 }
 
 }

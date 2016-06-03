@@ -756,7 +756,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         maskRect.intersect(snappedIntRect(paintInfo.rect));
 
         // Now create the mask.
-        maskImage = context.createCompatibleBuffer(maskRect.size());
+        maskImage = ImageBuffer::createCompatibleBuffer(maskRect.size(), context);
         if (!maskImage)
             return;
         paintMaskForTextFillBox(maskImage.get(), maskRect, box, scrolledPaintRect);

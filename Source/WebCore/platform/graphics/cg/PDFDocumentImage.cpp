@@ -43,7 +43,9 @@
 #include <CoreGraphics/CGContext.h>
 #include <CoreGraphics/CGPDFDocument.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RAMSize.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/StdLibExtras.h>
 
 #if !PLATFORM(COCOA)
 #include "ImageSourceCG.h"
@@ -143,6 +145,15 @@ static void transformContextForPainting(GraphicsContext& context, const FloatRec
 void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect)
 {
 #if PLATFORM(IOS)
+    // On iOS, if the physical memory is less than 1GB, do not allocate more than 16MB for the PDF cachedImage.
+    const size_t memoryThreshold = WTF::GB;
+    const size_t maxArea = 16 * WTF::MB / 4; // 16 MB maximum size, divided by a rough cost of 4 bytes per pixel of area.
+    
+    if (ramSize() <= memoryThreshold && ImageBuffer::compatibleBufferSize(dstRect.size(), context).area() >= maxArea) {
+        m_cachedImageBuffer = nullptr;
+        return;
+    }
+
     // On iOS, some clients use low-quality image interpolation always, which throws off this optimization,
     // as we never get the subsequent high-quality paint. Since live resize is rare on iOS, disable the optimization.
     // FIXME (136593): It's also possible to do the wrong thing here if CSS specifies low-quality interpolation via the "image-rendering"
@@ -156,26 +167,27 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     bool repaintIfNecessary = interpolationQuality != InterpolationNone && interpolationQuality != InterpolationLow;
 #endif
 
-    if (!m_cachedImageBuffer || (!cacheParametersMatch(context, dstRect, srcRect) && repaintIfNecessary)) {
-        m_cachedImageBuffer = context.createCompatibleBuffer(FloatRect(enclosingIntRect(dstRect)).size());
-        if (!m_cachedImageBuffer)
-            return;
-        GraphicsContext& bufferContext = m_cachedImageBuffer->context();
+    if (m_cachedImageBuffer && (!repaintIfNecessary || cacheParametersMatch(context, dstRect, srcRect)))
+        return;
+    
+    m_cachedImageBuffer = ImageBuffer::createCompatibleBuffer(FloatRect(enclosingIntRect(dstRect)).size(), context);
+    if (!m_cachedImageBuffer)
+        return;
+    auto& bufferContext = m_cachedImageBuffer->context();
 
-        transformContextForPainting(bufferContext, dstRect, srcRect);
-        drawPDFPage(bufferContext);
+    transformContextForPainting(bufferContext, dstRect, srcRect);
+    drawPDFPage(bufferContext);
 
-        m_cachedTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-        m_cachedDestinationSize = dstRect.size();
-        m_cachedSourceRect = srcRect;
+    m_cachedTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    m_cachedDestinationSize = dstRect.size();
+    m_cachedSourceRect = srcRect;
 
-        IntSize internalSize = m_cachedImageBuffer->internalSize();
-        size_t oldCachedBytes = m_cachedBytes;
-        m_cachedBytes = internalSize.width() * internalSize.height() * 4;
+    IntSize internalSize = m_cachedImageBuffer->internalSize();
+    size_t oldCachedBytes = m_cachedBytes;
+    m_cachedBytes = safeCast<size_t>(internalSize.width()) * internalSize.height() * 4;
 
-        if (imageObserver())
-            imageObserver()->decodedSizeChanged(this, safeCast<int>(m_cachedBytes) - safeCast<int>(oldCachedBytes));
-    }
+    if (imageObserver())
+        imageObserver()->decodedSizeChanged(this, safeCast<int>(m_cachedBytes) - safeCast<int>(oldCachedBytes));
 }
 
 void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op, BlendMode, ImageOrientationDescription)

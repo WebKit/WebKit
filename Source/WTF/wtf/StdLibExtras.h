@@ -121,6 +121,7 @@ enum CheckMoveParameterTag { CheckMoveParameter };
 
 static const size_t KB = 1024;
 static const size_t MB = 1024 * 1024;
+static const size_t GB = 1024 * 1024 * 1024;
 
 inline bool isPointerAligned(void* p)
 {

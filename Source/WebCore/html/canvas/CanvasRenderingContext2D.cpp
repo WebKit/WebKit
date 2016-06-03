@@ -2448,7 +2448,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
             fontProxy.drawBidiText(*c, textRun, location + offset, FontCascade::UseFallbackIfFontNotReady);
         }
 
-        std::unique_ptr<ImageBuffer> maskImage = c->createCompatibleBuffer(maskRect.size());
+        auto maskImage = ImageBuffer::createCompatibleBuffer(maskRect.size(), *c);
         if (!maskImage)
             return;
 

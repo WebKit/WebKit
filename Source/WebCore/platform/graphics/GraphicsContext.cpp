@@ -1012,36 +1012,6 @@ void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2
     }
 }
 
-static bool scalesMatch(AffineTransform a, AffineTransform b)
-{
-    return a.xScale() == b.xScale() && a.yScale() == b.yScale();
-}
-
-std::unique_ptr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const FloatSize& size, bool hasAlpha) const
-{
-    // Make the buffer larger if the context's transform is scaling it so we need a higher
-    // resolution than one pixel per unit. Also set up a corresponding scale factor on the
-    // graphics context.
-
-    AffineTransform transform = getCTM(DefinitelyIncludeDeviceScale);
-    FloatSize scaledSize(static_cast<int>(ceil(size.width() * transform.xScale())), static_cast<int>(ceil(size.height() * transform.yScale())));
-
-    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::createCompatibleBuffer(scaledSize, 1, ColorSpaceSRGB, *this, hasAlpha);
-    if (!buffer)
-        return nullptr;
-
-    buffer->context().scale(FloatSize(scaledSize.width() / size.width(), scaledSize.height() / size.height()));
-
-    return buffer;
-}
-
-bool GraphicsContext::isCompatibleWithBuffer(ImageBuffer& buffer) const
-{
-    GraphicsContext& bufferContext = buffer.context();
-
-    return scalesMatch(getCTM(), bufferContext.getCTM()) && isAcceleratedContext() == bufferContext.isAcceleratedContext();
-}
-
 #if !USE(CG)
 void GraphicsContext::platformApplyDeviceScaleFactor(float)
 {
@@ -1058,6 +1028,12 @@ void GraphicsContext::applyDeviceScaleFactor(float deviceScaleFactor)
     }
 
     platformApplyDeviceScaleFactor(deviceScaleFactor);
+}
+    
+FloatSize GraphicsContext::scaleFactor() const
+{
+    AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    return FloatSize(transform.xScale(), transform.yScale());
 }
 
 void GraphicsContext::fillEllipse(const FloatRect& ellipse)

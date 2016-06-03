@@ -1,3 +1,66 @@
+2016-06-02  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        [iOS] PDFDocumentImage should not create a cached image larger than 4M pixels
+        https://bugs.webkit.org/show_bug.cgi?id=157857
+
+        Reviewed by Darin Adler.
+
+        On iOS, if the scaled size of the PDFDocumentImage cached image will exceed
+        the 4M pixels limit and the system physical memory is 1GB or less, do not
+        create it. PDFDocumentImage::draw() falls back peacefully if the cached image
+        couldn't be created for any reason. The PDF will be drawn directly to the
+        GraphicsContext without having to go through the cached image. This means
+        the whole PDF will be drawn multiple times; one time for each tile. I think
+        this is okay for zooming a large PDFDocumentImage on a low end device.
+        
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal): Call the static function
+        ImageBuffer::createCompatibleBuffer() without having to go through the GraphicsContext.
+        
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::drawPattern): Ditto.
+        
+        * platform/graphics/FloatSize.h:
+        (WebCore::FloatSize::area): A helper function similar to IntSize::area().
+        (WebCore::operator*): Scale a FloatSize by another FloatSize and return the result.
+        
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::drawPattern): Call ImageBuffer::createCompatibleBuffer().
+        
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::scaleFactor):: Return the scaling part of the current CTM.
+        (WebCore::scalesMatch): Deleted.
+        (WebCore::GraphicsContext::createCompatibleBuffer): Deleted.
+        (WebCore::GraphicsContext::isCompatibleWithBuffer): Deleted.
+        * platform/graphics/GraphicsContext.h:
+        Move these image buffer functions to ImageBuffer.
+        
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer): Make createCompatibleBuffer
+        a static function of the ImageBuffer. There is no need to go through the
+        GraphicsContext just to get the GraphicsContext scaleFactor.
+        
+        (WebCore::ImageBuffer::compatibleBufferSize):  Scale the size of the cachedImage
+        by the scaleFactor of the context.
+        
+        (WebCore::ImageBuffer::isCompatibleWithContext): Returns true if the drawing
+        context and the ImageBuffer context have the same scaleFactor.
+        
+        * platform/graphics/ImageBuffer.h:
+        
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::drawPattern): Call ImageBuffer::createCompatibleBuffer().
+        
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::updateCachedImageIfNeeded): On iOS, if the
+        physical memory is less than 1GB, do not allocate more than 16MB for the
+        PDF cachedImage.
+        
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Call ImageBuffer::createCompatibleBuffer().
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::bufferForeground): Ditto.
+
 2016-06-02  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] 'undefined' should be an acceptable value for nullable parameters
