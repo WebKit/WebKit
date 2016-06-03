@@ -1,3 +1,28 @@
+2016-06-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Refactor showModalDialog handling in JSDOMWindowCustom
+        https://bugs.webkit.org/show_bug.cgi?id=158294
+
+        Reviewed by Ryosuke Niwa.
+
+        The showModalDialog property is currently implemented in a way that  effectively
+        results in duplication of the tail of the function, but modified to call
+        Base::getOwnPropertySlot instead of getStaticPropertySlot. It does so based on the
+        assumption that Base::getOwnPropertySlot is not going to search the static tables
+        (containing the property we wish to omit).
+
+        However as a part of bug #158178 I plan to change it such that Base::getOwnPropertySlot
+        does also search the static tables. So, refactoring this code to no longer depend on
+        using a function that bypasses the static tables. Always perform a lookup that will
+        check both property storage & static tables. If the object does contain the property,
+        then check explicitly for the value we're intending to suppress.
+
+        Covered by exsiting tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+            - Check result of getStaticPropertySlot for showModalDialog function.
+
 2016-06-02  Brady Eidson  <beidson@apple.com>
 
         Fix AtomicString regression caused by r201603.
