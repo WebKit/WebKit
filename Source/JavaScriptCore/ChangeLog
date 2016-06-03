@@ -1,3 +1,21 @@
+2016-06-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Clients of PolymorphicAccess::addCases shouldn't have to malloc
+        https://bugs.webkit.org/show_bug.cgi?id=158357
+
+        Reviewed by Keith Miller.
+
+        We only ever have 1 or 2 cases, so we can use inline Vector capacity.
+
+        This shows up a little in the JSBench profile.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::addCases):
+        (JSC::PolymorphicAccess::addCase):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase):
+
 2016-06-03  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix some more INFINITI->INFINITY typos

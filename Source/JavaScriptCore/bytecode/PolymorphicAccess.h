@@ -383,7 +383,7 @@ public:
     // When this fails (returns GaveUp), this will leave the old stub intact but you should not try
     // to call this method again for that PolymorphicAccess instance.
     AccessGenerationResult addCases(
-        VM&, CodeBlock*, StructureStubInfo&, const Identifier&, Vector<std::unique_ptr<AccessCase>>);
+        VM&, CodeBlock*, StructureStubInfo&, const Identifier&, Vector<std::unique_ptr<AccessCase>, 2>);
 
     AccessGenerationResult addCase(
         VM&, CodeBlock*, StructureStubInfo&, const Identifier&, std::unique_ptr<AccessCase>);

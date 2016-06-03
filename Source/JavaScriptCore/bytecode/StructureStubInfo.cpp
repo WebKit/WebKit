@@ -134,7 +134,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     } else {
         std::unique_ptr<PolymorphicAccess> access = std::make_unique<PolymorphicAccess>();
         
-        Vector<std::unique_ptr<AccessCase>> accessCases;
+        Vector<std::unique_ptr<AccessCase>, 2> accessCases;
         
         std::unique_ptr<AccessCase> previousCase =
             AccessCase::fromStructureStubInfo(vm, codeBlock, *this);

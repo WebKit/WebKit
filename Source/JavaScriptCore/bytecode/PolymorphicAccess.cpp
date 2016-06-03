@@ -1421,7 +1421,7 @@ PolymorphicAccess::~PolymorphicAccess() { }
 
 AccessGenerationResult PolymorphicAccess::addCases(
     VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
-    Vector<std::unique_ptr<AccessCase>> originalCasesToAdd)
+    Vector<std::unique_ptr<AccessCase>, 2> originalCasesToAdd)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -1482,7 +1482,7 @@ AccessGenerationResult PolymorphicAccess::addCase(
     VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
     std::unique_ptr<AccessCase> newAccess)
 {
-    Vector<std::unique_ptr<AccessCase>> newAccesses;
+    Vector<std::unique_ptr<AccessCase>, 2> newAccesses;
     newAccesses.append(WTFMove(newAccess));
     return addCases(vm, codeBlock, stubInfo, ident, WTFMove(newAccesses));
 }
