@@ -1,3 +1,21 @@
+2016-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Drop BlobRegistryContext class as it is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=158328
+
+        Reviewed by Brady Eidson.
+
+        Drop BlobRegistryContext class as it is no longer needed. We can now
+        call isolatedCopy() as we capture in the lambda.
+
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerFileBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURLForSlice):
+        (WebCore::ThreadableBlobRegistry::blobSize):
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURL):
+        (WebCore::BlobRegistryContext::BlobRegistryContext): Deleted.
+
 2016-06-02  Zalan Bujtas  <zalan@apple.com>
 
         Repaint issue with vertical text in an out of flow container.
