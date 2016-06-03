@@ -22,7 +22,7 @@
 #ifndef FormController_h
 #define FormController_h
 
-#include "CheckedRadioButtons.h"
+#include "RadioButtonGroups.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
@@ -77,7 +77,7 @@ public:
     FormController();
     ~FormController();
 
-    CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
+    RadioButtonGroups& radioButtonGroups() { return m_radioButtonGroups; }
 
     void registerFormElementWithState(HTMLFormControlElementWithState*);
     void unregisterFormElementWithState(HTMLFormControlElementWithState*);
@@ -102,7 +102,7 @@ private:
     FormControlState takeStateForFormElement(const HTMLFormControlElementWithState&);
     static void formStatesFromStateVector(const Vector<String>&, SavedFormStateMap&);
 
-    CheckedRadioButtons m_checkedRadioButtons;
+    RadioButtonGroups m_radioButtonGroups;
     FormElementListHashSet m_formElementsWithState;
     SavedFormStateMap m_savedFormStateMap;
     std::unique_ptr<FormKeyGenerator> m_formKeyGenerator;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef CheckedRadioButtons_h
-#define CheckedRadioButtons_h
+#pragma once
 
 #include <memory>
 #include <wtf/Forward.h>
@@ -31,12 +30,10 @@ namespace WebCore {
 class HTMLInputElement;
 class RadioButtonGroup;
 
-// FIXME: Rename the class. The class was a simple map from a name to a checked
-// radio button. It manages RadioButtonGroup objects now.
-class CheckedRadioButtons {
+class RadioButtonGroups {
 public:
-    CheckedRadioButtons();
-    ~CheckedRadioButtons();
+    RadioButtonGroups();
+    ~RadioButtonGroups();
     void addButton(HTMLInputElement*);
     void updateCheckedState(HTMLInputElement*);
     void requiredAttributeChanged(HTMLInputElement*);
@@ -44,12 +41,10 @@ public:
     HTMLInputElement* checkedButtonForGroup(const AtomicString& groupName) const;
     bool isInRequiredGroup(HTMLInputElement*) const;
     Vector<HTMLInputElement*> groupMembers(const HTMLInputElement&) const;
-    
+
 private:
     typedef HashMap<AtomicStringImpl*, std::unique_ptr<RadioButtonGroup>> NameToGroupMap;
     std::unique_ptr<NameToGroupMap> m_nameToGroupMap;
 };
 
 } // namespace WebCore
-
-#endif // CheckedRadioButtons_h

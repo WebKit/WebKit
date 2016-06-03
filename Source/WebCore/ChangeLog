@@ -1,3 +1,87 @@
+2016-06-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        Rename CheckedRadioButtons into RadioButtonGroups
+        https://bugs.webkit.org/show_bug.cgi?id=158326
+
+        Reviewed by Alex Christensen.
+
+        CheckedRadioButtons handles the set of all the Radio Button Groups
+        for a particular form or document.
+        The name is wrong and apparently comes from former uses of this class
+        (see the comment above the class declaration).
+
+        This patch renames "CheckedRadioButtons" to "RadioButtonGroups" to reflect that it handles
+        all the Radio Button Group from a given context (form or document).
+        Internally it has a set of RadioButtonGroup but that is never explicitely
+        exposed.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::RadioButtonGroup::isEmpty): Deleted.
+        (WebCore::RadioButtonGroup::isRequired): Deleted.
+        (WebCore::RadioButtonGroup::checkedButton): Deleted.
+        (WebCore::RadioButtonGroup::RadioButtonGroup): Deleted.
+        (WebCore::RadioButtonGroup::isValid): Deleted.
+        (WebCore::RadioButtonGroup::members): Deleted.
+        (WebCore::RadioButtonGroup::setCheckedButton): Deleted.
+        (WebCore::RadioButtonGroup::add): Deleted.
+        (WebCore::RadioButtonGroup::updateCheckedState): Deleted.
+        (WebCore::RadioButtonGroup::requiredAttributeChanged): Deleted.
+        (WebCore::RadioButtonGroup::remove): Deleted.
+        (WebCore::RadioButtonGroup::updateValidityForAllButtons): Deleted.
+        (WebCore::RadioButtonGroup::contains): Deleted.
+        (WebCore::CheckedRadioButtons::CheckedRadioButtons): Deleted.
+        (WebCore::CheckedRadioButtons::~CheckedRadioButtons): Deleted.
+        (WebCore::CheckedRadioButtons::addButton): Deleted.
+        (WebCore::CheckedRadioButtons::groupMembers): Deleted.
+        (WebCore::CheckedRadioButtons::updateCheckedState): Deleted.
+        (WebCore::CheckedRadioButtons::requiredAttributeChanged): Deleted.
+        (WebCore::CheckedRadioButtons::checkedButtonForGroup): Deleted.
+        (WebCore::CheckedRadioButtons::isInRequiredGroup): Deleted.
+        (WebCore::CheckedRadioButtons::removeButton): Deleted.
+        * dom/RadioButtonGroups.cpp: Renamed from Source/WebCore/dom/CheckedRadioButtons.cpp.
+        (WebCore::RadioButtonGroup::isEmpty):
+        (WebCore::RadioButtonGroup::isRequired):
+        (WebCore::RadioButtonGroup::checkedButton):
+        (WebCore::RadioButtonGroup::RadioButtonGroup):
+        (WebCore::RadioButtonGroup::isValid):
+        (WebCore::RadioButtonGroup::members):
+        (WebCore::RadioButtonGroup::setCheckedButton):
+        (WebCore::RadioButtonGroup::add):
+        (WebCore::RadioButtonGroup::updateCheckedState):
+        (WebCore::RadioButtonGroup::requiredAttributeChanged):
+        (WebCore::RadioButtonGroup::remove):
+        (WebCore::RadioButtonGroup::updateValidityForAllButtons):
+        (WebCore::RadioButtonGroup::contains):
+        (WebCore::RadioButtonGroups::RadioButtonGroups):
+        (WebCore::RadioButtonGroups::~RadioButtonGroups):
+        (WebCore::RadioButtonGroups::addButton):
+        (WebCore::RadioButtonGroups::groupMembers):
+        (WebCore::RadioButtonGroups::updateCheckedState):
+        (WebCore::RadioButtonGroups::requiredAttributeChanged):
+        (WebCore::RadioButtonGroups::checkedButtonForGroup):
+        (WebCore::RadioButtonGroups::isInRequiredGroup):
+        (WebCore::RadioButtonGroups::removeButton):
+        * dom/RadioButtonGroups.h: Renamed from Source/WebCore/dom/CheckedRadioButtons.h.
+        * html/FormController.h:
+        (WebCore::FormController::radioButtonGroups):
+        (WebCore::FormController::checkedRadioButtons): Deleted.
+        * html/HTMLFormElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::didMoveToNewDocument):
+        (WebCore::HTMLInputElement::requiredAttributeChanged):
+        (WebCore::HTMLInputElement::isInRequiredRadioButtonGroup):
+        (WebCore::HTMLInputElement::radioButtonGroup):
+        (WebCore::HTMLInputElement::checkedRadioButtonForGroup):
+        (WebCore::HTMLInputElement::radioButtonGroups):
+        (WebCore::HTMLInputElement::addToRadioButtonGroup):
+        (WebCore::HTMLInputElement::removeFromRadioButtonGroup):
+        (WebCore::HTMLInputElement::checkedRadioButtons): Deleted.
+        * html/HTMLInputElement.h:
+
 2016-06-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, roll out r196633 as it broke PageCache on iOS for WebKit.org

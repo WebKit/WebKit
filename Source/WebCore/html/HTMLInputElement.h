@@ -36,7 +36,6 @@
 
 namespace WebCore {
 
-class CheckedRadioButtons;
 class DragData;
 class FileList;
 class HTMLDataListElement;
@@ -45,6 +44,7 @@ class HTMLOptionElement;
 class Icon;
 class InputType;
 class ListAttributeTargetObserver;
+class RadioButtonGroups;
 class TextControlInnerTextElement;
 class URL;
 struct DateTimeChooserParameters;
@@ -421,7 +421,7 @@ private:
     void updateValueIfNeeded();
 
     // Returns null if this isn't associated with any radio button group.
-    CheckedRadioButtons* checkedRadioButtons() const;
+    RadioButtonGroups* radioButtonGroups() const;
     void addToRadioButtonGroup();
     void removeFromRadioButtonGroup();
 

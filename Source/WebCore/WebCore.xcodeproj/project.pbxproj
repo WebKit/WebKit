@@ -3764,8 +3764,8 @@
 		93F1E1EC1A40FDDC00348D13 /* NSPopoverSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F1E1EB1A40FDDC00348D13 /* NSPopoverSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F6F1ED127F70B10055CB06 /* WebGLContextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */; };
 		93F6F1EE127F70B10055CB06 /* WebGLContextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */; };
-		93F925430F7EF5B8007E37C9 /* CheckedRadioButtons.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F925440F7EF5B8007E37C9 /* CheckedRadioButtons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F925420F7EF5B8007E37C9 /* CheckedRadioButtons.cpp */; };
+		93F925430F7EF5B8007E37C9 /* RadioButtonGroups.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F925410F7EF5B8007E37C9 /* RadioButtonGroups.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93F925440F7EF5B8007E37C9 /* RadioButtonGroups.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F925420F7EF5B8007E37C9 /* RadioButtonGroups.cpp */; };
 		93F9B6570BA0F35E00854064 /* DOMHTMLCanvasElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */; };
 		93F9B6580BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B6550BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h */; };
 		93F9B6E00BA0FB7200854064 /* JSComment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B6DE0BA0FB7200854064 /* JSComment.cpp */; };
@@ -11417,8 +11417,8 @@
 		93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGenerator.pm; path = scripts/CodeGenerator.pm; sourceTree = "<group>"; };
 		93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGeneratorJS.pm; path = ../scripts/CodeGeneratorJS.pm; sourceTree = "<group>"; wrapsLines = 0; };
 		93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = "generate-bindings.pl"; path = "scripts/generate-bindings.pl"; sourceTree = "<group>"; };
-		93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckedRadioButtons.h; sourceTree = "<group>"; };
-		93F925420F7EF5B8007E37C9 /* CheckedRadioButtons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckedRadioButtons.cpp; sourceTree = "<group>"; };
+		93F925410F7EF5B8007E37C9 /* RadioButtonGroups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioButtonGroups.h; sourceTree = "<group>"; };
+		93F925420F7EF5B8007E37C9 /* RadioButtonGroups.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RadioButtonGroups.cpp; sourceTree = "<group>"; };
 		93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLCanvasElement.mm; sourceTree = "<group>"; };
 		93F9B6550BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLCanvasElementInternal.h; sourceTree = "<group>"; };
 		93F9B6DE0BA0FB7200854064 /* JSComment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSComment.cpp; sourceTree = "<group>"; };
@@ -24238,8 +24238,6 @@
 				6550B695099DF0270090D781 /* CharacterData.cpp */,
 				6550B696099DF0270090D781 /* CharacterData.h */,
 				93EEC1E609C2877700C515D1 /* CharacterData.idl */,
-				93F925420F7EF5B8007E37C9 /* CheckedRadioButtons.cpp */,
-				93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */,
 				D619A305144E00BE004BC302 /* ChildListMutationScope.cpp */,
 				D619A306144E00BE004BC302 /* ChildListMutationScope.h */,
 				83D26D3C1AFDCC50001B3873 /* ChildNode.idl */,
@@ -24518,6 +24516,8 @@
 				FF945ECA161F7F3600971BC8 /* PseudoElement.h */,
 				550A0BC7085F6039007353D6 /* QualifiedName.cpp */,
 				550A0BC8085F6039007353D6 /* QualifiedName.h */,
+				93F925420F7EF5B8007E37C9 /* RadioButtonGroups.cpp */,
+				93F925410F7EF5B8007E37C9 /* RadioButtonGroups.h */,
 				F523D30302DE4476018635CA /* Range.cpp */,
 				F523D30402DE4476018635CA /* Range.h */,
 				936DD03A09CEAC270056AE8C /* Range.idl */,
@@ -25278,7 +25278,7 @@
 				97B8FFD116AE7F960038388D /* CharacterReferenceParserInlines.h in Headers */,
 				B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */,
 				F55B3DB21251F12D003EF269 /* CheckboxInputType.h in Headers */,
-				93F925430F7EF5B8007E37C9 /* CheckedRadioButtons.h in Headers */,
+				93F925430F7EF5B8007E37C9 /* RadioButtonGroups.h in Headers */,
 				D619A308144E00BE004BC302 /* ChildListMutationScope.h in Headers */,
 				A81872200977D3C0005826D9 /* ChildNodeList.h in Headers */,
 				14D823520AF92A790004F057 /* Chrome.h in Headers */,
@@ -29222,7 +29222,7 @@
 				6550B69F099DF0270090D781 /* CharacterData.cpp in Sources */,
 				9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */,
 				F55B3DB11251F12D003EF269 /* CheckboxInputType.cpp in Sources */,
-				93F925440F7EF5B8007E37C9 /* CheckedRadioButtons.cpp in Sources */,
+				93F925440F7EF5B8007E37C9 /* RadioButtonGroups.cpp in Sources */,
 				D619A307144E00BE004BC302 /* ChildListMutationScope.cpp in Sources */,
 				A81872250977D3C0005826D9 /* ChildNodeList.cpp in Sources */,
 				14D8238B0AF92DF60004F057 /* Chrome.cpp in Sources */,

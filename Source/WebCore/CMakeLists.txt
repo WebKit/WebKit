@@ -1396,7 +1396,6 @@ set(WebCore_SOURCES
     dom/BeforeUnloadEvent.cpp
     dom/CDATASection.cpp
     dom/CharacterData.cpp
-    dom/CheckedRadioButtons.cpp
     dom/ChildListMutationScope.cpp
     dom/ChildNodeList.cpp
     dom/ClassCollection.cpp
@@ -1491,6 +1490,7 @@ set(WebCore_SOURCES
     dom/ProgressEvent.cpp
     dom/PseudoElement.cpp
     dom/QualifiedName.cpp
+    dom/RadioButtonGroups.cpp
     dom/Range.cpp
     dom/RegisteredEventListener.cpp
     dom/ScopedEventQueue.cpp

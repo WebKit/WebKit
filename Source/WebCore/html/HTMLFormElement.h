@@ -24,10 +24,10 @@
 #ifndef HTMLFormElement_h
 #define HTMLFormElement_h
 
-#include "CheckedRadioButtons.h"
 #include "FormState.h"
 #include "FormSubmission.h"
 #include "HTMLElement.h"
+#include "RadioButtonGroups.h"
 #include <memory>
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
@@ -131,7 +131,7 @@ public:
     void finishRequestAutocomplete(AutocompleteResult);
 #endif
 
-    CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
+    RadioButtonGroups& radioButtonGroups() { return m_radioButtonGroups; }
 
     const Vector<FormAssociatedElement*>& associatedElements() const { return m_associatedElements; }
     const Vector<HTMLImageElement*>& imageElements() const { return m_imageElements; }
@@ -185,7 +185,7 @@ private:
     FormSubmission::Attributes m_attributes;
     std::unique_ptr<PastNamesMap> m_pastNamesMap;
 
-    CheckedRadioButtons m_checkedRadioButtons;
+    RadioButtonGroups m_radioButtonGroups;
 
     unsigned m_associatedElementsBeforeIndex;
     unsigned m_associatedElementsAfterIndex;
