@@ -45,7 +45,6 @@ class IDBKeyPath;
 class IDBValue;
 class IndexKey;
 class JSDOMGlobalObject;
-class ScriptExecutionContext;
 class ThreadSafeDataBuffer;
 
 IDBKeyPath idbKeyPathFromValue(JSC::ExecState&, JSC::JSValue);
@@ -56,11 +55,10 @@ bool canInjectIDBKeyIntoScriptValue(JSC::ExecState&, const JSC::JSValue&, const 
 bool injectIDBKeyIntoScriptValue(JSC::ExecState&, const IDBKeyData&, JSC::JSValue, const IDBKeyPath&);
 
 JSC::JSValue toJS(JSC::ExecState&, JSC::JSGlobalObject&, IDBKey*);
-JSC::JSValue idbKeyDataToScriptValue(ScriptExecutionContext&, const IDBKeyData&);
+JSC::JSValue idbKeyDataToScriptValue(JSC::ExecState&, const IDBKeyData&);
 void generateIndexKeyForValue(JSC::ExecState&, const IDBIndexInfo&, JSC::JSValue, IndexKey& outKey);
 
-JSC::JSValue deserializeIDBValueToJSValue(ScriptExecutionContext&, const IDBValue&);
-JSC::JSValue deserializeIDBValueDataToJSValue(JSC::ExecState&, const ThreadSafeDataBuffer& valueData);
+JSC::JSValue deserializeIDBValueToJSValue(JSC::ExecState&, const IDBValue&);
 
 Ref<IDBKey> scriptValueToIDBKey(JSC::ExecState&, const JSC::JSValue&);
 

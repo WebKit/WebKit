@@ -1480,7 +1480,7 @@ IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(const IDBIndexInfo& i
 {
     JSLockHolder locker(vm());
 
-    auto jsValue = deserializeIDBValueDataToJSValue(*globalObject().globalExec(), value);
+    auto jsValue = deserializeIDBValueToJSValue(*globalObject().globalExec(), value);
     if (jsValue.isUndefinedOrNull())
         return { };
 
@@ -1497,7 +1497,7 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
 {
     JSLockHolder locker(vm());
 
-    auto jsValue = deserializeIDBValueDataToJSValue(*globalObject().globalExec(), value);
+    auto jsValue = deserializeIDBValueToJSValue(*globalObject().globalExec(), value);
     if (jsValue.isUndefinedOrNull())
         return { };
 

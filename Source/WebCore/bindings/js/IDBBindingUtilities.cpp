@@ -307,8 +307,7 @@ bool canInjectIDBKeyIntoScriptValue(ExecState& exec, const JSValue& scriptValue,
     return canInjectNthValueOnKeyPath(exec, scriptValue, keyPathElements, keyPathElements.size() - 1);
 }
 
-
-static JSValue deserializeIDBValueToJSValue(ExecState& exec, const IDBValue& value)
+JSValue deserializeIDBValueToJSValue(ExecState& exec, const IDBValue& value)
 {
     // FIXME: I think it's peculiar to use undefined to mean "null data" and null to mean "empty data".
     // But I am not changing this at the moment because at least some callers are specifically checking isUndefined.
@@ -329,36 +328,15 @@ static JSValue deserializeIDBValueToJSValue(ExecState& exec, const IDBValue& val
     return result;
 }
 
-JSValue deserializeIDBValueToJSValue(ScriptExecutionContext& context, const IDBValue& value)
-{
-    // FIXME: I think it's peculiar to return an empty JSValue, undefined, and null for three different error cases.
-
-    auto* exec = context.execState();
-    if (!exec)
-        return { };
-
-    return deserializeIDBValueToJSValue(*exec, value);
-}
-
-JSValue deserializeIDBValueDataToJSValue(ExecState& exec, const ThreadSafeDataBuffer& valueData)
-{
-    return deserializeIDBValueToJSValue(exec, IDBValue(valueData));
-}
-
 Ref<IDBKey> scriptValueToIDBKey(ExecState& exec, const JSValue& scriptValue)
 {
     return createIDBKeyFromValue(exec, scriptValue);
 }
 
-JSC::JSValue idbKeyDataToScriptValue(ScriptExecutionContext& context, const IDBKeyData& keyData)
+JSC::JSValue idbKeyDataToScriptValue(JSC::ExecState& exec, const IDBKeyData& keyData)
 {
     RefPtr<IDBKey> key = keyData.maybeCreateIDBKey();
-
-    ExecState* exec = context.execState();
-    if (!exec)
-        return { };
-
-    return toJS(*exec, *exec->lexicalGlobalObject(), key.get());
+    return toJS(exec, *exec.lexicalGlobalObject(), key.get());
 }
 
 static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, const IDBIndexInfo& info)

@@ -851,7 +851,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     if (usedKeyIsGenerated && !objectStoreInfo->keyPath().isNull()) {
         JSLockHolder locker(databaseThreadVM());
 
-        auto value = deserializeIDBValueDataToJSValue(databaseThreadExecState(), originalRecordValue.data());
+        auto value = deserializeIDBValueToJSValue(databaseThreadExecState(), originalRecordValue.data());
         if (value.isUndefined()) {
             postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to deserialize record value for record key injection")), usedKey));
             return;

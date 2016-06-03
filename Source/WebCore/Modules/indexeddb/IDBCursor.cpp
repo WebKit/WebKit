@@ -399,6 +399,10 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
     if (!context)
         return;
 
+    auto* exec = context->execState();
+    if (!exec)
+        return;
+
     if (!getResult.isDefined()) {
         m_currentKey = { };
         m_currentKeyData = { };
@@ -412,13 +416,13 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
 
     auto& vm = context->vm();
 
-    m_currentKey = { vm, idbKeyDataToScriptValue(*context, getResult.keyData()) };
+    m_currentKey = { vm, idbKeyDataToScriptValue(*exec, getResult.keyData()) };
     m_currentKeyData = getResult.keyData();
-    m_currentPrimaryKey = { vm, idbKeyDataToScriptValue(*context, getResult.primaryKeyData()) };
+    m_currentPrimaryKey = { vm, idbKeyDataToScriptValue(*exec, getResult.primaryKeyData()) };
     m_currentPrimaryKeyData = getResult.primaryKeyData();
 
     if (isKeyCursorWithValue())
-        m_currentValue = { vm, deserializeIDBValueToJSValue(*context, getResult.value()) };
+        m_currentValue = { vm, deserializeIDBValueToJSValue(*exec, getResult.value()) };
     else
         m_currentValue = { };
 

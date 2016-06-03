@@ -303,7 +303,7 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
 {
     JSLockHolder locker(UniqueIDBDatabase::databaseThreadVM());
 
-    auto jsValue = deserializeIDBValueDataToJSValue(UniqueIDBDatabase::databaseThreadExecState(), value);
+    auto jsValue = deserializeIDBValueToJSValue(UniqueIDBDatabase::databaseThreadExecState(), value);
     if (jsValue.isUndefinedOrNull())
         return { };
 
@@ -341,7 +341,7 @@ IDBError MemoryObjectStore::populateIndexWithExistingRecords(MemoryIndex& index)
     JSLockHolder locker(UniqueIDBDatabase::databaseThreadVM());
 
     for (auto iterator : *m_keyValueStore) {
-        auto jsValue = deserializeIDBValueDataToJSValue(UniqueIDBDatabase::databaseThreadExecState(), iterator.value);
+        auto jsValue = deserializeIDBValueToJSValue(UniqueIDBDatabase::databaseThreadExecState(), iterator.value);
         if (jsValue.isUndefinedOrNull())
             return { };
 

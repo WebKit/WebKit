@@ -330,8 +330,12 @@ void IDBRequest::setResult(const IDBKeyData& keyData)
     if (!context)
         return;
 
+    auto* exec = context->execState();
+    if (!exec)
+        return;
+
     clearResult();
-    m_scriptResult = { context->vm(), idbKeyDataToScriptValue(*context, keyData) };
+    m_scriptResult = { context->vm(), idbKeyDataToScriptValue(*exec, keyData) };
 }
 
 void IDBRequest::setResult(uint64_t number)
@@ -356,8 +360,12 @@ void IDBRequest::setResultToStructuredClone(const IDBValue& value)
     if (!context)
         return;
 
+    auto* exec = context->execState();
+    if (!exec)
+        return;
+
     clearResult();
-    m_scriptResult = { context->vm(), deserializeIDBValueToJSValue(*context, value) };
+    m_scriptResult = { context->vm(), deserializeIDBValueToJSValue(*exec, value) };
 }
 
 void IDBRequest::clearResult()

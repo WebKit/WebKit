@@ -1,3 +1,40 @@
+2016-06-03  Brady Eidson  <beidson@apple.com>
+
+        More miscellaneous IDBBindingUtilities cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=158359
+
+        Reviewed by Tim Horton.
+
+        No new tests (Straight refactor, yo).
+
+        Replace more ScriptExecutionContext&s with ExecState&s.
+        Combine more unnecessarily separate functions.
+        Remove some cruft.
+        
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::setGetResult):
+        
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::setResult):
+        (WebCore::IDBRequest::setResultToStructuredClone):
+        
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForPutRecord):
+        (WebCore::IDBServer::MemoryObjectStore::populateIndexWithExistingRecords):
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateOneIndexForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValueToJSValue):
+        (WebCore::idbKeyDataToScriptValue):
+        (WebCore::deserializeIDBValueDataToJSValue): Deleted.
+        * bindings/js/IDBBindingUtilities.h:
+
 2016-06-03  Chris Dumez  <cdumez@apple.com>
 
         CanvasRenderingContext2D.createPattern() / putImageData() throw wrong exception type
