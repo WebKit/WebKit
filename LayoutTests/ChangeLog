@@ -1,3 +1,16 @@
+2016-06-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix a typo in the clz32() tests
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        Joe found a bug in math-clz32.js: I typed INFINITI instead of INFINITY.
+        The tests was effectively checking "undefined" instead of infinity.
+
+        * js/math-clz32-expected.txt:
+        * js/script-tests/math-clz32.js:
+        (objectRecordConversionCalls.valueOf):
+
 2016-06-02  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] 'undefined' should be an acceptable value for nullable parameters

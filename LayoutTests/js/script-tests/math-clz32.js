@@ -28,8 +28,8 @@ shouldBe('Math.clz32(Number.MIN_SAFE_INTEGER)', '31');
 shouldBe('Math.clz32(Math.PI)', '30');
 shouldBe('Math.clz32(Math.E)', '30');
 shouldBe('Math.clz32(NaN)', '32');
-shouldBe('Math.clz32(Number.POSITIVE_INFINITI)', '32');
-shouldBe('Math.clz32(Number.NEGATIVE_INFINITI)', '32');
+shouldBe('Math.clz32(Number.POSITIVE_INFINITY)', '32');
+shouldBe('Math.clz32(Number.NEGATIVE_INFINITY)', '32');
 
 shouldBe('Math.clz32()', '32');
 shouldBe('Math.clz32(undefined)', '32');

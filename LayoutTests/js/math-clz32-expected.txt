@@ -25,8 +25,8 @@ PASS Math.clz32(Number.MIN_SAFE_INTEGER) is 31
 PASS Math.clz32(Math.PI) is 30
 PASS Math.clz32(Math.E) is 30
 PASS Math.clz32(NaN) is 32
-PASS Math.clz32(Number.POSITIVE_INFINITI) is 32
-PASS Math.clz32(Number.NEGATIVE_INFINITI) is 32
+PASS Math.clz32(Number.POSITIVE_INFINITY) is 32
+PASS Math.clz32(Number.NEGATIVE_INFINITY) is 32
 PASS Math.clz32() is 32
 PASS Math.clz32(undefined) is 32
 PASS Math.clz32(null) is 32
