@@ -220,12 +220,12 @@ function testMathFloorOnConstants()
     var value = Math.floor(NaN);
     if (value === value)
         throw new Error("Math.floor(NaN) = " + value);
-    var value = Math.floor(Number.POSITIVE_INFINITI);
-    if (value === value)
-        throw new Error("Math.floor(Number.POSITIVE_INFINITI) = " + value);
-    var value = Math.floor(Number.NEGATIVE_INFINITI);
-    if (value === value)
-        throw new Error("Math.floor(Number.NEGATIVE_INFINITI) = " + value);
+    var value = Math.floor(Number.POSITIVE_INFINITY);
+    if (value !== Infinity)
+        throw new Error("Math.floor(Number.POSITIVE_INFINITY) = " + value);
+    var value = Math.floor(Number.NEGATIVE_INFINITY);
+    if (value !== -Infinity)
+        throw new Error("Math.floor(Number.NEGATIVE_INFINITY) = " + value);
     var value = Math.floor(Math.E);
     if (value !== 2)
         throw new Error("Math.floor(Math.E) = " + value);

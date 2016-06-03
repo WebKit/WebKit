@@ -219,12 +219,12 @@ function testMathTruncOnConstants()
     var value = Math.trunc(NaN);
     if (value === value)
         throw new Error("Math.trunc(NaN) = " + value);
-    var value = Math.trunc(Number.POSITIVE_INFINITI);
-    if (value === value)
-        throw new Error("Math.trunc(Number.POSITIVE_INFINITI) = " + value);
-    var value = Math.trunc(Number.NEGATIVE_INFINITI);
-    if (value === value)
-        throw new Error("Math.trunc(Number.NEGATIVE_INFINITI) = " + value);
+    var value = Math.trunc(Number.POSITIVE_INFINITY);
+    if (value !== Infinity)
+        throw new Error("Math.trunc(Number.POSITIVE_INFINITY) = " + value);
+    var value = Math.trunc(Number.NEGATIVE_INFINITY);
+    if (value !== -Infinity)
+        throw new Error("Math.trunc(Number.NEGATIVE_INFINITY) = " + value);
     var value = Math.trunc(Math.E);
     if (value !== 2)
         throw new Error("Math.trunc(Math.E) = " + value);

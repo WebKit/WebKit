@@ -220,12 +220,12 @@ function testMathCeilOnConstants()
     var value = Math.ceil(NaN);
     if (value === value)
         throw new Error("Math.ceil(NaN) = " + value);
-    var value = Math.ceil(Number.POSITIVE_INFINITI);
-    if (value === value)
-        throw new Error("Math.ceil(Number.POSITIVE_INFINITI) = " + value);
-    var value = Math.ceil(Number.NEGATIVE_INFINITI);
-    if (value === value)
-        throw new Error("Math.ceil(Number.NEGATIVE_INFINITI) = " + value);
+    var value = Math.ceil(Number.POSITIVE_INFINITY);
+    if (value !== Infinity)
+        throw new Error("Math.ceil(Number.POSITIVE_INFINITY) = " + value);
+    var value = Math.ceil(Number.NEGATIVE_INFINITY);
+    if (value !== -Infinity)
+        throw new Error("Math.ceil(Number.NEGATIVE_INFINITY) = " + value);
     var value = Math.ceil(Math.E);
     if (value !== 3)
         throw new Error("Math.ceil(Math.E) = " + value);

@@ -220,12 +220,12 @@ function testMathRoundOnConstants()
     var value = Math.round(NaN);
     if (value === value)
         throw "Math.round(NaN) = " + value;
-    var value = Math.round(Number.POSITIVE_INFINITI);
-    if (value === value)
-        throw "Math.round(Number.POSITIVE_INFINITI) = " + value;
-    var value = Math.round(Number.NEGATIVE_INFINITI);
-    if (value === value)
-        throw "Math.round(Number.NEGATIVE_INFINITI) = " + value;
+    var value = Math.round(Number.POSITIVE_INFINITY);
+    if (value !== Infinity)
+        throw "Math.round(Number.POSITIVE_INFINITY) = " + value;
+    var value = Math.round(Number.NEGATIVE_INFINITY);
+    if (value !== -Infinity)
+        throw "Math.round(Number.NEGATIVE_INFINITY) = " + value;
     var value = Math.round(Math.E);
     if (value !== 3)
         throw "Math.round(Math.E) = " + value;

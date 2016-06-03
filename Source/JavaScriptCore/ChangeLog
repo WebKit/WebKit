@@ -1,3 +1,23 @@
+2016-06-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix some more INFINITI->INFINITY typos
+
+        Unreviewed.
+
+        The tests were not covering the edge cases they were supposed to test.
+
+        * tests/stress/math-ceil-basics.js:
+        (testMathCeilOnConstants):
+        * tests/stress/math-clz32-basics.js:
+        (testMathClz32OnDoubles):
+        (testMathClz32OnConstants):
+        * tests/stress/math-floor-basics.js:
+        (testMathFloorOnConstants):
+        * tests/stress/math-round-basics.js:
+        (testMathRoundOnConstants):
+        * tests/stress/math-trunc-basics.js:
+        (testMathTruncOnConstants):
+
 2016-06-02  Gavin & Ellie Barraclough  <barraclough@apple.com>
 
         JSGlobalObject::addFunction should call deleteProperty rather than removeDirect

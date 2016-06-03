@@ -95,13 +95,13 @@ function testMathClz32OnDoubles()
     if (value != 32)
         throw "mathClz32OnDouble(NaN) = " + value;
 
-    var value = mathClz32OnDouble(Number.POSITIVE_INFINITI);
+    var value = mathClz32OnDouble(Number.POSITIVE_INFINITY);
     if (value != 32)
-        throw "mathClz32OnDouble(Number.POSITIVE_INFINITI) = " + value;
+        throw "mathClz32OnDouble(Number.POSITIVE_INFINITY) = " + value;
 
-    var value = mathClz32OnDouble(Number.NEGATIVE_INFINITI);
+    var value = mathClz32OnDouble(Number.NEGATIVE_INFINITY);
     if (value != 32)
-        throw "mathClz32OnDouble(Number.NEGATIVE_INFINITI) = " + value;
+        throw "mathClz32OnDouble(Number.NEGATIVE_INFINITY) = " + value;
 }
 noInline(testMathClz32OnDoubles);
 
@@ -185,12 +185,12 @@ function testMathClz32OnConstants()
     var value = Math.clz32(NaN);
     if (value !== 32)
         throw "Math.clz32(NaN) = " + value;
-    var value = Math.clz32(Number.POSITIVE_INFINITI);
+    var value = Math.clz32(Number.POSITIVE_INFINITY);
     if (value !== 32)
-        throw "Math.clz32(Number.POSITIVE_INFINITI) = " + value;
-    var value = Math.clz32(Number.NEGATIVE_INFINITI);
+        throw "Math.clz32(Number.POSITIVE_INFINITY) = " + value;
+    var value = Math.clz32(Number.NEGATIVE_INFINITY);
     if (value !== 32)
-        throw "Math.clz32(Number.NEGATIVE_INFINITI) = " + value;
+        throw "Math.clz32(Number.NEGATIVE_INFINITY) = " + value;
     var value = Math.clz32(Math.E);
     if (value !== 30)
         throw "Math.clz32(Math.E) = " + value;
