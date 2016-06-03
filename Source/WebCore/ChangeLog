@@ -1,3 +1,20 @@
+2016-06-03  Brady Eidson  <beidson@apple.com>
+
+        ResourceResponseBase cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=158348
+
+        Reviewed by Chris Dumez.
+
+        No new tests (Refactor, no behavior change).
+
+        CrossThreadData can be noncopyable and WTFMove()'ed around, instead of 
+        being in a unique_ptr.
+        
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::crossThreadData):
+        (WebCore::ResourceResponseBase::fromCrossThreadData):
+        * platform/network/ResourceResponseBase.h:
+
 2016-06-03  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: WebGL doesn't show up in CSS reflections

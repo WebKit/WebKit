@@ -48,6 +48,11 @@ public:
     enum class Type;
 
     struct CrossThreadData {
+        CrossThreadData(const CrossThreadData&) = delete;
+        CrossThreadData& operator=(const CrossThreadData&) = delete;
+        CrossThreadData() = default;
+        CrossThreadData(CrossThreadData&&) = default;
+
         URL url;
         String mimeType;
         long long expectedContentLength;
@@ -60,8 +65,8 @@ public:
         Type type;
     };
 
-    std::unique_ptr<CrossThreadData> crossThreadData() const;
-    static ResourceResponse fromCrossThreadData(std::unique_ptr<CrossThreadData>&&);
+    CrossThreadData crossThreadData() const;
+    static ResourceResponse fromCrossThreadData(CrossThreadData&&);
 
     bool isNull() const { return m_isNull; }
     WEBCORE_EXPORT bool isHTTP() const;
