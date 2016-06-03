@@ -5032,8 +5032,17 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setPluginsEnabled(!!enabled);
 
+    // FIXME: Add preferences for the runtime enabled features.
+
 #if ENABLE(INDEXED_DATABASE)
     RuntimeEnabledFeatures::sharedFeatures().setWebkitIndexedDBEnabled(true);
+#endif
+
+#if ENABLE(FETCH_API)
+    hr = prefsPrivate->fetchAPIEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(!!enabled);
 #endif
 
     hr = preferences->privateBrowsingEnabled(&enabled);

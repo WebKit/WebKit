@@ -167,3 +167,6 @@
 #define WebKitAllowDisplayAndRunningOfInsecureContentPreferenceKey "WebKitAllowDisplayAndRunningOfInsecureContent"
 
 #define WebKitShowTiledScrollingIndicatorPreferenceKey "WebKitShowTiledScrollingIndicator"
+
+#define WebKitFetchAPIEnabledPreferenceKey "WebKitFetchAPIEnabled"
+

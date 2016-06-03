@@ -291,6 +291,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAllowDisplayAndRunningOfInsecureContentPreferenceKey), kCFBooleanTrue);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitFetchAPIEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 }
 
@@ -1915,5 +1917,19 @@ HRESULT WebPreferences::showTiledScrollingIndicator(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setShowTiledScrollingIndicator(BOOL enabled)
 {
     setBoolValue(WebKitShowTiledScrollingIndicatorPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::fetchAPIEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitFetchAPIEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setFetchAPIEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitFetchAPIEnabledPreferenceKey, enabled);
     return S_OK;
 }

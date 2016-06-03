@@ -847,6 +847,10 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
 
     preferences->setFontSmoothing(FontSmoothingTypeStandard);
 
+    COMPtr<IWebPreferencesPrivate3> prefsPrivate3(Query, preferences);
+    ASSERT(prefsPrivate3);
+    prefsPrivate3->setFetchAPIEnabled(TRUE);
+
     setAlwaysAcceptCookies(false);
 }
 
