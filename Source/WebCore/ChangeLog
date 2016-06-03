@@ -1,3 +1,14 @@
+2016-06-03  Ada Chan  <adachan@apple.com>
+
+        REGRESSION(r201474): Subtitles are not resizing in other fullscreen modes
+        https://bugs.webkit.org/show_bug.cgi?id=158355
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::syncTextTrackBounds):
+        Set the text track representation layer's frame based on the active video layer.
+
 2016-06-03  Brady Eidson  <beidson@apple.com>
 
         Miscellaneous IDBBindingUtilities cleanup.

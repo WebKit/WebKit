@@ -2181,7 +2181,8 @@ void MediaPlayerPrivateAVFoundationObjC::syncTextTrackBounds()
         return;
 
     FloatRect videoFullscreenFrame = m_videoFullscreenLayerManager->videoFullscreenFrame();
-    CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : CGRectMake(0, 0, videoFullscreenFrame.width(), videoFullscreenFrame.height());
+    auto activeLayer = m_secondaryVideoLayer.get() ?: m_videoLayer.get();
+    CGRect textFrame = activeLayer ? [activeLayer videoRect] : CGRectMake(0, 0, videoFullscreenFrame.width(), videoFullscreenFrame.height());
     [m_textTrackRepresentationLayer setFrame:textFrame];
 #endif
 }
