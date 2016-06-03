@@ -39,30 +39,30 @@ class WorkQueue;
 
 class WorkItemWin : public ThreadSafeRefCounted<WorkItemWin> {
 public:
-    static RefPtr<WorkItemWin> create(NoncopyableFunction<void ()>&&, WorkQueue*);
+    static RefPtr<WorkItemWin> create(Function<void ()>&&, WorkQueue*);
     virtual ~WorkItemWin();
 
-    NoncopyableFunction<void ()>& function() { return m_function; }
+    Function<void ()>& function() { return m_function; }
     WorkQueue* queue() const { return m_queue.get(); }
 
 protected:
-    WorkItemWin(NoncopyableFunction<void ()>&&, WorkQueue*);
+    WorkItemWin(Function<void ()>&&, WorkQueue*);
 
 private:
-    NoncopyableFunction<void ()> m_function;
+    Function<void ()> m_function;
     RefPtr<WorkQueue> m_queue;
 };
 
 class HandleWorkItem : public WorkItemWin {
 public:
-    static RefPtr<HandleWorkItem> createByAdoptingHandle(HANDLE, NoncopyableFunction<void ()>&&, WorkQueue*);
+    static RefPtr<HandleWorkItem> createByAdoptingHandle(HANDLE, Function<void ()>&&, WorkQueue*);
     virtual ~HandleWorkItem();
 
     void setWaitHandle(HANDLE waitHandle) { m_waitHandle = waitHandle; }
     HANDLE waitHandle() const { return m_waitHandle; }
 
 private:
-    HandleWorkItem(HANDLE, NoncopyableFunction<void ()>&&, WorkQueue*);
+    HandleWorkItem(HANDLE, Function<void ()>&&, WorkQueue*);
 
     HANDLE m_handle;
     HANDLE m_waitHandle;

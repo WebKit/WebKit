@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/NoncopyableFunction.h>
+#include <wtf/Function.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -35,7 +35,7 @@ class CrossThreadTask {
 public:
     CrossThreadTask() = default;
 
-    CrossThreadTask(NoncopyableFunction<void ()>&& taskFunction)
+    CrossThreadTask(Function<void ()>&& taskFunction)
         : m_taskFunction(WTFMove(taskFunction))
     {
         ASSERT(taskFunction);
@@ -47,7 +47,7 @@ public:
     }
 
 protected:
-    NoncopyableFunction<void ()> m_taskFunction;
+    Function<void ()> m_taskFunction;
 };
 
 template <typename T, typename... Arguments>

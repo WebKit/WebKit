@@ -45,7 +45,7 @@ bool ScrollingThread::isCurrentThread()
     return threadIdentifier && currentThread() == threadIdentifier;
 }
 
-void ScrollingThread::dispatch(NoncopyableFunction<void ()>&& function)
+void ScrollingThread::dispatch(Function<void ()>&& function)
 {
     auto& scrollingThread = ScrollingThread::singleton();
     scrollingThread.createThreadIfNeeded();
@@ -58,7 +58,7 @@ void ScrollingThread::dispatch(NoncopyableFunction<void ()>&& function)
     scrollingThread.wakeUpRunLoop();
 }
 
-void ScrollingThread::dispatchBarrier(NoncopyableFunction<void ()>&& function)
+void ScrollingThread::dispatchBarrier(Function<void ()>&& function)
 {
     dispatch([function = WTFMove(function)]() mutable {
         callOnMainThread(WTFMove(function));
@@ -104,7 +104,7 @@ void ScrollingThread::dispatchFunctionsFromScrollingThread()
 {
     ASSERT(isCurrentThread());
 
-    Vector<NoncopyableFunction<void ()>> functions;
+    Vector<Function<void ()>> functions;
     
     {
         std::lock_guard<Lock> lock(m_functionsMutex);

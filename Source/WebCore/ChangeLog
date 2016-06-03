@@ -1,3 +1,58 @@
+2016-06-03  Anders Carlsson  <andersca@apple.com>
+
+        Rename NoncopyableFunction to Function
+        https://bugs.webkit.org/show_bug.cgi?id=158354
+
+        Reviewed by Chris Dumez.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::runTask):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/webaudio/AudioDestinationNode.h:
+        (WebCore::AudioDestinationNode::resume):
+        (WebCore::AudioDestinationNode::suspend):
+        (WebCore::AudioDestinationNode::close):
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::resume):
+        (WebCore::DefaultAudioDestinationNode::suspend):
+        (WebCore::DefaultAudioDestinationNode::close):
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * dom/ActiveDOMCallbackMicrotask.cpp:
+        (WebCore::ActiveDOMCallbackMicrotask::ActiveDOMCallbackMicrotask):
+        * dom/ActiveDOMCallbackMicrotask.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::Task::Task):
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::callOnFileThread):
+        (WebCore::AsyncFileStream::perform):
+        * fileapi/AsyncFileStream.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::queuePostLayoutCallback):
+        (WebCore::FrameView::flushPostLayoutTasksQueue):
+        * page/FrameView.h:
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::dispatch):
+        (WebCore::ScrollingThread::dispatchBarrier):
+        (WebCore::ScrollingThread::dispatchFunctionsFromScrollingThread):
+        * page/scrolling/ScrollingThread.h:
+        * platform/GenericTaskQueue.cpp:
+        (WebCore::TaskDispatcher<Timer>::postTask):
+        * platform/GenericTaskQueue.h:
+        (WebCore::TaskDispatcher::postTask):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::scheduleDeferredTask):
+        * platform/mediastream/MediaStreamPrivate.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::scheduleDeferredTask):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::postResolutionCallbackQueue):
+        (WebCore::Style::queuePostResolutionCallback):
+        * style/StyleTreeResolver.h:
+
 2016-06-03  Ada Chan  <adachan@apple.com>
 
         REGRESSION(r201474): Subtitles are not resizing in other fullscreen modes

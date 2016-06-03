@@ -35,7 +35,7 @@
 #include <wtf/BloomFilter.h>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
-#include <wtf/NoncopyableFunction.h>
+#include <wtf/Function.h>
 #include <wtf/Optional.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
@@ -79,7 +79,7 @@ public:
         ShareCount = 1 << 1,
     };
     typedef unsigned TraverseFlags;
-    typedef NoncopyableFunction<void (const Record*, const RecordInfo&)> TraverseHandler;
+    typedef Function<void (const Record*, const RecordInfo&)> TraverseHandler;
     // Null record signals end.
     void traverse(const String& type, TraverseFlags, TraverseHandler&&);
 

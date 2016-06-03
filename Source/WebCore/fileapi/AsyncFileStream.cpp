@@ -39,7 +39,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/NoncopyableFunction.h>
+#include <wtf/Function.h>
 
 namespace WebCore {
 
@@ -64,12 +64,12 @@ inline AsyncFileStream::Internals::Internals(FileStreamClient& client)
 #endif
 }
 
-static void callOnFileThread(NoncopyableFunction<void ()>&& function)
+static void callOnFileThread(Function<void ()>&& function)
 {
     ASSERT(isMainThread());
     ASSERT(function);
 
-    static NeverDestroyed<MessageQueue<NoncopyableFunction<void ()>>> queue;
+    static NeverDestroyed<MessageQueue<Function<void ()>>> queue;
 
     static std::once_flag createFileThreadOnce;
     std::call_once(createFileThreadOnce, [] {
@@ -90,7 +90,7 @@ static void callOnFileThread(NoncopyableFunction<void ()>&& function)
         });
     });
 
-    queue.get().append(std::make_unique<NoncopyableFunction<void ()>>(WTFMove(function)));
+    queue.get().append(std::make_unique<Function<void ()>>(WTFMove(function)));
 }
 
 AsyncFileStream::AsyncFileStream(FileStreamClient& client)
@@ -114,7 +114,7 @@ AsyncFileStream::~AsyncFileStream()
     });
 }
 
-void AsyncFileStream::perform(NoncopyableFunction<std::function<void(FileStreamClient&)>(FileStream&)>&& operation)
+void AsyncFileStream::perform(Function<std::function<void(FileStreamClient&)>(FileStream&)>&& operation)
 {
     auto& internals = *m_internals;
     callOnFileThread([&internals, operation = WTFMove(operation)] {

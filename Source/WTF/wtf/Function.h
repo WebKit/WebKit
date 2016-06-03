@@ -30,15 +30,15 @@
 
 namespace WTF {
 
-template<typename> class NoncopyableFunction;
+template<typename> class Function;
 
 template <typename Out, typename... In>
-class NoncopyableFunction<Out(In...)> {
+class Function<Out(In...)> {
 public:
-    NoncopyableFunction() = default;
+    Function() = default;
 
     template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
-    NoncopyableFunction(CallableType&& callable)
+    Function(CallableType&& callable)
         : m_callableWrapper(std::make_unique<CallableWrapper<CallableType>>(WTFMove(callable)))
     {
     }
@@ -53,13 +53,13 @@ public:
     explicit operator bool() const { return !!m_callableWrapper; }
 
     template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
-    NoncopyableFunction& operator=(CallableType&& callable)
+    Function& operator=(CallableType&& callable)
     {
         m_callableWrapper = std::make_unique<CallableWrapper<CallableType>>(WTFMove(callable));
         return *this;
     }
 
-    NoncopyableFunction& operator=(std::nullptr_t)
+    Function& operator=(std::nullptr_t)
     {
         m_callableWrapper = nullptr;
         return *this;
@@ -96,4 +96,4 @@ private:
 
 } // namespace WTF
 
-using WTF::NoncopyableFunction;
+using WTF::Function;

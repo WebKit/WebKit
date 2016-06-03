@@ -1,3 +1,22 @@
+2016-06-03  Anders Carlsson  <andersca@apple.com>
+
+        Rename NoncopyableFunction to Function
+        https://bugs.webkit.org/show_bug.cgi?id=158354
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::clearDiskCacheEntries):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::traverse):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::runTaskInQueue):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2016-06-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, roll out r196633 as it broke PageCache on iOS for WebKit.org

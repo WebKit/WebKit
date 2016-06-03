@@ -37,7 +37,7 @@
 #include "NotImplemented.h"
 #include "PeerConnectionBackend.h"
 #include "RTCSessionDescription.h"
-#include <wtf/NoncopyableFunction.h>
+#include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -79,7 +79,7 @@ public:
     void clearNegotiationNeededState() override { notImplemented(); };
 
 private:
-    void runTask(NoncopyableFunction<void ()>&&);
+    void runTask(Function<void ()>&&);
     void startRunningTasks();
 
     void createOfferTask(RTCOfferOptions&, PeerConnection::SessionDescriptionPromise&);
@@ -93,7 +93,7 @@ private:
     PeerConnectionBackendClient* m_client;
     std::unique_ptr<MediaEndpoint> m_mediaEndpoint;
 
-    NoncopyableFunction<void ()> m_initialDeferredTask;
+    Function<void ()> m_initialDeferredTask;
 
     std::unique_ptr<SDPProcessor> m_sdpProcessor;
 
