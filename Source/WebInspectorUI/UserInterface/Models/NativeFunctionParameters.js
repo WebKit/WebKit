@@ -838,10 +838,11 @@ WebInspector.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
-    FontLoader: {
-        checkFont: "font, [text]",
-        loadFont: "params",
-        notifyWhenFontsReady: "callback",
+    FontFaceSet: {
+        add: "font",
+        check: "font, [text=\" \"]",
+        delete: "font",
+        load: "font, [text=\" \"]",
         __proto__: null,
     },
 
@@ -952,6 +953,11 @@ WebInspector.NativePrototypeFunctionParameters = {
         item: "index",
         namedItem: "[name]",
         setCustomValidity: "error",
+        __proto__: null,
+    },
+
+    HTMLSlotElement: {
+        assignedNodes: "[options]",
         __proto__: null,
     },
 
@@ -2142,24 +2148,27 @@ WebInspector.NativePrototypeFunctionParameters = {
         updateIce: "configuration",
         __proto__: null,
     },
-};
 
-(function() {
-    var EventTarget = {
+    EventTarget: {
         addEventListener: "type, listener, [useCapture=false]",
         removeEventListener: "type, listener, [useCapture=false]",
         dispatchEvent: "event",
-    };
+        __proto__: null,
+    },
+};
 
+(function() {
+    // COMPATIBILITY (iOS 9): EventTarget properties were on instances, now there
+    // is an actual EventTarget prototype in the chain.
+    var EventTarget = WebInspector.NativePrototypeFunctionParameters.EventTarget;
     var eventTargetTypes = [
         "Node", "Window",
-        "AudioNode", "AudioTrackList", "DOMApplicationCache", "FileReader", "FontLoader",
+        "AudioNode", "AudioTrackList", "DOMApplicationCache", "FileReader",
         "MediaController", "MediaStreamTrack", "MessagePort", "Notification", "RTCDTMFSender",
         "SpeechSynthesisUtterance", "TextTrack", "TextTrackCue", "TextTrackList",
         "VideoTrackList", "WebKitMediaKeySession", "WebKitNamedFlow", "WebSocket",
         "WorkerGlobalScope", "XMLHttpRequest", "webkitMediaStream", "webkitRTCPeerConnection"
     ];
-
     for (var type of eventTargetTypes)
         Object.assign(WebInspector.NativePrototypeFunctionParameters[type], EventTarget);
 
