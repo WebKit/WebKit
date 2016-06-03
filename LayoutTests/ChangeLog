@@ -1,5 +1,14 @@
 2016-06-03  Brady Eidson  <beidson@apple.com>
 
+        LayoutTest imported/w3c/indexeddb/idbcursor-advance-continue-async.htm is flaky on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=154606
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk2/TestExpectations: Remove expectations. Test has been working great for quite awhile.
+
+2016-06-03  Brady Eidson  <beidson@apple.com>
+
         storage/indexeddb/intversion-open-in-upgradeneeded.html is flaky on mac.
         https://bugs.webkit.org/show_bug.cgi?id=155050
 
