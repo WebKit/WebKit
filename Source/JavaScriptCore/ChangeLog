@@ -1,3 +1,23 @@
+2016-06-03  Andreas Kling  <akling@apple.com>
+
+        Eliminate two large sources of temporary StringImpl objects.
+        <https://webkit.org/b/158336>
+
+        Reviewed by Anders Carlsson.
+
+        We were jumping through some inefficient hoops when creating Identifiers due to the
+        convenience of our String(const char*) constructor.
+
+        This patch avoids just over 1 million temporary StringImpl objects on the PLUM benchmark.
+
+        * runtime/JSObject.h:
+        (JSC::makeIdentifier): Add an overload for string literals so we can stop creating a temporary
+        String just for passing to Identifier::fromString().
+
+        * runtime/Lookup.h:
+        (JSC::reifyStaticProperties): Use the Identifier::fromString() that takes an LChar* and a length
+        instead of creating a temporary String.
+
 2016-06-03  Mark Lam  <mark.lam@apple.com>
 
         Clean up how StackVisitor dumps its frames.

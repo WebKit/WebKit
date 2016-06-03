@@ -1624,6 +1624,12 @@ inline size_t maxOffsetRelativeToBase(PropertyOffset offset)
 
 COMPILE_ASSERT(!(sizeof(JSObject) % sizeof(WriteBarrierBase<Unknown>)), JSObject_inline_storage_has_correct_alignment);
 
+template<unsigned charactersCount>
+ALWAYS_INLINE Identifier makeIdentifier(VM& vm, const char (&characters)[charactersCount])
+{
+    return Identifier::fromString(&vm, characters);
+}
+
 ALWAYS_INLINE Identifier makeIdentifier(VM& vm, const char* name)
 {
     return Identifier::fromString(&vm, name);

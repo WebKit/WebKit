@@ -428,7 +428,7 @@ inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberO
     for (auto& value : values) {
         if (!value.m_key)
             continue;
-        auto key = Identifier::fromString(&vm, value.m_key);
+        auto key = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(value.m_key), strlen(value.m_key));
         reifyStaticProperty(vm, key, value, thisObj);
     }
 }
