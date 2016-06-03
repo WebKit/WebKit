@@ -1,3 +1,17 @@
+2016-06-03  Zalan Bujtas  <zalan@apple.com>
+
+        Incorrect rendering on boostmobile FAQ page
+        https://bugs.webkit.org/show_bug.cgi?id=158303
+        <rdar://problem/26603462>
+
+        Reviewed by Chris Dumez.
+
+        Initial value for background-color is 'transparent'. see https://drafts.csswg.org/css-backgrounds-3/#background-color
+
+        Test: fast/selectors/non-visited-link-backround-color.html
+
+        * css/CSSPropertyNames.in:
+
 2016-06-03  Brady Eidson  <beidson@apple.com>
 
         More miscellaneous IDBBindingUtilities cleanup.

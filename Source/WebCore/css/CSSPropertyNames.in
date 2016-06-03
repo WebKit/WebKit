@@ -145,7 +145,7 @@ background [Longhands=background-image|background-position-x|background-position
 background-attachment [FillLayerProperty, NameForMethods=Attachment]
 background-blend-mode [FillLayerProperty, NameForMethods=BlendMode]
 background-clip [FillLayerProperty, NameForMethods=Clip]
-background-color [VisitedLinkColorSupport, Initial=invalidColor, NoDefaultColor]
+background-color [VisitedLinkColorSupport, NoDefaultColor]
 background-image [FillLayerProperty, NameForMethods=Image]
 background-origin [FillLayerProperty, NameForMethods=Origin]
 background-position [Longhands=background-position-x|background-position-y]
