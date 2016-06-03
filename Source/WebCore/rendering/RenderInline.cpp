@@ -1260,7 +1260,7 @@ LayoutRect RenderInline::rectWithOutlineForRepaint(const RenderLayerModelObject*
     return r;
 }
 
-LayoutRect RenderInline::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, bool fixed) const
+LayoutRect RenderInline::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
 {
     // LayoutState is only valid for root-relative repainting
     LayoutRect adjustedRect = rect;
@@ -1307,7 +1307,7 @@ LayoutRect RenderInline::computeRectForRepaint(const LayoutRect& rect, const Ren
         adjustedRect.move(-containerOffset);
         return adjustedRect;
     }
-    return container->computeRectForRepaint(adjustedRect, repaintContainer, fixed);
+    return container->computeRectForRepaint(adjustedRect, repaintContainer, context);
 }
 
 LayoutSize RenderInline::offsetFromContainer(RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const

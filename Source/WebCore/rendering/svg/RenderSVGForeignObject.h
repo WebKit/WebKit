@@ -41,7 +41,7 @@ public:
 
     LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
     FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const override;
-    LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const override;
+    LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, RepaintContext = { false, false }) const override;
 
     bool requiresLayer() const override { return false; }
     void layout() override;

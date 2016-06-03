@@ -691,7 +691,7 @@ LayoutRect RenderView::visualOverflowRect() const
     return RenderBlockFlow::visualOverflowRect();
 }
 
-LayoutRect RenderView::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, bool fixed) const
+LayoutRect RenderView::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
 {
     // If a container was specified, and was not nullptr or the RenderView,
     // then we should have found it by now.
@@ -710,7 +710,7 @@ LayoutRect RenderView::computeRectForRepaint(const LayoutRect& rect, const Rende
             adjustedRect.setX(viewWidth() - adjustedRect.maxX());
     }
 
-    if (fixed)
+    if (context.m_hasPositionFixedDescendant)
         adjustedRect.moveBy(frameView().scrollPositionRespectingCustomFixedPosition());
     
     // Apply our transform if we have one (because of full page zooming).

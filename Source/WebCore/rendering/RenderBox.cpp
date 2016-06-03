@@ -2206,7 +2206,7 @@ static inline bool shouldApplyContainersClipAndOffset(const RenderLayerModelObje
 #endif
 }
 
-LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, bool fixed) const
+LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
 {
     // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
     // Only when we cross a writing mode boundary will we have to possibly flipForWritingMode (to convert into a more appropriate
@@ -2245,13 +2245,11 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
         return adjustedRect;
     }
 
-    bool containerSkipped;
-    auto* renderer = container(repaintContainer, containerSkipped);
-    if (!renderer)
+    bool repaintContainerIsSkipped;
+    auto* container = this->container(repaintContainer, repaintContainerIsSkipped);
+    if (!container)
         return adjustedRect;
     
-    EPosition position = styleToUse.position();
-
     // This code isn't necessary for in-flow RenderFlowThreads.
     // Don't add the location of the region in the flow thread for absolute positioned
     // elements because their absolute position already pushes them down through
@@ -2259,15 +2257,20 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     // us to add the height twice.
     // The same logic applies for elements flowed directly into the flow thread. Their topLeft member
     // will already contain the portion rect of the region.
-    if (renderer->isOutOfFlowRenderFlowThread() && position != AbsolutePosition && containingBlock() != flowThreadContainingBlock()) {
+    EPosition position = styleToUse.position();
+    if (container->isOutOfFlowRenderFlowThread() && position != AbsolutePosition && containingBlock() != flowThreadContainingBlock()) {
         RenderRegion* firstRegion = nullptr;
         RenderRegion* lastRegion = nullptr;
-        if (downcast<RenderFlowThread>(*renderer).getRegionRangeForBox(this, firstRegion, lastRegion))
+        if (downcast<RenderFlowThread>(*container).getRegionRangeForBox(this, firstRegion, lastRegion))
             adjustedRect.moveBy(firstRegion->flowThreadPortionRect().location());
     }
 
-    if (isWritingModeRoot() && !isOutOfFlowPositioned())
-        flipForWritingMode(adjustedRect);
+    if (isWritingModeRoot()) {
+        if (!isOutOfFlowPositioned() || !context.m_dirtyRectIsFlipped) {
+            flipForWritingMode(adjustedRect);
+            context.m_dirtyRectIsFlipped = true;
+        }
+    }
 
     LayoutSize locationOffset = this->locationOffset();
     // FIXME: This is needed as long as RenderWidget snaps to integral size/position.
@@ -2282,15 +2285,15 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
     if (hasLayer() && layer()->transform()) {
-        fixed = position == FixedPosition;
+        context.m_hasPositionFixedDescendant = position == FixedPosition;
         adjustedRect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(adjustedRect), document().deviceScaleFactor()));
         topLeft = adjustedRect.location();
         topLeft.move(locationOffset);
     } else if (position == FixedPosition)
-        fixed = true;
+        context.m_hasPositionFixedDescendant = true;
 
-    if (position == AbsolutePosition && renderer->isInFlowPositioned() && is<RenderInline>(*renderer))
-        topLeft += downcast<RenderInline>(*renderer).offsetForInFlowPositionedInline(this);
+    if (position == AbsolutePosition && container->isInFlowPositioned() && is<RenderInline>(*container))
+        topLeft += downcast<RenderInline>(*container).offsetForInFlowPositionedInline(this);
     else if (styleToUse.hasInFlowPosition() && layer()) {
         // Apply the relative position offset when invalidating a rectangle.  The layer
         // is translated, but the render box isn't, so we need to do this to get the
@@ -2302,8 +2305,8 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
     adjustedRect.setLocation(topLeft);
-    if (renderer->hasOverflowClip()) {
-        RenderBox& containerBox = downcast<RenderBox>(*renderer);
+    if (container->hasOverflowClip()) {
+        RenderBox& containerBox = downcast<RenderBox>(*container);
         if (shouldApplyContainersClipAndOffset(repaintContainer, &containerBox)) {
             containerBox.applyCachedClipAndScrollOffsetForRepaint(adjustedRect);
             if (adjustedRect.isEmpty())
@@ -2311,13 +2314,13 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
         }
     }
 
-    if (containerSkipped) {
-        // If the repaintContainer is below o, then we need to map the rect into repaintContainer's coordinates.
-        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(*renderer);
+    if (repaintContainerIsSkipped) {
+        // If the repaintContainer is below container, then we need to map the rect into repaintContainer's coordinates.
+        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(*container);
         adjustedRect.move(-containerOffset);
         return adjustedRect;
     }
-    return renderer->computeRectForRepaint(adjustedRect, repaintContainer, fixed);
+    return container->computeRectForRepaint(adjustedRect, repaintContainer, context);
 }
 
 void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& oldRect)

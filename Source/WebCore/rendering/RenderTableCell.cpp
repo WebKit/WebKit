@@ -386,14 +386,14 @@ LayoutRect RenderTableCell::clippedOverflowRectForRepaint(const RenderLayerModel
     return computeRectForRepaint(r, repaintContainer);
 }
 
-LayoutRect RenderTableCell::computeRectForRepaint(const LayoutRect& r, const RenderLayerModelObject* repaintContainer, bool fixed) const
+LayoutRect RenderTableCell::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
 {
     if (repaintContainer == this)
-        return r;
-    LayoutRect adjustedRect = r;
+        return rect;
+    LayoutRect adjustedRect = rect;
     if ((!view().layoutStateEnabled() || repaintContainer) && parent())
         adjustedRect.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
-    return RenderBlockFlow::computeRectForRepaint(adjustedRect, repaintContainer, fixed);
+    return RenderBlockFlow::computeRectForRepaint(adjustedRect, repaintContainer, context);
 }
 
 LayoutUnit RenderTableCell::cellBaselinePosition() const

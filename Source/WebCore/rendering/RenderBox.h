@@ -392,7 +392,7 @@ public:
     void deleteLineBoxWrapper();
 
     LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
-    LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const override;
+    LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, RepaintContext context = { false, false }) const override;
     void repaintDuringLayoutIfMoved(const LayoutRect&);
     virtual void repaintOverhangingFloats(bool paintAllDescendants);
 

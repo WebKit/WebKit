@@ -382,7 +382,7 @@ FloatRect RenderSVGRoot::computeFloatRectForRepaint(const FloatRect& repaintRect
         LayoutRect decoratedRepaintRect = unionRect(localSelectionRect(false), visualOverflowRect());
         adjustedRect.unite(decoratedRepaintRect);
     }
-    return RenderReplaced::computeRectForRepaint(enclosingIntRect(adjustedRect), repaintContainer, fixed);
+    return RenderReplaced::computeRectForRepaint(enclosingIntRect(adjustedRect), repaintContainer, {fixed, false});
 }
 
 // This method expects local CSS box coordinates.

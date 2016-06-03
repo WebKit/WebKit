@@ -1,3 +1,45 @@
+2016-06-02  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint issue with vertical text in an out of flow container.
+        https://bugs.webkit.org/show_bug.cgi?id=102665
+        <rdar://problem/26605298>
+
+        Reviewed by David Hyatt.
+
+        Since the renderer’s offset for positioned objects is always physical, we only
+        need to flip the repaint rect(always logical) for writing root, when we see the first positioned object.
+        All subsequent writing root changes for positioned objects are okay and they don't need flipping.
+
+        Test: fast/repaint/vertical-text-repaint.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeRectForRepaint):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::computeRectForRepaint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::computeRectForRepaint):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::computeAbsoluteRepaintRect):
+        (WebCore::RenderObject::computeRectForRepaint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeRectForRepaint):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeRectForRepaint):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::computeRectForRepaint):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeFloatRectForRepaint):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::computeRectForRepaint):
+        * rendering/svg/RenderSVGText.h:
+
 2016-06-02  Anders Carlsson  <andersca@apple.com>
 
         Fix build

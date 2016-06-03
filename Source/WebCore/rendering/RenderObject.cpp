@@ -964,7 +964,7 @@ LayoutRect RenderObject::clippedOverflowRectForRepaint(const RenderLayerModelObj
     return LayoutRect();
 }
 
-LayoutRect RenderObject::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, bool fixed) const
+LayoutRect RenderObject::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
 {
     if (repaintContainer == this)
         return rect;
@@ -979,7 +979,7 @@ LayoutRect RenderObject::computeRectForRepaint(const LayoutRect& rect, const Ren
         if (adjustedRect.isEmpty())
             return adjustedRect;
     }
-    return parent->computeRectForRepaint(adjustedRect, repaintContainer, fixed);
+    return parent->computeRectForRepaint(adjustedRect, repaintContainer, context);
 }
 
 FloatRect RenderObject::computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject*, bool) const

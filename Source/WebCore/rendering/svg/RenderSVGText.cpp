@@ -90,9 +90,9 @@ LayoutRect RenderSVGText::clippedOverflowRectForRepaint(const RenderLayerModelOb
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
 
-LayoutRect RenderSVGText::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, bool fixed) const
+LayoutRect RenderSVGText::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
 {
-    return enclosingLayoutRect(computeFloatRectForRepaint(rect, repaintContainer, fixed));
+    return enclosingLayoutRect(computeFloatRectForRepaint(rect, repaintContainer, context.m_hasPositionFixedDescendant));
 }
 
 FloatRect RenderSVGText::computeFloatRectForRepaint(const FloatRect& repaintRect, const RenderLayerModelObject* repaintContainer, bool fixed) const

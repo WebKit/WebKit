@@ -742,11 +742,20 @@ public:
     // that rect in view coordinates.
     LayoutRect computeAbsoluteRepaintRect(const LayoutRect& r, bool fixed = false) const
     {
-        return computeRectForRepaint(r, nullptr, fixed);
+        return computeRectForRepaint(r, nullptr, { fixed, false });
     }
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in the coordinate space of repaintContainer.
-    virtual LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const;
+    struct RepaintContext {
+        RepaintContext(bool hasPositionFixedDescendant, bool dirtyRectIsFlipped)
+            : m_hasPositionFixedDescendant(hasPositionFixedDescendant)
+            , m_dirtyRectIsFlipped(dirtyRectIsFlipped)
+            {
+            }
+        bool m_hasPositionFixedDescendant { false };
+        bool m_dirtyRectIsFlipped { false };
+    };
+    virtual LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, RepaintContext = { false, false }) const;
     virtual FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const;
 
     virtual unsigned int length() const { return 1; }

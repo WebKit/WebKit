@@ -1,0 +1,11 @@
+PASS window.internals.repaintRectsAsText().indexOf('95 25') is not -1
+PASS window.internals.repaintRectsAsText().indexOf('95 155') is not -1
+PASS window.internals.repaintRectsAsText().indexOf('95 285') is not -1
+PASS window.internals.repaintRectsAsText().indexOf('225 25') is not -1
+PASS window.internals.repaintRectsAsText().indexOf('225 155') is not -1
+PASS window.internals.repaintRectsAsText().indexOf('225 285') is not -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+moobarmoobarmoobarmoobarmoobarmoobar
+moobar

@@ -221,3 +221,5 @@ fast/loader/iframe-src-invalid-url.html [ Skip ]
 
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
 
+# repaint rects work differently on WK1
+fast/repaint/vertical-text-repaint.html [ Pass Failure ]
