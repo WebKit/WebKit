@@ -2329,8 +2329,7 @@ CharacterOffset AXObjectCache::startCharacterOffsetOfParagraph(const CharacterOf
     
     auto* startBlock = enclosingBlock(startNode);
     int offset = characterOffset.startIndex + characterOffset.offset;
-    Position p(startNode, offset, Position::PositionIsOffsetInAnchor);
-    auto* highestRoot = highestEditableRoot(p);
+    auto* highestRoot = highestEditableRoot(firstPositionInOrBeforeNode(startNode));
     Position::AnchorType type = Position::PositionIsOffsetInAnchor;
     
     auto* node = findStartOfParagraph(startNode, highestRoot, startBlock, offset, type, boundaryCrossingRule);
@@ -2352,8 +2351,7 @@ CharacterOffset AXObjectCache::endCharacterOffsetOfParagraph(const CharacterOffs
     
     Node* stayInsideBlock = enclosingBlock(startNode);
     int offset = characterOffset.startIndex + characterOffset.offset;
-    Position p(startNode, offset, Position::PositionIsOffsetInAnchor);
-    Node* highestRoot = highestEditableRoot(p);
+    Node* highestRoot = highestEditableRoot(firstPositionInOrBeforeNode(startNode));
     Position::AnchorType type = Position::PositionIsOffsetInAnchor;
     
     Node* node = findEndOfParagraph(startNode, highestRoot, stayInsideBlock, offset, type, boundaryCrossingRule);

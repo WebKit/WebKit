@@ -129,6 +129,8 @@ RefPtr<Range> VisibleSelection::firstRange() const
         return nullptr;
     Position start = m_start.parentAnchoredEquivalent();
     Position end = m_end.parentAnchoredEquivalent();
+    if (start.isNull() || end.isNull())
+        return nullptr;
     return Range::create(start.anchorNode()->document(), start, end);
 }
 
