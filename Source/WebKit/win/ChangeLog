@@ -1,3 +1,13 @@
+2016-06-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Implement WebView::removeAllUserContentFromGroup
+        https://bugs.webkit.org/show_bug.cgi?id=158343
+
+        Reviewed by Brent Fulgham.
+
+        * WebView.cpp:
+        (WebView::removeAllUserContentFromGroup):
+
 2016-06-02  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fetch API tests are failing.

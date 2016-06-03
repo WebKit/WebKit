@@ -6779,7 +6779,16 @@ HRESULT WebView::removeUserStyleSheetsFromGroup(_In_ BSTR groupName, _In_opt_ IW
 
 HRESULT WebView::removeAllUserContentFromGroup(_In_ BSTR groupName)
 {
-    return E_NOTIMPL;
+    String group = toString(groupName);
+    if (group.isEmpty())
+        return E_FAIL;
+
+    auto viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
+        return S_OK;
+
+    viewGroup->userContentController().removeAllUserContent();
+    return S_OK;
 }
 
 HRESULT WebView::invalidateBackingStore(_In_ const RECT* rect)
