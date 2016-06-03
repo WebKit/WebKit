@@ -1,3 +1,44 @@
+2016-06-03  Keith Miller  <keith_miller@apple.com>
+
+        Add argument_count bytecode for concat
+        https://bugs.webkit.org/show_bug.cgi?id=158358
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds a new argument count bytecode. Normally, we would
+        just make sure that the argument.length bytecode was fast enough
+        that we shouldn't need such an bytecode.  However, for the case of
+        Array.prototype.concat the overhead of the arguments object
+        allocation in the LLInt was too high and caused regressions.
+
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_argumentCount):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getArgumentCount):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_argument_count):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * tests/stress/argument-count-bytecode.js: Added.
+        (inlineCount):
+        (inlineCount1):
+        (inlineCount2):
+        (inlineCountVarArgs):
+        (assert):
+
 2016-06-03  Geoffrey Garen  <ggaren@apple.com>
 
         Clients of PolymorphicAccess::addCases shouldn't have to malloc

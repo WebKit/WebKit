@@ -677,6 +677,17 @@ _llint_op_enter:
     dispatch(1)
 
 
+_llint_op_argument_count:
+    traceExecution()
+    loadisFromInstruction(1, t2)
+    loadi PayloadOffset + ArgumentCount[cfr], t0
+    subi 1, t0
+    move Int32Tag, t1
+    storei t1, TagOffset[cfr, t2, 8]
+    storei t0, PayloadOffset[cfr, t2, 8]
+    dispatch(2)
+
+
 _llint_op_get_scope:
     traceExecution()
     loadi Callee + PayloadOffset[cfr], t0

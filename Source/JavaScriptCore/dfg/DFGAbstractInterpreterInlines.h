@@ -1973,7 +1973,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(m_graph, SpecFunction);
         break;
         
-    case GetArgumentCount:
+    case GetArgumentCountIncludingThis:
         forNode(node).setType(SpecInt32Only);
         break;
         

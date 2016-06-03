@@ -4070,7 +4070,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case GetArgumentCount: {
+    case GetArgumentCountIncludingThis: {
         GPRTemporary result(this);
         m_jit.load32(JITCompiler::payloadFor(JSStack::ArgumentCount), result.gpr());
         int32Result(result.gpr(), node);

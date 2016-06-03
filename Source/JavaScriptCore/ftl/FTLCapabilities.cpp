@@ -160,7 +160,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetExecutable:
     case GetScope:
     case GetCallee:
-    case GetArgumentCount:
+    case GetArgumentCountIncludingThis:
     case ToString:
     case CallStringConstructor:
     case MakeRope:

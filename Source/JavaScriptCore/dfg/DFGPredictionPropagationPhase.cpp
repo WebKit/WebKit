@@ -737,7 +737,7 @@ private:
             break;
         }
             
-        case GetArgumentCount: {
+        case GetArgumentCountIncludingThis: {
             setPrediction(SpecInt32Only);
             break;
         }

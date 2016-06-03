@@ -1419,6 +1419,16 @@ void JIT::emit_op_create_cloned_arguments(Instruction* currentInstruction)
     slowPathCall.call();
 }
 
+void JIT::emit_op_argument_count(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    load32(payloadFor(JSStack::ArgumentCount), regT0);
+    sub32(TrustedImm32(1), regT0);
+    JSValueRegs result = JSValueRegs::withTwoAvailableRegs(regT0, regT1);
+    boxInt32(regT0, result);
+    emitPutVirtualRegister(dst, result);
+}
+
 void JIT::emit_op_copy_rest(Instruction* currentInstruction)
 {
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_copy_rest);

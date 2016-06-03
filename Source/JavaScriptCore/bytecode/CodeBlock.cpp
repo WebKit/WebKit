@@ -818,6 +818,11 @@ void CodeBlock::dumpBytecode(
             out.printf("%s", registerName(r0).data());
             break;
         }
+        case op_argument_count: {
+            int r0 = (++it)->u.operand;
+            printLocationOpAndRegisterOperand(out, exec, location, it, "argument_count", r0);
+            break;
+        }
         case op_copy_rest: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;

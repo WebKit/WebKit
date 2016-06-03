@@ -53,6 +53,7 @@ void computeUsesForBytecodeOffset(
     case op_jmp:
     case op_new_object:
     case op_enter:
+    case op_argument_count:
     case op_catch:
     case op_profile_control_flow:
     case op_create_direct_arguments:
@@ -362,6 +363,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
 #undef LLINT_HELPER_OPCODES
         return;
     // These all have a single destination for the first argument.
+    case op_argument_count:
     case op_to_index_string:
     case op_get_enumerable_length:
     case op_has_indexed_property:

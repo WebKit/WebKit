@@ -106,6 +106,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     switch (opcodeID) {
     case op_enter:
     case op_to_this:
+    case op_argument_count:
     case op_check_tdz:
     case op_create_this:
     case op_bitand:

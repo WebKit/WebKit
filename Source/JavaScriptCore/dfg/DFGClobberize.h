@@ -502,7 +502,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(StackLoc, AbstractHeap(Stack, JSStack::Callee)), LazyNode(node));
         return;
         
-    case GetArgumentCount:
+    case GetArgumentCountIncludingThis:
         read(AbstractHeap(Stack, JSStack::ArgumentCount));
         def(HeapLocation(StackPayloadLoc, AbstractHeap(Stack, JSStack::ArgumentCount)), LazyNode(node));
         return;

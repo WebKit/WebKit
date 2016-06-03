@@ -1508,7 +1508,7 @@ private:
         case DoubleConstant:
         case GetLocal:
         case GetCallee:
-        case GetArgumentCount:
+        case GetArgumentCountIncludingThis:
         case GetRestLength:
         case Flush:
         case PhantomLocal:

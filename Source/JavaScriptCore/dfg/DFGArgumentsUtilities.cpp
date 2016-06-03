@@ -76,7 +76,7 @@ Node* emitCodeToGetArgumentsArrayLength(
     
     Node* argumentCount;
     if (!inlineCallFrame)
-        argumentCount = insertionSet.insertNode(nodeIndex, SpecInt32Only, GetArgumentCount, origin);
+        argumentCount = insertionSet.insertNode(nodeIndex, SpecInt32Only, GetArgumentCountIncludingThis, origin);
     else {
         VirtualRegister argumentCountRegister(inlineCallFrame->stackOffset + JSStack::ArgumentCount);
         

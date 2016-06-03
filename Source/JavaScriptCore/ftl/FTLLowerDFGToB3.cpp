@@ -776,8 +776,8 @@ private:
         case GetCallee:
             compileGetCallee();
             break;
-        case GetArgumentCount:
-            compileGetArgumentCount();
+        case GetArgumentCountIncludingThis:
+            compileGetArgumentCountIncludingThis();
             break;
         case GetScope:
             compileGetScope();
@@ -4670,7 +4670,7 @@ private:
         setJSValue(m_out.loadPtr(addressFor(JSStack::Callee)));
     }
     
-    void compileGetArgumentCount()
+    void compileGetArgumentCountIncludingThis()
     {
         setInt32(m_out.load32(payloadFor(JSStack::ArgumentCount)));
     }

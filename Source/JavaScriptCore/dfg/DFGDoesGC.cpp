@@ -50,7 +50,7 @@ bool doesGC(Graph& graph, Node* node)
     case LazyJSConstant:
     case Identity:
     case GetCallee:
-    case GetArgumentCount:
+    case GetArgumentCountIncludingThis:
     case GetRestLength:
     case GetLocal:
     case SetLocal:
