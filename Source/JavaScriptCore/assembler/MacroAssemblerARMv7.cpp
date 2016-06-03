@@ -224,7 +224,8 @@ asm (
     "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
 
     "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_D0_OFFSET) "\n"
-    "vstmia.64 ip, { d0-d31 }" "\n"
+    "vstmia.64 ip!, { d0-d15 }" "\n"
+    "vstmia.64 ip!, { d16-d31 }" "\n"
 
     "mov       fp, sp" "\n" // Save the ProbeContext*.
 
@@ -238,7 +239,9 @@ asm (
     // out of the ProbeContext before returning.
 
     "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_D31_OFFSET + FPREG_SIZE) "\n"
-    "vldmdb.64 ip!, { d0-d31 }" "\n"
+    "vldmdb.64 ip!, { d16-d31 }" "\n"
+    "vldmdb.64 ip!, { d0-d15 }" "\n"
+
     "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R11_OFFSET + GPREG_SIZE) "\n"
     "ldmdb     ip, { r0-r11 }" "\n"
     "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_FPSCR_OFFSET) "]" "\n"

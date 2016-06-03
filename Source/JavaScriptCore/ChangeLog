@@ -1,5 +1,22 @@
 2016-06-03  Mark Lam  <mark.lam@apple.com>
 
+        ARMv7 vstm and vldm instructions can only operate on a maximum of 16 registers.
+        https://bugs.webkit.org/show_bug.cgi?id=158349
+
+        Reviewed by Filip Pizlo.
+
+        According to the ARM Assembler Reference, the vstm and vldm instructions can only
+        operate on a maximum of 16 registers.  See
+        http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dht0002a/ch01s03s02.html
+        and http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dht0002a/ch01s03s02.html.
+
+        The ARMv7 probe code was wrongly using these instructions to store and load all
+        32 'd' registers.  This is now fixed.
+
+        * assembler/MacroAssemblerARMv7.cpp:
+
+2016-06-03  Mark Lam  <mark.lam@apple.com>
+
         Gardening: CLOOP build fix (needs a #include).
 
         Not reviewed.
