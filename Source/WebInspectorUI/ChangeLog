@@ -1,5 +1,38 @@
 2016-06-02  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Modernize Array.prototype.every/some callsites to arrow functions
+        https://bugs.webkit.org/show_bug.cgi?id=158330
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype._updateContentFlowFromPayload):
+        * UserInterface/Models/ProfileNode.js:
+        (WebInspector.ProfileNode):
+        * UserInterface/Models/ScopeChainNode.js:
+        (WebInspector.ScopeChainNode):
+        * UserInterface/Models/StackTrace.js:
+        (WebInspector.StackTrace):
+        * UserInterface/Models/StructureDescription.js:
+        (WebInspector.StructureDescription):
+        * UserInterface/Models/TypeDescription.js:
+        (WebInspector.TypeDescription):
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackend.Command.prototype.supports):
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.showContentView):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._checkElementsForPendingViewStateCookie.treeElementMatchesCookie):
+        (WebInspector.NavigationSidebarPanel.prototype._checkElementsForPendingViewStateCookie):
+        * UserInterface/Views/ScopeBar.js:
+        (WebInspector.ScopeBar.prototype.get selectedItems):
+        (WebInspector.ScopeBar.prototype.hasNonDefaultItemSelected):
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView):
+        (WebInspector.TabContentView.console.assert): Deleted.
+
+2016-06-02  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Modernize some function expressions that bind(this) to arrow functions
         https://bugs.webkit.org/show_bug.cgi?id=158315
 

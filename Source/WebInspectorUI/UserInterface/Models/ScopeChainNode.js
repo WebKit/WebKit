@@ -30,7 +30,7 @@ WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
         super();
 
         console.assert(typeof type === "string");
-        console.assert(objects.every(function(x) { return x instanceof WebInspector.RemoteObject; }));
+        console.assert(objects.every((x) => x instanceof WebInspector.RemoteObject));
 
         if (type in WebInspector.ScopeChainNode.Type)
             type = WebInspector.ScopeChainNode.Type[type];

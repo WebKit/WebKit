@@ -29,8 +29,8 @@ WebInspector.StructureDescription = class StructureDescription extends WebInspec
     {
         super();
 
-        console.assert(!fields || fields.every(function(x) { return typeof x === "string"; }));
-        console.assert(!optionalFields || optionalFields.every(function(x) { return typeof x === "string"; }));
+        console.assert(!fields || fields.every((x) => typeof x === "string"));
+        console.assert(!optionalFields || optionalFields.every((x) => typeof x === "string"));
         console.assert(!constructorName || typeof constructorName === "string");
         console.assert(!prototypeStructure || prototypeStructure instanceof WebInspector.StructureDescription);
 

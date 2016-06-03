@@ -29,7 +29,7 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
     {
         super();
 
-        console.assert(callFrames && callFrames.every(function(callFrame) { return callFrame instanceof WebInspector.CallFrame; }));
+        console.assert(callFrames && callFrames.every((callFrame) => callFrame instanceof WebInspector.CallFrame));
 
         this._callFrames = callFrames;
     }

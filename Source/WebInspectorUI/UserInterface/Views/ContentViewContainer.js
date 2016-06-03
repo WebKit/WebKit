@@ -127,10 +127,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         // Disassociate with the removed content views.
         for (let i = 0; i < removedEntries.length; ++i) {
             // Skip disassociation if this content view is still in the back/forward list.
-            let shouldDissociateContentView = !this._backForwardList.some(function(existingEntry) {
-                return existingEntry.contentView === removedEntries[i].contentView;
-            });
-
+            let shouldDissociateContentView = !this._backForwardList.some((existingEntry) => existingEntry.contentView === removedEntries[i].contentView);
             if (shouldDissociateContentView)
                 this._disassociateFromContentView(removedEntries[i].contentView, removedEntries[i].tombstone);
         }

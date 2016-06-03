@@ -34,9 +34,9 @@ WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
         console.assert(id);
         console.assert(!calls || calls instanceof Array);
         console.assert(!calls || calls.length >= 1);
-        console.assert(!calls || calls.every(function(call) { return call instanceof WebInspector.ProfileNodeCall; }));
+        console.assert(!calls || calls.every((call) => call instanceof WebInspector.ProfileNodeCall));
         console.assert(childNodes instanceof Array);
-        console.assert(childNodes.every(function(node) { return node instanceof WebInspector.ProfileNode; }));
+        console.assert(childNodes.every((node) => node instanceof WebInspector.ProfileNode));
 
         this._id = id;
         this._type = type || WebInspector.ProfileNode.Type.Function;

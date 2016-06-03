@@ -81,16 +81,12 @@ WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
 
     get selectedItems()
     {
-        return this._items.filter(function(item) {
-            return item.selected;
-        });
+        return this._items.filter((item) => item.selected);
     }
 
     hasNonDefaultItemSelected()
     {
-        return this._items.some(function(item) {
-            return item.selected && item !== this._defaultItem;
-        }, this);
+        return this._items.some((item) => item.selected && item !== this._defaultItem);
     }
 
     // Private
