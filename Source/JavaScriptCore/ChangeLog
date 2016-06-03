@@ -1,3 +1,58 @@
+2016-06-02  Gavin & Ellie Barraclough  <barraclough@apple.com>
+
+        JSGlobalObject::addFunction should call deleteProperty rather than removeDirect
+        https://bugs.webkit.org/show_bug.cgi?id=158295
+
+        Reviewed by Saam Barati.
+
+        When a function in declared in program code, this replaces any previosly existing
+        property from the global object. JSGlobalObject::addFunction is currently calling
+        removeDirect rather than deleteProperty to remove the existing property. This fails
+        to remove any properties from static tables.
+
+        We currently get away with this because (a) JSObject & JSGlobalObject don't currently
+        have any properties in static tables, and (b) the current quirky property precedence
+        means that the symbol table properties end up taking precedence over JSDOMWindow's
+        static table, so window object properties end up being shadowed.
+
+        As a part of bug #158178 the precedence of static tables will change, requiring this
+        to be fixed.
+
+        The deleteProperty function does what we want (has the ability to remove properties,
+        including those from the static tables). Normally deleteProperty will not remove
+        properties that are non-configurable (DontDelete) - we need to do so. The function
+        does already support this, through a flag on VM named 'isInDefineOwnProperty', which
+        causes configurability to be ignored. Generalize this mechanism for use outside of
+        defineOwnProperty, renaming & moving DefineOwnPropertyScope helper class out to VM.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::deleteProperty):
+            - isInDefineOwnProperty -> deletePropertyMode.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addFunction):
+            - removeDirect -> deleteProperty.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+            - isInDefineOwnProperty -> deletePropertyMode.
+        (JSC::JSObject::defineOwnNonIndexProperty):
+            - DefineOwnPropertyScope -> VM::DeletePropertyModeScope.
+        (JSC::DefineOwnPropertyScope::DefineOwnPropertyScope): Deleted.
+        (JSC::DefineOwnPropertyScope::~DefineOwnPropertyScope): Deleted.
+            - DefineOwnPropertyScope -> VM::DeletePropertyModeScope.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+            - removed m_inDefineOwnProperty.
+        * runtime/VM.h:
+        (JSC::VM::deletePropertyMode):
+            - isInDefineOwnProperty -> deletePropertyMode.
+        (JSC::VM::DeletePropertyModeScope::DeletePropertyModeScope):
+        (JSC::VM::DeletePropertyModeScope::~DeletePropertyModeScope):
+            - DefineOwnPropertyScope -> VM::DeletePropertyModeScope.
+        (JSC::VM::setInDefineOwnProperty): Deleted.
+            - Replaced with deletePropertyMode, can now only be set via VM::DeletePropertyModeScope.
+        (JSC::VM::isInDefineOwnProperty): Deleted.
+            - isInDefineOwnProperty -> deletePropertyMode.
+
 2016-06-03  Mark Lam  <mark.lam@apple.com>
 
         ARMv7 vstm and vldm instructions can only operate on a maximum of 16 registers.

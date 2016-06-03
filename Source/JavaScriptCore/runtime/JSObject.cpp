@@ -1497,7 +1497,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
 
     if (!thisObject->staticFunctionsReified()) {
         if (auto* entry = thisObject->findPropertyHashEntry(propertyName)) {
-            if (entry->attributes() & DontDelete)
+            if (entry->attributes() & DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable)
                 return false;
             thisObject->reifyAllStaticProperties(exec);
         }
@@ -1505,7 +1505,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
 
     unsigned attributes;
     if (isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes))) {
-        if (attributes & DontDelete && !vm.isInDefineOwnProperty())
+        if (attributes & DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable)
             return false;
         thisObject->removeDirect(vm, propertyName);
     }
@@ -2933,24 +2933,6 @@ bool JSObject::putDirectMayBeIndex(ExecState* exec, PropertyName propertyName, J
     return putDirect(exec->vm(), propertyName, value);
 }
 
-class DefineOwnPropertyScope {
-public:
-    DefineOwnPropertyScope(ExecState* exec)
-        : m_vm(exec->vm())
-    {
-        m_vm.setInDefineOwnProperty(true);
-    }
-
-    ~DefineOwnPropertyScope()
-    {
-        m_vm.setInDefineOwnProperty(false);
-    }
-
-private:
-    VM& m_vm;
-};
-
-
 // 9.1.6.3 of the spec
 // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-validateandapplypropertydescriptor
 bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, PropertyName propertyName, bool isExtensible,
@@ -3104,7 +3086,7 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     // Currently DefineOwnProperty uses delete to remove properties when they are being replaced
     // (particularly when changing attributes), however delete won't allow non-configurable (i.e.
     // DontDelete) properties to be deleted. For now, we can use this flag to make this work.
-    DefineOwnPropertyScope scope(exec);
+    VM::DeletePropertyModeScope scope(exec->vm(), VM::DeletePropertyMode::IgnoreConfigurable);
     PropertyDescriptor current;
     bool isCurrentDefined = getOwnPropertyDescriptor(exec, propertyName, current);
     bool isExtensible = this->isExtensible(exec);

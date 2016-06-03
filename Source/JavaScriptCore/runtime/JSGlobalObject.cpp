@@ -857,7 +857,8 @@ void JSGlobalObject::addGlobalVar(const Identifier& ident)
 void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName)
 {
     VM& vm = exec->vm();
-    removeDirect(vm, propertyName); // Newly declared functions overwrite existing properties.
+    VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+    methodTable(vm)->deleteProperty(this, exec, propertyName);
     addGlobalVar(propertyName);
 }
 

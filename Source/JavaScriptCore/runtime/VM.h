@@ -344,15 +344,37 @@ public:
     AtomicStringTable* atomicStringTable() const { return m_atomicStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
 
-    void setInDefineOwnProperty(bool inDefineOwnProperty)
+    enum class DeletePropertyMode {
+        // Default behaviour of deleteProperty, matching the spec.
+        Default,
+        // This setting causes deleteProperty to force deletion of all
+        // properties including those that are non-configurable (DontDelete).
+        IgnoreConfigurable
+    };
+
+    DeletePropertyMode deletePropertyMode()
     {
-        m_inDefineOwnProperty = inDefineOwnProperty;
+        return m_deletePropertyMode;
     }
 
-    bool isInDefineOwnProperty()
-    {
-        return m_inDefineOwnProperty;
-    }
+    class DeletePropertyModeScope {
+    public:
+        DeletePropertyModeScope(VM& vm, DeletePropertyMode mode)
+            : m_vm(vm)
+            , m_previousMode(vm.m_deletePropertyMode)
+        {
+            m_vm.m_deletePropertyMode = mode;
+        }
+
+        ~DeletePropertyModeScope()
+        {
+            m_vm.m_deletePropertyMode = m_previousMode;
+        }
+
+    private:
+        VM& m_vm;
+        DeletePropertyMode m_previousMode;
+    };
 
 #if ENABLE(JIT)
     bool canUseJIT() { return m_canUseJIT; }
@@ -638,7 +660,7 @@ private:
     Exception* m_exception { nullptr };
     Exception* m_lastException { nullptr };
     bool m_failNextNewCodeBlock { false };
-    bool m_inDefineOwnProperty;
+    DeletePropertyMode m_deletePropertyMode { DeletePropertyMode::Default };
     bool m_globalConstRedeclarationShouldThrow { true };
     bool m_shouldBuildPCToCodeOriginMapping { false };
     std::unique_ptr<CodeCache> m_codeCache;

@@ -458,7 +458,7 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
     // For non-host functions, don't let these properties by deleted - except by DefineOwnProperty.
-    if (!thisObject->isHostOrBuiltinFunction() && !exec->vm().isInDefineOwnProperty()) {
+    if (!thisObject->isHostOrBuiltinFunction() && exec->vm().deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable) {
         FunctionExecutable* executable = thisObject->jsExecutable();
         if (propertyName == exec->propertyNames().arguments
             || (propertyName == exec->propertyNames().prototype && !executable->isArrowFunction())

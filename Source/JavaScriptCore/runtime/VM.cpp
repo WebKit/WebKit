@@ -188,7 +188,6 @@ VM::VM(VMType vmType, HeapType heapType)
 #if !ENABLE(JIT)
     , m_jsStackLimit(0)
 #endif
-    , m_inDefineOwnProperty(false)
     , m_codeCache(std::make_unique<CodeCache>())
     , m_builtinExecutables(std::make_unique<BuiltinExecutables>(*this))
     , m_typeProfilerEnabledCount(0)
