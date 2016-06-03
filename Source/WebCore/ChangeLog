@@ -1,3 +1,46 @@
+2016-06-03  Antoine Quint  <graouts@apple.com>
+
+        Reflection of element does not respect backdrop-filter property
+        https://bugs.webkit.org/show_bug.cgi?id=158201
+
+        Reviewed by Dean Jackson.
+
+        We weren't cloning the PlatformCALayer for the backdrop so reflections would simply
+        not show their backdrops. We now follow the same pattern as other PlatformCALayers
+        owned by a GraphicsLayerCA and keep a list of backdrop layer clones that we add
+        to the structural layer when cloning to match the layer order of the original
+        and update the backdrop layer clone properties to match the original when the
+        backdrop filters or rectangle changes.
+
+        Tests: css3/filters/backdrop/backdrop-filter-with-reflection-add-backdrop.html
+               css3/filters/backdrop/backdrop-filter-with-reflection-remove-backdrop.html
+               css3/filters/backdrop/backdrop-filter-with-reflection-value-change.html
+               css3/filters/backdrop/backdrop-filter-with-reflection.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateBackdropFilters):
+        (WebCore::GraphicsLayerCA::updateBackdropFiltersRect):
+        Update backdrop layer clones to match new values set when the backdrop filter
+        configuration changes.
+
+        (WebCore::GraphicsLayerCA::ensureCloneLayers):
+        Create the backdrop layer clones map if needed and clone the existing backdrop layer.
+
+        (WebCore::GraphicsLayerCA::clearClones):
+        Clear the backdrop layer clones map.
+
+        (WebCore::GraphicsLayerCA::fetchCloneLayers):
+        Obtain a clone for the backdrop layer, and if we have a valid clone, add it to the
+        structural layer clone as its first child to match the operation in updateSublayerList().
+
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        Modify the signature for ensureCloneLayers() to account for the new backdrop layer clone and
+        declare the backdrop layer clone map.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::clone):
+        Reflect the backdrop layer type when cloning a PlatformCALayer.
+
 2016-06-03  Brady Eidson  <beidson@apple.com>
 
         ResourceResponseBase cleanup.

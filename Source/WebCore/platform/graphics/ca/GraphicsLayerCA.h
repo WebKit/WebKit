@@ -374,7 +374,7 @@ private:
     PassRefPtr<PlatformCALayer> findOrMakeClone(CloneID, PlatformCALayer *, LayerMap*, CloneLevel);
 
     void ensureCloneLayers(CloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
-        RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, CloneLevel);
+        RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, RefPtr<PlatformCALayer>& backdropLayer, CloneLevel);
 
     static void clearClones(std::unique_ptr<LayerMap>&);
 
@@ -518,6 +518,7 @@ private:
     std::unique_ptr<LayerMap> m_contentsClippingLayerClones;
     std::unique_ptr<LayerMap> m_contentsShapeMaskLayerClones;
     std::unique_ptr<LayerMap> m_shapeMaskLayerClones;
+    std::unique_ptr<LayerMap> m_backdropLayerClones;
 
 #ifdef VISIBLE_TILE_WASH
     RefPtr<PlatformCALayer> m_visibleTileWashLayer;

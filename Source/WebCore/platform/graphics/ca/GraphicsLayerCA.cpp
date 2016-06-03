@@ -1950,6 +1950,14 @@ void GraphicsLayerCA::updateBackdropFilters()
 
     m_backdropLayer->setHidden(!m_contentsVisible);
     m_backdropLayer->setFilters(m_backdropFilters);
+
+    if (LayerMap* layerCloneMap = m_backdropLayerClones.get()) {
+        for (auto& clone : *layerCloneMap) {
+            PlatformCALayer* cloneLayer = clone.value.get();
+            cloneLayer->setHidden(!m_contentsVisible);
+            cloneLayer->setFilters(m_backdropFilters);
+        }
+    }
 }
 
 void GraphicsLayerCA::updateBackdropFiltersRect()
@@ -1959,6 +1967,14 @@ void GraphicsLayerCA::updateBackdropFiltersRect()
     FloatRect contentBounds(0, 0, m_backdropFiltersRect.width(), m_backdropFiltersRect.height());
     m_backdropLayer->setBounds(contentBounds);
     m_backdropLayer->setPosition(m_backdropFiltersRect.location());
+
+    if (LayerMap* layerCloneMap = m_backdropLayerClones.get()) {
+        for (auto& clone : *layerCloneMap) {
+            PlatformCALayer* cloneLayer = clone.value.get();
+            cloneLayer->setBounds(contentBounds);
+            cloneLayer->setPosition(m_backdropFiltersRect.location());
+        }
+    }
 }
 
 #if ENABLE(CSS_COMPOSITING)
@@ -3580,7 +3596,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Pl
 }   
 
 void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
-    RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, CloneLevel cloneLevel)
+    RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, RefPtr<PlatformCALayer>& backdropLayer, CloneLevel cloneLevel)
 {
     structuralLayer = nullptr;
     contentsLayer = nullptr;
@@ -3603,12 +3619,16 @@ void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>
     if (!m_shapeMaskLayerClones && m_shapeMaskLayer)
         m_shapeMaskLayerClones = std::make_unique<LayerMap>();
 
+    if (!m_backdropLayerClones && m_backdropLayer)
+        m_backdropLayerClones = std::make_unique<LayerMap>();
+    
     primaryLayer = findOrMakeClone(cloneID, m_layer.get(), m_layerClones.get(), cloneLevel);
     structuralLayer = findOrMakeClone(cloneID, m_structuralLayer.get(), m_structuralLayerClones.get(), cloneLevel);
     contentsLayer = findOrMakeClone(cloneID, m_contentsLayer.get(), m_contentsLayerClones.get(), cloneLevel);
     contentsClippingLayer = findOrMakeClone(cloneID, m_contentsClippingLayer.get(), m_contentsClippingLayerClones.get(), cloneLevel);
     contentsShapeMaskLayer = findOrMakeClone(cloneID, m_contentsShapeMaskLayer.get(), m_contentsShapeMaskLayerClones.get(), cloneLevel);
     shapeMaskLayer = findOrMakeClone(cloneID, m_shapeMaskLayer.get(), m_shapeMaskLayerClones.get(), cloneLevel);
+    backdropLayer = findOrMakeClone(cloneID, m_backdropLayer.get(), m_backdropLayerClones.get(), cloneLevel);
 }
 
 void GraphicsLayerCA::clearClones(std::unique_ptr<LayerMap>& layerMap)
@@ -3630,6 +3650,7 @@ void GraphicsLayerCA::removeCloneLayers()
     clearClones(m_contentsClippingLayerClones);
     clearClones(m_contentsShapeMaskLayerClones);
     clearClones(m_shapeMaskLayerClones);
+    clearClones(m_backdropLayerClones);
 }
 
 FloatPoint GraphicsLayerCA::positionForCloneRootLayer() const
@@ -3663,7 +3684,8 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
     RefPtr<PlatformCALayer> contentsClippingLayer;
     RefPtr<PlatformCALayer> contentsShapeMaskLayer;
     RefPtr<PlatformCALayer> shapeMaskLayer;
-    ensureCloneLayers(replicaState.cloneID(), primaryLayer, structuralLayer, contentsLayer, contentsClippingLayer, contentsShapeMaskLayer, shapeMaskLayer, cloneLevel);
+    RefPtr<PlatformCALayer> backdropLayer;
+    ensureCloneLayers(replicaState.cloneID(), primaryLayer, structuralLayer, contentsLayer, contentsClippingLayer, contentsShapeMaskLayer, shapeMaskLayer, backdropLayer, cloneLevel);
 
     if (m_maskLayer) {
         RefPtr<PlatformCALayer> maskClone = downcast<GraphicsLayerCA>(*m_maskLayer).fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel);
@@ -3707,9 +3729,12 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
 
     if (shapeMaskLayer)
         primaryLayer->setMask(shapeMaskLayer.get());
-    
+
     if (replicaLayer || structuralLayer || contentsLayer || contentsClippingLayer || childLayers.size() > 0) {
         if (structuralLayer) {
+            if (backdropLayer)
+                clonalSublayers.append(backdropLayer);
+            
             // Replicas render behind the actual layer content.
             if (replicaLayer)
                 clonalSublayers.append(replicaLayer);

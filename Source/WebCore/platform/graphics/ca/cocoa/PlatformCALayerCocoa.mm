@@ -326,6 +326,9 @@ PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* o
     case LayerTypeShapeLayer:
         type = LayerTypeShapeLayer;
         break;
+    case LayerTypeBackdropLayer:
+        type = LayerTypeBackdropLayer;
+        break;
     case LayerTypeLayer:
     default:
         type = LayerTypeLayer;
