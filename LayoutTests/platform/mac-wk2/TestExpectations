@@ -463,3 +463,5 @@ webkit.org/b/155757 [ Debug ElCapitan ] media/media-document-audio-repaint.html 
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
 
 webkit.org/b/158133 [ Debug ] js/function-apply.html [ Pass Timeout ]
+
+webkit.org/b/158237 fast/scrolling/scroll-container-horizontally.html [ Pass Timeout ]
