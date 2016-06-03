@@ -194,11 +194,11 @@ void DatabaseProcess::createDatabaseToWebProcessConnection()
 
 void DatabaseProcess::fetchWebsiteData(SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID)
 {
+#if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID](const WebsiteData& websiteData) {
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
     };
 
-#if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         // FIXME: Pick the right database store based on the session ID.
         postDatabaseTask(CrossThreadTask([this, websiteDataTypes, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -216,11 +216,11 @@ void DatabaseProcess::fetchWebsiteData(SessionID, OptionSet<WebsiteDataType> web
 
 void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
+#if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID]() {
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteData(callbackID), 0);
     };
 
-#if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
         idbServer().closeAndDeleteDatabasesModifiedSince(modifiedSince, WTFMove(completionHandler));
 #endif
@@ -228,11 +228,11 @@ void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDat
 
 void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& securityOriginDatas, uint64_t callbackID)
 {
+#if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID]() {
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
     };
 
-#if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
         idbServer().closeAndDeleteDatabasesForOrigins(securityOriginDatas, WTFMove(completionHandler));
 #endif

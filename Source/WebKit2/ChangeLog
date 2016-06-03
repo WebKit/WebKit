@@ -1,3 +1,15 @@
+2016-06-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(INDEXED_DATABASE) build after r201575
+        https://bugs.webkit.org/show_bug.cgi?id=158346
+
+        Reviewed by Brady Eidson.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::fetchWebsiteData):
+        (WebKit::DatabaseProcess::deleteWebsiteData):
+        (WebKit::DatabaseProcess::deleteWebsiteDataForOrigins):
+
 2016-06-02  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebProcess::registerWithStateDumper()
