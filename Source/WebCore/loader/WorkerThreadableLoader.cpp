@@ -162,9 +162,9 @@ void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long by
 void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
     Ref<ThreadableLoaderClientWrapper> protectedWorkerClientWrapper = *m_workerClientWrapper;
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = WTFMove(protectedWorkerClientWrapper), identifier, response = response.isolatedCopy()] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = WTFMove(protectedWorkerClientWrapper), identifier, responseData = response.crossThreadData()] (ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        protectedWorkerClientWrapper->didReceiveResponse(identifier, response);
+        protectedWorkerClientWrapper->didReceiveResponse(identifier, ResourceResponse::fromCrossThreadData(WTFMove(responseData)));
     }, m_taskMode);
 }
 

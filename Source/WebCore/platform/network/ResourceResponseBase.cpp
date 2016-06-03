@@ -63,23 +63,42 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
 {
 }
 
-ResourceResponse ResourceResponseBase::isolatedCopy() const
+std::unique_ptr<ResourceResponseBase::CrossThreadData> ResourceResponseBase::crossThreadData() const
+{
+    auto data = std::make_unique<CrossThreadData>();
+
+    data->url = url().isolatedCopy();
+    data->mimeType = mimeType().isolatedCopy();
+    data->expectedContentLength = expectedContentLength();
+    data->textEncodingName = textEncodingName().isolatedCopy();
+
+    data->httpStatusCode = httpStatusCode();
+    data->httpStatusText = httpStatusText().isolatedCopy();
+    data->httpVersion = httpVersion().isolatedCopy();
+
+    data->httpHeaderFields = httpHeaderFields().isolatedCopy();
+    data->resourceLoadTiming = m_resourceLoadTiming.isolatedCopy();
+    data->type = m_type;
+
+    return data;
+}
+
+ResourceResponse ResourceResponseBase::fromCrossThreadData(std::unique_ptr<CrossThreadData>&& data)
 {
     ResourceResponse response;
 
-    response.setURL(url().isolatedCopy());
-    response.setMimeType(mimeType().isolatedCopy());
-    response.setExpectedContentLength(expectedContentLength());
-    response.setTextEncodingName(textEncodingName().isolatedCopy());
+    response.setURL(data->url);
+    response.setMimeType(data->mimeType);
+    response.setExpectedContentLength(data->expectedContentLength);
+    response.setTextEncodingName(data->textEncodingName);
 
-    response.setHTTPStatusCode(httpStatusCode());
-    response.setHTTPStatusText(httpStatusText().isolatedCopy());
-    response.setHTTPVersion(httpVersion().isolatedCopy());
+    response.setHTTPStatusCode(data->httpStatusCode);
+    response.setHTTPStatusText(data->httpStatusText);
+    response.setHTTPVersion(data->httpVersion);
 
-    response.lazyInit(AllFields);
-    response.m_httpHeaderFields = httpHeaderFields().isolatedCopy();
-    response.m_resourceLoadTiming = m_resourceLoadTiming.isolatedCopy();
-    response.m_type = m_type;
+    response.m_httpHeaderFields = WTFMove(data->httpHeaderFields);
+    response.m_resourceLoadTiming = data->resourceLoadTiming;
+    response.m_type = data->type;
 
     return response;
 }

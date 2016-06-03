@@ -45,7 +45,23 @@ class ResourceResponse;
 class ResourceResponseBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ResourceResponse isolatedCopy() const;
+    enum class Type;
+
+    struct CrossThreadData {
+        URL url;
+        String mimeType;
+        long long expectedContentLength;
+        String textEncodingName;
+        int httpStatusCode;
+        String httpStatusText;
+        String httpVersion;
+        HTTPHeaderMap httpHeaderFields;
+        ResourceLoadTiming resourceLoadTiming;
+        Type type;
+    };
+
+    std::unique_ptr<CrossThreadData> crossThreadData() const;
+    static ResourceResponse fromCrossThreadData(std::unique_ptr<CrossThreadData>&&);
 
     bool isNull() const { return m_isNull; }
     WEBCORE_EXPORT bool isHTTP() const;

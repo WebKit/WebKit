@@ -1,3 +1,22 @@
+2016-06-02  Brady Eidson  <beidson@apple.com>
+
+        Fix AtomicString regression caused by r201603.
+        https://bugs.webkit.org/show_bug.cgi?id=158338
+
+        Reviewed by Chris Dumez.
+
+        No new tests (Refactor, plus already caught by existing test configs).
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::crossThreadData): Re-introduce the cross thread data concept,
+          but more modern and clean this time.
+        (WebCore::ResourceResponseBase::fromCrossThreadData):
+        (WebCore::ResourceResponseBase::isolatedCopy): Deleted.
+        * platform/network/ResourceResponseBase.h:
+
 2016-06-02  Chris Dumez  <cdumez@apple.com>
 
         Drop BlobRegistryContext class as it is no longer needed
