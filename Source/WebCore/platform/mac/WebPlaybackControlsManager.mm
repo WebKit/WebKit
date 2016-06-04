@@ -33,6 +33,7 @@
 #else
 @implementation WebPlaybackControlsManager
 
+@synthesize webPlaybackSessionInterfaceMac=_webPlaybackSessionInterfaceMac;
 @synthesize contentDuration=_contentDuration;
 @synthesize hasEnabledAudio=_hasEnabledAudio;
 @synthesize hasEnabledVideo=_hasEnabledVideo;
