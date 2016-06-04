@@ -1,3 +1,20 @@
+2016-06-04  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Add -private.html variants of crypto/subtle IndexedDB tests.
+        https://bugs.webkit.org/show_bug.cgi?id=153323
+
+        Reviewed by Darin Adler.
+
+        * crypto/subtle/resources/rsa-indexeddb-non-exportable.js: Copied from LayoutTests/crypto/subtle/rsa-indexeddb-non-exportable.html.
+        * crypto/subtle/resources/rsa-indexeddb.js: Copied from LayoutTests/crypto/subtle/rsa-indexeddb.html.
+
+        * crypto/subtle/rsa-indexeddb-non-exportable-private-expected.txt: Added.
+        * crypto/subtle/rsa-indexeddb-non-exportable-private.html: Added.
+        * crypto/subtle/rsa-indexeddb-non-exportable.html:
+        * crypto/subtle/rsa-indexeddb-private-expected.txt: Added.
+        * crypto/subtle/rsa-indexeddb-private.html: Added.
+        * crypto/subtle/rsa-indexeddb.html:
+
 2016-06-04  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r201263): Some tests have become flaky timeouts.
