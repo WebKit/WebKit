@@ -1,5 +1,20 @@
 2016-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Bopomofo ruby in Dictionary.app is written horizontally (when it should be written vertically)
+        https://bugs.webkit.org/show_bug.cgi?id=158245
+        <rdar://problem/25675318>
+
+        Reviewed by Darin Adler.
+
+        Rebaselined fast/table/border-collapsing/004-vertical.html to show a progression.
+
+        * fast/text/orthogonal-writing-mode-containing-block-frameView-resize-relayout-expected.html: Added.
+        * fast/text/orthogonal-writing-mode-containing-block-frameView-resize-relayout.html: Added.
+        * platform/mac/fast/table/border-collapsing/004-vertical-expected.png: Rebased
+        * platform/mac/fast/table/border-collapsing/004-vertical-expected.txt: Rebased
+
+2016-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Text not visible while external font downloading
         https://bugs.webkit.org/show_bug.cgi?id=25207
         <rdar://problem/15167413>

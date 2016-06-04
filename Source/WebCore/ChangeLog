@@ -1,5 +1,45 @@
 2016-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Bopomofo ruby in Dictionary.app is written horizontally (when it should be written vertically)
+        https://bugs.webkit.org/show_bug.cgi?id=158245
+        <rdar://problem/25675318>
+
+        Reviewed by Darin Adler.
+
+        With orthogonal flows, the inner element gets a logical width that is computed from two values:
+        - The containing block's available logical height
+        - The FrameView's visibleHeight
+
+        In Dictionary.app, the FrameView's height changes, but this element doesn't get relaid out.
+        This is because of our optimization where normal-flow elements don't get relaid out if their
+        parent's width doesn't change (which is the case here).
+
+        Therefore, this orthogonal writing mode element should be relaid out when the FrameView changes
+        size. Luckily, we already have machinery for doing this: percentage heights. In quirks mode, a
+        div with a percentage height may walk arbitrarily far up the DOM tree in order to determine which
+        element the percentage should be resolved against. Therefore, we have a map of percentage-sizing-
+        ancestors to percentage-sizing-descendants which speeds up this search. If a percentage-sizing-
+        ancestor gets relaid out, all the relevant percentage-sizing-descendants get relaid out too.
+
+        Therefore, we can simply mark the FrameView as a percentage-sizing-ancestor and the orthogonal
+        flow element as a percentage-sizing-descendant. The lifetime of this relationship is already
+        managed correctly - it gets reset when style changes and when the renderer is destroyed, and
+        is created during layout.
+
+        Unfortunately, this same treatment should also be done to the element which dictates the
+        containing block's logical height (which caused https://bugs.webkit.org/show_bug.cgi?id=158286).
+        Implementing this would require giving RenderBox::availableLogicalHeight() a second result
+        of the necessary element which dictates the return. In an effort to keep this patch small and
+        focused, I'll do this secondary (much larger) work in a patch on that bug. This patch,
+        therefore, is kept small and focused.
+
+        Test: fast/text/orthogonal-writing-mode-containing-block-frameView-resize-relayout.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::perpendicularContainingBlockLogicalHeight):
+
+2016-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Text not visible while external font downloading
         https://bugs.webkit.org/show_bug.cgi?id=25207
         <rdar://problem/15167413>
