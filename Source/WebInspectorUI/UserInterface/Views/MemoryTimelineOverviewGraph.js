@@ -133,7 +133,13 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
                 element.remove();
         }
 
-        let visibleRecords = this._visibleRecords(graphStartTime, visibleEndTime);
+        let discontinuities = this.timelineOverview.discontinuitiesInTimeRange(graphStartTime, visibleEndTime);
+
+        // Don't include the record before the graph start if the graph start is within a gap.
+        let includeRecordBeforeStart = !discontinuities.length || discontinuities[0].startTime > graphStartTime;
+
+        // FIXME: <https://webkit.org/b/153759> Web Inspector: Memory Timelines should better extend to future data
+        let visibleRecords = this._memoryTimeline.recordsInTimeRange(graphStartTime, visibleEndTime, includeRecordBeforeStart);
         if (!visibleRecords.length)
             return;
 
@@ -148,19 +154,59 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
         }
 
         // Extend the first record to the start so it doesn't look like we originate at zero size.
-        if (visibleRecords[0] === this._memoryTimeline.records[0])
+        if (visibleRecords[0] === this._memoryTimeline.records[0] && (!discontinuities.length || discontinuities[0].startTime > visibleRecords[0].startTime))
             this._chart.addPointSet(0, pointSetForRecord(visibleRecords[0]));
 
-        // Points for visible records.
-        for (let record of visibleRecords) {
-            let x = xScale(record.startTime);
-            this._chart.addPointSet(x, pointSetForRecord(record));
+        function insertDiscontinuity(previousRecord, discontinuity, nextRecord)
+        {
+            console.assert(previousRecord || nextRecord);
+            if (!(previousRecord || nextRecord))
+                return;
+
+            let xStart = xScale(discontinuity.startTime);
+            let xEnd = xScale(discontinuity.endTime);
+
+            // Extend the previous record to the start of the discontinuity.
+            if (previousRecord)
+                this._chart.addPointSet(xStart, pointSetForRecord(previousRecord));
+
+            let zeroValues = Array((previousRecord || nextRecord).categories.length).fill(yScale(0));
+            this._chart.addPointSet(xStart, zeroValues);
+
+            if (nextRecord) {
+                this._chart.addPointSet(xEnd, zeroValues);
+                this._chart.addPointSet(xEnd, pointSetForRecord(nextRecord));
+            } else {
+                // Extend the discontinuity to the visible end time to prevent
+                // drawing artifacts when the next record arrives.
+                this._chart.addPointSet(xScale(visibleEndTime), zeroValues);
+            }
         }
 
-        // Extend the last value to current / end time.
-        let lastRecord = visibleRecords.lastValue;
-        let x = Math.floor(xScale(visibleEndTime));
-        this._chart.addPointSet(x, pointSetForRecord(lastRecord));
+        // Points for visible records.
+        let previousRecord = null;
+        for (let record of visibleRecords) {
+            if (discontinuities.length && discontinuities[0].endTime < record.startTime) {
+                let discontinuity = discontinuities.shift();
+                insertDiscontinuity.call(this, previousRecord, discontinuity, record);
+            }
+
+            let x = xScale(record.startTime);
+            this._chart.addPointSet(x, pointSetForRecord(record));
+
+            previousRecord = record;
+        }
+
+        if (discontinuities.length)
+            insertDiscontinuity.call(this, previousRecord, discontinuities[0], null);
+        else {
+            // Extend the last value to current / end time.
+            let lastRecord = visibleRecords.lastValue;
+            if (lastRecord.startTime <= visibleEndTime) {
+                let x = Math.floor(xScale(visibleEndTime));
+                this._chart.addPointSet(x, pointSetForRecord(lastRecord));
+            }
+        }
 
         this._chart.updateLayout();
     }
@@ -192,22 +238,6 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
         let lowerIndex = events.lowerBound(startTime, (time, event) => time - event.timestamp);
         let upperIndex = events.upperBound(endTime, (time, event) => time - event.timestamp);
         return events.slice(lowerIndex, upperIndex);
-    }
-
-    _visibleRecords(startTime, endTime)
-    {
-        let records = this._memoryTimeline.records;
-        let lowerIndex = records.lowerBound(startTime, (time, record) => time - record.timestamp);
-        let upperIndex = records.upperBound(endTime, (time, record) => time - record.timestamp);
-
-        // Include the record right before the start time in case it extends into this range.
-        if (lowerIndex > 0)
-            lowerIndex--;
-        // FIXME: <https://webkit.org/b/153759> Web Inspector: Memory Timelines should better extend to future data
-        // if (upperIndex !== records.length)
-        //     upperIndex++;
-
-        return records.slice(lowerIndex, upperIndex);
     }
 
     _memoryTimelineRecordAdded(event)

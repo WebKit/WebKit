@@ -422,6 +422,11 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         }
     }
 
+    discontinuitiesInTimeRange(startTime, endTime)
+    {
+        return this._recording.discontinuitiesInTimeRange(startTime, endTime);
+    }
+
     // Protected
 
     get timelineRuler()

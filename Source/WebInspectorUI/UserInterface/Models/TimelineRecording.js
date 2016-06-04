@@ -159,6 +159,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         this._eventMarkers = [];
         this._startTime = NaN;
         this._endTime = NaN;
+        this._discontinuities = [];
 
         this._topDownCallingContextTree.reset();
         this._bottomUpCallingContextTree.reset();
@@ -280,6 +281,16 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
             return;
 
         memoryTimeline.addMemoryPressureEvent(memoryPressureEvent);
+    }
+
+    addDiscontinuity(startTime, endTime)
+    {
+        this._discontinuities.push({startTime, endTime});
+    }
+
+    discontinuitiesInTimeRange(startTime, endTime)
+    {
+        return this._discontinuities.filter((item) => item.startTime < endTime && item.endTime > startTime);
     }
 
     computeElapsedTime(timestamp)

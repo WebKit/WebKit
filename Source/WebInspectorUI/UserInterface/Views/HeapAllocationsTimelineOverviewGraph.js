@@ -57,7 +57,7 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
         this._selectedImageElement = null;
 
         // This may display records past the current time marker.
-        let visibleRecords = this._visibleRecords(this.startTime, this.endTime);
+        let visibleRecords = this._heapAllocations.recordsInTimeRange(this.startTime, this.endTime);
         if (!visibleRecords.length)
             return;
 
@@ -112,14 +112,6 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
         imageElement.classList.add("selected");
 
         this._selectedImageElement = imageElement;
-    }
-
-    _visibleRecords(startTime, endTime)
-    {
-        let records = this._heapAllocationsTimeline.records;
-        let lowerIndex = records.lowerBound(startTime, (time, record) => time - record.timestamp);
-        let upperIndex = records.upperBound(endTime, (time, record) => time - record.timestamp);
-        return records.slice(lowerIndex, upperIndex);
     }
 
     _heapAllocationTimelineRecordAdded(event)

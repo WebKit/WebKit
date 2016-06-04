@@ -1,3 +1,60 @@
+2016-06-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: discontinuous recordings should have discontinuities in the timeline memory graph
+        https://bugs.webkit.org/show_bug.cgi?id=158052
+        <rdar://problem/26516695>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add gaps to the overview and category line charts where discontinuities
+        exist in the timeline recording.
+
+        * UserInterface/Models/Timeline.js:
+        (WebInspector.Timeline.prototype.recordsInTimeRange):
+        Replaces `_visibleRecords` methods found in various views.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.reset):
+        (WebInspector.TimelineRecording.prototype.addDiscontinuity):
+        (WebInspector.TimelineRecording.prototype.discontinuitiesInTimeRange):
+        Allow discontinuities to be added to the recording, and have a means to
+        look up gaps within a time range.
+
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.js:
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype._visibleRecords): Deleted.
+        Replaced by Timeline helper method.
+
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.layout.insertDiscontinuity):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.layout):
+        Insert zero-points into the chart at discontinuity boundaries to create
+        gaps. Data points for records immediately before or after a gap are extended
+        to the edge of the discontinuity.
+
+        (WebInspector.MemoryTimelineOverviewGraph.prototype._visibleRecords): Deleted.
+        Replaced by Timeline helper method.
+
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WebInspector.MemoryTimelineView.prototype.layout):
+        Insert zero-points into each category chart at discontinuity boundaries
+        to create gaps.
+
+        Insert zero-points into the chart to create gaps.
+        (WebInspector.MemoryTimelineView.prototype._visibleRecords): Deleted.
+        Replaced by Timeline helper method.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype.discontinuitiesInTimeRange):
+        Forward to the TimelineRecording, which isn't exposed to clients.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype._capturingStarted):
+        (WebInspector.TimelineRecordingContentView.prototype._capturingStopped):
+        (WebInspector.TimelineRecordingContentView.prototype._recordingReset):
+        Track discontinuities (recording stop followed by a start) and add them
+        to the current recording.
+
 2016-06-03  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add a keyboard shortcut to close the current tab bar item
