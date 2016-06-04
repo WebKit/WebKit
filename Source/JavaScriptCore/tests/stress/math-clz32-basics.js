@@ -56,7 +56,7 @@ function verifyMathClz32OnIntegerWithOtherTypes()
 
     var clzMinusZero = mathClz32OnInteger(-0);
     if (clzMinusZero != 32)
-        throw "mathClz32OnInteger(\"-0\") = " + clzMinusZero;
+        throw "mathClz32OnInteger(-0) = " + clzMinusZero;
 }
 noInline(verifyMathClz32OnIntegerWithOtherTypes);
 
@@ -70,9 +70,9 @@ function mathClz32OnDouble(value)
 {
     return Math.clz32(value);
 }
-noInline(mathClz32OnInteger);
+noInline(mathClz32OnDouble);
 
-// Test simple cases on integers.
+// Test simple cases on doubles.
 function testMathClz32OnDoubles()
 {
     var value = mathClz32OnDouble(Math.PI);
@@ -89,7 +89,7 @@ function testMathClz32OnDoubles()
 
     var value = mathClz32OnDouble(-0);
     if (value != 32)
-        throw "mathClz32OnDouble(0) = " + value;
+        throw "mathClz32OnDouble(-0) = " + value;
 
     var value = mathClz32OnDouble(NaN);
     if (value != 32)

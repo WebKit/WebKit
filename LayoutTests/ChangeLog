@@ -1,3 +1,31 @@
+2016-06-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add better basic isNaN test coverage
+        https://bugs.webkit.org/show_bug.cgi?id=158379
+
+        Reviewed by Benjamin Poulain.
+
+        * js/Number-isNaN-expected.txt: Added.
+        * js/Number-isNaN.html: Added.
+        * js/global-isNaN-expected.txt: Added.
+        * js/global-isNaN.html: Added.
+        * js/script-tests/Number-isNaN.js: Added.
+        (objectWithNumberValueOf.valueOf):
+        (objectWithNaNValueOf.valueOf):
+        (objectRecordConversionCalls.toString):
+        (objectRecordConversionCalls.valueOf):
+        * js/script-tests/global-isNaN.js: Added.
+        (objectConvertToString.toString):
+        (objectRecordToStringCall.toString):
+        (objectThrowOnToString.toString):
+        (objectWithValueOf.valueOf):
+        (objectThrowOnValueOf.valueOf):
+        (objectThrowOnValueOf.toString):
+        (objectRecordValueOfCall.valueOf):
+        (objectRecordConversionCalls.toString):
+        (objectRecordConversionCalls.valueOf):
+        * js/script-tests/math-clz32.js:
+
 2016-06-04  Brent Fulgham  <bfulgham@apple.com>
 
         CSP: Content Security Policy directive, upgrade-insecure-requests (UIR)
