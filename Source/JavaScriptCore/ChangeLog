@@ -1,5 +1,25 @@
 2016-06-03  Saam barati  <sbarati@apple.com>
 
+        Proxy.ownKeys should no longer throw an exception when duplicate keys are returned and the target is non-extensible
+        https://bugs.webkit.org/show_bug.cgi?id=158350
+        <rdar://problem/26626211>
+
+        Reviewed by Michael Saboff.
+
+        The spec was recently changes in Proxy [[OwnPropertyKeys]]
+        to allow for duplicate property names under certain circumstances.
+        This patch fixes our implementation to match the spec.
+        See: https://github.com/tc39/ecma262/pull/594
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        * tests/stress/proxy-own-keys.js:
+        (i.catch):
+        (ownKeys):
+        (assert):
+
+2016-06-03  Saam barati  <sbarati@apple.com>
+
         Some shadow chicken code is wrong when run on a big endian CPU
         https://bugs.webkit.org/show_bug.cgi?id=158361
 

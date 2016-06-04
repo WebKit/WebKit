@@ -861,7 +861,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     CallData callData;
     CallType callType;
     JSValue ownKeysMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "ownKeys"), ASCIILiteral("'ownKeys' property of a Proxy's handler should be callable"));
-    if (exec->hadException())
+    if (vm.exception())
         return;
     JSObject* target = this->target();
     if (ownKeysMethod.isUndefined()) {
@@ -872,7 +872,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     JSValue arrayLikeObject = call(exec, ownKeysMethod, callType, callData, handler, arguments);
-    if (exec->hadException())
+    if (vm.exception())
         return;
 
     PropertyNameMode propertyNameMode = trapResult.mode();
@@ -890,8 +890,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     }
     ASSERT(resultFilter);
     RuntimeTypeMask dontThrowAnExceptionTypeFilter = TypeString | TypeSymbol;
-    HashMap<UniquedStringImpl*, unsigned> uncheckedResultKeys;
-    unsigned totalSize = 0;
+    HashSet<UniquedStringImpl*> uncheckedResultKeys;
 
     auto addPropName = [&] (JSValue value, RuntimeType type) -> bool {
         static const bool doExitEarly = true;
@@ -901,33 +900,30 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
             return dontExitEarly;
 
         Identifier ident = value.toPropertyKey(exec);
-        if (exec->hadException())
+        if (vm.exception())
             return doExitEarly;
 
-        ++uncheckedResultKeys.add(ident.impl(), 0).iterator->value;
-        ++totalSize;
-
+        uncheckedResultKeys.add(ident.impl());
         trapResult.addUnchecked(ident.impl());
-
         return dontExitEarly;
     };
 
     createListFromArrayLike(exec, arrayLikeObject, dontThrowAnExceptionTypeFilter, ASCIILiteral("Proxy handler's 'ownKeys' method must return an array-like object containing only Strings and Symbols"), addPropName);
-    if (exec->hadException())
+    if (vm.exception())
         return;
 
     bool targetIsExensible = target->isExtensible(exec);
 
     PropertyNameArray targetKeys(&vm, propertyNameMode);
     target->methodTable(vm)->getOwnPropertyNames(target, exec, targetKeys, enumerationMode);
-    if (exec->hadException())
+    if (vm.exception())
         return;
     Vector<UniquedStringImpl*> targetConfigurableKeys;
     Vector<UniquedStringImpl*> targetNonConfigurableKeys;
     for (const Identifier& ident : targetKeys) {
         PropertyDescriptor descriptor;
         bool isPropertyDefined = target->getOwnPropertyDescriptor(exec, ident.impl(), descriptor); 
-        if (exec->hadException())
+        if (vm.exception())
             return;
         if (isPropertyDefined && !descriptor.configurable())
             targetNonConfigurableKeys.append(ident.impl());
@@ -935,26 +931,18 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
             targetConfigurableKeys.append(ident.impl());
     }
 
-    auto removeIfContainedInUncheckedResultKeys = [&] (UniquedStringImpl* impl) -> bool {
-        static const bool isContainedIn = true;
-        static const bool isNotContainedIn = false;
-
+    enum ContainedIn { IsContainedIn, IsNotContainedIn };
+    auto removeIfContainedInUncheckedResultKeys = [&] (UniquedStringImpl* impl) -> ContainedIn {
         auto iter = uncheckedResultKeys.find(impl);
         if (iter == uncheckedResultKeys.end())
-            return isNotContainedIn;
+            return IsNotContainedIn;
 
-        unsigned& count = iter->value;
-        if (count == 0)
-            return isNotContainedIn;
-
-        --count;
-        --totalSize;
-        return isContainedIn;
+        uncheckedResultKeys.remove(iter);
+        return IsContainedIn;
     };
 
     for (UniquedStringImpl* impl : targetNonConfigurableKeys) {
-        bool contains = removeIfContainedInUncheckedResultKeys(impl);
-        if (!contains) {
+        if (removeIfContainedInUncheckedResultKeys(impl) == IsNotContainedIn) {
             throwVMTypeError(exec, makeString("Proxy object's 'target' has the non-configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
             return;
         }
@@ -964,22 +952,14 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
         return;
 
     for (UniquedStringImpl* impl : targetConfigurableKeys) {
-        bool contains = removeIfContainedInUncheckedResultKeys(impl);
-        if (!contains) {
+        if (removeIfContainedInUncheckedResultKeys(impl) == IsNotContainedIn) {
             throwVMTypeError(exec, makeString("Proxy object's non-extensible 'target' has configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
             return;
         }
     }
 
-#ifndef NDEBUG
-    unsigned sum = 0;
-    for (unsigned keyCount : uncheckedResultKeys.values())
-        sum += keyCount;
-    ASSERT(sum == totalSize);
-#endif
-
-    if (totalSize) {
-        throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'ownKeys' method returned a key that was not present in its target or it returned duplicate keys"));
+    if (uncheckedResultKeys.size()) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'ownKeys' method returned a key that was not present in its non-extensible target"));
         return;
     }
 }

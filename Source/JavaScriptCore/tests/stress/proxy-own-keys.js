@@ -160,11 +160,80 @@ function assert(b) {
             Object.keys(proxy);
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' method returned a key that was not present in its target or it returned duplicate keys");
+            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' method returned a key that was not present in its non-extensible target");
         }
         assert(threw);
         assert(called);
         called = false;
+    }
+}
+
+{
+    let target = {};
+    let called1 = false;
+    let called2 = false;
+    Object.defineProperty(target, 'a', { value: 42, configurable: false });
+    let p1 = new Proxy(target, {
+        ownKeys() {
+            called1 = true;
+            return ['a', 'a'];
+        }
+    });
+    let p2 = new Proxy(p1, {
+        ownKeys() {
+            called2 = true;
+            return ['a'];
+        }
+    });
+
+    for (let i = 0; i < 500; i++) {
+        // FIXME: we may update the spec to make this test not throw.
+        // see: https://github.com/tc39/ecma262/pull/594
+        let threw = false;
+        try {
+            Reflect.ownKeys(p2);
+        } catch(e) {
+            assert(e.toString() === "TypeError: Proxy object's 'target' has the non-configurable property 'a' that was not in the result from the 'ownKeys' trap");
+            threw = true;
+        }
+        assert(threw);
+        assert(called1);
+        assert(called2);
+    }
+}
+
+{
+    let target = {};
+    let called1 = false;
+    let called2 = false;
+    Object.defineProperty(target, 'a', { value: 42, configurable: true });
+    Object.preventExtensions(target);
+    let p1 = new Proxy(target, {
+        ownKeys() {
+            called1 = true;
+            return ['a', 'a'];
+        }
+    });
+    let p2 = new Proxy(p1, {
+        ownKeys() {
+            called2 = true;
+            return ['a'];
+        }
+    });
+
+    for (let i = 0; i < 500; i++) {
+        // FIXME: we may update the spec to make this test not throw.
+        // see: https://github.com/tc39/ecma262/pull/594
+        let threw = false;
+        try {
+            Reflect.ownKeys(p2);
+        } catch(e) {
+            assert(e.toString() === "TypeError: Proxy object's non-extensible 'target' has configurable property 'a' that was not in the result from the 'ownKeys' trap");
+            threw = true;
+        }
+        assert(threw);
+        assert(called1);
+        assert(called2);
     }
 }
 
@@ -186,14 +255,7 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 500; i++) {
-        let threw = false;
-        try {
-            Object.keys(proxy);
-        } catch(e) {
-            threw = true;
-            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' method returned a key that was not present in its target or it returned duplicate keys");
-        }
-        assert(threw);
+        Object.keys(proxy);
         assert(called);
         called = false;
     }
