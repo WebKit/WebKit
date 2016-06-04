@@ -1,5 +1,35 @@
 2016-06-03  Benjamin Poulain  <bpoulain@apple.com>
 
+        Eager FTL failure for strict comparison of NaN with number check
+        https://bugs.webkit.org/show_bug.cgi?id=158368
+
+        Reviewed by Darin Adler.
+
+        DoupleRep with a RealNumberUse starts by handling double
+        then falls back to Int32 if the unboxed double is NaN.
+
+        Before handling integers, the code is checking if the input
+        is indeed an int32. The problem was that this check failed
+        to account for NaN as an original input of the DoubleRep.
+
+        The call to isNotInt32() filter the doubles checks because
+        that was handled by the previous block.
+        The problem is the previous block handles any double except NaN.
+        If the original input was NaN, the masking by "~SpecFullDouble"
+        filter that possibility and isNotInt32() fails to test that case.
+
+        This patch fixes the issue by changing the filter to SpecDoubleReal.
+        The type SpecDoubleReal does not include the NaN types.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDoubleRep):
+        * tests/stress/double-rep-real-number-use-on-nan.js: Added.
+        To ensure the isNotInt32() does not test anything, we want
+        proven numbers as input. The (+value) are there to enforce
+        a ToNumber() which in turn give us a proven Number type.
+
+2016-06-03  Benjamin Poulain  <bpoulain@apple.com>
+
         JSON.stringify replacer function calls with numeric array indices
         https://bugs.webkit.org/show_bug.cgi?id=158262
         rdar://problem/26613876
