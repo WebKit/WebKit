@@ -89,6 +89,7 @@ Timing-Allow-Origin
 Trailer
 Transfer-Encoding
 Upgrade
+Upgrade-Insecure-Requests
 User-Agent
 Vary
 Via

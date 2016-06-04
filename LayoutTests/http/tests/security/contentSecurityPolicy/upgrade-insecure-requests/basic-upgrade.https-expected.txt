@@ -1,0 +1,3 @@
+
+PASS Verify that images are upgraded. 
+

@@ -1,0 +1,6 @@
+
+
+PASS Same-host frames are upgraded. 
+PASS Cross-host frames are upgraded. 
+PASS Upgrade policy does NOT cascade to nested, cross-host frames. 
+

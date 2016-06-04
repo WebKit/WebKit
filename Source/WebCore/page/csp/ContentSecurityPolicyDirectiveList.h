@@ -86,6 +86,7 @@ private:
     void parsePluginTypes(const String& name, const String& value);
     void addDirective(const String& name, const String& value);
     void applySandboxPolicy(const String& name, const String& sandboxPolicy);
+    void setUpgradeInsecureRequests(const String& name);
 
     template <class CSPDirectiveType>
     void setCSPDirective(const String& name, const String& value, std::unique_ptr<CSPDirectiveType>&);
@@ -100,8 +101,9 @@ private:
     String m_header;
     ContentSecurityPolicyHeaderType m_headerType;
 
-    bool m_reportOnly;
-    bool m_haveSandboxPolicy;
+    bool m_reportOnly { false };
+    bool m_haveSandboxPolicy { false };
+    bool m_upgradeInsecureRequests { false };
 
     std::unique_ptr<ContentSecurityPolicyMediaListDirective> m_pluginTypes;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_baseURI;

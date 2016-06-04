@@ -1,3 +1,81 @@
+2016-06-04  Brent Fulgham  <bfulgham@apple.com>
+
+        CSP: Content Security Policy directive, upgrade-insecure-requests (UIR)
+        https://bugs.webkit.org/show_bug.cgi?id=143653
+        <rdar://problem/23032067>
+
+        Reviewed by Andy Estes.
+
+        Some of these tests are based on a set of Blink patches by Mike West <mkwst@chromium.org>.
+        <https://src.chromium.org/viewvc/blink?revision=192607&view=revision>,
+        <https://codereview.chromium.org/1178093002>, <https://codereview.chromium.org/1964303003>
+
+        The rest of them are based on our own mixedContent tests, revised for upgraded requests.
+
+        Note that WebSockets are not part of this testing at present due to https://bugs.webkit.org/show_bug.cgi?id=157884.
+
+        * http/tests/security/contentSecurityPolicy/report-only-upgrade-insecure.php: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade-cors.https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade-cors.https.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade.https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade.https.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/form-upgrade-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/form-upgrade.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-auxiliary-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-auxiliary.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-nested-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-nested.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-subresource-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-subresource.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-top-level-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-top-level.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/iframe-upgrade.https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/iframe-upgrade.https.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-nested-upgrades-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-nested-upgrades.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-open-window-upgrades-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-open-window-upgrades.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/basic-upgrade-cors.https.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/check-https-header.pl: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/echo-https-header.pl: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/frame-with-insecure-audio-video.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/frame-with-insecure-css.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/frame-with-insecure-image.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/frame-with-redirect-http-to-https-script.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/frame-with-redirect-https-to-http-script.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/insecure-xhr-in-main-frame-window.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/mixed-content-with-upgrade.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/post-https-header.pl: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-audio-video-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-audio-video-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-css-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-css-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-image-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-image-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-xhr-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-xhr-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-redirect-http-to-https-script-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-redirect-http-to-https-script-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-redirect-https-to-http-script-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-redirect-https-to-http-script-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrades-mixed-content-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrades-mixed-content.html: Added.
+        * http/tests/security/resources/post-origin-to-parent.html: Added.
+        * http/tests/ssl/iframe-upgrade.https-expected.txt: Added.
+        * http/tests/ssl/iframe-upgrade.https.html: Added.
+        * http/tests/ssl/upgrade-origin-usage-expected.txt: Added.
+        * http/tests/ssl/upgrade-origin-usage.html: Added.
+        * http/tests/ssl/resources/origin-usage-iframe-1.html: Added.
+        * http/tests/ssl/resources/origin-usage-iframe-1.manifest: Added.
+        * http/tests/ssl/resources/origin-usage-iframe-2.html: Added.
+        * http/tests/ssl/resources/origin-usage-iframe-2.manifest: Added.
+        * http/tests/websocket/tests/hybi/upgrade-simple-ws-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/upgrade-simple-ws.html: Added.
+        * TestExpectations: Skip http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-simple-ws.html since the
+        WebSocket server does not currently support wss sockets.
+
 2016-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Bopomofo ruby in Dictionary.app is written horizontally (when it should be written vertically)

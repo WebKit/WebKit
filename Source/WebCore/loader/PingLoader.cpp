@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2015 Roopesh Chander (roop@roopc.net)
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,6 +34,7 @@
 #include "config.h"
 #include "PingLoader.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "FormData.h"
 #include "Frame.h"
@@ -80,6 +82,9 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
         return;
 #endif
 
+    if (Document* document = frame.document())
+        document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
+
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
     String referrer = SecurityPolicy::generateReferrerHeader(frame.document()->referrerPolicy(), request.url(), frame.loader().outgoingReferrer());
     if (!referrer.isEmpty())
@@ -101,6 +106,8 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
     if (processContentExtensionRulesForLoad(frame, request, ResourceType::Raw) == ContentExtensions::BlockedStatus::Blocked)
         return;
 #endif
+
+    frame.document()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
     request.setHTTPMethod("POST");
     request.setHTTPContentType("text/ping");
@@ -132,6 +139,9 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, RefPtr<
     if (processContentExtensionRulesForLoad(frame, request, ResourceType::Raw) == ContentExtensions::BlockedStatus::Blocked)
         return;
 #endif
+
+    if (Document* document = frame.document())
+        document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
     request.setHTTPMethod(ASCIILiteral("POST"));
     request.setHTTPBody(WTFMove(report));

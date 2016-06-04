@@ -1,3 +1,114 @@
+2016-06-04  Brent Fulgham  <bfulgham@apple.com>
+
+        CSP: Content Security Policy directive, upgrade-insecure-requests (UIR)
+        https://bugs.webkit.org/show_bug.cgi?id=143653
+        <rdar://problem/23032067>
+
+        Reviewed by Andy Estes.
+
+        Modify our loading logic so that we recognize and upgrade insecure requests to secure
+        requests if the Content Security Policy directive 'upgrade-insecure-requests' is
+        present.
+        
+        Add a static helper function to ContentSecurityPolicy to upgrade insecure URLs so
+        that we don't have to sprinkle the same code all over the loader system.
+
+        Tests: http/tests/security/contentSecurityPolicy/report-only-upgrade-insecure.php
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade-cors.https.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade.https.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/form-upgrade.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-auxiliary.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-nested.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-subresource.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/https-header-top-level.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/iframe-upgrade.https.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-nested-upgrades.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-open-window-upgrades.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-audio-video-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-css-in-iframe.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-image-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-simple-ws.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-xhr-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-redirect-http-to-https-script-in-iframe.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-redirect-https-to-http-script-in-iframe.html
+               http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrades-mixed-content.html
+               http/tests/ssl/iframe-upgrade.https.html
+               http/tests/ssl/upgrade-origin-usage.html
+               http/tests/websocket/tests/hybi/upgrade-simple-ws.html
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect): Upgrade insecure requests if the CSP
+        indicates we should.
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Populate new document CSP with sets of upgrade host and port combinations.
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript): Upgrade insecure requests if
+        the CSP indicates we should.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Ditto.
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin): Ditto.
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create): Ditto.
+        (WebCore::FormSubmission::populateFrameLoadRequest): Add "Upgrade-Insecure-Requests"
+        header to frame load requests.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToMainResourceRequest): Add the
+        'Update-Insecure-Requests' header field if necessary.
+        (WebCore::FrameLoader::addHTTPUpgradeInsecureRequestsIfNeeded): Added helper function.
+        (WebCore::FrameLoader::loadPostRequest): Upgrade insecure requests if the CSP
+        indicates we should.
+        (WebCore::FrameLoader::loadResourceSynchronously): Ditto.
+        (WebCore::FrameLoader::loadDifferentDocumentItem): If loading a form, add the
+        'Update-Insecure-Requests' header field if necessary.
+        (WebCore::createWindow): Upgrade insecure requests if the CSP
+        indicates we should.
+        * loader/FrameLoader.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage): Upgrade insecure requests if the CSP
+        indicates we should.
+        (WebCore::PingLoader::sendPing): Ditto.
+        (WebCore::PingLoader::sendViolationReport): Ditto.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal): Ditto.
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestFrame): Ditto.
+        (WebCore::SubframeLoader::requestObject): Ditto.
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::shouldLoadResourceFromApplicationCache): Ditto.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage): Ditto.
+        (WebCore::CachedResourceLoader::requestResource): Ditto.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow): Add the 'Update-Insecure-Requests' header
+        field if necessary.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::copyStateFrom): Populate upgraded resource set
+        from other context.
+        (WebCore::ContentSecurityPolicy::upgradeInsecureRequestIfNeeded): Added helper function
+        to upgrade requests when the upgrade-insecure-requests CSP policy is present, or if
+        the host and port combination have previously been upgraded.
+        (WebCore::ContentSecurityPolicy::upgradeInsecureNavigationRequestIfNeeded): Added
+        helper function to upgrade requests that have been previously upgraded. Cross-site
+        navigations only get upgraded when they have been previously upgraded.
+        (WebCore::ContentSecurityPolicy::addInsecureNavigationRequestsToUpgrade): Added.
+        (WebCore::ContentSecurityPolicy::populateInsecureNavigationRequestsToUpgradeFromOther): Added.
+        * page/csp/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::setUpgradeInsecureRequests): Added.
+        (WebCore::ContentSecurityPolicy::upgradeInsecureRequests): Added.
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::ContentSecurityPolicyDirectiveList): Use
+        more C++11 initializations.
+        (WebCore::ContentSecurityPolicyDirectiveList::setUpgradeInsecureRequests): Added.
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective): Teach this function to
+        recognize the new directive.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        * page/csp/ContentSecurityPolicyDirectiveNames.cpp:
+        * page/csp/ContentSecurityPolicyDirectiveNames.h:
+        * platform/network/HTTPHeaderNames.in: Add new 'Upgrade-Insecure-Requests' header field.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open): Upgrade insecure requests if the CSP if needed.
+
 2016-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Bopomofo ruby in Dictionary.app is written horizontally (when it should be written vertically)
