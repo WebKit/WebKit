@@ -223,7 +223,6 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     , m_renderContextID(0)
     , m_rendererType(UseSoftwareRenderer)
     , m_waitingForReply(false)
-    , m_urlCheckCounter(0)
     , m_pluginFunctionCallDepth(0)
     , m_shouldStopSoon(false)
     , m_currentRequestID(0)
@@ -1605,58 +1604,6 @@ bool NetscapePluginInstanceProxy::convertPoint(double sourceX, double sourceY, N
     ASSERT(m_pluginView);
 
     return [m_pluginView convertFromX:sourceX andY:sourceY space:sourceSpace toX:&destX andY:&destY space:destSpace];
-}
-
-uint32_t NetscapePluginInstanceProxy::checkIfAllowedToLoadURL(const char* url, const char* target)
-{
-    uint32_t checkID;
-    
-    // Assign a check ID
-    do {
-        checkID = ++m_urlCheckCounter;
-    } while (m_urlChecks.contains(checkID) || !m_urlCheckCounter);
-
-    NSString *frameName = target ? [NSString stringWithCString:target encoding:NSISOLatin1StringEncoding] : nil;
-
-    NSNumber *contextInfo = [[NSNumber alloc] initWithUnsignedInt:checkID];
-    WebPluginContainerCheck *check = [WebPluginContainerCheck checkWithRequest:[m_pluginView requestWithURLCString:url]
-                                                                        target:frameName
-                                                                  resultObject:m_pluginView
-                                                                      selector:@selector(_containerCheckResult:contextInfo:)
-                                                                    controller:m_pluginView 
-                                                                   contextInfo:contextInfo];
-    
-    [contextInfo release];
-    m_urlChecks.set(checkID, check);
-    [check start];
-    
-    return checkID;
-}
-
-void NetscapePluginInstanceProxy::cancelCheckIfAllowedToLoadURL(uint32_t checkID)
-{
-    URLCheckMap::iterator it = m_urlChecks.find(checkID);
-    if (it == m_urlChecks.end())
-        return;
-    
-    WebPluginContainerCheck *check = it->value.get();
-    [check cancel];
-    m_urlChecks.remove(it);
-}
-
-void NetscapePluginInstanceProxy::checkIfAllowedToLoadURLResult(uint32_t checkID, bool allowed)
-{
-}
-
-void NetscapePluginInstanceProxy::resolveURL(const char* url, const char* target, data_t& resolvedURLData, mach_msg_type_number_t& resolvedURLLength)
-{
-    ASSERT(m_pluginView);
-    
-    WTF::CString resolvedURL = [m_pluginView resolvedURLStringForURL:url target:target];
-    
-    resolvedURLLength = resolvedURL.length();
-    mig_allocate(reinterpret_cast<vm_address_t*>(&resolvedURLData), resolvedURLLength);
-    memcpy(resolvedURLData, resolvedURL.data(), resolvedURLLength);
 }
 
 void NetscapePluginInstanceProxy::privateBrowsingModeDidChange(bool isPrivateBrowsingEnabled)

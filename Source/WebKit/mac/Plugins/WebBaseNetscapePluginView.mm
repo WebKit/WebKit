@@ -34,8 +34,6 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitSystemInterface.h"
-#import "WebPluginContainerCheck.h"
-#import "WebNetscapeContainerCheckContextInfo.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebView.h"
@@ -828,27 +826,6 @@ using namespace WebCore;
     return TRUE;
 }
 
-
-- (CString)resolvedURLStringForURL:(const char*)url target:(const char*)target
-{
-    String relativeURLString = String::fromUTF8(url);
-    if (relativeURLString.isNull())
-        return CString();
-    
-    Frame* frame = core([self webFrame]);
-    if (!frame)
-        return CString();
-
-    Frame* targetFrame = frame->tree().find(String::fromUTF8(target));
-    if (!targetFrame)
-        return CString();
-    
-    if (!frame->document()->securityOrigin()->canAccess(targetFrame->document()->securityOrigin()))
-        return CString();
-  
-    URL absoluteURL = targetFrame->document()->completeURL(relativeURLString);
-    return absoluteURL.string().utf8();
-}
 
 - (void)invalidatePluginContentRect:(NSRect)rect
 {

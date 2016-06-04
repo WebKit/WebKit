@@ -30,7 +30,6 @@
 #import <Cocoa/Cocoa.h>
 
 #import "WebNetscapePluginPackage.h"
-#import "WebPluginContainerCheck.h"
 #import <wtf/Forward.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
@@ -122,7 +121,6 @@ namespace WebCore {
 
 - (BOOL)convertFromX:(double)sourceX andY:(double)sourceY space:(NPCoordinateSpace)sourceSpace
                  toX:(double *)destX andY:(double *)destY space:(NPCoordinateSpace)destSpace;
-- (WTF::CString)resolvedURLStringForURL:(const char*)url target:(const char*)target;
 
 - (void)invalidatePluginContentRect:(NSRect)rect;
 

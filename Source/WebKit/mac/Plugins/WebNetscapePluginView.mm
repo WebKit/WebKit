@@ -45,12 +45,9 @@
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebNSViewExtras.h"
-#import "WebNetscapeContainerCheckContextInfo.h"
-#import "WebNetscapeContainerCheckPrivate.h"
 #import "WebNetscapePluginEventHandler.h"
 #import "WebNetscapePluginPackage.h"
 #import "WebNetscapePluginStream.h"
-#import "WebPluginContainerCheck.h"
 #import "WebPluginRequest.h"
 #import "WebPreferences.h"
 #import "WebUIDelegatePrivate.h"
@@ -1247,70 +1244,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 }
 
-- (uint32_t)checkIfAllowedToLoadURL:(const char*)urlCString frame:(const char*)frameNameCString 
-                       callbackFunc:(void (*)(NPP npp, uint32_t checkID, NPBool allowed, void* context))callbackFunc 
-                            context:(void*)context
-{
-    if (!_containerChecksInProgress) 
-        _containerChecksInProgress = [[NSMutableDictionary alloc] init];
-    
-    NSString *frameName = frameNameCString ? [NSString stringWithCString:frameNameCString encoding:NSISOLatin1StringEncoding] : nil;
-    
-    ++_currentContainerCheckRequestID;
-    WebNetscapeContainerCheckContextInfo *contextInfo = [[WebNetscapeContainerCheckContextInfo alloc] initWithCheckRequestID:_currentContainerCheckRequestID 
-                                                                                                                callbackFunc:callbackFunc
-                                                                                                                      context:context];
-    
-    WebPluginContainerCheck *check = [WebPluginContainerCheck checkWithRequest:[self requestWithURLCString:urlCString]
-                                                                        target:frameName
-                                                                  resultObject:self
-                                                                      selector:@selector(_containerCheckResult:contextInfo:)
-                                                                    controller:self 
-                                                                   contextInfo:contextInfo];
-    
-    [contextInfo release];
-    [_containerChecksInProgress setObject:check forKey:[NSNumber numberWithInt:_currentContainerCheckRequestID]];
-    [check start];
-    
-    return _currentContainerCheckRequestID;
-}
-
-- (void)_containerCheckResult:(PolicyAction)policy contextInfo:(id)contextInfo
-{
-    ASSERT([contextInfo isKindOfClass:[WebNetscapeContainerCheckContextInfo class]]);
-    void (*pluginCallback)(NPP npp, uint32_t, NPBool, void*) = [contextInfo callback];
-    
-    if (!pluginCallback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    pluginCallback([self plugin], [contextInfo checkRequestID], (policy == PolicyUse), [contextInfo context]);
-}
-
-- (void)cancelCheckIfAllowedToLoadURL:(uint32_t)checkID
-{
-    WebPluginContainerCheck *check = (WebPluginContainerCheck *)[_containerChecksInProgress objectForKey:[NSNumber numberWithInt:checkID]];
-    
-    if (!check)
-        return;
-    
-    [check cancel];
-    [_containerChecksInProgress removeObjectForKey:[NSNumber numberWithInt:checkID]];
-}
-
-// WebPluginContainerCheck automatically calls this method after invoking our _containerCheckResult: selector.
-// It works this way because calling -[WebPluginContainerCheck cancel] allows it to do it's teardown process.
-- (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)webPluginContainerCheck
-{
-    ASSERT([webPluginContainerCheck isKindOfClass:[WebPluginContainerCheck class]]);
-    WebPluginContainerCheck *check = (WebPluginContainerCheck *)webPluginContainerCheck;
-    ASSERT([[check contextInfo] isKindOfClass:[WebNetscapeContainerCheckContextInfo class]]);
-    
-    [self cancelCheckIfAllowedToLoadURL:[[check contextInfo] checkRequestID]];
-}
-
-
 // MARK: NSVIEW
 
 - (id)initWithFrame:(NSRect)frame
@@ -1359,8 +1292,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     free(cValues);
     
     ASSERT(!_eventHandler);
-    
-    [_containerChecksInProgress release];
 }
 
 - (void)disconnectStream:(WebNetscapePluginStream*)stream
@@ -2058,12 +1989,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             return NPERR_NO_ERROR;
         }
 
-        case WKNVBrowserContainerCheckFuncs:
-        {
-            *(WKNBrowserContainerCheckFuncs **)value = browserContainerCheckFuncs();
-            return NPERR_NO_ERROR;
-        }
-
         case WKNVSupportsCompositingCoreAnimationPluginsBool:
         {
             *(NPBool *)value = [[[self webView] preferences] acceleratedCompositingEnabled];
@@ -2275,17 +2200,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     memcpy(*passwordStr, password.data(), password.length());
     
     return NPERR_NO_ERROR;
-}
-
-- (char*)resolveURL:(const char*)url forTarget:(const char*)target
-{
-    CString location = [self resolvedURLStringForURL:url target:target];
-
-    if (location.isNull())
-        return 0;
-    
-    // We use strdup here because the caller needs to free it with NPN_MemFree (which calls free).
-    return strdup(location.data());
 }
 
 @end

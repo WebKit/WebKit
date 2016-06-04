@@ -162,13 +162,7 @@ public:
     bool shouldStop();
     
     uint32_t nextRequestID();
-    
-    uint32_t checkIfAllowedToLoadURL(const char* url, const char* target);
-    void cancelCheckIfAllowedToLoadURL(uint32_t checkID);
-    void checkIfAllowedToLoadURLResult(uint32_t checkID, bool allowed);
 
-    void resolveURL(const char* url, const char* target, data_t& resolvedURLData, mach_msg_type_number_t& resolvedURLLength);
-    
     void didDraw();
     void privateBrowsingModeDidChange(bool isPrivateBrowsingEnabled);
     
@@ -343,10 +337,6 @@ private:
     typedef HashSet<ProxyInstance*> ProxyInstanceSet;
     ProxyInstanceSet m_instances;
 
-    uint32_t m_urlCheckCounter;
-    typedef HashMap<uint32_t, RetainPtr<id>> URLCheckMap;
-    URLCheckMap m_urlChecks;
-    
     unsigned m_pluginFunctionCallDepth;
     bool m_shouldStopSoon;
     uint32_t m_currentRequestID;

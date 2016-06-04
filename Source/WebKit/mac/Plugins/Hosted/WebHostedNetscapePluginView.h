@@ -35,7 +35,7 @@ namespace WebKit {
     class NetscapePluginInstanceProxy;
 }
 
-@interface WebHostedNetscapePluginView : WebBaseNetscapePluginView<WebPluginManualLoader, WebPluginContainerCheckController>
+@interface WebHostedNetscapePluginView : WebBaseNetscapePluginView<WebPluginManualLoader>
 {
     RetainPtr<NSArray> _attributeKeys;
     RetainPtr<NSArray> _attributeValues;

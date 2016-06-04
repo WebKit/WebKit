@@ -1,5 +1,55 @@
 2016-06-04  Anders Carlsson  <andersca@apple.com>
 
+        Remove NPSPI that is no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=158384
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCCheckIfAllowedToLoadURL): Deleted.
+        (WKPCCancelCheckIfAllowedToLoadURL): Deleted.
+        (WKPCResolveURL): Deleted.
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy): Deleted.
+        (WebKit::NetscapePluginInstanceProxy::checkIfAllowedToLoadURL): Deleted.
+        (WebKit::NetscapePluginInstanceProxy::cancelCheckIfAllowedToLoadURL): Deleted.
+        (WebKit::NetscapePluginInstanceProxy::checkIfAllowedToLoadURLResult): Deleted.
+        (WebKit::NetscapePluginInstanceProxy::resolveURL): Deleted.
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView _webPluginContainerCancelCheckIfAllowedToLoadRequest:]): Deleted.
+        (-[WebHostedNetscapePluginView _containerCheckResult:contextInfo:]): Deleted.
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView resolvedURLStringForURL:target:]): Deleted.
+        * Plugins/WebNetscapeContainerCheckContextInfo.h: Removed.
+        * Plugins/WebNetscapeContainerCheckContextInfo.mm: Removed.
+        (-[WebNetscapeContainerCheckContextInfo initWithCheckRequestID:callbackFunc:context:]): Deleted.
+        (-[WebNetscapeContainerCheckContextInfo checkRequestID]): Deleted.
+        (-[WebNetscapeContainerCheckContextInfo callback]): Deleted.
+        (-[WebNetscapeContainerCheckContextInfo context]): Deleted.
+        * Plugins/WebNetscapeContainerCheckPrivate.h: Removed.
+        * Plugins/WebNetscapeContainerCheckPrivate.mm: Removed.
+        (browserContainerCheckFuncs): Deleted.
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView checkIfAllowedToLoadURL:frame:callbackFunc:context:]): Deleted.
+        (-[WebNetscapePluginView _containerCheckResult:contextInfo:]): Deleted.
+        (-[WebNetscapePluginView cancelCheckIfAllowedToLoadURL:]): Deleted.
+        (-[WebNetscapePluginView _webPluginContainerCancelCheckIfAllowedToLoadRequest:]): Deleted.
+        (-[WebNetscapePluginView fini]): Deleted.
+        (-[WebNetscapePluginView getVariable:value:]): Deleted.
+        (-[WebNetscapePluginView resolveURL:forTarget:]): Deleted.
+        * Plugins/npapi.mm:
+        (WKN_CheckIfAllowedToLoadURL): Deleted.
+        (WKN_CancelCheckIfAllowedToLoadURL): Deleted.
+        (WKN_ResolveURL): Deleted.
+
+2016-06-04  Anders Carlsson  <andersca@apple.com>
+
         Temporary build fix. (This function is going away).
 
         * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
