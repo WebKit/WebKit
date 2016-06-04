@@ -93,6 +93,7 @@ public:
         bool m_pluginReplacementEnabled;
         bool m_shouldConvertPositionStyleOnCopy;
         bool m_fontFallbackPrefersPictographs;
+        bool m_webFontsAlwaysFallBack;
         bool m_backgroundShouldExtendBeyondPage;
         SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
         bool m_scrollingTreeIncludesFrames;
@@ -150,6 +151,7 @@ public:
     void setUseLegacyBackgroundSizeShorthandBehavior(bool, ExceptionCode&);
     void setAutoscrollForDragAndDropEnabled(bool, ExceptionCode&);
     void setFontFallbackPrefersPictographs(bool, ExceptionCode&);
+    void setWebFontsAlwaysFallBack(bool, ExceptionCode&);
     void setPluginReplacementEnabled(bool);
     void setBackgroundShouldExtendBeyondPage(bool, ExceptionCode&);
     void setShouldConvertPositionStyleOnCopy(bool, ExceptionCode&);

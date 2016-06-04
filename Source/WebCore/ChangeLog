@@ -1,3 +1,47 @@
+2016-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text not visible while external font downloading
+        https://bugs.webkit.org/show_bug.cgi?id=25207
+        <rdar://problem/15167413>
+
+        Reviewed by Dean Jackson.
+
+        I already laid the groundwork for this when implementing the CSS Font Loading API.
+        We only have to create a timer and correctly respond to it timing out (by setting
+        state).
+
+        This patch also adds a new internal setting which puts us in a mode where font
+        loads never complete and the timeout occurs immediately. This is so we can test
+        the fallback behavior.
+
+        Test: fast/text/web-font-load-fallback-during-loading.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::CSSFontFace):
+        (WebCore::CSSFontFace::fontLoadEventOccurred):
+        (WebCore::CSSFontFace::timeoutFired):
+        (WebCore::CSSFontFace::setStatus):
+        (WebCore::CSSFontFace::fontLoaded):
+        (WebCore::CSSFontFace::webFontsShouldAlwaysFallBack):
+        (WebCore::CSSFontFace::pump):
+        (WebCore::CSSFontFace::font):
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::fontLoaded):
+        * css/FontFace.cpp:
+        (WebCore::FontFace::fontStateChanged):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setWebFontsAlwaysFallBack):
+        * page/Settings.h:
+        (WebCore::Settings::webFontsAlwaysFallBack):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setWebFontsAlwaysFallBack):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2016-06-03  Chris Dumez  <cdumez@apple.com>
 
         Modernize a few more lambda captures

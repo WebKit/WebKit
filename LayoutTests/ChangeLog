@@ -1,3 +1,16 @@
+2016-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text not visible while external font downloading
+        https://bugs.webkit.org/show_bug.cgi?id=25207
+        <rdar://problem/15167413>
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/web-font-load-fallback-during-loading-no-multiple-expected.txt: Added.
+        * fast/text/web-font-load-fallback-during-loading-no-multiple.html: Added.
+        * fast/text/web-font-load-fallback-during-loading-expected.html: Added.
+        * fast/text/web-font-load-fallback-during-loading.html: Added.
+
 2016-06-03  Benjamin Poulain  <bpoulain@apple.com>
 
         JSON.stringify replacer function calls with numeric array indices

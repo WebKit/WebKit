@@ -40,6 +40,7 @@
     [RaisesException] void setFantasyFontFamily(DOMString family, DOMString script);
     [RaisesException] void setPictographFontFamily(DOMString family, DOMString script);
     [RaisesException] void setFontFallbackPrefersPictographs(boolean preferPictographs);
+    [RaisesException] void setWebFontsAlwaysFallBack(boolean enable);
 
     [RaisesException] void setTextAutosizingEnabled(boolean enabled);
     [RaisesException] void setTextAutosizingWindowSizeOverride(long width, long height);

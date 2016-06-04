@@ -65,6 +65,7 @@ inline void CSSFontFaceSource::setStatus(Status newStatus)
         ASSERT(status() == Status::Loading);
         break;
     }
+
     m_status = newStatus;
 }
 
@@ -113,10 +114,14 @@ void CSSFontFaceSource::fontLoaded(CachedFont& loadedFont)
         return;
     }
 
+    if (m_face.webFontsShouldAlwaysFallBack())
+        return;
+
     if (m_font->errorOccurred())
         setStatus(Status::Failure);
     else
         setStatus(Status::Success);
+
     m_face.fontLoaded(*this);
 }
 

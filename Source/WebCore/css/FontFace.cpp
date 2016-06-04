@@ -367,12 +367,13 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
         // We still need to resolve promises when loading completes, even if all references to use have fallen out of scope.
         ref();
         break;
+    case CSSFontFace::Status::TimedOut:
+        break;
     case CSSFontFace::Status::Success:
         if (m_promise)
             std::exchange(m_promise, Nullopt)->resolve(*this);
         deref();
         return;
-    case CSSFontFace::Status::TimedOut:
     case CSSFontFace::Status::Failure:
         if (m_promise)
             std::exchange(m_promise, Nullopt)->reject(NETWORK_ERR);

@@ -93,6 +93,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_pluginReplacementEnabled(RuntimeEnabledFeatures::sharedFeatures().pluginReplacementEnabled())
     , m_shouldConvertPositionStyleOnCopy(settings.shouldConvertPositionStyleOnCopy())
     , m_fontFallbackPrefersPictographs(settings.fontFallbackPrefersPictographs())
+    , m_webFontsAlwaysFallBack(settings.webFontsAlwaysFallBack())
     , m_backgroundShouldExtendBeyondPage(settings.backgroundShouldExtendBeyondPage())
     , m_storageBlockingPolicy(settings.storageBlockingPolicy())
     , m_scrollingTreeIncludesFrames(settings.scrollingTreeIncludesFrames())
@@ -169,6 +170,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setAutoscrollForDragAndDropEnabled(m_autoscrollForDragAndDropEnabled);
     settings.setShouldConvertPositionStyleOnCopy(m_shouldConvertPositionStyleOnCopy);
     settings.setFontFallbackPrefersPictographs(m_fontFallbackPrefersPictographs);
+    settings.setWebFontsAlwaysFallBack(m_webFontsAlwaysFallBack);
     settings.setBackgroundShouldExtendBeyondPage(m_backgroundShouldExtendBeyondPage);
     settings.setStorageBlockingPolicy(m_storageBlockingPolicy);
     settings.setScrollingTreeIncludesFrames(m_scrollingTreeIncludesFrames);
@@ -513,6 +515,12 @@ void InternalSettings::setFontFallbackPrefersPictographs(bool preferPictographs,
 {
     InternalSettingsGuardForSettings();
     settings()->setFontFallbackPrefersPictographs(preferPictographs);
+}
+
+void InternalSettings::setWebFontsAlwaysFallBack(bool enable, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setWebFontsAlwaysFallBack(enable);
 }
 
 void InternalSettings::setPluginReplacementEnabled(bool enabled)
