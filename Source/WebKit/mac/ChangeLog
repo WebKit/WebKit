@@ -1,3 +1,11 @@
+2016-06-04  Anders Carlsson  <andersca@apple.com>
+
+        Temporary build fix. (This function is going away).
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::checkIfAllowedToLoadURLResult): Deleted.
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
 2016-06-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, roll out r196633 as it broke PageCache on iOS for WebKit.org

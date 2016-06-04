@@ -1646,7 +1646,6 @@ void NetscapePluginInstanceProxy::cancelCheckIfAllowedToLoadURL(uint32_t checkID
 
 void NetscapePluginInstanceProxy::checkIfAllowedToLoadURLResult(uint32_t checkID, bool allowed)
 {
-    _WKPHCheckIfAllowedToLoadURLResult(m_pluginHostProxy->port(), m_pluginID, checkID, allowed);
 }
 
 void NetscapePluginInstanceProxy::resolveURL(const char* url, const char* target, data_t& resolvedURLData, mach_msg_type_number_t& resolvedURLLength)
