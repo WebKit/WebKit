@@ -1685,10 +1685,12 @@ sub GenerateParametersCheckExpression
             $usedArguments{$parameterIndex} = 1;
         } elsif ($codeGenerator->GetArrayOrSequenceType($type) || $codeGenerator->IsTypedArrayType($type) || $codeGenerator->IsWrapperType($type)) {
             my $condition = "";
-            $condition .= "${value}.isUndefined() || " if $parameter->isOptional;
 
-            # http://heycam.github.io/webidl/#es-nullable-type
-            $condition .= "${value}.isUndefinedOrNull() || " if $parameter->isNullable;
+            if ($parameter->isNullable) {
+                $condition .= "${value}.isUndefinedOrNull() || ";
+            } elsif ($parameter->isOptional) {
+                $condition .= "${value}.isUndefined() || ";
+            }
 
             if ($codeGenerator->GetArrayOrSequenceType($type)) {
                 # FIXME: Add proper support for T[], T[]?, sequence<T>.

@@ -1,3 +1,15 @@
+2016-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Avoid redundant isUndefined() check for parameters that are both optional and nullable in overloads
+        https://bugs.webkit.org/show_bug.cgi?id=158380
+
+        Reviewed by Brady Eidson.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheckExpression):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter):
+
 2016-06-04  Brent Fulgham  <bfulgham@apple.com>
 
         CSP: Content Security Policy directive, upgrade-insecure-requests (UIR)
