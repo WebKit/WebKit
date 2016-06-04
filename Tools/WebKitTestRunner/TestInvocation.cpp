@@ -174,8 +174,6 @@ end:
         dumpWebProcessUnresponsiveness();
     else if (TestController::singleton().resetStateToConsistentValues(m_options))
         return;
-    else
-        dumpWebProcessUnresponsiveness("TestController::resetStateToConsistentValues failed\n");
 
     // The process is unresponsive, so let's start a new one.
     TestController::singleton().terminateWebContentProcess();
