@@ -88,10 +88,10 @@ bool WorkerEventQueue::enqueueEvent(Ref<Event>&& event)
     if (m_isClosed)
         return false;
 
-    EventDispatcher* eventDispatcherPtr = new EventDispatcher(event.copyRef(), *this);
-    m_eventDispatcherMap.add(event.ptr(), eventDispatcherPtr);
-    m_scriptExecutionContext.postTask([eventDispatcherPtr] (ScriptExecutionContext&) {
-        std::unique_ptr<EventDispatcher> eventDispatcher(eventDispatcherPtr);
+    auto* eventPtr = event.ptr();
+    auto eventDispatcher = std::make_unique<EventDispatcher>(WTFMove(event), *this);
+    m_eventDispatcherMap.add(eventPtr, eventDispatcher.get());
+    m_scriptExecutionContext.postTask([eventDispatcher = WTFMove(eventDispatcher)] (ScriptExecutionContext&) {
         eventDispatcher->dispatch();
     });
 

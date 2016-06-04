@@ -107,21 +107,21 @@ Worker::~Worker()
     m_contextProxy->workerObjectDestroyed();
 }
 
-void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)
+void Worker::postMessage(RefPtr<SerializedScriptValue>&& message, MessagePort* port, ExceptionCode& ec)
 {
     MessagePortArray ports;
     if (port)
         ports.append(port);
-    postMessage(message, &ports, ec);
+    postMessage(WTFMove(message), &ports, ec);
 }
 
-void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray* ports, ExceptionCode& ec)
+void Worker::postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray* ports, ExceptionCode& ec)
 {
     // Disentangle the port in preparation for sending it to the remote context.
-    std::unique_ptr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(ports, ec);
+    auto channels = MessagePort::disentanglePorts(ports, ec);
     if (ec)
         return;
-    m_contextProxy->postMessageToWorkerGlobalScope(message, WTFMove(channels));
+    m_contextProxy->postMessageToWorkerGlobalScope(WTFMove(message), WTFMove(channels));
 }
 
 void Worker::terminate()

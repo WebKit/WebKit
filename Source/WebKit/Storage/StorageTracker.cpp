@@ -501,9 +501,8 @@ void StorageTracker::deleteOrigin(SecurityOrigin* origin)
         m_originSet.remove(originId);
     }
 
-    String originIdCopy = originId.isolatedCopy();
-    m_thread->dispatch([this, originIdCopy] {
-        syncDeleteOrigin(originIdCopy);
+    m_thread->dispatch([this, originId = originId.isolatedCopy()] {
+        syncDeleteOrigin(originId);
     });
 }
 

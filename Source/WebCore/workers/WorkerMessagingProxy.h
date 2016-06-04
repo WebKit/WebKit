@@ -54,14 +54,14 @@ namespace WebCore {
         // (Only use these methods in the worker object thread.)
         void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, WorkerThreadStartMode) override;
         void terminateWorkerGlobalScope() override;
-        void postMessageToWorkerGlobalScope(PassRefPtr<SerializedScriptValue>, std::unique_ptr<MessagePortChannelArray>) override;
+        void postMessageToWorkerGlobalScope(RefPtr<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>) override;
         bool hasPendingActivity() const override;
         void workerObjectDestroyed() override;
         void notifyNetworkStateChange(bool isOnline) override;
 
         // Implementations of WorkerObjectProxy.
         // (Only use these methods in the worker context thread.)
-        void postMessageToWorkerObject(PassRefPtr<SerializedScriptValue>, std::unique_ptr<MessagePortChannelArray>) override;
+        void postMessageToWorkerObject(RefPtr<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>) override;
         void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) override;
         void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, int columnNumber, const String& sourceURL) override;
         void confirmMessageFromWorkerObject(bool hasPendingActivity) override;

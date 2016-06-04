@@ -88,30 +88,28 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     thread->start();
 }
 
-void WorkerMessagingProxy::postMessageToWorkerObject(PassRefPtr<SerializedScriptValue> message, std::unique_ptr<MessagePortChannelArray> channels)
+void WorkerMessagingProxy::postMessageToWorkerObject(RefPtr<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray> channels)
 {
-    MessagePortChannelArray* channelsPtr = channels.release();
-    m_scriptExecutionContext->postTask([this, channelsPtr, message] (ScriptExecutionContext& context) {
+    m_scriptExecutionContext->postTask([this, channels = WTFMove(channels), message = WTFMove(message)] (ScriptExecutionContext& context) mutable {
         Worker* workerObject = this->workerObject();
         if (!workerObject || askedToTerminate())
             return;
 
-        std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(context, std::unique_ptr<MessagePortChannelArray>(channelsPtr));
-        workerObject->dispatchEvent(MessageEvent::create(WTFMove(ports), message));
+        auto ports = MessagePort::entanglePorts(context, WTFMove(channels));
+        workerObject->dispatchEvent(MessageEvent::create(WTFMove(ports), WTFMove(message)));
     });
 }
 
-void WorkerMessagingProxy::postMessageToWorkerGlobalScope(PassRefPtr<SerializedScriptValue> message, std::unique_ptr<MessagePortChannelArray> channels)
+void WorkerMessagingProxy::postMessageToWorkerGlobalScope(RefPtr<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray> channels)
 {
     if (m_askedToTerminate)
         return;
 
-    MessagePortChannelArray* channelsPtr = channels.release();
-    ScriptExecutionContext::Task task([channelsPtr, message] (ScriptExecutionContext& scriptContext) {
+    ScriptExecutionContext::Task task([channels = WTFMove(channels), message = WTFMove(message)] (ScriptExecutionContext& scriptContext) mutable {
         ASSERT_WITH_SECURITY_IMPLICATION(scriptContext.isWorkerGlobalScope());
-        DedicatedWorkerGlobalScope& context = static_cast<DedicatedWorkerGlobalScope&>(scriptContext);
-        std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(scriptContext, std::unique_ptr<MessagePortChannelArray>(channelsPtr));
-        context.dispatchEvent(MessageEvent::create(WTFMove(ports), message));
+        auto& context = static_cast<DedicatedWorkerGlobalScope&>(scriptContext);
+        auto ports = MessagePort::entanglePorts(scriptContext, WTFMove(channels));
+        context.dispatchEvent(MessageEvent::create(WTFMove(ports), WTFMove(message)));
         context.thread().workerObjectProxy().confirmMessageFromWorkerObject(context.hasPendingActivity());
     });
 

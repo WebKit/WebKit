@@ -55,9 +55,9 @@ namespace WebCore {
 
         EventTargetInterface eventTargetInterface() const override { return WorkerEventTargetInterfaceType; }
 
-        void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
+        void postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray*, ExceptionCode&);
         // Needed for Objective-C bindings (see bug 28774).
-        void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, ExceptionCode&);
+        void postMessage(RefPtr<SerializedScriptValue>&& message, MessagePort*, ExceptionCode&);
 
         void terminate();
 
