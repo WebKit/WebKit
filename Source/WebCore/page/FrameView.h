@@ -37,7 +37,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/Function.h>
+#include <wtf/NoncopyableFunction.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -111,7 +111,7 @@ public:
     void scheduleRelayout();
     void scheduleRelayoutOfSubtree(RenderElement&);
     void unscheduleRelayout();
-    void queuePostLayoutCallback(Function<void()>&&);
+    void queuePostLayoutCallback(NoncopyableFunction<void()>&&);
     bool layoutPending() const;
     bool isInLayout() const { return m_layoutPhase != OutsideLayout; }
     bool isInRenderTreeLayout() const { return m_layoutPhase == InRenderTreeLayout; }
@@ -828,7 +828,7 @@ private:
     ScrollPinningBehavior m_scrollPinningBehavior;
 
     IntRect* m_cachedWindowClipRect { nullptr };
-    Vector<Function<void()>> m_postLayoutCallbackQueue;
+    Vector<NoncopyableFunction<void()>> m_postLayoutCallbackQueue;
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)

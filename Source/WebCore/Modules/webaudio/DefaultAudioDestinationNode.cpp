@@ -106,7 +106,7 @@ void DefaultAudioDestinationNode::startRendering()
         m_destination->start();
 }
 
-void DefaultAudioDestinationNode::resume(Function<void ()>&& function)
+void DefaultAudioDestinationNode::resume(NoncopyableFunction<void ()>&& function)
 {
     ASSERT(isInitialized());
     if (isInitialized())
@@ -115,7 +115,7 @@ void DefaultAudioDestinationNode::resume(Function<void ()>&& function)
         scriptExecutionContext->postTask(WTFMove(function));
 }
 
-void DefaultAudioDestinationNode::suspend(Function<void ()>&& function)
+void DefaultAudioDestinationNode::suspend(NoncopyableFunction<void ()>&& function)
 {
     ASSERT(isInitialized());
     if (isInitialized())
@@ -124,7 +124,7 @@ void DefaultAudioDestinationNode::suspend(Function<void ()>&& function)
         scriptExecutionContext->postTask(WTFMove(function));
 }
 
-void DefaultAudioDestinationNode::close(Function<void()>&& function)
+void DefaultAudioDestinationNode::close(NoncopyableFunction<void()>&& function)
 {
     ASSERT(isInitialized());
     uninitialize();

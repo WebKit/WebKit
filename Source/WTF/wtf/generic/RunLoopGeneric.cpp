@@ -32,12 +32,12 @@ namespace WTF {
 class RunLoop::TimerBase::ScheduledTask : public ThreadSafeRefCounted<ScheduledTask> {
 WTF_MAKE_NONCOPYABLE(ScheduledTask);
 public:
-    static RefPtr<ScheduledTask> create(Function<void ()>&& function, double interval, bool repeating)
+    static RefPtr<ScheduledTask> create(NoncopyableFunction<void ()>&& function, double interval, bool repeating)
     {
         return adoptRef(new ScheduledTask(WTFMove(function), interval, repeating));
     }
 
-    ScheduledTask(Function<void ()>&& function, double interval, bool repeating)
+    ScheduledTask(NoncopyableFunction<void ()>&& function, double interval, bool repeating)
         : m_function(WTFMove(function))
         , m_fireInterval(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(interval)))
         , m_isRepeating(repeating)
@@ -90,7 +90,7 @@ public:
     }
 
 private:
-    Function<void ()> m_function;
+    NoncopyableFunction<void ()> m_function;
     Condition::Clock::time_point m_scheduledTimePoint;
     std::chrono::microseconds m_fireInterval;
     std::atomic<bool> m_isActive { true };
@@ -237,7 +237,7 @@ void RunLoop::scheduleAndWakeUp(RefPtr<TimerBase::ScheduledTask> task)
     wakeUp(locker);
 }
 
-void RunLoop::dispatchAfter(std::chrono::nanoseconds delay, Function<void ()>&& function)
+void RunLoop::dispatchAfter(std::chrono::nanoseconds delay, NoncopyableFunction<void ()>&& function)
 {
     LockHolder locker(m_loopLock);
     bool repeating = false;

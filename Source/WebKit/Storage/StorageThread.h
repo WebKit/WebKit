@@ -26,9 +26,10 @@
 #ifndef StorageThread_h
 #define StorageThread_h
 
-#include <wtf/Function.h>
+#include <functional>
 #include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
+#include <wtf/NoncopyableFunction.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ public:
     bool start();
     void terminate();
 
-    void dispatch(Function<void ()>&&);
+    void dispatch(NoncopyableFunction<void ()>&&);
 
     static void releaseFastMallocFreeMemoryInAllThreads();
 
@@ -58,7 +59,7 @@ private:
     void performTerminate();
 
     ThreadIdentifier m_threadID;
-    MessageQueue<Function<void ()>> m_queue;
+    MessageQueue<NoncopyableFunction<void ()>> m_queue;
 };
 
 } // namespace WebCore

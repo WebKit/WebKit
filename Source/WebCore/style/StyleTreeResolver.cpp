@@ -521,13 +521,13 @@ std::unique_ptr<Update> TreeResolver::resolve(Change change)
     return WTFMove(m_update);
 }
 
-static Vector<Function<void ()>>& postResolutionCallbackQueue()
+static Vector<NoncopyableFunction<void ()>>& postResolutionCallbackQueue()
 {
-    static NeverDestroyed<Vector<Function<void ()>>> vector;
+    static NeverDestroyed<Vector<NoncopyableFunction<void ()>>> vector;
     return vector;
 }
 
-void queuePostResolutionCallback(Function<void ()>&& callback)
+void queuePostResolutionCallback(NoncopyableFunction<void ()>&& callback)
 {
     postResolutionCallbackQueue().append(WTFMove(callback));
 }
