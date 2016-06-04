@@ -1,3 +1,18 @@
+2016-06-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        JSON.stringify replacer function calls with numeric array indices
+        https://bugs.webkit.org/show_bug.cgi?id=158262
+        rdar://problem/26613876
+
+        Reviewed by Saam Barati.
+
+        The spec of SerializeJSONArray is pretty clear that the index
+        should be transformed into a string before calling SerializeJSONProperty.
+        See http://www.ecma-international.org/ecma-262/6.0/#sec-serializejsonarray
+
+        * runtime/JSONObject.cpp:
+        (JSC::PropertyNameForFunctionCall::value):
+
 2016-06-03  Saam barati  <sbarati@apple.com>
 
         Proxy.ownKeys should no longer throw an exception when duplicate keys are returned and the target is non-extensible

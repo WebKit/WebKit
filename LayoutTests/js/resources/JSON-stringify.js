@@ -144,6 +144,7 @@ function createTests() {
         jsonObject.stringify([1,2,3,4,5], function(k,v){allString = allString && (typeof k == "string"); return v});
         return allString;
     });
+    result[result.length - 1].expected = true;
     result.push(function(jsonObject){
         var allString = true;
         var array = [];
@@ -346,7 +347,7 @@ function createTests() {
         jsonObject.stringify([1,2,3,,,,4,5,6], replaceFunc);
         return replaceTracker;
     });
-    result[result.length - 1].expected = '(string)[1,2,3,null,null,null,4,5,6];0(number)1;1(number)2;2(number)3;3(number)undefined;4(number)undefined;5(number)undefined;6(number)4;7(number)5;8(number)6;'
+    result[result.length - 1].expected = '(string)[1,2,3,null,null,null,4,5,6];0(string)1;1(string)2;2(string)3;3(string)undefined;4(string)undefined;5(string)undefined;6(string)4;7(string)5;8(string)6;'
     result.push(function(jsonObject){
         replaceTracker = "";
         jsonObject.stringify({a:"a", b:"b", c:"c", 3: "d", 2: "e", 1: "f"}, replaceFunc);
@@ -427,7 +428,7 @@ function createTests() {
         try { jsonObject.stringify(cyclicArray); } catch(e) { cycleTracker += " -> exception" }
         return cycleTracker;
     });
-    result[result.length - 1].expected = "0(number):[object Object]first, -> exception";
+    result[result.length - 1].expected = "0(string):[object Object]first, -> exception";
     function createArray(len, o) { var r = []; for (var i = 0; i < len; i++) r[i] = o; return r; }
     var getterCalls;
     var magicObject = createArray(10, {abcdefg: [1,2,5,"ab", null, undefined, true, false,,], 

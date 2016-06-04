@@ -1,3 +1,20 @@
+2016-06-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        JSON.stringify replacer function calls with numeric array indices
+        https://bugs.webkit.org/show_bug.cgi?id=158262
+
+        Reviewed by Saam Barati.
+
+        * js/JSON-stringify-exposes-array-indices-as-strings-expected.txt: Added.
+        * js/JSON-stringify-exposes-array-indices-as-strings.html: Added.
+        * js/script-tests/JSON-stringify-exposes-array-indices-as-strings.js: Added.
+        (replacer):
+        (testObject.toJSON):
+        (toJSONArrayHelper):
+        * js/resources/JSON-stringify.js:
+        * js/dom/JSON-stringify-expected.txt:
+        Update the test results for the native implementation.
+
 2016-06-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash under VisibleSelection::firstRange()

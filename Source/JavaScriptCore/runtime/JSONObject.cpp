@@ -200,8 +200,12 @@ JSValue PropertyNameForFunctionCall::value(ExecState* exec) const
     if (!m_value) {
         if (m_identifier)
             m_value = jsString(exec, m_identifier->string());
-        else
-            m_value = jsNumber(m_number);
+        else {
+            VM& vm = exec->vm();
+            if (m_number <= 9)
+                return vm.smallStrings.singleCharacterString(m_number + '0');
+            m_value = jsNontrivialString(&vm, vm.numericStrings.add(m_number));
+        }
     }
     return m_value;
 }

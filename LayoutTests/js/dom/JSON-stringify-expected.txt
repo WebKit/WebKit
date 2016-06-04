@@ -147,7 +147,7 @@ function (jsonObject){
         jsonObject.stringify([1,2,3,4,5], function(k,v){allString = allString && (typeof k == "string"); return v});
         return allString;
     }
-PASS tests[i](nativeJSON) is tests[i](JSON)
+PASS tests[i](nativeJSON) is tests[i].expected
 function (jsonObject){
         var allString = true;
         var array = [];
