@@ -1,5 +1,20 @@
 2016-06-03  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: add a keyboard shortcut to close the current tab bar item
+        https://bugs.webkit.org/show_bug.cgi?id=158363
+        <rdar://problem/22677254>
+
+        Reviewed by Timothy Hatcher.
+
+        Make Cmd-w close the current tab. This matches Safari's keyboard shortcut.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+        Don't do anything if the New Tab tab is the only tab bar item besides the
+        pinned "new tab" button.
+
+2016-06-03  Brian Burg  <bburg@apple.com>
+
         Web Inspector: setter for debugging flag InspectorBackend.dumpInspectorTimeStats does not work
         https://bugs.webkit.org/show_bug.cgi?id=158366
 
