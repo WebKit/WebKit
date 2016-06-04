@@ -47,22 +47,4 @@ WorkItemWin::~WorkItemWin()
 {
 }
 
-HandleWorkItem::HandleWorkItem(HANDLE handle, NoncopyableFunction<void ()>&& function, WorkQueue* queue)
-    : WorkItemWin(WTFMove(function), queue)
-    , m_handle(handle)
-    , m_waitHandle(0)
-{
-    ASSERT_ARG(handle, handle);
-}
-
-RefPtr<HandleWorkItem> HandleWorkItem::createByAdoptingHandle(HANDLE handle, NoncopyableFunction<void ()>&& function, WorkQueue* queue)
-{
-    return adoptRef(new HandleWorkItem(handle, WTFMove(function), queue));
-}
-
-HandleWorkItem::~HandleWorkItem()
-{
-    ::CloseHandle(m_handle);
-}
-
 } // namespace WTF

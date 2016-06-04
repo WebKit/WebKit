@@ -1,3 +1,24 @@
+2016-06-03  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of HANDLE registration code in WorkQueueWin
+        https://bugs.webkit.org/show_bug.cgi?id=158375
+
+        Reviewed by Darin Adler.
+
+        * wtf/WorkQueue.h:
+        * wtf/win/WorkItemWin.cpp:
+        (WTF::HandleWorkItem::HandleWorkItem): Deleted.
+        (WTF::HandleWorkItem::createByAdoptingHandle): Deleted.
+        (WTF::HandleWorkItem::~HandleWorkItem): Deleted.
+        * wtf/win/WorkItemWin.h:
+        (WTF::HandleWorkItem::setWaitHandle): Deleted.
+        (WTF::HandleWorkItem::waitHandle): Deleted.
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::WorkQueue::handleCallback): Deleted.
+        (WTF::WorkQueue::platformInvalidate): Deleted.
+        (WTF::WorkQueue::unregisterWaitAndDestroyItemSoon): Deleted.
+        (WTF::WorkQueue::unregisterWaitAndDestroyItemCallback): Deleted.
+
 2016-06-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201663.

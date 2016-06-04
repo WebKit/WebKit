@@ -53,21 +53,6 @@ private:
     RefPtr<WorkQueue> m_queue;
 };
 
-class HandleWorkItem : public WorkItemWin {
-public:
-    static RefPtr<HandleWorkItem> createByAdoptingHandle(HANDLE, NoncopyableFunction<void ()>&&, WorkQueue*);
-    virtual ~HandleWorkItem();
-
-    void setWaitHandle(HANDLE waitHandle) { m_waitHandle = waitHandle; }
-    HANDLE waitHandle() const { return m_waitHandle; }
-
-private:
-    HandleWorkItem(HANDLE, NoncopyableFunction<void ()>&&, WorkQueue*);
-
-    HANDLE m_handle;
-    HANDLE m_waitHandle;
-};
-
 }
 
 #endif
