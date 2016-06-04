@@ -28,7 +28,6 @@
 
 #include <wtf/MathExtras.h>
 #include <wtf/Threading.h>
-#include <wtf/win/WorkItemWin.h>
 
 namespace WTF {
 
@@ -49,19 +48,19 @@ void WorkQueue::performWorkOnRegisteredWorkThread()
 {
     ASSERT(m_isWorkThreadRegistered);
 
-    m_workItemQueueLock.lock();
+    m_functionQueueLock.lock();
 
-    while (!m_workItemQueue.isEmpty()) {
-        Vector<RefPtr<WorkItemWin>> workItemQueue;
-        m_workItemQueue.swap(workItemQueue);
+    while (!m_functionQueue.isEmpty()) {
+        Vector<NoncopyableFunction<void ()>> functionQueue;
+        m_functionQueue.swap(functionQueue);
 
         // Allow more work to be scheduled while we're not using the queue directly.
-        m_workItemQueueLock.unlock();
-        for (auto& workItem : workItemQueue) {
-            workItem->function()();
+        m_functionQueueLock.unlock();
+        for (auto& function : functionQueue) {
+            function();
             deref();
         }
-        m_workItemQueueLock.lock();
+        m_functionQueueLock.lock();
     }
 
     // One invariant we maintain is that any work scheduled while a work thread is registered will
@@ -69,7 +68,7 @@ void WorkQueue::performWorkOnRegisteredWorkThread()
     // held so that no work can be scheduled while we're still registered.
     unregisterAsWorkThread();
 
-    m_workItemQueueLock.unlock();
+    m_functionQueueLock.unlock();
 }
 
 void WorkQueue::platformInitialize(const char* name, Type, QOS)
@@ -101,9 +100,9 @@ void WorkQueue::platformInvalidate()
 
 void WorkQueue::dispatch(NoncopyableFunction<void ()>&& function)
 {
-    MutexLocker locker(m_workItemQueueLock);
+    MutexLocker locker(m_functionQueueLock);
     ref();
-    m_workItemQueue.append(WorkItemWin::create(WTFMove(function), this));
+    m_functionQueue.append(WTFMove(function));
 
     // Spawn a work thread to perform the work we just added. As an optimization, we avoid
     // spawning the thread if a work thread is already registered. This prevents multiple work

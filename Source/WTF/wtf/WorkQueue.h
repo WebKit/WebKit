@@ -43,9 +43,7 @@
 #endif
 
 #if USE(WINDOWS_EVENT_LOOP)
-#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
-#include <wtf/win/WorkItemWin.h>
 #endif
 
 #if USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)
@@ -109,8 +107,8 @@ private:
 #elif USE(WINDOWS_EVENT_LOOP)
     volatile LONG m_isWorkThreadRegistered;
 
-    Mutex m_workItemQueueLock;
-    Vector<RefPtr<WorkItemWin>> m_workItemQueue;
+    Mutex m_functionQueueLock;
+    Vector<NoncopyableFunction<void ()>> m_functionQueue;
 
     HANDLE m_timerQueue;
 #elif USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)

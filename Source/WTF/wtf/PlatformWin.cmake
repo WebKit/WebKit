@@ -8,7 +8,6 @@ list(APPEND WTF_SOURCES
 
     win/MainThreadWin.cpp
     win/RunLoopWin.cpp
-    win/WorkItemWin.cpp
     win/WorkQueueWin.cpp
 )
 
