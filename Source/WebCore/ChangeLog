@@ -1,3 +1,28 @@
+2016-06-04  Darin Adler  <darin@apple.com>
+
+        leaks seen in fast/css/variables tests
+        https://bugs.webkit.org/show_bug.cgi?id=150728
+
+        Reviewed by Anders Carlsson.
+
+        Fixes leaks seen running fast/css/variables tests with leak checking turned on.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isStringType): Added. For debugging purposes so we catch cases where we
+        are not treating strings consistently between construction and destruction.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Assert isStringType returns true.
+        (WebCore::CSSPrimitiveValue::cleanup): Added CSS_DIMENSION and CSS_PARSER_IDENTIFIER
+        to the list of types that have to decrement the reference count of the string we own.
+        Both types are passed to the string constructor above.
+
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::buildParserValueListSubstitutingVariables): Restructured the
+        code so we destroy any CSSParserValue that we don't use. This is needed because of the
+        peculiar requirements of CSSParserValue: it has a be a struct without a destructor so
+        it can be used in the CSS grammar, so we have to destroy it explicitly. Ideally we would
+        minimize any use of it outside the CSSParser itself, but as long as we are using it, we
+        need to do this explicit destruction.
+
 2016-06-04  Anders Carlsson  <andersca@apple.com>
 
         32-bit build fix
