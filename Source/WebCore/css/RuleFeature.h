@@ -74,7 +74,7 @@ struct RuleFeatureSet {
 private:
     struct SelectorFeatures {
         bool hasSiblingSelector { false };
-        Vector<AtomicStringImpl*> classesMatchingAncestors;
+        Vector<AtomicStringImpl*, 32> classesMatchingAncestors;
         Vector<const CSSSelector*> attributeSelectorsMatchingAncestors;
     };
     void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, bool matchesAncestor = false);

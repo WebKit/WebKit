@@ -1,3 +1,16 @@
+2016-06-05  Andreas Kling  <akling@apple.com>
+
+        Give RuleFeatures::classesMatchingAncestors some inline capacity.
+        <https://webkit.org/b/158356>
+
+        Reviewed by Darin Adler.
+
+        Avoid 362'000 heap allocations on PLUM (1.3% of all transient fastMallocs) by giving
+        RuleFeatures::classesMatchingAncestors some inline capacity (32).
+        This class is only ever allocated on the stack anyway.
+
+        * css/RuleFeature.h:
+
 2016-06-05  Brady Eidson  <beidson@apple.com>
 
         Unreviewed, rolling out r201693.
