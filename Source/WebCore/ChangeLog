@@ -1,3 +1,21 @@
+2016-06-03  Ada Chan  <adachan@apple.com>
+
+        REGRESSION (r201474): Should set overflow: hidden on -webkit-media-controls when placeholder is showing
+        https://bugs.webkit.org/show_bug.cgi?id=158377
+
+        Reviewed by Darin Adler.
+
+        In r201474, we defer removing the hidden class from inlinePlaybackPlaceholder until
+        showInlinePlaybackPlaceholderWhenSafe(). We also need to move the code that adds the
+        placeholder-showing class to -webkit-media-controls to that method.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.showInlinePlaybackPlaceholderWhenSafe):
+        Add the "placeholder-showing" class to -webkit-media-controls when we show the placeholder.
+        (Controller.prototype.handlePresentationModeChange):
+        Remove the "placeholder-showing" class from -webkit-media-controls when we hide the
+        placeholder. Remove the old code that adds and removes that class.
+
 2016-06-04  Darin Adler  <darin@apple.com>
 
         leaks seen in fast/css/variables tests

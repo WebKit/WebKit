@@ -842,9 +842,10 @@ Controller.prototype = {
         if (this.presentationMode() != 'picture-in-picture')
             return;
 
-        if (!this.host.isVideoLayerInline)
+        if (!this.host.isVideoLayerInline) {
             this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.hidden);
-        else
+            this.base.classList.add(this.ClassNames.placeholderShowing);
+        } else
             setTimeout(this.showInlinePlaybackPlaceholderWhenSafe.bind(this), this.PlaceholderPollingDelay);
     },
 
@@ -859,6 +860,7 @@ Controller.prototype = {
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.pictureInPicture);
+                this.base.classList.remove(this.ClassNames.placeholderShowing);
 
                 this.controls.pictureInPictureButton.classList.remove(this.ClassNames.returnFromPictureInPicture);
                 break;
@@ -883,11 +885,6 @@ Controller.prototype = {
                 this.controls.pictureInPictureButton.classList.remove(this.ClassNames.returnFromPictureInPicture);
                 break;
         }
-
-        if (this.controls.inlinePlaybackPlaceholder.classList.contains(this.ClassNames.hidden))
-            this.base.classList.remove(this.ClassNames.placeholderShowing);
-        else
-            this.base.classList.add(this.ClassNames.placeholderShowing);
 
         this.updateControls();
         this.updateCaptionContainer();
