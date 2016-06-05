@@ -224,6 +224,7 @@ public:
     void toggleOverwriteModeEnabled(ExceptionCode&);
 
     unsigned countMatchesForText(const String&, unsigned findOptions, const String& markMatches, ExceptionCode&);
+    unsigned countFindMatches(const String&, unsigned findOptions, ExceptionCode&);
 
     unsigned numberOfScrollableAreas(ExceptionCode&);
 

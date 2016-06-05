@@ -1,3 +1,62 @@
+2016-06-05  Antti Koivisto  <antti@apple.com>
+
+        Find on page finds too many matches
+        https://bugs.webkit.org/show_bug.cgi?id=158395
+        rdar://problem/7440637
+
+        Reviewed by Dan Bernstein and Darin Adler.
+
+        There is a long standing bug where in some cases WebKit may find non-visible text matches when doing find on page.
+        For example searching patch review view in bugs.webkit.org returns twice as many matches as there actually are
+        on the page. This happens because the text content is replicated in an invisible subframe.
+
+        Fix by making TextIterator ignore content in non-visible subframes in findPlainText.
+
+        Test: editing/text-iterator/count-matches-in-frames.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::nextInPreOrderCrossingShadowBoundaries):
+
+            Remove support for an uninteresting assertion.
+
+        (WebCore::fullyClipsContents):
+
+            Elements without renderer clip their content (except for display:contents).
+            Test the content rect instead of the size rect for emptiness.
+
+        (WebCore::ignoresContainerClip):
+        (WebCore::pushFullyClippedState):
+        (WebCore::setUpFullyClippedStack):
+        (WebCore::isClippedByFrameAncestor):
+
+            Test if the frame owner element is clipped in any of the parent frames.
+
+        (WebCore::TextIterator::TextIterator):
+
+            If the frame is clipped by its ancestors the iterator is initialized to end state.
+            Clipped frame never renders anything so there is no need to maintain clip stack and traverse.
+
+        (WebCore::findPlainText):
+
+            Use TextIteratorClipsToFrameAncestors behavior. There might be other places where
+            this behavior should be used (or perhaps it should be used always?) but limit this to
+            text search for now.
+
+        (WebCore::depthCrossingShadowBoundaries): Deleted.
+        * editing/TextIterator.h:
+        * editing/TextIteratorBehavior.h:
+
+            Add TextIteratorClipsToFrameAncestors behavior.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::countMatchesForText):
+        (WebCore::Internals::countFindMatches):
+        (WebCore::Internals::numberOfLiveNodes):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+            Testing support
+
 2016-06-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         Do not construct temporary copy of String from AtomicString.

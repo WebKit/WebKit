@@ -1,3 +1,14 @@
+2016-06-05  Antti Koivisto  <antti@apple.com>
+
+        TextIterator should ignore non-visible frames in findPlainText
+        https://bugs.webkit.org/show_bug.cgi?id=158395
+
+        Reviewed by Dan Bernstein and Darin Adler.
+
+        * editing/text-iterator/count-matches-in-frames-expected.txt: Added.
+        * editing/text-iterator/count-matches-in-frames.html: Added.
+        * imported/blink/fast/shapes/shape-outside-floats/shape-outside-negative-height-crash-width.html: Non-rendered whitespace change.
+
 2016-06-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add -private.html variants of crypto/subtle IndexedDB tests.

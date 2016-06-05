@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLegendElement.h"
 #include "HTMLMeterElement.h"
@@ -185,18 +186,6 @@ unsigned BitStack::size() const
 
 // --------
 
-#if !ASSERT_DISABLED
-
-static unsigned depthCrossingShadowBoundaries(Node& node)
-{
-    unsigned depth = 0;
-    for (Node* parent = node.parentOrShadowHostNode(); parent; parent = parent->parentOrShadowHostNode())
-        ++depth;
-    return depth;
-}
-
-#endif
-
 // This function is like Range::pastLastNode, except for the fact that it can climb up out of shadow trees.
 static Node* nextInPreOrderCrossingShadowBoundaries(Node& rangeEndContainer, int rangeEndOffset)
 {
@@ -214,9 +203,17 @@ static Node* nextInPreOrderCrossingShadowBoundaries(Node& rangeEndContainer, int
 static inline bool fullyClipsContents(Node& node)
 {
     auto* renderer = node.renderer();
-    if (!is<RenderBox>(renderer) || !renderer->hasOverflowClip())
+    if (!renderer) {
+        if (!is<Element>(node))
+            return false;
+        return !downcast<Element>(node).hasDisplayContents();
+    }
+    if (!is<RenderBox>(*renderer))
         return false;
-    return downcast<RenderBox>(*renderer).size().isEmpty();
+    auto& box = downcast<RenderBox>(*renderer);
+    if (!box.hasOverflowClip())
+        return false;
+    return box.contentSize().isEmpty();
 }
 
 static inline bool ignoresContainerClip(Node& node)
@@ -229,8 +226,6 @@ static inline bool ignoresContainerClip(Node& node)
 
 static void pushFullyClippedState(BitStack& stack, Node& node)
 {
-    ASSERT(stack.size() == depthCrossingShadowBoundaries(node));
-
     // Push true if this node full clips its contents, or if a parent already has fully
     // clipped and this is not a node that ignores its container's clip.
     stack.push(fullyClipsContents(node) || (stack.top() && !ignoresContainerClip(node)));
@@ -239,6 +234,7 @@ static void pushFullyClippedState(BitStack& stack, Node& node)
 static void setUpFullyClippedStack(BitStack& stack, Node& node)
 {
     // Put the nodes in a vector so we can iterate in reverse order.
+    // FIXME: This (and TextIterator in general) should use ComposedTreeIterator.
     Vector<Node*, 100> ancestry;
     for (Node* parent = node.parentOrShadowHostNode(); parent; parent = parent->parentOrShadowHostNode())
         ancestry.append(parent);
@@ -248,8 +244,20 @@ static void setUpFullyClippedStack(BitStack& stack, Node& node)
     for (size_t i = 0; i < size; ++i)
         pushFullyClippedState(stack, *ancestry[size - i - 1]);
     pushFullyClippedState(stack, node);
+}
 
-    ASSERT(stack.size() == 1 + depthCrossingShadowBoundaries(node));
+static bool isClippedByFrameAncestor(const Document& document, TextIteratorBehavior behavior)
+{
+    if (!(behavior & TextIteratorClipsToFrameAncestors))
+        return false;
+
+    for (auto* owner = document.ownerElement(); owner; owner = owner->document().ownerElement()) {
+        BitStack ownerClipStack;
+        setUpFullyClippedStack(ownerClipStack, *owner);
+        if (ownerClipStack.top())
+            return true;
+    }
+    return false;
 }
 
 // FIXME: editingIgnoresContent and isRendererReplacedElement try to do the same job.
@@ -365,15 +373,17 @@ TextIterator::TextIterator(const Range* range, TextIteratorBehavior behavior)
     m_node = range->firstNode();
     if (!m_node)
         return;
+
+    if (isClippedByFrameAncestor(m_node->document(), m_behavior))
+        return;
+
     setUpFullyClippedStack(m_fullyClippedStack, *m_node);
+
     m_offset = m_node == m_startContainer ? m_startOffset : 0;
 
     m_pastEndNode = nextInPreOrderCrossingShadowBoundaries(*m_endContainer, m_endOffset);
 
-#ifndef NDEBUG
-    // Need this just because of the assert in advance().
     m_positionNode = m_node;
-#endif
 
     advance();
 }
@@ -1223,10 +1233,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range& ra
     m_endContainer = endNode;
     m_endOffset = endOffset;
     
-#ifndef NDEBUG
-    // Need this just because of the assert.
     m_positionNode = endNode;
-#endif
 
     m_lastTextNode = nullptr;
     m_lastCharacter = '\n';
@@ -2613,7 +2620,7 @@ static size_t findPlainText(const Range& range, const String& target, FindOption
         }
     }
 
-    CharacterIterator findIterator(range, TextIteratorEntersTextControls);
+    CharacterIterator findIterator(range, TextIteratorEntersTextControls | TextIteratorClipsToFrameAncestors);
 
     while (!findIterator.atEnd()) {
         findIterator.advance(buffer.append(findIterator.text()));
@@ -2652,7 +2659,7 @@ Ref<Range> findPlainText(const Range& range, const String& target, FindOptions o
     }
 
     // Then, find the document position of the start and the end of the text.
-    CharacterIterator computeRangeIterator(range, TextIteratorEntersTextControls);
+    CharacterIterator computeRangeIterator(range, TextIteratorEntersTextControls | TextIteratorClipsToFrameAncestors);
     return characterSubrange(range.ownerDocument(), computeRangeIterator, matchStart, matchLength);
 }
 

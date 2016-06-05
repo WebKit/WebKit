@@ -161,6 +161,7 @@ enum AutoFillButtonType {
     void setAutofilled(HTMLInputElement inputElement, boolean enabled);
     void setShowAutoFillButton(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
     [RaisesException] unsigned long countMatchesForText(DOMString text, unsigned long findOptions, DOMString markMatches);
+    [RaisesException] unsigned long countFindMatches(DOMString text, unsigned long findOptions);
 
     [RaisesException] DOMString autofillFieldName(Element formControlElement);
 

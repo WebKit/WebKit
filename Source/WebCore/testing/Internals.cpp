@@ -1733,6 +1733,15 @@ unsigned Internals::countMatchesForText(const String& text, unsigned findOptions
     return document->frame()->editor().countMatchesForText(text, nullptr, findOptions, 1000, mark, nullptr);
 }
 
+unsigned Internals::countFindMatches(const String& text, unsigned findOptions, ExceptionCode&)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return 0;
+
+    return document->page()->countFindMatches(text, findOptions, 1000);
+}
+
 unsigned Internals::numberOfLiveNodes() const
 {
     unsigned nodeCount = 0;
