@@ -1,3 +1,15 @@
+2016-06-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Do not construct temporary copy of String from AtomicString.
+        https://bugs.webkit.org/show_bug.cgi?id=158400
+
+        Reviewed by Darin Adler.
+
+        No new tests needed.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::ariaReadOnlyValue):
+
 2016-06-05  Andreas Kling  <akling@apple.com>
 
         Give RuleFeatures::classesMatchingAncestors some inline capacity.
