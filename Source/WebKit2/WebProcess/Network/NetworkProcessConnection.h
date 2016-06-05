@@ -58,7 +58,7 @@ public:
 
     void didReceiveNetworkProcessConnectionMessage(IPC::Connection&, IPC::MessageDecoder&);
 
-    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, NoncopyableFunction<void (const Vector<String>& filePaths)>&& completionHandler);
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, std::function<void (const Vector<String>& filePaths)> completionHandler);
 
 private:
     NetworkProcessConnection(IPC::Connection::Identifier);
@@ -81,7 +81,7 @@ private:
     // The connection from the web process to the network process.
     RefPtr<IPC::Connection> m_connection;
 
-    HashMap<uint64_t, NoncopyableFunction<void (const Vector<String>&)>> m_writeBlobToFileCompletionHandlers;
+    HashMap<uint64_t, std::function<void (const Vector<String>&)>> m_writeBlobToFileCompletionHandlers;
 };
 
 } // namespace WebKit

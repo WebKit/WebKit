@@ -132,9 +132,9 @@ uint64_t NetworkBlobRegistry::blobSize(NetworkConnectionToWebProcess* connection
     return blobRegistry().blobSize(url);
 }
 
-void NetworkBlobRegistry::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, NoncopyableFunction<void(const Vector<String>&)>&& completionHandler)
+void NetworkBlobRegistry::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, std::function<void(const Vector<String>&)> completionHandler)
 {
-    blobRegistry().writeBlobsToTemporaryFiles(blobURLs, WTFMove(completionHandler));
+    blobRegistry().writeBlobsToTemporaryFiles(blobURLs, completionHandler);
 }
 
 void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebProcess* connection)
