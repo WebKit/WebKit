@@ -256,7 +256,7 @@ struct BlobForFileWriting {
     Vector<std::pair<String, ThreadSafeDataBuffer>> filePathsOrDataBuffers;
 };
 
-void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, NoncopyableFunction<void (const Vector<String>& filePaths)>&& completionHandler)
+void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, std::function<void (const Vector<String>& filePaths)> completionHandler)
 {
     Vector<BlobForFileWriting> blobsForWriting;
     for (auto& url : blobURLs) {
@@ -287,45 +287,47 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
     blobUtilityQueue().dispatch([blobsForWriting = WTFMove(blobsForWriting), completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<String> filePaths;
 
-        auto performWriting = [blobsForWriting = WTFMove(blobsForWriting), &filePaths]() {
-            for (auto& blob : blobsForWriting) {
-                PlatformFileHandle file;
-                String tempFilePath = openTemporaryFile(ASCIILiteral("Blob"), file);
+        ScopeGuard completionCaller([completionHandler]() mutable {
+            callOnMainThread([completionHandler = WTFMove(completionHandler)]() {
+                Vector<String> filePaths;
+                completionHandler(filePaths);
+            });
+        });
 
-                ScopeGuard fileCloser([file]() mutable {
-                    closeFile(file);
-                });
-                
-                if (tempFilePath.isEmpty() || !isHandleValid(file)) {
-                    LOG_ERROR("Failed to open temporary file for writing a Blob to IndexedDB");
-                    return false;
-                }
+        for (auto& blob : blobsForWriting) {
+            PlatformFileHandle file;
+            String tempFilePath = openTemporaryFile(ASCIILiteral("Blob"), file);
 
-                for (auto& part : blob.filePathsOrDataBuffers) {
-                    if (part.second.data()) {
-                        int length = part.second.data()->size();
-                        if (writeToFile(file, reinterpret_cast<const char*>(part.second.data()->data()), length) != length) {
-                            LOG_ERROR("Failed writing a Blob to temporary file for storage in IndexedDB");
-                            return false;
-                        }
-                    } else {
-                        ASSERT(!part.first.isEmpty());
-                        if (!appendFileContentsToFileHandle(part.first, file)) {
-                            LOG_ERROR("Failed copying File contents to a Blob temporary file for storage in IndexedDB (%s to %s)", part.first.utf8().data(), tempFilePath.utf8().data());
-                            return false;
-                        }
-                    }
-                }
-
-                filePaths.append(tempFilePath.isolatedCopy());
+            ScopeGuard fileCloser([file]() {
+                PlatformFileHandle handle = file;
+                closeFile(handle);
+            });
+            
+            if (tempFilePath.isEmpty() || !isHandleValid(file)) {
+                LOG_ERROR("Failed to open temporary file for writing a Blob to IndexedDB");
+                return;
             }
 
-            return true;
-        };
+            for (auto& part : blob.filePathsOrDataBuffers) {
+                if (part.second.data()) {
+                    int length = part.second.data()->size();
+                    if (writeToFile(file, reinterpret_cast<const char*>(part.second.data()->data()), length) != length) {
+                        LOG_ERROR("Failed writing a Blob to temporary file for storage in IndexedDB");
+                        return;
+                    }
+                } else {
+                    ASSERT(!part.first.isEmpty());
+                    if (!appendFileContentsToFileHandle(part.first, file)) {
+                        LOG_ERROR("Failed copying File contents to a Blob temporary file for storage in IndexedDB (%s to %s)", part.first.utf8().data(), tempFilePath.utf8().data());
+                        return;
+                    }
+                }
+            }
 
-        if (!performWriting())
-            filePaths.clear();
+            filePaths.append(tempFilePath.isolatedCopy());
+        }
 
+        completionCaller.disable();
         callOnMainThread([completionHandler = WTFMove(completionHandler), filePaths = WTFMove(filePaths)]() {
             completionHandler(filePaths);
         });

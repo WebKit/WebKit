@@ -70,7 +70,7 @@ public:
     void clearObjectStore(TransactionOperation&, uint64_t objectStoreIdentifier);
     void createIndex(TransactionOperation&, const IDBIndexInfo&);
     void deleteIndex(TransactionOperation&, uint64_t objectStoreIdentifier, const String& indexName);
-    void putOrAdd(TransactionOperation&, IDBKeyData&&, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode);
+    void putOrAdd(TransactionOperation&, IDBKey*, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(TransactionOperation&, const IDBKeyRangeData&);
     void getCount(TransactionOperation&, const IDBKeyRangeData&);
     void deleteRecord(TransactionOperation&, const IDBKeyRangeData&);
@@ -124,7 +124,7 @@ private:
     void callConnectionOnMainThread(void (IDBConnectionToServer::*method)(Parameters...), Arguments&&... arguments)
     {
         if (isMainThread())
-            (m_connectionToServer.*method)(std::forward<Arguments>(arguments)...);
+            (m_connectionToServer.*method)(arguments...);
         else
             postMainThreadTask(m_connectionToServer, method, arguments...);
     }

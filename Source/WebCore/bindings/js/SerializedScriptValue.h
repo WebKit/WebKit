@@ -31,7 +31,6 @@
 #include <runtime/ArrayBuffer.h>
 #include <runtime/JSCJSValue.h>
 #include <wtf/Forward.h>
-#include <wtf/NoncopyableFunction.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -87,7 +86,7 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     Vector<String> blobURLsIsolatedCopy() const;
-    void writeBlobsToDiskForIndexedDB(NoncopyableFunction<void (const IDBValue&)>&& completionHandler);
+    void writeBlobsToDiskForIndexedDB(std::function<void (const IDBValue&)> completionHandler);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously();
 #endif // ENABLE(INDEXED_DATABASE)
 

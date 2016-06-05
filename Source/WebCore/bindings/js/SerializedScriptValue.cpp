@@ -2796,7 +2796,7 @@ Vector<String> SerializedScriptValue::blobURLsIsolatedCopy() const
     return result;
 }
 
-void SerializedScriptValue::writeBlobsToDiskForIndexedDB(NoncopyableFunction<void (const IDBValue&)>&& completionHandler)
+void SerializedScriptValue::writeBlobsToDiskForIndexedDB(std::function<void (const IDBValue&)> completionHandler)
 {
     ASSERT(isMainThread());
     ASSERT(hasBlobURLs());

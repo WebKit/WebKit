@@ -1,3 +1,16 @@
+2016-06-05  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed, rolling out r201693.
+
+        Can't fix right now
+
+        Reverted changeset:
+
+        "Modern IDB: Crash seen in IDBConnectionProxy::putOrAdd on
+        GuardMalloc bot"
+        https://bugs.webkit.org/show_bug.cgi?id=158124
+        http://trac.webkit.org/changeset/201693
+
 2016-06-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Crash seen in IDBConnectionProxy::putOrAdd on GuardMalloc bot
