@@ -130,7 +130,7 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
 
     _updateShownTabs()
     {
-        let allTabClasses = [...WebInspector.knownTabClasses()];
+        let allTabClasses = Array.from(WebInspector.knownTabClasses());
         let allowedTabClasses = allTabClasses.filter((tabClass) => tabClass.isTabAllowed() && !tabClass.isEphemeral());
         allowedTabClasses.sort((a, b) => a.tabInfo().title.localeCompare(b.tabInfo().title));
 

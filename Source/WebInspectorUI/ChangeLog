@@ -1,3 +1,26 @@
+2016-06-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add a keyboard shortcut to open the new tab tab
+        https://bugs.webkit.org/show_bug.cgi?id=158365
+        <rdar://problem/26631897>
+
+        Reviewed by Timothy Hatcher.
+
+        Make Cmd-t show the new tab tab if it's not already open and
+        there is at least one tab type that's not currently in the tab bar.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._updateNewTabButtonState):
+        (WebInspector.showNewTabTab):
+        (WebInspector.isNewTabWithTypeAllowed):
+        Clean up the code that decides whether we can show the new tab tab.
+        It is now a special case inside WebInspector.isNewTabWithTypeAllowed.
+
+        * UserInterface/Views/NewTabContentView.js:
+        (WebInspector.NewTabContentView.prototype._updateShownTabs):
+        Use Array.from.
+
 2016-06-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: discontinuous recordings should have discontinuities in the timeline memory graph
