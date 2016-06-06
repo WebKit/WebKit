@@ -214,31 +214,55 @@ bool MediaElementSession::pageAllowsPlaybackAfterResuming(const HTMLMediaElement
 
 bool MediaElementSession::canControlControlsManager(const HTMLMediaElement& element) const
 {
-    if (!element.hasAudio())
+    if (!element.hasAudio()) {
+        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: No audio");
         return false;
+    }
 
-    if (element.muted())
+    if (element.muted()) {
+        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: Muted");
         return false;
+    }
 
-    if (element.ended())
+    if (element.ended()) {
+        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: Ended");
         return false;
+    }
 
-    if (element.document().activeDOMObjectsAreSuspended())
+    if (element.document().activeDOMObjectsAreSuspended()) {
+        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: activeDOMObjectsAreSuspended()");
         return false;
+    }
 
-    if (!playbackPermitted(element))
+    if (!playbackPermitted(element)) {
+        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: Playback not permitted");
         return false;
+    }
 
-    if (!element.renderer())
+    if (element.isVideo()) {
+        if (!element.renderer()) {
+            LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: No renderer");
+            return false;
+        }
+
+        if (!element.hasVideo()) {
+            LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: No video");
+            return false;
+        }
+
+        if (isElementLargeEnoughForMainContent(element)) {
+            LOG(Media, "MediaElementSession::canControlControlsManager - returning TRUE: Is main content");
+            return true;
+        }
+    }
+
+    if (m_restrictions & RequireUserGestureToControlControlsManager && !ScriptController::processingUserGestureForMedia()) {
+        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: No user gesture");
         return false;
+    }
 
-    if (isElementLargeEnoughForMainContent(element))
-        return true;
-
-    if (ScriptController::processingUserGestureForMedia())
-        return true;
-
-    return false;
+    LOG(Media, "MediaElementSession::canControlControlsManager - returning TRUE: All criteria met");
+    return true;
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

@@ -94,7 +94,8 @@ public:
         MetadataPreloadingNotPermitted = 1 << 9,
         AutoPreloadingNotPermitted = 1 << 10,
         InvisibleAutoplayNotPermitted = 1 << 11,
-        OverrideUserGestureRequirementForMainContent = 1 << 12
+        OverrideUserGestureRequirementForMainContent = 1 << 12,
+        RequireUserGestureToControlControlsManager = 1 << 13,
     };
     typedef unsigned BehaviorRestrictions;
 

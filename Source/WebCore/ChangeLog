@@ -1,3 +1,23 @@
+2016-06-06  Jer Noble  <jer.noble@apple.com>
+
+        Media elements should only be allowed to control controls manager during a user gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=158432
+
+        Reviewed by Eric Carlson.
+
+        Add a new MediaElementSession behavior restriction for the controls manager
+        which is cleared on the first user gesture. Since canControlControlsManager()
+        may be called before the first layout, call updatePlaybackControlsManager()
+        since the main content check requires the laid-out size of the media element.
+
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::layoutSizeChanged):
+        (WebCore::HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canControlControlsManager):
+        * html/MediaElementSession.h:
+
 2016-06-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Update MediaEndpointPeerConnection::createOffer() to use the transceiver set

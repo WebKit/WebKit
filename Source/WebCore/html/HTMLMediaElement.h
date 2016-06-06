@@ -926,6 +926,7 @@ private:
     bool m_parsingInProgress : 1;
     bool m_elementIsHidden : 1;
     bool m_creatingControls : 1;
+    bool m_receivedLayoutSizeChanged : 1;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     bool m_mediaControlsDependOnPageScaleFactor : 1;
