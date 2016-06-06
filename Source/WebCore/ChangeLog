@@ -1,3 +1,13 @@
+2016-06-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(SHADOW_DOM) && !ENABLE(DETAILS_ELEMENT) build
+        https://bugs.webkit.org/show_bug.cgi?id=158347
+
+        Reviewed by Chris Dumez.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::destroyRenderTreeIfNeeded):
+
 2016-06-06  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused ResourceResponse::platformResponseIsUpToDate
