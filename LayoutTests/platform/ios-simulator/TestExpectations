@@ -2992,3 +2992,5 @@ imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html [ Failure ]
+
+webkit.org/b/157916 http/tests/misc/slow-loading-animated-image.html [ Pass ImageOnlyFailure ]

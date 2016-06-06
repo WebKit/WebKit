@@ -1,3 +1,12 @@
+2016-06-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking http/tests/misc/slow-loading-animated-image.html as flaky on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=157916
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-06-06  Chris Dumez  <cdumez@apple.com>
 
         Implement EventListenerOptions argument to addEventListener
