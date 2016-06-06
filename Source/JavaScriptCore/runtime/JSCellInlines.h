@@ -118,7 +118,7 @@ inline VM* JSCell::vm() const
     return MarkedBlock::blockFor(this)->vm();
 }
 
-inline VM& ExecState::vm() const
+ALWAYS_INLINE VM& ExecState::vm() const
 {
     ASSERT(callee());
     ASSERT(callee()->vm());

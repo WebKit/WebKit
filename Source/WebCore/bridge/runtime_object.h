@@ -78,9 +78,9 @@ protected:
     void finishCreation(VM&);
 
 private:
-    static EncodedJSValue fallbackObjectGetter(ExecState*, EncodedJSValue, PropertyName, JSObject*);
-    static EncodedJSValue fieldGetter(ExecState*, EncodedJSValue, PropertyName, JSObject*);
-    static EncodedJSValue methodGetter(ExecState*, EncodedJSValue, PropertyName, JSObject*);
+    static EncodedJSValue fallbackObjectGetter(ExecState*, EncodedJSValue, PropertyName);
+    static EncodedJSValue fieldGetter(ExecState*, EncodedJSValue, PropertyName);
+    static EncodedJSValue methodGetter(ExecState*, EncodedJSValue, PropertyName);
 
     RefPtr<Instance> m_instance;
 };

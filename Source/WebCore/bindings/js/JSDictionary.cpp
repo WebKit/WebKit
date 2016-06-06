@@ -73,19 +73,15 @@ JSDictionary::GetPropertyResult JSDictionary::tryGetProperty(const char* propert
 {
     ASSERT(isValid());
     Identifier identifier = Identifier::fromString(m_exec, propertyName);
-    PropertySlot slot(m_initializerObject.get(), PropertySlot::InternalMethodType::Get);
-
-    if (!m_initializerObject.get()->getPropertySlot(m_exec, identifier, slot))
-        return NoPropertyFound;
-
+    bool propertyFound = m_initializerObject.get()->getPropertySlot(m_exec, identifier, [&] (bool propertyFound, PropertySlot& slot) -> bool {
+        if (!propertyFound)
+            return false;
+        finalResult = slot.getValue(m_exec, identifier);
+        return true;
+    });
     if (m_exec->hadException())
         return ExceptionThrown;
-
-    finalResult = slot.getValue(m_exec, identifier);
-    if (m_exec->hadException())
-        return ExceptionThrown;
-
-    return PropertyFound;
+    return propertyFound ? PropertyFound : NoPropertyFound;
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, bool& result)

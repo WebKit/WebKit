@@ -274,37 +274,38 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
         return JSValue::encode(thisValue.isUndefined() ? vm.smallStrings.undefinedObjectString() : vm.smallStrings.nullObjectString());
     JSObject* thisObject = thisValue.toObject(exec);
     if (!thisObject)
-        return JSValue::encode(JSValue());
+        return JSValue::encode(jsUndefined());
 
-    JSString* result = thisObject->structure(vm)->objectToStringValue();
-    if (!result) {
-        PropertyName toStringTagSymbol = exec->propertyNames().toStringTagSymbol;
-        PropertySlot toStringTagSlot(thisObject, PropertySlot::InternalMethodType::Get);
-        if (thisObject->getPropertySlot(exec, toStringTagSymbol, toStringTagSlot)) {
+    auto result = thisObject->structure(vm)->objectToStringValue();
+    if (result)
+        return JSValue::encode(result);
+
+    PropertyName toStringTagSymbol = exec->propertyNames().toStringTagSymbol;
+    return JSValue::encode(thisObject->getPropertySlot(exec, toStringTagSymbol, [&] (bool found, PropertySlot& toStringTagSlot) -> JSValue {
+        if (found) {
             JSValue stringTag = toStringTagSlot.getValue(exec, toStringTagSymbol);
             if (UNLIKELY(vm.exception()))
-                return JSValue::encode(JSValue());
+                return jsUndefined();
             if (stringTag.isString()) {
                 JSRopeString::RopeBuilder ropeBuilder(vm);
                 ropeBuilder.append(vm.smallStrings.objectStringStart());
                 ropeBuilder.append(jsCast<JSString*>(stringTag));
                 ropeBuilder.append(vm.smallStrings.singleCharacterString(']'));
-                result = ropeBuilder.release();
+                JSString* result = ropeBuilder.release();
 
                 thisObject->structure(vm)->setObjectToStringValue(exec, vm, result, toStringTagSlot);
-                return JSValue::encode(result);
+                return result;
             }
         }
 
         String newString = WTF::tryMakeString("[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]");
         if (!newString)
-            return JSValue::encode(throwOutOfMemoryError(exec));
+            return throwOutOfMemoryError(exec);
 
-        result = jsNontrivialString(&vm, newString);
+        auto result = jsNontrivialString(&vm, newString);
         thisObject->structure(vm)->setObjectToStringValue(exec, vm, result, toStringTagSlot);
-    }
-
-    return JSValue::encode(result);
+        return result;
+    }));
 }
 
 } // namespace JSC

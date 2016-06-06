@@ -1492,26 +1492,27 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
     // ModuleVar is always converted to ClosureVar for get_from_scope.
     ASSERT(getPutInfo.resolveType() != ModuleVar);
 
-    PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
-    if (!scope->getPropertySlot(exec, ident, slot)) {
-        if (getPutInfo.resolveMode() == ThrowIfNotFound)
-            LLINT_RETURN(exec->vm().throwException(exec, createUndefinedVariableError(exec, ident)));
-        LLINT_RETURN(jsUndefined());
-    }
+    LLINT_RETURN(scope->getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+        if (!found) {
+            if (getPutInfo.resolveMode() == ThrowIfNotFound)
+                return exec->vm().throwException(exec, createUndefinedVariableError(exec, ident));
+            return jsUndefined();
+        }
 
-    JSValue result = JSValue();
-    if (scope->isGlobalLexicalEnvironment()) {
-        // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
-        result = slot.getValue(exec, ident);
-        if (result == jsTDZValue())
-            LLINT_THROW(createTDZError(exec));
-    }
+        JSValue result = JSValue();
+        if (scope->isGlobalLexicalEnvironment()) {
+            // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
+            result = slot.getValue(exec, ident);
+            if (result == jsTDZValue())
+                return exec->vm().throwException(exec, createTDZError(exec));
+        }
 
-    CommonSlowPaths::tryCacheGetFromScopeGlobal(exec, vm, pc, scope, slot, ident);
+        CommonSlowPaths::tryCacheGetFromScopeGlobal(exec, vm, pc, scope, slot, ident);
 
-    if (!result)
-        result = slot.getValue(exec, ident);
-    LLINT_RETURN(result);
+        if (!result)
+            return slot.getValue(exec, ident);
+        return result;
+    }));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)

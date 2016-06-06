@@ -1,3 +1,15 @@
+2016-06-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Change ProxyObject.[[Get]] not to use custom accessor
+        https://bugs.webkit.org/show_bug.cgi?id=157080
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::propertyGetter):
+        (WebKit::JSNPObject::methodGetter):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2016-06-05  Brady Eidson  <beidson@apple.com>
 
         Unreviewed, rolling out r201694.

@@ -480,12 +480,12 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             value = asArray(m_object.get())->getIndexQuickly(index);
         else {
             PropertySlot slot(m_object.get(), PropertySlot::InternalMethodType::Get);
-            if (m_object->methodTable()->getOwnPropertySlotByIndex(m_object.get(), exec, index, slot)) {
+            if (m_object->methodTable()->getOwnPropertySlotByIndex(m_object.get(), exec, index, slot))
                 value = slot.getValue(exec, index);
-                if (exec->hadException())
-                    return false;
-            } else
+            else
                 value = jsUndefined();
+            if (UNLIKELY(exec->hadException()))
+                return false;
         }
 
         // Append the separator string.
@@ -631,6 +631,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                         inValue = slot.getValue(m_exec, index);
                     else
                         inValue = jsUndefined();
+                    if (m_exec->hadException())
+                        return jsNull();
                 }
                     
                 if (inValue.isObject()) {

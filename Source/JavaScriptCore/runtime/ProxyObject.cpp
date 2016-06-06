@@ -95,22 +95,21 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
 
 static const char* s_proxyAlreadyRevokedErrorMessage = "Proxy has already been revoked. No more operations are allowed to be performed on it";
 
-static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName, JSObject* slotBase)
+static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValue receiver, PropertyName propertyName)
 {
     VM& vm = exec->vm();
     if (UNLIKELY(!vm.isSafeToRecurse())) {
         throwStackOverflowError(exec);
-        return JSValue::encode(JSValue());
+        return JSValue();
     }
 
-    ProxyObject* proxyObject = jsCast<ProxyObject*>(slotBase);
     JSObject* target = proxyObject->target();
 
     if (propertyName == vm.propertyNames->underscoreProto)
-        return JSValue::encode(proxyObject->performGetPrototype(exec));
+        return proxyObject->performGetPrototype(exec);
 
     auto performDefaultGet = [&] {
-        return JSValue::encode(target->get(exec, propertyName));
+        return target->get(exec, propertyName);
     };
 
     if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
@@ -118,14 +117,14 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
 
     JSValue handlerValue = proxyObject->handler();
     if (handlerValue.isNull())
-        return throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        return throwTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
 
     JSObject* handler = jsCast<JSObject*>(handlerValue);
     CallData callData;
     CallType callType;
     JSValue getHandler = handler->getMethod(exec, callData, callType, vm.propertyNames->get, ASCIILiteral("'get' property of a Proxy's handler object should be callable"));
     if (exec->hadException())
-        return JSValue::encode(jsUndefined());
+        return jsUndefined();
 
     if (getHandler.isUndefined())
         return performDefaultGet();
@@ -133,26 +132,36 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
-    arguments.append(JSValue::decode(thisValue));
+    arguments.append(receiver);
     JSValue trapResult = call(exec, getHandler, callType, callData, handler, arguments);
     if (exec->hadException())
-        return JSValue::encode(jsUndefined());
+        return jsUndefined();
 
     PropertyDescriptor descriptor;
     if (target->getOwnPropertyDescriptor(exec, propertyName, descriptor)) {
         if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
             if (!sameValue(exec, descriptor.value(), trapResult))
-                return throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'get' result of a non-configurable and non-writable property should be the same value as the target's property"));
+                return throwTypeError(exec, ASCIILiteral("Proxy handler's 'get' result of a non-configurable and non-writable property should be the same value as the target's property"));
         } else if (descriptor.isAccessorDescriptor() && !descriptor.configurable() && descriptor.getter().isUndefined()) {
             if (!trapResult.isUndefined())
-                return throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'get' result of a non-configurable accessor property without a getter should be undefined"));
+                return throwTypeError(exec, ASCIILiteral("Proxy handler's 'get' result of a non-configurable accessor property without a getter should be undefined"));
         }
     }
 
     if (exec->hadException())
-        return JSValue::encode(jsUndefined());
+        return jsUndefined();
 
-    return JSValue::encode(trapResult);
+    return trapResult;
+}
+
+bool ProxyObject::performGet(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+{
+    JSValue result = performProxyGet(exec, this, slot.thisValue(), propertyName);
+    if (exec->hadException())
+        return false;
+    unsigned ignoredAttributes = 0;
+    slot.setValue(this, ignoredAttributes, result);
+    return true;
 }
 
 bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -337,8 +346,7 @@ bool ProxyObject::getOwnPropertySlotCommon(ExecState* exec, PropertyName propert
     slot.setIsTaintedByProxy();
     switch (slot.internalMethodType()) {
     case PropertySlot::InternalMethodType::Get:
-        slot.setCustom(this, CustomAccessor, performProxyGet);
-        return true;
+        return performGet(exec, propertyName, slot);
     case PropertySlot::InternalMethodType::GetOwnProperty:
         return performInternalMethodGetOwnProperty(exec, propertyName, slot);
     case PropertySlot::InternalMethodType::HasProperty:

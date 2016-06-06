@@ -768,6 +768,22 @@ ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, PropertyName propertyName, P
         slot.getValue(exec, propertyName) : jsUndefined();
 }
 
+template<typename CallbackWhenNoException>
+ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(ExecState* exec, PropertyName propertyName, CallbackWhenNoException callback) const
+{
+    PropertySlot slot(asValue(), PropertySlot::InternalMethodType::Get);
+    return getPropertySlot(exec, propertyName, slot, callback);
+}
+
+template<typename CallbackWhenNoException>
+ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot, CallbackWhenNoException callback) const
+{
+    bool found = getPropertySlot(exec, propertyName, slot);
+    if (UNLIKELY(exec->hadException()))
+        return { };
+    return callback(found, slot);
+}
+
 ALWAYS_INLINE bool JSValue::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
 {
     // If this is a primitive, we'll need to synthesize the prototype -

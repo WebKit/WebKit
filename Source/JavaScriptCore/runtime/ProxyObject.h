@@ -95,6 +95,7 @@ private:
 
     bool getOwnPropertySlotCommon(ExecState*, PropertyName, PropertySlot&);
     bool performInternalMethodGetOwnProperty(ExecState*, PropertyName, PropertySlot&);
+    bool performGet(ExecState*, PropertyName, PropertySlot&);
     bool performHasProperty(ExecState*, PropertyName, PropertySlot&);
     template <typename DefaultDeleteFunction>
     bool performDelete(ExecState*, PropertyName, DefaultDeleteFunction);

@@ -1084,7 +1084,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // to make some space here.
             jit.makeSpaceOnStackForCCall();
 
-            // getter: EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName, JSObject* slotBase);
+            // getter: EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName);
             // setter: void (*PutValueFunc)(ExecState*, EncodedJSValue thisObject, EncodedJSValue value);
             // Custom values are passed the slotBase (the property holder), custom accessors are passed the thisVaule (reciever).
             // FIXME: Remove this differences in custom values and custom accessors.
@@ -1094,8 +1094,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 jit.setupArgumentsWithExecState(
                     baseForCustomValue,
-                    CCallHelpers::TrustedImmPtr(ident.impl()),
-                    baseForAccessGPR);
+                    CCallHelpers::TrustedImmPtr(ident.impl()));
             } else
                 jit.setupArgumentsWithExecState(baseForCustomValue, valueRegs.gpr());
 #else
@@ -1103,8 +1102,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.setupArgumentsWithExecState(
                     EABI_32BIT_DUMMY_ARG baseForCustomValue,
                     CCallHelpers::TrustedImm32(JSValue::CellTag),
-                    CCallHelpers::TrustedImmPtr(ident.impl()),
-                    baseForAccessGPR);
+                    CCallHelpers::TrustedImmPtr(ident.impl()));
             } else {
                 jit.setupArgumentsWithExecState(
                     EABI_32BIT_DUMMY_ARG baseForCustomValue,

@@ -771,6 +771,8 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
     const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
     JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
     JSObject* resolvedScope = JSScope::resolve(exec, scope, ident);
+    // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
+    CHECK_EXCEPTION();
 
     ResolveType resolveType = static_cast<ResolveType>(pc[4].u.operand);
 

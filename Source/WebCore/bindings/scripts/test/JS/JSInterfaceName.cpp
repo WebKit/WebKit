@@ -32,7 +32,7 @@ namespace WebCore {
 
 // Attributes
 
-JSC::EncodedJSValue jsInterfaceNameConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName, JSC::JSObject*);
+JSC::EncodedJSValue jsInterfaceNameConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSInterfaceNameConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSInterfaceNamePrototype : public JSC::JSNonFinalObject {
@@ -115,7 +115,7 @@ void JSInterfaceName::destroy(JSC::JSCell* cell)
     thisObject->JSInterfaceName::~JSInterfaceName();
 }
 
-EncodedJSValue jsInterfaceNameConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName, JSObject*)
+EncodedJSValue jsInterfaceNameConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSInterfaceNamePrototype* domObject = jsDynamicCast<JSInterfaceNamePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))

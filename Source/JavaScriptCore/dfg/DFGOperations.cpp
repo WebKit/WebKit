@@ -1622,27 +1622,27 @@ EncodedJSValue JIT_OPERATION operationGetDynamicVar(ExecState* exec, JSObject* s
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    const Identifier& ident = Identifier::fromUid(exec, impl);
-    GetPutInfo getPutInfo(getPutInfoBits);
-
-    PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
-    if (!scope->getPropertySlot(exec, ident, slot)) {
-        if (getPutInfo.resolveMode() == ThrowIfNotFound)
-            vm.throwException(exec, createUndefinedVariableError(exec, ident));
-        return JSValue::encode(jsUndefined());
-    }
-
-    if (scope->isGlobalLexicalEnvironment()) {
-        // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
-        JSValue result = slot.getValue(exec, ident);
-        if (result == jsTDZValue()) {
-            exec->vm().throwException(exec, createTDZError(exec));
-            return JSValue::encode(jsUndefined());
+    Identifier ident = Identifier::fromUid(exec, impl);
+    return JSValue::encode(scope->getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+        if (!found) {
+            GetPutInfo getPutInfo(getPutInfoBits);
+            if (getPutInfo.resolveMode() == ThrowIfNotFound)
+                vm.throwException(exec, createUndefinedVariableError(exec, ident));
+            return jsUndefined();
         }
-        return JSValue::encode(result);
-    }
 
-    return JSValue::encode(slot.getValue(exec, ident));
+        if (scope->isGlobalLexicalEnvironment()) {
+            // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
+            JSValue result = slot.getValue(exec, ident);
+            if (result == jsTDZValue()) {
+                exec->vm().throwException(exec, createTDZError(exec));
+                return jsUndefined();
+            }
+            return result;
+        }
+
+        return slot.getValue(exec, ident);
+    }));
 }
 
 void JIT_OPERATION operationPutDynamicVar(ExecState* exec, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits)

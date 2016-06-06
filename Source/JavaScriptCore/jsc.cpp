@@ -302,8 +302,12 @@ public:
     {
         ImpureGetter* thisObject = jsCast<ImpureGetter*>(object);
         
-        if (thisObject->m_delegate && thisObject->m_delegate->getPropertySlot(exec, name, slot))
-            return true;
+        if (thisObject->m_delegate) {
+            if (thisObject->m_delegate->getPropertySlot(exec, name, slot))
+                return true;
+            if (exec->hadException())
+                return false;
+        }
 
         return Base::getOwnPropertySlot(object, exec, name, slot);
     }
@@ -358,7 +362,7 @@ public:
     }
 
 private:
-    static EncodedJSValue customGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName, JSObject*)
+    static EncodedJSValue customGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
     {
         CustomGetter* thisObject = jsDynamicCast<CustomGetter*>(JSValue::decode(thisValue));
         if (!thisObject)
@@ -463,7 +467,7 @@ private:
     {
     }
 
-    static EncodedJSValue lengthGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName, JSObject*)
+    static EncodedJSValue lengthGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
     {
         RuntimeArray* thisObject = jsDynamicCast<RuntimeArray*>(JSValue::decode(thisValue));
         if (!thisObject)
@@ -585,6 +589,7 @@ static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionRun(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionLoad(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionLoadString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReadline(ExecState*);
@@ -765,6 +770,7 @@ protected:
         addFunction(vm, "version", functionVersion, 1);
         addFunction(vm, "run", functionRun, 1);
         addFunction(vm, "load", functionLoad, 1);
+        addFunction(vm, "loadString", functionLoadString, 1);
         addFunction(vm, "readFile", functionReadFile, 1);
         addFunction(vm, "checkSyntax", functionCheckSyntax, 1);
         addFunction(vm, "jscStack", functionJSCStack, 1);
@@ -1103,7 +1109,7 @@ static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector<char>&
 JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, ExecState* exec, JSValue key)
 {
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
-    String moduleKey = key.toString(exec)->value(exec);
+    String moduleKey = key.toWTFString(exec);
     if (exec->hadException()) {
         JSValue exception = exec->exception();
         exec->clearException();
@@ -1371,7 +1377,7 @@ static EncodedJSValue JSC_HOST_CALL functionGetGetterSetter(ExecState* exec)
     if (!property.isString())
         return JSValue::encode(jsUndefined());
 
-    Identifier ident = Identifier::fromString(&exec->vm(), property.toString(exec)->value(exec));
+    Identifier ident = Identifier::fromString(&exec->vm(), property.toWTFString(exec));
 
     PropertySlot slot(value, PropertySlot::InternalMethodType::VMInquiry);
     value.getPropertySlot(exec, ident, slot);
@@ -1394,7 +1400,7 @@ EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*)
 
 EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 {
-    String fileName = exec->argument(0).toString(exec)->value(exec);
+    String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> script;
@@ -1425,7 +1431,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
 {
-    String fileName = exec->argument(0).toString(exec)->value(exec);
+    String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> script;
@@ -1441,9 +1447,23 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
     return JSValue::encode(result);
 }
 
+EncodedJSValue JSC_HOST_CALL functionLoadString(ExecState* exec)
+{
+    String sourceCode = exec->argument(0).toWTFString(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+
+    NakedPtr<Exception> evaluationException;
+    JSValue result = evaluate(globalObject->globalExec(), makeSource(sourceCode), JSValue(), evaluationException);
+    if (evaluationException)
+        exec->vm().throwException(exec, evaluationException);
+    return JSValue::encode(result);
+}
+
 EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
 {
-    String fileName = exec->argument(0).toString(exec)->value(exec);
+    String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> script;
@@ -1455,7 +1475,7 @@ EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
 {
-    String fileName = exec->argument(0).toString(exec)->value(exec);
+    String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> script;
@@ -1745,7 +1765,7 @@ EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(ExecState*)
 #if ENABLE(WEBASSEMBLY)
 EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState* exec)
 {
-    String fileName = exec->argument(0).toString(exec)->value(exec);
+    String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> buffer;
@@ -1766,7 +1786,7 @@ EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
 {
-    String fileName = exec->argument(0).toString(exec)->value(exec);
+    String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> script;
@@ -1795,7 +1815,7 @@ EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState* exec)
     if (exec->argumentCount() < 1 || !exec->argument(0).isString())
         return JSValue::encode(jsUndefined());
 
-    String functionText = exec->argument(0).toString(exec)->value(exec);
+    String functionText = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(JSValue());
 
@@ -1814,7 +1834,7 @@ EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
 {
-    String source = exec->argument(0).toString(exec)->value(exec);
+    String source = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1972,11 +1992,11 @@ int main(int argc, char** argv)
 
 static void dumpException(GlobalObject* globalObject, JSValue exception)
 {
-    printf("Exception: %s\n", exception.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+    printf("Exception: %s\n", exception.toWTFString(globalObject->globalExec()).utf8().data());
     Identifier stackID = Identifier::fromString(globalObject->globalExec(), "stack");
     JSValue stackValue = exception.get(globalObject->globalExec(), stackID);
     if (!stackValue.isUndefinedOrNull())
-        printf("%s\n", stackValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+        printf("%s\n", stackValue.toWTFString(globalObject->globalExec()).utf8().data());
 }
 
 static void dumpException(GlobalObject* globalObject, NakedPtr<Exception> evaluationException)
@@ -2061,7 +2081,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
             if (!uncaughtExceptionName || i != scripts.size() - 1) {
                 success = success && !evaluationException;
                 if (dump && !evaluationException)
-                    printf("End: %s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+                    printf("End: %s\n", returnValue.toWTFString(globalObject->globalExec()).utf8().data());
                 dumpException(globalObject, evaluationException);
             } else
                 success = success && checkUncaughtException(vm, globalObject, evaluationException, uncaughtExceptionName);
@@ -2128,9 +2148,9 @@ static void runInteractive(GlobalObject* globalObject)
         JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line, interpreterName), JSValue(), evaluationException);
 #endif
         if (evaluationException)
-            printf("Exception: %s\n", evaluationException->value().toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+            printf("Exception: %s\n", evaluationException->value().toWTFString(globalObject->globalExec()).utf8().data());
         else
-            printf("%s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+            printf("%s\n", returnValue.toWTFString(globalObject->globalExec()).utf8().data());
 
         globalObject->globalExec()->clearException();
         globalObject->vm().drainMicrotasks();

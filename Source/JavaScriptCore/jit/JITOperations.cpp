@@ -241,13 +241,12 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
 
     JSValue baseValue = JSValue::decode(base);
     LOG_IC((ICEvent::OperationGetByIdOptimize, baseValue.classInfoOrNull(), ident));
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
-    
-    bool hasResult = baseValue.getPropertySlot(exec, ident, slot);
-    if (stubInfo->considerCaching(baseValue.structureOrNull()))
-        repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Normal);
-    
-    return JSValue::encode(hasResult? slot.getValue(exec, ident) : jsUndefined());
+
+    return JSValue::encode(baseValue.getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+        if (stubInfo->considerCaching(baseValue.structureOrNull()))
+            repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Normal);
+        return found ? slot.getValue(exec, ident) : jsUndefined();
+    }));
 }
 
 EncodedJSValue JIT_OPERATION operationInOptimize(ExecState* exec, StructureStubInfo* stubInfo, JSCell* base, UniquedStringImpl* key)
@@ -268,6 +267,8 @@ EncodedJSValue JIT_OPERATION operationInOptimize(ExecState* exec, StructureStubI
     LOG_IC((ICEvent::OperationInOptimize, base->classInfo(), ident));
     PropertySlot slot(base, PropertySlot::InternalMethodType::HasProperty);
     bool result = asObject(base)->getPropertySlot(exec, ident, slot);
+    if (vm->exception())
+        return JSValue::encode(jsUndefined());
     
     RELEASE_ASSERT(accessType == stubInfo->accessType);
     
@@ -2014,28 +2015,29 @@ EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, Instruction*
     // ModuleVar is always converted to ClosureVar for get_from_scope.
     ASSERT(getPutInfo.resolveType() != ModuleVar);
 
-    PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
-    if (!scope->getPropertySlot(exec, ident, slot)) {
-        if (getPutInfo.resolveMode() == ThrowIfNotFound)
-            vm.throwException(exec, createUndefinedVariableError(exec, ident));
-        return JSValue::encode(jsUndefined());
-    }
-
-    JSValue result = JSValue();
-    if (scope->isGlobalLexicalEnvironment()) {
-        // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
-        result = slot.getValue(exec, ident);
-        if (result == jsTDZValue()) {
-            exec->vm().throwException(exec, createTDZError(exec));
-            return JSValue::encode(jsUndefined());
+    return JSValue::encode(scope->getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+        if (!found) {
+            if (getPutInfo.resolveMode() == ThrowIfNotFound)
+                vm.throwException(exec, createUndefinedVariableError(exec, ident));
+            return jsUndefined();
         }
-    }
 
-    CommonSlowPaths::tryCacheGetFromScopeGlobal(exec, vm, pc, scope, slot, ident);
+        JSValue result = JSValue();
+        if (scope->isGlobalLexicalEnvironment()) {
+            // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
+            result = slot.getValue(exec, ident);
+            if (result == jsTDZValue()) {
+                vm.throwException(exec, createTDZError(exec));
+                return jsUndefined();
+            }
+        }
 
-    if (!result)
-        result = slot.getValue(exec, ident);
-    return JSValue::encode(result);
+        CommonSlowPaths::tryCacheGetFromScopeGlobal(exec, vm, pc, scope, slot, ident);
+
+        if (!result)
+            return slot.getValue(exec, ident);
+        return result;
+    }));
 }
 
 void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)

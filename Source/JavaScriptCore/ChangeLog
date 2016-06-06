@@ -1,3 +1,138 @@
+2016-06-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Change ProxyObject.[[Get]] not to use custom accessor
+        https://bugs.webkit.org/show_bug.cgi?id=157080
+
+        Reviewed by Darin Adler.
+
+        This patch focuses on introducing the second part of the followings.
+        But to do so, first and third parts are necessary.
+
+        1. Insert missing exception checks for getPropertySlot.
+
+            While getPropertySlot can perform user-observable behavior if the slot is not VMInquiry,
+            several places miss exeption checks. For example, ProxyObject's hasProperty already can
+            throw any errors. Looking through the code, we found several missing error checks after
+            hasProperty, but this will be fixed in the separated patch[1].
+
+        2. Do not use custom accessor to implement ProxyObject's [[Get]].
+
+            The caller already allows getOwnPropertySlot to throw an exception if the type
+            is not VMInquiry. So instead of using custom accessor, we simply implement it
+            directly in the ProxyObject's method.
+
+        3. Strip slotBase from custom accessor.
+
+            The custom accessor should not be bound to the specific slot base[2], since it
+            is just an accessor. There is an alternative design: makeing this custom accessor
+            to custom value accessor and accept both the slot base and the receiver instead
+            of allowing throwing an error from getOwnPropertySlot. But we take the first design
+            that allows getPropertySlot to throw an error, since hasProperty (that does not call
+            getValue of the custom getters) can already throw any errors.
+
+            To query the property with the non-user-observable way, we already provided the way for that:
+            use VMInquiry and isTaintedByProxy() instead.
+
+        Tests just ensure that the current semantics works correctly after this patch.
+        And this patch is performance neutral.
+
+        Later, we will attempt to rename "thisValue" to "receiver"[3].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=158398
+        [2]: https://bugs.webkit.org/show_bug.cgi?id=157978
+        [3]: https://bugs.webkit.org/show_bug.cgi?id=158397
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::staticFunctionGetter):
+        (JSC::JSCallbackObject<Parent>::callbackGetter):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JITOperations.cpp:
+        * jsc.cpp:
+        (WTF::ImpureGetter::getOwnPropertySlot):
+        (WTF::CustomGetter::customGetter):
+        (WTF::RuntimeArray::lengthGetter):
+        (GlobalObject::finishCreation):
+        (GlobalObject::moduleLoaderFetch):
+        (functionGetGetterSetter):
+        (functionRun):
+        (functionLoad):
+        (functionLoadString):
+        (functionReadFile):
+        (functionCheckSyntax):
+        (functionLoadWebAssembly):
+        (functionLoadModule):
+        (functionCreateBuiltin):
+        (functionCheckModuleSyntax):
+        (dumpException):
+        (runWithScripts):
+        (runInteractive):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSBoundSlotBaseFunction.cpp:
+        (JSC::boundSlotBaseFunctionCall):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::getPropertySlot):
+        * runtime/JSCellInlines.h:
+        (JSC::ExecState::vm):
+        This change is super important for performance. We add several `exec->hadException()` calls into the super hot path, like JSC::operationGetByIdOptimize.
+        Without this change, we call ExecState::vm() and it is not inlined. This causes 1 - 2% performance regression in Octane PDFJS.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::JSFunction::callerGetter):
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::callbackGetter):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        Here's UNLIKELY is important for Kraken's json-stringify-tinderbox. Without it, we can observe 0.5% regression.
+
+        (JSC::Walker::walk):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getPropertySlot):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::customGetter):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::thisValue):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performGet):
+        (JSC::ProxyObject::getOwnPropertySlotCommon):
+        * runtime/ProxyObject.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::regExpConstructorDollar):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        * tests/stress/get-from-scope-dynamic-onto-proxy.js: Added.
+        (shouldBe):
+        (shouldThrow.handler.has):
+        (handler.has):
+        (try.handler.has):
+        * tests/stress/operation-in-throw-error.js: Added.
+        (testCase.handler.has):
+        (testCase):
+        * tests/stress/proxy-and-json-stringify.js: Added.
+        (shouldThrow):
+        * tests/stress/proxy-and-typed-array.js: Added.
+        * tests/stress/proxy-json-path.js: Added.
+        * tests/stress/proxy-with-statement.js: Added.
+
 2016-06-03  Gavin & Ellie Barraclough  <barraclough@apple.com>
 
         Deprecate remaining uses of Lookup getStatic*, use HasStaticPropertyTable instead.
