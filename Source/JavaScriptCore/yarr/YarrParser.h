@@ -448,10 +448,10 @@ private:
                 consume();
                 UChar32 codePoint = 0;
                 do {
-                    if (atEndOfPattern())
+                    if (atEndOfPattern() || !isASCIIHexDigit(peek())) {
                         m_err = InvalidUnicodeEscape;
-                    if (!isASCIIHexDigit(peek()))
-                        m_err = InvalidUnicodeEscape;
+                        break;
+                    }
 
                     codePoint = (codePoint << 4) | toASCIIHexValue(consume());
 

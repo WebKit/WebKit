@@ -1,3 +1,19 @@
+2016-06-03  Oliver Hunt  <oliver@apple.com>
+
+        RegExp unicode parsing reads an extra character before failing
+        https://bugs.webkit.org/show_bug.cgi?id=158376
+
+        Reviewed by Saam Barati.
+
+        This was a probably harmless bug, but keeps triggering assertions
+        for me locally. Essentially we'd see a parse error, set the error
+        type, but then carry on parsing. In debug builds this asserts, in
+        release builds you are pretty safe unless you're exceptionally
+        unlucky with where the error occurs.
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseEscape):
+
 2016-06-06  Guillaume Emont  <guijemont@igalia.com>
 
         [jsc][mips] fix JIT::emit_op_log_shadow_chicken_prologue/_tail

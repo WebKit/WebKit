@@ -205,11 +205,11 @@ shouldThrow('r = new RegExp("\\\\u{110000}", "u")', '"SyntaxError: Invalid regul
 var invalidEscapeException = "SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern";
 var newRegExp;
 
-function shouldThrowInvalidEscape(pattern)
+function shouldThrowInvalidEscape(pattern, error='invalidEscapeException')
 {
     newRegExp = 'r = new RegExp("' + pattern + '", "u")';
 
-    shouldThrow(newRegExp, 'invalidEscapeException');
+    shouldThrow(newRegExp, error);
 }
 
 shouldThrowInvalidEscape("\\\\-");
@@ -222,3 +222,5 @@ shouldThrowInvalidEscape("[\\\\x]");
 shouldThrowInvalidEscape("\\\\u");
 shouldThrowInvalidEscape("[\\\\u]");
 
+shouldThrowInvalidEscape("\\\\u{", '"SyntaxError: Invalid regular expression: invalid unicode {} escape"');
+shouldThrowInvalidEscape("\\\\u{\\udead", '"SyntaxError: Invalid regular expression: invalid unicode {} escape"');

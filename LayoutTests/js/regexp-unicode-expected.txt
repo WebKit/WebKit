@@ -151,6 +151,8 @@ PASS r = new RegExp("\\x", "u") threw exception SyntaxError: Invalid regular exp
 PASS r = new RegExp("[\\x]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
 PASS r = new RegExp("\\u", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
 PASS r = new RegExp("[\\u]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS r = new RegExp("\\u{", "u") threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
+PASS r = new RegExp("\\u{\udead", "u") threw exception SyntaxError: Invalid regular expression: invalid unicode {} escape.
 PASS successfullyParsed is true
 
 TEST COMPLETE

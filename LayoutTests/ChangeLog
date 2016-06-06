@@ -1,3 +1,14 @@
+2016-06-03  Oliver Hunt  <oliver@apple.com>
+
+        RegExp unicode parsing reads an extra character before failing
+        https://bugs.webkit.org/show_bug.cgi?id=158376
+
+        Reviewed by Saam Barati.
+
+        Add a couple of tests.
+
+        * js/script-tests/regexp-unicode.js:
+
 2016-06-06  Chris Dumez  <cdumez@apple.com>
 
         Crash under JSObject::getOwnPropertyDescriptor()
