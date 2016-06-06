@@ -1,3 +1,23 @@
+2016-06-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Update MediaEndpointPeerConnection::createOffer() to use the transceiver set
+        https://bugs.webkit.org/show_bug.cgi?id=158203
+
+        Reviewed by Eric Carlson.
+
+        Updated existing test.
+
+        * fast/mediastream/RTCPeerConnection-inspect-offer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-inspect-offer.html:
+        Add verification of mid attribute [1] (corresponds to the RTCRtpTransceiver mid attribute).
+        [1] https://tools.ietf.org/html/rfc5888
+        * fast/mediastream/resources/sdp-utils.js: Added.
+        (printComparableSessionDescription):
+        (verified):
+        (match):
+        Move the printComparableSessionDescription function to a separate file
+        to make it usable in other (future) tests.
+
 2016-06-06  Antoine Quint  <graouts@apple.com>
 
         Position of WebGL <canvas> on iOS is incorrect with CSS borders

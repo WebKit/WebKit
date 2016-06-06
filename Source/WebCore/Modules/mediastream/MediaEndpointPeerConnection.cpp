@@ -45,6 +45,7 @@
 namespace WebCore {
 
 using namespace PeerConnection;
+using namespace PeerConnectionStates;
 
 static std::unique_ptr<PeerConnectionBackend> createMediaEndpointPeerConnection(PeerConnectionBackendClient* client)
 {
@@ -95,6 +96,22 @@ MediaEndpointPeerConnection::MediaEndpointPeerConnection(PeerConnectionBackendCl
     m_mediaEndpoint->generateDtlsInfo();
 }
 
+static RTCRtpTransceiver* matchTransceiver(const RtpTransceiverVector& transceivers, const std::function<bool(RTCRtpTransceiver&)>& matchFunction)
+{
+    for (auto& transceiver : transceivers) {
+        if (matchFunction(*transceiver))
+            return transceiver.get();
+    }
+    return nullptr;
+}
+
+static RTCRtpTransceiver* matchTransceiverByMid(const RtpTransceiverVector& transceivers, const String& mid)
+{
+    return matchTransceiver(transceivers, [&mid] (RTCRtpTransceiver& current) {
+        return current.mid() == mid;
+    });
+}
+
 void MediaEndpointPeerConnection::runTask(NoncopyableFunction<void ()>&& task)
 {
     if (m_dtlsFingerprint.isNull()) {
@@ -128,27 +145,56 @@ void MediaEndpointPeerConnection::createOfferTask(RTCOfferOptions&, SessionDescr
 {
     ASSERT(!m_dtlsFingerprint.isEmpty());
 
+    if (m_client->internalSignalingState() == SignalingState::Closed)
+        return;
+
     RefPtr<MediaEndpointSessionConfiguration> configurationSnapshot = MediaEndpointSessionConfiguration::create();
 
-    configurationSnapshot->setSessionVersion(m_sdpSessionVersion++);
+    configurationSnapshot->setSessionVersion(m_sdpOfferSessionVersion++);
 
-    RtpSenderVector senders = RtpSenderVector(m_client->getSenders());
+    auto transceivers = RtpTransceiverVector(m_client->getTransceivers());
 
-    // Add media descriptions for senders.
-    for (auto& sender : senders) {
+    // Remove any transceiver objects from transceivers that can be matched to an existing media description.
+    for (auto& mediaDescription : configurationSnapshot->mediaDescriptions()) {
+        if (!mediaDescription->port()) {
+            // This media description should be recycled.
+            continue;
+        }
+
+        RTCRtpTransceiver* transceiver = matchTransceiverByMid(transceivers, mediaDescription->mid());
+        if (!transceiver)
+            continue;
+
+        mediaDescription->setMode(transceiver->directionString());
+        if (transceiver->hasSendingDirection()) {
+            RTCRtpSender& sender = *transceiver->sender();
+
+            mediaDescription->setMediaStreamId(sender.mediaStreamIds()[0]);
+            mediaDescription->setMediaStreamTrackId(sender.trackId());
+        }
+
+        transceivers.removeFirst(transceiver);
+    }
+
+    // Add media descriptions for remaining transceivers.
+    for (auto& transceiver : transceivers) {
         RefPtr<PeerMediaDescription> mediaDescription = PeerMediaDescription::create();
-        MediaStreamTrack& track = *sender->track();
+        RTCRtpSender& sender = *transceiver->sender();
 
-        mediaDescription->setMediaStreamId(sender->mediaStreamIds()[0]);
-        mediaDescription->setMediaStreamTrackId(track.id());
-        mediaDescription->setType(track.kind());
-        mediaDescription->setPayloads(track.kind() == "audio" ? m_defaultAudioPayloads : m_defaultVideoPayloads);
+        mediaDescription->setMode(transceiver->directionString());
+        mediaDescription->setMid(transceiver->provisionalMid());
+        mediaDescription->setMediaStreamId(sender.mediaStreamIds()[0]);
+        mediaDescription->setType(sender.trackKind());
+        mediaDescription->setPayloads(sender.trackKind() == "audio" ? m_defaultAudioPayloads : m_defaultVideoPayloads);
         mediaDescription->setDtlsFingerprintHashFunction(m_dtlsFingerprintFunction);
         mediaDescription->setDtlsFingerprint(m_dtlsFingerprint);
         mediaDescription->setCname(m_cname);
         mediaDescription->addSsrc(cryptographicallyRandomNumber());
         mediaDescription->setIceUfrag(m_iceUfrag);
         mediaDescription->setIcePassword(m_icePassword);
+
+        if (sender.track())
+            mediaDescription->setMediaStreamTrackId(sender.trackId());
 
         configurationSnapshot->addMediaDescription(WTFMove(mediaDescription));
     }

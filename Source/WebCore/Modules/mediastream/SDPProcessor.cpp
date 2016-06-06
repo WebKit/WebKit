@@ -70,6 +70,7 @@ STRING_FUNCTION(ice)
 STRING_FUNCTION(mediaDescriptions)
 STRING_FUNCTION(mediaStreamId)
 STRING_FUNCTION(mediaStreamTrackId)
+STRING_FUNCTION(mid)
 STRING_FUNCTION(mode)
 STRING_FUNCTION(mux)
 STRING_FUNCTION(nack)
@@ -210,6 +211,9 @@ static RefPtr<MediaEndpointSessionConfiguration> configurationFromJSON(const Str
 
         if (mediaDescriptionObject->getString(modeString(), stringValue))
             mediaDescription->setMode(stringValue);
+
+        if (mediaDescriptionObject->getString(midString(), stringValue))
+            mediaDescription->setMid(stringValue);
 
         RefPtr<InspectorArray> payloadsArray = InspectorArray::create();
         mediaDescriptionObject->getArray(payloadsString(), payloadsArray);
@@ -353,6 +357,7 @@ static String configurationToJSON(const MediaEndpointSessionConfiguration& confi
         mediaDescriptionObject->setInteger(portString(), mediaDescription->port());
         mediaDescriptionObject->setString(addressString(), mediaDescription->address());
         mediaDescriptionObject->setString(modeString(), mediaDescription->mode());
+        mediaDescriptionObject->setString(midString(), mediaDescription->mid());
 
         RefPtr<InspectorArray> payloadsArray = InspectorArray::create();
 

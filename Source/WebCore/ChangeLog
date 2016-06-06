@@ -1,3 +1,35 @@
+2016-06-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Update MediaEndpointPeerConnection::createOffer() to use the transceiver set
+        https://bugs.webkit.org/show_bug.cgi?id=158203
+
+        Reviewed by Eric Carlson.
+
+        Create an SDP offer based on the RTCPeerConnection object's set of RTCRtpTransceiver objects
+        (instead of RTCRtpSender objects).
+
+        Updated existing test: fast/mediastream/RTCPeerConnection-inspect-offer.html
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::matchTransceiver):
+        (WebCore::matchTransceiverByMid):
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        Remove getSenders() which is replaced by getTransceivers().
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/SDPProcessor.cpp:
+        (WebCore::configurationFromJSON):
+        (WebCore::configurationToJSON):
+        * Modules/mediastream/sdp.js:
+        (SDP.parse):
+        (SDP.generate):
+        Add support for mid attribute.
+        * platform/mediastream/PeerMediaDescription.h:
+        (WebCore::PeerMediaDescription::mid):
+        (WebCore::PeerMediaDescription::setMid):
+        (WebCore::PeerMediaDescription::clone):
+
 2016-06-06  George Ruan  <gruan@apple.com>
 
         Support createPattern(HTMLVideoElement, const String& repetitionType)

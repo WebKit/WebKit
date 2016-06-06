@@ -46,6 +46,7 @@ class MediaStreamTrack;
 class SDPProcessor;
 
 typedef Vector<RefPtr<RTCRtpSender>> RtpSenderVector;
+typedef Vector<RefPtr<RTCRtpTransceiver>> RtpTransceiverVector;
 
 class MediaEndpointPeerConnection : public PeerConnectionBackend, public MediaEndpointClient {
 public:
@@ -105,7 +106,7 @@ private:
     String m_icePassword;
     String m_dtlsFingerprint;
     String m_dtlsFingerprintFunction;
-    unsigned m_sdpSessionVersion { 0 };
+    unsigned m_sdpOfferSessionVersion { 0 };
 };
 
 } // namespace WebCore

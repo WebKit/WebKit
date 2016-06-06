@@ -40,8 +40,9 @@ if (typeof(SDP) == "undefined")
         "msidsemantic": "^a=msid-semantic: *WMS .*$",
         "mblock": "^m=(audio|video|application) ([\\d]+) ([A-Z/]+)([\\d ]*)$\\r?\\n",
         "mode": "^a=(sendrecv|sendonly|recvonly|inactive).*$",
+        "mid": "^a=mid:([!#$%&'*+-.\\w]*).*$",
         "rtpmap": "^a=rtpmap:${type} ([\\w\\-]+)/([\\d]+)/?([\\d]+)?.*$",
-        "fmtp": "^a=fmtp:${type} ([\\w\\-=;]+).*$",
+        "fmtp": "^a=fmtp:${type} ([\\w\\-=; ]+).*$",
         "param": "([\\w\\-]+)=([\\w\\-]+);?",
         "nack": "^a=rtcp-fb:${type} nack$",
         "nackpli": "^a=rtcp-fb:${type} nack pli$",
@@ -77,6 +78,7 @@ if (typeof(SDP) == "undefined")
             "${rtcpLine}" +
             "${rtcpMuxLine}" +
             "a=${mode}\r\n" +
+            "${midLine}" +
             "${rtpMapLines}" +
             "${fmtpLines}" +
             "${nackLines}" +
@@ -93,6 +95,7 @@ if (typeof(SDP) == "undefined")
 
         "rtcp": "a=rtcp:${port}${[ ]netType}${[ ]addressType}${[ ]address}\r\n",
         "rtcpMux": "a=rtcp-mux\r\n",
+        "mid": "a=mid:${mid}\r\n",
 
         "rtpMap": "a=rtpmap:${type} ${encodingName}/${clockRate}${[/]channels}\r\n",
         "fmtp": "a=fmtp:${type} ${parameters}\r\n",
@@ -201,6 +204,10 @@ if (typeof(SDP) == "undefined")
             var mode = match(mblock, regexps.mode, "m", sblock);
             if (mode)
                 mediaDescription.mode = mode[1];
+
+            var mid = match(mblock, regexps.mid, "m", sblock);
+            if (mid)
+                mediaDescription.mid = mid[1];
 
             var payloadTypes = [];
             if (match(mediaDescription.protocol, "(UDP/TLS)?RTP/S?AVPF?")) {
@@ -404,6 +411,11 @@ if (typeof(SDP) == "undefined")
                 "rtcp": {}
             });
             var mblock = fillTemplate(templates.mblock, mediaDescription);
+
+            var midInfo = {"midLine": ""};
+            if (mediaDescription.mid)
+                midInfo.midLine = fillTemplate(templates.mid, mediaDescription);
+            mblock = fillTemplate(mblock, midInfo);
 
             var payloadInfo = {"rtpMapLines": "", "fmtpLines": "", "nackLines": "",
                 "nackpliLines": "", "ccmfirLines": "", "ericScreamLines": ""};

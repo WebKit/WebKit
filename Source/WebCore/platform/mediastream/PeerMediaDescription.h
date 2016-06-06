@@ -61,6 +61,9 @@ public:
     const String& mode() const { return m_mode; }
     void setMode(const String& mode) { m_mode = mode; }
 
+    const String& mid() const { return m_mid; }
+    void setMid(const String& mid) { m_mid = mid; }
+
     const Vector<RefPtr<MediaPayload>>& payloads() const { return m_payloads; }
     void addPayload(RefPtr<MediaPayload>&& payload) { m_payloads.append(WTFMove(payload)); }
     void setPayloads(Vector<RefPtr<MediaPayload>>&& payloads) { m_payloads = payloads; }
@@ -117,6 +120,7 @@ public:
         copy->m_port = m_port;
         copy->m_address = String(m_address);
         copy->m_mode = String(m_mode);
+        copy->m_mid = String(m_mid);
 
         for (auto& payload : m_payloads)
             copy->m_payloads.append(payload->clone());
@@ -153,6 +157,7 @@ private:
     unsigned short m_port { 9 };
     String m_address { "0.0.0.0" };
     String m_mode { "sendrecv" };
+    String m_mid;
 
     Vector<RefPtr<MediaPayload>> m_payloads;
 
