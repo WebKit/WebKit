@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
+<style>
+html {
+   overflow-x: scroll;
+}
+.container {
+   display: grid;
+   overflow-y: scroll;
+   overflow-x: scroll;
+}
+.item {
+    background: lime;
+    width: 100px;
+    height: 100px;
+}
+</style>
+<p>This test passes if you see a 100x100px green box and scrollbars are disabled.</p>
+<div class="container fit-content">
+    <div class="item">item</div>
+</div>

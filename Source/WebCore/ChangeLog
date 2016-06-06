@@ -1,3 +1,20 @@
+2016-06-06  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Horizontal scroll must account for grid container's height
+        https://bugs.webkit.org/show_bug.cgi?id=157971
+
+        Reviewed by Darin Adler.
+
+        We don't consider the scrollbar when computing the grid container's
+        logical height at the beginning of the 'layoutBlock' logic. We must
+        do it because otherwise, contentLogicalHeight may return a negative
+        value.
+
+        Test: fast/css-grid-layout/grid-container-scroll-accounts-for-sizing.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+
 2016-06-06  Alex Christensen  <achristensen@webkit.org>
 
         Reduce ResourceRequest copying in loading code
