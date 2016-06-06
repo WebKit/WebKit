@@ -1,3 +1,14 @@
+2016-06-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Update ewebkit minor version
+        https://bugs.webkit.org/show_bug.cgi?id=158409
+
+        Reviewed by Csaba Osztrogonác.
+
+        EWebKit has used efl 1.17 version though, it still is stopped at version 1.14.
+
+        * Source/cmake/OptionsEfl.cmake: Bump minor version to 1.17.
+
 2016-06-05  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Sync EFL features with featureList.pm
