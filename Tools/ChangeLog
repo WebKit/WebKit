@@ -1,3 +1,15 @@
+2016-06-06  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION (r104174): 500+ tests failing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=75965
+
+        Reviewed by Michael Catanzaro.
+
+        Reset WebView scale factors before running next test.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2016-06-04  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r201263): Some tests have become flaky timeouts.
