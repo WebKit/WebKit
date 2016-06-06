@@ -1678,7 +1678,10 @@ sub GenerateParametersCheckExpression
                 push(@andExpression, "(${value}.isNull() || ${value}.isObject())");
             }
             $usedArguments{$parameterIndex} = 1;
-        } elsif ($codeGenerator->GetArrayOrSequenceType($type) || $codeGenerator->IsTypedArrayType($type) || $codeGenerator->IsWrapperType($type)) {
+        } elsif ($codeGenerator->IsDictionaryType($parameter->type)) {
+            push(@andExpression, "(${value}.isUndefinedOrNull() || ${value}.isObject())");
+            $usedArguments{$parameterIndex} = 1;
+        } elsif (($codeGenerator->GetArrayOrSequenceType($type) || $codeGenerator->IsTypedArrayType($type) || $codeGenerator->IsWrapperType($type)) && $type ne "EventListener") {
             my $condition = "";
 
             if ($parameter->isNullable) {

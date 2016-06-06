@@ -172,13 +172,15 @@ public:
     bool defaultPrevented() const { return m_defaultPrevented; }
     void preventDefault()
     {
-        if (m_cancelable)
+        if (m_cancelable && !m_isExecutingPassiveEventListener)
             m_defaultPrevented = true;
     }
     void setDefaultPrevented(bool defaultPrevented) { m_defaultPrevented = defaultPrevented; }
 
     bool defaultHandled() const { return m_defaultHandled; }
     void setDefaultHandled() { m_defaultHandled = true; }
+
+    void setInPassiveListener(bool value) { m_isExecutingPassiveEventListener = value; }
 
     bool cancelBubble() const { return m_cancelBubble; }
     void setCancelBubble(bool cancel) { m_cancelBubble = cancel; }
@@ -217,6 +219,7 @@ private:
     bool m_defaultHandled { false };
     bool m_cancelBubble { false };
     bool m_isTrusted { false };
+    bool m_isExecutingPassiveEventListener { false };
 
     unsigned short m_eventPhase { 0 };
     EventTarget* m_currentTarget { nullptr };

@@ -279,8 +279,8 @@ namespace WebCore {
 
         // Events
         // EventTarget API
-        bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, bool useCapture) override;
-        bool removeEventListener(const AtomicString& eventType, EventListener&, bool useCapture) override;
+        bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+        bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
         void removeAllEventListeners() override;
 
         using EventTarget::dispatchEvent;

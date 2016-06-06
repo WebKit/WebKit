@@ -95,9 +95,9 @@ Vector<AtomicString> EventListenerMap::eventTypes() const
     return types;
 }
 
-static bool addListenerToVector(EventListenerVector* vector, Ref<EventListener>&& listener, bool useCapture)
+static bool addListenerToVector(EventListenerVector* vector, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
 {
-    RegisteredEventListener registeredListener(WTFMove(listener), useCapture);
+    RegisteredEventListener registeredListener(WTFMove(listener), options);
 
     if (vector->find(registeredListener) != notFound)
         return false; // Duplicate listener.
@@ -106,17 +106,17 @@ static bool addListenerToVector(EventListenerVector* vector, Ref<EventListener>&
     return true;
 }
 
-bool EventListenerMap::add(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
+bool EventListenerMap::add(const AtomicString& eventType, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
 {
     assertNoActiveIterators();
 
     for (auto& entry : m_entries) {
         if (entry.first == eventType)
-            return addListenerToVector(entry.second.get(), WTFMove(listener), useCapture);
+            return addListenerToVector(entry.second.get(), WTFMove(listener), options);
     }
 
     m_entries.append(std::make_pair(eventType, std::make_unique<EventListenerVector>()));
-    return addListenerToVector(m_entries.last().second.get(), WTFMove(listener), useCapture);
+    return addListenerToVector(m_entries.last().second.get(), WTFMove(listener), options);
 }
 
 static bool removeListenerFromVector(EventListenerVector* listenerVector, EventListener& listener, bool useCapture, size_t& indexOfRemovedListener)

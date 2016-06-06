@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests support for 'passive' member in AddEventListenerOptions.");
+
+var listenerCallCount = 0;
+function passiveListenerFunction(ev)
+{
+    ++listenerCallCount;
+    ev.preventDefault();
+}
+
+function activeListenerFunction(ev)
+{
+    ++listenerCallCount;
+    ev.preventDefault();
+}
+
+evalAndLog("document.body.addEventListener('test', passiveListenerFunction, { 'passive': true })");
+var testEvent1 = new Event('test', { 'cancelable': true });
+evalAndLog("document.body.dispatchEvent(testEvent1)");
+shouldBe("listenerCallCount", "1");
+shouldBeFalse("testEvent1.defaultPrevented");
+
+debug("");
+listenerCallCount = 0;
+// 'passive should be false by default.
+evalAndLog("document.body.addEventListener('test', activeListenerFunction, { })");
+var testEvent2 = new Event('test', { 'cancelable': true });
+evalAndLog("document.body.dispatchEvent(testEvent2)");
+shouldBe("listenerCallCount", "2");
+shouldBeTrue("testEvent2.defaultPrevented");
+document.body.removeEventListener('test', activeListenerFunction);
+
+debug("");
+listenerCallCount = 0;
+evalAndLog("document.body.addEventListener('test', activeListenerFunction, { 'passive': false })");
+var testEvent2 = new Event('test', { 'cancelable': true });
+evalAndLog("document.body.dispatchEvent(testEvent2)");
+shouldBe("listenerCallCount", "2");
+shouldBeTrue("testEvent2.defaultPrevented");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

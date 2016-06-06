@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<body/>
+<script src="../../../../../resources/testharness.js"></script>
+<script src="../../../../../resources/testharnessreport.js"></script>
+
+<script>
+function testOptionEquality(addOptionValue, removeOptionValue, test) {
+  var handler = function handler(e) {
+      assert_unreached("dummy value getter invoked");
+  }
+  document.addEventListener('test', handler, addOptionValue);
+  document.removeEventListener('test', handler, removeOptionValue);
+  document.body.dispatchEvent(new Event('test', {'bubbles': true}));
+  test.done();
+}
+
+test(function(t) { testOptionEquality({}, false, t); }, "Empty object");
+test(function(t) { testOptionEquality({'capture': false}, false, t); }, "Capture false");
+test(function(t) { testOptionEquality({'capture': true}, true, t); }, "Capture true");
+test(function(t) { testOptionEquality({'dummy': true}, false, t); }, "Non-empty object");
+
+</script>
