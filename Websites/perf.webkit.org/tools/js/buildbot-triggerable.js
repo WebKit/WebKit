@@ -27,6 +27,22 @@ class BuildbotTriggerable {
 
     name() { return this._name; }
 
+    updateTriggerable()
+    {
+        const map = new Map;
+        for (const syncer of this._syncers) {
+            for (const config of syncer.testConfigurations()) {
+                const entry = {test: config.test.id(), platform: config.platform.id()};
+                map.set(entry.test + '-' + entry.platform, entry);
+            }
+        }
+        return this._remote.postJSON(`/api/update-triggerable/`, {
+            'slaveName': this._slaveInfo.name,
+            'slavePassword': this._slaveInfo.password,
+            'triggerable': this._name,
+            'configurations': Array.from(map.values())});
+    }
+
     syncOnce()
     {
         let syncerList = this._syncers;

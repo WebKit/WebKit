@@ -41,8 +41,12 @@ function syncLoop(options)
     global.RemoteAPI = new RemoteAPI(serverConfig.server);
 
     console.log(`Fetching the manifest...`);
+
+    let triggerable;
     Manifest.fetch().then(function () {
-        let triggerable = new BuildbotTriggerable(buildbotConfig, global.RemoteAPI, buildbotRemote, serverConfig.slave, console);
+        triggerable = new BuildbotTriggerable(buildbotConfig, global.RemoteAPI, buildbotRemote, serverConfig.slave, console);
+        return triggerable.updateTriggerable();
+    }).then(function () {
         return triggerable.syncOnce();
     }).catch(function (error) {
         console.error(error);

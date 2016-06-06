@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-const crypto = require('crypto');
 
 const TestServer = require('./resources/test-server.js');
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;

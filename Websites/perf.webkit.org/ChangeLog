@@ -1,3 +1,32 @@
+2016-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        sync-buildbot.js should update the list of tests and platforms associated with a triggerable
+        https://bugs.webkit.org/show_bug.cgi?id=158406
+        <rdar://problem/26185737>
+
+        Reviewed by Darin Adler.
+
+        Added /api/update-triggerable to update the list of configurations (platform and test pairs)
+        associated with a given triggerable, and make sync-buildbot.js use this JSON API before each
+        syncing cycle so that the association gets updated automatically by simply updating the JSON.
+
+        * server-tests/api-manifest.js: Use const for imported modules.
+        * server-tests/api-report-commits-tests.js: Removed unnecessary importing of crypto.
+        * server-tests/resources/mock-data.js:
+        (MockData.someTestId): Added.
+        (MockData.somePlatformId): Added.
+        (MockData.addMockData):
+        * server-tests/tools-buildbot-triggerable-tests.js: Use const for imported modules. Also added
+        a test for BuildbotTriggerable's updateTriggerable.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.updateTriggerable): Added. Find the list of all configurations
+        associated with this triggeerable and post it to /api/update-triggerable.
+        * tools/js/database.js: Added triggerable_configurations to the list of tables.
+        * tools/js/remote.js:
+        (RemoteAPI.prototype.postJSON): Print the whole response when JSON parsing fails for debugging.
+        * tools/sync-buildbot.js:
+        (syncLoop): Call BuildbotTriggerable's updateTriggerable before syncing.
+
 2016-06-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r201564.

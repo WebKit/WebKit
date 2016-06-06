@@ -16,6 +16,8 @@ MockData = {
         Test.clearStaticMap();
         TestGroup.clearStaticMap();
     },
+    someTestId() { return 200; },
+    somePlatformId() { return 65; },
     addMockData: function (db, statusList)
     {
         if (!statusList)
@@ -28,8 +30,8 @@ MockData = {
             db.insert('commits', {id: 87832, repository: 9, revision: '10.11 15A284'}),
             db.insert('commits', {id: 93116, repository: 11, revision: '191622', time: (new Date(1445945816878)).toISOString()}),
             db.insert('commits', {id: 96336, repository: 11, revision: '192736', time: (new Date(1448225325650)).toISOString()}),
-            db.insert('platforms', {id: 65, name: 'some platform'}),
-            db.insert('tests', {id: 200, name: 'some test'}),
+            db.insert('platforms', {id: MockData.somePlatformId(), name: 'some platform'}),
+            db.insert('tests', {id: MockData.someTestId(), name: 'some test'}),
             db.insert('test_metrics', {id: 300, test: 200, name: 'some metric'}),
             db.insert('test_configurations', {id: 301, metric: 300, platform: 65, type: 'current'}),
             db.insert('root_sets', {id: 401}),

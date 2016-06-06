@@ -1,10 +1,11 @@
 'use strict';
 
-let assert = require('assert');
+const assert = require('assert');
 
 require('../tools/js/v3-models.js');
 
-let TestServer = require('./resources/test-server.js');
+const MockData = require('./resources/mock-data.js');
+const TestServer = require('./resources/test-server.js');
 
 describe('/api/manifest', function () {
     this.timeout(1000);

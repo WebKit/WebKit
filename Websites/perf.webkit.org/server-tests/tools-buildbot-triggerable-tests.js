@@ -1,11 +1,12 @@
 'use strict';
 
-let assert = require('assert');
+const assert = require('assert');
 
-let BuildbotTriggerable = require('../tools/js/buildbot-triggerable.js').BuildbotTriggerable;
-let MockData = require('./resources/mock-data.js');
-let MockRemoteAPI = require('../unit-tests/resources/mock-remote-api.js').MockRemoteAPI;
-let TestServer = require('./resources/test-server.js');
+const BuildbotTriggerable = require('../tools/js/buildbot-triggerable.js').BuildbotTriggerable;
+const MockData = require('./resources/mock-data.js');
+const MockRemoteAPI = require('../unit-tests/resources/mock-remote-api.js').MockRemoteAPI;
+const TestServer = require('./resources/test-server.js');
+const connectToDatabaseInEveryTest = require('./resources/common-operations.js').connectToDatabaseInEveryTest;
 
 class MockLogger {
     constructor()
@@ -902,4 +903,32 @@ describe('BuildbotTriggerable', function () {
             }).catch(done);
         });
     });
+
+    describe('updateTriggerables', function () {
+        connectToDatabaseInEveryTest();
+
+        it('should update available triggerables', function (done) {
+            let db = TestServer.database();
+            MockData.addMockData(db).then(function () {
+                return Manifest.fetch();
+            }).then(function () {
+                return db.selectAll('triggerable_configurations', 'test');
+            }).then(function (configurations) {
+                assert.equal(configurations.length, 0);
+                let config = MockData.mockTestSyncConfigWithSingleBuilder();
+                let logger = new MockLogger;
+                let slaveInfo = {name: 'sync-slave', password: 'password'};
+                let triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
+                return triggerable.updateTriggerable();
+            }).then(function () {
+                return db.selectAll('triggerable_configurations', 'test');
+            }).then(function (configurations) {
+                assert.equal(configurations.length, 1);
+                assert.equal(configurations[0].test, MockData.someTestId());
+                assert.equal(configurations[0].platform, MockData.somePlatformId());
+                done();
+            }).catch(done);
+        });
+    });
+
 });
