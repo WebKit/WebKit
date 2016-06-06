@@ -293,12 +293,12 @@ void NetworkProcess::destroyPrivateBrowsingSession(SessionID sessionID)
     SessionTracker::destroySession(sessionID);
 }
 
-void NetworkProcess::grantSandboxExtensionsToDatabaseProcessForBlobs(const Vector<String>& filenames, std::function<void ()> completionHandler)
+void NetworkProcess::grantSandboxExtensionsToDatabaseProcessForBlobs(const Vector<String>& filenames, NoncopyableFunction<void ()>&& completionHandler)
 {
     static uint64_t lastRequestID;
 
     uint64_t requestID = ++lastRequestID;
-    m_sandboxExtensionForBlobsCompletionHandlers.set(requestID, completionHandler);
+    m_sandboxExtensionForBlobsCompletionHandlers.set(requestID, WTFMove(completionHandler));
     parentProcessConnection()->send(Messages::NetworkProcessProxy::GrantSandboxExtensionsToDatabaseProcessForBlobs(requestID, filenames), 0);
 }
 
