@@ -1,3 +1,30 @@
+2016-06-06  George Ruan  <gruan@apple.com>
+
+        Support createPattern(HTMLVideoElement, const String& repetitionType)
+        https://bugs.webkit.org/show_bug.cgi?id=149984
+        <rdar://problem/23058823>
+
+        Reviewed by Dean Jackson.
+
+        Support functionality for HTMLVideoElement argument for
+        CanvasRenderingContext2D::createPattern*()
+
+        Tests: fast/canvas/canvas-createPattern-video-invalid.html
+               fast/canvas/canvas-createPattern-video-loading.html
+               fast/canvas/canvas-createPattern-video-modify.html
+               http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html
+               http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html
+               http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html
+               http/tests/security/canvas-remote-read-remote-video-localhost.html
+               http/tests/security/canvas-remote-read-remote-video-redirect.html
+               media/video-canvas-createPattern.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern): Implement
+        functionality of description
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2016-06-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(SHADOW_DOM) && !ENABLE(DETAILS_ELEMENT) build

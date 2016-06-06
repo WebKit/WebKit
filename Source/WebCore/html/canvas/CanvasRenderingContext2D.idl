@@ -177,6 +177,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     [RaisesException] CanvasPattern createPattern(HTMLCanvasElement canvas, [TreatNullAs=EmptyString] DOMString repetitionType);
     [RaisesException] CanvasPattern createPattern(HTMLImageElement image, [TreatNullAs=EmptyString] DOMString repetitionType);
+    [Conditional=VIDEO, RaisesException] CanvasPattern? createPattern(HTMLVideoElement video, [TreatNullAs=EmptyString] DOMString repetitionType);
     [RaisesException] ImageData createImageData(ImageData? imagedata);
     [RaisesException] ImageData createImageData(float sw, float sh);
 

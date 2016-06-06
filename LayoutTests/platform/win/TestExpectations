@@ -898,6 +898,8 @@ media/encrypted-media/encrypted-media-syntax.html [ Skip ] # [ WontFix ]
 webkit.org/b/103442 media/W3C/video/networkState/networkState_during_progress.html [ Skip ]
 
 # No CORS support for media elements is implemented yet.
+http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Failure ]
+http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Failure ]
 http/tests/security/video-cross-origin-readback.html [ Skip ]
 
 # Requires ENABLE(MEDIA_CAPTURE)

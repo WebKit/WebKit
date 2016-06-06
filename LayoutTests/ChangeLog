@@ -1,3 +1,81 @@
+2016-06-06  George Ruan  <gruan@apple.com>
+
+        Support createPattern(HTMLVideoElement, const String& repetitionType)
+        https://bugs.webkit.org/show_bug.cgi?id=149984
+        <rdar://problem/23058823>
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/canvas-createPattern-video-invalid-expected.txt: Added.
+        * fast/canvas/canvas-createPattern-video-invalid.html: Added. Test
+        behavior when given invalid arguments.
+        * fast/canvas/canvas-createPattern-video-loading-expected.txt: Added.
+        * fast/canvas/canvas-createPattern-video-loading.html: Added. Tests
+        behavior before video loaded, right after it's loaded, and after being
+        played.
+        * fast/canvas/canvas-createPattern-video-modify-expected.txt: Added.
+        * fast/canvas/canvas-createPattern-video-modify.html: Added. Tests
+        that modifying the video after calling the createPattern() function
+        does not affect the pattern rendered or to be rendered.
+        *
+        http/tests/security/canvas-remote-read-remote-image-allowed-expected.txt:
+        Fix typo.
+        *
+        http/tests/security/canvas-remote-read-remote-image-allowed-with-credentials-expected.txt:
+        Fix typo.
+        *
+        http/tests/security/canvas-remote-read-remote-image-allowed-with-credentials.html:
+        Fix typo.
+        * http/tests/security/canvas-remote-read-remote-image-allowed.html:
+        Fix typo.
+        *
+        http/tests/security/canvas-remote-read-remote-image-blocked-no-crossorigin-expected.txt:
+        Fix typo.
+        *
+        http/tests/security/canvas-remote-read-remote-image-blocked-no-crossorigin.html:
+        Fix typo.
+        * http/tests/security/canvas-remote-read-remote-video-allowed-anonymous-expected.txt: Added.
+        *
+        http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html:
+        Added. This test will fail as CORS is not implemented for media yet.
+        Tests that data can be retrieved from canvas even when tainted if CORS
+        is enabled with anonymous.
+        * http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials-expected.txt: Added.
+        *
+        http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html:
+        Added. This test will fail as CORS is not implemented for media yet.
+        Tests that data can be retrieved from canvas even when tainted if CORS
+        is enabled with credentials.
+        * http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin-expected.txt: Added.
+        *
+        http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html:
+        Added. Ensures that data cannot be retrieved from a tainted canvas if
+        no cross origin is enabled.
+        * http/tests/security/canvas-remote-read-remote-video-localhost-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-remote-video-localhost.html:
+        Added. Ensures that localhost is blocked like http.
+        * http/tests/security/canvas-remote-read-remote-video-redirect-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-remote-video-redirect.html:
+        Added. Ensures that redirects are blocked.
+        * http/tests/security/resources/canvas-video-crossorigin.js: Added.
+        Includes common functions used to test the CORS of canvas for video.
+        *
+        http/tests/security/resources/video-cross-origin-allow-credentials.php:
+        Added. Script that serves test video for
+        canvas-remote-read-remote-video-allowed-with-credentials.html.
+        * media/video-canvas-createPattern-expected.txt: Added.
+        * media/video-canvas-createPattern.html: Added. Naive test that
+        ensures functionality of createPattern() with HTMLVideoElement
+        argument.
+        * platform/ios-simulator-wk1/TestExpectations: Added
+        canvas-remote-read-remote-video-allowed-anonymous.html and
+        canvas-remote-read-remote-video-allowed-with-credentials.html.
+        * platform/ios-simulator-wk2/TestExpectations: Same as wk1.
+        * platform/mac/TestExpectations: Same as wk1.
+        * platform/mac/media/video-canvas-createPattern-expected.png: Added.
+        * platform/win/TestExpectations: Same as wk1.
+        * platform/wk2/TestExpectations: Same as wk1.
+
 2016-06-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201706.

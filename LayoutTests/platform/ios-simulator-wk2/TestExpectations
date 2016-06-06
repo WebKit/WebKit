@@ -500,6 +500,8 @@ http/tests/navigation/redirect-to-random-url-versus-memory-cache.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html
+http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Failure ]
+http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Failure ]
 http/tests/security/cookies/third-party-cookie-blocking-user-action.html
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 http/tests/security/isolatedWorld/userGestureEvents.html

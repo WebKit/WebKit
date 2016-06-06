@@ -182,6 +182,9 @@ public:
     RefPtr<CanvasGradient> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1, ExceptionCode&);
     RefPtr<CanvasPattern> createPattern(HTMLImageElement&, const String& repetitionType, ExceptionCode&);
     RefPtr<CanvasPattern> createPattern(HTMLCanvasElement&, const String& repetitionType, ExceptionCode&);
+#if ENABLE(VIDEO)
+    RefPtr<CanvasPattern> createPattern(HTMLVideoElement&, const String& repetitionType, ExceptionCode&);
+#endif
 
     RefPtr<ImageData> createImageData(RefPtr<ImageData>&&, ExceptionCode&) const;
     RefPtr<ImageData> createImageData(float width, float height, ExceptionCode&) const;

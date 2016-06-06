@@ -33,6 +33,7 @@
 #include "config.h"
 #include "CanvasRenderingContext2D.h"
 
+#include "BitmapImage.h"
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
@@ -46,6 +47,7 @@
 #include "FloatQuad.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageBuffer.h"
 #include "ImageData.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
@@ -1795,6 +1797,33 @@ RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElement&
         return nullptr;
     return CanvasPattern::create(canvas.copiedImage(), repeatX, repeatY, canvas.originClean());
 }
+    
+#if ENABLE(VIDEO)
+RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLVideoElement& videoElement, const String& repetitionType, ExceptionCode& ec)
+{
+    if (videoElement.readyState() < HTMLMediaElement::HAVE_CURRENT_DATA)
+        return nullptr;
+    
+    bool repeatX, repeatY;
+    ec = 0;
+    CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
+    if (ec)
+        return nullptr;
+    
+    checkOrigin(&videoElement);
+    bool originClean = canvas()->originClean();
+
+#if USE(CG) || (ENABLE(ACCELERATED_2D_CANVAS) && USE(GSTREAMER_GL) && USE(CAIRO))
+    if (auto nativeImage = videoElement.nativeImageForCurrentTime())
+        return CanvasPattern::create(BitmapImage::create(WTFMove(nativeImage)), repeatX, repeatY, originClean);
+#endif
+
+    auto imageBuffer = ImageBuffer::create(size(videoElement), drawingContext() ? drawingContext()->renderingMode() : Accelerated);
+    videoElement.paintCurrentFrameInContext(imageBuffer->context(), FloatRect(FloatPoint(), size(videoElement)));
+    
+    return CanvasPattern::create(ImageBuffer::sinkIntoImage(WTFMove(imageBuffer), Unscaled), repeatX, repeatY, originClean);
+}
+#endif
 
 void CanvasRenderingContext2D::didDrawEntireCanvas()
 {

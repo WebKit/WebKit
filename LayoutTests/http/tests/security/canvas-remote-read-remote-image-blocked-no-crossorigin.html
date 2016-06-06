@@ -76,7 +76,7 @@ image.onload = function() {
     var context = canvas.getContext("2d");
     context.drawImage(dirtyCanvas, 0, 0, 100, 100);
 
-    test(canvas, "tained canvas");
+    test(canvas, "tainted canvas");
 
     // Test reading after using a tainted pattern
     canvas = document.createElement("canvas");

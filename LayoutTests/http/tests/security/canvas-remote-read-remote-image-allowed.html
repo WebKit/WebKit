@@ -76,7 +76,7 @@ image.onload = function() {
     var context = canvas.getContext("2d");
     context.drawImage(dirtyCanvas, 0, 0, 100, 100);
 
-    test(canvas, "CORS-untained canvas");
+    test(canvas, "CORS-untainted canvas");
 
     // Test reading after using a tainted pattern
     canvas = document.createElement("canvas");
