@@ -1,3 +1,15 @@
+2016-06-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Move efl include paths to JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
+        https://bugs.webkit.org/show_bug.cgi?id=158418
+
+        Reviewed by Csaba Osztrogonác.
+
+        In Source/JavaScriptCore/PlatformEfl.cmake, we don't use JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
+        for efl include paths.
+
+        * PlatformEfl.cmake:
+
 2016-06-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Change ProxyObject.[[Get]] not to use custom accessor
