@@ -1,3 +1,16 @@
+2016-06-06  Guillaume Emont  <guijemont@igalia.com>
+
+        [jsc][mips] fix JIT::emit_op_log_shadow_chicken_prologue/_tail
+        https://bugs.webkit.org/show_bug.cgi?id=158209
+
+        Reviewed by Mark Lam.
+
+        On MIPS, changes GPRInfo::nonArgGPR0 to be regT4 instead of regT0,
+        since the code of JIT::emit_op_log_shadow_chicken_prologue/_tail()
+        expects nonArgGPR0 to be a different register from regT0 and regT2.
+
+        * jit/GPRInfo.h:
+
 2016-06-06  Chris Dumez  <cdumez@apple.com>
 
         Crash under JSObject::getOwnPropertyDescriptor()

@@ -771,7 +771,7 @@ public:
     static const GPRReg argumentGPR1 = MIPSRegisters::a1;
     static const GPRReg argumentGPR2 = MIPSRegisters::a2;
     static const GPRReg argumentGPR3 = MIPSRegisters::a3;
-    static const GPRReg nonArgGPR0 = regT0;
+    static const GPRReg nonArgGPR0 = regT4;
     static const GPRReg returnValueGPR = regT0;
     static const GPRReg returnValueGPR2 = regT1;
     static const GPRReg nonPreservedNonReturnGPR = regT2;
