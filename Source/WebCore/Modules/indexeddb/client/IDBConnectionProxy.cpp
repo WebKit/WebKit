@@ -156,12 +156,12 @@ void IDBConnectionProxy::deleteIndex(TransactionOperation& operation, uint64_t o
     callConnectionOnMainThread(&IDBConnectionToServer::deleteIndex, requestData, WTFMove(objectStoreIdentifier), indexName);
 }
 
-void IDBConnectionProxy::putOrAdd(TransactionOperation& operation, IDBKey* key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
+void IDBConnectionProxy::putOrAdd(TransactionOperation& operation, IDBKeyData&& keyData, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
 {
     const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    callConnectionOnMainThread(&IDBConnectionToServer::putOrAdd, requestData, IDBKeyData(key), value, mode);
+    callConnectionOnMainThread(&IDBConnectionToServer::putOrAdd, requestData, keyData, value, mode);
 }
 
 void IDBConnectionProxy::getRecord(TransactionOperation& operation, const IDBKeyRangeData& keyRange)

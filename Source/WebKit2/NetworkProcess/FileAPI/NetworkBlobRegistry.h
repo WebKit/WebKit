@@ -30,6 +30,7 @@
 #include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/NoncopyableFunction.h>
 
 namespace WebCore {
 class BlobDataFileReference;
@@ -54,7 +55,7 @@ public:
     void registerBlobURLForSlice(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end);
     void unregisterBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&);
     uint64_t blobSize(NetworkConnectionToWebProcess*, const WebCore::URL&);
-    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, std::function<void(const Vector<String>&)> completionHandler);
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, NoncopyableFunction<void(const Vector<String>&)>&& completionHandler);
 
     void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*);
 

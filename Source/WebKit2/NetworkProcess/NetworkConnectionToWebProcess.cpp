@@ -308,20 +308,18 @@ void NetworkConnectionToWebProcess::blobSize(const URL& url, uint64_t& resultSiz
 
 void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, uint64_t requestIdentifier)
 {
-    RefPtr<NetworkConnectionToWebProcess> protector(this);
-
-    Vector<RefPtr<WebCore::BlobDataFileReference>> fileReferences;
+    Vector<RefPtr<BlobDataFileReference>> fileReferences;
     for (auto& url : blobURLs)
         fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(*this, { ParsedURLString, url }));
 
     for (auto& file : fileReferences)
         file->prepareForFileAccess();
 
-    NetworkBlobRegistry::singleton().writeBlobsToTemporaryFiles(blobURLs, [this, protector, requestIdentifier, fileReferences](auto& fileNames) {
+    NetworkBlobRegistry::singleton().writeBlobsToTemporaryFiles(blobURLs, [this, protectedThis = Ref<NetworkConnectionToWebProcess>(*this), requestIdentifier, fileReferences = WTFMove(fileReferences)](auto& fileNames) mutable {
         for (auto& file : fileReferences)
             file->revokeFileAccess();
 
-        NetworkProcess::singleton().grantSandboxExtensionsToDatabaseProcessForBlobs(fileNames, [this, protector, requestIdentifier, fileNames]() {
+        NetworkProcess::singleton().grantSandboxExtensionsToDatabaseProcessForBlobs(fileNames, [this, protectedThis = WTFMove(protectedThis), requestIdentifier, fileNames = WTFMove(fileNames)]() {
             if (!m_connection || !m_connection->isValid())
                 return;
 

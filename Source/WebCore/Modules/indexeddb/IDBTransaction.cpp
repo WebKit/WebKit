@@ -966,20 +966,18 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
         return;
     }
 
-    RefPtr<IDBTransaction> protectedThis(this);
-    RefPtr<IDBClient::TransactionOperation> protectedOperation(&operation);
-    value->writeBlobsToDiskForIndexedDB([protectedThis = WTFMove(protectedThis), this, protectedOperation = WTFMove(protectedOperation), key = WTFMove(key), overwriteMode](const IDBValue& idbValue) mutable {
+    value->writeBlobsToDiskForIndexedDB([protectedThis = Ref<IDBTransaction>(*this), this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), keyData = IDBKeyData(key.get()).isolatedCopy(), overwriteMode](const IDBValue& idbValue) mutable {
         ASSERT(currentThread() == originThreadID());
         ASSERT(isMainThread());
         if (idbValue.data().data()) {
-            m_database->connectionProxy().putOrAdd(*protectedOperation, key.get(), idbValue, overwriteMode);
+            m_database->connectionProxy().putOrAdd(protectedOperation.get(), WTFMove(keyData), idbValue, overwriteMode);
             return;
         }
 
         // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
         // In that case, we cannot successfully store this record, so we callback with an error.
         auto result = IDBResultData::error(protectedOperation->identifier(), { IDBDatabaseException::UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
-        callOnMainThread([protectedThis = WTFMove(protectedThis), protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)]() {
+        callOnMainThread([protectedThis = WTFMove(protectedThis), protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)]() mutable {
             protectedOperation->completed(result);
         });
     });
