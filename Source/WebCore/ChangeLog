@@ -1,3 +1,41 @@
+2016-06-05  Gavin & Ellie Barraclough  <barraclough@apple.com>
+
+        Deprecate remaining uses of Lookup getStatic*, use HasStaticPropertyTable instead.
+        https://bugs.webkit.org/show_bug.cgi?id=158178
+
+        Reviewed by Darin Adler.
+
+        As of bug #158059 most JSC static table property access no longer requires getOwnPropertySlot to be
+        overridden. Port remaining calls to the getStatic* functions in Lookup.h over to the new mechanism.
+
+        Switch WebCore DOM instance bindings to use HasStaticPropertyTable.
+
+        * bindings/js/JSPluginElementFunctions.h:
+        (WebCore::pluginElementCustomGetOwnPropertySlot):
+            - Switch call from getStaticValueSlot to Type::getOwnPropertySlot.
+              For any element where Type::hasStaticPropertyTable is true the HasStaticPropertyTable
+              structure flag will also be set, so Type::getOwnPropertySlot will do the same thing.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+            - If we override getOwnPropertySlot, Base::getOwnPropertySlot will handle property storage & static property lookup.
+        (InstanceOverridesGetOwnPropertySlot):
+            - Instances only override getOwnPropertySlot if the really need to, not just for static property lookup.
+        (GenerateHeader):
+            - Set HasStaticPropertyTable in instance structureFlags, where appropriate.
+        (GenerateImplementation):
+            - GenerateGetOwnPropertySlotBody no longer needs to know if there are static properties.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSattribute.h:
+            - Updating bindings test results.
+
 2016-06-06  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Crash seen in IDBConnectionProxy::putOrAdd on GuardMalloc bot

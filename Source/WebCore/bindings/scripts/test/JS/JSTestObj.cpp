@@ -1358,7 +1358,7 @@ bool JSTestObj::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyN
         slot.setValue(thisObject, attributes, jsStringOrUndefined(state, thisObject->wrapped().item(index)));
         return true;
     }
-    if (getStaticPropertySlot<JSTestObj, Base>(state, JSTestObjTable, thisObject, propertyName, slot))
+    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
         return true;
     return false;
 }

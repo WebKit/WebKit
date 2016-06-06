@@ -272,7 +272,7 @@ sub IsDOMGlobalObject
 
 sub GenerateGetOwnPropertySlotBody
 {
-    my ($interface, $className, $hasInstanceProperties, $inlined) = @_;
+    my ($interface, $className, $inlined) = @_;
 
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
     my $namedGetterFunction = GetNamedGetterFunction($interface);
@@ -281,15 +281,7 @@ sub GenerateGetOwnPropertySlotBody
     my @getOwnPropertySlotImpl = ();
 
     my $ownPropertyCheck = sub {
-        if ($hasInstanceProperties) {
-            my $instanceFunctionCount = InstanceFunctionCount($interface);
-            # If there are functions on the instance, then call getStaticPropertySlot() instead of getStaticValueSlot().
-            my $staticPropertyGetFunction = $namespaceMaybe . ($instanceFunctionCount eq 0 ? "getStaticValueSlot" : "getStaticPropertySlot");
-            my $staticPropertyTable = $inlined ? "*info()->staticPropHashTable" : "${className}Table";
-            push(@getOwnPropertySlotImpl, "    if ($staticPropertyGetFunction<$className, Base>(state, ${staticPropertyTable}, thisObject, propertyName, slot))\n");
-        } else {
-            push(@getOwnPropertySlotImpl, "    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))\n");
-        }
+        push(@getOwnPropertySlotImpl, "    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
     };
 
@@ -686,7 +678,6 @@ sub PrototypePropertyCount
 sub InstanceOverridesGetOwnPropertySlot
 {
     my $interface = shift;
-    my $numInstanceProperties = InstancePropertyCount($interface);
 
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
@@ -699,7 +690,7 @@ sub InstanceOverridesGetOwnPropertySlot
         || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
         || $hasNamedGetter;
 
-    return $numInstanceProperties > 0 || $hasComplexGetter;
+    return $hasComplexGetter;
 }
 
 sub PrototypeHasStaticPropertyTable
@@ -1147,8 +1138,12 @@ sub GenerateHeader
         push(@headerContent, "    static const bool needsDestruction = false;\n\n");
     }
 
-    my $hasStaticPropertyTable = InstancePropertyCount($interface) > 0 ? "true" : "false";
-    push(@headerContent, "    static const bool hasStaticPropertyTable = $hasStaticPropertyTable;\n\n");
+    if (InstancePropertyCount($interface) > 0) {
+        $structureFlags{"JSC::HasStaticPropertyTable"} = 1;
+        push(@headerContent, "    static const bool hasStaticPropertyTable = true;\n\n");
+    } else {
+        push(@headerContent, "    static const bool hasStaticPropertyTable = false;\n\n");
+    }
 
     # Prototype
     unless (IsDOMGlobalObject($interface)) {
@@ -2435,7 +2430,7 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    auto* thisObject = jsCast<${className}*>(object);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
-            push(@implContent, GenerateGetOwnPropertySlotBody($interface, $className, $numInstanceProperties > 0, 0));
+            push(@implContent, GenerateGetOwnPropertySlotBody($interface, $className, 0));
             push(@implContent, "}\n\n");
         }
 
