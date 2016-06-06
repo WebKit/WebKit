@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceResponse_h
-#define ResourceResponse_h
+#pragma once
 
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
@@ -54,8 +53,6 @@ public:
     // Needed for compatibility.
     CFURLResponseRef cfURLResponse() const { return 0; }
 
-    bool platformResponseIsUpToDate() const { return false; }
-
 private:
     friend class ResourceResponseBase;
 
@@ -68,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ResourceResponse_h

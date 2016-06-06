@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceResponse_h
-#define ResourceResponse_h
+#pragma once
 
 #include "ResourceResponseBase.h"
 
@@ -74,8 +73,6 @@ public:
     GTlsCertificateFlags soupMessageTLSErrors() const { return m_tlsErrors; }
     void setSoupMessageTLSErrors(GTlsCertificateFlags tlsErrors) { m_tlsErrors = tlsErrors; }
 
-    bool platformResponseIsUpToDate() const { return false; }
-
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, ResourceResponse&);
 
@@ -110,5 +107,3 @@ bool ResourceResponse::decode(Decoder& decoder, ResourceResponse& response)
 }
 
 } // namespace WebCore
-
-#endif // ResourceResponse_h

@@ -1,3 +1,26 @@
+2016-06-06  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused ResourceResponse::platformResponseIsUpToDate
+        https://bugs.webkit.org/show_bug.cgi?id=158424
+
+        Reviewed by Brady Eidson.
+
+        No change in behavior, just removing unused code that was introduced in r145007.
+
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::platformResponseIsUpToDate): Deleted.
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/curl/ResourceResponse.h:
+        (WebCore::ResourceResponse::cfURLResponse):
+        (WebCore::ResourceResponse::platformResponseIsUpToDate): Deleted.
+        * platform/network/soup/ResourceResponse.h:
+        (WebCore::ResourceResponse::soupMessageTLSErrors):
+        (WebCore::ResourceResponse::setSoupMessageTLSErrors):
+        (WebCore::ResourceResponse::decode):
+        (WebCore::ResourceResponse::platformResponseIsUpToDate): Deleted.
+
 2016-06-05  Gavin & Ellie Barraclough  <barraclough@apple.com>
 
         Deprecate remaining uses of Lookup getStatic*, use HasStaticPropertyTable instead.

@@ -127,7 +127,6 @@ NSURLResponse *ResourceResponse::nsURLResponse() const
 
 ResourceResponse::ResourceResponse(NSURLResponse* nsResponse)
     : m_initLevel(Uninitialized)
-    , m_platformResponseIsUpToDate(true)
     , m_cfResponse([nsResponse _CFURLResponse])
     , m_nsResponse(nsResponse)
 {
