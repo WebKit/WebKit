@@ -496,6 +496,7 @@
     <branch module="icu4c-55_1-src.tgz" version="55.1" checkoutdir="icu"
             repo="webkitgtk-jhbuild-mirror"
             hash="sha256:e16b22cbefdd354bec114541f7849a12f8fc2015320ca5282ee4fd787571457b">
+      <patch file="icudata-stdlibs.patch" strip="1"/>
     </branch>
   </autotools>
 

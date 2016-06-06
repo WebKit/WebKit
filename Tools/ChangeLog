@@ -1,3 +1,29 @@
+2016-06-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r201449) [GTK] ARMv7 build fails with libicudata.so.55: cannot open shared object file on gtkdoc-scangobj step.
+        https://bugs.webkit.org/show_bug.cgi?id=158417
+
+        Reviewed by Michael Catanzaro.
+
+        The toolchain on armhf (ARMv7) seems unable to properly handle
+        a shared library that doesn't link with anything.
+
+        And libicudata is built by default in this way because it only
+        contains static data.
+
+        That makes icu unusable on armhf because the linker will be
+        unable to resolve the libicudata dependencies.
+
+        Most (if not all) distributions workaround this by linking
+        libicudata with libc6, which is already a needed dependency for
+        any of the other icu shared libraries.
+
+        So import here the Debian patch fixing this issue. For further
+        details check https://bugs.debian.org/653457
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/icudata-stdlibs.patch: Added.
+
 2016-06-06  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION (r104174): 500+ tests failing on Windows
