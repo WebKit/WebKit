@@ -1,3 +1,20 @@
+2016-06-06  Antoine Quint  <graouts@apple.com>
+
+        Position of WebGL <canvas> on iOS is incorrect with CSS borders
+        https://bugs.webkit.org/show_bug.cgi?id=156790
+
+        Reviewed by Simon Fraser.
+
+        Adding new tests checking that CSS border, box-shadow and padding properties used on a
+        WebGL <canvas> element correctly affect the position of the WebGL content.
+
+        * webgl/webgl-border-expected.html: Added.
+        * webgl/webgl-border.html: Added.
+        * webgl/webgl-box-shadow-expected.html: Added.
+        * webgl/webgl-box-shadow.html: Added.
+        * webgl/webgl-padding-expected.html: Added.
+        * webgl/webgl-padding.html: Added.
+
 2016-06-06  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ESNext] Support trailing commas in function param lists

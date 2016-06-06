@@ -65,10 +65,12 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(LayerType layerType, Pl
     case LayerHostingMode::OutOfProcess:
         m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
 #if PLATFORM(IOS)
-        float scaleFactor = context.deviceScaleFactor();
-        // Set a scale factor here to make convertRect:toLayer:nil take scale factor into account. <rdar://problem/18316542>.
-        // This scale factor is inverted in the hosting process.
-        [customLayer setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, 1)];
+        if (layerType == LayerTypeAVPlayerLayer) {
+            float scaleFactor = context.deviceScaleFactor();
+            // Set a scale factor here to make convertRect:toLayer:nil take scale factor into account. <rdar://problem/18316542>.
+            // This scale factor is inverted in the hosting process.
+            [customLayer setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, 1)];
+        }
 #endif
         break;
 #endif

@@ -1,3 +1,26 @@
+2016-06-06  Antoine Quint  <graouts@apple.com>
+
+        Position of WebGL <canvas> on iOS is incorrect with CSS borders
+        https://bugs.webkit.org/show_bug.cgi?id=156790
+
+        Reviewed by Simon Fraser.
+
+        WebGL layers on iOS are hosted by a WKRemoteView, which applies a transform scaling
+        its content by the inverse of the device pixel ratio, which affects how positions are
+        applied to the WebGL layer. The container layer of the layer hosted by a WKRemoteView
+        then has an inverse transform applied to it in the PlatformCALayerRemoteCustom
+        constructor. However, the position of a CALayer is not affected by its transform.
+
+        The fix for <rdar://problem/18316542> should be specific to video, so we only apply the
+        scaling in the case of a LayerTypeAVPlayerLayer.
+
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (-[WKRemoteView initWithFrame:contextID:]):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        (-[WKRemoteView initWithFrame:contextID:hostingDeviceScaleFactor:]): Deleted.
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+
 2016-06-06  Brady Eidson  <beidson@apple.com>
 
         Fix build after r201717
