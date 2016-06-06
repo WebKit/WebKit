@@ -1,3 +1,16 @@
+2016-06-06  Chris Dumez  <cdumez@apple.com>
+
+        Crash under JSObject::getOwnPropertyDescriptor()
+        https://bugs.webkit.org/show_bug.cgi?id=158382
+        <rdar://problem/26605004>
+
+        Reviewed by Mark Lam.
+
+        Add layout test to cover the crash in JSObject::getOwnPropertyDescriptor().
+
+        * js/dom/getOwnPropertyDescriptor-crash-expected.txt: Added.
+        * js/dom/getOwnPropertyDescriptor-crash.html: Added.
+
 2016-06-06  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Horizontal scroll must account for grid container's height
