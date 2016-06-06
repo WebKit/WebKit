@@ -1498,10 +1498,10 @@ static Ref<CSSValue> createTimingFunctionValue(const TimingFunction* timingFunct
 {
     switch (timingFunction->type()) {
     case TimingFunction::CubicBezierFunction: {
-        auto& function = *static_cast<const CubicBezierTimingFunction*>(timingFunction);
-        if (function.timingFunctionPreset() != CubicBezierTimingFunction::Custom) {
+        const CubicBezierTimingFunction* bezierTimingFunction = static_cast<const CubicBezierTimingFunction*>(timingFunction);
+        if (bezierTimingFunction->timingFunctionPreset() != CubicBezierTimingFunction::Custom) {
             CSSValueID valueId = CSSValueInvalid;
-            switch (function.timingFunctionPreset()) {
+            switch (bezierTimingFunction->timingFunctionPreset()) {
             case CubicBezierTimingFunction::Ease:
                 valueId = CSSValueEase;
                 break;
@@ -1512,21 +1512,17 @@ static Ref<CSSValue> createTimingFunctionValue(const TimingFunction* timingFunct
                 valueId = CSSValueEaseOut;
                 break;
             default:
-                ASSERT(function.timingFunctionPreset() == CubicBezierTimingFunction::EaseInOut);
+                ASSERT(bezierTimingFunction->timingFunctionPreset() == CubicBezierTimingFunction::EaseInOut);
                 valueId = CSSValueEaseInOut;
                 break;
             }
             return CSSValuePool::singleton().createIdentifierValue(valueId);
         }
-        return CSSCubicBezierTimingFunctionValue::create(function.x1(), function.y1(), function.x2(), function.y2());
+        return CSSCubicBezierTimingFunctionValue::create(bezierTimingFunction->x1(), bezierTimingFunction->y1(), bezierTimingFunction->x2(), bezierTimingFunction->y2());
     }
     case TimingFunction::StepsFunction: {
-        auto& function = *static_cast<const StepsTimingFunction*>(timingFunction);
-        return CSSStepsTimingFunctionValue::create(function.numberOfSteps(), function.stepAtStart());
-    }
-    case TimingFunction::SpringFunction: {
-        auto& function = *static_cast<const SpringTimingFunction*>(timingFunction);
-        return CSSSpringTimingFunctionValue::create(function.mass(), function.stiffness(), function.damping(), function.initialVelocity());
+        const StepsTimingFunction* stepsTimingFunction = static_cast<const StepsTimingFunction*>(timingFunction);
+        return CSSStepsTimingFunctionValue::create(stepsTimingFunction->numberOfSteps(), stepsTimingFunction->stepAtStart());
     }
     default:
         ASSERT(timingFunction->type() == TimingFunction::LinearFunction);

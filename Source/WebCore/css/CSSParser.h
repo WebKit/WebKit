@@ -214,13 +214,10 @@ public:
     static Vector<double> parseKeyframeSelector(const String&);
 
     bool parseTransformOriginShorthand(RefPtr<CSSPrimitiveValue>&, RefPtr<CSSPrimitiveValue>&, RefPtr<CSSValue>&);
-    Optional<double> parseCubicBezierTimingFunctionValue(CSSParserValueList&);
-    Optional<double> parseSpringTimingFunctionValue(CSSParserValueList&);
+    bool parseCubicBezierTimingFunctionValue(CSSParserValueList& args, double& result);
     bool parseAnimationProperty(CSSPropertyID, RefPtr<CSSValue>&, AnimationParseContext&);
     bool parseTransitionShorthand(CSSPropertyID, bool important);
     bool parseAnimationShorthand(CSSPropertyID, bool important);
-
-    bool isSpringTimingFunctionEnabled() const;
 
     RefPtr<CSSPrimitiveValue> parseColumnWidth();
     RefPtr<CSSPrimitiveValue> parseColumnCount();

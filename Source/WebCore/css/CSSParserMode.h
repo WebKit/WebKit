@@ -73,7 +73,6 @@ public:
     bool needsSiteSpecificQuirks { false };
     bool enforcesCSSMIMETypeInNoQuirksMode { true };
     bool useLegacyBackgroundSizeShorthandBehavior { false };
-    bool springTimingFunctionEnabled { false };
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);
