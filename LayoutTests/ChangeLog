@@ -1,3 +1,10 @@
+2016-06-05  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL gardening on June 6. Unskip passing tests and mark failing tests.
+        New bug is filed for new failing tests.
+
+        * platform/efl/TestExpectations:
+
 2016-06-05  Gavin & Ellie Barraclough  <barraclough@apple.com>
 
         Deprecate remaining uses of Lookup getStatic*, use HasStaticPropertyTable instead.

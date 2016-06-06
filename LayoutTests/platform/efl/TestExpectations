@@ -630,18 +630,13 @@ http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [
 mathml/presentation/fractions-box.html [ Skip ]
 
 webkit.org/b/155875 svg/W3C-SVG-1.1/animate-elem-22-b.svg [ Crash ]
-webkit.org/b/155875 svg/W3C-SVG-1.1/animate-elem-23-t.svg [ Crash ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/animate-elem-28-t.svg [ Crash ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/interact-order-01-b.svg [ Crash ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/interact-order-02-b.svg [ Crash ]
-webkit.org/b/155875 svg/W3C-SVG-1.1/linking-a-01-b.svg [ Crash ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/paths-data-04-t.svg [ Crash ]
-webkit.org/b/155875 svg/W3C-SVG-1.1/paths-data-07-t.svg [ Crash ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/paths-data-08-t.svg [ Crash ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/paths-data-13-t.svg [ Crash ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/pservers-grad-01-b.svg [ Crash ]
-webkit.org/b/155875 svg/W3C-SVG-1.1/script-handle-03-b.svg [ Crash ]
-webkit.org/b/155875 svg/W3C-SVG-1.1/shapes-ellipse-01-t.svg [ Crash ]
 
 Bug(EFL) fast/dom/Window/property-access-on-cached-window-after-frame-removed.html [ Crash ]
 Bug(EFL) fast/selectors/querySelector-in-range-crash.html [ Crash ]
@@ -1071,6 +1066,9 @@ webkit.org/b/148470 css1/box_properties/padding_left.html [ Failure ImageOnlyFai
 webkit.org/b/148470 css1/box_properties/padding_right.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/148470 css1/box_properties/padding_top.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/148470 css1/box_properties/width.html [ Failure ImageOnlyFailure Pass ]
+
+webkit.org/b/158412 imported/w3c/web-platform-tests/html/dom/reflection-grouping.html [ Timeout Pass ]
+webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ul-element/grouping-ul.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
@@ -1847,21 +1845,16 @@ webkit.org/b/133320 crypto/subtle/hmac-sign-verify.html [ Pass ]
 # Missing EFL's accessibility functions
 webkit.org/b/111984 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 webkit.org/b/111988 accessibility/aria-readonly.html [ Failure ]
-webkit.org/b/111991 accessibility/aria-text-role.html [ Failure ]
 webkit.org/b/111996 accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/111999 accessibility/disabled-controls-not-focusable.html [ Failure ]
 webkit.org/b/112002 accessibility/inline-continuations.html [ Failure ]
 webkit.org/b/112005 accessibility/onclick-handlers.html [ Failure ]
-webkit.org/b/112008 accessibility/spinbutton-value.html [ Failure ]
 webkit.org/b/112012 accessibility/svg-bounds.html [ Failure ]
 webkit.org/b/112014 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 webkit.org/b/112018 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/112021 accessibility/visible-elements.html [ Failure Crash ]
 webkit.org/b/133148 accessibility/set-selected-text-range-contenteditable.html [ Skip ]
 webkit.org/b/156045 accessibility/attachment-element.html [ Skip ]
-
-# New accessibility test added in r151079 that is failing for EFL.
-webkit.org/b/117182 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
 
 webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
 webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
@@ -1987,8 +1980,6 @@ webkit.org/b/124657 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure
 webkit.org/b/124663 media/track/track-legacyapi-with-automatic-mode.html [ Skip ]
 
 webkit.org/b/124890 accessibility/media-emits-object-replacement.html [ Failure ]
-
-webkit.org/b/125506 accessibility/alt-tag-on-image-with-nonimage-role.html [ Failure ]
 
 # QuickTime plug-in not relevant to this port
 plugins/quicktime-plugin-replacement.html [ Skip ]
@@ -2530,9 +2521,6 @@ webkit.org/b/155875 svg/batik/text/textEffect3.svg [ Failure ]
 webkit.org/b/155875 svg/batik/text/textPosition2.svg [ Failure ]
 webkit.org/b/155875 svg/foreignObject/text-tref-02-b.svg [ Failure ]
 
-webkit.org/b/155934 accessibility/svg-group-element-with-title.html [ Failure ]
-webkit.org/b/155934 accessibility/svg-image.html [ Failure ]
-webkit.org/b/155934 accessibility/svg-labelledby.html [ Failure ]
 webkit.org/b/155934 accessibility/svg-remote-element.html [ Failure ]
 
 webkit.org/b/155936 accessibility/aria-current.html [ Failure ]
@@ -2634,3 +2622,8 @@ webkit.org/b/156969 media/video-zoom-controls.html [ Failure ]
 webkit.org/b/156969 media/volume-bar-empty-when-muted.html [ Failure ]
 
 webkit.org/b/157550 fast/forms/select-non-native-rendering-direction.html [ Missing ]
+
+webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Failure ]
+webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Failure ]
+webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html [ Failure ]
+webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html [ Crash ]
