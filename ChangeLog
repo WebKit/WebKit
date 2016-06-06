@@ -1,3 +1,15 @@
+2016-06-05  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Sync EFL features with featureList.pm
+        https://bugs.webkit.org/show_bug.cgi?id=158410
+
+        Reviewed by Antonio Gomes.
+
+        In OptionsEfl, some features on/off status are different with
+        featureList.pm definitions. Sync with it.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2016-06-03  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] IndexedDB worker tests are failing.
