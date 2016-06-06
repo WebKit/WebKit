@@ -1746,6 +1746,9 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
         TreeDestructuringPattern parameter = 0;
         TreeExpression defaultValue = 0;
 
+        if (UNLIKELY(match(CLOSEPAREN)))
+            break;
+        
         if (match(DOTDOTDOT)) {
             next();
             failIfFalse(matchSpecIdentifier(), "Rest parameter '...' should be followed by a variable identifier");
@@ -3826,6 +3829,9 @@ template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(Tre
         JSTokenLocation argumentLocation(tokenLocation());
         next(TreeBuilder::DontBuildStrings);
 
+        if (UNLIKELY(match(CLOSEPAREN)))
+            break;
+        
         TreeExpression arg = parseArgument(context, argType);
         propagateError();
         semanticFailIfTrue(match(DOTDOTDOT), "The '...' operator should come before the target expression");

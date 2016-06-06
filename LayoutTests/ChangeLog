@@ -1,3 +1,14 @@
+2016-06-06  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ESNext] Support trailing commas in function param lists
+        https://bugs.webkit.org/show_bug.cgi?id=158020
+
+        Reviewed by Keith Miller.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+        * sputnik/Conformance/13_Function_Definition/S13_A5.html:
+
 2016-06-06  George Ruan  <gruan@apple.com>
 
         Support createPattern(HTMLVideoElement, const String& repetitionType)
