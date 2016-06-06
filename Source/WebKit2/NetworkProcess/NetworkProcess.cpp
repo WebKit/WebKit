@@ -486,9 +486,9 @@ void NetworkProcess::continueCanAuthenticateAgainstProtectionSpace(DownloadID do
     downloadManager().continueCanAuthenticateAgainstProtectionSpace(downloadID, canAuthenticate);
 }
 
-void NetworkProcess::continueWillSendRequest(DownloadID downloadID, const WebCore::ResourceRequest& request)
+void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
 {
-    downloadManager().continueWillSendRequest(downloadID, request);
+    downloadManager().continueWillSendRequest(downloadID, WTFMove(request));
 }
 
 void NetworkProcess::pendingDownloadCanceled(DownloadID downloadID)

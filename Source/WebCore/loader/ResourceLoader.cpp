@@ -607,11 +607,12 @@ ResourceError ResourceLoader::cannotShowURLError()
     return frameLoader()->client().cannotShowURLError(m_request);
 }
 
-void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
+ResourceRequest ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest&& request, ResourceResponse&& redirectResponse)
 {
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForRedirect(this, request, redirectResponse))
-        return;
+        return WTFMove(request);
     willSendRequestInternal(request, redirectResponse);
+    return WTFMove(request);
 }
 
 void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

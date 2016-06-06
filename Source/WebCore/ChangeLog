@@ -1,3 +1,67 @@
+2016-06-06  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce ResourceRequest copying in loading code
+        https://bugs.webkit.org/show_bug.cgi?id=158251
+
+        Reviewed by Darin Adler.
+
+        No new tests. There should be no change in behavior except fewer unnecessary copies.
+        Before, we would pass a const ResourceRequest& around, and if we needed to modify it
+        we would copy the whole thing, modify the copy, and pass the copy along.  This can be
+        accomplished with move semantics without the now-unnecessary copy.
+        
+        The biggest conceptual change is that the synchronous ResourceHandleClient::willSendRequest
+        used to take a non-const ResourceRequest& and modify it, but now it returns a modified
+        ResourceRequest instead.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::cannotShowURLError):
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didSendData):
+        * loader/ResourceLoader.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (ResourceHandleStreamingClient::getOrCreateReadBuffer):
+        (ResourceHandleStreamingClient::willSendRequest):
+        (ResourceHandleStreamingClient::didReceiveResponse):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.cpp:
+        (WebCore::ResourceHandleClient::~ResourceHandleClient):
+        (WebCore::ResourceHandleClient::willSendRequest):
+        (WebCore::ResourceHandleClient::willSendRequestAsync):
+        (WebCore::ResourceHandleClient::didReceiveResponseAsync):
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didSendData):
+        (WebCore::ResourceHandleClient::didReceiveResponse):
+        (WebCore::ResourceHandleClient::loadingSynchronousXHR):
+        (WebCore::ResourceHandleClient::willSendRequest): Deleted.
+        * platform/network/SynchronousLoaderClient.cpp:
+        (WebCore::SynchronousLoaderClient::~SynchronousLoaderClient):
+        (WebCore::SynchronousLoaderClient::willSendRequest):
+        (WebCore::SynchronousLoaderClient::shouldUseCredentialStorage):
+        * platform/network/SynchronousLoaderClient.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::willSendRequest):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest):
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::willSendRequest):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore::ResourceHandle::continueWillSendRequest):
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connectionShouldUseCredentialStorage:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::shouldRedirectAsGET):
+        (WebCore::continueAfterWillSendRequest):
+        (WebCore::readCallback):
+        (WebCore::ResourceHandle::continueWillSendRequest):
+        (WebCore::ResourceHandle::continueDidReceiveResponse):
+
 2016-06-05  Sam Weinig  <sam@webkit.org>
 
         Add experimental support for spring based CSS animations

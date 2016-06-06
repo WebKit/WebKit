@@ -72,7 +72,7 @@ public:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(bool);
 #endif
-    void continueWillSendRequest(const WebCore::ResourceRequest& newRequest);
+    void continueWillSendRequest(WebCore::ResourceRequest&& newRequest);
 
     WebCore::SharedBuffer* bufferedData() { return m_bufferedData.get(); }
     const WebCore::ResourceResponse& response() const { return m_response; }
@@ -87,7 +87,7 @@ public:
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override;
     bool isSynchronous() const override;
-    void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse) override;
+    void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&) override;
     ShouldContinueDidReceiveResponse didReceiveResponse(const WebCore::ResourceResponse&) override;
     void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     void didFinishLoading(double finishTime) override;

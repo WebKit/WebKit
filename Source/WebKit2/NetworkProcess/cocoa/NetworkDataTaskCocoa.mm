@@ -187,7 +187,7 @@ void NetworkDataTask::didBecomeDownload()
         m_client->didBecomeDownload();
 }
 
-void NetworkDataTask::willPerformHTTPRedirection(const WebCore::ResourceResponse& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler completionHandler)
+void NetworkDataTask::willPerformHTTPRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler completionHandler)
 {
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
@@ -232,7 +232,7 @@ void NetworkDataTask::willPerformHTTPRedirection(const WebCore::ResourceResponse
     }
     
     if (m_client)
-        m_client->willPerformHTTPRedirection(redirectResponse, request, completionHandler);
+        m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), completionHandler);
     else {
         ASSERT_NOT_REACHED();
         completionHandler({ });

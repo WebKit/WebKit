@@ -105,7 +105,7 @@ void NetworkLoad::cancel()
         m_handle->cancel();
 }
 
-void NetworkLoad::continueWillSendRequest(const WebCore::ResourceRequest& newRequest)
+void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
 {
 #if PLATFORM(COCOA)
     m_currentRequest.updateFromDelegatePreservingOldProperties(newRequest.nsURLRequest(DoNotUpdateHTTPBody));
@@ -128,8 +128,10 @@ void NetworkLoad::continueWillSendRequest(const WebCore::ResourceRequest& newReq
             redirectCompletionHandler({ });
 #endif
         return;
-    } else if (m_handle)
-        m_handle->continueWillSendRequest(m_currentRequest);
+    } else if (m_handle) {
+        auto currentRequestCopy = m_currentRequest;
+        m_handle->continueWillSendRequest(WTFMove(currentRequestCopy));
+    }
 
 #if USE(NETWORK_SESSION)
     if (redirectCompletionHandler)
@@ -160,15 +162,15 @@ NetworkLoadClient::ShouldContinueDidReceiveResponse NetworkLoad::sharedDidReceiv
     return m_client.didReceiveResponse(response);
 }
 
-void NetworkLoad::sharedWillSendRedirectedRequest(const ResourceRequest& request, const ResourceResponse& redirectResponse)
+void NetworkLoad::sharedWillSendRedirectedRequest(ResourceRequest&& request, ResourceResponse&& redirectResponse)
 {
     // We only expect to get the willSendRequest callback from ResourceHandle as the result of a redirect.
     ASSERT(!redirectResponse.isNull());
     ASSERT(RunLoop::isMain());
 
-    auto oldRequest = m_currentRequest;
+    auto oldRequest = WTFMove(m_currentRequest);
     m_currentRequest = request;
-    m_client.willSendRedirectedRequest(oldRequest, request, redirectResponse);
+    m_client.willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse));
 }
 
 #if USE(NETWORK_SESSION)
@@ -201,11 +203,11 @@ void NetworkLoad::setPendingDownload(PendingDownload& pendingDownload)
     m_task->setPendingDownload(pendingDownload);
 }
 
-void NetworkLoad::willPerformHTTPRedirection(const ResourceResponse& response, const ResourceRequest& request, RedirectCompletionHandler completionHandler)
+void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& response, ResourceRequest&& request, RedirectCompletionHandler completionHandler)
 {
     ASSERT(!m_redirectCompletionHandler);
     m_redirectCompletionHandler = completionHandler;
-    sharedWillSendRedirectedRequest(request, response);
+    sharedWillSendRedirectedRequest(WTFMove(request), WTFMove(response));
 }
 
 void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, std::function<void(AuthenticationChallengeDisposition, const Credential&)> completionHandler)
@@ -318,10 +320,10 @@ void NetworkLoad::didFail(ResourceHandle* handle, const ResourceError& error)
     m_client.didFailLoading(error);
 }
 
-void NetworkLoad::willSendRequestAsync(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& redirectResponse)
+void NetworkLoad::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&& redirectResponse)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
-    sharedWillSendRedirectedRequest(request, redirectResponse);
+    sharedWillSendRedirectedRequest(WTFMove(request), WTFMove(redirectResponse));
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

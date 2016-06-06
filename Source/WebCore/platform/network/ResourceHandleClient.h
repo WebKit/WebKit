@@ -69,8 +69,7 @@ namespace WebCore {
         WEBCORE_EXPORT ResourceHandleClient();
         WEBCORE_EXPORT virtual ~ResourceHandleClient();
 
-        // Request may be modified.
-        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& /*redirectResponse*/) { }
+        WEBCORE_EXPORT virtual ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&&);
         virtual void didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
@@ -88,7 +87,7 @@ namespace WebCore {
         virtual bool loadingSynchronousXHR() { return false; }
 
         // Client will pass an updated request using ResourceHandle::continueWillSendRequest() when ready.
-        WEBCORE_EXPORT virtual void willSendRequestAsync(ResourceHandle*, const ResourceRequest&, const ResourceResponse& redirectResponse);
+        WEBCORE_EXPORT virtual void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&);
 
         // Client will call ResourceHandle::continueDidReceiveResponse() when ready.
         WEBCORE_EXPORT virtual void didReceiveResponseAsync(ResourceHandle*, const ResourceResponse&);

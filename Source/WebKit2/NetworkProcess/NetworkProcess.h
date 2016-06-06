@@ -172,7 +172,7 @@ private:
     void cancelDownload(DownloadID);
 #if USE(NETWORK_SESSION)
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
-    void continueWillSendRequest(DownloadID, const WebCore::ResourceRequest&);
+    void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
     void continueDecidePendingDownloadDestination(DownloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite);
 #endif
     void setCacheModel(uint32_t);

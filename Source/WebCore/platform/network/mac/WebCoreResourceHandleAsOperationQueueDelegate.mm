@@ -122,9 +122,7 @@ using namespace WebCore;
             return;
         }
 
-        ResourceRequest request = newRequest;
-
-        m_handle->willSendRequest(request, redirectResponse);
+        m_handle->willSendRequest(newRequest, redirectResponse);
     });
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);

@@ -78,7 +78,7 @@ public:
 #if USE(NETWORK_SESSION)
     std::pair<RefPtr<NetworkDataTask>, std::unique_ptr<PendingDownload>> dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
-    void continueWillSendRequest(DownloadID, const WebCore::ResourceRequest&);
+    void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
     void willDecidePendingDownloadDestination(NetworkDataTask&, ResponseCompletionHandler);
     void continueDecidePendingDownloadDestination(DownloadID, String destination, const SandboxExtension::Handle&, bool allowOverwrite);
 #else

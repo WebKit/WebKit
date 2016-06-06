@@ -55,7 +55,7 @@ public:
     const WebCore::ResourceRequest& currentRequest() const { return m_currentRequest; }
     void clearCurrentRequest() { m_currentRequest = WebCore::ResourceRequest(); }
 
-    void continueWillSendRequest(const WebCore::ResourceRequest&);
+    void continueWillSendRequest(WebCore::ResourceRequest&&);
     void continueDidReceiveResponse();
 
 #if USE(NETWORK_SESSION)
@@ -65,7 +65,7 @@ public:
     DownloadID pendingDownloadID() { return m_task->pendingDownloadID(); }
     
     // NetworkDataTaskClient
-    void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, RedirectCompletionHandler) final;
+    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler) final;
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler) final;
     void didReceiveResponseNetworkSession(const WebCore::ResourceResponse&, ResponseCompletionHandler) final;
     void didReceiveData(RefPtr<WebCore::SharedBuffer>&&) final;
@@ -76,7 +76,7 @@ public:
     void cannotShowURL() override;
 #endif
     // ResourceHandleClient
-    void willSendRequestAsync(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) override;
+    void willSendRequestAsync(WebCore::ResourceHandle*, WebCore::ResourceRequest&&, WebCore::ResourceResponse&& redirectResponse) override;
     void didSendData(WebCore::ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponseAsync(WebCore::ResourceHandle*, const WebCore::ResourceResponse&) override;
     void didReceiveData(WebCore::ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
@@ -117,7 +117,7 @@ public:
 
 private:
     NetworkLoadClient::ShouldContinueDidReceiveResponse sharedDidReceiveResponse(const WebCore::ResourceResponse&);
-    void sharedWillSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void sharedWillSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceResponse&&);
 
     NetworkLoadClient& m_client;
     const NetworkLoadParameters m_parameters;

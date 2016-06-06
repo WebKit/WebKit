@@ -92,15 +92,15 @@ CFURLRequestRef SynchronousResourceHandleCFURLConnectionDelegate::willSendReques
     LOG(Network, "CFNet - SynchronousResourceHandleCFURLConnectionDelegate::willSendRequest(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
     ResourceRequest request = createResourceRequest(cfRequest, redirectResponse.get());
-    m_handle->willSendRequest(request, redirectResponse.get());
+    auto newRequest = m_handle->willSendRequest(WTFMove(request), redirectResponse.get());
 
-    if (request.isNull())
-        return 0;
+    if (newRequest.isNull())
+        return nullptr;
 
-    cfRequest = request.cfURLRequest(UpdateHTTPBody);
+    auto newCFRequest = newRequest.cfURLRequest(UpdateHTTPBody);
 
-    CFRetain(cfRequest);
-    return cfRequest;
+    CFRetain(newCFRequest);
+    return newCFRequest;
 }
 
 #if !PLATFORM(COCOA)

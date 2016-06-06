@@ -183,7 +183,7 @@ private:
     void finishNetworkLoad();
 
     // ResourceHandleClient
-    void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse) override;
+    ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&& redirectResponse) override;
     void didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
     void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength) override;

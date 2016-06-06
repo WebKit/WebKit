@@ -95,7 +95,7 @@ class ResourceHandleStreamingClient : public ResourceHandleClient, public Stream
 #if USE(SOUP)
         char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
 #endif
-        void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&) override;
+        ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) override;
         void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
         void didReceiveData(ResourceHandle*, const char*, unsigned, int) override;
         void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedLength) override;
@@ -1085,8 +1085,9 @@ char* ResourceHandleStreamingClient::getOrCreateReadBuffer(size_t requestedSize,
 }
 #endif
 
-void ResourceHandleStreamingClient::willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&)
+ResourceRequest ResourceHandleStreamingClient::willSendRequest(ResourceHandle*, ResourceRequest&& request, ResourceResponse&&)
 {
+    return WTFMove(request);
 }
 
 void ResourceHandleStreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)

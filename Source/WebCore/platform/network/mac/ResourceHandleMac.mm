@@ -440,7 +440,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     data.swap(client.mutableData());
 }
 
-void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
+ResourceRequest ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse&& redirectResponse)
 {
     ASSERT(!redirectResponse.isNull());
 
@@ -489,23 +489,24 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     }
 
     if (d->m_usesAsyncCallbacks) {
-        client()->willSendRequestAsync(this, request, redirectResponse);
-    } else {
-        Ref<ResourceHandle> protectedThis(*this);
-        client()->willSendRequest(this, request, redirectResponse);
-
-        // Client call may not preserve the session, especially if the request is sent over IPC.
-        if (!request.isNull())
-            request.setStorageSession(d->m_storageSession.get());
+        client()->willSendRequestAsync(this, WTFMove(request), WTFMove(redirectResponse));
+        return { };
     }
+
+    Ref<ResourceHandle> protectedThis(*this);
+    auto newRequest = client()->willSendRequest(this, WTFMove(request), WTFMove(redirectResponse));
+
+    // Client call may not preserve the session, especially if the request is sent over IPC.
+    if (!newRequest.isNull())
+        newRequest.setStorageSession(d->m_storageSession.get());
+    return newRequest;
 }
 
-void ResourceHandle::continueWillSendRequest(const ResourceRequest& request)
+void ResourceHandle::continueWillSendRequest(ResourceRequest&& newRequest)
 {
     ASSERT(d->m_usesAsyncCallbacks);
 
     // Client call may not preserve the session, especially if the request is sent over IPC.
-    ResourceRequest newRequest = request;
     if (!newRequest.isNull())
         newRequest.setStorageSession(d->m_storageSession.get());
     [(id)delegate() continueWillSendRequest:newRequest.nsURLRequest(UpdateHTTPBody)];

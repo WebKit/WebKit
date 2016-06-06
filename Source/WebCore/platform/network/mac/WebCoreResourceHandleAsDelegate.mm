@@ -77,11 +77,7 @@ using namespace WebCore;
         LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", m_handle, connection, [newRequest description]); 
 #endif
 
-    ResourceRequest request = newRequest;
-
-    m_handle->willSendRequest(request, redirectResponse);
-
-    return request.nsURLRequest(UpdateHTTPBody);
+    return m_handle->willSendRequest(newRequest, redirectResponse).nsURLRequest(UpdateHTTPBody);
 }
 
 - (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection

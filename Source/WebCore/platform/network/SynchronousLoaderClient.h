@@ -45,7 +45,7 @@ public:
     WEBCORE_EXPORT static ResourceError platformBadResponseError();
 
 private:
-    void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& /*redirectResponse*/) override;
+    ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) override;
     bool shouldUseCredentialStorage(ResourceHandle*) override;
     void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) override;
     void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;

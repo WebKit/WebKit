@@ -48,7 +48,7 @@ public:
     }
     
 private:
-    void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, RedirectCompletionHandler completionHandler) override
+    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler completionHandler) override
     {
         completionHandler({ });
         delete this;

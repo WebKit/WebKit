@@ -87,12 +87,12 @@ void DownloadManager::continueCanAuthenticateAgainstProtectionSpace(DownloadID d
         pendingDownload->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
 }
 
-void DownloadManager::continueWillSendRequest(DownloadID downloadID, const WebCore::ResourceRequest& request)
+void DownloadManager::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
 {
     auto* pendingDownload = m_pendingDownloads.get(downloadID);
     ASSERT(pendingDownload);
     if (pendingDownload)
-        pendingDownload->continueWillSendRequest(request);
+        pendingDownload->continueWillSendRequest(WTFMove(request));
 }
 
 void DownloadManager::willDecidePendingDownloadDestination(NetworkDataTask& networkDataTask, ResponseCompletionHandler completionHandler)

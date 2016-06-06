@@ -36,16 +36,16 @@ SynchronousLoaderClient::~SynchronousLoaderClient()
 {
 }
 
-void SynchronousLoaderClient::willSendRequest(ResourceHandle* handle, ResourceRequest& request, const ResourceResponse& /*redirectResponse*/)
+ResourceRequest SynchronousLoaderClient::willSendRequest(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&&)
 {
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
     if (protocolHostAndPortAreEqual(handle->firstRequest().url(), request.url()))
-        return;
+        return WTFMove(request);
 
     ASSERT(m_error.isNull());
     m_error = platformBadResponseError();
     m_isDone = true;
-    request = ResourceRequest();
+    return { };
 }
 
 bool SynchronousLoaderClient::shouldUseCredentialStorage(ResourceHandle*)

@@ -105,7 +105,7 @@ public:
     WEBCORE_EXPORT virtual ~ResourceHandle();
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-    void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
+    ResourceRequest willSendRequest(ResourceRequest&&, ResourceResponse&&);
 #endif
 
 #if PLATFORM(COCOA) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
@@ -202,7 +202,7 @@ public:
     WEBCORE_EXPORT void clearClient();
 
     // Called in response to ResourceHandleClient::willSendRequestAsync().
-    WEBCORE_EXPORT void continueWillSendRequest(const ResourceRequest&);
+    WEBCORE_EXPORT void continueWillSendRequest(ResourceRequest&&);
 
     // Called in response to ResourceHandleClient::didReceiveResponseAsync().
     WEBCORE_EXPORT virtual void continueDidReceiveResponse();

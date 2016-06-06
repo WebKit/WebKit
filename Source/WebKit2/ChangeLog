@@ -1,3 +1,63 @@
+2016-06-06  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce ResourceRequest copying in loading code
+        https://bugs.webkit.org/show_bug.cgi?id=158251
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::DownloadManager::continueWillSendRequest):
+        (WebKit::DownloadManager::willDecidePendingDownloadDestination):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::PendingDownload):
+        (WebKit::PendingDownload::willSendRedirectedRequest):
+        (WebKit::PendingDownload::continueWillSendRequest):
+        (WebKit::PendingDownload::canAuthenticateAgainstProtectionSpaceAsync):
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::firstRequest):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::cancel):
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        (WebKit::NetworkLoad::sharedDidReceiveResponse):
+        (WebKit::NetworkLoad::sharedWillSendRedirectedRequest):
+        (WebKit::NetworkLoad::setPendingDownload):
+        (WebKit::NetworkLoad::willPerformHTTPRedirection):
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::didFail):
+        (WebKit::NetworkLoad::willSendRequestAsync):
+        * NetworkProcess/NetworkLoad.h:
+        (WebKit::NetworkLoad::currentRequest):
+        (WebKit::NetworkLoad::clearCurrentRequest):
+        (WebKit::NetworkLoad::pendingDownloadID):
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkProcess::continueWillSendRequest):
+        (WebKit::NetworkProcess::pendingDownloadCanceled):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::NetworkResourceLoader::continueDidReceiveResponse):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.h:
+        (WebKit::PingLoad::PingLoad):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::~SpeculativeLoad):
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::didBecomeDownload):
+        (WebKit::NetworkDataTask::willPerformHTTPRedirection):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::detachFromCoreLoader):
+        (WebKit::WebResourceLoader::willSendRequest):
+        * WebProcess/Network/WebResourceLoader.h:
+
 2016-06-05  Sam Weinig  <sam@webkit.org>
 
         Add experimental support for spring based CSS animations

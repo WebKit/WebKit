@@ -45,14 +45,14 @@ PendingDownload::PendingDownload(const NetworkLoadParameters& parameters, Downlo
     m_networkLoad->setPendingDownload(*this);
 }
 
-void PendingDownload::willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse)
+void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse)
 {
-    send(Messages::DownloadProxy::WillSendRequest(redirectRequest, redirectResponse));
+    send(Messages::DownloadProxy::WillSendRequest(WTFMove(redirectRequest), WTFMove(redirectResponse)));
 };
     
-void PendingDownload::continueWillSendRequest(const WebCore::ResourceRequest& newRequest)
+void PendingDownload::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
 {
-    m_networkLoad->continueWillSendRequest(newRequest);
+    m_networkLoad->continueWillSendRequest(WTFMove(newRequest));
 }
 
 void PendingDownload::canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace& protectionSpace)
