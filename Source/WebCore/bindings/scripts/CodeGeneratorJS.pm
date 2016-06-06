@@ -702,7 +702,7 @@ sub InstanceOverridesGetOwnPropertySlot
     return $numInstanceProperties > 0 || $hasComplexGetter;
 }
 
-sub PrototypeOverridesGetOwnPropertySlot
+sub PrototypeHasStaticPropertyTable
 {
     my $interface = shift;
     my $numPrototypeProperties = PrototypePropertyCount($interface);
@@ -2267,70 +2267,43 @@ sub GenerateImplementation
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
 
-    if (PrototypeOverridesGetOwnPropertySlot($interface)) {
-        my $prototypePropertyCount = PrototypePropertyCount($interface);
-        my $prototypeFunctionCount = PrototypeFunctionCount($interface);
-        my $prototypeAttributeCount = $prototypePropertyCount - $prototypeFunctionCount;
-        if (IsDOMGlobalObject($interface)) {
-            push(@implContent, "bool ${className}Prototype::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    VM& vm = state->vm();\n");
-            push(@implContent, "    UNUSED_PARAM(vm);\n");
-            push(@implContent, "    auto* thisObject = jsCast<${className}Prototype*>(object);\n");
+    if (PrototypeHasStaticPropertyTable($interface) && !IsDOMGlobalObject($interface)) {
+        push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    Base::finishCreation(vm);\n");
+        push(@implContent, "    reifyStaticProperties(vm, ${className}PrototypeTableValues, *this);\n");
 
-            if ($numConstants eq 0 && $prototypePropertyCount eq 0) {
-                push(@implContent, "    return Base::getOwnPropertySlot(thisObject, state, propertyName, slot);\n");        
-            } elsif ($numConstants eq 0 && $prototypeAttributeCount eq 0) {
-                push(@implContent, "    return getStaticFunctionSlot<JSObject>(state, ${className}PrototypeTable, thisObject, propertyName, slot);\n");
-            } elsif ($prototypePropertyCount eq 0) {
-                push(@implContent, "    return getStaticValueSlot<${className}Prototype, JSObject>(state, ${className}PrototypeTable, thisObject, propertyName, slot);\n");
-            } else {
-                push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(state, ${className}PrototypeTable, thisObject, propertyName, slot);\n");
-            }
-            push(@implContent, "}\n\n");
-        } elsif ($numConstants > 0 || $numPrototypeProperties > 0) {
-            push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    Base::finishCreation(vm);\n");
-            push(@implContent, "    reifyStaticProperties(vm, ${className}PrototypeTableValues, *this);\n");
-
-            my @runtimeEnabledProperties = @runtimeEnabledFunctions;
-            push(@runtimeEnabledProperties, @runtimeEnabledAttributes);
-            foreach my $functionOrAttribute (@runtimeEnabledProperties) {
-                my $signature = $functionOrAttribute->signature;
-                my $conditionalString = $codeGenerator->GenerateConditionalString($signature);
-                push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-                AddToImplIncludes("RuntimeEnabledFeatures.h");
-                my $enable_function = GetRuntimeEnableFunctionName($signature);
-                my $name = $signature->name;
-                push(@implContent, "    if (!${enable_function}()) {\n");
-                push(@implContent, "        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
-                push(@implContent, "        removeDirect(vm, propertyName);\n");
-                push(@implContent, "    }\n");
-                push(@implContent, "#endif\n") if $conditionalString;
-            }
-
-            my $firstPrivateFunction = 1;
-            foreach my $function (@{$interface->functions}) {
-                next unless ($function->signature->extendedAttributes->{"Private"});
-                AddToImplIncludes("WebCoreJSClientData.h");
-                push(@implContent, "    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);\n") if $firstPrivateFunction;
-                $firstPrivateFunction = 0;
-                push(@implContent, "    putDirect(vm, clientData.builtinNames()." . $function->signature->name . "PrivateName(), JSFunction::create(vm, globalObject(), 0, String(), " . GetFunctionName($interface, $className, $function) . "), ReadOnly | DontEnum);\n");
-            }
-
-            if ($interface->iterable) {
-                my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
-                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), ReadOnly | DontEnum);\n");
-            }
-
-            push(@implContent, "}\n\n");
-        } else {
-            push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    Base::finishCreation(vm);\n");
-            push(@implContent, "}\n\n");
+        my @runtimeEnabledProperties = @runtimeEnabledFunctions;
+        push(@runtimeEnabledProperties, @runtimeEnabledAttributes);
+        foreach my $functionOrAttribute (@runtimeEnabledProperties) {
+            my $signature = $functionOrAttribute->signature;
+            my $conditionalString = $codeGenerator->GenerateConditionalString($signature);
+            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+            AddToImplIncludes("RuntimeEnabledFeatures.h");
+            my $enable_function = GetRuntimeEnableFunctionName($signature);
+            my $name = $signature->name;
+            push(@implContent, "    if (!${enable_function}()) {\n");
+            push(@implContent, "        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
+            push(@implContent, "        removeDirect(vm, propertyName);\n");
+            push(@implContent, "    }\n");
+            push(@implContent, "#endif\n") if $conditionalString;
         }
+
+        my $firstPrivateFunction = 1;
+        foreach my $function (@{$interface->functions}) {
+            next unless ($function->signature->extendedAttributes->{"Private"});
+            AddToImplIncludes("WebCoreJSClientData.h");
+            push(@implContent, "    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);\n") if $firstPrivateFunction;
+            $firstPrivateFunction = 0;
+            push(@implContent, "    putDirect(vm, clientData.builtinNames()." . $function->signature->name . "PrivateName(), JSFunction::create(vm, globalObject(), 0, String(), " . GetFunctionName($interface, $className, $function) . "), ReadOnly | DontEnum);\n");
+        }
+
+        if ($interface->iterable) {
+            my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
+            push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), ReadOnly | DontEnum);\n");
+        }
+
+        push(@implContent, "}\n\n");
     }
 
     if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
@@ -4839,12 +4812,11 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "    {\n");
     push(@$outputArray, "    }\n");
 
-    if (PrototypeOverridesGetOwnPropertySlot($interface)) {
-        push(@$outputArray, "\n");
+    if (PrototypeHasStaticPropertyTable($interface)) {
         if (IsDOMGlobalObject($interface)) {
-            push(@$outputArray, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
-            $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
+            $structureFlags{"JSC::HasStaticPropertyTable"} = 1;
         } else {
+            push(@$outputArray, "\n");
             push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
         }
     }

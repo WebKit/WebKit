@@ -108,14 +108,6 @@ static const HashTableValue JSTestGlobalObjectPrototypeTableValues[] =
 static const HashTable JSTestGlobalObjectPrototypeTable = { 1, 1, true, JSTestGlobalObjectPrototypeTableValues, JSTestGlobalObjectPrototypeTableIndex };
 const ClassInfo JSTestGlobalObjectPrototype::s_info = { "TestGlobalObjectPrototype", &Base::s_info, &JSTestGlobalObjectPrototypeTable, CREATE_METHOD_TABLE(JSTestGlobalObjectPrototype) };
 
-bool JSTestGlobalObjectPrototype::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
-{
-    VM& vm = state->vm();
-    UNUSED_PARAM(vm);
-    auto* thisObject = jsCast<JSTestGlobalObjectPrototype*>(object);
-    return getStaticPropertySlot<JSTestGlobalObjectPrototype, JSObject>(state, JSTestGlobalObjectPrototypeTable, thisObject, propertyName, slot);
-}
-
 const ClassInfo JSTestGlobalObject::s_info = { "TestGlobalObject", &Base::s_info, &JSTestGlobalObjectTable, CREATE_METHOD_TABLE(JSTestGlobalObject) };
 
 JSTestGlobalObject::JSTestGlobalObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestGlobalObject>&& impl)

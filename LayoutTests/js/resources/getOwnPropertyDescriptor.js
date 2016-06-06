@@ -41,7 +41,8 @@ descriptorShouldBe("global", "'global'", {writable: true, enumerable: true, conf
 descriptorShouldBe("global", "'undefined'", {writable: false, enumerable: false, configurable: false, value:"undefined"});
 descriptorShouldBe("global", "'NaN'", {writable: false, enumerable: false, configurable: false, value:"NaN"});
 descriptorShouldBe("global", "'Infinity'", {writable: false, enumerable: false, configurable: false, value:"Infinity"});
-descriptorShouldBe("global", "'window'", {writable: false, enumerable: true, configurable: false, value:"global"});
+var globalWindowGetter = Object.getOwnPropertyDescriptor(global, 'window').get;
+descriptorShouldBe("global", "'window'", {get: 'globalWindowGetter', set: undefined, enumerable: true, configurable: false});
 descriptorShouldBe("global", "'XMLHttpRequest'", {writable: true, enumerable: false, configurable: true, value:"XMLHttpRequest"});
 descriptorShouldBe("global", "0", {writable: true, enumerable: false, configurable: false, value:"global[0]"});
 descriptorShouldBe("document.getElementsByTagName('div')", "0", {writable: false, enumerable: true, configurable: false, value:"document.getElementsByTagName('div')[0]"});

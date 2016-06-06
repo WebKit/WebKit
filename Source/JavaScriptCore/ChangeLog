@@ -1,3 +1,22 @@
+2016-06-03  Gavin & Ellie Barraclough  <barraclough@apple.com>
+
+        Deprecate remaining uses of Lookup getStatic*, use HasStaticPropertyTable instead.
+        https://bugs.webkit.org/show_bug.cgi?id=158178
+
+        Reviewed by Darin Adler.
+
+        As of bug #158059 most JSC static table property access no longer requires getOwnPropertySlot to be
+        overridden. Port remaining calls to the getStatic* functions in Lookup.h over to the new mechanism.
+
+        Part 1: Switch JSGlobalObject & JSDOMWindow to use HasStaticPropertyTable.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::getOwnPropertySlot):
+            - Override is still required for symbol table,
+              but regular property access is now via Base::getOwnPropertySlot.
+        * runtime/JSGlobalObject.h:
+            - add HasStaticPropertyTable to structureFlags.
+
 2016-06-03  Benjamin Poulain  <bpoulain@apple.com>
 
         Eager FTL failure for strict comparison of NaN with number check

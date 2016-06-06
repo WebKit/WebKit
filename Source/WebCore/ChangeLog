@@ -1,3 +1,36 @@
+2016-06-03  Gavin & Ellie Barraclough  <barraclough@apple.com>
+
+        Deprecate remaining uses of Lookup getStatic*, use HasStaticPropertyTable instead.
+        https://bugs.webkit.org/show_bug.cgi?id=158178
+
+        Reviewed by Darin Adler.
+
+        As of bug #158059 most JSC static table property access no longer requires getOwnPropertySlot to be
+        overridden. Port remaining calls to the getStatic* functions in Lookup.h over to the new mechanism.
+
+        Part 1: Switch JSGlobalObject & JSDOMWindow to use HasStaticPropertyTable.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+            - getStaticPropertySlot -> Base::getOwnPropertySlot.
+        * bindings/js/JSPluginElementFunctions.h:
+        (WebCore::pluginElementCustomGetOwnPropertySlot):
+            - Switch call from getStaticValueSlot to Type::getOwnPropertySlot.
+              For any element where Type::hasStaticPropertyTable is true the HasStaticPropertyTable
+              structure flag will also be set, so Type::getOwnPropertySlot will do the same thing.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (PrototypeHasStaticPropertyTable):
+            - Was PrototypeOverridesGetOwnPropertySlot; prototypes now never need override getOwnPropertySlot so renaming accordingly.
+        (GenerateImplementation):
+            - Removed generation of getOwnPropertySlot body for DOMGlobalObjects.
+        (GeneratePrototypeDeclaration):
+            - For DOMGlobalObjects, set HasStaticPropertyTable instead of OverridesGetOwnPropertySlot & removed getOwnPropertySlot declaration.
+        (PrototypeOverridesGetOwnPropertySlot): Deleted.
+            Renamed to PrototypeHasStaticPropertyTable.
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+            - Updating bindings test results.
+
 2016-06-05  Antti Koivisto  <antti@apple.com>
 
         Find on page finds too many matches

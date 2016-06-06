@@ -1178,10 +1178,9 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
 
 bool JSGlobalObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
-    if (getStaticPropertySlot<JSGlobalObject, Base>(exec, globalObjectTable, thisObject, propertyName, slot))
+    if (Base::getOwnPropertySlot(object, exec, propertyName, slot))
         return true;
-    return symbolTableGet(thisObject, propertyName, slot);
+    return symbolTableGet(jsCast<JSGlobalObject*>(object), propertyName, slot);
 }
 
 void JSGlobalObject::clearRareData(JSCell* cell)

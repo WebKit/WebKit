@@ -114,9 +114,10 @@ PASS Object.getOwnPropertyDescriptor(global, 'Infinity').hasOwnProperty('get') i
 PASS Object.getOwnPropertyDescriptor(global, 'Infinity').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Infinity').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Infinity').configurable is false
-PASS Object.getOwnPropertyDescriptor(global, 'window').value is global
-PASS Object.getOwnPropertyDescriptor(global, 'window').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'window').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'window').get is globalWindowGetter
+PASS Object.getOwnPropertyDescriptor(global, 'window').set is undefined
+PASS Object.getOwnPropertyDescriptor(global, 'window').hasOwnProperty('value') is false
+PASS Object.getOwnPropertyDescriptor(global, 'window').hasOwnProperty('writable') is false
 PASS Object.getOwnPropertyDescriptor(global, 'window').enumerable is true
 PASS Object.getOwnPropertyDescriptor(global, 'window').configurable is false
 PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').value is XMLHttpRequest
