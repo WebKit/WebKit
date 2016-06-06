@@ -76,7 +76,7 @@ public:
     FrameView& frameView() const { return m_frameView; }
 
     LayoutRect visualOverflowRect() const override;
-    LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, RepaintContext = { false, false }) const override;
+    LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, RepaintContext = { }) const override;
     void repaintRootContents();
     void repaintViewRectangle(const LayoutRect&) const;
     void repaintViewAndCompositedLayers();

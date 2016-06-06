@@ -1,3 +1,19 @@
+2016-06-05  Zalan Bujtas  <zalan@apple.com>
+
+        Addressing post-review comments on r201635.
+
+        Reviewed by Chris Dumez.
+
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::computeRectForRepaint):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::RepaintContext::RepaintContext):
+        (WebCore::RenderObject::computeRectForRepaint):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGText.h:
+
 2016-06-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Change ProxyObject.[[Get]] not to use custom accessor

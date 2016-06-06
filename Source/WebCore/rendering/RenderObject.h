@@ -747,15 +747,15 @@ public:
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in the coordinate space of repaintContainer.
     struct RepaintContext {
-        RepaintContext(bool hasPositionFixedDescendant, bool dirtyRectIsFlipped)
+        RepaintContext(bool hasPositionFixedDescendant = false, bool dirtyRectIsFlipped = false)
             : m_hasPositionFixedDescendant(hasPositionFixedDescendant)
             , m_dirtyRectIsFlipped(dirtyRectIsFlipped)
             {
             }
-        bool m_hasPositionFixedDescendant { false };
-        bool m_dirtyRectIsFlipped { false };
+        bool m_hasPositionFixedDescendant;
+        bool m_dirtyRectIsFlipped;
     };
-    virtual LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, RepaintContext = { false, false }) const;
+    virtual LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, RepaintContext = { }) const;
     virtual FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const;
 
     virtual unsigned int length() const { return 1; }
