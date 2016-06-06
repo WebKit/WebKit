@@ -1,3 +1,20 @@
+2016-06-05  Sam Weinig  <sam@webkit.org>
+
+        Add experimental support for spring based CSS animations
+        https://bugs.webkit.org/show_bug.cgi?id=158403
+
+        Reviewed by Dean Jackson.
+
+        * animations/script-tests/spring-computed-style.js: Added.
+        * animations/script-tests/spring-parsing.js: Added.
+        * animations/spring-computed-style-expected.txt: Added.
+        * animations/spring-computed-style.html: Added.
+        * animations/spring-function-expected.txt: Added.
+        * animations/spring-function.html: Added.
+        * animations/spring-parsing-expected.txt: Added.
+        * animations/spring-parsing.html: Added.
+        Add tests for the spring timing function.
+
 2016-06-05  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed EFL gardening on June 6. Unskip passing tests and mark failing tests.

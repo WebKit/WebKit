@@ -270,6 +270,7 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         textAutosizingEnabled = settings->textAutosizingEnabled();
 #endif
+        springTimingFunctionEnabled = settings->springTimingFunctionEnabled();
     }
 
 #if PLATFORM(IOS)
@@ -291,7 +292,8 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
 #endif
         && a.needsSiteSpecificQuirks == b.needsSiteSpecificQuirks
         && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
-        && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior;
+        && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
+        && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled;
 }
 
 CSSParser::CSSParser(const CSSParserContext& context)
@@ -5157,21 +5159,36 @@ bool CSSParser::parseTransformOriginShorthand(RefPtr<CSSPrimitiveValue>& value1,
     return true;
 }
 
-bool CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList& args, double& result)
+bool CSSParser::isSpringTimingFunctionEnabled() const
+{
+    return m_context.springTimingFunctionEnabled;
+}
+
+Optional<double> CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList& args)
 {
     ValueWithCalculation argumentWithCalculation(*args.current());
     if (!validateUnit(argumentWithCalculation, FNumber))
-        return false;
-    result = parsedDouble(argumentWithCalculation);
+        return Nullopt;
+    Optional<double> result = parsedDouble(argumentWithCalculation);
     CSSParserValue* nextValue = args.next();
     if (!nextValue) {
         // The last number in the function has no comma after it, so we're done.
-        return true;
+        return result;
     }
     if (!isComma(nextValue))
-        return false;
+        return Nullopt;
     args.next();
-    return true;
+    return result;
+}
+
+Optional<double> CSSParser::parseSpringTimingFunctionValue(CSSParserValueList& args)
+{
+    ValueWithCalculation argumentWithCalculation(*args.current());
+    if (!validateUnit(argumentWithCalculation, FNumber))
+        return Nullopt;
+    Optional<double> result = parsedDouble(argumentWithCalculation);
+    args.next();
+    return result;
 }
 
 RefPtr<CSSValue> CSSParser::parseAnimationTimingFunction()
@@ -5219,27 +5236,67 @@ RefPtr<CSSValue> CSSParser::parseAnimationTimingFunction()
     }
 
     if (equalLettersIgnoringASCIICase(value.function->name, "cubic-bezier(")) {
-        // For cubic bezier, 4 values must be specified.
+        // For cubic bezier, 4 values must be specified (comma-separated).
         if (!args || args->size() != 7)
             return nullptr;
 
         // There are two points specified. The x values must be between 0 and 1 but the y values can exceed this range.
-        double x1, y1, x2, y2;
 
-        if (!parseCubicBezierTimingFunctionValue(*args, x1))
+        auto x1 = parseCubicBezierTimingFunctionValue(*args);
+        if (!x1)
             return nullptr;
-        if (x1 < 0 || x1 > 1)
-            return nullptr;
-        if (!parseCubicBezierTimingFunctionValue(*args, y1))
-            return nullptr;
-        if (!parseCubicBezierTimingFunctionValue(*args, x2))
-            return nullptr;
-        if (x2 < 0 || x2 > 1)
-            return nullptr;
-        if (!parseCubicBezierTimingFunctionValue(*args, y2))
+        if (x1.value() < 0 || x1.value() > 1)
             return nullptr;
 
-        return CSSCubicBezierTimingFunctionValue::create(x1, y1, x2, y2);
+        auto y1 = parseCubicBezierTimingFunctionValue(*args);
+        if (!y1)
+            return nullptr;
+
+        auto x2 = parseCubicBezierTimingFunctionValue(*args);
+        if (!x2)
+            return nullptr;
+        if (x2.value() < 0 || x2.value() > 1)
+            return nullptr;
+
+        auto y2 = parseCubicBezierTimingFunctionValue(*args);
+        if (!y2)
+            return nullptr;
+
+        return CSSCubicBezierTimingFunctionValue::create(x1.value(), y1.value(), x2.value(), y2.value());
+    }
+
+    if (isSpringTimingFunctionEnabled() && equalLettersIgnoringASCIICase(value.function->name, "spring(")) {
+        // For a spring, 4 values must be specified (space-separated).
+        if (!args || args->size() != 4)
+            return nullptr;
+        
+        // Mass must be greater than 0.
+        auto mass = parseSpringTimingFunctionValue(*args);
+        if (!mass)
+            return nullptr;
+        if (mass.value() <= 0)
+            return nullptr;
+
+        // Stiffness must be greater than 0.
+        auto stiffness = parseSpringTimingFunctionValue(*args);
+        if (!stiffness)
+            return nullptr;
+        if (stiffness.value() <= 0)
+            return nullptr;
+
+        // Damping coefficient must be greater than or equal to 0.
+        auto damping = parseSpringTimingFunctionValue(*args);
+        if (!damping)
+            return nullptr;
+        if (damping.value() < 0)
+            return nullptr;
+
+        // Initial velocity may have any value.
+        auto initialVelocity = parseSpringTimingFunctionValue(*args);
+        if (!initialVelocity)
+            return nullptr;
+
+        return CSSSpringTimingFunctionValue::create(mass.value(), stiffness.value(), damping.value(), initialVelocity.value());
     }
 
     return nullptr;

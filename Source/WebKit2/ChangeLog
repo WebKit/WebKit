@@ -1,3 +1,25 @@
+2016-06-05  Sam Weinig  <sam@webkit.org>
+
+        Add experimental support for spring based CSS animations
+        https://bugs.webkit.org/show_bug.cgi?id=158403
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<StepsTimingFunction>::decode):
+        (IPC::ArgumentCoder<SpringTimingFunction>::encode):
+        (IPC::ArgumentCoder<SpringTimingFunction>::decode):
+        (IPC::ArgumentCoder<FloatPoint>::encode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebPreferencesDefinitions.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::Properties::encode):
+        (WebKit::PlatformCAAnimationRemote::Properties::decode):
+        (WebKit::addAnimationToLayer):
+        Pipe through support for the Spring animation.
+
 2016-06-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Change ProxyObject.[[Get]] not to use custom accessor

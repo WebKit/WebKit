@@ -37,13 +37,18 @@ TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
         ts << "linear";
         break;
     case TimingFunction::CubicBezierFunction: {
-        const CubicBezierTimingFunction& cubicBezierFunction = static_cast<const CubicBezierTimingFunction&>(timingFunction);
-        ts << "cubic-bezier(" << cubicBezierFunction.x1() << ", " << cubicBezierFunction.y1() << ", " <<  cubicBezierFunction.x2() << ", " << cubicBezierFunction.y2() << ")";
+        auto& function = static_cast<const CubicBezierTimingFunction&>(timingFunction);
+        ts << "cubic-bezier(" << function.x1() << ", " << function.y1() << ", " <<  function.x2() << ", " << function.y2() << ")";
         break;
     }
     case TimingFunction::StepsFunction: {
-        const StepsTimingFunction& stepsFunction = static_cast<const StepsTimingFunction&>(timingFunction);
-        ts << "steps(" << stepsFunction.numberOfSteps() << ", " << (stepsFunction.stepAtStart() ? "start" : "end") << ")";
+        auto& function = static_cast<const StepsTimingFunction&>(timingFunction);
+        ts << "steps(" << function.numberOfSteps() << ", " << (function.stepAtStart() ? "start" : "end") << ")";
+        break;
+    }
+    case TimingFunction::SpringFunction: {
+        auto& function = static_cast<const SpringTimingFunction&>(timingFunction);
+        ts << "spring(" << function.mass() << " " << function.stiffness() << " " <<  function.damping() << " " << function.initialVelocity() << ")";
         break;
     }
     }

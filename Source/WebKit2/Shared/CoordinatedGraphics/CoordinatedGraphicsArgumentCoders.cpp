@@ -365,6 +365,14 @@ static void encodeTimingFunction(ArgumentEncoder& encoder, const TimingFunction*
         encoder << steps->stepAtStart();
         break;
     }
+    case TimingFunction::SpringFunction: {
+        const SpringTimingFunction* spring = static_cast<const SpringTimingFunction*>(timingFunction);
+        encoder << spring->mass();
+        encoder << spring->stiffness();
+        encoder << spring->damping();
+        encoder << spring->initialVelocity();
+        break;
+    }
     }
 }
 
@@ -411,6 +419,23 @@ bool decodeTimingFunction(ArgumentDecoder& decoder, RefPtr<TimingFunction>& timi
             return false;
 
         timingFunction = StepsTimingFunction::create(numberOfSteps, stepAtStart);
+        return true;
+    }
+    case TimingFunction::SpringFunction: {
+        double mass;
+        if (!decoder.decode(mass))
+            return false;
+        double stiffness;
+        if (!decoder.decode(stiffness))
+            return false;
+        double damping;
+        if (!decoder.decode(damping))
+            return false;
+        double initialVelocity;
+        if (!decoder.decode(initialVelocity))
+            return false;
+
+        timingFunction = SpringTimingFunction::create(mass, stiffness, damping, initialVelocity);
         return true;
     }
     }

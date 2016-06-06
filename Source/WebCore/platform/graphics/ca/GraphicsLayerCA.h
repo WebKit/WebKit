@@ -242,6 +242,7 @@ private:
     // Return autoreleased animation (use RetainPtr?)
     PassRefPtr<PlatformCAAnimation> createBasicAnimation(const Animation*, const String& keyPath, bool additive);
     PassRefPtr<PlatformCAAnimation> createKeyframeAnimation(const Animation*, const String&, bool additive);
+    RefPtr<PlatformCAAnimation> createSpringAnimation(const Animation*, const String&, bool additive);
     void setupAnimation(PlatformCAAnimation*, const Animation*, bool additive);
     
     const TimingFunction* timingFunctionForAnimationValue(const AnimationValue&, const Animation&);
