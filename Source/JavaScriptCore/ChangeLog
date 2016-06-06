@@ -1,3 +1,21 @@
+2016-06-06  Andreas Kling  <akling@apple.com>
+
+        Don't reportAbandonedObjectGraph() after throwing out linked code or RegExps.
+        <https://webkit.org/b/158444>
+
+        Unreviewed.
+
+        This is a speculative change for iOS performance bots. The calls to reportAbandonedObjectGraph
+        were basically redundant, since mainframe navigation will cause GC acceleration anyway via
+        ScriptController.
+
+        This appears successful at recovering the ~0.7% regression I could reproduce locally on newer
+        hardware but it's a bit too noisy to say for sure.
+
+        * runtime/VM.cpp:
+        (JSC::VM::deleteAllLinkedCode):
+        (JSC::VM::deleteAllRegExpCode):
+
 2016-06-06  Skachkov Oleksandr  <gskachkov@gmail.com>
         [ESNext] Trailing commas in function parameters.
         https://bugs.webkit.org/show_bug.cgi?id=158020
