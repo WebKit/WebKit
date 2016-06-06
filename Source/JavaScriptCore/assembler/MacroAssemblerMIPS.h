@@ -641,10 +641,10 @@ public:
     {
         m_assembler.sqrtd(dst, src);
     }
-    
-    void absDouble(FPRegisterID, FPRegisterID)
+
+    void absDouble(FPRegisterID src, FPRegisterID dst)
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        m_assembler.absd(dst, src);
     }
 
     NO_RETURN_DUE_TO_CRASH void ceilDouble(FPRegisterID, FPRegisterID)
@@ -1275,7 +1275,16 @@ public:
         return false;
 #endif
     }
-    static bool supportsFloatingPointAbs() { return false; }
+
+    static bool supportsFloatingPointAbs()
+    {
+#if WTF_MIPS_DOUBLE_FLOAT && WTF_MIPS_ISA_AT_LEAST(2)
+        return true;
+#else
+        return false;
+#endif
+    }
+
     static bool supportsFloatingPointRounding() { return false; }
 
     // Stack manipulation operations:

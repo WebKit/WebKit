@@ -547,6 +547,11 @@ public:
         emitInst(0x46200004 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
     }
 
+    void absd(FPRegisterID fd, FPRegisterID fs)
+    {
+        emitInst(0x46200005 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
+    }
+
     void movd(FPRegisterID fd, FPRegisterID fs)
     {
         emitInst(0x46200006 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
