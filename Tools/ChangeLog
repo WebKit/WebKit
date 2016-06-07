@@ -1,3 +1,15 @@
+2016-06-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Imported markup insertion test is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=158477
+
+        Reviewed by Darin Adler.
+
+        Make sure the empty synchronous request is loaded after each test.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+
 2016-06-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r201449) [GTK] ARMv7 build fails with libicudata.so.55: cannot open shared object file on gtkdoc-scangobj step.
