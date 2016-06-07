@@ -1,3 +1,12 @@
+2016-06-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unskip js/script-tests/class-syntax-scoping.js
+        https://bugs.webkit.org/show_bug.cgi?id=158458
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/script-tests/class-syntax-scoping.js:
+
 2016-06-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         ASSERTION failed in get-by-pname.js when run with JSC_useLLINT=false and 2 other configurations

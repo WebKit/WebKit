@@ -1,5 +1,3 @@
-//@ skip
-
 description('Tests for scoping of variables in ES6 class syntax');
 
 var local = "FAIL";
