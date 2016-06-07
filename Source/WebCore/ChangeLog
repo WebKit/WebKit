@@ -1,3 +1,9 @@
+2016-06-07  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the 10.10 build.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+
 2016-06-06  Alex Christensen  <achristensen@webkit.org>
 
         Modernize loading code
