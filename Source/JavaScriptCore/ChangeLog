@@ -1,3 +1,23 @@
+2016-06-07  Saam barati  <sbarati@apple.com>
+
+        InvalidationPointInjectionPhase creates bogus InvalidationPoints that may even be inserted when it's not OK to exit
+        https://bugs.webkit.org/show_bug.cgi?id=158499
+        <rdar://problem/26647473>
+
+        Reviewed by Mark Lam and Benjamin Poulain.
+
+        InvalidationPointInjectionPhase forgot to clear m_originThatHadFire 
+        before analyzing the current block it's analyzing. This meant that
+        the phase allowed a residual m_originThatHadFire that was set from the
+        previous block to effect a completely unrelated block. This is usually
+        harmless, but sometimes we would insert an InvalidationPoint at a point
+        in the graph when exiting is invalid. This would cause a crash.
+
+        * dfg/DFGInvalidationPointInjectionPhase.cpp:
+        (JSC::DFG::InvalidationPointInjectionPhase::run):
+        * tests/stress/dont-crash-on-bad-invalidation-point.js: Added.
+        (dontCrash):
+
 2016-06-07  Saam Barati  <sbarati@apple.com>
 
         operationProcessTypeProfilerLogDFG doesn't update topCallFrame
