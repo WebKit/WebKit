@@ -350,7 +350,7 @@ void MultipartHandle::didReceiveResponse()
         response.setTextEncodingName(extractCharsetFromMediaType(contentType));
 
         d->client()->didReceiveResponse(m_resourceHandle, response);
-        response->setResponseFired(true);
+        m_response->setResponseFired(true);
     }
 }
 
