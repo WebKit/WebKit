@@ -521,7 +521,7 @@ WebInspector._rememberOpenTabs = function()
 
 WebInspector._updateNewTabButtonState = function(event)
 {
-    this.tabBar.newTabItem.disabled = this.isNewTabWithTypeAllowed(WebInspector.NewTabContentView.Type);
+    this.tabBar.newTabItem.disabled = !this.isNewTabWithTypeAllowed(WebInspector.NewTabContentView.Type);
 };
 
 WebInspector._newTabItemClicked = function(event)

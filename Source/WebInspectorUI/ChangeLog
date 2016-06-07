@@ -1,3 +1,15 @@
+2016-06-07  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add a keyboard shortcut to open the new tab tab
+        https://bugs.webkit.org/show_bug.cgi?id=158365
+        <rdar://problem/26631897>
+
+        Unreviewed, fix a typo introduced in r201692.
+        This caused the new tab button to stop working.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._updateNewTabButtonState):
+
 2016-06-05  Matt Baker  <mattbaker@apple.com>
 
         REGRESSION (r201686): Web Inspector: Fix typo causing an internal error
