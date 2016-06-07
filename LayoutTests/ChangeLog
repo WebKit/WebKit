@@ -1,3 +1,13 @@
+2016-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Video elements are painted twice, in PaintPhaseForeground and PaintPhaseSelfOutline
+        https://bugs.webkit.org/show_bug.cgi?id=158247
+
+        Reviewed by Simon Fraser.
+
+        * fast/replaced/outline-replaced-elements-offset-expected.html: Added.
+        * fast/replaced/outline-replaced-elements-offset.html: Added.
+
 2016-06-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Mark fast/text/international/system-language/han-quotes.html as flaky

@@ -1,3 +1,30 @@
+2016-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Video elements are painted twice, in PaintPhaseForeground and PaintPhaseSelfOutline
+        https://bugs.webkit.org/show_bug.cgi?id=158247
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/replaced/outline-replaced-elements-offset.html
+
+        In <http://trac.webkit.org/changeset/105247>,
+        RenderReplaced::paint was changed to call
+        RenderReplaced::paintReplaced in PaintPhaseOutline and
+        PaintPhaseSelfOutline to paint outline of SVG.
+
+        As the result, RenderVideo::paintReplaced paints twice,
+        in forground and outline phase.
+
+        It was changed to paint outline of SVG in PaintPhaseForeground
+        since <http://trac.webkit.org/changeset/168645>.  No need to call
+        RenderReplaced::paintReplaced in outline phases anymore.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint): Return early if
+        PaintPhaseOutline or PaintPhaseSelfOutline.
+        Return early unless PaintPhaseForeground nor PaintPhaseSelection,
+        even if canHaveChildren().
+
 2016-06-07  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Creating a TouchList with non Touch items should throw an exception
