@@ -121,31 +121,10 @@ public:
     virtual DOMWindow* toDOMWindow();
     virtual bool isMessagePort() const;
 
-    struct ListenerOptions {
-        ListenerOptions(bool capture = false)
-            : capture(capture)
-        { }
-
-        bool capture;
-    };
-
-    struct AddEventListenerOptions : public ListenerOptions {
-        AddEventListenerOptions(bool capture = false, bool passive = false, bool once = false)
-            : ListenerOptions(capture)
-            , passive(passive)
-            , once(once)
-        { }
-
-        bool passive;
-        bool once;
-    };
-
     void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture);
     void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture);
-    void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, const AddEventListenerOptions&);
-    void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, const ListenerOptions&);
-    virtual bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { });
-    virtual bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&);
+    virtual bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, bool useCapture);
+    virtual bool removeEventListener(const AtomicString& eventType, EventListener&, bool useCapture);
 
     virtual void removeAllEventListeners();
     virtual bool dispatchEvent(Event&);
@@ -228,16 +207,6 @@ inline bool EventTarget::hasCapturingEventListeners(const AtomicString& eventTyp
     if (!d)
         return false;
     return d->eventListenerMap.containsCapturing(eventType);
-}
-
-inline void EventTarget::addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
-{
-    addEventListenerForBindings(eventType, WTFMove(listener), AddEventListenerOptions(useCapture));
-}
-
-inline void EventTarget::removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
-{
-    removeEventListenerForBindings(eventType, WTFMove(listener), ListenerOptions(useCapture));
 }
 
 } // namespace WebCore

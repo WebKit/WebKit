@@ -221,11 +221,11 @@ std::unique_ptr<MessagePortArray> MessagePort::entanglePorts(ScriptExecutionCont
     return portArray;
 }
 
-bool MessagePort::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool MessagePort::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
 {
     if (listener->isAttribute() && eventType == eventNames().messageEvent)
         start();
-    return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), options);
+    return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), useCapture);
 }
 
 } // namespace WebCore
