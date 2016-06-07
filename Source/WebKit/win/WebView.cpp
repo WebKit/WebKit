@@ -402,6 +402,7 @@ WebView::WebView()
 {
     JSC::initializeThreading();
     WTF::initializeMainThread();
+    RunLoop::initializeMainRunLoop();
 
     m_backingStoreSize.cx = m_backingStoreSize.cy = 0;
 
