@@ -1,3 +1,13 @@
+2016-06-07  Saam Barati  <sbarati@apple.com>
+
+        operationProcessTypeProfilerLogDFG doesn't update topCallFrame
+        https://bugs.webkit.org/show_bug.cgi?id=158428
+        <rdar://problem/26571493>
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGOperations.cpp:
+
 2016-06-07  Mark Lam  <mark.lam@apple.com>
 
         calculatedDisplayName() and friends actually need a VM& and not a ExecState/CallFrame.

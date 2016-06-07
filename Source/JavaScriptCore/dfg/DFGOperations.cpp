@@ -1567,7 +1567,10 @@ JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVector
 
 void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState* exec) 
 {
-    exec->vm().typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside DFG."));
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    vm.typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside DFG."));
 }
 
 void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* debugInfoRaw, void* scratch)
