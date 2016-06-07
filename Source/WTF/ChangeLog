@@ -1,3 +1,27 @@
+2016-06-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Do not allocate unnecessary UTF-8 string for encodeXXX functions
+        https://bugs.webkit.org/show_bug.cgi?id=158416
+
+        Reviewed by Darin Adler and Geoffrey Garen.
+
+        * wtf/Bitmap.h:
+        (WTF::Bitmap::size):
+        (WTF::WordType>::Bitmap):
+        (WTF::WordType>::get):
+        (WTF::WordType>::set):
+        (WTF::WordType>::testAndSet):
+        (WTF::WordType>::testAndClear):
+        (WTF::WordType>::concurrentTestAndSet):
+        (WTF::WordType>::concurrentTestAndClear):
+        (WTF::WordType>::clear):
+        (WTF::WordType>::clearAll):
+        (WTF::WordType>::nextPossiblyUnset):
+        (WTF::WordType>::findRunOfZeros):
+        (WTF::WordType>::count):
+        (WTF::WordType>::isEmpty):
+        (WTF::WordType>::isFull):
+
 2016-06-06  Saam Barati  <sbarati@apple.com>
 
         equal(StringView, StringView) for strings should have a fast path for pointer equality

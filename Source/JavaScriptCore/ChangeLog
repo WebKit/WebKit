@@ -1,3 +1,62 @@
+2016-06-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Do not allocate unnecessary UTF-8 string for encodeXXX functions
+        https://bugs.webkit.org/show_bug.cgi?id=158416
+
+        Reviewed by Darin Adler and Geoffrey Garen.
+
+        Previously, encodeXXX functions first allocate new UTF-8 string, and generate (& allocate) the results from this UTF-8 string.
+        It is costly since this UTF-8 string is always wasted. In this patch, we generate the results without this UTF-8 string.
+        We precisely implement ECMA262's Encode abstract operation[1].
+
+        This optimized encodeXXX functions provide great improvement in kraken stanford-crypto-sha256-iterative since it frequently calls
+        these functions. We can see 6 - 7% improvements.
+
+                                                      baseline                  patched
+
+        stanford-crypto-sha256-iterative           37.952+-0.155      ^      35.484+-0.265         ^ definitely 1.0695x faster
+
+
+        [1]: https://tc39.github.io/ecma262/#sec-encode
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::toSafeView):
+        Use this helper function to retrieve JSString::SafeView.
+
+        (JSC::makeCharacterBitmap):
+        (JSC::encode):
+        In encode, we reserve N length buffer at first. This is important when the length of the given string is long enough,
+        preventing frequent unnecessary buffer reallocations. This reserving contributes to 1% kraken stanford-crypto-sha256-iterative progression.
+
+        (JSC::decode):
+        Previously, Bitmap accidentally includes \0. And instead of removing this \0, we checked character != 0.
+        This patch fixes it for the Bitmap not to include \0.
+
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        * tests/stress/encode-decode-ascii.js: Added.
+        (shouldBe):
+        * tests/stress/encode-decode-unicode.js: Added.
+        (shouldBe):
+        (isLowSurrogate):
+        (isHighSurrogate):
+        (isSurrogate):
+        * tests/stress/encode-decode-uri-component-surrogates.js: Added.
+        (shouldBe):
+        (toHighSurrogate):
+        (toLowSurrogate):
+        * tests/stress/encode-decode-uri-surrogates.js: Added.
+        (shouldBe):
+        (toHighSurrogate):
+        (toLowSurrogate):
+        * tests/stress/encode-decode-zero.js: Added.
+        (shouldBe):
+        * tests/stress/escape-unescape-surrogates.js: Added.
+        (shouldBe):
+        (toHighSurrogate):
+        (toLowSurrogate):
+
 2016-06-07  Ting-Wei Lan  <lantw44@gmail.com>
 
         [GTK] Include locale.h before using LC_ALL
@@ -198,6 +257,27 @@
         for efl include paths.
 
         * PlatformEfl.cmake:
+        * tests/stress/encode-decode-ascii.js: Added.
+        (shouldBe):
+        * tests/stress/encode-decode-unicode.js: Added.
+        (shouldBe):
+        (isLowSurrogate):
+        (isHighSurrogate):
+        (isSurrogate):
+        * tests/stress/encode-decode-uri-component-surrogates.js: Added.
+        (shouldBe):
+        (toHighSurrogate):
+        (toLowSurrogate):
+        * tests/stress/encode-decode-uri-surrogates.js: Added.
+        (shouldBe):
+        (toHighSurrogate):
+        (toLowSurrogate):
+        * tests/stress/encode-decode-zero.js: Added.
+        (shouldBe):
+        * tests/stress/escape-unescape-surrogates.js: Added.
+        (shouldBe):
+        (toHighSurrogate):
+        (toLowSurrogate):
 
 2016-06-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
