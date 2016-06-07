@@ -83,12 +83,15 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
 
 #if PLATFORM(GTK)
     bool requiresGtk2 = pluginRequiresGtk2(pluginPath);
-    if (requiresGtk2)
+    if (requiresGtk2) {
 #if ENABLE(PLUGIN_PROCESS_GTK2)
         pluginProcessPath.append('2');
+        if (!fileExists(pluginProcessPath))
+            return false;
 #else
         return false;
 #endif
+    }
 #endif
 
     CString binaryPath = fileSystemRepresentation(pluginProcessPath);

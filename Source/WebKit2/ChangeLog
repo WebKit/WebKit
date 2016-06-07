@@ -1,3 +1,17 @@
+2016-06-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Hide GTK+ 2 plugins if GTK+ 2 plugin process was built but is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=158419
+
+        Reviewed by Carlos Garcia Campos.
+
+        Patch by Alberto Garcia <berto@igalia.com>
+
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+
 2016-06-06  Antoine Quint  <graouts@apple.com>
 
         Position of WebGL <canvas> on iOS is incorrect with CSS borders
