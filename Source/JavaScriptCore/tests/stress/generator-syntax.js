@@ -1,4 +1,6 @@
+// <https://webkit.org/b/158460> Clarify SyntaxErrors around yield and unskip tests
 //@ skip
+
 function testSyntax(script) {
     try {
         eval(script);

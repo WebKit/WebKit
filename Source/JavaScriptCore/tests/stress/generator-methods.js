@@ -1,4 +1,3 @@
-//@ skip
 class Hello {
     *gen() {
         yield;

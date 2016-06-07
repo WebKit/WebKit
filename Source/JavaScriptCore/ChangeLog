@@ -1,3 +1,18 @@
+2016-06-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unskip generator related stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=158461
+
+        Reviewed by Darin Adler.
+
+        * tests/stress/generator-methods.js:
+        * tests/stress/generator-syntax.js:
+        * tests/stress/yield-and-line-terminator.js:
+        * tests/stress/yield-label-generator.js:
+        * tests/stress/yield-named-accessors-generator.js:
+        * tests/stress/yield-named-variable-generator.js:
+        * tests/stress/yield-out-of-generator.js:
+
 2016-06-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix typo in test name trailing-comma-in-function-paramters.js

@@ -1,4 +1,3 @@
-//@ skip
 function testSyntax(script) {
     try {
         eval(script);
@@ -31,12 +30,12 @@ testSyntaxError(`
 function *t1() {
     let yield = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 testSyntaxError(`
 function *t1() {
     const yield = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 
 testSyntaxError(`
 function *t1() {
@@ -63,12 +62,12 @@ testSyntaxError(`
 function *t1() {
     let { i: yield } = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 testSyntaxError(`
 function *t1() {
     const { i: yield } = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 
 testSyntaxError(`
 function *t1() {
@@ -79,12 +78,12 @@ testSyntaxError(`
 function *t1() {
     let [ yield ] = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 testSyntaxError(`
 function *t1() {
     const [ yield ] = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 
 testSyntaxError(`
 function *t1() {
@@ -104,7 +103,7 @@ function *t1() {
     } catch (yield) {
     }
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a catch variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a catch parameter name.`);
 
 testSyntax(`
 function *t1() {

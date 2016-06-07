@@ -1,4 +1,3 @@
-//@ skip
 function *t1() {
     let object = {
         get yield() {
