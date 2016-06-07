@@ -1,3 +1,25 @@
+2016-06-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        URLs containing tabs or newlines are parsed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=143381
+        <rdar://problem/26567214>
+
+        Reviewed by Brent Fulgham.
+
+        1. Strip any tabs and newlines in the URL input.
+        2. Replace the original stripping URL leading and trailing white spaces logic with WTFString's
+        builtin, and move this logic to the very begining of the URL parser.
+        3. Enhance the protocolIs method to ignore any leading whitespace/control characters, and
+        tabs/newlines of the examining url.
+
+        Test: fast/url/tab-and-newline-stripping.html
+
+        * platform/URL.cpp:
+        (WebCore::isTabNewline):
+        (WebCore::shouldTrimFromURL):
+        (WebCore::URL::init):
+        (WebCore::protocolIs):
+
 2016-06-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update the list of elements attachShadow is allowed

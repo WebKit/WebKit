@@ -1,3 +1,36 @@
+2016-06-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        URLs containing tabs or newlines are parsed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=143381
+        <rdar://problem/26567214>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/dom/DOMURL/set-href-attribute-host-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-host.html:
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-host.js:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt:
+        * fast/url/segments-expected.txt:
+        * fast/url/segments-from-data-url-expected.txt:
+        * fast/url/segments-from-data-url.html:
+        * fast/url/segments.html:
+        * fast/url/tab-and-newline-stripping-expected.txt: Added.
+        * fast/url/tab-and-newline-stripping.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-control-char2-expected.txt:
+
 2016-06-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update the list of elements attachShadow is allowed
