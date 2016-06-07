@@ -2,7 +2,7 @@
 class AnalysisCategoryToolbar extends Toolbar {
     constructor()
     {
-        super();
+        super('analysis-category-toolbar');
         this._categories = AnalysisTask.categories();
         this._currentCategory = null;
         this._filter = null;

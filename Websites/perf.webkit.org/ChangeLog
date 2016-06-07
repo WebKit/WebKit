@@ -1,3 +1,10 @@
+2016-06-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r201739. attachShadow was throwing an exception on this component.
+
+        * public/v3/pages/analysis-category-toolbar.js:
+        (AnalysisCategoryToolbar):
+
 2016-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         sync-buildbot.js should update the list of tests and platforms associated with a triggerable
