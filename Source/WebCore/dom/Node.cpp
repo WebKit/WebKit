@@ -1907,9 +1907,9 @@ void Node::didMoveToNewDocument(Document* oldDocument)
     }
 }
 
-static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
+static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, Ref<EventListener>&& listener, const EventTarget::AddEventListenerOptions& options)
 {
-    if (!targetNode->EventTarget::addEventListener(eventType, listener.copyRef(), useCapture))
+    if (!targetNode->EventTarget::addEventListener(eventType, listener.copyRef(), options))
         return false;
 
     targetNode->document().addListenerTypeIfNeeded(eventType);
@@ -1927,7 +1927,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     // This code was added to address <rdar://problem/5846492> Onorientationchange event not working for document.body.
     // Forward this call to addEventListener() to the window since these are window-only events.
     if (eventType == eventNames().orientationchangeEvent || eventType == eventNames().resizeEvent)
-        targetNode->document().domWindow()->addEventListener(eventType, WTFMove(listener), useCapture);
+        targetNode->document().domWindow()->addEventListener(eventType, WTFMove(listener), options);
 
 #if ENABLE(TOUCH_EVENTS)
     if (eventNames().isTouchEventType(eventType))
@@ -1943,14 +1943,14 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     return true;
 }
 
-bool Node::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
+bool Node::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
-    return tryAddEventListener(this, eventType, WTFMove(listener), useCapture);
+    return tryAddEventListener(this, eventType, WTFMove(listener), options);
 }
 
-static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& eventType, EventListener& listener, bool useCapture)
+static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& eventType, EventListener& listener, const EventTarget::ListenerOptions& options)
 {
-    if (!targetNode->EventTarget::removeEventListener(eventType, listener, useCapture))
+    if (!targetNode->EventTarget::removeEventListener(eventType, listener, options))
         return false;
 
     // FIXME: Notify Document that the listener has vanished. We need to keep track of a number of
@@ -1968,7 +1968,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
     // This code was added to address <rdar://problem/5846492> Onorientationchange event not working for document.body.
     // Forward this call to removeEventListener() to the window since these are window-only events.
     if (eventType == eventNames().orientationchangeEvent || eventType == eventNames().resizeEvent)
-        targetNode->document().domWindow()->removeEventListener(eventType, listener, useCapture);
+        targetNode->document().domWindow()->removeEventListener(eventType, listener, options);
 
 #if ENABLE(TOUCH_EVENTS)
     if (eventNames().isTouchEventType(eventType))
@@ -1984,9 +1984,9 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
     return true;
 }
 
-bool Node::removeEventListener(const AtomicString& eventType, EventListener& listener, bool useCapture)
+bool Node::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
 {
-    return tryRemoveEventListener(this, eventType, listener, useCapture);
+    return tryRemoveEventListener(this, eventType, listener, options);
 }
 
 typedef HashMap<Node*, std::unique_ptr<EventTargetData>> EventTargetDataMap;

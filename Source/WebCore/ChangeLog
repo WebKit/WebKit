@@ -1,3 +1,90 @@
+2016-06-06  Chris Dumez  <cdumez@apple.com>
+
+        Implement EventListenerOptions argument to addEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=149466
+        <rdar://problem/22802031>
+
+        Reviewed by Dean Jackson.
+
+        Implement AddEventListenerOptions dictionary argument to addEventListener()
+        and EventListenerOptions dictionary argument to removeEventListener(), as
+        per the latest DOM specification:
+        - https://dom.spec.whatwg.org/#interface-eventtarget
+
+        Firefox and Chrome already support this.
+
+        Support for AddEventListenerOptions in this patch is as follows:
+        - 'capture': fully supported.
+        - 'once': fully supported.
+        - 'passive': supported in the sense that preventDefault() will be ignored
+                     for passive event listeners. There are however currently no
+                     performance benefits from passing this flag. Those optimizations
+                     will be implemented in follow-up patches (in particular for
+                     Touch and Scroll events).
+
+        Tests: fast/events/AddEventListenerOptions-once-recursive.html
+               fast/events/AddEventListenerOptions-once.html
+               fast/events/AddEventListenerOptions-passive.html
+               fast/events/removeEventListener-EventListenerOptions-capture.html
+               imported/w3c/web-platform-tests/dom/events/EventListenerOptions-capture.html
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::addEventListener):
+        (WebCore::AudioScheduledSourceNode::removeEventListener):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::addEventListener):
+        (WebCore::ScriptProcessorNode::removeEventListener):
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheckExpression):
+        * dom/Event.h:
+        (WebCore::Event::preventDefault):
+        (WebCore::Event::setInPassiveListener):
+        * dom/EventListenerMap.cpp:
+        (WebCore::addListenerToVector):
+        (WebCore::EventListenerMap::add):
+        * dom/EventListenerMap.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::addEventListenerForBindings):
+        (WebCore::EventTarget::removeEventListenerForBindings):
+        (WebCore::EventTarget::removeEventListener):
+        (WebCore::EventTarget::setAttributeEventListener):
+        (WebCore::EventTarget::fireEventListeners):
+        * dom/EventTarget.h:
+        (WebCore::EventTarget::ListenerOptions::ListenerOptions):
+        (WebCore::EventTarget::AddEventListenerOptions::AddEventListenerOptions):
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::addEventListenerForBindings):
+        (WebCore::EventTarget::removeEventListenerForBindings):
+        * dom/EventTarget.idl:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::addEventListener):
+        * dom/MessagePort.h:
+        * dom/Node.cpp:
+        (WebCore::tryAddEventListener):
+        (WebCore::Node::addEventListener):
+        (WebCore::tryRemoveEventListener):
+        (WebCore::Node::removeEventListener):
+        * dom/Node.h:
+        * dom/RegisteredEventListener.h:
+        (WebCore::RegisteredEventListener::Options::Options):
+        (WebCore::RegisteredEventListener::RegisteredEventListener):
+        (WebCore::operator==):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addEventListener):
+        (WebCore::HTMLMediaElement::removeEventListener):
+        * html/HTMLMediaElement.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        * page/DOMWindow.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::addEventListener):
+        (WebCore::SVGElement::removeEventListener):
+        * svg/SVGElement.h:
+
 2016-06-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201730.

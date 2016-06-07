@@ -528,10 +528,10 @@ bool SVGElement::haveLoadedRequiredResources()
     return true;
 }
 
-bool SVGElement::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
+bool SVGElement::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {   
     // Add event listener to regular DOM element
-    if (!Node::addEventListener(eventType, listener.copyRef(), useCapture))
+    if (!Node::addEventListener(eventType, listener.copyRef(), options))
         return false;
 
     if (containingShadowRoot())
@@ -541,17 +541,17 @@ bool SVGElement::addEventListener(const AtomicString& eventType, Ref<EventListen
     ASSERT(!instanceUpdatesBlocked());
     for (auto* instance : instances()) {
         ASSERT(instance->correspondingElement() == this);
-        bool result = instance->Node::addEventListener(eventType, listener.copyRef(), useCapture);
+        bool result = instance->Node::addEventListener(eventType, listener.copyRef(), options);
         ASSERT_UNUSED(result, result);
     }
 
     return true;
 }
 
-bool SVGElement::removeEventListener(const AtomicString& eventType, EventListener& listener, bool useCapture)
+bool SVGElement::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
 {
     if (containingShadowRoot())
-        return Node::removeEventListener(eventType, listener, useCapture);
+        return Node::removeEventListener(eventType, listener, options);
 
     // EventTarget::removeEventListener creates a PassRefPtr around the given EventListener
     // object when creating a temporary RegisteredEventListener object used to look up the
@@ -561,7 +561,7 @@ bool SVGElement::removeEventListener(const AtomicString& eventType, EventListene
     Ref<EventListener> protector(listener);
 
     // Remove event listener from regular DOM element
-    if (!Node::removeEventListener(eventType, listener, useCapture))
+    if (!Node::removeEventListener(eventType, listener, options))
         return false;
 
     // Remove event listener from all shadow tree DOM element instances
@@ -569,7 +569,7 @@ bool SVGElement::removeEventListener(const AtomicString& eventType, EventListene
     for (auto& instance : instances()) {
         ASSERT(instance->correspondingElement() == this);
 
-        if (instance->Node::removeEventListener(eventType, listener, useCapture))
+        if (instance->Node::removeEventListener(eventType, listener, options))
             continue;
 
         // This case can only be hit for event listeners created from markup

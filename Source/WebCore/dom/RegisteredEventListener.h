@@ -31,6 +31,26 @@ namespace WebCore {
 
     class RegisteredEventListener {
     public:
+        struct Options {
+            Options(bool capture = false, bool passive = false, bool once = false)
+                : capture(capture)
+                , passive(passive)
+                , once(once)
+            { }
+
+            bool capture;
+            bool passive;
+            bool once;
+        };
+
+        RegisteredEventListener(Ref<EventListener>&& listener, const Options& options)
+            : listener(WTFMove(listener))
+            , useCapture(options.capture)
+            , isPassive(options.passive)
+            , isOnce(options.once)
+        {
+        }
+
         RegisteredEventListener(Ref<EventListener>&& listener, bool useCapture)
             : listener(WTFMove(listener))
             , useCapture(useCapture)
@@ -38,11 +58,16 @@ namespace WebCore {
         }
 
         RefPtr<EventListener> listener;
-        bool useCapture;
+        bool useCapture { false };
+        bool isPassive { false };
+        bool isOnce { false };
+        bool isMarkedForRemoval { false };
     };
     
     inline bool operator==(const RegisteredEventListener& a, const RegisteredEventListener& b)
     {
+        // Other data members are purposefully not checked. The DOM specification says that upon adding / removing
+        // EventListeners, we should only check the type and the capture flag.
         return *a.listener == *b.listener && a.useCapture == b.useCapture;
     }
 

@@ -54,7 +54,8 @@ public:
     bool containsCapturing(const AtomicString& eventType) const;
 
     void clear();
-    bool add(const AtomicString& eventType, Ref<EventListener>&&, bool useCapture);
+
+    bool add(const AtomicString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
     bool remove(const AtomicString& eventType, EventListener&, bool useCapture, size_t& indexOfRemovedListener);
     EventListenerVector* find(const AtomicString& eventType);
     Vector<AtomicString> eventTypes() const;
