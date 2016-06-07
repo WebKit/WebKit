@@ -196,6 +196,10 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::ArgumentEncoder& encoder
         case TimingFunction::StepsFunction:
             encoder << *static_cast<StepsTimingFunction*>(timingFunction.get());
             break;
+
+        case TimingFunction::SpringFunction:
+            encoder << *static_cast<SpringTimingFunction*>(timingFunction.get());
+            break;
         }
     }
 }
@@ -280,6 +284,12 @@ bool PlatformCAAnimationRemote::Properties::decode(IPC::ArgumentDecoder& decoder
             case TimingFunction::StepsFunction:
                 timingFunction = StepsTimingFunction::create();
                 if (!decoder.decode(*static_cast<StepsTimingFunction*>(timingFunction.get())))
+                    return false;
+                break;
+
+            case TimingFunction::SpringFunction:
+                timingFunction = SpringTimingFunction::create();
+                if (!decoder.decode(*static_cast<SpringTimingFunction*>(timingFunction.get())))
                     return false;
                 break;
             }
@@ -752,6 +762,28 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
         }
         
         caAnimation = keyframeAnimation;
+        break;
+    }
+    case PlatformCAAnimation::Spring: {
+        RetainPtr<CASpringAnimation> springAnimation;
+        springAnimation = [CASpringAnimation animationWithKeyPath:properties.keyPath];
+        
+        if (properties.keyValues.size() > 1) {
+            [springAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0])];
+            [springAnimation setToValue:animationValueFromKeyframeValue(properties.keyValues[1])];
+        }
+        
+        if (properties.timingFunctions.size()) {
+            auto& timingFunction = properties.timingFunctions[0];
+            if (timingFunction->isSpringTimingFunction()) {
+                auto& function = *static_cast<const SpringTimingFunction*>(timingFunction.get());
+                [springAnimation setMass:function.mass()];
+                [springAnimation setStiffness:function.stiffness()];
+                [springAnimation setDamping:function.damping()];
+                [springAnimation setInitialVelocity:function.initialVelocity()];
+            }
+        }
+        caAnimation = springAnimation;
         break;
     }
     }

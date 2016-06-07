@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "PlatformCAAnimationCocoa.h"
 
 #import "FloatConversion.h"
 #import "PlatformCAFilters.h"
+#import "QuartzCoreSPI.h"
 #import "TimingFunction.h"
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/text/WTFString.h>
@@ -161,20 +162,30 @@ PassRefPtr<PlatformCAAnimation> PlatformCAAnimationCocoa::create(PlatformAnimati
 PlatformCAAnimationCocoa::PlatformCAAnimationCocoa(AnimationType type, const String& keyPath)
     : PlatformCAAnimation(type)
 {
-    if (type == Basic)
+    switch (type) {
+    case Basic:
         m_animation = [CABasicAnimation animationWithKeyPath:keyPath];
-    else
+        break;
+    case Keyframe:
         m_animation = [CAKeyframeAnimation animationWithKeyPath:keyPath];
+        break;
+    case Spring:
+        m_animation = [CASpringAnimation animationWithKeyPath:keyPath];
+        break;
+    }
 }
 
 PlatformCAAnimationCocoa::PlatformCAAnimationCocoa(PlatformAnimationRef animation)
 {
-    if ([static_cast<CAAnimation*>(animation) isKindOfClass:[CABasicAnimation class]])
-        setType(Basic);
-    else if ([static_cast<CAAnimation*>(animation) isKindOfClass:[CAKeyframeAnimation class]])
+    if ([static_cast<CAAnimation*>(animation) isKindOfClass:[CABasicAnimation class]]) {
+        if ([static_cast<CAAnimation*>(animation) isKindOfClass:[CASpringAnimation class]])
+            setType(Spring);
+        else
+            setType(Basic);
+    } else if ([static_cast<CAAnimation*>(animation) isKindOfClass:[CAKeyframeAnimation class]])
         setType(Keyframe);
     else {
-        ASSERT(0);
+        ASSERT_NOT_REACHED();
         return;
     }
     
@@ -305,7 +316,27 @@ void PlatformCAAnimationCocoa::setFillMode(FillModeType value)
 
 void PlatformCAAnimationCocoa::setTimingFunction(const TimingFunction* value, bool reverse)
 {
-    [m_animation setTimingFunction:toCAMediaTimingFunction(value, reverse)];
+    switch (animationType()) {
+    case Basic:
+    case Keyframe:
+        [m_animation setTimingFunction:toCAMediaTimingFunction(value, reverse)];
+        break;
+    case Spring:
+        if (value->isSpringTimingFunction()) {
+            // FIXME: Handle reverse.
+            auto& function = *static_cast<const SpringTimingFunction*>(value);
+            CASpringAnimation *springAnimation = (CASpringAnimation *)m_animation.get();
+            springAnimation.mass = function.mass();
+            springAnimation.stiffness = function.stiffness();
+            springAnimation.damping = function.damping();
+#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+            springAnimation.initialVelocity = function.initialVelocity();
+#else
+            springAnimation.velocity = function.initialVelocity();
+#endif
+        }
+        break;
+    }
 }
 
 void PlatformCAAnimationCocoa::copyTimingFunctionFrom(const PlatformCAAnimation& value)
@@ -346,14 +377,14 @@ void PlatformCAAnimationCocoa::setValueFunction(ValueFunctionType value)
 
 void PlatformCAAnimationCocoa::setFromValue(float value)
 {
-    if (animationType() != Basic)
+    if (!isBasicAnimation())
         return;
     [static_cast<CABasicAnimation*>(m_animation.get()) setFromValue:[NSNumber numberWithDouble:value]];
 }
 
 void PlatformCAAnimationCocoa::setFromValue(const WebCore::TransformationMatrix& value)
 {
-    if (animationType() != Basic)
+    if (!isBasicAnimation())
         return;
 
     [static_cast<CABasicAnimation*>(m_animation.get()) setFromValue:[NSValue valueWithCATransform3D:value]];
@@ -361,7 +392,7 @@ void PlatformCAAnimationCocoa::setFromValue(const WebCore::TransformationMatrix&
 
 void PlatformCAAnimationCocoa::setFromValue(const FloatPoint3D& value)
 {
-    if (animationType() != Basic)
+    if (!isBasicAnimation())
         return;
 
     NSArray* array = [NSArray arrayWithObjects:
@@ -374,7 +405,7 @@ void PlatformCAAnimationCocoa::setFromValue(const FloatPoint3D& value)
 
 void PlatformCAAnimationCocoa::setFromValue(const WebCore::Color& value)
 {
-    if (animationType() != Basic)
+    if (!isBasicAnimation())
         return;
 
     NSArray* array = [NSArray arrayWithObjects:
@@ -394,7 +425,7 @@ void PlatformCAAnimationCocoa::setFromValue(const FilterOperation* operation, in
 
 void PlatformCAAnimationCocoa::copyFromValueFrom(const PlatformCAAnimation& value)
 {
-    if (animationType() != Basic || value.animationType() != Basic)
+    if (!isBasicAnimation() || !value.isBasicAnimation())
         return;
 
     CABasicAnimation* otherAnimation = static_cast<CABasicAnimation*>(downcast<PlatformCAAnimationCocoa>(value).m_animation.get());
@@ -403,14 +434,14 @@ void PlatformCAAnimationCocoa::copyFromValueFrom(const PlatformCAAnimation& valu
 
 void PlatformCAAnimationCocoa::setToValue(float value)
 {
-    if (animationType() != Basic)
+    if (!isBasicAnimation())
         return;
     [static_cast<CABasicAnimation*>(m_animation.get()) setToValue:[NSNumber numberWithDouble:value]];
 }
 
 void PlatformCAAnimationCocoa::setToValue(const WebCore::TransformationMatrix& value)
 {
-    if (animationType() != Basic)
+    if (!isBasicAnimation())
         return;
 
     [static_cast<CABasicAnimation*>(m_animation.get()) setToValue:[NSValue valueWithCATransform3D:value]];
@@ -418,7 +449,7 @@ void PlatformCAAnimationCocoa::setToValue(const WebCore::TransformationMatrix& v
 
 void PlatformCAAnimationCocoa::setToValue(const FloatPoint3D& value)
 {
-    if (animationType() != Basic)
+    if (!isBasicAnimation())
         return;
 
     NSArray* array = [NSArray arrayWithObjects:
@@ -431,7 +462,7 @@ void PlatformCAAnimationCocoa::setToValue(const FloatPoint3D& value)
 
 void PlatformCAAnimationCocoa::setToValue(const WebCore::Color& value)
 {
-    if (animationType() != Basic)
+    if (!isBasicAnimation())
         return;
 
     NSArray* array = [NSArray arrayWithObjects:
@@ -451,7 +482,7 @@ void PlatformCAAnimationCocoa::setToValue(const FilterOperation* operation, int 
 
 void PlatformCAAnimationCocoa::copyToValueFrom(const PlatformCAAnimation& value)
 {
-    if (animationType() != Basic || value.animationType() != Basic)
+    if (!isBasicAnimation() || !value.isBasicAnimation())
         return;
 
     CABasicAnimation* otherAnimation = static_cast<CABasicAnimation*>(downcast<PlatformCAAnimationCocoa>(value).m_animation.get());

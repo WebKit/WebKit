@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,9 +89,42 @@ private:
     bool m_stepAtStart;
 };
 
+class CSSSpringTimingFunctionValue : public CSSValue {
+public:
+    static Ref<CSSSpringTimingFunctionValue> create(double mass, double stiffness, double damping, double initialVelocity)
+    {
+        return adoptRef(*new CSSSpringTimingFunctionValue(mass, stiffness, damping, initialVelocity));
+    }
+
+    double mass() const { return m_mass; }
+    double stiffness() const { return m_stiffness; }
+    double damping() const { return m_damping; }
+    double initialVelocity() const { return m_initialVelocity; }
+
+    String customCSSText() const;
+
+    bool equals(const CSSSpringTimingFunctionValue&) const;
+
+private:
+    CSSSpringTimingFunctionValue(double mass, double stiffness, double damping, double initialVelocity)
+        : CSSValue(SpringTimingFunctionClass)
+        , m_mass(mass)
+        , m_stiffness(stiffness)
+        , m_damping(damping)
+        , m_initialVelocity(initialVelocity)
+    {
+    }
+
+    double m_mass;
+    double m_stiffness;
+    double m_damping;
+    double m_initialVelocity;
+};
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCubicBezierTimingFunctionValue, isCubicBezierTimingFunctionValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSStepsTimingFunctionValue, isStepsTimingFunctionValue())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSSpringTimingFunctionValue, isSpringTimingFunctionValue())
 
 #endif // CSSTimingFunctionValue_h

@@ -265,6 +265,40 @@ bool ArgumentCoder<StepsTimingFunction>::decode(ArgumentDecoder& decoder, StepsT
     return true;
 }
 
+void ArgumentCoder<SpringTimingFunction>::encode(ArgumentEncoder& encoder, const SpringTimingFunction& timingFunction)
+{
+    encoder.encodeEnum(timingFunction.type());
+    
+    encoder << timingFunction.mass();
+    encoder << timingFunction.stiffness();
+    encoder << timingFunction.damping();
+    encoder << timingFunction.initialVelocity();
+}
+
+bool ArgumentCoder<SpringTimingFunction>::decode(ArgumentDecoder& decoder, SpringTimingFunction& timingFunction)
+{
+    // Type is decoded by the caller.
+    double mass;
+    if (!decoder.decode(mass))
+        return false;
+
+    double stiffness;
+    if (!decoder.decode(stiffness))
+        return false;
+
+    double damping;
+    if (!decoder.decode(damping))
+        return false;
+
+    double initialVelocity;
+    if (!decoder.decode(initialVelocity))
+        return false;
+
+    timingFunction.setValues(mass, stiffness, damping, initialVelocity);
+
+    return true;
+}
+
 void ArgumentCoder<FloatPoint>::encode(ArgumentEncoder& encoder, const FloatPoint& floatPoint)
 {
     SimpleArgumentCoder<FloatPoint>::encode(encoder, floatPoint);

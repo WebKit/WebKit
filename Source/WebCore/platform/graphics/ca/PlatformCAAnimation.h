@@ -41,7 +41,7 @@ class TimingFunction;
 
 class PlatformCAAnimation : public RefCounted<PlatformCAAnimation> {
 public:
-    enum AnimationType { Basic, Keyframe };
+    enum AnimationType { Basic, Keyframe, Spring };
     enum FillModeType { NoFillMode, Forwards, Backwards, Both };
     enum ValueFunctionType { NoValueFunction, RotateX, RotateY, RotateZ, ScaleX, ScaleY, ScaleZ, Scale, TranslateX, TranslateY, TranslateZ, Translate };
 
@@ -123,6 +123,8 @@ public:
         if (beginTime() <= 0)
             setBeginTime(t);
     }
+
+    bool isBasicAnimation() const;
     
 protected:
     PlatformCAAnimation(AnimationType type = Basic)

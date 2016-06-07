@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,23 @@
 #include "config.h"
 #include "CSSTimingFunctionValue.h"
 
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 String CSSCubicBezierTimingFunctionValue::customCSSText() const
 {
-    return "cubic-bezier("
-        + String::number(m_x1) + ", "
-        + String::number(m_y1) + ", "
-        + String::number(m_x2) + ", "
-        + String::number(m_y2) + ')';
+    StringBuilder builder;
+    builder.appendLiteral("cubic-bezier(");
+    builder.appendNumber(m_x1);
+    builder.appendLiteral(", ");
+    builder.appendNumber(m_y1);
+    builder.appendLiteral(", ");
+    builder.appendNumber(m_x2);
+    builder.appendLiteral(", ");
+    builder.appendNumber(m_y2);
+    builder.append(')');    
+    return builder.toString();
 }
 
 bool CSSCubicBezierTimingFunctionValue::equals(const CSSCubicBezierTimingFunctionValue& other) const
@@ -44,15 +50,42 @@ bool CSSCubicBezierTimingFunctionValue::equals(const CSSCubicBezierTimingFunctio
     return m_x1 == other.m_x1 && m_x2 == other.m_x2 && m_y1 == other.m_y1 && m_y2 == other.m_y2;
 }
 
-
 String CSSStepsTimingFunctionValue::customCSSText() const
 {
-    return "steps(" + String::number(m_steps) + ", " + (m_stepAtStart ? "start" : "end") + ')';
+    StringBuilder builder;
+    builder.appendLiteral("steps(");
+    builder.appendNumber(m_steps);
+    if (m_stepAtStart)
+        builder.appendLiteral(", start)");
+    else
+        builder.appendLiteral(", end)");
+    return builder.toString();
 }
 
 bool CSSStepsTimingFunctionValue::equals(const CSSStepsTimingFunctionValue& other) const
 {
     return m_steps == other.m_steps && m_stepAtStart == other.m_stepAtStart;
 }
+
+String CSSSpringTimingFunctionValue::customCSSText() const
+{
+    StringBuilder builder;
+    builder.appendLiteral("spring(");
+    builder.appendNumber(m_mass);
+    builder.append(' ');
+    builder.appendNumber(m_stiffness);
+    builder.append(' ');
+    builder.appendNumber(m_damping);
+    builder.append(' ');
+    builder.appendNumber(m_initialVelocity);
+    builder.append(')');
+    return builder.toString();
+}
+
+bool CSSSpringTimingFunctionValue::equals(const CSSSpringTimingFunctionValue& other) const
+{
+    return m_mass == other.m_mass && m_stiffness == other.m_stiffness && m_damping == other.m_damping && m_initialVelocity == other.m_initialVelocity;
+}
+
 
 } // namespace WebCore

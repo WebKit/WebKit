@@ -1,0 +1,96 @@
+Test the parsing of the spring() function on the transition-timing-function property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Valid spring tests
+
+
+Basic : spring(1 100 10 0)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1 100 10 0)'
+PASS propertyValue.cssText is 'spring(1 100 10 0)'
+
+Negative Velocity : spring(1 100 10 -10)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1 100 10 -10)'
+PASS propertyValue.cssText is 'spring(1 100 10 -10)'
+
+Positive Velocity : spring(1 100 10 10)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1 100 10 10)'
+PASS propertyValue.cssText is 'spring(1 100 10 10)'
+
+Zero Damping : spring(1 100 0 10)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1 100 0 10)'
+PASS propertyValue.cssText is 'spring(1 100 0 10)'
+
+Minimum Values : spring(1 1 0 -999999)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1 1 0 -999999)'
+PASS propertyValue.cssText is 'spring(1 1 0 -999999)'
+
+Floating Point Values : spring(1.5 2.3 3.7 -1.8)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('transition-timing-function') is 'spring(1.5 2.3 3.7 -1.8)'
+PASS propertyValue.cssText is 'spring(1.5 2.3 3.7 -1.8)'
+
+Invalid spring tests
+
+
+No parameters : spring()
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('transition-timing-function') is ""
+
+Not enough parameters : spring(1 100 10)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('transition-timing-function') is ""
+
+Too many parameters : spring(1 100 10 0 0)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('transition-timing-function') is ""
+
+Non-numeric parameters : spring(a b c d)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('transition-timing-function') is ""
+
+Illegal Mass (< 0) : spring(-1 100 10 0)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('transition-timing-function') is ""
+
+Illegal Mass (== 0) : spring(0 100 10 0)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('transition-timing-function') is ""
+
+Illegal Stiffness (< 0) : spring(1 -1 10 0)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('transition-timing-function') is ""
+
+Illegal Stiffness (== 0) : spring(1 0 10 0)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('transition-timing-function') is ""
+
+Illegal Damping (< 0) : spring(1 100 -1 0)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('transition-timing-function') is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,241 @@
+2016-06-06  Sam Weinig  <sam@webkit.org>
+
+        Add experimental support for spring based CSS animations
+        https://bugs.webkit.org/show_bug.cgi?id=158403
+
+        Reviewed by Dean Jackson.
+
+        Adds experimental support for a new CSS animation timing function that uses
+        spring to model the time function. To use it you replace your normal timing
+        function, be it cubic-bezier or steps, with a new function called spring().
+        For instance, for a transition you would write:
+
+            transition-timing-function: spring(1 100 10 0);
+        
+        The parameters are, in order:
+            - Mass
+            - Stiffness
+            - Damping
+            - Initial Velocity
+
+        Tests: animations/spring-computed-style.html
+               animations/spring-function.html
+               animations/spring-parsing.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new file.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createTimingFunctionValue):
+        Modernize and add support for the spring function.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseTransformOriginShorthand):
+        (WebCore::CSSParser::isSpringTimingFunctionEnabled):
+        (WebCore::CSSParser::parseCubicBezierTimingFunctionValue):
+        (WebCore::CSSParser::parseSpringTimingFunctionValue):
+        (WebCore::CSSParser::parseAnimationTimingFunction):
+        * css/CSSParser.h:
+        * css/CSSParserMode.h:
+        Add parsing support for the spring() function.
+
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSCubicBezierTimingFunctionValue::customCSSText):
+        (WebCore::CSSCubicBezierTimingFunctionValue::equals):
+        (WebCore::CSSStepsTimingFunctionValue::customCSSText):
+        (WebCore::CSSStepsTimingFunctionValue::equals):
+        (WebCore::CSSSpringTimingFunctionValue::customCSSText):
+        (WebCore::CSSSpringTimingFunctionValue::equals):
+        * css/CSSTimingFunctionValue.h:
+        (WebCore::CSSSpringTimingFunctionValue::create):
+        (WebCore::CSSSpringTimingFunctionValue::mass):
+        (WebCore::CSSSpringTimingFunctionValue::stiffness):
+        (WebCore::CSSSpringTimingFunctionValue::damping):
+        (WebCore::CSSSpringTimingFunctionValue::initialVelocity):
+        (WebCore::CSSSpringTimingFunctionValue::CSSSpringTimingFunctionValue):
+        Modernize and add support for the spring function.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationTimingFunction):
+        Pipe the spring function into the animation.
+
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isSpringTimingFunctionValue):
+        Add support for the spring function.
+        
+        * page/Settings.in:
+        Add a setting to control if the spring function is enabled.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::solveSpringFunction):
+        (WebCore::AnimationBase::progress):
+        Add support for solving the spring function. Since the spring requires time to be absolute,
+        get the real time by multiplying the ratio t, to the total duration.
+
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::operator<<):
+        * platform/animation/TimingFunction.h:
+        (WebCore::TimingFunction::~TimingFunction):
+        (WebCore::TimingFunction::isSpringTimingFunction):
+        Add support for the spring timing function.
+
+        * platform/graphics/SpringSolver.h: Added.
+        (WebCore::SpringSolver::SpringSolver):
+        (WebCore::SpringSolver::solve):
+        Add a Spring solver that matches the one in CoreAnimation.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createBasicAnimation):
+        (WebCore::GraphicsLayerCA::createSpringAnimation):
+        (WebCore::GraphicsLayerCA::setupAnimation):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        Map animations with spring timing functions to CASpringAnimations.
+
+        * platform/graphics/ca/PlatformCAAnimation.cpp:
+        (WebCore::operator<<):
+        (WebCore::PlatformCAAnimation::isBasicAnimation):
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        (WebCore::PlatformCAAnimation::setActualStartTimeIfNeeded):
+        (WebCore::PlatformCAAnimation::PlatformCAAnimation):
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+        (WebCore::toCAMediaTimingFunction):
+        (PlatformCAAnimationCocoa::PlatformCAAnimationCocoa):
+        (PlatformCAAnimationCocoa::setTimingFunction):
+        (PlatformCAAnimationCocoa::copyTimingFunctionFrom):
+        (PlatformCAAnimationCocoa::setFromValue):
+        (PlatformCAAnimationCocoa::copyFromValueFrom):
+        (PlatformCAAnimationCocoa::setToValue):
+        (PlatformCAAnimationCocoa::copyToValueFrom):
+        Add a new type of PlatformCAAnimation, Spring, which is a sub-type of Basic.
+
+2016-06-05  Sam Weinig  <sam@webkit.org>
+
+        Add experimental support for spring based CSS animations
+        https://bugs.webkit.org/show_bug.cgi?id=158403
+
+        Reviewed by Dean Jackson.
+
+        Adds experimental support for a new CSS animation timing function that uses
+        spring to model the time function. To use it you replace your normal timing
+        function, be it cubic-bezier or steps, with a new function called spring().
+        For instance, for a transition you would write:
+
+            transition-timing-function: spring(1 100 10 0);
+        
+        The parameters are, in order:
+            - Mass
+            - Stiffness
+            - Damping
+            - Initial Velocity
+
+        Tests: animations/spring-computed-style.html
+               animations/spring-function.html
+               animations/spring-parsing.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new file.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createTimingFunctionValue):
+        Modernize and add support for the spring function.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseTransformOriginShorthand):
+        (WebCore::CSSParser::isSpringTimingFunctionEnabled):
+        (WebCore::CSSParser::parseCubicBezierTimingFunctionValue):
+        (WebCore::CSSParser::parseSpringTimingFunctionValue):
+        (WebCore::CSSParser::parseAnimationTimingFunction):
+        * css/CSSParser.h:
+        * css/CSSParserMode.h:
+        Add parsing support for the spring() function.
+
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSCubicBezierTimingFunctionValue::customCSSText):
+        (WebCore::CSSCubicBezierTimingFunctionValue::equals):
+        (WebCore::CSSStepsTimingFunctionValue::customCSSText):
+        (WebCore::CSSStepsTimingFunctionValue::equals):
+        (WebCore::CSSSpringTimingFunctionValue::customCSSText):
+        (WebCore::CSSSpringTimingFunctionValue::equals):
+        * css/CSSTimingFunctionValue.h:
+        (WebCore::CSSSpringTimingFunctionValue::create):
+        (WebCore::CSSSpringTimingFunctionValue::mass):
+        (WebCore::CSSSpringTimingFunctionValue::stiffness):
+        (WebCore::CSSSpringTimingFunctionValue::damping):
+        (WebCore::CSSSpringTimingFunctionValue::initialVelocity):
+        (WebCore::CSSSpringTimingFunctionValue::CSSSpringTimingFunctionValue):
+        Modernize and add support for the spring function.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationTimingFunction):
+        Pipe the spring function into the animation.
+
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isSpringTimingFunctionValue):
+        Add support for the spring function.
+        
+        * page/Settings.in:
+        Add a setting to control if the spring function is enabled.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::solveSpringFunction):
+        (WebCore::AnimationBase::progress):
+        Add support for solving the spring function. Since the spring requires time to be absolute,
+        get the real time by multiplying the ratio t, to the total duration.
+
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::operator<<):
+        * platform/animation/TimingFunction.h:
+        (WebCore::TimingFunction::~TimingFunction):
+        (WebCore::TimingFunction::isSpringTimingFunction):
+        Add support for the spring timing function.
+
+        * platform/graphics/SpringSolver.h: Added.
+        (WebCore::SpringSolver::SpringSolver):
+        (WebCore::SpringSolver::solve):
+        Add a Spring solver that matches the one in CoreAnimation.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createBasicAnimation):
+        (WebCore::GraphicsLayerCA::createSpringAnimation):
+        (WebCore::GraphicsLayerCA::setupAnimation):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        Map animations with spring timing functions to CASpringAnimations.
+
+        * platform/graphics/ca/PlatformCAAnimation.cpp:
+        (WebCore::operator<<):
+        (WebCore::PlatformCAAnimation::isBasicAnimation):
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        (WebCore::PlatformCAAnimation::setActualStartTimeIfNeeded):
+        (WebCore::PlatformCAAnimation::PlatformCAAnimation):
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+        (WebCore::toCAMediaTimingFunction):
+        (PlatformCAAnimationCocoa::PlatformCAAnimationCocoa):
+        (PlatformCAAnimationCocoa::setTimingFunction):
+        (PlatformCAAnimationCocoa::copyTimingFunctionFrom):
+        (PlatformCAAnimationCocoa::setFromValue):
+        (PlatformCAAnimationCocoa::copyFromValueFrom):
+        (PlatformCAAnimationCocoa::setToValue):
+        (PlatformCAAnimationCocoa::copyToValueFrom):
+        Add a new type of PlatformCAAnimation, Spring, which is a sub-type of Basic.
+
 2016-06-07  Chris Dumez  <cdumez@apple.com>
 
         Implement EventListenerOptions argument to addEventListener
