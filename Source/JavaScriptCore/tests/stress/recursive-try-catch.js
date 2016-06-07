@@ -1,3 +1,4 @@
+//@ defaultNoSamplingProfilerRun
 // This test should run to completion without excessive memory usage
 
 let maxHeapAllowed = 10 * 1024 * 1024; // This test should run using much less than 10MB.

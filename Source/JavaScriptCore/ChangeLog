@@ -1,3 +1,18 @@
+2016-06-06  Mark Lam  <mark.lam@apple.com>
+
+        32-bit JSC stress test failing: stress/recursive-try-catch.js.ftl-no-cjit-validate-sampling-profiler
+        https://bugs.webkit.org/show_bug.cgi?id=158362
+
+        Reviewed by Michael Saboff.
+
+        The test does infinite recursion until it overflows the stack.  That means the
+        sampling profiler will have to capture excessively large samples, which in turn
+        makes it run very slowly.  This is what causes the test time out.
+
+        The fix is to not run the test with the sampling profiler.
+
+        * tests/stress/recursive-try-catch.js:
+
 2016-06-06  Andreas Kling  <akling@apple.com>
 
         Don't reportAbandonedObjectGraph() after throwing out linked code or RegExps.
