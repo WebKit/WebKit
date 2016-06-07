@@ -32,6 +32,7 @@
 
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "PDFViewSPI.h"
 #import "WebDataSourceInternal.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebDocumentInternal.h"
@@ -1134,7 +1135,11 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 
 - (NSClipView *)_clipViewForPDFDocumentView
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    NSClipView *clipView = (NSClipView *)[[PDFSubview documentScrollView] contentView];
+#else
     NSClipView *clipView = (NSClipView *)[[PDFSubview documentView] _web_superviewOfClass:[NSClipView class]];
+#endif
     ASSERT(clipView);
     return clipView;
 }
