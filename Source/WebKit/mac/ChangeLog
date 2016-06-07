@@ -1,3 +1,18 @@
+2016-06-07  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS WK1] Remove unused -_webkit_unescapedQueryValue and -_webkit_queryKeysAndValues NSString category methods
+        <https://webkit.org/b/158485>
+        <rdar://problem/16960445>
+
+        Reviewed by Dan Bernstein.
+
+        * Misc/WebNSURLExtras.h:
+        (-[NSString _webkit_unescapedQueryValue]): Deleted declaration.
+        (-[NSString _webkit_queryKeysAndValues]): Deleted declaration.
+        * Misc/WebNSURLExtras.mm:
+        (-[NSString _webkit_unescapedQueryValue]): Deleted.
+        (-[NSString _webkit_queryKeysAndValues]): Deleted.
+
 2016-06-07  Alex Christensen  <achristensen@webkit.org>
 
         Adopt [PDFView documentScrollView]
