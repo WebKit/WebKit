@@ -1568,8 +1568,10 @@ ALWAYS_INLINE bool Lexer<T>::parseBinary(double& returnValue)
         shift();
     }
 
-    if (isASCIIDigit(m_current))
+    if (isASCIIDigit(m_current)) {
+        returnValue = 0;
         return false;
+    }
 
     returnValue = parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 2);
     return true;
@@ -1606,8 +1608,10 @@ ALWAYS_INLINE bool Lexer<T>::parseOctal(double& returnValue)
         shift();
     }
 
-    if (isASCIIDigit(m_current))
+    if (isASCIIDigit(m_current)) {
+        returnValue = 0;
         return false;
+    }
 
     returnValue = parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 8);
     return true;

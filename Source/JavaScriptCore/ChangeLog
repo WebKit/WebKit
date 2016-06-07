@@ -1,3 +1,21 @@
+2016-06-06  Michael Saboff  <msaboff@apple.com>
+
+        octal and binary parsing is wrong for some programs
+        https://bugs.webkit.org/show_bug.cgi?id=158437
+
+        Reviewed by Saam Barati.
+
+        When there is an error parsing an binary or octal literal, we need to clear the returnValue
+        of any residual value.  This is because the processing of returnValue happens before the
+        syntax check for the extra character.  Without clearing returnValue, we end trying to
+        categorize the value as an INTEGER or DOUBLE token.  If the value happens to be an
+        impure NaN, we ASSERT.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseBinary):
+        (JSC::Lexer<T>::parseOctal):
+        * tests/stress/regress-158437.js: New test.
+
 2016-06-06  Mark Lam  <mark.lam@apple.com>
 
         32-bit JSC stress test failing: stress/recursive-try-catch.js.ftl-no-cjit-validate-sampling-profiler
