@@ -178,9 +178,9 @@ String JSFunction::name()
     return jsExecutable()->name().string();
 }
 
-String JSFunction::displayName(ExecState* exec)
+String JSFunction::displayName(VM& vm)
 {
-    JSValue displayName = getDirect(exec->vm(), exec->vm().propertyNames->displayName);
+    JSValue displayName = getDirect(vm, vm.propertyNames->displayName);
     
     if (displayName && isJSString(displayName))
         return asString(displayName)->tryGetValue();
@@ -188,9 +188,9 @@ String JSFunction::displayName(ExecState* exec)
     return String();
 }
 
-const String JSFunction::calculatedDisplayName(ExecState* exec)
+const String JSFunction::calculatedDisplayName(VM& vm)
 {
-    const String explicitName = displayName(exec);
+    const String explicitName = displayName(vm);
     
     if (!explicitName.isEmpty())
         return explicitName;
@@ -556,12 +556,12 @@ ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& construc
     return ConstructType::JS;
 }
 
-String getCalculatedDisplayName(CallFrame* callFrame, JSObject* object)
+String getCalculatedDisplayName(VM& vm, JSObject* object)
 {
     if (JSFunction* function = jsDynamicCast<JSFunction*>(object))
-        return function->calculatedDisplayName(callFrame);
+        return function->calculatedDisplayName(vm);
     if (InternalFunction* function = jsDynamicCast<InternalFunction*>(object))
-        return function->calculatedDisplayName(callFrame);
+        return function->calculatedDisplayName(vm);
     return emptyString();
 }
 

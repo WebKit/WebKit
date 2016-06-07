@@ -95,9 +95,9 @@ namespace JSC {
         unsigned bytecodeOffset;
         String sourceURL;
         intptr_t sourceID;
-        JS_EXPORT_PRIVATE String toString(CallFrame*);
+        String toString(VM&);
         String friendlySourceURL() const;
-        String friendlyFunctionName(CallFrame*) const;
+        String friendlyFunctionName(VM&) const;
         JS_EXPORT_PRIVATE void computeLineAndColumn(unsigned& line, unsigned& column);
 
     private:

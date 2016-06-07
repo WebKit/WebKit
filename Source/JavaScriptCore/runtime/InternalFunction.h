@@ -41,8 +41,8 @@ public:
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
     JS_EXPORT_PRIVATE const String& name();
-    const String displayName(ExecState*);
-    const String calculatedDisplayName(ExecState*);
+    const String displayName(VM&);
+    const String calculatedDisplayName(VM&);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     { 

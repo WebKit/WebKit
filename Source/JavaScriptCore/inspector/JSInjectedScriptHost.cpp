@@ -220,22 +220,23 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     if (columnNumber)
         columnNumber -= 1;
 
+    VM& vm = exec->vm();
     String scriptID = String::number(sourceCode->provider()->asID());
     JSObject* location = constructEmptyObject(exec);
-    location->putDirect(exec->vm(), Identifier::fromString(exec, "scriptId"), jsString(exec, scriptID));
-    location->putDirect(exec->vm(), Identifier::fromString(exec, "lineNumber"), jsNumber(lineNumber));
-    location->putDirect(exec->vm(), Identifier::fromString(exec, "columnNumber"), jsNumber(columnNumber));
+    location->putDirect(vm, Identifier::fromString(exec, "scriptId"), jsString(exec, scriptID));
+    location->putDirect(vm, Identifier::fromString(exec, "lineNumber"), jsNumber(lineNumber));
+    location->putDirect(vm, Identifier::fromString(exec, "columnNumber"), jsNumber(columnNumber));
 
     JSObject* result = constructEmptyObject(exec);
-    result->putDirect(exec->vm(), Identifier::fromString(exec, "location"), location);
+    result->putDirect(vm, Identifier::fromString(exec, "location"), location);
 
     String name = function->name();
     if (!name.isEmpty())
-        result->putDirect(exec->vm(), Identifier::fromString(exec, "name"), jsString(exec, name));
+        result->putDirect(vm, Identifier::fromString(exec, "name"), jsString(exec, name));
 
-    String displayName = function->displayName(exec);
+    String displayName = function->displayName(vm);
     if (!displayName.isEmpty())
-        result->putDirect(exec->vm(), Identifier::fromString(exec, "displayName"), jsString(exec, displayName));
+        result->putDirect(vm, Identifier::fromString(exec, "displayName"), jsString(exec, displayName));
 
     // FIXME: provide function scope data in "scopesRaw" property when JSC supports it.
     // <https://webkit.org/b/87192> [JSC] expose function (closure) inner context to debugger

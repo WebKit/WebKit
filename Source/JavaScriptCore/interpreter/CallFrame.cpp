@@ -229,7 +229,7 @@ String CallFrame::friendlyFunctionName()
         return ASCIILiteral("global code");
     case FunctionCode:
         if (callee())
-            return getCalculatedDisplayName(this, callee());
+            return getCalculatedDisplayName(vm(), callee());
         return emptyString();
     }
 

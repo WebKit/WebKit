@@ -106,7 +106,7 @@ String StackFrame::friendlySourceURL() const
     return traceLine.isNull() ? emptyString() : traceLine;
 }
 
-String StackFrame::friendlyFunctionName(CallFrame* callFrame) const
+String StackFrame::friendlyFunctionName(VM& vm) const
 {
     String traceLine;
     JSObject* stackFrameCallee = callee.get();
@@ -120,10 +120,10 @@ String StackFrame::friendlyFunctionName(CallFrame* callFrame) const
         break;
     case StackFrameNativeCode:
         if (callee)
-            traceLine = getCalculatedDisplayName(callFrame, stackFrameCallee).impl();
+            traceLine = getCalculatedDisplayName(vm, stackFrameCallee).impl();
         break;
     case StackFrameFunctionCode:
-        traceLine = getCalculatedDisplayName(callFrame, stackFrameCallee).impl();
+        traceLine = getCalculatedDisplayName(vm, stackFrameCallee).impl();
         break;
     case StackFrameGlobalCode:
         traceLine = "global code";
@@ -496,10 +496,10 @@ void StackFrame::expressionInfo(int& divot, int& startOffset, int& endOffset, un
     divot += characterOffset;
 }
 
-String StackFrame::toString(CallFrame* callFrame)
+String StackFrame::toString(VM& vm)
 {
     StringBuilder traceBuild;
-    String functionName = friendlyFunctionName(callFrame);
+    String functionName = friendlyFunctionName(vm);
     String sourceURL = friendlySourceURL();
     traceBuild.append(functionName);
     if (!sourceURL.isEmpty()) {
@@ -593,8 +593,9 @@ JSString* Interpreter::stackTraceAsString(ExecState* exec, Vector<StackFrame> st
 {
     // FIXME: JSStringJoiner could be more efficient than StringBuilder here.
     StringBuilder builder;
+    VM& vm = exec->vm();
     for (unsigned i = 0; i < stackTrace.size(); i++) {
-        builder.append(String(stackTrace[i].toString(exec)));
+        builder.append(String(stackTrace[i].toString(vm)));
         if (i != stackTrace.size() - 1)
             builder.append('\n');
     }

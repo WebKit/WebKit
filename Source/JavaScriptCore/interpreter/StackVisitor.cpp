@@ -223,10 +223,10 @@ String StackVisitor::Frame::functionName() const
         break;
     case CodeType::Native:
         if (callee)
-            traceLine = getCalculatedDisplayName(callFrame(), callee).impl();
+            traceLine = getCalculatedDisplayName(callFrame()->vm(), callee).impl();
         break;
     case CodeType::Function:
-        traceLine = getCalculatedDisplayName(callFrame(), callee).impl();
+        traceLine = getCalculatedDisplayName(callFrame()->vm(), callee).impl();
         break;
     case CodeType::Global:
         traceLine = ASCIILiteral("global code");

@@ -319,10 +319,11 @@ String JSObject::calculatedClassName(JSObject* object)
             if (constructorValue.isCell()) {
                 if (JSCell* constructorCell = constructorValue.asCell()) {
                     if (JSObject* ctorObject = constructorCell->getObject()) {
+                        VM& vm = exec->vm();
                         if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(ctorObject))
-                            prototypeFunctionName = constructorFunction->calculatedDisplayName(exec);
+                            prototypeFunctionName = constructorFunction->calculatedDisplayName(vm);
                         else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(ctorObject))
-                            prototypeFunctionName = constructorFunction->calculatedDisplayName(exec);
+                            prototypeFunctionName = constructorFunction->calculatedDisplayName(vm);
                     }
                 }
             }

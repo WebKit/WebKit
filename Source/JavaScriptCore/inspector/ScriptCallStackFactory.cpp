@@ -138,11 +138,12 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
 {
     Vector<ScriptCallFrame> frames;
     RefCountedArray<StackFrame> stackTrace = exception->stack();
+    VM& vm = exec->vm();
     for (size_t i = 0; i < stackTrace.size() && i < maxStackSize; i++) {
         unsigned line;
         unsigned column;
         stackTrace[i].computeLineAndColumn(line, column);
-        String functionName = stackTrace[i].friendlyFunctionName(exec);
+        String functionName = stackTrace[i].friendlyFunctionName(vm);
         frames.append(ScriptCallFrame(functionName, stackTrace[i].friendlySourceURL(), static_cast<SourceID>(stackTrace[i].sourceID), line, column));
     }
 

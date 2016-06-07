@@ -1,3 +1,54 @@
+2016-06-07  Mark Lam  <mark.lam@apple.com>
+
+        calculatedDisplayName() and friends actually need a VM& and not a ExecState/CallFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=158488
+
+        Reviewed by Geoffrey Garen.
+
+        calculatedDisplayName() (and some of its friends) actually just need a VM&.
+        Their work has nothing to do with an ExecState at all.  This patch will make that
+        clear by changing these functions to take a VM& arg instead of an ExecState* or
+        CallFrame*.
+
+        Also removed the JS_EXPORT_PRIVATE attribute from Interpreter::StackFrame::toString().
+        The JS_EXPORT_PRIVATE attribute was a holdover from the days when WebInspector
+        was entirely in WebCore.  It is no longer needed.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::functionDetails):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStackFromException):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::friendlyFunctionName):
+        * interpreter/Interpreter.cpp:
+        (JSC::StackFrame::friendlySourceURL):
+        (JSC::StackFrame::friendlyFunctionName):
+        (JSC::StackFrame::expressionInfo):
+        (JSC::StackFrame::toString):
+        (JSC::Interpreter::stackTraceAsString):
+        * interpreter/Interpreter.h:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::functionName):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::name):
+        (JSC::InternalFunction::displayName):
+        (JSC::InternalFunction::getCallData):
+        (JSC::InternalFunction::calculatedDisplayName):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createStructure):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::name):
+        (JSC::JSFunction::displayName):
+        (JSC::JSFunction::calculatedDisplayName):
+        (JSC::JSFunction::getConstructData):
+        (JSC::getCalculatedDisplayName):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::executable):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::calculatedClassName):
+
 2016-06-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Do not allocate unnecessary UTF-8 string for encodeXXX functions
