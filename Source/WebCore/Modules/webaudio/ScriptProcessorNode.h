@@ -73,8 +73,8 @@ private:
 
     void fireProcessEvent();
 
-    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
+    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, bool useCapture) override;
+    bool removeEventListener(const AtomicString& eventType, EventListener&, bool useCapture) override;
     void removeAllEventListeners() override;
 
     // Double buffering

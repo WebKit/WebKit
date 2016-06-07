@@ -25,25 +25,10 @@
     JSCustomToNativeObject,
     ObjCProtocol,
 ] interface EventTarget {
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? listener, optional AddEventListenerOptions options);
-    [ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener, optional EventListenerOptions options);
-#endif
-
     // FIXME: The 'type' and 'listener' parameters should not be optional.
     [ObjCLegacyUnnamedParameters, ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] optional DOMString type = "undefined", optional EventListener? listener, optional boolean useCapture = false);
     [ObjCLegacyUnnamedParameters, ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] optional DOMString type = "undefined", optional EventListener? listener, optional boolean useCapture = false);
 
     // FIXME: event should not be nullable.
     [ImplementedAs=dispatchEventForBindings, RaisesException] boolean dispatchEvent(Event? event);
-};
-
-dictionary EventListenerOptions {
-    boolean capture = false;
-};
-
-dictionary AddEventListenerOptions {
-    boolean capture = false;
-    boolean passive = false;
-    boolean once = false;
 };

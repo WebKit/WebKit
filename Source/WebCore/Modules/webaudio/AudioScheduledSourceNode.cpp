@@ -201,17 +201,17 @@ void AudioScheduledSourceNode::finish()
     }
 }
 
-bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
 {
-    bool success = AudioNode::addEventListener(eventType, WTFMove(listener), options);
+    bool success = AudioNode::addEventListener(eventType, WTFMove(listener), useCapture);
     if (success && eventType == eventNames().endedEvent)
         m_hasEndedListener = hasEventListeners(eventNames().endedEvent);
     return success;
 }
 
-bool AudioScheduledSourceNode::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
+bool AudioScheduledSourceNode::removeEventListener(const AtomicString& eventType, EventListener& listener, bool useCapture)
 {
-    bool success = AudioNode::removeEventListener(eventType, listener, options);
+    bool success = AudioNode::removeEventListener(eventType, listener, useCapture);
     if (success && eventType == eventNames().endedEvent)
         m_hasEndedListener = hasEventListeners(eventNames().endedEvent);
     return success;

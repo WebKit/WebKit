@@ -133,8 +133,8 @@ public:
 
     virtual bool haveLoadedRequiredResources();
 
-    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
+    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, bool useCapture) override;
+    bool removeEventListener(const AtomicString& eventType, EventListener&, bool useCapture) override;
     bool hasFocusEventListeners() const;
 
 #if ENABLE(CSS_REGIONS)

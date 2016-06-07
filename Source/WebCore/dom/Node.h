@@ -507,8 +507,8 @@ public:
     EventTargetInterface eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in Document.h
 
-    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
+    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, bool useCapture) override;
+    bool removeEventListener(const AtomicString& eventType, EventListener&, bool useCapture) override;
 
     using EventTarget::dispatchEvent;
     bool dispatchEvent(Event&) override;
