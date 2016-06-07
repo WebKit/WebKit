@@ -1722,9 +1722,9 @@ bool DOMWindow::isSameSecurityOriginAsMainFrame() const
     return false;
 }
 
-bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
+bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
-    if (!EventTarget::addEventListener(eventType, WTFMove(listener), useCapture))
+    if (!EventTarget::addEventListener(eventType, WTFMove(listener), options))
         return false;
 
     if (Document* document = this->document()) {
@@ -1825,9 +1825,9 @@ void DOMWindow::resetAllGeolocationPermission()
 #endif
 }
 
-bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener& listener, bool useCapture)
+bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
 {
-    if (!EventTarget::removeEventListener(eventType, listener, useCapture))
+    if (!EventTarget::removeEventListener(eventType, listener, options.capture))
         return false;
 
     if (Document* document = this->document()) {

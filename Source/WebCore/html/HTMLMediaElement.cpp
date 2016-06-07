@@ -5228,13 +5228,13 @@ bool HTMLMediaElement::dispatchEvent(Event& event)
     return HTMLElement::dispatchEvent(event);
 }
 
-bool HTMLMediaElement::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, bool useCapture)
+bool HTMLMediaElement::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
-        return Node::addEventListener(eventType, WTFMove(listener), useCapture);
+        return Node::addEventListener(eventType, WTFMove(listener), options);
 
     bool isFirstAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent);
-    if (!Node::addEventListener(eventType, WTFMove(listener), useCapture))
+    if (!Node::addEventListener(eventType, WTFMove(listener), options))
         return false;
 
     if (isFirstAvailabilityChangedListener) {
@@ -5248,12 +5248,12 @@ bool HTMLMediaElement::addEventListener(const AtomicString& eventType, Ref<Event
     return true;
 }
 
-bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventListener& listener, bool useCapture)
+bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
 {
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
-        return Node::removeEventListener(eventType, listener, useCapture);
+        return Node::removeEventListener(eventType, listener, options);
 
-    if (!Node::removeEventListener(eventType, listener, useCapture))
+    if (!Node::removeEventListener(eventType, listener, options))
         return false;
 
     bool didRemoveLastAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent);
