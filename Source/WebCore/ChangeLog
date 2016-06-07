@@ -1,3 +1,17 @@
+2016-06-07  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix non-cocoa platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=158332
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::createCustomFontData):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::continueWillSendRequest):
+        * platform/network/curl/MultipartHandle.cpp:
+        (WebCore::MultipartHandle::didReceiveResponse):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback):
+
 2016-06-07  Sam Weinig  <sam@webkit.org>
 
         Try to fix the 10.10 build.

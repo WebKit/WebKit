@@ -522,8 +522,9 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 
                 ResourceRequest redirectedRequest = job->firstRequest();
                 redirectedRequest.setURL(newURL);
+                ResourceResponse response = d->m_response;
                 if (client)
-                    client->willSendRequest(job, redirectedRequest, d->m_response);
+                    client->willSendRequest(job, WTFMove(redirectedRequest), WTFMove(response));
 
                 d->m_firstRequest.setURL(newURL);
 

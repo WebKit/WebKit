@@ -155,7 +155,7 @@ void ResourceHandle::clearClient()
 
 #if !PLATFORM(COCOA) && !USE(CFNETWORK) && !USE(SOUP)
 // ResourceHandle never uses async client calls on these platforms yet.
-void ResourceHandle::continueWillSendRequest(const ResourceRequest&)
+void ResourceHandle::continueWillSendRequest(ResourceRequest&&)
 {
     notImplemented();
 }

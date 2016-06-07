@@ -113,7 +113,7 @@ std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedB
             return nullptr;
 
         auto buffer = SharedBuffer::adoptVector(convertedFont);
-        return createFontCustomPlatformData(*buffer);
+        return createFontCustomPlatformData(buffer);
     }
 #endif
 
