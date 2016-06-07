@@ -780,7 +780,11 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
                 [springAnimation setMass:function.mass()];
                 [springAnimation setStiffness:function.stiffness()];
                 [springAnimation setDamping:function.damping()];
+#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
                 [springAnimation setInitialVelocity:function.initialVelocity()];
+#else
+                [springAnimation setVelocity:function.initialVelocity()];
+#endif
             }
         }
         caAnimation = springAnimation;

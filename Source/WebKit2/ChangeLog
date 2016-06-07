@@ -1,3 +1,10 @@
+2016-06-07  Sam Weinig  <sam@webkit.org>
+
+        Fix 10.10 build.
+
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (WebKit::addAnimationToLayer):
+
 2016-06-06  Alex Christensen  <achristensen@webkit.org>
 
         Modernize loading code
