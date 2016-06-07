@@ -147,6 +147,7 @@ typedef enum {
 @property CGFloat stiffness;
 @property CGFloat damping;
 @property CGFloat velocity;
+@property CGFloat initialVelocity;
 @end
 #else
 @interface CASpringAnimation (Private)
