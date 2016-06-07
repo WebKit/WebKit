@@ -61,6 +61,7 @@
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
 #include "WASMModuleParser.h"
+#include <locale.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
