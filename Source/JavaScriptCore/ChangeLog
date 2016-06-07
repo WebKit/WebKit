@@ -1,3 +1,12 @@
+2016-06-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix typo in test name trailing-comma-in-function-paramters.js
+        https://bugs.webkit.org/show_bug.cgi?id=158462
+
+        Reviewed by Mark Lam.
+
+        * tests/stress/trailing-comma-in-function-parameters.js: Renamed from Source/JavaScriptCore/tests/stress/trailing-comma-in-function-paramters.js.
+
 2016-06-06  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r197595): 2% JSBench regression on iPhone 5.
