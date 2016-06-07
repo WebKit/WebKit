@@ -34,6 +34,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/SessionID.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
 
 namespace WebKit {
@@ -249,9 +250,9 @@ void NetworkLoad::didReceiveResponseNetworkSession(const ResourceResponse& respo
         m_responseCompletionHandler = completionHandler;
 }
 
-void NetworkLoad::didReceiveData(RefPtr<SharedBuffer>&& buffer)
+void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
 {
-    ASSERT(buffer);
+    // FIXME: This should be the encoded data length, not the decoded data length.
     auto size = buffer->size();
     m_client.didReceiveBuffer(WTFMove(buffer), size);
 }
@@ -300,7 +301,7 @@ void NetworkLoad::didReceiveData(ResourceHandle*, const char* /* data */, unsign
     ASSERT_NOT_REACHED();
 }
 
-void NetworkLoad::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<SharedBuffer> buffer, int reportedEncodedDataLength)
+void NetworkLoad::didReceiveBuffer(ResourceHandle* handle, Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
     m_client.didReceiveBuffer(WTFMove(buffer), reportedEncodedDataLength);

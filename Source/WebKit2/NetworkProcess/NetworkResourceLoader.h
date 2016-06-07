@@ -89,7 +89,7 @@ public:
     bool isSynchronous() const override;
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&) override;
     ShouldContinueDidReceiveResponse didReceiveResponse(const WebCore::ResourceResponse&) override;
-    void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
+    void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     void didFinishLoading(double finishTime) override;
     void didFailLoading(const WebCore::ResourceError&) override;
 #if USE(NETWORK_SESSION)

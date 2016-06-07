@@ -63,7 +63,7 @@ private:
         completionHandler(WebCore::PolicyAction::PolicyIgnore);
         delete this;
     }
-    void didReceiveData(RefPtr<WebCore::SharedBuffer>&&)  override { ASSERT_NOT_REACHED(); }
+    void didReceiveData(Ref<WebCore::SharedBuffer>&&)  override { ASSERT_NOT_REACHED(); }
     void didCompleteWithError(const WebCore::ResourceError&) override { delete this; }
     void didBecomeDownload() override { ASSERT_NOT_REACHED(); }
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) override { }

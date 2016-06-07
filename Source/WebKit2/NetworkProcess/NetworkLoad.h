@@ -68,7 +68,7 @@ public:
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler) final;
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler) final;
     void didReceiveResponseNetworkSession(const WebCore::ResourceResponse&, ResponseCompletionHandler) final;
-    void didReceiveData(RefPtr<WebCore::SharedBuffer>&&) final;
+    void didReceiveData(Ref<WebCore::SharedBuffer>&&) final;
     void didCompleteWithError(const WebCore::ResourceError&) final;
     void didBecomeDownload() final;
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) override;
@@ -80,7 +80,7 @@ public:
     void didSendData(WebCore::ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponseAsync(WebCore::ResourceHandle*, const WebCore::ResourceResponse&) override;
     void didReceiveData(WebCore::ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
-    void didReceiveBuffer(WebCore::ResourceHandle*, PassRefPtr<WebCore::SharedBuffer>, int encodedDataLength) override;
+    void didReceiveBuffer(WebCore::ResourceHandle*, Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     void didFinishLoading(WebCore::ResourceHandle*, double finishTime) override;
     void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError&) override;
     void wasBlocked(WebCore::ResourceHandle*) override;

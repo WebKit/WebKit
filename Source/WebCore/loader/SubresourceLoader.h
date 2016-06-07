@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SubresourceLoader_h
-#define SubresourceLoader_h
+#pragma once
 
 #include "FrameLoaderTypes.h"
 #include "ResourceLoader.h"
@@ -68,7 +67,7 @@ private:
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponse(const ResourceResponse&) override;
     void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
-    void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) override;
+    void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType) override;
     void didFinishLoading(double finishTime) override;
     void didFail(const ResourceError&) override;
     void willCancel(const ResourceError&) override;
@@ -94,7 +93,7 @@ private:
     bool checkForHTTPStatusCodeError();
     bool checkCrossOriginAccessControl(const ResourceRequest&, const ResourceResponse&, ResourceRequest& newRequest);
 
-    void didReceiveDataOrBuffer(const char*, int, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
+    void didReceiveDataOrBuffer(const char*, int, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
 
     void notifyDone();
 
@@ -130,5 +129,3 @@ private:
 };
 
 }
-
-#endif // SubresourceLoader_h

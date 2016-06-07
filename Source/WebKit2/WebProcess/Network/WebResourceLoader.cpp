@@ -202,7 +202,7 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
 
     // Only send data to the didReceiveData callback if it exists.
     if (unsigned bufferSize = buffer->size())
-        m_coreLoader->didReceiveBuffer(buffer.release(), bufferSize, DataPayloadWholeResource);
+        m_coreLoader->didReceiveBuffer(buffer.releaseNonNull(), bufferSize, DataPayloadWholeResource);
 
     if (!m_coreLoader)
         return;

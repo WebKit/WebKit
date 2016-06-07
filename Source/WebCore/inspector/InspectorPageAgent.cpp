@@ -139,6 +139,7 @@ static RefPtr<TextResourceDecoder> createXHRTextDecoder(const String& mimeType, 
 
 bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, String* result, bool* base64Encoded)
 {
+    // FIXME: result should be a String& and base64Encoded should be a bool&.
     bool hasZeroSize;
     bool prepared = prepareCachedResourceBuffer(cachedResource, &hasZeroSize);
     if (!prepared)
@@ -146,11 +147,15 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
 
     *base64Encoded = !hasTextContent(cachedResource);
     if (*base64Encoded) {
-        RefPtr<SharedBuffer> buffer = hasZeroSize ? SharedBuffer::create() : cachedResource->resourceBuffer();
-        if (!buffer)
-            return false;
-        *result = base64Encode(buffer->data(), buffer->size());
-        return true;
+        if (hasZeroSize) {
+            *result = { };
+            return true;
+        }
+        if (auto* buffer = cachedResource->resourceBuffer()) {
+            *result = base64Encode(buffer->data(), buffer->size());
+            return true;
+        }
+        return false;
     }
 
     if (hasZeroSize) {

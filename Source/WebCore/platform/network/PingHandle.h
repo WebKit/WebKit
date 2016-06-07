@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PingHandle_h
-#define PingHandle_h
+#pragma once
 
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
@@ -58,7 +57,7 @@ public:
 
 private:
     void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override { delete this; }
-    void didReceiveData(ResourceHandle*, const char*, unsigned, int) override { delete this; }
+    void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) override { delete this; };
     void didFinishLoading(ResourceHandle*, double) override { delete this; }
     void didFail(ResourceHandle*, const ResourceError&) override { delete this; }
     bool shouldUseCredentialStorage(ResourceHandle*)  override { return m_shouldUseCredentialStorage; }
@@ -81,5 +80,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PingHandle_h

@@ -20,8 +20,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef CachedRawResourceClient_h
-#define CachedRawResourceClient_h
+#pragma once
 
 #include "CachedResourceClient.h"
 
@@ -48,5 +47,3 @@ public:
 };
 
 }
-
-#endif // CachedRawResourceClient_h

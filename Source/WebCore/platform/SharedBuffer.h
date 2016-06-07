@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SharedBuffer_h
-#define SharedBuffer_h
+#pragma once
 
 #include "FileSystem.h"
 #include <runtime/ArrayBuffer.h>
@@ -52,14 +51,14 @@ namespace WebCore {
     
 class SharedBuffer : public RefCounted<SharedBuffer> {
 public:
-    static PassRefPtr<SharedBuffer> create() { return adoptRef(new SharedBuffer); }
-    static PassRefPtr<SharedBuffer> create(unsigned size) { return adoptRef(new SharedBuffer(size)); }
-    static PassRefPtr<SharedBuffer> create(const char* c, unsigned i) { return adoptRef(new SharedBuffer(c, i)); }
+    static Ref<SharedBuffer> create() { return adoptRef(*new SharedBuffer); }
+    static Ref<SharedBuffer> create(unsigned size) { return adoptRef(*new SharedBuffer(size)); }
+    static Ref<SharedBuffer> create(const char* c, unsigned i) { return adoptRef(*new SharedBuffer(c, i)); }
     static Ref<SharedBuffer> create(const unsigned char* data, unsigned size) { return adoptRef(*new SharedBuffer(data, size)); }
 
     WEBCORE_EXPORT static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
 
-    WEBCORE_EXPORT static PassRefPtr<SharedBuffer> adoptVector(Vector<char>& vector);
+    WEBCORE_EXPORT static Ref<SharedBuffer> adoptVector(Vector<char>&);
     
     WEBCORE_EXPORT ~SharedBuffer();
     
@@ -90,7 +89,7 @@ public:
 
     bool isEmpty() const { return !size(); }
 
-    WEBCORE_EXPORT void append(SharedBuffer*);
+    WEBCORE_EXPORT void append(SharedBuffer&);
     WEBCORE_EXPORT void append(const char*, unsigned);
     WEBCORE_EXPORT void append(const Vector<char>&);
 
@@ -99,7 +98,7 @@ public:
     unsigned platformDataSize() const;
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    static PassRefPtr<SharedBuffer> wrapCFDataArray(CFArrayRef);
+    static Ref<SharedBuffer> wrapCFDataArray(CFArrayRef);
     void append(CFDataRef);
 #endif
 
@@ -144,7 +143,7 @@ private:
 
     void clearPlatformData();
     void maybeTransferPlatformData();
-    bool maybeAppendPlatformData(SharedBuffer*);
+    bool maybeAppendPlatformData(SharedBuffer&);
 
     void maybeTransferMappedFileData();
 
@@ -155,14 +154,14 @@ private:
     void clearDataBuffer();
 
     unsigned m_size { 0 };
-    mutable RefPtr<DataBuffer> m_buffer;
+    mutable Ref<DataBuffer> m_buffer;
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     explicit SharedBuffer(CFArrayRef);
     mutable Vector<RetainPtr<CFDataRef>> m_dataArray;
     unsigned copySomeDataFromDataArray(const char*& someData, unsigned position) const;
     const char *singleDataArrayBuffer() const;
-    bool maybeAppendDataArray(SharedBuffer*);
+    bool maybeAppendDataArray(SharedBuffer&);
 #else
     mutable Vector<char*> m_segments;
 #endif
@@ -184,5 +183,3 @@ private:
 RefPtr<SharedBuffer> utf8Buffer(const String&);
 
 } // namespace WebCore
-
-#endif // SharedBuffer_h

@@ -112,7 +112,7 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData()
         return cfData;
 
     data(); // Force data into m_buffer from segments or data array.
-    return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataBuffer:m_buffer.get()]).leakRef());
+    return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataBuffer:m_buffer.ptr()]).leakRef());
 }
 
 RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)

@@ -27,7 +27,7 @@
 namespace WebCore {
 
 SharedBuffer::SharedBuffer(SoupBuffer* soupBuffer)
-    : m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(*new DataBuffer)
     , m_soupBuffer(soupBuffer)
 {
     ASSERT(soupBuffer);
@@ -73,7 +73,7 @@ unsigned SharedBuffer::platformDataSize() const
     return m_soupBuffer->length;
 }
 
-bool SharedBuffer::maybeAppendPlatformData(SharedBuffer*)
+bool SharedBuffer::maybeAppendPlatformData(SharedBuffer&)
 {
     return false;
 }

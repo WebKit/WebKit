@@ -401,7 +401,7 @@ void CachedImage::addDataBuffer(SharedBuffer& data)
 void CachedImage::addData(const char* data, unsigned length)
 {
     ASSERT(dataBufferingPolicy() == DoNotBufferData);
-    addIncrementalDataBuffer(*SharedBuffer::create(data, length));
+    addIncrementalDataBuffer(SharedBuffer::create(data, length));
     CachedResource::addData(data, length);
 }
 

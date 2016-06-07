@@ -146,7 +146,7 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int /* encodedLength */) override
+    void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffer, int /* encodedLength */) override
     {
         // This pattern is suggested by SharedBuffer.h.
         const char* segment;

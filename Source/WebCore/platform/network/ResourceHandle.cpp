@@ -85,7 +85,7 @@ ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest
     }
 }
 
-PassRefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
+RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
 {
     BuiltinResourceHandleConstructorMap::iterator protocolMapItem = builtinResourceHandleConstructorMap().find(request.url().protocol());
 
@@ -100,7 +100,7 @@ PassRefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, co
     if (newHandle->start())
         return newHandle.release();
 
-    return 0;
+    return nullptr;
 }
 
 void ResourceHandle::scheduleFailure(FailureType type)

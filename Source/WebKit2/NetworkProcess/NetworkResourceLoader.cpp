@@ -331,7 +331,7 @@ auto NetworkResourceLoader::didReceiveResponse(const ResourceResponse& receivedR
     return ShouldContinueDidReceiveResponse::No;
 }
 
-void NetworkResourceLoader::didReceiveBuffer(RefPtr<SharedBuffer>&& buffer, int reportedEncodedDataLength)
+void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
 #if ENABLE(NETWORK_CACHE)
     ASSERT(!m_cacheEntryForValidation);
@@ -355,7 +355,7 @@ void NetworkResourceLoader::didReceiveBuffer(RefPtr<SharedBuffer>&& buffer, int 
         startBufferingTimerIfNeeded();
         return;
     }
-    sendBufferMaybeAborting(*buffer, encodedDataLength);
+    sendBufferMaybeAborting(buffer, encodedDataLength);
 }
 
 void NetworkResourceLoader::didFinishLoading(double finishTime)

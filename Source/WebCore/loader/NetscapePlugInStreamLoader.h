@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetscapePlugInStreamLoader_h
-#define NetscapePlugInStreamLoader_h
+#pragma once
 
 #include "ResourceLoader.h"
 #include <wtf/Forward.h>
@@ -62,7 +61,7 @@ private:
     void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback) override;
     void didReceiveResponse(const ResourceResponse&) override;
     void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
-    void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) override;
+    void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType) override;
     void didFinishLoading(double finishTime) override;
     void didFail(const ResourceError&) override;
 
@@ -73,7 +72,7 @@ private:
     void willCancel(const ResourceError&) override;
     void didCancel(const ResourceError&) override;
 
-    void didReceiveDataOrBuffer(const char*, int, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
+    void didReceiveDataOrBuffer(const char*, int, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
 
     void notifyDone();
 
@@ -82,5 +81,3 @@ private:
 };
 
 }
-
-#endif // NetscapePlugInStreamLoader_h

@@ -462,7 +462,7 @@ void ApplicationCacheGroup::abort(Frame* frame)
     cacheUpdateFailed();
 }
 
-PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL& url, ApplicationCacheResource* newestCachedResource)
+RefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL& url, ApplicationCacheResource* newestCachedResource)
 {
     ResourceRequest request(url);
     m_frame->loader().applyUserAgent(request);

@@ -1,3 +1,107 @@
+2016-06-06  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize loading code
+        https://bugs.webkit.org/show_bug.cgi?id=158332
+
+        Reviewed by Darin Adler.
+
+        No new tests, no change in behavior.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        * loader/FrameLoader.h:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveData):
+        (WebCore::NetscapePlugInStreamLoader::didReceiveBuffer):
+        (WebCore::NetscapePlugInStreamLoader::didReceiveDataOrBuffer):
+        (WebCore::NetscapePlugInStreamLoader::didFinishLoading):
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::deliverResponseAndData):
+        (WebCore::ResourceLoader::loadDataURL):
+        (WebCore::ResourceLoader::addDataOrBuffer):
+        (WebCore::ResourceLoader::clearResourceData):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::didReceiveBuffer):
+        (WebCore::ResourceLoader::didReceiveDataOrBuffer):
+        (WebCore::ResourceLoader::didFinishLoading):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::wasCancelled):
+        (WebCore::ResourceLoader::options):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::didReceiveBuffer):
+        (WebCore::SubresourceLoader::didReceiveDataOrBuffer):
+        * loader/SubresourceLoader.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::abort):
+        (WebCore::ApplicationCacheGroup::createResourceHandle):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::addData):
+        * loader/cache/CachedRawResourceClient.h:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        (WebCore::SharedBuffer::adoptVector):
+        (WebCore::SharedBuffer::duplicateDataBufferIfNecessary):
+        (WebCore::SharedBuffer::appendToDataBuffer):
+        (WebCore::SharedBuffer::clearDataBuffer):
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::create):
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::maybeAppendPlatformData):
+        (WebCore::SharedBuffer::wrapCFDataArray):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (ResourceHandleStreamingClient::didReceiveData):
+        (ResourceHandleStreamingClient::didReceiveBuffer):
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createCFData):
+        (WebCore::SharedBuffer::createFromReadingFile):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::~BlobRegistryImpl):
+        (WebCore::createBlobResourceHandle):
+        (WebCore::loadBlobResourceSynchronously):
+        (WebCore::registerBlobResourceHandleConstructor):
+        (WebCore::BlobRegistryImpl::createResourceHandle):
+        (WebCore::BlobRegistryImpl::appendStorageItems):
+        (WebCore::createResourceHandle): Deleted.
+        (WebCore::loadResourceSynchronously): Deleted.
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::createAsync):
+        (WebCore::BlobResourceHandle::loadResourceSynchronously):
+        Removed the overridden didReceiveData and didFinishLoading, 
+        which did nothing and were identical to the function they overwrote.
+        * platform/network/BlobResourceHandle.h:
+        * platform/network/PingHandle.h:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        (WebCore::ResourceHandle::scheduleFailure):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.cpp:
+        (WebCore::ResourceHandleClient::willCacheResponseAsync):
+        (WebCore::ResourceHandleClient::didReceiveBuffer):
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didReceiveResponse):
+        (WebCore::ResourceHandleClient::didReceiveData):
+        (WebCore::ResourceHandleClient::didFinishLoading):
+        (WebCore::ResourceHandleClient::didFail):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSessionDataTask resource:receivedData:length:]):
+        This data must be copied in order to put it in a refcounted NSData because it comes
+        from IPC from the Network Process and is an IPC::DataReference which will be deallocated
+        when the message handling is done.
+        * platform/soup/SharedBufferSoup.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        * testing/MockContentFilter.cpp:
+        (WebCore::MockContentFilter::replacementData):
+        (WebCore::MockContentFilter::unblockHandler):
+
 2016-06-06  Sam Weinig  <sam@webkit.org>
 
         Add experimental support for spring based CSS animations

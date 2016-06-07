@@ -62,30 +62,30 @@ static inline void freeSegment(char* p)
 #endif
 
 SharedBuffer::SharedBuffer()
-    : m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(*new DataBuffer))
 {
 }
 
 SharedBuffer::SharedBuffer(unsigned size)
     : m_size(size)
-    , m_buffer(adoptRef(new DataBuffer))
+    , m_buffer(adoptRef(*new DataBuffer))
 {
 }
 
 SharedBuffer::SharedBuffer(const char* data, unsigned size)
-    : m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(*new DataBuffer))
 {
     append(data, size);
 }
 
 SharedBuffer::SharedBuffer(const unsigned char* data, unsigned size)
-    : m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(*new DataBuffer))
 {
     append(reinterpret_cast<const char*>(data), size);
 }
 
 SharedBuffer::SharedBuffer(MappedFileData&& fileData)
-    : m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(*new DataBuffer))
     , m_fileData(WTFMove(fileData))
 {
 }
@@ -106,12 +106,12 @@ RefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePa
     return adoptRef(new SharedBuffer(WTFMove(mappedFileData)));
 }
 
-PassRefPtr<SharedBuffer> SharedBuffer::adoptVector(Vector<char>& vector)
+Ref<SharedBuffer> SharedBuffer::adoptVector(Vector<char>& vector)
 {
-    RefPtr<SharedBuffer> buffer = create();
+    auto buffer = create();
     buffer->m_buffer->data.swap(vector);
     buffer->m_size = buffer->m_buffer->data.size();
-    return buffer.release();
+    return buffer;
 }
 
 unsigned SharedBuffer::size() const
@@ -161,7 +161,7 @@ RefPtr<ArrayBuffer> SharedBuffer::createArrayBuffer() const
     return arrayBuffer;
 }
 
-void SharedBuffer::append(SharedBuffer* data)
+void SharedBuffer::append(SharedBuffer& data)
 {
     if (maybeAppendPlatformData(data))
         return;
@@ -172,7 +172,7 @@ void SharedBuffer::append(SharedBuffer* data)
 
     const char* segment;
     size_t position = 0;
-    while (size_t length = data->getSomeData(segment, position)) {
+    while (size_t length = data.getSomeData(segment, position)) {
         append(segment, length);
         position += length;
     }
@@ -288,10 +288,10 @@ void SharedBuffer::duplicateDataBufferIfNecessary() const
         return;
 
     size_t newCapacity = std::max(static_cast<size_t>(m_size), currentCapacity * 2);
-    RefPtr<DataBuffer> newBuffer = adoptRef(new DataBuffer);
+    auto newBuffer = adoptRef(*new DataBuffer);
     newBuffer->data.reserveInitialCapacity(newCapacity);
     newBuffer->data = m_buffer->data;
-    m_buffer = newBuffer.release();
+    m_buffer = WTFMove(newBuffer);
 }
 
 void SharedBuffer::appendToDataBuffer(const char *data, unsigned length) const
@@ -303,7 +303,7 @@ void SharedBuffer::appendToDataBuffer(const char *data, unsigned length) const
 void SharedBuffer::clearDataBuffer()
 {
     if (!m_buffer->hasOneRef())
-        m_buffer = adoptRef(new DataBuffer);
+        m_buffer = adoptRef(*new DataBuffer);
     else
         m_buffer->data.clear();
 }
@@ -409,7 +409,7 @@ inline const char* SharedBuffer::platformData() const
 {
     ASSERT_NOT_REACHED();
 
-    return 0;
+    return nullptr;
 }
 
 inline unsigned SharedBuffer::platformDataSize() const
@@ -419,7 +419,7 @@ inline unsigned SharedBuffer::platformDataSize() const
     return 0;
 }
 
-inline bool SharedBuffer::maybeAppendPlatformData(SharedBuffer*)
+inline bool SharedBuffer::maybeAppendPlatformData(SharedBuffer&)
 {
     return false;
 }

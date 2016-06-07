@@ -569,9 +569,6 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     ASSERT_UNUSED(resource, &resource == _resource);
     UNUSED_PARAM(data);
     UNUSED_PARAM(length);
-    // FIXME: try to avoid a copy, if possible.
-    // e.g., RetainPtr<CFDataRef> cfData = resource->resourceBuffer()->createCFData();
-
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     [self.session addDelegateOperation:[strongSelf, length, nsData] {

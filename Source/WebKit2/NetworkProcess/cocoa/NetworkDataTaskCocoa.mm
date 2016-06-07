@@ -175,7 +175,7 @@ void NetworkDataTask::didReceiveResponse(const WebCore::ResourceResponse& respon
     }
 }
 
-void NetworkDataTask::didReceiveData(RefPtr<WebCore::SharedBuffer>&& data)
+void NetworkDataTask::didReceiveData(Ref<WebCore::SharedBuffer>&& data)
 {
     if (m_client)
         m_client->didReceiveData(WTFMove(data));

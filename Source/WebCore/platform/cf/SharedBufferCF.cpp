@@ -34,7 +34,7 @@
 namespace WebCore {
 
 SharedBuffer::SharedBuffer(CFDataRef cfData)
-    : m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(*new DataBuffer))
     , m_cfData(cfData)
     , m_vnodeToken(VNodeTracker::singleton().token())
 {
@@ -110,22 +110,22 @@ bool SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer& newContent
     return true;
 }
 
-bool SharedBuffer::maybeAppendPlatformData(SharedBuffer* newContents)
+bool SharedBuffer::maybeAppendPlatformData(SharedBuffer& newContents)
 {
-    if (size() || !newContents->m_cfData)
+    if (size() || !newContents.m_cfData)
         return false;
-    m_cfData = newContents->m_cfData;
+    m_cfData = newContents.m_cfData;
     return true;
 }
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-PassRefPtr<SharedBuffer> SharedBuffer::wrapCFDataArray(CFArrayRef cfDataArray)
+Ref<SharedBuffer> SharedBuffer::wrapCFDataArray(CFArrayRef cfDataArray)
 {
-    return adoptRef(new SharedBuffer(cfDataArray));
+    return adoptRef(*new SharedBuffer(cfDataArray));
 }
 
 SharedBuffer::SharedBuffer(CFArrayRef cfDataArray)
-    : m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(*new DataBuffer))
     , m_cfData(nullptr)
 {
     CFIndex dataArrayCount = CFArrayGetCount(cfDataArray);
@@ -185,16 +185,16 @@ const char *SharedBuffer::singleDataArrayBuffer() const
     return reinterpret_cast<const char*>(CFDataGetBytePtr(m_dataArray.at(0).get()));
 }
 
-bool SharedBuffer::maybeAppendDataArray(SharedBuffer* data)
+bool SharedBuffer::maybeAppendDataArray(SharedBuffer& data)
 {
-    if (m_buffer->data.size() || m_cfData || !data->m_dataArray.size())
+    if (m_buffer->data.size() || m_cfData || !data.m_dataArray.size())
         return false;
 #if !ASSERT_DISABLED
     unsigned originalSize = size();
 #endif
-    for (auto& cfData : data->m_dataArray)
+    for (auto& cfData : data.m_dataArray)
         append(cfData.get());
-    ASSERT(size() == originalSize + data->size());
+    ASSERT(size() == originalSize + data.size());
     return true;
 }
 #endif

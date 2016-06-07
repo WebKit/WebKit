@@ -129,21 +129,21 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& resp
 
 void NetscapePlugInStreamLoader::didReceiveData(const char* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
-    didReceiveDataOrBuffer(data, length, 0, encodedDataLength, dataPayloadType);
+    didReceiveDataOrBuffer(data, length, nullptr, encodedDataLength, dataPayloadType);
 }
 
-void NetscapePlugInStreamLoader::didReceiveBuffer(PassRefPtr<SharedBuffer> buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void NetscapePlugInStreamLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
-    didReceiveDataOrBuffer(0, 0, buffer, encodedDataLength, dataPayloadType);
+    didReceiveDataOrBuffer(nullptr, 0, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }
 
-void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const char* data, int length, PassRefPtr<SharedBuffer> buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const char* data, int length, RefPtr<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     Ref<NetscapePlugInStreamLoader> protectedThis(*this);
     
     m_client->didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length);
 
-    ResourceLoader::didReceiveDataOrBuffer(data, length, buffer, encodedDataLength, dataPayloadType);
+    ResourceLoader::didReceiveDataOrBuffer(data, length, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }
 
 void NetscapePlugInStreamLoader::didFinishLoading(double finishTime)

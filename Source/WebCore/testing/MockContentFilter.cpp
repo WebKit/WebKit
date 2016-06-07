@@ -114,7 +114,7 @@ void MockContentFilter::finishedAddingData()
 Ref<SharedBuffer> MockContentFilter::replacementData() const
 {
     ASSERT(didBlockData());
-    return adoptRef(*SharedBuffer::create(m_replacementData.data(), m_replacementData.size()).leakRef());
+    return SharedBuffer::create(m_replacementData.data(), m_replacementData.size()).leakRef();
 }
 
 ContentFilterUnblockHandler MockContentFilter::unblockHandler() const

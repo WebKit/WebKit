@@ -24,11 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceHandleClient_h
-#define ResourceHandleClient_h
+#pragma once
 
 #include "PlatformExportMacros.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLCachePriv.h>
@@ -75,7 +74,7 @@ namespace WebCore {
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
         
         virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) { }
-        WEBCORE_EXPORT virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedDataLength);
+        WEBCORE_EXPORT virtual void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength);
         
         virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) { }
         virtual void didFail(ResourceHandle*, const ResourceError&) { }
@@ -140,5 +139,3 @@ namespace WebCore {
     };
 
 }
-
-#endif

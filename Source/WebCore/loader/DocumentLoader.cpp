@@ -805,8 +805,9 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     }
 
     if (!isStopping() && m_substituteData.isValid() && isLoadingMainResource()) {
-        if (m_substituteData.content()->size())
-            dataReceived(0, m_substituteData.content()->data(), m_substituteData.content()->size());
+        auto content = m_substituteData.content();
+        if (content && content->size())
+            dataReceived(nullptr, content->data(), content->size());
         if (isLoadingMainResource())
             finishedLoading(0);
     }

@@ -98,7 +98,7 @@ class ResourceHandleStreamingClient : public ResourceHandleClient, public Stream
         ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) override;
         void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
         void didReceiveData(ResourceHandle*, const char*, unsigned, int) override;
-        void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedLength) override;
+        void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedLength) override;
         void didFinishLoading(ResourceHandle*, double /*finishTime*/) override;
         void didFail(ResourceHandle*, const ResourceError&) override;
         void wasBlocked(ResourceHandle*) override;
@@ -1100,7 +1100,7 @@ void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* 
     ASSERT_NOT_REACHED();
 }
 
-void ResourceHandleStreamingClient::didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int /* encodedLength */)
+void ResourceHandleStreamingClient::didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffer, int /* encodedLength */)
 {
     // This pattern is suggested by SharedBuffer.h.
     const char* segment;

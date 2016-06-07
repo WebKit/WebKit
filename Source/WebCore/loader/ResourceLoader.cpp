@@ -170,7 +170,7 @@ void ResourceLoader::deliverResponseAndData(const ResourceResponse& response, Re
 
     if (buffer) {
         unsigned size = buffer->size();
-        didReceiveBuffer(buffer.release(), size, DataPayloadWholeResource);
+        didReceiveBuffer(buffer.releaseNonNull(), size, DataPayloadWholeResource);
         if (reachedTerminalState())
             return;
     }
@@ -254,13 +254,13 @@ void ResourceLoader::loadDataURL()
         if (protectedThis->wasCancelled())
             return;
         auto& result = decodeResult.value();
-        auto dataSize = result.data->size();
+        auto dataSize = result.data ? result.data->size() : 0;
 
         ResourceResponse dataResponse { url, result.mimeType, dataSize, result.charset };
         protectedThis->didReceiveResponse(dataResponse);
 
         if (!protectedThis->reachedTerminalState() && dataSize)
-            protectedThis->didReceiveBuffer(result.data.get(), dataSize, DataPayloadWholeResource);
+            protectedThis->didReceiveBuffer(result.data.releaseNonNull(), dataSize, DataPayloadWholeResource);
 
         if (!protectedThis->reachedTerminalState())
             protectedThis->didFinishLoading(currentTime());
@@ -289,19 +289,18 @@ void ResourceLoader::addDataOrBuffer(const char* data, unsigned length, SharedBu
     if (m_options.dataBufferingPolicy() == DoNotBufferData)
         return;
 
-    if (dataPayloadType == DataPayloadWholeResource) {
-        m_resourceData = buffer ? buffer : SharedBuffer::create(data, length);
+    if (!m_resourceData || dataPayloadType == DataPayloadWholeResource) {
+        if (buffer)
+            m_resourceData = buffer;
+        else
+            m_resourceData = SharedBuffer::create(data, length);
         return;
     }
-        
-    if (!m_resourceData)
-        m_resourceData = buffer ? buffer : SharedBuffer::create(data, length);
-    else {
-        if (buffer)
-            m_resourceData->append(buffer);
-        else
-            m_resourceData->append(data, length);
-    }
+    
+    if (buffer)
+        m_resourceData->append(*buffer);
+    else
+        m_resourceData->append(data, length);
 }
 
 void ResourceLoader::clearResourceData()
@@ -453,23 +452,22 @@ void ResourceLoader::didReceiveData(const char* data, unsigned length, long long
     // ASSERT(con == connection);
     // ASSERT(!m_reachedTerminalState);
 
-    didReceiveDataOrBuffer(data, length, 0, encodedDataLength, dataPayloadType);
+    didReceiveDataOrBuffer(data, length, nullptr, encodedDataLength, dataPayloadType);
 }
 
-void ResourceLoader::didReceiveBuffer(PassRefPtr<SharedBuffer> buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void ResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
-    didReceiveDataOrBuffer(0, 0, buffer, encodedDataLength, dataPayloadType);
+    didReceiveDataOrBuffer(nullptr, 0, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }
 
-void ResourceLoader::didReceiveDataOrBuffer(const char* data, unsigned length, PassRefPtr<SharedBuffer> prpBuffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void ResourceLoader::didReceiveDataOrBuffer(const char* data, unsigned length, RefPtr<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     // This method should only get data+length *OR* a SharedBuffer.
-    ASSERT(!prpBuffer || (!data && !length));
+    ASSERT(!buffer || (!data && !length));
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     Ref<ResourceLoader> protectedThis(*this);
-    RefPtr<SharedBuffer> buffer = prpBuffer;
 
     addDataOrBuffer(data, length, buffer.get(), dataPayloadType);
     
@@ -632,9 +630,9 @@ void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, unsigned 
     didReceiveData(data, length, encodedDataLength, DataPayloadBytes);
 }
 
-void ResourceLoader::didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int encodedDataLength)
+void ResourceLoader::didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffer, int encodedDataLength)
 {
-    didReceiveBuffer(buffer, encodedDataLength, DataPayloadBytes);
+    didReceiveBuffer(WTFMove(buffer), encodedDataLength, DataPayloadBytes);
 }
 
 void ResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)

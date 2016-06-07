@@ -104,7 +104,7 @@ public:
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(const ResourceResponse&);
     virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType);
-    virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
+    virtual void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
     virtual void didFinishLoading(double finishTime);
     virtual void didFail(const ResourceError&);
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
@@ -156,7 +156,7 @@ protected:
 
     bool wasCancelled() const { return m_cancellationStatus >= Cancelled; }
 
-    void didReceiveDataOrBuffer(const char*, unsigned, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
+    void didReceiveDataOrBuffer(const char*, unsigned, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
 
     const ResourceLoaderOptions& options() { return m_options; }
 
@@ -187,7 +187,7 @@ private:
     void didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
     void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
-    void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedDataLength) override;
+    void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength) override;
     void didFinishLoading(ResourceHandle*, double finishTime) override;
     void didFail(ResourceHandle*, const ResourceError&) override;
     void wasBlocked(ResourceHandle*) override;

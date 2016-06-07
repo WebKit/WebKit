@@ -1,3 +1,34 @@
+2016-06-06  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize loading code
+        https://bugs.webkit.org/show_bug.cgi?id=158332
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::client):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        (WebKit::NetworkLoad::didReceiveData):
+        (WebKit::NetworkLoad::didReceiveBuffer):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::didReceiveBuffer):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::didReceiveResponse):
+        (WebKit::NetworkDataTask::didReceiveData):
+        * Shared/WebHitTestResultData.cpp:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResource):
+
 2016-06-05  Sam Weinig  <sam@webkit.org>
 
         Add experimental support for spring based CSS animations

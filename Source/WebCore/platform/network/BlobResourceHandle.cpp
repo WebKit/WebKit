@@ -84,8 +84,6 @@ public:
     BlobResourceSynchronousLoader(ResourceError&, ResourceResponse&, Vector<char>&);
 
     void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
-    void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) override;
-    void didFinishLoading(ResourceHandle*, double /*finishTime*/) override;
     void didFail(ResourceHandle*, const ResourceError&) override;
 
 private:
@@ -116,14 +114,6 @@ void BlobResourceSynchronousLoader::didReceiveResponse(ResourceHandle* handle, c
     static_cast<BlobResourceHandle*>(handle)->readSync(m_data.data(), static_cast<int>(m_data.size()));
 }
 
-void BlobResourceSynchronousLoader::didReceiveData(ResourceHandle*, const char*, unsigned, int)
-{
-}
-
-void BlobResourceSynchronousLoader::didFinishLoading(ResourceHandle*, double)
-{
-}
-
 void BlobResourceSynchronousLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
     m_error = error;
@@ -134,9 +124,9 @@ void BlobResourceSynchronousLoader::didFail(ResourceHandle*, const ResourceError
 ///////////////////////////////////////////////////////////////////////////////
 // BlobResourceHandle
 
-PassRefPtr<BlobResourceHandle> BlobResourceHandle::createAsync(BlobData* blobData, const ResourceRequest& request, ResourceHandleClient* client)
+Ref<BlobResourceHandle> BlobResourceHandle::createAsync(BlobData* blobData, const ResourceRequest& request, ResourceHandleClient* client)
 {
-    return adoptRef(new BlobResourceHandle(blobData, request, client, true));
+    return adoptRef(*new BlobResourceHandle(blobData, request, client, true));
 }
 
 void BlobResourceHandle::loadResourceSynchronously(BlobData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)

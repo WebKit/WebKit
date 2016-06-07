@@ -88,7 +88,7 @@ auto SpeculativeLoad::didReceiveResponse(const ResourceResponse& receivedRespons
     return ShouldContinueDidReceiveResponse::Yes;
 }
 
-void SpeculativeLoad::didReceiveBuffer(RefPtr<SharedBuffer>&& buffer, int reportedEncodedDataLength)
+void SpeculativeLoad::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
     ASSERT(!m_cacheEntryForValidation);
 

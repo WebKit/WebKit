@@ -53,12 +53,12 @@ BlobRegistryImpl::~BlobRegistryImpl()
 {
 }
 
-static RefPtr<ResourceHandle> createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
+static Ref<ResourceHandle> createBlobResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
     return static_cast<BlobRegistryImpl&>(blobRegistry()).createResourceHandle(request, client);
 }
 
-static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+static void loadBlobResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     BlobData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(request.url());
     BlobResourceHandle::loadResourceSynchronously(blobData, request, error, response, data);
@@ -68,20 +68,17 @@ static void registerBlobResourceHandleConstructor()
 {
     static bool didRegister = false;
     if (!didRegister) {
-        ResourceHandle::registerBuiltinConstructor("blob", createResourceHandle);
-        ResourceHandle::registerBuiltinSynchronousLoader("blob", loadResourceSynchronously);
+        ResourceHandle::registerBuiltinConstructor("blob", createBlobResourceHandle);
+        ResourceHandle::registerBuiltinSynchronousLoader("blob", loadBlobResourceSynchronously);
         didRegister = true;
     }
 }
 
-RefPtr<ResourceHandle> BlobRegistryImpl::createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
+Ref<ResourceHandle> BlobRegistryImpl::createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
     auto handle = BlobResourceHandle::createAsync(getBlobDataFromURL(request.url()), request, client);
-    if (!handle)
-        return nullptr;
-
     handle->start();
-    return handle;
+    return WTFMove(handle);
 }
 
 void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItemList& items, long long offset, long long length)

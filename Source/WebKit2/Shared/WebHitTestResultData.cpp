@@ -27,6 +27,7 @@
 #include <WebCore/HitTestResult.h>
 #include <WebCore/Node.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
 
