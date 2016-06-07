@@ -1,3 +1,14 @@
+2016-06-07  Pranjal Jumde  <pjumde@apple.com>
+
+        Prevents integer overflow in Vector.h
+        https://bugs.webkit.org/show_bug.cgi?id=158455
+        <rdar://problem/20235469>
+
+        Reviewed by Mark Lam.
+
+        * bmalloc/Vector.h:
+        (bmalloc::Vector<T>::reallocateBuffer):
+
 2016-05-27  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Deduplicated bmalloc/Zone.cpp handling.
