@@ -135,6 +135,8 @@ public:
     struct UnderlyingString;
 
 private:
+    friend bool equal(StringView, StringView);
+
     void initialize(const LChar*, unsigned length);
     void initialize(const UChar*, unsigned length);
 
@@ -525,6 +527,11 @@ template<typename CharacterType, size_t inlineCapacity> void append(Vector<Chara
 
 inline bool equal(StringView a, StringView b)
 {
+    if (a.m_characters == b.m_characters) {
+        ASSERT(a.is8Bit() == b.is8Bit());
+        return a.length() == b.length();
+    }
+        
     return equalCommon(a, b);
 }
 

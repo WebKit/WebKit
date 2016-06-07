@@ -1,3 +1,27 @@
+2016-06-06  Saam Barati  <sbarati@apple.com>
+
+        equal(StringView, StringView) for strings should have a fast path for pointer equality
+        https://bugs.webkit.org/show_bug.cgi?id=158452
+
+        Reviewed by Andreas Kling.
+
+        JSBench does a lot of StringView::operator== on StringViews that have
+        the same underlying characters pointer. This becomes hot inside JSBench
+        because JSBench heavily stresses JSC's UnlinkedCodeCache with a high
+        hit rate. This means that when we get a hit in the cache, we used to
+        do the long form of string compare. However, we were often comparing
+        two StringViews that had the same underlying buffer and length.
+        This patch speeds this case up to run in constant time instead of
+        linear time.
+
+        * wtf/text/StringCommon.h:
+        (WTF::equalCommon):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::data):
+        * wtf/text/StringView.h:
+        (WTF::StringView::data):
+
 2016-06-04  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WorkItemWin
