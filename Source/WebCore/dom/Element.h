@@ -254,8 +254,10 @@ public:
         ShadowRootMode mode;
     };
 
+#if ENABLE(SHADOW_DOM)
     ShadowRoot* shadowRootForBindings(JSC::ExecState&) const;
     RefPtr<ShadowRoot> attachShadow(const ShadowRootInit&, ExceptionCode&);
+#endif
 
     ShadowRoot* userAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();
@@ -594,7 +596,6 @@ private:
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&);
 
-    virtual bool canHaveUserAgentShadowRoot() const;
     void removeShadowRoot();
 
     const RenderStyle* existingComputedStyle();

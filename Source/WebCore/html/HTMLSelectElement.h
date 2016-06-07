@@ -119,8 +119,6 @@ private:
     
     bool canStartSelection() const final { return false; }
 
-    bool canHaveUserAgentShadowRoot() const final { return true; }
-
     bool isEnumeratable() const final { return true; }
     bool supportLabels() const final { return true; }
 

@@ -47,12 +47,6 @@ private:
     {
     }
 
-#if ENABLE(METER_ELEMENT)
-    bool canHaveUserAgentShadowRoot() const final { return false; }
-#else
-    bool canHaveUserAgentShadowRoot() const final { return localName() == "meter"; }
-#endif
-
     bool isHTMLUnknownElement() const override { return true; }
 };
 

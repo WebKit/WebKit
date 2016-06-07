@@ -889,7 +889,7 @@ static RefPtr<Element> createHTMLElementWithNameValidation(Document& document, c
     QualifiedName qualifiedName(nullAtom, localName, xhtmlNamespaceURI);
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    if (CustomElementDefinitions::checkName(localName) == CustomElementDefinitions::NameStatus::Valid) {
+    if (Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
         Ref<HTMLElement> element = HTMLElement::create(qualifiedName, document);
         element->setIsUnresolvedCustomElement();
         document.ensureCustomElementDefinitions().addUpgradeCandidate(element.get());
@@ -1074,7 +1074,7 @@ static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const Qual
         }
     }
     // FIXME: Should we also check the equality of prefix between the custom element and name?
-    if (CustomElementDefinitions::checkName(name.localName()) == CustomElementDefinitions::NameStatus::Valid) {
+    if (Document::validateCustomElementName(name.localName()) == CustomElementNameValidationStatus::Valid) {
         Ref<HTMLElement> element = HTMLElement::create(name, document);
         element->setIsUnresolvedCustomElement();
         document.ensureCustomElementDefinitions().addUpgradeCandidate(element.get());
@@ -1111,6 +1111,40 @@ Ref<Element> Document::createElement(const QualifiedName& name, bool createdByPa
 
     return element.releaseNonNull();
 }
+
+#if ENABLE(CUSTOM_ELEMENTS) || ENABLE(SHADOW_DOM)
+CustomElementNameValidationStatus Document::validateCustomElementName(const AtomicString& localName)
+{
+    bool containsHyphen = false;
+    for (auto character : StringView(localName).codeUnits()) {
+        if (isASCIIUpper(character))
+            return CustomElementNameValidationStatus::ContainsUpperCase;
+        if (character == '-')
+            containsHyphen = true;
+    }
+
+    if (!containsHyphen)
+        return CustomElementNameValidationStatus::NoHyphen;
+
+#if ENABLE(MATHML)
+    const auto& annotationXmlLocalName = MathMLNames::annotation_xmlTag.localName();
+#else
+    static NeverDestroyed<const AtomicString> annotationXmlLocalName(ASCIILiteral("annotation-xml"));
+#endif
+
+    if (localName == SVGNames::color_profileTag.localName()
+        || localName == SVGNames::font_faceTag.localName()
+        || localName == SVGNames::font_face_formatTag.localName()
+        || localName == SVGNames::font_face_nameTag.localName()
+        || localName == SVGNames::font_face_srcTag.localName()
+        || localName == SVGNames::font_face_uriTag.localName()
+        || localName == SVGNames::missing_glyphTag.localName()
+        || localName == annotationXmlLocalName)
+        return CustomElementNameValidationStatus::ConflictsWithBuiltinNames;
+
+    return CustomElementNameValidationStatus::Valid;
+}
+#endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
 bool Document::isCSSGridLayoutEnabled() const

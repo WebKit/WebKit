@@ -76,7 +76,6 @@ private:
 
     void didElementStateChange();
     void didAddUserAgentShadowRoot(ShadowRoot*) override;
-    bool canHaveUserAgentShadowRoot() const final { return true; }
 
     RefPtr<MeterValueElement> m_value;
 };

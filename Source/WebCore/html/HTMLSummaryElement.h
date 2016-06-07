@@ -42,8 +42,6 @@ private:
 
     void didAddUserAgentShadowRoot(ShadowRoot*) override;
 
-    // FIXME: Shadow DOM spec says we should be able to create shadow root on this element
-    bool canHaveUserAgentShadowRoot() const final { return true; }
     bool hasCustomFocusLogic() const final { return true; }
 
     HTMLDetailsElement* detailsElement() const;

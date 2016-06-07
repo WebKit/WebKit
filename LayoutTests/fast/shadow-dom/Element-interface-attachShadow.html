@@ -78,8 +78,22 @@ test(function () {
     }, 'Calling attachShadow({mode: "open"}) after attachShadow({mode: "closed"}) on the same element must throw');
 }, 'Element.attachShadow must throw a InvalidStateError if the context object already hosts a shadow tree');
 
+var htmlElementNames = ['a', 'abbr', 'acronym', 'address', 'applet', 'area', 'article', 'aside', 'audio', 'b', 'base', 'basefont', 'bdi',
+    'bdo', 'bgsound', 'big', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup',
+    'command', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dir', 'div', 'dl', 'dt', 'em', 'embed', 'fieldset', 'figcaption',
+    'figure', 'font', 'footer', 'form', 'frame', 'frameset', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr',
+    'html', 'i', 'iframe', 'image', 'img', 'input', 'ins', 'isindex', 'kbd', 'keygen', 'label', 'layer', 'legend', 'li', 'link', 'listing',
+    'main', 'map', 'mark', 'marquee', 'menu', 'meta', 'meter', 'nav', 'nobr', 'noembed', 'noframes', 'nolayer', 'object', 'ol', 'optgroup',
+    'option', 'output', 'p', 'param', 'picture', 'plaintext', 'pre', 'progress', 'q', 'rb', 'rp', 'rt', 'rtc', 'ruby', 's', 'samp', 'script',
+    'section', 'select', 'slot', 'small', 'source', 'span', 'strike', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td',
+    'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr', 'xmp', 'noscript'];
+var allowingAttachShadow = ["article", "aside", "blockquote", "body", "div", "footer", "h1", "h2", "h3", "h4", "h5", "h6", "header", "nav", "p", "section", "span"];
+
 test(function () {
-    for (var elementName of ['button', 'details', 'input', 'marquee', 'meter', 'progress', 'select', 'textarea', 'keygen']) {
+    for (var elementName of htmlElementNames) {
+        if (allowingAttachShadow.indexOf(elementName) >= 0)
+            continue;
+
         assert_throws({'name': 'NotSupportedError'}, function () {
             document.createElement(elementName).attachShadow({mode: "open"});
         }, 'Calling attachShadow({mode: "open"}) on ' + elementName + ' element must throw');
@@ -88,7 +102,37 @@ test(function () {
             document.createElement(elementName).attachShadow({mode: "closed"});
         }, 'Calling attachShadow({mode: "closed"}) on ' + elementName + ' element must throw');
     }
-}, 'Element.attachShadow must throw a NotSupportedError for button, details, input, marquee, meter, progress, select, textarea, and keygen elements');
+}, 'Element.attachShadow must throw a NotSupportedError on HTML elements whose local name is not one of ' + allowingAttachShadow.join(', '));
+
+test(function () {
+    for (var elementName of allowingAttachShadow) {
+        assert_true(document.createElement(elementName).attachShadow({mode: "open"}) instanceof ShadowRoot,
+            'Calling attachShadow({mode: "open"}) on ' + elementName + ' element must not throw');
+
+        assert_true(document.createElement(elementName).attachShadow({mode: "closed"}) instanceof ShadowRoot,
+            'Calling attachShadow({mode: "closed"}) on ' + elementName + ' element must not throw');
+    }
+}, 'Element.attachShadow must not throw a NotSupportedError on ' + allowingAttachShadow.join(', '));
+
+test(function () {
+    assert_throws({'name': 'NotSupportedError'}, function () {
+        document.createElement('w3cfutureelement').attachShadow({mode: "open"});
+    }, 'Calling attachShadow({mode: "open"}) on a HTML element whose local name is "w3cfutureelement" must throw');
+
+    assert_throws({'name': 'NotSupportedError'}, function () {
+        document.createElement('w3cfutureelement').attachShadow({mode: "closed"});
+    }, 'Calling attachShadow({mode: "closed"}) on a HTML element whose local name is "w3cfutureelement" must throw');
+
+}, 'Element.attachShadow must throw a NotSupportedError on a HTMLKnownElement which does not have a valid custom element');
+
+test(function () {
+    assert_true(document.createElement('custom-element').attachShadow({mode: "open"}) instanceof ShadowRoot,
+        'Calling attachShadow({mode: "open"}) on a HTML element whose local name is "custom-element" element must not throw');
+
+    assert_true(document.createElement('custom-element').attachShadow({mode: "closed"}) instanceof ShadowRoot,
+        'Calling attachShadow({mode: "closed"}) on a HTML element whose local name is "custom-element" must not throw');
+
+}, 'Element.attachShadow must throw a NotSupportedError on a HTMLKnownElement which has a valid custom element');
 
 </script>
 </body>

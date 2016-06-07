@@ -333,7 +333,6 @@ private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
 
     void didAddUserAgentShadowRoot(ShadowRoot*) final;
-    bool canHaveUserAgentShadowRoot() const final { return true; }
 
     void willChangeForm() final;
     void didChangeForm() final;

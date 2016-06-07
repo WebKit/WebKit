@@ -1,3 +1,55 @@
+2016-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update the list of elements attachShadow is allowed
+        https://bugs.webkit.org/show_bug.cgi?id=157706
+
+        Reviewed by Darin Adler.
+
+        Update the list of elements on which attachShadow is allowed per the latest shadow DOM spec:
+        http://www.w3.org/TR/shadow-dom/#widl-Element-attachShadow-ShadowRoot-ShadowRootInit-shadowRootInitDict
+        which now only allows attachShadow on the following elements and custom elements:
+        button, details, input, marquee, meter, progress, select, textarea, keygen
+
+        In order to check that a given HTML element's local name is a valid custom element name,
+        this patch moves CustomElementDefinitions::checkName to Document::validateCustomElementName so that
+        it could be used when either SHADOW_DOM or CUSTOM_ELEMENTS build flag is turned on.
+
+        Also removed Element::canHaveUserAgentShadowRoot since it was only used in Element::attachShadow.
+
+        Test: fast/shadow-dom/Element-interface-attachShadow.html
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::defineElement):
+        * dom/CustomElementDefinitions.cpp:
+        (WebCore::CustomElementDefinitions::checkName): Moved to Document::validateCustomElementName.
+        * dom/CustomElementDefinitions.h:
+        * dom/Document.cpp:
+        (WebCore::createHTMLElementWithNameValidation):
+        (WebCore::createFallbackHTMLElement):
+        (WebCore::Document::validateCustomElementName): Moved from CustomElementDefinitions::checkName.
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::canAttachAuthorShadowRoot): Added.
+        (WebCore::Element::attachShadow):
+        * dom/Element.h:
+        * html/HTMLButtonElement.h:
+        * html/HTMLDetailsElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLKeygenElement.h:
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLMediaElement.h:
+        * html/HTMLMeterElement.h:
+        * html/HTMLPlugInElement.h:
+        * html/HTMLProgressElement.h:
+        * html/HTMLQuoteElement.h:
+        * html/HTMLSelectElement.h:
+        * html/HTMLSummaryElement.h:
+        * html/HTMLTagNames.in:
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLUnknownElement.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface):
+
 2016-06-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash inside moveOutOfAllShadowRoots

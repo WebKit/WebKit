@@ -39,36 +39,6 @@
 
 namespace WebCore {
 
-CustomElementDefinitions::NameStatus CustomElementDefinitions::checkName(const AtomicString& tagName)
-{
-    bool containsHyphen = false;
-    for (unsigned i = 0; i < tagName.length(); i++) {
-        if (isASCIIUpper(tagName[i]))
-            return NameStatus::ContainsUpperCase;
-        if (tagName[i] == '-')
-            containsHyphen = true;
-    }
-
-    if (!containsHyphen)
-        return NameStatus::NoHyphen;
-
-    // FIXME: We should be taking the advantage of QualifiedNames in SVG and MathML.
-    if (tagName == SVGNames::color_profileTag.localName()
-        || tagName == SVGNames::font_faceTag.localName()
-        || tagName == SVGNames::font_face_formatTag.localName()
-        || tagName == SVGNames::font_face_nameTag.localName()
-        || tagName == SVGNames::font_face_srcTag.localName()
-        || tagName == SVGNames::font_face_uriTag.localName()
-        || tagName == SVGNames::missing_glyphTag.localName()
-#if ENABLE(MATHML)
-        || tagName == MathMLNames::annotation_xmlTag.localName()
-#endif
-        )
-        return NameStatus::ConflictsWithBuiltinNames;
-
-    return NameStatus::Valid;
-}
-
 void CustomElementDefinitions::addElementDefinition(Ref<JSCustomElementInterface>&& interface)
 {
     AtomicString localName = interface->name().localName();

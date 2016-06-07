@@ -4,5 +4,8 @@ PASS Nodes other than Element should not have attachShadow
 PASS Element.attachShadow must throw a TypeError if mode is not "open" or "closed" 
 PASS Element.attachShadow must create an instance of ShadowRoot 
 PASS Element.attachShadow must throw a InvalidStateError if the context object already hosts a shadow tree 
-PASS Element.attachShadow must throw a NotSupportedError for button, details, input, marquee, meter, progress, select, textarea, and keygen elements 
+PASS Element.attachShadow must throw a NotSupportedError on HTML elements whose local name is not one of article, aside, blockquote, body, div, footer, h1, h2, h3, h4, h5, h6, header, nav, p, section, span 
+PASS Element.attachShadow must not throw a NotSupportedError on article, aside, blockquote, body, div, footer, h1, h2, h3, h4, h5, h6, header, nav, p, section, span 
+PASS Element.attachShadow must throw a NotSupportedError on a HTMLKnownElement which does not have a valid custom element 
+PASS Element.attachShadow must throw a NotSupportedError on a HTMLKnownElement which has a valid custom element 
 

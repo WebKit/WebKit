@@ -56,9 +56,6 @@ public:
     JSCustomElementInterface* findInterface(const JSC::JSObject*) const;
     bool containsConstructor(const JSC::JSObject*) const;
 
-    enum class NameStatus { Valid, ConflictsWithBuiltinNames, NoHyphen, ContainsUpperCase };
-    static NameStatus checkName(const AtomicString& tagName);
-
 private:
     HashMap<AtomicString, Vector<RefPtr<Element>>> m_upgradeCandidatesMap;
     HashMap<AtomicString, RefPtr<JSCustomElementInterface>> m_nameMap;

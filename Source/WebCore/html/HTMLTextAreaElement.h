@@ -71,7 +71,6 @@ private:
     enum WrapMethod { NoWrap, SoftWrap, HardWrap };
 
     void didAddUserAgentShadowRoot(ShadowRoot*) override;
-    bool canHaveUserAgentShadowRoot() const final { return true; }
 
     void maxLengthAttributeChanged(const AtomicString& newValue);
 

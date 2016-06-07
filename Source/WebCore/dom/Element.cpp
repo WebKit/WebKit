@@ -1685,14 +1685,46 @@ RefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
     return nullptr;
 }
 
-bool Element::canHaveUserAgentShadowRoot() const
+#if ENABLE(SHADOW_DOM)
+static bool canAttachAuthorShadowRoot(const Element& element)
 {
-    return false;
+    static NeverDestroyed<HashSet<AtomicString>> tagNames = [] {
+        const AtomicString tagList[] = {
+            articleTag.localName(),
+            asideTag.localName(),
+            blockquoteTag.localName(),
+            bodyTag.localName(),
+            divTag.localName(),
+            footerTag.localName(),
+            h1Tag.localName(),
+            h2Tag.localName(),
+            h3Tag.localName(),
+            h4Tag.localName(),
+            h5Tag.localName(),
+            h6Tag.localName(),
+            headerTag.localName(),
+            navTag.localName(),
+            pTag.localName(),
+            sectionTag.localName(),
+            spanTag.localName()
+        };
+
+        HashSet<AtomicString> set;
+        for (auto& name : tagList)
+            set.add(name);
+        return set;
+    }();
+
+    if (!is<HTMLElement>(element))
+        return false;
+
+    const auto& localName = element.localName();
+    return tagNames.get().contains(localName) || Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid;
 }
 
 RefPtr<ShadowRoot> Element::attachShadow(const ShadowRootInit& init, ExceptionCode& ec)
 {
-    if (canHaveUserAgentShadowRoot()) {
+    if (!canAttachAuthorShadowRoot(*this)) {
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
@@ -1719,6 +1751,7 @@ ShadowRoot* Element::shadowRootForBindings(JSC::ExecState& state) const
     }
     return root;
 }
+#endif
 
 ShadowRoot* Element::userAgentShadowRoot() const
 {

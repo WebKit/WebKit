@@ -1,3 +1,15 @@
+2016-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update the list of elements attachShadow is allowed
+        https://bugs.webkit.org/show_bug.cgi?id=157706
+
+        Reviewed by Darin Adler.
+
+        Added more test cases for validating elements on which attachShadow is allowed and disallowed.
+
+        * fast/shadow-dom/Element-interface-attachShadow-expected.txt:
+        * fast/shadow-dom/Element-interface-attachShadow.html:
+
 2016-06-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash inside moveOutOfAllShadowRoots

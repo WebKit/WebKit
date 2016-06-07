@@ -55,8 +55,6 @@ private:
     void reset() override;
     bool shouldSaveAndRestoreFormControlState() const override;
 
-    bool canHaveUserAgentShadowRoot() const final { return true; }
-
     bool isKeytypeRSA() const;
 
     HTMLSelectElement* shadowSelect() const;

@@ -673,7 +673,7 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
 
         QualifiedName qualifiedName(nullAtom, localName, xhtmlNamespaceURI);
 #if ENABLE(CUSTOM_ELEMENTS)
-        if (CustomElementDefinitions::checkName(localName) == CustomElementDefinitions::NameStatus::Valid) {
+        if (Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
             element = HTMLElement::create(qualifiedName, ownerDocument);
             element->setIsUnresolvedCustomElement();
             ownerDocument.ensureCustomElementDefinitions().addUpgradeCandidate(*element);

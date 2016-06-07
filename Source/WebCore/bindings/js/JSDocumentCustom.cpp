@@ -158,14 +158,14 @@ JSValue JSDocument::defineElement(ExecState& state)
         return jsUndefined();
     }
 
-    switch (CustomElementDefinitions::checkName(tagName)) {
-    case CustomElementDefinitions::NameStatus::Valid:
+    switch (Document::validateCustomElementName(tagName)) {
+    case CustomElementNameValidationStatus::Valid:
         break;
-    case CustomElementDefinitions::NameStatus::ConflictsWithBuiltinNames:
+    case CustomElementNameValidationStatus::ConflictsWithBuiltinNames:
         return throwSyntaxError(&state, "Custom element name cannot be same as one of the builtin elements");
-    case CustomElementDefinitions::NameStatus::NoHyphen:
+    case CustomElementNameValidationStatus::NoHyphen:
         return throwSyntaxError(&state, "Custom element name must contain a hyphen");
-    case CustomElementDefinitions::NameStatus::ContainsUpperCase:
+    case CustomElementNameValidationStatus::ContainsUpperCase:
         return throwSyntaxError(&state, "Custom element name cannot contain an upper case letter");
     }
 

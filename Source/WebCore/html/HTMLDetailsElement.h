@@ -42,7 +42,6 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     void didAddUserAgentShadowRoot(ShadowRoot*) override;
-    bool canHaveUserAgentShadowRoot() const final { return true; }
     bool hasCustomFocusLogic() const final { return true; }
 
     bool m_isOpen { false };
