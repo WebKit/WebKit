@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,7 +31,6 @@
 #include "config.h"
 #include "FormSubmission.h"
 
-#include "ContentSecurityPolicy.h"
 #include "DOMFormData.h"
 #include "Document.h"
 #include "Event.h"
@@ -190,8 +188,6 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement* form, const Attribut
     bool isMultiPartForm = false;
     String encodingType = copiedAttributes.encodingType();
 
-    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(actionURL, ContentSecurityPolicy::InsecureRequestType::FormSubmission);
-
     if (copiedAttributes.method() == PostMethod) {
         isMultiPartForm = copiedAttributes.isMultiPartForm();
         if (isMultiPartForm && isMailtoForm) {
@@ -273,7 +269,6 @@ void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
 
     frameRequest.resourceRequest().setURL(requestURL());
     FrameLoader::addHTTPOriginIfNeeded(frameRequest.resourceRequest(), m_origin);
-    FrameLoader::addHTTPUpgradeInsecureRequestsIfNeeded(frameRequest.resourceRequest());
 }
 
 }

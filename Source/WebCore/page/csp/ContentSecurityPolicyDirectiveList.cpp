@@ -100,6 +100,8 @@ static inline bool checkMediaType(ContentSecurityPolicyMediaListDirective* direc
 ContentSecurityPolicyDirectiveList::ContentSecurityPolicyDirectiveList(ContentSecurityPolicy& policy, ContentSecurityPolicyHeaderType type)
     : m_policy(policy)
     , m_headerType(type)
+    , m_reportOnly(false)
+    , m_haveSandboxPolicy(false)
 {
     m_reportOnly = (type == ContentSecurityPolicyHeaderType::Report || type == ContentSecurityPolicyHeaderType::PrefixedReport);
 }
@@ -433,20 +435,6 @@ void ContentSecurityPolicyDirectiveList::applySandboxPolicy(const String& name, 
         m_policy.reportInvalidSandboxFlags(invalidTokens);
 }
 
-void ContentSecurityPolicyDirectiveList::setUpgradeInsecureRequests(const String& name)
-{
-    if (m_reportOnly) {
-        m_policy.reportInvalidDirectiveInReportOnlyMode(name);
-        return;
-    }
-    if (m_upgradeInsecureRequests) {
-        m_policy.reportDuplicateDirective(name);
-        return;
-    }
-    m_upgradeInsecureRequests = true;
-    m_policy.setUpgradeInsecureRequests(true);
-}
-
 void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const String& value)
 {
     ASSERT(!name.isEmpty());
@@ -493,8 +481,6 @@ void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const 
         applySandboxPolicy(name, value);
     else if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::reportURI))
         parseReportURI(name, value);
-    else if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::upgradeInsecureRequests))
-        setUpgradeInsecureRequests(name);
     else
         m_policy.reportUnsupportedDirective(name);
 }

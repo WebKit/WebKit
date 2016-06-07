@@ -1,3 +1,0 @@
-
-PASS Verify that nested documents receive an 'HTTPS' header. 
-

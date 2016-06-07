@@ -27,9 +27,6 @@
 #pragma once
 
 #include "ContentSecurityPolicyResponseHeaders.h"
-#include "SecurityOrigin.h"
-#include "SecurityOriginHash.h"
-#include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
@@ -50,7 +47,6 @@ class ContentSecurityPolicySource;
 class DOMStringList;
 class Frame;
 class JSDOMWindowShell;
-class ResourceRequest;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class TextEncoding;
@@ -152,16 +148,6 @@ public:
     // Used by ContentSecurityPolicySource
     bool protocolMatchesSelf(const URL&) const;
 
-    void setUpgradeInsecureRequests(bool);
-    bool upgradeInsecureRequests() const { return m_upgradeInsecureRequests; }
-    enum class InsecureRequestType { Load, FormSubmission, Navigation };
-    void upgradeInsecureRequestIfNeeded(ResourceRequest&, InsecureRequestType);
-    void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType);
-
-    HashSet<RefPtr<SecurityOrigin>>&& takeNavigationRequestsToUpgrade();
-    void inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy&);
-    void setInsecureNavigationRequestsToUpgrade(HashSet<RefPtr<SecurityOrigin>>&&);
-
 private:
     void logToConsole(const String& message, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = nullptr) const;
     void updateSourceSelf(const SecurityOrigin&);
@@ -188,10 +174,8 @@ private:
     SandboxFlags m_sandboxFlags;
     bool m_overrideInlineStyleAllowed { false };
     bool m_isReportingEnabled { true };
-    bool m_upgradeInsecureRequests { false };
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineScripts;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;
-    HashSet<RefPtr<SecurityOrigin>> m_insecureNavigationRequestsToUpgrade;
 };
 
 template<typename Predicate, typename... Args>

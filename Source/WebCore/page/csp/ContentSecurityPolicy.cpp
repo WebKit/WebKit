@@ -46,7 +46,6 @@
 #include "JSMainThreadExecState.h"
 #include "ParsingUtilities.h"
 #include "PingLoader.h"
-#include "ResourceRequest.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
@@ -112,9 +111,6 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
     ASSERT(m_policies.isEmpty());
     for (auto& policy : other->m_policies)
         didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited);
-
-    m_upgradeInsecureRequests = other->m_upgradeInsecureRequests;
-    m_insecureNavigationRequestsToUpgrade.add(other->m_insecureNavigationRequestsToUpgrade.begin(), other->m_insecureNavigationRequestsToUpgrade.end());
 }
 
 void ContentSecurityPolicy::didCreateWindowShell(JSDOMWindowShell& windowShell) const
@@ -758,70 +754,5 @@ bool ContentSecurityPolicy::experimentalFeaturesEnabled() const
     return false;
 #endif
 }
-
-void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(ResourceRequest& request, InsecureRequestType requestType)
-{
-    URL url = request.url();
-    upgradeInsecureRequestIfNeeded(url, requestType);
-    request.setURL(url);
-}
-
-void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureRequestType requestType)
-{
-    if (!url.protocolIs("http") && !url.protocolIs("ws"))
-        return;
-
-    bool upgradeRequest = m_insecureNavigationRequestsToUpgrade.contains(SecurityOrigin::create(url));
-    if (requestType == InsecureRequestType::Load || requestType == InsecureRequestType::FormSubmission)
-        upgradeRequest |= m_upgradeInsecureRequests;
     
-    if (!upgradeRequest)
-        return;
-
-    if (url.protocolIs("http"))
-        url.setProtocol("https");
-    else if (url.protocolIs("ws"))
-        url.setProtocol("wss");
-    else
-        return;
-    
-    if (url.port() == 80)
-        url.setPort(443);
-}
-
-void ContentSecurityPolicy::setUpgradeInsecureRequests(bool upgradeInsecureRequests)
-{
-    m_upgradeInsecureRequests = upgradeInsecureRequests;
-    if (!m_upgradeInsecureRequests)
-        return;
-
-    if (!m_scriptExecutionContext)
-        return;
-
-    // Store the upgrade domain as an 'insecure' protocol so we can quickly identify
-    // origins we should upgrade.
-    URL upgradeURL = m_scriptExecutionContext->url();
-    if (upgradeURL.protocolIs("https"))
-        upgradeURL.setProtocol("http");
-    else if (upgradeURL.protocolIs("wss"))
-        upgradeURL.setProtocol("ws");
-    
-    m_insecureNavigationRequestsToUpgrade.add(SecurityOrigin::create(upgradeURL));
-}
-
-void ContentSecurityPolicy::inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy& other)
-{
-    m_insecureNavigationRequestsToUpgrade.add(other.m_insecureNavigationRequestsToUpgrade.begin(), other.m_insecureNavigationRequestsToUpgrade.end());
-}
-
-HashSet<RefPtr<SecurityOrigin>>&& ContentSecurityPolicy::takeNavigationRequestsToUpgrade()
-{
-    return WTFMove(m_insecureNavigationRequestsToUpgrade);
-}
-
-void ContentSecurityPolicy::setInsecureNavigationRequestsToUpgrade(HashSet<RefPtr<SecurityOrigin>>&& insecureNavigationRequests)
-{
-    m_insecureNavigationRequestsToUpgrade = WTFMove(insecureNavigationRequests);
-}
-
 }

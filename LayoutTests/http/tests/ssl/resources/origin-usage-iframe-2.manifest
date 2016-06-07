@@ -1,6 +1,0 @@
-CACHE MANIFEST
-
-# This adds ~13K to the app cache
-
-CACHE:
-https://127.0.0.1:8443/security/resources/abe.png

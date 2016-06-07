@@ -369,7 +369,6 @@ void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, Event* trig
         frameRequest.setFrameName(m_frame.document()->baseTarget());
 
     addHTTPOriginIfNeeded(frameRequest.resourceRequest(), outgoingOrigin());
-    m_frame.document()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(frameRequest.resourceRequest(), ContentSecurityPolicy::InsecureRequestType::Navigation);
 
     loadFrameRequest(frameRequest, triggeringEvent, nullptr);
 }
@@ -2545,9 +2544,6 @@ void FrameLoader::addExtraFieldsToMainResourceRequest(ResourceRequest& request)
     // FIXME: Using m_loadType seems wrong for some callers.
     // If we are only preparing to load the main resource, that is previous load's load type!
     addExtraFieldsToRequest(request, m_loadType, true);
-
-    // Upgrade-Insecure-Requests should only be added to main resource requests
-    addHTTPUpgradeInsecureRequestsIfNeeded(request);
 }
 
 void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadType loadType, bool mainResource)
@@ -2654,16 +2650,6 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, const String& 
     request.setHTTPOrigin(origin);
 }
 
-void FrameLoader::addHTTPUpgradeInsecureRequestsIfNeeded(ResourceRequest& request)
-{
-    if (request.url().protocolIs("https")) {
-        // FIXME: Identify HSTS cases and avoid adding the header. <https://bugs.webkit.org/show_bug.cgi?id=157885>
-        return;
-    }
-
-    request.setHTTPHeaderField(HTTPHeaderName::UpgradeInsecureRequests, ASCIILiteral("1"));
-}
-
 void FrameLoader::loadPostRequest(const FrameLoadRequest& request, const String& referrer, FrameLoadType loadType, Event* event, PassRefPtr<FormState> prpFormState)
 {
     RefPtr<FormState> formState = prpFormState;
@@ -2687,9 +2673,6 @@ void FrameLoader::loadPostRequest(const FrameLoadRequest& request, const String&
     workingResourceRequest.setHTTPBody(inRequest.httpBody());
     workingResourceRequest.setHTTPContentType(contentType);
     addExtraFieldsToRequest(workingResourceRequest, loadType, true);
-
-    if (Document* document = m_frame.document())
-        document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(workingResourceRequest, ContentSecurityPolicy::InsecureRequestType::Load);
 
     NavigationAction action(workingResourceRequest, loadType, true, event, request.shouldOpenExternalURLsPolicy(), request.downloadAttribute());
 
@@ -2749,8 +2732,6 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     }
 #endif
 
-    m_frame.document()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(newRequest, ContentSecurityPolicy::InsecureRequestType::Load);
-    
     if (error.isNull()) {
         ASSERT(!newRequest.isNull());
 
@@ -3334,7 +3315,6 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
         request.setHTTPContentType(item.formContentType());
         RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item.referrer());
         addHTTPOriginIfNeeded(request, securityOrigin->toString());
-        addHTTPUpgradeInsecureRequestsIfNeeded(request);
 
         // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
         // See https://bugs.webkit.org/show_bug.cgi?id=22194 for more discussion.
@@ -3625,7 +3605,6 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, const FrameLo
     if (!referrer.isEmpty())
         requestWithReferrer.resourceRequest().setHTTPReferrer(referrer);
     FrameLoader::addHTTPOriginIfNeeded(requestWithReferrer.resourceRequest(), openerFrame.loader().outgoingOrigin());
-    FrameLoader::addHTTPUpgradeInsecureRequestsIfNeeded(requestWithReferrer.resourceRequest());
 
     Page* oldPage = openerFrame.page();
     if (!oldPage)

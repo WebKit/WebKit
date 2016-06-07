@@ -46,7 +46,6 @@ const char* const reportURI = "report-uri";
 const char* const sandbox = "sandbox";
 const char* const scriptSrc = "script-src";
 const char* const styleSrc = "style-src";
-const char* const upgradeInsecureRequests = "upgrade-insecure-requests";
     
 } // namespace ContentSecurityPolicyDirectiveNames
 

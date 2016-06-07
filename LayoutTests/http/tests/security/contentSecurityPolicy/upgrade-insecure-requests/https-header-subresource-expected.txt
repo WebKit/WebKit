@@ -1,3 +1,0 @@
-
-PASS Verify that subresources do not receive an 'Upgrade-Insecure-Requests' header. 
-
