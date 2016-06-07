@@ -1,3 +1,25 @@
+2016-06-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash inside moveOutOfAllShadowRoots
+        https://bugs.webkit.org/show_bug.cgi?id=158378
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by InShadowTreeFlag not being cleared when a shadow host or its ancestor was removed
+        due to addChildNodesToDeletionQueue not invoking notifyChildNodeRemoved when a node was in a shadow tree
+        but not in a document.
+
+        Fixed the bug by invoking notifyChildNodeRemoved when the removed node is either in a shadow tree
+        or it's in a shadow tree. Also fixed a bug in VTTCue::~VTTCue that it was trying to remove the display
+        tree even when the owner document was being destroyed. This results in various assertions to be hit.
+
+        Test: fast/shadow-dom/shadow-host-removal-crash.html
+
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::addChildNodesToDeletionQueue):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::~VTTCue):
+
 2016-06-06  Chris Dumez  <cdumez@apple.com>
 
         Implement EventListenerOptions argument to addEventListener

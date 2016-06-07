@@ -1,3 +1,16 @@
+2016-06-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash inside moveOutOfAllShadowRoots
+        https://bugs.webkit.org/show_bug.cgi?id=158378
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test that reproduced the crash reliably at least on my machine.
+
+        * fast/shadow-dom/shadow-host-removal-crash-expected.txt: Added.
+        * fast/shadow-dom/shadow-host-removal-crash.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-06-06  Chris Dumez  <cdumez@apple.com>
 
         Implement EventListenerOptions argument to addEventListener
