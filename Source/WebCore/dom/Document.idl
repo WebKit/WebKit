@@ -301,7 +301,7 @@
                                                    optional long webkitRadiusY = 0,
                                                    optional unrestricted float webkitRotationAngle = NaN,
                                                    optional unrestricted float webkitForce = NaN);
-    [NewObject, Custom, RaisesException] TouchList createTouchList();
+    [NewObject, Custom] TouchList createTouchList(Touch... touches);
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

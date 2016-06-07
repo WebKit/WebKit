@@ -133,10 +133,14 @@ JSValue JSDocument::createTouchList(ExecState& state)
 {
     auto touchList = TouchList::create();
 
-    for (size_t i = 0; i < state.argumentCount(); i++)
-        touchList->append(JSTouch::toWrapped(state.argument(i)));
+    for (size_t i = 0; i < state.argumentCount(); ++i) {
+        auto* item = JSTouch::toWrapped(state.uncheckedArgument(i));
+        if (!item)
+            return JSValue::decode(throwArgumentTypeError(state, i, "touches", "Document", "createTouchList", "Touch"));
 
-    return toJS(&state, globalObject(), touchList);
+        touchList->append(item);
+    }
+    return toJSNewlyCreated(&state, globalObject(), WTFMove(touchList));
 }
 #endif
 

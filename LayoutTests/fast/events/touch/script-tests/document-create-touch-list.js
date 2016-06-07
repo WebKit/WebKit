@@ -37,10 +37,7 @@ try {
 }
 
 // Test createTouchList with invalid arguments which throws exceptions.
-try {
-    var tl = document.createTouchList(1, 2);
-} catch(e) {
-    testFailed("An exception was thrown: " + e.message);
-}
+shouldThrow("document.createTouchList(1, 2)");
+
 isSuccessfullyParsed();
 

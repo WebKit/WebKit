@@ -1,3 +1,20 @@
+2016-06-07  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        Creating a TouchList with non Touch items should throw an exception
+        https://bugs.webkit.org/show_bug.cgi?id=158302
+
+        Reviewed by Youenn Fablet.
+
+        Only Touch items should be passed to CreateTouchList function as
+        per specification (https://w3c.github.io/touch-events/#extensions-to-the-document-interface).
+
+        Tests have been modified to check whether behavior of CreateTouchList is correct.
+
+        * fast/events/touch/document-create-touch-list-crash-expected.txt:
+        * fast/events/touch/document-create-touch-list-expected.txt:
+        * fast/events/touch/script-tests/document-create-touch-list-crash.js:
+        * fast/events/touch/script-tests/document-create-touch-list.js:
+
 2016-06-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unskip js/script-tests/class-syntax-scoping.js
