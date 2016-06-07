@@ -501,6 +501,15 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return m_object->language();
 }
 
+- (BOOL)accessibilityIsDialog
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    AccessibilityRole roleValue = m_object->roleValue();
+    return roleValue == ApplicationDialogRole || roleValue == ApplicationAlertDialogRole;
+}
+
 - (BOOL)_accessibilityIsLandmarkRole:(AccessibilityRole)role
 {
     switch (role) {

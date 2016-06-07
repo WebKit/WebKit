@@ -1,3 +1,16 @@
+2016-06-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS: Need to expose whether object is a dialog element
+        https://bugs.webkit.org/show_bug.cgi?id=158487
+        <rdar://problem/26678218>
+
+        Reviewed by Joanmarie Diggs.
+
+        Expose whether an object is a dialog type. This will allow decisions higher up the stack to be made in regards to where to move VoiceOver focus.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityIsDialog]):
+
 2016-06-07  Alex Christensen  <achristensen@webkit.org>
 
         Fix Yosemite build.
