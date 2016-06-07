@@ -121,8 +121,6 @@ list(APPEND WebKit_SOURCES
 
     mac/Plugins/WebBaseNetscapePluginView.mm
     mac/Plugins/WebBasePluginPackage.mm
-    mac/Plugins/WebNetscapeContainerCheckContextInfo.mm
-    mac/Plugins/WebNetscapeContainerCheckPrivate.mm
     mac/Plugins/WebNetscapePluginEventHandler.mm
     mac/Plugins/WebNetscapePluginEventHandlerCarbon.mm
     mac/Plugins/WebNetscapePluginEventHandlerCocoa.mm
