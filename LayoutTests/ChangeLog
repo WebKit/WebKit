@@ -1,3 +1,11 @@
+2016-06-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Mark fast/text/international/system-language/han-quotes.html as flaky
+
+        Unreviewed gardening
+
+        * platform/gtk/TestExpectations:
+
 2016-06-07  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Creating a TouchList with non Touch items should throw an exception
