@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2005-2007 Alexey Proskuryakov <ap@webkit.org>
  *  Copyright (C) 2007, 2008 Julien Chaffraix <jchaffraix@webkit.org>
  *  Copyright (C) 2008, 2011 Google Inc. All rights reserved.
@@ -480,6 +480,7 @@ void XMLHttpRequest::open(const String& method, const URL& url, bool async, Exce
     m_method = uppercaseKnownHTTPMethod(method);
 
     m_url = url;
+    scriptExecutionContext()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
 
     m_async = async;
 

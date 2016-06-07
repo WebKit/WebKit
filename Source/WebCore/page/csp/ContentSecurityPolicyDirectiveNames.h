@@ -45,6 +45,7 @@ extern const char* const reportURI;
 extern const char* const sandbox;
 extern const char* const scriptSrc;
 extern const char* const styleSrc;
+extern const char* const upgradeInsecureRequests;
 
 } // namespace ContentSecurityPolicyDirectiveNames
 

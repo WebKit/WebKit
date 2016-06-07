@@ -202,6 +202,7 @@ public:
     void addExtraFieldsToMainResourceRequest(ResourceRequest&);
     
     static void addHTTPOriginIfNeeded(ResourceRequest&, const String& origin);
+    static void addHTTPUpgradeInsecureRequestsIfNeeded(ResourceRequest&);
 
     FrameLoaderClient& client() const { return m_client; }
 

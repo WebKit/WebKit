@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 31: PASS: Successfully retrieved image data.
+This test opens a window that loads an insecure image. We should upgrade this request and thereby avoid triggering a mixed content callback.
+
+

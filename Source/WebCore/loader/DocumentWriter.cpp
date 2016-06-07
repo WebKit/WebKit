@@ -29,6 +29,7 @@
 #include "config.h"
 #include "DocumentWriter.h"
 
+#include "ContentSecurityPolicy.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
 #include "Frame.h"
@@ -143,6 +144,17 @@ void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     else
         document->createDOMWindow();
 
+    // Per <http://www.w3.org/TR/upgrade-insecure-requests/>, we need to retain an ongoing set of upgraded
+    // requests in new navigation contexts. Although this information is present when we construct the
+    // Document object, it is discard in the subsequent 'clear' statements below. So, we must capture it
+    // so we can restore it.
+    HashSet<RefPtr<SecurityOrigin>> insecureNavigationRequestsToUpgrade;
+    bool upgradeInsecureRequests = false;
+    if (auto* existingDocument = m_frame->document()) {
+        upgradeInsecureRequests = existingDocument->contentSecurityPolicy()->upgradeInsecureRequests();
+        insecureNavigationRequestsToUpgrade = existingDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade();
+    }
+    
     m_frame->loader().clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView);
     clear();
 
@@ -156,6 +168,9 @@ void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
 
     m_frame->loader().setOutgoingReferrer(url);
     m_frame->setDocument(document.copyRef());
+
+    document->contentSecurityPolicy()->setUpgradeInsecureRequests(upgradeInsecureRequests);
+    document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(WTFMove(insecureNavigationRequestsToUpgrade));
 
     if (m_decoder)
         document->setDecoder(m_decoder.get());
