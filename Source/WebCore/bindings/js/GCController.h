@@ -47,7 +47,6 @@ public:
     WEBCORE_EXPORT void setJavaScriptGarbageCollectorTimerEnabled(bool);
     WEBCORE_EXPORT void deleteAllCode();
     WEBCORE_EXPORT void deleteAllLinkedCode();
-    WEBCORE_EXPORT void deleteAllRegExpCode();
 
 private:
     GCController(); // Use singleton() instead.

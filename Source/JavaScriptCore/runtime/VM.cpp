@@ -552,13 +552,6 @@ void VM::deleteAllLinkedCode()
     });
 }
 
-void VM::deleteAllRegExpCode()
-{
-    whenIdle([this]() {
-        m_regExpCache->deleteAllCode();
-    });
-}
-
 void VM::deleteAllCode()
 {
     whenIdle([this]() {
