@@ -860,7 +860,7 @@ webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/frame-ancestor
 webkit.org/b/154522 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Failure ]
 http/tests/security/contentSecurityPolicy/script-src-blocked-error-event.html [ Pass Failure ]
-http/tests/hybi/upgrade-simple-ws.html [ Skip ]
+webkit.org/b/158480 http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Skip ]
 
 # These state object tests purposefully stress a resource limit, and take multiple seconds to run.
 loader/stateobjects/pushstate-size-iframe.html [ Slow ]
