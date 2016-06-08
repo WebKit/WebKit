@@ -1,3 +1,11 @@
+2016-06-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build
+
+        * DumpRenderTree/cairo/PixelDumpSupportCairo.h:
+        (BitmapContext::createByAdoptingBitmapAndContext):
+        (BitmapContext::~BitmapContext):
+
 2016-06-08  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Change some parameters based on a random search

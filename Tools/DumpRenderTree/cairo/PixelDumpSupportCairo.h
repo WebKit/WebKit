@@ -27,10 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PixelDumpSupportCairo_h
-#define PixelDumpSupportCairo_h
+#pragma once
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 #if PLATFORM(WIN)
@@ -48,9 +46,9 @@ typedef void* PlatformBitmapBuffer;
 
 class BitmapContext : public RefCounted<BitmapContext> {
 public:
-    static PassRefPtr<BitmapContext> createByAdoptingBitmapAndContext(PlatformBitmapBuffer buffer, cairo_t* context)
+    static Ref<BitmapContext> createByAdoptingBitmapAndContext(PlatformBitmapBuffer buffer, cairo_t* context)
     {
-        return adoptRef(new BitmapContext(buffer, context));
+        return adoptRef(*new BitmapContext(buffer, context));
     }
 
     ~BitmapContext()
@@ -77,5 +75,3 @@ private:
     PlatformBitmapBuffer m_buffer;
     cairo_t* m_context;
 };
-
-#endif // PixelDumpSupportCairo_h
