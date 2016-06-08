@@ -1,3 +1,14 @@
+2016-06-08  Aakash Jain  <aakash_jain@apple.com>
+
+        Don't try to cleanup non-existing ios Simulators
+        https://bugs.webkit.org/show_bug.cgi?id=158510
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.clean_up_test_run): 
+        Check if simulator exists before trying to clean it up.
+
 2016-06-08  Brady Eidson  <beidson@apple.com>
 
         Try to fix the Windows build.

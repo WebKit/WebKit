@@ -254,6 +254,8 @@ class IOSSimulatorPort(Port):
                 pass
 
         for i in xrange(self.child_processes()):
+            if not os.path.exists(self.get_simulator_path(i)):
+                continue
             try:
                 subprocess.call([self.LSREGISTER_PATH, "-v", "-u", self.get_simulator_path(i)])
                 shutil.rmtree(self.get_simulator_path(i), ignore_errors=True)
