@@ -1,3 +1,12 @@
+2016-06-07  Lucas Forschler  <lforschler@apple.com>
+
+        <rdar://problem/26685782>
+        Teach the copy-webkitlibraries-to-product-directory script about WebKitSystemInterfaceOSX10.12
+
+        Rubber-stamped by Jessie Berlin.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2016-06-08  Aakash Jain  <aakash_jain@apple.com>
 
         Don't try to cleanup non-existing ios Simulators
