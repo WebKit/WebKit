@@ -1,3 +1,14 @@
+2016-06-08  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Command-W should not close Web Inspector tabs; it should close the window
+        https://bugs.webkit.org/show_bug.cgi?id=158538
+        rdar://problem/26699215
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser): Change shortcut to Command-Shift-W.
+
 2016-06-07  Brian Burg  <bburg@apple.com>
 
         Web Inspector: reduce timer churn when processing many DOM.attributeModified messages
