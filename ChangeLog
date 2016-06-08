@@ -1,3 +1,14 @@
+2016-06-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Shadow DOM tests are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=158524
+
+        Reviewed by Brent Fulgham.
+
+        Enable Shadow DOM.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2016-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Enable IndexedDB in workers

@@ -850,6 +850,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     COMPtr<IWebPreferencesPrivate3> prefsPrivate3(Query, preferences);
     ASSERT(prefsPrivate3);
     prefsPrivate3->setFetchAPIEnabled(TRUE);
+    prefsPrivate3->setShadowDOMEnabled(TRUE);
 
     setAlwaysAcceptCookies(false);
 }

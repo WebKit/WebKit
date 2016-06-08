@@ -1,3 +1,22 @@
+2016-06-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Shadow DOM tests are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=158524
+
+        Reviewed by Brent Fulgham.
+
+        Add preference for enabling Shadow DOM.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::shadowDOMEnabled):
+        (WebPreferences::setShadowDOMEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2016-06-07  Per Arne Vollan  <pvollan@apple.com>
 
         [Win][IndexedDB] Crash when running worker test.

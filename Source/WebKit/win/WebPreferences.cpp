@@ -293,6 +293,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitFetchAPIEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitShadowDOMEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 }
 
@@ -1931,5 +1933,19 @@ HRESULT WebPreferences::fetchAPIEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setFetchAPIEnabled(BOOL enabled)
 {
     setBoolValue(WebKitFetchAPIEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::shadowDOMEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitShadowDOMEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setShadowDOMEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitShadowDOMEnabledPreferenceKey, enabled);
     return S_OK;
 }

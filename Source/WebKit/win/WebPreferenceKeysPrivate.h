@@ -170,3 +170,4 @@
 
 #define WebKitFetchAPIEnabledPreferenceKey "WebKitFetchAPIEnabled"
 
+#define WebKitShadowDOMEnabledPreferenceKey "WebKitShadowDOMEnabled"

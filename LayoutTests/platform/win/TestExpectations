@@ -3358,7 +3358,10 @@ webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-heade
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-unsafe-url.html [ Failure ]
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html [ Failure ]
 
-webkit.org/b/153772 fast/shadow-dom/slot-removal-crash-2.html [ Timeout ]
+webkit.org/b/148695 fast/shadow-dom [ Pass ]
+
+# Touch events is not enabled on Windows
+webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Failure ]
 
 # The SVG -> OTF Font converter outputs 'kern' tables instead of 'GPOS' tables.
 webkit.org/b/137204 fast/text/svg-font-face-with-kerning.html [ Failure ]
