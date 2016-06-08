@@ -1,3 +1,34 @@
+2016-06-08  Eric Carlson  <eric.carlson@apple.com>
+
+        HTMLMediaElement.prototype.canPlayType accounting for 250-750ms first loading theverge.com
+        https://bugs.webkit.org/show_bug.cgi?id=158335
+        <rdar://problem/26615416>
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.xcodeproj/project.pbxproj: Add AVFoundationMIMETypeCache.
+
+        * platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.h: Added.
+        * platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.mm: Added.
+        (WebCore::AVFoundationMIMETypeCache::AVFoundationMIMETypeCache):
+        (WebCore::AVFoundationMIMETypeCache::loadTypes):
+        (WebCore::AVFoundationMIMETypeCache::types):
+        (WebCore::AVFoundationMIMETypeCache::singleton):
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::registerMediaEngine): Start MIME type loading.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::getSupportedTypes): Use AVFoundationMIMETypeCache.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsKeySystem): Ditto.
+        (WebCore::avfMIMETypes): Deleted.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine): Start MIME type loading.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isAvailable): Use AVFoundationMIMETypeCache.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType): Ditto.
+        (WebCore::mimeTypeCache): Deleted.
+
 2016-06-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r201667): ASSERTION FAILED: !m_anchorNode || !editingIgnoresContent(*m_anchorNode)

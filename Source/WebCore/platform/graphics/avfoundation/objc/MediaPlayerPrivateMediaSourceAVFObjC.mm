@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#import "AVFoundationMIMETypeCache.h"
 #import "CDMSessionAVStreamSession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "FileSystem.h"
@@ -202,9 +203,12 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    if (isAvailable())
-        registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateMediaSourceAVFObjC>(player); }, getSupportedTypes,
-            supportsType, 0, 0, 0, 0);
+    if (!isAvailable())
+        return;
+
+    registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateMediaSourceAVFObjC>(player); },
+        getSupportedTypes, supportsType, 0, 0, 0, 0);
+    AVFoundationMIMETypeCache::singleton().loadTypes();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
@@ -217,25 +221,9 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
         && class_getInstanceMethod(getAVSampleBufferAudioRendererClass(), @selector(setMuted:));
 }
 
-static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
-{
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
-    static bool typeListInitialized = false;
-
-    if (typeListInitialized)
-        return cache;
-    typeListInitialized = true;
-
-    NSArray *types = [getAVURLAssetClass() audiovisualMIMETypes];
-    for (NSString *mimeType in types)
-        cache.get().add(mimeType);
-    
-    return cache;
-} 
-
 void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
-    types = mimeTypeCache();
+    types = AVFoundationMIMETypeCache::singleton().types();
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
@@ -248,7 +236,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
         return MediaPlayer::IsNotSupported;
 #endif
 
-    if (parameters.type.isEmpty() || !mimeTypeCache().contains(parameters.type))
+    if (parameters.type.isEmpty() || !AVFoundationMIMETypeCache::singleton().types().contains(parameters.type))
         return MediaPlayer::IsNotSupported;
 
     // The spec says:
