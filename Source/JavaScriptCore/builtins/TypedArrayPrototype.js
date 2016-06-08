@@ -261,7 +261,7 @@ function map(callback /*, thisArg */)
     if (constructor === @undefined)
         result = new (@typedArrayGetOriginalConstructor(this))(length);
     else {
-        var speciesConstructor = @Object(constructor)[@symbolSpecies];
+        var speciesConstructor = @Object(constructor).@speciesSymbol;
         if (speciesConstructor === null || speciesConstructor === @undefined)
             result = new (@typedArrayGetOriginalConstructor(this))(length);
         else {
@@ -302,7 +302,7 @@ function filter(callback /*, thisArg */)
     if (constructor === @undefined)
         result = new (@typedArrayGetOriginalConstructor(this))(resultLength);
     else {
-        var speciesConstructor = @Object(constructor)[@symbolSpecies];
+        var speciesConstructor = @Object(constructor).@speciesSymbol;
         if (speciesConstructor === null || speciesConstructor === @undefined)
             result = new (@typedArrayGetOriginalConstructor(this))(resultLength);
         else {

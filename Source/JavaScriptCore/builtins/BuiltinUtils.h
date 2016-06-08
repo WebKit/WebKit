@@ -37,8 +37,8 @@ namespace JSC {
     const JSC::Identifier& name##PublicName() const { return m_##name; } \
     const JSC::Identifier& name##PrivateName() const { return m_##name##PrivateName; }
 
-#define INITIALIZE_BUILTIN_SYMBOLS(name) , m_##name##Symbol(JSC::Identifier::fromUid(JSC::PrivateName(JSC::PrivateName::Description, ASCIILiteral("Symbol." #name))))
-#define DECLARE_BUILTIN_SYMBOLS(name) const JSC::Identifier m_##name##Symbol;
+#define INITIALIZE_BUILTIN_SYMBOLS(name) , m_##name##Symbol(JSC::Identifier::fromUid(JSC::PrivateName(JSC::PrivateName::Description, ASCIILiteral("Symbol." #name)))), m_##name##SymbolPrivateIdentifier(JSC::Identifier::fromString(vm, #name "Symbol"))
+#define DECLARE_BUILTIN_SYMBOLS(name) const JSC::Identifier m_##name##Symbol; const JSC::Identifier m_##name##SymbolPrivateIdentifier;
 #define DECLARE_BUILTIN_SYMBOL_ACCESSOR(name) \
     const JSC::Identifier& name##Symbol() const { return m_##name##Symbol; }
 

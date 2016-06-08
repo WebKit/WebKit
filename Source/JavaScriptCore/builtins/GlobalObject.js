@@ -69,7 +69,7 @@ function speciesConstructor(obj, defaultConstructor)
         return defaultConstructor;
     if (!@isObject(constructor))
         throw new @TypeError("|this|.constructor is not an Object or undefined");
-    constructor = constructor[@symbolSpecies];
+    constructor = constructor.@speciesSymbol;
     if (constructor == null)
         return defaultConstructor;
     if (@isConstructor(constructor))

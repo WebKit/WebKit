@@ -226,7 +226,7 @@ function filter(callback /*, thisArg */)
         if (@isArrayConstructor(constructor) && @Array !== constructor)
             constructor = @undefined;
         if (@isObject(constructor)) {
-            constructor = constructor[@symbolSpecies];
+            constructor = constructor.@speciesSymbol;
             if (constructor === null)
                 constructor = @undefined;
         }
@@ -278,7 +278,7 @@ function map(callback /*, thisArg */)
         if (@isArrayConstructor(constructor) && @Array !== constructor)
             constructor = @undefined;
         if (@isObject(constructor)) {
-            constructor = constructor[@symbolSpecies];
+            constructor = constructor.@speciesSymbol;
             if (constructor === null)
                 constructor = @undefined;
         }

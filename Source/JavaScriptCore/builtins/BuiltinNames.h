@@ -35,6 +35,11 @@ namespace JSC {
 #define INITIALIZE_PRIVATE_TO_PUBLIC_ENTRY(name) m_privateToPublicMap.add(m_##name##PrivateName.impl(), &m_##name);
 #define INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY(name) m_publicToPrivateMap.add(m_##name.impl(), &m_##name##PrivateName);
 
+// We commandeer the publicToPrivateMap to allow us to convert private symbol names into the appropriate symbol.
+// e.g. @iteratorSymbol points to Symbol.iterator in this map rather than to a an actual private name.
+// FIXME: This is a weird hack and we shouldn't need to do this.
+#define INITIALIZE_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY(name) m_publicToPrivateMap.add(m_##name##SymbolPrivateIdentifier.impl(), &m_##name##Symbol);
+
 class BuiltinNames {
     WTF_MAKE_NONCOPYABLE(BuiltinNames); WTF_MAKE_FAST_ALLOCATED;
     
@@ -54,6 +59,7 @@ public:
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PRIVATE_TO_PUBLIC_ENTRY)
         JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
+        JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY)
         m_privateToPublicMap.add(m_dollarVMPrivateName.impl(), &m_dollarVMName);
         m_publicToPrivateMap.add(m_dollarVMName.impl(), &m_dollarVMPrivateName);
     }

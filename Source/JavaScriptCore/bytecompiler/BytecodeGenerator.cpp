@@ -1727,9 +1727,11 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, bool b)
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, const Identifier& identifier)
 {
+    ASSERT(!identifier.isSymbol());
     JSString*& stringInMap = m_stringMap.add(identifier.impl(), nullptr).iterator->value;
     if (!stringInMap)
         stringInMap = jsOwnedString(vm(), identifier.string());
+
     return emitLoad(dst, JSValue(stringInMap));
 }
 

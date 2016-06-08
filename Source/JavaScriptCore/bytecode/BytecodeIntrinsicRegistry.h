@@ -57,12 +57,6 @@ class Identifier;
     macro(promiseStatePending) \
     macro(promiseStateFulfilled) \
     macro(promiseStateRejected) \
-    macro(symbolIterator) \
-    macro(symbolMatch) \
-    macro(symbolReplace) \
-    macro(symbolSearch) \
-    macro(symbolSpecies) \
-    macro(symbolSplit) \
     macro(GeneratorResumeModeNormal) \
     macro(GeneratorResumeModeThrow) \
     macro(GeneratorResumeModeReturn) \

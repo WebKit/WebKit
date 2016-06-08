@@ -1,3 +1,58 @@
+2016-06-08  Keith Miller  <keith_miller@apple.com>
+
+        We should be able to lookup symbols by identifier in builtins
+        https://bugs.webkit.org/show_bug.cgi?id=158530
+
+        Reviewed by Mark Lam.
+
+        This patch allows us to lookup the value of a symbol property on a
+        object by identifier in builtins. Before, it was only possible to
+        do so if we were directly emitting the bytecodes, such as in a
+        for-of loop looking for Symbol.iterator. As we tier up we convert
+        the builtin's get_by_val symbol lookups into get_by_id
+        lookups. However, there is still a significant performance
+        difference between get_by_id and get_by_val in the LLInt, where
+        this transformation does not take place.
+
+        In order to make this work we hijack BuiltinNames'
+        m_publicToPrivateMap so that it points the @<symbol>Symbol to the
+        appropriate vm symbol. This way when we lex the identifier it will
+        become the appropriate symbol's identifier.  Currently, if the
+        symbol is used to name a property in an object literal we will not
+        keep a cache of the Symbol objects we have already seen. We could
+        add a map for symbols but since we can only load symbols by
+        identifier in builtins its likely not worth it. Additionally, even
+        in builtins it is extremely rare to use Symbols in object
+        literals.
+
+        * builtins/ArrayConstructor.js:
+        (from):
+        * builtins/ArrayPrototype.js:
+        (filter):
+        (map):
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::BuiltinNames):
+        * builtins/BuiltinUtils.h:
+        * builtins/GlobalObject.js:
+        (speciesConstructor):
+        * builtins/StringPrototype.js:
+        (match):
+        (intrinsic.StringPrototypeReplaceIntrinsic.replace):
+        (search):
+        (split):
+        * builtins/TypedArrayConstructor.js:
+        (from):
+        * builtins/TypedArrayPrototype.js:
+        (map):
+        (filter):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry): Deleted.
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+
 2016-06-08  Rawinder Singh  <rawinder.singh-webkit@cisra.canon.com.au>
 
         [web-animations] Add Animatable, AnimationEffect, KeyframeEffect and Animation interface

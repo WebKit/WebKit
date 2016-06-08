@@ -63,7 +63,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
     if (items == null)
         throw new @TypeError("TypedArray.from requires an array-like object - not null or undefined");
 
-    let iteratorMethod = items[@symbolIterator];
+    let iteratorMethod = items.@iteratorSymbol;
     if (iteratorMethod != null) {
         if (typeof iteratorMethod !== "function")
             throw new @TypeError("TypedArray.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
@@ -76,12 +76,8 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
         // Since for-of loop once more looks up the @@iterator property of a given iterable,
         // it could be observable if the user defines a getter for @@iterator.
         // To avoid this situation, we define a wrapper object that @@iterator just returns a given iterator.
-        let wrapper = {
-            [@symbolIterator]() {
-                return iterator;
-            }
-        };
-
+        let wrapper = {};
+        wrapper.@iteratorSymbol = function() { return iterator; }
 
         for (let value of wrapper) {
             if (mapFn)
