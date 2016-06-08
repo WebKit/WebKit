@@ -47,6 +47,20 @@ static float computeLength(CSSValue& value, const RenderStyle& style, RenderView
         CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(value);
         if (!primitiveValue.isLength())
             return defaultLength(style, renderer);
+
+        // Because we evaluate "sizes" at parse time (before style has been resolved), the font metrics used for these specific units
+        // are not available. The font selector's internal consistency isn't guaranteed just yet, so we can just temporarily clear
+        // the pointer to it for the duration of the unit evaluation. This is acceptible because the style always comes from the
+        // RenderView, which has its font information hardcoded in resolveForDocument() to be -webkit-standard, whose operations
+        // don't require a font selector.
+        if (!primitiveValue.isCalculated() && (primitiveValue.primitiveType() == CSSPrimitiveValue::CSS_EXS || primitiveValue.primitiveType() == CSSPrimitiveValue::CSS_CHS)) {
+            RefPtr<FontSelector> fontSelector = style.fontCascade().fontSelector();
+            style.fontCascade().update(nullptr);
+            float result = primitiveValue.computeLength<float>(conversionData);
+            style.fontCascade().update(fontSelector.get());
+            return result;
+        }
+
         return primitiveValue.computeLength<float>(conversionData);
     }
     if (is<CSSCalcValue>(value))

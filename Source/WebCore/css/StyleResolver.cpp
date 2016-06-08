@@ -296,6 +296,9 @@ StyleResolver::StyleResolver(Document& document)
 void StyleResolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets)
 {
     m_ruleSets.appendAuthorStyleSheets(styleSheets, &m_mediaQueryEvaluator, m_inspectorCSSOMWrappers, this);
+
+    document().fontSelector().buildCompleted();
+
     if (auto renderView = document().renderView())
         renderView->style().fontCascade().update(&document().fontSelector());
 

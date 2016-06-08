@@ -529,6 +529,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_didDispatchViewportPropertiesChanged(false)
 #endif
     , m_templateDocumentHost(nullptr)
+    , m_fontSelector(CSSFontSelector::create(*this))
 #if ENABLE(WEB_REPLAY)
     , m_inputCursor(EmptyInputCursor::create())
 #endif
@@ -562,6 +563,8 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 
     initSecurityContext();
     initDNSPrefetch();
+
+    m_fontSelector->registerForInvalidationCallbacks(*this);
 
     for (auto& nodeListAndCollectionCount : m_nodeListAndCollectionCounts)
         nodeListAndCollectionCount = 0;
@@ -637,6 +640,8 @@ Document::~Document()
     extensionStyleSheets().detachFromDocument();
 
     clearStyleResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
+    m_fontSelector->clearDocument();
+    m_fontSelector->unregisterForInvalidationCallbacks(*this);
 
     // It's possible for multiple Documents to end up referencing the same CachedResourceLoader (e.g., SVGImages
     // load the initial empty document and the SVGDocument with the same DocumentLoader).
@@ -2208,26 +2213,12 @@ void Document::fontsNeedUpdate(FontSelector&)
     scheduleForcedStyleRecalc();
 }
 
-CSSFontSelector& Document::fontSelector()
-{
-    if (!m_fontSelector) {
-        m_fontSelector = CSSFontSelector::create(*this);
-        m_fontSelector->registerForInvalidationCallbacks(*this);
-    }
-    return *m_fontSelector;
-}
-
 void Document::clearStyleResolver()
 {
     m_styleResolver = nullptr;
     m_userAgentShadowTreeStyleResolver = nullptr;
 
-    // FIXME: It would be better if the FontSelector could survive this operation.
-    if (m_fontSelector) {
-        m_fontSelector->clearDocument();
-        m_fontSelector->unregisterForInvalidationCallbacks(*this);
-        m_fontSelector = nullptr;
-    }
+    m_fontSelector->buildStarted();
 }
 
 void Document::createRenderTree()

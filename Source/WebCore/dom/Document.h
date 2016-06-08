@@ -504,7 +504,7 @@ public:
     }
     StyleResolver& userAgentShadowTreeStyleResolver();
 
-    CSSFontSelector& fontSelector();
+    CSSFontSelector& fontSelector() { return m_fontSelector; }
 
     void notifyRemovePendingSheetIfNeeded();
 
@@ -1736,7 +1736,7 @@ private:
     std::unique_ptr<CustomElementDefinitions> m_customElementDefinitions;
 #endif
 
-    RefPtr<CSSFontSelector> m_fontSelector;
+    Ref<CSSFontSelector> m_fontSelector;
 
 #if ENABLE(WEB_REPLAY)
     RefPtr<JSC::InputCursor> m_inputCursor;
