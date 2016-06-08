@@ -27,11 +27,15 @@
 #define CacheValidation_h
 
 #include "PlatformExportMacros.h"
+#include "SessionID.h"
 #include <wtf/Optional.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class HTTPHeaderMap;
+class ResourceRequest;
 class ResourceResponse;
 
 struct RedirectChainCacheStatus {
@@ -64,6 +68,9 @@ struct CacheControlDirectives {
     bool mustRevalidate { false };
 };
 WEBCORE_EXPORT CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap&);
+
+WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(const ResourceRequest&, const ResourceResponse&, SessionID = SessionID::defaultSessionID());
+WEBCORE_EXPORT bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&, SessionID = SessionID::defaultSessionID());
 
 }
 
