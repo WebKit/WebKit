@@ -1,0 +1,87 @@
+<head>
+    <meta name="viewport" content="width=device-width">
+    <title>This tests that an element clips its backdrop according to the border-radius property and correctly updates the clipping when the border-radius property changes.</title>
+    <style>
+
+    svg {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 200px;
+        height: 200px;
+        background-color: lightgray;
+    }
+
+    .backdrop {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        width: 160px;
+        height: 160px;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        -webkit-backdrop-filter: invert(100%);
+    }
+
+    .changed {
+        border-radius: 100%;
+    }
+
+    .stencil {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .stencil > div {
+        position: absolute;
+        background-color: black;
+    }
+
+    .stencil > div:nth-of-type(1) {
+        width: 200px;
+        height: 20px;
+    }
+
+    .stencil > div:nth-of-type(2) {
+        width: 160px;
+        height: 200px;
+    }
+
+    .stencil > div:nth-of-type(3) {
+        left: 180px;
+        width: 20px;
+        height: 200px;
+    }
+
+    .stencil > div:nth-of-type(4) {
+        top: 40px;
+        width: 200px;
+        height: 160px;
+    }
+
+    </style>
+</head>
+<svg viewbox="0 0 2 2">
+    <rect fill="black" x="0" y="0" width="1" height="1"></rect>
+    <rect fill="black" x="1" y="1" width="1" height="1"></rect>
+</svg>
+<div class="backdrop"></div>
+<div class="stencil">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+<script type="text/javascript">
+    
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    window.requestAnimationFrame(function() {
+        document.querySelector(".backdrop").classList.add("changed");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+    
+</script>

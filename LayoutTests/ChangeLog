@@ -1,3 +1,28 @@
+2016-06-07  Antoine Quint  <graouts@apple.com>
+
+        The backdrop-filter property does not respect border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=158483
+        <rdar://problem/24210257>
+
+        Reviewed by Simon Fraser.
+
+        Adding new tests checking that border-radius correctly affects clipping of the backdrop layer
+        in a basic scenario, when we change border-radius to a different value, when we set border-radius
+        back to 0 and when we add a reflection.
+
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add-expected.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-expected.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-remove-expected.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-remove.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-expected.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-value-change-expected.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-value-change.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-value-remove-expected.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-value-remove.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-border-radius.html: Added.
+
 2016-06-07  Sam Weinig  <sam@webkit.org>
 
         Update tests to work around https://bugs.webkit.org/show_bug.cgi?id=158507.

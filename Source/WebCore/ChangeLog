@@ -1,3 +1,39 @@
+2016-06-07  Antoine Quint  <graouts@apple.com>
+
+        The backdrop-filter property does not respect border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=158483
+        <rdar://problem/24210257>
+
+        Reviewed by Simon Fraser.
+
+        In order to correctly support border-radius and backdrop-filter together, we change
+        the value set as the m_backdropFiltersRect from a FloatRect to FloatRoundedRect so
+        that it accounts for values set by the border-radius property. Then we add a new
+        m_backdropClippingLayer PlatformCALayer member to clip the backdrop layer in the
+        event that the border-radius is non-zero in updateBackdropFiltersRect(). Finally,
+        we follow the same pattern used for other PlatformCALayers owned by a GraphicsLayerCA
+        to support cloning of the new m_backdropClippingLayer.
+
+        Tests: css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html
+               css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-remove.html
+               css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html
+               css3/filters/backdrop/backdrop-filter-with-border-radius-value-change.html
+               css3/filters/backdrop/backdrop-filter-with-border-radius-value-remove.html
+               css3/filters/backdrop/backdrop-filter-with-border-radius.html
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setBackdropFiltersRect):
+        (WebCore::GraphicsLayer::backdropFiltersRect):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::willBeDestroyed):
+        (WebCore::GraphicsLayerCA::setBackdropFiltersRect):
+        (WebCore::GraphicsLayerCA::updateBackdropFiltersRect):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateBackdropFiltersGeometry):
+        Use a rounded rect if there is no clip and we have non-zero border-radius set on the renderer.
+
 2016-06-07  Andreas Kling  <akling@apple.com>
 
         CachedScript should avoid recomputing its hash multiple times.
