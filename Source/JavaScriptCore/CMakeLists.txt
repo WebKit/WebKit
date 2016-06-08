@@ -76,6 +76,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirCCallingConvention.cpp
     b3/air/AirCode.cpp
     b3/air/AirCustom.cpp
+    b3/air/AirDumpAsJS.cpp
     b3/air/AirEliminateDeadCode.cpp
     b3/air/AirEmitShuffle.cpp
     b3/air/AirFixObviousSpills.cpp

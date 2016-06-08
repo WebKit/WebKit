@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,37 +22,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+"use strict";
 
-#include "config.h"
-#include "Reg.h"
-
-#if ENABLE(JIT)
-
-#include "FPRInfo.h"
-#include "GPRInfo.h"
-
-namespace JSC {
-
-const char* Reg::debugName() const
+function benchmark()
 {
-    if (!*this)
-        return nullptr;
-    if (isGPR())
-        return GPRInfo::debugName(gpr());
-    return FPRInfo::debugName(fpr());
+    const verbose = 0;
+    const numIterations = 200;
+    
+    let before = currentTime();
+    
+    var codeGenerators = [
+        createPayloadGbemuExecuteIteration,
+        createPayloadImagingGaussianBlurGaussianBlur,
+        createPayloadTypescriptScanIdentifier,
+        createPayloadJSAirACLj8C
+    ];
+    
+    for (let iteration = 0; iteration < numIterations; ++iteration) {
+        for (let generateCode of codeGenerators) {
+            let code = generateCode();
+            
+            if (verbose) {
+                print("Before allocateStack:");
+                print(code);
+            }
+            
+            allocateStack(code);
+            
+            if (verbose) {
+                print("After allocateStack:");
+                print(code);
+            }
+        }
+    }
+    
+    let after = currentTime();
+    return after - before;
 }
-
-void Reg::dump(PrintStream& out) const
-{
-    if (!*this)
-        out.print("<none>");
-    else if (isGPR())
-        out.print(gpr());
-    else
-        out.print(fpr());
-}
-
-} // namespace JSC
-
-#endif // ENABLE(JIT)
-

@@ -1,3 +1,16 @@
+2016-06-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Implement Air::allocateStack() in ES6 to see how much of a bad idea that is
+        https://bugs.webkit.org/show_bug.cgi?id=158318
+
+        Reviewed by Saam Barati.
+
+        * wtf/Insertion.h:
+        (WTF::executeInsertions): I found a bug while rewriting this code in JS.
+        * wtf/PrintStream.h:
+        (WTF::PrintStream::print):
+        (WTF::PrintStream::println): This is useful to have.
+
 2016-06-07  Keith Rollin  <krollin@apple.com>
 
         Remove all uses of PassRefPtr in WTF

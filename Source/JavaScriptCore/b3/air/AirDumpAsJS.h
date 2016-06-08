@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "Reg.h"
+#ifndef AirDumpAsJS_h
+#define AirDumpAsJS_h
 
-#if ENABLE(JIT)
+#if ENABLE(B3_JIT)
 
-#include "FPRInfo.h"
-#include "GPRInfo.h"
+#include <wtf/PrintStream.h>
 
-namespace JSC {
+namespace JSC { namespace B3 { namespace Air {
 
-const char* Reg::debugName() const
-{
-    if (!*this)
-        return nullptr;
-    if (isGPR())
-        return GPRInfo::debugName(gpr());
-    return FPRInfo::debugName(fpr());
-}
+class Code;
 
-void Reg::dump(PrintStream& out) const
-{
-    if (!*this)
-        out.print("<none>");
-    else if (isGPR())
-        out.print(gpr());
-    else
-        out.print(fpr());
-}
+// This is used for benchmarking. Various operations on Air are interesting from a benchmarking
+// standpoint. We can write some Air phases in JS and then use that to benchmark JS. The benchmark
+// is called JSAir, and it's in PerformanceTests/JSAir.
+void dumpAsJS(Code&, PrintStream&);
 
-} // namespace JSC
+} } } // namespace JSC::B3::Air
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(B3_JIT)
+
+#endif // AirDumpAsJS_h
 

@@ -688,7 +688,15 @@ public:
 
     bool isSomeImm() const
     {
-        return isImm() || isBigImm() || isBitImm() || isBitImm64();
+        switch (kind()) {
+        case Imm:
+        case BigImm:
+        case BitImm:
+        case BitImm64:
+            return true;
+        default:
+            return false;
+        }
     }
 
     bool isAddr() const
@@ -991,33 +999,6 @@ public:
     unsigned tmpIndex() const
     {
         return tmp().tmpIndex();
-    }
-
-    // If 'this' is an address Arg, then it returns a new address Arg with the additional offset applied.
-    // Note that this does not consider whether doing so produces a valid Arg or not. Unless you really
-    // know what you're doing, you should call Arg::isValidForm() on the result. Some code won't do that,
-    // like if you're applying a very small offset to a Arg::stack() that you know has no offset to begin
-    // with. It's safe to assume that all targets allow small offsets (like, 0..7) for Addr, Stack, and
-    // CallArg.
-    Arg withOffset(int64_t additionalOffset) const
-    {
-        if (!hasOffset())
-            return Arg();
-        if (sumOverflows<int64_t>(offset(), additionalOffset))
-            return Arg();
-        switch (kind()) {
-        case Addr:
-            return addr(base(), offset() + additionalOffset);
-        case Stack:
-            return stack(stackSlot(), offset() + additionalOffset);
-        case CallArg:
-            return callArg(offset() + additionalOffset);
-        case Index:
-            return index(base(), index(), scale(), offset() + additionalOffset);
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return Arg();
-        }
     }
 
     static bool isValidImmForm(int64_t value)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,37 +22,38 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+"use strict";
 
-#include "config.h"
-#include "Reg.h"
+class Tmp extends TmpBase {
+    constructor(index, type)
+    {
+        super();
+        this._index = index;
+        this._type = type;
+    }
+    
+    static fromReg(reg)
+    {
+        return reg;
+    }
+    
+    get index() { return this._index; }
+    get type() { return this._type; }
+    
+    get isReg() { return false; }
+    
+    toString()
+    {
+        return "%" + (this.isGP ? "" : "f") + "tmp" + this._index;
+    }
+    
+    static extract(arg)
+    {
+        if (arg.isTmp)
+            return arg.tmp;
+        return null;
+    }
 
-#if ENABLE(JIT)
-
-#include "FPRInfo.h"
-#include "GPRInfo.h"
-
-namespace JSC {
-
-const char* Reg::debugName() const
-{
-    if (!*this)
-        return nullptr;
-    if (isGPR())
-        return GPRInfo::debugName(gpr());
-    return FPRInfo::debugName(fpr());
+    static forEachFast(arg, func) { return arg.forEachTmpFast(func); }
+    static forEach(arg, role, type, width, func) { return arg.forEachTmp(role, type, width, func); }
 }
-
-void Reg::dump(PrintStream& out) const
-{
-    if (!*this)
-        out.print("<none>");
-    else if (isGPR())
-        out.print(gpr());
-    else
-        out.print(fpr());
-}
-
-} // namespace JSC
-
-#endif // ENABLE(JIT)
-

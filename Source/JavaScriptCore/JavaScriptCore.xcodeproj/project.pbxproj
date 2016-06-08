@@ -1983,6 +1983,8 @@
 		DC17E81A1C9C91E9008A6AB3 /* CCallHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC17E8161C9C802B008A6AB3 /* CCallHelpers.cpp */; };
 		DC2143071CA32E55000A8869 /* ICStats.h in Headers */ = {isa = PBXBuildFile; fileRef = DC2143061CA32E52000A8869 /* ICStats.h */; };
 		DC2143081CA32E58000A8869 /* ICStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC2143051CA32E52000A8869 /* ICStats.cpp */; };
+		DC454B8C1D00E822004C18AF /* AirDumpAsJS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC454B8A1D00E81F004C18AF /* AirDumpAsJS.cpp */; };
+		DC454B8D1D00E824004C18AF /* AirDumpAsJS.h in Headers */ = {isa = PBXBuildFile; fileRef = DC454B8B1D00E81F004C18AF /* AirDumpAsJS.h */; };
 		DC605B5D1CE26EA000593718 /* ProfilerEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC605B591CE26E9800593718 /* ProfilerEvent.cpp */; };
 		DC605B5E1CE26EA200593718 /* ProfilerEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DC605B5A1CE26E9800593718 /* ProfilerEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC605B5F1CE26EA500593718 /* ProfilerUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC605B5B1CE26E9800593718 /* ProfilerUID.cpp */; };
@@ -4197,6 +4199,8 @@
 		DC17E8161C9C802B008A6AB3 /* CCallHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCallHelpers.cpp; sourceTree = "<group>"; };
 		DC2143051CA32E52000A8869 /* ICStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ICStats.cpp; sourceTree = "<group>"; };
 		DC2143061CA32E52000A8869 /* ICStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICStats.h; sourceTree = "<group>"; };
+		DC454B8A1D00E81F004C18AF /* AirDumpAsJS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirDumpAsJS.cpp; path = b3/air/AirDumpAsJS.cpp; sourceTree = "<group>"; };
+		DC454B8B1D00E81F004C18AF /* AirDumpAsJS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirDumpAsJS.h; path = b3/air/AirDumpAsJS.h; sourceTree = "<group>"; };
 		DC605B591CE26E9800593718 /* ProfilerEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerEvent.cpp; path = profiler/ProfilerEvent.cpp; sourceTree = "<group>"; };
 		DC605B5A1CE26E9800593718 /* ProfilerEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerEvent.h; path = profiler/ProfilerEvent.h; sourceTree = "<group>"; };
 		DC605B5B1CE26E9800593718 /* ProfilerUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerUID.cpp; path = profiler/ProfilerUID.cpp; sourceTree = "<group>"; };
@@ -4821,6 +4825,8 @@
 				0FEC85511BDACDC70080FF74 /* AirCode.h */,
 				0F6183221C45BF070072450B /* AirCustom.cpp */,
 				0F10F1A21C420BF0001C07D2 /* AirCustom.h */,
+				DC454B8A1D00E81F004C18AF /* AirDumpAsJS.cpp */,
+				DC454B8B1D00E81F004C18AF /* AirDumpAsJS.h */,
 				0F4570361BE44C910062A629 /* AirEliminateDeadCode.cpp */,
 				0F4570371BE44C910062A629 /* AirEliminateDeadCode.h */,
 				0F6183231C45BF070072450B /* AirEmitShuffle.cpp */,
@@ -7022,6 +7028,7 @@
 				0FEC85061BDACDAC0080FF74 /* B3CheckSpecial.h in Headers */,
 				0FEC85081BDACDAC0080FF74 /* B3CheckValue.h in Headers */,
 				0FEC850A1BDACDAC0080FF74 /* B3Common.h in Headers */,
+				DC454B8D1D00E824004C18AF /* AirDumpAsJS.h in Headers */,
 				0FEC850C1BDACDAC0080FF74 /* B3Commutativity.h in Headers */,
 				0FEC850E1BDACDAC0080FF74 /* B3Const32Value.h in Headers */,
 				0FEC85101BDACDAC0080FF74 /* B3Const64Value.h in Headers */,
@@ -9106,6 +9113,7 @@
 				140566D6107EC271005DBC8D /* JSFunction.cpp in Sources */,
 				0F4A38F91C8E13DF00190318 /* SuperSampler.cpp in Sources */,
 				797E07A91B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp in Sources */,
+				DC454B8C1D00E822004C18AF /* AirDumpAsJS.cpp in Sources */,
 				147F39D2107EC37600427A48 /* JSGlobalObject.cpp in Sources */,
 				A5FD0085189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp in Sources */,
 				A5C3A1A518C0490200C9593A /* JSGlobalObjectConsoleClient.cpp in Sources */,

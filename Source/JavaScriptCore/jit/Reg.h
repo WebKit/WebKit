@@ -172,6 +172,8 @@ public:
         return m_index;
     }
     
+    const char* debugName() const;
+    
     void dump(PrintStream&) const;
 
     class AllRegsIterable {

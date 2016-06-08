@@ -36,65 +36,13 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-template<typename T> struct ForEach;
-template<> struct ForEach<Tmp> {
-    template<typename Functor>
-    static void forEach(Inst& inst, const Functor& functor)
-    {
-        inst.forEachTmp(functor);
-    }
-};
-
-template<> struct ForEach<Arg> {
-    template<typename Functor>
-    static void forEach(Inst& inst, const Functor& functor)
-    {
-        inst.forEachArg(functor);
-    }
-};
-
-template<> struct ForEach<StackSlot*> {
-    template<typename Functor>
-    static void forEach(Inst& inst, const Functor& functor)
-    {
-        inst.forEachArg(
-            [&] (Arg& arg, Arg::Role role, Arg::Type type, Arg::Width width) {
-                if (!arg.isStack())
-                    return;
-                StackSlot* stackSlot = arg.stackSlot();
-
-                // FIXME: This is way too optimistic about the meaning of "Def". It gets lucky for
-                // now because our only use of "Anonymous" stack slots happens to want the optimistic
-                // semantics. We could fix this by just changing the comments that describe the
-                // semantics of "Anonymous".
-                // https://bugs.webkit.org/show_bug.cgi?id=151128
-                
-                functor(stackSlot, role, type, width);
-                arg = Arg::stack(stackSlot, arg.offset());
-            });
-    }
-};
-
-template<> struct ForEach<Reg> {
-    template<typename Functor>
-    static void forEach(Inst& inst, const Functor& functor)
-    {
-        inst.forEachTmp(
-            [&] (Tmp& tmp, Arg::Role role, Arg::Type type, Arg::Width width) {
-                if (!tmp.isReg())
-                    return;
-
-                Reg reg = tmp.reg();
-                functor(reg, role, type, width);
-                tmp = Tmp(reg);
-            });
-    }
-};
-
 template<typename Thing, typename Functor>
 void Inst::forEach(const Functor& functor)
 {
-    ForEach<Thing>::forEach(*this, functor);
+    forEachArg(
+        [&] (Arg& arg, Arg::Role role, Arg::Type type, Arg::Width width) {
+            arg.forEach<Thing>(role, type, width, functor);
+        });
 }
 
 inline const RegisterSet& Inst::extraClobberedRegs()

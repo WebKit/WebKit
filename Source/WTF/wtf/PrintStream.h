@@ -70,6 +70,13 @@ public:
         printInternal(*this, value);
         print(remainingValues...);
     }
+    
+    template<typename... Types>
+    void println(const Types&... values)
+    {
+        print(values...);
+        print("\n");
+    }
 };
 
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const char*);

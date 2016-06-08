@@ -1994,8 +1994,25 @@ int main(int argc, char** argv)
 static void dumpException(GlobalObject* globalObject, JSValue exception)
 {
     printf("Exception: %s\n", exception.toWTFString(globalObject->globalExec()).utf8().data());
+
+    Identifier nameID = Identifier::fromString(globalObject->globalExec(), "name");
+    Identifier fileNameID = Identifier::fromString(globalObject->globalExec(), "sourceURL");
+    Identifier lineNumberID = Identifier::fromString(globalObject->globalExec(), "line");
     Identifier stackID = Identifier::fromString(globalObject->globalExec(), "stack");
+    
+    JSValue nameValue = exception.get(globalObject->globalExec(), nameID);
+    JSValue fileNameValue = exception.get(globalObject->globalExec(), fileNameID);
+    JSValue lineNumberValue = exception.get(globalObject->globalExec(), lineNumberID);
     JSValue stackValue = exception.get(globalObject->globalExec(), stackID);
+    
+    if (nameValue.toWTFString(globalObject->globalExec()) == "SyntaxError"
+        && (!fileNameValue.isUndefinedOrNull() || !lineNumberValue.isUndefinedOrNull())) {
+        printf(
+            "at %s:%s\n",
+            fileNameValue.toWTFString(globalObject->globalExec()).utf8().data(),
+            lineNumberValue.toWTFString(globalObject->globalExec()).utf8().data());
+    }
+    
     if (!stackValue.isUndefinedOrNull())
         printf("%s\n", stackValue.toWTFString(globalObject->globalExec()).utf8().data());
 }

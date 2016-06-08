@@ -30,6 +30,7 @@
 
 #include "AirAllocateStack.h"
 #include "AirCode.h"
+#include "AirDumpAsJS.h"
 #include "AirEliminateDeadCode.h"
 #include "AirFixObviousSpills.h"
 #include "AirFixPartialRegisterStalls.h"
@@ -102,11 +103,21 @@ void prepareForGeneration(Code& code)
     // Prior to this point the prologue and epilogue is implicit. This makes it explicit. It also
     // does things like identify which callee-saves we're using and saves them.
     handleCalleeSaves(code);
+    
+    if (Options::dumpAirAsJSBeforeAllocateStack()) {
+        dataLog("Dumping Air as JS before allocateStack:\n");
+        dumpAsJS(code, WTF::dataFile());
+    }
 
     // This turns all Stack and CallArg Args into Addr args that use the frame pointer. It does
     // this by first-fit allocating stack slots. It should be pretty darn close to optimal, so we
     // shouldn't have to worry about this very much.
     allocateStack(code);
+    
+    if (Options::dumpAirAfterAllocateStack()) {
+        dataLog("Dumping Air after allocateStack:\n");
+        dataLog(code);
+    }
 
     // If we coalesced moves then we can unbreak critical edges. This is the main reason for this
     // phase.

@@ -1,3 +1,308 @@
+2016-06-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Implement Air::allocateStack() in ES6 to see how much of a bad idea that is
+        https://bugs.webkit.org/show_bug.cgi?id=158318
+
+        Reviewed by Saam Barati.
+        
+        This adds a new benchmark for us to play with called JSAir. It's a complete ES6
+        implementation of Air's allocateStack() phase along with all of Air needed to run that
+        phase. This includes things like stack slots, registers, temporaries, basic blocks,
+        instructions, and all of the code for iterating over, inspecting, and modifying those
+        things.
+        
+        To make this work, JSC can now dump Air just before allocateStack() in the form of JS code
+        that creates a Code object that matches exactly what C++ Air saw. This benchmark comprises
+        four Air IRs:
+        
+        - Octane/gbemu's largest function, executeIteration.
+        - Kraken/imaging-gaussian-blur's largest function in OSR entry mode, gaussuanBlur.
+        - Octane/typescript's largest function that is actually hot, scanIdentifier.
+        - JSAir's largest hot function, which is anonymous, so we call it by its hash (ACLj8C).
+        
+        This runs in about 2 seconds on my machine in JSC trunk. It includes both a commandline
+        harness and a web harness. JSAir is almost exactly 100x slower in ES6 in WebKit than the
+        C++ Air::allocateStack() phase on which it is based.
+        
+        JSAir uses the following ES6 features:
+        
+        - Symbol.
+        - for-of.
+        - arrow functions.
+        - Map/Set.
+        - let/const.
+        - classes.
+        
+        All of these things are used in anger and should end up on the hot path. There is also code
+        that uses Proxies, but it ends up being dead.
+        
+        We can improve this even more:
+        I still need to add result validation: https://bugs.webkit.org/show_bug.cgi?id=158493
+        I want to make it use more ES6 features: https://bugs.webkit.org/show_bug.cgi?id=158497
+        
+        * JSAir: Added.
+        * JSAir/all.js: Added.
+        * JSAir/allocate_stack.js: Added.
+        (allocateStack.attemptAssignment):
+        (allocateStack.assign):
+        (allocateStack.interfere):
+        (allocateStack.):
+        (allocateStack):
+        * JSAir/arg.js: Added.
+        (Arg):
+        (Arg.isAnyUse):
+        (Arg.isColdUse):
+        (Arg.isWarmUse):
+        (Arg.cooled):
+        (Arg.isEarlyUse):
+        (Arg.isLateUse):
+        (Arg.isAnyDef):
+        (Arg.isEarlyDef):
+        (Arg.isLateDef):
+        (Arg.isZDef):
+        (Arg.typeForB3Type):
+        (Arg.widthForB3Type):
+        (Arg.conservativeWidth):
+        (Arg.minimumWidth):
+        (Arg.bytes):
+        (Arg.widthForBytes):
+        (Arg.createTmp):
+        (Arg.fromReg):
+        (Arg.createImm):
+        (Arg.createBigImm):
+        (Arg.createBitImm):
+        (Arg.createBitImm64):
+        (Arg.createAddr):
+        (Arg.createStack):
+        (Arg.createCallArg):
+        (Arg.createStackAddr):
+        (Arg.isValidScale):
+        (Arg.logScale):
+        (Arg.createIndex):
+        (Arg.createRelCond):
+        (Arg.createResCond):
+        (Arg.createDoubleCond):
+        (Arg.createWidth):
+        (Arg.prototype.get kind):
+        (Arg.prototype.get isTmp):
+        (Arg.prototype.get isImm):
+        (Arg.prototype.get isBigImm):
+        (Arg.prototype.get isBitImm):
+        (Arg.prototype.get isBitImm64):
+        (Arg.prototype.get isSomeImm):
+        (Arg.prototype.get isAddr):
+        (Arg.prototype.get isStack):
+        (Arg.prototype.get isCallArg):
+        (Arg.prototype.get isIndex):
+        (Arg.prototype.get isMemory):
+        (Arg.prototype.get isStackMemory):
+        (Arg.prototype.get isRelCond):
+        (Arg.prototype.get isResCond):
+        (Arg.prototype.get isDoubleCond):
+        (Arg.prototype.get isCondition):
+        (Arg.prototype.get isWidth):
+        (Arg.prototype.get isAlive):
+        (Arg.prototype.get tmp):
+        (Arg.prototype.get value):
+        (Arg.prototype.get base):
+        (Arg.prototype.get hasOffset):
+        (Arg.prototype.get offset):
+        (Arg.prototype.get stackSlot):
+        (Arg.prototype.get index):
+        (Arg.prototype.get scale):
+        (Arg.prototype.get logScale):
+        (Arg.prototype.get width):
+        (Arg.prototype.get isGPTmp):
+        (Arg.prototype.get isFPTmp):
+        (Arg.prototype.get isGP):
+        (Arg.prototype.get isFP):
+        (Arg.prototype.get hasType):
+        (Arg.prototype.get type):
+        (Arg.prototype.isType):
+        (Arg.prototype.isCompatibleType):
+        (Arg.prototype.get isGPR):
+        (Arg.prototype.get gpr):
+        (Arg.prototype.get isFPR):
+        (Arg.prototype.get fpr):
+        (Arg.prototype.get isReg):
+        (Arg.prototype.get reg):
+        (Arg.isValidImmForm):
+        (Arg.isValidBitImmForm):
+        (Arg.isValidBitImm64Form):
+        (Arg.isValidAddrForm):
+        (Arg.isValidIndexForm):
+        (Arg.prototype.isValidForm):
+        (Arg.prototype.forEachTmpFast):
+        (Arg.prototype.usesTmp):
+        (Arg.prototype.forEachTmp):
+        (Arg.prototype.is):
+        (Arg.prototype.as):
+        (Arg.prototype.forEachFast):
+        (Arg.prototype.forEach):
+        (Arg.extract):
+        (Arg.forEachFast):
+        (Arg.forEach):
+        (Arg.prototype.get condition):
+        (Arg.prototype.get isInvertible):
+        (Arg.prototype.toString):
+        * JSAir/basic_block.js: Added.
+        (BasicBlock):
+        (BasicBlock.prototype.get index):
+        (BasicBlock.prototype.get size):
+        (BasicBlock.prototype.Symbol.iterator):
+        (BasicBlock.prototype.at):
+        (BasicBlock.get last):
+        (BasicBlock.get insts):
+        (BasicBlock.get numSuccessors):
+        (BasicBlock.get successors):
+        (BasicBlock.get successorBlocks.):
+        (BasicBlock.get successorBlocks):
+        (BasicBlock.set get numPredecessors):
+        (BasicBlock.get predecessors):
+        (BasicBlock.get frequency):
+        (BasicBlock.get headerString):
+        (BasicBlock.get footerString):
+        * JSAir/benchmark.js: Added.
+        (benchmark):
+        * JSAir/code.js: Added.
+        (Code):
+        (Code.prototype.addBlock):
+        (Code.prototype.addStackSlot):
+        (Code.prototype.newTmp):
+        (Code.prototype.get size):
+        (Code.prototype.at):
+        (Code.prototype.Symbol.iterator):
+        (Code.prototype.get blocks):
+        (Code.prototype.get stackSlots):
+        (Code.prototype.tmps):
+        (Code.prototype.get callArgAreaSize):
+        (Code.prototype.requestCallArgAreaSize):
+        (Code.prototype.get frameSize):
+        (Code.prototype.setFrameSize):
+        (Code.prototype.toString):
+        * JSAir/custom.js: Added.
+        (const.ShuffleCustom.forEachArg):
+        (const.ShuffleCustom.hasNonArgNonControlEffects):
+        (const.PatchCustom.forEachArg):
+        (const.PatchCustom.hasNonArgNonControlEffects):
+        (const.CCallCustom.forEachArg):
+        (const.CCallCustom.hasNonArgNonControlEffects):
+        (const.ColdCCallCustom.forEachArg):
+        (const.ColdCCallCustom.hasNonArgNonControlEffects):
+        * JSAir/frequented_block.js: Added.
+        (FrequentedBlock):
+        (FrequentedBlock.prototype.toString):
+        * JSAir/insertion_set.js: Added.
+        (Insertion):
+        (Insertion.prototype.get index):
+        (Insertion.prototype.get element):
+        (Insertion.prototype.lessThan):
+        (InsertionSet):
+        (InsertionSet.prototype.appendInsertion):
+        (InsertionSet.prototype.append):
+        (InsertionSet.prototype.execute):
+        * JSAir/inst.js: Added.
+        (Inst):
+        (Inst.prototype.append):
+        (Inst.prototype.clear):
+        (Inst.prototype.get opcode):
+        (Inst.prototype.get args):
+        (Inst.prototype.visitArg):
+        (Inst.prototype.forEachTmpFast):
+        (Inst.prototype.forEachArg):
+        (Inst.prototype.forEachTmp):
+        (Inst.prototype.forEach):
+        (Inst.forEachDef):
+        (Inst.forEachDefWithExtraClobberedRegs):
+        (Inst.prototype.get hasNonArgEffects):
+        (Inst.prototype.toString):
+        * JSAir/liveness.js: Added.
+        (Liveness):
+        (Liveness.prototype.get thing):
+        (Liveness.prototype.get code):
+        (Liveness.prototype.get liveAtHead):
+        (Liveness.prototype.get liveAtTail):
+        (Liveness.prototype.localCalc.LocalCalc):
+        (Liveness.prototype.localCalc.LocalCalc.prototype.get liveSet):
+        (Liveness.prototype.localCalc.LocalCalc.prototype.execute):
+        (Liveness.prototype.localCalc):
+        * JSAir/opcode.js: Added.
+        (Inst_forEachArg):
+        (Inst_hasNonArgEffects):
+        * JSAir/payload-gbemu-executeIteration.js: Added.
+        (createPayloadGbemuExecuteIteration):
+        * JSAir/payload-imaging-gaussian-blur-gaussianBlur.js: Added.
+        (createPayloadImagingGaussianBlurGaussianBlur):
+        * JSAir/payload-jsair-ACLj8C.js: Added.
+        (createPayloadJSAirACLj8C):
+        * JSAir/payload-typescript-scanIdentifier.js: Added.
+        (createPayloadTypescriptScanIdentifier):
+        * JSAir/reg.js: Added.
+        (Reg):
+        (Reg.fromReg):
+        (Reg.prototype.get index):
+        (Reg.prototype.get type):
+        (Reg.prototype.get name):
+        (Reg.prototype.get isCalleeSave):
+        (Reg.prototype.get isReg):
+        (Reg.prototype.toString):
+        (Reg.extract):
+        (Reg.forEachFast):
+        (Reg.forEach):
+        (newGPR):
+        (Reg.gprs.Reg.fprs.Reg.calleeSaveGPRs.Reg.calleeSaveFPRs.Reg.calleeSaves):
+        * JSAir/stack_slot.js: Added.
+        (StackSlot):
+        (StackSlot.prototype.get byteSize):
+        (StackSlot.prototype.get kind):
+        (StackSlot.prototype.get isLocked):
+        (StackSlot.prototype.get isSpill):
+        (StackSlot.prototype.get index):
+        (StackSlot.prototype.ensureSize):
+        (StackSlot.prototype.get alignment):
+        (StackSlot.prototype.get offsetFromFP):
+        (StackSlot.prototype.setOffsetFromFP):
+        (StackSlot.prototype.toString):
+        (StackSlot.extract):
+        (StackSlot.forEachFast):
+        (StackSlot.forEach):
+        * JSAir/symbols.js: Added.
+        * JSAir/test.html: Added.
+        * JSAir/test.js: Added.
+        * JSAir/tmp.js: Added.
+        (Tmp):
+        (Tmp.fromReg):
+        (Tmp.prototype.get index):
+        (Tmp.prototype.get type):
+        (Tmp.prototype.get isReg):
+        (Tmp.prototype.toString):
+        (Tmp.extract):
+        (Tmp.forEachFast):
+        (Tmp.forEach):
+        * JSAir/tmp_base.js: Added.
+        (TmpBase.prototype.get isGP):
+        (TmpBase.prototype.get isFP):
+        (TmpBase.prototype.get isGPR):
+        (TmpBase.prototype.get isFPR):
+        (TmpBase.prototype.get reg):
+        (TmpBase.prototype.get gpr):
+        (TmpBase.prototype.get fpr):
+        (TmpBase):
+        * JSAir/util.js: Added.
+        (isRepresentableAsInt32):
+        (addIndexed):
+        (roundUpToMultipleOf):
+        (symbolName):
+        (mergeIntoSet):
+        (nonEmptyRangesOverlap):
+        (rangesOverlap):
+        (removeAllMatching):
+        (swap):
+        (bubble):
+        (bubbleSort):
+        (currentTime):
+        (else.currentTime):
+
 2016-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Allow JSBench to use precise time

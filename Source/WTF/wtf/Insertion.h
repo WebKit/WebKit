@@ -60,12 +60,12 @@ size_t executeInsertions(TargetVectorType& target, InsertionVectorType& insertio
     size_t numInsertions = insertions.size();
     if (!numInsertions)
         return 0;
+    size_t originalTargetSize = target.size();
     target.grow(target.size() + numInsertions);
     size_t lastIndex = target.size();
-    size_t originalTargetSize = target.size();
     for (size_t indexInInsertions = numInsertions; indexInInsertions--;) {
         ASSERT(!indexInInsertions || insertions[indexInInsertions].index() >= insertions[indexInInsertions - 1].index());
-        ASSERT_UNUSED(originalTargetSize, insertions[indexInInsertions].index() < originalTargetSize);
+        ASSERT_UNUSED(originalTargetSize, insertions[indexInInsertions].index() <= originalTargetSize);
         size_t firstIndex = insertions[indexInInsertions].index() + indexInInsertions;
         size_t indexOffset = indexInInsertions + 1;
         for (size_t i = lastIndex; --i > firstIndex;)

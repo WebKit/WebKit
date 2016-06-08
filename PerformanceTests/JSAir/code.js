@@ -1,0 +1,99 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+"use strict";
+
+class Code {
+    constructor()
+    {
+        this._blocks = [];
+        this._stackSlots = [];
+        this._gpTmps = [];
+        this._fpTmps = [];
+        this._callArgAreaSize = 0;
+        this._frameSize = 0;
+    }
+    
+    addBlock(frequency)
+    {
+        if (frequency == null)
+            frequency = 1;
+        let result = addIndexed(this._blocks, BasicBlock, frequency);
+        return result;
+    }
+    
+    addStackSlot(byteSize, kind)
+    {
+        let result = addIndexed(this._stackSlots, StackSlot, byteSize, kind);
+        return result;
+    }
+    
+    newTmp(type)
+    {
+        let result = addIndexed(this["_" + symbolName(type).toLowerCase() + "Tmps"], Tmp, type);
+        return result;
+    }
+    
+    get size() { return this._blocks.length; }
+    at(index) { return this._blocks[index]; }
+    
+    [Symbol.iterator]()
+    {
+        return this._blocks[Symbol.iterator]();
+    }
+    
+    get blocks() { return this._blocks; }
+    get stackSlots() { return this._stackSlots; }
+    
+    tmps(type) { return this["_" + symbolName(type).toLowerCase() + "Tmps"]; }
+    
+    get callArgAreaSize() { return this._callArgAreaSize; }
+    
+    requestCallArgAreaSize(size)
+    {
+        this._callArgAreaSize = Math.max(this._callArgAreaSize, roundUpToMultipleOf(stackAlignmentBytes, size));
+    }
+    
+    get frameSize() { return this._frameSize; }
+    
+    setFrameSize(frameSize) { this._frameSize = frameSize; }
+    
+    toString()
+    {
+        let result = "";
+        for (let block of this) {
+            result += block.toStringDeep();
+        }
+        if (this.stackSlots.length) {
+            result += "Stack slots:\n";
+            for (let slot of this.stackSlots)
+                result += "    " + slot + "\n";
+        }
+        if (this._frameSize)
+            result += "Frame size: " + this._frameSize + "\n";
+        if (this._callArgAreaSize)
+            result += "Call arg area size: " + this._callArgAreaSize + "\n";
+        return result;
+    }
+}

@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirArgInlines.h"
 #include "AirCode.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"

@@ -1,3 +1,56 @@
+2016-06-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Implement Air::allocateStack() in ES6 to see how much of a bad idea that is
+        https://bugs.webkit.org/show_bug.cgi?id=158318
+
+        Reviewed by Saam Barati.
+        
+        Most of these changes are to support dumpAsJS(). But I also found some duplicate and dead
+        code while rewriting it to JS.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirAllocateStack.cpp:
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isSomeImm):
+        (JSC::B3::Air::Arg::isAddr):
+        (JSC::B3::Air::Arg::tmpIndex):
+        (JSC::B3::Air::Arg::isValidImmForm):
+        (JSC::B3::Air::Arg::withOffset): Deleted. This was dead code.
+        * b3/air/AirArgInlines.h: It turns out that Inst has a ForEach thing that duplicated some of the logic of ArgThingHelper, so I just made ArgThingHelper more powerful.
+        (JSC::B3::Air::ArgThingHelper<Arg>::forEach):
+        (JSC::B3::Air::ArgThingHelper<Reg>::is):
+        (JSC::B3::Air::ArgThingHelper<Reg>::as):
+        (JSC::B3::Air::ArgThingHelper<Reg>::forEachFast):
+        (JSC::B3::Air::ArgThingHelper<Reg>::forEach):
+        (JSC::B3::Air::Arg::is):
+        * b3/air/AirDumpAsJS.cpp: Added.
+        (JSC::B3::Air::dumpAsJS):
+        * b3/air/AirDumpAsJS.h: Added.
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::forEach):
+        (JSC::B3::Air::Inst::extraClobberedRegs):
+        (JSC::B3::Air::ForEach<Tmp>::forEach): Deleted. This was doing what ArgThingHelper would have done but not as well.
+        (JSC::B3::Air::ForEach<Arg>::forEach): Deleted.
+        (JSC::B3::Air::ForEach<Reg>::forEach): Deleted.
+        * b3/air/AirLogRegisterPressure.cpp:
+        * b3/air/AirReportUsedRegisters.cpp:
+        * b3/air/AirSpillEverything.cpp:
+        * b3/air/opcode_generator.rb: Make this dump opcode.js, which is like what it dumps for C++.
+        * jit/Reg.cpp:
+        (JSC::Reg::debugName):
+        (JSC::Reg::dump):
+        * jit/Reg.h:
+        (JSC::Reg::hash):
+        * jsc.cpp: Fix jsc so that it reports the filename and line number of parser errors.
+        (dumpException):
+        * parser/ParserError.h: Make it easier to debug this code.
+        (WTF::printInternal):
+        * runtime/Options.h:
+
 2016-06-07  Keith Rollin  <krollin@apple.com>
 
         Remove all uses of PassRefPtr in WTF

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,37 +22,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+"use strict";
 
-#include "config.h"
-#include "Reg.h"
+class TmpBase {
+    get isGP() { return this.type == GP; }
+    get isFP() { return this.type == FP; }
+    
+    get isGPR() { return this.isReg && this.isGP; }
+    get isFPR() { return this.isReg && this.isFP; }
+    
+    get reg()
+    {
+        if (!this.isReg)
+            throw new Error("Called .reg on non-Reg");
+        return this;
+    }
 
-#if ENABLE(JIT)
-
-#include "FPRInfo.h"
-#include "GPRInfo.h"
-
-namespace JSC {
-
-const char* Reg::debugName() const
-{
-    if (!*this)
-        return nullptr;
-    if (isGPR())
-        return GPRInfo::debugName(gpr());
-    return FPRInfo::debugName(fpr());
+    get gpr()
+    {
+        if (!this.isGPR)
+            throw new Error("Called .gpr on non-GPR");
+        return this;
+    }
+    
+    get fpr()
+    {
+        if (!this.isFPR)
+            throw new Error("Called .fpr on non-FPR");
+        return this;
+    }
 }
-
-void Reg::dump(PrintStream& out) const
-{
-    if (!*this)
-        out.print("<none>");
-    else if (isGPR())
-        out.print(gpr());
-    else
-        out.print(fpr());
-}
-
-} // namespace JSC
-
-#endif // ENABLE(JIT)
 
