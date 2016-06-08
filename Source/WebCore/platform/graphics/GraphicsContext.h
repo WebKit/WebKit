@@ -395,8 +395,8 @@ public:
     FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides);
 
     FloatRect computeUnderlineBoundsForText(const FloatPoint&, float width, bool printing);
-    WEBCORE_EXPORT void drawLineForText(const FloatPoint&, float width, bool printing, bool doubleLines = false);
-    void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing, bool doubleLines = false);
+    WEBCORE_EXPORT void drawLineForText(const FloatPoint&, float width, bool printing, bool doubleLines = false, StrokeStyle = SolidStroke);
+    void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing, bool doubleLines = false, StrokeStyle = SolidStroke);
     enum DocumentMarkerLineStyle {
 #if PLATFORM(IOS)
         TextCheckingDictationPhraseWithAlternativesLineStyle,

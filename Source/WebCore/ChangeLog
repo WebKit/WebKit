@@ -1,3 +1,35 @@
+2016-06-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text-decoration-style: dashed / dotted rendered as solid
+        https://bugs.webkit.org/show_bug.cgi?id=134336
+
+        Reviewed by Dean Jackson.
+
+        We already had most of the infrastructure for dotted / dashed underlines.
+        Previously, we were setting the stroke style for the underlines, but then
+        filling the underlines (which means the stroke styles is irrelevant).
+        Instead, we should just compute the individual dots / dashes to fill.
+
+        The implementation of this is done inside GraphicsContext because
+        GraphicsContext is already responsible for handling the single / double
+        underline distinction. Extending it to be responsible for dotted / dashed
+        is the natural thing to do.
+
+        Tests: fast/css3-text/css3-text-decoration/text-decoration-dashed.html
+               fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html
+               fast/css3-text/css3-text-decoration/text-decoration-dotted.html
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLinesForText):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLinesForText):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::drawSkipInkUnderline):
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+
 2016-06-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: Need to expose whether object is a dialog element
