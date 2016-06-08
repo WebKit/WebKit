@@ -115,9 +115,9 @@ JSTestGlobalObject::JSTestGlobalObject(Structure* structure, JSDOMGlobalObject& 
 {
 }
 
-void JSTestGlobalObject::finishCreation(VM& vm)
+void JSTestGlobalObject::finishCreation(VM& vm, JSProxy* proxy)
 {
-    Base::finishCreation(vm);
+    Base::finishCreation(vm, proxy);
 
 #if ENABLE(TEST_FEATURE)
     if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {

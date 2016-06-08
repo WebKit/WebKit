@@ -1,3 +1,13 @@
+2016-06-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline bindings tests after r201808
+
+        Unreviewed test gardening.
+
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::JSTestGlobalObject::finishCreation):
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+
 2016-06-08  Lucas Forschler  <lforschler@apple.com>
 
         Teach cmake about libWebKitSystemInterfaceOSX10.12
