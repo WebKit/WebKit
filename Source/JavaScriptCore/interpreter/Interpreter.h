@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013, 2015-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,23 +85,16 @@ namespace JSC {
 
     struct StackFrame {
         Strong<JSObject> callee;
-        StackFrameCodeType codeType;
-        Strong<ScriptExecutable> executable;
-        Strong<UnlinkedCodeBlock> codeBlock;
-        RefPtr<SourceProvider> code;
-        int lineOffset;
-        unsigned firstLineColumnOffset;
-        unsigned characterOffset;
+        Strong<CodeBlock> codeBlock;
         unsigned bytecodeOffset;
-        String sourceURL;
-        intptr_t sourceID;
-        String toString(VM&);
-        String friendlySourceURL() const;
-        String friendlyFunctionName(VM&) const;
-        JS_EXPORT_PRIVATE void computeLineAndColumn(unsigned& line, unsigned& column);
 
-    private:
-        void expressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column);
+        bool isNative() const { return !codeBlock; }
+
+        void computeLineAndColumn(unsigned& line, unsigned& column);
+        String functionName(VM&) const;
+        intptr_t sourceID() const;
+        String sourceURL() const;
+        String toString(VM&);
     };
 
     class SuspendExceptionScope {

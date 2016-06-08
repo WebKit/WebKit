@@ -143,8 +143,8 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
         unsigned line;
         unsigned column;
         stackTrace[i].computeLineAndColumn(line, column);
-        String functionName = stackTrace[i].friendlyFunctionName(vm);
-        frames.append(ScriptCallFrame(functionName, stackTrace[i].friendlySourceURL(), static_cast<SourceID>(stackTrace[i].sourceID), line, column));
+        String functionName = stackTrace[i].functionName(vm);
+        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL(), static_cast<SourceID>(stackTrace[i].sourceID()), line, column));
     }
 
     // Fallback to getting at least the line and sourceURL from the exception object if it has values and the exceptionStack doesn't.
@@ -158,10 +158,10 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
             extractSourceInformationFromException(exec, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL);
             frames.append(ScriptCallFrame(String(), exceptionSourceURL, noSourceID, lineNumber, columnNumber));
         } else {
-            if (stackTrace[0].sourceURL.isEmpty()) {
+            if (stackTrace[0].isNative() || stackTrace[0].sourceURL().isEmpty()) {
                 const ScriptCallFrame& firstCallFrame = frames.first();
                 extractSourceInformationFromException(exec, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL);
-                frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, stackTrace[0].sourceID, lineNumber, columnNumber);
+                frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, stackTrace[0].sourceID(), lineNumber, columnNumber);
             }
         }
     }

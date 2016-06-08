@@ -1,3 +1,64 @@
+2016-06-08  Mark Lam  <mark.lam@apple.com>
+
+        Simplify Interpreter::StackFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=158498
+
+        Reviewed by Saam Barati.
+
+        Previously, Interpreter::StackFrame (which is used to capture info for
+        Error.stack) eagerly extracts info out of CodeBlock and duplicates the work that
+        CodeBlock does to compute line and column numbers (amongst other things).
+
+        This patch does away with the eager extraction and only stashes the CodeBlock
+        pointer in the Interpreter::StackFrame.  Instead, Interpreter::StackFrame will
+        provide methods for computing the desired values on request later.
+
+        One difference in implementation: the old StackFrame offers a sourceURL and a
+        friendlySourceURL().  The only difference between the 2 is that for native
+        functions, sourceURL returns an empty string, and friendlySourceURL() returns
+        "[native code]".  This is how it affects the clients of StackFrame:
+
+            - In the old code, the Error object's addErrorInfoAndGetBytecodeOffset() and
+              the inspector's createScriptCallStackFromException() would check if
+              sourceURL is empty.  If so, they will use this as an indicator to use
+              alternate source info in the Error object e.g. url and line numbers from
+              the parser that produced a SyntaxError.
+
+            - In the new implementation, StackFrame only has a sourceURL() function that
+              behaves like the old friendlySourceURL().  The client code which were
+              relying on sourceURL being empty, will now explicitly check if the
+              StackFrame is for native code using a new isNative() query in addition to
+              the sourceURL being empty.  This achieve functional parity with the old
+              behavior.
+
+        Also fix Error.cpp's addErrorInfoAndGetBytecodeOffset() to take a bytecodeOffset
+        pointer instead of a reference.  The bytecodeOffset arg is supposed to be
+        optional, but was implemented in a unclear way.  This change clarifies it.
+
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStackFromException):
+        * interpreter/Interpreter.cpp:
+        (JSC::StackFrame::sourceID):
+        (JSC::StackFrame::sourceURL):
+        (JSC::StackFrame::functionName):
+        (JSC::eval):
+        (JSC::Interpreter::isOpcode):
+        (JSC::StackFrame::computeLineAndColumn):
+        (JSC::StackFrame::toString):
+        (JSC::GetStackTraceFunctor::operator()):
+        (JSC::StackFrame::friendlySourceURL): Deleted.
+        (JSC::StackFrame::friendlyFunctionName): Deleted.
+        (JSC::getStackFrameCodeType): Deleted.
+        (JSC::StackFrame::expressionInfo): Deleted.
+        * interpreter/Interpreter.h:
+        (JSC::StackFrame::isNative):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfoAndGetBytecodeOffset):
+        (JSC::addErrorInfo):
+        * runtime/Error.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+
 2016-06-08  Keith Miller  <keith_miller@apple.com>
 
         We should be able to lookup symbols by identifier in builtins

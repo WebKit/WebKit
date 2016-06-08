@@ -63,7 +63,7 @@ JS_EXPORT_PRIVATE JSObject* createURIError(ExecState*, const String&);
 JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(ExecState*);
 
 
-bool addErrorInfoAndGetBytecodeOffset(ExecState*, VM&, JSObject*, bool, CallFrame*&, unsigned&);
+bool addErrorInfoAndGetBytecodeOffset(ExecState*, VM&, JSObject*, bool, CallFrame*&, unsigned* = nullptr);
 
 bool hasErrorInfo(ExecState*, JSObject* error);
 JS_EXPORT_PRIVATE void addErrorInfo(ExecState*, JSObject*, bool); 

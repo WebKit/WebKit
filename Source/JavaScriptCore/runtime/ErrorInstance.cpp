@@ -142,9 +142,9 @@ void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& messag
     if (!message.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(&vm, message), DontEnum);
 
-    unsigned bytecodeOffset = hasSourceAppender();
+    unsigned bytecodeOffset = 0;
     CallFrame* callFrame = nullptr;
-    bool hasTrace = addErrorInfoAndGetBytecodeOffset(exec, vm, this, useCurrentFrame, callFrame, bytecodeOffset);
+    bool hasTrace = addErrorInfoAndGetBytecodeOffset(exec, vm, this, useCurrentFrame, callFrame, hasSourceAppender() ? &bytecodeOffset : nullptr);
 
     if (hasTrace && callFrame && hasSourceAppender()) {
         if (callFrame && callFrame->codeBlock()) 
