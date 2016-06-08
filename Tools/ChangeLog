@@ -1,3 +1,14 @@
+2016-06-08  Aakash Jain  <aakash_jain@apple.com>
+
+        tests fail if display sleeps while run-webkit-tests is running
+        https://bugs.webkit.org/show_bug.cgi?id=153919
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (releaseSleepAssertions): Release both Display sleep and System sleep assertions.
+        (addSleepAssertions): Add sleep assertion for both Display sleep and System sleep.
+
 2016-06-08  Lucas Forschler  <lforschler@apple.com>
 
         Reverted changeset 201814.
