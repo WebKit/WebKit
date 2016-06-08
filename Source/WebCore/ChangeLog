@@ -1,3 +1,20 @@
+2016-06-07  Chris Dumez  <cdumez@apple.com>
+
+        Expose Event / EventTarget properties on WorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=158511
+
+        Reviewed by Sam Weinig.
+
+        Expose Event / EventTarget properties on WorkerGlobalScope, as per the
+        latest DOM specification:
+        - https://dom.spec.whatwg.org/#interface-event
+        - https://dom.spec.whatwg.org/#interface-eventtarget
+
+        No new tests, rebaselined existing test.
+
+        * dom/Event.idl:
+        * dom/EventTarget.idl:
+
 2016-06-07  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Build fix related with SharedBuffer::createFromReadingFile in SharedBufferPosix.cpp

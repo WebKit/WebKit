@@ -21,6 +21,7 @@
 // Introduced in DOM Level 2:
 [
     CustomToJSObject,
+    Exposed=(Window,Worker),
     JSCustomHeader,
     JSCustomToNativeObject,
     ObjCProtocol,

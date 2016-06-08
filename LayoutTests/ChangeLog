@@ -1,3 +1,14 @@
+2016-06-07  Chris Dumez  <cdumez@apple.com>
+
+        Expose Event / EventTarget properties on WorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=158511
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline existing test.
+
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+
 2016-06-07  Antoine Quint  <graouts@apple.com>
 
         The backdrop-filter property does not respect border-radius
