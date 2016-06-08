@@ -1,3 +1,20 @@
+2016-06-08  Jer Noble  <jer.noble@apple.com>
+
+        With audio user gesture restriction in place, video.src = 'file', video.play() succeeds where it should fail.
+        https://bugs.webkit.org/show_bug.cgi?id=158546
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-playback-restriction-play-before-load.html
+
+        Don't check that the media element isPlaying(); that will only return true if playback has begun.
+        Instead, check !paused(), as that will be true as soon as the play() method returns.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::updateShouldPlay):
+        * rendering/RenderLayer.h:
+
 2016-06-08  Alex Christensen  <achristensen@webkit.org>
 
         Modernize WebSocket code

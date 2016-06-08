@@ -1,3 +1,13 @@
+2016-06-08  Jer Noble  <jer.noble@apple.com>
+
+        With audio user gesture restriction in place, video.src = 'file', video.play() succeeds where it should fail.
+        https://bugs.webkit.org/show_bug.cgi?id=158546
+
+        Reviewed by Eric Carlson.
+
+        * media/video-playback-restriction-play-before-load-expected.txt: Added.
+        * media/video-playback-restriction-play-before-load.html: Added.
+
 2016-06-08  Chris Dumez  <cdumez@apple.com>
 
         First parameter to MessagePort / DedicatedWorkerGlobalScope.postMessage() should be mandatory
