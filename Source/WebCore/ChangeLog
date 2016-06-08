@@ -1,3 +1,19 @@
+2016-06-07  Andreas Kling  <akling@apple.com>
+
+        CachedScript should avoid recomputing its hash multiple times.
+        <https://webkit.org/b/158506>
+
+        Reviewed by Saam Barati.
+
+        JSBench was hitting CachedScript::script() hard and spending lots of time hashing scripts.
+        Since we're already caching the hash in a member variable, don't bother rehashing if we've
+        already done it before.
+
+        This takes total time spent in StringImpl::hashSlowCase() from 1600ms to 77ms on my MBP.
+
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script):
+
 2016-06-07  Keith Rollin  <krollin@apple.com>
 
         Remove all uses of PassRefPtr in WTF

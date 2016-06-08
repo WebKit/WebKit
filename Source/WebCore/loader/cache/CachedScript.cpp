@@ -93,7 +93,9 @@ StringView CachedScript::script()
 
     if (!m_script) {
         m_script = m_decoder->decodeAndFlush(m_data->data(), encodedSize());
-        m_scriptHash = m_script.impl()->hash();
+        ASSERT(!m_scriptHash || m_scriptHash == m_script.impl()->hash());
+        if (m_decodingState == NeverDecoded)
+            m_scriptHash = m_script.impl()->hash();
         m_decodingState = DataAndDecodedStringHaveDifferentBytes;
         setDecodedSize(m_script.sizeInBytes());
     }
