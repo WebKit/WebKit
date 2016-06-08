@@ -34,8 +34,8 @@ namespace WebCore {
 Touch* TouchList::item(unsigned index)
 {
     if (index >= m_values.size())
-        return 0;
-    return m_values[index].get();
+        return nullptr;
+    return m_values[index].ptr();
 }
 
 const Touch* TouchList::item(unsigned index) const

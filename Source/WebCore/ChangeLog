@@ -1,3 +1,20 @@
+2016-06-07  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        TouchList::append() should take a Ref instead of RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=158469
+
+        Reviewed by Chris Dumez.
+
+        RefPtr<Touch> items handled in TouchList cannot be null. Thus
+        RefPtr<Touch> is replaced by Ref<Touch> objects.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::createTouchList):
+        * dom/TouchList.cpp:
+        (WebCore::TouchList::item):
+        * dom/TouchList.h:
+        (WebCore::TouchList::append):
+
 2016-06-07  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         EFL build has been broken since r201761

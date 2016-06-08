@@ -46,12 +46,12 @@ public:
     Touch* item(unsigned);
     const Touch* item(unsigned) const;
 
-    void append(RefPtr<Touch>&& touch) { m_values.append(WTFMove(touch)); }
+    void append(Ref<Touch>&& touch) { m_values.append(WTFMove(touch)); }
 
 private:
     TouchList() {}
 
-    Vector<RefPtr<Touch>> m_values;
+    Vector<Ref<Touch>> m_values;
 };
 
 } // namespace WebCore

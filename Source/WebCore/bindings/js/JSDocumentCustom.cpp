@@ -138,7 +138,7 @@ JSValue JSDocument::createTouchList(ExecState& state)
         if (!item)
             return JSValue::decode(throwArgumentTypeError(state, i, "touches", "Document", "createTouchList", "Touch"));
 
-        touchList->append(item);
+        touchList->append(*item);
     }
     return toJSNewlyCreated(&state, globalObject(), WTFMove(touchList));
 }
