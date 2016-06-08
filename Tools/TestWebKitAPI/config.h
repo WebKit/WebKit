@@ -65,7 +65,7 @@
 
 #include <stdint.h>
 
-#if !PLATFORM(IOS) && !PLATFORM(WIN) && !(PLATFORM(GTK) && !defined(BUILDING_WEBKIT2__)) && !defined(BUILDING_JSCONLY__)
+#if !PLATFORM(IOS) && !PLATFORM(WIN) && !defined(BUILDING_JSCONLY__)
 #include <WebKit/WebKit2_C.h>
 #endif
 

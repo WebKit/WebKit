@@ -1,3 +1,12 @@
+2016-06-08  Konstantin Tokarev  <annulen@yandex.ru>
+
+        TestWebKitAPI: Removed redunandant check PLATFORM(GTK) && !defined(BUILDING_WEBKIT2__)
+        https://bugs.webkit.org/show_bug.cgi?id=158521
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/config.h:
+
 2016-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use a longer timeout for glib unit tests
