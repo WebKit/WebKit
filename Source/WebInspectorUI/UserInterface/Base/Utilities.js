@@ -1273,6 +1273,38 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
             this[debounceTimeoutSymbol] = undefined;
         }
     });
+
+    const requestAnimationFrameSymbol = Symbol("peform-on-animation-frame");
+    const requestAnimationFrameProxySymbol = Symbol("perform-on-animation-frame-proxy");
+
+    Object.defineProperty(Object.prototype, "onNextFrame",
+    {
+        get: function()
+        {
+            if (!this[requestAnimationFrameProxySymbol]) {
+                this[requestAnimationFrameProxySymbol] = new Proxy(this, {
+                    get(target, property, receiver) {
+                        return (...args) => {
+                            let original = target[property];
+                            console.assert(typeof original === "function");
+
+                            if (original[requestAnimationFrameSymbol])
+                                return;
+
+                            let performWork = () => {
+                                original[requestAnimationFrameSymbol] = undefined;
+                                original.apply(target, args);
+                            };
+
+                            original[requestAnimationFrameSymbol] = requestAnimationFrame(performWork);
+                        };
+                    }
+                });
+            }
+
+            return this[requestAnimationFrameProxySymbol];
+        }
+    });
 })();
 
 function appendWebInspectorSourceURL(string)

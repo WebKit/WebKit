@@ -57,28 +57,28 @@ WebInspector.DOMTreeUpdater.prototype = {
     {
         this._recentlyModifiedNodes.push({node: event.data.node, updated: true, attribute: event.data.name});
         if (this._treeOutline._visible)
-            this.soon._updateModifiedNodes();
+            this.onNextFrame._updateModifiedNodes();
     },
 
     _characterDataModified: function(event)
     {
         this._recentlyModifiedNodes.push({node: event.data.node, updated: true});
         if (this._treeOutline._visible)
-            this.soon._updateModifiedNodes();
+            this.onNextFrame._updateModifiedNodes();
     },
 
     _nodeInserted: function(event)
     {
         this._recentlyModifiedNodes.push({node: event.data.node, parent: event.data.parent, inserted: true});
         if (this._treeOutline._visible)
-            this.soon._updateModifiedNodes();
+            this.onNextFrame._updateModifiedNodes();
     },
 
     _nodeRemoved: function(event)
     {
         this._recentlyModifiedNodes.push({node: event.data.node, parent: event.data.parent, removed: true});
         if (this._treeOutline._visible)
-            this.soon._updateModifiedNodes();
+            this.onNextFrame._updateModifiedNodes();
     },
 
     _childNodeCountUpdated: function(event)
@@ -90,8 +90,6 @@ WebInspector.DOMTreeUpdater.prototype = {
 
     _updateModifiedNodes: function()
     {
-        this._updateModifiedNodes.cancelDebounce();
-
         let updatedParentTreeElements = [];
         for (let recentlyModifiedNode of this._recentlyModifiedNodes) {
             let parent = recentlyModifiedNode.parent;

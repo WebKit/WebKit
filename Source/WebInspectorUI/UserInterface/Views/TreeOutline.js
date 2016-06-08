@@ -800,8 +800,6 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
 
     _fireDidChange()
     {
-        this._didChangeTimeoutIdentifier = undefined;
-
         if (this.treeOutline)
             this.treeOutline._treeElementDidChange(this);
     }
@@ -811,9 +809,7 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
         if (!this.treeOutline)
             return;
 
-        // Prevent telling the TreeOutline multiple times in a row by delaying it with a timeout.
-        if (!this._didChangeTimeoutIdentifier)
-            this._didChangeTimeoutIdentifier = setTimeout(this._fireDidChange.bind(this), 0);
+        this.onNextFrame._fireDidChange();
     }
 
     _setListItemNodeContent()
