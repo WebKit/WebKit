@@ -253,23 +253,28 @@ typedef const char* optionString;
     \
     v(double, jitPolicyScale, 1.0, Normal, "scale JIT thresholds to this specified ratio between 0.0 (compile ASAP) and 1.0 (compile like normal).") \
     v(bool, forceEagerCompilation, false, Normal, nullptr) \
-    v(int32, thresholdForJITAfterWarmUp, 500, Normal, nullptr) \
-    v(int32, thresholdForJITSoon, 100, Normal, nullptr) \
+    v(int32, thresholdForJITAfterWarmUp, 373, Normal, nullptr) \
+    v(int32, thresholdForJITSoon, 169, Normal, nullptr) \
     \
-    v(int32, thresholdForOptimizeAfterWarmUp, 1000, Normal, nullptr) \
-    v(int32, thresholdForOptimizeAfterLongWarmUp, 1000, Normal, nullptr) \
-    v(int32, thresholdForOptimizeSoon, 1000, Normal, nullptr) \
-    v(int32, executionCounterIncrementForLoop, 1, Normal, nullptr) \
-    v(int32, executionCounterIncrementForEntry, 15, Normal, nullptr) \
+    v(int32, thresholdForOptimizeAfterWarmUp, 511, Normal, nullptr) \
+    v(int32, thresholdForOptimizeAfterLongWarmUp, 885, Normal, nullptr) \
+    v(int32, thresholdForOptimizeSoon, 853, Normal, nullptr) \
+    v(int32, executionCounterIncrementForLoop, 2, Normal, nullptr) \
+    v(int32, executionCounterIncrementForEntry, 28, Normal, nullptr) \
     \
-    v(int32, thresholdForFTLOptimizeAfterWarmUp, 100000, Normal, nullptr) \
-    v(int32, thresholdForFTLOptimizeSoon, 1000, Normal, nullptr) \
-    v(int32, ftlTierUpCounterIncrementForLoop, 1, Normal, nullptr) \
-    v(int32, ftlTierUpCounterIncrementForReturn, 15, Normal, nullptr) \
+    v(int32, thresholdForFTLOptimizeAfterWarmUp, 99566, Normal, nullptr) \
+    v(int32, thresholdForFTLOptimizeSoon, 1566, Normal, nullptr) \
+    v(int32, ftlTierUpCounterIncrementForLoop, 6, Normal, nullptr) \
+    v(int32, ftlTierUpCounterIncrementForReturn, 13, Normal, nullptr) \
     v(unsigned, ftlOSREntryFailureCountForReoptimization, 15, Normal, nullptr) \
     v(unsigned, ftlOSREntryRetryThreshold, 100, Normal, nullptr) \
     \
-    v(int32, evalThresholdMultiplier, 10, Normal, nullptr) \
+    v(double, optimizationThresholdScalingFactorA, 0.1785461740514816, Normal, nullptr) \
+    v(double, optimizationThresholdScalingFactorB, 1.2691392484494950, Normal, nullptr) \
+    v(double, optimizationThresholdScalingFactorC, 0.0003675505121227, Normal, nullptr) \
+    v(double, optimizationThresholdScalingFactorD, 1.5838284192987762, Normal, nullptr) \
+    \
+    v(int32, evalThresholdMultiplier, 8, Normal, nullptr) \
     v(unsigned, maximumEvalCacheableSourceLength, 256, Normal, nullptr) \
     \
     v(bool, randomizeExecutionCountsBetweenCheckpoints, false, Normal, nullptr) \

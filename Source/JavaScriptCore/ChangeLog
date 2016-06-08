@@ -1,3 +1,26 @@
+2016-06-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Change some parameters based on a random search
+        https://bugs.webkit.org/show_bug.cgi?id=158514
+
+        Reviewed by Filip Pizlo.
+
+        Over the weekend, I left an iMac running the JSC benchmarks
+        while changing a bunch of parameters.
+
+        The parameters were changed randomly, with a random deviation
+        from the original value.
+        To converge toward good values, the range was subject
+        to exponential annealing over time.
+
+        The values in this patch is the best outcome my iMac could
+        find over the weekend. It is about 1% better on the Haswell
+        machines I tested.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::optimizationThresholdScalingFactor):
+        * runtime/Options.h:
+
 2016-06-08  Gavin Barraclough  <barraclough@apple.com>
 
         Remove removeDirect
