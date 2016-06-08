@@ -1,5 +1,12 @@
 2016-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ build with threaded compositor enabled after r201802.
+
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::create):
+
+2016-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         LayerTreeHost should be created with a WebPage reference instead of a pointer
         https://bugs.webkit.org/show_bug.cgi?id=158520
 

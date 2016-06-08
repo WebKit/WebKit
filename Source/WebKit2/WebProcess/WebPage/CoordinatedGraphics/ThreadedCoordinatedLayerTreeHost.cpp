@@ -48,7 +48,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<ThreadedCoordinatedLayerTreeHost> ThreadedCoordinatedLayerTreeHost::create(WebPage webPage)
+Ref<ThreadedCoordinatedLayerTreeHost> ThreadedCoordinatedLayerTreeHost::create(WebPage& webPage)
 {
     return adoptRef(*new ThreadedCoordinatedLayerTreeHost(webPage));
 }
