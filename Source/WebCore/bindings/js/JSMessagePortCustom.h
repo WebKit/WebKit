@@ -32,6 +32,7 @@
 #define JSMessagePortCustom_h
 
 #include "MessagePort.h"
+#include <runtime/Error.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValue.h>
 #include <wtf/Forward.h>
@@ -49,10 +50,13 @@ namespace WebCore {
     template <typename T>
     inline JSC::JSValue handlePostMessage(JSC::ExecState& state, T* impl)
     {
+        if (UNLIKELY(state.argumentCount() < 1))
+            return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
         MessagePortArray portArray;
         ArrayBufferArray arrayBufferArray;
         fillMessagePortArray(state, state.argument(1), portArray, arrayBufferArray);
-        RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(&state, state.argument(0), &portArray, &arrayBufferArray);
+        RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(&state, state.uncheckedArgument(0), &portArray, &arrayBufferArray);
         if (state.hadException())
             return JSC::jsUndefined();
 

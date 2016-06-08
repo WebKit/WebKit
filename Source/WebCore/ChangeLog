@@ -1,3 +1,26 @@
+2016-06-08  Chris Dumez  <cdumez@apple.com>
+
+        First parameter to MessagePort / DedicatedWorkerGlobalScope.postMessage() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=158540
+
+        Reviewed by Geoffrey Garen.
+
+        First parameter to MessagePort / DedicatedWorkerGlobalScope.postMessage() should be mandatory:
+        - https://html.spec.whatwg.org/multipage/comms.html#messageport
+        - https://html.spec.whatwg.org/multipage/workers.html#dedicated-workers-and-the-dedicatedworkerglobalscope-interface
+
+        Previously, WebKit send a bogus MessageEvent whose data attribute is undefined. This would
+        cause a testharness error when running the following W3C test:
+        - http://w3c-test.org/workers/interfaces.worker
+
+        Firefox and Chrome already correctly throw in this case. Our Window.postMessage() API is also
+        already throwing in this case.
+
+        Test: fast/workers/postMessage-missing-parameter.html
+
+        * bindings/js/JSMessagePortCustom.h:
+        (WebCore::handlePostMessage):
+
 2016-06-08  Gavin Barraclough  <barraclough@apple.com>
 
         Remove removeDirect

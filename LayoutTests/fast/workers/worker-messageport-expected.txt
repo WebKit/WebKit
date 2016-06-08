@@ -4,6 +4,7 @@ PASS: evt.ports = [] as expected
 PASS: Received message port
 PASS: Received response from Worker via MessagePort
 PASS: Got port from worker
+PASS: Calling MessagePort.postMessage() without parameter threw exception: TypeError: Not enough arguments
 PASS: Received final response from worker
 PASS: Got 1000 messages
 DONE

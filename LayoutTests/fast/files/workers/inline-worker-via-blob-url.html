@@ -23,7 +23,7 @@ function runTest()
         if (testRunner.notifyDone)
             testRunner.notifyDone();
     };
-    worker.postMessage();
+    worker.postMessage("message");
 }
 
 if (window.testRunner) {

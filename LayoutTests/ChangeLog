@@ -1,3 +1,18 @@
+2016-06-08  Chris Dumez  <cdumez@apple.com>
+
+        First parameter to MessagePort / DedicatedWorkerGlobalScope.postMessage() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=158540
+
+        Reviewed by Geoffrey Garen.
+
+        Add test coverage.
+
+        * fast/files/workers/inline-worker-via-blob-url.html:
+        * fast/workers/postMessage-missing-parameter-expected.txt: Added.
+        * fast/workers/postMessage-missing-parameter.html: Added.
+        * fast/workers/worker-messageport-expected.txt:
+        * fast/workers/worker-messageport.html:
+
 2016-06-08  Nan Wang  <n_wang@apple.com>
 
         For keyboard users, activating a fragment URL should transfer focus and caret to the destination

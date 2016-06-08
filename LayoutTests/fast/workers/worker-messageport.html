@@ -51,6 +51,13 @@ function awaitPortFromWorker(evt)
             log("FAIL: Got the wrong number of ports from worker: " + evt.ports.length);
         } else {
             log("PASS: Got port from worker");
+            try {
+                // Missing parameter, should throw.
+                evt.ports[0].postMessage();
+                log("FAIL: Calling MessagePort.postMessage() without parameter did not throw.");
+            } catch (e) {
+                log("PASS: Calling MessagePort.postMessage() without parameter threw exception: " + e);
+            }
             evt.ports[0].postMessage("ping");
             evt.ports[0].onmessage = function(evt) {
                 if (evt.data == "pong") {
