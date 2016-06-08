@@ -38,23 +38,23 @@ namespace WebCore {
 RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
 {
     if (filePath.isEmpty())
-        return 0;
+        return nullptr;
 
     CString filename = fileSystemRepresentation(filePath);
     int fd = open(filename.data(), O_RDONLY);
     if (fd == -1)
-        return 0;
+        return nullptr;
 
     struct stat fileStat;
     if (fstat(fd, &fileStat)) {
         close(fd);
-        return 0;
+        return nullptr;
     }
 
     size_t bytesToRead;
     if (!WTF::convertSafely(fileStat.st_size, bytesToRead)) {
         close(fd);
-        return 0;
+        return nullptr;
     }
 
     Vector<char> buffer(bytesToRead);
@@ -66,10 +66,10 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
 
     close(fd);
 
-    if (totalBytesRead == bytesToRead)
-        return SharedBuffer::adoptVector(buffer);
+    if (totalBytesRead != bytesToRead)
+        return nullptr;
 
-    return nullptr;
+    return SharedBuffer::adoptVector(buffer);
 }
 
 } // namespace WebCore
