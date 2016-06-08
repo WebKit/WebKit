@@ -1,5 +1,17 @@
 2016-06-08  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: an error is encountered when trying to delete nodes that have children
+        https://bugs.webkit.org/show_bug.cgi?id=158541
+        <rdar://problem/26705901>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.adjustCollapsedRange):
+        Offset into the array variable instead of a variable holding its length.
+
+2016-06-08  Brian Burg  <bburg@apple.com>
+
         Web Inspector: DOMTreeOutline selection areas should be created and updated lazily
         https://bugs.webkit.org/show_bug.cgi?id=158513
         <rdar://problem/26689646>

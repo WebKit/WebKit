@@ -450,7 +450,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
         // In case some nodes from the expanded range were removed, pull some nodes from the collapsed range into the expanded range at the bottom.
         for (var i = this.expandedChildCount, limit = Math.min(this.expandedChildrenLimit, totalChildrenCount); i < limit; ++i)
-            this.insertChildElement(totalChildrenCount[i], i);
+            this.insertChildElement(visibleChildren[i], i);
 
         var expandedChildCount = this.expandedChildCount;
         if (totalChildrenCount > this.expandedChildCount) {
