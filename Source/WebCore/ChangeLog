@@ -1,3 +1,27 @@
+2016-06-08  Dean Jackson  <dino@apple.com>
+
+        Multiple selectors break keyframes animation
+        https://bugs.webkit.org/show_bug.cgi?id=158199
+        <rdar://problem/26652591>
+
+        Reviewed by Simon Fraser.
+
+        If we came across a duplicate key entry in a keyframe, we
+        were replacing the existing entry, instead of merging.
+
+        Test: animations/duplicate-keys.html
+
+        * css/CSSKeyframeRule.h:
+        (WebCore::StyleKeyframe::setKey): Add a way to set the key of a rule
+        as a number, rather than going through a string and the CSS parser.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::keyframeStylesForAnimation): Check if the rule
+        has duplicates, and if it does, merge all the common entries.
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeList::insert): Now that we've removed duplicates at
+        the processing time, we should never come across a duplicate while
+        building this list.
+
 2016-06-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline bindings tests after r201808

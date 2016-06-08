@@ -78,12 +78,10 @@ void KeyframeList::insert(KeyframeValue&& keyframe)
         return;
 
     bool inserted = false;
-    bool replaced = false;
     size_t i = 0;
     for (; i < m_keyframes.size(); ++i) {
         if (m_keyframes[i].key() == keyframe.key()) {
-            m_keyframes[i] = WTFMove(keyframe);
-            replaced = true;
+            ASSERT_NOT_REACHED();
             break;
         }
 
@@ -95,18 +93,8 @@ void KeyframeList::insert(KeyframeValue&& keyframe)
         }
     }
     
-    if (!replaced && !inserted)
+    if (!inserted)
         m_keyframes.append(WTFMove(keyframe));
-
-    if (replaced) {
-        // We have to rebuild the properties list from scratch.
-        m_properties.clear();
-        for (auto& keyframeValue : m_keyframes) {
-            for (auto& property : keyframeValue.properties())
-                m_properties.add(property);
-        }
-        return;
-    }
 
     for (auto& property : m_keyframes[i].properties())
         m_properties.add(property);

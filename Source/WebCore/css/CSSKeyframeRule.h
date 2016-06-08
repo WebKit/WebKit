@@ -47,6 +47,12 @@ public:
 
     String keyText() const;
     void setKeyText(const String& text) { m_keys = CSSParser::parseKeyframeSelector(text); }
+    void setKey(double key)
+    {
+        ASSERT(m_keys.isEmpty());
+        m_keys.clear();
+        m_keys.append(key);
+    }
 
     const Vector<double>& keys() const { return m_keys; };
 

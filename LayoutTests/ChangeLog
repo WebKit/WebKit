@@ -1,3 +1,14 @@
+2016-06-08  Dean Jackson  <dino@apple.com>
+
+        Multiple selectors break keyframes animation
+        https://bugs.webkit.org/show_bug.cgi?id=158199
+        <rdar://problem/26652591>
+
+        Reviewed by Simon Fraser.
+
+        * animations/duplicate-keys-expected.html: Added.
+        * animations/duplicate-keys.html: Added.
+
 2016-06-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Shadow DOM tests are failing.

@@ -1,0 +1,42 @@
+<style>
+.box {
+    height: 100px;
+    width: 0px;
+    border-width: 0;
+    border-left-width: 200px;
+    border-right-width: 200px;
+    border-style: solid;
+    border-color: blue;
+    animation: foo 200ms forwards;
+}
+@keyframes foo {
+    0% {
+        border-left-color: orange;
+        border-right-color: green;
+    }
+    50% {
+        border-left-color: red;
+    }
+    50%, to {
+        border-right-color: green;
+    }
+    to {
+        border-left-color: orange;
+    }
+}
+
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    window.addEventListener("load", function () {
+        var box = document.querySelector(".box");
+        internals.pauseAnimationAtTimeOnElement("foo", 0.1, box);
+        testRunner.notifyDone();
+    }, false);
+}
+</script>
+<p>Left side should go orange -> red -> orange, right side should stay green at the end.</p>
+<div class="box">
+</div>
+
