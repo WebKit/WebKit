@@ -30,19 +30,6 @@
 
 namespace TestWebKitAPI {
 
-inline std::ostringstream& log()
-{
-    static std::ostringstream log;
-    return log;
-}
-
-inline std::string takeLogStr()
-{
-    std::string string = log().str();
-    log().str("");
-    return string;
-}
-
 struct LifetimeLogger {
     LifetimeLogger()
     {
@@ -85,11 +72,25 @@ struct LifetimeLogger {
     const char& name { *"<default>" };
     int copyGeneration { 0 };
     int moveGeneration { 0 };
+
+    static std::ostringstream& log()
+    {
+        static std::ostringstream log;
+        return log;
+    }
+
+    static std::string takeLogStr()
+    {
+        std::string string = log().str();
+        log().str("");
+        return string;
+    }
+
 };
 
 void testFunction(const LifetimeLogger&, const LifetimeLogger&, const LifetimeLogger&)
 {
-    log() << "testFunction called" << " ";
+    LifetimeLogger::log() << "testFunction called" << " ";
 }
 
 TEST(WTF_CrossThreadTask, Basic)
@@ -102,7 +103,7 @@ TEST(WTF_CrossThreadTask, Basic)
         auto task = createCrossThreadTask(testFunction, logger1, logger2, logger3);
         task.performTask();
     }
-    ASSERT_STREQ("default_constructor(<default>-0-0) copy_constructor(<default>-1-0) name_constructor(logger-0-0) isolatedCopy() copy_constructor(<default>-1-0) isolatedCopy() copy_constructor(<default>-2-0) isolatedCopy() copy_constructor(logger-1-0) move_constructor(<default>-1-1) move_constructor(<default>-2-1) move_constructor(logger-1-1) destructor(logger-1-0) destructor(<default>-2-0) destructor(<default>-1-0) testFunction called destructor(logger-1-1) destructor(<default>-2-1) destructor(<default>-1-1) destructor(logger-0-0) destructor(<default>-1-0) destructor(<default>-0-0) ", takeLogStr().c_str());
+    ASSERT_STREQ("default_constructor(<default>-0-0) copy_constructor(<default>-1-0) name_constructor(logger-0-0) isolatedCopy() copy_constructor(<default>-1-0) isolatedCopy() copy_constructor(<default>-2-0) isolatedCopy() copy_constructor(logger-1-0) move_constructor(<default>-1-1) move_constructor(<default>-2-1) move_constructor(logger-1-1) destructor(logger-1-0) destructor(<default>-2-0) destructor(<default>-1-0) testFunction called destructor(logger-1-1) destructor(<default>-2-1) destructor(<default>-1-1) destructor(logger-0-0) destructor(<default>-1-0) destructor(<default>-0-0) ", LifetimeLogger::takeLogStr().c_str());
 }
     
 } // namespace TestWebKitAPI

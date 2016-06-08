@@ -1,5 +1,19 @@
 2016-06-08  Brady Eidson  <beidson@apple.com>
 
+        Try to fix the Windows build.
+
+        Unreviewed.
+
+        * TestWebKitAPI/Tests/WTF/CrossThreadTask.cpp:
+        (TestWebKitAPI::LifetimeLogger::log):
+        (TestWebKitAPI::LifetimeLogger::takeLogStr):
+        (TestWebKitAPI::testFunction):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::log): Deleted. (VS was seeing it as a dupe symbol)
+        (TestWebKitAPI::takeLogStr): Deleted. (VS was seeing it as a dupe symbol)
+
+2016-06-08  Brady Eidson  <beidson@apple.com>
+
         Make CrossThreadCopier more efficient (fewer copies!).
         https://bugs.webkit.org/show_bug.cgi?id=158456
 
