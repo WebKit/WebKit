@@ -81,7 +81,7 @@ OBJC_CLASS _WKThumbnailView;
 - (void)_web_didChangeContentSize:(NSSize)newSize;
 
 @optional
-- (void)_web_didAddMediaControlsManager;
+- (void)_web_didAddMediaControlsManager:(id)controlsManager;
 - (void)_web_didRemoveMediaControlsManager;
 
 @end

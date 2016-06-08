@@ -1,3 +1,12 @@
+2016-06-08  Beth Dakin  <bdakin@apple.com>
+
+        _web_didAddMediaControlsManager should take a controlsManager as a parameter 
+        https://bugs.webkit.org/show_bug.cgi?id=158545
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+
 2016-06-06  Antti Koivisto  <antti@apple.com>
 
         WebKit memory cache doesn't respect Vary header
