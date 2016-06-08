@@ -28,7 +28,7 @@
 
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WTF {
@@ -43,7 +43,7 @@ public:
 private:
     friend class CString;
 
-    static PassRefPtr<CStringBuffer> createUninitialized(size_t length);
+    static Ref<CStringBuffer> createUninitialized(size_t length);
 
     CStringBuffer(size_t length) : m_length(length) { }
     char* mutableData() { return reinterpret_cast_ptr<char*>(this + 1); }

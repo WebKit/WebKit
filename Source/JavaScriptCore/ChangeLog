@@ -1,3 +1,33 @@
+2016-06-07  Keith Rollin  <krollin@apple.com>
+
+        Remove all uses of PassRefPtr in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=157596
+        <rdar://problem/26234391>
+
+        Reviewed by Chris Dumez.
+
+        Update calls to interfaces that no longer take or return PassRefPtrs.
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRope):
+        * runtime/JSString.h:
+        (JSC::JSString::JSString):
+        (JSC::jsSubstring):
+        * runtime/PrivateName.h:
+        (JSC::PrivateName::PrivateName):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::SmallStringsStorage):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCodeSlowCase):
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstrings):
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::replaceUsingStringSearch):
+        (JSC::repeatCharacter):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncLink):
+        (JSC::normalize):
+
 2016-06-07  Saam barati  <sbarati@apple.com>
 
         InvalidationPointInjectionPhase creates bogus InvalidationPoints that may even be inserted when it's not OK to exit

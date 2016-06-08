@@ -265,7 +265,7 @@ private:
     }
 
     // Used to create new strings that are a substring of an existing 8-bit StringImpl (BufferSubstring)
-    StringImpl(const LChar* characters, unsigned length, PassRefPtr<StringImpl> base)
+    StringImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters)
@@ -276,13 +276,13 @@ private:
         ASSERT(m_length);
         ASSERT(base->bufferOwnership() != BufferSubstring);
 
-        substringBuffer() = base.leakRef();
+        substringBuffer() = &base.leakRef();
 
         STRING_STATS_ADD_8BIT_STRING2(m_length, true);
     }
 
     // Used to create new strings that are a substring of an existing 16-bit StringImpl (BufferSubstring)
-    StringImpl(const UChar* characters, unsigned length, PassRefPtr<StringImpl> base)
+    StringImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters)
@@ -293,14 +293,14 @@ private:
         ASSERT(m_length);
         ASSERT(base->bufferOwnership() != BufferSubstring);
 
-        substringBuffer() = base.leakRef();
+        substringBuffer() = &base.leakRef();
 
         STRING_STATS_ADD_16BIT_STRING2(m_length, true);
     }
 
     enum CreateSymbolTag { CreateSymbol };
     // Used to create new symbol strings that holds existing 8-bit [[Description]] string as a substring buffer (BufferSubstring).
-    StringImpl(CreateSymbolTag, const LChar* characters, unsigned length, PassRefPtr<StringImpl> base)
+    StringImpl(CreateSymbolTag, const LChar* characters, unsigned length, Ref<StringImpl>&& base)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters)
@@ -310,7 +310,7 @@ private:
         ASSERT(m_data8);
         ASSERT(base->bufferOwnership() != BufferSubstring);
 
-        substringBuffer() = base.leakRef();
+        substringBuffer() = &base.leakRef();
         symbolRegistry() = nullptr;
         hashForSymbol() = nextHashForSymbol();
 
@@ -318,7 +318,7 @@ private:
     }
 
     // Used to create new symbol strings that holds existing 16-bit [[Description]] string as a substring buffer (BufferSubstring).
-    StringImpl(CreateSymbolTag, const UChar* characters, unsigned length, PassRefPtr<StringImpl> base)
+    StringImpl(CreateSymbolTag, const UChar* characters, unsigned length, Ref<StringImpl>&& base)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters)
@@ -328,7 +328,7 @@ private:
         ASSERT(m_data16);
         ASSERT(base->bufferOwnership() != BufferSubstring);
 
-        substringBuffer() = base.leakRef();
+        substringBuffer() = &base.leakRef();
         symbolRegistry() = nullptr;
         hashForSymbol() = nextHashForSymbol();
 
@@ -352,21 +352,20 @@ public:
     WTF_EXPORT_STRING_API static Ref<StringImpl> create(const LChar*);
     ALWAYS_INLINE static Ref<StringImpl> create(const char* s) { return create(reinterpret_cast<const LChar*>(s)); }
 
-    static ALWAYS_INLINE Ref<StringImpl> createSubstringSharingImpl(PassRefPtr<StringImpl> rep, unsigned offset, unsigned length)
+    static ALWAYS_INLINE Ref<StringImpl> createSubstringSharingImpl(StringImpl& rep, unsigned offset, unsigned length)
     {
-        ASSERT(rep);
-        ASSERT(length <= rep->length());
+        ASSERT(length <= rep.length());
 
         if (!length)
             return *empty();
 
-        StringImpl* ownerRep = (rep->bufferOwnership() == BufferSubstring) ? rep->substringBuffer() : rep.get();
+        auto* ownerRep = ((rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep);
 
         // We allocate a buffer that contains both the StringImpl struct as well as the pointer to the owner string.
-        StringImpl* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(1)));
-        if (rep->is8Bit())
-            return adoptRef(*new (NotNull, stringImpl) StringImpl(rep->m_data8 + offset, length, ownerRep));
-        return adoptRef(*new (NotNull, stringImpl) StringImpl(rep->m_data16 + offset, length, ownerRep));
+        auto* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(1)));
+        if (rep.is8Bit())
+            return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data8 + offset, length, *ownerRep));
+        return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data16 + offset, length, *ownerRep));
     }
 
     template<unsigned charactersCount>
@@ -387,21 +386,21 @@ public:
 
     WTF_EXPORT_STRING_API static Ref<StringImpl> createUninitialized(unsigned length, LChar*& data);
     WTF_EXPORT_STRING_API static Ref<StringImpl> createUninitialized(unsigned length, UChar*& data);
-    template <typename T> static ALWAYS_INLINE PassRefPtr<StringImpl> tryCreateUninitialized(unsigned length, T*& output)
+    template <typename T> static ALWAYS_INLINE RefPtr<StringImpl> tryCreateUninitialized(unsigned length, T*& output)
     {
         if (!length) {
-            output = 0;
+            output = nullptr;
             return empty();
         }
 
         if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(T))) {
-            output = 0;
-            return 0;
+            output = nullptr;
+            return nullptr;
         }
         StringImpl* resultImpl;
         if (!tryFastMalloc(allocationSize<T>(length)).getValue(resultImpl)) {
-            output = 0;
-            return 0;
+            output = nullptr;
+            return nullptr;
         }
         output = resultImpl->tailPointer<T>();
 
@@ -409,13 +408,13 @@ public:
     }
 
     WTF_EXPORT_STRING_API static Ref<SymbolImpl> createNullSymbol();
-    WTF_EXPORT_STRING_API static Ref<SymbolImpl> createSymbol(PassRefPtr<StringImpl> rep);
+    WTF_EXPORT_STRING_API static Ref<SymbolImpl> createSymbol(StringImpl& rep);
 
-    // Reallocate the StringImpl. The originalString must be only owned by the PassRefPtr,
+    // Reallocate the StringImpl. The originalString must be only owned by the Ref,
     // and the buffer ownership must be BufferInternal. Just like the input pointer of realloc(),
     // the originalString can't be used after this function.
-    static Ref<StringImpl> reallocate(PassRefPtr<StringImpl> originalString, unsigned length, LChar*& data);
-    static Ref<StringImpl> reallocate(PassRefPtr<StringImpl> originalString, unsigned length, UChar*& data);
+    static Ref<StringImpl> reallocate(Ref<StringImpl>&& originalString, unsigned length, LChar*& data);
+    static Ref<StringImpl> reallocate(Ref<StringImpl>&& originalString, unsigned length, UChar*& data);
 
     static unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
     static unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
@@ -765,7 +764,7 @@ public:
         ASSERT(bufferOwnership() == BufferSubstring);
         ASSERT(substringBuffer());
         ASSERT(!substringBuffer()->isSymbol());
-        return createSubstringSharingImpl(this, 0, length());
+        return createSubstringSharingImpl(*this, 0, length());
     }
 
     SymbolRegistry* const& symbolRegistry() const
@@ -860,7 +859,7 @@ private:
     template <typename CharType> static Ref<StringImpl> constructInternal(StringImpl*, unsigned);
     template <typename CharType> static Ref<StringImpl> createUninitializedInternal(unsigned, CharType*&);
     template <typename CharType> static Ref<StringImpl> createUninitializedInternalNonEmpty(unsigned, CharType*&);
-    template <typename CharType> static Ref<StringImpl> reallocateInternal(PassRefPtr<StringImpl>, unsigned, CharType*&);
+    template <typename CharType> static Ref<StringImpl> reallocateInternal(Ref<StringImpl>&&, unsigned, CharType*&);
     template <typename CharType> static Ref<StringImpl> createInternal(const CharType*, unsigned);
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
     WTF_EXPORT_PRIVATE static unsigned nextHashForSymbol();

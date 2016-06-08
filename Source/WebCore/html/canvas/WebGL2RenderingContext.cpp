@@ -1836,7 +1836,7 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
     case GraphicsContext3D::COLOR_WRITEMASK:
         return getBooleanArrayParameter(pname);
     case GraphicsContext3D::COMPRESSED_TEXTURE_FORMATS:
-        return WebGLGetInfo(Uint32Array::create(m_compressedTextureFormats.data(), m_compressedTextureFormats.size()).release());
+        return WebGLGetInfo(PassRefPtr<Uint32Array>(Uint32Array::create(m_compressedTextureFormats.data(), m_compressedTextureFormats.size())));
     case GraphicsContext3D::CULL_FACE:
         return getBooleanParameter(pname);
     case GraphicsContext3D::CULL_FACE_MODE:

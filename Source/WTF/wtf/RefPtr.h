@@ -31,6 +31,9 @@
 
 namespace WTF {
 
+template<typename T> class RefPtr;
+template<typename T> RefPtr<T> adoptRef(T*);
+
 enum HashTableDeletedValueType { HashTableDeletedValue };
 
 template<typename T> class RefPtr {
@@ -62,7 +65,8 @@ public:
 
     T* get() const { return m_ptr; }
     
-    PassRefPtr<T> release() { PassRefPtr<T> tmp = adoptRef(m_ptr); m_ptr = nullptr; return tmp; }
+    // FIXME: Remove release() and change all call sites to call WTFMove().
+    RefPtr<T> release() { RefPtr<T> tmp = adoptRef(m_ptr); m_ptr = nullptr; return tmp; }
     Ref<T> releaseNonNull() { ASSERT(m_ptr); Ref<T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }
 
     T* leakRef() WARN_UNUSED_RETURN;
@@ -98,6 +102,11 @@ public:
 #endif
 
 private:
+    friend RefPtr adoptRef<T>(T*);
+
+    enum AdoptTag { Adopt };
+    RefPtr(T* ptr, AdoptTag) : m_ptr(ptr) { }
+
     T* m_ptr;
 };
 
@@ -228,9 +237,16 @@ template <typename T> struct IsSmartPtr<RefPtr<T>> {
     static const bool value = true;
 };
 
+template<typename T> inline RefPtr<T> adoptRef(T* p)
+{
+    adopted(p);
+    return RefPtr<T>(p, RefPtr<T>::Adopt);
+}
+
 } // namespace WTF
 
 using WTF::RefPtr;
+using WTF::adoptRef;
 using WTF::static_pointer_cast;
 
 #endif // WTF_RefPtr_h

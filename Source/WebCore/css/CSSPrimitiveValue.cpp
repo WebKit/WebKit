@@ -1044,7 +1044,7 @@ NEVER_INLINE Ref<StringImpl> CSSPrimitiveValue::formatNumberValue(const char* su
 
     unsigned bufferLength = decimal.bufferLengthForStringDecimal() + suffixLength;
     LChar* buffer;
-    Ref<StringImpl> string = StringImpl::createUninitialized(bufferLength, buffer);
+    auto string = StringImpl::createUninitialized(bufferLength, buffer);
 
     unsigned length = decimal.toStringDecimal(buffer, bufferLength);
 

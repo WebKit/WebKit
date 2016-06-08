@@ -5510,7 +5510,7 @@ void Document::windowScreenDidChange(PlatformDisplayID displayID)
 String Document::displayStringModifiedByEncoding(const String& str) const
 {
     if (m_decoder)
-        return m_decoder->encoding().displayString(str.impl());
+        return m_decoder->encoding().displayString(str.impl()).get();
     return str;
 }
 

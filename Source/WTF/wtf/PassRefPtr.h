@@ -21,14 +21,12 @@
 #ifndef WTF_PassRefPtr_h
 #define WTF_PassRefPtr_h
 
-#include <wtf/GetPtr.h>
 #include <wtf/Ref.h>
 
 namespace WTF {
 
     template<typename T> class RefPtr;
     template<typename T> class PassRefPtr;
-    template<typename T> PassRefPtr<T> adoptRef(T*);
 
     template<typename T> ALWAYS_INLINE void refIfNotNull(T* ptr)
     {
@@ -59,6 +57,7 @@ namespace WTF {
 
         template<typename U> PassRefPtr(const RefPtr<U>&);
         template<typename U> PassRefPtr(Ref<U>&& reference) : m_ptr(&reference.leakRef()) { }
+        template<typename U> PassRefPtr(RefPtr<U>&& reference) : m_ptr(reference.leakRef()) { }
 
         T* get() const { return m_ptr; }
 
@@ -73,7 +72,7 @@ namespace WTF {
         typedef T* (PassRefPtr::*UnspecifiedBoolType);
         operator UnspecifiedBoolType() const { return m_ptr ? &PassRefPtr::m_ptr : nullptr; }
 
-        friend PassRefPtr adoptRef<T>(T*);
+        template<typename V, typename U> friend PassRefPtr<V> static_pointer_cast(const PassRefPtr<U>&);
 
     private:
         PassRefPtr& operator=(const PassRefPtr&) = delete;
@@ -145,16 +144,10 @@ namespace WTF {
     { 
         return a != b.get(); 
     }
-    
-    template<typename T> inline PassRefPtr<T> adoptRef(T* p)
-    {
-        adopted(p);
-        return PassRefPtr<T>(p, PassRefPtr<T>::Adopt);
-    }
 
-    template<typename T, typename U> inline PassRefPtr<T> static_pointer_cast(const PassRefPtr<U>& p) 
-    { 
-        return adoptRef(static_cast<T*>(p.leakRef())); 
+    template<typename V, typename U> inline PassRefPtr<V> static_pointer_cast(const PassRefPtr<U>& p)
+    {
+        return PassRefPtr<V>(static_cast<V*>(p.leakRef()), PassRefPtr<V>::Adopt);
     }
 
     template <typename T> struct IsSmartPtr<PassRefPtr<T>> {
@@ -164,7 +157,6 @@ namespace WTF {
 } // namespace WTF
 
 using WTF::PassRefPtr;
-using WTF::adoptRef;
 using WTF::static_pointer_cast;
 
 #endif // WTF_PassRefPtr_h

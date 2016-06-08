@@ -1,3 +1,22 @@
+2016-06-07  Keith Rollin  <krollin@apple.com>
+
+        Remove all uses of PassRefPtr in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=157596
+        <rdar://problem/26234391>
+
+        Reviewed by Chris Dumez.
+
+        Update calls to interfaces that no longer take or return PassRefPtrs.
+
+        No new tests: no new functionality so changes are covered by existing
+        tests.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberValue):
+        * dom/Document.cpp:
+        (WebCore::Document::displayStringModifiedByEncoding):
+        * xml/XPathGrammar.y:
+
 2016-06-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text-decoration-style: dashed / dotted rendered as solid

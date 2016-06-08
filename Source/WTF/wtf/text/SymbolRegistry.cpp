@@ -40,7 +40,7 @@ Ref<SymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
     if (!addResult.isNewEntry)
         return *static_cast<SymbolImpl*>(addResult.iterator->impl());
 
-    Ref<SymbolImpl> symbol = StringImpl::createSymbol(rep.impl());
+    auto symbol = StringImpl::createSymbol(*rep.impl());
     symbol->symbolRegistry() = this;
     *addResult.iterator = SymbolRegistryKey(&symbol.get());
     return symbol;

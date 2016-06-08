@@ -25,7 +25,6 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/MainThread.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 

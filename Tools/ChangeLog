@@ -1,3 +1,17 @@
+2016-06-07  Keith Rollin  <krollin@apple.com>
+
+        Remove all uses of PassRefPtr in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=157596
+        <rdar://problem/26234391>
+
+        Reviewed by Chris Dumez.
+
+        Update calls to interfaces that no longer take or return PassRefPtrs.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::stringFromUTF8):
+        (TestWebKitAPI::TEST):
+
 2016-06-07  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Imported markup insertion test is failing.

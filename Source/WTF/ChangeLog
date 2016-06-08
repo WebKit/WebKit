@@ -1,3 +1,63 @@
+2016-06-07  Keith Rollin  <krollin@apple.com>
+
+        Remove all uses of PassRefPtr in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=157596
+        <rdar://problem/26234391>
+
+        Reviewed by Chris Dumez.
+
+        Remove/update most interfaces that take or return PassRefPtrs.
+        Remaining references include those in non-Cocoa implementations and
+        those required for continued compatibility with modules that still use
+        PassRefPtrs (specifically: Forward.h, RefPtr interoperability,
+        SizeLimits.h, WorkQueue (Windows) DispatchQueueEfl,
+        DispatchWorkItemEfl, and PassRefPtr itself).
+
+        Update calls to interfaces that no longer take or return PassRefPtrs.
+
+        Update adoptRef(T*) to return a RefPtr instead of a PassRefPtr and
+        move it to RefPtr.h from PassRefPtr.h.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::allocate):
+        * wtf/MetaAllocator.h:
+        * wtf/ParallelJobsGeneric.h:
+        (WTF::ParallelEnvironment::ThreadPrivate::create):
+        * wtf/text/AtomicStringImpl.cpp:
+        (WTF::HashAndUTF8CharactersTranslator::translate):
+        (WTF::SubstringTranslator::translate):
+        * wtf/text/CString.cpp:
+        (WTF::CStringBuffer::createUninitialized):
+        * wtf/text/CString.h:
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::reifyString):
+        (WTF::StringBuilder::resize):
+        (WTF::StringBuilder::reallocateBuffer<LChar>):
+        (WTF::StringBuilder::reallocateBuffer<UChar>):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::reallocateInternal):
+        (WTF::StringImpl::reallocate):
+        (WTF::StringImpl::create8BitIfPossible):
+        (WTF::StringImpl::createSymbol):
+        (WTF::StringImpl::createNullSymbol):
+        (WTF::StringImpl::convertToLowercaseWithoutLocale):
+        (WTF::StringImpl::convertToUppercaseWithoutLocale):
+        (WTF::StringImpl::convertToLowercaseWithLocale):
+        (WTF::StringImpl::convertToUppercaseWithLocale):
+        (WTF::StringImpl::convertASCIICase):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::createSubstringSharingImpl):
+        (WTF::StringImpl::tryCreateUninitialized):
+        (WTF::StringImpl::extractFoldedStringInSymbol):
+        * wtf/text/SymbolRegistry.cpp:
+        (WTF::SymbolRegistry::symbolForKey):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::substringSharingImpl):
+        * wtf/text/WTFString.h:
+        (WTF::String::String): Deleted.
+        * wtf/text/cf/StringImplCF.cpp:
+
 2016-06-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Do not allocate unnecessary UTF-8 string for encodeXXX functions

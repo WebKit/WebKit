@@ -148,12 +148,12 @@ MetaAllocator::MetaAllocator(size_t allocationGranule, size_t pageSize)
     ASSERT(static_cast<size_t>(1) << m_logAllocationGranule == m_allocationGranule);
 }
 
-PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void* ownerUID)
+RefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void* ownerUID)
 {
     LockHolder locker(&m_lock);
 
     if (!sizeInBytes)
-        return 0;
+        return nullptr;
     
     sizeInBytes = roundUp(sizeInBytes);
     
@@ -164,7 +164,7 @@ PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void
         
         start = allocateNewSpace(numberOfPages);
         if (!start)
-            return 0;
+            return nullptr;
         
         ASSERT(numberOfPages >= requestedNumberOfPages);
         
@@ -186,12 +186,12 @@ PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void
     m_numAllocations++;
 #endif
 
-    MetaAllocatorHandle* handle = new MetaAllocatorHandle(this, start, sizeInBytes, ownerUID);
+    auto handle = adoptRef(*new MetaAllocatorHandle(this, start, sizeInBytes, ownerUID));
 
     if (UNLIKELY(!!m_tracker))
-        m_tracker->notify(handle);
+        m_tracker->notify(handle.ptr());
 
-    return adoptRef(handle);
+    return WTFMove(handle);
 }
 
 MetaAllocator::Statistics MetaAllocator::currentStatistics()

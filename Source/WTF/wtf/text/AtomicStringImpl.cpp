@@ -219,7 +219,7 @@ struct HashAndUTF8CharactersTranslator {
     static void translate(StringImpl*& location, const HashAndUTF8Characters& buffer, unsigned hash)
     {
         UChar* target;
-        RefPtr<StringImpl> newString = StringImpl::createUninitialized(buffer.utf16Length, target);
+        auto newString = StringImpl::createUninitialized(buffer.utf16Length, target);
 
         bool isAllASCII;
         const char* source = buffer.characters;
@@ -229,7 +229,7 @@ struct HashAndUTF8CharactersTranslator {
         if (isAllASCII)
             newString = StringImpl::create(buffer.characters, buffer.length);
 
-        location = newString.leakRef();
+        location = &newString.leakRef();
         location->setHash(hash);
         location->setIsAtomic(true);
     }
@@ -284,7 +284,7 @@ struct SubstringLocation {
 struct SubstringTranslator {
     static void translate(StringImpl*& location, const SubstringLocation& buffer, unsigned hash)
     {
-        location = &StringImpl::createSubstringSharingImpl(buffer.baseString, buffer.start, buffer.length).leakRef();
+        location = &StringImpl::createSubstringSharingImpl(*buffer.baseString, buffer.start, buffer.length).leakRef();
         location->setHash(hash);
         location->setIsAtomic(true);
     }

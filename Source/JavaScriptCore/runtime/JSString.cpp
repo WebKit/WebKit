@@ -252,9 +252,9 @@ void JSRopeString::resolveRope(ExecState* exec) const
     
     if (is8Bit()) {
         LChar* buffer;
-        if (RefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer)) {
+        if (auto newImpl = StringImpl::tryCreateUninitialized(m_length, buffer)) {
             Heap::heap(this)->reportExtraMemoryAllocated(newImpl->cost());
-            m_value = newImpl.release();
+            m_value = WTFMove(newImpl);
         } else {
             outOfMemory(exec);
             return;
@@ -266,9 +266,9 @@ void JSRopeString::resolveRope(ExecState* exec) const
     }
 
     UChar* buffer;
-    if (RefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer)) {
+    if (auto newImpl = StringImpl::tryCreateUninitialized(m_length, buffer)) {
         Heap::heap(this)->reportExtraMemoryAllocated(newImpl->cost());
-        m_value = newImpl.release();
+        m_value = WTFMove(newImpl);
     } else {
         outOfMemory(exec);
         return;

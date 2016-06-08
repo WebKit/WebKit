@@ -54,10 +54,10 @@ private:
 SmallStringsStorage::SmallStringsStorage()
 {
     LChar* characterBuffer = 0;
-    RefPtr<StringImpl> baseString = StringImpl::createUninitialized(singleCharacterStringCount, characterBuffer);
+    auto baseString = StringImpl::createUninitialized(singleCharacterStringCount, characterBuffer);
     for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
         characterBuffer[i] = i;
-        m_reps[i] = AtomicStringImpl::add(PassRefPtr<StringImpl>(StringImpl::createSubstringSharingImpl(baseString, i, 1)).get());
+        m_reps[i] = AtomicStringImpl::add(StringImpl::createSubstringSharingImpl(baseString.get(), i, 1).ptr());
     }
 }
 

@@ -70,10 +70,10 @@ static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec)
 {
     unsigned length = exec->argumentCount();
     UChar* buf;
-    PassRefPtr<StringImpl> impl = StringImpl::createUninitialized(length, buf);
+    auto impl = StringImpl::createUninitialized(length, buf);
     for (unsigned i = 0; i < length; ++i)
         buf[i] = static_cast<UChar>(exec->uncheckedArgument(i).toUInt32(exec));
-    return jsString(exec, impl);
+    return jsString(exec, WTFMove(impl));
 }
 
 static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)

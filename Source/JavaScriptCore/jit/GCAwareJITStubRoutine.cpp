@@ -35,6 +35,7 @@
 #include "JSCInlines.h"
 #include "SlotVisitor.h"
 #include "Structure.h"
+#include <wtf/RefPtr.h>
 
 namespace JSC {
 
@@ -144,17 +145,13 @@ PassRefPtr<JITStubRoutine> createJITStubRoutine(
     
     if (codeBlockForExceptionHandlers) {
         RELEASE_ASSERT(JITCode::isOptimizingJIT(codeBlockForExceptionHandlers->jitType()));
-        return static_pointer_cast<JITStubRoutine>(
-            adoptRef(new GCAwareJITStubRoutineWithExceptionHandler(code, vm, owner, cells, codeBlockForExceptionHandlers, exceptionHandlerCallSiteIndex)));
+        return adoptRef(new GCAwareJITStubRoutineWithExceptionHandler(code, vm, owner, cells, codeBlockForExceptionHandlers, exceptionHandlerCallSiteIndex));
     }
 
-    if (cells.isEmpty()) {
-        return static_pointer_cast<JITStubRoutine>(
-            adoptRef(new GCAwareJITStubRoutine(code, vm)));
-    }
+    if (cells.isEmpty())
+        return adoptRef(new GCAwareJITStubRoutine(code, vm));
     
-    return static_pointer_cast<JITStubRoutine>(
-        adoptRef(new MarkingGCAwareJITStubRoutine(code, vm, owner, cells)));
+    return adoptRef(new MarkingGCAwareJITStubRoutine(code, vm, owner, cells));
 }
 
 } // namespace JSC

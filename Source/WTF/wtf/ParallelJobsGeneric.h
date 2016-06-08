@@ -66,9 +66,9 @@ public:
 
         void waitForFinish();
 
-        static PassRefPtr<ThreadPrivate> create()
+        static Ref<ThreadPrivate> create()
         {
-            return adoptRef(new ThreadPrivate());
+            return adoptRef(*new ThreadPrivate());
         }
 
         static void workerThread(void*);

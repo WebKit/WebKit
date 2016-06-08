@@ -59,7 +59,7 @@ void StringBuilder::reifyString() const
     if (m_length == m_buffer->length())
         m_string = m_buffer.get();
     else
-        m_string = StringImpl::createSubstringSharingImpl(m_buffer, 0, m_length);
+        m_string = StringImpl::createSubstringSharingImpl(*m_buffer, 0, m_length);
 }
 
 void StringBuilder::resize(unsigned newSize)
@@ -88,7 +88,7 @@ void StringBuilder::resize(unsigned newSize)
     ASSERT(m_length == m_string.length());
     ASSERT(newSize < m_string.length());
     m_length = newSize;
-    m_string = StringImpl::createSubstringSharingImpl(m_string.impl(), 0, newSize);
+    m_string = StringImpl::createSubstringSharingImpl(*m_string.impl(), 0, newSize);
 }
 
 // Allocate a new 8 bit buffer, copying in currentCharacters (these may come from either m_string
@@ -147,7 +147,7 @@ void StringBuilder::reallocateBuffer<LChar>(unsigned requiredLength)
     ASSERT(m_buffer->is8Bit());
     
     if (m_buffer->hasOneRef())
-        m_buffer = StringImpl::reallocate(m_buffer.release(), requiredLength, m_bufferCharacters8);
+        m_buffer = StringImpl::reallocate(m_buffer.releaseNonNull(), requiredLength, m_bufferCharacters8);
     else
         allocateBuffer(m_buffer->characters8(), requiredLength);
 }
@@ -162,7 +162,7 @@ void StringBuilder::reallocateBuffer<UChar>(unsigned requiredLength)
     if (m_buffer->is8Bit())
         allocateBufferUpConvert(m_buffer->characters8(), requiredLength);
     else if (m_buffer->hasOneRef())
-        m_buffer = StringImpl::reallocate(m_buffer.release(), requiredLength, m_bufferCharacters16);
+        m_buffer = StringImpl::reallocate(m_buffer.releaseNonNull(), requiredLength, m_bufferCharacters16);
     else
         allocateBuffer(m_buffer->characters16(), requiredLength);
 }

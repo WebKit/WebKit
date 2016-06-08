@@ -141,7 +141,7 @@ void handleMessageDelayed(Connection& connection, MessageDecoder& decoder, std::
     }
 
     RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(&connection, WTFMove(replyEncoder)));
-    callMemberFunction(WTFMove(arguments), delayedReply.release(), object, function);
+    callMemberFunction(WTFMove(arguments), PassRefPtr<typename T::DelayedReply>(WTFMove(delayedReply)), object, function);
 }
 
 } // namespace IPC
