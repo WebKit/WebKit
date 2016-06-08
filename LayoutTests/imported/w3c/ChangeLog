@@ -1,3 +1,16 @@
+2016-06-08  Chris Dumez  <cdumez@apple.com>
+
+        Import new AddEventListenerOptions test from W3C web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=158535
+
+        Reviewed by Ryosuke Niwa.
+
+        Import new AddEventListenerOptions test from W3C web-platform-tests.
+
+        * web-platform-tests/dom/events/AddEventListenerOptions-passive-expected.txt: Added.
+        * web-platform-tests/dom/events/AddEventListenerOptions-passive.html: Added.
+        * web-platform-tests/dom/events/EventListenerOptions-capture.html:
+
 2016-06-07  Chris Dumez  <cdumez@apple.com>
 
         Implement EventListenerOptions argument to addEventListener
