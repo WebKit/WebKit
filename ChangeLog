@@ -1,3 +1,14 @@
+2016-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Enable IndexedDB in workers
+        https://bugs.webkit.org/show_bug.cgi?id=158475
+
+        Reviewed by Antonio Gomes.
+
+        This is working now and many tests are failing only because we don't enable it.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-06-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Update ewebkit minor version
