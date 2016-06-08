@@ -1,3 +1,18 @@
+2016-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use a longer timeout for glib unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=158476
+
+        Reviewed by Darin Adler.
+
+        The timeout is supposed to be per test case, but in the case of GLib tests it affects all the tests cases of the
+        same test program. Some test programs like TestLoaderClient, that have a lot of test cases, often time out in
+        the bots because the timeout is not enough to run all the tests cases. So, we should use a longer timeout for
+        GLib tests.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._run_test_glib):
+
 2016-06-07  Keith Rollin  <krollin@apple.com>
 
         Remove all uses of PassRefPtr in WTF

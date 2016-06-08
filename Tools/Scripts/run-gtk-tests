@@ -326,7 +326,11 @@ class TestRunner:
         for test_case in self._test_cases_to_skip(test_program):
             tester_command.extend(['-s', test_case])
         tester_command.append(test_program)
-        timeout = self._options.timeout
+        # This timeout is supposed to be per test case, but in the case of GLib tests it affects all the tests cases of
+        # the same test program. Some test programs like TestLoaderClient, that have a lot of test cases, often time out
+        # in the bots because the timeout is not enough to run all the tests cases. So, we use a longer timeout for GLib
+        # tests (timeout * 2).
+        timeout = self._options.timeout * 2
         test = os.path.join(os.path.basename(os.path.dirname(test_program)), os.path.basename(test_program))
         if test in TestRunner.SLOW:
             timeout *= 5
