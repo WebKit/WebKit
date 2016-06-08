@@ -1,3 +1,9 @@
+2016-06-08  Lucas Forschler  <lforschler@apple.com>
+
+        Reverted changeset 201814.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2016-06-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Shadow DOM tests are failing.
