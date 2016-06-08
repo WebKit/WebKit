@@ -1,3 +1,11 @@
+2016-06-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/events/touch/document-create-touch-list-ios.html
+
+        Unreviewed test gardening.
+
+        * fast/events/touch/document-create-touch-list-ios-expected.txt:
+
 2016-06-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text-decoration-style: dashed / dotted rendered as solid

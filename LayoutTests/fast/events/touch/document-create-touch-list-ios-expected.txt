@@ -12,6 +12,7 @@ PASS touchList.length is 0
 PASS touchList.item(0) is null
 PASS touchList.item(1) is null
 FAIL An exception was thrown: The provided value is non-finite
+FAIL An exception was thrown: Argument 1 ('touches') to Document.createTouchList must be an instance of Touch
 PASS successfullyParsed is true
 
 TEST COMPLETE
