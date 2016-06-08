@@ -66,7 +66,10 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
 
     close(fd);
 
-    return totalBytesRead == bytesToRead ? SharedBuffer::adoptVector(buffer) : 0;
+    if (totalBytesRead == bytesToRead)
+        return SharedBuffer::adoptVector(buffer);
+
+    return nullptr;
 }
 
 } // namespace WebCore

@@ -1,3 +1,11 @@
+2016-06-07  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Build fix related with SharedBuffer::createFromReadingFile in SharedBufferPosix.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=158515
+
+        * platform/posix/SharedBufferPOSIX.cpp:
+        (WebCore::SharedBuffer::createFromReadingFile):
+
 2016-06-07  Mark Lam  <mark.lam@apple.com>
 
         Need an exception check after constructEmptyArray().
