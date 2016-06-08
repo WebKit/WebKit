@@ -112,12 +112,9 @@ InsertListCommand::InsertListCommand(Document& document, Type type)
 
 void InsertListCommand::doApply()
 {
-    if (!endingSelection().isNonOrphanedCaretOrRange())
+    if (endingSelection().isNoneOrOrphaned() || !endingSelection().isContentRichlyEditable())
         return;
 
-    if (!endingSelection().rootEditableElement())
-        return;
-    
     VisiblePosition visibleEnd = endingSelection().visibleEnd();
     VisiblePosition visibleStart = endingSelection().visibleStart();
     // When a selection ends at the start of a paragraph, we rarely paint 

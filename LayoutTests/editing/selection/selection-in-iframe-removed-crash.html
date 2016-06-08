@@ -2,8 +2,10 @@
 <html>
 Test passes if it does not crash.
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
 var docElement = document.documentElement;
 function crash() {
@@ -21,6 +23,8 @@ function finish() {
     range1 = document.createRange();
     range1.selectNodeContents(iframe1.contentDocument);
     window.getSelection().addRange(range1);
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 document.addEventListener("DOMContentLoaded", crash, false);

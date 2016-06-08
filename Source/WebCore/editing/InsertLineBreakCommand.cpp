@@ -91,7 +91,7 @@ void InsertLineBreakCommand::doApply()
 {
     deleteSelection();
     VisibleSelection selection = endingSelection();
-    if (!selection.isNonOrphanedCaretOrRange())
+    if (selection.isNoneOrOrphaned())
         return;
     
     VisiblePosition caret(selection.visibleStart());

@@ -1484,7 +1484,7 @@ static String valueForeColor(Frame& frame, Event*)
 static String valueFormatBlock(Frame& frame, Event*)
 {
     const VisibleSelection& selection = frame.selection().selection();
-    if (!selection.isNonOrphanedCaretOrRange() || !selection.isContentEditable())
+    if (selection.isNoneOrOrphaned() || !selection.isContentEditable())
         return emptyString();
     Element* formatBlockElement = FormatBlockCommand::elementForFormatBlockCommand(selection.firstRange().get());
     if (!formatBlockElement)

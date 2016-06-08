@@ -148,7 +148,7 @@ RefPtr<Element> InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock(con
 
 void InsertParagraphSeparatorCommand::doApply()
 {
-    if (!endingSelection().isNonOrphanedCaretOrRange())
+    if (endingSelection().isNoneOrOrphaned())
         return;
     
     Position insertionPosition = endingSelection().start();

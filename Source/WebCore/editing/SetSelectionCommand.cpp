@@ -42,7 +42,7 @@ void SetSelectionCommand::doApply()
 {
     FrameSelection& selection = frame().selection();
 
-    if (selection.shouldChangeSelection(m_selectionToSet) && m_selectionToSet.isNonOrphanedCaretOrRange()) {
+    if (selection.shouldChangeSelection(m_selectionToSet) && !m_selectionToSet.isNoneOrOrphaned()) {
         selection.setSelection(m_selectionToSet, m_options);
         setEndingSelection(m_selectionToSet);
     }
@@ -52,7 +52,7 @@ void SetSelectionCommand::doUnapply()
 {
     FrameSelection& selection = frame().selection();
 
-    if (selection.shouldChangeSelection(startingSelection()) && startingSelection().isNonOrphanedCaretOrRange())
+    if (selection.shouldChangeSelection(startingSelection()) && !startingSelection().isNoneOrOrphaned())
         selection.setSelection(startingSelection(), m_options);
 }
 

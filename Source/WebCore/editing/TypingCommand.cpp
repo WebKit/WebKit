@@ -261,9 +261,9 @@ void TypingCommand::postTextStateChangeNotificationForDeletion(const VisibleSele
 
 void TypingCommand::doApply()
 {
-    if (!endingSelection().isNonOrphanedCaretOrRange())
+    if (endingSelection().isNoneOrOrphaned())
         return;
-        
+
     if (m_commandType == DeleteKey)
         if (m_commands.isEmpty())
             m_openedByBackwardDelete = true;

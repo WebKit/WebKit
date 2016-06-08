@@ -132,7 +132,7 @@ void InsertTextCommand::doApply()
 {
     ASSERT(m_text.find('\n') == notFound);
 
-    if (!endingSelection().isNonOrphanedCaretOrRange())
+    if (endingSelection().isNoneOrOrphaned())
         return;
 
     // Delete the current selection.

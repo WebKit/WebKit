@@ -290,7 +290,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
                 // It's possible that during the above set selection, this FrameSelection has been modified by
                 // selectFrameElementInParentIfFullySelected, but that the selection is no longer valid since
                 // the frame is about to be destroyed. If this is the case, clear our selection.
-                if (newSelectionFrame->hasOneRef() && !m_selection.isNonOrphanedCaretOrRange())
+                if (newSelectionFrame->hasOneRef() && m_selection.isNoneOrOrphaned())
                     clear();
                 return false;
             }

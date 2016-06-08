@@ -1,3 +1,46 @@
+2016-06-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r201667): ASSERTION FAILED: !m_anchorNode || !editingIgnoresContent(*m_anchorNode)
+        https://bugs.webkit.org/show_bug.cgi?id=158373
+        <rdar://problem/26690795>
+
+        Reviewed by Brent Fulgham.
+
+        The bug was caused by VisibleSelection::toNormalizedRange calling parentAnchoredEquivalent on an orphaned Position.
+        Fixed it by checking that condition and exiting early since we can't create a Range with a detached node anyway.
+
+        Also renamed isNonOrphanedCaretOrRange to isNoneOrOrphaned after negating the semantics for clarity.
+
+        Test: editing/selection/selection-in-iframe-removed-crash.html
+
+        * editing/EditorCommand.cpp:
+        (WebCore::valueFormatBlock):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::doApply):
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/SetSelectionCommand.cpp:
+        (WebCore::SetSelectionCommand::doApply):
+        (WebCore::SetSelectionCommand::doUnapply):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::doApply):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::firstRange): Also added a check for isNoneOrOrphaned since this function can hit the same
+        assertion when the selection end points are orphaned.
+        (WebCore::VisibleSelection::toNormalizedRange): Fixed the bug.
+        * editing/VisibleSelection.h:
+        (WebCore::VisibleSelection::isNoneOrOrphaned): Renamed from isNonOrphanedCaretOrRange and negated the semantics.
+
 2016-06-08  Dean Jackson  <dino@apple.com>
 
         Multiple selectors break keyframes animation

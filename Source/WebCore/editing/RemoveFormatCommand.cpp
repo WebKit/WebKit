@@ -78,7 +78,7 @@ static bool isElementForRemoveFormatCommand(const Element* element)
 
 void RemoveFormatCommand::doApply()
 {
-    if (!endingSelection().isNonOrphanedCaretOrRange())
+    if (endingSelection().isNoneOrOrphaned())
         return;
 
     // Get the default style for this editable root, it's the style that we'll give the

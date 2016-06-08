@@ -914,10 +914,7 @@ void ReplaceSelectionCommand::doApply()
     VisibleSelection selection = endingSelection();
     ASSERT(selection.isCaretOrRange());
     ASSERT(selection.start().deprecatedNode());
-    if (!selection.isNonOrphanedCaretOrRange() || !selection.start().deprecatedNode())
-        return;
-
-    if (!selection.rootEditableElement())
+    if (selection.isNoneOrOrphaned() || !selection.start().deprecatedNode() || !selection.isContentEditable())
         return;
 
     // In plain text only regions, we create style-less fragments, so the inserted content will automatically
