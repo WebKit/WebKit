@@ -46,10 +46,6 @@
     bottom: 0;
 }
 
-.timeline-view.overview > .data-grid th {
-    border-top: solid 1px var(--border-color);
-}
-
 .timeline-view.overview > .data-grid td.graph-column {
     padding: 2px 0;
 }
