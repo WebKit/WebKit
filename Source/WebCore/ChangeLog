@@ -1,3 +1,21 @@
+2016-06-07  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Refactor: Use captures with initializers in MediaEndpointPeerConnection::createOffer()
+        https://bugs.webkit.org/show_bug.cgi?id=158486
+
+        Reviewed by Eric Carlson.
+
+        Use initializers for the capture list when scheduling the "create offer task".
+
+        No change in behavior.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createOffer):
+        (WebCore::WrappedSessionDescriptionPromise::create): Deleted.
+        (WebCore::WrappedSessionDescriptionPromise::promise): Deleted.
+        (WebCore::WrappedSessionDescriptionPromise::WrappedSessionDescriptionPromise): Deleted.
+        Not needed anymore.
+
 2016-06-07  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         TouchList::append() should take a Ref instead of RefPtr

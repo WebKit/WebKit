@@ -54,23 +54,6 @@ static std::unique_ptr<PeerConnectionBackend> createMediaEndpointPeerConnection(
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createMediaEndpointPeerConnection;
 
-class WrappedSessionDescriptionPromise : public RefCounted<WrappedSessionDescriptionPromise> {
-public:
-    static Ref<WrappedSessionDescriptionPromise> create(SessionDescriptionPromise&& promise)
-    {
-        return *adoptRef(new WrappedSessionDescriptionPromise(WTFMove(promise)));
-    }
-
-    SessionDescriptionPromise& promise() { return m_promise; }
-
-private:
-    WrappedSessionDescriptionPromise(SessionDescriptionPromise&& promise)
-        : m_promise(WTFMove(promise))
-    { }
-
-    SessionDescriptionPromise m_promise;
-};
-
 static String randomString(size_t length)
 {
     const size_t size = ceil(length * 3 / 4);
@@ -133,11 +116,8 @@ void MediaEndpointPeerConnection::startRunningTasks()
 
 void MediaEndpointPeerConnection::createOffer(RTCOfferOptions& options, SessionDescriptionPromise&& promise)
 {
-    const RefPtr<RTCOfferOptions> protectedOptions = &options;
-    RefPtr<WrappedSessionDescriptionPromise> wrappedPromise = WrappedSessionDescriptionPromise::create(WTFMove(promise));
-
-    runTask([this, protectedOptions, wrappedPromise]() {
-        createOfferTask(*protectedOptions, wrappedPromise->promise());
+    runTask([this, protectedOptions = RefPtr<RTCOfferOptions>(&options), protectedPromise = WTFMove(promise)]() mutable {
+        createOfferTask(*protectedOptions, protectedPromise);
     });
 }
 
