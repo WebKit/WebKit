@@ -42,6 +42,13 @@ public:
         return proxy;
     }
 
+    static JSProxy* create(VM& vm, Structure* structure)
+    {
+        JSProxy* proxy = new (NotNull, allocateCell<JSProxy>(vm.heap)) JSProxy(vm, structure);
+        proxy->finishCreation(vm);
+        return proxy;
+    }
+
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, JSType proxyType)
     {
         ASSERT(proxyType == ImpureProxyType || proxyType == PureForwardingProxyType);
@@ -52,6 +59,8 @@ public:
 
     JSObject* target() const { return m_target.get(); }
     static ptrdiff_t targetOffset() { return OBJECT_OFFSETOF(JSProxy, m_target); }
+
+    JS_EXPORT_PRIVATE void setTarget(VM&, JSGlobalObject*);
 
 protected:
     JSProxy(VM& vm, Structure* structure)
@@ -71,8 +80,6 @@ protected:
     }
 
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
-
-    JS_EXPORT_PRIVATE void setTarget(VM&, JSGlobalObject*);
 
     JS_EXPORT_PRIVATE static String className(const JSObject*);
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);

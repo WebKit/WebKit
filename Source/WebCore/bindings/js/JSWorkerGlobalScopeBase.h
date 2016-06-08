@@ -43,6 +43,7 @@ namespace WebCore {
         DECLARE_INFO;
 
         WorkerGlobalScope& wrapped() const { return *m_wrapped; }
+        JSC::JSProxy* proxy() const { ASSERT(m_proxy); return m_proxy.get(); }
         ScriptExecutionContext* scriptExecutionContext() const;
 
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -61,10 +62,13 @@ namespace WebCore {
 
     protected:
         JSWorkerGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkerGlobalScope>&&);
-        void finishCreation(JSC::VM&);
+        void finishCreation(JSC::VM&, JSC::JSProxy*);
+
+        static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
 
     private:
         RefPtr<WorkerGlobalScope> m_wrapped;
+        JSC::WriteBarrier<JSC::JSProxy> m_proxy;
     };
 
     // Returns a JSWorkerGlobalScope or jsNull()

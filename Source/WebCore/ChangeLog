@@ -1,3 +1,45 @@
+2016-06-08  Chris Dumez  <cdumez@apple.com>
+
+        self.hasOwnProperty() does not work inside Web workers
+        https://bugs.webkit.org/show_bug.cgi?id=158446
+        <rdar://problem/26638397>
+
+        Reviewed by Geoffrey Garen.
+
+        W3C tests for workers were severely broken on WebKit because
+        self.hasOwnProperty() did not work inside workers. The reason is that
+        hasOwnProperty() (and other methods like toString()) call toThis() in
+        StrictMode on thisValue. However, in the case of 'self' in workers,
+        self was a DedicatedWorkerGlobalScope, which is a JSGlobalObject.
+        JSGlobalObject::toThis() returns jsUndefined() when called in strict
+        mode. As a result, we would end up with exceptions such as "undefined
+        is not an object" when calling self.hasOwnProperty() in workers.
+
+        To address the problem, this patch introduces a JSProxy whose proxy
+        type is PureForwardingProxyType and whose target is the
+        WorkerGlobalScope. This JSProxy is what we expose to the JavaScript,
+        instead of the JSWorkerGlobalScope itself. As a result, toThis() now
+        behaves as expected and self.hasOwnProperty() works inside workers.
+
+        This patch greatly improves our pass rate on several W3C tests:
+        http://w3c-test.org/workers/interfaces.worker: 20 passes -> 50 passes (out of 128)
+        http://w3c-test.org/IndexedDB/interfaces.worker 0 passes -> 145 passes (out of 156)
+
+        Tests: fast/workers/self-hasOwnProperty.html
+               fast/workers/self-toString.html
+
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::finishCreation):
+        (WebCore::JSWorkerGlobalScopeBase::visitChildren):
+        (WebCore::toJS):
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        (WebCore::JSWorkerGlobalScopeBase::proxy):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+
 2016-06-08  Antti Koivisto  <antti@apple.com>
 
         WebKit memory cache doesn't respect Vary header

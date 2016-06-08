@@ -35,6 +35,7 @@
 #include "JSWorkerGlobalScope.h"
 #include "Language.h"
 #include "WorkerGlobalScope.h"
+#include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/Microtask.h>
 
@@ -52,10 +53,20 @@ JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* st
 {
 }
 
-void JSWorkerGlobalScopeBase::finishCreation(VM& vm)
+void JSWorkerGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
 {
-    Base::finishCreation(vm);
+    m_proxy.set(vm, this, proxy);
+
+    Base::finishCreation(vm, m_proxy.get());
     ASSERT(inherits(info()));
+}
+
+void JSWorkerGlobalScopeBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSWorkerGlobalScopeBase* thisObject = jsCast<JSWorkerGlobalScopeBase*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_proxy);
 }
 
 void JSWorkerGlobalScopeBase::destroy(JSCell* cell)
@@ -111,7 +122,7 @@ JSValue toJS(ExecState*, WorkerGlobalScope& workerGlobalScope)
         return jsNull();
     JSWorkerGlobalScope* contextWrapper = script->workerGlobalScopeWrapper();
     ASSERT(contextWrapper);
-    return contextWrapper;
+    return contextWrapper->proxy();
 }
 
 JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSValue value)

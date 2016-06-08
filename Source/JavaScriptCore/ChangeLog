@@ -1,3 +1,20 @@
+2016-06-08  Chris Dumez  <cdumez@apple.com>
+
+        self.hasOwnProperty() does not work inside Web workers
+        https://bugs.webkit.org/show_bug.cgi?id=158446
+        <rdar://problem/26638397>
+
+        Reviewed by Geoffrey Garen.
+
+        Add a factory function to JSProxy to create a JSProxy without a target.
+        Also make the setTarget() method public so that the target can now be
+        set after creation. This is needed so that we can create a proxy for
+        JSWorkerGlobalScope, then create the JSWorkerGlobalScope object,
+        passing it the proxy and finally set the target on the proxy.
+
+        * runtime/JSProxy.h:
+        (JSC::JSProxy::create):
+
 2016-06-07  Filip Pizlo  <fpizlo@apple.com>
 
         Add result validation to JSAir

@@ -1101,10 +1101,10 @@ sub GenerateHeader
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
-        push(@headerContent, "    static $className* create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl)\n");
+        push(@headerContent, "    static $className* create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSC::JSProxy* proxy)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm.heap)) ${className}(vm, structure, WTFMove(impl));\n");
-        push(@headerContent, "        ptr->finishCreation(vm);\n");
+        push(@headerContent, "        ptr->finishCreation(vm, proxy);\n");
         push(@headerContent, "        vm.heap.addFinalizer(ptr, destroy);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
@@ -1416,7 +1416,7 @@ sub GenerateHeader
         if ($interfaceName eq "DOMWindow") {
             push(@headerContent, "    void finishCreation(JSC::VM&, JSDOMWindowShell*);\n");
         } else {
-            push(@headerContent, "    void finishCreation(JSC::VM&);\n");
+            push(@headerContent, "    void finishCreation(JSC::VM&, JSC::JSProxy*);\n");
         }
     }
 
@@ -2359,9 +2359,9 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    Base::finishCreation(vm, shell);\n\n");
         } else {
-            push(@implContent, "void ${className}::finishCreation(VM& vm)\n");
+            push(@implContent, "void ${className}::finishCreation(VM& vm, JSProxy* proxy)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    Base::finishCreation(vm);\n\n");
+            push(@implContent, "    Base::finishCreation(vm, proxy);\n\n");
         }
         # Support for RuntimeEnabled attributes on global objects.
         foreach my $attribute (@{$interface->attributes}) {
