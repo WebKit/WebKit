@@ -25,10 +25,10 @@
 "use strict";
 
 class Inst {
-    constructor(opcode, args)
+    constructor(opcode, args = [])
     {
         this._opcode = opcode;
-        this._args = args == null ? [] : args;
+        this._args = args;
     }
     
     append(...args)

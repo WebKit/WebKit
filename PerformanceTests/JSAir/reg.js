@@ -55,7 +55,7 @@ class Reg extends TmpBase {
     
     toString()
     {
-        return "%" + this._name;
+        return `%${this._name}`;
     }
     
     static extract(arg)
@@ -109,12 +109,12 @@ class Reg extends TmpBase {
         Reg.rsi = newGPR("rsi");
         Reg.rdi = newGPR("rdi");
         for (let i = 8; i <= 15; ++i)
-            Reg["r" + i] = newGPR("r" + i, i >= 12);
+            Reg[`r${i}`] = newGPR(`r${i}`, i >= 12);
     }
 
     // Define X86_64 FPRs.
     for (let i = 0; i <= 15; ++i)
-        Reg["xmm" + i] = newReg(i, FP, "xmm" + i);
+        Reg[`xmm${i}`] = newReg(i, FP, `xmm${i}`);
 
     Reg.gprs = []
     Reg.fprs = []

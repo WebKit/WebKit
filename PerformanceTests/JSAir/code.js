@@ -35,24 +35,19 @@ class Code {
         this._frameSize = 0;
     }
     
-    addBlock(frequency)
+    addBlock(frequency = 1)
     {
-        if (frequency == null)
-            frequency = 1;
-        let result = addIndexed(this._blocks, BasicBlock, frequency);
-        return result;
+        return addIndexed(this._blocks, BasicBlock, frequency);
     }
     
     addStackSlot(byteSize, kind)
     {
-        let result = addIndexed(this._stackSlots, StackSlot, byteSize, kind);
-        return result;
+        return addIndexed(this._stackSlots, StackSlot, byteSize, kind);
     }
     
     newTmp(type)
     {
-        let result = addIndexed(this["_" + symbolName(type).toLowerCase() + "Tmps"], Tmp, type);
-        return result;
+        return addIndexed(this[`_${lowerSymbolName(type)}Tmps`], Tmp, type);
     }
     
     get size() { return this._blocks.length; }
@@ -66,7 +61,7 @@ class Code {
     get blocks() { return this._blocks; }
     get stackSlots() { return this._stackSlots; }
     
-    tmps(type) { return this["_" + symbolName(type).toLowerCase() + "Tmps"]; }
+    tmps(type) { return this[`_${lowerSymbolName(type)}Tmps`]; }
     
     get callArgAreaSize() { return this._callArgAreaSize; }
     
@@ -116,12 +111,12 @@ class Code {
         if (this.stackSlots.length) {
             result += "Stack slots:\n";
             for (let slot of this.stackSlots)
-                result += "    " + slot + "\n";
+                result += `    ${slot}\n`;
         }
         if (this._frameSize)
-            result += "Frame size: " + this._frameSize + "\n";
+            result += `Frame size: ${this._frameSize}\n`;
         if (this._callArgAreaSize)
-            result += "Call arg area size: " + this._callArgAreaSize + "\n";
+            result += `Call arg area size: ${this._callArgAreaSize}\n`;
         return result;
     }
 }

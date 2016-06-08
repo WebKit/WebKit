@@ -1,3 +1,69 @@
+2016-06-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Use more ES6 features in JSAir
+        https://bugs.webkit.org/show_bug.cgi?id=158497
+
+        Reviewed by Keith Miller.
+        
+        This improves JSAir with the following ES6 features suggested by JoePeck:
+        
+        - String interpolation.
+        - Destructuring inside PatchCustom.
+        - Default arguments.
+        
+        All of these things are on hot paths.
+        
+        Note that I didn't use string interpolation everywhere that I could, only in those places
+        where it made the code more readable. In Ruby, I used the style that if the interpolation
+        expression has any non-trivial stuff (like a ternary operator, a chain of calls, or embedded
+        strings) then it's better to use regular strcat. I think that's what I carried over to here.
+        
+        Note that the previous change (Add result validation to JSAir) also made the Proxy code not
+        dead, though it's not necessarily on the hot path. The Proxy isn't called into frequently
+        but it's used from a function that is otherwise hot, so if calling into the Proxy prevents
+        that function from being optimized then it will hurt so good.
+        
+        I also reenabled tail calls in a few places.
+        
+        This change doesn't seem to change the performance of the benchmark for us. That's expected
+        since these ES6 features are cheap. Note that this claim doesn't include Proxy, which was
+        added in a separate change and that change did make the benchmark overall more expensive.
+
+        * JSAir/allocate_stack.js:
+        (allocateStack):
+        * JSAir/arg.js:
+        (Arg.createBitImm64):
+        (Arg.createAddr):
+        (Arg.createStack):
+        (Arg.logScale):
+        (Arg.createIndex):
+        * JSAir/basic_block.js:
+        (BasicBlock.get headerString):
+        (BasicBlock.prototype.get if):
+        (BasicBlock):
+        * JSAir/benchmark.js:
+        (benchmark):
+        * JSAir/code.js:
+        (Code):
+        (Code.prototype.addBlock):
+        (Code.prototype.addStackSlot):
+        (Code.prototype.newTmp):
+        (Code.prototype.get size):
+        (Code.prototype.get blocks):
+        (Code.prototype.get stackSlots):
+        (Code.prototype.tmps):
+        (Code.prototype.get callArgAreaSize):
+        (Code.prototype.toString):
+        * JSAir/custom.js:
+        (const.PatchCustom.forEachArg):
+        * JSAir/inst.js:
+        (Inst):
+        * JSAir/reg.js:
+        (Reg.prototype.toString):
+        * JSAir/util.js:
+        (symbolName):
+        (lowerSymbolName):
+
 2016-06-07  Filip Pizlo  <fpizlo@apple.com>
 
         Add result validation to JSAir

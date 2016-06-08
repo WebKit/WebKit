@@ -52,7 +52,7 @@ function benchmark()
             
             let hash = code.hash();
             if (hash != payload.earlyHash)
-                throw new Error("Wrong early hash for " + payload.generate.name +": " + hash);
+                throw new Error(`Wrong early hash for ${payload.generate.name}: ${hash}`);
             
             allocateStack(code);
             
@@ -63,7 +63,7 @@ function benchmark()
 
             hash = code.hash();
             if (hash != payload.lateHash)
-                throw new Error("Wrong late hash for " + payload.generate.name +": " + hash);
+                throw new Error(`Wrong late hash for ${payload.generate.name}: ${hash}`);
         }
     }
     

@@ -227,8 +227,7 @@ function allocateStack(code)
                         // zero fills.
                         if (slot.byteSize != 8) {
                             throw new Error(
-                                "Bad spill slot size for ZDef: " + slot.byteSize + ", width is " +
-                                    width);
+                                `Bad spill slot size for ZDef: ${slot.byteSize}, width is ${width}`);
                         }
                         if (width != 32)
                             throw new Error("Bad width for ZDef");

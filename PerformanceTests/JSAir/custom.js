@@ -50,9 +50,8 @@ const PatchCustom = {
     forEachArg(inst, func)
     {
         for (let i = 0; i < inst.args.length; ++i) {
-            inst.visitArg(
-                i, func, inst.patchArgData[i].role, inst.patchArgData[i].type,
-                inst.patchArgData[i].width);
+            let {type, role, width} = inst.patchArgData[i];
+            inst.visitArg(i, func, role, type, width);
         }
     },
     

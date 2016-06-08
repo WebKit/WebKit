@@ -108,7 +108,7 @@ class BasicBlock {
     get headerString()
     {
         let result = "";
-        result += "BB" + this + ": ; frequency = " + this._frequency + "\n";
+        result += `BB${this}: ; frequency = ${this._frequency}\n`;
         if (this._predecessors.length)
             result += "  Predecessors: " + this._predecessors.join(", ") + "\n";
         return result;
@@ -127,7 +127,7 @@ class BasicBlock {
         let result = "";
         result += this.headerString;
         for (let inst of this)
-            result += "    " + inst + "\n";
+            result += `    ${inst}\n`;
         result += this.footerString;
         return result;
     }

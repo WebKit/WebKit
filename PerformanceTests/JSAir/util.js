@@ -49,6 +49,11 @@ function symbolName(symbol)
     return fullString.substring("Symbol(".length, fullString.length - ")".length);
 }
 
+function lowerSymbolName(symbol)
+{
+    return symbolName(symbol).toLowerCase();
+}
+
 function setToString(set)
 {
     let result = "";

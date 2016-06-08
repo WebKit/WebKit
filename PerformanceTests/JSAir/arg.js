@@ -333,10 +333,8 @@ class Arg {
         return result;
     }
     
-    static createAddr(base, offset)
+    static createAddr(base, offset = 0)
     {
-        if (offset == null)
-            offset = 0;
         let result = new Arg();
         result._kind = Arg.Addr;
         result._base = base;
@@ -344,10 +342,8 @@ class Arg {
         return result;
     }
     
-    static createStack(slot, offset)
+    static createStack(slot, offset = 0)
     {
-        if (offset == null)
-            offset = 0;
         let result = new Arg();
         result._kind = Arg.Stack;
         result._slot = slot;
@@ -400,12 +396,8 @@ class Arg {
         }
     }
     
-    static createIndex(base, index, scale, offset)
+    static createIndex(base, index, scale = 1, offset = 0)
     {
-        if (scale == null)
-            scale = 1;
-        if (offset == null)
-            offset = 0;
         let result = new Arg();
         result._kind = Arg.Index;
         result._base = base;
