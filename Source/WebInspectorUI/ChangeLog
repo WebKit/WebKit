@@ -1,3 +1,58 @@
+2016-06-08  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: reduce redundant attribute modification updates in DOMTreeUpdater and DOMTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=158504
+        <rdar://problem/25561452>
+
+        Reviewed by Timothy Hatcher.
+
+        When the frontend gets lots of DOM.attributeModified events, it forwards these on to
+        DOMTreeUpdater, which pushes a record for every single modification. It then updates
+        the DOM elements with the attibute changes on an animation frame. However, since it
+        doesn't do any deduplication of the modification records, a lot of time is wasted
+        on updating DOMTreeElements with intermediate (non-final) attribute values.
+
+        This patch rewrites DOMTreeUpdater to precisely track which nodes and attributes
+        of each node need to be updated on the next animation frame. This is done using
+        Sets and Maps that only hold onto the most recent attribute values rather than
+        pushing a record object for every single mutation.
+
+        This improves the performance of the Elements tab on an SVG particle simulator
+        dramatically so that the Inspector will not immediately hang. It still only achieves
+        a few updates per second in this case, so there is still optimization to be done on
+        the frontend and throttling to be done on the backend.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement):
+        (WebInspector.DOMTreeElement.prototype.attributeDidChange):
+        (WebInspector.DOMTreeElement.prototype._buildAttributeDOM):
+        (WebInspector.DOMTreeElement.prototype._markNodeChanged):
+        (WebInspector.DOMTreeElement.prototype._nodeChangedAnimationEnd):
+        (WebInspector.DOMTreeElement.prototype._fireDidChange):
+        (WebInspector.DOMTreeElement.prototype.nodeStateChanged): Deleted.
+        Simplify the list of modified attributes a little bit. This still uses a worklist
+        approach, so it's possible that duplicate updates for the same attribute could accumulate
+        if DOMTreeUpdater pushes updates faster than DOMTreeElement can render them.
+
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WebInspector.DOMTreeUpdater):
+        (WebInspector.DOMTreeUpdater.prototype._attributesUpdated):
+        (WebInspector.DOMTreeUpdater.prototype._characterDataModified):
+        (WebInspector.DOMTreeUpdater.prototype._nodeAttributeModified):
+        (WebInspector.DOMTreeUpdater.prototype._nodeInserted):
+        (WebInspector.DOMTreeUpdater.prototype._nodeRemoved):
+        (WebInspector.DOMTreeUpdater.prototype._childNodeCountUpdated):
+        (WebInspector.DOMTreeUpdater.prototype._updateModifiedNodes):
+        (WebInspector.DOMTreeUpdater.prototype._reset):
+        Rewrite this class to separately track insertions, deletions, and modifications. Use
+        Sets and Maps so redundant entries are not kept around. Split the main work loop
+        and use fewer enum-like properties to control how each DOM element change is handled.
+
+        Attempt to update all inserted children before modifying their attributes. This
+        wasn't done previously, but enough duplicate attribute modifications occurred that
+        usually some of them would be processed after being added to the tree. There is only
+        one chance to do this now.
+
 2016-06-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r158219): Web Inspector: Border under the default Timeline content view is too thick

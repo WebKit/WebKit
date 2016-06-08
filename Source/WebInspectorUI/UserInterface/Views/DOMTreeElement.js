@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2013, 2015, 2016 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Joseph Pecoraro
  *
@@ -42,7 +42,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         this._searchQuery = null;
         this._expandedChildrenLimit = WebInspector.DOMTreeElement.InitialChildrenLimit;
 
-        this._nodeStateChanges = [];
+        this._recentlyModifiedAttributes = [];
         this._boundNodeChangedAnimationEnd = this._nodeChangedAnimationEnd.bind(this);
 
         node.addEventListener(WebInspector.DOMNode.Event.EnabledPseudoClassesChanged, this._nodePseudoClassesDidChange, this);
@@ -197,12 +197,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         return count;
     }
 
-    nodeStateChanged(change)
+    attributeDidChange(name)
     {
-        if (!change)
-            return;
-
-        this._nodeStateChanges.push(change);
+        this._recentlyModifiedAttributes.push({name});
     }
 
     showChildNode(node)
@@ -1148,9 +1145,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (hasText)
             attrSpanElement.append("\"");
 
-        for (let change of this._nodeStateChanges) {
-            if (change.type === WebInspector.DOMTreeElement.ChangeType.Attribute && change.attribute === name)
-                change.element = hasText ? attrValueElement : attrNameElement;
+        for (let attribute of this._recentlyModifiedAttributes) {
+            if (attribute.name === name)
+                attribute.element = hasText ? attrValueElement : attrNameElement;
         }
     }
 
@@ -1498,8 +1495,8 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     _markNodeChanged()
     {
-        for (let change of this._nodeStateChanges) {
-            let element = change.element;
+        for (let attribute of this._recentlyModifiedAttributes) {
+            let element = attribute.element;
             if (!element)
                 continue;
 
@@ -1515,9 +1512,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         element.classList.remove("node-state-changed");
         element.removeEventListener("animationend", this._boundNodeChangedAnimationEnd);
 
-        for (let i = this._nodeStateChanges.length - 1; i >= 0; --i) {
-            if (this._nodeStateChanges[i].element === element)
-                this._nodeStateChanges.splice(i, 1);
+        for (let i = this._recentlyModifiedAttributes.length - 1; i >= 0; --i) {
+            if (this._recentlyModifiedAttributes[i].element === element)
+                this._recentlyModifiedAttributes.splice(i, 1);
         }
     }
 
@@ -1533,8 +1530,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
     {
         super._fireDidChange();
 
-        if (this._nodeStateChanges)
-            this._markNodeChanged();
+        this._markNodeChanged();
     }
 
     handleEvent(event)
