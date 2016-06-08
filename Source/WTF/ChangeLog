@@ -1,3 +1,22 @@
+2016-06-08  Brady Eidson  <beidson@apple.com>
+
+        Make CrossThreadCopier more efficient (fewer copies!).
+        https://bugs.webkit.org/show_bug.cgi?id=158456
+
+        Reviewed by Alex Christensen.
+
+        Previously, we'd run all arguments through CrossThreadCopier, then immediately make
+        an unnecessary copy of the result during lambda capture.
+
+        Instead, we should just put the CrossThreadCopier generated objects directly in lambdas,
+        which are then captured by NoncopyableFunctions.
+
+        This reduces the number of constructor calls per argument from 2 copies to 1 move.
+
+        * wtf/CrossThreadTask.h:
+        (WTF::CrossThreadTask::CrossThreadTask):
+        (WTF::createCrossThreadTask):
+
 2016-06-07  Filip Pizlo  <fpizlo@apple.com>
 
         Implement Air::allocateStack() in ES6 to see how much of a bad idea that is
