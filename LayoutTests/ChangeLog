@@ -1,3 +1,14 @@
+2016-06-06  Antti Koivisto  <antti@apple.com>
+
+        WebKit memory cache doesn't respect Vary header
+        https://bugs.webkit.org/show_bug.cgi?id=71509
+        <rdar://problem/26651033>
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/cache/disk-cache/disk-cache-vary-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-vary-no-body-expected.txt:
+
 2016-06-08  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Imlement MediaEndpointPeerConnection::setLocalDescription()

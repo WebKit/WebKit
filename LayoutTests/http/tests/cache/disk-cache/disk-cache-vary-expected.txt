@@ -558,7 +558,7 @@ response source: Network
 
 response headers: {"Cache-control":"max-age=100","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
-response source: Memory cache
+response source: Network
 
 response headers: {"Cache-control":"no-store","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
@@ -586,15 +586,15 @@ response source: Network
 
 response headers: {"ETag":"match","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
-response source: Memory cache after validation
+response source: Network
 
 response headers: {"Cache-control":"max-age=0","ETag":"match","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
-response source: Memory cache after validation
+response source: Network
 
 response headers: {"Cache-control":"max-age=100","ETag":"match","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
-response source: Memory cache
+response source: Network
 
 response headers: {"Cache-control":"no-store","ETag":"match","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
@@ -610,15 +610,15 @@ response source: Network
 
 response headers: {"Cache-control":"no-cache","ETag":"match","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
-response source: Memory cache after validation
+response source: Network
 
 response headers: {"Cache-control":"max-age=0, no-cache","ETag":"match","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
-response source: Memory cache after validation
+response source: Network
 
 response headers: {"Cache-control":"max-age=100, no-cache","ETag":"match","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
-response source: Memory cache after validation
+response source: Network
 
 response headers: {"ETag":"nomatch","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
@@ -630,7 +630,7 @@ response source: Network
 
 response headers: {"Cache-control":"max-age=100","ETag":"nomatch","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}
-response source: Memory cache
+response source: Network
 
 response headers: {"Cache-control":"no-store","ETag":"nomatch","Vary":"Accept-Language"}
 request headers: {"Accept-Language":"unique()"}

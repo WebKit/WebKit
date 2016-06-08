@@ -1,3 +1,25 @@
+2016-06-06  Antti Koivisto  <antti@apple.com>
+
+        WebKit memory cache doesn't respect Vary header
+        https://bugs.webkit.org/show_bug.cgi?id=71509
+        <rdar://problem/26651033>
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeCacheKey):
+        (WebKit::NetworkCache::cachePolicyAllowsExpired):
+        (WebKit::NetworkCache::makeUseDecision):
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::storeRedirect):
+        (WebKit::NetworkCache::Cache::update):
+        (WebKit::NetworkCache::headerValueForVary): Deleted.
+        (WebKit::NetworkCache::collectVaryingRequestHeaders): Deleted.
+        (WebKit::NetworkCache::verifyVaryingRequestHeaders): Deleted.
+
+            These move to WebCore.
+
 2016-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with threaded compositor enabled after r201802.

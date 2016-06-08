@@ -1,3 +1,53 @@
+2016-06-08  Antti Koivisto  <antti@apple.com>
+
+        WebKit memory cache doesn't respect Vary header
+        https://bugs.webkit.org/show_bug.cgi?id=71509
+        <rdar://problem/26651033>
+
+        Reviewed by Sam Weinig.
+
+        Implement Vary header support in WebCore memory cache.
+
+        The patch moves Vary header code from WebKit2 Network Cache to WebCore and uses it to
+        verify the headers for CachedResources.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::failBeforeStarting):
+        (WebCore::addAdditionalRequestHeadersToRequest):
+
+            Factor into standalone function so we can use it from varyHeaderValuesMatch.
+
+        (WebCore::CachedResource::addAdditionalRequestHeaders):
+        (WebCore::CachedResource::load):
+        (WebCore::CachedResource::setResponse):
+
+            Collect the Vary header values when we receive a response.
+
+        (WebCore::CachedResource::responseReceived):
+        (WebCore::CachedResource::redirectChainAllowsReuse):
+        (WebCore::CachedResource::varyHeaderValuesMatch):
+
+            Test for Vary match.
+
+        (WebCore::CachedResource::overheadSize):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isCacheValidator):
+        (WebCore::CachedResource::resourceToRevalidate):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+
+            Reload on Vary mismatch.
+
+        * platform/network/CacheValidation.cpp:
+        (WebCore::parseCacheControlDirectives):
+        (WebCore::headerValueForVary):
+        (WebCore::collectVaryingRequestHeaders):
+        (WebCore::verifyVaryingRequestHeaders):
+
+            Vary header collection and validation code moves here.
+
+        * platform/network/CacheValidation.h:
+
 2016-06-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201800.

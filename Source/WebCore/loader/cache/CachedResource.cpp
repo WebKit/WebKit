@@ -182,7 +182,7 @@ void CachedResource::failBeforeStarting()
     error(CachedResource::LoadError);
 }
 
-void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader& cachedResourceLoader)
+static void addAdditionalRequestHeadersToRequest(ResourceRequest& request, const CachedResourceLoader& cachedResourceLoader)
 {
     // Note: We skip the Content-Security-Policy check here because we check
     // the Content-Security-Policy at the CachedResourceLoader layer so we can
@@ -191,22 +191,28 @@ void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader& cachedRes
     FrameLoader& frameLoader = cachedResourceLoader.frame()->loader();
     String outgoingReferrer;
     String outgoingOrigin;
-    if (m_resourceRequest.httpReferrer().isNull()) {
+    if (request.httpReferrer().isNull()) {
         outgoingReferrer = frameLoader.outgoingReferrer();
         outgoingOrigin = frameLoader.outgoingOrigin();
     } else {
-        outgoingReferrer = m_resourceRequest.httpReferrer();
+        outgoingReferrer = request.httpReferrer();
         outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
     }
 
-    outgoingReferrer = SecurityPolicy::generateReferrerHeader(cachedResourceLoader.document()->referrerPolicy(), m_resourceRequest.url(), outgoingReferrer);
+    auto referrerPolicy = cachedResourceLoader.document() ? cachedResourceLoader.document()->referrerPolicy() : ReferrerPolicy::Default;
+    outgoingReferrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, request.url(), outgoingReferrer);
     if (outgoingReferrer.isEmpty())
-        m_resourceRequest.clearHTTPReferrer();
+        request.clearHTTPReferrer();
     else
-        m_resourceRequest.setHTTPReferrer(outgoingReferrer);
-    FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
+        request.setHTTPReferrer(outgoingReferrer);
+    FrameLoader::addHTTPOriginIfNeeded(request, outgoingOrigin);
 
-    frameLoader.addExtraFieldsToSubresourceRequest(m_resourceRequest);
+    frameLoader.addExtraFieldsToSubresourceRequest(request);
+}
+
+void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader& cachedResourceLoader)
+{
+    addAdditionalRequestHeadersToRequest(m_resourceRequest, cachedResourceLoader);
 }
 
 void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
@@ -417,6 +423,8 @@ void CachedResource::setResponse(const ResourceResponse& response)
     m_response = response;
     m_response.setType(m_responseType);
     m_response.setRedirected(m_redirectChainCacheStatus.status != RedirectChainCacheStatus::NoRedirection);
+
+    m_varyingHeaderValues = collectVaryingRequestHeaders(m_resourceRequest, m_response, m_sessionID);
 }
 
 void CachedResource::responseReceived(const ResourceResponse& response)
@@ -763,6 +771,17 @@ CachedResource::RevalidationDecision CachedResource::makeRevalidationDecision(Ca
 bool CachedResource::redirectChainAllowsReuse(ReuseExpiredRedirectionOrNot reuseExpiredRedirection) const
 {
     return WebCore::redirectChainAllowsReuse(m_redirectChainCacheStatus, reuseExpiredRedirection);
+}
+
+bool CachedResource::varyHeaderValuesMatch(const ResourceRequest& request, const CachedResourceLoader& cachedResourceLoader)
+{
+    if (m_varyingHeaderValues.isEmpty())
+        return true;
+
+    ResourceRequest requestWithFullHeaders(request);
+    addAdditionalRequestHeadersToRequest(requestWithFullHeaders, cachedResourceLoader);
+
+    return verifyVaryingRequestHeaders(m_varyingHeaderValues, requestWithFullHeaders, m_sessionID);
 }
 
 unsigned CachedResource::overheadSize() const
