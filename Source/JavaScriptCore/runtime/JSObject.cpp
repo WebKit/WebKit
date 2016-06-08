@@ -1496,19 +1496,36 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
     if (Optional<uint32_t> index = parseIndex(propertyName))
         return thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, index.value());
 
+    unsigned attributes;
+
     if (!thisObject->staticFunctionsReified()) {
         if (auto* entry = thisObject->findPropertyHashEntry(propertyName)) {
-            if (entry->attributes() & DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable)
+            // If the static table contains a non-configurable (DontDelete) property then we can return early;
+            // if there is a property in the storage array it too must be non-configurable (the language does
+            // not allow repacement of a non-configurable property with a configurable one).
+            if (entry->attributes() & DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable) {
+                ASSERT(!isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes)) || attributes & DontDelete);
                 return false;
+            }
             thisObject->reifyAllStaticProperties(exec);
         }
     }
 
-    unsigned attributes;
-    if (isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes))) {
+    Structure* structure = thisObject->structure(vm);
+
+    bool propertyIsPresent = isValidOffset(structure->get(vm, propertyName, attributes));
+    if (propertyIsPresent) {
         if (attributes & DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable)
             return false;
-        thisObject->removeDirect(vm, propertyName);
+
+        PropertyOffset offset;
+        if (structure->isUncacheableDictionary())
+            offset = structure->removePropertyWithoutTransition(vm, propertyName);
+        else
+            thisObject->setStructure(vm, Structure::removePropertyTransition(vm, structure, propertyName, offset));
+
+        if (offset != invalidOffset)
+            thisObject->putDirectUndefined(offset);
     }
 
     return true;
@@ -1976,28 +1993,6 @@ void JSObject::reifyAllStaticProperties(ExecState* exec)
     }
 
     structure(vm)->setStaticFunctionsReified(true);
-}
-
-bool JSObject::removeDirect(VM& vm, PropertyName propertyName)
-{
-    Structure* structure = this->structure(vm);
-    if (!isValidOffset(structure->get(vm, propertyName)))
-        return false;
-
-    PropertyOffset offset;
-    if (structure->isUncacheableDictionary()) {
-        offset = structure->removePropertyWithoutTransition(vm, propertyName);
-        if (offset == invalidOffset)
-            return false;
-        putDirectUndefined(offset);
-        return true;
-    }
-
-    setStructure(vm, Structure::removePropertyTransition(vm, structure, propertyName, offset));
-    if (offset == invalidOffset)
-        return false;
-    putDirectUndefined(offset);
-    return true;
 }
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue getterSetter, unsigned attributes, PropertyOffset offset)

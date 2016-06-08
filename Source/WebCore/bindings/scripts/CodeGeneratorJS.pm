@@ -2282,7 +2282,8 @@ sub GenerateImplementation
             my $name = $signature->name;
             push(@implContent, "    if (!${enable_function}()) {\n");
             push(@implContent, "        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
-            push(@implContent, "        removeDirect(vm, propertyName);\n");
+            push(@implContent, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
+            push(@implContent, "        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);\n");
             push(@implContent, "    }\n");
             push(@implContent, "#endif\n") if $conditionalString;
         }

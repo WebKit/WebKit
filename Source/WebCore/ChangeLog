@@ -1,3 +1,36 @@
+2016-06-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove removeDirect
+        https://bugs.webkit.org/show_bug.cgi?id=158516
+
+        Reviewed by Ryosuke Niwa.
+
+        removeDirect is typically used as a subroutine of deleteProperty, but is also available to
+        call directly. Having this functionality factored out to a separate routine is a bad idea
+        on a couple of fronts:
+
+        - for the main use within deleteProperty there is redundancy (presence of the property
+          was being checked twice) and inconsistency (the two functions returned different results
+          in the case of a nonexistent property; the result from removeDirect was never observed).
+
+        - all uses of removeDirect are in practical terms incorrect. removeDirect had the
+          advantage of ignoring the configurable (DontDelete) attributes, but this is achievable
+          using the DeletePropertyMode setting - and the disadvantage of failing delete static
+          table properties. Last uses were one that was removed in bug #158295 (where failure to
+          delete static properties was a problem), and as addressed in this patch removeDirect is
+          being used to implement runtime enabled features. This only works because we currently
+          force reification of all properties on the DOM prototype objects, so in effect there are
+          no static properties. In order to make the code robust such that runtime enabled
+          features would still work even if we were not reifying static properties (a change we
+          may want to make) we should be calling deleteProperty in this case too.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+            - changed to call deleteProperty instead of removeDirect.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+            - updated bindings test results.
+
 2016-06-08  Nan Wang  <n_wang@apple.com>
 
         For keyboard users, activating a fragment URL should transfer focus and caret to the destination

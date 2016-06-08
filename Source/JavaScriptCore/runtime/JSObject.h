@@ -622,7 +622,6 @@ public:
 
     void transitionTo(VM&, Structure*);
 
-    JS_EXPORT_PRIVATE bool removeDirect(VM&, PropertyName); // Return true if anything is removed.
     bool hasCustomProperties() { return structure()->didTransition(); }
     bool hasGetterSetterProperties() { return structure()->hasGetterSetterProperties(); }
     bool hasCustomGetterSetterProperties() { return structure()->hasCustomGetterSetterProperties(); }
