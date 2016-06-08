@@ -40,7 +40,7 @@ class WebPage;
 class CoordinatedLayerTreeHost : public LayerTreeHost, public WebCore::CompositingCoordinator::Client
 {
 public:
-    static Ref<CoordinatedLayerTreeHost> create(WebPage*);
+    static Ref<CoordinatedLayerTreeHost> create(WebPage&);
     virtual ~CoordinatedLayerTreeHost();
 
     const LayerTreeContext& layerTreeContext() override { return m_layerTreeContext; }
@@ -75,7 +75,7 @@ public:
     static RefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
 protected:
-    explicit CoordinatedLayerTreeHost(WebPage*);
+    explicit CoordinatedLayerTreeHost(WebPage&);
 
 private:
     // CoordinatedLayerTreeHost

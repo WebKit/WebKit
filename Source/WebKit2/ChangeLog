@@ -1,3 +1,51 @@
+2016-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        LayerTreeHost should be created with a WebPage reference instead of a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=158520
+
+        Reviewed by Žan Doberšek.
+
+        We are indeed creating the LayerTreeHost always from a WebPage reference but getting its address to pass it to
+        the LayerTreeHost create() function.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::enterAcceleratedCompositingMode):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::create):
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::didFlushRootLayer):
+        (WebKit::CoordinatedLayerTreeHost::performScheduledLayerFlush):
+        (WebKit::CoordinatedLayerTreeHost::commitSceneState):
+        (WebKit::CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::create):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::compositorDidFlushLayers):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didScaleFactorChanged):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::setVisibleContentsRect):
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode):
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        (WebKit::LayerTreeHost::LayerTreeHost):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::create):
+        (WebKit::LayerTreeHostGtk::LayerTreeHostGtk):
+        (WebKit::LayerTreeHostGtk::makeContextCurrent):
+        (WebKit::LayerTreeHostGtk::deviceOrPageScaleFactorChanged):
+        (WebKit::LayerTreeHostGtk::paintContents):
+        (WebKit::LayerTreeHostGtk::deviceScaleFactor):
+        (WebKit::LayerTreeHostGtk::pageScaleFactor):
+        (WebKit::LayerTreeHostGtk::flushPendingLayerChanges):
+        (WebKit::LayerTreeHostGtk::flushAndRenderLayers):
+        (WebKit::LayerTreeHostGtk::pageBackgroundTransparencyChanged):
+        (WebKit::LayerTreeHostGtk::initialize): Deleted.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+
 2016-06-07  Sam Weinig  <sam@webkit.org>
 
         Fix 10.10 build.

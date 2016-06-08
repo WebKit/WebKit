@@ -306,7 +306,7 @@ void CoordinatedDrawingArea::enterAcceleratedCompositingMode(GraphicsLayer* grap
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
 
-    m_layerTreeHost = LayerTreeHost::create(&m_webPage);
+    m_layerTreeHost = LayerTreeHost::create(m_webPage);
     if (!m_inUpdateBackingStoreState)
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
 

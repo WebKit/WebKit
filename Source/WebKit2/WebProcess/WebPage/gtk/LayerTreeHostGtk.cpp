@@ -126,14 +126,12 @@ void LayerTreeHostGtk::RenderFrameScheduler::renderFrame()
     nextFrame();
 }
 
-PassRefPtr<LayerTreeHostGtk> LayerTreeHostGtk::create(WebPage* webPage)
+Ref<LayerTreeHostGtk> LayerTreeHostGtk::create(WebPage& webPage)
 {
-    RefPtr<LayerTreeHostGtk> host = adoptRef(new LayerTreeHostGtk(webPage));
-    host->initialize();
-    return host.release();
+    return adoptRef(*new LayerTreeHostGtk(webPage));
 }
 
-LayerTreeHostGtk::LayerTreeHostGtk(WebPage* webPage)
+LayerTreeHostGtk::LayerTreeHostGtk(WebPage& webPage)
     : LayerTreeHost(webPage)
     , m_isValid(true)
     , m_notifyAfterScheduledLayerFlush(false)
@@ -141,6 +139,30 @@ LayerTreeHostGtk::LayerTreeHostGtk(WebPage* webPage)
     , m_viewOverlayRootLayer(nullptr)
     , m_renderFrameScheduler(std::bind(&LayerTreeHostGtk::renderFrame, this))
 {
+    m_rootLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
+    m_rootLayer->setDrawsContent(false);
+    m_rootLayer->setSize(m_webPage.size());
+
+    m_scaleMatrix.makeIdentity();
+    m_scaleMatrix.scale(m_webPage.deviceScaleFactor() * m_webPage.pageScaleFactor());
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setAnchorPoint(FloatPoint3D());
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTransform(m_scaleMatrix);
+
+    // The non-composited contents are a child of the root layer.
+    m_nonCompositedContentLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
+    m_nonCompositedContentLayer->setDrawsContent(true);
+    m_nonCompositedContentLayer->setContentsOpaque(m_webPage.drawsBackground());
+    m_nonCompositedContentLayer->setSize(m_webPage.size());
+    if (m_webPage.corePage()->settings().acceleratedDrawingEnabled())
+        m_nonCompositedContentLayer->setAcceleratesDrawing(true);
+
+#ifndef NDEBUG
+    m_rootLayer->setName("LayerTreeHost root layer");
+    m_nonCompositedContentLayer->setName("LayerTreeHost non-composited content");
+#endif
+
+    m_rootLayer->addChild(m_nonCompositedContentLayer.get());
+    m_nonCompositedContentLayer->setNeedsDisplay();
 }
 
 bool LayerTreeHostGtk::makeContextCurrent()
@@ -157,34 +179,6 @@ bool LayerTreeHostGtk::makeContextCurrent()
     }
 
     return m_context->makeContextCurrent();
-}
-
-void LayerTreeHostGtk::initialize()
-{
-    m_rootLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-    m_rootLayer->setDrawsContent(false);
-    m_rootLayer->setSize(m_webPage->size());
-
-    m_scaleMatrix.makeIdentity();
-    m_scaleMatrix.scale(m_webPage->deviceScaleFactor() * m_webPage->pageScaleFactor());
-    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setAnchorPoint(FloatPoint3D());
-    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTransform(m_scaleMatrix);
-
-    // The non-composited contents are a child of the root layer.
-    m_nonCompositedContentLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-    m_nonCompositedContentLayer->setDrawsContent(true);
-    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground());
-    m_nonCompositedContentLayer->setSize(m_webPage->size());
-    if (m_webPage->corePage()->settings().acceleratedDrawingEnabled())
-        m_nonCompositedContentLayer->setAcceleratesDrawing(true);
-
-#ifndef NDEBUG
-    m_rootLayer->setName("LayerTreeHost root layer");
-    m_nonCompositedContentLayer->setName("LayerTreeHost non-composited content");
-#endif
-
-    m_rootLayer->addChild(m_nonCompositedContentLayer.get());
-    m_nonCompositedContentLayer->setNeedsDisplay();
 }
 
 LayerTreeHostGtk::~LayerTreeHostGtk()
@@ -279,7 +273,7 @@ void LayerTreeHostGtk::deviceOrPageScaleFactorChanged()
     m_nonCompositedContentLayer->deviceOrPageScaleFactorChanged();
 
     m_scaleMatrix.makeIdentity();
-    m_scaleMatrix.scale(m_webPage->deviceScaleFactor() * m_webPage->pageScaleFactor());
+    m_scaleMatrix.scale(m_webPage.deviceScaleFactor() * m_webPage.pageScaleFactor());
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTransform(m_scaleMatrix);
 }
 
@@ -291,17 +285,17 @@ void LayerTreeHostGtk::forceRepaint()
 void LayerTreeHostGtk::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect)
 {
     if (graphicsLayer == m_nonCompositedContentLayer.get())
-        m_webPage->drawRect(graphicsContext, enclosingIntRect(clipRect));
+        m_webPage.drawRect(graphicsContext, enclosingIntRect(clipRect));
 }
 
 float LayerTreeHostGtk::deviceScaleFactor() const
 {
-    return m_webPage->deviceScaleFactor();
+    return m_webPage.deviceScaleFactor();
 }
 
 float LayerTreeHostGtk::pageScaleFactor() const
 {
-    return m_webPage->pageScaleFactor();
+    return m_webPage.pageScaleFactor();
 }
 
 bool LayerTreeHostGtk::renderFrame()
@@ -312,11 +306,11 @@ bool LayerTreeHostGtk::renderFrame()
 
 bool LayerTreeHostGtk::flushPendingLayerChanges()
 {
-    bool viewportIsStable = m_webPage->corePage()->mainFrame().view()->viewportIsStable();
+    bool viewportIsStable = m_webPage.corePage()->mainFrame().view()->viewportIsStable();
     m_rootLayer->flushCompositingStateForThisLayerOnly(viewportIsStable);
     m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly(viewportIsStable);
 
-    if (!m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes())
+    if (!m_webPage.corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes())
         return false;
 
     if (m_viewOverlayRootLayer)
@@ -354,7 +348,7 @@ void LayerTreeHostGtk::flushAndRenderLayers()
 {
     {
         RefPtr<LayerTreeHostGtk> protect(this);
-        m_webPage->layoutIfNeeded();
+        m_webPage.layoutIfNeeded();
 
         if (!m_isValid)
             return;
@@ -371,7 +365,7 @@ void LayerTreeHostGtk::flushAndRenderLayers()
 
     if (m_notifyAfterScheduledLayerFlush) {
         // Let the drawing area know that we've done a flush of the layer changes.
-        static_cast<DrawingAreaImpl*>(m_webPage->drawingArea())->layerHostDidFlushLayers();
+        static_cast<DrawingAreaImpl*>(m_webPage.drawingArea())->layerHostDidFlushLayers();
         m_notifyAfterScheduledLayerFlush = false;
     }
 }
@@ -401,7 +395,7 @@ void LayerTreeHostGtk::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
 
 void LayerTreeHostGtk::pageBackgroundTransparencyChanged()
 {
-    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground());
+    m_nonCompositedContentLayer->setContentsOpaque(m_webPage.drawsBackground());
 }
 
 void LayerTreeHostGtk::cancelPendingLayerFlush()

@@ -41,7 +41,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
+RefPtr<LayerTreeHost> LayerTreeHost::create(WebPage& webPage)
 {
 #if USE(COORDINATED_GRAPHICS_THREADED)
     return ThreadedCoordinatedLayerTreeHost::create(webPage);
@@ -51,11 +51,11 @@ PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
     return LayerTreeHostGtk::create(webPage);
 #else
     UNUSED_PARAM(webPage);
-    return 0;
+    return nullptr;
 #endif
 }
 
-LayerTreeHost::LayerTreeHost(WebPage* webPage)
+LayerTreeHost::LayerTreeHost(WebPage& webPage)
     : m_webPage(webPage)
 {
 }

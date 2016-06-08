@@ -61,7 +61,7 @@ class WebPage;
 class ThreadedCoordinatedLayerTreeHost : public LayerTreeHost, public WebCore::CompositingCoordinator::Client, public ThreadedCompositor::Client {
     WTF_MAKE_NONCOPYABLE(ThreadedCoordinatedLayerTreeHost); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ThreadedCoordinatedLayerTreeHost> create(WebPage*);
+    static Ref<ThreadedCoordinatedLayerTreeHost> create(WebPage&);
     virtual ~ThreadedCoordinatedLayerTreeHost();
 
     const LayerTreeContext& layerTreeContext() override { return m_layerTreeContext; };
@@ -101,7 +101,7 @@ public:
     static RefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
 protected:
-    explicit ThreadedCoordinatedLayerTreeHost(WebPage*);
+    explicit ThreadedCoordinatedLayerTreeHost(WebPage&);
 
 private:
 

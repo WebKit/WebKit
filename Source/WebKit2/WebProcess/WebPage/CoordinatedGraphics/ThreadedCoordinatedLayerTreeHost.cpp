@@ -48,7 +48,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<ThreadedCoordinatedLayerTreeHost> ThreadedCoordinatedLayerTreeHost::create(WebPage* webPage)
+Ref<ThreadedCoordinatedLayerTreeHost> ThreadedCoordinatedLayerTreeHost::create(WebPage webPage)
 {
     return adoptRef(*new ThreadedCoordinatedLayerTreeHost(webPage));
 }
@@ -57,7 +57,7 @@ ThreadedCoordinatedLayerTreeHost::~ThreadedCoordinatedLayerTreeHost()
 {
 }
 
-ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage* webPage)
+ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webPage)
     : LayerTreeHost(webPage)
     , m_forceRepaintAsyncCallbackID(0)
     , m_notifyAfterScheduledLayerFlush(false)
@@ -66,9 +66,9 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage* webP
     , m_layerFlushTimer(RunLoop::main(), this, &ThreadedCoordinatedLayerTreeHost::performScheduledLayerFlush)
     , m_layerFlushSchedulingEnabled(true)
 {
-    m_coordinator = std::make_unique<CompositingCoordinator>(m_webPage->corePage(), this);
+    m_coordinator = std::make_unique<CompositingCoordinator>(m_webPage.corePage(), this);
 
-    m_coordinator->createRootLayer(m_webPage->size());
+    m_coordinator->createRootLayer(m_webPage.size());
 
     CoordinatedSurface::setFactory(createCoordinatedSurface);
 
@@ -149,7 +149,7 @@ void ThreadedCoordinatedLayerTreeHost::sizeDidChange(const WebCore::IntSize& new
 void ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
 {
     m_coordinator->deviceOrPageScaleFactorChanged();
-    m_compositor->setDeviceScaleFactor(m_webPage->deviceScaleFactor());
+    m_compositor->setDeviceScaleFactor(m_webPage.deviceScaleFactor());
 }
 
 void ThreadedCoordinatedLayerTreeHost::pauseRendering()
@@ -180,12 +180,12 @@ void ThreadedCoordinatedLayerTreeHost::didChangeViewportProperties(const WebCore
 
 void ThreadedCoordinatedLayerTreeHost::compositorDidFlushLayers()
 {
-    static_cast<DrawingAreaImpl*>(m_webPage->drawingArea())->layerHostDidFlushLayers();
+    static_cast<DrawingAreaImpl*>(m_webPage.drawingArea())->layerHostDidFlushLayers();
 }
 
 void ThreadedCoordinatedLayerTreeHost::didScaleFactorChanged(float scale, const IntPoint& origin)
 {
-    m_webPage->scalePage(scale, origin);
+    m_webPage.scalePage(scale, origin);
 }
 
 void ThreadedCoordinatedLayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* graphicsLayer)
@@ -221,8 +221,8 @@ void ThreadedCoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& r
     if (m_lastScrollPosition != roundedIntPoint(rect.location())) {
         m_lastScrollPosition = roundedIntPoint(rect.location());
 
-        if (!m_webPage->corePage()->mainFrame().view()->useFixedLayout())
-            m_webPage->corePage()->mainFrame().view()->notifyScrollPositionChanged(m_lastScrollPosition);
+        if (!m_webPage.corePage()->mainFrame().view()->useFixedLayout())
+            m_webPage.corePage()->mainFrame().view()->notifyScrollPositionChanged(m_lastScrollPosition);
     }
 
     if (m_lastScaleFactor != scale) {

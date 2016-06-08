@@ -49,7 +49,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<CoordinatedLayerTreeHost> CoordinatedLayerTreeHost::create(WebPage* webPage)
+Ref<CoordinatedLayerTreeHost> CoordinatedLayerTreeHost::create(WebPage& webPage)
 {
     return adoptRef(*new CoordinatedLayerTreeHost(webPage));
 }
@@ -58,7 +58,7 @@ CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost()
 {
 }
 
-CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
+CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage& webPage)
     : LayerTreeHost(webPage)
     , m_notifyAfterScheduledLayerFlush(false)
     , m_isValid(true)
@@ -69,9 +69,9 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
     , m_forceRepaintAsyncCallbackID(0)
     , m_viewOverlayRootLayer(nullptr)
 {
-    m_coordinator = std::make_unique<CompositingCoordinator>(webPage->corePage(), this);
+    m_coordinator = std::make_unique<CompositingCoordinator>(m_webPage.corePage(), this);
 
-    m_coordinator->createRootLayer(webPage->size());
+    m_coordinator->createRootLayer(m_webPage.size());
     m_layerTreeContext.contextID = toCoordinatedGraphicsLayer(m_coordinator->rootLayer())->id();
 
     CoordinatedSurface::setFactory(createCoordinatedSurface);
@@ -186,7 +186,7 @@ void CoordinatedLayerTreeHost::didFlushRootLayer(const FloatRect& visibleContent
 {
     // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
     if (m_viewOverlayRootLayer)
-        m_viewOverlayRootLayer->flushCompositingState(visibleContentRect,  m_webPage->mainFrame()->view()->viewportIsStable());
+        m_viewOverlayRootLayer->flushCompositingState(visibleContentRect,  m_webPage.mainFrame()->view()->viewportIsStable());
 }
 
 void CoordinatedLayerTreeHost::performScheduledLayerFlush()
@@ -202,12 +202,12 @@ void CoordinatedLayerTreeHost::performScheduledLayerFlush()
     bool didSync = m_coordinator->flushPendingLayerChanges();
 
     if (m_forceRepaintAsyncCallbackID) {
-        m_webPage->send(Messages::WebPageProxy::VoidCallback(m_forceRepaintAsyncCallbackID));
+        m_webPage.send(Messages::WebPageProxy::VoidCallback(m_forceRepaintAsyncCallbackID));
         m_forceRepaintAsyncCallbackID = 0;
     }
 
     if (m_notifyAfterScheduledLayerFlush && didSync) {
-        static_cast<CoordinatedDrawingArea*>(m_webPage->drawingArea())->layerHostDidFlushLayers();
+        static_cast<CoordinatedDrawingArea*>(m_webPage.drawingArea())->layerHostDidFlushLayers();
         m_notifyAfterScheduledLayerFlush = false;
     }
 }
@@ -223,7 +223,7 @@ void CoordinatedLayerTreeHost::paintLayerContents(const GraphicsLayer*, Graphics
 
 void CoordinatedLayerTreeHost::commitSceneState(const WebCore::CoordinatedGraphicsState& state)
 {
-    m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::CommitCoordinatedGraphicsState(state));
+    m_webPage.send(Messages::CoordinatedLayerTreeHostProxy::CommitCoordinatedGraphicsState(state));
     m_isWaitingForRenderer = true;
 }
 
@@ -235,7 +235,7 @@ RefPtr<CoordinatedSurface> CoordinatedLayerTreeHost::createCoordinatedSurface(co
 void CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
 {
     m_coordinator->deviceOrPageScaleFactorChanged();
-    m_webPage->mainFrame()->pageOverlayController().didChangeDeviceScaleFactor();
+    m_webPage.mainFrame()->pageOverlayController().didChangeDeviceScaleFactor();
 }
 
 void CoordinatedLayerTreeHost::pageBackgroundTransparencyChanged()

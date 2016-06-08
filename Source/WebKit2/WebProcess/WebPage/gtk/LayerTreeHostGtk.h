@@ -41,15 +41,13 @@ namespace WebKit {
 
 class LayerTreeHostGtk final : public LayerTreeHost, WebCore::GraphicsLayerClient {
 public:
-    static PassRefPtr<LayerTreeHostGtk> create(WebPage*);
+    static Ref<LayerTreeHostGtk> create(WebPage&);
     virtual ~LayerTreeHostGtk();
 
-protected:
-    explicit LayerTreeHostGtk(WebPage*);
+private:
+    explicit LayerTreeHostGtk(WebPage&);
 
     WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
-
-    void initialize();
 
     // LayerTreeHost
     void scheduleLayerFlush() override;
@@ -63,8 +61,6 @@ protected:
     void pageBackgroundTransparencyChanged() override;
 
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
-
-private:
 
     class RenderFrameScheduler {
     public:
