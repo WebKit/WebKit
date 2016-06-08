@@ -753,9 +753,6 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
     }
 
-    if (!existingResource->varyHeaderValuesMatch(request, *this))
-        return Reload;
-
     auto* textDecoder = existingResource->textResourceDecoder();
     if (textDecoder && !textDecoder->hasEqualEncodingForCharset(cachedResourceRequest.charset()))
         return Reload;

@@ -27,9 +27,6 @@
 #include "CacheValidation.h"
 
 #include "HTTPHeaderMap.h"
-#include "NetworkStorageSession.h"
-#include "PlatformCookieJar.h"
-#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
 
@@ -327,56 +324,6 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
     }
 
     return result;
-}
-
-static String headerValueForVary(SessionID sessionID, const ResourceRequest& request, const String& headerName)
-{
-    // Explicit handling for cookies is needed because they are added magically by the networking layer.
-    // FIXME: The value might have changed between making the request and retrieving the cookie here.
-    // We could fetch the cookie when making the request but that seems overkill as the case is very rare and it
-    // is a blocking operation. This should be sufficient to cover reasonable cases.
-    if (headerName == httpHeaderNameString(HTTPHeaderName::Cookie)) {
-        if (sessionID != SessionID::defaultSessionID()) {
-            // FIXME: Don't know how to get the cookie. There should be a global way to get NetworkStorageSession from sessionID.
-            return "";
-        }
-        return cookieRequestHeaderFieldValue(NetworkStorageSession::defaultStorageSession(), request.firstPartyForCookies(), request.url());
-    }
-    return request.httpHeaderField(headerName);
-}
-
-Vector<std::pair<String, String>> collectVaryingRequestHeaders(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, SessionID sessionID)
-{
-    String varyValue = response.httpHeaderField(WebCore::HTTPHeaderName::Vary);
-    if (varyValue.isEmpty())
-        return { };
-    Vector<String> varyingHeaderNames;
-    varyValue.split(',', /*allowEmptyEntries*/ false, varyingHeaderNames);
-    Vector<std::pair<String, String>> varyingRequestHeaders;
-    varyingRequestHeaders.reserveCapacity(varyingHeaderNames.size());
-    for (auto& varyHeaderName : varyingHeaderNames) {
-        String headerName = varyHeaderName.stripWhiteSpace();
-        String headerValue = headerValueForVary(sessionID, request, headerName);
-        varyingRequestHeaders.append(std::make_pair(headerName, headerValue));
-    }
-    return varyingRequestHeaders;
-}
-
-bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyingRequestHeaders, const WebCore::ResourceRequest& request, SessionID sessionID)
-{
-    for (auto& varyingRequestHeader : varyingRequestHeaders) {
-        // FIXME: Vary: * in response would ideally trigger a cache delete instead of a store.
-        if (varyingRequestHeader.first == "*")
-            return false;
-        if (sessionID != SessionID::defaultSessionID() && varyingRequestHeader.first == httpHeaderNameString(HTTPHeaderName::Cookie)) {
-            // FIXME: See the comment in headerValueForVary.
-            return false;
-        }
-        String headerValue = headerValueForVary(sessionID, request, varyingRequestHeader.first);
-        if (headerValue != varyingRequestHeader.second)
-            return false;
-    }
-    return true;
 }
 
 }

@@ -242,8 +242,6 @@ public:
     virtual RevalidationDecision makeRevalidationDecision(CachePolicy) const;
     bool redirectChainAllowsReuse(ReuseExpiredRedirectionOrNot) const;
 
-    bool varyHeaderValuesMatch(const ResourceRequest&, const CachedResourceLoader&);
-
     bool isCacheValidator() const { return m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }
     
@@ -355,8 +353,6 @@ private:
     HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
 
     RedirectChainCacheStatus m_redirectChainCacheStatus;
-
-    Vector<std::pair<String, String>> m_varyingHeaderValues;
 
     unsigned long m_identifierForLoadWithoutResourceLoader { 0 };
 };
