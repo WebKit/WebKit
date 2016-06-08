@@ -1,5 +1,16 @@
 2016-06-07  Sam Weinig  <sam@webkit.org>
 
+        Update tests to work around https://bugs.webkit.org/show_bug.cgi?id=158507.
+
+        * TestExpectations:
+        Re-enable now passing test.
+
+        * animations/script-tests/spring-computed-style.js:
+        * animations/script-tests/spring-parsing.js:
+        Use a non-body element to do the testing.
+
+2016-06-07  Sam Weinig  <sam@webkit.org>
+
         Mark animations/spring-computed-style.html as failing temporarily.
 
         * TestExpectations:

@@ -8,13 +8,16 @@ var stylesheet, cssRule, declaration, propertyValue, subRule;
 var styleElement = document.createElement("style");
 document.head.appendChild(styleElement);
 stylesheet = styleElement.sheet;
+var div = document.createElement(div);
+div.id = "target";
+document.body.appendChild(div);
 
 function testSpring(description, spring, expectedValue)
 {
     debug("");
     debug(description + " : " + spring);
 
-    stylesheet.insertRule("body { transition-timing-function: " + spring + "; }", 0);
+    stylesheet.insertRule("#target { transition-timing-function: " + spring + "; }", 0);
     cssRule = stylesheet.cssRules.item(0);
 
     shouldBe("cssRule.type", "1");

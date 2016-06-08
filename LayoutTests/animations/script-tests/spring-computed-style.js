@@ -8,15 +8,18 @@ var stylesheet, springStyle;
 var styleElement = document.createElement("style");
 document.head.appendChild(styleElement);
 stylesheet = styleElement.sheet;
+var div = document.createElement(div);
+div.id = "target";
+document.body.appendChild(div);
 
 function testComputedSpring(description, spring, expectedValue)
 {
     debug("");
     debug(description + " : " + spring);
 
-    stylesheet.insertRule("body { transition-timing-function: " + spring + "; }", 0);
+    stylesheet.insertRule("#target { transition-timing-function: " + spring + "; }", 0);
 
-    springStyle = window.getComputedStyle(document.body).getPropertyCSSValue("transition-timing-function");
+    springStyle = window.getComputedStyle(div).getPropertyCSSValue("transition-timing-function");
     shouldBe("springStyle.cssText", "'" + expectedValue + "'");
     
     stylesheet.deleteRule(0);

@@ -981,5 +981,3 @@ webkit.org/b/156631 fast/text/font-face-javascript.html [ Pass Crash Failure ]
 webkit.org/b/157849 fast/frames/crash-during-iframe-load-stop.html [ Pass Timeout ]
 
 webkit.org/b/158085 http/tests/css/shared-stylesheet-mutation.html [ Pass Failure ]
-
-animations/spring-computed-style.html [ Pass Failure ]
