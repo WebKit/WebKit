@@ -1,5 +1,18 @@
 2016-06-08  Brian Burg  <bburg@apple.com>
 
+        Uncaught Exception in TimelineDataGrid._updatePopoverForSelectedNode()
+        https://bugs.webkit.org/show_bug.cgi?id=158502
+        <rdar://problem/26687038>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._updatePopoverForSelectedNode):
+        It appears that this expression was moved around since it accesses
+        targetFrame before it's initialized. Check rect.size.height directly.
+
+2016-06-08  Brian Burg  <bburg@apple.com>
+
         Web Inspector: reduce redundant attribute modification updates in DOMTreeUpdater and DOMTreeElement
         https://bugs.webkit.org/show_bug.cgi?id=158504
         <rdar://problem/25561452>
