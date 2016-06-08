@@ -795,6 +795,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
         focusDocumentView();
 
     m_mousePressNode = event.targetNode();
+    m_frame.document()->setFocusNavigationStartingNode(event.targetNode());
 #if ENABLE(DRAG_SUPPORT)
     m_dragStartPos = event.event().position();
 #endif
@@ -1654,6 +1655,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
     }
 
     m_mousePressNode = mouseEvent.targetNode();
+    m_frame.document()->setFocusNavigationStartingNode(mouseEvent.targetNode());
 
     RefPtr<Frame> subframe = subframeForHitTestResult(mouseEvent);
     if (subframe && passMousePressEventToSubframe(mouseEvent, subframe.get())) {

@@ -2100,8 +2100,14 @@ bool FrameView::scrollToAnchor(const String& name)
     maintainScrollPositionAtAnchor(scrollPositionAnchor);
     
     // If the anchor accepts keyboard focus, move focus there to aid users relying on keyboard navigation.
-    if (anchorElement && anchorElement->isFocusable())
-        document.setFocusedElement(anchorElement);
+    if (anchorElement) {
+        if (anchorElement->isFocusable())
+            document.setFocusedElement(anchorElement);
+        else {
+            document.setFocusedElement(nullptr);
+            document.setFocusNavigationStartingNode(anchorElement);
+        }
+    }
     
     return true;
 }

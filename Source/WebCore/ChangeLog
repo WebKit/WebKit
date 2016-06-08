@@ -1,3 +1,43 @@
+2016-06-08  Nan Wang  <n_wang@apple.com>
+
+        For keyboard users, activating a fragment URL should transfer focus and caret to the destination
+        https://bugs.webkit.org/show_bug.cgi?id=116046
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a sequential focus navigation starting node to document. When TAB or SHIFT-TAB is pressed
+        and there is no focused element, we start searching for next focus candidates at the sequential
+        focus navigation node.
+        Spec: https://html.spec.whatwg.org/multipage/interaction.html#sequential-focus-navigation-starting-point
+
+        Test: fast/events/sequential-focus-navigation-starting-point.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::destroyRenderTree):
+        (WebCore::Document::styleResolverChanged):
+        (WebCore::isNodeInSubtree):
+        (WebCore::Document::removeFocusedNodeOfSubtree):
+        (WebCore::Document::hoveredElementDidDetach):
+        (WebCore::Document::setFocusedElement):
+        (WebCore::shouldResetFocusNavigationStartingNode):
+        (WebCore::Document::setFocusNavigationStartingNode):
+        (WebCore::Document::focusNavigationStartingNode):
+        (WebCore::Document::setCSSTarget):
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::fallbackFocusNavigationStartingNodeAfterRemoval):
+        (WebCore::Document::removeFocusNavigationNodeOfSubtree):
+        (WebCore::Document::textInserted):
+        * dom/Document.h:
+        (WebCore::Document::userActionElements):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToAnchor):
+
 2016-06-08  Eric Carlson  <eric.carlson@apple.com>
 
         HTMLMediaElement.prototype.canPlayType accounting for 250-750ms first loading theverge.com

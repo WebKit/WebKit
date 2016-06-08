@@ -730,6 +730,9 @@ public:
     UserActionElementSet& userActionElements()  { return m_userActionElements; }
     const UserActionElementSet& userActionElements() const { return m_userActionElements; }
 
+    void setFocusNavigationStartingNode(Node*);
+    Element* focusNavigationStartingNode(FocusDirection) const;
+
     void removeFocusedNodeOfSubtree(Node*, bool amongChildrenOnly = false);
     void hoveredElementDidDetach(Element*);
     void elementInActiveChainDidDetach(Element*);
@@ -769,6 +772,7 @@ public:
     void nodeChildrenWillBeRemoved(ContainerNode&);
     // nodeWillBeRemoved is only safe when removing one node at a time.
     void nodeWillBeRemoved(Node&);
+    void removeFocusNavigationNodeOfSubtree(Node&, bool amongChildrenOnly = false);
     enum class AcceptChildOperation { Replace, InsertOrAdd };
     bool canAcceptChild(const Node& newChild, const Node* refChild, AcceptChildOperation) const;
 
@@ -1465,6 +1469,8 @@ private:
 
     Color m_textColor;
 
+    bool m_focusNavigationStartingNodeIsRemoved;
+    RefPtr<Node> m_focusNavigationStartingNode;
     RefPtr<Element> m_focusedElement;
     RefPtr<Element> m_hoveredElement;
     RefPtr<Element> m_activeElement;
