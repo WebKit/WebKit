@@ -26,42 +26,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "KeyframeEffect.h"
 
 #if ENABLE(WEB_ANIMATIONS)
 
-#include "AnimationEffect.h"
-#include "Supplementable.h"
-#include "WebAnimation.h"
-#include <wtf/HashMap.h>
-#include <wtf/WeakPtr.h>
+#include "Element.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
-class DocumentTimeline;
-class Document;
+RefPtr<KeyframeEffect> KeyframeEffect::create(Element* target)
+{
+    if (!target) {
+        // FIXME: Support null animation target.
+        return nullptr;
+    }
 
-class DocumentAnimation : public Supplement<Document> {
-public:
-    DocumentAnimation();
-    virtual ~DocumentAnimation();
+    return adoptRef(new KeyframeEffect(target));
+}
 
-    static DocumentAnimation* from(Document*);
-    static DocumentTimeline* timeline(Document&);
-    static WebAnimationVector getAnimations(Document&);
+KeyframeEffect::KeyframeEffect(Element* target)
+    : m_target(target)
+{
+}
 
-    WebAnimationVector getAnimations(std::function<bool(const AnimationEffect&)> = [](const AnimationEffect&) { return true; }) const;
-
-    void addAnimation(WebAnimation&);
-    void removeAnimation(WebAnimation&);
-
-private:
-    static const char* supplementName();
-
-    RefPtr<DocumentTimeline> m_defaultTimeline;
-
-    HashMap<WebAnimation*, WeakPtr<WebAnimation>> m_animations;
-};
+KeyframeEffect::~KeyframeEffect()
+{
+}
 
 } // namespace WebCore
 

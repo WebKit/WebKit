@@ -27,10 +27,10 @@
  */
 
 [
-    EnabledAtRuntime=WebAnimations,
     Conditional=WEB_ANIMATIONS,
     ImplementationLacksVTable,
-    // FIX: Should be DOMHighResTimeStamp rather than double (e.g. see Performance.now()).
-    Constructor(double originTime)
+    // FIXME: Should be DOMHighResTimeStamp rather than double (e.g. see Performance.now()).
+    Constructor(double originTime),
+    ConstructorCallWith=Document
 ] interface DocumentTimeline : AnimationTimeline {
 };

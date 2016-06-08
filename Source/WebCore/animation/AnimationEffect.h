@@ -30,37 +30,24 @@
 
 #if ENABLE(WEB_ANIMATIONS)
 
-#include "AnimationEffect.h"
-#include "Supplementable.h"
 #include "WebAnimation.h"
-#include <wtf/HashMap.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class DocumentTimeline;
-class Document;
-
-class DocumentAnimation : public Supplement<Document> {
+class AnimationEffect : public RefCounted<AnimationEffect> {
 public:
-    DocumentAnimation();
-    virtual ~DocumentAnimation();
+    AnimationEffect();
+    virtual ~AnimationEffect();
 
-    static DocumentAnimation* from(Document*);
-    static DocumentTimeline* timeline(Document&);
-    static WebAnimationVector getAnimations(Document&);
+    void setAnimation(WebAnimation*);
 
-    WebAnimationVector getAnimations(std::function<bool(const AnimationEffect&)> = [](const AnimationEffect&) { return true; }) const;
-
-    void addAnimation(WebAnimation&);
-    void removeAnimation(WebAnimation&);
+    bool isCurrent() const;
+    bool isInEffect() const;
 
 private:
-    static const char* supplementName();
-
-    RefPtr<DocumentTimeline> m_defaultTimeline;
-
-    HashMap<WebAnimation*, WeakPtr<WebAnimation>> m_animations;
+    WeakPtr<WebAnimation> m_animation;
 };
 
 } // namespace WebCore

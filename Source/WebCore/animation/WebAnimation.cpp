@@ -26,42 +26,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebAnimation.h"
 
 #if ENABLE(WEB_ANIMATIONS)
 
 #include "AnimationEffect.h"
-#include "Supplementable.h"
-#include "WebAnimation.h"
-#include <wtf/HashMap.h>
-#include <wtf/WeakPtr.h>
+#include "DocumentTimeline.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
-class DocumentTimeline;
-class Document;
+RefPtr<WebAnimation> WebAnimation::create(AnimationEffect* effect, AnimationTimeline* timeline)
+{
+    if (!effect) {
+        // FIXME: Support creating animations with null effect.
+        return nullptr;
+    }
 
-class DocumentAnimation : public Supplement<Document> {
-public:
-    DocumentAnimation();
-    virtual ~DocumentAnimation();
+    if (!timeline) {
+        // FIXME: Support creating animations without a timeline.
+        return nullptr;
+    } 
 
-    static DocumentAnimation* from(Document*);
-    static DocumentTimeline* timeline(Document&);
-    static WebAnimationVector getAnimations(Document&);
+    if (!timeline->isDocumentTimeline()) {
+        // FIXME: Currently only support DocumentTimeline.
+        return nullptr;
+    } 
 
-    WebAnimationVector getAnimations(std::function<bool(const AnimationEffect&)> = [](const AnimationEffect&) { return true; }) const;
+    return adoptRef(new WebAnimation(effect, timeline));
+}
 
-    void addAnimation(WebAnimation&);
-    void removeAnimation(WebAnimation&);
+WebAnimation::WebAnimation(AnimationEffect* effect, AnimationTimeline* timeline)
+    : m_effect(effect)
+    , m_timeline(timeline)
+    , m_weakPtrFactory(this)
+{
+    if (m_effect)
+        m_effect->setAnimation(this);
 
-private:
-    static const char* supplementName();
+    if (m_timeline)
+        m_timeline->attachAnimation(*this);
+}
 
-    RefPtr<DocumentTimeline> m_defaultTimeline;
+WebAnimation::~WebAnimation()
+{
+    if (m_effect)
+        m_effect->setAnimation(nullptr);
 
-    HashMap<WebAnimation*, WeakPtr<WebAnimation>> m_animations;
-};
+    if (m_timeline)
+        m_timeline->detachAnimation(*this);
+}
 
 } // namespace WebCore
 

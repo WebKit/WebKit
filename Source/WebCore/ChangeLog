@@ -1,3 +1,72 @@
+2016-06-08  Rawinder Singh  <rawinder.singh-webkit@cisra.canon.com.au>
+
+        [web-animations] Add Animatable, AnimationEffect, KeyframeEffect and Animation interface
+        https://bugs.webkit.org/show_bug.cgi?id=156096
+
+        Reviewed by Dean Jackson.
+
+        Adds:
+        - Animatable interface and implementation of getAnimations in Element
+        - Interface and implementation for Document getAnimations method.
+        - AnimationEffect interface and class stub.
+        - KeyframeEffect interface and constructor implementation.
+        - 'Animation' interface, constructor and query methods for effect and timeline.
+        - Remove runtime condition on Web animation interfaces (compile time flag is specified).
+
+        Test: webanimations/Document.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/Animatable.idl: Copied from Source/WebCore/animation/DocumentAnimation.idl.
+        * animation/AnimationEffect.cpp: Copied from Source/WebCore/animation/AnimationTimeline.cpp.
+        (WebCore::AnimationEffect::AnimationEffect):
+        (WebCore::AnimationEffect::~AnimationEffect):
+        (WebCore::AnimationEffect::setAnimation):
+        (WebCore::AnimationEffect::isCurrent):
+        (WebCore::AnimationEffect::isInEffect):
+        * animation/AnimationEffect.h: Copied from Source/WebCore/animation/DocumentTimeline.cpp.
+        * animation/AnimationEffect.idl: Copied from Source/WebCore/animation/AnimationTimeline.idl.
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::destroy):
+        (WebCore::AnimationTimeline::attachAnimation):
+        (WebCore::AnimationTimeline::detachAnimation):
+        * animation/AnimationTimeline.h:
+        * animation/AnimationTimeline.idl:
+        * animation/DocumentAnimation.cpp:
+        (WebCore::DocumentAnimation::timeline):
+        (WebCore::DocumentAnimation::getAnimations):
+        (WebCore::DocumentAnimation::addAnimation):
+        (WebCore::DocumentAnimation::removeAnimation):
+        * animation/DocumentAnimation.h:
+        (WebCore::DocumentAnimation::getAnimations):
+        * animation/DocumentAnimation.idl:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::create):
+        (WebCore::DocumentTimeline::DocumentTimeline):
+        (WebCore::DocumentTimeline::attach):
+        (WebCore::DocumentTimeline::detach):
+        * animation/DocumentTimeline.h:
+        * animation/DocumentTimeline.idl:
+        * animation/KeyframeEffect.cpp: Copied from Source/WebCore/animation/DocumentTimeline.cpp.
+        (WebCore::KeyframeEffect::create):
+        (WebCore::KeyframeEffect::KeyframeEffect):
+        (WebCore::KeyframeEffect::~KeyframeEffect):
+        * animation/KeyframeEffect.h: Copied from Source/WebCore/animation/DocumentTimeline.h.
+        * animation/KeyframeEffect.idl: Copied from Source/WebCore/animation/AnimationTimeline.idl.
+        * animation/WebAnimation.cpp: Copied from Source/WebCore/animation/DocumentAnimation.cpp.
+        (WebCore::WebAnimation::create):
+        (WebCore::WebAnimation::WebAnimation):
+        (WebCore::WebAnimation::~WebAnimation):
+        * animation/WebAnimation.h: Copied from Source/WebCore/animation/DocumentAnimation.h.
+        * animation/WebAnimation.idl: Copied from Source/WebCore/animation/DocumentTimeline.idl.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * dom/Element.cpp:
+        (WebCore::Element::getAnimations):
+        * dom/Element.h:
+        * dom/Element.idl:
+
 2016-06-08  Chris Dumez  <cdumez@apple.com>
 
         self.hasOwnProperty() does not work inside Web workers

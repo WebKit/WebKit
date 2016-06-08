@@ -3016,15 +3016,22 @@ list(APPEND WebCore_CSS_VALUE_KEYWORDS
 
 if (ENABLE_WEB_ANIMATIONS)
     list(APPEND WebCore_IDL_FILES
+        "animation/Animatable.idl"
+        "animation/AnimationEffect.idl"
         "animation/AnimationTimeline.idl"
         "animation/DocumentAnimation.idl"
         "animation/DocumentTimeline.idl"
+        "animation/KeyframeEffect.idl"
+        "animation/WebAnimation.idl"
     )
 
     list(APPEND WebCore_SOURCES
+        "animation/AnimationEffect.cpp"
         "animation/AnimationTimeline.cpp"
         "animation/DocumentAnimation.cpp"
         "animation/DocumentTimeline.cpp"
+        "animation/KeyframeEffect.cpp"
+        "animation/WebAnimation.cpp"
     )
 endif ()
 

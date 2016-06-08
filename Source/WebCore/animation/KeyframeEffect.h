@@ -31,36 +31,23 @@
 #if ENABLE(WEB_ANIMATIONS)
 
 #include "AnimationEffect.h"
-#include "Supplementable.h"
-#include "WebAnimation.h"
-#include <wtf/HashMap.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class DocumentTimeline;
-class Document;
+class Element;
 
-class DocumentAnimation : public Supplement<Document> {
+class KeyframeEffect final : public AnimationEffect {
 public:
-    DocumentAnimation();
-    virtual ~DocumentAnimation();
+    static RefPtr<KeyframeEffect> create(Element*);
+    ~KeyframeEffect() override;
 
-    static DocumentAnimation* from(Document*);
-    static DocumentTimeline* timeline(Document&);
-    static WebAnimationVector getAnimations(Document&);
-
-    WebAnimationVector getAnimations(std::function<bool(const AnimationEffect&)> = [](const AnimationEffect&) { return true; }) const;
-
-    void addAnimation(WebAnimation&);
-    void removeAnimation(WebAnimation&);
+    Element* target() const { return m_target.get(); }
 
 private:
-    static const char* supplementName();
+    KeyframeEffect(Element*);
 
-    RefPtr<DocumentTimeline> m_defaultTimeline;
-
-    HashMap<WebAnimation*, WeakPtr<WebAnimation>> m_animations;
+    // FIXME: Ensure that there is no cyclic reference from Element to KeyframeEffect.
+    RefPtr<Element> m_target;
 };
 
 } // namespace WebCore

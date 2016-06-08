@@ -26,24 +26,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DocumentTimeline_h
-#define DocumentTimeline_h
+#pragma once
 
 #if ENABLE(WEB_ANIMATIONS)
 
 #include "AnimationTimeline.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class Document;
+
 class DocumentTimeline final : public AnimationTimeline {
 public:
-    static Ref<DocumentTimeline> create(double);
+    static Ref<DocumentTimeline> create(Document&, double);
     ~DocumentTimeline();
 
+    void attach(WebAnimation&);
+    void detach(WebAnimation&);
+
 protected:
-    DocumentTimeline(double);
+    DocumentTimeline(Document&, double);
     
 private:
+    WeakPtr<Document> m_document;
     double m_originTime;
 };
 
@@ -52,5 +58,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_ANIMATION_TIMELINE(DocumentTimeline, isDocumentTimeline())
 
 #endif // ENABLE(WEB_ANIMATIONS)
-
-#endif // DocumentTimeline_h

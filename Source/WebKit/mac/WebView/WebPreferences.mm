@@ -624,6 +624,9 @@ public:
 #if ENABLE(CSS_GRID_LAYOUT)
         [NSNumber numberWithBool:YES], WebKitCSSGridLayoutEnabledPreferenceKey,
 #endif
+#if ENABLE(WEB_ANIMATIONS)
+        [NSNumber numberWithBool:NO], WebKitWebAnimationsEnabledPreferenceKey,
+#endif
         nil];
 
 #if !PLATFORM(IOS)
@@ -2752,6 +2755,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCSSGridLayoutEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCSSGridLayoutEnabledPreferenceKey];
+}
+
+- (BOOL)webAnimationsEnabled
+{
+    return [self _boolValueForKey:WebKitWebAnimationsEnabledPreferenceKey];
+}
+
+- (void)setWebAnimationsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitWebAnimationsEnabledPreferenceKey];
 }
 
 @end

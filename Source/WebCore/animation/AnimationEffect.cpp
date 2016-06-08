@@ -26,42 +26,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "AnimationEffect.h"
 
 #if ENABLE(WEB_ANIMATIONS)
 
-#include "AnimationEffect.h"
-#include "Supplementable.h"
 #include "WebAnimation.h"
-#include <wtf/HashMap.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class DocumentTimeline;
-class Document;
+AnimationEffect::AnimationEffect()
+{
+}
 
-class DocumentAnimation : public Supplement<Document> {
-public:
-    DocumentAnimation();
-    virtual ~DocumentAnimation();
+AnimationEffect::~AnimationEffect()
+{
+}
 
-    static DocumentAnimation* from(Document*);
-    static DocumentTimeline* timeline(Document&);
-    static WebAnimationVector getAnimations(Document&);
+void AnimationEffect::setAnimation(WebAnimation* animation)
+{
+    m_animation = animation ? animation->createWeakPtr() : WeakPtr<WebAnimation>();
+}
 
-    WebAnimationVector getAnimations(std::function<bool(const AnimationEffect&)> = [](const AnimationEffect&) { return true; }) const;
+bool AnimationEffect::isCurrent() const
+{
+    // FIXME: Calculate whether animation is current according to spec.
+    return true;
+}
 
-    void addAnimation(WebAnimation&);
-    void removeAnimation(WebAnimation&);
-
-private:
-    static const char* supplementName();
-
-    RefPtr<DocumentTimeline> m_defaultTimeline;
-
-    HashMap<WebAnimation*, WeakPtr<WebAnimation>> m_animations;
-};
+bool AnimationEffect::isInEffect() const
+{
+    // FIXME: Calculate whether animation is in effect according to spec.
+    return false;
+}
 
 } // namespace WebCore
 

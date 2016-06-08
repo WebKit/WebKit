@@ -30,38 +30,35 @@
 
 #if ENABLE(WEB_ANIMATIONS)
 
-#include "AnimationEffect.h"
-#include "Supplementable.h"
-#include "WebAnimation.h"
-#include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class DocumentTimeline;
-class Document;
+class AnimationEffect;
+class AnimationTimeline;
 
-class DocumentAnimation : public Supplement<Document> {
+class WebAnimation final : public RefCounted<WebAnimation> {
 public:
-    DocumentAnimation();
-    virtual ~DocumentAnimation();
+    static RefPtr<WebAnimation> create(AnimationEffect*, AnimationTimeline*);
+    ~WebAnimation();
 
-    static DocumentAnimation* from(Document*);
-    static DocumentTimeline* timeline(Document&);
-    static WebAnimationVector getAnimations(Document&);
+    AnimationEffect* effect() const { return m_effect.get(); }
+    AnimationTimeline* timeline() const { return m_timeline.get(); }
 
-    WebAnimationVector getAnimations(std::function<bool(const AnimationEffect&)> = [](const AnimationEffect&) { return true; }) const;
-
-    void addAnimation(WebAnimation&);
-    void removeAnimation(WebAnimation&);
+    WeakPtr<WebAnimation> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(); }
 
 private:
-    static const char* supplementName();
+    WebAnimation(AnimationEffect*, AnimationTimeline*);
 
-    RefPtr<DocumentTimeline> m_defaultTimeline;
-
-    HashMap<WebAnimation*, WeakPtr<WebAnimation>> m_animations;
+    RefPtr<AnimationEffect> m_effect;
+    RefPtr<AnimationTimeline> m_timeline;
+    WeakPtrFactory<WebAnimation> m_weakPtrFactory;
 };
+
+typedef Vector<WebAnimation *> WebAnimationVector;
 
 } // namespace WebCore
 
