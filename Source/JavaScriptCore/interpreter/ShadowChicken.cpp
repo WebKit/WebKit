@@ -435,10 +435,13 @@ void ShadowChicken::dump(PrintStream& out) const
 
 JSArray* ShadowChicken::functionsOnStack(ExecState* exec)
 {
+    VM& vm = exec->vm();
     JSArray* result = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return nullptr;
 
     iterate(
-        exec->vm(), exec,
+        vm, exec,
         [&] (const Frame& frame) -> bool {
             result->push(exec, frame.callee);
             return true;

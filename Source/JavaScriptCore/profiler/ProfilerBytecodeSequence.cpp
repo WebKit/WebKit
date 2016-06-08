@@ -77,15 +77,20 @@ const Bytecode& BytecodeSequence::forBytecodeIndex(unsigned bytecodeIndex) const
 
 void BytecodeSequence::addSequenceProperties(ExecState* exec, JSObject* result) const
 {
+    VM& vm = exec->vm();
     JSArray* header = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return;
     for (unsigned i = 0; i < m_header.size(); ++i)
         header->putDirectIndex(exec, i, jsString(exec, String::fromUTF8(m_header[i])));
-    result->putDirect(exec->vm(), exec->propertyNames().header, header);
+    result->putDirect(vm, exec->propertyNames().header, header);
     
     JSArray* sequence = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return;
     for (unsigned i = 0; i < m_sequence.size(); ++i)
         sequence->putDirectIndex(exec, i, m_sequence[i].toJS(exec));
-    result->putDirect(exec->vm(), exec->propertyNames().bytecode, sequence);
+    result->putDirect(vm, exec->propertyNames().bytecode, sequence);
 }
 
 } } // namespace JSC::Profiler

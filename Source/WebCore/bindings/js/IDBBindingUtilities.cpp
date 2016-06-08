@@ -88,16 +88,19 @@ JSValue toJS(ExecState& state, JSGlobalObject& globalObject, IDBKey* key)
         return jsUndefined();
     }
 
-    Locker<JSLock> locker(state.vm().apiLock());
+    VM& vm = state.vm();
+    Locker<JSLock> locker(vm.apiLock());
 
     switch (key->type()) {
     case KeyType::Array: {
         auto& inArray = key->array();
         unsigned size = inArray.size();
-        auto& outArray = *constructEmptyArray(&state, 0, &globalObject, size);
+        auto outArray = constructEmptyArray(&state, 0, &globalObject, size);
+        if (UNLIKELY(vm.exception()))
+            return jsUndefined();
         for (size_t i = 0; i < size; ++i)
-            outArray.putDirectIndex(&state, i, toJS(state, globalObject, inArray.at(i).get()));
-        return &outArray;
+            outArray->putDirectIndex(&state, i, toJS(state, globalObject, inArray.at(i).get()));
+        return outArray;
     }
     case KeyType::String:
         return jsStringWithCache(&state, key->string());

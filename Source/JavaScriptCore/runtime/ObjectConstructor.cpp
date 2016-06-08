@@ -703,12 +703,15 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIs(ExecState* exec)
 // FIXME: Use the enumeration cache.
 JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode propertyNameMode, DontEnumPropertiesMode dontEnumPropertiesMode)
 {
+    VM& vm = exec->vm();
     PropertyNameArray properties(exec, propertyNameMode);
-    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, EnumerationMode(dontEnumPropertiesMode));
-    if (exec->hadException())
+    object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(dontEnumPropertiesMode));
+    if (UNLIKELY(vm.exception()))
         return nullptr;
 
     JSArray* keys = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return nullptr;
 
     switch (propertyNameMode) {
     case PropertyNameMode::Strings: {
@@ -727,7 +730,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
             const auto& identifier = properties[i];
             ASSERT(identifier.isSymbol());
             if (!exec->propertyNames().isPrivateName(identifier))
-                keys->push(exec, Symbol::create(exec->vm(), static_cast<SymbolImpl&>(*identifier.impl())));
+                keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
         }
         break;
     }
@@ -746,7 +749,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
 
         // To ensure the order defined in the spec (9.1.12), we append symbols at the last elements of keys.
         for (const auto& identifier : propertySymbols)
-            keys->push(exec, Symbol::create(exec->vm(), static_cast<SymbolImpl&>(*identifier.impl())));
+            keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
 
         break;
     }

@@ -297,6 +297,8 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderObjectRequestedModules(ExecState* exec)
         return JSValue::encode(constructEmptyArray(exec, nullptr));
 
     JSArray* result = constructEmptyArray(exec, nullptr, moduleRecord->requestedModules().size());
+    if (UNLIKELY(exec->hadException()))
+        JSValue::encode(jsUndefined());
     size_t i = 0;
     for (auto& key : moduleRecord->requestedModules())
         result->putDirectIndex(exec, i++, jsString(exec, key.get()));

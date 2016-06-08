@@ -179,6 +179,8 @@ JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& 
     static unsigned maxSizeForDirectPath = 100000;
     
     JSArray* array = constructEmptyArray(exec, nullptr);
+    if (UNLIKELY(vm.exception()))
+        return jsUndefined();
 
     auto iterate = [&] () {
         size_t end = result.end;

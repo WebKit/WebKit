@@ -590,6 +590,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
 {
+    VM& vm = exec->vm();
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
     unsigned argCount = exec->argumentCount();
     JSValue curArg = thisValue.toObject(exec);
@@ -610,7 +611,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
         if (currentArray) {
             // Can't use JSArray::length here because this might be a RuntimeArray!
             finalArraySize += getLength(exec, currentArray);
-            if (exec->hadException())
+            if (UNLIKELY(vm.exception()))
                 return JSValue::encode(jsUndefined());
         } else
             ++finalArraySize;
@@ -636,22 +637,22 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
     else {
         // We add the newTarget because the compiler gets confused between 0 being a number and a pointer.
         result = constructEmptyArray(exec, nullptr, 0, JSValue());
-        if (exec->hadException())
+        if (UNLIKELY(vm.exception()))
             return JSValue::encode(jsUndefined());
     }
 
     curArg = thisValue.toObject(exec);
-    ASSERT(!exec->hadException());
+    ASSERT(!vm.exception());
     unsigned n = 0;
     for (unsigned i = 0; ; ++i) {
         if (JSArray* currentArray = jsDynamicCast<JSArray*>(curArg)) {
             // Can't use JSArray::length here because this might be a RuntimeArray!
             unsigned length = getLength(exec, currentArray);
-            if (exec->hadException())
+            if (UNLIKELY(vm.exception()))
                 return JSValue::encode(jsUndefined());
             for (unsigned k = 0; k < length; ++k) {
                 JSValue v = getProperty(exec, currentArray, k);
-                if (exec->hadException())
+                if (UNLIKELY(vm.exception()))
                     return JSValue::encode(jsUndefined());
                 if (v)
                     result->putDirectIndex(exec, n, v);
@@ -846,11 +847,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
 {
     // http://developer.netscape.com/docs/manuals/js/client/jsref/array.htm#1193713 or 15.4.4.10
+    VM& vm = exec->vm();
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     if (!thisObj)
         return JSValue::encode(JSValue());
     unsigned length = getLength(exec, thisObj);
-    if (exec->hadException())
+    if (UNLIKELY(vm.exception()))
         return JSValue::encode(jsUndefined());
 
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
@@ -869,13 +871,16 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     JSObject* result;
     if (speciesResult.first == SpeciesConstructResult::CreatedObject)
         result = speciesResult.second;
-    else
+    else {
         result = constructEmptyArray(exec, nullptr, end - begin);
+        if (UNLIKELY(vm.exception()))
+            return JSValue::encode(jsUndefined());
+    }
 
     unsigned n = 0;
     for (unsigned k = begin; k < end; k++, n++) {
         JSValue v = getProperty(exec, thisObj, k);
-        if (exec->hadException())
+        if (UNLIKELY(vm.exception()))
             return JSValue::encode(jsUndefined());
         if (v)
             result->putDirectIndex(exec, n, v);
@@ -894,7 +899,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     if (!thisObj)
         return JSValue::encode(JSValue());
     unsigned length = getLength(exec, thisObj);
-    if (exec->hadException())
+    if (UNLIKELY(vm.exception()))
         return JSValue::encode(jsUndefined());
 
     if (!exec->argumentCount()) {
@@ -905,8 +910,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         JSObject* result;
         if (speciesResult.first == SpeciesConstructResult::CreatedObject)
             result = speciesResult.second;
-        else
+        else {
             result = constructEmptyArray(exec, nullptr);
+            if (UNLIKELY(vm.exception()))
+                return JSValue::encode(jsUndefined());
+        }
 
         setLength(exec, result, 0);
         return JSValue::encode(result);
@@ -939,10 +947,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             
             for (unsigned k = 0; k < deleteCount; ++k) {
                 JSValue v = getProperty(exec, thisObj, k + begin);
-                if (exec->hadException())
+                if (UNLIKELY(vm.exception()))
                     return JSValue::encode(jsUndefined());
                 result->putByIndexInline(exec, k, v, true);
-                if (exec->hadException())
+                if (UNLIKELY(vm.exception()))
                     return JSValue::encode(jsUndefined());
             }
         } else {
@@ -952,7 +960,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             
             for (unsigned k = 0; k < deleteCount; ++k) {
                 JSValue v = getProperty(exec, thisObj, k + begin);
-                if (exec->hadException())
+                if (UNLIKELY(vm.exception()))
                     return JSValue::encode(jsUndefined());
                 result->initializeIndex(vm, k, v);
             }
@@ -962,16 +970,16 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     unsigned additionalArgs = std::max<int>(exec->argumentCount() - 2, 0);
     if (additionalArgs < deleteCount) {
         shift<JSArray::ShiftCountForSplice>(exec, thisObj, begin, deleteCount, additionalArgs, length);
-        if (exec->hadException())
+        if (UNLIKELY(vm.exception()))
             return JSValue::encode(jsUndefined());
     } else if (additionalArgs > deleteCount) {
         unshift<JSArray::ShiftCountForSplice>(exec, thisObj, begin, deleteCount, additionalArgs, length);
-        if (exec->hadException())
+        if (UNLIKELY(vm.exception()))
             return JSValue::encode(jsUndefined());
     }
     for (unsigned k = 0; k < additionalArgs; ++k) {
         thisObj->putByIndexInline(exec, k + begin, exec->uncheckedArgument(k + 2), true);
-        if (exec->hadException())
+        if (UNLIKELY(vm.exception()))
             return JSValue::encode(jsUndefined());
     }
 

@@ -1082,19 +1082,22 @@ static ALWAYS_INLINE bool splitStringByOneCharacterImpl(ExecState* exec, JSArray
 // ES 21.1.3.17 String.prototype.split(separator, limit)
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
 {
+    VM& vm = exec->vm();
     JSValue thisValue = exec->thisValue();
     ASSERT(checkObjectCoercible(thisValue));
 
     // 3. Let S be the result of calling ToString, giving it the this value as its argument.
     // 7. Let s be the number of characters in S.
     String input = thisValue.toString(exec)->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(vm.exception()))
         return JSValue::encode(jsUndefined());
     ASSERT(!input.isNull());
 
     // 4. Let A be a new array created as if by the expression new Array()
     //    where Array is the standard built-in constructor with that name.
     JSArray* result = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return JSValue::encode(jsUndefined());
 
     // 5. Let lengthA be 0.
     unsigned resultLength = 0;
@@ -1110,7 +1113,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
     //    otherwise let R = ToString(separator).
     JSValue separatorValue = exec->uncheckedArgument(0);
     String separator = separatorValue.toString(exec)->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(vm.exception()))
         return JSValue::encode(jsUndefined());
 
     // 10. If lim == 0, return A.

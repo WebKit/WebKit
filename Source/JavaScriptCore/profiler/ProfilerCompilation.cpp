@@ -114,48 +114,60 @@ void Compilation::dump(PrintStream& out) const
 
 JSValue Compilation::toJS(ExecState* exec) const
 {
+    VM& vm = exec->vm();
     JSObject* result = constructEmptyObject(exec);
-    
-    result->putDirect(exec->vm(), exec->propertyNames().bytecodesID, jsNumber(m_bytecodes->id()));
-    result->putDirect(exec->vm(), exec->propertyNames().compilationKind, jsString(exec, String::fromUTF8(toCString(m_kind))));
+    if (UNLIKELY(vm.exception()))
+        return jsUndefined();
+    result->putDirect(vm, exec->propertyNames().bytecodesID, jsNumber(m_bytecodes->id()));
+    result->putDirect(vm, exec->propertyNames().compilationKind, jsString(exec, String::fromUTF8(toCString(m_kind))));
     
     JSArray* profiledBytecodes = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return jsUndefined();
     for (unsigned i = 0; i < m_profiledBytecodes.size(); ++i)
         profiledBytecodes->putDirectIndex(exec, i, m_profiledBytecodes[i].toJS(exec));
-    result->putDirect(exec->vm(), exec->propertyNames().profiledBytecodes, profiledBytecodes);
+    result->putDirect(vm, exec->propertyNames().profiledBytecodes, profiledBytecodes);
     
     JSArray* descriptions = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return jsUndefined();
     for (unsigned i = 0; i < m_descriptions.size(); ++i)
         descriptions->putDirectIndex(exec, i, m_descriptions[i].toJS(exec));
-    result->putDirect(exec->vm(), exec->propertyNames().descriptions, descriptions);
+    result->putDirect(vm, exec->propertyNames().descriptions, descriptions);
     
     JSArray* counters = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return jsUndefined();
     for (auto it = m_counters.begin(), end = m_counters.end(); it != end; ++it) {
         JSObject* counterEntry = constructEmptyObject(exec);
-        counterEntry->putDirect(exec->vm(), exec->propertyNames().origin, it->key.toJS(exec));
-        counterEntry->putDirect(exec->vm(), exec->propertyNames().executionCount, jsNumber(it->value->count()));
+        counterEntry->putDirect(vm, exec->propertyNames().origin, it->key.toJS(exec));
+        counterEntry->putDirect(vm, exec->propertyNames().executionCount, jsNumber(it->value->count()));
         counters->push(exec, counterEntry);
     }
-    result->putDirect(exec->vm(), exec->propertyNames().counters, counters);
+    result->putDirect(vm, exec->propertyNames().counters, counters);
     
     JSArray* exitSites = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return jsUndefined();
     for (unsigned i = 0; i < m_osrExitSites.size(); ++i)
         exitSites->putDirectIndex(exec, i, m_osrExitSites[i].toJS(exec));
-    result->putDirect(exec->vm(), exec->propertyNames().osrExitSites, exitSites);
+    result->putDirect(vm, exec->propertyNames().osrExitSites, exitSites);
     
     JSArray* exits = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return jsUndefined();
     for (unsigned i = 0; i < m_osrExits.size(); ++i)
         exits->putDirectIndex(exec, i, m_osrExits[i].toJS(exec));
-    result->putDirect(exec->vm(), exec->propertyNames().osrExits, exits);
+    result->putDirect(vm, exec->propertyNames().osrExits, exits);
     
-    result->putDirect(exec->vm(), exec->propertyNames().numInlinedGetByIds, jsNumber(m_numInlinedGetByIds));
-    result->putDirect(exec->vm(), exec->propertyNames().numInlinedPutByIds, jsNumber(m_numInlinedPutByIds));
-    result->putDirect(exec->vm(), exec->propertyNames().numInlinedCalls, jsNumber(m_numInlinedCalls));
-    result->putDirect(exec->vm(), exec->propertyNames().jettisonReason, jsString(exec, String::fromUTF8(toCString(m_jettisonReason))));
+    result->putDirect(vm, exec->propertyNames().numInlinedGetByIds, jsNumber(m_numInlinedGetByIds));
+    result->putDirect(vm, exec->propertyNames().numInlinedPutByIds, jsNumber(m_numInlinedPutByIds));
+    result->putDirect(vm, exec->propertyNames().numInlinedCalls, jsNumber(m_numInlinedCalls));
+    result->putDirect(vm, exec->propertyNames().jettisonReason, jsString(exec, String::fromUTF8(toCString(m_jettisonReason))));
     if (!m_additionalJettisonReason.isNull())
-        result->putDirect(exec->vm(), exec->propertyNames().additionalJettisonReason, jsString(exec, String::fromUTF8(m_additionalJettisonReason)));
+        result->putDirect(vm, exec->propertyNames().additionalJettisonReason, jsString(exec, String::fromUTF8(m_additionalJettisonReason)));
     
-    result->putDirect(exec->vm(), exec->propertyNames().uid, m_uid.toJS(exec));
+    result->putDirect(vm, exec->propertyNames().uid, m_uid.toJS(exec));
     
     return result;
 }

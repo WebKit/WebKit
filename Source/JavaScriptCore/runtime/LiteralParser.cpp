@@ -583,6 +583,8 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             startParseArray:
             case StartParseArray: {
                 JSArray* array = constructEmptyArray(m_exec, 0);
+                if (UNLIKELY(m_exec->hadException()))
+                    return JSValue();
                 objectStack.append(array);
             }
             doParseArrayStartExpression:

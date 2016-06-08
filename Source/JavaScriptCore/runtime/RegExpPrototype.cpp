@@ -563,6 +563,8 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
     // 11. Let A be ArrayCreate(0).
     // 12. Let lengthA be 0.
     JSArray* result = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return JSValue::encode(jsUndefined());
     unsigned resultLength = 0;
 
     // 13. If limit is undefined, let lim be 2^32-1; else let lim be ? ToUint32(limit).

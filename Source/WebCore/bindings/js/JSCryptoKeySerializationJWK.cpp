@@ -534,7 +534,10 @@ static void buildJSONForRSAComponents(JSC::ExecState* exec, const CryptoKeyDataR
     if (data.otherPrimeInfos().isEmpty())
         return;
 
+    VM& vm = exec->vm();
     JSArray* oth = constructEmptyArray(exec, 0, exec->lexicalGlobalObject(), data.otherPrimeInfos().size());
+    if (UNLIKELY(vm.exception()))
+        return;
     for (size_t i = 0, size = data.otherPrimeInfos().size(); i < size; ++i) {
         JSObject* jsPrimeInfo = constructEmptyObject(exec);
         addToJSON(exec, jsPrimeInfo, "r", base64URLEncode(data.otherPrimeInfos()[i].primeFactor));
@@ -542,7 +545,7 @@ static void buildJSONForRSAComponents(JSC::ExecState* exec, const CryptoKeyDataR
         addToJSON(exec, jsPrimeInfo, "t", base64URLEncode(data.otherPrimeInfos()[i].factorCRTCoefficient));
         oth->putDirectIndex(exec, i, jsPrimeInfo);
     }
-    result->putDirect(exec->vm(), Identifier::fromString(exec, "oth"), oth);
+    result->putDirect(vm, Identifier::fromString(exec, "oth"), oth);
 }
 
 static void addBoolToJSON(ExecState* exec, JSObject* json, const char* key, bool value)
@@ -655,7 +658,10 @@ static void addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoK
 
 static void addUsagesToJSON(ExecState* exec, JSObject* json, CryptoKeyUsage usages)
 {
+    VM& vm = exec->vm();
     JSArray* keyOps = constructEmptyArray(exec, 0, exec->lexicalGlobalObject(), 0);
+    if (UNLIKELY(vm.exception()))
+        return;
 
     unsigned index = 0;
     if (usages & CryptoKeyUsageSign)
@@ -675,7 +681,7 @@ static void addUsagesToJSON(ExecState* exec, JSObject* json, CryptoKeyUsage usag
     if (usages & CryptoKeyUsageDeriveBits)
         keyOps->putDirectIndex(exec, index++, jsNontrivialString(exec, ASCIILiteral("deriveBits")));
 
-    json->putDirect(exec->vm(), Identifier::fromString(exec, "key_ops"), keyOps);
+    json->putDirect(vm, Identifier::fromString(exec, "key_ops"), keyOps);
 }
 
 String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& key)

@@ -36,7 +36,10 @@ namespace JSC { namespace Profiler {
 
 JSValue OSRExitSite::toJS(ExecState* exec) const
 {
+    VM& vm = exec->vm();
     JSArray* result = constructEmptyArray(exec, 0);
+    if (UNLIKELY(vm.exception()))
+        return jsUndefined();
     for (unsigned i = 0; i < m_codeAddresses.size(); ++i)
         result->putDirectIndex(exec, i, jsString(exec, toString(RawPointer(m_codeAddresses[i]))));
     return result;

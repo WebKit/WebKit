@@ -1,3 +1,26 @@
+2016-06-07  Mark Lam  <mark.lam@apple.com>
+
+        Need an exception check after constructEmptyArray().
+        https://bugs.webkit.org/show_bug.cgi?id=158411
+
+        Reviewed by Saam Barati.
+
+        A stress test for this was added in JavaScriptCore.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        (WebCore::getJSListenerFunctions):
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::buildJSONForRSAComponents):
+        (WebCore::addBoolToJSON):
+        (WebCore::addUsagesToJSON):
+        (WebCore::JSCryptoKeySerializationJWK::serialize):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::deserialize):
+
 2016-06-07  Antoine Quint  <graouts@apple.com>
 
         The backdrop-filter property does not respect border-radius

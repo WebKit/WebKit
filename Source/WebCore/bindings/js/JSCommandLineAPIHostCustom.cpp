@@ -67,7 +67,10 @@ JSValue JSCommandLineAPIHost::inspectedObject(ExecState& state)
 
 static JSArray* getJSListenerFunctions(ExecState& state, Document* document, const EventListenerInfo& listenerInfo)
 {
+    VM& vm = state.vm();
     JSArray* result = constructEmptyArray(&state, nullptr);
+    if (UNLIKELY(vm.exception()))
+        return nullptr;
     size_t handlersCount = listenerInfo.eventListenerVector.size();
     for (size_t i = 0, outputIndex = 0; i < handlersCount; ++i) {
         const JSEventListener* jsListener = JSEventListener::cast(listenerInfo.eventListenerVector[i].listener.get());
@@ -85,8 +88,8 @@ static JSArray* getJSListenerFunctions(ExecState& state, Document* document, con
             continue;
 
         JSObject* listenerEntry = constructEmptyObject(&state);
-        listenerEntry->putDirect(state.vm(), Identifier::fromString(&state, "listener"), function);
-        listenerEntry->putDirect(state.vm(), Identifier::fromString(&state, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i].useCapture));
+        listenerEntry->putDirect(vm, Identifier::fromString(&state, "listener"), function);
+        listenerEntry->putDirect(vm, Identifier::fromString(&state, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i].useCapture));
         result->putDirectIndex(&state, outputIndex++, JSValue(listenerEntry));
     }
     return result;
