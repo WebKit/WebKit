@@ -1,3 +1,11 @@
+2016-06-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline js/dom/global-constructors-attributes.html for Mac after r201810
+
+        Unreviewed test gardening.
+
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2016-06-08  Jer Noble  <jer.noble@apple.com>
 
         With audio user gesture restriction in place, video.src = 'file', video.play() succeeds where it should fail.
