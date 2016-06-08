@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadableWebSocketChannelClientWrapper_h
-#define ThreadableWebSocketChannelClientWrapper_h
+#pragma once
 
 #if ENABLE(WEB_SOCKETS)
 
@@ -50,7 +49,7 @@ class WebSocketChannelClient;
 
 class ThreadableWebSocketChannelClientWrapper : public ThreadSafeRefCounted<ThreadableWebSocketChannelClientWrapper> {
 public:
-    static Ref<ThreadableWebSocketChannelClientWrapper> create(ScriptExecutionContext*, WebSocketChannelClient*);
+    static Ref<ThreadableWebSocketChannelClientWrapper> create(ScriptExecutionContext&, WebSocketChannelClient&);
 
     void clearSyncMethodDone();
     void setSyncMethodDone();
@@ -89,11 +88,11 @@ public:
     void resume();
 
 private:
-    ThreadableWebSocketChannelClientWrapper(ScriptExecutionContext*, WebSocketChannelClient*);
+    ThreadableWebSocketChannelClientWrapper(ScriptExecutionContext&, WebSocketChannelClient&);
 
     void processPendingTasks();
 
-    ScriptExecutionContext* m_context;
+    ScriptExecutionContext& m_context;
     WebSocketChannelClient* m_client;
     WorkerThreadableWebSocketChannel::Peer* m_peer;
     bool m_failedWebSocketChannelCreation;
@@ -110,5 +109,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_SOCKETS)
-
-#endif // ThreadableWebSocketChannelClientWrapper_h

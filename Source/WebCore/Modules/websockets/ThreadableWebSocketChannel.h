@@ -28,14 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadableWebSocketChannel_h
-#define ThreadableWebSocketChannel_h
+#pragma once
 
 #if ENABLE(WEB_SOCKETS)
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -53,7 +51,7 @@ class ThreadableWebSocketChannel {
     WTF_MAKE_NONCOPYABLE(ThreadableWebSocketChannel);
 public:
     ThreadableWebSocketChannel() { }
-    static PassRefPtr<ThreadableWebSocketChannel> create(ScriptExecutionContext*, WebSocketChannelClient*);
+    static Ref<ThreadableWebSocketChannel> create(ScriptExecutionContext&, WebSocketChannelClient&);
 
     enum SendResult {
         SendSuccess,
@@ -88,5 +86,3 @@ protected:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_SOCKETS)
-
-#endif // ThreadableWebSocketChannel_h

@@ -59,7 +59,7 @@ class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStrea
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<WebSocketChannel> create(Document* document, WebSocketChannelClient* client) { return adoptRef(*new WebSocketChannel(document, client)); }
+    static Ref<WebSocketChannel> create(Document& document, WebSocketChannelClient& client) { return adoptRef(*new WebSocketChannel(document, client)); }
     virtual ~WebSocketChannel();
 
     bool send(const char* data, int length);
@@ -122,7 +122,7 @@ protected:
     void derefThreadableWebSocketChannel() override { deref(); }
 
 private:
-    WebSocketChannel(Document*, WebSocketChannelClient*);
+    WebSocketChannel(Document&, WebSocketChannelClient&);
 
     bool appendToBuffer(const char* data, size_t len);
     void skipBuffer(size_t len);

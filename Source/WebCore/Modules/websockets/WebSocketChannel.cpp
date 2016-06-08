@@ -64,9 +64,9 @@ namespace WebCore {
 
 const double TCPMaximumSegmentLifetime = 2 * 60.0;
 
-WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* client)
-    : m_document(document)
-    , m_client(client)
+WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& client)
+    : m_document(&document)
+    , m_client(&client)
     , m_resumeTimer(*this, &WebSocketChannel::resumeTimerFired)
     , m_suspended(false)
     , m_closing(false)
@@ -81,9 +81,7 @@ WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* c
     , m_outgoingFrameQueueStatus(OutgoingFrameQueueOpen)
     , m_blobLoaderStatus(BlobLoaderNotStarted)
 {
-    ASSERT(m_document);
-
-    if (Page* page = m_document->page())
+    if (Page* page = document.page())
         m_identifier = page->progress().createUniqueIdentifier();
 
     LOG(Network, "WebSocketChannel %p ctor, identifier %lu", this, m_identifier);

@@ -1,3 +1,56 @@
+2016-06-08  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize WebSocket code
+        https://bugs.webkit.org/show_bug.cgi?id=158539
+
+        Reviewed by Brady Eidson.
+
+        No new tests, no change in behavior.
+
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::create):
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        (WebCore::ThreadableWebSocketChannel::ThreadableWebSocketChannel):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::create):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        * Modules/websockets/WebSocketChannel.h:
+        (WebCore::WebSocketChannel::create):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::subprotocol):
+        (WebCore::WorkerThreadableWebSocketChannel::extensions):
+        (WebCore::WorkerThreadableWebSocketChannel::resume):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::Peer):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessage):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::Bridge):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::~Bridge):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::initialize):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::close):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::setMethodNotCompleted):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        (WebCore::WorkerThreadableWebSocketChannel::create):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::create):
+
 2016-06-08  Chris Dumez  <cdumez@apple.com>
 
         First parameter to MessagePort / DedicatedWorkerGlobalScope.postMessage() should be mandatory

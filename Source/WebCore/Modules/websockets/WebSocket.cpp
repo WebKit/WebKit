@@ -250,7 +250,7 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
         return;
     }
 
-    m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this);
+    m_channel = ThreadableWebSocketChannel::create(*scriptExecutionContext(), *this);
 
     // FIXME: There is a disagreement about restriction of subprotocols between WebSocket API and hybi-10 protocol
     // draft. The former simply says "only characters in the range U+0021 to U+007E are allowed," while the latter
