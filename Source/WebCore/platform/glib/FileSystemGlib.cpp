@@ -372,10 +372,27 @@ bool unloadModule(PlatformModule module)
 #endif
 }
 
-bool hardLinkOrCopyFile(const String&, const String&)
+bool hardLinkOrCopyFile(const String& source, const String& destination)
 {
-    // FIXME: Implement
-    return false;
+#if OS(WINDOWS)
+    return !!::CopyFile(source.charactersWithNullTermination().data(), destination.charactersWithNullTermination().data(), TRUE);
+#else
+    GUniquePtr<gchar> sourceFilename = unescapedFilename(source);
+    if (!sourceFilename)
+        return false;
+
+    GUniquePtr<gchar> destinationFilename = unescapedFilename(destination);
+    if (!destinationFilename)
+        return false;
+
+    if (!link(sourceFilename.get(), destinationFilename.get()))
+        return true;
+
+    // Hard link failed. Perform a copy instead.
+    GRefPtr<GFile> sourceFile = adoptGRef(g_file_new_for_path(sourceFilename.get()));
+    GRefPtr<GFile> destinationFile = adoptGRef(g_file_new_for_path(destinationFilename.get()));
+    return g_file_copy(sourceFile.get(), destinationFile.get(), G_FILE_COPY_NONE, nullptr, nullptr, nullptr, nullptr);
+#endif
 }
 
 }

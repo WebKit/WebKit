@@ -1,3 +1,15 @@
+2016-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Implement hardLinkOrCopyFile() in FileSystemGlib
+        https://bugs.webkit.org/show_bug.cgi?id=158473
+
+        Reviewed by Michael Catanzaro.
+
+        It was added in r199230 to be used by IndexedDB blob support, but never implemented for GLib.
+
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::hardLinkOrCopyFile):
+
 2016-06-07  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Refactor: Use captures with initializers in MediaEndpointPeerConnection::createOffer()
