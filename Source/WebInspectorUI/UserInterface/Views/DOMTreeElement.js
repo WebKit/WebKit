@@ -144,20 +144,16 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         return this._hovered;
     }
 
-    set hovered(x)
+    set hovered(value)
     {
-        if (this._hovered === x)
+        if (this._hovered === value)
             return;
 
-        this._hovered = x;
+        this._hovered = value;
 
         if (this.listItemElement) {
-            if (x) {
-                this.updateSelection();
-                this.listItemElement.classList.add("hovered");
-            } else {
-                this.listItemElement.classList.remove("hovered");
-            }
+            this.listItemElement.classList.toggle("hovered", this._hovered);
+            this.updateSelectionArea();
         }
     }
 
@@ -262,27 +258,36 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         WebInspector.RemoteObject.resolveNode(node, "", resolvedNode.bind(this));
     }
 
-    updateSelection()
+    updateSelectionArea()
     {
-        var listItemElement = this.listItemElement;
+        let listItemElement = this.listItemElement;
         if (!listItemElement)
             return;
 
-        if (!this.selectionElement) {
-            this.selectionElement = document.createElement("div");
-            this.selectionElement.className = "selection selected";
-            listItemElement.insertBefore(this.selectionElement, listItemElement.firstChild);
+        // If there's no reason to have a selection area, remove the DOM element.
+        let indicatesTreeOutlineState = this.treeOutline && (this.treeOutline.dragOverTreeElement === this || this.treeOutline.selectedTreeElement === this);
+        if (!this.hovered && !this.pseudoClassesEnabled && !indicatesTreeOutlineState) {
+            if (this._selectionElement) {
+                this._selectionElement.remove();
+                this._selectionElement = null;
+            }
+
+            return;
         }
 
-        this.selectionElement.style.height = listItemElement.offsetHeight + "px";
+        if (!this._selectionElement) {
+            this._selectionElement = document.createElement("div");
+            this._selectionElement.className = "selection-area";
+            listItemElement.insertBefore(this._selectionElement, listItemElement.firstChild);
+        }
+
+        this._selectionElement.style.height = listItemElement.offsetHeight + "px";
     }
 
     onattach()
     {
-        if (this._hovered) {
-            this.updateSelection();
+        if (this.hovered)
             this.listItemElement.classList.add("hovered");
-        }
 
         this.updateTitle();
 
@@ -484,7 +489,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             return;
 
         this.updateTitle();
-        this.treeOutline.updateSelection();
     }
 
     oncollapse()
@@ -493,7 +497,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             return;
 
         this.updateTitle();
-        this.treeOutline.updateSelection();
     }
 
     onreveal()
@@ -513,7 +516,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         this.treeOutline.selectDOMNode(this.representedObject, selectedByUser);
         if (selectedByUser)
             WebInspector.domTreeManager.highlightDOMNode(this.representedObject.id);
-        this.updateSelection();
+        this.treeOutline.updateSelection();
         this.treeOutline.suppressRevealAndSelect = false;
     }
 
@@ -588,7 +591,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             tag.append("<" + nodeName, node, ">");
         }
 
-        this.updateSelection();
+        this.updateSelectionArea();
     }
 
     _startEditingTarget(eventTarget)
@@ -854,7 +857,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         // Append editor.
         this.listItemElement.appendChild(this._htmlEditElement);
 
-        this.updateSelection();
+        this.updateSelectionArea();
 
         function commit()
         {
@@ -879,7 +882,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 child = child.nextSibling;
             }
 
-            this.updateSelection();
+            this.updateSelectionArea();
         }
 
         var config = new WebInspector.EditingConfig(commit.bind(this), dispose.bind(this));
@@ -1073,8 +1076,10 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             this._highlightResult = undefined;
         }
 
-        this.selectionElement = null;
-        this.updateSelection();
+        // Setting this.title will implicitly remove all children. Clear the
+        // selection element so that we properly recreate it if necessary.
+        this._selectionElement = null;
+        this.updateSelectionArea();
         this._highlightSearchResults();
     }
 
@@ -1518,11 +1523,17 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         }
     }
 
+    get pseudoClassesEnabled()
+    {
+        return !!this.representedObject.enabledPseudoClasses.length;
+    }
+
     _nodePseudoClassesDidChange(event)
     {
         if (this._elementCloseTag)
             return;
 
+        this.updateSelectionArea();
         this._listItemNode.classList.toggle("pseudo-class-enabled", !!this.representedObject.enabledPseudoClasses.length);
     }
 

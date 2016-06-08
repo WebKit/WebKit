@@ -34,16 +34,16 @@
 
     list-style-type: none;
 
- /* Needed to make the negative z-index on .selection works. Otherwise the background-color from .syntax-highlighted hides the selection. */
+ /* Needed to make the negative z-index on .selection-area works. Otherwise the background-color from .syntax-highlighted hides the selection. */
     background-color: transparent !important;
     color: black;
 }
 
-.tree-outline.dom li.hovered:not(.selected) .selection {
+.tree-outline.dom li.hovered:not(.selected) .selection-area {
     background-color: hsla(209, 100%, 49%, 0.1);
 }
 
-.tree-outline.dom li .selection {
+.tree-outline.dom li .selection-area {
     position: absolute;
     left: 0;
     right: 0;
@@ -51,16 +51,16 @@
     z-index: 10;
 }
 
-.tree-outline.dom li.selected .selection {
+.tree-outline.dom li.selected .selection-area {
     background-color: hsl(0, 0%, 83%);
 }
 
-.tree-outline.dom li.elements-drag-over .selection {
+.tree-outline.dom li.elements-drag-over .selection-area {
     margin-top: -2px;
     border-top: 2px solid hsl(209, 100%, 49%);
 }
 
-.tree-outline.dom:focus li.selected .selection {
+.tree-outline.dom:focus li.selected .selection-area {
     background-color: hsl(209, 100%, 49%);
 }
 
@@ -109,7 +109,7 @@
     word-wrap: break-word;
 }
 
-.tree-outline.dom li.pseudo-class-enabled > .selection::before {
+.tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
     display: inline-block;
     position: absolute;
     top: 4px;
@@ -129,7 +129,7 @@
     color: white;
 }
 
-.tree-outline.dom:focus li.selected.pseudo-class-enabled > .selection::before {
+.tree-outline.dom:focus li.selected.pseudo-class-enabled > .selection-area::before {
     background-color: hsl(0, 100%, 100%);
 }
 

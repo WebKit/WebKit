@@ -1,5 +1,94 @@
 2016-06-08  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: DOMTreeOutline selection areas should be created and updated lazily
+        https://bugs.webkit.org/show_bug.cgi?id=158513
+        <rdar://problem/26689646>
+
+        Reviewed by Timothy Hatcher.
+
+        Selection areas for DOMTreeElements are used for several things: drag markers,
+        element hover styles, element selection styles, and showing forced pseudo states
+        for an element. Fortunately it's easy to tell when any of these things is necessary.
+
+        Change DOMTreeOutline and DOMTreeElement so they don't create selection areas
+        unless they are needed for one of these tasks. This significantly reduces
+        forced layouts that are required to update the selection area height in case the
+        element has new attributes that cause the tag to become more or less wrapped.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.set hovered):
+        Modernize this method a bit.
+
+        (WebInspector.DOMTreeElement.prototype.updateSelectionArea):
+        If a selection area is not necessary, don't create one.
+        If one exists and it's not needed, then remove it.
+
+        (WebInspector.DOMTreeElement.prototype.onattach):
+        Remove redundant calls to updateSelection(). This is already called in
+        updateTitle().
+
+        (WebInspector.DOMTreeElement.prototype.onselect):
+        Ask the DOMTreeOutline to update the selection rather than forcing the
+        element to do it. This is consistent with other updates to user selection.
+
+        (WebInspector.DOMTreeElement.prototype._insertInLastAttributePosition):
+        (WebInspector.DOMTreeElement.prototype._startEditingAsHTML.dispose):
+        (WebInspector.DOMTreeElement.prototype._startEditingAsHTML):
+        Use renamed method.
+
+        (WebInspector.DOMTreeElement.prototype.updateTitle):
+        Add a comment to explain why the selection area is nulled out here.
+
+        (WebInspector.DOMTreeElement.prototype.get pseudoClassesEnabled):
+        (WebInspector.DOMTreeElement.prototype._nodePseudoClassesDidChange):
+        Update the selection area in case one does not exist for this tree element.
+        The indicator for forced pseudo classes is a pseudo element of the selection area.
+
+        (WebInspector.DOMTreeElement.prototype.updateSelection): Renamed.
+        (WebInspector.DOMTreeElement.prototype.onexpand):
+        (WebInspector.DOMTreeElement.prototype.oncollapse):
+        Remove redundant calls to updateSelection(). This is already called in
+        updateTitle().
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom):
+        (.tree-outline.dom li.hovered:not(.selected) .selection-area):
+        (.tree-outline.dom li .selection-area):
+        (.tree-outline.dom li.selected .selection-area):
+        (.tree-outline.dom li.elements-drag-over .selection-area):
+        (.tree-outline.dom:focus li.selected .selection-area):
+        (.tree-outline.dom li.pseudo-class-enabled > .selection-area::before):
+        (.tree-outline.dom:focus li.selected.pseudo-class-enabled > .selection-area::before):
+        (.tree-outline.dom li.hovered:not(.selected) .selection): Deleted.
+        (.tree-outline.dom li .selection): Deleted.
+        (.tree-outline.dom li.selected .selection): Deleted.
+        (.tree-outline.dom li.elements-drag-over .selection): Deleted.
+        (.tree-outline.dom:focus li.selected .selection): Deleted.
+        (.tree-outline.dom li.pseudo-class-enabled > .selection::before): Deleted.
+        (.tree-outline.dom:focus li.selected.pseudo-class-enabled > .selection::before): Deleted.
+        Rename the selector to be less ambiguous.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype.updateSelection): Simplify. The call
+        to update the selection area will bail out if there is nothing to be done.
+
+        (WebInspector.DOMTreeOutline.prototype.findTreeElement):
+        (WebInspector.DOMTreeOutline.prototype._onmousemove):
+        (WebInspector.DOMTreeOutline.prototype._onmouseout):
+        Clean up and use let and arrow functions.
+
+        (WebInspector.DOMTreeOutline.prototype._ondragover):
+        (WebInspector.DOMTreeOutline.prototype._clearDragOverTreeElementMarker):
+        Clear the dragging element before updating the selection area since it looks at
+        the dragging element to determine whether anything needs to be done.
+
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-node > .tree-outline.dom li.hovered:not(.selected) .selection-area):
+        (.formatted-node > .tree-outline.dom li.hovered:not(.selected) .selection): Deleted.
+        Rename the selector to be less ambiguous.
+
+2016-06-08  Brian Burg  <bburg@apple.com>
+
         Uncaught Exception in TimelineDataGrid._updatePopoverForSelectedNode()
         https://bugs.webkit.org/show_bug.cgi?id=158502
         <rdar://problem/26687038>

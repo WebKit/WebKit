@@ -189,10 +189,12 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     updateSelection()
     {
-        if (!this.selectedTreeElement)
-            return;
-        var element = this.treeOutline.selectedTreeElement;
-        element.updateSelection();
+        // This will miss updating selection areas used for the hovered tree element and
+        // and those used to show forced pseudo class indicators, but this should be okay.
+        // The hovered element will update when user moves the mouse, and indicators don't need the
+        // selection area height to be accurate since they use ::before to place the indicator.
+        if (this.selectedTreeElement)
+            this.selectedTreeElement.updateSelectionArea();
     }
 
     _selectedNodeChanged()
@@ -202,17 +204,9 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     findTreeElement(node)
     {
-        function isAncestorNode(ancestor, node)
-        {
-            return ancestor.isAncestor(node);
-        }
-
-        function parentNode(node)
-        {
-            return node.parentNode;
-        }
-
-        var treeElement = super.findTreeElement(node, isAncestorNode, parentNode);
+        let isAncestorNode = (ancestor, node) => ancestor.isAncestor(node);
+        let parentNode = (node) => node.parentNode;
+        let treeElement = super.findTreeElement(node, isAncestorNode, parentNode);
         if (!treeElement && node.nodeType() === Node.TEXT_NODE) {
             // The text node might have been inlined if it was short, so try to find the parent element.
             treeElement = super.findTreeElement(node.parentNode, isAncestorNode, parentNode);
@@ -341,7 +335,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
         if (this._previousHoveredElement) {
             this._previousHoveredElement.hovered = false;
-            delete this._previousHoveredElement;
+            this._previousHoveredElement = null;
         }
 
         if (element) {
@@ -364,7 +358,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
         if (this._previousHoveredElement) {
             this._previousHoveredElement.hovered = false;
-            delete this._previousHoveredElement;
+            this._previousHoveredElement = null;
         }
 
         WebInspector.domTreeManager.hideDOMNodeHighlight();
@@ -407,9 +401,10 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
             node = node.parentNode;
         }
 
-        treeElement.updateSelection();
+        this.dragOverTreeElement = treeElement;
         treeElement.listItemElement.classList.add("elements-drag-over");
-        this._dragOverTreeElement = treeElement;
+        treeElement.updateSelectionArea();
+
         event.preventDefault();
         event.dataTransfer.dropEffect = "move";
         return false;
@@ -481,10 +476,12 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     _clearDragOverTreeElementMarker()
     {
-        if (this._dragOverTreeElement) {
-            this._dragOverTreeElement.updateSelection();
-            this._dragOverTreeElement.listItemElement.classList.remove("elements-drag-over");
-            delete this._dragOverTreeElement;
+        if (this.dragOverTreeElement) {
+            let element = this.dragOverTreeElement;
+            this.dragOverTreeElement = null;
+
+            element.listItemElement.classList.remove("elements-drag-over");
+            element.updateSelectionArea();
         }
     }
 
