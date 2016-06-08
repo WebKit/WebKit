@@ -1,3 +1,21 @@
+2016-06-08  Brady Eidson  <beidson@apple.com>
+
+        Add an API test that confirms object constructor/destructor calls during creation of a CrossThreadTask.
+        https://bugs.webkit.org/show_bug.cgi?id=158528
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CrossThreadTask.cpp: Added.
+        (TestWebKitAPI::log):
+        (TestWebKitAPI::takeLogStr):
+        (TestWebKitAPI::LifetimeLogger::LifetimeLogger):
+        (TestWebKitAPI::LifetimeLogger::~LifetimeLogger):
+        (TestWebKitAPI::LifetimeLogger::isolatedCopy):
+        (TestWebKitAPI::testFunction):
+        (TestWebKitAPI::TEST):
+
 2016-06-08  Konstantin Tokarev  <annulen@yandex.ru>
 
         TestWebKitAPI: Removed redunandant check PLATFORM(GTK) && !defined(BUILDING_WEBKIT2__)

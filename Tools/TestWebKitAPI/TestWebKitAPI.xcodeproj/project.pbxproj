@@ -71,6 +71,7 @@
 		51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */; };
 		51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */; };
 		51714EB81CF8CA17004723C4 /* WebProcessKillIDBCleanup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */; };
+		51714EBA1D087416004723C4 /* CrossThreadTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EB91D087416004723C4 /* CrossThreadTask.cpp */; };
 		517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */; };
 		51B1EE8E1C80F5880064FB98 /* IndexedDBPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51B1EE8D1C80F5880064FB98 /* IndexedDBPersistence.mm */; };
 		51B1EE961C80FAEF0064FB98 /* IndexedDBPersistence-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51B1EE941C80FADD0064FB98 /* IndexedDBPersistence-1.html */; };
@@ -655,6 +656,7 @@
 		51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "WebProcessKillIDBCleanup-1.html"; sourceTree = "<group>"; };
 		51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "WebProcessKillIDBCleanup-2.html"; sourceTree = "<group>"; };
 		51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessKillIDBCleanup.mm; sourceTree = "<group>"; };
+		51714EB91D087416004723C4 /* CrossThreadTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadTask.cpp; sourceTree = "<group>"; };
 		517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCachePruneWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCachePruneWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
 		51B1EE8D1C80F5880064FB98 /* IndexedDBPersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBPersistence.mm; sourceTree = "<group>"; };
@@ -1374,6 +1376,7 @@
 				0FEAE3671B7D19CB00CE17F2 /* Condition.cpp */,
 				26A2C72E15E2E73C005B1A14 /* CString.cpp */,
 				E40019301ACE9B5C001B0A2A /* BloomFilter.cpp */,
+				51714EB91D087416004723C4 /* CrossThreadTask.cpp */,
 				7AA021BA1AB09EA70052953F /* DateMath.cpp */,
 				E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */,
 				7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */,
@@ -2055,6 +2058,7 @@
 				1AAD19F71C7CE20300831E47 /* Coding.mm in Sources */,
 				1A9FB6CE1CA34BE500966124 /* EarlyKVOCrash.mm in Sources */,
 				9B0786A31C58830F00D159E3 /* InjectedBundleMakeAllShadowRootsOpen.cpp in Sources */,
+				51714EBA1D087416004723C4 /* CrossThreadTask.cpp in Sources */,
 				1A4F81CC1BDFFD37004E672E /* RemoteObjectRegistry.mm in Sources */,
 				51CB4AD81B3A079C00C1B1C6 /* ModalAlertsSPI.cpp in Sources */,
 				7A38D7E61C752D5F004F157D /* HashCountedSet.cpp in Sources */,
