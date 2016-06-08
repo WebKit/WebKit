@@ -1,3 +1,13 @@
+2016-06-08  Lucas Forschler  <lforschler@apple.com>
+
+        Teach cmake about libWebKitSystemInterfaceOSX10.12
+        This patch also removes duplicated logic inside DumpRenderTree/PlatformMac.cmake
+
+        Rubber-stamped by Alex Christensen.
+ 
+        * DumpRenderTree/PlatformMac.cmake:
+        * WebKitTestRunner/PlatformMac.cmake:
+
 2016-06-07  Lucas Forschler  <lforschler@apple.com>
 
         <rdar://problem/26685782>

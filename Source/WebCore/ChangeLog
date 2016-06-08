@@ -1,3 +1,11 @@
+2016-06-08  Lucas Forschler  <lforschler@apple.com>
+
+        Teach cmake about libWebKitSystemInterfaceOSX10.12
+        
+        Rubber-stamped by Matt Hanson and Alex Christensen.
+        
+        * PlatformMac.cmake:
+
 2016-06-08  Rawinder Singh  <rawinder.singh-webkit@cisra.canon.com.au>
 
         [web-animations] Add Animatable, AnimationEffect, KeyframeEffect and Animation interface
