@@ -47,6 +47,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     let slot4 = code.addStackSlot(8, Spill);
     let slot5 = code.addStackSlot(8, Spill);
     let slot6 = code.addStackSlot(40, Locked);
+    slot6.setOffsetFromFP(-40);
     let tmp141 = code.newTmp(GP);
     let tmp140 = code.newTmp(GP);
     let tmp139 = code.newTmp(GP);
@@ -269,7 +270,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb0.successors.push(new FrequentedBlock(bb2, Normal));
     bb0.successors.push(new FrequentedBlock(bb1, Rare));
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4374261488);
+    arg = Arg.createBigImm(144305904, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -281,6 +282,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbp);
     inst.args.push(arg);
@@ -297,7 +299,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.Scratch, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4372502752);
+    arg = Arg.createBigImm(142547168, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -315,7 +317,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4372502768);
+    arg = Arg.createBigImm(142547184, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -327,7 +329,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4372502776);
+    arg = Arg.createBigImm(142547192, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -339,7 +341,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4372502784);
+    arg = Arg.createBigImm(142547200, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -351,7 +353,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4372502792);
+    arg = Arg.createBigImm(142547208, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -363,7 +365,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4372502800);
+    arg = Arg.createBigImm(142547216, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -375,7 +377,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4372502808);
+    arg = Arg.createBigImm(142547224, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -387,7 +389,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4372502816);
+    arg = Arg.createBigImm(142547232, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -399,7 +401,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4372502824);
+    arg = Arg.createBigImm(142547240, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rdi);
     inst.args.push(arg);
@@ -411,7 +413,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(-281474976710656);
+    arg = Arg.createBigImm(0, -65536);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rdi);
     inst.args.push(arg);
@@ -441,6 +443,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb1.successors.push(new FrequentedBlock(bb2, Normal));
     bb1.predecessors.push(bb0);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(Below);
     inst.args.push(arg);
@@ -500,6 +503,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb2.predecessors.push(bb0);
     bb2.predecessors.push(bb1);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(Below);
     inst.args.push(arg);
@@ -547,6 +551,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb2.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(Below);
     inst.args.push(arg);
@@ -594,6 +599,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb2.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(Below);
     inst.args.push(arg);
@@ -665,6 +671,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb3.successors.push(new FrequentedBlock(bb4, Normal));
     bb3.predecessors.push(bb2);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(Below);
     inst.args.push(arg);
@@ -748,6 +755,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb5.successors.push(new FrequentedBlock(bb6, Normal));
     bb5.predecessors.push(bb4);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(Below);
     inst.args.push(arg);
@@ -807,6 +815,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb6.predecessors.push(bb4);
     bb6.predecessors.push(bb5);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(Below);
     inst.args.push(arg);
@@ -878,6 +887,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb7.successors.push(new FrequentedBlock(bb8, Normal));
     bb7.predecessors.push(bb6);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(Below);
     inst.args.push(arg);
@@ -937,7 +947,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb8.predecessors.push(bb6);
     bb8.predecessors.push(bb7);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4347049352);
+    arg = Arg.createBigImm(117076488, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r8);
     inst.args.push(arg);
@@ -973,6 +983,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb9.successors.push(new FrequentedBlock(bb10, Normal));
     bb9.predecessors.push(bb8);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(Below);
     inst.args.push(arg);
@@ -1031,7 +1042,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb10.predecessors.push(bb8);
     bb10.predecessors.push(bb9);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4374462168);
+    arg = Arg.createBigImm(144506584, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rdi);
     inst.args.push(arg);
@@ -1049,12 +1060,13 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb10.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4374462128);
+    arg = Arg.createBigImm(144506544, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rdi);
     inst.args.push(arg);
     bb10.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
@@ -1062,7 +1074,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     arg = Arg.createImm(80);
     inst.args.push(arg);
-    arg = Arg.createBigImm(4374462128);
+    arg = Arg.createBigImm(144506544, 1);
     inst.args.push(arg);
     arg = Arg.createStack(slot5, 0);
     inst.args.push(arg);
@@ -1102,7 +1114,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb10.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4374462136);
+    arg = Arg.createBigImm(144506552, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rdi);
     inst.args.push(arg);
@@ -1148,7 +1160,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb10.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(-281474976710654);
+    arg = Arg.createBigImm(2, -65536);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r10);
     inst.args.push(arg);
@@ -1231,6 +1243,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb15.predecessors.push(bb13);
     bb15.predecessors.push(bb14);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -1320,6 +1333,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb18.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -1367,6 +1381,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.LateColdUse, type: FP, width: 64});
     bb18.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -1424,6 +1439,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb19.successors.push(new FrequentedBlock(bb20, Normal));
     bb19.predecessors.push(bb18);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(LessThan);
     inst.args.push(arg);
@@ -1501,6 +1517,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb20.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(LessThan);
     inst.args.push(arg);
@@ -1545,6 +1562,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.ColdUse, type: FP, width: 64});
     bb20.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(AboveOrEqual);
     inst.args.push(arg);
@@ -1621,6 +1639,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb20.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -1668,6 +1687,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.ColdUse, type: FP, width: 64});
     bb20.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
@@ -1743,6 +1763,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb22.predecessors.push(bb20);
     bb22.predecessors.push(bb21);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -1811,6 +1832,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb24.successors.push(new FrequentedBlock(bb27, Normal));
     bb24.predecessors.push(bb23);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -1864,6 +1886,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.LateColdUse, type: GP, width: 32});
     bb24.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -1922,6 +1945,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb24.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(AboveOrEqual);
     inst.args.push(arg);
@@ -1969,6 +1993,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 32});
     bb24.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(AboveOrEqual);
     inst.args.push(arg);
@@ -2050,6 +2075,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb24.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(LessThan);
     inst.args.push(arg);
@@ -2103,6 +2129,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 32});
     bb24.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(AboveOrEqual);
     inst.args.push(arg);
@@ -2263,6 +2290,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb27.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -2344,6 +2372,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb31.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -2396,6 +2425,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb32.successors.push(new FrequentedBlock(bb33, Rare));
     bb32.predecessors.push(bb31);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -2447,6 +2477,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb33.successors.push(new FrequentedBlock(bb34, Normal));
     bb33.predecessors.push(bb32);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(LessThan);
     inst.args.push(arg);
@@ -2491,6 +2522,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb34.predecessors.push(bb32);
     bb34.predecessors.push(bb33);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -2535,6 +2567,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.LateColdUse, type: GP, width: 32});
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -2585,6 +2618,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(AboveOrEqual);
     inst.args.push(arg);
@@ -2626,6 +2660,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.ColdUse, type: FP, width: 64});
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createDoubleCond(DoubleNotEqualOrUnordered);
     inst.args.push(arg);
@@ -2682,6 +2717,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -2742,6 +2778,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(AboveOrEqual);
     inst.args.push(arg);
@@ -2780,6 +2817,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.ColdUse, type: FP, width: 64});
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(AboveOrEqual);
     inst.args.push(arg);
@@ -2818,6 +2856,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.patchArgData.push({role: Arg.ColdUse, type: FP, width: 64});
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createDoubleCond(DoubleNotEqualOrUnordered);
     inst.args.push(arg);
@@ -2879,6 +2918,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createDoubleCond(DoubleNotEqualOrUnordered);
     inst.args.push(arg);
@@ -2929,6 +2969,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createDoubleCond(DoubleNotEqualOrUnordered);
     inst.args.push(arg);
@@ -2976,6 +3017,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -3019,6 +3061,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     inst.args.push(arg);
     bb35.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -3051,7 +3094,7 @@ function createPayloadImagingGaussianBlurGaussianBlur()
     bb35.append(inst);
     bb36.predecessors.push(bb35);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4374462160);
+    arg = Arg.createBigImm(144506576, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);

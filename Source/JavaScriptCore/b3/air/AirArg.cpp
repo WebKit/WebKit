@@ -109,6 +109,50 @@ bool Arg::isCompatibleType(const Arg& other) const
     return true;
 }
 
+unsigned Arg::jsHash() const
+{
+    unsigned result = static_cast<unsigned>(m_kind);
+    
+    switch (m_kind) {
+    case Invalid:
+    case Special:
+        break;
+    case Tmp:
+        result += m_base.internalValue();
+        break;
+    case Imm:
+    case BitImm:
+    case CallArg:
+    case RelCond:
+    case ResCond:
+    case DoubleCond:
+    case WidthArg:
+        result += static_cast<unsigned>(m_offset);
+        break;
+    case BigImm:
+    case BitImm64:
+        result += static_cast<unsigned>(m_offset);
+        result += static_cast<unsigned>(m_offset >> 32);
+        break;
+    case Addr:
+        result += m_offset;
+        result += m_base.internalValue();
+        break;
+    case Index:
+        result += static_cast<unsigned>(m_offset);
+        result += m_scale;
+        result += m_base.internalValue();
+        result += m_index.internalValue();
+        break;
+    case Stack:
+        result += static_cast<unsigned>(m_scale);
+        result += stackSlot()->index();
+        break;
+    }
+    
+    return result;
+}
+
 void Arg::dump(PrintStream& out) const
 {
     switch (m_kind) {

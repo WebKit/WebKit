@@ -48,6 +48,7 @@ function createPayloadTypescriptScanIdentifier()
     let slot7 = code.addStackSlot(8, Spill);
     let slot8 = code.addStackSlot(8, Spill);
     let slot9 = code.addStackSlot(40, Locked);
+    slot9.setOffsetFromFP(-40);
     let tmp98 = code.newTmp(GP);
     let tmp97 = code.newTmp(GP);
     let tmp96 = code.newTmp(GP);
@@ -152,7 +153,7 @@ function createPayloadTypescriptScanIdentifier()
     bb0.successors.push(new FrequentedBlock(bb5, Normal));
     bb0.successors.push(new FrequentedBlock(bb4, Normal));
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4579251936);
+    arg = Arg.createBigImm(177329888, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -164,6 +165,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbp);
     inst.args.push(arg);
@@ -186,12 +188,13 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(-281474976710654);
+    arg = Arg.createBigImm(2, -65536);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r15);
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -212,6 +215,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
@@ -232,6 +236,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
@@ -277,12 +282,13 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4556913984);
+    arg = Arg.createBigImm(154991936, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
@@ -290,7 +296,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     arg = Arg.createImm(80);
     inst.args.push(arg);
-    arg = Arg.createBigImm(4556913984);
+    arg = Arg.createBigImm(154991936, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbx);
     inst.args.push(arg);
@@ -312,7 +318,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 32});
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4556913992);
+    arg = Arg.createBigImm(154991944, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -330,6 +336,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(AboveOrEqual);
     inst.args.push(arg);
@@ -412,6 +419,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -447,7 +455,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4531909360);
+    arg = Arg.createBigImm(129987312, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -459,13 +467,13 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4510266960);
+    arg = Arg.createBigImm(108418352, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(-281474976710656);
+    arg = Arg.createBigImm(0, -65536);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r14);
     inst.args.push(arg);
@@ -486,6 +494,7 @@ function createPayloadTypescriptScanIdentifier()
     bb0.append(inst);
     bb1.predecessors.push(bb6);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     inst.patchHasNonArgEffects = true;
     inst.extraEarlyClobberedRegs = new Set();
@@ -497,6 +506,7 @@ function createPayloadTypescriptScanIdentifier()
     bb1.append(inst);
     bb2.predecessors.push(bb23);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     inst.patchHasNonArgEffects = true;
     inst.extraEarlyClobberedRegs = new Set();
@@ -508,6 +518,7 @@ function createPayloadTypescriptScanIdentifier()
     bb2.append(inst);
     bb3.predecessors.push(bb32);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     inst.patchHasNonArgEffects = true;
     inst.extraEarlyClobberedRegs = new Set();
@@ -519,6 +530,7 @@ function createPayloadTypescriptScanIdentifier()
     bb3.append(inst);
     bb4.predecessors.push(bb0);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbx);
     inst.args.push(arg);
@@ -615,6 +627,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb6.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r10);
     inst.args.push(arg);
@@ -681,7 +694,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb6.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4531909360);
+    arg = Arg.createBigImm(129987312, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -759,6 +772,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb11.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -820,6 +834,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb11.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(Overflow);
     inst.args.push(arg);
@@ -880,6 +895,7 @@ function createPayloadTypescriptScanIdentifier()
     bb12.successors.push(new FrequentedBlock(bb14, Normal));
     bb12.predecessors.push(bb11);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(AboveOrEqual);
     inst.args.push(arg);
@@ -982,6 +998,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb15.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(AboveOrEqual);
     inst.args.push(arg);
@@ -1046,6 +1063,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb15.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -1090,6 +1108,7 @@ function createPayloadTypescriptScanIdentifier()
     bb15.append(inst);
     bb16.predecessors.push(bb11);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbx);
     inst.args.push(arg);
@@ -1150,6 +1169,7 @@ function createPayloadTypescriptScanIdentifier()
     bb19.append(inst);
     bb20.predecessors.push(bb19);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbx);
     inst.args.push(arg);
@@ -1172,6 +1192,7 @@ function createPayloadTypescriptScanIdentifier()
     bb21.successors.push(new FrequentedBlock(bb23, Normal));
     bb21.predecessors.push(bb19);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbx);
     inst.args.push(arg);
@@ -1195,6 +1216,7 @@ function createPayloadTypescriptScanIdentifier()
     bb21.append(inst);
     bb22.predecessors.push(bb21);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbx);
     inst.args.push(arg);
@@ -1223,7 +1245,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb23.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4556943616);
+    arg = Arg.createBigImm(155021568, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -1259,6 +1281,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb23.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -1325,6 +1348,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb23.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbx);
     inst.args.push(arg);
@@ -1339,7 +1363,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb23.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4556963336);
+    arg = Arg.createBigImm(155041288, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -1357,6 +1381,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb23.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -1404,7 +1429,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb23.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4510204912);
+    arg = Arg.createBigImm(108356304, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -1434,6 +1459,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb23.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -1485,7 +1511,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.patchArgData.push({role: Arg.Use, type: GP, width: 64});
     bb23.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4531909360);
+    arg = Arg.createBigImm(129987312, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -1502,6 +1528,7 @@ function createPayloadTypescriptScanIdentifier()
     bb24.successors.push(new FrequentedBlock(bb26, Normal));
     bb24.predecessors.push(bb23);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbx);
     inst.args.push(arg);
@@ -1621,7 +1648,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb32.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4556913680);
+    arg = Arg.createBigImm(154991632, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -1645,8 +1672,9 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb32.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
-    arg = Arg.createBigImm(4510204912);
+    arg = Arg.createBigImm(108356304, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -1696,7 +1724,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.patchArgData.push({role: Arg.Use, type: GP, width: 64});
     bb32.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4531909360);
+    arg = Arg.createBigImm(129987312, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -1711,6 +1739,7 @@ function createPayloadTypescriptScanIdentifier()
     bb32.append(inst);
     bb33.predecessors.push(bb32);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbx);
     inst.args.push(arg);
@@ -1730,7 +1759,7 @@ function createPayloadTypescriptScanIdentifier()
     bb33.append(inst);
     bb34.predecessors.push(bb30);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4555757344);
+    arg = Arg.createBigImm(153835296, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -1766,6 +1795,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.args.push(arg);
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -1826,6 +1856,7 @@ function createPayloadTypescriptScanIdentifier()
     inst.patchArgData.push({role: Arg.Use, type: GP, width: 64});
     bb34.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbx);
     inst.args.push(arg);

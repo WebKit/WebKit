@@ -307,11 +307,12 @@ class Arg {
         return result;
     }
     
-    static createBigImm(value)
+    static createBigImm(lowValue, highValue = 0)
     {
         let result = new Arg();
         result._kind = Arg.BigImm;
-        result._value = value;
+        result._lowValue = lowValue;
+        result._highValue = highValue;
         return result;
     }
     
@@ -323,11 +324,12 @@ class Arg {
         return result;
     }
     
-    static createBitImm64(value)
+    static createBitImm64(lowValue, highValue = 0)
     {
         let result = new Arg();
         result._kind = Arg.BitImm64;
-        result._value = value;
+        result._lowValue = lowValue;
+        result._highValue = highValue;
         return result;
     }
     
@@ -445,6 +447,13 @@ class Arg {
         return result;
     }
     
+    static createSpecial()
+    {
+        let result = new Arg();
+        result._kind = Arg.Special;
+        return result;
+    }
+    
     get kind() { return this._kind; }
     get isTmp() { return this._kind == Arg.Tmp; }
     get isImm() { return this._kind == Arg.Imm; }
@@ -455,8 +464,16 @@ class Arg {
     {
         switch (this._kind) {
         case Arg.Imm:
-        case Arg.BigImm:
         case Arg.BitImm:
+            return true;
+        default:
+            return false;
+        }
+    }
+    get isSomeBigImm()
+    {
+        switch (this._kind) {
+        case Arg.BigImm:
         case Arg.BitImm64:
             return true;
         default:
@@ -507,6 +524,7 @@ class Arg {
         }
     }
     get isWidth() { return this._kind == Arg.Width; }
+    get isSpecial() { return this._kind == Arg.Special; }
     get isAlive() { return this.isTmp || this.isStack; }
     
     get tmp()
@@ -521,6 +539,20 @@ class Arg {
         if (!this.isSomeImm)
             throw new Error("Called .value for non-imm");
         return this._value;
+    }
+    
+    get lowValue()
+    {
+        if (!this.isSomeBigImm)
+            throw new Error("Called .lowValue for non-big-imm");
+        return this._lowValue;
+    }
+    
+    get highValue()
+    {
+        if (!this.isSomeBigImm)
+            throw new Error("Called .highValue for non-big-imm");
+        return this._highValue;
     }
     
     get base()
@@ -600,6 +632,7 @@ class Arg {
         case Arg.ResCond:
         case Arg.DoubleCond:
         case Arg.Width:
+        case Arg.Special:
             return true;
         case Arg.Tmp:
             return this.isGPTmp;
@@ -620,6 +653,7 @@ class Arg {
         case Arg.ResCond:
         case Arg.DoubleCond:
         case Arg.Width:
+        case Arg.Special:
         case Arg.Invalid:
             return false;
         case Arg.Addr:
@@ -731,6 +765,7 @@ class Arg {
         case Arg.ResCond:
         case Arg.DoubleCond:
         case Arg.Width:
+        case Arg.Special:
             return true;
         default:
             throw new Error("Bad kind");
@@ -861,6 +896,115 @@ class Arg {
         }
     }
     
+    static kindCode(kind)
+    {
+        switch (kind) {
+        case Arg.Invalid:
+            return 0;
+        case Arg.Tmp:
+            return 1;
+        case Arg.Imm:
+            return 2;
+        case Arg.BigImm:
+            return 3;
+        case Arg.BitImm:
+            return 4;
+        case Arg.BitImm64:
+            return 5;
+        case Arg.Addr:
+            return 6;
+        case Arg.Stack:
+            return 7;
+        case Arg.CallArg:
+            return 8;
+        case Arg.Index:
+            return 9;
+        case Arg.RelCond:
+            return 10;
+        case Arg.ResCond:
+            return 11;
+        case Arg.DoubleCond:
+            return 12;
+        case Arg.Special:
+            return 13;
+        case Arg.WidthArg:
+            return 14;
+        default:
+            throw new Error("Bad kind");
+        }
+    }
+    
+    hash()
+    {
+        let result = Arg.kindCode(this._kind);
+        
+        switch (this._kind) {
+        case Arg.Invalid:
+        case Arg.Special:
+            break;
+        case Arg.Tmp:
+            result += this._tmp.hash();
+            result |= 0;
+            break;
+        case Arg.Imm:
+        case Arg.BitImm:
+            result += this._value;
+            result |= 0;
+            break;
+        case Arg.BigImm:
+        case Arg.BitImm64:
+            result += this._lowValue;
+            result |= 0;
+            result += this._highValue;
+            result |= 0;
+            break;
+        case Arg.CallArg:
+            result += this._offset;
+            result |= 0;
+            break;
+        case Arg.RelCond:
+            result += relCondCode(this._condition);
+            result |= 0;
+            break;
+        case Arg.ResCond:
+            result += resCondCode(this._condition);
+            result |= 0;
+            break;
+        case Arg.DoubleCond:
+            result += doubleCondCode(this._condition);
+            result |= 0;
+            break;
+        case Arg.WidthArg:
+            result += this._width;
+            result |= 0;
+            break;
+        case Arg.Addr:
+            result += this._offset;
+            result |= 0;
+            result += this._base.hash();
+            result |= 0;
+            break;
+        case Arg.Index:
+            result += this._offset;
+            result |= 0;
+            result += this._scale;
+            result |= 0;
+            result += this._base.hash();
+            result |= 0;
+            result += this._index.hash();
+            result |= 0;
+            break;
+        case Arg.Stack:
+            result += this._offset;
+            result |= 0;
+            result += this.stackSlot.index;
+            result |= 0;
+            break;
+        }
+        
+        return result >>> 0;
+    }
+    
     toString()
     {
         switch (this._kind) {
@@ -869,11 +1013,10 @@ class Arg {
         case Arg.Tmp:
             return this._tmp.toString();
         case Arg.Imm:
-        case Arg.BitImm:
             return "$" + this._value;
         case Arg.BigImm:
         case Arg.BitImm64:
-            return "$0x" + this._value.toString(16);
+            return "$0x" + this._highValue.toString(16) + ":" + this._lowValue.toString(16);
         case Arg.Addr:
             return "" + (this._offset ? this._offset : "") + "(" + this._base + ")";
         case Arg.Index:
@@ -886,8 +1029,11 @@ class Arg {
         case Arg.RelCond:
         case Arg.ResCond:
         case Arg.DoubleCond:
-        case Arg.Width:
             return symbolName(this._condition);
+        case Arg.Special:
+            return "special";
+        case Arg.Width:
+            return "" + this._value;
         default:
             throw new Error("Bad kind");
         }
@@ -908,6 +1054,7 @@ Arg.Index = Symbol("Index");
 Arg.RelCond = Symbol("RelCond");
 Arg.ResCond = Symbol("ResCond");
 Arg.DoubleCond = Symbol("DoubleCond");
+Arg.Special = Symbol("Special");
 Arg.Width = Symbol("Width");
 
 // Arg roles

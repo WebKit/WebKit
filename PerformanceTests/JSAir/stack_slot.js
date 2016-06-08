@@ -62,6 +62,11 @@ class StackSlot {
     
     setOffsetFromFP(value) { this._offsetFromFP = value; }
     
+    hash()
+    {
+        return ((this._kind == Spill ? 1 : 0) + this._byteSize * 3 + (this._offsetFromFP ? this._offsetFromFP * 7 : 0)) >>> 0;
+    }
+    
     toString()
     {
         return "" + (this.isSpill ? "spill" : "stack") + this._index + "<" + this._byteSize +

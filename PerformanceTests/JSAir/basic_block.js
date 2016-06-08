@@ -51,7 +51,7 @@ class BasicBlock {
     
     get(index)
     {
-        if (index >= this._insts.length)
+        if (index < 0 || index >= this._insts.length)
             return null;
         return this._insts[index];
     }
@@ -74,13 +74,15 @@ class BasicBlock {
     {
         return new Proxy(this._successors, {
             get(target, property) {
-                if ((property | 0) == property)
+                if (typeof property == "string"
+                    && (property | 0) == property)
                     return target[property].block;
                 return target[property];
             },
             
             set(target, property, value) {
-                if ((property | 0) == property) {
+                if (typeof property == "string"
+                    && (property | 0) == property) {
                     var oldValue = target[property];
                     target[property] = new FrequentedBlock(
                         value, oldValue ? oldValue.frequency : Normal);

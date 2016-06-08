@@ -211,6 +211,10 @@ public:
 
     const char* lastPhaseName() const { return m_lastPhaseName; }
 
+    // This is a hash of the code. You can use this if you want to put code into a hashtable, but
+    // it's mainly for validating the results from JSAir.
+    unsigned jsHash() const;
+
 private:
     friend class ::JSC::B3::Procedure;
     friend class BlockInsertionSet;

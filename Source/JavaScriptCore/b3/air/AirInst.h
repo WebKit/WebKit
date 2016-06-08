@@ -187,6 +187,9 @@ public:
     //     Add Tmp1, Tmp2, Tmp3
     // returns 2 if 0 and 1 benefit from aliasing to Tmp3.
     Optional<unsigned> shouldTryAliasingDef();
+    
+    // This computes a hash for comparing this to JSAir's Inst.
+    unsigned jsHash() const;
 
     void dump(PrintStream&) const;
 

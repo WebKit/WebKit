@@ -125,6 +125,16 @@ class Inst {
     
     get hasNonArgEffects() { return Inst_hasNonArgEffects(this); }
     
+    hash()
+    {
+        let result = opcodeCode(this.opcode);
+        for (let arg of this.args) {
+            result += arg.hash();
+            result |= 0;
+        }
+        return result >>> 0;
+    }
+    
     toString()
     {
         return "" + symbolName(this._opcode) + " " + this._args.join(", ");

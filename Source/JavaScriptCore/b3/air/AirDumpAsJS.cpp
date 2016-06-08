@@ -81,11 +81,18 @@ void dumpAsJS(Code& code, PrintStream& out)
     for (unsigned i = 0; i < code.size(); ++i)
         out.println("let ", varNameForBlockAtIndex(i), " = code.addBlock();");
     
+    out.println("let hash;");
+
     for (unsigned i = 0; i < code.stackSlots().size(); ++i) {
         StackSlot* slot = code.stackSlots()[i];
-        if (slot)
+        if (slot) {
             out.println("let ", varName(slot), " = code.addStackSlot(", slot->byteSize(), ", ", slot->kind(), ");");
-        else
+            if (slot->offsetFromFP())
+                out.println(varName(slot), ".setOffsetFromFP(", slot->offsetFromFP(), ");");
+            out.println("hash = ", varName(slot), ".hash();");
+            out.println("if (hash != ", slot->jsHash(), ")");
+            out.println("    throw new Error(\"Bad hash: \" + hash);");
+        } else
             out.println("code.addStackSlot(1, Spill);");
     }
     
@@ -129,7 +136,10 @@ void dumpAsJS(Code& code, PrintStream& out)
                         break;
                         
                     case Arg::BigImm:
-                        out.println("arg = Arg.createBigImm(", arg.value(), ");");
+                        out.println(
+                            "arg = Arg.createBigImm(",
+                            static_cast<int32_t>(arg.value()), ", ",
+                            static_cast<int32_t>(arg.value() >> 32), ");");
                         break;
                         
                     case Arg::BitImm:
@@ -137,7 +147,10 @@ void dumpAsJS(Code& code, PrintStream& out)
                         break;
                         
                     case Arg::BitImm64:
-                        out.println("arg = Arg.createBitImm64(", arg.value(), ");");
+                        out.println(
+                            "arg = Arg.createBitImm64(",
+                            static_cast<int32_t>(arg.value()), ", ",
+                            static_cast<int32_t>(arg.value() >> 32), ");");
                         break;
                         
                     case Arg::Addr:
@@ -173,7 +186,7 @@ void dumpAsJS(Code& code, PrintStream& out)
                         break;
                         
                     case Arg::Special:
-                        // JS-Air doesn't have Specials.
+                        out.println("arg = Arg.createSpecial();");
                         break;
                         
                     case Arg::WidthArg:
@@ -214,6 +227,10 @@ void dumpAsJS(Code& code, PrintStream& out)
                 for (unsigned i = 1; i < inst.origin->numChildren(); ++i)
                     out.println("inst.cCallArgTypes.push(", inst.origin->child(i)->type(), ");");
             }
+            
+            out.println("hash = inst.hash();");
+            out.println("if (hash != ", inst.jsHash(), ")");
+            out.println("    throw new Error(\"Bad hash: \" + hash);");
             
             out.println(varName(block), ".append(inst);");
         }

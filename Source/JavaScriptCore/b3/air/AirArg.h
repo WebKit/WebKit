@@ -1209,7 +1209,7 @@ public:
         ASSERT(isDoubleCond());
         return static_cast<MacroAssembler::DoubleCondition>(m_offset);
     }
-
+    
     // Tells you if the Arg is invertible. Only condition arguments are invertible, and even for those, there
     // are a few exceptions - notably Overflow and Signed.
     bool isInvertible() const
@@ -1260,6 +1260,9 @@ public:
         return isRelCond() && MacroAssembler::isUnsigned(asRelationalCondition());
     }
 
+    // This computes a hash for comparing this to JSAir's Arg.
+    unsigned jsHash() const;
+    
     void dump(PrintStream&) const;
 
     Arg(WTF::HashTableDeletedValueType)

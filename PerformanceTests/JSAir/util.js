@@ -40,7 +40,7 @@ const stackAlignmentBytes = 16;
 
 function roundUpToMultipleOf(amount, value)
 {
-    return Math.ceil(value / amount * amount);
+    return Math.ceil(value / amount) * amount;
 }
 
 function symbolName(symbol)

@@ -79,6 +79,34 @@ class Code {
     
     setFrameSize(frameSize) { this._frameSize = frameSize; }
     
+    hash()
+    {
+        let result = 0;
+        for (let block of this) {
+            result *= 1000001;
+            result |= 0;
+            for (let inst of block) {
+                result *= 97;
+                result |= 0;
+                result += inst.hash();
+                result |= 0;
+            }
+            for (let successor of block.successorBlocks) {
+                result *= 7;
+                result |= 0;
+                result += successor.index;
+                result |= 0;
+            }
+        }
+        for (let slot of this.stackSlots) {
+            result *= 101;
+            result |= 0;
+            result += slot.hash();
+            result |= 0;
+        }
+        return result >>> 0;
+    }
+    
     toString()
     {
         let result = "";

@@ -45,6 +45,16 @@ bool Inst::hasArgEffects()
     return result;
 }
 
+unsigned Inst::jsHash() const
+{
+    unsigned result = static_cast<unsigned>(opcode);
+    
+    for (const Arg& arg : args)
+        result += arg.jsHash();
+    
+    return result;
+}
+
 void Inst::dump(PrintStream& out) const
 {
     out.print(opcode, " ", listDump(args));

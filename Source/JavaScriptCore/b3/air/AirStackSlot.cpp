@@ -39,6 +39,11 @@ void StackSlot::setOffsetFromFP(intptr_t value)
         m_b3Slot->m_offsetFromFP = value;
 }
 
+unsigned StackSlot::jsHash() const
+{
+    return static_cast<unsigned>(m_kind) + m_byteSize * 3 + m_offsetFromFP * 7;
+}
+
 void StackSlot::dump(PrintStream& out) const
 {
     if (isSpill())

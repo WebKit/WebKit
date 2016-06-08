@@ -24,6 +24,7 @@ function createPayloadJSAirACLj8C()
     let slot2 = code.addStackSlot(8, Spill);
     let slot3 = code.addStackSlot(8, Spill);
     let slot4 = code.addStackSlot(40, Locked);
+    slot4.setOffsetFromFP(-40);
     let tmp61 = code.newTmp(GP);
     let tmp60 = code.newTmp(GP);
     let tmp59 = code.newTmp(GP);
@@ -91,7 +92,7 @@ function createPayloadJSAirACLj8C()
     bb0.successors.push(new FrequentedBlock(bb1, Normal));
     bb0.successors.push(new FrequentedBlock(bb15, Normal));
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4346997392);
+    arg = Arg.createBigImm(276424800, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -103,6 +104,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rbp);
     inst.args.push(arg);
@@ -143,12 +145,13 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(-281474976710654);
+    arg = Arg.createBigImm(2, -65536);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r15);
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -181,12 +184,13 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(-281474976710656);
+    arg = Arg.createBigImm(0, -65536);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r14);
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -209,6 +213,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.LateUse, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -238,6 +243,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -279,12 +285,13 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4346916592);
+    arg = Arg.createBigImm(276327648, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
@@ -326,6 +333,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
@@ -364,6 +372,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -405,12 +414,13 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
     arg = Arg.createAddr(Reg.r12, 0);
     inst.args.push(arg);
-    arg = Arg.createImm(364);
+    arg = Arg.createImm(372);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r12);
     inst.args.push(arg);
@@ -458,6 +468,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -517,6 +528,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -576,12 +588,13 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4346910400);
+    arg = Arg.createBigImm(276321024, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
@@ -671,6 +684,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -693,6 +707,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.LateUse, type: GP, width: 64});
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r12);
     inst.args.push(arg);
@@ -731,6 +746,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb0.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -780,12 +796,13 @@ function createPayloadJSAirACLj8C()
     bb1.successors.push(new FrequentedBlock(bb2, Normal));
     bb1.predecessors.push(bb0);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
     arg = Arg.createAddr(Reg.r8, 0);
     inst.args.push(arg);
-    arg = Arg.createImm(452);
+    arg = Arg.createImm(468);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r8);
     inst.args.push(arg);
@@ -812,7 +829,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb1.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4347313192);
+    arg = Arg.createBigImm(276741160, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -833,6 +850,7 @@ function createPayloadJSAirACLj8C()
     bb1.append(inst);
     bb2.predecessors.push(bb1);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r12);
     inst.args.push(arg);
@@ -861,6 +879,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb3.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
@@ -899,7 +918,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb3.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4346778864);
+    arg = Arg.createBigImm(275739616, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -940,6 +959,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb4.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -1008,13 +1028,13 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb4.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4347218048);
+    arg = Arg.createBigImm(276645872, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
     bb4.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4347218672);
+    arg = Arg.createBigImm(276646496, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -1044,6 +1064,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb4.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -1101,6 +1122,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.Use, type: GP, width: 64});
     bb4.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r12);
     inst.args.push(arg);
@@ -1139,6 +1161,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb4.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -1193,6 +1216,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb5.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -1215,6 +1239,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.LateUse, type: GP, width: 64});
     bb5.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r12);
     inst.args.push(arg);
@@ -1235,6 +1260,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb5.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createResCond(NonZero);
     inst.args.push(arg);
@@ -1267,12 +1293,13 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb5.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);
     arg = Arg.createAddr(Reg.rcx, 0);
     inst.args.push(arg);
-    arg = Arg.createImm(406);
+    arg = Arg.createImm(419);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rcx);
     inst.args.push(arg);
@@ -1299,7 +1326,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb5.append(inst);
     inst = new Inst(Move);
-    arg = Arg.createBigImm(4346906176);
+    arg = Arg.createBigImm(276168608, 1);
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -1329,6 +1356,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb5.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -1386,6 +1414,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.Use, type: GP, width: 64});
     bb5.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r12);
     inst.args.push(arg);
@@ -1472,6 +1501,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb7.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.rax);
     inst.args.push(arg);
@@ -1538,6 +1568,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.Use, type: GP, width: 64});
     bb7.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r12);
     inst.args.push(arg);
@@ -1582,6 +1613,7 @@ function createPayloadJSAirACLj8C()
     bb11.predecessors.push(bb9);
     bb11.predecessors.push(bb10);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(Below);
     inst.args.push(arg);
@@ -1608,6 +1640,7 @@ function createPayloadJSAirACLj8C()
     inst.patchArgData.push({role: Arg.ColdUse, type: GP, width: 64});
     bb11.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createTmp(Reg.r12);
     inst.args.push(arg);
@@ -1646,6 +1679,7 @@ function createPayloadJSAirACLj8C()
     inst.args.push(arg);
     bb14.append(inst);
     inst = new Inst(Patch);
+    arg = Arg.createSpecial();
     inst.args.push(arg);
     arg = Arg.createRelCond(NotEqual);
     inst.args.push(arg);

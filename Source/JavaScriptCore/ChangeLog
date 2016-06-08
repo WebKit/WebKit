@@ -1,3 +1,44 @@
+2016-06-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Add result validation to JSAir
+        https://bugs.webkit.org/show_bug.cgi?id=158493
+
+        Reviewed by Saam Barati.
+        
+        Add a ::jsHash() method to some things, to compute a hash code that is suitable for
+        comparing a C++ Code to a JSAir Code. This is different from existing hashing functionality
+        because it errs on the side of easy reproducibility from JS rather than speed.
+
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::isCompatibleType):
+        (JSC::B3::Air::Arg::jsHash):
+        (JSC::B3::Air::Arg::dump):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::asDoubleCondition):
+        (JSC::B3::Air::Arg::isInvertible):
+        (JSC::B3::Air::Arg::isUnsignedCond):
+        (JSC::B3::Air::Arg::Arg):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::addFastTmp):
+        (JSC::B3::Air::Code::jsHash):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::lastPhaseName):
+        * b3/air/AirDumpAsJS.cpp:
+        (JSC::B3::Air::dumpAsJS):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * b3/air/AirInst.cpp:
+        (JSC::B3::Air::Inst::hasArgEffects):
+        (JSC::B3::Air::Inst::jsHash):
+        (JSC::B3::Air::Inst::dump):
+        * b3/air/AirInst.h:
+        * b3/air/AirStackSlot.cpp:
+        (JSC::B3::Air::StackSlot::setOffsetFromFP):
+        (JSC::B3::Air::StackSlot::jsHash):
+        (JSC::B3::Air::StackSlot::dump):
+        * b3/air/AirStackSlot.h:
+        * b3/air/opcode_generator.rb:
+
 2016-06-07  Mark Lam  <mark.lam@apple.com>
 
         Need an exception check after constructEmptyArray().

@@ -165,7 +165,7 @@ function allocateStack(code)
         if (slot.offsetFromFP)
             continue;
         
-        assign(slot, assignedEscapedStackSlots.concat(interference.get(slot)));
+        assign(slot, assignedEscapedStackSlots.concat(Array.from(interference.get(slot))));
     }
     
     // Figure out how much stack we're using for stack slots.

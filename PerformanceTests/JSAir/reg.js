@@ -46,6 +46,13 @@ class Reg extends TmpBase {
     
     get isReg() { return true; }
     
+    hash()
+    {
+        if (this.isGP)
+            return 1 + this._index;
+        return -1 - this._index;
+    }
+    
     toString()
     {
         return "%" + this._name;

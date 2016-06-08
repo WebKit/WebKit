@@ -107,6 +107,7 @@ void prepareForGeneration(Code& code)
     if (Options::dumpAirAsJSBeforeAllocateStack()) {
         dataLog("Dumping Air as JS before allocateStack:\n");
         dumpAsJS(code, WTF::dataFile());
+        dataLog("Air hash: ", code.jsHash(), "\n");
     }
 
     // This turns all Stack and CallArg Args into Addr args that use the frame pointer. It does
@@ -117,6 +118,7 @@ void prepareForGeneration(Code& code)
     if (Options::dumpAirAfterAllocateStack()) {
         dataLog("Dumping Air after allocateStack:\n");
         dataLog(code);
+        dataLog("Air hash: ", code.jsHash(), "\n");
     }
 
     // If we coalesced moves then we can unbreak critical edges. This is the main reason for this

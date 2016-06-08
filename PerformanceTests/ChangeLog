@@ -1,5 +1,105 @@
 2016-06-07  Filip Pizlo  <fpizlo@apple.com>
 
+        Add result validation to JSAir
+        https://bugs.webkit.org/show_bug.cgi?id=158493
+
+        Reviewed by Saam Barati.
+        
+        This adds the ability to hash a Code in a way that matches the C++ code's hashing of Code.
+        This allows us to check if the Code that JSAir sees is the code that C++ saw. We use this to
+        check the Code before and after allocateStack, and compare against hashes we got from C++.
+        
+        Doing this uncovered bugs. roundUpToMultipleOf wasn't doing anything. allocateStack was not
+        allocating things correctly because I was concatting a Set to an Array, which doesn't really
+        work. Now these bugs are fixed.
+        
+        The checking step adds to the running time so I reduced the number of iterations. The
+        benchmark spends a decent amount of its time computing Code hashes; I think it's around 1/3
+        total. This is probably OK. It's better to verify the results even if the running time is
+        not all in the "core" of the algorithm.
+        
+        Also add a run-jsc-stress-tests yaml file to allow this to run as a test.
+
+        * JSAir/allocate_stack.js:
+        * JSAir/arg.js:
+        (Arg.createImm):
+        (Arg.createBigImm):
+        (Arg.createBitImm):
+        (Arg.createBitImm64):
+        (Arg.createWidth):
+        (Arg.createSpecial):
+        (Arg.prototype.get kind):
+        (Arg.prototype.get isTmp):
+        (Arg.prototype.get isImm):
+        (Arg.prototype.get isSomeImm):
+        (Arg.prototype.get isSomeBigImm):
+        (Arg.prototype.get isCondition):
+        (Arg.prototype.get isWidth):
+        (Arg.prototype.get isSpecial):
+        (Arg.prototype.get isAlive):
+        (Arg.prototype.get tmp):
+        (Arg.prototype.get value):
+        (Arg.prototype.get lowValue):
+        (Arg.prototype.get highValue):
+        (Arg.prototype.get base):
+        (Arg.prototype.get isGP):
+        (Arg.prototype.get isFP):
+        (Arg.prototype.isValidForm):
+        (Arg.prototype.get isInvertible):
+        (Arg.kindCode):
+        (Arg.prototype.hash):
+        (Arg.prototype.toString):
+        (Arg):
+        * JSAir/basic_block.js:
+        (BasicBlock.get successorBlocks):
+        * JSAir/benchmark.js:
+        (benchmark):
+        * JSAir/code.js:
+        (Code.prototype.setFrameSize):
+        (Code.prototype.hash):
+        (Code.prototype.toString):
+        (Code):
+        * JSAir/inst.js:
+        (Inst.prototype.get hasNonArgEffects):
+        (Inst.prototype.hash):
+        (Inst.prototype.toString):
+        (Inst):
+        * JSAir/jsair-tests.yaml: Added.
+        * JSAir/opcode.js:
+        (Inst_forEachArg):
+        (Inst_hasNonArgEffects):
+        (opcodeCode):
+        * JSAir/payload-gbemu-executeIteration.js:
+        (createPayloadGbemuExecuteIteration):
+        * JSAir/payload-imaging-gaussian-blur-gaussianBlur.js:
+        (createPayloadImagingGaussianBlurGaussianBlur):
+        * JSAir/payload-jsair-ACLj8C.js:
+        (createPayloadJSAirACLj8C):
+        * JSAir/payload-typescript-scanIdentifier.js:
+        (createPayloadTypescriptScanIdentifier):
+        * JSAir/reg.js:
+        (Reg.prototype.get isReg):
+        (Reg.prototype.hash):
+        (Reg.prototype.toString):
+        * JSAir/stack_slot.js:
+        (StackSlot.prototype.setOffsetFromFP):
+        (StackSlot.prototype.hash):
+        (StackSlot.prototype.toString):
+        * JSAir/symbols.js:
+        (relCondCode):
+        (resCondCode):
+        (doubleCondCode):
+        * JSAir/test.html:
+        * JSAir/tmp.js:
+        (Tmp.prototype.get isReg):
+        (Tmp.prototype.hash):
+        (Tmp.prototype.toString):
+        * JSAir/util.js:
+        (roundUpToMultipleOf):
+        (symbolName):
+
+2016-06-07  Filip Pizlo  <fpizlo@apple.com>
+
         Implement Air::allocateStack() in ES6 to see how much of a bad idea that is
         https://bugs.webkit.org/show_bug.cgi?id=158318
 

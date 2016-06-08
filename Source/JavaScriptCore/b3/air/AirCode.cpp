@@ -134,6 +134,29 @@ void Code::addFastTmp(Tmp tmp)
     m_fastTmps.add(tmp);
 }
 
+unsigned Code::jsHash() const
+{
+    unsigned result = 0;
+    
+    for (BasicBlock* block : *this) {
+        result *= 1000001;
+        for (Inst& inst : *block) {
+            result *= 97;
+            result += inst.jsHash();
+        }
+        for (BasicBlock* successor : block->successorBlocks()) {
+            result *= 7;
+            result += successor->index();
+        }
+    }
+    for (StackSlot* slot : stackSlots()) {
+        result *= 101;
+        result += slot->jsHash();
+    }
+    
+    return result;
+}
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

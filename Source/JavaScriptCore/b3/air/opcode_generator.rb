@@ -1181,5 +1181,18 @@ File.open("JSAir_opcode.js", "w") {
     outp.puts "return false;"
     outp.puts "}"
     outp.puts "}"
+    
+    outp.puts "function opcodeCode(opcode)"
+    outp.puts "{"
+    outp.puts "switch (opcode) {"
+    $opcodes.keys.sort.each_with_index {
+        | opcode, index |
+        outp.puts "case #{opcode}:"
+        outp.puts "return #{index}"
+    }
+    outp.puts "default:"
+    outp.puts "throw new Error(\"bad opcode\");"
+    outp.puts "}"
+    outp.puts "}"
 }
 

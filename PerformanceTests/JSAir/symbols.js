@@ -57,12 +57,58 @@ const GreaterThanOrEqual = Symbol("GreaterThanOrEqual");
 const LessThan = Symbol("LessThan");
 const LessThanOrEqual = Symbol("LessThanOrEqual");
 
+function relCondCode(cond)
+{
+    switch (cond) {
+    case Equal:
+        return 4;
+    case NotEqual:
+        return 5;
+    case Above:
+        return 7;
+    case AboveOrEqual:
+        return 3;
+    case Below:
+        return 2;
+    case BelowOrEqual:
+        return 6;
+    case GreaterThan:
+        return 15;
+    case GreaterThanOrEqual:
+        return 13;
+    case LessThan:
+        return 12;
+    case LessThanOrEqual:
+        return 14;
+    default:
+        throw new Error("Bad rel cond");
+    }
+}
+
 // Result conditions
 const Overflow = Symbol("Overflow");
 const Signed = Symbol("Signed");
 const PositiveOrZero = Symbol("PositiveOrZero");
 const Zero = Symbol("Zero");
 const NonZero = Symbol("NonZero");
+
+function resCondCode(cond)
+{
+    switch (cond) {
+    case Overflow:
+        return 0;
+    case Signed:
+        return 8;
+    case PositiveOrZero:
+        return 9;
+    case Zero:
+        return 4;
+    case NonZero:
+        return 5;
+    default:
+        throw new Error("Bad res cond: " + cond.toString());
+    }
+}
 
 // Double conditions
 const DoubleEqual = Symbol("DoubleEqual");
@@ -77,6 +123,40 @@ const DoubleGreaterThanOrUnordered = Symbol("DoubleGreaterThanOrUnordered");
 const DoubleGreaterThanOrEqualOrUnordered = Symbol("DoubleGreaterThanOrEqualOrUnordered");
 const DoubleLessThanOrUnordered = Symbol("DoubleLessThanOrUnordered");
 const DoubleLessThanOrEqualOrUnordered = Symbol("DoubleLessThanOrEqualOrUnordered");
+
+function doubleCondCode(cond)
+{
+    const bitInvert = 0x10;
+    const bitSpecial = 0x20;
+    switch (cond) {
+    case DoubleEqual:
+        return 4 | bitSpecial;
+    case DoubleNotEqual:
+        return 5;
+    case DoubleGreaterThan:
+        return 7;
+    case DoubleGreaterThanOrEqual:
+        return 3;
+    case DoubleLessThan:
+        return 7 | bitInvert;
+    case DoubleLessThanOrEqual:
+        return 3 | bitInvert;
+    case DoubleEqualOrUnordered:
+        return 4;
+    case DoubleNotEqualOrUnordered:
+        return 5 | bitSpecial;
+    case DoubleGreaterThanOrUnordered:
+        return 2 | bitInvert;
+    case DoubleGreaterThanOrEqualOrUnordered:
+        return 6 | bitInvert;
+    case DoubleLessThanOrUnordered:
+        return 2;
+    case DoubleLessThanOrEqualOrUnordered:
+        return 6;
+    default:
+        throw new Error("Bad cond");
+    }
+}
 
 // Define pointerType()
 const Ptr = 64;
