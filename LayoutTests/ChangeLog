@@ -1,3 +1,9 @@
+2016-06-07  Sam Weinig  <sam@webkit.org>
+
+        Mark animations/spring-computed-style.html as failing temporarily.
+
+        * TestExpectations:
+
 2016-06-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/events/touch/document-create-touch-list-ios.html
