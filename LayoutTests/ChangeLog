@@ -1,3 +1,19 @@
+2016-06-08  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Imlement MediaEndpointPeerConnection::setLocalDescription()
+        https://bugs.webkit.org/show_bug.cgi?id=158190
+
+        Reviewed by Eric Carlson.
+
+        Add new test for RTCPeerConnection.setLocalDescription.
+
+        * fast/mediastream/RTCPeerConnection-setLocalDescription-offer-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html: Added.
+        Set two local offers as local descriptions and inspect the state changes. Also set some
+        descriptions with bad types.
+        * platform/mac/TestExpectations:
+        Skip the above test for mac (not building with WEB_RTC)
+
 2016-06-07  Chris Dumez  <cdumez@apple.com>
 
         Expose Event / EventTarget properties on WorkerGlobalScope

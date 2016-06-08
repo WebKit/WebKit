@@ -2386,6 +2386,8 @@
 		5E2C43741BCF0D750001E2BC /* JSRTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */; };
 		5E2C437B1BCF9A570001E2BC /* RTCPeerConnectionBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43791BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5E4EAB041D07166A0006A184 /* MediaEndpointSessionDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E4EAB031D07164C0006A184 /* MediaEndpointSessionDescription.h */; };
+		5E4EAB051D07166E0006A184 /* MediaEndpointSessionDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EAB021D07164C0006A184 /* MediaEndpointSessionDescription.cpp */; };
 		5E5E2B131CFC3E70000C0D85 /* RTCRtpTransceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E2B101CFC3E4B000C0D85 /* RTCRtpTransceiver.cpp */; };
 		5E5E2B141CFC3E75000C0D85 /* RTCRtpTransceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5EA3D6DF1C859D7F00300BBB /* MockMediaEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA3D6DE1C859D5300300BBB /* MockMediaEndpoint.h */; };
@@ -9995,6 +9997,8 @@
 		5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionBuiltins.h; sourceTree = "<group>"; };
 		5E2C43781BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPeerConnectionInternalsBuiltins.cpp; sourceTree = "<group>"; };
 		5E2C43791BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionInternalsBuiltins.h; sourceTree = "<group>"; };
+		5E4EAB021D07164C0006A184 /* MediaEndpointSessionDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEndpointSessionDescription.cpp; sourceTree = "<group>"; };
+		5E4EAB031D07164C0006A184 /* MediaEndpointSessionDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEndpointSessionDescription.h; sourceTree = "<group>"; };
 		5E5E2B101CFC3E4B000C0D85 /* RTCRtpTransceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCRtpTransceiver.cpp; sourceTree = "<group>"; };
 		5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpTransceiver.h; sourceTree = "<group>"; };
 		5E5E2B121CFC3E4B000C0D85 /* RTCRtpTransceiver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpTransceiver.idl; sourceTree = "<group>"; };
@@ -15407,6 +15411,8 @@
 				07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */,
 				5E16A2E21BFA64FB0029A21E /* MediaEndpointPeerConnection.cpp */,
 				5E16A2E31BFA64FB0029A21E /* MediaEndpointPeerConnection.h */,
+				5E4EAB021D07164C0006A184 /* MediaEndpointSessionDescription.cpp */,
+				5E4EAB031D07164C0006A184 /* MediaEndpointSessionDescription.h */,
 				07C59B6517F784BA000FBCBB /* MediaSourceSettings.cpp */,
 				07C59B6617F784BA000FBCBB /* MediaSourceSettings.h */,
 				07221B4C17CEC32700848E51 /* MediaStream.cpp */,
@@ -27077,6 +27083,7 @@
 				E1C36D350EB0A094007410BC /* JSWorkerGlobalScopeBase.h in Headers */,
 				E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */,
 				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
+				5E4EAB041D07166A0006A184 /* MediaEndpointSessionDescription.h in Headers */,
 				7C4C96DD1AD4483500365A60 /* JSWritableStream.h in Headers */,
 				8358CB701C53277500E0C2D8 /* JSXMLDocument.h in Headers */,
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,
@@ -31634,6 +31641,7 @@
 				E4D58EB817B4ED8900CBDCA8 /* StyleFontSizeFunctions.cpp in Sources */,
 				BCEF447D0E674806001C1287 /* StyleGeneratedImage.cpp in Sources */,
 				A10DC76A14747BAB005E2471 /* StyleGridData.cpp in Sources */,
+				5E4EAB051D07166E0006A184 /* MediaEndpointSessionDescription.cpp in Sources */,
 				A110DB9D14F5DF8700A03B93 /* StyleGridItemData.cpp in Sources */,
 				BC2273030E82F1E600E7F975 /* StyleInheritedData.cpp in Sources */,
 				E47127CA163438A100ED6F5A /* StyleInvalidationAnalysis.cpp in Sources */,

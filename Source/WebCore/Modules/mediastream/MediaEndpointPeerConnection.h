@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,17 +34,19 @@
 #if ENABLE(WEB_RTC)
 
 #include "MediaEndpoint.h"
+#include "MediaEndpointSessionDescription.h"
 #include "NotImplemented.h"
 #include "PeerConnectionBackend.h"
-#include "RTCSessionDescription.h"
 #include <wtf/NoncopyableFunction.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class MediaStreamTrack;
+class PeerMediaDescription;
 class SDPProcessor;
 
+typedef Vector<RefPtr<PeerMediaDescription>> MediaDescriptionVector;
 typedef Vector<RefPtr<RTCRtpSender>> RtpSenderVector;
 typedef Vector<RefPtr<RTCRtpTransceiver>> RtpTransceiverVector;
 
@@ -85,6 +87,13 @@ private:
 
     void createOfferTask(RTCOfferOptions&, PeerConnection::SessionDescriptionPromise&);
 
+    void setLocalDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
+
+    bool localDescriptionTypeValidForState(RTCSessionDescription::SdpType) const;
+
+    MediaEndpointSessionDescription* internalLocalDescription() const;
+    RefPtr<RTCSessionDescription> createRTCSessionDescription(MediaEndpointSessionDescription*) const;
+
     // MediaEndpointClient
     void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) override;
     void gotIceCandidate(unsigned mdescIndex, RefPtr<IceCandidate>&&) override;
@@ -107,6 +116,11 @@ private:
     String m_dtlsFingerprint;
     String m_dtlsFingerprintFunction;
     unsigned m_sdpOfferSessionVersion { 0 };
+
+    RefPtr<MediaEndpointSessionDescription> m_currentLocalDescription;
+    RefPtr<MediaEndpointSessionDescription> m_pendingLocalDescription;
+
+    bool m_negotiationNeeded { false };
 };
 
 } // namespace WebCore

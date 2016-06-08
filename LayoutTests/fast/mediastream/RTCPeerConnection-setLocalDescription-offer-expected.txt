@@ -1,0 +1,58 @@
+Test RTCPeerConnection.setLocalDescription called with an RTCSessionDescription of type 'offer'
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.signalingState is 'stable'
+PASS pc.localDescription is null
+PASS pc.pendingLocalDescription is null
+PASS pc.currentLocalDescription is null
+
+PASS Got stream
+*** Add audioTrack.
+PASS pc.getTransceivers().length is 1
+PASS audioTransceiver.mid is null
+
+PASS Got firstOffer
+PASS pc.signalingState is 'stable'
+PASS audioTransceiver.mid is null
+
+PASS firstOffer set as local description
+PASS pc.signalingState is 'have-local-offer'
+PASS pc.localDescription is firstOffer
+PASS pc.pendingLocalDescription is firstOffer
+PASS pc.currentLocalDescription is null
+PASS firstOffer.type is pc.localDescription.type
+PASS firstOffer.sdp is pc.localDescription.sdp
+PASS typeof pc.getTransceivers()[0].mid == 'string' is true
+Set firstOffer as local description again.
+
+PASS firstOffer set as local description (again)
+PASS pc.signalingState is 'have-local-offer'
+
+*** Try setting local descriptions with bad types for the current state
+PASS promise pc.setLocalDescription(new RTCSessionDescription({type:'answer', sdp:firstOffer.sdp})); rejected with Error: InvalidStateError: DOM Exception 11
+PASS promise pc.setLocalDescription(new RTCSessionDescription({type:'pranswer', sdp:firstOffer.sdp})); rejected with Error: InvalidStateError: DOM Exception 11
+
+*** Add videoTrack
+PASS pc.getTransceivers().length is 2
+*** Find the transceiver for the newly added video track
+PASS videoTransceiver is defined.
+PASS videoTransceiver.mid is null
+
+PASS Got secondOffer
+PASS pc.signalingState is 'have-local-offer'
+PASS videoTransceiver.mid is null
+
+PASS secondOffer set as local description
+PASS pc.signalingState is 'have-local-offer'
+PASS pc.localDescription is secondOffer
+PASS pc.pendingLocalDescription is secondOffer
+PASS pc.currentLocalDescription is null
+PASS secondOffer.type is pc.localDescription.type
+PASS secondOffer.sdp is pc.localDescription.sdp
+PASS typeof videoTransceiver.mid == 'string' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

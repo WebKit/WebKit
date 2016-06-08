@@ -190,6 +190,7 @@ fast/mediastream/RTCPeerConnection-overloaded-operations.html
 fast/mediastream/RTCPeerConnection-addTransceiver.html
 fast/mediastream/RTCRtpSender-replaceTrack.html
 fast/mediastream/RTCSessionDescription.html
+fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html
 
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]

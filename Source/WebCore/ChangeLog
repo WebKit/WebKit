@@ -1,3 +1,47 @@
+2016-06-08  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Imlement MediaEndpointPeerConnection::setLocalDescription()
+        https://bugs.webkit.org/show_bug.cgi?id=158190
+
+        Reviewed by Eric Carlson.
+
+        Add implementation for MediaEndpointPeerConnection::setLocalDescription. This function
+        parses the input SDP, configures the media backend and updates the
+        RTCPeerConnection state.
+
+        This change adds MediaEndpointSessionDescription which is an object representation
+        of an RTCSessionDescription (which contains an SDP string).
+
+        Test: fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html
+
+        * CMakeLists.txt:
+        Add MediaEndpointSessionDescription.
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::hasUnassociatedTransceivers):
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        (WebCore::MediaEndpointPeerConnection::setLocalDescription):
+        (WebCore::MediaEndpointPeerConnection::setLocalDescriptionTask):
+        Add implementation.
+        (WebCore::MediaEndpointPeerConnection::localDescription):
+        (WebCore::MediaEndpointPeerConnection::currentLocalDescription):
+        (WebCore::MediaEndpointPeerConnection::pendingLocalDescription):
+        (WebCore::MediaEndpointPeerConnection::localDescriptionTypeValidForState):
+        (WebCore::MediaEndpointPeerConnection::internalLocalDescription):
+        (WebCore::MediaEndpointPeerConnection::createRTCSessionDescription):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/MediaEndpointSessionDescription.cpp: Added.
+        (WebCore::MediaEndpointSessionDescription::create):
+        (WebCore::MediaEndpointSessionDescription::toRTCSessionDescription):
+        (WebCore::MediaEndpointSessionDescription::typeString):
+        (WebCore::MediaEndpointSessionDescription::isLaterThan):
+        * Modules/mediastream/MediaEndpointSessionDescription.h: Added.
+        (WebCore::MediaEndpointSessionDescription::~MediaEndpointSessionDescription):
+        (WebCore::MediaEndpointSessionDescription::type):
+        (WebCore::MediaEndpointSessionDescription::configuration):
+        (WebCore::MediaEndpointSessionDescription::MediaEndpointSessionDescription):
+        * WebCore.xcodeproj/project.pbxproj:
+        Add MediaEndpointSessionDescription.
+
 2016-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Implement hardLinkOrCopyFile() in FileSystemGlib
