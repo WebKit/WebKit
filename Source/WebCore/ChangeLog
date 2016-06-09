@@ -1,3 +1,27 @@
+2016-06-08  John Wilander  <wilander@apple.com>
+
+        Perform IDNA encoding on parameters for setHostAndPort and setHost
+        https://bugs.webkit.org/show_bug.cgi?id=158371
+        <rdar://problem/16869342>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: fast/dom/set-document-location-host-to-unaccepted-values.html
+               fast/dom/set-document-location-hostname-to-unaccepted-values.html
+               http/tests/dom/set-document-location-host-to-accepted-values.html
+               http/tests/dom/set-document-location-hostname-to-accepted-values.html
+
+        * platform/URL.cpp:
+        (WebCore::containsOnlyASCII):
+            Moved up to enable usage in URL::setHost and URL::setHostAndPort.
+        (WebCore::appendEncodedHostname):
+            Moved up to enable usage in URL::setHost and URL::setHostAndPort.
+        (WebCore::URL::setHost):
+            Now disallows the colon character, does IDNA encoding, and uses StringBuilder.
+        (WebCore::URL::setHostAndPort):
+            Now disallows multiple colons, disallows non-numeric ports, disallows the empty
+            string, does IDNA encoding, and uses StringBuilder.
+
 2016-06-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix WinCairo build.

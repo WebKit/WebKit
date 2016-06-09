@@ -836,17 +836,70 @@ bool URL::setProtocol(const String& s)
     return true;
 }
 
+static bool containsOnlyASCII(StringView string)
+{
+    if (string.is8Bit())
+        return charactersAreAllASCII(string.characters8(), string.length());
+    return charactersAreAllASCII(string.characters16(), string.length());
+}
+    
+// Appends the punycoded hostname identified by the given string and length to
+// the output buffer. The result will not be null terminated.
+// Return value of false means error in encoding.
+static bool appendEncodedHostname(UCharBuffer& buffer, StringView string)
+{
+    // Needs to be big enough to hold an IDN-encoded name.
+    // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
+    const unsigned hostnameBufferLength = 2048;
+    
+    if (string.length() > hostnameBufferLength || containsOnlyASCII(string)) {
+        append(buffer, string);
+        return true;
+    }
+    
+    UChar hostnameBuffer[hostnameBufferLength];
+    UErrorCode error = U_ZERO_ERROR;
+    
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+    int32_t numCharactersConverted = uidna_IDNToASCII(string.upconvertedCharacters(), string.length(), hostnameBuffer,
+        hostnameBufferLength, UIDNA_ALLOW_UNASSIGNED, 0, &error);
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic pop
+#endif
+    
+    if (error == U_ZERO_ERROR) {
+        buffer.append(hostnameBuffer, numCharactersConverted);
+        return true;
+    }
+    return false;
+}
+    
 void URL::setHost(const String& s)
 {
     if (!m_isValid)
         return;
 
-    // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
-    // and to avoid changing more than just the host.
+    auto colonIndex = s.find(':');
+    if (colonIndex != notFound)
+        return;
 
+    UCharBuffer encodedHostName;
+    if (!appendEncodedHostname(encodedHostName, s))
+        return;
+    
     bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
-
-    parse(m_string.left(hostStart()) + (slashSlashNeeded ? "//" : "") + s + m_string.substring(m_hostEnd));
+    
+    StringBuilder builder;
+    builder.append(m_string.left(hostStart()));
+    if (slashSlashNeeded)
+        builder.append("//");
+    builder.append(StringView(encodedHostName.data(), encodedHostName.size()));
+    builder.append(m_string.substring(m_hostEnd));
+    
+    parse(builder.toString());
 }
 
 void URL::removePort()
@@ -872,12 +925,40 @@ void URL::setHostAndPort(const String& hostAndPort)
     if (!m_isValid)
         return;
 
-    // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
-    // and to avoid changing more than just host and port.
+    StringView hostName(hostAndPort);
+    StringView port;
+    
+    auto colonIndex = hostName.find(':');
+    if (colonIndex != notFound) {
+        port = hostName.substring(colonIndex + 1);
+        bool ok;
+        int portInt = port.toIntStrict(ok);
+        if (!ok || portInt < 0)
+            return;
+        hostName = hostName.substring(0, colonIndex);
+    }
+
+    if (hostName.isEmpty())
+        return;
+
+    UCharBuffer encodedHostName;
+    if (!appendEncodedHostname(encodedHostName, hostName))
+        return;
 
     bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
 
-    parse(m_string.left(hostStart()) + (slashSlashNeeded ? "//" : "") + hostAndPort + m_string.substring(m_portEnd));
+    StringBuilder builder;
+    builder.append(m_string.left(hostStart()));
+    if (slashSlashNeeded)
+        builder.append("//");
+    builder.append(StringView(encodedHostName.data(), encodedHostName.size()));
+    if (!port.isEmpty()) {
+        builder.append(":");
+        builder.append(port);
+    }
+    builder.append(m_string.substring(m_portEnd));
+
+    parse(builder.toString());
 }
 
 void URL::setUser(const String& user)
@@ -1664,13 +1745,6 @@ String encodeWithURLEscapeSequences(const String& notEncodedString)
     return String(buffer.data(), p - buffer.data());
 }
 
-static bool containsOnlyASCII(StringView string)
-{
-    if (string.is8Bit())
-        return charactersAreAllASCII(string.characters8(), string.length());
-    return charactersAreAllASCII(string.characters16(), string.length());
-}
-
 static bool protocolIs(StringView stringURL, const char* protocol)
 {
     assertProtocolIsGood(protocol);
@@ -1680,40 +1754,6 @@ static bool protocolIs(StringView stringURL, const char* protocol)
             return stringURL[i] == ':';
         if (!isLetterMatchIgnoringCase(stringURL[i], protocol[i]))
             return false;
-    }
-    return false;
-}
-
-// Appends the punycoded hostname identified by the given string and length to
-// the output buffer. The result will not be null terminated.
-// Return value of false means error in encoding.
-static bool appendEncodedHostname(UCharBuffer& buffer, StringView string)
-{
-    // Needs to be big enough to hold an IDN-encoded name.
-    // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
-    const unsigned hostnameBufferLength = 2048;
-
-    if (string.length() > hostnameBufferLength || containsOnlyASCII(string)) {
-        append(buffer, string);
-        return true;
-    }
-
-    UChar hostnameBuffer[hostnameBufferLength];
-    UErrorCode error = U_ZERO_ERROR;
-
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-    int32_t numCharactersConverted = uidna_IDNToASCII(string.upconvertedCharacters(), string.length(), hostnameBuffer,
-        hostnameBufferLength, UIDNA_ALLOW_UNASSIGNED, 0, &error);
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic pop
-#endif
-
-    if (error == U_ZERO_ERROR) {
-        buffer.append(hostnameBuffer, numCharactersConverted);
-        return true;
     }
     return false;
 }

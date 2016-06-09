@@ -1,3 +1,22 @@
+2016-06-08  John Wilander  <wilander@apple.com>
+
+        Perform IDNA encoding on parameters for setHostAndPort and setHost
+        https://bugs.webkit.org/show_bug.cgi?id=158371
+        <rdar://problem/16869342>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/dom/resources/set-document-location-iframe.html: Added.
+        * fast/dom/set-document-location-host-to-unaccepted-values-expected.txt: Added.
+        * fast/dom/set-document-location-host-to-unaccepted-values.html: Added.
+        * fast/dom/set-document-location-hostname-to-unaccepted-values-expected.txt: Added.
+        * fast/dom/set-document-location-hostname-to-unaccepted-values.html: Added.
+        * http/tests/dom/resources/set-document-location-iframe.html: Added.
+        * http/tests/dom/set-document-location-host-to-accepted-values-expected.txt: Added.
+        * http/tests/dom/set-document-location-host-to-accepted-values.html: Added.
+        * http/tests/dom/set-document-location-hostname-to-accepted-values-expected.txt: Added.
+        * http/tests/dom/set-document-location-hostname-to-accepted-values.html: Added.
+
 2016-06-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html for Mac after r201810

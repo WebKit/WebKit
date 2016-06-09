@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 67: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+PASS: localhost was accepted (at least the iframe contentDocument was null so it had changed origin).
+PASS: 127.0.0.1 was accepted.
+
