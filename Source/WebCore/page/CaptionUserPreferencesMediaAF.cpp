@@ -944,6 +944,9 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
         }
     }
 
+    if (tracksForMenu.isEmpty())
+        return tracksForMenu;
+
     std::sort(tracksForMenu.begin(), tracksForMenu.end(), textTrackCompare);
 
     tracksForMenu.insert(0, TextTrack::captionMenuOffItem());

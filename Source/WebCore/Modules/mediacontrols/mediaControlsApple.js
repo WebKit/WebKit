@@ -1741,7 +1741,10 @@ Controller.prototype = {
 
     updateCaptionButton: function()
     {
-        if (this.video.webkitHasClosedCaptions || this.video.audioTracks.length > 1)
+        var audioTracks = this.host.sortedTrackListForMenu(this.video.audioTracks);
+        var textTracks = this.host.sortedTrackListForMenu(this.video.textTracks);
+
+        if ((textTracks && textTracks.length) || (audioTracks && audioTracks.length > 1))
             this.controls.captionButton.classList.remove(this.ClassNames.hidden);
         else
             this.controls.captionButton.classList.add(this.ClassNames.hidden);

@@ -1,3 +1,14 @@
+2016-06-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Don't show the caption menu if a video has only forced tracks
+        https://bugs.webkit.org/show_bug.cgi?id=158573
+        <rdar://problem/24632384>
+
+        Reviewed by Jer Noble.
+
+        * media/controls/forced-tracks-only-expected.txt: Added.
+        * media/controls/forced-tracks-only.html: Added.
+
 2016-06-09  Chris Dumez  <cdumez@apple.com>
 
         WorkerGlobalScope attributes / operations should be on the prototype
