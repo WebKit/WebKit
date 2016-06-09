@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSocketChannel_h
-#define WebSocketChannel_h
+#pragma once
 
 #if ENABLE(WEB_SOCKETS)
 
@@ -39,7 +38,6 @@
 #include "Timer.h"
 #include "WebSocketDeflateFramer.h"
 #include "WebSocketFrame.h"
-#include "WebSocketHandshake.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -54,6 +52,7 @@ class FileReaderLoader;
 class SocketStreamHandle;
 class SocketStreamError;
 class WebSocketChannelClient;
+class WebSocketHandshake;
 
 class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel, public FileReaderLoaderClient
 {
@@ -71,7 +70,7 @@ public:
     ThreadableWebSocketChannel::SendResult send(const String& message) override;
     ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) override;
     ThreadableWebSocketChannel::SendResult send(Blob&) override;
-    unsigned long bufferedAmount() const override;
+    unsigned bufferedAmount() const override;
     void close(int code, const String& reason) override; // Start closing handshake.
     void fail(const String& reason) override;
     void disconnect() override;
@@ -80,14 +79,12 @@ public:
     void resume() override;
 
     // SocketStreamHandleClient functions.
-    void willOpenSocketStream(SocketStreamHandle*) override;
-    void didOpenSocketStream(SocketStreamHandle*) override;
-    void didCloseSocketStream(SocketStreamHandle*) override;
-    void didReceiveSocketStreamData(SocketStreamHandle*, const char*, int) override;
-    void didUpdateBufferedAmount(SocketStreamHandle*, size_t bufferedAmount) override;
-    void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&) override;
-    void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) override;
-    void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) override;
+    void willOpenSocketStream(SocketStreamHandle&) override;
+    void didOpenSocketStream(SocketStreamHandle&) override;
+    void didCloseSocketStream(SocketStreamHandle&) override;
+    void didReceiveSocketStreamData(SocketStreamHandle&, const char*, int) override;
+    void didUpdateBufferedAmount(SocketStreamHandle&, size_t bufferedAmount) override;
+    void didFailSocketStream(SocketStreamHandle&, const SocketStreamError&) override;
 
     enum CloseEventCode {
         CloseEventCodeNotSpecified = -1,
@@ -191,29 +188,29 @@ private:
     Vector<char> m_buffer;
 
     Timer m_resumeTimer;
-    bool m_suspended;
-    bool m_closing;
-    bool m_receivedClosingHandshake;
+    bool m_suspended { false };
+    bool m_closing { false };
+    bool m_receivedClosingHandshake { false };
     Timer m_closingTimer;
-    bool m_closed;
-    bool m_shouldDiscardReceivedData;
-    unsigned long m_unhandledBufferedAmount;
+    bool m_closed { false };
+    bool m_shouldDiscardReceivedData { false };
+    unsigned m_unhandledBufferedAmount { 0 };
 
-    unsigned long m_identifier; // m_identifier == 0 means that we could not obtain a valid identifier.
+    unsigned m_identifier { 0 }; // m_identifier == 0 means that we could not obtain a valid identifier.
 
     // Private members only for hybi-10 protocol.
-    bool m_hasContinuousFrame;
+    bool m_hasContinuousFrame { false };
     WebSocketFrame::OpCode m_continuousFrameOpCode;
     Vector<uint8_t> m_continuousFrameData;
-    unsigned short m_closeEventCode;
+    unsigned short m_closeEventCode { CloseEventCodeAbnormalClosure };
     String m_closeEventReason;
 
     Deque<std::unique_ptr<QueuedFrame>> m_outgoingFrameQueue;
-    OutgoingFrameQueueStatus m_outgoingFrameQueueStatus;
+    OutgoingFrameQueueStatus m_outgoingFrameQueueStatus { OutgoingFrameQueueOpen };
 
     // FIXME: Load two or more Blobs simultaneously for better performance.
     std::unique_ptr<FileReaderLoader> m_blobLoader;
-    BlobLoaderStatus m_blobLoaderStatus;
+    BlobLoaderStatus m_blobLoaderStatus { BlobLoaderNotStarted };
 
     WebSocketDeflateFramer m_deflateFramer;
 };
@@ -221,5 +218,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_SOCKETS)
-
-#endif // WebSocketChannel_h

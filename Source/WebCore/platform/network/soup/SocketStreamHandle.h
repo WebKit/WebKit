@@ -43,15 +43,13 @@
 
 namespace WebCore {
 
-    class AuthenticationChallenge;
-    class Credential;
     class NetworkingContext;
     class SocketStreamHandleClient;
 
     class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
     public:
-        static PassRefPtr<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client, NetworkingContext&, bool) { return adoptRef(new SocketStreamHandle(url, client)); }
-        static PassRefPtr<SocketStreamHandle> create(GSocketConnection* socketConnection, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(socketConnection, client)); }
+        static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client, NetworkingContext&, bool) { return adoptRef(*new SocketStreamHandle(url, client)); }
+        static Ref<SocketStreamHandle> create(GSocketConnection* socketConnection, SocketStreamHandleClient* client) { return adoptRef(*new SocketStreamHandle(socketConnection, client)); }
 
         virtual ~SocketStreamHandle();
         void connected(GSocketConnection*, GError*);
@@ -73,14 +71,6 @@ namespace WebCore {
 
         SocketStreamHandle(const URL&, SocketStreamHandleClient*);
         SocketStreamHandle(GSocketConnection*, SocketStreamHandleClient*);
-
-        // No authentication for streams per se, but proxy may ask for credentials.
-        void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-        void receivedCredential(const AuthenticationChallenge&, const Credential&);
-        void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
-        void receivedCancellation(const AuthenticationChallenge&);
-        void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&);
-        void receivedChallengeRejection(const AuthenticationChallenge&);
 
         void beginWaitingForSocketWritability();
         void stopWaitingForSocketWritability();

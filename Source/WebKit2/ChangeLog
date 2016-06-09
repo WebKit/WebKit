@@ -1,3 +1,14 @@
+2016-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up WebSocket code
+        https://bugs.webkit.org/show_bug.cgi?id=158551
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerFileBlobURL):
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+
 2016-06-09  David Kilzer  <ddkilzer@apple.com>
 
         Update properties for UIWKTextInteractionAssistant

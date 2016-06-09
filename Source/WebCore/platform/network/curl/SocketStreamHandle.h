@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SocketStreamHandle_h
-#define SocketStreamHandle_h
+#pragma once
 
 #include "SocketStreamHandleBase.h"
 
@@ -47,8 +46,6 @@
 
 namespace WebCore {
 
-class AuthenticationChallenge;
-class Credential;
 class NetworkingContext;
 class SocketStreamHandleClient;
 
@@ -75,14 +72,6 @@ private:
     void didOpenSocket();
 
     static std::unique_ptr<char[]> createCopy(const char* data, int length);
-
-    // No authentication for streams per se, but proxy may ask for credentials.
-    void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-    void receivedCredential(const AuthenticationChallenge&, const Credential&);
-    void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
-    void receivedCancellation(const AuthenticationChallenge&);
-    void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&);
-    void receivedChallengeRejection(const AuthenticationChallenge&);
 
     struct SocketData {
         SocketData(std::unique_ptr<char[]>&& source, int length)
@@ -111,5 +100,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SocketStreamHandle_h

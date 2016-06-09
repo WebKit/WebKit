@@ -64,9 +64,9 @@ public:
 private:
     friend class BlobData;
 
-    explicit BlobDataItem(PassRefPtr<BlobDataFileReference> file)
+    explicit BlobDataItem(Ref<BlobDataFileReference>&& file)
         : m_type(Type::File)
-        , m_file(file)
+        , m_file(WTFMove(file))
         , m_offset(0)
         , m_length(toEndOfFile)
     {
@@ -111,7 +111,7 @@ public:
     void swapItems(BlobDataItemList&);
 
     void appendData(const ThreadSafeDataBuffer&);
-    void appendFile(PassRefPtr<BlobDataFileReference>);
+    void appendFile(Ref<BlobDataFileReference>&&);
 
 private:
     friend class BlobRegistryImpl;

@@ -115,10 +115,10 @@ static String joinStrings(const Vector<String>& strings, const char* separator)
     return builder.toString();
 }
 
-static unsigned long saturateAdd(unsigned long a, unsigned long b)
+static unsigned saturateAdd(unsigned a, unsigned b)
 {
-    if (std::numeric_limits<unsigned long>::max() - a < b)
-        return std::numeric_limits<unsigned long>::max();
+    if (std::numeric_limits<unsigned>::max() - a < b)
+        return std::numeric_limits<unsigned>::max();
     return a + b;
 }
 
@@ -369,7 +369,7 @@ void WebSocket::send(Blob& binaryData, ExceptionCode& ec)
         return;
     }
     if (m_state == CLOSING || m_state == CLOSED) {
-        unsigned long payloadSize = static_cast<unsigned long>(binaryData.size());
+        unsigned payloadSize = static_cast<unsigned>(binaryData.size());
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return;
@@ -419,7 +419,7 @@ WebSocket::State WebSocket::readyState() const
     return m_state;
 }
 
-unsigned long WebSocket::bufferedAmount() const
+unsigned WebSocket::bufferedAmount() const
 {
     return saturateAdd(m_bufferedAmount, m_bufferedAmountAfterClose);
 }
@@ -566,7 +566,7 @@ void WebSocket::didReceiveMessage(const String& msg)
 
 void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
 {
-    LOG(Network, "WebSocket %p didReceiveBinaryData() %lu byte binary message", this, static_cast<unsigned long>(binaryData.size()));
+    LOG(Network, "WebSocket %p didReceiveBinaryData() %u byte binary message", this, static_cast<unsigned>(binaryData.size()));
     switch (m_binaryType) {
     case BinaryTypeBlob:
         // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
@@ -586,9 +586,9 @@ void WebSocket::didReceiveMessageError()
     dispatchOrQueueErrorEvent();
 }
 
-void WebSocket::didUpdateBufferedAmount(unsigned long bufferedAmount)
+void WebSocket::didUpdateBufferedAmount(unsigned bufferedAmount)
 {
-    LOG(Network, "WebSocket %p didUpdateBufferedAmount() New bufferedAmount is %lu", this, bufferedAmount);
+    LOG(Network, "WebSocket %p didUpdateBufferedAmount() New bufferedAmount is %u", this, bufferedAmount);
     if (m_state == CLOSED)
         return;
     m_bufferedAmount = bufferedAmount;
@@ -600,7 +600,7 @@ void WebSocket::didStartClosingHandshake()
     m_state = CLOSING;
 }
 
-void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
+void WebSocket::didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
 {
     LOG(Network, "WebSocket %p didClose()", this);
     if (!m_channel)

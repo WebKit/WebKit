@@ -68,23 +68,12 @@ WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& c
     : m_document(&document)
     , m_client(&client)
     , m_resumeTimer(*this, &WebSocketChannel::resumeTimerFired)
-    , m_suspended(false)
-    , m_closing(false)
-    , m_receivedClosingHandshake(false)
     , m_closingTimer(*this, &WebSocketChannel::closingTimerFired)
-    , m_closed(false)
-    , m_shouldDiscardReceivedData(false)
-    , m_unhandledBufferedAmount(0)
-    , m_identifier(0)
-    , m_hasContinuousFrame(false)
-    , m_closeEventCode(CloseEventCodeAbnormalClosure)
-    , m_outgoingFrameQueueStatus(OutgoingFrameQueueOpen)
-    , m_blobLoaderStatus(BlobLoaderNotStarted)
 {
     if (Page* page = document.page())
         m_identifier = page->progress().createUniqueIdentifier();
 
-    LOG(Network, "WebSocketChannel %p ctor, identifier %lu", this, m_identifier);
+    LOG(Network, "WebSocketChannel %p ctor, identifier %u", this, m_identifier);
 }
 
 WebSocketChannel::~WebSocketChannel()
@@ -174,7 +163,7 @@ bool WebSocketChannel::send(const char* data, int length)
     return true;
 }
 
-unsigned long WebSocketChannel::bufferedAmount() const
+unsigned WebSocketChannel::bufferedAmount() const
 {
     LOG(Network, "WebSocketChannel %p bufferedAmount()", this);
     ASSERT(m_handle);
@@ -253,30 +242,30 @@ void WebSocketChannel::resume()
         m_resumeTimer.startOneShot(0);
 }
 
-void WebSocketChannel::willOpenSocketStream(SocketStreamHandle*)
+void WebSocketChannel::willOpenSocketStream(SocketStreamHandle&)
 {
     LOG(Network, "WebSocketChannel %p willOpenSocketStream()", this);
 }
 
-void WebSocketChannel::didOpenSocketStream(SocketStreamHandle* handle)
+void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
 {
     LOG(Network, "WebSocketChannel %p didOpenSocketStream()", this);
-    ASSERT(handle == m_handle);
+    ASSERT(&handle == m_handle);
     if (!m_document)
         return;
     if (m_identifier)
         InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_document, m_identifier, m_handshake->clientHandshakeRequest());
     CString handshakeMessage = m_handshake->clientHandshakeMessage();
-    if (!handle->send(handshakeMessage.data(), handshakeMessage.length()))
+    if (!handle.send(handshakeMessage.data(), handshakeMessage.length()))
         fail("Failed to send WebSocket handshake.");
 }
 
-void WebSocketChannel::didCloseSocketStream(SocketStreamHandle* handle)
+void WebSocketChannel::didCloseSocketStream(SocketStreamHandle& handle)
 {
     LOG(Network, "WebSocketChannel %p didCloseSocketStream()", this);
     if (m_identifier && m_document)
         InspectorInstrumentation::didCloseWebSocket(m_document, m_identifier);
-    ASSERT_UNUSED(handle, handle == m_handle || !m_handle);
+    ASSERT_UNUSED(handle, &handle == m_handle || !m_handle);
     m_closed = true;
     if (m_closingTimer.isActive())
         m_closingTimer.stop();
@@ -296,21 +285,21 @@ void WebSocketChannel::didCloseSocketStream(SocketStreamHandle* handle)
     deref();
 }
 
-void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle* handle, const char* data, int len)
+void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, const char* data, int len)
 {
     LOG(Network, "WebSocketChannel %p didReceiveSocketStreamData() Received %d bytes", this, len);
     Ref<WebSocketChannel> protectedThis(*this); // The client can close the channel, potentially removing the last reference.
-    ASSERT(handle == m_handle);
+    ASSERT(&handle == m_handle);
     if (!m_document) {
         return;
     }
     if (len <= 0) {
-        handle->disconnect();
+        handle.disconnect();
         return;
     }
     if (!m_client) {
         m_shouldDiscardReceivedData = true;
-        handle->disconnect();
+        handle.disconnect();
         return;
     }
     if (m_shouldDiscardReceivedData)
@@ -325,16 +314,16 @@ void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle* handle, co
             break;
 }
 
-void WebSocketChannel::didUpdateBufferedAmount(SocketStreamHandle*, size_t bufferedAmount)
+void WebSocketChannel::didUpdateBufferedAmount(SocketStreamHandle&, size_t bufferedAmount)
 {
     if (m_client)
         m_client->didUpdateBufferedAmount(bufferedAmount);
 }
 
-void WebSocketChannel::didFailSocketStream(SocketStreamHandle* handle, const SocketStreamError& error)
+void WebSocketChannel::didFailSocketStream(SocketStreamHandle& handle, const SocketStreamError& error)
 {
     LOG(Network, "WebSocketChannel %p didFailSocketStream()", this);
-    ASSERT(handle == m_handle || !m_handle);
+    ASSERT(&handle == m_handle || !m_handle);
     if (m_document) {
         String message;
         if (error.isNull())
@@ -347,15 +336,7 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle* handle, const Soc
         m_document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, message);
     }
     m_shouldDiscardReceivedData = true;
-    handle->disconnect();
-}
-
-void WebSocketChannel::didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&)
-{
-}
-
-void WebSocketChannel::didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&)
-{
+    handle.disconnect();
 }
 
 void WebSocketChannel::didStartLoading()
@@ -397,7 +378,7 @@ bool WebSocketChannel::appendToBuffer(const char* data, size_t len)
 {
     size_t newBufferSize = m_buffer.size() + len;
     if (newBufferSize < m_buffer.size()) {
-        LOG(Network, "WebSocketChannel %p appendToBuffer() Buffer overflow (%lu bytes already in receive buffer and appending %lu bytes)", this, static_cast<unsigned long>(m_buffer.size()), static_cast<unsigned long>(len));
+        LOG(Network, "WebSocketChannel %p appendToBuffer() Buffer overflow (%u bytes already in receive buffer and appending %u bytes)", this, static_cast<unsigned>(m_buffer.size()), static_cast<unsigned>(len));
         return false;
     }
     m_buffer.append(data, len);
@@ -416,7 +397,7 @@ bool WebSocketChannel::processBuffer()
     ASSERT(!m_suspended);
     ASSERT(m_client);
     ASSERT(!m_buffer.isEmpty());
-    LOG(Network, "WebSocketChannel %p processBuffer() Receive buffer has %lu bytes", this, static_cast<unsigned long>(m_buffer.size()));
+    LOG(Network, "WebSocketChannel %p processBuffer() Receive buffer has %u bytes", this, static_cast<unsigned>(m_buffer.size()));
 
     if (m_shouldDiscardReceivedData)
         return false;
@@ -445,7 +426,7 @@ bool WebSocketChannel::processBuffer()
             LOG(Network, "WebSocketChannel %p Connected", this);
             skipBuffer(headerLength);
             m_client->didConnect();
-            LOG(Network, "WebSocketChannel %p %lu bytes remaining in m_buffer", this, static_cast<unsigned long>(m_buffer.size()));
+            LOG(Network, "WebSocketChannel %p %u bytes remaining in m_buffer", this, static_cast<unsigned>(m_buffer.size()));
             return !m_buffer.isEmpty();
         }
         ASSERT(m_handshake->mode() == WebSocketHandshake::Failed);
@@ -468,7 +449,7 @@ void WebSocketChannel::resumeTimerFired()
         if (!processBuffer())
             break;
     if (!m_suspended && m_client && m_closed && m_handle)
-        didCloseSocketStream(m_handle.get());
+        didCloseSocketStream(*m_handle);
 }
 
 void WebSocketChannel::startClosingHandshake(int code, const String& reason)

@@ -80,7 +80,7 @@ public:
 
     const URL& url() const;
     State readyState() const;
-    unsigned long bufferedAmount() const;
+    unsigned bufferedAmount() const;
 
     String protocol() const;
     String extensions() const;
@@ -100,9 +100,9 @@ public:
     void didReceiveMessage(const String& message) override;
     void didReceiveBinaryData(Vector<uint8_t>&&) override;
     void didReceiveMessageError() override;
-    void didUpdateBufferedAmount(unsigned long bufferedAmount) override;
+    void didUpdateBufferedAmount(unsigned bufferedAmount) override;
     void didStartClosingHandshake() override;
-    void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) override;
+    void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) override;
 
 private:
     explicit WebSocket(ScriptExecutionContext&);
@@ -133,8 +133,8 @@ private:
 
     State m_state;
     URL m_url;
-    unsigned long m_bufferedAmount;
-    unsigned long m_bufferedAmountAfterClose;
+    unsigned m_bufferedAmount;
+    unsigned m_bufferedAmountAfterClose;
     BinaryType m_binaryType;
     String m_subprotocol;
     String m_extensions;

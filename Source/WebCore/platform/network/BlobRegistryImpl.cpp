@@ -110,15 +110,14 @@ void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItem
     ASSERT(!length);
 }
 
-void BlobRegistryImpl::registerFileBlobURL(const URL& url, RefPtr<BlobDataFileReference>&& file, const String& contentType)
+void BlobRegistryImpl::registerFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& file, const String& contentType)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
 
-    RefPtr<BlobData> blobData = BlobData::create(contentType);
-
-    blobData->appendFile(file);
-    m_blobs.set(url.string(), blobData.release());
+    auto blobData = BlobData::create(contentType);
+    blobData->appendFile(WTFMove(file));
+    m_blobs.set(url.string(), WTFMove(blobData));
 }
 
 void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
@@ -171,13 +170,13 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
         return;
     }
 
-    if (file == nullptr || file->path().isEmpty())
+    if (!file || file->path().isEmpty())
         return;
 
-    RefPtr<BlobData> backingFile = BlobData::create({ });
-    backingFile->appendFile(WTFMove(file));
+    auto backingFile = BlobData::create({ });
+    backingFile->appendFile(file.releaseNonNull());
 
-    m_blobs.set(url.string(), backingFile.release());
+    m_blobs.set(url.string(), WTFMove(backingFile));
 }
 
 void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)

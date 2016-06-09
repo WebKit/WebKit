@@ -65,7 +65,7 @@ public:
     virtual SendResult send(const String& message) = 0;
     virtual SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) = 0;
     virtual SendResult send(Blob&) = 0;
-    virtual unsigned long bufferedAmount() const = 0;
+    virtual unsigned bufferedAmount() const = 0;
     virtual void close(int code, const String& reason) = 0;
     // Log the reason text and close the connection. Will call didClose().
     virtual void fail(const String& reason) = 0;

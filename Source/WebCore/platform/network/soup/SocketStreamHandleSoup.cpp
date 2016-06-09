@@ -36,7 +36,6 @@
 
 #include "URL.h"
 #include "Logging.h"
-#include "NotImplemented.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 
@@ -68,17 +67,17 @@ static SocketStreamHandle* getHandleFromId(void* id)
     return gActiveHandles.get(id);
 }
 
-static void deactivateHandle(SocketStreamHandle* handle)
+static void deactivateHandle(SocketStreamHandle& handle)
 {
-    gActiveHandles.remove(handle->id());
+    gActiveHandles.remove(handle.id());
 }
 
-static void* activateHandle(SocketStreamHandle* handle)
+static void* activateHandle(SocketStreamHandle& handle)
 {
     // The first id cannot be 0, because it conflicts with the HashMap emptyValue.
     static gint currentHandleId = 1;
     void* id = GINT_TO_POINTER(currentHandleId++);
-    gActiveHandles.set(id, handle);
+    gActiveHandles.set(id, &handle);
     return id;
 }
 
@@ -88,7 +87,7 @@ SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient*
     LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
     unsigned int port = url.hasPort() ? url.port() : (url.protocolIs("wss") ? 443 : 80);
 
-    m_id = activateHandle(this);
+    m_id = activateHandle(*this);
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
     if (url.protocolIs("wss"))
         g_socket_client_set_tls(socketClient.get(), TRUE);
@@ -100,7 +99,7 @@ SocketStreamHandle::SocketStreamHandle(GSocketConnection* socketConnection, Sock
     : SocketStreamHandleBase(URL(), client)
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
-    m_id = activateHandle(this);
+    m_id = activateHandle(*this);
     connected(socketConnection, 0);
 }
 
@@ -108,14 +107,14 @@ SocketStreamHandle::~SocketStreamHandle()
 {
     LOG(Network, "SocketStreamHandle %p delete", this);
     // If for some reason we were destroyed without closing, ensure that we are deactivated.
-    deactivateHandle(this);
-    setClient(0);
+    deactivateHandle(*this);
+    setClient(nullptr);
 }
 
 void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* error)
 {
     if (error) {
-        m_client->didFailSocketStream(this, SocketStreamError(error->code, error->message));
+        m_client->didFailSocketStream(*this, SocketStreamError(error->code, error->message));
         return;
     }
 
@@ -128,13 +127,13 @@ void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* 
         reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), m_id);
 
     m_state = Open;
-    m_client->didOpenSocketStream(this);
+    m_client->didOpenSocketStream(*this);
 }
 
 void SocketStreamHandle::readBytes(signed long bytesRead, GError* error)
 {
     if (error) {
-        m_client->didFailSocketStream(this, SocketStreamError(error->code, error->message));
+        m_client->didFailSocketStream(*this, SocketStreamError(error->code, error->message));
         return;
     }
 
@@ -144,8 +143,8 @@ void SocketStreamHandle::readBytes(signed long bytesRead, GError* error)
     }
 
     // The client can close the handle, potentially removing the last reference.
-    RefPtr<SocketStreamHandle> protectedThis(this); 
-    m_client->didReceiveSocketStreamData(this, m_readBuffer.get(), bytesRead);
+    Ref<SocketStreamHandle> protectedThis(*this); 
+    m_client->didReceiveSocketStreamData(*this, m_readBuffer.get(), bytesRead);
     if (m_inputStream) // The client may have closed the connection.
         g_input_stream_read_async(m_inputStream.get(), m_readBuffer.get(), READ_BUFFER_SIZE, G_PRIORITY_DEFAULT, 0,
             reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), m_id);
@@ -174,7 +173,7 @@ int SocketStreamHandle::platformSend(const char* data, int length)
         if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_WOULD_BLOCK))
             beginWaitingForSocketWritability();
         else
-            m_client->didFailSocketStream(this, SocketStreamError(error->code, error->message));
+            m_client->didFailSocketStream(*this, SocketStreamError(error->code, error->message));
         return 0;
     }
 
@@ -190,14 +189,14 @@ void SocketStreamHandle::platformClose()
 {
     LOG(Network, "SocketStreamHandle %p platformClose", this);
     // We remove this handle from the active handles list first, to disable all callbacks.
-    deactivateHandle(this);
+    deactivateHandle(*this);
     stopWaitingForSocketWritability();
 
     if (m_socketConnection) {
         GUniqueOutPtr<GError> error;
         g_io_stream_close(G_IO_STREAM(m_socketConnection.get()), 0, &error.outPtr());
         if (error)
-            m_client->didFailSocketStream(this, SocketStreamError(error->code, error->message));
+            m_client->didFailSocketStream(*this, SocketStreamError(error->code, error->message));
         m_socketConnection = 0;
     }
 
@@ -205,37 +204,7 @@ void SocketStreamHandle::platformClose()
     m_inputStream = 0;
     m_readBuffer = nullptr;
 
-    m_client->didCloseSocketStream(this);
-}
-
-void SocketStreamHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
-void SocketStreamHandle::receivedCredential(const AuthenticationChallenge&, const Credential&)
-{
-    notImplemented();
-}
-
-void SocketStreamHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
-void SocketStreamHandle::receivedCancellation(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
-void SocketStreamHandle::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
-void SocketStreamHandle::receivedChallengeRejection(const AuthenticationChallenge&)
-{
-    notImplemented();
+    m_client->didCloseSocketStream(*this);
 }
 
 void SocketStreamHandle::beginWaitingForSocketWritability()

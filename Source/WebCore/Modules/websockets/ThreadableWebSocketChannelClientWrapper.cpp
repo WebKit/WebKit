@@ -136,12 +136,12 @@ void ThreadableWebSocketChannelClientWrapper::setSendRequestResult(ThreadableWeb
     m_syncMethodDone = true;
 }
 
-unsigned long ThreadableWebSocketChannelClientWrapper::bufferedAmount() const
+unsigned ThreadableWebSocketChannelClientWrapper::bufferedAmount() const
 {
     return m_bufferedAmount;
 }
 
-void ThreadableWebSocketChannelClientWrapper::setBufferedAmount(unsigned long bufferedAmount)
+void ThreadableWebSocketChannelClientWrapper::setBufferedAmount(unsigned bufferedAmount)
 {
     m_bufferedAmount = bufferedAmount;
     m_syncMethodDone = true;
@@ -185,7 +185,7 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData(Vector<uint8_
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount(unsigned long bufferedAmount)
+void ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount(unsigned bufferedAmount)
 {
     m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this, protectedThis = Ref<ThreadableWebSocketChannelClientWrapper>(*this), bufferedAmount] (ScriptExecutionContext&) {
         if (m_client)
@@ -207,7 +207,7 @@ void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake()
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didClose(unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
+void ThreadableWebSocketChannelClientWrapper::didClose(unsigned unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
 {
     m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this, protectedThis = Ref<ThreadableWebSocketChannelClientWrapper>(*this), unhandledBufferedAmount, closingHandshakeCompletion, code, reason = reason.isolatedCopy()] (ScriptExecutionContext&) {
             if (m_client)

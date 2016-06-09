@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BlobRegistry_h
-#define BlobRegistry_h
+#pragma once
 
 #include <functional>
 #include <wtf/Forward.h>
@@ -50,7 +49,7 @@ class WEBCORE_EXPORT BlobRegistry {
 public:
 
     // Registers a blob URL referring to the specified file.
-    virtual void registerFileBlobURL(const URL&, RefPtr<BlobDataFileReference>&&, const String& contentType) = 0;
+    virtual void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType) = 0;
 
     // Registers a blob URL referring to the specified blob data.
     virtual void registerBlobURL(const URL&, Vector<BlobPart>, const String& contentType) = 0;
@@ -77,5 +76,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // BlobRegistry_h

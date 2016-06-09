@@ -101,7 +101,7 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::send(Bl
     return m_bridge->send(binaryData);
 }
 
-unsigned long WorkerThreadableWebSocketChannel::bufferedAmount() const
+unsigned WorkerThreadableWebSocketChannel::bufferedAmount() const
 {
     if (!m_bridge)
         return 0;
@@ -206,7 +206,7 @@ void WorkerThreadableWebSocketChannel::Peer::bufferedAmount()
     if (!m_mainWebSocketChannel)
         return;
 
-    unsigned long bufferedAmount = m_mainWebSocketChannel->bufferedAmount();
+    unsigned bufferedAmount = m_mainWebSocketChannel->bufferedAmount();
     m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper = m_workerClientWrapper.copyRef(), bufferedAmount](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
         workerClientWrapper->setBufferedAmount(bufferedAmount);
@@ -288,7 +288,7 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData(Vector<uint8_t
     }, m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount(unsigned long bufferedAmount)
+void WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount(unsigned bufferedAmount)
 {
     ASSERT(isMainThread());
 
@@ -308,7 +308,7 @@ void WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake()
     }, m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
+void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
 {
     ASSERT(isMainThread());
     m_mainWebSocketChannel = nullptr;
@@ -461,7 +461,7 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
     return m_workerClientWrapper->sendRequestResult();
 }
 
-unsigned long WorkerThreadableWebSocketChannel::Bridge::bufferedAmount()
+unsigned WorkerThreadableWebSocketChannel::Bridge::bufferedAmount()
 {
     if (!m_peer)
         return 0;

@@ -29,11 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SocketStreamHandleBase_h
-#define SocketStreamHandleBase_h
+#pragma once
 
 #include "URL.h"
-
 #include <wtf/StreamBuffer.h>
 
 namespace WebCore {
@@ -69,5 +67,3 @@ namespace WebCore {
     };
 
 }  // namespace WebCore
-
-#endif  // SocketStreamHandleBase_h

@@ -29,33 +29,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SocketStreamHandleClient_h
-#define SocketStreamHandleClient_h
+#pragma once
 
 namespace WebCore {
 
-    class AuthenticationChallenge;
-    class URL;
-    class SocketStreamError;
-    class SocketStreamHandle;
+class SocketStreamError;
+class SocketStreamHandle;
 
-    class SocketStreamHandleClient {
-    public:
-        virtual ~SocketStreamHandleClient() { }
+class SocketStreamHandleClient {
+public:
+    virtual ~SocketStreamHandleClient() { }
 
-        virtual void willOpenSocketStream(SocketStreamHandle*) { }
-        virtual void didOpenSocketStream(SocketStreamHandle*) { }
-        virtual void didCloseSocketStream(SocketStreamHandle*) { }
-        virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char* /*data*/, int /*length*/) { }
-        virtual void didUpdateBufferedAmount(SocketStreamHandle*, size_t /*bufferedAmount*/) { }
+    virtual void willOpenSocketStream(SocketStreamHandle&) { }
+    virtual void didOpenSocketStream(SocketStreamHandle&) { }
+    virtual void didCloseSocketStream(SocketStreamHandle&) { }
+    virtual void didReceiveSocketStreamData(SocketStreamHandle&, const char* /*data*/, int /*length*/) { }
+    virtual void didUpdateBufferedAmount(SocketStreamHandle&, size_t /*bufferedAmount*/) { }
 
-        virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&) { }
+    virtual void didFailSocketStream(SocketStreamHandle&, const SocketStreamError&) { }
+};
 
-        // No authentication for streams per se, but proxy may ask for credentials.
-        virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) { }
-        virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) { }
-    };
-
-}  // namespace WebCore
-
-#endif  // SocketStreamHandleClient_h
+} // namespace WebCore

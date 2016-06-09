@@ -66,7 +66,7 @@ public:
     ThreadableWebSocketChannel::SendResult send(const String& message) override;
     ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) override;
     ThreadableWebSocketChannel::SendResult send(Blob&) override;
-    unsigned long bufferedAmount() const override;
+    unsigned bufferedAmount() const override;
     void close(int code, const String& reason) override;
     void fail(const String& reason) override;
     void disconnect() override; // Will suppress didClose().
@@ -96,9 +96,9 @@ public:
         void didConnect() override;
         void didReceiveMessage(const String& message) override;
         void didReceiveBinaryData(Vector<uint8_t>&&) override;
-        void didUpdateBufferedAmount(unsigned long bufferedAmount) override;
+        void didUpdateBufferedAmount(unsigned bufferedAmount) override;
         void didStartClosingHandshake() override;
-        void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) override;
+        void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) override;
         void didReceiveMessageError() override;
 
     private:
@@ -129,7 +129,7 @@ private:
         ThreadableWebSocketChannel::SendResult send(const String& message);
         ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength);
         ThreadableWebSocketChannel::SendResult send(Blob&);
-        unsigned long bufferedAmount();
+        unsigned bufferedAmount();
         void close(int code, const String& reason);
         void fail(const String& reason);
         void disconnect();
