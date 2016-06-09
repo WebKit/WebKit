@@ -106,12 +106,6 @@ fast/images/animated-gif-body-outside-viewport.html [ Skip ]
 fast/images/animated-gif-window-resizing.html [ Skip ]
 fast/images/animated-gif-zooming.html [ Skip ]
 
-# Mavericks and prior do not support contentInset
-[ Mavericks ] platform/mac/fast/events/content-inset-hit-testing.html [ Skip ]
-[ Mavericks ] platform/mac/fast/events/content-inset-hit-testing-in-frame.html [ Skip ]
-[ Mavericks ] fast/scrolling/latching/scroll-select-bottom-test.html [ Skip ]
-[ Mavericks ] platform/mac-wk1/fast/backgrounds/top-content-inset-fixed-attachment.html [ Skip ]
-
 # WK1 uses the native scrollview for scrolling by page.
 scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html
 scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html
@@ -140,12 +134,6 @@ http/tests/cache/disk-cache
 
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
-
-webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Pass Timeout ]
-webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Pass Timeout ]
-webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Timeout ]
-webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html [ Pass Timeout ]
-webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/oes-texture-half-float.html [ Pass Timeout ]
 
 [ ElCapitan+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 

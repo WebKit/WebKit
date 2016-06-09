@@ -1,3 +1,11 @@
+2016-06-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Removing Mavericks-specific TestExpectations from mac-wk1 TestExpectations file.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-06-09  Eric Carlson  <eric.carlson@apple.com>
 
         Don't show the caption menu if a video has only forced tracks
