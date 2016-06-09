@@ -1,5 +1,11 @@
 2016-06-08  Alex Christensen  <achristensen@webkit.org>
 
+       Fix WinCairo build
+
+        * DumpRenderTree/cairo/PixelDumpSupportCairo.h:
+
+2016-06-08  Alex Christensen  <achristensen@webkit.org>
+
         Fix WinCairo build
 
         * DumpRenderTree/cairo/PixelDumpSupportCairo.h:
