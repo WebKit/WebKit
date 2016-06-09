@@ -1,3 +1,12 @@
+2016-06-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Add comments to clarify feature enablement
+        https://bugs.webkit.org/show_bug.cgi?id=158567
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2016-06-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, skip jsair tests while we figure out the debug timeouts.
