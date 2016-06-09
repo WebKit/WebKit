@@ -1004,6 +1004,19 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this.needsLayout();
     }
 
+    _noteRowRemoved(dataGridNode)
+    {
+        if (this._inline || this._variableHeightRows) {
+            // Inline DataGrids rows are not updated in layout, so
+            // we need to remove rows immediately.
+            if (dataGridNode.element && dataGridNode.element.parentNode)
+                dataGridNode.element.parentNode.removeChild(dataGridNode.element);
+            return;
+        }
+
+        this._noteRowsChanged();
+    }
+
     _noteScrollPositionChanged()
     {
         this._cachedScrollTop = NaN;
@@ -2513,7 +2526,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         this._attached = false;
 
         this.dataGrid._rows.remove(this, true);
-        this.dataGrid._noteRowsChanged();
+        this.dataGrid._noteRowRemoved(this);
 
         for (var i = 0; i < this.children.length; ++i)
             this.children[i]._detach();

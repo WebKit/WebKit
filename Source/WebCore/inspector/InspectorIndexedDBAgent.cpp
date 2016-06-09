@@ -394,7 +394,7 @@ public:
         }
         auto* cursorResult = request.cursorResult();
         if (!cursorResult) {
-            m_requestCallback->sendFailure("Unexpected result type.");
+            end(false);
             return;
         }
 
@@ -483,8 +483,7 @@ public:
             return;
         }
 
-        Ref<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_injectedScript, m_requestCallback.copyRef(), 0, m_pageSize);
-
+        TransactionActivator activator(idbTransaction.get());
         ExceptionCodeWithMessage ec;
         RefPtr<IDBRequest> idbRequest;
         if (!m_indexName.isEmpty()) {
@@ -503,6 +502,7 @@ public:
             return;
         }
 
+        Ref<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_injectedScript, m_requestCallback.copyRef(), 0, m_pageSize);
         idbRequest->addEventListener(eventNames().successEvent, WTFMove(openCursorCallback), false);
     }
 
