@@ -541,8 +541,8 @@ typedef NS_ENUM(NSInteger, UIWKHandlePosition) {
 - (void)showTextStyleOptions;
 - (void)hideTextStyleOptions;
 
-@property (nonatomic, readonly, retain) UITapGestureRecognizer *singleTapGesture;
-@property (nonatomic, readonly, retain) UILongPressGestureRecognizer *loupeGesture;
+@property (nonatomic, readonly, assign) UILongPressGestureRecognizer *loupeGesture;
+@property (nonatomic, readonly, assign) UITapGestureRecognizer *singleTapGesture;
 @end
 
 @protocol UIWKInteractionViewProtocol

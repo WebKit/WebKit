@@ -1,3 +1,16 @@
+2016-06-09  David Kilzer  <ddkilzer@apple.com>
+
+        Update properties for UIWKTextInteractionAssistant
+        <https://webkit.org/b/158559>
+
+        Reviewed by Darin Adler.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        (UIWKTextInteractionAssistant.loupeGesture):
+        (UIWKTextInteractionAssistant.singleTapGesture):
+        Change from retain to assign since UIWKTextInteractionAssistant
+        is not responsible for their lifetime.  Sort alphabetically.
+
 2016-06-09  Michael Saboff  <msaboff@apple.com>
 
         WebKitTestRunner and DumpRenderTree do not handle dangling surrogate characters
