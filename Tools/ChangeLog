@@ -1,3 +1,13 @@
+2016-06-09  Brady Eidson  <beidson@apple.com>
+
+        Greatly simplify CrossThreadTask.h.
+        https://bugs.webkit.org/show_bug.cgi?id=158542
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/CrossThreadTask.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-06-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r201836, r201845, and r201848.

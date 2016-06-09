@@ -85,7 +85,6 @@ struct LifetimeLogger {
         log().str("");
         return string;
     }
-
 };
 
 void testFunction(const LifetimeLogger&, const LifetimeLogger&, const LifetimeLogger&)
@@ -103,7 +102,7 @@ TEST(WTF_CrossThreadTask, Basic)
         auto task = createCrossThreadTask(testFunction, logger1, logger2, logger3);
         task.performTask();
     }
-    ASSERT_STREQ("default_constructor(<default>-0-0) copy_constructor(<default>-1-0) name_constructor(logger-0-0) isolatedCopy() copy_constructor(<default>-1-0) isolatedCopy() copy_constructor(<default>-2-0) isolatedCopy() copy_constructor(logger-1-0) move_constructor(<default>-1-1) move_constructor(<default>-2-1) move_constructor(logger-1-1) destructor(logger-1-0) destructor(<default>-2-0) destructor(<default>-1-0) testFunction called destructor(logger-1-1) destructor(<default>-2-1) destructor(<default>-1-1) destructor(logger-0-0) destructor(<default>-1-0) destructor(<default>-0-0) ", LifetimeLogger::takeLogStr().c_str());
+    ASSERT_STREQ("default_constructor(<default>-0-0) copy_constructor(<default>-1-0) name_constructor(logger-0-0) isolatedCopy() copy_constructor(<default>-1-0) isolatedCopy() copy_constructor(<default>-2-0) isolatedCopy() copy_constructor(logger-1-0) move_constructor(<default>-1-1) move_constructor(<default>-2-1) move_constructor(logger-1-1) destructor(logger-1-0) destructor(<default>-2-0) destructor(<default>-1-0) move_constructor(<default>-1-2) move_constructor(<default>-2-2) move_constructor(logger-1-2) destructor(logger-1-1) destructor(<default>-2-1) destructor(<default>-1-1) testFunction called destructor(logger-1-2) destructor(<default>-2-2) destructor(<default>-1-2) destructor(logger-0-0) destructor(<default>-1-0) destructor(<default>-0-0) ", LifetimeLogger::takeLogStr().c_str());
 }
     
 } // namespace TestWebKitAPI
