@@ -5,6 +5,13 @@
         * platform/network/curl/MultipartHandle.cpp:
         (WebCore::MultipartHandle::didReceiveResponse):
 
+2016-06-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build.
+
+        * platform/network/curl/MultipartHandle.cpp:
+        (WebCore::MultipartHandle::didReceiveResponse):
+
 2016-06-08  Jer Noble  <jer.noble@apple.com>
 
         With audio user gesture restriction in place, video.src = 'file', video.play() succeeds where it should fail.
