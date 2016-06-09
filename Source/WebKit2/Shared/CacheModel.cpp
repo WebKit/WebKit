@@ -55,7 +55,7 @@ void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t di
         // Foundation memory cache capacity (in bytes)
         urlCacheMemoryCapacity = 0;
 
-        // Foundation disk cache capacity (in bytes)
+        // Disk cache capacity (in bytes)
         urlCacheDiskCapacity = 0;
 
         break;
@@ -92,9 +92,9 @@ void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t di
         else
             urlCacheMemoryCapacity =      512 * 1024; 
 
-        // Foundation disk cache capacity (in bytes)
+        // Disk cache capacity (in bytes)
         if (diskFreeSize >= 16384)
-            urlCacheDiskCapacity = 50 * 1024 * 1024;
+            urlCacheDiskCapacity = 75 * 1024 * 1024;
         else if (diskFreeSize >= 8192)
             urlCacheDiskCapacity = 40 * 1024 * 1024;
         else if (diskFreeSize >= 4096)
@@ -153,11 +153,11 @@ void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t di
             urlCacheMemoryCapacity =      512 * 1024;
 #endif
 
-        // Foundation disk cache capacity (in bytes)
+        // Disk cache capacity (in bytes)
         if (diskFreeSize >= 16384)
-            urlCacheDiskCapacity = 175 * 1024 * 1024;
+            urlCacheDiskCapacity = 500 * 1024 * 1024;
         else if (diskFreeSize >= 8192)
-            urlCacheDiskCapacity = 150 * 1024 * 1024;
+            urlCacheDiskCapacity = 250 * 1024 * 1024;
         else if (diskFreeSize >= 4096)
             urlCacheDiskCapacity = 125 * 1024 * 1024;
         else if (diskFreeSize >= 2048)

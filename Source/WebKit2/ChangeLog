@@ -1,3 +1,29 @@
+2016-06-08  Antti Koivisto  <antti@apple.com>
+
+        Increase disk cache capacity when there is lots of free space
+        https://bugs.webkit.org/show_bug.cgi?id=158526
+
+        Reviewed by Chris Dumez.
+
+        Our maximum disk cache capacity has been 175MB for a very long time. Meanwhile the average resource size has grown
+        massively. 175MB is now enough for cacheable resources of a few dozen sites at most. Using bigger caches when there is
+        room for it can reduce network traffic, reduce disk writes, save battery and speed up page loading.
+
+        This patch changes cache size for PrimaryWebBrowser cache model
+
+        >=16GB free: 175MB -> 500MB
+        8-16GB free: 150MB -> 250MB
+
+        and modestly for DocumentBrowser
+
+        >=16GB free: 50MB -> 75MB
+
+        Note that if system (on Cocoa platforms) really needs disk space it will wipe out caches so this doesn't reduce
+        available disk space in scenarios like software installation.
+
+        * Shared/CacheModel.cpp:
+        (WebKit::calculateCacheSizes):
+
 2016-06-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Introduce ResourceErrorBase::type
