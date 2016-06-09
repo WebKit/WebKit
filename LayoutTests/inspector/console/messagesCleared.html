@@ -35,13 +35,7 @@ function test()
         name: "ClearViaCommandLineAPI",
         description: "Calling `clear()` in the command line API should trigger Console.messagesCleared.",
         test: (resolve, reject) => {
-            const objectGroup = "test";
-            const includeCommandLineAPI = true;
-            const ignorePauseOnExceptionsAndMute = false;
-            const shouldReturnByValue = false;
-            const shouldGeneratePreview = false;
-            const shouldSaveResult = false;
-            WebInspector.runtimeManager.evaluateInInspectedWindow("clear()", objectGroup, includeCommandLineAPI, ignorePauseOnExceptionsAndMute, shouldReturnByValue, shouldGeneratePreview, shouldSaveResult, function(){});
+            WebInspector.runtimeManager.evaluateInInspectedWindow("clear()", {objectGroup: "test", includeCommandLineAPI: true}, function(){});
             WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
                 resolve();

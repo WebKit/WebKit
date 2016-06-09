@@ -75,7 +75,7 @@ function test()
         InspectorTest.log("-----------------------------------------------------");
         InspectorTest.log("EXPRESSION: " + step.expression);
 
-        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, "test", false, true, false, false, false, function(remoteObject, wasThrown) {
+        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, function(remoteObject, wasThrown) {
             InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
             InspectorTest.log("type: " + remoteObject.type);
             if (remoteObject.subtype)

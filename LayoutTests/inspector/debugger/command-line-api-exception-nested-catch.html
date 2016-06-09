@@ -16,13 +16,13 @@ function test()
     WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
 
     function dumpCommandLineAPIValue(prefix) {
-        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", "test", true, true, false, false, false, function(result, wasThrown) {
+        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
             InspectorTest.log(prefix + ": $exception => " + result.description);
         });
     }
 
     function checkIfExceptionValueMatchesVariable(varName) {
-        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception === " + varName, "test", true, true, false, false, false, function(result, wasThrown) {
+        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception === " + varName, {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
             InspectorTest.log("  CATCH: $exception === " + varName + " ? " + result.description);
         });
     }

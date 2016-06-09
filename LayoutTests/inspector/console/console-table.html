@@ -44,7 +44,7 @@ function test()
     });
 
     for (var step of steps)
-        WebInspector.runtimeManager.evaluateInInspectedWindow(step, "test", false, true, false, true, false, function(){});
+        WebInspector.runtimeManager.evaluateInInspectedWindow(step, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, function(){});
 }
 </script>
 </head>

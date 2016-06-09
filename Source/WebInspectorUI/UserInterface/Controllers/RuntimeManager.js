@@ -35,8 +35,20 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
 
     // Public
 
-    evaluateInInspectedWindow(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult, callback)
+    evaluateInInspectedWindow(expression, options, callback)
     {
+        let {objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult, sourceURLAppender} = options;
+
+        includeCommandLineAPI = includeCommandLineAPI || false;
+        doNotPauseOnExceptionsAndMuteConsole = doNotPauseOnExceptionsAndMuteConsole || false;
+        returnByValue = returnByValue || false;
+        generatePreview = generatePreview || false;
+        saveResult = saveResult || false;
+        sourceURLAppender = sourceURLAppender || appendWebInspectorSourceURL;
+
+        console.assert(objectGroup, "RuntimeManager.evaluateInInspectedWindow should always be called with an objectGroup");
+        console.assert(typeof sourceURLAppender === "function");
+
         if (!expression) {
             // There is no expression, so the completion should happen against global properties.
             expression = "this";
@@ -45,7 +57,7 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
             expression = "(" + expression + ")";
         }
 
-        expression = appendWebInspectorSourceURL(expression);
+        expression = sourceURLAppender(expression);
 
         function evalCallback(error, result, wasThrown, savedResultIndex)
         {

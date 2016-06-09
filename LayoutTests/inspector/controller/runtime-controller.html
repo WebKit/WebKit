@@ -12,13 +12,7 @@ function test()
         description: "Test evaluating an object literal string conveniently converts wraps it in parenthesis to avoid misinterpretation as a program with a block and labeled statement.",
         test: (resolve, reject) => {
             function testSource(expression, callback) {
-                const objectGroup = "test";
-                const includeCommandLineAPI = false;
-                const ignorePauseOnExceptionsAndMute = false;
-                const shouldReturnByValue = false;
-                const shouldGeneratePreview = false;
-                const shouldSaveResult = false;
-                WebInspector.runtimeManager.evaluateInInspectedWindow(expression, objectGroup, includeCommandLineAPI, ignorePauseOnExceptionsAndMute, shouldReturnByValue, shouldGeneratePreview, shouldSaveResult, (result, wasThrown) => {
+                WebInspector.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
                     InspectorTest.log("Source: " + expression);
                     callback(result, wasThrown);
                 });

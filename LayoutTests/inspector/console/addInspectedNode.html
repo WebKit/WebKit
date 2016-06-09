@@ -6,13 +6,7 @@
 function test()
 {
     function evaluate$0(callback) {
-        const objectGroup = "test";
-        const includeCommandLineAPI = true;
-        const ignorePauseOnExceptionsAndMute = false;
-        const shouldReturnByValue = false;
-        const shouldGeneratePreview = false;
-        const shouldSaveResult = false;
-        WebInspector.runtimeManager.evaluateInInspectedWindow("$0", objectGroup, includeCommandLineAPI, ignorePauseOnExceptionsAndMute, shouldReturnByValue, shouldGeneratePreview, shouldSaveResult, callback);
+        WebInspector.runtimeManager.evaluateInInspectedWindow("$0", {objectGroup: "test", includeCommandLineAPI: true}, callback);
     }
 
     let nodeA, nodeB;

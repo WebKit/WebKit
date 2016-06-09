@@ -215,7 +215,7 @@ function test()
                 return;
             }
 
-            WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, "test", false, true, false, true, false, function(remoteObject, wasThrown) {
+            WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, function(remoteObject, wasThrown) {
                 InspectorTest.log("");
                 InspectorTest.log("-----------------------------------------------------");
                 InspectorTest.log("EXPRESSION: " + step.expression);

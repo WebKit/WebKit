@@ -231,9 +231,17 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
             this._appendConsoleMessageView(commandResultMessageView, true);
         }
 
-        text = appendWebInspectorConsoleEvaluationSourceURL(text);
+        let options = {
+            objectGroup: WebInspector.RuntimeManager.ConsoleObjectGroup,
+            includeCommandLineAPI: true,
+            doNotPauseOnExceptionsAndMuteConsole: false,
+            returnByValue: false,
+            generatePreview: true,
+            saveResult: true,
+            sourceURLAppender: appendWebInspectorConsoleEvaluationSourceURL,
+        };
 
-        WebInspector.runtimeManager.evaluateInInspectedWindow(text, WebInspector.RuntimeManager.ConsoleObjectGroup, true, false, false, true, true, printResult.bind(this));
+        WebInspector.runtimeManager.evaluateInInspectedWindow(text, options, printResult.bind(this));
     }
 
     // Private

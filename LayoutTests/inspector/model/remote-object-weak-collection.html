@@ -53,8 +53,8 @@ function test()
 
         // Run the expression, and then run a garbage collection on a different
         // event loop so no objects are kept alive by the stack.
-        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, "test", false, true, false, true, false, function(remoteObject, wasThrown) {
-            WebInspector.runtimeManager.evaluateInInspectedWindow("GCController.collect()", "test", false, true, false, false, false, function() {
+        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, function(remoteObject, wasThrown) {
+            WebInspector.runtimeManager.evaluateInInspectedWindow("GCController.collect()", {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, function() {
                 InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
                 remoteObject.getCollectionEntries(0, 100, function(entries) {
                     InspectorTest.log("ENTRIES:");

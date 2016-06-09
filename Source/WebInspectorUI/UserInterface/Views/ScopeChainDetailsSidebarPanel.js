@@ -350,7 +350,8 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         let promises = [];
         for (let expression of watchExpressions) {
             promises.push(new Promise(function(resolve, reject) {
-                WebInspector.runtimeManager.evaluateInInspectedWindow(expression, WebInspector.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName, false, true, false, true, false, function(object, wasThrown) {
+                let options = {objectGroup: WebInspector.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName, includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, returnByValue: false, generatePreview: true, saveResult: false};
+                WebInspector.runtimeManager.evaluateInInspectedWindow(expression, options, function(object, wasThrown) {
                     let propertyDescriptor = new WebInspector.PropertyDescriptor({name: expression, value: object}, undefined, undefined, wasThrown);
                     objectTree.appendExtraPropertyDescriptor(propertyDescriptor);
                     resolve(propertyDescriptor);

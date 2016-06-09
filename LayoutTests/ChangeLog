@@ -1,3 +1,26 @@
+2016-06-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: Should be able to evaluate "{a:1, b:2}" in the console
+        https://bugs.webkit.org/show_bug.cgi?id=158548
+        <rdar://problem/26708513>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/console/addInspectedNode.html:
+        * inspector/console/command-line-api-copy.html:
+        * inspector/console/command-line-api.html:
+        * inspector/console/console-api.html:
+        * inspector/console/console-table.html:
+        * inspector/console/messagesCleared.html:
+        * inspector/controller/runtime-controller.html:
+        * inspector/debugger/command-line-api-exception-nested-catch.html:
+        * inspector/debugger/command-line-api-exception.html:
+        * inspector/model/remote-object-get-properties.html:
+        * inspector/model/remote-object-weak-collection.html:
+        * inspector/model/remote-object.html:
+        * inspector/timeline/exception-in-injected-script-while-recording.html:
+        Update evaluateInInspectedWindow callsites to use options dictionary.
+
 2016-06-08  Chris Dumez  <cdumez@apple.com>
 
         DedicatedWorkerGlobalScope prototype chain is incorrect

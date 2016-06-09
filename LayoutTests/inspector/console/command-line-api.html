@@ -69,13 +69,7 @@ function test()
                         reject();
                 }
 
-                const objectGroup = "test";
-                const includeCommandLineAPI = true;
-                const ignorePauseOnExceptionsAndMute = false;
-                const shouldReturnByValue = false;
-                const shouldGeneratePreview = false;
-                const shouldSaveResult = false;
-                WebInspector.runtimeManager.evaluateInInspectedWindow(`String(${input})`, objectGroup, includeCommandLineAPI, ignorePauseOnExceptionsAndMute, shouldReturnByValue, shouldGeneratePreview, shouldSaveResult, callback);
+                WebInspector.runtimeManager.evaluateInInspectedWindow(`String(${input})`, {objectGroup: "test", includeCommandLineAPI: true}, callback);
             }
         })
     }

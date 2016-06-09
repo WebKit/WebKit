@@ -1,3 +1,28 @@
+2016-06-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: Should be able to evaluate "{a:1, b:2}" in the console
+        https://bugs.webkit.org/show_bug.cgi?id=158548
+        <rdar://problem/26708513>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        Switch the many parameters to an options dictionary.
+        Include a new option for sourceURL appender, so that
+        Console evaluations can have its own append.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted):
+        Use the appendWebInspectorConsoleEvaluationSourceURL appender.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WebInspector.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.evaluated):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._generateWatchExpressionsSection.):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._generateWatchExpressionsSection):
+        Use the new options dictionary.
+
 2016-06-08  Brian Burg  <bburg@apple.com>
 
         Web Inspector: an error is encountered when trying to delete nodes that have children

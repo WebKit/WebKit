@@ -40,13 +40,13 @@ function test()
     }
 
     function dumpCommandLineAPIValue(prefix) {
-        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", "test", true, true, false, false, false, function(result, wasThrown) {
+        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
             InspectorTest.log(prefix + ": $exception => " + result.description);
         });
     }
 
     function checkIfExceptionValueMatchesCatchVariable() {
-        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception === e", "test", true, true, false, false, false, function(result, wasThrown) {
+        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception === e", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
             InspectorTest.log("STEPPED OUT TO CATCH BLOCK: $exception === e ? " + result.description);
         });
     }

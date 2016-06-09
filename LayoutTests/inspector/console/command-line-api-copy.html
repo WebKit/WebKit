@@ -22,14 +22,8 @@ function test()
     }
 
     function commandLineAPICopyAndPaste(expression, callback) {
-        const objectGroup = "test";
-        const includeCommandLineAPI = true;
-        const ignorePauseOnExceptionsAndMute = false;
-        const shouldReturnByValue = false;
-        const shouldGeneratePreview = false;
-        const shouldSaveResult = false;
         InspectorTest.assert(typeof expression === "string", "Test requires string expression to evaluate on the page.");
-        WebInspector.runtimeManager.evaluateInInspectedWindow(`copy(${expression})`, objectGroup, includeCommandLineAPI, ignorePauseOnExceptionsAndMute, shouldReturnByValue, shouldGeneratePreview, shouldSaveResult, () => {
+        WebInspector.runtimeManager.evaluateInInspectedWindow(`copy(${expression})`, {objectGroup: "test", includeCommandLineAPI: true}, () => {
             InspectorTest.evaluateInPage("pasteAndReturnString()", (error, remoteObjectPayload) => {
                 let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
                 InspectorTest.assert(remoteObject.type === "string", "RemoteObject from pasteAndReturnString should return a string.");
