@@ -112,6 +112,7 @@
 #import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/Page.h>
+#import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
@@ -760,18 +761,8 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 @end
 #endif // !PLATFORM(IOS)
 
-// By imaging to a width a little wider than the available pixels,
-// thin pages will be scaled down a little, matching the way they
-// print in IE and Camino. This lets them use fewer sheets than they
-// would otherwise, which is presumably why other browsers do this.
-// Wide pages will be scaled down more than this.
-const float _WebHTMLViewPrintingMinimumShrinkFactor = 1.25;
-
-// This number determines how small we are willing to reduce the page content
-// in order to accommodate the widest line. If the page would have to be
-// reduced smaller to make the widest line fit, we just clip instead (this
-// behavior matches MacIE and Mozilla, at least)
-const float _WebHTMLViewPrintingMaximumShrinkFactor = 2;
+const float _WebHTMLViewPrintingMinimumShrinkFactor = PrintContext::minimumShrinkFactor();
+const float _WebHTMLViewPrintingMaximumShrinkFactor = PrintContext::maximumShrinkFactor();
 
 #define AUTOSCROLL_INTERVAL             0.1f
 

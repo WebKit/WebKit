@@ -1,3 +1,14 @@
+2016-06-09  Andy Estes  <aestes@apple.com>
+
+        Define printing{Minimum,Maximum}ShrinkFactor in only one place
+        https://bugs.webkit.org/show_bug.cgi?id=158580
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebHTMLView.mm: Initialized _WebHTMLViewPrintingMinimumShrinkFactor and
+        _WebHTMLViewPrintingMaximumShrinkFactor with PrintContext::minimumShrinkFactor() and
+        PrintContext::maximumShrinkFactor() instead of with duplicated float literals.
+
 2016-06-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201810.

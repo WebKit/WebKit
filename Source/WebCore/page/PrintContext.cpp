@@ -31,19 +31,6 @@
 
 namespace WebCore {
 
-// By imaging to a width a little wider than the available pixels,
-// thin pages will be scaled down a little, matching the way they
-// print in IE and Camino. This lets them use fewer sheets than they
-// would otherwise, which is presumably why other browsers do this.
-// Wide pages will be scaled down more than this.
-const float printingMinimumShrinkFactor = 1.25f;
-
-// This number determines how small we are willing to reduce the page content
-// in order to accommodate the widest line. If the page would have to be
-// reduced smaller to make the widest line fit, we just clip instead (this
-// behavior matches MacIE and Mozilla, at least)
-const float printingMaximumShrinkFactor = 2;
-
 PrintContext::PrintContext(Frame* frame)
     : m_frame(frame)
     , m_isPrinting(false)
@@ -167,10 +154,10 @@ void PrintContext::begin(float width, float height)
     m_isPrinting = true;
 
     FloatSize originalPageSize = FloatSize(width, height);
-    FloatSize minLayoutSize = m_frame->resizePageRectsKeepingRatio(originalPageSize, FloatSize(width * printingMinimumShrinkFactor, height * printingMinimumShrinkFactor));
+    FloatSize minLayoutSize = m_frame->resizePageRectsKeepingRatio(originalPageSize, FloatSize(width * minimumShrinkFactor(), height * minimumShrinkFactor()));
 
     // This changes layout, so callers need to make sure that they don't paint to screen while in printing mode.
-    m_frame->setPrinting(true, minLayoutSize, originalPageSize, printingMaximumShrinkFactor / printingMinimumShrinkFactor, AdjustViewSize);
+    m_frame->setPrinting(true, minLayoutSize, originalPageSize, maximumShrinkFactor() / minimumShrinkFactor(), AdjustViewSize);
 }
 
 float PrintContext::computeAutomaticScaleFactor(const FloatSize& availablePaperSize)
@@ -186,7 +173,7 @@ float PrintContext::computeAutomaticScaleFactor(const FloatSize& availablePaperS
     if (viewLogicalWidth < 1)
         return 1;
 
-    float maxShrinkToFitScaleFactor = 1 / printingMaximumShrinkFactor;
+    float maxShrinkToFitScaleFactor = 1 / maximumShrinkFactor();
     float shrinkToFitScaleFactor = (useViewWidth ? availablePaperSize.width() : availablePaperSize.height()) / viewLogicalWidth;
     return std::max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor);
 }
