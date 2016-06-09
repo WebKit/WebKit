@@ -1,3 +1,21 @@
+2016-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        border-radius with different width and height rendered wrong
+        https://bugs.webkit.org/show_bug.cgi?id=158300
+        <rdar://problem/26672922>
+
+        Reviewed by Zalan Bujtas.
+        
+        * fast/borders/border-non-renderable-radius-inner-clip-expected.html: Added.
+        * fast/borders/border-non-renderable-radius-inner-clip.html: Added.
+        * fast/borders/border-radius-inner-clip-expected-mismatch.html: Added.
+        * fast/borders/border-radius-inner-clip-vertical-expected-mismatch.html: Added.
+        * fast/borders/border-radius-inner-clip-vertical.html: Added.
+        * fast/borders/border-radius-inner-clip.html: Added.
+        * fast/borders/resources/border-radius-helpers.js: Added.
+        (createContainer):
+        (createReferenceContainer):
+
 2016-06-09  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed test gardening.

@@ -1,3 +1,38 @@
+2016-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        border-radius with different width and height rendered wrong
+        https://bugs.webkit.org/show_bug.cgi?id=158300
+        <rdar://problem/26672922>
+
+        Reviewed by Zalan Bujtas.
+
+        Borders with border-radius close to 100% 100% got oddly clipped. This happened because
+        of the clipping we do to achieve the diagonal corner joins; RenderBoxModelObject::clipBorderSidePolygon()
+        created trapezoids for each side, but only extended them to the center of the inner border rect.
+        This clipped out parts of these borders.
+
+        Fix by computing the trapezoids by intersecting the corner diagonal line with a line that passes
+        through the adjacent corners of the inner rect, whose intersection is always going to be inside the
+        rounded border. Also fix the quads used to do the antialiased/non-antialiased clipping,
+        by adding a point rather than moving a corner point to ensure we don't mistakenly clip out any
+        parts of the border.
+        
+        Finally, improve the rendering of non-renderable cases by actually doing the diagonal
+        corner joins rather than just giving up.
+
+        Tests: fast/borders/border-non-renderable-radius-inner-clip.html
+               fast/borders/border-radius-inner-clip-vertical.html
+               fast/borders/border-radius-inner-clip.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::calculateAdjustedInnerBorder): Moved up.
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        (WebCore::findInnerVertex): Deleted.
+        (WebCore::calculateSideRectIncludingInner): Deleted.
+        (WebCore::RenderBoxModelObject::clipBorderSideForComplexInnerPath): Deleted.
+        * rendering/RenderBoxModelObject.h:
+
 2016-06-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed, fixing compilation issue with WebRTC
