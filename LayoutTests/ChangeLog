@@ -1,3 +1,15 @@
+2016-06-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r201842.
+
+        The change that prompted this rebaseline was rolled out.
+
+        Reverted changeset:
+
+        "Rebaseline js/dom/global-constructors-attributes.html for Mac
+        after r201810"
+        http://trac.webkit.org/changeset/201842
+
 2016-06-09  Michael Saboff  <msaboff@apple.com>
 
         WebKitTestRunner and DumpRenderTree do not handle dangling surrogate characters
