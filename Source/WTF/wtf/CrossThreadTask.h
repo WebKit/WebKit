@@ -62,10 +62,10 @@ void callFunctionForCrossThreadTaskImpl(F function, ArgsTuple&& args, std::index
     function(std::get<ArgsIndex>(std::forward<ArgsTuple>(args))...);
 }
 
-template <typename F, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
+template <typename F, typename ArgsTuple, typename ArgsIndices = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
 void callFunctionForCrossThreadTask(F function, ArgsTuple&& args)
 {
-    callFunctionForCrossThreadTaskImpl(function, std::forward<ArgsTuple>(args), ArgsIndicies());
+    callFunctionForCrossThreadTaskImpl(function, std::forward<ArgsTuple>(args), ArgsIndices());
 }
 
 template<typename... Parameters, typename... Arguments>

@@ -1,5 +1,12 @@
 2016-06-09  Brady Eidson  <beidson@apple.com>
 
+        Unaddressed review feedback from r201872
+
+        * wtf/CrossThreadTask.h:
+        (WTF::callFunctionForCrossThreadTask): Fix typo.
+
+2016-06-09  Brady Eidson  <beidson@apple.com>
+
         Greatly simplify CrossThreadTask.h.
         https://bugs.webkit.org/show_bug.cgi?id=158542
 
