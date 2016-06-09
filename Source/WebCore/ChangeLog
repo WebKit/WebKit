@@ -1,3 +1,11 @@
+2016-06-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed, fixing compilation issue with WebRTC
+
+        The code dependencies of the SDP processor were not right.
+
+        * PlatformGTK.cmake:
+
 2016-06-09  Frederic Wang  <fwang@igalia.com>
 
         Introduce MathOperator::Type
