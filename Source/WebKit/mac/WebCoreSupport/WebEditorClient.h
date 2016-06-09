@@ -51,8 +51,6 @@ public:
     void didCheckSucceed(int sequence, NSArray *results);
 
 private:
-    void pageDestroyed() override;
-
     bool isGrammarCheckingEnabled() override;
     void toggleGrammarChecking() override;
     bool isContinuousSpellCheckingEnabled() override;

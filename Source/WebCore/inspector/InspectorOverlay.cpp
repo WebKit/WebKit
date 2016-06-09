@@ -866,7 +866,7 @@ Page* InspectorOverlay::overlayPage()
 
     PageConfiguration pageConfiguration;
     fillWithEmptyClients(pageConfiguration);
-    m_overlayPage = std::make_unique<Page>(pageConfiguration);
+    m_overlayPage = std::make_unique<Page>(WTFMove(pageConfiguration));
 
     Settings& settings = m_page.settings();
     Settings& overlaySettings = m_overlayPage->settings();

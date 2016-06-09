@@ -70,7 +70,7 @@ void Page::addSchedulePair(Ref<SchedulePair>&& pair)
     m_scheduledRunLoopPairs->add(pair.ptr());
 
 #if !USE(CFNETWORK)
-    for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         if (DocumentLoader* documentLoader = frame->loader().documentLoader())
             documentLoader->schedule(pair);
         if (DocumentLoader* documentLoader = frame->loader().provisionalDocumentLoader())
@@ -90,7 +90,7 @@ void Page::removeSchedulePair(Ref<SchedulePair>&& pair)
     m_scheduledRunLoopPairs->remove(pair.ptr());
 
 #if !USE(CFNETWORK)
-    for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         if (DocumentLoader* documentLoader = frame->loader().documentLoader())
             documentLoader->unschedule(pair);
         if (DocumentLoader* documentLoader = frame->loader().provisionalDocumentLoader())

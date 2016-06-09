@@ -40,7 +40,6 @@
 #include "FocusDirection.h"
 #include "FrameLoaderClient.h"
 #include "InspectorClient.h"
-#include "Page.h"
 #include "ProgressTrackerClient.h"
 #include "ResourceError.h"
 #include "TextCheckerClient.h"
@@ -71,6 +70,7 @@
 namespace WebCore {
 
 class GraphicsContext3D;
+class Page;
 
 class EmptyChromeClient : public ChromeClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -436,7 +436,6 @@ class EmptyEditorClient : public EditorClient {
 public:
     EmptyEditorClient() { }
     virtual ~EmptyEditorClient() { }
-    void pageDestroyed() override { }
 
     bool shouldDeleteRange(Range*) override { return false; }
     bool smartInsertDeleteEnabled() override { return false; }

@@ -389,7 +389,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(CONTEXT_MENUS)
     pageConfiguration.contextMenuClient = new WebContextMenuClient(this);
 #endif
-    pageConfiguration.editorClient = new WebEditorClient(this);
+    pageConfiguration.editorClient = std::make_unique<WebEditorClient>(this);
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = new WebDragClient(this);
 #endif
@@ -414,7 +414,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #include <WebKitAdditions/WebPageInitialization.h>
 #endif
 
-    m_page = std::make_unique<Page>(pageConfiguration);
+    m_page = std::make_unique<Page>(WTFMove(pageConfiguration));
     updatePreferences(parameters.store);
 
     m_drawingArea = DrawingArea::create(*this, parameters);

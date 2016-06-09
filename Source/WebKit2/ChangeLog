@@ -1,3 +1,19 @@
+2016-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up EditorClient lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=158588
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::generateTextCheckingRequestID):
+        (WebKit::WebEditorClient::shouldDeleteRange):
+        (WebKit::WebEditorClient::pageDestroyed): Deleted.
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        (WebKit::WebEditorClient::WebEditorClient):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents):
+
 2016-06-09  Andy Estes  <aestes@apple.com>
 
         WKWebView does not render PDF pages in AirPrint

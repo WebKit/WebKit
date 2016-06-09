@@ -30,6 +30,7 @@
 #include "BackForwardClient.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
+#include "EditorClient.h"
 #include "StorageNamespaceProvider.h"
 #include "UserContentController.h"
 #include "VisitedLinkStore.h"

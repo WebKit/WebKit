@@ -41,8 +41,6 @@ public:
     }
 
 private:
-    void pageDestroyed() override;
-
     bool shouldDeleteRange(WebCore::Range*) override;
     bool smartInsertDeleteEnabled() override;
     bool isSelectTrailingWhitespaceEnabled() override;

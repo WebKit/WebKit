@@ -67,7 +67,7 @@ public:
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuClient* contextMenuClient { nullptr };
 #endif
-    EditorClient* editorClient { nullptr };
+    std::unique_ptr<EditorClient> editorClient;
     DragClient* dragClient { nullptr };
     InspectorClient* inspectorClient { nullptr };
     PlugInClient* plugInClient { nullptr };

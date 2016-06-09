@@ -1,3 +1,18 @@
+2016-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up EditorClient lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=158588
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient):
+        (WebEditorClient::pageDestroyed): Deleted.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2016-06-09  Andy Estes  <aestes@apple.com>
 
         Define printing{Minimum,Maximum}ShrinkFactor in only one place

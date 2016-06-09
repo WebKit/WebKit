@@ -183,11 +183,6 @@ static WebViewInsertAction kit(EditorInsertAction coreAction)
 
 @end
 
-void WebEditorClient::pageDestroyed()
-{
-    delete this;
-}
-
 WebEditorClient::WebEditorClient(WebView *webView)
     : m_webView(webView)
     , m_undoTarget(adoptNS([[WebEditorUndoTarget alloc] init]))

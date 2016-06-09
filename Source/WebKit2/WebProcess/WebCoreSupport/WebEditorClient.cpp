@@ -70,11 +70,6 @@ static uint64_t generateTextCheckingRequestID()
     return uniqueTextCheckingRequestID++;
 }
 
-void WebEditorClient::pageDestroyed()
-{
-    delete this;
-}
-
 bool WebEditorClient::shouldDeleteRange(Range* range)
 {
     bool result = m_page->injectedBundleEditorClient().shouldDeleteRange(m_page, range);
