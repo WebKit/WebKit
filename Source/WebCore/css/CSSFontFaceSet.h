@@ -60,8 +60,11 @@ public:
     size_t faceCount() const { return m_faces.size(); }
     void add(CSSFontFace&);
     void remove(const CSSFontFace&);
+    void purge();
     void clear();
     CSSFontFace& operator[](size_t i);
+
+    CSSFontFace* lookupByCSSConnection(StyleRuleFontFace&);
 
     bool check(const String& font, const String& text, ExceptionCode&);
 
@@ -91,7 +94,7 @@ private:
     void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
     void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) override;
 
-    void registerLocalFontFacesForFamily(const String&);
+    void ensureLocalFontFacesForFamilyRegistered(const String&);
 
     static String familyNameFromPrimitive(const CSSPrimitiveValue&);
 
@@ -100,6 +103,7 @@ private:
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_facesLookupTable;
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_locallyInstalledFacesLookupTable;
     HashMap<String, HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>, ASCIICaseInsensitiveHash> m_cache;
+    HashMap<StyleRuleFontFace*, CSSFontFace*> m_constituentCSSConnections;
     size_t m_facesPartitionIndex { 0 }; // All entries in m_faces before this index are CSS-connected.
     Status m_status { Status::Loaded };
     HashSet<CSSFontFaceSetClient*> m_clients;

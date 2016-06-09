@@ -1,3 +1,13 @@
+2016-06-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Deleting a CSSOM style rule invalidates any previously-added FontFaces
+        https://bugs.webkit.org/show_bug.cgi?id=158450
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-face-set-cssom-expected.txt: Added.
+        * fast/text/font-face-set-cssom.html: Added.
+
 2016-06-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking webgl/webgl-backing-store-size-update.html as a flaky timeout on mac-wk1

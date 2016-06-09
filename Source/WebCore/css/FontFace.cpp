@@ -270,11 +270,13 @@ void FontFace::setFeatureSettings(const String& featureSettings, ExceptionCode& 
 
 String FontFace::family() const
 {
+    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
     return m_backing->families()->cssText();
 }
 
 String FontFace::style() const
 {
+    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
     switch (m_backing->traitsMask() & FontStyleMask) {
     case FontStyleNormalMask:
         return String("normal", String::ConstructFromLiteral);
@@ -287,6 +289,7 @@ String FontFace::style() const
 
 String FontFace::weight() const
 {
+    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
     switch (m_backing->traitsMask() & FontWeightMask) {
     case FontWeight100Mask:
         return String("100", String::ConstructFromLiteral);
@@ -318,6 +321,7 @@ String FontFace::stretch() const
 
 String FontFace::unicodeRange() const
 {
+    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
     if (!m_backing->ranges().size())
         return "U+0-10FFFF";
     RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
@@ -328,11 +332,13 @@ String FontFace::unicodeRange() const
 
 String FontFace::variant() const
 {
+    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
     return computeFontVariant(m_backing->variantSettings())->cssText();
 }
 
 String FontFace::featureSettings() const
 {
+    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
     if (!m_backing->featureSettings().size())
         return "normal";
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
@@ -357,6 +363,15 @@ auto FontFace::status() const -> LoadStatus
     }
     ASSERT_NOT_REACHED();
     return LoadStatus::Error;
+}
+
+void FontFace::adopt(CSSFontFace& newFace)
+{
+    m_promise = Nullopt;
+    m_backing->removeClient(*this);
+    m_backing = newFace;
+    m_backing->addClient(*this);
+    newFace.setWrapper(*this);
 }
 
 void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontFace::Status newState)
