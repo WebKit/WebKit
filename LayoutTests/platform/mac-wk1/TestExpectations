@@ -211,3 +211,5 @@ webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ P
 
 # repaint rects work differently on WK1
 fast/repaint/vertical-text-repaint.html [ Pass Failure ]
+
+webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
