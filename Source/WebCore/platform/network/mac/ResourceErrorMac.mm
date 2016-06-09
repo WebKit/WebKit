@@ -193,6 +193,7 @@ static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceError
 #if USE(CFNETWORK)
 
 ResourceError::ResourceError(NSError *error)
+    : ResourceErrorBase(Type::Null)
     , m_dataIsUpToDate(false)
     , m_platformError(reinterpret_cast<CFErrorRef>(error))
 {

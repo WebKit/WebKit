@@ -1,3 +1,12 @@
+2016-06-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Attempt to fix the iOS build.
+
+        Unreviewed build fix.
+
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::ResourceError):
+
 2016-06-09  Simon Fraser  <simon.fraser@apple.com>
 
         border-radius with different width and height rendered wrong
