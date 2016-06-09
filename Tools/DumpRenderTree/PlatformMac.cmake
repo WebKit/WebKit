@@ -7,10 +7,8 @@ if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
 set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
 elif ("${CURRENT_OSX_VERSION}" MATCHES "10.10")
 set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceYosemite.a)
-elif ("${CURRENT_OSX_VERSION}" MATCHES "10.11")
-set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceElCapitan.a)
 else ()
-set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceOSX10.12.a)
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceElCapitan.a)
 endif ()
 link_directories(../../WebKitLibraries)
 
@@ -28,6 +26,13 @@ list(APPEND DumpRenderTree_LIBRARIES
 
 add_definitions("-ObjC++ -std=c++11")
 
+if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
+elif ("${CURRENT_OSX_VERSION}" MATCHES "10.10")
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceYosemite.a)
+else ()
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceElCapitan.a)
+endif ()
 link_directories(../../WebKitLibraries)
 include_directories(../../WebKitLibraries)
 
