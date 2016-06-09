@@ -1,5 +1,25 @@
 2016-06-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Threaded Compositor] Many layout tests crash when threaded compositor is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=158560
+
+        Reviewed by Žan Doberšek.
+
+        This is because CoordinatedGraphicsLayer::notifyFlushRequired() assumes it has a valid compositor when it's
+        called. But the compositor is only present when GraphicsLayer::create() is called with a
+        GraphicsLayerFactory. When running the layout tests, layers are created without a factory because DrawingAreaImpl
+        is not entering AC mode as expected and the layer tree host is not created, making
+        DrawingAreaImpl::graphicsLayerFactory() always return nullptr. This happens because DrawingAreaImpl is checking
+        acceleratedDrawingEnabled setting to decide whether to always use compositing mode or not, and WTR sets that
+        setting to false (changing its default value). The thing is that acceleratedDrawingEnabled setting doesn't have
+        any effect in non-Mac ports, what we really want to check there is whether acceleratedCompositingEnabled is true
+        or false.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updatePreferences):
+
+2016-06-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [Threaded Compositor] Remove ThreadedCompositor::setNeedsDisplay()
         https://bugs.webkit.org/show_bug.cgi?id=158523
 

@@ -248,7 +248,7 @@ void DrawingAreaImpl::updatePreferences(const WebPreferencesStore& store)
     settings.setFixedPositionCreatesStackingContext(true);
 #endif
 
-    m_alwaysUseCompositing = settings.acceleratedDrawingEnabled() && settings.forceCompositingMode();
+    m_alwaysUseCompositing = settings.acceleratedCompositingEnabled() && settings.forceCompositingMode();
     if (m_alwaysUseCompositing && !m_layerTreeHost)
         enterAcceleratedCompositingMode(nullptr);
 }
