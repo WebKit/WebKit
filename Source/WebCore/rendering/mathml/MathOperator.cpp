@@ -75,10 +75,28 @@ static const StretchyCharacter stretchyCharacters[14] = {
     { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
-void MathOperator::setOperator(UChar baseCharacter, Type operatorType)
+void MathOperator::setOperator(const RenderStyle& style, UChar baseCharacter, Type operatorType)
 {
     m_baseCharacter = baseCharacter;
     m_operatorType = operatorType;
+    reset(style);
+}
+
+void MathOperator::reset(const RenderStyle& style)
+{
+    m_maxPreferredWidth = 0;
+    m_width = 0;
+
+    // We use the base size for the calculation of the preferred width.
+    GlyphData baseGlyph;
+    if (!getBaseGlyph(style, baseGlyph))
+        return;
+    m_maxPreferredWidth = m_width = advanceWidthForGlyph(baseGlyph);
+
+    if (m_operatorType == Type::VerticalOperator)
+        calculateStretchyData(style, true); // We also take into account the width of larger sizes for the calculation of the preferred width.
+    else if (m_operatorType == Type::DisplayOperator)
+        calculateDisplayStyleLargeOperator(style); // We can directly select the size variant and determine the final metrics.
 }
 
 LayoutUnit MathOperator::stretchSize() const
@@ -127,6 +145,8 @@ void MathOperator::calculateDisplayStyleLargeOperator(const RenderStyle& style)
     for (auto& sizeVariant : sizeVariants) {
         GlyphData glyphData(sizeVariant, baseGlyph.font);
         setSizeVariant(glyphData);
+        // Large operators in STIX Word have incorrect advance width, causing misplacement of superscript, so we use the glyph bound instead (http://sourceforge.net/p/stixfonts/tracking/49/).
+        m_maxPreferredWidth = boundsForGlyph(glyphData).width();
         m_italicCorrection = glyphData.font->mathData()->getItalicCorrection(*glyphData.font, glyphData.glyph);
         if (heightForGlyph(glyphData) >= displayOperatorMinHeight)
             break;
@@ -235,24 +255,24 @@ bool MathOperator::calculateGlyphAssemblyFallback(const RenderStyle& style, cons
     return true;
 }
 
-void MathOperator::calculateStretchyData(const RenderStyle& style, float* maximumGlyphWidth, LayoutUnit targetSize)
+void MathOperator::calculateStretchyData(const RenderStyle& style, bool calculateMaxPreferredWidth, LayoutUnit targetSize)
 {
     ASSERT(m_operatorType == Type::VerticalOperator || m_operatorType == Type::HorizontalOperator);
-    ASSERT(!maximumGlyphWidth || m_operatorType == Type::VerticalOperator);
+    ASSERT(!calculateMaxPreferredWidth || m_operatorType == Type::VerticalOperator);
     bool isVertical = m_operatorType == Type::VerticalOperator;
 
     GlyphData baseGlyph;
     if (!getBaseGlyph(style, baseGlyph))
         return;
 
-    if (!maximumGlyphWidth) {
+    if (!calculateMaxPreferredWidth) {
         // We do not stretch if the base glyph is large enough.
         float baseSize = isVertical ? heightForGlyph(baseGlyph) : advanceWidthForGlyph(baseGlyph);
         if (targetSize <= baseSize)
             return;
     }
 
-    MathOperator::GlyphAssemblyData assemblyData;
+    GlyphAssemblyData assemblyData;
     if (baseGlyph.font->mathData()) {
         Vector<Glyph> sizeVariants;
         Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
@@ -260,11 +280,11 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, float* maximu
         // We verify the size variants.
         for (auto& sizeVariant : sizeVariants) {
             GlyphData glyphData(sizeVariant, baseGlyph.font);
-            if (maximumGlyphWidth)
-                *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(glyphData));
+            if (calculateMaxPreferredWidth)
+                m_maxPreferredWidth = std::max<LayoutUnit>(m_maxPreferredWidth, advanceWidthForGlyph(glyphData));
             else {
                 setSizeVariant(glyphData);
-                float size = isVertical ? heightForGlyph(glyphData) : advanceWidthForGlyph(glyphData);
+                LayoutUnit size = isVertical ? heightForGlyph(glyphData) : advanceWidthForGlyph(glyphData);
                 if (size >= targetSize)
                     return;
             }
@@ -303,11 +323,11 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, float* maximu
     }
 
     // If we are measuring the maximum width, verify each component.
-    if (maximumGlyphWidth) {
-        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.topOrRight));
-        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.extension));
-        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.middle));
-        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.bottomOrLeft));
+    if (calculateMaxPreferredWidth) {
+        m_maxPreferredWidth = std::max<LayoutUnit>(m_maxPreferredWidth, advanceWidthForGlyph(assemblyData.topOrRight));
+        m_maxPreferredWidth = std::max<LayoutUnit>(m_maxPreferredWidth, advanceWidthForGlyph(assemblyData.extension));
+        m_maxPreferredWidth = std::max<LayoutUnit>(m_maxPreferredWidth, advanceWidthForGlyph(assemblyData.middle));
+        m_maxPreferredWidth = std::max<LayoutUnit>(m_maxPreferredWidth, advanceWidthForGlyph(assemblyData.bottomOrLeft));
         return;
     }
 

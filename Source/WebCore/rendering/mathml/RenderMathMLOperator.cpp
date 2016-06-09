@@ -267,30 +267,20 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         return;
     }
 
+    // FIXME: We should not use stretchSize during the preferred width calculation nor should we leave logical width dirty (http://webkit.org/b/152244).
     MathOperator::Type type;
     if (isLargeOperatorInDisplayStyle())
         type = MathOperator::Type::DisplayOperator;
     else
         type = m_isVertical ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
-    m_mathOperator.setOperator(m_textContent, type);
-    GlyphData baseGlyph;
-    float maximumGlyphWidth = m_mathOperator.getBaseGlyph(style(), baseGlyph) ? advanceWidthForGlyph(baseGlyph) : 0;
+    m_mathOperator.setOperator(style(), m_textContent, type);
+    float maximumGlyphWidth;
     if (!m_isVertical) {
+        maximumGlyphWidth = m_mathOperator.width();
         if (maximumGlyphWidth < stretchSize())
             maximumGlyphWidth = stretchSize();
-        m_maxPreferredLogicalWidth = m_leadingSpace + maximumGlyphWidth + m_trailingSpace;
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
-        return;
-    }
-    if (isLargeOperatorInDisplayStyle()) {
-        // Large operators in STIX Word have incorrect advance width, causing misplacement of superscript, so we use the glyph bound instead (http://sourceforge.net/p/stixfonts/tracking/49/).
-        m_mathOperator.calculateDisplayStyleLargeOperator(style());
-        if (m_mathOperator.m_stretchType == MathOperator::StretchType::SizeVariant)
-            maximumGlyphWidth = boundsForGlyph(m_mathOperator.m_variant).width();
-    } else {
-        // FIXME: some glyphs (e.g. the one for "FRACTION SLASH" in the STIX Math font or large operators) have a width that depends on the height, resulting in large gaps (https://bugs.webkit.org/show_bug.cgi?id=130326).
-        m_mathOperator.calculateStretchyData(style(), &maximumGlyphWidth);
-    }
+    } else
+        maximumGlyphWidth = m_mathOperator.maxPreferredWidth();
     m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_leadingSpace + maximumGlyphWidth + m_trailingSpace;
 }
 
@@ -379,11 +369,11 @@ void RenderMathMLOperator::updateStyle()
         type = MathOperator::Type::DisplayOperator;
     else
         type = m_isVertical ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
-    m_mathOperator.setOperator(m_textContent, type);
+    m_mathOperator.setOperator(style(), m_textContent, type);
     if (m_isVertical && isLargeOperatorInDisplayStyle())
         m_mathOperator.calculateDisplayStyleLargeOperator(style());
     else {
-        m_mathOperator.calculateStretchyData(style(), nullptr, stretchSize());
+        m_mathOperator.calculateStretchyData(style(), false, stretchSize());
         if (!m_mathOperator.isStretched())
             return;
     }

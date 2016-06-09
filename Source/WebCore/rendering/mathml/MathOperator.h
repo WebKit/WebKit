@@ -41,8 +41,11 @@ class MathOperator {
 public:
     MathOperator() { }
     enum class Type { UndefinedOperator, DisplayOperator, VerticalOperator, HorizontalOperator };
-    void setOperator(UChar baseCharacter, Type);
+    void setOperator(const RenderStyle&, UChar baseCharacter, Type);
+    void reset(const RenderStyle&);
 
+    LayoutUnit width() const { return m_width; }
+    LayoutUnit maxPreferredWidth() const { return m_maxPreferredWidth; }
     LayoutUnit italicCorrection() const { return m_italicCorrection; }
 
     bool isStretched() const { return m_stretchType != StretchType::Unstretched; }
@@ -71,7 +74,7 @@ public:
     void setSizeVariant(const GlyphData&);
     void setGlyphAssembly(const GlyphAssemblyData&);
     void calculateDisplayStyleLargeOperator(const RenderStyle&);
-    void calculateStretchyData(const RenderStyle&, float* maximumGlyphWidth, LayoutUnit targetSize = 0);
+    void calculateStretchyData(const RenderStyle&, bool calculateMaxPreferredWidth, LayoutUnit targetSize = 0);
     bool calculateGlyphAssemblyFallback(const RenderStyle&, const Vector<OpenTypeMathData::AssemblyPart>&, GlyphAssemblyData&) const;
 
     LayoutRect paintGlyph(const RenderStyle&, PaintInfo&, const GlyphData&, const LayoutPoint& origin, GlyphPaintTrimming);
@@ -80,17 +83,18 @@ public:
     void paintVerticalGlyphAssembly(const RenderStyle&, PaintInfo&, const LayoutPoint&);
     void paintHorizontalGlyphAssembly(const RenderStyle&, PaintInfo&, const LayoutPoint&);
 
-    UChar m_baseCharacter = 0;
+    UChar m_baseCharacter { 0 };
     Type m_operatorType { Type::UndefinedOperator };
-    StretchType m_stretchType = StretchType::Unstretched;
+    StretchType m_stretchType { StretchType::Unstretched };
     union {
         GlyphData m_variant;
         GlyphAssemblyData m_assembly;
     };
-    LayoutUnit m_width = 0;
-    LayoutUnit m_ascent = 0;
-    LayoutUnit m_descent = 0;
-    LayoutUnit m_italicCorrection = 0;
+    LayoutUnit m_maxPreferredWidth { 0 };
+    LayoutUnit m_width { 0 };
+    LayoutUnit m_ascent { 0 };
+    LayoutUnit m_descent { 0 };
+    LayoutUnit m_italicCorrection { 0 };
 };
 
 }
