@@ -1354,3 +1354,5 @@ webkit.org/b/158101 imported/blink/http/tests/plugins/get-url-notify-on-removal.
 webkit.org/b/143653 [ Yosemite ] http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Skip ] # Timeout
 
 webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/158569 editing/selection/selection-in-iframe-removed-crash.html [ Pass Failure ]
