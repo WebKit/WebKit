@@ -1,3 +1,29 @@
+2016-06-09  Chris Dumez  <cdumez@apple.com>
+
+        WorkerGlobalScope attributes / operations should be on the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=158568
+        <rdar://problem/26720079>
+
+        Reviewed by Geoffrey Garen.
+
+        WorkerGlobalScope attributes / operations should be on the prototype
+        because WorkerGlobalScope is not marked as [Global] / [PrimaryGlobal]:
+        - https://html.spec.whatwg.org/multipage/workers.html#the-workerglobalscope-common-interface
+        - http://heycam.github.io/webidl/#es-attributes
+        - http://heycam.github.io/webidl/#es-operations
+
+        DedicatedWorkerGlobalScope is the interface that is marked as [Global]
+        and whose attributes / operations should be on the instance.
+
+        This brings the number of failures on http://w3c-test.org/workers/interfaces.worker
+        from 65 to 34. It also aligns our behavior with Firefox and Chrome.
+
+        Test: fast/workers/WorkerGlobalScope-properties-prototype.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InterfaceRequiresAttributesOnInstance):
+        (OperationShouldBeOnInstance):
+
 2016-06-09  Tim Horton  <timothy_horton@apple.com>
 
         Writing-mode-dependent properties don't apply if their value is a variable

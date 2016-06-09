@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/worker-create-common.js"></script>
+<script>
+
+var jsTestIsAsync = true;
+
+description("Tests that WorkerGlobalScope's properties are on the prototype.");
+
+var worker = createWorker();
+worker.postMessage("eval self.__proto__.__proto__ === WorkerGlobalScope.prototype");
+worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('navigator') === true");
+worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('self') === true");
+worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('location') === true");
+worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('close') === true");
+worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('importScripts') === true");
+worker.postMessage("eval self.hasOwnProperty('navigator') === false");
+worker.postMessage("eval self.hasOwnProperty('location') === false");
+worker.postMessage("eval self.hasOwnProperty('close') === false");
+
+// DedicatedWorkerGlobalScope properties should be on the instance.
+worker.postMessage("eval self.hasOwnProperty('postMessage') === true");
+worker.postMessage("eval self.hasOwnProperty('onmessage') === true");
+worker.postMessage("eval DONE");
+
+worker.onmessage = function(evt) {
+    if (!/DONE/.test(evt.data))
+        debug(evt.data.replace(new RegExp("/.*LayoutTests"), "<...>"));
+    else
+        finishJSTest();
+};
+
+</script>
+<script src="../../resources/js-test-post.js"></script>

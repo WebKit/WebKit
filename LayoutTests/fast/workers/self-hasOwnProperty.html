@@ -10,7 +10,7 @@ description('Tests that self.hasOwnProperty() works in workers');
 var worker = createWorker();
 worker.postMessage("eval self.hasOwnProperty('DedicatedWorkerGlobalScope')");
 worker.postMessage("eval self.hasOwnProperty('WorkerGlobalScope')");
-worker.postMessage("eval self.hasOwnProperty('navigator')");
+worker.postMessage("eval self.hasOwnProperty('postMessage')");
 worker.postMessage("eval DONE");
 
 worker.onmessage = function(evt) {

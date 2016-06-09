@@ -558,7 +558,8 @@ sub InterfaceRequiresAttributesOnInstance
     # FIXME: We should be able to drop this once <rdar://problem/24466097> is fixed.
     return 1 if $interface->isException;
 
-    return 1 if IsDOMGlobalObject($interface);
+    # FIXME: Add support for [PrimaryGlobal] / [Global].
+    return 1 if IsDOMGlobalObject($interface) && $interface->name ne "WorkerGlobalScope";
 
     return 1 if InterfaceRequiresAttributesOnInstanceForCompatibility($interface);
 
@@ -596,7 +597,8 @@ sub OperationShouldBeOnInstance
     my $interface = shift;
     my $function = shift;
 
-    return 1 if IsDOMGlobalObject($interface);
+    # FIXME: Add support for [PrimaryGlobal] / [Global].
+    return 1 if IsDOMGlobalObject($interface) && $interface->name ne "WorkerGlobalScope";
 
     # FIXME: The bindings generator does not support putting runtime-enabled operations on the instance yet (except for global objects).
     return 0 if $function->signature->extendedAttributes->{"EnabledAtRuntime"};
