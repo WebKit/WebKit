@@ -44,8 +44,13 @@ public:
         return adoptRef(*new RTCRtpReceiver(WTFMove(track)));
     }
 
+    bool isDispatched() const { return m_isDispatched; }
+    void setDispatched(bool isDispatched) { m_isDispatched = isDispatched; }
+
 private:
     explicit RTCRtpReceiver(Ref<MediaStreamTrack>&&);
+
+    bool m_isDispatched { false };
 };
 
 } // namespace WebCore

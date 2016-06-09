@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+class MediaStream;
 class MediaStreamTrack;
 class PeerMediaDescription;
 class SDPProcessor;
@@ -88,10 +89,13 @@ private:
     void createOfferTask(RTCOfferOptions&, PeerConnection::SessionDescriptionPromise&);
 
     void setLocalDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
+    void setRemoteDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
 
     bool localDescriptionTypeValidForState(RTCSessionDescription::SdpType) const;
+    bool remoteDescriptionTypeValidForState(RTCSessionDescription::SdpType) const;
 
     MediaEndpointSessionDescription* internalLocalDescription() const;
+    MediaEndpointSessionDescription* internalRemoteDescription() const;
     RefPtr<RTCSessionDescription> createRTCSessionDescription(MediaEndpointSessionDescription*) const;
 
     // MediaEndpointClient
@@ -119,6 +123,11 @@ private:
 
     RefPtr<MediaEndpointSessionDescription> m_currentLocalDescription;
     RefPtr<MediaEndpointSessionDescription> m_pendingLocalDescription;
+
+    RefPtr<MediaEndpointSessionDescription> m_currentRemoteDescription;
+    RefPtr<MediaEndpointSessionDescription> m_pendingRemoteDescription;
+
+    HashMap<String, RefPtr<MediaStream>> m_remoteStreamMap;
 
     bool m_negotiationNeeded { false };
 };

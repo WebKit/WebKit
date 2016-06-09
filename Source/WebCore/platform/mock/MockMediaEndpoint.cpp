@@ -131,6 +131,31 @@ Vector<RefPtr<MediaPayload>> MockMediaEndpoint::getDefaultVideoPayloads()
     return payloads;
 }
 
+MediaPayloadVector MockMediaEndpoint::filterPayloads(const MediaPayloadVector& remotePayloads, const MediaPayloadVector& defaultPayloads)
+{
+    MediaPayloadVector filteredPayloads;
+
+    for (auto& remotePayload : remotePayloads) {
+        MediaPayload* defaultPayload = nullptr;
+        for (auto& payload : defaultPayloads) {
+            if (payload->encodingName() == remotePayload->encodingName().convertToASCIIUppercase()) {
+                defaultPayload = payload.get();
+                break;
+            }
+        }
+        if (!defaultPayload)
+            continue;
+
+        if (defaultPayload->parameters().contains("packetizationMode") && remotePayload->parameters().contains("packetizationMode")
+            && (defaultPayload->parameters().get("packetizationMode") != defaultPayload->parameters().get("packetizationMode")))
+            continue;
+
+        filteredPayloads.append(remotePayload);
+    }
+
+    return filteredPayloads;
+}
+
 MediaEndpoint::UpdateResult MockMediaEndpoint::updateReceiveConfiguration(MediaEndpointSessionConfiguration* configuration, bool isInitiator)
 {
     UNUSED_PARAM(configuration);
@@ -139,9 +164,10 @@ MediaEndpoint::UpdateResult MockMediaEndpoint::updateReceiveConfiguration(MediaE
     return UpdateResult::Success;
 }
 
-MediaEndpoint::UpdateResult MockMediaEndpoint::updateSendConfiguration(MediaEndpointSessionConfiguration* configuration, bool isInitiator)
+MediaEndpoint::UpdateResult MockMediaEndpoint::updateSendConfiguration(MediaEndpointSessionConfiguration* configuration, const RealtimeMediaSourceMap& sendSourceMap, bool isInitiator)
 {
     UNUSED_PARAM(configuration);
+    UNUSED_PARAM(sendSourceMap);
     UNUSED_PARAM(isInitiator);
 
     return UpdateResult::Success;

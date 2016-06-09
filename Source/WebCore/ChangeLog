@@ -1,3 +1,58 @@
+2016-06-08  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Imlement MediaEndpointPeerConnection::setRemoteDescription()
+        https://bugs.webkit.org/show_bug.cgi?id=158467
+
+        Reviewed by Eric Carlson.
+
+        Implement MediaEndpointPeerConnection::setRemoteDescription() which verifies a
+        remote offer or answer, configures the WebRTC backend and dispatches the 'track' events
+        that represent the incoming media [1].
+
+        This change also updates the RTCTrackEvent [2] with a streams and a transceiver attribute.
+
+        [1] https://w3c.github.io/webrtc-pc/archives/20160513/webrtc.html#dom-rtcpeerconnection-setremotedescription
+        [2] https://w3c.github.io/webrtc-pc/archives/20160513/webrtc.html#rtctrackevent
+
+        Tests: fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html
+               fast/mediastream/RTCTrackEvent-constructor.html
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::createSourceMap):
+        (WebCore::MediaEndpointPeerConnection::setLocalDescriptionTask):
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescription):
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescriptionTask):
+        Implemented.
+        (WebCore::MediaEndpointPeerConnection::remoteDescription):
+        (WebCore::MediaEndpointPeerConnection::currentRemoteDescription):
+        (WebCore::MediaEndpointPeerConnection::pendingRemoteDescription):
+        (WebCore::MediaEndpointPeerConnection::remoteDescriptionTypeValidForState):
+        (WebCore::MediaEndpointPeerConnection::internalRemoteDescription):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTransceiver):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpReceiver.h:
+        (WebCore::RTCRtpReceiver::isDispatched):
+        (WebCore::RTCRtpReceiver::setDispatched):
+        * Modules/mediastream/RTCTrackEvent.cpp:
+        (WebCore::RTCTrackEvent::create):
+        (WebCore::RTCTrackEvent::RTCTrackEvent):
+        * Modules/mediastream/RTCTrackEvent.h:
+        (WebCore::RTCTrackEvent::streams):
+        (WebCore::RTCTrackEvent::transceiver):
+        * Modules/mediastream/RTCTrackEvent.idl:
+        Add streams and transceiver attributes.
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDictionary.h:
+        * platform/mediastream/MediaEndpoint.h:
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::filterPayloads):
+        (WebCore::MockMediaEndpoint::updateSendConfiguration):
+        * platform/mock/MockMediaEndpoint.h:
+
 2016-06-08  John Wilander  <wilander@apple.com>
 
         Perform IDNA encoding on parameters for setHostAndPort and setHost

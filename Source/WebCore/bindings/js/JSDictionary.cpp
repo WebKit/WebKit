@@ -59,7 +59,9 @@
 
 #if ENABLE(WEB_RTC)
 #include "JSRTCRtpReceiver.h"
+#include "JSRTCRtpTransceiver.h"
 #endif
+
 
 #if ENABLE(GAMEPAD)
 #include "JSGamepad.h"
@@ -265,6 +267,35 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Medi
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<RTCRtpReceiver>& result)
 {
     result = JSRTCRtpReceiver::toWrapped(value);
+}
+
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<RTCRtpTransceiver>& result)
+{
+    result = JSRTCRtpTransceiver::toWrapped(value);
+}
+
+void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<RefPtr<MediaStream>>& result)
+{
+    if (value.isUndefinedOrNull())
+        return;
+
+    unsigned length = 0;
+    JSObject* object = toJSSequence(exec, value, length);
+    if (exec->hadException())
+        return;
+
+    for (unsigned i = 0 ; i < length; ++i) {
+        JSValue itemValue = object->get(exec, i);
+        if (exec->hadException())
+            return;
+
+        auto stream = JSMediaStream::toWrapped(itemValue);
+        if (!stream) {
+            setDOMException(exec, TypeError);
+            return;
+        }
+        result.append(stream);
+    }
 }
 #endif
 

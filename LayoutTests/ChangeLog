@@ -1,3 +1,23 @@
+2016-06-08  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Imlement MediaEndpointPeerConnection::setRemoteDescription()
+        https://bugs.webkit.org/show_bug.cgi?id=158467
+
+        Reviewed by Eric Carlson.
+
+        Add tests for RTCPeerConnection.setRemoteDescription() and the RTCTrackEvent constructor.
+
+        * fast/mediastream/RTCPeerConnection-setRemoteDescription-offer-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html: Added.
+        Verify the description set, the expected RTCPeerConnection state changes and that the
+        'track' event is fired before the setRemoteDescription() promise fulfills.
+        * fast/mediastream/RTCTrackEvent-constructor-expected.txt: Added.
+        * fast/mediastream/RTCTrackEvent-constructor.html: Added.
+        This test has some expected failures since the bindings generator don't support 'required'
+        dictionary members for event init dictionaries.
+        * platform/mac/TestExpectations:
+        Skip tests for mac that require building with WEB_RTC enabled.
+
 2016-06-08  John Wilander  <wilander@apple.com>
 
         Perform IDNA encoding on parameters for setHostAndPort and setHost

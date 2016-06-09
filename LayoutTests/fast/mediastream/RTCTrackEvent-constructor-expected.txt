@@ -1,0 +1,35 @@
+This tests the constructor for the RTCTrackEvent DOM class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+evt = new RTCTrackEvent('eventType', { receiver: receiver, track: track, transceiver: transceiver})
+PASS evt.bubbles is false
+PASS evt.cancelable is false
+PASS evt.receiver is receiver
+PASS evt.track is track
+PASS evt.streams is []
+PASS evt.transceiver is transceiver
+
+PASS new RTCTrackEvent('eventType', { receiver: receiver, track: track, streams: [], transceiver: transceiver}).streams is []
+PASS new RTCTrackEvent('eventType', { receiver: receiver, track: track, streams: [stream], transceiver: transceiver}).streams is [stream]
+
+PASS new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [stream, null], transceiver: transceiver}) threw exception TypeError: Type error.
+PASS new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [null], transceiver: transceiver}) threw exception TypeError: Type error.
+PASS new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [{}], transceiver: transceiver}) threw exception TypeError: Type error.
+PASS new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [1], transceiver: transceiver}) threw exception TypeError: Type error.
+
+Dictionary members receiver, track and transceiver are not nullable
+FAIL new RTCTrackEvent('eventType', { receiver: null, track: track, transceiver: transceiver}) should throw an exception. Was [object RTCTrackEvent].
+FAIL new RTCTrackEvent('eventType', { receiver: receiver, track: null, transceiver: transceiver}) should throw an exception. Was [object RTCTrackEvent].
+FAIL new RTCTrackEvent('eventType', { receiver: receiver, track: track, transceiver: null}) should throw an exception. Was [object RTCTrackEvent].
+
+Dictionary members receiver, track and transceiver are required
+FAIL new RTCTrackEvent('eventType', { track: track, transceiver: transceiver}) should throw an exception. Was [object RTCTrackEvent].
+FAIL new RTCTrackEvent('eventType', { receiver: receiver, transceiver: transceiver}) should throw an exception. Was [object RTCTrackEvent].
+FAIL new RTCTrackEvent('eventType', { receiver: receiver, track: track}) should throw an exception. Was [object RTCTrackEvent].
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

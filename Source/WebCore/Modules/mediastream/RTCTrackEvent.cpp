@@ -34,14 +34,15 @@
 #if ENABLE(WEB_RTC)
 
 #include "EventNames.h"
+#include "MediaStream.h"
 #include "MediaStreamTrack.h"
-#include "RTCRtpReceiver.h"
+#include "RTCRtpTransceiver.h"
 
 namespace WebCore {
 
-Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track)
+Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<RefPtr<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
 {
-    return adoptRef(*new RTCTrackEvent(type, canBubble, cancelable, WTFMove(receiver), WTFMove(track)));
+    return adoptRef(*new RTCTrackEvent(type, canBubble, cancelable, WTFMove(receiver), WTFMove(track), WTFMove(streams), WTFMove(transceiver)));
 }
 
 Ref<RTCTrackEvent> RTCTrackEvent::createForBindings(const AtomicString& type, const RTCTrackEventInit& initializer)
@@ -49,10 +50,12 @@ Ref<RTCTrackEvent> RTCTrackEvent::createForBindings(const AtomicString& type, co
     return adoptRef(*new RTCTrackEvent(type, initializer));
 }
 
-RTCTrackEvent::RTCTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track)
+RTCTrackEvent::RTCTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<RefPtr<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
     : Event(type, canBubble, cancelable)
-    , m_receiver(receiver)
-    , m_track(track)
+    , m_receiver(WTFMove(receiver))
+    , m_track(WTFMove(track))
+    , m_streams(WTFMove(streams))
+    , m_transceiver(WTFMove(transceiver))
 {
 }
 
@@ -60,6 +63,8 @@ RTCTrackEvent::RTCTrackEvent(const AtomicString& type, const RTCTrackEventInit& 
     : Event(type, initializer)
     , m_receiver(initializer.receiver)
     , m_track(initializer.track)
+    , m_streams(initializer.streams)
+    , m_transceiver(initializer.transceiver)
 {
 }
 

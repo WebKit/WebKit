@@ -34,4 +34,6 @@
 ] interface RTCTrackEvent : Event {
    [InitializedByEventConstructor] readonly attribute RTCRtpReceiver receiver;
    [InitializedByEventConstructor] readonly attribute MediaStreamTrack track;
+   [InitializedByEventConstructor] readonly attribute MediaStream[] streams;
+   [InitializedByEventConstructor] readonly attribute RTCRtpTransceiver transceiver;
 };

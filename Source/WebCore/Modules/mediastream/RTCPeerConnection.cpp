@@ -452,6 +452,11 @@ bool RTCPeerConnection::canSuspendForDocumentSuspension() const
     return false;
 }
 
+void RTCPeerConnection::addTransceiver(RefPtr<RTCRtpTransceiver>&& transceiver)
+{
+    m_transceiverSet->append(WTFMove(transceiver));
+}
+
 void RTCPeerConnection::setSignalingState(SignalingState newState)
 {
     m_signalingState = newState;
