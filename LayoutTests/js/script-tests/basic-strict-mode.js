@@ -85,6 +85,9 @@ shouldThrow("(function f(arg){'use strict'; f.arguments; })()");
 shouldThrow("(function f(arg){'use strict'; f.caller; })()");
 shouldThrow("(function f(arg){'use strict'; f.arguments=5; })()");
 shouldThrow("(function f(arg){'use strict'; f.caller=5; })()");
+shouldBe("(function a(a){'use strict'; return a+2; })(40)", "42");
+shouldBe("var foo = function a(a){'use strict'; return a+2; }; foo(40)", "42");
+shouldBe("var o = {foo: function a(a){'use strict'; return a+2; } }; o.foo(40)", "42");
 
 // arguments/caller poisoning should be visible but not throw with 'in' & 'hasOwnProperty'.
 shouldBeTrue('"caller" in function(){"use strict"}');

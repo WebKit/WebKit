@@ -68,6 +68,9 @@ PASS (function f(arg){'use strict'; f.arguments; })() threw exception TypeError:
 PASS (function f(arg){'use strict'; f.caller; })() threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
 PASS (function f(arg){'use strict'; f.arguments=5; })() threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
 PASS (function f(arg){'use strict'; f.caller=5; })() threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
+PASS (function a(a){'use strict'; return a+2; })(40) is 42
+PASS var foo = function a(a){'use strict'; return a+2; }; foo(40) is 42
+PASS var o = {foo: function a(a){'use strict'; return a+2; } }; o.foo(40) is 42
 PASS "caller" in function(){"use strict"} is true
 PASS (function(){"use strict";}).hasOwnProperty("caller") is true
 PASS "arguments" in function(){"use strict"} is true

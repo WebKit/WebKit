@@ -1,3 +1,15 @@
+2016-06-09  Michael Saboff  <msaboff@apple.com>
+
+        ES6: Reusing function name as a parameter name shouldn't throw Syntax Error
+        https://bugs.webkit.org/show_bug.cgi?id=158575
+
+        Reviewed by Benjamin Poulain.
+
+        Added a new test case.
+
+        * js/basic-strict-mode-expected.txt:
+        * js/script-tests/basic-strict-mode.js:
+
 2016-06-09  Antoine Quint  <graouts@apple.com>
 
         Changing canvas height immediately after page load does not relayout canvas

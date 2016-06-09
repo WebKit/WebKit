@@ -1,3 +1,20 @@
+2016-06-09  Michael Saboff  <msaboff@apple.com>
+
+        ES6: Reusing function name as a parameter name shouldn't throw Syntax Error
+        https://bugs.webkit.org/show_bug.cgi?id=158575
+
+        Reviewed by Benjamin Poulain.
+
+        The check for a parameter with a duplicate name doesn't take into account the
+        type of the prior variable.  Added a check that the duplicate is also a
+        parameter.
+
+        See the relevant spec section at:
+        http://www.ecma-international.org/ecma-262/6.0/#sec-function-definitions-static-semantics-early-errors
+
+        * parser/Parser.h:
+        (JSC::Scope::declareParameter):
+
 2016-06-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r201836, r201845, and r201848.

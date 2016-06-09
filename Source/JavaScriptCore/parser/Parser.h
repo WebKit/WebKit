@@ -479,9 +479,10 @@ public:
         DeclarationResultMask result = DeclarationResult::Valid;
         bool isArgumentsIdent = isArguments(m_vm, ident);
         auto addResult = m_declaredVariables.add(ident->impl());
+        bool isValidStrictMode = (addResult.isNewEntry || !addResult.iterator->value.isParameter())
+            && m_vm->propertyNames->eval != *ident && !isArgumentsIdent;
         addResult.iterator->value.clearIsVar();
         addResult.iterator->value.setIsParameter();
-        bool isValidStrictMode = addResult.isNewEntry && m_vm->propertyNames->eval != *ident && !isArgumentsIdent;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         m_declaredParameters.add(ident->impl());
         if (!isValidStrictMode)
