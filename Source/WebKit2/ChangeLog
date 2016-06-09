@@ -1,3 +1,20 @@
+2016-06-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Remove ThreadedCompositor::setNeedsDisplay()
+        https://bugs.webkit.org/show_bug.cgi?id=158523
+
+        Reviewed by Michael Catanzaro.
+
+        ThreadedCompositor::setNeedsDisplay() is always called from the main thread and schedules a task to the
+        compositing thread to schedule an immediate update. But RunLoop::Timer is thread-safe so we don't really need to
+        schedule a task to the update the timer in the compositing thread, we can do that directly in the main
+        thread. And that's exactly what scheduleDisplayImmediately() does, so we can use it instead of setNeedsDisplay().
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::setNeedsDisplay(): Deleted.
+        (WebKit::ThreadedCompositor::updateSceneState):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2016-06-08  Antti Koivisto  <antti@apple.com>
 
         Increase disk cache capacity when there is lots of free space

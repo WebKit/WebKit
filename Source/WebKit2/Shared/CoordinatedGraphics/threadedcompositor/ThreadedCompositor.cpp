@@ -61,14 +61,6 @@ ThreadedCompositor::~ThreadedCompositor()
     terminateCompositingThread();
 }
 
-void ThreadedCompositor::setNeedsDisplay()
-{
-    RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([protector] {
-        protector->scheduleDisplayImmediately();
-    });
-}
-
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     RefPtr<ThreadedCompositor> protector(this);
@@ -221,7 +213,7 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
         scene->commitSceneState(state);
     });
 
-    setNeedsDisplay();
+    scheduleDisplayImmediately();
 }
 
 void ThreadedCompositor::callOnCompositingThread(std::function<void()>&& function)

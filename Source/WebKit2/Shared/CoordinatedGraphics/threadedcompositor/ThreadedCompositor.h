@@ -64,8 +64,6 @@ public:
     static Ref<ThreadedCompositor> create(Client*);
     virtual ~ThreadedCompositor();
 
-    void setNeedsDisplay();
-
     void setNativeSurfaceHandleForCompositing(uint64_t);
     void setDeviceScaleFactor(float);
 
