@@ -1,3 +1,11 @@
+2016-06-08  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Try to fix the EFL build. 
+
+        Unreviewed. 
+
+        * TestWebKitAPI/CMakeLists.txt:
+
 2016-06-08  Alex Christensen  <achristensen@webkit.org>
 
        Fix WinCairo build
