@@ -449,7 +449,6 @@ void Options::initialize()
 
             // Do range checks where needed and make corrections to the options:
             ASSERT(Options::thresholdForOptimizeAfterLongWarmUp() >= Options::thresholdForOptimizeAfterWarmUp());
-            ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= Options::thresholdForOptimizeSoon());
             ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= 0);
 
             dumpOptionsIfNeeded();
