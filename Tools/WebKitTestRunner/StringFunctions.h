@@ -87,7 +87,7 @@ inline WTF::String toWTFString(WKStringRef string)
 {
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);
     auto buffer = std::make_unique<char[]>(bufferSize);
-    size_t stringLength = WKStringGetUTF8CString(string, buffer.get(), bufferSize);
+    size_t stringLength = WKStringGetUTF8CStringNonStrict(string, buffer.get(), bufferSize);
     return WTF::String::fromUTF8WithLatin1Fallback(buffer.get(), stringLength - 1);
 }
     

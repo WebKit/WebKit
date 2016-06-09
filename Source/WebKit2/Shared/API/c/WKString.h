@@ -55,6 +55,7 @@ WK_EXPORT size_t WKStringGetCharacters(WKStringRef string, WKChar* buffer, size_
 
 WK_EXPORT size_t WKStringGetMaximumUTF8CStringSize(WKStringRef string);
 WK_EXPORT size_t WKStringGetUTF8CString(WKStringRef string, char* buffer, size_t bufferSize);
+WK_EXPORT size_t WKStringGetUTF8CStringNonStrict(WKStringRef string, char* buffer, size_t bufferSize);
 
 WK_EXPORT bool WKStringIsEqual(WKStringRef a, WKStringRef b);
 WK_EXPORT bool WKStringIsEqualToUTF8CString(WKStringRef a, const char* b);

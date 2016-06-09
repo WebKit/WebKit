@@ -1,3 +1,21 @@
+2016-06-09  Michael Saboff  <msaboff@apple.com>
+
+        WebKitTestRunner and DumpRenderTree do not handle dangling surrogate characters
+        https://bugs.webkit.org/show_bug.cgi?id=154863
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added a non-strict verions of WKStringGetUTF8CString() that will handle dangling
+        surrogates.  Changed the extraction of inner text from frames in DumpRenderTree
+        to use the new WKStringGetUTF8CStringNonStrict() function instead of NSString
+        conversion since NSString doesn't have a way to handle dangling surrogates.
+        The code added in DumpRenderTree matches what was changed in WebKitTestRunner.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpFramesAsText):
+        * WebKitTestRunner/StringFunctions.h:
+        (WTR::toWTFString):
+
 2016-06-08  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Try to fix the EFL build. 

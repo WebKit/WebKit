@@ -70,7 +70,10 @@ size_t WKStringGetMaximumUTF8CStringSize(WKStringRef stringRef)
     return toImpl(stringRef)->stringView().length() * 3 + 1;
 }
 
-size_t WKStringGetUTF8CString(WKStringRef stringRef, char* buffer, size_t bufferSize)
+enum StrictType { NonStrict = false, Strict = true };
+
+template <StrictType strict>
+size_t WKStringGetUTF8CStringImpl(WKStringRef stringRef, char* buffer, size_t bufferSize)
 {
     if (!bufferSize)
         return 0;
@@ -85,7 +88,7 @@ size_t WKStringGetUTF8CString(WKStringRef stringRef, char* buffer, size_t buffer
         result = WTF::Unicode::convertLatin1ToUTF8(&characters, characters + stringView.length(), &p, p + bufferSize - 1);
     } else {
         const UChar* characters = stringView.characters16();
-        result = WTF::Unicode::convertUTF16ToUTF8(&characters, characters + stringView.length(), &p, p + bufferSize - 1, /* strict */ true);
+        result = WTF::Unicode::convertUTF16ToUTF8(&characters, characters + stringView.length(), &p, p + bufferSize - 1, strict);
     }
 
     if (result != WTF::Unicode::conversionOK && result != WTF::Unicode::targetExhausted)
@@ -93,6 +96,16 @@ size_t WKStringGetUTF8CString(WKStringRef stringRef, char* buffer, size_t buffer
 
     *p++ = '\0';
     return p - buffer;
+}
+
+size_t WKStringGetUTF8CString(WKStringRef stringRef, char* buffer, size_t bufferSize)
+{
+    return WKStringGetUTF8CStringImpl<StrictType::Strict>(stringRef, buffer, bufferSize);
+}
+
+size_t WKStringGetUTF8CStringNonStrict(WKStringRef stringRef, char* buffer, size_t bufferSize)
+{
+    return WKStringGetUTF8CStringImpl<StrictType::NonStrict>(stringRef, buffer, bufferSize);
 }
 
 bool WKStringIsEqual(WKStringRef aRef, WKStringRef bRef)
