@@ -54,26 +54,7 @@ void AnimationTimeline::destroy()
     }
     
     ASSERT_NOT_REACHED();
-}
-
-void AnimationTimeline::attachAnimation(WebAnimation& animation)
-{
-    if (classType() == DocumentTimelineClass) {
-        downcast<DocumentTimeline>(*this).attach(animation);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-void AnimationTimeline::detachAnimation(WebAnimation& animation)
-{
-    if (classType() == DocumentTimelineClass) {
-        downcast<DocumentTimeline>(*this).detach(animation);
-        return;
-    }
-    
-    ASSERT_NOT_REACHED();
+    return;
 }
 
 } // namespace WebCore

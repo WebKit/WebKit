@@ -52,7 +52,6 @@ class PlatformWheelEvent;
 class PseudoElement;
 class RenderNamedFlowFragment;
 class RenderTreePosition;
-class WebAnimation;
 struct ElementStyle;
 
 enum SpellcheckAttributeState {
@@ -516,10 +515,6 @@ public:
 
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
-
-#if ENABLE(WEB_ANIMATIONS)
-    Vector<WebAnimation*> getAnimations();
-#endif
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);

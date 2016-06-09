@@ -223,13 +223,9 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
-    $(WebCore)/animation/Animatable.idl \
-    $(WebCore)/animation/AnimationEffect.idl \
     $(WebCore)/animation/AnimationTimeline.idl \
     $(WebCore)/animation/DocumentAnimation.idl \
     $(WebCore)/animation/DocumentTimeline.idl \
-    $(WebCore)/animation/KeyframeEffect.idl \
-    $(WebCore)/animation/WebAnimation.idl \
     $(WebCore)/crypto/CryptoKey.idl \
     $(WebCore)/crypto/CryptoKeyPair.idl \
     $(WebCore)/crypto/SubtleCrypto.idl \

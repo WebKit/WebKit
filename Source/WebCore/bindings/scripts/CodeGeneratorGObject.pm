@@ -47,7 +47,7 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
                     "Event" => 1, "CSSRule" => 1, "CSSValue" => 1, "StyleSheet" => 1, "MediaList" => 1,
                     "Counter" => 1, "Rect" => 1, "RGBColor" => 1, "XPathExpression" => 1, "XPathResult" => 1,
                     "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1, "Blob" => 1, "DOMTokenList" => 1,
-                    "HTMLCollection" => 1, "TextTrackCue" => 1, "AnimationTimeline" => 1, "AnimationEffect" => 1);
+                    "HTMLCollection" => 1, "TextTrackCue" => 1, "AnimationTimeline" => 1);
 
 # Only objects derived from Node are released by the DOM object cache and can be
 # transfer none. Ideally we could use GetBaseClass with the parent type to check
@@ -63,7 +63,7 @@ my %transferFullTypeHash = ("AudioTrack" => 1, "AudioTrackList" => 1, "BarProp" 
     "DOMWindow" => 1, "DOMWindowCSS" => 1, "EventTarget" => 1,
     "File" => 1, "FileList" => 1, "Gamepad" => 1, "GamepadList" => 1,
     "Geolocation" => 1, "HTMLOptionsCollection" => 1, "History" => 1,
-    "KeyboardEvent" => 1, "KeyframeEffect" => 1, "MediaError" => 1, "MediaController" => 1,
+    "KeyboardEvent" => 1, "MediaError" => 1, "MediaController" => 1,
     "MouseEvent" => 1, "MediaQueryList" => 1, "Navigator" => 1, "NodeFilter" => 1,
     "Performance" => 1, "PerformanceEntry" => 1, "PerformanceEntryList" => 1, "PerformanceNavigation" => 1, "PerformanceTiming" => 1,
     "Range" => 1, "Screen" => 1, "SpeechSynthesis" => 1, "SpeechSynthesisVoice" => 1,

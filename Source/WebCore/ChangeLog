@@ -1,3 +1,18 @@
+2016-06-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r201810.
+        https://bugs.webkit.org/show_bug.cgi?id=158563
+
+        breaks build without ENABLE_WEB_ANIMATION (Requested by
+        mcatanzaro on #webkit).
+
+        Reverted changeset:
+
+        "[web-animations] Add Animatable, AnimationEffect,
+        KeyframeEffect and Animation interface"
+        https://bugs.webkit.org/show_bug.cgi?id=156096
+        http://trac.webkit.org/changeset/201810
+
 2016-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         slotchange event should be fired at the end of microtask

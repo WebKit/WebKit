@@ -31,20 +31,15 @@
 
 #if ENABLE(WEB_ANIMATIONS)
 
-#include "Document.h"
-#include "DocumentAnimation.h"
-#include "WebAnimation.h"
-
 namespace WebCore {
 
-Ref<DocumentTimeline> DocumentTimeline::create(Document& context, double originTime)
+Ref<DocumentTimeline> DocumentTimeline::create(double originTime)
 {
-    return adoptRef(*new DocumentTimeline(context, originTime));
+    return adoptRef(*new DocumentTimeline(originTime));
 }
 
-DocumentTimeline::DocumentTimeline(Document& context, double originTime)
+DocumentTimeline::DocumentTimeline(double originTime)
     : AnimationTimeline(DocumentTimelineClass)
-    , m_document(context.createWeakPtr())
     , m_originTime(originTime)
 {
     UNUSED_PARAM(m_originTime);
@@ -52,31 +47,6 @@ DocumentTimeline::DocumentTimeline(Document& context, double originTime)
 
 DocumentTimeline::~DocumentTimeline()
 {
-}
-
-void DocumentTimeline::attach(WebAnimation& animation)
-{
-    ASSERT(animation.timeline() == this);
-    ASSERT(m_document);
-
-    if (!m_document)
-        return;
-
-    auto* document = DocumentAnimation::from(m_document.get());
-    if (document)
-        document->addAnimation(animation);
-}
-
-void DocumentTimeline::detach(WebAnimation& animation)
-{
-    ASSERT(m_document);
-
-    if (!m_document)
-        return;
-
-    auto* document = DocumentAnimation::from(m_document.get());
-    if (document)
-        document->removeAnimation(animation);
 }
 
 } // namespace WebCore

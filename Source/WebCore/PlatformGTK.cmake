@@ -592,13 +592,9 @@ list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
 
 if (ENABLE_WEB_ANIMATIONS)
     list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
-        animation/Animatable.idl
-        animation/AnimationEffect.idl
         animation/AnimationTimeline.idl
         animation/DocumentAnimation.idl
         animation/DocumentTimeline.idl
-        animation/KeyframeEffect.idl
-        animation/WebAnimation.idl
     )
 endif ()
 
