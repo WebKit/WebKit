@@ -1,3 +1,9 @@
+2016-06-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, teach the perf bots not to run JSAir.
+
+        * Skipped:
+
 2016-06-08  Filip Pizlo  <fpizlo@apple.com>
 
         Use more ES6 features in JSAir
