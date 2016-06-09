@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #import "AccessibilityIOS.h"
 #import "ApplicationStateTracker.h"
 #import "PageClientImplIOS.h"
+#import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "SmartMagnificationController.h"
@@ -48,6 +49,8 @@
 #import "WebPageGroup.h"
 #import "WebProcessPool.h"
 #import "WebSystemInterface.h"
+#import "_WKFrameHandleInternal.h"
+#import "_WKWebViewPrintFormatterInternal.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FrameView.h>
@@ -181,6 +184,9 @@ private:
     RetainPtr<NSUndoManager> _undoManager;
 
     std::unique_ptr<ApplicationStateTracker> _applicationStateTracker;
+
+    BOOL _isPrintingToPDF;
+    RetainPtr<CGPDFDocumentRef> _printedDocument;
 }
 
 - (instancetype)_commonInitializationWithProcessPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration
@@ -606,6 +612,67 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (void)_applicationDidBecomeActive:(NSNotification*)notification
 {
     _page->applicationDidBecomeActive();
+}
+
+@end
+
+#pragma mark Printing
+
+@interface WKContentView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
+@end
+
+@implementation WKContentView (_WKWebViewPrintFormatter)
+
+- (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
+{
+    if (_isPrintingToPDF)
+        return 0;
+
+    uint64_t frameID;
+    if (_WKFrameHandle *handle = printFormatter.frameToPrint)
+        frameID = handle._frameID;
+    else if (auto mainFrame = _page->mainFrame())
+        frameID = mainFrame->frameID();
+    else
+        return 0;
+
+    // The first page can have a smaller content rect than subsequent pages if a top content inset
+    // is specified. Since WebKit requires a uniform content rect for each page during layout, use
+    // the intersection of the first and non-first page rects.
+    // FIXME: Teach WebCore::PrintContext to accept an initial content offset when paginating.
+    CGRect printingRect = CGRectIntersection([printFormatter _pageContentRect:YES], [printFormatter _pageContentRect:NO]);
+    if (CGRectIsEmpty(printingRect))
+        return 0;
+
+    PrintInfo printInfo;
+    printInfo.pageSetupScaleFactor = 1;
+    printInfo.availablePaperWidth = CGRectGetWidth(printingRect);
+    printInfo.availablePaperHeight = CGRectGetHeight(printingRect);
+
+    _isPrintingToPDF = YES;
+    auto retainedSelf = retainPtr(self);
+    return _page->computePagesForPrintingAndDrawToPDF(frameID, printInfo, [retainedSelf](const IPC::DataReference& pdfData, CallbackBase::Error error) {
+        retainedSelf->_isPrintingToPDF = NO;
+        if (error != CallbackBase::Error::None)
+            return;
+
+        auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
+        auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
+        retainedSelf->_printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
+    });
+}
+
+- (CGPDFDocumentRef)_wk_printedDocument
+{
+    if (_isPrintingToPDF) {
+        if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DrawToPDFCallback>(_page->pageID(), std::chrono::milliseconds::max())) {
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+        ASSERT(!_isPrintingToPDF);
+    }
+
+    return _printedDocument.autorelease();
 }
 
 @end

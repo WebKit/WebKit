@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,81 +24,69 @@
  */
 
 #import "config.h"
-#import "_WKWebViewPrintFormatter.h"
+#import "_WKWebViewPrintFormatterInternal.h"
 
 #if PLATFORM(IOS)
 
-#import "PrintInfo.h"
 #import "WKWebViewInternal.h"
+#import "_WKFrameHandle.h"
 #import <wtf/RetainPtr.h>
 
-@interface UIPrintFormatter ()
-- (CGRect)_pageContentRect:(BOOL)firstPage;
-- (void)_recalcIfNecessary;
-@end
-
-@interface _WKWebViewPrintFormatter ()
-@property (nonatomic, readonly) WKWebView *webView;
-@end
-
 @implementation _WKWebViewPrintFormatter {
-    double _totalScaleFactor;
-    WebKit::PrintInfo _printInfo;
+    RetainPtr<_WKFrameHandle> _frameToPrint;
+    RetainPtr<CGPDFDocumentRef> _printedDocument;
 }
 
-- (void)dealloc
+- (_WKFrameHandle *)frameToPrint
 {
-    [self.webView _endPrinting];
-    [_frameToPrint release];
-    [super dealloc];
+    return _frameToPrint.get();
 }
 
-- (WKWebView *)webView
+- (void)setFrameToPrint:(_WKFrameHandle *)frameToPrint
 {
-    ASSERT([self.view isKindOfClass:[WKWebView class]]);
-    return static_cast<WKWebView *>(self.view);
+    _frameToPrint = frameToPrint;
+}
+
+- (WKWebView *)_webView
+{
+    UIView *view = self.view;
+    ASSERT([view isKindOfClass:[WKWebView class]]);
+    return static_cast<WKWebView *>(view);
 }
 
 - (NSInteger)_recalcPageCount
 {
-    ASSERT([self respondsToSelector:@selector(_pageContentRect:)]);
-
-    CGRect firstRect = [self _pageContentRect:YES];
-    CGRect nextRect = [self _pageContentRect:NO];
-    if (CGRectIsEmpty(firstRect) || CGRectIsEmpty(nextRect))
-        return 0;
-
-    // The first page can have a smaller content rect than subsequent pages if a top content inset is specified. Since
-    // WebKit requires a uniform content rect for each page during layout, use the first page rect for all pages if it's
-    // smaller. This is what UIWebView's print formatter does.
-    ASSERT(firstRect.size.width == nextRect.size.width);
-    ASSERT(firstRect.origin.y >= nextRect.origin.y);
-    _printInfo.pageSetupScaleFactor = 1;
-    _printInfo.availablePaperWidth = nextRect.size.width;
-    _printInfo.availablePaperHeight = nextRect.size.height - (firstRect.origin.y - nextRect.origin.y);
-
-    return [self.webView _computePageCountAndStartDrawingToPDFForFrame:_frameToPrint printInfo:_printInfo firstPage:self.startPage computedTotalScaleFactor:_totalScaleFactor];
+    _printedDocument = nullptr;
+    NSUInteger pageCount = [self._webView._printProvider _wk_pageCountForPrintFormatter:self];
+    return std::min<NSUInteger>(pageCount, NSIntegerMax);
 }
 
 - (CGRect)rectForPageAtIndex:(NSInteger)pageIndex
 {
-    ASSERT([self respondsToSelector:@selector(_recalcIfNecessary)]);
-    [self _recalcIfNecessary];
     return [self _pageContentRect:pageIndex == self.startPage];
 }
 
 - (void)drawInRect:(CGRect)rect forPageAtIndex:(NSInteger)pageIndex
 {
-    // CGPDFDocuments use 1-based page indexing.
-    CGPDFPageRef pdfPage = CGPDFDocumentGetPage(self.webView._printedDocument, pageIndex - self.startPage + 1);
+    if (!_printedDocument)
+        _printedDocument = self._webView._printProvider._wk_printedDocument;
+
+    NSInteger offsetFromStartPage = pageIndex - self.startPage;
+    if (offsetFromStartPage < 0)
+        return;
+
+    CGPDFPageRef page = CGPDFDocumentGetPage(_printedDocument.get(), offsetFromStartPage + 1);
+    if (!page)
+        return;
 
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSaveGState(context);
 
-    CGContextTranslateCTM(context, rect.origin.x, rect.origin.y);
-    CGContextScaleCTM(context, _totalScaleFactor, -_totalScaleFactor);
-    CGContextTranslateCTM(context, 0, -CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox).size.height);
-    CGContextDrawPDFPage(context, pdfPage);
+    CGContextTranslateCTM(context, CGRectGetMinX(rect), CGRectGetMaxY(rect));
+    CGContextScaleCTM(context, 1, -1);
+    CGContextConcatCTM(context, CGPDFPageGetDrawingTransform(page, kCGPDFCropBox, CGRectMake(0, 0, CGRectGetWidth(rect), CGRectGetHeight(rect)), 0, true));
+    CGContextClipToRect(context, CGPDFPageGetBoxRect(page, kCGPDFCropBox));
+    CGContextDrawPDFPage(context, page);
 
     CGContextRestoreGState(context);
 }

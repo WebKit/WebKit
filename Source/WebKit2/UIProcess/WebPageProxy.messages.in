@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -186,7 +186,7 @@ messages -> WebPageProxy {
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)
     DisableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
-    DidFinishDrawingPagesToPDF(IPC::DataReference pdfData)
+    DrawToPDFCallback(IPC::DataReference pdfData, uint64_t callbackID)
 #endif
 #if ENABLE(DATA_DETECTION)
     SetDataDetectionResult(struct WebKit::DataDetectionResult dataDetectionResult)

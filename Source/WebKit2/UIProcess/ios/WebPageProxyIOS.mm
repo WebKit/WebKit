@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
+#import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteLayerTreeTransaction.h"
@@ -962,9 +963,25 @@ void WebPageProxy::disableDoubleTapGesturesDuringTapIfNecessary(uint64_t request
     m_pageClient.disableDoubleTapGesturesDuringTapIfNecessary(requestID);
 }
 
-void WebPageProxy::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfData)
+uint32_t WebPageProxy::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo& printInfo, DrawToPDFCallback::CallbackFunction&& callback)
 {
-    m_pageClient.didFinishDrawingPagesToPDF(pdfData);
+    if (!isValid()) {
+        callback(IPC::DataReference(), CallbackBase::Error::OwnerWasInvalidated);
+        return 0;
+    }
+
+    uint32_t pageCount = 0;
+    uint64_t callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    using Message = Messages::WebPage::ComputePagesForPrintingAndDrawToPDF;
+    process().sendSync(Message(frameID, printInfo, callbackID), Message::Reply(pageCount), m_pageID);
+    return pageCount;
+}
+
+void WebPageProxy::drawToPDFCallback(const IPC::DataReference& pdfData, uint64_t callbackID)
+{
+    auto callback = m_callbacks.take<DrawToPDFCallback>(callbackID);
+    RELEASE_ASSERT(callback);
+    callback->performCallbackWithReturnValue(pdfData);
 }
 
 void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)

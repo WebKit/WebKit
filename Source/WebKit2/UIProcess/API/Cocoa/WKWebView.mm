@@ -99,7 +99,6 @@
 
 #if PLATFORM(IOS)
 #import "_WKWebViewPrintFormatter.h"
-#import "PrintInfo.h"
 #import "ProcessThrottler.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
@@ -108,7 +107,6 @@
 #import "WKPDFView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
-#import "WebPageMessages.h"
 #import "WebVideoFullscreenManagerProxy.h"
 #import <UIKit/UIApplication.h>
 #import <WebCore/CoreGraphicsSPI.h>
@@ -260,8 +258,6 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     BOOL _delayUpdateVisibleContentRects;
     BOOL _hadDelayedUpdateVisibleContentRects;
 
-    BOOL _pageIsPrintingToPDF;
-    RetainPtr<CGPDFDocumentRef> _printedDocument;
     Vector<std::function<void ()>> _snapshotsDeferredDuringResize;
 #endif
 #if PLATFORM(MAC)
@@ -4533,50 +4529,12 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return [_WKWebViewPrintFormatter class];
 }
 
-- (NSInteger)_computePageCountAndStartDrawingToPDFForFrame:(_WKFrameHandle *)frame printInfo:(const WebKit::PrintInfo&)printInfo firstPage:(uint32_t)firstPage computedTotalScaleFactor:(double&)totalScaleFactor
+- (id <_WKWebViewPrintProvider>)_printProvider
 {
-    if ([self _isDisplayingPDF])
-        return CGPDFDocumentGetNumberOfPages([(WKPDFView *)_customContentView pdfDocument]);
-
-    _pageIsPrintingToPDF = YES;
-    Vector<WebCore::IntRect> pageRects;
-    uint64_t frameID = frame ? frame._frameID : _page->mainFrame()->frameID();
-    if (!_page->sendSync(Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF(frameID, printInfo, firstPage), Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF::Reply(pageRects, totalScaleFactor)))
-        return 0;
-    return pageRects.size();
-}
-
-- (void)_endPrinting
-{
-    _pageIsPrintingToPDF = NO;
-    _printedDocument = nullptr;
-    _page->send(Messages::WebPage::EndPrinting());
-}
-
-- (CGPDFDocumentRef)_printedDocument
-{
-    if ([self _isDisplayingPDF]) {
-        ASSERT(!_pageIsPrintingToPDF);
-        return [(WKPDFView *)_customContentView pdfDocument];
-    }
-
-    if (_pageIsPrintingToPDF) {
-        if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidFinishDrawingPagesToPDF>(_page->pageID(), std::chrono::milliseconds::max())) {
-            ASSERT_NOT_REACHED();
-            return nullptr;
-        }
-        ASSERT(!_pageIsPrintingToPDF);
-    }
-    return _printedDocument.get();
-}
-
-- (void)_setPrintedDocument:(CGPDFDocumentRef)printedDocument
-{
-    if (!_pageIsPrintingToPDF)
-        return;
-    ASSERT(![self _isDisplayingPDF]);
-    _printedDocument = printedDocument;
-    _pageIsPrintingToPDF = NO;
+    id contentView = self._currentContentView;
+    if ([contentView conformsToProtocol:@protocol(_WKWebViewPrintProvider)])
+        return contentView;
+    return nil;
 }
 
 @end

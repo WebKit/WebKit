@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
 #import "_WKFindDelegate.h"
+#import "_WKWebViewPrintFormatterInternal.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
@@ -886,6 +887,28 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
     if (auto drawingArea = _webView->_page->drawingArea())
         drawingArea->hideContentUntilAnyUpdate();
     _webView->_page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow, true, WebPageProxy::ViewStateChangeDispatchMode::Immediate);
+}
+
+@end
+
+#pragma mark Printing
+
+@interface WKPDFView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
+@end
+
+@implementation WKPDFView (_WKWebViewPrintFormatter)
+
+- (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
+{
+    CGPDFDocumentRef document = _cgPDFDocument.get();
+    if (CGPDFDocumentAllowsPrinting(document))
+        return CGPDFDocumentGetNumberOfPages(document);
+    return 0;
+}
+
+- (CGPDFDocumentRef)_wk_printedDocument
+{
+    return _cgPDFDocument.get();
 }
 
 @end
