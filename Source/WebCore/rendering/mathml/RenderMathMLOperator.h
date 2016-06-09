@@ -32,6 +32,7 @@
 #include "GlyphPage.h"
 #include "MathMLElement.h"
 #include "MathMLOperatorDictionary.h"
+#include "MathOperator.h"
 #include "OpenTypeMathData.h"
 #include "RenderMathMLToken.h"
 
@@ -51,7 +52,7 @@ public:
     // FIXME: The displaystyle property is not implemented (https://bugs.webkit.org/show_bug.cgi?id=118737).
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp); }
     bool isVertical() const { return m_isVertical; }
-    LayoutUnit italicCorrection() const { return m_italicCorrection; }
+    LayoutUnit italicCorrection() const { return m_mathOperator.italicCorrection(); }
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void updateStyle() final;
@@ -73,20 +74,6 @@ protected:
     UChar textContent() const { return m_textContent; }
 
 private:
-    struct GlyphAssemblyData {
-        GlyphData topOrRight;
-        GlyphData extension;
-        GlyphData bottomOrLeft;
-        GlyphData middle;
-    };
-    enum class StretchType { Unstretched, SizeVariant, GlyphAssembly };
-    StretchType m_stretchType;
-    union {
-        GlyphData m_variant;
-        GlyphAssemblyData m_assembly;
-    };
-    LayoutUnit m_italicCorrection;
-
     const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
     bool isRenderMathMLOperator() const final { return true; }
@@ -100,27 +87,6 @@ private:
 
     bool shouldAllowStretching() const;
 
-    bool getBaseGlyph(const RenderStyle&, GlyphData&) const;
-    void setSizeVariant(const GlyphData&);
-    void setGlyphAssembly(const GlyphAssemblyData&);
-    bool calculateGlyphAssemblyFallBack(const Vector<OpenTypeMathData::AssemblyPart>&, GlyphAssemblyData&) const;
-    void calculateDisplayStyleLargeOperator();
-    void calculateStretchyData(float* maximumGlyphWidth, LayoutUnit targetSize = 0);
-
-    enum GlyphPaintTrimming {
-        TrimTop,
-        TrimBottom,
-        TrimTopAndBottom,
-        TrimLeft,
-        TrimRight,
-        TrimLeftAndRight
-    };
-
-    LayoutRect paintGlyph(PaintInfo&, const GlyphData&, const LayoutPoint& origin, GlyphPaintTrimming);
-    void fillWithVerticalExtensionGlyph(PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
-    void fillWithHorizontalExtensionGlyph(PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
-    void paintVerticalGlyphAssembly(PaintInfo&, const LayoutPoint&);
-    void paintHorizontalGlyphAssembly(PaintInfo&, const LayoutPoint&);
     void setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag, const QualifiedName&);
     void setOperatorFlagFromAttributeValue(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
     void setOperatorPropertiesFromOpDictEntry(const MathMLOperatorDictionary::Entry*);
@@ -137,6 +103,7 @@ private:
     LayoutUnit m_trailingSpace;
     LayoutUnit m_minSize;
     LayoutUnit m_maxSize;
+    MathOperator m_mathOperator;
 };
 
 } // namespace WebCore

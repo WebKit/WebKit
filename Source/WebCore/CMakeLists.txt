@@ -2517,6 +2517,7 @@ set(WebCore_SOURCES
     rendering/line/TrailingObjects.cpp
 
     rendering/mathml/MathMLOperatorDictionary.cpp
+    rendering/mathml/MathOperator.cpp
     rendering/mathml/RenderMathMLBlock.cpp
     rendering/mathml/RenderMathMLFenced.cpp
     rendering/mathml/RenderMathMLFraction.cpp

@@ -1,3 +1,63 @@
+2016-06-08  Frederic Wang  <fwang@igalia.com>
+
+        Move selection and drawing of stretchy operators into a separate MathOperator class
+        https://bugs.webkit.org/show_bug.cgi?id=156921
+
+        Reviewed by Martin Robinson.
+
+        No new tests, behavior is not changed.
+
+        * CMakeLists.txt: Add the MathOperator files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/mathml/MathOperator.cpp: Added.
+        (WebCore::boundsForGlyph): Moved from RenderMathMLOperator.
+        (WebCore::heightForGlyph): Moved from RenderMathMLOperator.
+        (WebCore::advanceWidthForGlyph): Moved from RenderMathMLOperator.
+        (WebCore::MathOperator::MathOperator):
+        (WebCore::MathOperator::setOperator):
+        (WebCore::MathOperator::getBaseGlyph): Moved from RenderMathMLOperator.
+        (WebCore::MathOperator::setSizeVariant): Moved from RenderMathMLOperator.
+        (WebCore::MathOperator::setGlyphAssembly): Moved from RenderMathMLOperator.
+        (WebCore::MathOperator::calculateDisplayStyleLargeOperator): Moved from RenderMathMLOperator with additional style parameter.
+        (WebCore::MathOperator::calculateGlyphAssemblyFallBack): Ditto.
+        (WebCore::MathOperator::calculateStretchyData): Ditto.
+        (WebCore::MathOperator::paintGlyph): Ditto.
+        (WebCore::MathOperator::fillWithVerticalExtensionGlyph): Ditto.
+        (WebCore::MathOperator::fillWithHorizontalExtensionGlyph): Ditto.
+        (WebCore::MathOperator::paintVerticalGlyphAssembly): Ditto.
+        (WebCore::MathOperator::paintHorizontalGlyphAssembly): Ditto.
+        * rendering/mathml/MathOperator.h: Added.
+        (WebCore::MathOperator::italicCorrection):
+        (WebCore::MathOperator::isStretched):
+        (WebCore::MathOperator::unstretch):
+        (WebCore::MathOperator::GlyphAssemblyData::GlyphAssemblyData): Moved from RenderMathMLOperator.
+        (WebCore::MathOperator::stretchSize):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths): Updated to use MathOperator members.
+        For now we call setOperator to transmit information to m_mathOperator.
+        (WebCore::RenderMathMLOperator::updateStyle): Updated to use MathOperator members.
+        For now we set some m_mathOperator members to transmit it some information.
+        (WebCore::RenderMathMLOperator::firstLineBaseline): Updated to use MathOperator members.
+        (WebCore::RenderMathMLOperator::computeLogicalHeight): Ditto.
+        (WebCore::RenderMathMLOperator::paint): Ditto.
+        For now we set some m_mathOperator members to transmit it some information.
+        (WebCore::RenderMathMLOperator::paintChildren): Updated to use MathOperator members.
+        (WebCore::RenderMathMLOperator::trailingSpaceError): Ditto.
+        (WebCore::RenderMathMLOperator::getBaseGlyph): Deleted.
+        (WebCore::RenderMathMLOperator::setSizeVariant): Deleted.
+        (WebCore::RenderMathMLOperator::setGlyphAssembly): Deleted.
+        (WebCore::RenderMathMLOperator::calculateGlyphAssemblyFallBack): Deleted.
+        (WebCore::RenderMathMLOperator::calculateDisplayStyleLargeOperator): Deleted.
+        (WebCore::RenderMathMLOperator::calculateStretchyData): Deleted.
+        (WebCore::RenderMathMLOperator::paintGlyph): Deleted.
+        (WebCore::RenderMathMLOperator::fillWithVerticalExtensionGlyph): Deleted.
+        (WebCore::RenderMathMLOperator::fillWithHorizontalExtensionGlyph): Deleted.
+        (WebCore::RenderMathMLOperator::paintVerticalGlyphAssembly): Deleted.
+        (WebCore::RenderMathMLOperator::paintHorizontalGlyphAssembly): Deleted.
+        * rendering/mathml/RenderMathMLOperator.h:
+        (WebCore::RenderMathMLOperator::italicCorrection): Updated to use MathOperator members.
+        (WebCore::RenderMathMLOperator::GlyphAssemblyData::GlyphAssemblyData): Deleted.
+
 2016-06-08  Chris Dumez  <cdumez@apple.com>
 
         DedicatedWorkerGlobalScope prototype chain is incorrect
