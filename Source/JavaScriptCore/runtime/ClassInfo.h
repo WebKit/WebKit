@@ -197,15 +197,6 @@ struct ClassInfo {
         return false;
     }
 
-    bool hasStaticProperties() const
-    {
-        for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
-            if (ci->staticPropHashTable)
-                return true;
-        }
-        return false;
-    }
-
     JS_EXPORT_PRIVATE bool hasStaticSetterOrReadonlyProperties() const;
 
     const HashTable* staticPropHashTable;

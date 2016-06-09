@@ -53,7 +53,7 @@ bool setUpStaticFunctionSlot(VM& vm, const HashTableValue* entry, JSObject* this
     if (!isValidOffset(offset)) {
         // If a property is ever deleted from an object with a static table, then we reify
         // all static functions at that time - after this we shouldn't be re-adding anything.
-        if (thisObject->staticFunctionsReified())
+        if (thisObject->staticPropertiesReified())
             return false;
 
         if (entry->attributes() & Builtin)

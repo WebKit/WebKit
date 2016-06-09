@@ -205,7 +205,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setAttributesInPrevious(0);
     setDidPreventExtensions(false);
     setDidTransition(false);
-    setStaticFunctionsReified(false);
+    setStaticPropertiesReified(false);
     setTransitionWatchpointIsLikelyToBeFired(false);
     setHasBeenDictionary(false);
  
@@ -236,7 +236,7 @@ Structure::Structure(VM& vm)
     setAttributesInPrevious(0);
     setDidPreventExtensions(false);
     setDidTransition(false);
-    setStaticFunctionsReified(false);
+    setStaticPropertiesReified(false);
     setTransitionWatchpointIsLikelyToBeFired(false);
     setHasBeenDictionary(false);
  
@@ -266,7 +266,7 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     setAttributesInPrevious(0);
     setDidPreventExtensions(previous->didPreventExtensions());
     setDidTransition(true);
-    setStaticFunctionsReified(previous->staticFunctionsReified());
+    setStaticPropertiesReified(previous->staticPropertiesReified());
     setHasBeenDictionary(previous->hasBeenDictionary());
  
     TypeInfo typeInfo = previous->typeInfo();

@@ -568,7 +568,7 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
             // prototypes it should be replaced, so break here.
             break;
         }
-        if (!obj->staticFunctionsReified()) {
+        if (!obj->staticPropertiesReified()) {
             if (obj->classInfo()->hasStaticSetterOrReadonlyProperties()) {
                 if (auto* entry = obj->findPropertyHashEntry(propertyName))
                     return putEntry(exec, entry, obj, this, propertyName, value, slot);
@@ -1498,7 +1498,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
 
     unsigned attributes;
 
-    if (!thisObject->staticFunctionsReified()) {
+    if (!thisObject->staticPropertiesReified()) {
         if (auto* entry = thisObject->findPropertyHashEntry(propertyName)) {
             // If the static table contains a non-configurable (DontDelete) property then we can return early;
             // if there is a property in the storage array it too must be non-configurable (the language does
@@ -1890,7 +1890,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
 
 void JSObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    if (!object->staticFunctionsReified())
+    if (!object->staticPropertiesReified())
         getClassPropertyNames(exec, object->classInfo(), propertyNames, mode);
 
     if (!mode.includeJSObjectProperties())
@@ -1965,18 +1965,18 @@ bool JSObject::isExtensible(ExecState* exec)
 
 void JSObject::reifyAllStaticProperties(ExecState* exec)
 {
-    ASSERT(!staticFunctionsReified());
+    ASSERT(!staticPropertiesReified());
     VM& vm = exec->vm();
 
     // If this object's ClassInfo has no static properties, then nothing to reify!
     // We can safely set the flag to avoid the expensive check again in the future.
-    if (!classInfo()->hasStaticProperties()) {
-        structure(vm)->setStaticFunctionsReified(true);
+    if (!TypeInfo::hasStaticPropertyTable(inlineTypeFlags())) {
+        structure(vm)->setStaticPropertiesReified(true);
         return;
     }
 
-    if (!structure(vm)->isUncacheableDictionary())
-        setStructure(vm, Structure::toUncacheableDictionaryTransition(vm, structure(vm)));
+    if (!structure(vm)->isDictionary())
+        setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure(vm)));
 
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
         const HashTable* hashTable = info->staticPropHashTable;
@@ -1992,7 +1992,7 @@ void JSObject::reifyAllStaticProperties(ExecState* exec)
         }
     }
 
-    structure(vm)->setStaticFunctionsReified(true);
+    structure(vm)->setStaticPropertiesReified(true);
 }
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue getterSetter, unsigned attributes, PropertyOffset offset)

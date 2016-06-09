@@ -1,3 +1,46 @@
+2016-06-08  Gavin & Ellie Barraclough  <barraclough@apple.com>
+
+        JSObject::reifyAllStaticProperties cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=158543
+
+        Reviewed by Mark Lam.
+
+        - JSObject & Structure contain fields labeled 'staticFunctionsReified', however reification now
+          affects all properties, not just functions. Rename to 'staticPropertiesReified'.
+        - reifyAllStaticProperties relies on a 'hasStaticProperties' method on ClassInfo that walks the
+          ClassInfo inheritance chain looking for static property tables. We can now more efficiently
+          get this information from TypeInfo.
+        - reifyAllStaticProperties triggers a 'toUncacheableDictionaryTransition'; this is overzealous,
+          cacheable dictionary is sufficient - this is what we do in the case of DOM prototype property
+          reification (see 'reifyStaticProperties' in Lookup.h). (Changing this with an eye on switching
+          DOM prototype property reification to use JSObject:: reifyAllStaticProperties, rather than
+          having its own special purpose code path.)
+
+        * runtime/ClassInfo.h:
+        (JSC::ClassInfo::hasStaticProperties): Deleted.
+            - deprecated by TypeInfo::hasStaticPropertyTable.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+            - staticFunctionsReified -> staticPropertiesReified
+        (JSC::JSObject::reifyAllStaticProperties):
+            - hasStaticProperties -> TypeInfo::hasStaticPropertyTable
+            - toUncacheableDictionaryTransition -> toCacheableDictionaryTransition
+            - staticFunctionsReified -> staticPropertiesReified
+        * runtime/JSObject.h:
+        (JSC::JSObject::staticPropertiesReified):
+        (JSC::JSObject::staticFunctionsReified): Deleted.
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertySlotFromTable):
+        (JSC::replaceStaticPropertySlot):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+            - staticFunctionsReified -> staticPropertiesReified
+
 2016-06-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Change thresholdForOptimizeSoon to match thresholdForOptimizeAfterWarmUp
