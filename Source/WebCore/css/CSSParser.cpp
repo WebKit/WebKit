@@ -1856,13 +1856,19 @@ void CSSParser::addExpandedPropertyForValue(CSSPropertyID propId, Ref<CSSValue>&
         addProperty(longhands[i], value.copyRef(), important);
 }
 
-RefPtr<CSSValue> CSSParser::parseVariableDependentValue(CSSPropertyID propID, const CSSVariableDependentValue& dependentValue, const CustomPropertyValueMap& customProperties)
+RefPtr<CSSValue> CSSParser::parseVariableDependentValue(CSSPropertyID propID, const CSSVariableDependentValue& dependentValue, const CustomPropertyValueMap& customProperties, TextDirection direction, WritingMode writingMode)
 {
     m_valueList.reset(new CSSParserValueList());
     if (!dependentValue.valueList().buildParserValueListSubstitutingVariables(m_valueList.get(), customProperties))
         return nullptr;
-    if (!parseValue(dependentValue.propertyID(), false))
+
+    CSSPropertyID dependentValuePropertyID = dependentValue.propertyID();
+    if (CSSProperty::isDirectionAwareProperty(dependentValuePropertyID))
+        dependentValuePropertyID = CSSProperty::resolveDirectionAwareProperty(dependentValuePropertyID, direction, writingMode);
+
+    if (!parseValue(dependentValuePropertyID, false))
         return nullptr;
+
     for (auto& property : m_parsedProperties) {
         if (property.id() == propID)
             return property.value();

@@ -1,3 +1,24 @@
+2016-06-09  Tim Horton  <timothy_horton@apple.com>
+
+        Writing-mode-dependent properties don't apply if their value is a variable
+        https://bugs.webkit.org/show_bug.cgi?id=158449
+        <rdar://problem/26662478>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/css/variables/direction-dependent-variable-properties.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseVariableDependentValue):
+        * css/CSSParser.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::resolvedVariableValue):
+        CSSVariableDependentValue stores the unresolved (direction-dependent) property ID,
+        because the property that it resolves to cannot be determined until style resolution time.
+        Plumb the requisite direction and writing mode information into parseVariableDependentValue
+        at style resolution time so that the property can be resolved to the correct
+        non-direction-dependent property for each use of the value.
+
 2016-06-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Attempt to fix the iOS build.

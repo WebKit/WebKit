@@ -1,3 +1,16 @@
+2016-06-09  Tim Horton  <timothy_horton@apple.com>
+
+        Writing-mode-dependent properties don't apply if their value is a variable
+        https://bugs.webkit.org/show_bug.cgi?id=158449
+        <rdar://problem/26662478>
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/variables/direction-dependent-variable-properties-expected.html: Added.
+        * fast/css/variables/direction-dependent-variable-properties.html: Added.
+        Add a test ensuring that direction-dependent properties work correctly,
+        including flipping when the direction is flipped.
+
 2016-06-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking editing/selection/selection-in-iframe-removed-crash.html as flaky on Mac
