@@ -49,6 +49,8 @@ WEBCORE_EXPORT
     BOOL _hasEnabledAudio;
     BOOL _hasEnabledVideo;
     float _rate;
+    BOOL _playing;
+    BOOL _canTogglePlayback;
 
 @private
     WebCore::WebPlaybackSessionInterfaceMac* _webPlaybackSessionInterfaceMac;
@@ -61,6 +63,8 @@ WEBCORE_EXPORT
 @property (readwrite) BOOL hasEnabledAudio;
 @property (readwrite) BOOL hasEnabledVideo;
 @property (nonatomic) float rate;
+@property (getter=isPlaying) BOOL playing;
+@property BOOL canTogglePlayback;
 
 - (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 - (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;

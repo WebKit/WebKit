@@ -38,6 +38,8 @@
 @synthesize hasEnabledAudio=_hasEnabledAudio;
 @synthesize hasEnabledVideo=_hasEnabledVideo;
 @synthesize rate=_rate;
+@synthesize playing=_playing;
+@synthesize canTogglePlayback=_canTogglePlayback;
 
 - (AVValueTiming *)timing
 {
