@@ -259,6 +259,7 @@ WebInspector.contentLoaded = function()
     this._saveAsKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._saveAs.bind(this));
 
     this.openResourceKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Command | WebInspector.KeyboardShortcut.Modifier.Shift, "O", this._showOpenResourceDialog.bind(this));
+    new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Command, "P", this._showOpenResourceDialog.bind(this));
 
     this.navigationSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "0", this.toggleNavigationSidebar.bind(this));
     this.detailsSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Option, "0", this.toggleDetailsSidebar.bind(this));

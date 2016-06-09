@@ -1,5 +1,16 @@
 2016-06-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Support Command-P for quick open
+        https://bugs.webkit.org/show_bug.cgi?id=158579
+        <rdar://problem/26726751>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+
+2016-06-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
         REGRESSION (r194717): Web Inspector: Elements tab: an element loses focus when selected by Up/Down key
         https://bugs.webkit.org/show_bug.cgi?id=157768
         <rdar://problem/26311155>
