@@ -258,7 +258,7 @@ typedef const char* optionString;
     \
     v(int32, thresholdForOptimizeAfterWarmUp, 511, Normal, nullptr) \
     v(int32, thresholdForOptimizeAfterLongWarmUp, 885, Normal, nullptr) \
-    v(int32, thresholdForOptimizeSoon, 853, Normal, nullptr) \
+    v(int32, thresholdForOptimizeSoon, 511, Normal, nullptr) \
     v(int32, executionCounterIncrementForLoop, 2, Normal, nullptr) \
     v(int32, executionCounterIncrementForEntry, 28, Normal, nullptr) \
     \

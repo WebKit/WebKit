@@ -1,5 +1,19 @@
 2016-06-08  Benjamin Poulain  <bpoulain@apple.com>
 
+        Change thresholdForOptimizeSoon to match thresholdForOptimizeAfterWarmUp
+
+        Unreviewed.
+
+        This adds back the assertion removed in r201845.
+        Making those threshold equal is completely perf neutral
+        (on Haswell rMBP with 20 runs).
+
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+
+2016-06-08  Benjamin Poulain  <bpoulain@apple.com>
+
         Tempory fix for the debug bots
 
         Unreviewed.
