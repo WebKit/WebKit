@@ -295,29 +295,8 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
 
     bool imageSourceHasChangedSize = oldIntrinsicSize != newIntrinsicSize || imageSizeChange != ImageSizeChangeNone;
 
-    if (imageSourceHasChangedSize) {
-        setPreferredLogicalWidthsDirty(true);
-
-        // If the actual area occupied by the image has changed and it is not constrained by style then a layout is required.
-        bool imageSizeIsConstrained = style().logicalWidth().isSpecified() && style().logicalHeight().isSpecified();
-
-        // FIXME: We only need to recompute the containing block's preferred size
-        // if the containing block's size depends on the image's size (i.e., the container uses shrink-to-fit sizing).
-        // There's no easy way to detect that shrink-to-fit is needed, always force a layout.
-        bool containingBlockNeedsToRecomputePreferredSize =
-            style().logicalWidth().isPercentOrCalculated()
-            || style().logicalMaxWidth().isPercentOrCalculated()
-            || style().logicalMinWidth().isPercentOrCalculated();
-
-        bool layoutSizeDependsOnIntrinsicSize = style().aspectRatioType() == AspectRatioFromIntrinsic;
-
-        if (!imageSizeIsConstrained || containingBlockNeedsToRecomputePreferredSize || layoutSizeDependsOnIntrinsicSize) {
-            // FIXME: It's not clear that triggering a layout guarantees a repaint in all cases.
-            // But many callers do depend on this code causing a layout.
-            setNeedsLayout();
-            return;
-        }
-    }
+    if (imageSourceHasChangedSize && setNeedsLayoutIfNeededAfterIntrinsicSizeChange())
+        return;
 
     if (everHadLayout() && !selfNeedsLayout()) {
         // The inner content rectangle is calculated during layout, but may need an update now

@@ -37,6 +37,7 @@ public:
 
     bool hasReplacedLogicalWidth() const;
     bool hasReplacedLogicalHeight() const;
+    bool setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 
 protected:
     RenderReplaced(Element&, RenderStyle&&);

@@ -1,3 +1,13 @@
+2016-06-09  Antoine Quint  <graouts@apple.com>
+
+        Changing canvas height immediately after page load does not relayout canvas
+        https://bugs.webkit.org/show_bug.cgi?id=156097
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/canvas/canvas-css-size-after-height-change-with-display-flex-expected.html: Added.
+        * fast/canvas/canvas-css-size-after-height-change-with-display-flex.html: Added.
+
 2016-06-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Deleting a CSSOM style rule invalidates any previously-added FontFaces
