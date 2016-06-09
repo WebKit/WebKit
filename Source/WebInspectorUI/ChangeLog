@@ -1,3 +1,34 @@
+2016-06-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r194717): Web Inspector: Elements tab: an element loses focus when selected by Up/Down key
+        https://bugs.webkit.org/show_bug.cgi?id=157768
+        <rdar://problem/26311155>
+
+        Reviewed by Timothy Hatcher.
+
+        Remove _previousFocusedSection and _newInspectorRuleSelector since it was used only
+        to focus on a newly created section (added by clicking on "+" button).
+
+        Introduce _inspectorSection and _isInspectorSectionPendingFocus.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.cssStyleDeclarationTextEditorBlurActiveEditor): Deleted.
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleSelectorPaste): Deleted.
+        No longer needed, it was only used by _previousFocusedSection and _newInspectorRuleSelector.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.): Deleted.
+        No londer needed, it was only used by _previousFocusedSection.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel):
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.appendStyleSection):
+        (WebInspector.RulesStyleDetailsPanel.prototype.newRuleButtonClicked):
+        (WebInspector.RulesStyleDetailsPanel.prototype.nodeStylesRefreshed):
+        (WebInspector.RulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionEditorFocused): Deleted.
+        (WebInspector.RulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionBlurActiveEditor): Deleted.
+        (WebInspector.RulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector): Deleted.
+
 2016-06-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: Web Inspector: Should be able to evaluate "{a:1, b:2}" in the console

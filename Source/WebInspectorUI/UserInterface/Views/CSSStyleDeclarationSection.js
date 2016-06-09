@@ -324,12 +324,6 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             this._delegate.cssStyleDeclarationSectionEditorFocused(this);
     }
 
-    cssStyleDeclarationTextEditorBlurActiveEditor()
-    {
-        if (typeof this._delegate.cssStyleDeclarationSectionBlurActiveEditor === "function")
-            this._delegate.cssStyleDeclarationSectionBlurActiveEditor(this);
-    }
-
     cssStyleDeclarationTextEditorSwitchRule(reverse)
     {
         if (!this._delegate)
@@ -458,9 +452,6 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
                 }
             }
 
-            if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector === "function")
-                this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector(this._currentSelectorText);
-
             this._style.nodeStyles.addRule(this._currentSelectorText);
         });
 
@@ -485,9 +476,6 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
                         selector = this._style.ownerRule.selectors.map((selector) => selector.text + pseudoClassSelector).join(", ");
                     else
                         selector = this._currentSelectorText + pseudoClassSelector;
-
-                    if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector === "function")
-                        this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector(selector);
 
                     this._style.nodeStyles.addRule(selector);
                 });
@@ -523,9 +511,6 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
                     selector = this._style.ownerRule.selectors.map((selector) => selector.text + pseudoElementSelector).join(", ");
                 else
                     selector = this._currentSelectorText + pseudoElementSelector;
-
-                if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector === "function")
-                    this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector(selector);
 
                 this._style.nodeStyles.addRule(selector, styleText);
             });
