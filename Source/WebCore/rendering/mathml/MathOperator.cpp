@@ -75,10 +75,16 @@ static const StretchyCharacter stretchyCharacters[14] = {
     { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
-void MathOperator::setOperator(UChar baseCharacter, bool isVertical)
+void MathOperator::setOperator(UChar baseCharacter, Type operatorType)
 {
     m_baseCharacter = baseCharacter;
-    m_isVertical = isVertical;
+    m_operatorType = operatorType;
+}
+
+LayoutUnit MathOperator::stretchSize() const
+{
+    ASSERT(m_operatorType == Type::VerticalOperator || m_operatorType == Type::HorizontalOperator);
+    return m_operatorType == Type::VerticalOperator ? m_ascent + m_descent : m_width;
 }
 
 bool MathOperator::getBaseGlyph(const RenderStyle& style, GlyphData& baseGlyph) const
@@ -97,13 +103,14 @@ void MathOperator::setSizeVariant(const GlyphData& sizeVariant)
 
 void MathOperator::setGlyphAssembly(const GlyphAssemblyData& assemblyData)
 {
+    ASSERT(m_operatorType == Type::VerticalOperator || m_operatorType == Type::HorizontalOperator);
     m_stretchType = StretchType::GlyphAssembly;
     m_assembly = assemblyData;
 }
 
 void MathOperator::calculateDisplayStyleLargeOperator(const RenderStyle& style)
 {
-    ASSERT(m_isVertical);
+    ASSERT(m_operatorType == Type::DisplayOperator);
 
     GlyphData baseGlyph;
     if (!getBaseGlyph(style, baseGlyph) || !baseGlyph.font->mathData())
@@ -230,7 +237,9 @@ bool MathOperator::calculateGlyphAssemblyFallback(const RenderStyle& style, cons
 
 void MathOperator::calculateStretchyData(const RenderStyle& style, float* maximumGlyphWidth, LayoutUnit targetSize)
 {
-    ASSERT(!maximumGlyphWidth || m_isVertical);
+    ASSERT(m_operatorType == Type::VerticalOperator || m_operatorType == Type::HorizontalOperator);
+    ASSERT(!maximumGlyphWidth || m_operatorType == Type::VerticalOperator);
+    bool isVertical = m_operatorType == Type::VerticalOperator;
 
     GlyphData baseGlyph;
     if (!getBaseGlyph(style, baseGlyph))
@@ -238,7 +247,7 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, float* maximu
 
     if (!maximumGlyphWidth) {
         // We do not stretch if the base glyph is large enough.
-        float baseSize = m_isVertical ? heightForGlyph(baseGlyph) : advanceWidthForGlyph(baseGlyph);
+        float baseSize = isVertical ? heightForGlyph(baseGlyph) : advanceWidthForGlyph(baseGlyph);
         if (targetSize <= baseSize)
             return;
     }
@@ -247,7 +256,7 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, float* maximu
     if (baseGlyph.font->mathData()) {
         Vector<Glyph> sizeVariants;
         Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
-        baseGlyph.font->mathData()->getMathVariants(baseGlyph.glyph, m_isVertical, sizeVariants, assemblyParts);
+        baseGlyph.font->mathData()->getMathVariants(baseGlyph.glyph, isVertical, sizeVariants, assemblyParts);
         // We verify the size variants.
         for (auto& sizeVariant : sizeVariants) {
             GlyphData glyphData(sizeVariant, baseGlyph.font);
@@ -255,7 +264,7 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, float* maximu
                 *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(glyphData));
             else {
                 setSizeVariant(glyphData);
-                float size = m_isVertical ? heightForGlyph(glyphData) : advanceWidthForGlyph(glyphData);
+                float size = isVertical ? heightForGlyph(glyphData) : advanceWidthForGlyph(glyphData);
                 if (size >= targetSize)
                     return;
             }
@@ -265,7 +274,7 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, float* maximu
         if (!calculateGlyphAssemblyFallback(style, assemblyParts, assemblyData))
             return;
     } else {
-        if (!m_isVertical)
+        if (!isVertical)
             return;
 
         // If the font does not have a MATH table, we fallback to the Unicode-only constructions.
@@ -303,7 +312,7 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, float* maximu
     }
 
     // We ensure that the size is large enough to avoid glyph overlaps.
-    float minSize = m_isVertical ?
+    float minSize = isVertical ?
         heightForGlyph(assemblyData.topOrRight) + heightForGlyph(assemblyData.middle) + heightForGlyph(assemblyData.bottomOrLeft)
         : advanceWidthForGlyph(assemblyData.bottomOrLeft) + advanceWidthForGlyph(assemblyData.middle) + advanceWidthForGlyph(assemblyData.topOrRight);
     if (minSize > targetSize)
@@ -366,7 +375,7 @@ LayoutRect MathOperator::paintGlyph(const RenderStyle& style, PaintInfo& info, c
 
 void MathOperator::fillWithVerticalExtensionGlyph(const RenderStyle& style, PaintInfo& info, const LayoutPoint& from, const LayoutPoint& to)
 {
-    ASSERT(m_isVertical);
+    ASSERT(m_operatorType == Type::VerticalOperator);
     ASSERT(m_stretchType == StretchType::GlyphAssembly);
     ASSERT(m_assembly.extension.isValid());
     ASSERT(from.y() <= to.y());
@@ -404,7 +413,7 @@ void MathOperator::fillWithVerticalExtensionGlyph(const RenderStyle& style, Pain
 
 void MathOperator::fillWithHorizontalExtensionGlyph(const RenderStyle& style, PaintInfo& info, const LayoutPoint& from, const LayoutPoint& to)
 {
-    ASSERT(!m_isVertical);
+    ASSERT(m_operatorType == Type::HorizontalOperator);
     ASSERT(m_stretchType == StretchType::GlyphAssembly);
     ASSERT(m_assembly.extension.isValid());
     ASSERT(from.x() <= to.x());
@@ -440,7 +449,7 @@ void MathOperator::fillWithHorizontalExtensionGlyph(const RenderStyle& style, Pa
 
 void MathOperator::paintVerticalGlyphAssembly(const RenderStyle& style, PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    ASSERT(m_isVertical);
+    ASSERT(m_operatorType == Type::VerticalOperator);
     ASSERT(m_stretchType == StretchType::GlyphAssembly);
     ASSERT(m_assembly.topOrRight.isValid());
     ASSERT(m_assembly.bottomOrLeft.isValid());
@@ -472,7 +481,7 @@ void MathOperator::paintVerticalGlyphAssembly(const RenderStyle& style, PaintInf
 
 void MathOperator::paintHorizontalGlyphAssembly(const RenderStyle& style, PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    ASSERT(!m_isVertical);
+    ASSERT(m_operatorType == Type::HorizontalOperator);
     ASSERT(m_stretchType == StretchType::GlyphAssembly);
     ASSERT(m_assembly.bottomOrLeft.isValid());
     ASSERT(m_assembly.topOrRight.isValid());

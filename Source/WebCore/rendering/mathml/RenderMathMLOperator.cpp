@@ -267,7 +267,12 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         return;
     }
 
-    m_mathOperator.setOperator(m_textContent, m_isVertical);
+    MathOperator::Type type;
+    if (isLargeOperatorInDisplayStyle())
+        type = MathOperator::Type::DisplayOperator;
+    else
+        type = m_isVertical ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
+    m_mathOperator.setOperator(m_textContent, type);
     GlyphData baseGlyph;
     float maximumGlyphWidth = m_mathOperator.getBaseGlyph(style(), baseGlyph) ? advanceWidthForGlyph(baseGlyph) : 0;
     if (!m_isVertical) {
@@ -369,7 +374,12 @@ void RenderMathMLOperator::updateStyle()
     if (!shouldAllowStretching())
         return;
 
-    m_mathOperator.setOperator(m_textContent, m_isVertical);
+    MathOperator::Type type;
+    if (isLargeOperatorInDisplayStyle())
+        type = MathOperator::Type::DisplayOperator;
+    else
+        type = m_isVertical ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
+    m_mathOperator.setOperator(m_textContent, type);
     if (m_isVertical && isLargeOperatorInDisplayStyle())
         m_mathOperator.calculateDisplayStyleLargeOperator(style());
     else {

@@ -1,3 +1,33 @@
+2016-06-09  Frederic Wang  <fwang@igalia.com>
+
+        Introduce MathOperator::Type
+        https://bugs.webkit.org/show_bug.cgi?id=156950
+
+        Reviewed by Sergio Villar Senin.
+
+        No new tests, behavior is not change.
+
+        An enum Type is introduced in MathOperator in order to indicate
+        which kind of stretching is requested. In follow-up work, this will
+        allow to just call setOperator and stretchTo without having to
+        explicitly call calculateDisplayStyleLargeOperator or calculateStretchyData.
+
+        * rendering/mathml/MathOperator.cpp:
+        (WebCore::MathOperator::setOperator): Use Type instead of a boolean.
+        (WebCore::MathOperator::setGlyphAssembly): Add an assert to ensure that the function is correctly used.
+        (WebCore::MathOperator::calculateDisplayStyleLargeOperator): Ditto, this makes the assert more accurate.
+        (WebCore::MathOperator::calculateStretchyData): Ditto and replace m_isVertical with a local isVertical variable.
+        (WebCore::MathOperator::fillWithVerticalExtensionGlyph): Ditto.
+        (WebCore::MathOperator::fillWithHorizontalExtensionGlyph): Ditto.
+        (WebCore::MathOperator::paintVerticalGlyphAssembly): Ditto.
+        (WebCore::MathOperator::paintHorizontalGlyphAssembly): Ditto.
+        * rendering/mathml/MathOperator.h: Add the Type enum.
+        (WebCore::MathOperator::stretchSize): Use Type instead of a boolean and add an
+        assert to ensure that the function is correctly used.
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths): Call setOperator with the correct value.
+        (WebCore::RenderMathMLOperator::updateStyle): Ditto.
+
 2016-06-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201810.

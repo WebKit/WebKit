@@ -40,7 +40,8 @@ class RenderStyle;
 class MathOperator {
 public:
     MathOperator() { }
-    void setOperator(UChar baseCharacter, bool isVertical);
+    enum class Type { UndefinedOperator, DisplayOperator, VerticalOperator, HorizontalOperator };
+    void setOperator(UChar baseCharacter, Type);
 
     LayoutUnit italicCorrection() const { return m_italicCorrection; }
 
@@ -65,7 +66,7 @@ public:
         TrimLeftAndRight
     };
 
-    LayoutUnit stretchSize() const { return m_isVertical ? m_ascent + m_descent : m_width; };
+    LayoutUnit stretchSize() const;
     bool getBaseGlyph(const RenderStyle&, GlyphData&) const;
     void setSizeVariant(const GlyphData&);
     void setGlyphAssembly(const GlyphAssemblyData&);
@@ -80,7 +81,7 @@ public:
     void paintHorizontalGlyphAssembly(const RenderStyle&, PaintInfo&, const LayoutPoint&);
 
     UChar m_baseCharacter = 0;
-    bool m_isVertical = false;
+    Type m_operatorType { Type::UndefinedOperator };
     StretchType m_stretchType = StretchType::Unstretched;
     union {
         GlyphData m_variant;
