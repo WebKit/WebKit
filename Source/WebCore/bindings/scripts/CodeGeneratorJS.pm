@@ -270,6 +270,16 @@ sub IsDOMGlobalObject
     return $interface->name eq "DOMWindow" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $interface->name eq "TestGlobalObject";
 }
 
+sub ShouldUseGlobalObjectPrototype
+{
+    my $interface = shift;
+
+    # For workers, the global object is a DedicatedWorkerGlobalScope.
+    return 0 if $interface->name eq "WorkerGlobalScope";
+
+    return IsDOMGlobalObject($interface);
+}
+
 sub GenerateGetOwnPropertySlotBody
 {
     my ($interface, $className, $inlined) = @_;
@@ -1146,7 +1156,7 @@ sub GenerateHeader
     }
 
     # Prototype
-    unless (IsDOMGlobalObject($interface)) {
+    unless (ShouldUseGlobalObjectPrototype($interface)) {
         push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);\n");
         push(@headerContent, "    static JSC::JSObject* prototype(JSC::VM&, JSC::JSGlobalObject*);\n");
     }
@@ -2400,11 +2410,14 @@ sub GenerateImplementation
             push(@implContent, "#endif\n") if $conditionalString;
         }
         push(@implContent, "}\n\n");
-    } else {
+    }
+    
+    unless (ShouldUseGlobalObjectPrototype($interface)) {
         push(@implContent, "JSObject* ${className}::createPrototype(VM& vm, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
-        if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, ${parentClassName}::prototype(vm, globalObject)));\n");
+        if ($interface->parent) {
+            my $parentClassNameForPrototype = "JS" . $interface->parent;
+            push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, ${parentClassNameForPrototype}::prototype(vm, globalObject)));\n");
         } else {
             my $prototype = $interface->isException ? "errorPrototype" : "objectPrototype";
             push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, globalObject->${prototype}()));\n");
@@ -5182,7 +5195,7 @@ sub GenerateConstructorHelperMethods
     # There must exist an interface prototype object for every non-callback interface defined, regardless
     # of whether the interface was declared with the [NoInterfaceObject] extended attribute.
     # https://heycam.github.io/webidl/#interface-prototype-object
-    if (IsDOMGlobalObject($interface)) {
+    if (ShouldUseGlobalObjectPrototype($interface)) {
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(), DontDelete | ReadOnly | DontEnum);\n");
     } elsif ($interface->isCallback) {
         push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");

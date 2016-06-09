@@ -1,3 +1,43 @@
+2016-06-08  Chris Dumez  <cdumez@apple.com>
+
+        DedicatedWorkerGlobalScope prototype chain is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=158544
+
+        Reviewed by Brady Eidson.
+
+        There were several issues with the prototype chain of DedicatedWorkerGlobalScope:
+        1. Object.getPrototypeOf(DedicatedWorkerGlobalScope.prototype) was not
+           WorkerGlobalScope.prototype.
+        2. WorkerGlobalScope.prototype was a DedicatedWorkerGlobalScopePrototype
+           object and was equal to DedicatedWorkerGlobalScope.prototype.
+        3. Object.getPrototypeOf(WorkerGlobalScope.prototype) was not EventTarget.prototype.
+
+        Those issues were identified by the following W3C web-platform-test:
+        http://w3c-test.org/workers/interfaces.worker
+
+        This patch fixes the issue so that the prototype chain is now as per the
+        specification.
+
+        Test: fast/workers/DedicatedWorkerGlobalScope-prototype-chain.html
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        - Stop creating the WorkerGlobalScopePrototype and let JSWorkerGlobalScope
+          create it.
+        - Set DedicatedWorkerGlobalScopePrototype's prototype to JSWorkerGlobalScope's
+          prototype after creating the JSDedicatedWorkerGlobalScope object.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldUseGlobalObjectPrototype):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateConstructorHelperMethods):
+        - Do not use globalObject.getPrototypeDirect() as 'prototype' property for
+          WorkerGlobalScope. The globalObject is a DedicatedWorkerGlobalScope, not
+          a WorkerGlobalScope.
+        - Generate the code to create / get a prototype object for WorkerGlobalScope.
+
+
 2016-06-08  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Imlement MediaEndpointPeerConnection::setRemoteDescription()
