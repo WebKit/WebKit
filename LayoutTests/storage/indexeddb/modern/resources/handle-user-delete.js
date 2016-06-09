@@ -4,6 +4,7 @@ indexedDBTest(prepareDatabase);
 
 var requestErrorCount = 0;
 var databaseError = false;
+var transactionAbort = false;
 
 function done()
 {
@@ -16,7 +17,12 @@ function done()
         log("[PASS] Database received correct error.");
     else
         log("[FAIL] Database did not receive correct error.");
-        
+
+    if (transactionAbort)
+        log("[PASS] Transaction aborted.");
+    else
+        log("[FAIL] Transaction did not abort.");
+
     finishJSTest();
 }
 
@@ -27,7 +33,7 @@ function log(message)
 
 function maybeFinish()
 {
-    if (requestErrorCount == 2 && databaseError)
+    if (requestErrorCount == 2 && databaseError && transactionAbort)
         done();
 }
 
@@ -77,7 +83,8 @@ function prepareDatabase(event)
     log("Started two spinning requests")
 
     versionTransaction.onabort = function(event) {
-        log("Initial upgrade versionchange transaction aborted: " + versionTransaction.error);
+        transactionAbort = true;
+		maybeFinish();
     }
 
     versionTransaction.oncomplete = function() {

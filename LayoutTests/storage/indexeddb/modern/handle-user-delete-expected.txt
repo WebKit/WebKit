@@ -10,9 +10,9 @@ indexedDB.open(dbname)
 Initial upgrade needed: Old version - 0 New version - 1
 Started two spinning requests
 Requested clearAllDatabases
-Initial upgrade versionchange transaction aborted: [object DOMError]
 [PASS] Both requests hit a failure condition (Received onerror or failed to start a new request because the transaction was aborted)
 [PASS] Database received correct error.
+[PASS] Transaction aborted.
 PASS successfullyParsed is true
 
 TEST COMPLETE

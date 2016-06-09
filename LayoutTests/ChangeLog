@@ -1,3 +1,17 @@
+2016-06-09  Brady Eidson  <beidson@apple.com>
+
+        LayoutTest storage/indexeddb/modern/handle-user-delete.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=158501
+
+        Reviewed by Darin Adler.
+        
+        The order in which the transaction abort happens doesn't matter; It only matters that it happens.
+        
+        Update the test to reflect this.
+        
+        * storage/indexeddb/modern/handle-user-delete-expected.txt:
+        * storage/indexeddb/modern/resources/handle-user-delete.js:
+
 2016-06-09  Simon Fraser  <simon.fraser@apple.com>
 
         border-radius with different width and height rendered wrong
