@@ -193,17 +193,16 @@ static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceError
 #if USE(CFNETWORK)
 
 ResourceError::ResourceError(NSError *error)
-    : m_dataIsUpToDate(false)
+    , m_dataIsUpToDate(false)
     , m_platformError(reinterpret_cast<CFErrorRef>(error))
 {
-    m_isNull = !error;
-    if (!m_isNull)
-        m_isTimeout = [error code] == NSURLErrorTimedOut;
+    if (error)
+        setType(([error code] == NSURLErrorTimedOut) ? Type::Timeout : Type::General);
 }
 
 NSError *ResourceError::nsError() const
 {
-    if (m_isNull) {
+    if (isNull()) {
         ASSERT(!m_platformError);
         return nil;
     }
@@ -238,21 +237,17 @@ ResourceError::operator NSError *() const
 #else
 
 ResourceError::ResourceError(NSError *nsError)
-    : m_dataIsUpToDate(false)
+    : ResourceErrorBase(Type::Null)
+    , m_dataIsUpToDate(false)
     , m_platformError(nsError)
 {
-    m_isNull = !nsError;
-    if (!m_isNull)
-        m_isTimeout = [m_platformError.get() code] == NSURLErrorTimedOut;
+    if (nsError)
+        setType(([m_platformError.get() code] == NSURLErrorTimedOut) ? Type::Timeout : Type::General);
 }
 
 ResourceError::ResourceError(CFErrorRef cfError)
-    : m_dataIsUpToDate(false)
-    , m_platformError((NSError *)cfError)
+    : ResourceError((NSError *)cfError)
 {
-    m_isNull = !cfError;
-    if (!m_isNull)
-        m_isTimeout = [m_platformError.get() code] == NSURLErrorTimedOut;
 }
 
 void ResourceError::platformLazyInit()
@@ -287,7 +282,7 @@ void ResourceError::doPlatformIsolatedCopy(const ResourceError&)
 
 NSError *ResourceError::nsError() const
 {
-    if (m_isNull) {
+    if (isNull()) {
         ASSERT(!m_platformError);
         return nil;
     }

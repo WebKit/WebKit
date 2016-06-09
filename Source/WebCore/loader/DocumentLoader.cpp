@@ -842,7 +842,7 @@ ResourceError DocumentLoader::interruptedForPolicyChangeError() const
 void DocumentLoader::stopLoadingForPolicyChange()
 {
     ResourceError error = interruptedForPolicyChangeError();
-    error.setIsCancellation(true);
+    error.setType(ResourceError::Type::Cancellation);
     cancelMainResourceLoad(error);
 }
 

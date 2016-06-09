@@ -1,3 +1,62 @@
+2016-06-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Introduce ResourceErrorBase::type
+        https://bugs.webkit.org/show_bug.cgi?id=158299
+
+        Reviewed by Alex Christensen.
+
+        Introducing an enum type for ResourceErrorBase.
+        In most cases, the type is set at construction time.
+        By default, constructor with no parameters will set type to Null.
+        Constructor with parameters will set type to General.
+
+        Removed boolean state error fields.
+
+        Introduced a type setter. It should only be used to  make the type
+        more precise (when type is Null or General).
+
+        Updating related calling code.
+
+        No change of behavior.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoadingForPolicyChange):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::cancel):
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::cancelledError):
+        (WebCore::FrameLoader::blockedError):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::cancel):
+        * platform/network/ResourceErrorBase.cpp:
+        (WebCore::ResourceErrorBase::isolatedCopy):
+        (WebCore::ResourceErrorBase::setType):
+        (WebCore::ResourceErrorBase::compare):
+        * platform/network/ResourceErrorBase.h:
+        (WebCore::ResourceErrorBase::isNull):
+        (WebCore::ResourceErrorBase::isCancellation):
+        (WebCore::ResourceErrorBase::isTimeout):
+        (WebCore::ResourceErrorBase::type):
+        (WebCore::ResourceErrorBase::ResourceErrorBase):
+        (WebCore::ResourceErrorBase::domain):
+        * platform/network/cf/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::ResourceError):
+        (WebCore::ResourceError::cfError):
+        * platform/network/curl/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::m_platformError):
+        (WebCore::ResourceError::nsError):
+        (WebCore::ResourceError::ResourceError):
+        (WebCore::ResourceError::platformLazyInit):
+        * platform/network/soup/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/soup/ResourceErrorSoup.cpp:
+        (WebCore::ResourceError::timeoutError):
+
 2016-06-08  Frederic Wang  <fwang@igalia.com>
 
         Move selection and drawing of stretchy operators into a separate MathOperator class

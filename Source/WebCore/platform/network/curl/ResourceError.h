@@ -40,12 +40,15 @@ namespace WebCore {
 class ResourceError : public ResourceErrorBase
 {
 public:
-    ResourceError() : m_sslErrors(0)
+    ResourceError(Type type = Type::Null)
+        : ResourceErrorBase(type)
+        , m_sslErrors(0)
     {
     }
 
-    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription)
-        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription), m_sslErrors(0)
+    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type = Type::Null)
+        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type)
+        , m_sslErrors(0)
     {
     }
 

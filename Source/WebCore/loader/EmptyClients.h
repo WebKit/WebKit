@@ -330,15 +330,15 @@ public:
     void committedLoad(DocumentLoader*, const char*, int) override { }
     void finishedLoading(DocumentLoader*) override { }
 
-    ResourceError cancelledError(const ResourceRequest&) override { ResourceError error("", 0, URL(), ""); error.setIsCancellation(true); return error; }
-    ResourceError blockedError(const ResourceRequest&) override { return ResourceError("", 0, URL(), ""); }
-    ResourceError blockedByContentBlockerError(const ResourceRequest&) override { return ResourceError("", 0, URL(), ""); }
-    ResourceError cannotShowURLError(const ResourceRequest&) override { return ResourceError("", 0, URL(), ""); }
-    ResourceError interruptedForPolicyChangeError(const ResourceRequest&) override { return ResourceError("", 0, URL(), ""); }
+    ResourceError cancelledError(const ResourceRequest&) override { return ResourceError(ResourceError::Type::Cancellation); }
+    ResourceError blockedError(const ResourceRequest&) override { return { }; }
+    ResourceError blockedByContentBlockerError(const ResourceRequest&) override { return { }; }
+    ResourceError cannotShowURLError(const ResourceRequest&) override { return { }; }
+    ResourceError interruptedForPolicyChangeError(const ResourceRequest&) override { return { }; }
 
-    ResourceError cannotShowMIMETypeError(const ResourceResponse&) override { return ResourceError("", 0, URL(), ""); }
-    ResourceError fileDoesNotExistError(const ResourceResponse&) override { return ResourceError("", 0, URL(), ""); }
-    ResourceError pluginWillHandleLoadError(const ResourceResponse&) override { return ResourceError("", 0, URL(), ""); }
+    ResourceError cannotShowMIMETypeError(const ResourceResponse&) override { return { }; }
+    ResourceError fileDoesNotExistError(const ResourceResponse&) override { return { }; }
+    ResourceError pluginWillHandleLoadError(const ResourceResponse&) override { return { }; }
 
     bool shouldFallBack(const ResourceError&) override { return false; }
 

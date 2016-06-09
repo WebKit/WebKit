@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016 Canon Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -38,38 +39,36 @@ class ResourceErrorBase {
 public:
     ResourceError isolatedCopy() const;
 
-    bool isNull() const { return m_isNull; }
-
     const String& domain() const { lazyInit(); return m_domain; }
     int errorCode() const { lazyInit(); return m_errorCode; }
     const URL& failingURL() const { lazyInit(); return m_failingURL; }
     const String& localizedDescription() const { lazyInit(); return m_localizedDescription; }
 
-    void setIsCancellation(bool isCancellation) { m_isCancellation = isCancellation; }
-    bool isCancellation() const { return m_isCancellation; }
+    enum class Type {
+        Null,
+        General,
+        Cancellation,
+        Timeout
+    };
 
-    void setIsTimeout(bool isTimeout) { m_isTimeout = isTimeout; }
-    bool isTimeout() const { return m_isTimeout; }
+    bool isNull() const { return m_type == Type::Null; }
+    bool isCancellation() const { return m_type == Type::Cancellation; }
+    bool isTimeout() const { return m_type == Type::Timeout; }
 
     static bool compare(const ResourceError&, const ResourceError&);
 
-protected:
-    ResourceErrorBase()
-        : m_errorCode(0)
-        , m_isNull(true)
-        , m_isCancellation(false)
-        , m_isTimeout(false)
-    {
-    }
+    void setType(Type);
+    Type type() const { return m_type; }
 
-    ResourceErrorBase(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription)
+protected:
+    ResourceErrorBase(Type type) : m_type(type) { }
+
+    ResourceErrorBase(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type)
         : m_domain(domain)
         , m_failingURL(failingURL)
         , m_localizedDescription(localizedDescription)
         , m_errorCode(errorCode)
-        , m_isNull(false)
-        , m_isCancellation(false)
-        , m_isTimeout(false)
+        , m_type(type)
     {
     }
 
@@ -84,10 +83,8 @@ protected:
     String m_domain;
     URL m_failingURL;
     String m_localizedDescription;
-    int m_errorCode;
-    bool m_isNull : 1;
-    bool m_isCancellation : 1;
-    bool m_isTimeout : 1;
+    int m_errorCode { 0 };
+    Type m_type { Type::General };
 
 private:
     const ResourceError& asResourceError() const;

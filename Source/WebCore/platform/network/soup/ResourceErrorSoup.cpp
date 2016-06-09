@@ -92,9 +92,7 @@ ResourceError ResourceError::timeoutError(const URL& failingURL)
     // Use the same value as in NSURLError.h
     static const int timeoutError = -1001;
     static const char* const  errorDomain = "WebKitNetworkError";
-    ResourceError error = ResourceError(errorDomain, timeoutError, failingURL, "Request timed out");
-    error.setIsTimeout(true);
-    return error;
+    return ResourceError(errorDomain, timeoutError, failingURL, "Request timed out", ResourceError::Type::Timeout);
 }
 
 void ResourceError::doPlatformIsolatedCopy(const ResourceError& other)
