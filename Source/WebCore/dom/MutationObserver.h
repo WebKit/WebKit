@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class HTMLSlotElement;
 class MutationCallback;
 class MutationObserverRegistration;
 class MutationRecord;
@@ -96,11 +97,13 @@ public:
 
     HashSet<Node*> observedNodes() const;
 
+    static void enqueueSlotChangeEvent(HTMLSlotElement&);
+
 private:
     explicit MutationObserver(Ref<MutationCallback>&&);
     void deliver();
 
-    static void deliverAllMutations();
+    static void notifyMutationObservers();
     static bool validateOptions(MutationObserverOptions);
 
     Ref<MutationCallback> m_callback;

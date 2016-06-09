@@ -4250,11 +4250,6 @@ void Document::enqueueOverflowEvent(Ref<Event>&& event)
     m_eventQueue.enqueueEvent(WTFMove(event));
 }
 
-void Document::enqueueSlotchangeEvent(Ref<Event>&& event)
-{
-    m_eventQueue.enqueueEvent(WTFMove(event));
-}
-
 RefPtr<Event> Document::createEvent(const String& type, ExceptionCode& ec)
 {
     // Please do *not* add new event classes to this function unless they are

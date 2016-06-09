@@ -1,3 +1,36 @@
+2016-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        slotchange event should be fired at the end of microtask
+        https://bugs.webkit.org/show_bug.cgi?id=157374
+        <rdar://problem/26154024>
+
+        Reviewed by Antti Koivisto.
+
+        Dispatch slotchange event at the end of every microtask after delivering records to mutation observers
+        as specified in: https://dom.spec.whatwg.org/#notify-mutation-observers
+
+        Test: fast/shadow-dom/slotchange-event.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::enqueueSlotchangeEvent): Deleted.
+        * dom/Document.h:
+        * dom/MutationObserver.cpp:
+        (WebCore::signalSlotList): Added.
+        (WebCore::MutationObserverMicrotask::run): mutationObserverCompoundMicrotaskQueuedFlag is now unset in
+        notifyMutationObservers to better match the concept to "notify mutation observers".
+        (WebCore::MutationObserver::enqueueSlotChangeEvent): Added.
+        (WebCore::MutationObserver::notifyMutationObservers): Renamed from deliverAllMutations. Added the code
+        to dispatch slotchange events as spec'ed, and also added comments for each step.
+        * dom/MutationObserver.h:
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::enqueueSlotChangeEvent): Use MutationObserver::enqueueSlotChangeEvent. Don't
+        create an event here since that is only needed when dispatching the event, and to keep track of whether
+        we've already scheduled an event or not. Use a boolean flag instead for the latter. 
+        (WebCore::HTMLSlotElement::dispatchSlotChangeEvent): Added. Creates and dispatches an event.
+        (WebCore::HTMLSlotElement::dispatchEvent): Deleted.
+        * html/HTMLSlotElement.h:
+        (WebCore::HTMLSlotElement::didRemoveFromSignalSlotList): Added.
+
 2016-06-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Introduce ResourceErrorBase::type

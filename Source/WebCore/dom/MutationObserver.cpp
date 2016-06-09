@@ -35,6 +35,7 @@
 #include "Dictionary.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "HTMLSlotElement.h"
 #include "Microtasks.h"
 #include "MutationCallback.h"
 #include "MutationObserverRegistration.h"
@@ -146,6 +147,13 @@ static MutationObserverSet& suspendedMutationObservers()
     return suspendedObservers;
 }
 
+// https://dom.spec.whatwg.org/#signal-slot-list
+static Vector<RefPtr<HTMLSlotElement>>& signalSlotList()
+{
+    static NeverDestroyed<Vector<RefPtr<HTMLSlotElement>>> list;
+    return list;
+}
+
 static bool mutationObserverCompoundMicrotaskQueuedFlag;
 
 class MutationObserverMicrotask final : public Microtask {
@@ -153,8 +161,7 @@ class MutationObserverMicrotask final : public Microtask {
 private:
     Result run() final
     {
-        mutationObserverCompoundMicrotaskQueuedFlag = false;
-        MutationObserver::deliverAllMutations();
+        MutationObserver::notifyMutationObservers();
         return Result::Done;
     }
 };
@@ -172,6 +179,15 @@ void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
     ASSERT(isMainThread());
     m_records.append(WTFMove(mutation));
     activeMutationObservers().add(this);
+
+    queueMutationObserverCompoundMicrotask();
+}
+
+void MutationObserver::enqueueSlotChangeEvent(HTMLSlotElement& slot)
+{
+    ASSERT(isMainThread());
+    ASSERT(!signalSlotList().contains(&slot));
+    signalSlotList().append(&slot);
 
     queueMutationObserverCompoundMicrotask();
 }
@@ -220,8 +236,12 @@ void MutationObserver::deliver()
     m_callback->call(records, this);
 }
 
-void MutationObserver::deliverAllMutations()
+void MutationObserver::notifyMutationObservers()
 {
+    // https://dom.spec.whatwg.org/#notify-mutation-observers
+    // 1. Unset mutation observer compound microtask queued flag.
+    mutationObserverCompoundMicrotaskQueuedFlag = false;
+
     ASSERT(isMainThread());
     static bool deliveryInProgress = false;
     if (deliveryInProgress)
@@ -240,20 +260,35 @@ void MutationObserver::deliverAllMutations()
         }
     }
 
-    while (!activeMutationObservers().isEmpty()) {
-        Vector<RefPtr<MutationObserver>> observers;
-        copyToVector(activeMutationObservers(), observers);
+    while (!activeMutationObservers().isEmpty() || !signalSlotList().isEmpty()) {
+        // 2. Let notify list be a copy of unit of related similar-origin browsing contexts' list of MutationObserver objects.
+        Vector<RefPtr<MutationObserver>> notifyList;
+        copyToVector(activeMutationObservers(), notifyList);
         activeMutationObservers().clear();
-        std::sort(observers.begin(), observers.end(), [](auto& lhs, auto& rhs) {
+        std::sort(notifyList.begin(), notifyList.end(), [](auto& lhs, auto& rhs) {
             return lhs->m_priority < rhs->m_priority;
         });
 
-        for (auto& observer : observers) {
+        // 3. Let signalList be a copy of unit of related similar-origin browsing contexts' signal slot list.
+        // 4. Empty unit of related similar-origin browsing contexts' signal slot list.
+        Vector<RefPtr<HTMLSlotElement>> slotList;
+        if (!signalSlotList().isEmpty()) {
+            slotList.swap(signalSlotList());
+            for (auto& slot : slotList)
+                slot->didRemoveFromSignalSlotList();
+        }
+
+        // 5. For each MutationObserver object mo in notify list, execute a compound microtask subtask
+        for (auto& observer : notifyList) {
             if (observer->canDeliver())
                 observer->deliver();
             else
                 suspendedMutationObservers().add(observer);
         }
+
+        // 6. For each slot slot in signalList, in order, fire an event named slotchange, with its bubbles attribute set to true, at slot.
+        for (auto& slot : slotList)
+            slot->dispatchSlotChangeEvent();
     }
 
     deliveryInProgress = false;

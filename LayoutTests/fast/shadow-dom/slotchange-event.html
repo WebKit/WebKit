@@ -534,6 +534,86 @@ testSlotchangeFiresWhenNestedSlotChange('closed', true);
 testSlotchangeFiresWhenNestedSlotChange('open', false);
 testSlotchangeFiresWhenNestedSlotChange('closed', false);
 
+function testSlotchangeFiresAtEndOfMicroTask(mode, connectedToDocument)
+{
+    var test = async_test('slotchange event must fire at the end of current microtask after mutation observers are invoked inside '
+        + treeName(mode, connectedToDocument) + ' when slots\'s contents change');
+
+    var outerHost;
+    var innerHost;
+    var outerSlot;
+    var innerSlot;
+    var slotchangeEvents = [];
+
+    test.step(function () {
+        outerHost = document.createElement('div');
+        if (connectedToDocument)
+            document.body.appendChild(outerHost);
+
+        var outerShadow = outerHost.attachShadow({'mode': mode});
+        outerShadow.appendChild(document.createElement('span'));
+        outerSlot = document.createElement('slot');
+        outerSlot.addEventListener('slotchange', function (event) {
+            event.stopPropagation();
+            test.step(function () {
+                assert_equals(event.target, outerSlot, 'slotchange event\'s target must be the slot element');
+            });
+            slotchangeEvents.push('outer');
+        });
+
+        innerHost = document.createElement('div');
+        innerHost.appendChild(outerSlot);
+        outerShadow.appendChild(innerHost);
+
+        var innerShadow = innerHost.attachShadow({'mode': mode});
+        innerShadow.appendChild(document.createElement('span'));
+        innerSlot = document.createElement('slot');
+        innerSlot.addEventListener('slotchange', function (event) {
+            event.stopPropagation();
+            test.step(function () {
+                assert_equals(event.target, innerSlot, 'slotchange event\'s target must be the slot element');
+            });
+            slotchangeEvents.push('inner');
+        });
+        innerShadow.appendChild(innerSlot);
+
+        outerHost.appendChild(document.createElement('span'));
+
+        assert_equals(slotchangeEvents.length, 0, 'slotchange event must not be fired synchronously');
+    });
+
+    var element = document.createElement('div');
+
+    new MutationObserver(function () {
+        test.step(function () {
+            assert_equals(slotchangeEvents.length, 0, 'slotchange event must not be fired before mutation records are delivered');
+        });
+        element.setAttribute('title', 'bar');
+        innerHost.appendChild(document.createElement('span'));
+    }).observe(element, {attributes: true, attributeFilter: ['id']});
+
+    new MutationObserver(function () {
+        test.step(function () {
+            assert_array_equals(slotchangeEvents, ['outer', 'inner'], 'slotchange event must be fired during a single compound microtask');
+        });
+    }).observe(element, {attributes: true, attributeFilter: ['title']});
+
+    element.setAttribute('id', 'foo');
+
+    setTimeout(function () {
+        test.step(function () {
+            assert_array_equals(slotchangeEvents, ['outer', 'inner', 'inner'],
+                'a distinct slotchange event must be enqueued for changes made during a mutation observer delivery');
+        });
+        test.done();
+    }, 0);
+}
+
+testSlotchangeFiresAtEndOfMicroTask('open', true);
+testSlotchangeFiresAtEndOfMicroTask('closed', true);
+testSlotchangeFiresAtEndOfMicroTask('open', false);
+testSlotchangeFiresAtEndOfMicroTask('closed', false);
+
 </script>
 </body>
 </html>

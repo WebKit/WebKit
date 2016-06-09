@@ -42,6 +42,9 @@ public:
     Vector<Node*> assignedNodes(const AssignedNodesOptions&) const;
 
     void enqueueSlotChangeEvent();
+    void didRemoveFromSignalSlotList() { m_inSignalSlotList = false; }
+
+    void dispatchSlotChangeEvent();
 
 private:
     HTMLSlotElement(const QualifiedName&, Document&);
@@ -49,9 +52,8 @@ private:
     InsertionNotificationRequest insertedInto(ContainerNode&) final;
     void removedFrom(ContainerNode&) final;
     void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason) final;
-    bool dispatchEvent(Event&) final;
 
-    Event* m_enqueuedSlotChangeEvent { nullptr };
+    bool m_inSignalSlotList { false };
 };
 
 }
