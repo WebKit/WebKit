@@ -144,6 +144,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageEvent').hasOwnProp
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageEvent').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageEvent').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageEvent').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessagePort').value is MessagePort
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessagePort').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessagePort').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessagePort').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessagePort').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Number').value is Number
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Number').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Number').hasOwnProperty('set') is false

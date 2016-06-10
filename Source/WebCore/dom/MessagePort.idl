@@ -26,6 +26,7 @@
  */
 
 [
+    Exposed=(Window,Worker),
     JSCustomMarkFunction,
     GenerateIsReachable=Impl,
     ActiveDOMObject,
