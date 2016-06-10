@@ -1,5 +1,17 @@
 2016-06-10  Matt Baker  <mattbaker@apple.com>
 
+        REGRESSION (r201538): Web Inspector: 1px gap above timeline progress view
+        https://bugs.webkit.org/show_bug.cgi?id=158626
+
+        Reviewed by Joseph Pecoraro.
+
+        Adjust progress view top position to account for grid border changes.
+
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-browser .recording-progress):
+
+2016-06-10  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: REGRESSION (r201538): Web Inspector: Border under JS Call Trees content view is too thick
         https://bugs.webkit.org/show_bug.cgi?id=158624
         <rdar://problem/26743633>
