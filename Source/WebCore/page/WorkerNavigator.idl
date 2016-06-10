@@ -27,7 +27,7 @@
  */
 
 [
-    NoInterfaceObject,
+    Exposed=Worker,
     GenerateIsReachable=Impl,
 ] interface WorkerNavigator {
     readonly attribute DOMString appName;
