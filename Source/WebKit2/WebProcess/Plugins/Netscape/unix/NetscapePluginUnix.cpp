@@ -51,13 +51,14 @@ bool NetscapePlugin::platformPostInitialize()
     }
 #endif
 
-    if (m_impl) {
-        m_npWindow.type = m_impl->windowType();
-        m_npWindow.window = m_impl->window();
-        m_npWindow.ws_info = m_impl->windowSystemInfo();
-        callSetWindow();
-    }
+    // Windowed plugins need a platform implementation.
+    if (!m_impl)
+        return !m_isWindowed;
 
+    m_npWindow.type = m_impl->windowType();
+    m_npWindow.window = m_impl->window();
+    m_npWindow.ws_info = m_impl->windowSystemInfo();
+    callSetWindow();
     return true;
 }
 

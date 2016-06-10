@@ -1,3 +1,15 @@
+2016-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Browser plugins crash under Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=157605
+
+        Reviewed by Michael Catanzaro.
+
+        Fail the initialization of windowed plugins if we don't have a platform implementation.
+
+        * WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+
 2016-06-09  Antoine Quint  <graouts@apple.com>
 
         [iOS] -webkit-overflow-scrolling: touch; ignores pointer-events: none;
