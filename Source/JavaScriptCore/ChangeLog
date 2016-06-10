@@ -1,3 +1,72 @@
+2016-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up JavaScriptCore.vcxproj directory after switching to CMake.
+
+        * JavaScriptCore.vcxproj/LLInt: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.make: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.pl: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.make: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/build-LLIntDesiredOffsets.pl: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.props: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorDebug.props: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorProduction.props: Removed.
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorRelease.props: Removed.
+        * JavaScriptCore.vcxproj/jsc: Removed.
+        * JavaScriptCore.vcxproj/jsc/DLLLauncherMain.cpp: Removed.
+        * JavaScriptCore.vcxproj/jsc/DLLLauncherWinCairo.props: Removed.
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj.filters: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscCommon.props: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscDebug.props: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscLauncher.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscLauncherPostBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscLauncherPreBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscLauncherPreLink.cmd: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscPostBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscPreBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscPreLink.cmd: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscProduction.props: Removed.
+        * JavaScriptCore.vcxproj/jsc/jscRelease.props: Removed.
+        * JavaScriptCore.vcxproj/testRegExp: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj.filters: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpCommon.props: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpDebug.props: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncher.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncherPostBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncherPreBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncherPreLink.cmd: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPostBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPreBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPreLink.cmd: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpProduction.props: Removed.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpRelease.props: Removed.
+        * JavaScriptCore.vcxproj/testapi: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj.filters: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiCommon.props: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiCommonCFLite.props: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiDebug.props: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiDebugCFLite.props: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiLauncher.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiLauncherPostBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiLauncherPreBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiLauncherPreLink.cmd: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiPostBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiPreBuild.cmd: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiPreLink.cmd: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiProduction.props: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiRelease.props: Removed.
+        * JavaScriptCore.vcxproj/testapi/testapiReleaseCFLite.props: Removed.
+        * shell/DLLLauncherMain.cpp: Copied from JavaScriptCore.vcxproj/jsc/DLLLauncherMain.cpp.
+        * shell/PlatformWin.cmake:
+
 2016-06-09  Filip Pizlo  <fpizlo@apple.com>
 
         Rare failure in stress/v8-deltablue-strict.js.ftl-eager
