@@ -1,5 +1,36 @@
 2016-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Threaded Compositor] Make it clear that compositing thread operations are always scheduled from the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=158562
+
+        Reviewed by Žan Doberšek.
+
+        The code is written as if the compositor thread could also call callOnCompositingRunLoop() which makes the code
+        confusing. This patch no longer checks if the task was scheduled in the compositing thread, and instead it adds
+        an ASSERT to ensure it's always called from the main thread as expected. It also adds some more ASSERTS to ensure
+        and clarify the methods are called from the expected thread.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::performTask):
+        (WebKit::CompositingRunLoop::callOnCompositingRunLoop): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing):
+        (WebKit::ThreadedCompositor::setDeviceScaleFactor):
+        (WebKit::ThreadedCompositor::didChangeViewportSize):
+        (WebKit::ThreadedCompositor::didChangeViewportAttribute):
+        (WebKit::ThreadedCompositor::didChangeContentsSize):
+        (WebKit::ThreadedCompositor::scrollTo):
+        (WebKit::ThreadedCompositor::scrollBy):
+        (WebKit::ThreadedCompositor::glContext):
+        (WebKit::ThreadedCompositor::didChangeVisibleRect):
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        (WebKit::ThreadedCompositor::updateSceneState):
+        (WebKit::ThreadedCompositor::callOnCompositingThread): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
+2016-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Browser plugins crash under Wayland
         https://bugs.webkit.org/show_bug.cgi?id=157605
 

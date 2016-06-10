@@ -46,7 +46,7 @@ public:
 
     CompositingRunLoop(std::function<void ()>&&);
 
-    void callOnCompositingRunLoop(std::function<void ()>&&);
+    void performTask(std::function<void ()>&&);
 
     void setUpdateTimer(UpdateTiming timing = Immediate);
     void stopUpdateTimer();

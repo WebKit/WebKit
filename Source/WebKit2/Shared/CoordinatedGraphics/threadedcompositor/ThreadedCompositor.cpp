@@ -64,7 +64,7 @@ ThreadedCompositor::~ThreadedCompositor()
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([protector, handle] {
+    m_compositingRunLoop->performTask([protector, handle] {
         protector->m_nativeSurfaceHandle = handle;
         protector->m_scene->setActive(true);
     });
@@ -73,7 +73,7 @@ void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 void ThreadedCompositor::setDeviceScaleFactor(float scale)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([protector, scale] {
+    m_compositingRunLoop->performTask([protector, scale] {
         protector->m_deviceScaleFactor = scale;
         protector->scheduleDisplayImmediately();
     });
@@ -82,7 +82,7 @@ void ThreadedCompositor::setDeviceScaleFactor(float scale)
 void ThreadedCompositor::didChangeViewportSize(const IntSize& size)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([protector, size] {
+    m_compositingRunLoop->performTask([protector, size] {
         protector->viewportController()->didChangeViewportSize(size);
     });
 }
@@ -90,7 +90,7 @@ void ThreadedCompositor::didChangeViewportSize(const IntSize& size)
 void ThreadedCompositor::didChangeViewportAttribute(const ViewportAttributes& attr)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([protector, attr] {
+    m_compositingRunLoop->performTask([protector, attr] {
         protector->viewportController()->didChangeViewportAttribute(attr);
     });
 }
@@ -98,7 +98,7 @@ void ThreadedCompositor::didChangeViewportAttribute(const ViewportAttributes& at
 void ThreadedCompositor::didChangeContentsSize(const IntSize& size)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([protector, size] {
+    m_compositingRunLoop->performTask([protector, size] {
         protector->viewportController()->didChangeContentsSize(size);
     });
 }
@@ -106,7 +106,7 @@ void ThreadedCompositor::didChangeContentsSize(const IntSize& size)
 void ThreadedCompositor::scrollTo(const IntPoint& position)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([protector, position] {
+    m_compositingRunLoop->performTask([protector, position] {
         protector->viewportController()->scrollTo(position);
     });
 }
@@ -114,7 +114,7 @@ void ThreadedCompositor::scrollTo(const IntPoint& position)
 void ThreadedCompositor::scrollBy(const IntSize& delta)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    callOnCompositingThread([protector, delta] {
+    m_compositingRunLoop->performTask([protector, delta] {
         protector->viewportController()->scrollBy(delta);
     });
 }
@@ -159,6 +159,8 @@ bool ThreadedCompositor::ensureGLContext()
 
 GLContext* ThreadedCompositor::glContext()
 {
+    ASSERT(&RunLoop::current() == &m_compositingRunLoop->runLoop());
+
     if (m_context)
         return m_context.get();
 
@@ -176,6 +178,8 @@ void ThreadedCompositor::scheduleDisplayImmediately()
 
 void ThreadedCompositor::didChangeVisibleRect()
 {
+    ASSERT(&RunLoop::current() == &m_compositingRunLoop->runLoop());
+
     RefPtr<ThreadedCompositor> protector(this);
     FloatRect visibleRect = viewportController()->visibleContentsRect();
     float scale = viewportController()->pageScaleFactor();
@@ -188,6 +192,7 @@ void ThreadedCompositor::didChangeVisibleRect()
 
 void ThreadedCompositor::renderLayerTree()
 {
+    ASSERT(&RunLoop::current() == &m_compositingRunLoop->runLoop());
     if (!m_scene)
         return;
 
@@ -208,17 +213,13 @@ void ThreadedCompositor::renderLayerTree()
 
 void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 {
+    ASSERT(isMainThread());
     RefPtr<CoordinatedGraphicsScene> scene = m_scene;
     m_scene->appendUpdate([scene, state] {
         scene->commitSceneState(state);
     });
 
     scheduleDisplayImmediately();
-}
-
-void ThreadedCompositor::callOnCompositingThread(std::function<void()>&& function)
-{
-    m_compositingRunLoop->callOnCompositingRunLoop(WTFMove(function));
 }
 
 void ThreadedCompositor::compositingThreadEntry(void* coordinatedCompositor)

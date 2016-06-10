@@ -29,6 +29,7 @@
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
 #include <wtf/CurrentTime.h>
+#include <wtf/MainThread.h>
 
 namespace WebKit {
 
@@ -40,13 +41,9 @@ CompositingRunLoop::CompositingRunLoop(std::function<void ()>&& updateFunction)
 {
 }
 
-void CompositingRunLoop::callOnCompositingRunLoop(std::function<void ()>&& function)
+void CompositingRunLoop::performTask(std::function<void ()>&& function)
 {
-    if (&m_runLoop == &RunLoop::current()) {
-        function();
-        return;
-    }
-
+    ASSERT(isMainThread());
     m_runLoop.dispatch(WTFMove(function));
 }
 
