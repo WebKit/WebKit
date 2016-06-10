@@ -59,6 +59,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Error').hasOwnProperty('g
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Error').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Error').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Error').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ErrorEvent').value is ErrorEvent
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ErrorEvent').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ErrorEvent').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ErrorEvent').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ErrorEvent').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'EvalError').value is EvalError
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'EvalError').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'EvalError').hasOwnProperty('set') is false
@@ -159,6 +164,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Object').hasOwnProperty('
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Object').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Object').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Object').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ProgressEvent').value is ProgressEvent
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ProgressEvent').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ProgressEvent').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ProgressEvent').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ProgressEvent').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Promise').value is Promise
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Promise').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Promise').hasOwnProperty('set') is false

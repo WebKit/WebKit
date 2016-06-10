@@ -25,6 +25,7 @@
 
 [
     ConstructorTemplate=Event,
+    Exposed=(Window,Worker),
 ] interface ProgressEvent : Event {
     [InitializedByEventConstructor] readonly attribute boolean lengthComputable;
     [InitializedByEventConstructor] readonly attribute unsigned long long loaded;

@@ -29,7 +29,8 @@
  */
 
 [
-    ConstructorTemplate=Event
+    ConstructorTemplate=Event,
+    Exposed=(Window,Worker),
 ] interface ErrorEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString message;
     [InitializedByEventConstructor] readonly attribute DOMString filename;
