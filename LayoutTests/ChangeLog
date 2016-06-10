@@ -1,3 +1,16 @@
+2016-06-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] CRASH when getting the computed style of a grid with only absolutely positioned children
+        https://bugs.webkit.org/show_bug.cgi?id=158537
+
+        Reviewed by Darin Adler.
+
+        * fast/css-grid-layout/grid-only-abspos-item-computed-style-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-only-abspos-item-computed-style-crash.html: Added.
+        * fast/css-grid-layout/grid-template-shorthand-get-set-expected.txt: Adjusted, grid-template
+        does create explicit tracks so we should return 0px instead of none.
+        * fast/css-grid-layout/grid-template-shorthand-get-set.html: Ditto.
+
 2016-06-10  Chris Dumez  <cdumez@apple.com>
 
         DOMException should be exposed to workers

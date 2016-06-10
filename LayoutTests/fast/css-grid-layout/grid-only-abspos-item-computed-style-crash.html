@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<style type="text/css">
+
+.grid {
+  display: grid;
+  position: relative;
+}
+
+.emptyCols { grid-template-rows: 20px; }
+.emptyRows { grid-template-columns: 10px; }
+
+.absposChild {
+  position: absolute;
+}
+
+</style>
+
+
+<script>
+function runTest() {
+     description("This test checks that, getting the computed style of a grid with only absolutelly positioned children and no tracks in some axis, does not CRASH.");
+     testGridTemplatesValues(document.getElementById("grid1"), "none", "20px");
+     testGridTemplatesValues(document.getElementById("grid2"), "10px", "none");
+     testGridTemplatesValues(document.getElementById("grid3"), "none", "none");
+}
+</script>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/grid-definitions-parsing-utils.js"></script>
+
+<body onload="runTest()">
+
+<div id="grid1" class="grid emptyCols"><div class="absposChild"></div></div>
+
+<div id="grid2" class="grid emptyRows"><div class="absposChild"></div></div>
+
+<div id="grid3" class="grid"><div class="absposChild"></div></div>
+
+</body>
