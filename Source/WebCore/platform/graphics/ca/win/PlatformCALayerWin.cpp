@@ -466,6 +466,15 @@ bool PlatformCALayerWin::backingStoreAttached() const
     return true;
 }
 
+bool PlatformCALayerWin::userInteractionEnabled() const
+{
+    return true;
+}
+ 
+void PlatformCALayerWin::setUserInteractionEnabled(bool)
+{
+}
+
 bool PlatformCALayerWin::geometryFlipped() const
 {
     return CACFLayerIsGeometryFlipped(m_layer.get());

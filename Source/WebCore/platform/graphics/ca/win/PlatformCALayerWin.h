@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformCALayerWin_h
-#define PlatformCALayerWin_h
+#pragma once
 
 #include "PlatformCALayer.h"
 #include <wtf/HashMap.h>
@@ -84,6 +83,9 @@ public:
 
     bool contentsHidden() const override;
     void setContentsHidden(bool) override;
+
+    bool userInteractionEnabled() const override;
+    void setUserInteractionEnabled(bool) override;
 
     void setBackingStoreAttached(bool) override;
     bool backingStoreAttached() const override;
@@ -170,5 +172,3 @@ private:
 };
 
 }
-
-#endif // PlatformCALayerWin_h
