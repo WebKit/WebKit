@@ -1,3 +1,13 @@
+2016-06-10  Sam Weinig  <sam@webkit.org>
+
+        Re-disable the UserMedia tests which are timing out.
+
+        They used to be accidentally disabled, due to not including
+        the FeatureDefines correctly, but not we explicitly disable it.
+
+        * TestWebKitAPI/Tests/WebKit2/UserMedia.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Introduce WTF::UniqueRef

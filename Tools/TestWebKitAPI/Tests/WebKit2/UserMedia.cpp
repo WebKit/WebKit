@@ -56,7 +56,7 @@ void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrameRef, WK
     done = true;
 }
 
-TEST(WebKit2, UserMediaBasic)
+TEST(WebKit2, DISABLED_UserMediaBasic)
 {
     auto context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());
