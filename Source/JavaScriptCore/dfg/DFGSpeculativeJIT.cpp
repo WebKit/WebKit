@@ -307,6 +307,12 @@ void SpeculativeJIT::emitInvalidationPoint(Node* node)
     noResult(node);
 }
 
+void SpeculativeJIT::unreachable(Node* node)
+{
+    m_compileOkay = false;
+    m_jit.abortWithReason(DFGUnreachableNode, node->op());
+}
+
 void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, Node* node)
 {
     if (!m_compileOkay)

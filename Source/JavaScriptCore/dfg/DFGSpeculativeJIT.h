@@ -2661,6 +2661,8 @@ public:
     
     void emitInvalidationPoint(Node*);
     
+    void unreachable(Node*);
+    
     // Called when we statically determine that a speculation will fail.
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, Node*);
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, Edge);

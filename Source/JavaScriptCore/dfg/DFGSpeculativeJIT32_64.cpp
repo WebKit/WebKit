@@ -5273,7 +5273,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case Unreachable:
-        RELEASE_ASSERT_NOT_REACHED();
+        unreachable(node);
         break;
 
     case LastNodeType:

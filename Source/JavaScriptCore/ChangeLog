@@ -1,3 +1,45 @@
+2016-06-10  Filip Pizlo  <fpizlo@apple.com>
+
+        The backend should be happy to compile Unreachable even if AI didn't prove it to be unreachable
+        https://bugs.webkit.org/show_bug.cgi?id=158631
+
+        Reviewed by Keith Miller.
+        
+        We've been slowly making the DFG Unreachable opcode behave like a grown-up. When we first
+        added it, it was a hack for Throw, and we could always rely on AI proving that Unreachable
+        was not reachable. But then we started using Unreachable as a proper Unreachable opcode,
+        like Oops in B3 for example, which has a more nuanced meaning: you use it whenever you
+        emit code that *you* know will not return, and you need some way of terminating the basic
+        block. The DFG is not a proof-carrying compiler, and it never will be. So, when you have
+        proved that something is not reachable, you should be able to use Unreachable even if
+        there is no guarantee that the compiler will later be able to replicate your proof. This
+        means that the backend may find itself compiling Unreachable because AI did not prove that
+        it was unreachable.
+        
+        Prior to this change, we would crash compiling Unreachable because we would rely on AI
+        preventing us from reaching Unreachable in the backend. But that's silly! We don't want
+        users of Unreachable to have to also convince AI that their Unreachable is really
+        Unreachable.
+        
+        This fixes crashes on real websites. I couldn't work out how to turn them into a reduced
+        test.
+
+        * assembler/AbortReason.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitInvalidationPoint):
+        (JSC::DFG::SpeculativeJIT::unreachable):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutDynamicVar):
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnreachable):
+        (JSC::FTL::DFG::LowerDFGToB3::compareEqObjectOrOtherToObject):
+
 2016-06-09  Alex Christensen  <achristensen@webkit.org>
 
         Clean up JavaScriptCore.vcxproj directory after switching to CMake.
