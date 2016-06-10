@@ -94,7 +94,6 @@ CSSFontFace::CSSFontFace(CSSFontSelector* fontSelector, StyleRuleFontFace* cssCo
     , m_cssConnection(cssConnection)
     , m_wrapper(wrapper ? wrapper->createWeakPtr() : WeakPtr<FontFace>())
     , m_isLocalFallback(isLocalFallback)
-    , m_mayBePurged(!wrapper)
 {
 }
 
@@ -113,9 +112,6 @@ bool CSSFontFace::setFamilies(CSSValue& family)
 
     RefPtr<CSSValueList> oldFamilies = m_families;
     m_families = &familyList;
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontFamily, &family);
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this, oldFamilies.get());
@@ -146,9 +142,6 @@ bool CSSFontFace::setStyle(CSSValue& style)
 {
     if (auto mask = calculateStyleMask(style)) {
         m_traitsMask = static_cast<FontTraitsMask>((static_cast<unsigned>(m_traitsMask) & (~FontStyleMask)) | mask.value());
-
-        if (m_cssConnection)
-            m_cssConnection->mutableProperties().setProperty(CSSPropertyFontStyle, &style);
 
         iterateClients(m_clients, [&](Client& client) {
             client.fontPropertyChanged(*this);
@@ -199,9 +192,6 @@ bool CSSFontFace::setWeight(CSSValue& weight)
     if (auto mask = calculateWeightMask(weight)) {
         m_traitsMask = static_cast<FontTraitsMask>((static_cast<unsigned>(m_traitsMask) & (~FontWeightMask)) | mask.value());
 
-        if (m_cssConnection)
-            m_cssConnection->mutableProperties().setProperty(CSSPropertyFontWeight, &weight);
-
         iterateClients(m_clients, [&](Client& client) {
             client.fontPropertyChanged(*this);
         });
@@ -224,9 +214,6 @@ bool CSSFontFace::setUnicodeRange(CSSValue& unicodeRange)
         m_ranges.append({ range.from(), range.to() });
     }
 
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyUnicodeRange, &unicodeRange);
-
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
     });
@@ -243,9 +230,6 @@ bool CSSFontFace::setVariantLigatures(CSSValue& variantLigatures)
     m_variantSettings.historicalLigatures = ligatures.historicalLigatures;
     m_variantSettings.contextualAlternates = ligatures.contextualAlternates;
 
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantLigatures, &variantLigatures);
-
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
     });
@@ -260,9 +244,6 @@ bool CSSFontFace::setVariantPosition(CSSValue& variantPosition)
 
     m_variantSettings.position = downcast<CSSPrimitiveValue>(variantPosition);
 
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantPosition, &variantPosition);
-
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
     });
@@ -276,9 +257,6 @@ bool CSSFontFace::setVariantCaps(CSSValue& variantCaps)
         return false;
 
     m_variantSettings.caps = downcast<CSSPrimitiveValue>(variantCaps);
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantCaps, &variantCaps);
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
@@ -297,9 +275,6 @@ bool CSSFontFace::setVariantNumeric(CSSValue& variantNumeric)
     m_variantSettings.numericOrdinal = numeric.ordinal;
     m_variantSettings.numericSlashedZero = numeric.slashedZero;
 
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantNumeric, &variantNumeric);
-
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
     });
@@ -313,9 +288,6 @@ bool CSSFontFace::setVariantAlternates(CSSValue& variantAlternates)
         return false;
 
     m_variantSettings.alternates = downcast<CSSPrimitiveValue>(variantAlternates);
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantAlternates, &variantAlternates);
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
@@ -331,9 +303,6 @@ bool CSSFontFace::setVariantEastAsian(CSSValue& variantEastAsian)
     m_variantSettings.eastAsianVariant = eastAsian.variant;
     m_variantSettings.eastAsianWidth = eastAsian.width;
     m_variantSettings.eastAsianRuby = eastAsian.ruby;
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantEastAsian, &variantEastAsian);
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
@@ -361,9 +330,6 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
         return;
 
     m_featureSettings = WTFMove(settings);
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontFeatureSettings, &featureSettings);
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
@@ -415,45 +381,33 @@ void CSSFontFace::removeClient(Client& client)
     m_clients.remove(&client);
 }
 
-void CSSFontFace::initializeWrapper()
+Ref<FontFace> CSSFontFace::wrapper()
 {
+    if (m_wrapper)
+        return Ref<FontFace>(*m_wrapper.get());
+
+    Ref<FontFace> wrapper = FontFace::create(*this);
     switch (m_status) {
     case Status::Pending:
         break;
     case Status::Loading:
-        m_wrapper->fontStateChanged(*this, Status::Pending, Status::Loading);
+        wrapper->fontStateChanged(*this, Status::Pending, Status::Loading);
         break;
     case Status::TimedOut:
-        m_wrapper->fontStateChanged(*this, Status::Pending, Status::Loading);
-        m_wrapper->fontStateChanged(*this, Status::Loading, Status::TimedOut);
+        wrapper->fontStateChanged(*this, Status::Pending, Status::Loading);
+        wrapper->fontStateChanged(*this, Status::Loading, Status::TimedOut);
         break;
     case Status::Success:
-        m_wrapper->fontStateChanged(*this, Status::Pending, Status::Loading);
-        m_wrapper->fontStateChanged(*this, Status::Pending, Status::Success);
+        wrapper->fontStateChanged(*this, Status::Pending, Status::Loading);
+        wrapper->fontStateChanged(*this, Status::Pending, Status::Success);
         break;
     case Status::Failure:
-        m_wrapper->fontStateChanged(*this, Status::Pending, Status::Loading);
-        m_wrapper->fontStateChanged(*this, Status::Pending, Status::Failure);
+        wrapper->fontStateChanged(*this, Status::Pending, Status::Loading);
+        wrapper->fontStateChanged(*this, Status::Pending, Status::Failure);
         break;
     }
-}
-
-Ref<FontFace> CSSFontFace::wrapper()
-{
-    if (m_wrapper)
-        return *m_wrapper.get();
-
-    auto wrapper = FontFace::create(*this);
     m_wrapper = wrapper->createWeakPtr();
-    initializeWrapper();
-    m_mayBePurged = false;
     return wrapper;
-}
-
-void CSSFontFace::setWrapper(FontFace& newWrapper)
-{
-    m_wrapper = newWrapper.createWeakPtr();
-    initializeWrapper();
 }
 
 void CSSFontFace::adoptSource(std::unique_ptr<CSSFontFaceSource>&& source)
@@ -596,17 +550,6 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
     }
 
     return nullptr;
-}
-
-bool CSSFontFace::purgeable() const
-{
-    return cssConnection() && m_mayBePurged;
-}
-
-void CSSFontFace::updateStyleIfNeeded()
-{
-    if (m_fontSelector && m_fontSelector->document())
-        m_fontSelector->document()->updateStyleIfNeeded();
 }
 
 #if ENABLE(SVG_FONTS)

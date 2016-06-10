@@ -69,8 +69,6 @@ public:
     Optional<Promise>& promise() { return m_promise; }
     void registerLoaded(Promise&&);
 
-    void adopt(CSSFontFace&);
-
     void load();
 
     CSSFontFace& backing() { return m_backing; }

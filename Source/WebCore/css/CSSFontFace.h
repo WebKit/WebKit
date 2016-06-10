@@ -135,14 +135,8 @@ public:
 
     // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
     Ref<FontFace> wrapper();
-    void setWrapper(FontFace&);
-    FontFace* existingWrapper() { return m_wrapper.get(); }
 
     bool webFontsShouldAlwaysFallBack() const;
-
-    bool purgeable() const;
-
-    void updateStyleIfNeeded();
 
 #if ENABLE(SVG_FONTS)
     bool hasSVGFontFaceSource() const;
@@ -154,8 +148,6 @@ private:
     size_t pump();
     void setStatus(Status);
     void notifyClientsOfFontPropertyChange();
-
-    void initializeWrapper();
 
     void fontLoadEventOccurred();
     void timeoutFired();
@@ -174,7 +166,6 @@ private:
     Status m_status { Status::Pending };
     bool m_isLocalFallback { false };
     bool m_sourcesPopulated { false };
-    bool m_mayBePurged { true };
 };
 
 }

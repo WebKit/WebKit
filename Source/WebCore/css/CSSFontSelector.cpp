@@ -45,7 +45,6 @@
 #include "Document.h"
 #include "Font.h"
 #include "FontCache.h"
-#include "FontFace.h"
 #include "FontFaceSet.h"
 #include "FontSelectorClient.h"
 #include "FontVariantBuilder.h"
@@ -102,17 +101,7 @@ bool CSSFontSelector::isEmpty() const
 void CSSFontSelector::buildStarted()
 {
     m_buildIsUnderway = true;
-    m_stagingArea.clear();
-    m_cssFontFaceSet->purge();
     ++m_version;
-
-    m_cssConnectionsPossiblyToRemove.clear();
-    m_cssConnectionsEncounteredDuringBuild.clear();
-    for (size_t i = 0; i < m_cssFontFaceSet->faceCount(); ++i) {
-        CSSFontFace& face = m_cssFontFaceSet.get()[i];
-        if (face.cssConnection())
-            m_cssConnectionsPossiblyToRemove.add(&face);
-    }
 }
 
 void CSSFontSelector::buildCompleted()
@@ -122,13 +111,7 @@ void CSSFontSelector::buildCompleted()
 
     m_buildIsUnderway = false;
 
-    // Some font faces weren't re-added during the build process.
-    for (auto& face : m_cssConnectionsPossiblyToRemove) {
-        auto* connection = face->cssConnection();
-        ASSERT(connection);
-        if (!m_cssConnectionsEncounteredDuringBuild.contains(connection))
-            m_cssFontFaceSet->remove(*face);
-    }
+    m_cssFontFaceSet->clear();
 
     for (auto& item : m_stagingArea)
         addFontFaceRule(item.styleRuleFontFace, item.isInitiatingElementInUserAgentShadowTree);
@@ -138,7 +121,6 @@ void CSSFontSelector::buildCompleted()
 void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isInitiatingElementInUserAgentShadowTree)
 {
     if (m_buildIsUnderway) {
-        m_cssConnectionsEncounteredDuringBuild.add(&fontFaceRule);
         m_stagingArea.append({fontFaceRule, isInitiatingElementInUserAgentShadowTree});
         return;
     }
@@ -204,12 +186,6 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     CSSFontFace::appendSources(fontFace, srcList, m_document, isInitiatingElementInUserAgentShadowTree);
     if (fontFace->allSourcesFailed())
         return;
-
-    if (RefPtr<CSSFontFace> existingFace = m_cssFontFaceSet->lookupByCSSConnection(fontFaceRule)) {
-        m_cssFontFaceSet->remove(*existingFace);
-        if (auto* existingWrapper = existingFace->existingWrapper())
-            existingWrapper->adopt(fontFace.get());
-    }
 
     m_cssFontFaceSet->add(fontFace.get());
     m_creatingFont = false;

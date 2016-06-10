@@ -95,10 +95,9 @@ bool CSSFontFaceSet::hasFace(const CSSFontFace& face) const
     return false;
 }
 
-void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& familyName)
+void CSSFontFaceSet::registerLocalFontFacesForFamily(const String& familyName)
 {
-    if (m_locallyInstalledFacesLookupTable.contains(familyName))
-        return;
+    ASSERT(!m_locallyInstalledFacesLookupTable.contains(familyName));
 
     Vector<FontTraitsMask> traitsMasks = FontCache::singleton().getTraitsInFamily(familyName);
     if (traitsMasks.isEmpty())
@@ -161,7 +160,7 @@ void CSSFontFaceSet::addToFacesLookupTable(CSSFontFace& face)
         if (addResult.isNewEntry) {
             // m_locallyInstalledFontFaces grows without bound, eventually encorporating every font installed on the system.
             // This is by design.
-            ensureLocalFontFacesForFamilyRegistered(familyName);
+            registerLocalFontFacesForFamily(familyName);
             familyFontFaces = { };
         }
 
@@ -188,11 +187,6 @@ void CSSFontFaceSet::add(CSSFontFace& face)
 
     if (face.status() == CSSFontFace::Status::Loading || face.status() == CSSFontFace::Status::TimedOut)
         incrementActiveCount();
-
-    if (face.cssConnection()) {
-        auto addResult = m_constituentCSSConnections.add(face.cssConnection(), &face);
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    }
 }
 
 void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const CSSValueList& familiesToSearchFor)
@@ -228,11 +222,6 @@ void CSSFontFaceSet::remove(const CSSFontFace& face)
     if (face.families())
         removeFromFacesLookupTable(face, *face.families());
 
-    if (face.cssConnection()) {
-        bool removed = m_constituentCSSConnections.remove(face.cssConnection());
-        ASSERT_UNUSED(removed, removed);
-    }
-
     for (size_t i = 0; i < m_faces.size(); ++i) {
         if (m_faces[i].ptr() == &face) {
             if (i < m_facesPartitionIndex)
@@ -247,23 +236,6 @@ void CSSFontFaceSet::remove(const CSSFontFace& face)
     ASSERT_NOT_REACHED();
 }
 
-CSSFontFace* CSSFontFaceSet::lookupByCSSConnection(StyleRuleFontFace& target)
-{
-    return m_constituentCSSConnections.get(&target);
-}
-
-void CSSFontFaceSet::purge()
-{
-    Vector<std::reference_wrapper<CSSFontFace>> toRemove;
-    for (auto& face : m_faces) {
-        if (face->purgeable())
-            toRemove.append(face.get());
-    }
-
-    for (auto& item : toRemove)
-        remove(item.get());
-}
-
 void CSSFontFaceSet::clear()
 {
     for (auto& face : m_faces)
@@ -272,7 +244,6 @@ void CSSFontFaceSet::clear()
     m_facesLookupTable.clear();
     m_locallyInstalledFacesLookupTable.clear();
     m_cache.clear();
-    m_constituentCSSConnections.clear();
     m_facesPartitionIndex = 0;
     m_status = Status::Loaded;
 }
