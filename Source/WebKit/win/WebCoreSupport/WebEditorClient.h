@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebEditorClient_H
-#define WebEditorClient_H
+#pragma once
 
 #include "WebKit.h"
 #include <WebCore/EditorClient.h>
@@ -38,8 +37,6 @@ class WebEditorClient : public WebCore::EditorClient, public WebCore::TextChecke
 public:
     WebEditorClient(WebView*);
     ~WebEditorClient();
-
-    virtual void pageDestroyed();
 
     virtual bool isContinuousSpellCheckingEnabled();
     virtual void toggleGrammarChecking();
@@ -122,5 +119,3 @@ private:
     WebView* m_webView;
     WebEditorUndoTarget* m_undoTarget;
 };
-
-#endif // WebEditorClient_H

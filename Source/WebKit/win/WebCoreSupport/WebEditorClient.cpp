@@ -142,11 +142,6 @@ WebEditorClient::~WebEditorClient()
         m_undoTarget->Release();
 }
 
-void WebEditorClient::pageDestroyed()
-{
-    delete this;
-}
-
 bool WebEditorClient::isContinuousSpellCheckingEnabled()
 {
     BOOL enabled;
