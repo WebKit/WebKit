@@ -25,9 +25,9 @@
 
 #include "config.h"
 
-#include <string>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
@@ -81,7 +81,14 @@ struct LifetimeLogger {
 
     String fullName()
     {
-        return makeString(&name, "-", String::number(copyGeneration), "-", String::number(moveGeneration));
+        StringBuilder builder;
+        builder.append(&name);
+        builder.append("-");
+        builder.append(String::number(copyGeneration));
+        builder.append("-");
+        builder.append(String::number(moveGeneration));
+
+        return builder.toString();
     }
 
     const char& name { *"<default>" };
