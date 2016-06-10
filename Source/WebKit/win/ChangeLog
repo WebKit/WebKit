@@ -1,5 +1,13 @@
 2016-06-09  Alex Christensen  <achristensen@webkit.org>
 
+        Actually fix Windows build after r201894
+        https://bugs.webkit.org/show_bug.cgi?id=158588
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
+2016-06-09  Alex Christensen  <achristensen@webkit.org>
+
         Clean up WebKit.vcxproj directory after switching to CMake.
 
         * WebKit.resources/resource.h: Copied from WebKit.vcxproj/WebKit/resource.h.
