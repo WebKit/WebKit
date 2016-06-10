@@ -1,3 +1,16 @@
+2016-06-10  Beth Dakin  <bdakin@apple.com>
+
+        Add requestExitFullScreen to WKFullScreenWindowController
+        https://bugs.webkit.org/show_bug.cgi?id=158633
+        -and corresponding-
+        rdar://problem/26564036
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController requestExitFullScreen]):
+
 2016-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Reduce ResourceResponse copying

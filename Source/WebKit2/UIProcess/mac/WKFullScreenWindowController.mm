@@ -337,6 +337,11 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     [self _manager]->willExitFullScreen();
 }
 
+- (void)requestExitFullScreen
+{
+    [self _manager]->requestExitFullScreen();
+}
+
 - (void)beganExitFullScreenWithInitialFrame:(const WebCore::IntRect&)initialFrame finalFrame:(const WebCore::IntRect&)finalFrame
 {
     if (_fullScreenState != WaitingToExitFullScreen)
