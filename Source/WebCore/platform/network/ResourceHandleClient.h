@@ -71,7 +71,7 @@ namespace WebCore {
         WEBCORE_EXPORT virtual ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&&);
         virtual void didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
-        virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
+        virtual void didReceiveResponse(ResourceHandle*, ResourceResponse&&) { }
         
         virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) { }
         WEBCORE_EXPORT virtual void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength);
@@ -89,7 +89,7 @@ namespace WebCore {
         WEBCORE_EXPORT virtual void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&);
 
         // Client will call ResourceHandle::continueDidReceiveResponse() when ready.
-        WEBCORE_EXPORT virtual void didReceiveResponseAsync(ResourceHandle*, const ResourceResponse&);
+        WEBCORE_EXPORT virtual void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&);
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
         // Client will pass an updated request using ResourceHandle::continueCanAuthenticateAgainstProtectionSpace() when ready.

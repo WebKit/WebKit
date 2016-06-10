@@ -136,7 +136,7 @@ public:
     }
 #endif // SOUP_CHECK_VERSION(2, 49, 91)
 
-    void didReceiveResponse(ResourceHandle*, const ResourceResponse& response) override
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&& response) override
     {
         m_response = response;
     }
@@ -654,9 +654,9 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
     d->m_previousPosition = 0;
 
     if (handle->client()->usesAsyncCallbacks())
-        handle->client()->didReceiveResponseAsync(handle.get(), d->m_response);
+        handle->client()->didReceiveResponseAsync(handle.get(), ResourceResponse(d->m_response));
     else {
-        handle->client()->didReceiveResponse(handle.get(), d->m_response);
+        handle->client()->didReceiveResponse(handle.get(), ResourceResponse(d->m_response));
         continueAfterDidReceiveResponse(handle.get());
     }
 }
@@ -718,9 +718,9 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         d->m_inputStream = inputStream;
 
     if (d->client()->usesAsyncCallbacks())
-        handle->client()->didReceiveResponseAsync(handle.get(), d->m_response);
+        handle->client()->didReceiveResponseAsync(handle.get(), ResourceResponse(d->m_response));
     else {
-        handle->client()->didReceiveResponse(handle.get(), d->m_response);
+        handle->client()->didReceiveResponse(handle.get(), ResourceResponse(d->m_response));
         continueAfterDidReceiveResponse(handle.get());
     }
 }

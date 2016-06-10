@@ -169,7 +169,7 @@ using namespace WebCore;
     UNUSED_PARAM(connection);
 #endif
     
-    m_handle->client()->didReceiveResponse(m_handle, resourceResponse);
+    m_handle->client()->didReceiveResponse(m_handle, WTFMove(resourceResponse));
 }
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)

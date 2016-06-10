@@ -76,25 +76,22 @@ void handleDataURL(ResourceHandle* handle)
 
     if (base64) {
         data = decodeURLEscapeSequences(data);
-        handle->client()->didReceiveResponse(handle, response);
+        handle->client()->didReceiveResponse(handle, WTFMove(response));
 
         // didReceiveResponse might cause the client to be deleted.
         if (handle->client()) {
             Vector<char> out;
-            if (base64Decode(data, out, Base64IgnoreSpacesAndNewLines) && out.size() > 0) {
-                response.setExpectedContentLength(out.size());
+            if (base64Decode(data, out, Base64IgnoreSpacesAndNewLines) && out.size() > 0)
                 handle->client()->didReceiveData(handle, out.data(), out.size(), 0);
-            }
         }
     } else {
         TextEncoding encoding(charset);
         data = decodeURLEscapeSequences(data, encoding);
-        handle->client()->didReceiveResponse(handle, response);
+        handle->client()->didReceiveResponse(handle, WTFMove(response));
 
         // didReceiveResponse might cause the client to be deleted.
         if (handle->client()) {
             CString encodedData = encoding.encode(data, URLEncodedEntitiesForUnencodables);
-            response.setExpectedContentLength(encodedData.length());
             if (encodedData.length())
                 handle->client()->didReceiveData(handle, encodedData.data(), encodedData.length(), 0);
         }

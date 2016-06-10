@@ -83,7 +83,7 @@ class BlobResourceSynchronousLoader : public ResourceHandleClient {
 public:
     BlobResourceSynchronousLoader(ResourceError&, ResourceResponse&, Vector<char>&);
 
-    void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
     void didFail(ResourceHandle*, const ResourceError&) override;
 
 private:
@@ -99,7 +99,7 @@ BlobResourceSynchronousLoader::BlobResourceSynchronousLoader(ResourceError& erro
 {
 }
 
-void BlobResourceSynchronousLoader::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
+void BlobResourceSynchronousLoader::didReceiveResponse(ResourceHandle* handle, ResourceResponse&& response)
 {
     // We cannot handle the size that is more than maximum integer.
     if (response.expectedContentLength() > INT_MAX) {
@@ -583,9 +583,9 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     // It's currently client's responsibility to know that didReceiveResponseAsync cannot be used to convert a
     // load into a download or blobs.
     if (usesAsyncCallbacks())
-        client()->didReceiveResponseAsync(this, response);
+        client()->didReceiveResponseAsync(this, WTFMove(response));
     else
-        client()->didReceiveResponse(this, response);
+        client()->didReceiveResponse(this, WTFMove(response));
 }
 
 void BlobResourceHandle::notifyResponseOnError()
@@ -615,9 +615,9 @@ void BlobResourceHandle::notifyResponseOnError()
     // Note that we don't wait for continueDidReceiveResponse when using didReceiveResponseAsync.
     // This is not formally correct, but the client has to be a no-op anyway, because blobs can't be downloaded.
     if (usesAsyncCallbacks())
-        client()->didReceiveResponseAsync(this, response);
+        client()->didReceiveResponseAsync(this, WTFMove(response));
     else
-        client()->didReceiveResponse(this, response);
+        client()->didReceiveResponse(this, WTFMove(response));
 }
 
 void BlobResourceHandle::notifyReceiveData(const char* data, int bytesRead)

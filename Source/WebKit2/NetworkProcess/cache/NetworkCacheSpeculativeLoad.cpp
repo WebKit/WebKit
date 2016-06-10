@@ -70,7 +70,7 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&&, ResourceReque
     abort();
 }
 
-auto SpeculativeLoad::didReceiveResponse(const ResourceResponse& receivedResponse) -> ShouldContinueDidReceiveResponse
+auto SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse) -> ShouldContinueDidReceiveResponse
 {
     m_response = receivedResponse;
 

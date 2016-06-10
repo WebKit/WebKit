@@ -56,7 +56,7 @@ public:
     }
 
 private:
-    void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override { delete this; }
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override { delete this; }
     void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) override { delete this; };
     void didFinishLoading(ResourceHandle*, double) override { delete this; }
     void didFail(ResourceHandle*, const ResourceError&) override { delete this; }

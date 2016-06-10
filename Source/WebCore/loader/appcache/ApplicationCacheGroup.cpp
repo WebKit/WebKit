@@ -489,7 +489,7 @@ RefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL& ur
     return handle;
 }
 
-void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
+void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, ResourceResponse&& response)
 {
     ASSERT(m_frame);
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame);

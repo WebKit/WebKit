@@ -637,7 +637,7 @@ void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, 
     didSendData(bytesSent, totalBytesToBeSent);
 }
 
-void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+void ResourceLoader::didReceiveResponse(ResourceHandle*, ResourceResponse&& response)
 {
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(this, response))
         return;

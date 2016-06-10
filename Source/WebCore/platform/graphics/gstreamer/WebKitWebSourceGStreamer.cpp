@@ -96,7 +96,7 @@ class ResourceHandleStreamingClient : public ResourceHandleClient, public Stream
         char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
 #endif
         ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) override;
-        void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
+        void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
         void didReceiveData(ResourceHandle*, const char*, unsigned, int) override;
         void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedLength) override;
         void didFinishLoading(ResourceHandle*, double /*finishTime*/) override;
@@ -1090,7 +1090,7 @@ ResourceRequest ResourceHandleStreamingClient::willSendRequest(ResourceHandle*, 
     return WTFMove(request);
 }
 
-void ResourceHandleStreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+void ResourceHandleStreamingClient::didReceiveResponse(ResourceHandle*, ResourceResponse&& response)
 {
     handleResponseReceived(response);
 }

@@ -153,14 +153,13 @@ void NetworkLoad::continueDidReceiveResponse()
         m_handle->continueDidReceiveResponse();
 }
 
-NetworkLoadClient::ShouldContinueDidReceiveResponse NetworkLoad::sharedDidReceiveResponse(const ResourceResponse& receivedResponse)
+NetworkLoadClient::ShouldContinueDidReceiveResponse NetworkLoad::sharedDidReceiveResponse(ResourceResponse&& response)
 {
-    ResourceResponse response = receivedResponse;
     response.setSource(ResourceResponse::Source::Network);
     if (m_parameters.needsCertificateInfo)
         response.includeCertificateInfo();
 
-    return m_client.didReceiveResponse(response);
+    return m_client.didReceiveResponse(WTFMove(response));
 }
 
 void NetworkLoad::sharedWillSendRedirectedRequest(ResourceRequest&& request, ResourceResponse&& redirectResponse)
@@ -239,12 +238,12 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
         m_client.canAuthenticateAgainstProtectionSpaceAsync(challenge.protectionSpace());
 }
 
-void NetworkLoad::didReceiveResponseNetworkSession(const ResourceResponse& response, ResponseCompletionHandler completionHandler)
+void NetworkLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler completionHandler)
 {
     ASSERT(isMainThread());
     if (m_task && m_task->pendingDownloadID().downloadID())
         NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), completionHandler, m_task->currentRequest());
-    else if (sharedDidReceiveResponse(response) == NetworkLoadClient::ShouldContinueDidReceiveResponse::Yes)
+    else if (sharedDidReceiveResponse(WTFMove(response)) == NetworkLoadClient::ShouldContinueDidReceiveResponse::Yes)
         completionHandler(PolicyUse);
     else
         m_responseCompletionHandler = completionHandler;
@@ -287,10 +286,10 @@ void NetworkLoad::cannotShowURL()
     
 #endif
 
-void NetworkLoad::didReceiveResponseAsync(ResourceHandle* handle, const ResourceResponse& receivedResponse)
+void NetworkLoad::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&& receivedResponse)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
-    if (sharedDidReceiveResponse(receivedResponse) == NetworkLoadClient::ShouldContinueDidReceiveResponse::Yes)
+    if (sharedDidReceiveResponse(WTFMove(receivedResponse)) == NetworkLoadClient::ShouldContinueDidReceiveResponse::Yes)
         m_handle->continueDidReceiveResponse();
 }
 

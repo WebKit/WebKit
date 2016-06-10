@@ -50,7 +50,7 @@ void ResourceHandleClient::willSendRequestAsync(ResourceHandle* handle, Resource
     handle->continueWillSendRequest(WTFMove(request));
 }
 
-void ResourceHandleClient::didReceiveResponseAsync(ResourceHandle* handle, const ResourceResponse&)
+void ResourceHandleClient::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&&)
 {
     handle->continueDidReceiveResponse();
 }

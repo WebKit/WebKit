@@ -58,7 +58,7 @@ private:
         completionHandler(AuthenticationChallengeDisposition::Cancel, { });
         delete this;
     }
-    void didReceiveResponseNetworkSession(const WebCore::ResourceResponse&, ResponseCompletionHandler completionHandler) override
+    void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler completionHandler) override
     {
         completionHandler(WebCore::PolicyAction::PolicyIgnore);
         delete this;

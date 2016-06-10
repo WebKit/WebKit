@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformMediaResourceLoader_h
-#define PlatformMediaResourceLoader_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -90,5 +89,4 @@ protected:
 
 } // namespace WebCore
 
-#endif
 #endif

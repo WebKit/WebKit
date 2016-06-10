@@ -1,3 +1,44 @@
+2016-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce ResourceResponse copying
+        https://bugs.webkit.org/show_bug.cgi?id=158232
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueDidReceiveResponse):
+        (WebKit::NetworkLoad::sharedDidReceiveResponse):
+        (WebKit::NetworkLoad::sharedWillSendRedirectedRequest):
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        (WebKit::NetworkLoad::didReceiveResponseAsync):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::abort):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/cache/NetworkCacheCoders.h:
+        (WebKit::NetworkCache::Coder<Optional<T>>::encode):
+        (WebKit::NetworkCache::Coder<Optional<T>>::decode):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::didCompleteWithError):
+        (WebKit::NetworkDataTask::didReceiveResponse):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::url):
+        (WebKit::WebFrame::certificateInfo):
+        (WebKit::WebFrame::innerText):
+
 2016-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add SPI to disable spellchecking on auto-fillable text fields

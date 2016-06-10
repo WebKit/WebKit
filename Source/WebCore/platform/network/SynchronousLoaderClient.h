@@ -48,7 +48,7 @@ private:
     ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) override;
     bool shouldUseCredentialStorage(ResourceHandle*) override;
     void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) override;
-    void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
     void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) override;
     void didFinishLoading(ResourceHandle*, double /*finishTime*/) override;
     void didFail(ResourceHandle*, const ResourceError&) override;
