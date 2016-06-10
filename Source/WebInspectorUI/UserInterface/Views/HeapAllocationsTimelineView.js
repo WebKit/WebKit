@@ -417,6 +417,9 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         // Selected Comparison.
         let snapshot1 = this._baselineHeapSnapshotTimelineRecord.heapSnapshot;
         let snapshot2 = heapAllocationsTimelineRecord.heapSnapshot;
+        if (snapshot1.identifier > snapshot2.identifier)
+            [snapshot1, snapshot2] = [snapshot2, snapshot1];
+
         let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
         workerProxy.createSnapshotDiff(snapshot1.proxyObjectId, snapshot2.proxyObjectId, ({objectId, snapshotDiff: serializedSnapshotDiff}) => {
             let diff = WebInspector.HeapSnapshotDiffProxy.deserialize(objectId, serializedSnapshotDiff);
@@ -424,6 +427,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         });
 
         this._baselineDataGridNode.clearBaseline();
+        this._baselineDataGridNode = null;
         this._selectingComparisonHeapSnapshots = false;
         this._compareHeapSnapshotsButtonItem.activated = false;
     }

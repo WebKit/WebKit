@@ -1,5 +1,23 @@
 2016-06-10  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: heap snapshot comparison view shows nothing if later snapshot is chosen first
+        https://bugs.webkit.org/show_bug.cgi?id=158584
+        <rdar://problem/26727849>
+
+        Reviewed by Timothy Hatcher.
+
+        ALways compare the the later snapshot to the earlier snapshot,
+        regardless of selection order.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView):
+        (WebInspector.HeapAllocationsTimelineView.prototype._dataGridNodeSelected):
+        Swap shapshots if the first has a greater identifier than the second.
+        Drive-by cleanup: null out `_baselineDataGridNode` since it isn't used
+        after the comparison completes.
+
+2016-06-10  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: rendering frames timeline "60fps" horizontal guide is mispositioned after switching timeline modes
         https://bugs.webkit.org/show_bug.cgi?id=158587
         <rdar://problem/26728174>
