@@ -1,3 +1,34 @@
+2016-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up Tools *.vcxproj after switching to CMake.
+
+        * DumpRenderTree/DumpRenderTree.sln: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.def: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.rc: Removed.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/resource.h: Removed.
+        * DumpRenderTree/PlatformWin.cmake:
+        * DumpRenderTree/win/TestNetscapePlugin.def: Copied from DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.def.
+        * DumpRenderTree/win/TestNetscapePlugin.rc: Copied from DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.rc.
+        * DumpRenderTree/win/resource.h: Copied from DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/resource.h.
+        * MiniBrowser/MiniBrowser.vcxproj: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowser.ico: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowser.rc: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLib.rc: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibResource.h: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserResource.h: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/small.ico: Removed.
+        * MiniBrowser/win/CMakeLists.txt:
+        * MiniBrowser/win/MiniBrowser.ico: Copied from MiniBrowser/MiniBrowser.vcxproj/MiniBrowser.ico.
+        * MiniBrowser/win/MiniBrowser.rc: Copied from MiniBrowser/MiniBrowser.vcxproj/MiniBrowser.rc.
+        * MiniBrowser/win/MiniBrowserLib.rc: Copied from MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLib.rc.
+        * MiniBrowser/win/MiniBrowserLibResource.h: Copied from MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibResource.h.
+        * MiniBrowser/win/MiniBrowserResource.h: Copied from MiniBrowser/MiniBrowser.vcxproj/MiniBrowserResource.h.
+        * MiniBrowser/win/small.ico: Copied from MiniBrowser/MiniBrowser.vcxproj/small.ico.
+        * WebKitTestRunner/WebKitTestRunner.sln: Removed.
+        * win/DLLLauncher/DLLLauncherWinCairo.props: Removed.
+
 2016-06-09  Zalan Bujtas  <zalan@apple.com>
 
         Add testing support for 3x device scale factor.

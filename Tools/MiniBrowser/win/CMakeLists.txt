@@ -1,5 +1,4 @@
 set(MiniBrowser_INCLUDE_DIRECTORIES
-    ../MiniBrowser.vcxproj
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit"
     "${WTF_DIR}"
@@ -15,11 +14,10 @@ set(MiniBrowser_SOURCES
     ResourceLoadDelegate.cpp
     WebDownloadDelegate.cpp
     MiniBrowser.cpp
+    MiniBrowserLib.rc
     MiniBrowserWebHost.cpp
     WinMain.cpp
     stdafx.cpp
-
-    ../MiniBrowser.vcxproj/MiniBrowserLib.rc
 )
 
 set(MiniBrowser_LIBRARIES
@@ -54,7 +52,7 @@ include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
 add_library(MiniBrowserLib SHARED ${MiniBrowser_SOURCES})
 target_link_libraries(MiniBrowserLib ${MiniBrowser_LIBRARIES})
 
-add_executable(MiniBrowser WIN32 ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp ../MiniBrowser.vcxproj/MiniBrowser.rc)
+add_executable(MiniBrowser WIN32 ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp MiniBrowser.rc)
 target_link_libraries(MiniBrowser shlwapi)
 set_target_properties(MiniBrowser PROPERTIES OUTPUT_NAME "MiniBrowser")
 

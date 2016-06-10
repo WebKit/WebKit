@@ -32,8 +32,8 @@ set(DumpRenderTree_SOURCES
 )
 
 list(APPEND TestNetscapePlugin_SOURCES
-    DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.def
-    DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.rc
+    win/TestNetscapePlugin.def
+    win/TestNetscapePlugin.rc
 
     TestNetscapePlugin/Tests/win/CallJSThatDestroysPlugin.cpp
     TestNetscapePlugin/Tests/win/DrawsGradient.cpp
@@ -70,7 +70,6 @@ set(ImageDiff_LIBRARIES
 
 list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     win
-    DumpRenderTree.vcxproj/TestNetscapePlugin
     TestNetscapePlugin
     TestNetscapePlugin/ForwardingHeaders
     TestNetscapePlugin/Tests
