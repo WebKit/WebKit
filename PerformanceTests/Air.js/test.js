@@ -27,26 +27,9 @@
 load("all.js");
 load("payload-gbemu-executeIteration.js");
 load("payload-imaging-gaussian-blur-gaussianBlur.js");
-load("payload-jsair-ACLj8C.js");
+load("payload-airjs-ACLj8C.js");
 load("payload-typescript-scanIdentifier.js");
 load("benchmark.js");
 
-let benchmark = new Benchmark();
-let before = preciseTime();
-
-// Run for at least 10 iterations.
-for (let i = 0; i < 10; ++i) {
-    print("Running mandatory iteration #" + (i + 1) + ":");
-    benchmark.runIteration();
-}
-
-// Run until we have been running for two seconds.
-while (preciseTime() < before + 2) {
-    print("Running bonus iteration:");
-    benchmark.runIteration();
-}
-
-print("Success!");
-
-
-
+let result = runBenchmark();
+print("That took " + result + " ms.");

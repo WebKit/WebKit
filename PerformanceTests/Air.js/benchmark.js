@@ -33,7 +33,7 @@ class Benchmark {
             {generate: createPayloadGbemuExecuteIteration, earlyHash: 632653144, lateHash: 372715518},
             {generate: createPayloadImagingGaussianBlurGaussianBlur, earlyHash: 3677819581, lateHash: 1252116304},
             {generate: createPayloadTypescriptScanIdentifier, earlyHash: 1914852601, lateHash: 837339551},
-            {generate: createPayloadJSAirACLj8C, earlyHash: 1373599940, lateHash: 3981283600}
+            {generate: createPayloadAirJSACLj8C, earlyHash: 1373599940, lateHash: 3981283600}
         ];
     }
     

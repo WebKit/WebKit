@@ -1,5 +1,50 @@
 2016-06-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Rename JSAir to Air.js.
+
+        Rubber stamped by Mark Lam.
+
+        * Air.js: Copied from PerformanceTests/JSAir.
+        * Air.js/airjs-tests.yaml: Copied from PerformanceTests/JSAir/jsair-tests.yaml.
+        * Air.js/benchmark.js: Copied from PerformanceTests/JSAir/benchmark.js.
+        (Benchmark):
+        * Air.js/jsair-tests.yaml: Removed.
+        * Air.js/payload-airjs-ACLj8C.js: Copied from PerformanceTests/JSAir/payload-jsair-ACLj8C.js.
+        * Air.js/payload-jsair-ACLj8C.js: Removed.
+        * Air.js/stress-test.js: Copied from PerformanceTests/JSAir/stress-test.js.
+        * Air.js/test.html: Copied from PerformanceTests/JSAir/test.html.
+        * Air.js/test.js: Copied from PerformanceTests/JSAir/test.js.
+        * JSAir: Removed.
+        * JSAir/all.js: Removed.
+        * JSAir/allocate_stack.js: Removed.
+        * JSAir/arg.js: Removed.
+        * JSAir/basic_block.js: Removed.
+        * JSAir/benchmark.js: Removed.
+        * JSAir/code.js: Removed.
+        * JSAir/custom.js: Removed.
+        * JSAir/frequented_block.js: Removed.
+        * JSAir/insertion_set.js: Removed.
+        * JSAir/inst.js: Removed.
+        * JSAir/jsair-tests.yaml: Removed.
+        * JSAir/liveness.js: Removed.
+        * JSAir/opcode.js: Removed.
+        * JSAir/payload-gbemu-executeIteration.js: Removed.
+        * JSAir/payload-imaging-gaussian-blur-gaussianBlur.js: Removed.
+        * JSAir/payload-jsair-ACLj8C.js: Removed.
+        * JSAir/payload-typescript-scanIdentifier.js: Removed.
+        * JSAir/reg.js: Removed.
+        * JSAir/stack_slot.js: Removed.
+        * JSAir/stress-test.js: Removed.
+        * JSAir/strip-hash.rb: Removed.
+        * JSAir/symbols.js: Removed.
+        * JSAir/test.html: Removed.
+        * JSAir/test.js: Removed.
+        * JSAir/tmp.js: Removed.
+        * JSAir/tmp_base.js: Removed.
+        * JSAir/util.js: Removed.
+
+2016-06-10  Filip Pizlo  <fpizlo@apple.com>
+
         JSC Stress Test failing: jsair-tests.yaml/test.js.ftl-eager-no-cjit
         https://bugs.webkit.org/show_bug.cgi?id=158571
 
