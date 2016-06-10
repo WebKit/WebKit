@@ -178,7 +178,7 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
         if (this.graphHeightSeconds === 0)
             return;
 
-        var overviewGraphHeight = this.element.offsetHeight;
+        let overviewGraphHeight = this.height;
 
         function createDividerAtPosition(framesPerSecond)
         {

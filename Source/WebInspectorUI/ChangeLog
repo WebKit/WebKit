@@ -1,5 +1,23 @@
 2016-06-10  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: rendering frames timeline "60fps" horizontal guide is mispositioned after switching timeline modes
+        https://bugs.webkit.org/show_bug.cgi?id=158587
+        <rdar://problem/26728174>
+
+        Reviewed by Timothy Hatcher.
+
+        When the view mode changes we iterate over all overview graphs, updating
+        their visibility as needed. Graphs being shown perform layout, even though
+        the overview's state is in transition: its offset height may still change.
+
+        A simple fix is to use TimelineOverviewGraph.height instead of the graph
+        element's offset height when performing layout.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype.layout):
+
+2016-06-10  Matt Baker  <mattbaker@apple.com>
+
         REGRESSION (r201538): Web Inspector: 1px gap above timeline progress view
         https://bugs.webkit.org/show_bug.cgi?id=158626
 
