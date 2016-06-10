@@ -95,6 +95,11 @@ void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htm
     toImpl(htmlInputElementHandleRef)->setHTMLInputElementValueForUser(toWTFString(valueRef));
 }
 
+void WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool enabled)
+{
+    toImpl(htmlInputElementHandleRef)->setHTMLInputElementSpellcheckEnabled(enabled);
+}
+
 bool WKBundleNodeHandleGetHTMLInputElementAutoFilled(WKBundleNodeHandleRef htmlInputElementHandleRef)
 {
     return toImpl(htmlInputElementHandleRef)->isHTMLInputElementAutoFilled();

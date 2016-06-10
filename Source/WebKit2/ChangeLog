@@ -1,3 +1,22 @@
+2016-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add SPI to disable spellchecking on auto-fillable text fields
+        https://bugs.webkit.org/show_bug.cgi?id=158611
+
+        Reviewed by Anders Carlsson.
+
+        Added WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled to disable spellchecking on a text field.
+
+        This is used by WebKit2 client which desires to disable spellchecking and notably autocorrection on
+        login forms, etc... where such feature would interfere with user's actions.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementSpellcheckEnabled): Added.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+
 2016-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Introduce WTF::UniqueRef

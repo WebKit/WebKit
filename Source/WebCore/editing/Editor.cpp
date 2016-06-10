@@ -2372,10 +2372,14 @@ bool Editor::isSpellCheckingEnabledFor(Node* node) const
 {
     if (!node)
         return false;
-    const Element* focusedElement = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
-    if (!focusedElement)
+    Element* element = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
+    if (!element)
         return false;
-    return focusedElement->isSpellCheckingEnabled();
+    if (element->isInUserAgentShadowTree()) {
+        if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(firstPositionInOrBeforeNode(element)))
+            return textControl->isSpellCheckingEnabled();
+    }
+    return element->isSpellCheckingEnabled();
 }
 
 bool Editor::isSpellCheckingEnabledInFocusedNode() const

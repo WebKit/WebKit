@@ -210,6 +210,14 @@ void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& val
     downcast<HTMLInputElement>(m_node.get()).setValueForUser(value);
 }
 
+void InjectedBundleNodeHandle::setHTMLInputElementSpellcheckEnabled(bool enabled)
+{
+    if (!is<HTMLInputElement>(m_node))
+        return;
+
+    downcast<HTMLInputElement>(m_node.get()).setSpellcheckEnabled(enabled);
+}
+
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilled() const
 {
     if (!is<HTMLInputElement>(m_node))

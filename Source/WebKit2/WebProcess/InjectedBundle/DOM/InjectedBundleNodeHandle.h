@@ -66,6 +66,7 @@ public:
     PassRefPtr<WebImage> renderedImage(SnapshotOptions);
     PassRefPtr<InjectedBundleRangeHandle> visibleRange();
     void setHTMLInputElementValueForUser(const String&);
+    void setHTMLInputElementSpellcheckEnabled(bool);
     bool isHTMLInputElementAutoFilled() const;
     void setHTMLInputElementAutoFilled(bool);
     bool isHTMLInputElementAutoFillButtonEnabled() const;
