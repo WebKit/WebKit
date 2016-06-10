@@ -23,8 +23,10 @@ function finish() {
     range1 = document.createRange();
     range1.selectNodeContents(iframe1.contentDocument);
     window.getSelection().addRange(range1);
-    if (window.testRunner)
+    if (window.testRunner) {
+        document.body.innerHTML = 'Test passes if it does not crash.';
         testRunner.notifyDone();
+    }
 }
 
 document.addEventListener("DOMContentLoaded", crash, false);
