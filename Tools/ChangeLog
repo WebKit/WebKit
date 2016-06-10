@@ -1,3 +1,39 @@
+2016-06-10  Sam Weinig  <sam@webkit.org>
+
+        Refactor TestWebKitAPI to allow just testing WTF
+        https://bugs.webkit.org/show_bug.cgi?id=158625
+
+        Reviewed by Tim Horton.
+
+        Extract all the WTF tests into a new target to allow a faster build / test / fix
+        cycle when working on WTF bugs and features.
+        
+        By calling `run-api-tests --wtf-only`, you don't need to have a build of JavaScriptCore/WebCore/etc
+        to test WTF only changes.
+
+        * Scripts/build-api-tests:
+        * Scripts/run-api-tests:
+        (buildTestTool):
+        (testToolPaths):
+        Add new options to build-api-tests and run-api-tests to only build/run the WTF test runner.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/Configurations/TestWTF.xcconfig: Added.
+        * TestWebKitAPI/Configurations/TestWTFLibrary.xcconfig: Added.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add two new targets, TestWTFLibrary which contains all the WTF tests, and TestWTF,
+        the test runner that runs the WTF tests.
+    
+        * TestWebKitAPI/Tests/WTF/RunLoop.cpp:
+        Use Utilities.h rather than PlatformUtilities.h.
+
+        * TestWebKitAPI/Utilities.h: Added.
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/cocoa/PlatformUtilitiesCocoa.mm:
+        * TestWebKitAPI/cocoa/UtilitiesCocoa.mm: Added.
+        Move the sleep and run functions into a new Utilities.h/cpp file. This file contains utilities
+        that don't depend on anything in the WebKit project. 
+
 2016-06-10  Brady Eidson  <beidson@apple.com>
 
         REGRESSION(r201928?) API test WTF.StringOperators failing

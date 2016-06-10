@@ -30,6 +30,8 @@
 #include <WebKit/WKNativeEvent.h>
 #include <WebKit/WKRetainPtr.h>
 #endif
+
+#include "Utilities.h"
 #include <string>
 
 #if USE(FOUNDATION)

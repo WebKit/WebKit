@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "PlatformUtilities.h"
+#include "Utilities.h"
 #include <wtf/RunLoop.h>
 
 namespace TestWebKitAPI {

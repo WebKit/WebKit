@@ -33,17 +33,20 @@ use POSIX;
 
 my $showHelp = 0;
 my $clean = 0;
+my $wtfOnly = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help        Show this help message
   --clean       Clean up the build directory
+  --wtf-only    Only build TestWTF and its dependencies
 EOF
 
 GetOptions(
     'help' => \$showHelp,
     'clean' => \$clean,
+    'wtf-only' => \$wtfOnly,
 );
 
 if ($showHelp) {
@@ -62,7 +65,12 @@ if (isAppleMacWebKit()) {
     chdir "Source/ThirdParty/gtest";
     buildXCodeProject("xcode/gtest", $clean, XcodeOptions(), @ARGV);
     chdir "../../../Tools/TestWebKitAPI" or die;
-    $result = buildXCodeProject("TestWebKitAPI", $clean, XcodeOptions(), @ARGV);
+
+    my @options = XcodeOptions();
+    if ($wtfOnly) {
+        push @options, ("-target", "TestWTF");
+    }
+    $result = buildXCodeProject("TestWebKitAPI", $clean, @options, @ARGV);
 } elsif (isAppleWinWebKit()) {
     chdir "Tools/TestWebKitAPI" or die;
     my $solutionPath = "TestWebKitAPI.vcxproj/TestWebKitAPI.sln";

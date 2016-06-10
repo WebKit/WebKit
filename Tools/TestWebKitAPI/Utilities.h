@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformUtilities.h"
-
-#include <wtf/RetainPtr.h>
-#include <wtf/StdLibExtras.h>
+#pragma once
 
 namespace TestWebKitAPI {
 namespace Util {
 
-std::string toSTD(NSString *string)
-{
-    if (!string)
-        return std::string();
+// Runs a platform runloop until the 'done' is true. 
+void run(bool* done);
+void sleep(double seconds);
 
-    size_t bufferSize = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    auto buffer = std::make_unique<char[]>(bufferSize);
-    NSUInteger stringLength;
-    [string getBytes:buffer.get() maxLength:bufferSize usedLength:&stringLength encoding:NSUTF8StringEncoding options:0 range:NSMakeRange(0, [string length]) remainingRange:0];
-    return std::string(buffer.get(), stringLength);
-}
-
-#if WK_API_ENABLED
-NSString * const TestPlugInClassNameParameter = @"TestPlugInPrincipalClassName";
-#endif
 } // namespace Util
 } // namespace TestWebKitAPI
