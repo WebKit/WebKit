@@ -1,3 +1,16 @@
+2016-06-10  Anders Carlsson  <andersca@apple.com>
+
+        Remove CommandLine class
+        https://bugs.webkit.org/show_bug.cgi?id=158628
+
+        Reviewed by Tim Horton.
+
+        * Shared/CommandLine.h: Removed.
+        (WebKit::CommandLine::operator[]): Deleted.
+        * Shared/posix/CommandLinePOSIX.cpp: Removed.
+        (WebKit::CommandLine::parse): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-06-10  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Rare RELEASE_ASSERT under RemoteLayerTreeDrawingArea::flushLayers()
