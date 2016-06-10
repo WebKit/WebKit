@@ -1,3 +1,18 @@
+2016-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce WTF::UniqueRef
+        https://bugs.webkit.org/show_bug.cgi?id=158596
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/UniqueRef.cpp: Added.
+        (TestWebKitAPI::B::B):
+        (TestWebKitAPI::C::C):
+        (TestWebKitAPI::function):
+        (TestWebKitAPI::TEST):
+
 2016-06-10  Sam Weinig  <sam@webkit.org>
 
         Refactor TestWebKitAPI to allow just testing WTF

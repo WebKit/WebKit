@@ -238,7 +238,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_sessionID(SessionID::defaultSessionID())
     , m_isClosing(false)
 {
-    ASSERT(m_editorClient);
     updateTimerThrottlingState();
 
     m_storageNamespaceProvider->addPage(*this);

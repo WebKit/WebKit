@@ -1,3 +1,24 @@
+2016-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce WTF::UniqueRef
+        https://bugs.webkit.org/show_bug.cgi?id=158596
+
+        Reviewed by Brady Eidson.
+
+        WTF::UniqueRef is like a std::unique_ptr that is guaranteed to be non-null.
+        std::make_unique returns a non-null value that is put into a std::unique_ptr, a type
+        that could contain null values.  To be able to pass such values around and store them
+        without wondering if they are null, we now have WTF::UniqueRef which cannot be null.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/UniqueRef.h: Added.
+        (WTF::makeUniqueRef):
+        (WTF::UniqueRef::UniqueRef):
+        (WTF::UniqueRef::get):
+        (WTF::UniqueRef::operator&):
+        (WTF::UniqueRef::operator->):
+
 2016-06-09  Brady Eidson  <beidson@apple.com>
 
         Unaddressed review feedback from r201872

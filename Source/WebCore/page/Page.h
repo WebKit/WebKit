@@ -44,6 +44,7 @@
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(SOLARIS)
@@ -157,7 +158,7 @@ public:
     WEBCORE_EXPORT void setCanStartMedia(bool);
     bool canStartMedia() const { return m_canStartMedia; }
 
-    EditorClient& editorClient() const { return *m_editorClient; }
+    EditorClient& editorClient() { return m_editorClient.get(); }
     PlugInClient* plugInClient() const { return m_plugInClient; }
 
     MainFrame& mainFrame() { return m_mainFrame.get(); }
@@ -174,7 +175,6 @@ public:
     WEBCORE_EXPORT const String& groupName() const;
 
     PageGroup& group();
-    PageGroup* groupPtr() { return m_group; } // can return 0
 
     static void forEachPage(std::function<void(Page&)>);
 
@@ -583,7 +583,7 @@ private:
 
     RefPtr<RenderTheme> m_theme;
 
-    std::unique_ptr<EditorClient> m_editorClient;
+    UniqueRef<EditorClient> m_editorClient;
     PlugInClient* m_plugInClient;
     ValidationMessageClient* m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;

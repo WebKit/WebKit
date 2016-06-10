@@ -111,6 +111,7 @@ set(WTF_HEADERS
     Threading.h
     ThreadingPrimitives.h
     TinyPtrSet.h
+    UniqueRef.h
     VMTags.h
     ValueCheck.h
     Vector.h

@@ -37,7 +37,8 @@
 
 namespace WebCore {
 
-PageConfiguration::PageConfiguration()
+PageConfiguration::PageConfiguration(UniqueRef<EditorClient>&& editorClient)
+    : editorClient(WTFMove(editorClient))
 {
 }
 

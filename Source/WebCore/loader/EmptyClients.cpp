@@ -129,8 +129,6 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
     pageConfiguration.dragClient = &dummyDragClient.get();
 #endif
 
-    pageConfiguration.editorClient = std::make_unique<EmptyEditorClient>();
-    
     static NeverDestroyed<EmptyInspectorClient> dummyInspectorClient;
     pageConfiguration.inspectorClient = &dummyInspectorClient.get();
 
