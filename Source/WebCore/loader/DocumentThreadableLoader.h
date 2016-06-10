@@ -31,16 +31,13 @@
 #ifndef DocumentThreadableLoader_h
 #define DocumentThreadableLoader_h
 
-#include "CachedRawResourceClient.h"
-#include "CachedResourceHandle.h"
+#include "CrossOriginPreflightChecker.h"
 #include "ThreadableLoader.h"
 
 namespace WebCore {
     class CachedRawResource;
     class ContentSecurityPolicy;
     class Document;
-    class URL;
-    class ResourceRequest;
     class SecurityOrigin;
     class ThreadableLoaderClient;
 
@@ -57,6 +54,8 @@ namespace WebCore {
 
         void cancel() override;
         virtual void setDefersLoading(bool);
+
+        friend CrossOriginPreflightChecker;
 
         using RefCounted<DocumentThreadableLoader>::ref;
         using RefCounted<DocumentThreadableLoader>::deref;
@@ -87,10 +86,10 @@ namespace WebCore {
         void didFinishLoading(unsigned long identifier, double finishTime);
         void didFail(unsigned long identifier, const ResourceError&);
         void makeCrossOriginAccessRequest(const ResourceRequest&);
-        void makeSimpleCrossOriginAccessRequest(const ResourceRequest& request);
-        void makeCrossOriginAccessRequestWithPreflight(const ResourceRequest& request);
-        void preflightSuccess();
-        void preflightFailure(unsigned long identifier, const URL&, const String& errorDescription);
+        void makeSimpleCrossOriginAccessRequest(const ResourceRequest&);
+        void makeCrossOriginAccessRequestWithPreflight(ResourceRequest&&);
+        void preflightSuccess(ResourceRequest&&);
+        void preflightFailure(unsigned long identifier, const ResourceError&);
 
         void loadRequest(const ResourceRequest&, SecurityCheckPolicy);
         bool isAllowedRedirect(const URL&);
@@ -101,6 +100,10 @@ namespace WebCore {
         SecurityOrigin* securityOrigin() const;
         const ContentSecurityPolicy& contentSecurityPolicy() const;
 
+        Document& document() { return m_document; }
+        const ThreadableLoaderOptions& options() const { return m_options; }
+        bool isLoading() { return m_resource || m_preflightChecker; }
+
         CachedResourceHandle<CachedRawResource> m_resource;
         ThreadableLoaderClient* m_client;
         Document& m_document;
@@ -108,8 +111,8 @@ namespace WebCore {
         bool m_sameOriginRequest;
         bool m_simpleRequest;
         bool m_async;
-        std::unique_ptr<ResourceRequest> m_actualRequest; // non-null during Access Control preflight checks
         std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
+        Optional<CrossOriginPreflightChecker> m_preflightChecker;
     };
 
 } // namespace WebCore

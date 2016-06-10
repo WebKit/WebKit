@@ -1900,6 +1900,7 @@ set(WebCore_SOURCES
     loader/ContentFilter.cpp
     loader/CookieJar.cpp
     loader/CrossOriginAccessControl.cpp
+    loader/CrossOriginPreflightChecker.cpp
     loader/CrossOriginPreflightResultCache.cpp
     loader/DocumentLoadTiming.cpp
     loader/DocumentLoader.cpp
