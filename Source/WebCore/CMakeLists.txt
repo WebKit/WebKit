@@ -2331,7 +2331,6 @@ set(WebCore_SOURCES
     platform/network/CredentialBase.cpp
     platform/network/CredentialStorage.cpp
     platform/network/DNSResolveQueue.cpp
-    platform/network/DataURL.cpp
     platform/network/DataURLDecoder.cpp
     platform/network/FormData.cpp
     platform/network/FormDataBuilder.cpp

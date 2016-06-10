@@ -7,6 +7,7 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Appcelerator Inc.
  * Copyright (C) 2009 Brent Fulgham <bfulgham@webkit.org>
+ * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  * Copyright (C) 2013 Peter Gal <galpeter@inf.u-szeged.hu>, University of Szeged
  * Copyright (C) 2013 Alex Christensen <achristensen@webkit.org>
  * Copyright (C) 2013 University of Szeged
@@ -48,8 +49,15 @@
 #include "MultipartHandle.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
+#include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
+#include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "SSLHandle.h"
+#include "TextEncoding.h"
+#include <wtf/text/Base64.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringView.h>
 
 #if OS(WINDOWS)
 #include "WebCoreBundleWin.h"
@@ -72,7 +80,6 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
-
 
 namespace WebCore {
 
@@ -904,6 +911,68 @@ bool ResourceHandleManager::startScheduledJobs()
         started = true;
     }
     return started;
+}
+
+static void handleDataURL(ResourceHandle* handle)
+{
+    ASSERT(handle->firstRequest().url().protocolIsData());
+    String url = handle->firstRequest().url().string();
+
+    ASSERT(handle);
+    ASSERT(handle->client());
+
+    int index = url.find(',');
+    if (index == -1) {
+        handle->client()->cannotShowURL(handle);
+        return;
+    }
+
+    String mediaType = url.substring(5, index - 5);
+    String data = url.substring(index + 1);
+
+    bool base64 = mediaType.endsWith(";base64", false);
+    if (base64)
+        mediaType = mediaType.left(mediaType.length() - 7);
+
+    if (mediaType.isEmpty())
+        mediaType = "text/plain";
+
+    String mimeType = extractMIMETypeFromMediaType(mediaType);
+    String charset = extractCharsetFromMediaType(mediaType);
+
+    if (charset.isEmpty())
+        charset = "US-ASCII";
+
+    ResourceResponse response;
+    response.setMimeType(mimeType);
+    response.setTextEncodingName(charset);
+    response.setURL(handle->firstRequest().url());
+
+    if (base64) {
+        data = decodeURLEscapeSequences(data);
+        handle->client()->didReceiveResponse(handle, WTFMove(response));
+
+        // didReceiveResponse might cause the client to be deleted.
+        if (handle->client()) {
+            Vector<char> out;
+            if (base64Decode(data, out, Base64IgnoreSpacesAndNewLines) && out.size() > 0)
+                handle->client()->didReceiveData(handle, out.data(), out.size(), 0);
+        }
+    } else {
+        TextEncoding encoding(charset);
+        data = decodeURLEscapeSequences(data, encoding);
+        handle->client()->didReceiveResponse(handle, WTFMove(response));
+
+        // didReceiveResponse might cause the client to be deleted.
+        if (handle->client()) {
+            CString encodedData = encoding.encode(data, URLEncodedEntitiesForUnencodables);
+            if (encodedData.length())
+                handle->client()->didReceiveData(handle, encodedData.data(), encodedData.length(), 0);
+        }
+    }
+
+    if (handle->client())
+        handle->client()->didFinishLoading(handle, 0);
 }
 
 void ResourceHandleManager::dispatchSynchronousJob(ResourceHandle* job)
