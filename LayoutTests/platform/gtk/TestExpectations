@@ -503,7 +503,6 @@ webkit.org/b/141423 fast/css/font-shorthand-from-longhands.html [ Failure ]
 webkit.org/b/141423 fast/css/font-shorthand-line-height.html [ Failure ]
 webkit.org/b/141423 fast/css/getComputedStyle/computed-style-font.html [ Failure ]
 webkit.org/b/141423 fast/css/getComputedStyle/computed-style-without-renderer.html [ Failure ]
-webkit.org/b/141423 fast/css/line-height-text-autosizing.html [ Failure ]
 webkit.org/b/141423 fast/css/getComputedStyle/computed-style.html [ Failure ]
 
 #Pointer and hover media queries.
@@ -713,6 +712,23 @@ webkit.org/b/156148 svg/text/text-vkern.svg [ Failure ]
 
 # Some shadow-dom tests that are not under fast/shadow-dom that are passing for mac
 webkit.org/b/148695 imported/w3c/csswg-test/css-scoping-1 [ Timeout Failure ImageOnlyFailure ]
+
+
+# Since r200320 resource-timing feature is a runtime flag.
+webkit.org/b/158617 fast/dom/Window/window-properties-performance-resource-timing.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_connection_reuse.html [ Timeout ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_ignore_data_url.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_ignore_failures.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_reparenting.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_script_types.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMarks.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMeasures.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_entry_type.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure_associate_with_navigation_timing.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure.html [ Failure ]
+webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_method_exist.html [ Failure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -2087,8 +2103,9 @@ webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/113772 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_iframe_self_navigation.html [ Failure ]
-webkit.org/b/113772 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_cached.html [ Failure ]
+# Timing out because of webkit.org/b/158617
+webkit.org/b/113772 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_iframe_self_navigation.html [ Failure Timeout ]
+webkit.org/b/113772 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_cached.html [ Failure Timeout ]
 
 webkit.org/b/115025 fast/events/constructors/mouse-event-constructor.html [ Failure ]
 webkit.org/b/115025 fast/events/constructors/wheel-event-constructor.html [ Failure ]

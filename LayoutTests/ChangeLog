@@ -1,3 +1,16 @@
+2016-06-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed gardening.
+
+        * TestExpectations: shadow-dom tests timeout on the GTK port.
+        Update the general expectations file to include also Timeout as
+        an expected failure.
+        * platform/gtk/TestExpectations: Since r200320 resource-timing feature is a runtime flag and this causes failures.
+        Remove also one test that has been removed.
+        * platform/gtk/fast/table/border-collapsing/cached-change-row-border-width-expected.txt: rebaseline after r201234
+        * platform/gtk/fast/table/border-collapsing/cached-change-tbody-border-width-expected.txt: rebaseline after r201234
+        * platform/gtk/fast/table/max-width-integer-overflow-expected.txt: rebaseline after r201234
+
 2016-06-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Origin header is not included in CORS requests for preloaded cross-origin resources
