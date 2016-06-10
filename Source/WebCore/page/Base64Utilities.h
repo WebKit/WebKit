@@ -32,10 +32,8 @@ namespace WebCore {
 
 class Base64Utilities {
 public:
-    Base64Utilities() = default;
-
-    String btoa(const String& stringToEncode, ExceptionCode&);
-    String atob(const String& encodedString, ExceptionCode&);
+    static String btoa(const String& stringToEncode, ExceptionCode&);
+    static String atob(const String& encodedString, ExceptionCode&);
 };
 
 }
