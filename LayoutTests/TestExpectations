@@ -581,3 +581,4 @@ inspector/css/selector-specificity.html [Skip]
 inspector/model/parse-script-syntax-tree.html [Skip]
 
 webkit.org/b/147229 inspector/css/modify-rule-selector.html [ Skip ]
+webkit.org/b/157849 fast/frames/crash-during-iframe-load-stop.html [ Pass Timeout ]
