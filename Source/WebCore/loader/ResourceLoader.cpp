@@ -432,6 +432,25 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
     m_response = r;
 
     if (m_response.isHttpVersion0_9()) {
+        auto url = m_response.url();
+        // Non-HTTP responses are interpreted as HTTP/0.9 which may allow exfiltration of data
+        // from non-HTTP services. Therefore cancel if the document was loaded with different
+        // HTTP version or if the resource request was to a non-default port.
+        if (!m_documentLoader->response().isHttpVersion0_9()) {
+            String message = "Cancelled resource load from '" + url.string() + "' because it is using HTTP/0.9 and the document was loaded with a different HTTP version.";
+            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier());
+            ResourceError error("", 0, url, message);
+            didFail(error);
+            return;
+        }
+        if (!isDefaultPortForProtocol(url.port(), url.protocol())) {
+            String message = "Cancelled resource load from '" + url.string() + "' because it is using HTTP/0.9 on a non-default port.";
+            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier());
+            ResourceError error("", 0, url, message);
+            didFail(error);
+            return;
+        }
+            
         String message = "Sandboxing '" + m_response.url().string() + "' because it is using HTTP/0.9.";
         m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, m_identifier);
         frameLoader()->forceSandboxFlags(SandboxScripts | SandboxPlugins);
