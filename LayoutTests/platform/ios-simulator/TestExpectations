@@ -2999,3 +2999,5 @@ imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation
 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html [ Failure ]
 
 webkit.org/b/157916 http/tests/misc/slow-loading-animated-image.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/158618 fast/hidpi/hidpi-3x-device-pixel-ratio.html [ Failure ]
