@@ -193,6 +193,7 @@ fast/mediastream/RTCSessionDescription.html
 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html
 fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html
 fast/mediastream/RTCTrackEvent-constructor.html
+fast/mediastream/RTCPeerConnection-inspect-answer.html
 
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]

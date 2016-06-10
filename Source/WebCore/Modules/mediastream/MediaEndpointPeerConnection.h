@@ -87,6 +87,7 @@ private:
     void startRunningTasks();
 
     void createOfferTask(RTCOfferOptions&, PeerConnection::SessionDescriptionPromise&);
+    void createAnswerTask(RTCAnswerOptions&, PeerConnection::SessionDescriptionPromise&);
 
     void setLocalDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
     void setRemoteDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
@@ -120,6 +121,7 @@ private:
     String m_dtlsFingerprint;
     String m_dtlsFingerprintFunction;
     unsigned m_sdpOfferSessionVersion { 0 };
+    unsigned m_sdpAnswerSessionVersion { 0 };
 
     RefPtr<MediaEndpointSessionDescription> m_currentLocalDescription;
     RefPtr<MediaEndpointSessionDescription> m_pendingLocalDescription;

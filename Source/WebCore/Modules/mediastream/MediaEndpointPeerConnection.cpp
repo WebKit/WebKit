@@ -191,23 +191,91 @@ void MediaEndpointPeerConnection::createOfferTask(RTCOfferOptions&, SessionDescr
         configurationSnapshot->addMediaDescription(WTFMove(mediaDescription));
     }
 
-    String sdpString;
-    SDPProcessor::Result result = m_sdpProcessor->generate(*configurationSnapshot, sdpString);
-    if (result != SDPProcessor::Result::Success) {
-        LOG_ERROR("SDPProcessor internal error");
-        return;
-    }
-
-    promise.resolve(RTCSessionDescription::create(RTCSessionDescription::SdpType::Offer, sdpString));
+    auto description = MediaEndpointSessionDescription::create(RTCSessionDescription::SdpType::Offer, WTFMove(configurationSnapshot));
+    promise.resolve(*description->toRTCSessionDescription(*m_sdpProcessor));
 }
 
 void MediaEndpointPeerConnection::createAnswer(RTCAnswerOptions& options, SessionDescriptionPromise&& promise)
 {
-    UNUSED_PARAM(options);
+    runTask([this, protectedOptions = RefPtr<RTCAnswerOptions>(&options), protectedPromise = WTFMove(promise)]() mutable {
+        createAnswerTask(*protectedOptions, protectedPromise);
+    });
+}
 
-    notImplemented();
+void MediaEndpointPeerConnection::createAnswerTask(RTCAnswerOptions&, SessionDescriptionPromise& promise)
+{
+    ASSERT(!m_dtlsFingerprint.isEmpty());
 
-    promise.reject(NOT_SUPPORTED_ERR);
+    if (m_client->internalSignalingState() == SignalingState::Closed)
+        return;
+
+    if (!internalRemoteDescription()) {
+        promise.reject(INVALID_STATE_ERR, "No remote description set");
+        return;
+    }
+
+    MediaEndpointSessionDescription* localDescription = internalLocalDescription();
+    RefPtr<MediaEndpointSessionConfiguration> configurationSnapshot = localDescription ?
+        localDescription->configuration()->clone() : MediaEndpointSessionConfiguration::create();
+
+    configurationSnapshot->setSessionVersion(m_sdpAnswerSessionVersion++);
+
+    auto transceivers = RtpTransceiverVector(m_client->getTransceivers());
+    const MediaDescriptionVector& remoteMediaDescriptions = internalRemoteDescription()->configuration()->mediaDescriptions();
+
+    for (unsigned i = 0; i < remoteMediaDescriptions.size(); ++i) {
+        PeerMediaDescription& remoteMediaDescription = *remoteMediaDescriptions[i];
+
+        RTCRtpTransceiver* transceiver = matchTransceiverByMid(transceivers, remoteMediaDescription.mid());
+        if (!transceiver) {
+            LOG_ERROR("Could not find a matching transceiver for remote description while creating answer");
+            continue;
+        }
+
+        if (i >= configurationSnapshot->mediaDescriptions().size()) {
+            auto newMediaDescription = PeerMediaDescription::create();
+
+            RTCRtpSender& sender = *transceiver->sender();
+            if (sender.track()) {
+                if (sender.mediaStreamIds().size())
+                    newMediaDescription->setMediaStreamId(sender.mediaStreamIds()[0]);
+                newMediaDescription->setMediaStreamTrackId(sender.trackId());
+                newMediaDescription->addSsrc(cryptographicallyRandomNumber());
+            }
+
+            newMediaDescription->setMode(transceiver->directionString());
+            newMediaDescription->setType(remoteMediaDescription.type());
+            newMediaDescription->setMid(remoteMediaDescription.mid());
+            newMediaDescription->setDtlsSetup(remoteMediaDescription.dtlsSetup() == "active" ? "passive" : "active");
+            newMediaDescription->setDtlsFingerprintHashFunction(m_dtlsFingerprintFunction);
+            newMediaDescription->setDtlsFingerprint(m_dtlsFingerprint);
+            newMediaDescription->setCname(m_cname);
+            newMediaDescription->setIceUfrag(m_iceUfrag);
+            newMediaDescription->setIcePassword(m_icePassword);
+
+            configurationSnapshot->addMediaDescription(WTFMove(newMediaDescription));
+        }
+
+        PeerMediaDescription& localMediaDescription = *configurationSnapshot->mediaDescriptions()[i];
+
+        localMediaDescription.setPayloads(remoteMediaDescription.payloads());
+        localMediaDescription.setRtcpMux(remoteMediaDescription.rtcpMux());
+
+        if (!localMediaDescription.ssrcs().size())
+            localMediaDescription.addSsrc(cryptographicallyRandomNumber());
+
+        if (localMediaDescription.dtlsSetup() == "actpass")
+            localMediaDescription.setDtlsSetup("passive");
+
+        transceivers.removeFirst(transceiver);
+    }
+
+    // Unassociated (non-stopped) transceivers need to be negotiated in a follow-up offer.
+    if (hasUnassociatedTransceivers(transceivers))
+        markAsNeedingNegotiation();
+
+    auto description = MediaEndpointSessionDescription::create(RTCSessionDescription::SdpType::Answer, WTFMove(configurationSnapshot));
+    promise.resolve(*description->toRTCSessionDescription(*m_sdpProcessor));
 }
 
 static RealtimeMediaSourceMap createSourceMap(const MediaDescriptionVector& remoteMediaDescriptions, unsigned localMediaDescriptionCount, const RtpTransceiverVector& transceivers)

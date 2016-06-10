@@ -1,3 +1,19 @@
+2016-06-10  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Imlement MediaEndpointPeerConnection::createAnswer()
+        https://bugs.webkit.org/show_bug.cgi?id=158566
+
+        Reviewed by Eric Carlson.
+
+        Add test for RTCPeerConnection.createAnswer.
+
+        * fast/mediastream/RTCPeerConnection-inspect-answer-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-inspect-answer.html: Added.
+        Generate two answers, one with audio only and a second with audio and video, and inspect
+        the result.
+        * platform/mac/TestExpectations:
+        Skip tests for mac that require building with WEB_RTC enabled.
+
 2016-06-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] CRASH when getting the computed style of a grid with only absolutely positioned children
