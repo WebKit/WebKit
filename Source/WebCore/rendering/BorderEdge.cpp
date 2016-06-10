@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-BorderEdge::BorderEdge(LayoutUnit edgeWidth, Color edgeColor, EBorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio)
+BorderEdge::BorderEdge(float edgeWidth, Color edgeColor, EBorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio)
     : m_width(edgeWidth)
     , m_color(edgeColor)
     , m_style(edgeStyle)
@@ -43,7 +43,7 @@ BorderEdge::BorderEdge(LayoutUnit edgeWidth, Color edgeColor, EBorderStyle edgeS
 {
     if (edgeStyle == DOUBLE && edgeWidth  < borderWidthInDevicePixel(3))
         m_style = SOLID;
-    m_flooredToDevicePixelWidth = floorToDevicePixel(edgeWidth, devicePixelRatio);
+    m_flooredToDevicePixelWidth = floorf(edgeWidth * devicePixelRatio) / devicePixelRatio;
 }
 
 void BorderEdge::getBorderEdgeInfo(BorderEdge edges[], const RenderStyle& style, float deviceScaleFactor, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)

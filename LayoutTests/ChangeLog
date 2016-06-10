@@ -1,3 +1,20 @@
+2016-06-09  Zalan Bujtas  <zalan@apple.com>
+
+        Hairline borders do not show up on 3x displays.
+        https://bugs.webkit.org/show_bug.cgi?id=158604
+        <rdar://problem/26511679>
+
+        Reviewed by Simon Fraser.
+
+        On a 3x display, when we convert a 1/3px hairline border from float
+        to LayoutUnit and pixel floor the result, we end up with a 0px width border.
+        It's because float to LayoutUnit is lossy and since the current kFixedPointDenominator % 3 != 0,
+        flooring LayoutUnit(1/3px) ends up being 0px. (float: 1/3 -> LayoutUnit: (1/3 - 1/kFixedPointDenominator) -> floor: 0)
+        This patch eliminates the (unnecessary) float -> LayoutUnit - float conversion on border width.   
+
+        * fast/borders/hidpi-3x-input-hairline-border-expected-mismatch.html: Added.
+        * fast/borders/hidpi-3x-input-hairline-border.html: Added.
+
 2016-06-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r201887.

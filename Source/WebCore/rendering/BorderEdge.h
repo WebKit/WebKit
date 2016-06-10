@@ -46,7 +46,7 @@ public:
     };
 
     BorderEdge() = default;
-    BorderEdge(LayoutUnit edgeWidth, Color edgeColor, EBorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio);
+    BorderEdge(float edgeWidth, Color edgeColor, EBorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio);
 
     static void getBorderEdgeInfo(BorderEdge edges[], const RenderStyle&, float deviceScaleFactor, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
 
