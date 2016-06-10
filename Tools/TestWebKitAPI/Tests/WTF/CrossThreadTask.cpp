@@ -27,19 +27,29 @@
 
 #include <string>
 #include <wtf/CrossThreadTask.h>
+#include <wtf/HashCountedSet.h>
+#include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
+
+static size_t totalDestructorCalls;
+static size_t totalIsolatedCopyCalls;
+
+static HashCountedSet<String> defaultConstructorSet;
+static HashCountedSet<String> nameConstructorSet;
+static HashCountedSet<String> copyConstructorSet;
+static HashCountedSet<String> moveConstructorSet;
 
 struct LifetimeLogger {
     LifetimeLogger()
     {
-        log() << "default_constructor(" << &name << "-" << copyGeneration << "-" << moveGeneration << ") ";
+        defaultConstructorSet.add(fullName());
     }
 
     LifetimeLogger(const char* inputName)
         : name(*inputName)
     {
-        log() << "name_constructor(" << &name << "-" << copyGeneration << "-" << moveGeneration << ") ";
+        nameConstructorSet.add(fullName());
     }
 
     LifetimeLogger(const LifetimeLogger& other)
@@ -47,7 +57,7 @@ struct LifetimeLogger {
         , copyGeneration(other.copyGeneration + 1)
         , moveGeneration(other.moveGeneration)
     {
-        log() << "copy_constructor(" << &name << "-" << copyGeneration << "-" << moveGeneration << ") ";
+        copyConstructorSet.add(fullName());
     }
 
     LifetimeLogger(LifetimeLogger&& other)
@@ -55,41 +65,33 @@ struct LifetimeLogger {
         , copyGeneration(other.copyGeneration)
         , moveGeneration(other.moveGeneration + 1)
     {
-        log() << "move_constructor(" << &name << "-" << copyGeneration << "-" << moveGeneration << ") ";
+        moveConstructorSet.add(fullName());
     }
 
     ~LifetimeLogger()
     {
-        log() << "destructor(" << &name << "-" << copyGeneration << "-" << moveGeneration << ") ";
+        ++totalDestructorCalls;
     }
 
     LifetimeLogger isolatedCopy() const
     {
-        log() << "isolatedCopy() ";
+        ++totalIsolatedCopyCalls;
         return LifetimeLogger(*this);
+    }
+
+    String fullName()
+    {
+        return makeString(&name, "-", String::number(copyGeneration), "-", String::number(moveGeneration));
     }
 
     const char& name { *"<default>" };
     int copyGeneration { 0 };
     int moveGeneration { 0 };
-
-    static std::ostringstream& log()
-    {
-        static std::ostringstream log;
-        return log;
-    }
-
-    static std::string takeLogStr()
-    {
-        std::string string = log().str();
-        log().str("");
-        return string;
-    }
 };
 
 void testFunction(const LifetimeLogger&, const LifetimeLogger&, const LifetimeLogger&)
 {
-    LifetimeLogger::log() << "testFunction called" << " ";
+    // Do nothing - Just need to check the side effects of the arguments getting in here.
 }
 
 TEST(WTF_CrossThreadTask, Basic)
@@ -102,7 +104,29 @@ TEST(WTF_CrossThreadTask, Basic)
         auto task = createCrossThreadTask(testFunction, logger1, logger2, logger3);
         task.performTask();
     }
-    ASSERT_STREQ("default_constructor(<default>-0-0) copy_constructor(<default>-1-0) name_constructor(logger-0-0) isolatedCopy() copy_constructor(<default>-1-0) isolatedCopy() copy_constructor(<default>-2-0) isolatedCopy() copy_constructor(logger-1-0) move_constructor(<default>-1-1) move_constructor(<default>-2-1) move_constructor(logger-1-1) destructor(logger-1-0) destructor(<default>-2-0) destructor(<default>-1-0) move_constructor(<default>-1-2) move_constructor(<default>-2-2) move_constructor(logger-1-2) destructor(logger-1-1) destructor(<default>-2-1) destructor(<default>-1-1) testFunction called destructor(logger-1-2) destructor(<default>-2-2) destructor(<default>-1-2) destructor(logger-0-0) destructor(<default>-1-0) destructor(<default>-0-0) ", LifetimeLogger::takeLogStr().c_str());
+
+    ASSERT_EQ(1u, defaultConstructorSet.size());
+    ASSERT_EQ(1u, defaultConstructorSet.count("<default>-0-0"));
+
+    ASSERT_EQ(1u, nameConstructorSet.size());
+    ASSERT_EQ(1u, nameConstructorSet.count("logger-0-0"));
+
+    ASSERT_EQ(3u, copyConstructorSet.size());
+    ASSERT_EQ(1u, copyConstructorSet.count("logger-1-0"));
+    ASSERT_EQ(2u, copyConstructorSet.count("<default>-1-0"));
+    ASSERT_EQ(1u, copyConstructorSet.count("<default>-2-0"));
+
+    ASSERT_EQ(6u, moveConstructorSet.size());
+    ASSERT_EQ(1u, moveConstructorSet.count("logger-1-1"));
+    ASSERT_EQ(1u, moveConstructorSet.count("logger-1-2"));
+    ASSERT_EQ(1u, moveConstructorSet.count("<default>-2-1"));
+    ASSERT_EQ(1u, moveConstructorSet.count("<default>-2-2"));
+    ASSERT_EQ(1u, moveConstructorSet.count("<default>-1-1"));
+    ASSERT_EQ(1u, moveConstructorSet.count("<default>-1-2"));
+
+    ASSERT_EQ(12u, totalDestructorCalls);
+    ASSERT_EQ(3u, totalIsolatedCopyCalls);
+
 }
     
 } // namespace TestWebKitAPI
