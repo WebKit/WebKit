@@ -86,7 +86,7 @@ public:
 #endif
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    virtual void viewportSizeChanged(const WebCore::IntSize&) = 0;
+    virtual void contentsSizeChanged(const WebCore::IntSize&) = 0;
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) = 0;
 #endif
 

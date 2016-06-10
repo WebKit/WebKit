@@ -77,7 +77,7 @@ public:
     void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
     void forceRepaint() override;
     bool forceRepaintAsync(uint64_t /*callbackID*/) override;
-    void sizeDidChange(const WebCore::IntSize& newSize) override;
+    void sizeDidChange(const WebCore::IntSize&) override;
     void deviceOrPageScaleFactorChanged() override;
 
     void pauseRendering() override;
@@ -86,7 +86,7 @@ public:
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void pageBackgroundTransparencyChanged() override { };
 
-    void viewportSizeChanged(const WebCore::IntSize&) override;
+    void contentsSizeChanged(const WebCore::IntSize&) override;
     void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
 
 #if PLATFORM(GTK)

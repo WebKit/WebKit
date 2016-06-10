@@ -230,7 +230,7 @@ void DrawingAreaImpl::mainFrameContentSizeChanged(const WebCore::IntSize& newSiz
 {
 #if USE(COORDINATED_GRAPHICS_THREADED)
     if (m_layerTreeHost)
-        m_layerTreeHost->sizeDidChange(newSize);
+        m_layerTreeHost->contentsSizeChanged(newSize);
 #else
     UNUSED_PARAM(newSize);
 #endif
@@ -349,13 +349,9 @@ void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImme
         m_webPage.layoutIfNeeded();
         m_webPage.scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
 
-        if (m_layerTreeHost) {
-#if USE(COORDINATED_GRAPHICS_THREADED)
-            m_layerTreeHost->viewportSizeChanged(m_webPage.size());
-#else
+        if (m_layerTreeHost)
             m_layerTreeHost->sizeDidChange(m_webPage.size());
-#endif
-        } else
+        else
             m_dirtyRegion = m_webPage.bounds();
     } else {
         ASSERT(size == m_webPage.size());
