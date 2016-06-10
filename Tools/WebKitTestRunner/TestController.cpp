@@ -990,7 +990,7 @@ void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 
 void TestController::updateWindowScaleForTest(PlatformWebView* view, const TestInvocation& test)
 {
-    view->changeWindowScaleIfNeeded(test.options().isHiDPITest ? 2 : 1);
+    view->changeWindowScaleIfNeeded(test.options().deviceScaleFactor);
 }
 
 void TestController::configureViewForTest(const TestInvocation& test)

@@ -56,16 +56,20 @@ static bool isSVGTestPath(const std::string& pathOrURL)
     return pathContains(pathOrURL, "svg/W3C-SVG-1.1") || pathContains(pathOrURL, "svg\\W3C-SVG-1.1");
 }
 
-static bool isHiDPITestPath(const std::string& pathOrURL)
+static float deviceScaleFactorForTest(const std::string& pathOrURL)
 {
-    return pathContains(pathOrURL, "/hidpi-");
+    if (pathContains(pathOrURL, "/hidpi-3x-"))
+        return 3;
+    if (pathContains(pathOrURL, "/hidpi-"))
+        return 2;
+    return 1;
 }
 
 TestOptions::TestOptions(const std::string& pathOrURL)
     : useFlexibleViewport(shouldMakeViewportFlexible(pathOrURL))
     , useFixedLayout(shouldUseFixedLayout(pathOrURL))
     , isSVGTest(isSVGTestPath(pathOrURL))
-    , isHiDPITest(isHiDPITestPath(pathOrURL))
+    , deviceScaleFactor(deviceScaleFactorForTest(pathOrURL))
 {
 }
 

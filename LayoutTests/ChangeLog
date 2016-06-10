@@ -1,3 +1,15 @@
+2016-06-09  Zalan Bujtas  <zalan@apple.com>
+
+        Add testing support for 3x device scale factor.
+        https://bugs.webkit.org/show_bug.cgi?id=158597
+
+        Reviewed by Simon Fraser.
+
+        Set 3x device scale factor on the test canvas when the test url is prefixed with hidpi-3x-. 
+
+        * fast/hidpi/hidpi-3x-device-pixel-ratio-expected.txt: Added.
+        * fast/hidpi/hidpi-3x-device-pixel-ratio.html: Added.
+
 2016-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r201823) editing/selection/selection-in-iframe-removed-crash.html is flaky

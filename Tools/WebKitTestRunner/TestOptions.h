@@ -38,11 +38,11 @@ struct TestOptions {
     bool useFlexibleViewport { false };
     bool useFixedLayout { false };
     bool isSVGTest { false };
-    bool isHiDPITest { false };
     bool useDataDetection { false };
     bool useMockScrollbars { true };
     bool needsSiteSpecificQuirks { false };
 
+    float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
     
     TestOptions(const std::string& pathOrURL);
