@@ -104,6 +104,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , masksToBounds(false)
     , opaque(false)
     , contentsHidden(false)
+    , userInteractionEnabled(true)
 {
 }
 
@@ -142,6 +143,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , masksToBounds(other.masksToBounds)
     , opaque(other.opaque)
     , contentsHidden(other.contentsHidden)
+    , userInteractionEnabled(other.userInteractionEnabled)
 {
     // FIXME: LayerProperties should reference backing store by ID, so that two layers can have the same backing store (for clones).
     // FIXME: LayerProperties shouldn't be copyable; PlatformCALayerRemote::clone should copy the relevant properties.
@@ -273,6 +275,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
 
     if (changedProperties & CustomAppearanceChanged)
         encoder.encodeEnum(customAppearance);
+
+    if (changedProperties & UserInteractionEnabledChanged)
+        encoder << userInteractionEnabled;
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& decoder, LayerProperties& result)
@@ -488,6 +493,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
 
     if (result.changedProperties & CustomAppearanceChanged) {
         if (!decoder.decodeEnum(result.customAppearance))
+            return false;
+    }
+
+    if (result.changedProperties & UserInteractionEnabledChanged) {
+        if (!decoder.decode(result.userInteractionEnabled))
             return false;
     }
 
@@ -814,6 +824,9 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::CustomAppearanceChanged)
             ts.dumpProperty("customAppearance", layerProperties.customAppearance);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::UserInteractionEnabledChanged)
+            ts.dumpProperty("userInteractionEnabled", layerProperties.userInteractionEnabled);
     }
 }
 

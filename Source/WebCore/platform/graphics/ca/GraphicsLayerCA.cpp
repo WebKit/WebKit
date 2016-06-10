@@ -676,6 +676,15 @@ void GraphicsLayerCA::setContentsVisible(bool contentsVisible)
         noteSublayersChanged();
 }
 
+void GraphicsLayerCA::setUserInteractionEnabled(bool userInteractionEnabled)
+{
+    if (userInteractionEnabled == m_userInteractionEnabled)
+        return;
+    
+    GraphicsLayer::setUserInteractionEnabled(userInteractionEnabled);
+    noteLayerPropertyChanged(UserInteractionEnabledChanged);
+}
+
 void GraphicsLayerCA::setAcceleratesDrawing(bool acceleratesDrawing)
 {
     if (acceleratesDrawing == m_acceleratesDrawing)
@@ -1579,6 +1588,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsVisibilityChanged)
         updateContentsVisibility();
 
+    if (m_uncommittedChanges & UserInteractionEnabledChanged)
+        updateUserInteractionEnabled();
+
     // Note that contentsScale can affect whether the layer can be opaque.
     if (m_uncommittedChanges & ContentsOpaqueChanged)
         updateContentsOpaque(pageScaleFactor);
@@ -1882,6 +1894,11 @@ void GraphicsLayerCA::updateContentsVisibility()
     }
 
     m_layer->setContentsHidden(!m_contentsVisible);
+}
+
+void GraphicsLayerCA::updateUserInteractionEnabled()
+{
+    m_layer->setUserInteractionEnabled(m_userInteractionEnabled);
 }
 
 void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)

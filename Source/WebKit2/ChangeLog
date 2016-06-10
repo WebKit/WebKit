@@ -1,3 +1,27 @@
+2016-06-09  Antoine Quint  <graouts@apple.com>
+
+        [iOS] -webkit-overflow-scrolling: touch; ignores pointer-events: none;
+        https://bugs.webkit.org/show_bug.cgi?id=119839
+        <rdar://problem/9671514>
+
+        Reviewed by Simon Fraser.
+
+        Propagate a "userInteractionEnabled" flag from the Web process which is used to turn off
+        user interaction on a UIScrollView created for -webkit-overflow-scrolling: touch.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpChangedLayers):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::userInteractionEnabled):
+        (WebKit::PlatformCALayerRemote::setUserInteractionEnabled):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2016-06-09  Anders Carlsson  <andersca@apple.com>
 
         Remove OriginAndDatabases.cpp, it's unused

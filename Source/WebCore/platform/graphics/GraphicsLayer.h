@@ -346,6 +346,9 @@ public:
     bool contentsAreVisible() const { return m_contentsVisible; }
     virtual void setContentsVisible(bool b) { m_contentsVisible = b; }
 
+    bool userInteractionEnabled() const { return m_userInteractionEnabled; }
+    virtual void setUserInteractionEnabled(bool b) { m_userInteractionEnabled = b; }
+    
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     virtual void setAcceleratesDrawing(bool b) { m_acceleratesDrawing = b; }
 
@@ -626,6 +629,7 @@ protected:
     bool m_showRepaintCounter : 1;
     bool m_isMaskLayer : 1;
     bool m_isTrackingDisplayListReplay : 1;
+    bool m_userInteractionEnabled : 1;
     
     GraphicsLayerPaintingPhase m_paintingPhase;
     CompositingCoordinatesOrientation m_contentsOrientation; // affects orientation of layer contents

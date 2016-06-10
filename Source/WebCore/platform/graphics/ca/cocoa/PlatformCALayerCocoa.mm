@@ -628,6 +628,15 @@ void PlatformCALayerCocoa::setContentsHidden(bool)
 {
 }
 
+bool PlatformCALayerCocoa::userInteractionEnabled() const
+{
+    return true;
+}
+
+void PlatformCALayerCocoa::setUserInteractionEnabled(bool)
+{
+}
+
 void PlatformCALayerCocoa::setBackingStoreAttached(bool)
 {
     // We could throw away backing store here with setContents:nil.

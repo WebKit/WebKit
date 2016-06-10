@@ -527,6 +527,20 @@ void PlatformCALayerRemote::setContentsHidden(bool value)
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ContentsHiddenChanged);
 }
 
+bool PlatformCALayerRemote::userInteractionEnabled() const
+{
+    return m_properties.userInteractionEnabled;
+}
+
+void PlatformCALayerRemote::setUserInteractionEnabled(bool value)
+{
+    if (m_properties.userInteractionEnabled == value)
+        return;
+    
+    m_properties.userInteractionEnabled = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::UserInteractionEnabledChanged);
+}
+
 void PlatformCALayerRemote::setBackingStoreAttached(bool value)
 {
     if (m_properties.backingStoreAttached == value)

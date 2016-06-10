@@ -331,9 +331,9 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
                 maskOwnerLayer.mask = maskView.layer;
         }
     }
-    
-    if (properties.changedProperties & RemoteLayerTreeTransaction::ContentsHiddenChanged)
-        view.userInteractionEnabled = !properties.contentsHidden;
+
+    if (properties.changedProperties & (RemoteLayerTreeTransaction::ContentsHiddenChanged | RemoteLayerTreeTransaction::UserInteractionEnabledChanged))
+        view.userInteractionEnabled = !properties.contentsHidden && properties.userInteractionEnabled;
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

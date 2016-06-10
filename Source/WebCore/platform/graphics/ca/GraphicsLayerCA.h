@@ -91,6 +91,7 @@ public:
     WEBCORE_EXPORT void setContentsVisible(bool) override;
     WEBCORE_EXPORT void setAcceleratesDrawing(bool) override;
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool) override;
+    WEBCORE_EXPORT void setUserInteractionEnabled(bool) override;
 
     WEBCORE_EXPORT void setBackgroundColor(const Color&) override;
 
@@ -399,6 +400,7 @@ private:
     void updateDrawsContent();
     void updateCoverage();
     void updateBackgroundColor();
+    void updateUserInteractionEnabled();
 
     void updateContentsImage();
     void updateContentsPlatformLayer();
@@ -495,6 +497,7 @@ private:
         BlendModeChanged =              1LLU << 34,
         ShapeChanged =                  1LLU << 35,
         WindRuleChanged =               1LLU << 36,
+        UserInteractionEnabledChanged = 1LLU << 37,
     };
     typedef uint64_t LayerChangeFlags;
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };

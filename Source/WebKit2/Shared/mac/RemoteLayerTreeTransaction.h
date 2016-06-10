@@ -89,6 +89,7 @@ public:
         AnimationsChanged               = 1LLU << 34,
         EdgeAntialiasingMaskChanged     = 1LLU << 35,
         CustomAppearanceChanged         = 1LLU << 36,
+        UserInteractionEnabledChanged   = 1LLU << 37,
     };
     typedef uint64_t LayerChange;
 
@@ -166,6 +167,7 @@ public:
         bool masksToBounds;
         bool opaque;
         bool contentsHidden;
+        bool userInteractionEnabled;
     };
 
     explicit RemoteLayerTreeTransaction();

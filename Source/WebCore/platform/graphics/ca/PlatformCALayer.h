@@ -161,6 +161,8 @@ public:
     // Used to disable user interaction for some platforms.
     virtual bool contentsHidden() const = 0;
     virtual void setContentsHidden(bool) = 0;
+    virtual bool userInteractionEnabled() const = 0;
+    virtual void setUserInteractionEnabled(bool) = 0;
 
     virtual bool geometryFlipped() const = 0;
     virtual void setGeometryFlipped(bool) = 0;
