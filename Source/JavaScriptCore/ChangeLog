@@ -1,3 +1,31 @@
+2016-06-09  Mark Lam  <mark.lam@apple.com>
+
+        Make some methods const.
+        https://bugs.webkit.org/show_bug.cgi?id=158594
+
+        Reviewed by Benjamin Poulain.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::columnNumberForBytecodeOffset):
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        * bytecode/ExpressionRangeInfo.h:
+        (JSC::ExpressionRangeInfo::encodeFatColumnMode):
+        (JSC::ExpressionRangeInfo::decodeFatLineMode):
+        (JSC::ExpressionRangeInfo::decodeFatColumnMode):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::lineNumberForBytecodeOffset):
+        (JSC::UnlinkedCodeBlock::getLineAndColumn):
+        (JSC::UnlinkedCodeBlock::expressionRangeForBytecodeOffset):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::createRareDataIfNecessary):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::isOpcode):
+        (JSC::StackFrame::computeLineAndColumn):
+        (JSC::StackFrame::toString):
+        * interpreter/Interpreter.h:
+        (JSC::StackFrame::isNative):
+
 2016-06-09  Michael Saboff  <msaboff@apple.com>
 
         ES6: Reusing function name as a parameter name shouldn't throw Syntax Error

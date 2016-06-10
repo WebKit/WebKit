@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2013, 2015-2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,8 +128,8 @@ int UnlinkedCodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
     return line;
 }
 
-inline void UnlinkedCodeBlock::getLineAndColumn(ExpressionRangeInfo& info,
-    unsigned& line, unsigned& column)
+inline void UnlinkedCodeBlock::getLineAndColumn(const ExpressionRangeInfo& info,
+    unsigned& line, unsigned& column) const
 {
     switch (info.mode) {
     case ExpressionRangeInfo::FatLineMode:
@@ -185,7 +185,7 @@ void UnlinkedCodeBlock::dumpExpressionRangeInfo()
 #endif
 
 void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset,
-    int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
+    int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column) const
 {
     ASSERT(bytecodeOffset < instructions().count());
 
@@ -198,7 +198,7 @@ void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset
         return;
     }
 
-    Vector<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
+    const Vector<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
 
     int low = 0;
     int high = expressionInfo.size();
@@ -213,7 +213,7 @@ void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset
     if (!low)
         low = 1;
 
-    ExpressionRangeInfo& info = expressionInfo[low - 1];
+    const ExpressionRangeInfo& info = expressionInfo[low - 1];
     startOffset = info.startOffset;
     endOffset = info.endOffset;
     divot = info.divotPoint;

@@ -444,7 +444,7 @@ bool Interpreter::isOpcode(Opcode opcode)
 #endif
 }
 
-void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column)
+void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
 {
     if (!codeBlock) {
         line = 0;
@@ -462,7 +462,7 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column)
         line = executable->overrideLineNumber();
 }
 
-String StackFrame::toString(VM& vm)
+String StackFrame::toString(VM& vm) const
 {
     StringBuilder traceBuild;
     String functionName = this->functionName(vm);

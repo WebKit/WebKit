@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -325,7 +325,7 @@ public:
     int lineNumberForBytecodeOffset(unsigned bytecodeOffset);
 
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
-        int& startOffset, int& endOffset, unsigned& line, unsigned& column);
+        int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
 
     bool typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);
 
@@ -387,7 +387,7 @@ private:
             m_rareData = std::make_unique<RareData>();
     }
 
-    void getLineAndColumn(ExpressionRangeInfo&, unsigned& line, unsigned& column);
+    void getLineAndColumn(const ExpressionRangeInfo&, unsigned& line, unsigned& column) const;
 
     int m_numParameters;
 

@@ -90,11 +90,11 @@ namespace JSC {
 
         bool isNative() const { return !codeBlock; }
 
-        void computeLineAndColumn(unsigned& line, unsigned& column);
+        void computeLineAndColumn(unsigned& line, unsigned& column) const;
         String functionName(VM&) const;
         intptr_t sourceID() const;
         String sourceURL() const;
-        String toString(VM&);
+        String toString(VM&) const;
     };
 
     class SuspendExceptionScope {
