@@ -4,7 +4,7 @@ This tests that attachment elements are accessible.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Attachment description: AXDescription: title, subtitle, action
+Attachment description: AXDescription: action, title, subtitle
 Attachment value: AXValue: 0.5
 Attachment role: AXRoleDescription: attachment
 PASS successfullyParsed is true

@@ -1,0 +1,12 @@
+
+This tests that attachment elements are accessible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Attachment description: AXLabel: action, title, subtitle
+Attachment value: AXValue: 0.50
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

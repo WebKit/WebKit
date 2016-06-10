@@ -22,8 +22,12 @@
     if (window.accessibilityController) {
         var content = accessibilityController.accessibleElementById("attachment");
         debug("Attachment description: " + content.description);
+
         debug("Attachment value: " + content.stringValue);
-        debug("Attachment role: " + content.roleDescription);
+
+        if (accessibilityController.platformName == "mac") {
+            debug("Attachment role: " + content.roleDescription);
+        }
     }
 
 </script>

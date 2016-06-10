@@ -326,6 +326,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (uint64_t)_axContainedByFieldsetTrait { return (1 << 22); }
 - (uint64_t)_axSearchFieldTrait { return (1 << 23); }
 - (uint64_t)_axTextAreaTrait { return (1 << 24); }
+- (uint64_t)_axUpdatesFrequentlyTrait { return (1 << 25); }
 
 - (BOOL)accessibilityCanFuzzyHitTest
 {
@@ -698,6 +699,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             break;
     }
 
+    if (m_object->isAttachmentElement())
+        traits |= [self _axUpdatesFrequentlyTrait];
+    
     if (m_object->isSelected())
         traits |= [self _axSelectedTrait];
 
@@ -1273,6 +1277,14 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return [NSString stringWithFormat:@"%d", m_object->headingLevel()];
     
     return nil;
+}
+
+- (BOOL)accessibilityIsAttachmentElement
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return is<AccessibilityAttachment>(m_object);
 }
 
 - (BOOL)accessibilityIsComboBox

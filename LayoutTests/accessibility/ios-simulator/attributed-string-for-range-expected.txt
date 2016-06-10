@@ -15,7 +15,7 @@ Attributed string: hello  {
     UIAccessibilityTokenFontName = "Times New Roman";
     UIAccessibilityTokenFontSize = 16;
 }￼{
-    UIAccessibilityTokenAttachment = "WebAccessibilityObjectWrapper: title, subtitle, action";
+    UIAccessibilityTokenAttachment = "WebAccessibilityObjectWrapper: action, title, subtitle";
 } {
     UIAccessibilityTokenFontFamily = "Times New Roman";
     UIAccessibilityTokenFontName = "Times New Roman";
