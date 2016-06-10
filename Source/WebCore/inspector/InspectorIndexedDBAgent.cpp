@@ -94,16 +94,16 @@ class ExecutableWithDatabase : public RefCounted<ExecutableWithDatabase> {
 public:
     ExecutableWithDatabase(ScriptExecutionContext* context)
         : m_context(context) { }
-    virtual ~ExecutableWithDatabase() { };
+    virtual ~ExecutableWithDatabase() { }
     void start(IDBFactory*, SecurityOrigin*, const String& databaseName);
     virtual void execute(IDBDatabase&) = 0;
     virtual RequestCallback& requestCallback() = 0;
-    ScriptExecutionContext* context() { return m_context; };
+    ScriptExecutionContext* context() const { return m_context; }
 private:
     ScriptExecutionContext* m_context;
 };
 
-class OpenDatabaseCallback : public EventListener {
+class OpenDatabaseCallback final : public EventListener {
 public:
     static Ref<OpenDatabaseCallback> create(ExecutableWithDatabase* executableWithDatabase)
     {
@@ -148,19 +148,19 @@ private:
 
 void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, const String& databaseName)
 {
-    Ref<OpenDatabaseCallback> callback = OpenDatabaseCallback::create(this);
-    ExceptionCodeWithMessage ec;
-
     if (!context()) {
         requestCallback().sendFailure("Could not open database.");
         return;
     }
 
+    ExceptionCodeWithMessage ec;
     RefPtr<IDBOpenDBRequest> idbOpenDBRequest = idbFactory->open(*context(), databaseName, Nullopt, ec);
     if (ec.code) {
         requestCallback().sendFailure("Could not open database.");
         return;
     }
+
+    Ref<OpenDatabaseCallback> callback = OpenDatabaseCallback::create(this);
     idbOpenDBRequest->addEventListener(eventNames().successEvent, WTFMove(callback), false);
 }
 
@@ -174,13 +174,14 @@ static RefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
             .setType(KeyPath::Type::Null)
             .release();
         break;
+
     case IDBKeyPath::Type::String:
         keyPath = KeyPath::create()
             .setType(KeyPath::Type::String)
             .release();
         keyPath->setString(idbKeyPath.string());
-
         break;
+
     case IDBKeyPath::Type::Array: {
         auto array = Inspector::Protocol::Array<String>::create();
         for (auto& string : idbKeyPath.array())
@@ -191,6 +192,7 @@ static RefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
         keyPath->setArray(WTFMove(array));
         break;
     }
+
     default:
         ASSERT_NOT_REACHED();
     }
@@ -225,7 +227,7 @@ static RefPtr<IDBIndex> indexForObjectStore(IDBObjectStore* idbObjectStore, cons
     return idbIndex;
 }
 
-class DatabaseLoader : public ExecutableWithDatabase {
+class DatabaseLoader final : public ExecutableWithDatabase {
 public:
     static Ref<DatabaseLoader> create(ScriptExecutionContext* context, Ref<RequestDatabaseCallback>&& requestCallback)
     {
@@ -265,7 +267,6 @@ public:
                 .setAutoIncrement(objectStoreInfo->autoIncrement())
                 .setIndexes(WTFMove(indexes))
                 .release();
-        
             objectStores->addItem(WTFMove(objectStore));
         }
     
@@ -274,7 +275,6 @@ public:
             .setVersion(databaseInfo.version())
             .setObjectStores(WTFMove(objectStores))
             .release();
-        
         m_requestCallback->sendSuccess(WTFMove(result));
     }
 
@@ -288,8 +288,6 @@ private:
 
 static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
 {
-    RefPtr<IDBKey> idbKey;
-
     String type;
     if (!key->getString("type", type))
         return nullptr;
@@ -299,6 +297,7 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
     static NeverDestroyed<const String> dateType(ASCIILiteral("date"));
     static NeverDestroyed<const String> arrayType(ASCIILiteral("array"));
 
+    RefPtr<IDBKey> idbKey;
     if (type == numberType) {
         double number;
         if (!key->getDouble("number", number))
@@ -336,25 +335,25 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
 static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const InspectorObject* keyRange)
 {
     RefPtr<InspectorObject> lower;
-    if (!keyRange->getObject("lower", lower))
+    if (!keyRange->getObject(ASCIILiteral("lower"), lower))
         return nullptr;
     RefPtr<IDBKey> idbLower = idbKeyFromInspectorObject(lower.get());
     if (!idbLower)
         return nullptr;
 
     RefPtr<InspectorObject> upper;
-    if (!keyRange->getObject("upper", upper))
+    if (!keyRange->getObject(ASCIILiteral("upper"), upper))
         return nullptr;
     RefPtr<IDBKey> idbUpper = idbKeyFromInspectorObject(upper.get());
     if (!idbUpper)
         return nullptr;
 
     bool lowerOpen;
-    if (!keyRange->getBoolean("lowerOpen", lowerOpen))
+    if (!keyRange->getBoolean(ASCIILiteral("lowerOpen"), lowerOpen))
         return nullptr;
 
     bool upperOpen;
-    if (!keyRange->getBoolean("upperOpen", upperOpen))
+    if (!keyRange->getBoolean(ASCIILiteral("upperOpen"), upperOpen))
         return nullptr;
 
     return IDBKeyRange::create(WTFMove(idbLower), WTFMove(idbUpper), lowerOpen, upperOpen);
@@ -432,7 +431,6 @@ public:
             .setValue(m_injectedScript.wrapObject(cursor.value(), String(), true))
             .release();
         m_result->addItem(WTFMove(dataEntry));
-
     }
 
     void end(bool hasMore)
@@ -447,16 +445,16 @@ private:
         : EventListener(EventListener::CPPEventListenerType)
         , m_injectedScript(injectedScript)
         , m_requestCallback(WTFMove(requestCallback))
+        , m_result(Array<DataEntry>::create())
         , m_skipCount(skipCount)
         , m_pageSize(pageSize)
-        , m_result(Array<DataEntry>::create())
     {
     }
     InjectedScript m_injectedScript;
     Ref<RequestDataCallback> m_requestCallback;
+    Ref<Array<DataEntry>> m_result;
     int m_skipCount;
     unsigned m_pageSize;
-    Ref<Array<DataEntry>> m_result;
 };
 
 class DataLoader : public ExecutableWithDatabase {
@@ -472,6 +470,7 @@ public:
     {
         if (!requestCallback().isActive())
             return;
+
         RefPtr<IDBTransaction> idbTransaction = transactionForDatabase(context(), &database, m_objectStoreName);
         if (!idbTransaction) {
             m_requestCallback->sendFailure("Could not get transaction");
@@ -710,6 +709,7 @@ public:
             m_requestCallback->sendFailure("Could not get transaction");
             return;
         }
+
         RefPtr<IDBObjectStore> idbObjectStore = objectStoreForTransaction(idbTransaction.get(), m_objectStoreName);
         if (!idbObjectStore) {
             m_requestCallback->sendFailure("Could not get object store");
