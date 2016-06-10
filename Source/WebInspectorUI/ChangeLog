@@ -1,3 +1,16 @@
+2016-06-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r201538): Web Inspector: Border under JS Call Trees content view is too thick
+        https://bugs.webkit.org/show_bug.cgi?id=158624
+        <rdar://problem/26743633>
+
+        Reviewed by Joseph Pecoraro.
+
+        Remove top border from <th> elements.
+
+        * UserInterface/Views/ProfileView.css:
+        (.profile > .data-grid th): Deleted.
+
 2016-06-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: Web Inspector: IndexedDB does not show ObjectStore data

@@ -31,10 +31,6 @@
     bottom: 0;
 }
 
-.profile > .data-grid th {
-    border-top: 1px solid var(--border-color);
-}
-
 .profile > .data-grid td .icon {
     position: relative;
     width: 16px;
