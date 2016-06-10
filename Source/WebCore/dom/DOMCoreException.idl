@@ -28,6 +28,7 @@
 
 [
     DoNotCheckConstants,
+    Exposed=(Window,Worker),
     InterfaceName=DOMException,
     ImplementationLacksVTable,
 ] exception DOMCoreException {

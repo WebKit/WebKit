@@ -1,3 +1,14 @@
+2016-06-10  Chris Dumez  <cdumez@apple.com>
+
+        DOMException should be exposed to workers
+        https://bugs.webkit.org/show_bug.cgi?id=158608
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline existing test.
+
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+
 2016-06-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver Unable to View Download Progress or Completion Status for Mail Attachments
