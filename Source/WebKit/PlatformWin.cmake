@@ -53,7 +53,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     win
     win/plugins
     win/WebCoreSupport
-    WebKit.vcxproj/WebKit
     "${WEBKIT_DIR}/.."
     "${DERIVED_SOURCES_WEBKIT_DIR}/include"
     "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces"

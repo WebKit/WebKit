@@ -1,3 +1,23 @@
+2016-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up WebKit.vcxproj directory after switching to CMake.
+
+        * PlatformWin.cmake:
+        * WebKit.vcxproj/Interfaces: Removed.
+        * WebKit.vcxproj/WebKit: Removed.
+        * WebKit.vcxproj/WebKit/resource.h: Removed.
+        * WebKit.vcxproj/WebKitGUID: Removed.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj: Removed.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj.filters: Removed.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDCommon.props: Removed.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDDebug.props: Removed.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDDebugWinCairo.props: Removed.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDPostBuild.cmd: Removed.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDPreBuild.cmd: Removed.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDProduction.props: Removed.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDRelease.props: Removed.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDReleaseWinCairo.props: Removed.
+
 2016-06-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Unreviewed trivial buildfix after r201689. Just for fun.
