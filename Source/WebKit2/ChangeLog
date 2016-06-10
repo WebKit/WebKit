@@ -1,3 +1,28 @@
+2016-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Rare RELEASE_ASSERT under RemoteLayerTreeDrawingArea::flushLayers()
+        https://bugs.webkit.org/show_bug.cgi?id=158622
+        rdar://problem/26609452
+
+        Reviewed by Tim Horton.
+        
+        It's possible for a CADisplayLink to fire after being paused sometimes, possibly
+        when an app is running another CADisplayLink whose callback takes some time. When
+        this happens, RemoteLayerTreeDrawingAreaProxy could erroneously send a second
+        didUpdate() to the web process between commits, which would clear the m_waitingForBackingStoreSwap
+        flag too early, and allow a subsequent RemoteLayerTreeDrawingArea::flushLayers()
+        to proceed when the m_pendingBackingStoreFlusher was still flushing.
+
+        Fix by preventing two didUpdates from being sent from the UI process between
+        commits.
+        
+        Not easily testable.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay):
+
 2016-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Content and viewport sizes are mixed

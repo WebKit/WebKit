@@ -219,6 +219,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     m_webPageProxy.layerTreeCommitComplete();
 
+    m_haveSentDidUpdateSinceLastCommit = false;
+
 #if PLATFORM(IOS)
     [m_displayLinkHandler schedule];
 #else
@@ -388,6 +390,11 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(double)
 {
     if (!m_webPageProxy.isValid())
         return;
+
+    if (m_haveSentDidUpdateSinceLastCommit)
+        return;
+    
+    m_haveSentDidUpdateSinceLastCommit = true;
 
     // Waiting for CA to commit is insufficient, because the render server can still be
     // using our backing store. We can improve this by waiting for the render server to commit

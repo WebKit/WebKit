@@ -91,6 +91,7 @@ private:
 
     RemoteLayerTreeHost m_remoteLayerTreeHost;
     bool m_isWaitingForDidUpdateGeometry { false };
+    bool m_haveSentDidUpdateSinceLastCommit { false };
 
     WebCore::IntSize m_lastSentSize;
 
