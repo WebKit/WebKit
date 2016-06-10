@@ -23,6 +23,6 @@
 
 - path: .
   tests:
-    - test.js
+    - stress-test.js
   cmd: defaultRunNoisyTest unless parseRunCommands
 

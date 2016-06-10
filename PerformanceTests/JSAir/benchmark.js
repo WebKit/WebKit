@@ -24,28 +24,28 @@
  */
 "use strict";
 
-function benchmark()
-{
-    const verbose = 0;
-    const numIterations = 150;
+class Benchmark {
+    constructor(verbose = 0)
+    {
+        this._verbose = verbose;
+        
+        this._payloads = [
+            {generate: createPayloadGbemuExecuteIteration, earlyHash: 632653144, lateHash: 372715518},
+            {generate: createPayloadImagingGaussianBlurGaussianBlur, earlyHash: 3677819581, lateHash: 1252116304},
+            {generate: createPayloadTypescriptScanIdentifier, earlyHash: 1914852601, lateHash: 837339551},
+            {generate: createPayloadJSAirACLj8C, earlyHash: 1373599940, lateHash: 3981283600}
+        ];
+    }
     
-    let before = currentTime();
-    
-    var payloads = [
-        {generate: createPayloadGbemuExecuteIteration, earlyHash: 632653144, lateHash: 372715518},
-        {generate: createPayloadImagingGaussianBlurGaussianBlur, earlyHash: 3677819581, lateHash: 1252116304},
-        {generate: createPayloadTypescriptScanIdentifier, earlyHash: 1914852601, lateHash: 837339551},
-        {generate: createPayloadJSAirACLj8C, earlyHash: 1373599940, lateHash: 3981283600}
-    ];
-    
-    for (let iteration = 0; iteration < numIterations; ++iteration) {
-        for (let payload of payloads) {
+    runIteration()
+    {
+        for (let payload of this._payloads) {
             // Sadly about 17% of our time is in generate. I don't think that's really avoidable,
             // and I don't mind testing VMs' ability to run such "data definition" code quickly. I
             // would not have expected it to be so slow from first principles!
             let code = payload.generate();
             
-            if (verbose) {
+            if (this._verbose) {
                 print("Before allocateStack:");
                 print(code);
             }
@@ -56,7 +56,7 @@ function benchmark()
             
             allocateStack(code);
             
-            if (verbose) {
+            if (this._verbose) {
                 print("After allocateStack:");
                 print(code);
             }
@@ -66,6 +66,19 @@ function benchmark()
                 throw new Error(`Wrong late hash for ${payload.generate.name}: ${hash}`);
         }
     }
+}
+
+function runBenchmark()
+{
+    const verbose = 0;
+    const numIterations = 150;
+    
+    let before = currentTime();
+    
+    let benchmark = new Benchmark(verbose);
+    
+    for (let iteration = 0; iteration < numIterations; ++iteration)
+        benchmark.runIteration();
     
     let after = currentTime();
     return after - before;

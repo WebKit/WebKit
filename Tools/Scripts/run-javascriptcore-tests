@@ -234,8 +234,7 @@ sub runJSCStressTests
         @testList = (
             "PerformanceTests/SunSpider/tests/sunspider-1.0",
             "PerformanceTests/JetStream/cdjs/cdjs-tests.yaml",
-            # Skip this while we figure out how to handle timeouts in debug.
-            # "PerformanceTests/JSAir/jsair-tests.yaml",
+            "PerformanceTests/JSAir/jsair-tests.yaml",
             "Source/JavaScriptCore/tests/executableAllocationFuzz.yaml",
             "Source/JavaScriptCore/tests/exceptionFuzz.yaml",
             "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",

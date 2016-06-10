@@ -1,3 +1,27 @@
+2016-06-10  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC Stress Test failing: jsair-tests.yaml/test.js.ftl-eager-no-cjit
+        https://bugs.webkit.org/show_bug.cgi?id=158571
+
+        Reviewed by Keith Miller.
+        
+        Introduce a different harness for run-jsc-stress-tests, which runs for a minimum of 10
+        iterations and then tries to do any number of "bonus" iterations until it's been running for
+        two seconds. Since this is the sort of test that isn't really meant to stress anything in
+        particular, I think it's OK if it is time-limited in this way. The worst case is that some
+        of its failures will be flaky, but I think that they would have been flaky anyway given the
+        complexity of the test.
+
+        * JSAir/benchmark.js:
+        (Benchmark):
+        (Benchmark.prototype.runIteration):
+        (benchmark): Deleted.
+        * JSAir/jsair-tests.yaml:
+        * JSAir/stress-test.js: Added.
+        (preciseTime):
+        * JSAir/test.html:
+        * JSAir/test.js:
+
 2016-06-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, teach the perf bots not to run JSAir.

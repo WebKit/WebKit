@@ -1,3 +1,15 @@
+2016-06-10  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC Stress Test failing: jsair-tests.yaml/test.js.ftl-eager-no-cjit
+        https://bugs.webkit.org/show_bug.cgi?id=158571
+
+        Reviewed by Keith Miller.
+        
+        Unskip the JSAir test.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+
 2016-06-10  Sam Weinig  <sam@webkit.org>
 
         Re-disable the UserMedia tests which are timing out.
