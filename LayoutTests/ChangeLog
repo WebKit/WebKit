@@ -1,3 +1,12 @@
+2016-06-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking imported/blink/storage/indexeddb/blob-delete-objectstore-db.html as flaky on Yosemite Release WK2
+        https://bugs.webkit.org/show_bug.cgi?id=158639
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-06-10  Brady Eidson  <beidson@apple.com>
 
         Add an IDB leak test.
