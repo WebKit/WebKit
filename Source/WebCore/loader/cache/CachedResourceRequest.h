@@ -65,6 +65,8 @@ public:
     void setInitiator(DocumentLoader&);
     DocumentLoader* initiatingDocumentLoader() const { return m_initiatingDocumentLoader.get(); }
 
+    void setAsPotentiallyCrossOrigin(const String&, Document&);
+
 private:
     ResourceRequest m_resourceRequest;
     String m_charset;

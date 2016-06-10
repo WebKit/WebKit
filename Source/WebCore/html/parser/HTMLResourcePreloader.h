@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef HTMLResourcePreloader_h
@@ -40,7 +40,6 @@ public:
         , m_baseURL(baseURL.isolatedCopy())
         , m_resourceType(resourceType)
         , m_mediaAttribute(mediaAttribute)
-        , m_crossOriginModeAllowsCookies(false)
     {
     }
 
@@ -49,7 +48,7 @@ public:
     const String& charset() const { return m_charset; }
     const String& media() const { return m_mediaAttribute; }
     void setCharset(const String& charset) { m_charset = charset.isolatedCopy(); }
-    void setCrossOriginModeAllowsCookies(bool allowsCookies) { m_crossOriginModeAllowsCookies = allowsCookies; }
+    void setCrossOriginMode(const String& mode) { m_crossOriginMode = mode; }
     CachedResource::Type resourceType() const { return m_resourceType; }
 
 private:
@@ -61,7 +60,7 @@ private:
     String m_charset;
     CachedResource::Type m_resourceType;
     String m_mediaAttribute;
-    bool m_crossOriginModeAllowsCookies;
+    String m_crossOriginMode;
 };
 
 typedef Vector<std::unique_ptr<PreloadRequest>> PreloadRequestStream;

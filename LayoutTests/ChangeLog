@@ -1,3 +1,15 @@
+2016-06-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Origin header is not included in CORS requests for preloaded cross-origin resources
+        https://bugs.webkit.org/show_bug.cgi?id=155761
+        <rdar://problem/25351850>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/security/cross-origin-css-9-expected.txt: Added.
+        * http/tests/security/cross-origin-css-9.html: Added.
+        * http/tests/security/resources/get-css-if-origin-header.php: Added.
+
 2016-06-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/hidpi/hidpi-3x-device-pixel-ratio.html as failing on ios-simulator

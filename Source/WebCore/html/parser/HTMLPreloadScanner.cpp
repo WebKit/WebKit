@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -143,8 +143,7 @@ public:
             return nullptr;
 
         auto request = std::make_unique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType(), m_mediaAttribute);
-
-        request->setCrossOriginModeAllowsCookies(crossOriginModeAllowsCookies());
+        request->setCrossOriginMode(m_crossOriginMode);
         request->setCharset(charset());
         return request;
     }
@@ -160,7 +159,7 @@ private:
     {
         if (match(attributeName, srcAttr))
             setUrlToLoad(attributeValue);
-        else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
+        else if (match(attributeName, crossoriginAttr))
             m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
         else if (match(attributeName, charsetAttr))
             m_charset = attributeValue;
@@ -215,6 +214,8 @@ private:
                 m_mediaAttribute = attributeValue;
             else if (match(attributeName, charsetAttr))
                 m_charset = attributeValue;
+            else if (match(attributeName, crossoriginAttr))
+                m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
             break;
         case TagId::Input:
             if (match(attributeName, srcAttr))
@@ -300,11 +301,6 @@ private:
             return false;
 
         return true;
-    }
-
-    bool crossOriginModeAllowsCookies()
-    {
-        return m_crossOriginMode.isNull() || equalLettersIgnoringASCIICase(m_crossOriginMode, "use-credentials");
     }
 
     TagId m_tagId;

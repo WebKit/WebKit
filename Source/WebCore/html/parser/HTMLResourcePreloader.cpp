@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -45,10 +45,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     ASSERT(isMainThread());
     CachedResourceRequest request(ResourceRequest(completeURL(document)));
     request.setInitiator(m_initiator);
-
-    // FIXME: It's possible CORS should work for other request types?
-    if (m_resourceType == CachedResource::Script)
-        request.mutableResourceRequest().setAllowCookies(m_crossOriginModeAllowsCookies);
+    request.setAsPotentiallyCrossOrigin(m_crossOriginMode, document);
     return request;
 }
 
