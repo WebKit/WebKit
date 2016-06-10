@@ -1,3 +1,23 @@
+2016-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up Visual Studio properties files after switching to CMake.
+
+        * win/tools/WinTools.make: Removed.
+        * win/tools/vsprops: Removed.
+        * win/tools/vsprops/FeatureDefines.props: Removed.
+        * win/tools/vsprops/FeatureDefinesCairo.props: Removed.
+        * win/tools/vsprops/GStreamer32.props: Removed.
+        * win/tools/vsprops/GStreamer64.props: Removed.
+        * win/tools/vsprops/GStreamerCommon.props: Removed.
+        * win/tools/vsprops/WinCairo.props: Removed.
+        * win/tools/vsprops/cURL.props: Removed.
+        * win/tools/vsprops/common.props: Removed.
+        * win/tools/vsprops/debug.props: Removed.
+        * win/tools/vsprops/debug_wincairo.props: Removed.
+        * win/tools/vsprops/debugsuffix.props: Removed.
+        * win/tools/vsprops/production.props: Removed.
+        * win/tools/vsprops/release.props: Removed.
+
 2016-04-28  Dean Jackson  <dino@apple.com>
 
         Update WebKitSystemInterface to internal version 82799.
