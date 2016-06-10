@@ -1578,8 +1578,6 @@
 		BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.mm */; };
 		BCC8B374125FB69000DE46A4 /* WKGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8B373125FB69000DE46A4 /* WKGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC938E01180DE440085E5FE /* WKContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCCF672D12C7EDF7008F9C35 /* OriginAndDatabases.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF672C12C7EDF7008F9C35 /* OriginAndDatabases.h */; };
-		BCCF673312C7F15C008F9C35 /* OriginAndDatabases.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCF673212C7F15C008F9C35 /* OriginAndDatabases.cpp */; };
 		BCCF6ABC12C91EF9008F9C35 /* WebImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCF6ABA12C91EF9008F9C35 /* WebImage.cpp */; };
 		BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF6ABB12C91EF9008F9C35 /* WebImage.h */; };
 		BCCF6AC212C91F34008F9C35 /* WKImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCF6AC012C91F34008F9C35 /* WKImage.cpp */; };
@@ -3655,8 +3653,6 @@
 		BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemInterface.mm; sourceTree = "<group>"; };
 		BCC8B373125FB69000DE46A4 /* WKGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGeometry.h; sourceTree = "<group>"; };
 		BCC938E01180DE440085E5FE /* WKContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextPrivate.h; sourceTree = "<group>"; };
-		BCCF672C12C7EDF7008F9C35 /* OriginAndDatabases.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginAndDatabases.h; sourceTree = "<group>"; };
-		BCCF673212C7F15C008F9C35 /* OriginAndDatabases.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginAndDatabases.cpp; sourceTree = "<group>"; };
 		BCCF6ABA12C91EF9008F9C35 /* WebImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebImage.cpp; sourceTree = "<group>"; };
 		BCCF6ABB12C91EF9008F9C35 /* WebImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebImage.h; sourceTree = "<group>"; };
 		BCCF6AC012C91F34008F9C35 /* WKImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKImage.cpp; sourceTree = "<group>"; };
@@ -4476,8 +4472,6 @@
 				DF58C6311371AC5800F9A37C /* NativeWebWheelEvent.h */,
 				1ADCB868189831B30022EE5A /* NavigationActionData.cpp */,
 				1ADCB869189831B30022EE5A /* NavigationActionData.h */,
-				BCCF673212C7F15C008F9C35 /* OriginAndDatabases.cpp */,
-				BCCF672C12C7EDF7008F9C35 /* OriginAndDatabases.h */,
 				BCC43AB8127B95DC00317F16 /* PlatformPopupMenuData.cpp */,
 				BCC43AB9127B95DC00317F16 /* PlatformPopupMenuData.h */,
 				E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */,
@@ -7538,7 +7532,6 @@
 				1A2D84A3127F6AD1001EB962 /* NPVariantData.h in Headers */,
 				3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */,
 				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
-				BCCF672D12C7EDF7008F9C35 /* OriginAndDatabases.h in Headers */,
 				7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */,
 				BC6EDAA6111271C600E7678B /* PageClient.h in Headers */,
 				0FCB4E6218BBE3D9000FCFC9 /* PageClientImpl.h in Headers */,
@@ -9005,7 +8998,6 @@
 				1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */,
 				1A2D84A4127F6AD1001EB962 /* NPVariantData.cpp in Sources */,
 				BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */,
-				BCCF673312C7F15C008F9C35 /* OriginAndDatabases.cpp in Sources */,
 				7C387434172F5615001BD88A /* PageBanner.cpp in Sources */,
 				7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */,
 				0FCB4E6318BBE3D9000FCFC9 /* PageClientImpl.mm in Sources */,

@@ -239,7 +239,6 @@ set(WebKit2_SOURCES
     Shared/FontInfo.cpp
     Shared/LayerTreeContext.cpp
     Shared/NavigationActionData.cpp
-    Shared/OriginAndDatabases.cpp
     Shared/PlatformPopupMenuData.cpp
     Shared/PrintInfo.cpp
     Shared/SessionState.cpp

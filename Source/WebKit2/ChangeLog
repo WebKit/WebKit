@@ -1,3 +1,17 @@
+2016-06-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove OriginAndDatabases.cpp, it's unused
+        https://bugs.webkit.org/show_bug.cgi?id=158595
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt:
+        * Shared/OriginAndDatabases.cpp: Removed.
+        (WebKit::OriginAndDatabases::encode): Deleted.
+        (WebKit::OriginAndDatabases::decode): Deleted.
+        * Shared/OriginAndDatabases.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-06-09  Alex Christensen  <achristensen@webkit.org>
 
         Clean up EditorClient lifetime
