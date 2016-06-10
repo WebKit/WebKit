@@ -297,6 +297,10 @@ public:
                 case Int52Constant:
                     VALIDATE((node), node->isNumberConstant());
                     break;
+                case GetByOffset:
+                case PutByOffset:
+                    VALIDATE((node), node->child1().node() == node->child2().node() || node->child1()->result() == NodeResultStorage);
+                    break;
                 default:
                     break;
                 }

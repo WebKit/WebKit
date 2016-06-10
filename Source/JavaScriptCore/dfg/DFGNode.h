@@ -524,13 +524,12 @@ struct Node {
         children.reset();
     }
     
-    void convertToGetByOffset(StorageAccessData& data, Edge storage)
+    void convertToGetByOffset(StorageAccessData& data, Edge storage, Edge base)
     {
         ASSERT(m_op == GetById || m_op == GetByIdFlush || m_op == MultiGetByOffset);
         m_opInfo = bitwise_cast<uintptr_t>(&data);
-        children.setChild2(children.child1());
-        children.child2().setUseKind(KnownCellUse);
         children.setChild1(storage);
+        children.setChild2(base);
         m_op = GetByOffset;
         m_flags &= ~NodeMustGenerate;
     }
@@ -544,12 +543,12 @@ struct Node {
         ASSERT(m_flags & NodeMustGenerate);
     }
     
-    void convertToPutByOffset(StorageAccessData& data, Edge storage)
+    void convertToPutByOffset(StorageAccessData& data, Edge storage, Edge base)
     {
         ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush || m_op == MultiPutByOffset);
         m_opInfo = bitwise_cast<uintptr_t>(&data);
         children.setChild3(children.child2());
-        children.setChild2(children.child1());
+        children.setChild2(base);
         children.setChild1(storage);
         m_op = PutByOffset;
     }

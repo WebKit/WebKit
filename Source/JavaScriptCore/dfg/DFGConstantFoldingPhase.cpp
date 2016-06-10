@@ -707,7 +707,7 @@ private:
         data.identifierNumber = identifierNumber;
         data.inferredType = inferredType;
         
-        node->convertToGetByOffset(data, propertyStorage);
+        node->convertToGetByOffset(data, propertyStorage, childEdge);
     }
 
     void emitPutByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const PutByIdVariant& variant, unsigned identifierNumber)
@@ -762,7 +762,7 @@ private:
         data.offset = variant.offset();
         data.identifierNumber = identifierNumber;
         
-        node->convertToPutByOffset(data, propertyStorage);
+        node->convertToPutByOffset(data, propertyStorage, childEdge);
         node->origin.exitOK = canExit;
 
         if (variant.kind() == PutByIdVariant::Transition) {

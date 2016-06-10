@@ -1,3 +1,108 @@
+2016-06-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Rare failure in stress/v8-deltablue-strict.js.ftl-eager
+        https://bugs.webkit.org/show_bug.cgi?id=158591
+
+        Reviewed by Saam Barati.
+        
+        This is a simple and sensible fix to an amazing compiler bug that previously only
+        manifested rarely in the v8-deltablue-strict test. It required on average 1000 runs while
+        the system was under load for the bug to manifest. Fortunately, the bug is 100% repro with
+        concurrent JIT disabled in the new "constant-fold-multi-get-by-offset-to-get-by-offset-on-
+        prototype-and-sink-allocation.js" test.
+        
+        The problem here is that we were allowing ourselves to be super sloppy with the meaning of
+        the two children of GetByOffset, and to a lesser extent, PutByOffset. The first two
+        children of these nodes have these meanings:
+        
+        child1: the storage from which to load (or to which to store)
+        child2: the logical object base
+        
+        Normally, child1 == child2, but child1 may point to a node that vends the storage pointer
+        in case we are using multiple indirections to get to the property. That's fairly common.
+        
+        Where this gets nutty is that we don't validate the behavior of child1. Previously, the
+        DFG::Validate phase would accept code that had child1 point to one object and child2 point
+        to another object. That's bad because then, analyses will assume that we're loading from
+        one object while we are actually loading from another. One of the fixes is to make
+        Validate smarter about this, so that future problems with this get caught sooner.
+        
+        The actual bug was in ConstantFoldingPhase. When we first wrote ConstantFoldingPhase's
+        logic for converting GetByIds and MultiGetByOffsets to GetByOffset, we assumed that this
+        was only for non-prototype loads. This was becuase the logic was originally written based
+        on a static GetByIdStatus analysis, which does not handle prototypes. So, as a shortcut,
+        we would convert the GetById (or MultiGetByOffset) to a GetByOffset by doing this
+        shuffling of children:
+        
+        child1 got the storage pointer, which might be a new GetButterfly node that we created.
+        child2 got the old value of child1.
+        
+        The bug was introduced when I later made it possible for a monomorphic prototype
+        MultiGetByOffset to be converted to a GetByOffset. Then this algorithm would mean that:
+        
+        child1 got either a pointer to the prototype or a storage pointer derived from the
+            prototype.
+        child2 got the old value of child1, which was a pointer to the base object (i.e. not the
+            prototype).
+        
+        This happens super rarely because most prototype loads that we can statically reason about
+        also happen to load constants, so we don't convert to GetByOffset at all. You need the
+        strange combination of a MultiGetByOffset (not GetById or GetByOffset) on some prototypes
+        and some static reasoning about the base so that we can convert it to a GetByOffset, but
+        not enough static reasoning that we can convert it to a constant.
+        
+        Even if the bad thing happened, then this is not enough for it to cause symptons. If we
+        did nothing else - like none of the other optimizations succeeded - then this would
+        be OK because the backend will emit code based on child1, which is right. But disaster
+        strikes when the code otherwise looks sane enough for ObjectAllocationSinkingPhase to kick
+        in. This phase operates on child2, as any good phase should: child1 is only interesting
+        for knowing *how* to load, not *what* we are loading. The phase is right to ignore child1.
+
+        So the phase would assume that we are loading the prototype property ("f" in the new test
+        or "addToGraph" in deltablue) from the sunken base object allocation in the inlined
+        constructor. The base object has no such property, but the phase conservatively assumes
+        that it does indeed have such a property. That's just how the phase does things: it is
+        very abstract and general, so it assumes that the set of properties on an allocation is
+        the set of properties that accesses to the allocation speak of. Clearly, this GetByOffset
+        was speaking of the property as being on the allocation. When sinking completed, it would
+        convert the GetByOffset to the sunken (a.k.a. promoted) property. But nobody stored to
+        this property on the allocation, so we'd get the bottom value, which is 1927. Why 1927? I
+        don't remember anymore, but apparently I chose it. It helped here - when I started seeing
+        that value come up, it took a quick grep to realize that this was the object allocation
+        sinking phase's bottom value.
+        
+        The real fix to the bug is to make Node::convertToGetByOffset() take an explicit new base
+        since its clients will use it to potentially create a load on a different object than the
+        base of the original operation, as in the relatively new
+        MultiGetByOffset(prototype)->GetByOffset optimization. As far as I know, the PutByOffset
+        code did not have the same bug because we don't have any optimizations that turn a PutById
+        or MultiPutByOffset into a PutByOffset on anything but the base object. But the logical
+        bug is definitely there: there's code in ConstantFoldingPhase that claims to be able to
+        convert any node to a PutByOffset on any base, but it actually silently reuses the
+        original node's child1 as the logical base (i.e. child2). This patch makes all of this
+        stuff explicit. You can't make this mistake anymore.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToGetStack):
+        (JSC::DFG::Node::convertToGetByOffset):
+        (JSC::DFG::Node::convertToMultiGetByOffset):
+        (JSC::DFG::Node::convertToPutByOffset):
+        * dfg/DFGValidate.cpp:
+        * tests/stress/constant-fold-multi-get-by-offset-to-get-by-offset-on-prototype-and-sink-allocation.js: Added.
+        (ThingA):
+        (ThingB):
+        (foo):
+        (bar):
+        * tests/stress/sink-to-impossible-multi-get-by-offset-on-prototypes.js: Added.
+        (ThingA):
+        (ThingB):
+        (ThingC):
+        (bar):
+        (foo):
+
 2016-06-09  Mark Lam  <mark.lam@apple.com>
 
         Make some methods const.
