@@ -525,10 +525,9 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/page/WebKitNamespace.idl \
     $(WebCore)/page/UserMessageHandlersNamespace.idl \
     $(WebCore)/page/UserMessageHandler.idl \
-    $(WebCore)/page/WindowBase64.idl \
     $(WebCore)/page/WindowEventHandlers.idl \
-    $(WebCore)/page/WindowTimers.idl \
     $(WebCore)/page/WorkerNavigator.idl \
+    $(WebCore)/page/WindowOrWorkerGlobalScope.idl \
     $(WebCore)/plugins/DOMMimeType.idl \
     $(WebCore)/plugins/DOMMimeTypeArray.idl \
     $(WebCore)/plugins/DOMPlugin.idl \

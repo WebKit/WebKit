@@ -1,0 +1,73 @@
+[Worker] tests that atob() / btoa() work in workers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/worker-atob-btoa.js
+PASS [Worker] self.atob("YQ==") is "a"
+PASS [Worker] self.atob("YWI=") is "ab"
+PASS [Worker] self.atob("YWJj") is "abc"
+PASS [Worker] self.atob("YWJjZA==") is "abcd"
+PASS [Worker] self.atob("YWJjZGU=") is "abcde"
+PASS [Worker] self.atob("YWJjZGVm") is "abcdef"
+PASS [Worker] self.btoa("a") is "YQ=="
+PASS [Worker] self.btoa("ab") is "YWI="
+PASS [Worker] self.btoa("abc") is "YWJj"
+PASS [Worker] self.btoa("abcd") is "YWJjZA=="
+PASS [Worker] self.btoa("abcde") is "YWJjZGU="
+PASS [Worker] self.btoa("abcdef") is "YWJjZGVm"
+PASS [Worker] typeof self.btoa is "function"
+PASS [Worker] self.btoa() threw exception TypeError: Not enough arguments.
+PASS [Worker] self.btoa("") is ""
+PASS [Worker] self.btoa(null) is "bnVsbA=="
+PASS [Worker] self.btoa(undefined) is "dW5kZWZpbmVk"
+PASS [Worker] self.btoa(self) is "W29iamVjdCBEZWRpY2F0ZWRXb3JrZXJHbG9iYWxTY29wZV0="
+PASS [Worker] self.btoa("éé") is "6ek="
+PASS [Worker] self.btoa("\u0080\u0081") is "gIE="
+PASS [Worker] self.btoa("тест") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.btoa is 0
+PASS [Worker] typeof self.btoa is "number"
+PASS [Worker] typeof self.atob is "function"
+PASS [Worker] self.atob() threw exception TypeError: Not enough arguments.
+PASS [Worker] self.atob("") is ""
+PASS [Worker] self.atob(null) is "ée"
+PASS [Worker] self.atob(undefined) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob(" YQ==") is "a"
+PASS [Worker] self.atob("YQ==\u000a") is "a"
+PASS [Worker] self.atob("ab\tcd") is "i·"
+PASS [Worker] self.atob("ab\ncd") is "i·"
+PASS [Worker] self.atob("ab\fcd") is "i·"
+PASS [Worker] self.atob("ab cd") is "i·"
+PASS [Worker] self.atob("ab\t\n\f\r cd") is "i·"
+PASS [Worker] self.atob(" \t\n\f\r ab\t\n\f\r cd\t\n\f\r ") is "i·"
+PASS [Worker] self.atob("ab\t\n\f\r =\t\n\f\r =\t\n\f\r ") is "i"
+PASS [Worker] self.atob("            ") is ""
+PASS [Worker] self.atob(" abcd===") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("abcd=== ") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("abcd ===") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("6ek=") is "éé"
+PASS [Worker] self.atob("6ek") is "éé"
+PASS [Worker] self.atob("gIE=") is ""
+PASS [Worker] self.atob("тест") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("z") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("zz") is "Ï"
+PASS [Worker] self.atob("zzz") is "Ï<"
+PASS [Worker] self.atob("zzz=") is "Ï<"
+PASS [Worker] self.atob("zzz==") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("zzz===") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("zzz====") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("zzz=====") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("zzzz") is "Ï<ó"
+PASS [Worker] self.atob("zzzzz") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("z=zz") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("=") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("==") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("===") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("====") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob("=====") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS [Worker] self.atob is 0
+PASS [Worker] typeof self.atob is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

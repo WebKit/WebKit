@@ -904,9 +904,8 @@ set(ObjC_BINDINGS_NO_MM
     NonElementParentNode
     ParentNode
     URLUtils
-    WindowBase64
     WindowEventHandlers
-    WindowTimers
+    WindowOrWorkerGlobalScope
     WorkerGlobalScopeIndexedDatabase
     WorkerGlobalScopeNotifications
     XPathNSResolver

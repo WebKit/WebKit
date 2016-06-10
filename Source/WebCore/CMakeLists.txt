@@ -616,9 +616,8 @@ set(WebCore_NON_SVG_IDL_FILES
     page/UserMessageHandlersNamespace.idl
     page/WebKitNamespace.idl
     page/WebKitPoint.idl
-    page/WindowBase64.idl
     page/WindowEventHandlers.idl
-    page/WindowTimers.idl
+    page/WindowOrWorkerGlobalScope.idl
     page/WorkerNavigator.idl
 
     plugins/DOMMimeType.idl
@@ -1988,6 +1987,7 @@ set(WebCore_SOURCES
 
     page/AutoscrollController.cpp
     page/BarProp.cpp
+    page/Base64Utilities.cpp
     page/CaptionUserPreferences.cpp
     page/Chrome.cpp
     page/ContextMenuContext.cpp

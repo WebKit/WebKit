@@ -1,3 +1,17 @@
+2016-06-09  Chris Dumez  <cdumez@apple.com>
+
+        atob() / btoa() API should be exposed to workers
+        https://bugs.webkit.org/show_bug.cgi?id=158576
+        <rdar://problem/26729340>
+
+        Reviewed by Sam Weinig.
+
+        Add test for atob() / btoa() in workers.
+
+        * fast/workers/atob-btoa-expected.txt: Added.
+        * fast/workers/atob-btoa.html: Added.
+        * fast/workers/resources/worker-atob-btoa.js: Added.
+
 2016-06-09  Michael Saboff  <msaboff@apple.com>
 
         ES6: Reusing function name as a parameter name shouldn't throw Syntax Error

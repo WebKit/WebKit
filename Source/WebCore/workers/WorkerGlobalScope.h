@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "Base64Utilities.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "ScriptExecutionContext.h"
@@ -57,7 +58,7 @@ namespace IDBClient {
 class IDBConnectionProxy;
 }
 
-class WorkerGlobalScope : public RefCounted<WorkerGlobalScope>, public Supplementable<WorkerGlobalScope>, public ScriptExecutionContext, public EventTargetWithInlineData {
+class WorkerGlobalScope : public RefCounted<WorkerGlobalScope>, public Supplementable<WorkerGlobalScope>, public ScriptExecutionContext, public EventTargetWithInlineData, public Base64Utilities {
 public:
     virtual ~WorkerGlobalScope();
 

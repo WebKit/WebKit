@@ -109,7 +109,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
-#include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -1135,38 +1134,6 @@ String DOMWindow::prompt(const String& message, const String& defaultValue)
         return returnValue;
 
     return String();
-}
-
-String DOMWindow::btoa(const String& stringToEncode, ExceptionCode& ec)
-{
-    if (stringToEncode.isNull())
-        return String();
-
-    if (!stringToEncode.containsOnlyLatin1()) {
-        ec = INVALID_CHARACTER_ERR;
-        return String();
-    }
-
-    return base64Encode(stringToEncode.latin1());
-}
-
-String DOMWindow::atob(const String& encodedString, ExceptionCode& ec)
-{
-    if (encodedString.isNull())
-        return String();
-
-    if (!encodedString.containsOnlyLatin1()) {
-        ec = INVALID_CHARACTER_ERR;
-        return String();
-    }
-
-    Vector<char> out;
-    if (!base64Decode(encodedString, out, Base64ValidatePadding | Base64IgnoreSpacesAndNewLines)) {
-        ec = INVALID_CHARACTER_ERR;
-        return String();
-    }
-
-    return String(out.data(), out.size());
 }
 
 bool DOMWindow::find(const String& string, bool caseSensitive, bool backwards, bool wrap, bool /*wholeWord*/, bool /*searchInFrames*/, bool /*showDialog*/) const
