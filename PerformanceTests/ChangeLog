@@ -1,3 +1,9 @@
+2016-06-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, skip Air.js. It got unskipped when I renamed it from JSAir.
+
+        * Skipped:
+
 2016-06-10  Filip Pizlo  <fpizlo@apple.com>
 
         Make it easy to package Air.js
