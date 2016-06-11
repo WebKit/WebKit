@@ -1145,7 +1145,7 @@
 		4319DA031C1BE40A001D260B /* B3LowerMacrosAfterOptimizations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4319DA011C1BE3C1001D260B /* B3LowerMacrosAfterOptimizations.cpp */; };
 		4319DA041C1BE40D001D260B /* B3LowerMacrosAfterOptimizations.h in Headers */ = {isa = PBXBuildFile; fileRef = 4319DA021C1BE3C1001D260B /* B3LowerMacrosAfterOptimizations.h */; };
 		4340A4841A9051AF00D73CCA /* MathCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4340A4821A9051AF00D73CCA /* MathCommon.cpp */; };
-		4340A4851A9051AF00D73CCA /* MathCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 4340A4831A9051AF00D73CCA /* MathCommon.h */; };
+		4340A4851A9051AF00D73CCA /* MathCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 4340A4831A9051AF00D73CCA /* MathCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		43422A621C158E6A00E2EB98 /* B3ConstFloatValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43422A601C15871B00E2EB98 /* B3ConstFloatValue.cpp */; };
 		43422A631C158E6D00E2EB98 /* B3ConstFloatValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 43422A611C15871B00E2EB98 /* B3ConstFloatValue.h */; };
 		43422A661C16267500E2EB98 /* B3ReduceDoubleToFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43422A641C16221E00E2EB98 /* B3ReduceDoubleToFloat.cpp */; };

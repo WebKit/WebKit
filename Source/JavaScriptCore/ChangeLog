@@ -1,5 +1,16 @@
 2016-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, attempt to fix r201964 failure on Apple ports
+        https://bugs.webkit.org/show_bug.cgi?id=158619
+
+        Reviewed by Mark Lam.
+
+        Add Private attributes to MathCommon.h.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2016-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Inline JSC::toInt32 to improve kraken
         https://bugs.webkit.org/show_bug.cgi?id=158619
 
