@@ -8,6 +8,9 @@ use them.
 
 This documents the motivation, design, and license of Air.js.
 
+To run Air.js, simply open "Air.js/test.html" in your browser. It will only run
+correctly if your browser supports ES6.
+
 ## Motivation
 
 At the time that Air.js was written, most JavaScript benchmarks used ES5 or
@@ -90,17 +93,19 @@ benchmarks according to JavaScriptCore's internal profiling:
 These payloads allow Air.js to precisely replay allocateStack on those actual
 functions.
 
-The payload is executable code that allocates the IR, and about 15% of
+It was an a priori goal of Air.js to spend most of the time in the
+allocateStack phase. This is a faithful reproduction of the C++ allocateStack
+phase, including its use of an abstract liveness analysis. It's abstract in the
+sense that the same liveness algorithm can be reused for temporaries,
+registers, or stack slots. In C++ this meant using templates, while in ES6 it
+means more run-time dynamic dispatch.
+
+Each IR payload is executable code that allocates the IR, and about 15% of
 benchmark execution time is spent in that code. This is significant, but having
 learned this, we don't feel that it would be honest to try to change the
 efficiency of payload initialization. What if the payload initialization was
 more expensive on our engine than others? If it was, then such a change would
 not be fair.
-
-Most of the time in Air.js is spent running the allocateStack phase, which is
-reproduced faithfully in ES6, including its use of an abstract liveness
-analysis. It's abstract in the sense that the same liveness algorithm can be
-reused for temporaries, registers, or stack slots.
 
 Air.js validates its results. We added a Code hashing capability to both the
 C++ Air and Air.js, and we assert each payload looks identical after

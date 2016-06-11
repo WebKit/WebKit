@@ -1,5 +1,24 @@
 2016-06-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix some text in Air.js/README.md
+        https://bugs.webkit.org/show_bug.cgi?id=158650
+
+        Reviewed by Benjamin Poulain.
+        
+        I read the text again and found bugs:
+        
+        - We never actually say how to run the benchmark. This change adds a blurb about how to run
+          it.
+
+        - We both say that allocateStack is responsible for the bulk of the running time and that
+          we haven't measured where the bulk of the time is spent. This changes the text to say that
+          it was a goal to make allocateStack be the hottest part of the benchmark, but that we did
+          not measure this.
+
+        * Air.js/README.md:
+
+2016-06-10  Filip Pizlo  <fpizlo@apple.com>
+
         Air.js should have some documentation
         https://bugs.webkit.org/show_bug.cgi?id=158648
 
