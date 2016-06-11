@@ -143,6 +143,9 @@ public:
     WEBCORE_EXPORT void setImagesEnabled(bool);
     bool areImagesEnabled() const { return m_areImagesEnabled; }
 
+    WEBCORE_EXPORT void setPreferMIMETypeForImages(bool);
+    bool preferMIMETypeForImages() const { return m_preferMIMETypeForImages; }
+
     WEBCORE_EXPORT void setPluginsEnabled(bool);
     bool arePluginsEnabled() const { return m_arePluginsEnabled; }
 
@@ -320,6 +323,7 @@ private:
     bool m_isJavaEnabledForLocalFiles : 1;
     bool m_loadsImagesAutomatically : 1;
     bool m_areImagesEnabled : 1;
+    bool m_preferMIMETypeForImages : 1;
     bool m_arePluginsEnabled : 1;
     bool m_isScriptEnabled : 1;
     bool m_needsAdobeFrameReloadingQuirk : 1;

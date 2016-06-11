@@ -1,3 +1,14 @@
+2016-06-10  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION(r198177): Cannot paste an image when the pasteboard format is mime type.
+        https://bugs.webkit.org/show_bug.cgi?id=158590
+        rdar://problem/25471371
+
+        Reviewed by Darin Adler.
+
+        * editing/pasteboard/image-in-iframe-expected.txt: Added.
+        * editing/pasteboard/image-in-iframe.html: Added.
+
 2016-06-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/blink/storage/indexeddb/blob-delete-objectstore-db.html as flaky on Yosemite Release WK2

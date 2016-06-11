@@ -157,6 +157,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setCanvasUsesAcceleratedDrawing(m_originalCanvasUsesAcceleratedDrawing);
     RuntimeEnabledFeatures::sharedFeatures().setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
     settings.setImagesEnabled(m_imagesEnabled);
+    settings.setPreferMIMETypeForImages(m_preferMIMETypeForImages);
     settings.setMinimumDOMTimerInterval(m_minimumTimerInterval);
 #if ENABLE(VIDEO_TRACK)
     settings.setShouldDisplaySubtitles(m_shouldDisplaySubtitles);
@@ -467,6 +468,12 @@ void InternalSettings::setStorageBlockingPolicy(const String& mode, ExceptionCod
 void InternalSettings::setLangAttributeAwareFormControlUIEnabled(bool enabled)
 {
     RuntimeEnabledFeatures::sharedFeatures().setLangAttributeAwareFormControlUIEnabled(enabled);
+}
+
+void InternalSettings::setPreferMIMETypeForImages(bool preferMIMETypeForImages, ExceptionCode &ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setPreferMIMETypeForImages(preferMIMETypeForImages);
 }
 
 void InternalSettings::setImagesEnabled(bool enabled, ExceptionCode& ec)

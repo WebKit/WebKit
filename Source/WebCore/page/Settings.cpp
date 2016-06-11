@@ -419,6 +419,11 @@ void Settings::setImagesEnabled(bool areImagesEnabled)
     m_setImageLoadingSettingsTimer.startOneShot(0);
 }
 
+void Settings::setPreferMIMETypeForImages(bool preferMIMETypeForImages)
+{
+    m_preferMIMETypeForImages = preferMIMETypeForImages;
+}
+
 void Settings::setForcePendingWebGLPolicy(bool forced)
 {
     m_forcePendingWebGLPolicy = forced;

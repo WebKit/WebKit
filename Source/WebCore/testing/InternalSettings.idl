@@ -63,6 +63,7 @@
     [RaisesException] void setEditingBehavior(DOMString behavior);
     [RaisesException] void setShouldConvertPositionStyleOnCopy(boolean convert);
     void setLangAttributeAwareFormControlUIEnabled(boolean enabled);
+    [RaisesException] void setPreferMIMETypeForImages(boolean preferMimeTypeForImage);
 
     // Other switches
     [RaisesException] void setStorageBlockingPolicy(DOMString policy);
