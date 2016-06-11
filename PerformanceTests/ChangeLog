@@ -1,5 +1,11 @@
 2016-06-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, make the link to test.html into an actual link.
+
+        * Air.js/README.md:
+
+2016-06-10  Filip Pizlo  <fpizlo@apple.com>
+
         Fix some text in Air.js/README.md
         https://bugs.webkit.org/show_bug.cgi?id=158650
 

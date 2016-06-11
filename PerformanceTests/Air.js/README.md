@@ -8,8 +8,8 @@ use them.
 
 This documents the motivation, design, and license of Air.js.
 
-To run Air.js, simply open "Air.js/test.html" in your browser. It will only run
-correctly if your browser supports ES6.
+To run Air.js, simply open "[Air.js/test.html](test.html)" in your browser. It
+will only run correctly if your browser supports ES6.
 
 ## Motivation
 
