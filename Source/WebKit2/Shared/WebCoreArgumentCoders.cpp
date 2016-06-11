@@ -38,6 +38,7 @@
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/Editor.h>
+#include <WebCore/EventTrackingRegions.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FilterOperation.h>
 #include <WebCore/FilterOperations.h>
@@ -105,6 +106,25 @@ void ArgumentCoder<AffineTransform>::encode(ArgumentEncoder& encoder, const Affi
 bool ArgumentCoder<AffineTransform>::decode(ArgumentDecoder& decoder, AffineTransform& affineTransform)
 {
     return SimpleArgumentCoder<AffineTransform>::decode(decoder, affineTransform);
+}
+
+void ArgumentCoder<EventTrackingRegions>::encode(ArgumentEncoder& encoder, const EventTrackingRegions& eventTrackingRegions)
+{
+    encoder << eventTrackingRegions.asynchronousDispatchRegion;
+    encoder << eventTrackingRegions.synchronousDispatchRegion;
+}
+
+bool ArgumentCoder<EventTrackingRegions>::decode(ArgumentDecoder& decoder, EventTrackingRegions& eventTrackingRegions)
+{
+    Region asynchronousDispatchRegion;
+    if (!decoder.decode(asynchronousDispatchRegion))
+        return false;
+    Region synchronousDispatchRegion;
+    if (!decoder.decode(synchronousDispatchRegion))
+        return false;
+    eventTrackingRegions.asynchronousDispatchRegion = WTFMove(asynchronousDispatchRegion);
+    eventTrackingRegions.synchronousDispatchRegion = WTFMove(synchronousDispatchRegion);
+    return true;
 }
 
 void ArgumentCoder<TransformationMatrix>::encode(ArgumentEncoder& encoder, const TransformationMatrix& transformationMatrix)

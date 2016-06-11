@@ -77,28 +77,28 @@ static inline void setStateScrollingNodeSnapOffsetsAsFloat(ScrollingStateScrolli
         node.setVerticalSnapOffsets(snapOffsetsAsFloat);
 }
 
-void AsyncScrollingCoordinator::setNonFastScrollableRegionDirty()
+void AsyncScrollingCoordinator::setEventTrackingRegionsDirty()
 {
-    m_nonFastScrollableRegionDirty = true;
+    m_eventTrackingRegionsDirty = true;
     // We have to schedule a commit, but the computed non-fast region may not have actually changed.
     scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::willCommitTree()
 {
-    updateNonFastScrollableRegion();
+    updateEventTrackingRegions();
 }
 
-void AsyncScrollingCoordinator::updateNonFastScrollableRegion()
+void AsyncScrollingCoordinator::updateEventTrackingRegions()
 {
-    if (!m_nonFastScrollableRegionDirty)
+    if (!m_eventTrackingRegionsDirty)
         return;
 
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(absoluteNonFastScrollableRegion());
-    m_nonFastScrollableRegionDirty = false;
+    m_scrollingStateTree->rootStateNode()->setEventTrackingRegions(absoluteEventTrackingRegions());
+    m_eventTrackingRegionsDirty = false;
 }
 
 void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
@@ -115,8 +115,8 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
     // frame view whose layout was updated is not the main frame.
     // In the future, we may want to have the ability to set non-fast scrolling regions for more than
     // just the root node. But right now, this concept only applies to the root.
-    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(absoluteNonFastScrollableRegion());
-    m_nonFastScrollableRegionDirty = false;
+    m_scrollingStateTree->rootStateNode()->setEventTrackingRegions(absoluteEventTrackingRegions());
+    m_eventTrackingRegionsDirty = false;
 
     if (!coordinatesScrollingForFrameView(frameView))
         return;
@@ -164,12 +164,12 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
     node->setScrollableAreaParameters(scrollParameters);
 }
 
-void AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged(FrameView&)
+void AsyncScrollingCoordinator::frameViewEventTrackingRegionsChanged(FrameView&)
 {
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    setNonFastScrollableRegionDirty();
+    setEventTrackingRegionsDirty();
 }
 
 void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView)
@@ -551,8 +551,8 @@ void AsyncScrollingCoordinator::setScrollPinningBehavior(ScrollPinningBehavior p
 String AsyncScrollingCoordinator::scrollingStateTreeAsText() const
 {
     if (m_scrollingStateTree->rootStateNode()) {
-        if (m_nonFastScrollableRegionDirty)
-            m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(absoluteNonFastScrollableRegion());
+        if (m_eventTrackingRegionsDirty)
+            m_scrollingStateTree->rootStateNode()->setEventTrackingRegions(absoluteEventTrackingRegions());
         return m_scrollingStateTree->rootStateNode()->scrollingStateTreeAsText();
     }
 

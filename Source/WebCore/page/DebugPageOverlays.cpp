@@ -131,8 +131,10 @@ bool NonFastScrollableRegionOverlay::updateRegion()
     std::unique_ptr<Region> region = std::make_unique<Region>();
 
     if (Page* page = m_frame.page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            *region = scrollingCoordinator->absoluteNonFastScrollableRegion();
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
+            EventTrackingRegions eventTrackingRegions = scrollingCoordinator->absoluteEventTrackingRegions();
+            *region = eventTrackingRegions.synchronousDispatchRegion;
+        }
     }
 
     bool regionChanged = !m_region || !(*m_region == *region);

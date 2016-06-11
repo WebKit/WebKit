@@ -101,7 +101,7 @@ public:
     virtual void scrollingTreeNodeDidEndScroll() { }
 #endif
 
-    WEBCORE_EXPORT bool isPointInNonFastScrollableRegion(IntPoint);
+    WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(IntPoint);
     
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) = 0;
@@ -162,7 +162,7 @@ private:
     ScrollingTreeNodeMap m_nodeMap;
 
     Lock m_mutex;
-    Region m_nonFastScrollableRegion;
+    EventTrackingRegions m_eventTrackingRegions;
     FloatPoint m_mainFrameScrollPosition;
 
     Lock m_swipeStateMutex;

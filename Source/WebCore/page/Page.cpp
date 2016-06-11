@@ -372,7 +372,7 @@ Ref<ClientRectList> Page::nonFastScrollableRects()
 
     Vector<IntRect> rects;
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        rects = scrollingCoordinator->absoluteNonFastScrollableRegion().rects();
+        rects = scrollingCoordinator->absoluteEventTrackingRegions().synchronousDispatchRegion.rects();
 
     Vector<FloatQuad> quads(rects.size());
     for (size_t i = 0; i < rects.size(); ++i)

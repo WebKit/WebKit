@@ -2,7 +2,7 @@
   (scrollable area size 785 600)
   (contents size 785 2213)
   (requested scroll position 0 200)
-  (non-fast-scrollable region
+  (synchronous event dispatch region
     at (0,13) size 204x204)
   (children 1
     (Fixed node

@@ -26,6 +26,7 @@
 #ifndef ScrollingCoordinator_h
 #define ScrollingCoordinator_h
 
+#include "EventTrackingRegions.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
 #include "PlatformWheelEvent.h"
@@ -128,7 +129,7 @@ public:
     void frameViewFixedObjectsDidChange(FrameView&);
 
     // Called whenever the non-fast scrollable region changes for reasons other than layout.
-    virtual void frameViewNonFastScrollableRegionChanged(FrameView&) { }
+    virtual void frameViewEventTrackingRegionsChanged(FrameView&) { }
 
     // Should be called whenever the root layer for the given frame view changes.
     virtual void frameViewRootLayerDidChange(FrameView&);
@@ -204,7 +205,7 @@ public:
     static String synchronousScrollingReasonsAsText(SynchronousScrollingReasons);
     String synchronousScrollingReasonsAsText() const;
 
-    Region absoluteNonFastScrollableRegion() const;
+    EventTrackingRegions absoluteEventTrackingRegions() const;
 
 protected:
     explicit ScrollingCoordinator(Page*);
@@ -229,7 +230,7 @@ private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;
     void updateSynchronousScrollingReasons(const FrameView&);
 
-    Region absoluteNonFastScrollableRegionForFrame(const Frame&) const;
+    EventTrackingRegions absoluteEventTrackingRegionsForFrame(const Frame&) const;
     
     bool m_forceSynchronousScrollLayerPositionUpdates { false };
 };

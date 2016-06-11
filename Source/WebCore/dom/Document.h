@@ -32,6 +32,7 @@
 #include "ContainerNode.h"
 #include "DocumentEventQueue.h"
 #include "DocumentTiming.h"
+#include "EventTrackingRegions.h"
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
 #include "MediaProducer.h"

@@ -72,6 +72,7 @@ struct CompositionUnderline;
 struct Cookie;
 struct DictationAlternative;
 struct DictionaryPopupInfo;
+struct EventTrackingRegions;
 struct ExceptionDetails;
 struct FileChooserSettings;
 struct Length;
@@ -130,6 +131,11 @@ namespace IPC {
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
     static void encode(ArgumentEncoder&, const WebCore::AffineTransform&);
     static bool decode(ArgumentDecoder&, WebCore::AffineTransform&);
+};
+
+template<> struct ArgumentCoder<WebCore::EventTrackingRegions> {
+    static void encode(ArgumentEncoder&, const WebCore::EventTrackingRegions&);
+    static bool decode(ArgumentDecoder&, WebCore::EventTrackingRegions&);
 };
 
 template<> struct ArgumentCoder<WebCore::TransformationMatrix> {

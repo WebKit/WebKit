@@ -4619,7 +4619,7 @@ void FrameView::scrollableAreaSetChanged()
 {
     if (auto* page = frame().page()) {
         if (auto* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->frameViewNonFastScrollableRegionChanged(*this);
+            scrollingCoordinator->frameViewEventTrackingRegionsChanged(*this);
     }
 }
 

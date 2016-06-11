@@ -96,11 +96,11 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& fra
     return renderView->usesCompositing();
 }
 
-Region ScrollingCoordinator::absoluteNonFastScrollableRegionForFrame(const Frame& frame) const
+EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(const Frame& frame) const
 {
     RenderView* renderView = frame.contentRenderer();
     if (!renderView || renderView->documentBeingDestroyed())
-        return Region();
+        return EventTrackingRegions();
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     // On iOS, we use nonFastScrollableRegion to represent the region covered by elements with touch event handlers.
@@ -108,22 +108,13 @@ Region ScrollingCoordinator::absoluteNonFastScrollableRegionForFrame(const Frame
 
     Document* document = frame.document();
     if (!document)
-        return Region();
-
-    Vector<IntRect> touchRects;
-    document->getTouchRects(touchRects);
-    
-    Region touchRegion;
-    for (const auto& rect : touchRects)
-        touchRegion.unite(rect);
-
-    // FIXME: use absoluteRegionForEventTargets().
-    return touchRegion;
+        return EventTrackingRegions();
+    return document->eventTrackingRegions();
 #else
     Region nonFastScrollableRegion;
     FrameView* frameView = frame.view();
     if (!frameView)
-        return nonFastScrollableRegion;
+        return EventTrackingRegions();
 
     // FIXME: should ASSERT(!frameView->needsLayout()) here, but need to fix DebugPageOverlays
     // to not ask for regions at bad times.
@@ -158,7 +149,7 @@ Region ScrollingCoordinator::absoluteNonFastScrollableRegionForFrame(const Frame
         if (!subframeView)
             continue;
 
-        Region subframeRegion = absoluteNonFastScrollableRegionForFrame(*subframe);
+        Region subframeRegion = absoluteEventTrackingRegionsForFrame(*subframe).synchronousDispatchRegion;
         // Map from the frame document to our document.
         IntPoint offset = subframeView->contentsToContainingViewContents(IntPoint());
 
@@ -178,13 +169,13 @@ Region ScrollingCoordinator::absoluteNonFastScrollableRegionForFrame(const Frame
     nonFastScrollableRegion.unite(wheelHandlerRegion.first);
 
     // FIXME: If this is not the main frame, we could clip the region to the frame's bounds.
-    return nonFastScrollableRegion;
+    return EventTrackingRegions { Region(), nonFastScrollableRegion };
 #endif
 }
 
-Region ScrollingCoordinator::absoluteNonFastScrollableRegion() const
+EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegions() const
 {
-    return absoluteNonFastScrollableRegionForFrame(m_page->mainFrame());
+    return absoluteEventTrackingRegionsForFrame(m_page->mainFrame());
 }
 
 void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView& frameView)

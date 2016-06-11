@@ -144,7 +144,7 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(ArgumentEncoder& en
     encoder << static_cast<const ScrollingStateScrollingNode&>(node);
     
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::FrameScaleFactor, frameScaleFactor)
-    SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::NonFastScrollableRegion, nonFastScrollableRegion)
+    SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::EventTrackingRegion, eventTrackingRegions)
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::ReasonsForSynchronousScrolling, synchronousScrollingReasons)
     SCROLLING_NODE_ENCODE_ENUM(ScrollingStateFrameScrollingNode::BehaviorForFixedElements, scrollBehaviorForFixedElements)
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::HeaderHeight, headerHeight)
@@ -228,7 +228,7 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(ArgumentDecoder& de
         return false;
 
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::FrameScaleFactor, float, setFrameScaleFactor);
-    SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::NonFastScrollableRegion, Region, setNonFastScrollableRegion);
+    SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::EventTrackingRegion, EventTrackingRegions, setEventTrackingRegions);
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::ReasonsForSynchronousScrolling, SynchronousScrollingReasons, setSynchronousScrollingReasons);
     SCROLLING_NODE_DECODE_ENUM(ScrollingStateFrameScrollingNode::BehaviorForFixedElements, ScrollBehaviorForFixedElements, setScrollBehaviorForFixedElements);
 
@@ -484,13 +484,24 @@ static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, b
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::FrameScaleFactor))
         ts.dumpProperty("frame-scale-factor", node.frameScaleFactor());
 
-    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::NonFastScrollableRegion)) {
-        TextStream::GroupScope group(ts);
-        ts << "non-fast-scrollable-region";
-        for (auto rect : node.nonFastScrollableRegion().rects()) {
-            ts << "\n";
-            ts.writeIndent();
-            ts << rect;
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::EventTrackingRegion)) {
+        {
+            TextStream::GroupScope group(ts);
+            ts << "asynchronous-event-tracking-region";
+            for (auto rect : node.eventTrackingRegions().asynchronousDispatchRegion.rects()) {
+                ts << "\n";
+                ts.writeIndent();
+                ts << rect;
+            }
+        }
+        {
+            TextStream::GroupScope group(ts);
+            ts << "synchronous-event-tracking-region";
+            for (auto rect : node.eventTrackingRegions().synchronousDispatchRegion.rects()) {
+                ts << "\n";
+                ts.writeIndent();
+                ts << rect;
+            }
         }
     }
 

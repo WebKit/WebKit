@@ -1,3 +1,20 @@
+2016-06-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add support for passive event listeners on touch events
+        https://bugs.webkit.org/show_bug.cgi?id=158601
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/tap-with-active-listener-on-elements-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-active-listener-on-elements.html: Added.
+        * fast/events/touch/ios/tap-with-active-listener-on-window-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-active-listener-on-window.html: Added.
+        * fast/events/touch/ios/tap-with-passive-listener-inside-active-listener-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-passive-listener-on-elements-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-passive-listener-on-elements.html: Added.
+        * fast/events/touch/ios/tap-with-passive-listener-on-window-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-passive-listener-on-window.html: Added.
+
 2016-06-10  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION(r198177): Cannot paste an image when the pasteboard format is mime type.

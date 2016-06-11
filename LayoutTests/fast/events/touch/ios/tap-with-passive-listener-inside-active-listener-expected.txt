@@ -1,0 +1,33 @@
+Tap on Target1 (green)
+
+Listener target1 received cancelable event touchstart targetting eventTarget1 at 50, 50
+defaultPrevented before preventDefault(): false
+defaultPrevented after preventDefault(): true
+Listener target1 received cancelable event touchend targetting eventTarget1
+defaultPrevented before preventDefault(): false
+defaultPrevented after preventDefault(): true
+Done
+Tap on Target2 (red)
+
+Listener target1 received cancelable event touchstart targetting eventTarget2 at 150, 50
+defaultPrevented before preventDefault(): false
+defaultPrevented after preventDefault(): true
+Listener target1 received cancelable event touchend targetting eventTarget2
+defaultPrevented before preventDefault(): false
+defaultPrevented after preventDefault(): true
+Done
+Tap on Target3 (blue)
+
+Listener target3 received cancelable event touchstart targetting eventTarget3 at 250, 50
+defaultPrevented before preventDefault(): false
+defaultPrevented after preventDefault(): false
+Listener target1 received cancelable event touchstart targetting eventTarget3 at 250, 50
+defaultPrevented before preventDefault(): false
+defaultPrevented after preventDefault(): true
+Listener target3 received cancelable event touchend targetting eventTarget3
+defaultPrevented before preventDefault(): false
+defaultPrevented after preventDefault(): false
+Listener target1 received cancelable event touchend targetting eventTarget3
+defaultPrevented before preventDefault(): false
+defaultPrevented after preventDefault(): true
+

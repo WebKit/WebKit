@@ -160,6 +160,7 @@ public:
     bool hasEventListeners() const;
     bool hasEventListeners(const AtomicString& eventType);
     bool hasCapturingEventListeners(const AtomicString& eventType);
+    bool hasActiveEventListeners(const AtomicString& eventType) const;
     const EventListenerVector& getEventListeners(const AtomicString& eventType);
 
     bool fireEventListeners(Event&);
@@ -167,6 +168,8 @@ public:
 
     void visitJSEventListeners(JSC::SlotVisitor&);
     void invalidateJSEventListeners(JSC::JSObject*);
+
+    bool hasActiveTouchEventListeners() const;
 
 protected:
     virtual ~EventTarget();

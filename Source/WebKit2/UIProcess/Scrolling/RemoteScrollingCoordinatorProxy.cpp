@@ -149,9 +149,9 @@ bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent&
     return result == ScrollingTree::DidHandleEvent; // FIXME: handle other values.
 }
 
-bool RemoteScrollingCoordinatorProxy::isPointInNonFastScrollableRegion(const IntPoint& p) const
+TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(IntPoint p) const
 {
-    return m_scrollingTree->isPointInNonFastScrollableRegion(p);
+    return m_scrollingTree->eventTrackingTypeForPoint(p);
 }
 
 void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const FloatRect& fixedPositionRect, double scale)

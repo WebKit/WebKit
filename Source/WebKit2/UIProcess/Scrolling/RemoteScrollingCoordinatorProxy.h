@@ -56,7 +56,7 @@ public:
     void scrollingTreeNodeDidScroll(WebCore::ScrollingNodeID, const WebCore::FloatPoint& newScrollPosition, WebCore::SetOrSyncScrollingLayerPosition);
     void scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, bool representsProgrammaticScroll);
 
-    bool isPointInNonFastScrollableRegion(const WebCore::IntPoint&) const;
+    WebCore::TrackingType eventTrackingTypeForPoint(WebCore::IntPoint) const;
 
     // Called externally when native views move around.
     void viewportChangedViaDelegatedScrolling(WebCore::ScrollingNodeID, const WebCore::FloatRect& fixedPositionRect, double scale);

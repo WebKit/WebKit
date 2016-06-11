@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.singleTapAtPoint(50, 50, function() {
+                    uiController.uiScriptComplete("Done");
+                });
+            })();`
+        }
+
+        function runTest()
+        {
+            var output = '';
+            window.addEventListener('touchstart', function(event) {
+                output += 'Received' + (event.cancelable ? ' cancelable' : '') + ' event ' + event.type + ' at ' + event.touches[0].clientX + ', ' + event.touches[0].clientY + '<br>';
+                event.preventDefault();
+            });
+
+            window.addEventListener('touchend', function(event) {
+                output += 'Received' + (event.cancelable ? ' cancelable' : '') + ' event ' + event.type + '<br>';
+            });
+
+            function fail(event) {
+                output += 'FAILED!: No mouse event should be receive, we got a ' + event.type;
+            }
+            window.addEventListener('mouseover', fail);
+            window.addEventListener('mouseout', fail);
+            window.addEventListener('mouseenter', fail);
+            window.addEventListener('mouseleave', fail);
+            window.addEventListener('mousedown', fail);
+            window.addEventListener('mousemove', fail);
+            window.addEventListener('mouseup', fail);
+            window.addEventListener('click', fail);
+
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function(result) {
+                    output += result;
+                    document.getElementById('output').innerHTML = output;
+                    testRunner.notifyDone();
+                });
+            }
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        * { touch-action: manipulation; }
+    </style>
+</head>
+<body>
+    <div id=output>
+    This test requires UIScriptController to run.
+    </div>
+</body>
+</html>

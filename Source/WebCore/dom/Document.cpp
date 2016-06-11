@@ -431,8 +431,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
 #if ENABLE(IOS_TOUCH_EVENTS)
-    , m_handlingTouchEvent(false)
-    , m_touchEventRegionsDirty(false)
     , m_touchEventsChangedTimer(*this, &Document::touchEventsChangedTimerFired)
 #endif
     , m_referencingNodeCount(0)
@@ -6284,7 +6282,7 @@ void Document::wheelEventHandlersChanged()
 
     if (FrameView* frameView = view()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->frameViewNonFastScrollableRegionChanged(*frameView);
+            scrollingCoordinator->frameViewEventTrackingRegionsChanged(*frameView);
     }
 
     bool haveHandlers = m_wheelEventTargets && !m_wheelEventTargets->isEmpty();

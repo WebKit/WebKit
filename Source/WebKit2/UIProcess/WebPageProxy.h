@@ -63,6 +63,7 @@
 #include "WebProcessLifetimeTracker.h"
 #include <WebCore/Color.h>
 #include <WebCore/DragActions.h>
+#include <WebCore/EventTrackingRegions.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/MediaProducer.h>
@@ -615,7 +616,7 @@ public:
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    void handleTouchEventSynchronously(const NativeWebTouchEvent&);
+    void handleTouchEventSynchronously(NativeWebTouchEvent&);
     void handleTouchEventAsynchronously(const NativeWebTouchEvent&);
 
 #elif ENABLE(TOUCH_EVENTS)
@@ -1463,7 +1464,7 @@ private:
     void sendWheelEvent(const WebWheelEvent&);
 
 #if ENABLE(TOUCH_EVENTS)
-    bool shouldStartTrackingTouchEvents(const WebTouchEvent&) const;
+    WebCore::TrackingType touchEventTrackingType(const WebTouchEvent&) const;
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -1690,7 +1691,7 @@ private:
     std::unique_ptr<NativeWebMouseEvent> m_currentlyProcessedMouseDownEvent;
 
 #if ENABLE(TOUCH_EVENTS)
-    bool m_isTrackingTouchEvents;
+    WebCore::TrackingType m_touchEventsTrackingType { WebCore::TrackingType::NotTracking };
 #endif
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     Deque<QueuedTouchEvents> m_touchEventQueue;

@@ -1,3 +1,46 @@
+2016-06-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add support for passive event listeners on touch events
+        https://bugs.webkit.org/show_bug.cgi?id=158601
+
+        Reviewed by Simon Fraser.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+        (WebKit::dump):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<EventTrackingRegions>::encode):
+        (IPC::ArgumentCoder<EventTrackingRegions>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint):
+        (WebKit::RemoteScrollingCoordinatorProxy::isPointInNonFastScrollableRegion): Deleted.
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::touchEventTrackingType):
+        The type is the most restrictive type of all the touch points.
+        If any touch point needs synchronous tracking, everything has to be synchronous.
+
+        (WebKit::WebPageProxy::handleTouchEventSynchronously):
+        This is a very unfortunate design.
+
+        The upper layer dealing with UIKit knows about gesture and when something
+        can be dispatched asynchrnously because a gesture has started.
+        This layer knows about tracking and can use that extra inforamtion
+        to dispatch an event asynchrnously anyway.
+
+        In the future, we should refactor this to let WebPageProxy
+        always decide of the dispatch type. I am just concerned changing
+        the upper layer while we are stabilizing WebKit.
+
+        (WebKit::WebPageProxy::handleTouchEventAsynchronously):
+        (WebKit::WebPageProxy::handleTouchEvent):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::WebPageProxy): Deleted.
+        (WebKit::WebPageProxy::shouldStartTrackingTouchEvents): Deleted.
+        * UIProcess/WebPageProxy.h:
+
 2016-06-10  Beth Dakin  <bdakin@apple.com>
 
         Add requestExitFullScreen to WKFullScreenWindowController

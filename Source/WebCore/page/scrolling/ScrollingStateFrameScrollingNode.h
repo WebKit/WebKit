@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
-#include "Region.h"
+#include "EventTrackingRegions.h"
 #include "ScrollTypes.h"
 #include "ScrollbarThemeComposite.h"
 #include "ScrollingCoordinator.h"
@@ -48,7 +48,7 @@ public:
 
     enum ChangedProperty {
         FrameScaleFactor = NumScrollingStateNodeBits,
-        NonFastScrollableRegion,
+        EventTrackingRegion,
         ReasonsForSynchronousScrolling,
         ScrolledContentsLayer,
         CounterScrollingLayer,
@@ -67,8 +67,8 @@ public:
     float frameScaleFactor() const { return m_frameScaleFactor; }
     WEBCORE_EXPORT void setFrameScaleFactor(float);
 
-    const Region& nonFastScrollableRegion() const { return m_nonFastScrollableRegion; }
-    WEBCORE_EXPORT void setNonFastScrollableRegion(const Region&);
+    const EventTrackingRegions& eventTrackingRegions() const { return m_eventTrackingRegions; }
+    WEBCORE_EXPORT void setEventTrackingRegions(const EventTrackingRegions&);
 
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     WEBCORE_EXPORT void setSynchronousScrollingReasons(SynchronousScrollingReasons);
@@ -137,7 +137,7 @@ private:
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
 #endif
 
-    Region m_nonFastScrollableRegion;
+    EventTrackingRegions m_eventTrackingRegions;
     FloatPoint m_requestedScrollPosition;
     float m_frameScaleFactor { 1 };
     float m_topContentInset { 0 };
