@@ -3,46 +3,30 @@
 <body>
 <script>
 
+var tests =
+[
+  { responseHeaders: {'Cache-control': 'max-age=100'} },
+  { responseHeaders: {'Vary': 'Cookie', 'Cache-control': 'max-age=100'} },
+];
 
-description("Test that Vary: Cookie in response is handled by caches.");
+description("Test that Vary: Cookie in response is handled by the disk cache.");
 
-function testCookies(testDiskCache, completionHandler)
-{
-    var tests = [
-      { responseHeaders: {'Cache-control': 'max-age=100'} },
-      { responseHeaders: {'Vary': 'Cookie', 'Cache-control': 'max-age=100'} },
-    ];
-
-    var options = { "ClearMemoryCache" : testDiskCache };
-    debug("Setting cookie and loading");
-    document.cookie = "cookie=" + Math.floor((Math.random() * 1000000000000));
-    loadResourcesWithOptions(tests, options, function () {
+debug("Setting cookie and loading");
+document.cookie = "cookie=value";
+loadResources(tests, function () {
+    printResults(tests);
+    debug("Loading again");
+    loadResources(tests, function () {
         printResults(tests);
-        debug("Loading again");
-        loadResourcesWithOptions(tests, options, function () {
+        debug("Changing cookie and loading");
+        document.cookie = "cookie=othervalue";
+        loadResources(tests, function () {
             printResults(tests);
-            debug("Changing cookie and loading");
-            document.cookie = "cookie" + Math.floor((Math.random() * 1000000000000));
-            loadResourcesWithOptions(tests, options, function () {
-                printResults(tests);
-                debug("Loading again");
-                loadResourcesWithOptions(tests, options, function () {
-                   printResults(tests);
-                   completionHandler();
-                });
+            debug("Loading again");
+            loadResources(tests, function () {
+               printResults(tests);
+               finishJSTest();
             });
-        });
-    });
-}
-
-debug("Testing disk cache");
-testCookies(true, function () {
-    debug("Testing memory cache");
-    testCookies(false, function () {
-        debug("Testing memory cache in private browsing");
-        testRunner.setPrivateBrowsingEnabled(true);
-        testCookies(false, function () {
-            finishJSTest();
         });
     });
 });

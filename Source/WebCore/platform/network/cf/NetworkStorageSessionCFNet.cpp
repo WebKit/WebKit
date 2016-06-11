@@ -41,10 +41,17 @@
 
 namespace WebCore {
 
-NetworkStorageSession::NetworkStorageSession(SessionID sessionID, RetainPtr<CFURLStorageSessionRef>&& platformSession)
-    : NetworkStorageSession(sessionID)
+NetworkStorageSession::NetworkStorageSession(SessionID sessionID, RetainPtr<CFURLStorageSessionRef> platformSession)
+    : m_sessionID(sessionID)
+    , m_platformSession(platformSession)
 {
-    m_platformSession = WTFMove(platformSession);
+}
+
+static std::unique_ptr<NetworkStorageSession>& defaultNetworkStorageSession()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
+    return session;
 }
 
 void NetworkStorageSession::switchToNewTestingSession()
@@ -52,10 +59,17 @@ void NetworkStorageSession::switchToNewTestingSession()
     // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
     String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
 #if PLATFORM(COCOA)
-    replaceDefaultSession(std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get()))));
+    defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get())));
 #else
-    replaceDefaultSession(std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultStorageSession().platformSession()))));
+    defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultNetworkStorageSession()->platformSession())));
 #endif
+}
+
+NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
+{
+    if (!defaultNetworkStorageSession())
+        defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), nullptr);
+    return *defaultNetworkStorageSession();
 }
 
 std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(SessionID sessionID, const String& identifierBase)
@@ -65,7 +79,7 @@ std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrows
 #if PLATFORM(COCOA)
     auto session = std::make_unique<NetworkStorageSession>(sessionID, adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get())));
 #else
-    auto session = std::make_unique<NetworkStorageSession>(sessionID, adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultStorageSession().platformSession())));
+    auto session = std::make_unique<NetworkStorageSession>(sessionID, adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession())));
 #endif
 
     return session;

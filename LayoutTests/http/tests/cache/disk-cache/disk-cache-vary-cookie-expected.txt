@@ -1,9 +1,8 @@
-Test that Vary: Cookie in response is handled by caches.
+Test that Vary: Cookie in response is handled by the disk cache.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Testing disk cache
 Setting cookie and loading
 response headers: {"Cache-control":"max-age=100"}
 response source: Network
@@ -31,64 +30,6 @@ response source: Disk cache
 
 response headers: {"Vary":"Cookie","Cache-control":"max-age=100"}
 response source: Disk cache
-
-Testing memory cache
-Setting cookie and loading
-response headers: {"Cache-control":"max-age=100"}
-response source: Network
-
-response headers: {"Vary":"Cookie","Cache-control":"max-age=100"}
-response source: Network
-
-Loading again
-response headers: {"Cache-control":"max-age=100"}
-response source: Memory cache
-
-response headers: {"Vary":"Cookie","Cache-control":"max-age=100"}
-response source: Memory cache
-
-Changing cookie and loading
-response headers: {"Cache-control":"max-age=100"}
-response source: Memory cache
-
-response headers: {"Vary":"Cookie","Cache-control":"max-age=100"}
-response source: Network
-
-Loading again
-response headers: {"Cache-control":"max-age=100"}
-response source: Memory cache
-
-response headers: {"Vary":"Cookie","Cache-control":"max-age=100"}
-response source: Memory cache
-
-Testing memory cache in private browsing
-Setting cookie and loading
-response headers: {"Cache-control":"max-age=100"}
-response source: Network
-
-response headers: {"Vary":"Cookie","Cache-control":"max-age=100"}
-response source: Network
-
-Loading again
-response headers: {"Cache-control":"max-age=100"}
-response source: Memory cache
-
-response headers: {"Vary":"Cookie","Cache-control":"max-age=100"}
-response source: Memory cache
-
-Changing cookie and loading
-response headers: {"Cache-control":"max-age=100"}
-response source: Memory cache
-
-response headers: {"Vary":"Cookie","Cache-control":"max-age=100"}
-response source: Network
-
-Loading again
-response headers: {"Cache-control":"max-age=100"}
-response source: Memory cache
-
-response headers: {"Vary":"Cookie","Cache-control":"max-age=100"}
-response source: Memory cache
 
 PASS successfullyParsed is true
 

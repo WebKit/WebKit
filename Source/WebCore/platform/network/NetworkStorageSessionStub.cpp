@@ -35,9 +35,13 @@
 namespace WebCore {
 
 NetworkStorageSession::NetworkStorageSession(SessionID sessionID, NetworkingContext* context)
-    : NetworkStorageSession(sessionID)
+    : m_sessionID(sessionID)
+    , m_context(context)
 {
-    m_context = context;
+}
+
+NetworkStorageSession::~NetworkStorageSession()
+{
 }
 
 NetworkingContext* NetworkStorageSession::context() const
@@ -49,6 +53,19 @@ std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrows
 {
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+static std::unique_ptr<NetworkStorageSession>& defaultSession()
+{
+    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
+    return session;
+}
+
+NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
+{
+    if (!defaultSession())
+        defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), nullptr);
+    return *defaultSession();
 }
 
 void NetworkStorageSession::switchToNewTestingSession()
