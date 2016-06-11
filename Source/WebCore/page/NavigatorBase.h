@@ -30,24 +30,30 @@
 
 namespace WebCore {
 
-    class NavigatorBase {
-    public:
-        String appName() const;
-        String appVersion() const;
-        virtual String userAgent() const = 0;
-        String platform() const;
+class NavigatorBase {
+public:
+    static String appName();
+    String appVersion() const;
+    virtual String userAgent() const = 0;
+    static String platform();
 
-        String appCodeName() const;
-        String product() const;
-        String productSub() const;
-        String vendor() const;
-        String vendorSub() const;
+    static String appCodeName();
+    static String product();
+    static String productSub();
+    static String vendor();
+    static String vendorSub();
 
-        bool onLine() const;
+    static bool onLine();
 
-    protected:
-        virtual ~NavigatorBase();
-    };
+    static String language();
+
+#if ENABLE(NAVIGATOR_HWCONCURRENCY)
+    static int hardwareConcurrency();
+#endif
+
+protected:
+    virtual ~NavigatorBase();
+};
 
 } // namespace WebCore
 

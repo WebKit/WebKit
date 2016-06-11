@@ -20,26 +20,10 @@
 [
     GenerateIsReachable=ImplFrame,
 ] interface Navigator {
-    [Nondeterministic] readonly attribute DOMString appCodeName;
-    [Nondeterministic] readonly attribute DOMString appName;
-    [Nondeterministic] readonly attribute DOMString appVersion;
-    [Nondeterministic] readonly attribute DOMString language;
-    [Nondeterministic] readonly attribute DOMString userAgent;
-    [Nondeterministic] readonly attribute DOMString platform;
     readonly attribute DOMPluginArray plugins;
     readonly attribute DOMMimeTypeArray mimeTypes;
-    [Nondeterministic] readonly attribute DOMString product;
-    [Nondeterministic] readonly attribute DOMString productSub;
-    [Nondeterministic] readonly attribute DOMString vendor;
-    [Nondeterministic] readonly attribute DOMString vendorSub;
     [Nondeterministic] readonly attribute boolean cookieEnabled;
     [Nondeterministic] boolean javaEnabled();
-
-    readonly attribute boolean onLine;
-
-#if defined(ENABLE_NAVIGATOR_HWCONCURRENCY)
-    readonly attribute long hardwareConcurrency;
-#endif
 
     // FIXME: Convert this #if'def to an IDL conditional attribute.
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
@@ -49,3 +33,7 @@
     void getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
 };
 
+Navigator implements NavigatorConcurrentHardware;
+Navigator implements NavigatorID;
+Navigator implements NavigatorLanguage;
+Navigator implements NavigatorOnLine;

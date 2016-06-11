@@ -11,11 +11,28 @@ if (window.testRunner) {
 var worker = createWorker();
 worker.postMessage("eval typeof navigator");
 worker.postMessage("eval navigator");
-worker.postMessage("eval navigator.appName");
+
+// NavigatorConcurrentHardware
+worker.postMessage("eval navigator.hardwareConcurrency >= 1 && navigator.hardwareConcurrency <= 8");
+
+// NavigatorID
+worker.postMessage("eval navigator.appCodeName === 'Mozilla'");
+worker.postMessage("eval navigator.appName === 'Netscape'");
 worker.postMessage("eval navigator.appVersion.indexOf('WebKit') != 0");
-worker.postMessage("eval typeof navigator.platform");
+worker.postMessage("eval typeof navigator.platform == 'string'");
+worker.postMessage("eval navigator.product === 'Gecko'");
+worker.postMessage("eval navigator.productSub === '20030107'");
 worker.postMessage("eval navigator.userAgent.indexOf('WebKit') != 0");
-worker.postMessage("eval typeof navigator.onLine");
+worker.postMessage("eval navigator.vendor === 'Apple Computer, Inc.'");
+worker.postMessage("eval navigator.vendorSub === ''");
+
+// NavigatorLanguage
+worker.postMessage("eval typeof navigator.language == 'string'");
+
+// NavigatorOnLine
+worker.postMessage("eval typeof navigator.onLine == 'boolean'");
+
+
 worker.postMessage("eval foo//bar");
 
 worker.onmessage = function(evt) {

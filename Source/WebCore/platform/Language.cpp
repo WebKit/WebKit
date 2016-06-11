@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+static StaticLock userPreferredLanguagesMutex;
+
 static void registerLanguageDidChangeCallbackIfNecessary()
 {
     static std::once_flag once;
@@ -100,11 +102,23 @@ void overrideUserPreferredLanguages(const Vector<String>& override)
     languageDidChange();
 }
 
+static Vector<String> isolatedCopy(const Vector<String>& strings)
+{
+    Vector<String> copy;
+    copy.reserveInitialCapacity(strings.size());
+    for (auto& language : strings)
+        copy.uncheckedAppend(language.isolatedCopy());
+    return copy;
+}
+
 Vector<String> userPreferredLanguages()
 {
-    Vector<String>& override = preferredLanguagesOverride();
-    if (!override.isEmpty())
-        return override;
+    {
+        std::lock_guard<StaticLock> lock(userPreferredLanguagesMutex);
+        Vector<String>& override = preferredLanguagesOverride();
+        if (!override.isEmpty())
+            return isolatedCopy(override);
+    }
     
     registerLanguageDidChangeCallbackIfNecessary();
     return platformUserPreferredLanguages();

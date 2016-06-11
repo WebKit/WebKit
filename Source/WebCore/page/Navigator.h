@@ -45,14 +45,10 @@ public:
     virtual ~Navigator();
 
     String appVersion() const;
-    String language() const;
     DOMPluginArray* plugins() const;
     DOMMimeTypeArray* mimeTypes() const;
     bool cookieEnabled() const;
     bool javaEnabled() const;
-#if defined(ENABLE_NAVIGATOR_HWCONCURRENCY)
-    int hardwareConcurrency() const;
-#endif
     virtual String userAgent() const;
 
 #if PLATFORM(IOS)

@@ -2,10 +2,17 @@ Test Navigator properties.
 
 typeof navigator: object
 navigator: [object WorkerNavigator]
-navigator.appName: Netscape
+navigator.hardwareConcurrency >= 1 && navigator.hardwareConcurrency <= 8: true
+navigator.appCodeName === 'Mozilla': true
+navigator.appName === 'Netscape': true
 navigator.appVersion.indexOf('WebKit') != 0: true
-typeof navigator.platform: string
+typeof navigator.platform == 'string': true
+navigator.product === 'Gecko': true
+navigator.productSub === '20030107': true
 navigator.userAgent.indexOf('WebKit') != 0: true
-typeof navigator.onLine: boolean
+navigator.vendor === 'Apple Computer, Inc.': true
+navigator.vendorSub === '': true
+typeof navigator.language == 'string': true
+typeof navigator.onLine == 'boolean': true
 DONE
 

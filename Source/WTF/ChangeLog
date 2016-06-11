@@ -1,3 +1,19 @@
+2016-06-11  Chris Dumez  <cdumez@apple.com>
+
+        WorkerNavigator is missing some attributes
+        https://bugs.webkit.org/show_bug.cgi?id=158593
+        <rdar://problem/26731334>
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformUserPreferredLanguages.h:
+        * wtf/PlatformUserPreferredLanguagesWin.cpp:
+        (WTF::platformLanguage):
+        (WTF::platformUserPreferredLanguages):
+
+        Make platformUserPreferredLanguages() thread safe on Windows. The
+        Mac and Unix implementations are already thread-safe.
+
 2016-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Introduce WTF::UniqueRef

@@ -514,6 +514,10 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/page/History.idl \
     $(WebCore)/page/Location.idl \
     $(WebCore)/page/Navigator.idl \
+    $(WebCore)/page/NavigatorConcurrentHardware.idl \
+    $(WebCore)/page/NavigatorID.idl \
+    $(WebCore)/page/NavigatorLanguage.idl \
+    $(WebCore)/page/NavigatorOnLine.idl \
     $(WebCore)/page/Performance.idl \
     $(WebCore)/page/PerformanceEntry.idl \
     $(WebCore)/page/PerformanceEntryList.idl \

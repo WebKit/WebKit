@@ -603,6 +603,10 @@ set(WebCore_NON_SVG_IDL_FILES
     page/History.idl
     page/Location.idl
     page/Navigator.idl
+    page/NavigatorConcurrentHardware.idl
+    page/NavigatorID.idl
+    page/NavigatorLanguage.idl
+    page/NavigatorOnLine.idl
     page/Performance.idl
     page/PerformanceEntry.idl
     page/PerformanceEntryList.idl

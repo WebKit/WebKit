@@ -26,11 +26,15 @@
 #include "config.h"
 #include "PlatformUserPreferredLanguages.h"
 
+#include <mutex>
 #include <windows.h>
+#include <wtf/Lock.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
+
+static StaticLock platformLanguageMutex;
 
 void setPlatformUserPreferredLanguagesChangedCallback(void (*)()) { }
 
@@ -54,9 +58,11 @@ static String localeInfo(LCTYPE localeType, const String& fallback)
 
 static String platformLanguage()
 {
+    std::lock_guard<StaticLock> lock(platformLanguageMutex);
+
     static String computedDefaultLanguage;
     if (!computedDefaultLanguage.isEmpty())
-        return computedDefaultLanguage;
+        return computedDefaultLanguage.isolatedCopy();
 
     String languageName = localeInfo(LOCALE_SISO639LANGNAME, "en");
     String countryName = localeInfo(LOCALE_SISO3166CTRYNAME, String());
@@ -71,9 +77,7 @@ static String platformLanguage()
 
 Vector<String> platformUserPreferredLanguages()
 {
-    Vector<String> userPreferredLanguages;
-    userPreferredLanguages.append(platformLanguage());
-    return userPreferredLanguages;
+    return { platformLanguage() };
 }
 
 } // namespace WTF

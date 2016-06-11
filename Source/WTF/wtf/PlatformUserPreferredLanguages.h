@@ -33,6 +33,7 @@ namespace WTF {
 
 WTF_EXPORT_PRIVATE void setPlatformUserPreferredLanguagesChangedCallback(void (*)());
 
+// This is thread-safe.
 WTF_EXPORT_PRIVATE Vector<String> platformUserPreferredLanguages();
 
 } // namespace WTF

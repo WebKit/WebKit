@@ -27,8 +27,11 @@
 #include "config.h"
 #include "NavigatorBase.h"
 
+#include "Language.h"
 #include "NetworkStateNotifier.h"
+#include <mutex>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/NumberOfCores.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(LINUX)
@@ -44,30 +47,30 @@
 #if PLATFORM(IOS)
 #define WEBCORE_NAVIGATOR_PLATFORM deviceName()
 #elif OS(MAC_OS_X) && (CPU(PPC) || CPU(PPC64))
-#define WEBCORE_NAVIGATOR_PLATFORM "MacPPC"
+#define WEBCORE_NAVIGATOR_PLATFORM ASCIILiteral("MacPPC")
 #elif OS(MAC_OS_X) && (CPU(X86) || CPU(X86_64))
-#define WEBCORE_NAVIGATOR_PLATFORM "MacIntel"
+#define WEBCORE_NAVIGATOR_PLATFORM ASCIILiteral("MacIntel")
 #elif OS(WINDOWS)
-#define WEBCORE_NAVIGATOR_PLATFORM "Win32"
+#define WEBCORE_NAVIGATOR_PLATFORM ASCIILiteral("Win32")
 #else
-#define WEBCORE_NAVIGATOR_PLATFORM ""
+#define WEBCORE_NAVIGATOR_PLATFORM emptyString()
 #endif
 #endif // ifndef WEBCORE_NAVIGATOR_PLATFORM
 
 #ifndef WEBCORE_NAVIGATOR_PRODUCT
-#define WEBCORE_NAVIGATOR_PRODUCT "Gecko"
+#define WEBCORE_NAVIGATOR_PRODUCT ASCIILiteral("Gecko")
 #endif // ifndef WEBCORE_NAVIGATOR_PRODUCT
 
 #ifndef WEBCORE_NAVIGATOR_PRODUCT_SUB
-#define WEBCORE_NAVIGATOR_PRODUCT_SUB "20030107"
+#define WEBCORE_NAVIGATOR_PRODUCT_SUB ASCIILiteral("20030107")
 #endif // ifndef WEBCORE_NAVIGATOR_PRODUCT_SUB
 
 #ifndef WEBCORE_NAVIGATOR_VENDOR
-#define WEBCORE_NAVIGATOR_VENDOR "Apple Computer, Inc."
+#define WEBCORE_NAVIGATOR_VENDOR ASCIILiteral("Apple Computer, Inc.")
 #endif // ifndef WEBCORE_NAVIGATOR_VENDOR
 
 #ifndef WEBCORE_NAVIGATOR_VENDOR_SUB
-#define WEBCORE_NAVIGATOR_VENDOR_SUB ""
+#define WEBCORE_NAVIGATOR_VENDOR_SUB emptyString()
 #endif // ifndef WEBCORE_NAVIGATOR_VENDOR_SUB
 
 namespace WebCore {
@@ -76,9 +79,9 @@ NavigatorBase::~NavigatorBase()
 {
 }
 
-String NavigatorBase::appName() const
+String NavigatorBase::appName()
 {
-    return "Netscape";
+    return ASCIILiteral("Netscape");
 }
 
 String NavigatorBase::appVersion() const
@@ -88,7 +91,7 @@ String NavigatorBase::appVersion() const
     return agent.substring(agent.find('/') + 1);
 }
 
-String NavigatorBase::platform() const
+String NavigatorBase::platform()
 {
 #if OS(LINUX)
     if (!String(WEBCORE_NAVIGATOR_PLATFORM).isEmpty())
@@ -101,34 +104,65 @@ String NavigatorBase::platform() const
 #endif
 }
 
-String NavigatorBase::appCodeName() const
+String NavigatorBase::appCodeName()
 {
-    return "Mozilla";
+    return ASCIILiteral("Mozilla");
 }
 
-String NavigatorBase::product() const
+String NavigatorBase::product()
 {
     return WEBCORE_NAVIGATOR_PRODUCT;
 }
 
-String NavigatorBase::productSub() const
+String NavigatorBase::productSub()
 {
     return WEBCORE_NAVIGATOR_PRODUCT_SUB;
 }
 
-String NavigatorBase::vendor() const
+String NavigatorBase::vendor()
 {
     return WEBCORE_NAVIGATOR_VENDOR;
 }
 
-String NavigatorBase::vendorSub() const
+String NavigatorBase::vendorSub()
 {
     return WEBCORE_NAVIGATOR_VENDOR_SUB;
 }
 
-bool NavigatorBase::onLine() const
+bool NavigatorBase::onLine()
 {
     return networkStateNotifier().onLine();
 }
+
+String NavigatorBase::language()
+{
+    return defaultLanguage();
+}
+
+#if ENABLE(NAVIGATOR_HWCONCURRENCY)
+
+int NavigatorBase::hardwareConcurrency()
+{
+    static int numberOfCores;
+
+    static std::once_flag once;
+    std::call_once(once, [] {
+        // Enforce a maximum for the number of cores reported to mitigate
+        // fingerprinting for the minority of machines with large numbers of cores.
+        // If machines with more than 8 cores become commonplace, we should bump this number.
+        // see https://bugs.webkit.org/show_bug.cgi?id=132588 for the
+        // rationale behind this decision.
+#if PLATFORM(IOS)
+        const int maxCoresToReport = 2;
+#else
+        const int maxCoresToReport = 8;
+#endif
+        numberOfCores = std::min(WTF::numberOfProcessorCores(), maxCoresToReport);
+    });
+
+    return numberOfCores;
+}
+
+#endif
 
 } // namespace WebCore
