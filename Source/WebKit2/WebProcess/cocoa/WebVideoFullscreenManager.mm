@@ -43,6 +43,7 @@
 #import <WebCore/PlatformCALayer.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerBacking.h>
+#import <WebCore/RenderVideo.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TimeRanges.h>
@@ -52,12 +53,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static IntRect clientRectForElement(HTMLElement* element)
+static IntRect inlineVideoFrame(HTMLVideoElement& element)
 {
-    if (!element)
-        return IntRect();
-
-    return element->clientRect();
+    element.document().updateLayoutIgnorePendingStylesheets();
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return { };
+    auto rect = renderer->videoBox();
+    rect.moveBy(renderer->absoluteBoundingBoxRect().location());
+    return element.document().view()->contentsToRootView(rect);
 }
 
 #pragma mark - WebVideoFullscreenInterfaceContext
@@ -275,8 +279,8 @@ void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoEle
     if (!interface->layerHostingContext())
         interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
 
-    FloatRect clientRect = clientRectForElement(&videoElement);
-    FloatRect videoLayerFrame = FloatRect(0, 0, clientRect.width(), clientRect.height());
+    auto videoRect = inlineVideoFrame(videoElement);
+    FloatRect videoLayerFrame = FloatRect(0, 0, videoRect.width(), videoRect.height());
 
     HTMLMediaElementEnums::VideoFullscreenMode oldMode = interface->fullscreenMode();
     interface->setTargetIsFullscreen(true);
@@ -291,7 +295,7 @@ void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoEle
 
     bool allowsPictureInPicture = videoElement.mediaSession().allowsPictureInPicture(videoElement);
     
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, interface->layerHostingContext()->contextID(), clientRectForElement(&videoElement), m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, interface->layerHostingContext()->contextID(), videoRect, m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement)
@@ -307,7 +311,7 @@ void WebVideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTML
         return;
 
     interface.setIsAnimating(true);
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(contextId, clientRectForElement(&videoElement)), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
@@ -464,7 +468,7 @@ void WebVideoFullscreenManager::fullscreenMayReturnToInline(uint64_t contextId, 
 
     if (!isPageVisible)
         model.videoElement()->scrollIntoViewIfNotVisible(false);
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::PreparedToReturnToInline(contextId, true, clientRectForElement(model.videoElement())), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::PreparedToReturnToInline(contextId, true, inlineVideoFrame(*model.videoElement())), m_page->pageID());
 }
     
 void WebVideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, WebCore::FloatRect bounds, IPC::Attachment fencePort)
@@ -474,8 +478,8 @@ void WebVideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, Web
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
     if (std::isnan(bounds.x()) || std::isnan(bounds.y()) || std::isnan(bounds.width()) || std::isnan(bounds.height())) {
-        FloatRect clientRect = clientRectForElement(model->videoElement());
-        bounds = FloatRect(0, 0, clientRect.width(), clientRect.height());
+        auto videoRect = inlineVideoFrame(*model->videoElement());
+        bounds = FloatRect(0, 0, videoRect.width(), videoRect.height());
     }
     
     [CATransaction begin];

@@ -39,7 +39,7 @@ public:
 
     HTMLVideoElement& videoElement() const;
 
-    IntRect videoBox() const;
+    WEBCORE_EXPORT IntRect videoBox() const;
 
     static IntSize defaultSize();
 

@@ -1,3 +1,19 @@
+2016-06-10  Ada Chan  <adachan@apple.com>
+
+        Use the video element's video box when getting the inline video rect in WebVideoFullscreenManager
+        https://bugs.webkit.org/show_bug.cgi?id=158351
+        <rdar://problem/26567938>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::inlineVideoFrame):
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreenForVideoElement):
+        (WebKit::WebVideoFullscreenManager::fullscreenMayReturnToInline):
+        (WebKit::WebVideoFullscreenManager::setVideoLayerFrameFenced):
+        (WebKit::clientRectForElement): Deleted.
+
 2016-06-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Add support for passive event listeners on touch events
