@@ -23,6 +23,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/loader/mac"
     "${WEBCORE_DIR}/page/cocoa"
     "${WEBCORE_DIR}/page/mac"
+    "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/cf"
     "${WEBCORE_DIR}/platform/cocoa"
     "${WEBCORE_DIR}/platform/graphics/avfoundation"

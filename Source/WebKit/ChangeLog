@@ -1,3 +1,9 @@
+2016-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2016-06-09  Alex Christensen  <achristensen@webkit.org>
 
         Clean up WebKit.vcxproj directory after switching to CMake.
