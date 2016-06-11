@@ -42,7 +42,6 @@
 
 #include "CredentialStorage.h"
 #include "CurlCacheManager.h"
-#include "DataURL.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
@@ -312,7 +311,7 @@ static void handleLocalReceiveResponse (CURL* handle, ResourceHandle* job, Resou
     ASSERT(url.isValid());
     d->m_response.setURL(url);
      if (d->client())
-         d->client()->didReceiveResponse(job, d->m_response);
+         d->client()->didReceiveResponse(job, ResourceResponse(d->m_response));
      d->m_response.setResponseFired(true);
 }
 
@@ -559,7 +558,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
                     }
                 }
             }
-            client->didReceiveResponse(job, d->m_response);
+            client->didReceiveResponse(job, ResourceResponse(d->m_response));
             CurlCacheManager::getInstance().didReceiveResponse(*job, d->m_response);
         }
         d->m_response.setResponseFired(true);
@@ -1002,7 +1001,7 @@ void ResourceHandleManager::dispatchSynchronousJob(ResourceHandle* job)
         handle->client()->didFail(job, error);
     } else {
         if (handle->client())
-            handle->client()->didReceiveResponse(job, handle->m_response);
+            handle->client()->didReceiveResponse(job, ResourceResponse(handle->m_response));
     }
 
 #if ENABLE(WEB_TIMING)

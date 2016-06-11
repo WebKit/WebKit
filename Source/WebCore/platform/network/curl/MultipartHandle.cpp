@@ -349,8 +349,7 @@ void MultipartHandle::didReceiveResponse()
         response.setMimeType(mimeType.convertToASCIILowercase());
         response.setTextEncodingName(extractCharsetFromMediaType(contentType));
 
-        d->client()->didReceiveResponse(m_resourceHandle, response);
-        response.setResponseFired(true);
+        d->client()->didReceiveResponse(m_resourceHandle, WTFMove(response));
     }
 }
 
