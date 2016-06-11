@@ -1,5 +1,26 @@
 2016-06-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Make it easy to package Air.js
+        https://bugs.webkit.org/show_bug.cgi?id=158652
+
+        Reviewed by Benjamin Poulain.
+        
+        If you want to give Air.js to someone, you can now do:
+        
+        cd PerformanceTests/Air.js
+        ./make_dist.sh
+        
+        This will create Air.js.tar.gz and a directory called Air.js. If you want to send someone
+        the benchmark, just send either of those things and tell them to look at index.html.
+        
+        You may have to edit make_dist.sh for wherever you have Markdown.pl. You can get that from
+        https://daringfireball.net/projects/markdown/
+
+        * Air.js/make_dist.sh: Added.
+        * Air.js/test.html:
+
+2016-06-10  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, make the link to test.html into an actual link.
 
         * Air.js/README.md:

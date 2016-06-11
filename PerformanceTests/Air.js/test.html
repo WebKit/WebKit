@@ -24,8 +24,12 @@
 <script src="benchmark.js"></script>
 <script>
     function runTest() {
-        var result = runBenchmark();
-        document.getElementById("result-summary").innerHTML = "That took " + result + " ms.";
+        try {
+            var result = runBenchmark();
+            document.getElementById("result-summary").innerHTML = "That took " + result + " ms.";
+        } catch (e) {
+            document.getElementById("result-summary").innerHTML = "Failed: " + e;
+        }
     }
 </script>
 </head>
