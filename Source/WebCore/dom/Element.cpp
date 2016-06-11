@@ -1686,32 +1686,32 @@ RefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
 }
 
 #if ENABLE(SHADOW_DOM)
+
 static bool canAttachAuthorShadowRoot(const Element& element)
 {
     static NeverDestroyed<HashSet<AtomicString>> tagNames = [] {
-        const AtomicString tagList[] = {
-            articleTag.localName(),
-            asideTag.localName(),
-            blockquoteTag.localName(),
-            bodyTag.localName(),
-            divTag.localName(),
-            footerTag.localName(),
-            h1Tag.localName(),
-            h2Tag.localName(),
-            h3Tag.localName(),
-            h4Tag.localName(),
-            h5Tag.localName(),
-            h6Tag.localName(),
-            headerTag.localName(),
-            navTag.localName(),
-            pTag.localName(),
-            sectionTag.localName(),
-            spanTag.localName()
+        static const HTMLQualifiedName* const tagList[] = {
+            &articleTag,
+            &asideTag,
+            &blockquoteTag,
+            &bodyTag,
+            &divTag,
+            &footerTag,
+            &h1Tag,
+            &h2Tag,
+            &h3Tag,
+            &h4Tag,
+            &h5Tag,
+            &h6Tag,
+            &headerTag,
+            &navTag,
+            &pTag,
+            &sectionTag,
+            &spanTag
         };
-
         HashSet<AtomicString> set;
         for (auto& name : tagList)
-            set.add(name);
+            set.add(name->localName());
         return set;
     }();
 
@@ -1751,7 +1751,8 @@ ShadowRoot* Element::shadowRootForBindings(JSC::ExecState& state) const
     }
     return root;
 }
-#endif
+
+#endif // ENABLE(SHADOW_DOM)
 
 ShadowRoot* Element::userAgentShadowRoot() const
 {
