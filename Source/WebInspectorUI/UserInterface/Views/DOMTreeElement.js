@@ -1198,7 +1198,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 if (node.isInShadowTree()) {
                     fragmentElement.textContent = WebInspector.UIString("Shadow Content");
                     fragmentElement.classList.add("shadow");
-                } else
+                } else if (node.parentNode && node.parentNode.templateContent() === node)
+                    fragmentElement.textContent = WebInspector.UIString("Template Content");
+                else
                     fragmentElement.textContent = WebInspector.UIString("Document Fragment");
                 break;
 

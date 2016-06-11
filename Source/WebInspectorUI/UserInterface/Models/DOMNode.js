@@ -83,7 +83,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         }
 
         if (payload.templateContent) {
-            this._templateContent = new WebInspector.DOMNode(this._domTreeManager, this.ownerDocument, true, payload.templateContent);
+            this._templateContent = new WebInspector.DOMNode(this._domTreeManager, this.ownerDocument, false, payload.templateContent);
             this._templateContent.parentNode = this;
         }
 

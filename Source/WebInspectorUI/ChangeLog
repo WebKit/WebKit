@@ -1,3 +1,21 @@
+2016-06-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: <template> content should not be hidden as Shadow Content
+        https://bugs.webkit.org/show_bug.cgi?id=158654
+
+        Reviewed by Ryosuke Niwa.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New "Template Content" string.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode):
+        Don't treat template content as shadow content.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._nodeTitleInfo):
+        Custom string for template content fragment.
+
 2016-06-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: heap snapshot comparison view shows nothing if later snapshot is chosen first
