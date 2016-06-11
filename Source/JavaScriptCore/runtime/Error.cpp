@@ -143,7 +143,8 @@ bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bo
 {
     Vector<StackFrame> stackTrace = Vector<StackFrame>();
 
-    vm.interpreter->getStackTrace(stackTrace);
+    size_t framesToSkip = useCurrentFrame ? 0 : 1;
+    vm.interpreter->getStackTrace(stackTrace, framesToSkip);
     if (!stackTrace.isEmpty()) {
 
         ASSERT(exec == vm.topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
@@ -173,9 +174,7 @@ bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bo
         if (!frameSourceURL.isEmpty())
             obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, frameSourceURL), ReadOnly | DontDelete);
 
-        if (!useCurrentFrame)
-            stackTrace.remove(0);
-        obj->putDirect(vm, vm.propertyNames->stack, vm.interpreter->stackTraceAsString(vm.topCallFrame, stackTrace), DontEnum);
+        obj->putDirect(vm, vm.propertyNames->stack, Interpreter::stackTraceAsString(vm, stackTrace), DontEnum);
 
         return true;
     }

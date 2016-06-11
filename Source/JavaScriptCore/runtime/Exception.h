@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 #define Exception_h
 
 #include "Interpreter.h"
-#include <wtf/RefCountedArray.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
     
@@ -57,7 +57,7 @@ public:
     }
 
     JSValue value() const { return m_value.get(); }
-    const RefCountedArray<StackFrame>& stack() const { return m_stack; }
+    const Vector<StackFrame>& stack() const { return m_stack; }
 
     bool didNotifyInspectorOfThrow() const { return m_didNotifyInspectorOfThrow; }
     void setDidNotifyInspectorOfThrow() { m_didNotifyInspectorOfThrow = true; }
@@ -69,7 +69,7 @@ private:
     void finishCreation(VM&, JSValue thrownValue, StackCaptureAction);
 
     WriteBarrier<Unknown> m_value;
-    RefCountedArray<StackFrame> m_stack;
+    Vector<StackFrame> m_stack;
     bool m_didNotifyInspectorOfThrow { false };
 
     friend class LLIntOffsetsExtractor;

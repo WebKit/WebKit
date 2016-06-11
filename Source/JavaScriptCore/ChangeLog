@@ -1,5 +1,48 @@
 2016-06-11  Mark Lam  <mark.lam@apple.com>
 
+        Minimize the amount of memcpy done for allocating Error stacks.
+        https://bugs.webkit.org/show_bug.cgi?id=158664
+
+        Reviewed by Darin Adler.
+
+        Currently, Vector<StackFrame> are being copied around multiple times in the
+        process of creating Error stacks.
+
+        This patch avoids this unnecessary copying by:
+        1. Sizing the StackFrame vector correctly to begin with, and skipping
+           undesirable top frames before filling in the vector.
+        2. Using perfect forwarding or passing by reference to pass the vector data around
+           instead of copying the vectors.
+        3. Changing the Exception object to take a Vector<StackFrame> instead of a
+           RefCountedArray<StackFrame>.
+
+        This patch has passed the JSC and layout tests.  Benchmarks show that perf is
+        neutral.
+
+        * API/tests/testapi.mm:
+        (testObjectiveCAPI):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStackFromException):
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::GetStackTraceFunctor):
+        (JSC::GetStackTraceFunctor::operator()):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::stackTraceAsString):
+        (JSC::findExceptionHandler):
+        * interpreter/Interpreter.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfoAndGetBytecodeOffset):
+        * runtime/Exception.cpp:
+        (JSC::Exception::finishCreation):
+        * runtime/Exception.h:
+        (JSC::Exception::valueOffset):
+        (JSC::Exception::value):
+        (JSC::Exception::stack):
+        (JSC::Exception::didNotifyInspectorOfThrow):
+        (JSC::Exception::setDidNotifyInspectorOfThrow):
+
+2016-06-11  Mark Lam  <mark.lam@apple.com>
+
         Tests that overflows the stack should not be run with the sampling profiler.
         https://bugs.webkit.org/show_bug.cgi?id=158663
 

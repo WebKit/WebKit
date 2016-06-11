@@ -137,7 +137,7 @@ static void extractSourceInformationFromException(JSC::ExecState* exec, JSObject
 Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JSC::Exception* exception, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
-    RefCountedArray<StackFrame> stackTrace = exception->stack();
+    auto& stackTrace = exception->stack();
     VM& vm = exec->vm();
     for (size_t i = 0; i < stackTrace.size() && i < maxStackSize; i++) {
         unsigned line;

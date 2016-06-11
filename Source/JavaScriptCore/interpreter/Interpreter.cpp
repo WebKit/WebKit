@@ -498,29 +498,35 @@ static inline bool isWebAssemblyExecutable(ExecutableBase* executable)
 
 class GetStackTraceFunctor {
 public:
-    GetStackTraceFunctor(VM& vm, Vector<StackFrame>& results, size_t remainingCapacity)
+    GetStackTraceFunctor(VM& vm, Vector<StackFrame>& results, size_t framesToSkip, size_t capacity)
         : m_vm(vm)
         , m_results(results)
-        , m_remainingCapacityForFrameCapture(remainingCapacity)
+        , m_framesToSkip(framesToSkip)
+        , m_remainingCapacityForFrameCapture(capacity)
     {
+        m_results.reserveInitialCapacity(capacity);
     }
 
     StackVisitor::Status operator()(StackVisitor& visitor) const
     {
-        VM& vm = m_vm;
+        if (m_framesToSkip > 0) {
+            m_framesToSkip--;
+            return StackVisitor::Continue;
+        }
+
         if (m_remainingCapacityForFrameCapture) {
             if (visitor->isJSFrame()
                 && !isWebAssemblyExecutable(visitor->codeBlock()->ownerExecutable())
                 && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
                 StackFrame s = {
-                    Strong<JSObject>(vm, visitor->callee()),
-                    Strong<CodeBlock>(vm, visitor->codeBlock()),
+                    Strong<JSObject>(m_vm, visitor->callee()),
+                    Strong<CodeBlock>(m_vm, visitor->codeBlock()),
                     visitor->bytecodeOffset()
                 };
                 m_results.append(s);
             } else {
                 StackFrame s = {
-                    Strong<JSObject>(vm, visitor->callee()),
+                    Strong<JSObject>(m_vm, visitor->callee()),
                     Strong<CodeBlock>(),
                     0 // unused value because codeBlock is null.
                 };
@@ -536,31 +542,43 @@ public:
 private:
     VM& m_vm;
     Vector<StackFrame>& m_results;
+    mutable size_t m_framesToSkip;
     mutable size_t m_remainingCapacityForFrameCapture;
 };
 
-void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t maxStackSize)
+void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t framesToSkip, size_t maxStackSize)
 {
     VM& vm = m_vm;
     CallFrame* callFrame = vm.topCallFrame;
     if (!callFrame)
         return;
 
-    GetStackTraceFunctor functor(vm, results, maxStackSize);
+    size_t framesCount = 0;
+    callFrame->iterate([&] (StackVisitor&) -> StackVisitor::Status {
+        framesCount++;
+        return StackVisitor::Continue;
+    });
+    if (framesCount <= framesToSkip)
+        return;
+
+    framesCount -= framesToSkip;
+    framesCount = std::min(maxStackSize, framesCount);
+
+    GetStackTraceFunctor functor(vm, results, framesToSkip, framesCount);
     callFrame->iterate(functor);
+    ASSERT(results.size() == results.capacity());
 }
 
-JSString* Interpreter::stackTraceAsString(ExecState* exec, Vector<StackFrame> stackTrace)
+JSString* Interpreter::stackTraceAsString(VM& vm, const Vector<StackFrame>& stackTrace)
 {
     // FIXME: JSStringJoiner could be more efficient than StringBuilder here.
     StringBuilder builder;
-    VM& vm = exec->vm();
     for (unsigned i = 0; i < stackTrace.size(); i++) {
         builder.append(String(stackTrace[i].toString(vm)));
         if (i != stackTrace.size() - 1)
             builder.append('\n');
     }
-    return jsString(&exec->vm(), builder.toString());
+    return jsString(&vm, builder.toString());
 }
 
 ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, CodeBlock* codeBlock, CodeBlock::RequiredHandler requiredHandler)
