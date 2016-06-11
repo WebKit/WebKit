@@ -54,7 +54,7 @@ void NetworkStorageSession::switchToNewTestingSession()
 #if PLATFORM(COCOA)
     replaceDefaultSession(std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get()))));
 #else
-    replaceDefaultSession(std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultNetworkStorageSession()->platformSession()))));
+    replaceDefaultSession(std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultStorageSession().platformSession()))));
 #endif
 }
 
