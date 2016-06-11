@@ -1,3 +1,9 @@
+2016-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * TestWebKitAPI/PlatformMac.cmake:
+
 2016-06-10  Filip Pizlo  <fpizlo@apple.com>
 
         Rename JSAir to Air.js
