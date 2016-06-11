@@ -23,13 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Logging_h
-#define Logging_h
+#pragma once
+
+#include "BPlatform.h"
 
 namespace bmalloc {
 
 void logVMFailure();
 
-} // namespace bmalloc
+#if !BUSE(OS_LOG)
+void reportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* format, ...) BATTRIBUTE_PRINTF(4, 5);
+#endif
 
-#endif // Logging_h
+} // namespace bmalloc
