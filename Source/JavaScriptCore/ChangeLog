@@ -1,3 +1,53 @@
+2016-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Inline JSC::toInt32 to improve kraken
+        https://bugs.webkit.org/show_bug.cgi?id=158619
+
+        Reviewed by Mark Lam.
+
+        Several kraken benchmarks show that JSC::toInt32 is frequently called.
+        For example, stanford-crypto-pbkdf2 reports that the hottest runtime function is JSC::toInt32.
+
+        The data is below (taken by Linux perf tools).
+        5.50%  jsc      libJavaScriptCore.so.1.0.0  [.] _ZN3JSC7toInt32Ed
+        3.96%  jsc      libJavaScriptCore.so.1.0.0  [.] _ZN3JSC20arrayProtoFuncConcatEPNS_9ExecStateE
+        2.48%  jsc      libJavaScriptCore.so.1.0.0  [.] _ZN3JSC19arrayProtoFuncSliceEPNS_9ExecStateE
+        1.69%  jsc      libJavaScriptCore.so.1.0.0  [.] _ZNK3JSC9Structure27holesMustForwardToPrototypeERNS_2VME
+
+        This is because of CommonSlowPaths' bit operations's JSValue::toInt32.
+        Due to the slow path, in `value | 0`, `value` may be a double number value. In that case, JSC::toInt32 is called.
+
+        While JSC::toIn32 is hot, the function itself is very small. It's worth inlining.
+
+        This change offers the following kraken improvements.
+
+                                                         baseline                  patched
+        Kraken:
+           audio-beat-detection                       47.492+-1.701             46.657+-1.232           might be 1.0179x faster
+           stanford-crypto-aes                        43.669+-0.210      ^      42.862+-0.115         ^ definitely 1.0188x faster
+           stanford-crypto-ccm                        45.213+-1.424             44.490+-1.290           might be 1.0162x faster
+           stanford-crypto-pbkdf2                    107.665+-0.581      ^     106.229+-0.807         ^ definitely 1.0135x faster
+
+        This patch only focused on the call to toInt32 from the runtime functions.
+        So JSC::toInt32 calls from the baseline / DFG remain.
+        We ensure that JIT code uses operationToInt32 instead of JSC::toInt32 since JSC::toInt32 is now marked as ALWAYS_INLINE.
+        Linux perf profiler also finds that this `operationToInt32` is frequently called in the above benchmarks.
+        It may be good to introduce asm emit for that instead of calling JSC::toInt32 operation in the separated patch.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::doubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::sensibleDoubleToInt32):
+        * runtime/JSCJSValue.cpp:
+        (JSC::toInt32): Deleted.
+        * runtime/JSCJSValueInlines.h:
+        * runtime/MathCommon.cpp:
+        (JSC::operationToInt32):
+        * runtime/MathCommon.h:
+        (JSC::toInt32):
+
 2016-06-10  Filip Pizlo  <fpizlo@apple.com>
 
         The backend should be happy to compile Unreachable even if AI didn't prove it to be unreachable

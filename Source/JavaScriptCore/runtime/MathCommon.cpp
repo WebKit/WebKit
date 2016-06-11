@@ -462,6 +462,11 @@ double JIT_OPERATION operationMathPow(double x, double y)
     return mathPowInternal(x, y);
 }
 
+int32_t JIT_OPERATION operationToInt32(double value)
+{
+    return JSC::toInt32(value);
+}
+
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
 static inline bool isStrictInt32(double value)
 {

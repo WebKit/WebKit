@@ -33,6 +33,7 @@
 #include "JSCellInlines.h"
 #include "JSObject.h"
 #include "JSFunction.h"
+#include "MathCommon.h"
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
