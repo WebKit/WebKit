@@ -105,6 +105,8 @@ private:
     HashSet<FontSelectorClient*> m_clients;
 
     Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;
+    HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
+    HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;
     Timer m_beginLoadingTimer;
 
     unsigned m_uniqueId;

@@ -1,3 +1,13 @@
+2016-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Deleting a CSSOM style rule invalidates any previously-added FontFaces
+        https://bugs.webkit.org/show_bug.cgi?id=158450
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-face-set-cssom-expected.txt: Added.
+        * fast/text/font-face-set-cssom.html: Added.
+
 2016-06-11  Chris Dumez  <cdumez@apple.com>
 
         WorkerNavigator is missing some attributes
