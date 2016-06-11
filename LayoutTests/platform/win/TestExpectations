@@ -3387,3 +3387,7 @@ fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
 
 # dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
 fast/loader/iframe-src-invalid-url.html [ Skip ]
+
+# These tests hardcode platform-specific font aliases.
+webkit.org/b/158649 fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure ]
+webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]

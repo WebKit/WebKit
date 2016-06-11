@@ -604,4 +604,32 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     return result;
 }
 
+const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString& familyName)
+{
+    static NeverDestroyed<AtomicString> timesNewRoman("Times New Roman", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> microsoftSansSerif("Microsoft Sans Serif", AtomicString::ConstructFromLiteral);
+
+    switch (familyName.length()) {
+    // On Windows, we don't support bitmap fonts, but legacy content expects support.
+    // Thus we allow Times New Roman as an alternative for the bitmap font MS Serif,
+    // even if the webpage does not specify fallback.
+    // FIXME: Seems unlikely this is still needed. If it was really needed, I think we
+    // would need it on other platforms too.
+    case 8:
+        if (equalLettersIgnoringASCIICase(familyName, "ms serif"))
+            return timesNewRoman;
+        break;
+    // On Windows, we don't support bitmap fonts, but legacy content expects support.
+    // Thus we allow Microsoft Sans Serif as an alternative for the bitmap font MS Sans Serif,
+    // even if the webpage does not specify fallback.
+    // FIXME: Seems unlikely this is still needed. If it was really needed, I think we
+    // would need it on other platforms too.
+    case 13:
+        if (equalLettersIgnoringASCIICase(familyName, "ms sans serif"))
+            return microsoftSansSerif;
+        break;
+    }
+    return nullAtom;
+}
+
 }

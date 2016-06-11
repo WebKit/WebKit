@@ -3001,3 +3001,6 @@ imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-
 webkit.org/b/157916 http/tests/misc/slow-loading-animated-image.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/158618 fast/hidpi/hidpi-3x-device-pixel-ratio.html [ Failure ]
+
+# These tests hardcode platform-specific font aliases.
+webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]

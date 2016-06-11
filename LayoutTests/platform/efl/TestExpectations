@@ -2627,3 +2627,7 @@ webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/document-meta
 webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Failure ]
 webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html [ Failure ]
 webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html [ Crash ]
+
+# These tests hardcode platform-specific font aliases.
+webkit.org/b/158649 fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure ]
+webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]

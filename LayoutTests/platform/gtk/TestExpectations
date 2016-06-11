@@ -2648,3 +2648,7 @@ http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html [ Pass ]
 
 # Timing out on OS X.
 imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Pass ]
+
+# These tests hardcode platform-specific font aliases.
+webkit.org/b/158649 fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure ]
+webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]

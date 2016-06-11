@@ -292,4 +292,25 @@ TEST(WTF, StringExistingHash)
     ASSERT_EQ(string2.existingHash(), 0u);
 }
 
+TEST(WTF, StringNaiveUnicodeEqual)
+{
+    String string1("abc");
+    ASSERT_FALSE(string1.isNull());
+    ASSERT_TRUE(string1.is8Bit());
+    UChar ab[] = { 'a', 'b' };
+    UChar abc[] = { 'a', 'b', 'c' };
+    UChar abcd[] = { 'a', 'b', 'c', 'd' };
+    UChar aBc[] = { 'a', 'B', 'c' };
+    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string1, ab));
+    ASSERT_TRUE(naiveEqualWithoutPerformingUnicodeNormalization(string1, abc));
+    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string1, abcd));
+    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string1, aBc));
+
+    String string2(abc, 3);
+    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string2, ab));
+    ASSERT_TRUE(naiveEqualWithoutPerformingUnicodeNormalization(string2, abc));
+    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string2, abcd));
+    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string2, aBc));
+}
+
 } // namespace TestWebKitAPI

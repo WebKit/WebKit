@@ -796,4 +796,64 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     return fontForPlatformData(alternateFont);
 }
 
+const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString& familyName)
+{
+    static const UChar songtiString[] = { 0x5b8b, 0x4f53 };
+    static const UChar weiruanYaHeiString[] = { 0x5fae, 0x8f6f, 0x96c5, 0x9ed1 };
+    static const UChar heitiString[] = { 0x9ed1, 0x4f53 };
+    static const UChar weiruanZhengHeitiString[] = { 0x5fae, 0x8edf, 0x6b63, 0x9ed1, 0x9ad4 };
+    static const UChar weiruanXinXiMingTi[] = { 0x5fae, 0x8edf, 0x65b0, 0x7d30, 0x660e, 0x9ad4 };
+
+    static NeverDestroyed<AtomicString> songtiSC("Songti SC", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> songtiTC("Songti TC", AtomicString::ConstructFromLiteral);
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || PLATFORM(IOS)
+    static NeverDestroyed<AtomicString> heitiSCReplacement("PingFang SC", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> heitiTCReplacement("PingFang TC", AtomicString::ConstructFromLiteral);
+#else
+    static NeverDestroyed<AtomicString> heitiSCReplacement("Heiti SC", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> heitiTCReplacement("Heiti TC", AtomicString::ConstructFromLiteral);
+#endif
+
+    switch (familyName.length()) {
+    case 2:
+        if (naiveEqualWithoutPerformingUnicodeNormalization(familyName, songtiString))
+            return songtiSC;
+        if (naiveEqualWithoutPerformingUnicodeNormalization(familyName, heitiString))
+            return heitiSCReplacement;
+        break;
+    case 4:
+        if (naiveEqualWithoutPerformingUnicodeNormalization(familyName, weiruanYaHeiString))
+            return heitiSCReplacement;
+        break;
+    case 5:
+        if (naiveEqualWithoutPerformingUnicodeNormalization(familyName, weiruanZhengHeitiString))
+            return heitiTCReplacement;
+        break;
+    case 6:
+        if (equalLettersIgnoringASCIICase(familyName, "simsun"))
+            return songtiSC;
+        if (naiveEqualWithoutPerformingUnicodeNormalization(familyName, weiruanXinXiMingTi))
+            return songtiTC;
+        break;
+    case 10:
+        if (equalLettersIgnoringASCIICase(familyName, "ms mingliu"))
+            return songtiTC;
+        if (equalIgnoringASCIICase(familyName, "\\5b8b\\4f53"))
+            return songtiSC;
+        break;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
+    case 15:
+        if (equalLettersIgnoringASCIICase(familyName, "microsoft yahei"))
+            return heitiSCReplacement;
+        break;
+#endif
+    case 18:
+        if (equalLettersIgnoringASCIICase(familyName, "microsoft jhenghei"))
+            return heitiTCReplacement;
+        break;
+    }
+
+    return nullAtom;
+}
+
 }

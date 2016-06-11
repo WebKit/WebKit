@@ -159,33 +159,33 @@ static FontPlatformDataCache& fontPlatformDataCache()
     return cache;
 }
 
-static AtomicString alternateFamilyName(const AtomicString& familyName)
+const AtomicString& FontCache::alternateFamilyName(const AtomicString& familyName)
 {
+    static NeverDestroyed<AtomicString> helvetica("Helvetica", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> timesNewRoman("Times New Roman", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> courierNew("Courier New", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> arial("Arial", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> courier("Courier", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> times("Times", AtomicString::ConstructFromLiteral);
+
+    const AtomicString& platformSpecificAlternate = platformAlternateFamilyName(familyName);
+    if (!platformSpecificAlternate.isNull())
+        return platformSpecificAlternate;
+
     switch (familyName.length()) {
     case 5:
         if (equalLettersIgnoringASCIICase(familyName, "arial"))
-            return AtomicString("Helvetica", AtomicString::ConstructFromLiteral);
+            return helvetica;
         if (equalLettersIgnoringASCIICase(familyName, "times"))
-            return AtomicString("Times New Roman", AtomicString::ConstructFromLiteral);
+            return timesNewRoman;
         break;
     case 7:
         if (equalLettersIgnoringASCIICase(familyName, "courier"))
-            return AtomicString("Courier New", AtomicString::ConstructFromLiteral);
+            return courierNew;
         break;
-#if OS(WINDOWS)
-    // On Windows, we don't support bitmap fonts, but legacy content expects support.
-    // Thus we allow Times New Roman as an alternative for the bitmap font MS Serif,
-    // even if the webpage does not specify fallback.
-    // FIXME: Seems unlikely this is still needed. If it was really needed, I think we
-    // would need it on other platforms too.
-    case 8:
-        if (equalLettersIgnoringASCIICase(familyName, "ms serif"))
-            return AtomicString("Times New Roman", AtomicString::ConstructFromLiteral);
-        break;
-#endif
     case 9:
         if (equalLettersIgnoringASCIICase(familyName, "helvetica"))
-            return AtomicString("Arial", AtomicString::ConstructFromLiteral);
+            return arial;
         break;
 #if !OS(WINDOWS)
     // On Windows, Courier New is a TrueType font that is always present and
@@ -195,23 +195,12 @@ static AtomicString alternateFamilyName(const AtomicString& familyName)
     // only be tried if Courier New is not found.
     case 11:
         if (equalLettersIgnoringASCIICase(familyName, "courier new"))
-            return AtomicString("Courier", AtomicString::ConstructFromLiteral);
-        break;
-#endif
-#if OS(WINDOWS)
-    // On Windows, we don't support bitmap fonts, but legacy content expects support.
-    // Thus we allow Microsoft Sans Serif as an alternative for the bitmap font MS Sans Serif,
-    // even if the webpage does not specify fallback.
-    // FIXME: Seems unlikely this is still needed. If it was really needed, I think we
-    // would need it on other platforms too.
-    case 13:
-        if (equalLettersIgnoringASCIICase(familyName, "ms sans serif"))
-            return AtomicString("Microsoft Sans Serif", AtomicString::ConstructFromLiteral);
+            return courier;
         break;
 #endif
     case 15:
         if (equalLettersIgnoringASCIICase(familyName, "times new roman"))
-            return AtomicString("Times", AtomicString::ConstructFromLiteral);
+            return times;
         break;
     }
 
@@ -251,7 +240,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
         if (!it->value && !checkingAlternateName) {
             // We were unable to find a font.  We have a small set of fonts that we alias to other names,
             // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
-            const AtomicString alternateName = alternateFamilyName(familyName);
+            const AtomicString& alternateName = alternateFamilyName(familyName);
             if (!alternateName.isNull()) {
                 FontPlatformData* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, alternateName, fontFaceFeatures, fontFaceVariantSettings, true);
                 // Lookup the key in the hash table again as the previous iterator may have

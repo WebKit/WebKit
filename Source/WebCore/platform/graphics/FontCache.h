@@ -226,6 +226,9 @@ private:
     FontPlatformData* getCustomFallbackFont(const UInt32, const FontDescription&);
 #endif
     std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings);
+    
+    static const AtomicString& alternateFamilyName(const AtomicString&);
+    static const AtomicString& platformAlternateFamilyName(const AtomicString&);
 
     Timer m_purgeTimer;
 
