@@ -1,5 +1,17 @@
 2016-06-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Air.js should have some documentation
+        https://bugs.webkit.org/show_bug.cgi?id=158648
+
+        Reviewed by Keith Miller.
+        
+        I want to be able to point people at a document if they want to know more about this
+        benchmark.
+
+        * Air.js/README.md: Added.
+
+2016-06-10  Filip Pizlo  <fpizlo@apple.com>
+
         Rename JSAir to Air.js.
 
         Rubber stamped by Mark Lam.
