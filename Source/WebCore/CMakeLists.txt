@@ -2338,6 +2338,7 @@ set(WebCore_SOURCES
     platform/network/HTTPParsers.cpp
     platform/network/MIMEHeader.cpp
     platform/network/NetworkStateNotifier.cpp
+    platform/network/NetworkStorageSession.cpp
     platform/network/ParsedContentRange.cpp
     platform/network/ParsedContentType.cpp
     platform/network/ProtectionSpaceBase.cpp

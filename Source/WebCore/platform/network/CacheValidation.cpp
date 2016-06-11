@@ -338,11 +338,7 @@ static String headerValueForVary(const ResourceRequest& request, const String& h
     // We could fetch the cookie when making the request but that seems overkill as the case is very rare and it
     // is a blocking operation. This should be sufficient to cover reasonable cases.
     if (headerName == httpHeaderNameString(HTTPHeaderName::Cookie)) {
-        if (sessionID != SessionID::defaultSessionID()) {
-            // FIXME: Don't know how to get the cookie. There should be a global way to get NetworkStorageSession from sessionID.
-            return "";
-        }
-        auto& session = NetworkStorageSession::defaultStorageSession();
+        auto& session = NetworkStorageSession::forSessionID(sessionID);
         auto* cookieStrategy = platformStrategies() ? platformStrategies()->cookiesStrategy() : nullptr;
         if (!cookieStrategy)
             return cookieRequestHeaderFieldValue(session, request.firstPartyForCookies(), request.url());
@@ -374,10 +370,6 @@ bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyin
         // FIXME: Vary: * in response would ideally trigger a cache delete instead of a store.
         if (varyingRequestHeader.first == "*")
             return false;
-        if (sessionID != SessionID::defaultSessionID() && varyingRequestHeader.first == httpHeaderNameString(HTTPHeaderName::Cookie)) {
-            // FIXME: See the comment in headerValueForVary.
-            return false;
-        }
         String headerValue = headerValueForVary(request, varyingRequestHeader.first, sessionID);
         if (headerValue != varyingRequestHeader.second)
             return false;

@@ -37,27 +37,9 @@
 namespace WebCore {
 
 NetworkStorageSession::NetworkStorageSession(SessionID sessionID, std::unique_ptr<SoupNetworkSession> session)
-    : m_sessionID(sessionID)
-    , m_session(WTFMove(session))
+    : NetworkStorageSession(sessionID)
 {
-}
-
-NetworkStorageSession::~NetworkStorageSession()
-{
-}
-
-static std::unique_ptr<NetworkStorageSession>& defaultSession()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
-    return session;
-}
-
-NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
-{
-    if (!defaultSession())
-        defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), nullptr);
-    return *defaultSession();
+    m_session = WTFMove(session);
 }
 
 std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(SessionID sessionID, const String&)
@@ -68,7 +50,7 @@ std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrows
 
 void NetworkStorageSession::switchToNewTestingSession()
 {
-    defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), SoupNetworkSession::createTestingSession());
+    replaceDefaultSession(std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), SoupNetworkSession::createTestingSession()));
 }
 
 SoupNetworkSession& NetworkStorageSession::soupNetworkSession() const

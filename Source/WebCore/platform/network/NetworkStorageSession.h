@@ -37,7 +37,6 @@
 
 namespace WebCore {
 
-class NetworkingContext;
 class ResourceRequest;
 class SoupNetworkSession;
 
@@ -49,37 +48,37 @@ public:
 
     WEBCORE_EXPORT static void switchToNewTestingSession();
 
+    static NetworkStorageSession& forSessionID(SessionID);
+
+    WEBCORE_EXPORT ~NetworkStorageSession();
+
     SessionID sessionID() const { return m_sessionID; }
     CredentialStorage& credentialStorage() { return m_credentialStorage; }
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-    NetworkStorageSession(SessionID, RetainPtr<CFURLStorageSessionRef>);
+    NetworkStorageSession(SessionID, RetainPtr<CFURLStorageSessionRef>&&);
 
     // May be null, in which case a Foundation default should be used.
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
     WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
 #elif USE(SOUP)
     NetworkStorageSession(SessionID, std::unique_ptr<SoupNetworkSession>);
-    ~NetworkStorageSession();
 
     SoupNetworkSession& soupNetworkSession() const;
     void setSoupNetworkSession(std::unique_ptr<SoupNetworkSession>);
-#else
-    NetworkStorageSession(SessionID, NetworkingContext*);
-    ~NetworkStorageSession();
-
-    NetworkingContext* context() const;
 #endif
 
 private:
+    explicit NetworkStorageSession(SessionID);
+
+    static void replaceDefaultSession(std::unique_ptr<NetworkStorageSession>);
+
     SessionID m_sessionID;
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
 #elif USE(SOUP)
     std::unique_ptr<SoupNetworkSession> m_session;
-#else
-    RefPtr<NetworkingContext> m_context;
 #endif
 
     CredentialStorage m_credentialStorage;
