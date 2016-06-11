@@ -66,6 +66,10 @@ public:
 
     SoupNetworkSession& soupNetworkSession() const;
     void setSoupNetworkSession(std::unique_ptr<SoupNetworkSession>);
+#else
+    NetworkStorageSession(SessionID, NetworkingContext*);
+
+    NetworkingContext* context() const;
 #endif
 
 private:
@@ -79,6 +83,8 @@ private:
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
 #elif USE(SOUP)
     std::unique_ptr<SoupNetworkSession> m_session;
+#else
+    RefPtr<NetworkingContext> m_context;
 #endif
 
     CredentialStorage m_credentialStorage;

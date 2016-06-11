@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkStorageSession.h"
 
+#include "NetworkingContext.h"
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
