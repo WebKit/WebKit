@@ -1,3 +1,10 @@
+2016-06-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Unreviewed leak fix after r201863.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpFramesAsText):
+
 2016-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Map commonly used Chinese Windows font names to names present on Cocoa operating systems
