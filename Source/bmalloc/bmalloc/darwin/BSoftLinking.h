@@ -29,13 +29,13 @@
 #include <dlfcn.h>
 #include <mutex>
 
-#define BSOFT_LINK_FRAMEWORK(framework) \
+#define BSOFT_LINK_PRIVATE_FRAMEWORK(framework) \
     static void* framework##Library() \
     { \
         static void* frameworkLibrary; \
         static std::once_flag once; \
         std::call_once(once, [] { \
-            frameworkLibrary = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+            frameworkLibrary = dlopen("/System/Library/PrivateFrameworks/" #framework ".framework/" #framework, RTLD_NOW); \
             RELEASE_BASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
         }); \
         return frameworkLibrary; \

@@ -1,3 +1,18 @@
+2016-06-12  David Kilzer  <ddkilzer@apple.com>
+
+        Crash in com.apple.WebKit.WebContent at std::__1::__call_once_proxy<std::__1::tuple<CrashReporterSupportLibrary()::$_0&&> >
+        <https://webkit.org/b/158660>
+        <rdar://problem/25652686>
+
+        Reviewed by Darin Adler.
+
+        * bmalloc/Logging.cpp: Switch to use
+        BSOFT_LINK_PRIVATE_FRAMEWORK() to link
+        CrashReporterSupport.framework.
+        * bmalloc/darwin/BSoftLinking.h:
+        (BSOFT_LINK_PRIVATE_FRAMEWORK): Rename from BSOFT_LINK_FRAMEWORK.
+        Switch to use /System/Library/PrivateFrameworks/.
+
 2016-06-11  David Kilzer  <ddkilzer@apple.com>
 
         Implement logging for RELEASE_BASSERT_WITH_MESSAGE() in BAssert.h
