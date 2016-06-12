@@ -1,5 +1,17 @@
 2016-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Addressing post-review comments after r201978.
+        https://bugs.webkit.org/show_bug.cgi?id=158649
+        <rdar://problem/13258122>
+
+        Unreviewed.
+
+        * wtf/text/StringCommon.h:
+        (WTF::equal):
+        (WTF::naiveEqualWithoutPerformingUnicodeNormalization): Deleted.
+
+2016-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] Map commonly used Chinese Windows font names to names present on Cocoa operating systems
         https://bugs.webkit.org/show_bug.cgi?id=158649
         <rdar://problem/13258122>

@@ -292,7 +292,7 @@ TEST(WTF, StringExistingHash)
     ASSERT_EQ(string2.existingHash(), 0u);
 }
 
-TEST(WTF, StringNaiveUnicodeEqual)
+TEST(WTF, StringUnicodeEqualUCharArray)
 {
     String string1("abc");
     ASSERT_FALSE(string1.isNull());
@@ -301,16 +301,16 @@ TEST(WTF, StringNaiveUnicodeEqual)
     UChar abc[] = { 'a', 'b', 'c' };
     UChar abcd[] = { 'a', 'b', 'c', 'd' };
     UChar aBc[] = { 'a', 'B', 'c' };
-    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string1, ab));
-    ASSERT_TRUE(naiveEqualWithoutPerformingUnicodeNormalization(string1, abc));
-    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string1, abcd));
-    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string1, aBc));
+    ASSERT_FALSE(equal(string1, ab));
+    ASSERT_TRUE(equal(string1, abc));
+    ASSERT_FALSE(equal(string1, abcd));
+    ASSERT_FALSE(equal(string1, aBc));
 
     String string2(abc, 3);
-    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string2, ab));
-    ASSERT_TRUE(naiveEqualWithoutPerformingUnicodeNormalization(string2, abc));
-    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string2, abcd));
-    ASSERT_FALSE(naiveEqualWithoutPerformingUnicodeNormalization(string2, aBc));
+    ASSERT_FALSE(equal(string2, ab));
+    ASSERT_TRUE(equal(string2, abc));
+    ASSERT_FALSE(equal(string2, abcd));
+    ASSERT_FALSE(equal(string2, aBc));
 }
 
 } // namespace TestWebKitAPI

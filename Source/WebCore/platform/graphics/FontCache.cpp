@@ -161,12 +161,12 @@ static FontPlatformDataCache& fontPlatformDataCache()
 
 const AtomicString& FontCache::alternateFamilyName(const AtomicString& familyName)
 {
-    static NeverDestroyed<AtomicString> helvetica("Helvetica", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> timesNewRoman("Times New Roman", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> courierNew("Courier New", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> arial("Arial", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> courier("Courier", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> courierNew("Courier New", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> helvetica("Helvetica", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> times("Times", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> timesNewRoman("Times New Roman", AtomicString::ConstructFromLiteral);
 
     const AtomicString& platformSpecificAlternate = platformAlternateFamilyName(familyName);
     if (!platformSpecificAlternate.isNull())
