@@ -2183,49 +2183,44 @@ TrackedRendererListHashSet* RenderBlock::positionedObjects() const
     return nullptr;
 }
 
-void RenderBlock::insertPositionedObject(RenderBox& o)
+void RenderBlock::insertPositionedObject(RenderBox& positioned)
 {
     ASSERT(!isAnonymousBlock());
 
-    if (o.isRenderFlowThread())
+    if (positioned.isRenderFlowThread())
         return;
     
-    insertIntoTrackedRendererMaps(o, gPositionedDescendantsMap, gPositionedContainerMap, isRenderView());
+    insertIntoTrackedRendererMaps(positioned, gPositionedDescendantsMap, gPositionedContainerMap, isRenderView());
 }
 
-void RenderBlock::removePositionedObject(RenderBox& o)
+void RenderBlock::removePositionedObject(RenderBox& rendererToRemove)
 {
-    removeFromTrackedRendererMaps(o, gPositionedDescendantsMap, gPositionedContainerMap);
+    removeFromTrackedRendererMaps(rendererToRemove, gPositionedDescendantsMap, gPositionedContainerMap);
 }
 
-void RenderBlock::removePositionedObjects(RenderBlock* o, ContainingBlockState containingBlockState)
+void RenderBlock::removePositionedObjects(const RenderBlock* newContainingBlockCandidate, ContainingBlockState containingBlockState)
 {
-    TrackedRendererListHashSet* positionedDescendants = positionedObjects();
+    auto* positionedDescendants = positionedObjects();
     if (!positionedDescendants)
         return;
     
-    Vector<RenderBox*, 16> deadObjects;
-
-    for (auto it = positionedDescendants->begin(), end = positionedDescendants->end(); it != end; ++it) {
-        RenderBox* r = *it;
-        if (!o || r->isDescendantOf(o)) {
-            if (containingBlockState == NewContainingBlock)
-                r->setChildNeedsLayout(MarkOnlyThis);
-            
-            // It is parent blocks job to add positioned child to positioned objects list of its containing block
-            // Parent layout needs to be invalidated to ensure this happens.
-            RenderElement* p = r->parent();
-            while (p && !p->isRenderBlock())
-                p = p->parent();
-            if (p)
-                p->setChildNeedsLayout();
-            
-            deadObjects.append(r);
-        }
+    Vector<RenderBox*, 16> renderersToRemove;
+    for (auto* renderer : *positionedDescendants) {
+        if (newContainingBlockCandidate && !renderer->isDescendantOf(newContainingBlockCandidate))
+            continue;
+        renderersToRemove.append(renderer);
+        if (containingBlockState == NewContainingBlock)
+            renderer->setChildNeedsLayout(MarkOnlyThis);
+        // It is the parent block's job to add positioned children to positioned objects list of its containing block.
+        // Dirty the parent to ensure this happens.
+        auto* parent = renderer->parent();
+        while (parent && !parent->isRenderBlock())
+            parent = parent->parent();
+        if (parent)
+            parent->setChildNeedsLayout();
     }
-    
-    for (unsigned i = 0; i < deadObjects.size(); i++)
-        removePositionedObject(*deadObjects.at(i));
+    for (auto* renderer : renderersToRemove)
+        removePositionedObject(*renderer);
 }
 
 void RenderBlock::addPercentHeightDescendant(RenderBox& descendant)
