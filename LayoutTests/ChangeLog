@@ -1,3 +1,22 @@
+2016-06-12  Zalan Bujtas  <zalan@apple.com>
+
+        Remove positioned descendants when RenderBlock is no longer a containing block.
+        https://bugs.webkit.org/show_bug.cgi?id=158655
+        <rdar://problem/26510032>
+
+        Reviewed by Simon Fraser.
+
+        Normally the RenderView is the containing block for fixed positioned renderers.
+        However when a renderer acquires some transform related properties, it becomes the containing
+        block for all the fixed positioned renderers in its descendant tree.
+        When the last transform related property is removed, the renderer is no longer a containing block
+        and we need to remove all these positioned renderers from the descendant tracker map (gPositionedDescendantsMap).
+        They will be inserted back into the tracker map during the next layout (either under the RenderView or
+        under the next transformed renderer in the ancestor chain).
+
+        * fast/block/fixed-position-reparent-when-transition-is-removed-expected.txt: Added.
+        * fast/block/fixed-position-reparent-when-transition-is-removed.html: Added.
+
 2016-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Map commonly used Chinese Windows font names to names present on Cocoa operating systems
