@@ -1,3 +1,27 @@
+2016-06-12  Aakash Jain  <aakash_jain@apple.com>
+
+        run-safari/run-webkit-app fail to quit iOS simulator after Xcode installation
+        https://bugs.webkit.org/show_bug.cgi?id=158651
+        rdar://problem/26499824
+
+        Reviewed by Daniel Bates.
+
+        This change is to make our tools more robust. Sometimes run-safari/run-webkit-app fails 
+        to start the tests as one of the first thing these scripts do is to relaunch iOS Simulators,
+        and in process call quitIOSSimulator. In case the Simulator is not registered in LaunchServices
+        for some reason, quitIOSSimulator fails and the script stops. This change will make the scripts
+        still continue when they fail to quit iOS Simuator, and modify the way Simulator is opened, 
+        so that Simulator is implicitly registered with LaunchServices while opening it.
+
+        * Scripts/webkitdirs.pm:
+        (relaunchIOSSimulator):
+        Launch iOS Simulator using complete path. Partially reverting http://trac.webkit.org/changeset/184202.
+        (quitIOSSimulator):
+        Do not die if quitting ios Simulator fails, so that relaunchIOSSimulator can still 
+        attempt to launch the simulator.
+        (waitUntilIOSSimulatorDeviceIsInState):
+        Added a FIXME.
+
 2016-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Addressing post-review comments after r201978.
