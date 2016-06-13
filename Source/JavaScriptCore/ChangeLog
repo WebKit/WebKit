@@ -1,3 +1,211 @@
+2016-06-13  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL::Output methods should be out-of-line whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=158704
+
+        Reviewed by Benjamin Poulain.
+        
+        These methods turn into a non-trivial amount of code because of the template-based B3 API.
+        Inlining them didn't achieve any performance advantages for the FTL, but it did make the
+        code larger. This outlines most methods in FTL::Output. It makes FTL::LowerDFGToB3 smaller
+        and it doesn't change performance.
+
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::appendTo):
+        (JSC::FTL::Output::framePointer):
+        (JSC::FTL::Output::lockedStackSlot):
+        (JSC::FTL::Output::constBool):
+        (JSC::FTL::Output::constInt32):
+        (JSC::FTL::Output::constInt64):
+        (JSC::FTL::Output::constDouble):
+        (JSC::FTL::Output::phi):
+        (JSC::FTL::Output::add):
+        (JSC::FTL::Output::sub):
+        (JSC::FTL::Output::mul):
+        (JSC::FTL::Output::div):
+        (JSC::FTL::Output::chillDiv):
+        (JSC::FTL::Output::mod):
+        (JSC::FTL::Output::chillMod):
+        (JSC::FTL::Output::neg):
+        (JSC::FTL::Output::doubleAdd):
+        (JSC::FTL::Output::doubleSub):
+        (JSC::FTL::Output::doubleMul):
+        (JSC::FTL::Output::doubleDiv):
+        (JSC::FTL::Output::doubleMod):
+        (JSC::FTL::Output::bitAnd):
+        (JSC::FTL::Output::bitOr):
+        (JSC::FTL::Output::bitXor):
+        (JSC::FTL::Output::shl):
+        (JSC::FTL::Output::aShr):
+        (JSC::FTL::Output::lShr):
+        (JSC::FTL::Output::bitNot):
+        (JSC::FTL::Output::logicalNot):
+        (JSC::FTL::Output::ctlz32):
+        (JSC::FTL::Output::doubleAbs):
+        (JSC::FTL::Output::doubleCeil):
+        (JSC::FTL::Output::doubleFloor):
+        (JSC::FTL::Output::doubleTrunc):
+        (JSC::FTL::Output::doubleSin):
+        (JSC::FTL::Output::doubleCos):
+        (JSC::FTL::Output::doublePow):
+        (JSC::FTL::Output::doublePowi):
+        (JSC::FTL::Output::doubleSqrt):
+        (JSC::FTL::Output::doubleLog):
+        (JSC::FTL::Output::hasSensibleDoubleToInt):
+        (JSC::FTL::Output::doubleToUInt):
+        (JSC::FTL::Output::signExt32To64):
+        (JSC::FTL::Output::zeroExt):
+        (JSC::FTL::Output::intToDouble):
+        (JSC::FTL::Output::unsignedToDouble):
+        (JSC::FTL::Output::castToInt32):
+        (JSC::FTL::Output::doubleToFloat):
+        (JSC::FTL::Output::floatToDouble):
+        (JSC::FTL::Output::load):
+        (JSC::FTL::Output::load8SignExt32):
+        (JSC::FTL::Output::baseIndex):
+        (JSC::FTL::Output::equal):
+        (JSC::FTL::Output::notEqual):
+        (JSC::FTL::Output::above):
+        (JSC::FTL::Output::aboveOrEqual):
+        (JSC::FTL::Output::below):
+        (JSC::FTL::Output::belowOrEqual):
+        (JSC::FTL::Output::greaterThan):
+        (JSC::FTL::Output::greaterThanOrEqual):
+        (JSC::FTL::Output::lessThan):
+        (JSC::FTL::Output::lessThanOrEqual):
+        (JSC::FTL::Output::doubleEqual):
+        (JSC::FTL::Output::doubleEqualOrUnordered):
+        (JSC::FTL::Output::doubleNotEqualOrUnordered):
+        (JSC::FTL::Output::doubleLessThan):
+        (JSC::FTL::Output::doubleLessThanOrEqual):
+        (JSC::FTL::Output::doubleGreaterThan):
+        (JSC::FTL::Output::doubleGreaterThanOrEqual):
+        (JSC::FTL::Output::doubleNotEqualAndOrdered):
+        (JSC::FTL::Output::doubleLessThanOrUnordered):
+        (JSC::FTL::Output::doubleLessThanOrEqualOrUnordered):
+        (JSC::FTL::Output::doubleGreaterThanOrUnordered):
+        (JSC::FTL::Output::doubleGreaterThanOrEqualOrUnordered):
+        (JSC::FTL::Output::isZero32):
+        (JSC::FTL::Output::notZero32):
+        (JSC::FTL::Output::isZero64):
+        (JSC::FTL::Output::notZero64):
+        (JSC::FTL::Output::select):
+        (JSC::FTL::Output::jump):
+        (JSC::FTL::Output::branch):
+        (JSC::FTL::Output::check):
+        (JSC::FTL::Output::ret):
+        (JSC::FTL::Output::unreachable):
+        (JSC::FTL::Output::speculate):
+        (JSC::FTL::Output::speculateAdd):
+        (JSC::FTL::Output::speculateSub):
+        (JSC::FTL::Output::speculateMul):
+        (JSC::FTL::Output::patchpoint):
+        (JSC::FTL::Output::trap):
+        (JSC::FTL::Output::anchor):
+        (JSC::FTL::Output::bitCast):
+        (JSC::FTL::Output::fround):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::setOrigin):
+        (JSC::FTL::Output::origin):
+        (JSC::FTL::Output::constIntPtr):
+        (JSC::FTL::Output::doubleNeg):
+        (JSC::FTL::Output::zeroExtPtr):
+        (JSC::FTL::Output::load32NonNegative):
+        (JSC::FTL::Output::isNull):
+        (JSC::FTL::Output::notNull):
+        (JSC::FTL::Output::testIsZeroPtr):
+        (JSC::FTL::Output::testNonZeroPtr):
+        (JSC::FTL::Output::call):
+        (JSC::FTL::Output::operation):
+        (JSC::FTL::Output::branch):
+        (JSC::FTL::Output::switchInstruction):
+        (JSC::FTL::Output::addIncomingToPhi):
+        (JSC::FTL::Output::framePointer): Deleted.
+        (JSC::FTL::Output::constBool): Deleted.
+        (JSC::FTL::Output::constInt32): Deleted.
+        (JSC::FTL::Output::constInt64): Deleted.
+        (JSC::FTL::Output::constDouble): Deleted.
+        (JSC::FTL::Output::phi): Deleted.
+        (JSC::FTL::Output::add): Deleted.
+        (JSC::FTL::Output::sub): Deleted.
+        (JSC::FTL::Output::mul): Deleted.
+        (JSC::FTL::Output::div): Deleted.
+        (JSC::FTL::Output::chillDiv): Deleted.
+        (JSC::FTL::Output::mod): Deleted.
+        (JSC::FTL::Output::chillMod): Deleted.
+        (JSC::FTL::Output::doubleAdd): Deleted.
+        (JSC::FTL::Output::doubleSub): Deleted.
+        (JSC::FTL::Output::doubleMul): Deleted.
+        (JSC::FTL::Output::doubleDiv): Deleted.
+        (JSC::FTL::Output::doubleMod): Deleted.
+        (JSC::FTL::Output::bitAnd): Deleted.
+        (JSC::FTL::Output::bitOr): Deleted.
+        (JSC::FTL::Output::bitXor): Deleted.
+        (JSC::FTL::Output::shl): Deleted.
+        (JSC::FTL::Output::aShr): Deleted.
+        (JSC::FTL::Output::lShr): Deleted.
+        (JSC::FTL::Output::ctlz32): Deleted.
+        (JSC::FTL::Output::addWithOverflow32): Deleted.
+        (JSC::FTL::Output::subWithOverflow32): Deleted.
+        (JSC::FTL::Output::mulWithOverflow32): Deleted.
+        (JSC::FTL::Output::addWithOverflow64): Deleted.
+        (JSC::FTL::Output::subWithOverflow64): Deleted.
+        (JSC::FTL::Output::mulWithOverflow64): Deleted.
+        (JSC::FTL::Output::doubleAbs): Deleted.
+        (JSC::FTL::Output::doubleCeil): Deleted.
+        (JSC::FTL::Output::doubleFloor): Deleted.
+        (JSC::FTL::Output::doubleSin): Deleted.
+        (JSC::FTL::Output::doubleCos): Deleted.
+        (JSC::FTL::Output::doublePow): Deleted.
+        (JSC::FTL::Output::doubleSqrt): Deleted.
+        (JSC::FTL::Output::doubleLog): Deleted.
+        (JSC::FTL::Output::signExt32To64): Deleted.
+        (JSC::FTL::Output::zeroExt): Deleted.
+        (JSC::FTL::Output::intToDouble): Deleted.
+        (JSC::FTL::Output::castToInt32): Deleted.
+        (JSC::FTL::Output::doubleToFloat): Deleted.
+        (JSC::FTL::Output::floatToDouble): Deleted.
+        (JSC::FTL::Output::equal): Deleted.
+        (JSC::FTL::Output::notEqual): Deleted.
+        (JSC::FTL::Output::above): Deleted.
+        (JSC::FTL::Output::aboveOrEqual): Deleted.
+        (JSC::FTL::Output::below): Deleted.
+        (JSC::FTL::Output::belowOrEqual): Deleted.
+        (JSC::FTL::Output::greaterThan): Deleted.
+        (JSC::FTL::Output::greaterThanOrEqual): Deleted.
+        (JSC::FTL::Output::lessThan): Deleted.
+        (JSC::FTL::Output::lessThanOrEqual): Deleted.
+        (JSC::FTL::Output::doubleEqual): Deleted.
+        (JSC::FTL::Output::doubleEqualOrUnordered): Deleted.
+        (JSC::FTL::Output::doubleNotEqualOrUnordered): Deleted.
+        (JSC::FTL::Output::doubleLessThan): Deleted.
+        (JSC::FTL::Output::doubleLessThanOrEqual): Deleted.
+        (JSC::FTL::Output::doubleGreaterThan): Deleted.
+        (JSC::FTL::Output::doubleGreaterThanOrEqual): Deleted.
+        (JSC::FTL::Output::doubleNotEqualAndOrdered): Deleted.
+        (JSC::FTL::Output::doubleLessThanOrUnordered): Deleted.
+        (JSC::FTL::Output::doubleLessThanOrEqualOrUnordered): Deleted.
+        (JSC::FTL::Output::doubleGreaterThanOrUnordered): Deleted.
+        (JSC::FTL::Output::doubleGreaterThanOrEqualOrUnordered): Deleted.
+        (JSC::FTL::Output::isZero32): Deleted.
+        (JSC::FTL::Output::notZero32): Deleted.
+        (JSC::FTL::Output::isZero64): Deleted.
+        (JSC::FTL::Output::notZero64): Deleted.
+        (JSC::FTL::Output::select): Deleted.
+        (JSC::FTL::Output::extractValue): Deleted.
+        (JSC::FTL::Output::jump): Deleted.
+        (JSC::FTL::Output::ret): Deleted.
+        (JSC::FTL::Output::unreachable): Deleted.
+        (JSC::FTL::Output::speculate): Deleted.
+        (JSC::FTL::Output::speculateAdd): Deleted.
+        (JSC::FTL::Output::speculateSub): Deleted.
+        (JSC::FTL::Output::speculateMul): Deleted.
+        (JSC::FTL::Output::patchpoint): Deleted.
+        (JSC::FTL::Output::trap): Deleted.
+        (JSC::FTL::Output::anchor): Deleted.
+        (JSC::FTL::Output::bitCast): Deleted.
+        (JSC::FTL::Output::fround): Deleted.
+
 2016-06-13  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, Cloop build fix.
