@@ -27,7 +27,7 @@
 const ShuffleCustom = {
     forEachArg(inst, func)
     {
-        var limit = inst.args.length / 3 * 3;
+        var limit = Math.floor(inst.args.length / 3) * 3;
         for (let i = 0; i < limit; i += 3) {
             let src = inst.args[i + 0];
             let dst = inst.args[i + 1];

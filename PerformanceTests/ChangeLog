@@ -1,3 +1,20 @@
+2016-06-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix round-down goof in Air.js's ShuffleCustom.forEachArg
+        https://bugs.webkit.org/show_bug.cgi?id=158674
+
+        Reviewed by Michael Saboff.
+        
+        x / 3 * 3 is not how you round down to multiples of 3 in JavaScript. You need to do
+        Math.floor(x / 3) * 3 instead.
+        
+        This is a benign change, because having extra arguments to a Shuffle is not something we
+        actually take advantage of yet. But I think it's best to match the original C++ code's
+        intent.
+
+        * Air.js/custom.js:
+        (const.ShuffleCustom.forEachArg):
+
 2016-06-11  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, skip Air.js. It got unskipped when I renamed it from JSAir.
