@@ -828,7 +828,8 @@ private:
 
                 switch (opcodeID) {
                 case op_tail_call:
-                case op_tail_call_varargs: {
+                case op_tail_call_varargs:
+                case op_tail_call_forward_arguments: {
                     if (!inlineCallFrame()) {
                         prediction = SpecFullTop;
                         break;
@@ -1229,7 +1230,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
         Node* callNode = addCall(result, op, OpInfo(), callTarget, argumentCountIncludingThis, registerOffset, prediction);
         if (callNode->op() == TailCall)
             return Terminal;
-        ASSERT(callNode->op() != TailCallVarargs);
+        ASSERT(callNode->op() != TailCallVarargs && callNode->op() != TailCallForwardVarargs);
         return NonTerminal;
     }
     
@@ -1246,7 +1247,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
     Node* callNode = addCall(result, op, callOpInfo, callTarget, argumentCountIncludingThis, registerOffset, prediction);
     if (callNode->op() == TailCall)
         return Terminal;
-    ASSERT(callNode->op() != TailCallVarargs);
+    ASSERT(callNode->op() != TailCallVarargs && callNode->op() != TailCallForwardVarargs);
     return NonTerminal;
 }
 
@@ -1254,7 +1255,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(Instruction* pc, N
 {
     ASSERT(OPCODE_LENGTH(op_call_varargs) == OPCODE_LENGTH(op_construct_varargs));
     ASSERT(OPCODE_LENGTH(op_call_varargs) == OPCODE_LENGTH(op_tail_call_varargs));
-    
+
     int result = pc[1].u.operand;
     int callee = pc[2].u.operand;
     int thisReg = pc[3].u.operand;
@@ -1285,16 +1286,19 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(Instruction* pc, N
     data->firstVarArgOffset = firstVarArgOffset;
     
     Node* thisChild = get(VirtualRegister(thisReg));
+    Node* argumentsChild = nullptr;
+    if (op != TailCallForwardVarargs)
+        argumentsChild = get(VirtualRegister(arguments));
 
-    if (op == TailCallVarargs) {
+    if (op == TailCallVarargs || op == TailCallForwardVarargs) {
         if (allInlineFramesAreTailCalls()) {
-            addToGraph(op, OpInfo(data), OpInfo(), callTarget, get(VirtualRegister(arguments)), thisChild);
+            addToGraph(op, OpInfo(data), OpInfo(), callTarget, thisChild, argumentsChild);
             return Terminal;
         }
-        op = TailCallVarargsInlinedCaller;
+        op = op == TailCallVarargs ? TailCallVarargsInlinedCaller : TailCallForwardVarargsInlinedCaller;
     }
 
-    Node* call = addToGraph(op, OpInfo(data), OpInfo(prediction), callTarget, get(VirtualRegister(arguments)), thisChild);
+    Node* call = addToGraph(op, OpInfo(data), OpInfo(prediction), callTarget, thisChild, argumentsChild);
     VirtualRegister resultReg(result);
     if (resultReg.isValid())
         set(resultReg, call);
@@ -1767,8 +1771,11 @@ bool ByteCodeParser::handleInlining(
                     data->offset = argumentsOffset;
                     data->limit = maxNumArguments;
                     data->mandatoryMinimum = mandatoryMinimum;
-            
-                    addToGraph(LoadVarargs, OpInfo(data), get(argumentsArgument));
+
+                    if (callOp == TailCallForwardVarargs)
+                        addToGraph(ForwardVarargs, OpInfo(data));
+                    else
+                        addToGraph(LoadVarargs, OpInfo(data), get(argumentsArgument));
 
                     // LoadVarargs may OSR exit. Hence, we need to keep alive callTargetNode, thisArgument
                     // and argumentsArgument for the baseline JIT. However, we only need a Phantom for
@@ -1962,7 +1969,7 @@ bool ByteCodeParser::handleInlining(
         m_exitOK = true;
         processSetLocalQueue(); // This only comes into play for intrinsics, since normal inlined code will leave an empty queue.
         if (Node* terminal = m_currentBlock->terminal())
-            ASSERT_UNUSED(terminal, terminal->op() == TailCall || terminal->op() == TailCallVarargs);
+            ASSERT_UNUSED(terminal, terminal->op() == TailCall || terminal->op() == TailCallVarargs || terminal->op() == TailCallForwardVarargs);
         else {
             addToGraph(Jump);
             landingBlocks.append(m_currentBlock);
@@ -2003,7 +2010,7 @@ bool ByteCodeParser::handleInlining(
     m_exitOK = true; // Origin changed, so it's fine to exit again.
     processSetLocalQueue();
     if (Node* terminal = m_currentBlock->terminal())
-        ASSERT_UNUSED(terminal, terminal->op() == TailCall || terminal->op() == TailCallVarargs);
+        ASSERT_UNUSED(terminal, terminal->op() == TailCall || terminal->op() == TailCallVarargs || terminal->op() == TailCallForwardVarargs);
     else {
         addToGraph(Jump);
         landingBlocks.append(m_currentBlock);
@@ -4437,17 +4444,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
         case op_call:
             handleCall(currentInstruction, Call, CallMode::Regular);
-            // Verify that handleCall(), which could have inlined the callee, didn't trash m_currentInstruction.
-            ASSERT(m_currentInstruction == currentInstruction);
+            ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleCall, which may have inlined the callee, trashed m_currentInstruction");
             NEXT_OPCODE(op_call);
 
         case op_tail_call: {
             flushForReturn();
             Terminality terminality = handleCall(currentInstruction, TailCall, CallMode::Tail);
-            // Verify that handleCall(), which could have inlined the callee, didn't trash m_currentInstruction.
-            ASSERT(m_currentInstruction == currentInstruction);
+            ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleCall, which may have inlined the callee, trashed m_currentInstruction");
             // If the call is terminal then we should not parse any further bytecodes as the TailCall will exit the function.
-            // If the call is not terminal, however, then we want the subsequent op_ret/op_jumpt to update metadata and clean
+            // If the call is not terminal, however, then we want the subsequent op_ret/op_jump to update metadata and clean
             // things up.
             if (terminality == NonTerminal) {
                 NEXT_OPCODE(op_tail_call);
@@ -4458,18 +4463,21 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_construct:
             handleCall(currentInstruction, Construct, CallMode::Construct);
+            ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleCall, which may have inlined the callee, trashed m_currentInstruction");
             NEXT_OPCODE(op_construct);
             
         case op_call_varargs: {
             handleVarargsCall(currentInstruction, CallVarargs, CallMode::Regular);
+            ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleVarargsCall, which may have inlined the callee, trashed m_currentInstruction");
             NEXT_OPCODE(op_call_varargs);
         }
 
         case op_tail_call_varargs: {
             flushForReturn();
             Terminality terminality = handleVarargsCall(currentInstruction, TailCallVarargs, CallMode::Tail);
+            ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleVarargsCall, which may have inlined the callee, trashed m_currentInstruction");
             // If the call is terminal then we should not parse any further bytecodes as the TailCall will exit the function.
-            // If the call is not terminal, however, then we want the subsequent op_ret/op_jumpt to update metadata and clean
+            // If the call is not terminal, however, then we want the subsequent op_ret/op_jump to update metadata and clean
             // things up.
             if (terminality == NonTerminal) {
                 NEXT_OPCODE(op_tail_call_varargs);
@@ -4477,9 +4485,27 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 LAST_OPCODE(op_tail_call_varargs);
             }
         }
+
+        case op_tail_call_forward_arguments: {
+            // We need to make sure that we don't unbox our arguments here since that won't be
+            // done by the arguments object creation node as that node may not exist.
+            noticeArgumentsUse();
+            flushForReturn();
+            Terminality terminality = handleVarargsCall(currentInstruction, TailCallForwardVarargs, CallMode::Tail);
+            ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleVarargsCall, which may have inlined the callee, trashed m_currentInstruction");
+            // If the call is terminal then we should not parse any further bytecodes as the TailCall will exit the function.
+            // If the call is not terminal, however, then we want the subsequent op_ret/op_jump to update metadata and clean
+            // things up.
+            if (terminality == NonTerminal) {
+                NEXT_OPCODE(op_tail_call);
+            } else {
+                LAST_OPCODE(op_tail_call);
+            }
+        }
             
         case op_construct_varargs: {
             handleVarargsCall(currentInstruction, ConstructVarargs, CallMode::Construct);
+            ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleVarargsCall, which may have inlined the callee, trashed m_currentInstruction");
             NEXT_OPCODE(op_construct_varargs);
         }
             

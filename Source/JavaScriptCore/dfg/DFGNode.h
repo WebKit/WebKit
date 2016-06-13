@@ -748,7 +748,51 @@ struct Node {
         ASSERT(op() == CreateActivation);
         return bitwise_cast<FrozenValue*>(m_opInfo2)->value();
     }
-     
+
+    bool hasArgumentsChild()
+    {
+        switch (op()) {
+        case GetMyArgumentByVal:
+        case GetMyArgumentByValOutOfBounds:
+        case LoadVarargs:
+        case ForwardVarargs:
+        case CallVarargs:
+        case CallForwardVarargs:
+        case ConstructVarargs:
+        case ConstructForwardVarargs:
+        case TailCallVarargs:
+        case TailCallForwardVarargs:
+        case TailCallVarargsInlinedCaller:
+        case TailCallForwardVarargsInlinedCaller:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    Edge& argumentsChild()
+    {
+        switch (op()) {
+        case GetMyArgumentByVal:
+        case GetMyArgumentByValOutOfBounds:
+        case LoadVarargs:
+        case ForwardVarargs:
+            return child1();
+        case CallVarargs:
+        case CallForwardVarargs:
+        case ConstructVarargs:
+        case ConstructForwardVarargs:
+        case TailCallVarargs:
+        case TailCallForwardVarargs:
+        case TailCallVarargsInlinedCaller:
+        case TailCallForwardVarargsInlinedCaller:
+            return child3();
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return child1();
+        }
+    }
+
     bool containsMovHint()
     {
         switch (op()) {

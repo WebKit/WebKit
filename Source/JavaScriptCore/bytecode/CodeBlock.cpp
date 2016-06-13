@@ -1466,7 +1466,8 @@ void CodeBlock::dumpBytecode(
             
         case op_construct_varargs:
         case op_call_varargs:
-        case op_tail_call_varargs: {
+        case op_tail_call_varargs:
+        case op_tail_call_forward_arguments: {
             int result = (++it)->u.operand;
             int callee = (++it)->u.operand;
             int thisValue = (++it)->u.operand;
@@ -1474,7 +1475,19 @@ void CodeBlock::dumpBytecode(
             int firstFreeRegister = (++it)->u.operand;
             int varArgOffset = (++it)->u.operand;
             ++it;
-            printLocationAndOp(out, exec, location, it, opcode == op_call_varargs ? "call_varargs" : opcode == op_construct_varargs ? "construct_varargs" : "tail_call_varargs");
+            const char* opName;
+            if (opcode == op_call_varargs)
+                opName = "call_varargs";
+            else if (opcode == op_construct_varargs)
+                opName = "construct_varargs";
+            else if (opcode == op_tail_call_varargs)
+                opName = "tail_call_varargs";
+            else if (opcode == op_tail_call_forward_arguments)
+                opName = "tail_call_forward_arguments";
+            else
+                RELEASE_ASSERT_NOT_REACHED();
+
+            printLocationAndOp(out, exec, location, it, opName);
             out.printf("%s, %s, %s, %s, %d, %d", registerName(result).data(), registerName(callee).data(), registerName(thisValue).data(), registerName(arguments).data(), firstFreeRegister, varArgOffset);
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
@@ -2055,6 +2068,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
         case op_call_varargs:
         case op_tail_call_varargs:
+        case op_tail_call_forward_arguments:
         case op_construct_varargs:
         case op_get_by_val: {
             int arrayProfileIndex = pc[opLength - 2].u.operand;

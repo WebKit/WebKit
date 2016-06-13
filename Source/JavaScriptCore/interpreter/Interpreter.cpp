@@ -235,6 +235,16 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
     return length;
 }
 
+unsigned sizeFrameForForwardArguments(CallFrame* callFrame, JSStack* stack, unsigned numUsedStackSlots)
+{
+    unsigned length = callFrame->argumentCount();
+    CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, length + 1);
+    if (!stack->ensureCapacityFor(calleeFrame->registers()))
+        throwStackOverflowError(callFrame);
+
+    return length;
+}
+
 unsigned sizeFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset)
 {
     unsigned length = sizeOfVarargs(callFrame, arguments, firstVarArgOffset);
@@ -294,6 +304,22 @@ void setupVarargsFrameAndSetThis(CallFrame* callFrame, CallFrame* newCallFrame, 
     setupVarargsFrame(callFrame, newCallFrame, arguments, firstVarArgOffset, length);
     newCallFrame->setThisValue(thisValue);
 }
+
+void setupForwardArgumentsFrame(CallFrame* execCaller, CallFrame* execCallee, uint32_t length)
+{
+    ASSERT(length == execCaller->argumentCount());
+    unsigned offset = execCaller->argumentOffset(0) * sizeof(Register);
+    memcpy(reinterpret_cast<char*>(execCallee) + offset, reinterpret_cast<char*>(execCaller) + offset, length * sizeof(Register));
+    execCallee->setArgumentCountIncludingThis(length + 1);
+}
+
+void setupForwardArgumentsFrameAndSetThis(CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, uint32_t length)
+{
+    setupForwardArgumentsFrame(execCaller, execCallee, length);
+    execCallee->setThisValue(thisValue);
+}
+
+    
 
 Interpreter::Interpreter(VM& vm)
     : m_vm(vm)

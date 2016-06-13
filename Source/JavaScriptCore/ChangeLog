@@ -1,3 +1,123 @@
+2016-06-12  Keith Miller  <keith_miller@apple.com>
+
+        Add new builtin opcode tailCallForwardArguments
+        https://bugs.webkit.org/show_bug.cgi?id=158666
+
+        Reviewed by Filip Pizlo.
+
+        We should support the ability to have a builtin forward its
+        arguments to a helper without allocating an arguments object. This
+        patch adds a new bytecode intrinsic @tailCallForwardArguments that
+        takes two values. The first is the target of the call and the
+        second is the new this value. This opcode will tail call to the
+        passed function without triggering an allocation of an arguments
+        object for the caller function.
+
+        In the LLInt and Baseline this function acts the same way a normal
+        tail call does.  The bytecode will allocate a new stack frame
+        copying all the arguments of the caller function into the new
+        frame, along with the new this. Then when the actual call happens
+        the new frame is copied over the caller frame. While this is not
+        necessary, it allows the target function to have more arguments
+        than the caller function via arity fixup.
+
+        Once we get to the DFG we reuse existing DFG Nodes for forwarding
+        arguments, although there were some minor changes. This patch
+        swaps the meaning of the second and third children for each DFG
+        varargs node, exchanging the argmuments and this child,
+        respectively. It also makes the arguments child for each varargs
+        node, as well as the ForwardVarargs node optional. If the optional
+        child is missing, then forwarding node assumes that the arguments
+        for the node's inlineCallFrame should be used instead. Finally,
+        when inlining the target of an inlined
+        op_tail_call_forward_arguments we make sure the arguments of the
+        forwarding function are marked as non-unboxable since this would
+        normally be done by the caller's create arguments object node,
+        which does not exist in this case.
+
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::callTypeFor):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finishCreation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCallForwardArgumentsInTailPosition):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_tailCallForwardArguments):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_tryGetById):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArgumentsChild):
+        (JSC::DFG::Node::argumentsChild):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileForwardVarargs):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargs):
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeFrameForForwardArguments):
+        (JSC::setupForwardArgumentsFrame):
+        (JSC::setupForwardArgumentsFrameAndSetThis):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emit_op_tail_call_forward_arguments):
+        (JSC::JIT::emitSlow_op_tail_call_forward_arguments):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emitSlow_op_tail_call_forward_arguments):
+        (JSC::JIT::emit_op_tail_call_forward_arguments):
+        (JSC::JIT::compileSetupVarargsFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::varargsSetup):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * tests/stress/tailCallForwardArguments.js: Added.
+        (putFuncToPrivateName.createBuiltin):
+        (putFuncToPrivateName):
+        (createTailCallForwardingFuncWith):
+        (baz):
+        (baz2):
+        (baz3):
+        (let.bodyText):
+        (baz4):
+        (baz5):
+        (arrayEq):
+
 2016-06-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, follow up patch for r201964

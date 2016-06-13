@@ -200,6 +200,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_construct:
     case op_call_varargs:
     case op_tail_call_varargs:
+    case op_tail_call_forward_arguments:
     case op_construct_varargs:
     case op_create_direct_arguments:
     case op_create_scoped_arguments:

@@ -108,6 +108,7 @@
             { "name" : "op_call_eval", "length" : 9 },
             { "name" : "op_call_varargs", "length" : 9 },
             { "name" : "op_tail_call_varargs", "length" : 9 },
+            { "name" : "op_tail_call_forward_arguments", "length" : 9 },
             { "name" : "op_ret", "length" : 2 },
             { "name" : "op_construct", "length" : 9 },
             { "name" : "op_construct_varargs", "length" : 9 },

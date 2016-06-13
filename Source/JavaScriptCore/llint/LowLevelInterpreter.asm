@@ -1529,8 +1529,8 @@ _llint_op_construct:
     traceExecution()
     doCall(_llint_slow_path_construct, prepareForRegularCall)
 
-macro doCallVarargs(slowPath, prepareCall)
-    callSlowPath(_llint_slow_path_size_frame_for_varargs)
+macro doCallVarargs(frameSlowPath, slowPath, prepareCall)
+    callSlowPath(frameSlowPath)
     branchIfException(_llint_throw_from_slow_path_trampoline)
     # calleeFrame in r1
     if JSVALUE64
@@ -1549,18 +1549,27 @@ end
 
 _llint_op_call_varargs:
     traceExecution()
-    doCallVarargs(_llint_slow_path_call_varargs, prepareForRegularCall)
+    doCallVarargs(_llint_slow_path_size_frame_for_varargs, _llint_slow_path_call_varargs, prepareForRegularCall)
 
 _llint_op_tail_call_varargs:
     traceExecution()
     checkSwitchToJITForEpilogue()
     # We lie and perform the tail call instead of preparing it since we can't
     # prepare the frame for a call opcode
-    doCallVarargs(_llint_slow_path_call_varargs, prepareForTailCall)
+    doCallVarargs(_llint_slow_path_size_frame_for_varargs, _llint_slow_path_call_varargs, prepareForTailCall)
+
+
+_llint_op_tail_call_forward_arguments:
+    traceExecution()
+    checkSwitchToJITForEpilogue()
+    # We lie and perform the tail call instead of preparing it since we can't
+    # prepare the frame for a call opcode
+    doCallVarargs(_llint_slow_path_size_frame_for_forward_arguments, _llint_slow_path_tail_call_forward_arguments, prepareForTailCall)
+
 
 _llint_op_construct_varargs:
     traceExecution()
-    doCallVarargs(_llint_slow_path_construct_varargs, prepareForRegularCall)
+    doCallVarargs(_llint_slow_path_size_frame_for_varargs, _llint_slow_path_construct_varargs, prepareForRegularCall)
 
 
 _llint_op_call_eval:

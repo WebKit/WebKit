@@ -972,7 +972,6 @@ private:
         case PhantomClonedArguments:
         case GetMyArgumentByVal:
         case GetMyArgumentByValOutOfBounds:
-        case ForwardVarargs:
         case PutHint:
         case CheckStructureImmediate:
         case MaterializeNewObject:
@@ -1055,6 +1054,7 @@ private:
         case ZombieHint:
         case ExitOK:
         case LoadVarargs:
+        case ForwardVarargs:
         case CopyRest:
         case PutDynamicVar:
             break;

@@ -115,7 +115,12 @@ private:
         case ConstructForwardVarargs:
         case TailCallForwardVarargs:
         case TailCallForwardVarargsInlinedCaller: {
-            InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
+
+            InlineCallFrame* inlineCallFrame;
+            if (m_node->argumentsChild())
+                inlineCallFrame = m_node->argumentsChild()->origin.semantic.inlineCallFrame;
+            else
+                inlineCallFrame = m_node->origin.semantic.inlineCallFrame;
             if (!inlineCallFrame) {
                 // Read the outermost arguments and argument count.
                 for (unsigned i = m_graph.m_codeBlock->numParameters(); i-- > 1;)

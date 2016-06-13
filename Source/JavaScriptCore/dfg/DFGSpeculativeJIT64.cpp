@@ -701,7 +701,8 @@ void SpeculativeJIT::emitCall(Node* node)
         
         if (isForwardVarargs) {
             flushRegisters();
-            use(node->child2());
+            if (node->child3())
+                use(node->child3());
             
             GPRReg scratchGPR1;
             GPRReg scratchGPR2;
@@ -713,7 +714,12 @@ void SpeculativeJIT::emitCall(Node* node)
             
             m_jit.move(TrustedImm32(numUsedStackSlots), scratchGPR2);
             JITCompiler::JumpList slowCase;
-            emitSetupVarargsFrameFastCase(m_jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, node->child2()->origin.semantic.inlineCallFrame, data->firstVarArgOffset, slowCase);
+            InlineCallFrame* inlineCallFrame;
+            if (node->child3())
+                inlineCallFrame = node->child3()->origin.semantic.inlineCallFrame;
+            else
+                inlineCallFrame = node->origin.semantic.inlineCallFrame;
+            emitSetupVarargsFrameFastCase(m_jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
             JITCompiler::Jump done = m_jit.jump();
             slowCase.link(&m_jit);
             callOperation(operationThrowStackOverflowForVarargs);
@@ -730,7 +736,7 @@ void SpeculativeJIT::emitCall(Node* node)
             auto loadArgumentsGPR = [&] (GPRReg reservedGPR) {
                 if (reservedGPR != InvalidGPRReg)
                     lock(reservedGPR);
-                JSValueOperand arguments(this, node->child2());
+                JSValueOperand arguments(this, node->child3());
                 argumentsGPR = arguments.gpr();
                 if (reservedGPR != InvalidGPRReg)
                     unlock(reservedGPR);
@@ -767,10 +773,10 @@ void SpeculativeJIT::emitCall(Node* node)
         
         // We don't need the arguments array anymore.
         if (isVarargs)
-            use(node->child2());
+            use(node->child3());
 
         // Now set up the "this" argument.
-        JSValueOperand thisArgument(this, node->child3());
+        JSValueOperand thisArgument(this, node->child2());
         GPRReg thisArgumentGPR = thisArgument.gpr();
         thisArgument.use();
         

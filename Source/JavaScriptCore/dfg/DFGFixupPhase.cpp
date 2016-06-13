@@ -1321,7 +1321,6 @@ private:
         case PhantomCreateActivation:
         case PhantomDirectArguments:
         case PhantomClonedArguments:
-        case ForwardVarargs:
         case GetMyArgumentByVal:
         case GetMyArgumentByValOutOfBounds:
         case PutHint:
@@ -1529,6 +1528,7 @@ private:
         case TailCallForwardVarargs:
         case TailCallForwardVarargsInlinedCaller:
         case LoadVarargs:
+        case ForwardVarargs:
         case ProfileControlFlow:
         case NewObject:
         case NewArrayBuffer:

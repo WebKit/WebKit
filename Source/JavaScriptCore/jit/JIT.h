@@ -317,7 +317,7 @@ namespace JSC {
 
         void compileOpCall(OpcodeID, Instruction*, unsigned callLinkInfoIndex);
         void compileOpCallSlowCase(OpcodeID, Instruction*, Vector<SlowCaseEntry>::iterator&, unsigned callLinkInfoIndex);
-        void compileSetupVarargsFrame(Instruction*, CallLinkInfo*);
+        void compileSetupVarargsFrame(OpcodeID, Instruction*, CallLinkInfo*);
         void compileCallEval(Instruction*);
         void compileCallEvalSlowCase(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitPutCallResult(Instruction*);
@@ -483,6 +483,7 @@ namespace JSC {
         void emit_op_call_eval(Instruction*);
         void emit_op_call_varargs(Instruction*);
         void emit_op_tail_call_varargs(Instruction*);
+        void emit_op_tail_call_forward_arguments(Instruction*);
         void emit_op_construct_varargs(Instruction*);
         void emit_op_catch(Instruction*);
         void emit_op_construct(Instruction*);
@@ -614,6 +615,7 @@ namespace JSC {
         void emitSlow_op_call_eval(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_tail_call_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_tail_call_forward_arguments(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_construct_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_construct(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_this(Instruction*, Vector<SlowCaseEntry>::iterator&);

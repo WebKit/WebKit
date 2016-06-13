@@ -888,6 +888,18 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByValDirect(BytecodeGenerat
     return generator.moveToDestinationIfNeeded(dst, generator.emitDirectPutByVal(base.get(), index.get(), value.get()));
 }
 
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tailCallForwardArguments(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> function = generator.emitNode(node);
+    node = node->m_next;
+    RefPtr<RegisterID> thisRegister = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    RefPtr<RegisterID> finalDst = generator.finalDestination(dst);
+    return generator.emitCallForwardArgumentsInTailPosition(finalDst.get(), function.get(), thisRegister.get(), generator.newTemporary(), 0, divot(), divotStart(), divotEnd());
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tryGetById(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
@@ -899,8 +911,8 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tryGetById(BytecodeGenerator& 
     const Identifier& ident = static_cast<StringNode*>(node->m_expr)->value();
     ASSERT(!node->m_next);
 
-    RegisterID* finalDest = generator.finalDestination(dst);
-    return generator.emitTryGetById(finalDest, base.get(), ident);
+    RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
+    return generator.emitTryGetById(finalDest.get(), base.get(), ident);
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toString(BytecodeGenerator& generator, RegisterID* dst)

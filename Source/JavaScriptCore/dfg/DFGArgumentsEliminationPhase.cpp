@@ -191,7 +191,7 @@ private:
                 case TailCallVarargs:
                 case TailCallVarargsInlinedCaller:
                     escape(node->child1(), node);
-                    escape(node->child3(), node);
+                    escape(node->child2(), node);
                     break;
 
                 case Check:
@@ -612,7 +612,7 @@ private:
                 case ConstructVarargs:
                 case TailCallVarargs:
                 case TailCallVarargsInlinedCaller: {
-                    Node* candidate = node->child2().node();
+                    Node* candidate = node->child3().node();
                     if (!m_candidates.contains(candidate))
                         break;
                     
@@ -633,7 +633,7 @@ private:
                         
                         unsigned firstChild = m_graph.m_varArgChildren.size();
                         m_graph.m_varArgChildren.append(node->child1());
-                        m_graph.m_varArgChildren.append(node->child3());
+                        m_graph.m_varArgChildren.append(node->child2());
                         for (Node* argument : arguments)
                             m_graph.m_varArgChildren.append(Edge(argument));
                         switch (node->op()) {

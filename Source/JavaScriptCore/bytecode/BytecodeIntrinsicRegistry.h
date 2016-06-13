@@ -43,6 +43,7 @@ class Identifier;
     macro(argumentCount) \
     macro(assert) \
     macro(isObject) \
+    macro(tailCallForwardArguments) \
     macro(tryGetById) \
     macro(putByValDirect) \
     macro(toString)

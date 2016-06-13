@@ -5952,8 +5952,12 @@ void SpeculativeJIT::compileSetFunctionName(Node* node)
 void SpeculativeJIT::compileForwardVarargs(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();
-    InlineCallFrame* inlineCallFrame = node->child1()->origin.semantic.inlineCallFrame;
-        
+    InlineCallFrame* inlineCallFrame;
+    if (node->child1())
+        inlineCallFrame = node->child1()->origin.semantic.inlineCallFrame;
+    else
+        inlineCallFrame = node->origin.semantic.inlineCallFrame;
+
     GPRTemporary length(this);
     JSValueRegsTemporary temp(this);
     GPRReg lengthGPR = length.gpr();

@@ -1917,6 +1917,14 @@ EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState* exec, EncodedJSValue
     return JSValue::encode(jsBoolean(result));
 }
 
+int32_t JIT_OPERATION operationSizeFrameForForwardArguments(ExecState* exec, EncodedJSValue, int32_t numUsedStackSlots, int32_t)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSStack* stack = &exec->interpreter()->stack();
+    return sizeFrameForForwardArguments(exec, stack, numUsedStackSlots);
+}
+
 int32_t JIT_OPERATION operationSizeFrameForVarargs(ExecState* exec, EncodedJSValue encodedArguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset)
 {
     VM& vm = exec->vm();
@@ -1924,6 +1932,14 @@ int32_t JIT_OPERATION operationSizeFrameForVarargs(ExecState* exec, EncodedJSVal
     JSStack* stack = &exec->interpreter()->stack();
     JSValue arguments = JSValue::decode(encodedArguments);
     return sizeFrameForVarargs(exec, stack, arguments, numUsedStackSlots, firstVarArgOffset);
+}
+
+CallFrame* JIT_OPERATION operationSetupForwardArgumentsFrame(ExecState* exec, CallFrame* newCallFrame, EncodedJSValue, int32_t, int32_t length)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    setupForwardArgumentsFrame(exec, newCallFrame, length);
+    return newCallFrame;
 }
 
 CallFrame* JIT_OPERATION operationSetupVarargsFrame(ExecState* exec, CallFrame* newCallFrame, EncodedJSValue encodedArguments, int32_t firstVarArgOffset, int32_t length)

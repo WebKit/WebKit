@@ -87,6 +87,11 @@ void JIT::emitSlow_op_tail_call_varargs(Instruction* currentInstruction, Vector<
 {
     compileOpCallSlowCase(op_tail_call_varargs, currentInstruction, iter, m_callLinkInfoIndex++);
 }
+
+void JIT::emitSlow_op_tail_call_forward_arguments(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpCallSlowCase(op_tail_call_forward_arguments, currentInstruction, iter, m_callLinkInfoIndex++);
+}
     
 void JIT::emitSlow_op_construct_varargs(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
@@ -122,6 +127,11 @@ void JIT::emit_op_tail_call_varargs(Instruction* currentInstruction)
 {
     compileOpCall(op_tail_call_varargs, currentInstruction, m_callLinkInfoIndex++);
 }
+
+void JIT::emit_op_tail_call_forward_arguments(Instruction* currentInstruction)
+{
+    compileOpCall(op_tail_call_forward_arguments, currentInstruction, m_callLinkInfoIndex++);
+}
     
 void JIT::emit_op_construct_varargs(Instruction* currentInstruction)
 {
@@ -133,7 +143,7 @@ void JIT::emit_op_construct(Instruction* currentInstruction)
     compileOpCall(op_construct, currentInstruction, m_callLinkInfoIndex++);
 }
 
-void JIT::compileSetupVarargsFrame(Instruction* instruction, CallLinkInfo* info)
+void JIT::compileSetupVarargsFrame(OpcodeID opcode, Instruction* instruction, CallLinkInfo* info)
 {
     int thisValue = instruction[3].u.operand;
     int arguments = instruction[4].u.operand;
@@ -141,12 +151,22 @@ void JIT::compileSetupVarargsFrame(Instruction* instruction, CallLinkInfo* info)
     int firstVarArgOffset = instruction[6].u.operand;
 
     emitLoad(arguments, regT1, regT0);
-    callOperation(operationSizeFrameForVarargs, regT1, regT0, -firstFreeRegister, firstVarArgOffset);
+    Z_JITOperation_EJZZ sizeOperation;
+    if (opcode == op_tail_call_forward_arguments)
+        sizeOperation = operationSizeFrameForForwardArguments;
+    else
+        sizeOperation = operationSizeFrameForVarargs;
+    callOperation(sizeOperation, regT1, regT0, -firstFreeRegister, firstVarArgOffset);
     move(TrustedImm32(-firstFreeRegister), regT1);
     emitSetVarargsFrame(*this, returnValueGPR, false, regT1, regT1);
     addPtr(TrustedImm32(-(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf(stackAlignmentBytes(), 6 * sizeof(void*)))), regT1, stackPointerRegister);
     emitLoad(arguments, regT2, regT4);
-    callOperation(operationSetupVarargsFrame, regT1, regT2, regT4, firstVarArgOffset, regT0);
+    F_JITOperation_EFJZZ setupOperation;
+    if (opcode == op_tail_call_forward_arguments)
+        setupOperation = operationSetupForwardArgumentsFrame;
+    else
+        setupOperation = operationSetupVarargsFrame;
+    callOperation(setupOperation, regT1, regT2, regT4, firstVarArgOffset, regT0);
     move(returnValueGPR, regT1);
 
     // Profile the argument count.
@@ -229,8 +249,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     CallLinkInfo* info = nullptr;
     if (opcodeID != op_call_eval)
         info = m_codeBlock->addCallLinkInfo();
-    if (opcodeID == op_call_varargs || opcodeID == op_construct_varargs || opcodeID == op_tail_call_varargs)
-        compileSetupVarargsFrame(instruction, info);
+    if (opcodeID == op_call_varargs || opcodeID == op_construct_varargs || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)
+        compileSetupVarargsFrame(opcodeID, instruction, info);
     else {
         int argCount = instruction[3].u.operand;
         int registerOffset = -instruction[4].u.operand;
@@ -277,7 +297,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;
 
     checkStackPointerAlignment();
-    if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs) {
+    if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
         prepareForTailCallSlow();
         m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedTailCall();
         return;

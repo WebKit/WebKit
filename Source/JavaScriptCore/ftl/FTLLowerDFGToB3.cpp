@@ -5197,7 +5197,7 @@ private:
     {
         Node* node = m_node;
         LValue jsCallee = lowJSValue(m_node->child1());
-        LValue thisArg = lowJSValue(m_node->child3());
+        LValue thisArg = lowJSValue(m_node->child2());
         
         LValue jsArguments = nullptr;
         bool forwarding = false;
@@ -5207,7 +5207,7 @@ private:
         case TailCallVarargs:
         case TailCallVarargsInlinedCaller:
         case ConstructVarargs:
-            jsArguments = lowJSValue(node->child2());
+            jsArguments = lowJSValue(node->child3());
             break;
         case CallForwardVarargs:
         case TailCallForwardVarargs:
@@ -5360,7 +5360,12 @@ private:
                     jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR2);
                     
                     CCallHelpers::JumpList slowCase;
-                    emitSetupVarargsFrameFastCase(jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, node->child2()->origin.semantic.inlineCallFrame, data->firstVarArgOffset, slowCase);
+                    InlineCallFrame* inlineCallFrame;
+                    if (node->child3())
+                        inlineCallFrame = node->child3()->origin.semantic.inlineCallFrame;
+                    else
+                        inlineCallFrame = node->origin.semantic.inlineCallFrame;
+                    emitSetupVarargsFrameFastCase(jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
 
                     CCallHelpers::Jump done = jit.jump();
                     slowCase.link(&jit);
@@ -5504,7 +5509,11 @@ private:
     void compileForwardVarargs()
     {
         LoadVarargsData* data = m_node->loadVarargsData();
-        InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
+        InlineCallFrame* inlineCallFrame;
+        if (m_node->child1())
+            inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
+        else
+            inlineCallFrame = m_node->origin.semantic.inlineCallFrame;
         
         LValue length = getArgumentsLength(inlineCallFrame).value;
         LValue lengthIncludingThis = m_out.add(length, m_out.constInt32(1 - data->offset));
