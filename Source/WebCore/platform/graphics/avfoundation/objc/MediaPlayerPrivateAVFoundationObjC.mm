@@ -734,9 +734,11 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     [m_videoLayer setPlayer:m_avPlayer.get()];
     [m_videoLayer setBackgroundColor:cachedCGColor(Color::black)];
 
+#if PLATFORM(MAC)
     m_secondaryVideoLayer = adoptNS([allocAVPlayerLayerInstance() init]);
     [m_secondaryVideoLayer setPlayer:m_avPlayer.get()];
     [m_secondaryVideoLayer setBackgroundColor:cachedCGColor(Color::black)];
+#endif
 
 #ifndef NDEBUG
     [m_videoLayer setName:@"MediaPlayerPrivate AVPlayerLayer"];
