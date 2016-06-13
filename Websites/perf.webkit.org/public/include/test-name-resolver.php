@@ -8,7 +8,6 @@ class TestNameResolver {
         $this->test_id_to_child_metrics = array();
         $this->test_to_metrics = array();
         $this->tests_sorted_by_full_name = array();
-        $this->metric_to_configurations = array();
         $this->id_to_metric = array();
         $this->id_to_aggregator = array();
 
@@ -27,16 +26,6 @@ class TestNameResolver {
         $this->full_name_to_test = $this->compute_full_name($test_table, $test_id_to_name, $test_id_to_parent);
         $this->test_to_metrics = $this->map_metrics_to_tests($db->fetch_table('test_metrics'), $test_id_to_parent);
         $this->tests_sorted_by_full_name = $this->sort_tests_by_full_name($this->full_name_to_test);
-
-        if ($configurations = $db->fetch_table('test_configurations')) {
-            foreach ($configurations as $config) {
-                $metric_id = $config['config_metric'];
-                $platform_id = $config['config_platform'];
-                array_set_default($this->metric_to_configurations, $metric_id, array());
-                array_set_default($this->metric_to_configurations[$metric_id], $platform_id, array());
-                array_push($this->metric_to_configurations[$metric_id][$platform_id], $config);
-            }
-        }
 
         if ($aggregator_table = $db->fetch_table('aggregators')) {
             foreach ($aggregator_table as $aggregator)
@@ -126,20 +115,8 @@ class TestNameResolver {
     }
 
     function configurations_for_metric_and_platform($metric_id, $platform_id) {
-        $metric_configurations = array_get($this->metric_to_configurations, $metric_id, array());
-        return array_get($metric_configurations, $platform_id);
-    }
-
-    function test_exists_on_platform($test_id, $platform_id) {
-        foreach ($this->metrics_for_test_id($test_id) as $metric) {
-            if ($this->configurations_for_metric_and_platform($metric['metric_id'], $platform_id))
-                return TRUE;
-        }
-        foreach ($this->child_metrics_for_test_id($test_id) as $metric) {
-            if ($this->configurations_for_metric_and_platform($metric['metric_id'], $platform_id))
-                return TRUE;
-        }
-        return FALSE;
+        return $this->db->query_and_fetch_all('SELECT * FROM test_configurations WHERE config_metric = $1 AND config_platform = $2
+            ORDER BY config_id', array($metric_id, $platform_id));
     }
 }
 
