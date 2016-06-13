@@ -865,6 +865,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             let {stackTraces} = samples;
             let topDownCallingContextTree = this.activeRecording.topDownCallingContextTree;
             let bottomUpCallingContextTree = this.activeRecording.bottomUpCallingContextTree;
+            let topFunctionsTopDownCallingContextTree = this.activeRecording.topFunctionsTopDownCallingContextTree;
+            let topFunctionsBottomUpCallingContextTree = this.activeRecording.topFunctionsBottomUpCallingContextTree;
 
             // Calculate a per-sample duration.
             let timestampIndex = 0;
@@ -901,6 +903,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             for (let i = 0; i < stackTraces.length; i++) {
                 topDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
                 bottomUpCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
+                topFunctionsTopDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
+                topFunctionsBottomUpCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
             }
 
             // FIXME: This transformation should not be needed after introducing ProfileView.

@@ -63,11 +63,30 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
                 node = node.findOrMakeChild(stackFrame);
                 node.addTimestampAndExpressionLocation(timestamp, duration, stackFrame.expressionLocation || null, i === 0);
             }
-        } else {
+        } else if (this._type === WebInspector.CallingContextTree.Type.BottomUp) {
             for (let i = 0; i < stackFrames.length; ++i) {
                 let stackFrame = stackFrames[i];
                 node = node.findOrMakeChild(stackFrame);
                 node.addTimestampAndExpressionLocation(timestamp, duration, stackFrame.expressionLocation || null, i === 0);
+            }
+        } else if (this._type === WebInspector.CallingContextTree.Type.TopFunctionsTopDown){
+            for (let i = stackFrames.length; i--; ) {
+                node = this._root;
+                for (let j = i + 1; j--; ) {
+                    let stackFrame = stackFrames[j];
+                    node = node.findOrMakeChild(stackFrame);
+                    node.addTimestampAndExpressionLocation(timestamp, duration, stackFrame.expressionLocation || null, j === 0);
+                }
+            }
+        } else {
+            console.assert(this._type === WebInspector.CallingContextTree.Type.TopFunctionsBottomUp);
+            for (let i = 0; i < stackFrames.length; i++) {
+                node = this._root;
+                for (let j = i; j < stackFrames.length; j++) {
+                    let stackFrame = stackFrames[j];
+                    node = node.findOrMakeChild(stackFrame);
+                    node.addTimestampAndExpressionLocation(timestamp, duration, stackFrame.expressionLocation || null, j === 0);
+                }
             }
         }
     }
@@ -362,4 +381,6 @@ WebInspector.CCTNode.__uid = 0;
 WebInspector.CallingContextTree.Type = {
     TopDown: Symbol("TopDown"),
     BottomUp: Symbol("BottomUp"),
+    TopFunctionsTopDown: Symbol("TopFunctionsTopDown"),
+    TopFunctionsBottomUp: Symbol("TopFunctionsTopDown"),
 };

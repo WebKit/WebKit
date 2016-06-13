@@ -37,6 +37,8 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         this._instruments = instruments || [];
         this._topDownCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.TopDown);
         this._bottomUpCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.BottomUp);
+        this._topFunctionsTopDownCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.TopFunctionsTopDown);
+        this._topFunctionsBottomUpCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.TopFunctionsBottomUp);
 
         for (let type of WebInspector.TimelineManager.availableTimelineTypes()) {
             let timeline = WebInspector.Timeline.create(type);
@@ -104,6 +106,16 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         return this._bottomUpCallingContextTree;
     }
 
+    get topFunctionsTopDownCallingContextTree()
+    {
+        return this._topFunctionsTopDownCallingContextTree;
+    }
+
+    get topFunctionsBottomUpCallingContextTree()
+    {
+        return this._topFunctionsBottomUpCallingContextTree;
+    }
+
     start()
     {
         console.assert(!this._capturing, "Attempted to start an already started session.");
@@ -163,6 +175,8 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
 
         this._topDownCallingContextTree.reset();
         this._bottomUpCallingContextTree.reset();
+        this._topFunctionsTopDownCallingContextTree.reset();
+        this._topFunctionsBottomUpCallingContextTree.reset();
 
         for (var timeline of this._timelines.values())
             timeline.reset(suppressEvents);

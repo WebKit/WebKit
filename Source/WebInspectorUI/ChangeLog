@@ -1,3 +1,106 @@
+2016-06-13  Saam Barati  <sbarati@apple.com>
+
+        Web Inspector: Call Trees view should have a 'Top Functions'-like mode
+        https://bugs.webkit.org/show_bug.cgi?id=158555
+        <rdar://problem/26712544>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch adds a Top Functions view that is similar to Instruments'
+        Top Functions view. I really wanted to add this view because I've
+        been doing a lot of performance debugging and I've exclusively 
+        used the Top Functions view and I want the Inspector to also have
+        this view. I like to think of it as a more sophisticated version of the bottom-up view.
+        
+        Top Functions works by treating every frame as a root in the tree.
+        Top functions view then presents a list of "roots". This is the same
+        as all other views, which also present a list of roots, but in this case,
+        every frame is a root. Bottom Up is great for nailing in specific performance
+        problems in exactly one frame. But Bottom Up doesn't give you good context about where
+        a specific frame is in the call tree and how frames are related by having
+        a caller or some path of shared callers. For example, consider this call tree:
+                 (program)
+                 /        \
+                /          \
+           (many nodes...)  
+              / 
+             /
+            (parent)
+            /   \
+           /     \
+         (leaf1)  (leaf2)
+        
+        Suppose that 'leaf1' is super hot, and 'leaf2' is moderately hot.
+        If we look at this through Bottom Up view, we will see 'leaf1'
+        is super hot, but it will take more scrolling to see that 'leaf2'
+        is moderately hot. Lets say that 'parent' is also moderately hot,
+        but that the majority of its time isn't self time. With Bottom Up view,
+        there is no good way to see that 'leaf1' and 'leaf2' are both nodes under 'parent'.
+        With Top Down, you can find this information, but it requires a ton of drilling down into
+        the tree (i.e, you must expand past the 'many nodes...' I drew above). It's inconvenient to
+        use Top Down here for indentation alone. Bottom up will tell you that 'leaf1' is super hot,
+        and that 'leaf2' and 'parent' are moderately hot, but it doesn't show how they're related
+        in the original tree. It's important to see that 'parent's total time is very high
+        because it itself is moderately hot, and it has a child node that is super hot, and
+        another child that's moderately 'hot'. For the sake of this example, let's pretend
+        that 85% of the program's time is spent inside 'parent'. Seeing this information through
+        'Top Functions' is easy because this information filters to the top of the list. Specifically,
+        when using 'Top Functions' sorted by Total Time. Because every node is a root, there will be
+        a top-level entry for every frame in the program. Specifically, there will be a top-level node
+        for 'parent' in my above example. Because I've sorted this view by Total Time, I will see '(program)'
+        first. That's because 100% of execution time is under the '(program)' frame. Then, I might see
+        a few other nodes that also run the entire time because '(program)' calls them, and they eventually
+        call into other things that never leave the stack. These will also have time ranges near 100%.
+        But, only a few nodes after that, I'll see 'parent' in the list because it accounts for 85% of
+        execution time. Immediately, I will see that it has some self time, and that it has two child
+        nodes that have self time. This is really helpful.
+        
+        Let's consider another example where it's not easy in Top Down to get the full picture of 'parent':
+                   (program)
+                    /  |  \
+                 (... many nodes...)
+                  /           \
+            (many nodes...)   (many nodes...)
+                 /             \
+               parent         parent
+                 |              |
+                leaf1          leaf2
+        
+        
+        If we viewed this program in Top Down, we don't get a full picture of 'parent'
+        because it has its time distributed in two different subsections of the tree.
+        Specifically, lets say it has 70% of time in the leaf1 path, and 30% of the
+        time in the leaf2 path. We want a way to see these things together. It's impossible
+        to do this in Top Down or Bottom Up. But, in Top Functions view, we get the view that
+        we want to see because we treat 'parent' as a root of the tree. Because we do this,
+        we will create the following sub tree in the Top Functions view:
+                parent
+               /      \
+             leaf1   leaf2
+        This happens naturally because when 'parent' is a root, we add all its children
+        to its subtree.
+        
+        Constructing this tree is really easy. What we do is take any arbitrary stack
+        trace of length n, and treat is as n separate stack traces. Specifically, we
+        perform the following operation for any stack trace S.
+        
+        S = [A, B, C, D]
+        (A is the entry frame, and D is the top of the stack).
+        We will transform this into a list of stack traces S' like so:
+        S' = [[A, B, C, D], [B, C, D], [C, D], [D]]
+        
+        If we then run the normal top down tree algorithm on this set of stack
+        traces, all nodes get treated as roots, and voila, we get the Top Functions view.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        * UserInterface/Main.html:
+        * UserInterface/Models/CallingContextTree.js:
+        * UserInterface/Models/TimelineRecording.js:
+        * UserInterface/Views/ScriptProfileTimelineView.js:
+        * UserInterface/Views/TextToggleButtonNavigationItem.css: Added.
+        * UserInterface/Views/TextToggleButtonNavigationItem.js: Added.
+
 2016-06-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add ability to show/hide DataGird columns
