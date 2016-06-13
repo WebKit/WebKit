@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import re
 import subprocess
 import sys
 import xml.dom.minidom
@@ -20,7 +21,9 @@ def main(argv):
         for script in unbundled_scripts:
             src = script.getAttribute('src')
             with open(os.path.join(public_v3_dir, src)) as script_file:
-                bundled_script += script_file.read()
+                script_content = script_file.read()
+                script_content = re.sub(r'([\"\'])use strict\1;', '', script_content)
+                bundled_script += script_content
 
     jsmin = subprocess.Popen(['python', os.path.join(tools_dir, 'jsmin.py')], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     minified_script = jsmin.communicate(input=bundled_script)[0]
