@@ -1531,6 +1531,9 @@ void UniqueIDBDatabase::executeNextDatabaseTask()
     auto task = m_databaseQueue.tryGetMessage();
     ASSERT(task);
 
+    // Performing the task might end up removing the last reference to this.
+    Ref<UniqueIDBDatabase> protectedThis(*this);
+
     task->performTask();
     --m_queuedTaskCount;
 }
@@ -1544,7 +1547,7 @@ void UniqueIDBDatabase::executeNextDatabaseTaskReply()
     ASSERT(task);
 
     // Performing the task might end up removing the last reference to this.
-    RefPtr<UniqueIDBDatabase> protectedThis(this);
+    Ref<UniqueIDBDatabase> protectedThis(*this);
 
     task->performTask();
     --m_queuedTaskCount;
