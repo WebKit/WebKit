@@ -971,8 +971,6 @@ void WebVideoFullscreenInterfaceAVKit::didStopPictureInPicture()
     [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
 
     clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
-    [m_window setHidden:YES];
-    [[m_playerViewController view] setHidden:YES];
     
     if (m_fullscreenChangeObserver)
         m_fullscreenChangeObserver->didExitFullscreen();
