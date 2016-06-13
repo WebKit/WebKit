@@ -105,6 +105,7 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
         this._startTime = x;
 
         this._timesDidChange();
+        this._scheduleFilterDidChange();
     }
 
     get endTime()
@@ -122,6 +123,7 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
         this._endTime = x;
 
         this._timesDidChange();
+        this._scheduleFilterDidChange();
     }
 
     get currentTime()
@@ -323,7 +325,10 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
     {
         if (!WebInspector.timelineManager.isCapturing() || this.showsLiveRecordingData)
             this.needsLayout();
+    }
 
+    _scheduleFilterDidChange()
+    {
         if (!this._timelineDataGrid || this._updateFilterTimeout)
             return;
 

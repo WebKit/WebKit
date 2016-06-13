@@ -364,9 +364,9 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._scheduledFilterUpdateIdentifier = requestAnimationFrame(this._updateFilter.bind(this));
     }
 
-    hasCustomFilters()
+    hasFilters()
     {
-        return this._hasFilterDelegate();
+        return this._textFilterRegex || this._hasFilterDelegate();
     }
 
     matchNodeAgainstCustomFilters(node)
@@ -387,9 +387,19 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         }
     }
 
+    _applyFiltersToNodeAndDispatchEvent(node)
+    {
+        const nodeWasHidden = node.hidden;
+        this._applyFiltersToNode(node);
+        if (nodeWasHidden !== node.hidden)
+            this.dispatchEventToListeners(WebInspector.DataGrid.Event.NodeWasFiltered, {node});
+
+        return nodeWasHidden !== node.hidden;
+    }
+
     _applyFiltersToNode(node)
     {
-        if (!this._textFilterRegex && !this.hasCustomFilters()) {
+        if (!this.hasFilters()) {
             // No filters, so make everything visible.
             node.hidden = false;
 
@@ -1195,6 +1205,11 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         if (this.expanded)
             child._attach();
+
+        if (!this.dataGrid.hasFilters())
+            return;
+
+        this.dataGrid._applyFiltersToNodeAndDispatchEvent(child);
     }
 
     removeChild(child)
@@ -1843,7 +1858,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         {
             // Don't populate if we don't have any active filters.
             // We only need to populate when a filter needs to reveal.
-            let dontPopulate = !this._textFilterRegex && !this.hasCustomFilters();
+            let dontPopulate = !this.hasFilters();
 
             let currentNode = this._rows[0];
             while (currentNode && !currentNode.root) {
@@ -1864,13 +1879,9 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
     yieldableTaskWillProcessItem(task, node)
     {
-        const nodeWasHidden = node.hidden;
-        this._applyFiltersToNode(node);
-        if (nodeWasHidden === node.hidden)
-            return;
-
-        this.dispatchEventToListeners(WebInspector.DataGrid.Event.NodeWasFiltered, {node});
-        this._filterDidModifyNodeWhileProcessingItems = true;
+        let nodeWasModified = this._applyFiltersToNodeAndDispatchEvent(node);
+        if (nodeWasModified)
+            this._filterDidModifyNodeWhileProcessingItems = true;
     }
 
     yieldableTaskDidYield(task, processedItems, elapsedTime)

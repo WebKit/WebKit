@@ -1,3 +1,50 @@
+2016-06-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Filter Records not applying to new records
+        https://bugs.webkit.org/show_bug.cgi?id=158213
+        <rdar://problem/26543912>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch makes the following improvements to timeline grid filtering:
+
+            - Records are filtered as they are added to the grid.
+            - Timeline view no longer triggers a filter refresh while the
+              current time changes while recording.
+            - Filters are refreshed whenever the current timeline view changes.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.hasFilters):
+        Helper function to check for custom and text filters.
+
+        (WebInspector.DataGrid.prototype._applyFiltersToNodeAndDispatchEvent):
+        Encapsulate node state change and event dispatch, which was previously
+        done in multiple places.
+
+        (WebInspector.DataGrid.prototype.insertChild):
+        Filter incoming node if needed.
+
+        (WebInspector.DataGrid.prototype._updateFilter.createIteratorForNodesToBeFiltered):
+        (WebInspector.DataGrid.prototype._updateFilter):
+        (WebInspector.DataGrid.prototype.yieldableTaskWillProcessItem):
+        Use new convenience functions.
+
+        (WebInspector.DataGrid.prototype.hasCustomFilters): Deleted.
+        Renamed `hasFilters`.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        Refresh grid filters on view change.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.set startTime):
+        (WebInspector.TimelineView.prototype.set endTime):
+        Schedule filter change notification when selection bounds changes.
+
+        (WebInspector.TimelineView.prototype._timesDidChange):
+        (WebInspector.TimelineView.prototype._scheduleFilterDidChange):
+        (WebInspector.TimelineView):
+
 2016-06-13  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: Call Trees view should have a 'Top Functions'-like mode

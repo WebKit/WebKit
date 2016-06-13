@@ -282,6 +282,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         if (timelineView) {
             this._updateTimelineViewTimes(timelineView);
+            this._filterDidChange();
 
             let timeline = null;
             if (timelineView.representedObject instanceof WebInspector.Timeline)
