@@ -320,14 +320,14 @@ sub SkipFunction {
     # how to auto-generate callbacks.  Skip functions that have "MediaQueryListListener" or
     # sequence<T> parameters, because this code generator doesn't know how to auto-generate
     # MediaQueryListListener or sequence<T>. Skip EventListeners because they are handled elsewhere.
+    # Skip functions that have variadic parameters because not supported yet.
     foreach my $param (@{$function->parameters}) {
-        if ($codeGenerator->IsFunctionOnlyCallbackInterface($param->type) ||
-            $param->extendedAttributes->{"Clamp"} ||
-            $param->type eq "MediaQueryListListener" ||
-            $param->type eq "EventListener" ||
-            $codeGenerator->GetSequenceType($param->type)) {
-            return 1;
-        }
+        return 1 if $codeGenerator->IsFunctionOnlyCallbackInterface($param->type);
+        return 1 if $param->extendedAttributes->{"Clamp"};
+        return 1 if $param->type eq "MediaQueryListListener";
+        return 1 if $param->type eq "EventListener";
+        return 1 if $codeGenerator->GetSequenceType($param->type);
+        return 1 if $param->isVariadic;
     }
 
     # This is for DataTransferItemList.idl add(File) method

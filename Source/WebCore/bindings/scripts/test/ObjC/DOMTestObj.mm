@@ -50,7 +50,6 @@
 #import "ExceptionHandlers.h"
 #import "HTMLNames.h"
 #import "JSMainThreadExecState.h"
-#import "Node.h"
 #import "ObjCEventListener.h"
 #import "SVGDocument.h"
 #import "SVGPoint.h"
@@ -1619,26 +1618,6 @@
     BOOL result = IMPL->strictFunction(str, a, b, ec);
     WebCore::raiseOnDOMError(ec);
     return result;
-}
-
-- (void)variadicStringMethod:(NSString *)head tail:(NSString *)tail
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->variadicStringMethod(head, tail);
-}
-
-- (void)variadicDoubleMethod:(double)head tail:(double)tail
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->variadicDoubleMethod(head, tail);
-}
-
-- (void)variadicNodeMethod:(DOMNode *)head tail:(DOMNode *)tail
-{
-    WebCore::JSMainThreadNullState state;
-    if (!head)
-        WebCore::raiseTypeErrorException();
-    IMPL->variadicNodeMethod(*core(head), core(tail));
 }
 
 - (void)any:(float)a b:(int)b

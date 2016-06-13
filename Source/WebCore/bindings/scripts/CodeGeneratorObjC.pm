@@ -547,6 +547,7 @@ sub SkipFunction
         return 1 if $codeGenerator->GetSequenceType($param->type);
         return 1 if $codeGenerator->GetArrayType($param->type);
         return 1 if $param->extendedAttributes->{"Clamp"};
+        return 1 if $param->isVariadic;
     }
 
     return 1 if $function->signature->extendedAttributes->{"Private"};

@@ -28,7 +28,6 @@
 
 @class DOMDictionary;
 @class DOMDocument;
-@class DOMNode;
 @class DOMSVGDocument;
 @class DOMSVGPoint;
 @class DOMTestDictionary;
@@ -214,9 +213,6 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (DOMSVGPoint *)immutablePointFunction;
 - (void)orange;
 - (BOOL)strictFunction:(NSString *)str a:(float)a b:(int)b;
-- (void)variadicStringMethod:(NSString *)head tail:(NSString *)tail;
-- (void)variadicDoubleMethod:(double)head tail:(double)tail;
-- (void)variadicNodeMethod:(DOMNode *)head tail:(DOMNode *)tail;
 - (void)any:(float)a b:(int)b;
 - (void)attachShadowRoot:(DOMTestDictionary *)init;
 @end
