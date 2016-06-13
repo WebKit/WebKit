@@ -1,3 +1,9 @@
+2016-06-13  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, Cloop build fix.
+
+        * bytecode/BytecodeList.json:
+
 2016-06-12  Keith Miller  <keith_miller@apple.com>
 
         Add new builtin opcode tailCallForwardArguments
