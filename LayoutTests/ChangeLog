@@ -1,5 +1,20 @@
 2016-06-13  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
+        WebRTC: Add test that verifies that RTCPeerConnection.addTrack can reuse an existing RTCRtpSender
+        https://bugs.webkit.org/show_bug.cgi?id=158621
+
+        Reviewed by Eric Carlson.
+
+        Add test to verify that RTCPeerConnection.addTrack reuses an existing RTCRtpSender
+        under the right circumstances.
+
+        * fast/mediastream/RTCPeerConnection-addTrack-reuse-sender-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html: Added.
+        * platform/mac/TestExpectations:
+        The mac port is not building with WEB_RTC yet.
+
+2016-06-13  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
         WebRTC: Add media setup test with complete offer/answer dialog
         https://bugs.webkit.org/show_bug.cgi?id=158620
 
