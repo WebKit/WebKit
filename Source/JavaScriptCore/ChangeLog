@@ -1,3 +1,19 @@
+2016-06-13  Oliver Hunt  <oliver@apple.com>
+
+        DFG Validation fails when performing a concatenation with only a single entry
+        https://bugs.webkit.org/show_bug.cgi?id=158699
+
+        Reviewed by Saam Barati.
+
+        Fairly simple short circuiting of a single replacement template string
+        without any padding to be planted as a simple to string rather than
+        op_strcat.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TemplateLiteralNode::emitBytecode):
+        * tests/stress/template-literal.js:
+        (testSingleNode):
+
 2016-06-13  Filip Pizlo  <fpizlo@apple.com>
 
         FTL::Output methods should be out-of-line whenever possible

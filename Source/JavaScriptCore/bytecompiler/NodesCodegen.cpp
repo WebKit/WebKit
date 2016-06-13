@@ -272,6 +272,9 @@ RegisterID* TemplateLiteralNode::emitBytecode(BytecodeGenerator& generator, Regi
         generator.emitNode(temporaryRegisters.last().get(), templateString->value());
     }
 
+    if (temporaryRegisters.size() == 1)
+        return generator.emitToString(generator.finalDestination(dst, temporaryRegisters[0].get()), temporaryRegisters[0].get());
+
     return generator.emitStrcat(generator.finalDestination(dst, temporaryRegisters[0].get()), temporaryRegisters[0].get(), temporaryRegisters.size());
 }
 

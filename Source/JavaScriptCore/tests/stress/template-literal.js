@@ -205,3 +205,35 @@ test(`Hello ${ `Co${`c`}oa` }`, "Hello Cocoa");
     test(stat[1], undefined);
     test(stat[2], undefined);
 }());
+
+dfgTests =[
+    function testSingleNode() {
+        for (var i = 0; i < 1000; i++)
+            `${1}`
+    },
+    function testPreNode() {
+        for (var i = 0; i < 1000; i++)
+            `n${1}`
+    },
+    function testPostNode() {
+        for (var i = 0; i < 1000; i++)
+            `${1}n`
+    },
+    function testSingleObjectNode() {
+        for (var i = 0; i < 1000; i++)
+            `${{}}`
+    },
+    function testObjectPreNode() {
+        for (var i = 0; i < 1000; i++)
+            `n${{}}`
+    },
+    function testObjectPostNode() {
+        for (var i = 0; i < 1000; i++)
+            `${{}}n`
+    },
+];
+
+for(var f of dfgTests) {
+    noInline(f)
+    f();
+}
