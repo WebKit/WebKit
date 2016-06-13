@@ -115,7 +115,6 @@ public:
     typedef HTTPHeaderMapConstIterator const_iterator;
 
     WEBCORE_EXPORT HTTPHeaderMap();
-    WEBCORE_EXPORT ~HTTPHeaderMap();
 
     // Gets a copy of the data suitable for passing to another thread.
     HTTPHeaderMap isolatedCopy() const;

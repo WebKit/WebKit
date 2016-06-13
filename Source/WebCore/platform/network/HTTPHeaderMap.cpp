@@ -40,10 +40,6 @@ HTTPHeaderMap::HTTPHeaderMap()
 {
 }
 
-HTTPHeaderMap::~HTTPHeaderMap()
-{
-}
-
 HTTPHeaderMap HTTPHeaderMap::isolatedCopy() const
 {
     HTTPHeaderMap map;
