@@ -27,6 +27,7 @@
 
 #include "Counters.h"
 #include "MoveOnly.h"
+#include "RefLogger.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
@@ -348,5 +349,50 @@ TEST(WTF_HashSet, UniquePtrNotZeroedBeforeDestructor)
     EXPECT_TRUE(observedBucket == observerAddress || observedBucket == reinterpret_cast<const DestructorObserver*>(-1));
 }
 
+TEST(WTF_HashSet, Ref)
+{
+    {
+        HashSet<Ref<RefLogger>> set;
+
+        RefLogger a("a");
+        Ref<RefLogger> ref(a);
+        set.add(WTFMove(ref));
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        HashSet<Ref<RefLogger>> set;
+
+        RefLogger a("a");
+        Ref<RefLogger> ref(a);
+        set.add(ref.copyRef());
+    }
+
+    ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        HashSet<Ref<RefLogger>> set;
+
+        RefLogger a("a");
+        Ref<RefLogger> ref(a);
+        set.add(WTFMove(ref));
+        set.remove(&a);
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        HashSet<Ref<RefLogger>> set;
+
+        RefLogger a("a");
+        Ref<RefLogger> ref(a);
+        set.add(WTFMove(ref));
+        
+        ASSERT_TRUE(set.contains(&a));
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+}
 
 } // namespace TestWebKitAPI

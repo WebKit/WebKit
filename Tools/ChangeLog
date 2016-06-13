@@ -1,3 +1,16 @@
+2016-06-13  Sam Weinig  <sam@webkit.org>
+
+        Make HashMap and HashSet work with Refs
+        https://bugs.webkit.org/show_bug.cgi?id=158638
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::TEST):
+        Add tests for using Refs in HashMaps (both as key and value) and HashSets.
+
 2016-06-13  Mark Lam  <mark.lam@apple.com>
 
         Add a mechanism for collecting LLINT stats.

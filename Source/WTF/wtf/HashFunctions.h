@@ -149,6 +149,10 @@ namespace WTF {
     template<typename T> struct PtrHash : PtrHashBase<T, IsSmartPtr<T>::value> {
     };
 
+    template<typename P> struct PtrHash<Ref<P>> : PtrHashBase<Ref<P>, IsSmartPtr<Ref<P>>::value> {
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
+
     // default hash function for each type
 
     template<typename T> struct DefaultHash;
@@ -194,6 +198,8 @@ namespace WTF {
 
     template<typename P> struct DefaultHash<P*> { typedef PtrHash<P*> Hash; };
     template<typename P> struct DefaultHash<RefPtr<P>> { typedef PtrHash<RefPtr<P>> Hash; };
+    template<typename P> struct DefaultHash<Ref<P>> { typedef PtrHash<Ref<P>> Hash; };
+
     template<typename P, typename Deleter> struct DefaultHash<std::unique_ptr<P, Deleter>> { typedef PtrHash<std::unique_ptr<P, Deleter>> Hash; };
 
     // make IntPairHash the default hash function for pairs of (at most) 32-bit integers.

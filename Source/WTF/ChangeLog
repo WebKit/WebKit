@@ -1,3 +1,64 @@
+2016-06-13  Sam Weinig  <sam@webkit.org>
+
+        Make HashMap and HashSet work with Refs
+        https://bugs.webkit.org/show_bug.cgi?id=158638
+
+        Reviewed by Darin Adler.
+
+        * wtf/GetPtr.h:
+        Move HashTableDeletedValueType and HashTableEmptyValueType here, as they are now shared
+        by more than one smart pointer. This file should probably be renamed to something else
+        at some point to indicate that it contains helpers for pointer and ref related functionality.
+
+        * wtf/HashFunctions.h:
+        Add a DefaultHash for Refs. Customize the PtrHash to indicate that it is not safe to compare
+        to empty or deleted Refs.
+
+        * wtf/HashMap.h:
+        (WTF::HashMapTranslator::equal):
+        (WTF::HashMapTranslator::translate):
+        (WTF::HashMapEnsureTranslator::equal):
+        (WTF::HashMapEnsureTranslator::translate):
+        * wtf/HashSet.h:
+        (WTF::IdentityExtractor::extract):
+        (WTF::HashSetTranslator::hash):
+        (WTF::HashSetTranslator::equal):
+        (WTF::HashSetTranslator::translate):
+        * wtf/HashTable.h:
+        (WTF::IdentityHashTranslator::hash):
+        (WTF::IdentityHashTranslator::equal):
+        (WTF::IdentityHashTranslator::translate):
+        Use the new assignToEmpty trait function to allow uninitialized Ref's to be safely assigned to.
+
+        * wtf/HashTraits.h:
+        (WTF::HashTraits<Ref<P>>::emptyValue):
+        (WTF::HashTraits<Ref<P>>::isEmptyValue):
+        (WTF::HashTraits<Ref<P>>::assignToEmpty):
+        (WTF::HashTraits<Ref<P>>::peek):
+        (WTF::HashTraits<Ref<P>>::customDeleteBucket):
+        Add custom HashTraits for Ref. Also, introduce a new trait function, assignToEmpty, for use
+        in translation assignments. This is necessary since the default assignment operator for Ref
+        will not allow assignment to the empty Ref, which we need to do here.
+
+        * wtf/Ref.h:
+        (WTF::Ref::operator=):
+        (WTF::Ref::Ref):
+        (WTF::Ref::isHashTableDeletedValue):
+        (WTF::Ref::hashTableDeletedValue):
+        (WTF::Ref::isHashTableEmptyValue):
+        (WTF::Ref::hashTableEmptyValue):
+        Add explicit constructors/predicates for making deleted/empty Refs.
+
+        (WTF::Ref::assignToHashTableEmptyValue):
+        Add a special function that allows assignment to an empty Ref, which the
+        assignment operator does not.
+        
+        (WTF::IsSmartPtr):
+        Add an IsSmartPtr override to indicate that Ref is a smart pointer.
+
+        * wtf/RefPtr.h:
+        Move HashTableDeletedValueType to GetPtr.h.
+
 2016-06-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Stack overflow at RefPtr::release on Windows port since r201782

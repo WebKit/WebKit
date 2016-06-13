@@ -43,6 +43,12 @@ template<typename T> struct GenericHashTraitsBase<false, T> {
     // for cases like String that need them.
     static const bool hasIsEmptyValueFunction = false;
 
+    template<typename U, typename V> 
+    static void assignToEmpty(U& emptyValue, V&& value)
+    { 
+        emptyValue = std::forward<V>(value);
+    }
+
     // The starting table size. Can be overridden when we know beforehand that
     // a hash table will have at least N entries.
     static const unsigned minimumTableSize = 8;
@@ -162,6 +168,32 @@ template<typename P> struct HashTraits<RefPtr<P>> : SimpleClassHashTraits<RefPtr
         ASSERT(!SimpleClassHashTraits<RefPtr<P>>::isDeletedValue(value));
         auto valueToBeDestroyed = WTFMove(value);
         SimpleClassHashTraits<RefPtr<P>>::constructDeletedValue(value);
+    }
+};
+
+template<typename P> struct HashTraits<Ref<P>> : SimpleClassHashTraits<Ref<P>> {
+    static const bool emptyValueIsZero = true;
+    static Ref<P> emptyValue() { return Ref<P>(HashTableEmptyValue); }
+
+    static const bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const Ref<P>& value) { return value.isHashTableEmptyValue(); }
+
+    static void assignToEmpty(Ref<P>& emptyValue, Ref<P>&& newValue)
+    {
+        ASSERT(isEmptyValue(emptyValue));
+        emptyValue.assignToHashTableEmptyValue(WTFMove(newValue));
+    }
+
+    typedef P* PeekType;
+    static PeekType peek(const Ref<P>& value) { return const_cast<PeekType>(value.ptr()); }
+    static PeekType peek(P* value) { return value; }
+
+    static void customDeleteBucket(Ref<P>& value)
+    {
+        // See unique_ptr's customDeleteBucket() for an explanation.
+        ASSERT(!SimpleClassHashTraits<Ref<P>>::isDeletedValue(value));
+        auto valueToBeDestroyed = WTFMove(value);
+        SimpleClassHashTraits<Ref<P>>::constructDeletedValue(value);
     }
 };
 

@@ -181,8 +181,8 @@ struct HashMapTranslator {
     template<typename T, typename U> static bool equal(const T& a, const U& b) { return HashFunctions::equal(a, b); }
     template<typename T, typename U, typename V> static void translate(T& location, U&& key, V&& mapped)
     {
-        location.key = std::forward<U>(key);
-        location.value = std::forward<V>(mapped);
+        ValueTraits::KeyTraits::assignToEmpty(location.key, std::forward<U>(key));
+        ValueTraits::ValueTraits::assignToEmpty(location.value, std::forward<V>(mapped));
     }
 };
 
@@ -192,8 +192,8 @@ struct HashMapEnsureTranslator {
     template<typename T, typename U> static bool equal(const T& a, const U& b) { return HashFunctions::equal(a, b); }
     template<typename T, typename U, typename Functor> static void translate(T& location, U&& key, const Functor& functor)
     {
-        location.key = std::forward<U>(key);
-        location.value = functor();
+        ValueTraits::KeyTraits::assignToEmpty(location.key, std::forward<U>(key));
+        ValueTraits::ValueTraits::assignToEmpty(location.value, functor());
     }
 };
 
