@@ -62,10 +62,10 @@ inline int clz32(uint32_t number)
 
 // This in the ToInt32 operation is defined in section 9.5 of the ECMA-262 spec.
 // Note that this operation is identical to ToUInt32 other than to interpretation
-// of the resulting bit-pattern (as such this metod is also called to implement
+// of the resulting bit-pattern (as such this method is also called to implement
 // ToUInt32).
 //
-// The operation can be descibed as round towards zero, then select the 32 least
+// The operation can be described as round towards zero, then select the 32 least
 // bits of the resulting value in 2s-complement representation.
 ALWAYS_INLINE int32_t toInt32(double number)
 {
@@ -76,13 +76,13 @@ ALWAYS_INLINE int32_t toInt32(double number)
     // after rounding; if the exponent is > 83 then no bits of precision can be
     // left in the low 32-bit range of the result (IEEE-754 doubles have 52 bits
     // of fractional precision).
-    // Note this case handles 0, -0, and all infinte, NaN, & denormal value.
+    // Note this case handles 0, -0, and all infinite, NaN, & denormal value.
     if (exp < 0 || exp > 83)
         return 0;
 
     // Select the appropriate 32-bits from the floating point mantissa. If the
     // exponent is 52 then the bits we need to select are already aligned to the
-    // lowest bits of the 64-bit integer representation of tghe number, no need
+    // lowest bits of the 64-bit integer representation of the number, no need
     // to shift. If the exponent is greater than 52 we need to shift the value
     // left by (exp - 52), if the value is less than 52 we need to shift right
     // accordingly.

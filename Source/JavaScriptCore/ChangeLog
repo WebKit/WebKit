@@ -1,3 +1,13 @@
+2016-06-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, follow up patch for r201964
+        https://bugs.webkit.org/show_bug.cgi?id=158619
+
+        Fix typo in the comment.
+
+        * runtime/MathCommon.h:
+        (JSC::toInt32):
+
 2016-06-13  Mark Lam  <mark.lam@apple.com>
 
         Add a mechanism for collecting LLINT stats.
