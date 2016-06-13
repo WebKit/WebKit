@@ -135,6 +135,23 @@ add_action('the_post', function($post) {
     $pages = array($post->post_content);
 });
 
+add_action('the_post', function($post) {
+    global $pages;
+
+    if (!(is_single() || is_page())) return;
+
+    $foreword = get_post_meta(get_the_ID(), 'foreword', true);
+    if ( ! $foreword ) return;
+
+    $content = $post->post_content;
+    // Transform Markdown
+    $Markdown = WPCom_Markdown::get_instance();
+    $foreword = wp_unslash( $Markdown->transform($foreword) );
+    
+    $post->post_content = '<div class="foreword">' . $foreword . '</div>' . $content;
+    $pages = array($post->post_content);
+});
+
 function before_the_title() {
     $post = get_post();
 

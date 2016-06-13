@@ -1,3 +1,14 @@
+2016-06-13  Jon Davis  <jond@apple.com>
+
+        Adds support for foreword custom meta and display styles on blog posts.
+        https://bugs.webkit.org/show_bug.cgi?id=158707.
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/functions.php:
+        * wp-content/themes/webkit/style.css:
+        (article .foreword):
+
 2016-06-02  Dean Jackson  <dino@apple.com>
 
         Update the example for wider color gamut images.

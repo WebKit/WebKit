@@ -1011,6 +1011,18 @@ article div.note {
     box-sizing: normal;
 }
 
+article .foreword {
+    padding: 3rem;
+    background-color: #f0f0f0;
+    border: 1px solid #e6e6e6;
+    color: #8E8E93;
+    border-radius: 3px;
+    margin-bottom: 3rem;
+    box-sizing: normal;
+    font-size: 1.6rem;
+    font-style: italic;
+}
+
 article .two-columns {
     columns: 2;
     column-gap: 6rem;
