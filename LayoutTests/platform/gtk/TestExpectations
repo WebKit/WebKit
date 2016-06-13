@@ -1607,7 +1607,7 @@ Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
 
 Bug(GTK) fast/history/go-back-to-iframe-with-plugin.html [ Timeout Pass ]
 
-webkit.org/b/153772 fast/shadow-dom/slot-removal-crash-2.html [ Timeout ]
+webkit.org/b/153772 fast/shadow-dom/slot-removal-crash-2.html [ Pass Timeout ]
 
 webkit.org/b/153944 plugins/get-url-notify-with-url-that-fails-to-load.html [ Timeout Pass ]
 
@@ -2611,8 +2611,8 @@ fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
 # This test relies on iOS-specific font fallback.
 fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
 
-# All other shadow DOM tests are expected to fail.
-fast/shadow-dom/text-slot-child-crash.svg [ Pass ]
+
+webkit.org/b/148695 fast/shadow-dom [ Pass ]
 
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
 

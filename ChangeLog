@@ -1,3 +1,14 @@
+2016-06-13  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [GTK] Enabling Shadow DOM by default
+        https://bugs.webkit.org/show_bug.cgi?id=158686
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added support for enabling Shadow DOM by default for GTK.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-06-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Add comments to clarify feature enablement
