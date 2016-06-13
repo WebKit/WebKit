@@ -233,6 +233,12 @@ class TestServer {
             self.cleanDataDirectory();
             originalRemote = global.RemoteAPI;
             global.RemoteAPI = self._remote;
+            self._remote.clearCookies();
+
+            if (global.PrivilegedAPI) {
+                global.PrivilegedAPI._token = null;
+                global.PrivilegedAPI._expiration = null;
+            }
         });
 
         after(function () {

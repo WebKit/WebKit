@@ -140,7 +140,7 @@ CREATE TABLE test_runs (
     run_mean_cache double precision,
     run_sum_cache double precision,
     run_square_sum_cache double precision,
-    run_marked_outlier boolean,
+    run_marked_outlier boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT test_config_build_must_be_unique UNIQUE(run_config, run_build));
 CREATE INDEX run_config_index ON test_runs(run_config);
 CREATE INDEX run_build_index ON test_runs(run_build);

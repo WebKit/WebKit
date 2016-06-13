@@ -16,6 +16,14 @@ var MockRemoteAPI = {
     {
         return this._addRequest(url, 'GET', null);
     },
+    postJSON: function (url, data)
+    {
+        return this._addRequest(url, 'POST', data);
+    },
+    postJSONWithStatus: function (url, data)
+    {
+        return this._addRequest(url, 'POST', data);
+    },
     postFormUrlencodedData: function (url, data)
     {
         return this._addRequest(url, 'POST', data);

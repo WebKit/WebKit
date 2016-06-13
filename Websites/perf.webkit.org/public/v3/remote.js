@@ -1,5 +1,17 @@
+"use strict";
 
 var RemoteAPI = {};
+
+RemoteAPI.postJSON = function (path, data)
+{
+    return this.getJSON(path, data || {});
+}
+
+RemoteAPI.postJSONWithStatus = function (path, data)
+{
+    console.log(document.cookie);
+    return this.getJSONWithStatus(path, data || {});
+}
 
 RemoteAPI.getJSON = function(path, data)
 {
@@ -53,35 +65,3 @@ RemoteAPI.getJSONWithStatus = function(path, data)
         return content;
     });
 }
-
-// FIXME: Use real class syntax once the dependency on data.js has been removed.
-PrivilegedAPI = class {
-
-    static sendRequest(path, data)
-    {
-        return this.requestCSRFToken().then(function (token) {
-            var clonedData = {};
-            for (var key in data)
-                clonedData[key] = data[key];
-            clonedData['token'] = token;
-            return RemoteAPI.getJSONWithStatus('../privileged-api/' + path, clonedData);
-        });
-    }
-
-    static requestCSRFToken()
-    {
-        var maxNetworkLatency = 3 * 60 * 1000; /* 3 minutes */
-        if (this._token && this._expiration > Date.now() + maxNetworkLatency)
-            return Promise.resolve(this._token);
-
-        return RemoteAPI.getJSONWithStatus('../privileged-api/generate-csrf-token', {}).then(function (result) {
-            PrivilegedAPI._token = result['token'];
-            PrivilegedAPI._expiration = new Date(result['expiration']);
-            return PrivilegedAPI._token;
-        });
-    }
-
-}
-
-PrivilegedAPI._token = null;
-PrivilegedAPI._expiration = null;

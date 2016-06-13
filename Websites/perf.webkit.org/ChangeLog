@@ -1,5 +1,45 @@
 2016-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Invalid token error when trying to create an A/B analysis for a range
+        https://bugs.webkit.org/show_bug.cgi?id=158679
+
+        Reviewed by Chris Dumez.
+
+        The problem in this particular case was due to another website overriding cookies for our subdomain.
+        Make PrivilegedAPI robust against its token becoming invalid in general to fix the bug since the cookie
+        is only available under /privileged-api/ and the v3 UI can't access it for security reasons.
+
+        This patch factors out PrivilegedAPI out of remote.js so that it can be tested separately in server tests
+        as well as unit tests even though RemoteAPI itself is implemented differently in each case.
+
+        * init-database.sql: Added a forgotten default value "false" to run_marked_outlier.
+        * public/v3/index.html:
+        * public/v3/privileged-api.js: Added. Extracted out of public/v3/remote.js.
+        (PrivilegedAPI.sendRequest): Fixed the bug. When the initial request fails with "InvalidToken" error,
+        re-generate the token and re-issue the request.
+        (PrivilegedAPI.requestCSRFToken):
+        * public/v3/remote.js:
+        (RemoteAPI.postJSON): Added to match tools/js/remote.js.
+        (RemoteAPI.postJSONWithStatus): Ditto.
+        (PrivilegedAPI): Moved to privileged-api.js.
+        * server-tests/api-measurement-set-tests.js: Removed the unused require for crypto.
+        * server-tests/privileged-api-upate-run-status.js: Added tests for /privileged-api/update-run-status.
+        * server-tests/resources/test-server.js:
+        (TestServer.prototype.inject): Clear the cookies as well as tokens in PrivilegedAPI.
+        * tools/js/remote.js:
+        (RemoteAPI): Added the support for PrivilegedAPI by making cookie set by the server persist.
+        (RemoteAPI.prototype.clearCookies): Added for tests.
+        (RemoteAPI.prototype.postJSON): Make sure sendHttpRequest always sends a valid JSON.
+        (RemoteAPI.prototype.postJSONWithStatus): Added since this API is used PrivilegedAPI.
+        (RemoteAPI.prototype.sendHttpRequest): Retain the cookie set by the server and send it back in each request.
+        * tools/js/v3-models.js:
+        * unit-tests/privileged-api-tests.js: Added unit tests for PrivilegedAPI.
+        * unit-tests/resources/mock-remote-api.js:
+        (MockRemoteAPI.postJSON): Added for unit testing.
+        (MockRemoteAPI.postJSONWithStatus): Ditto.
+
+2016-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         /admin/tests is very slow
         https://bugs.webkit.org/show_bug.cgi?id=158682
 

@@ -9,6 +9,7 @@ class RemoteAPI {
     constructor(server)
     {
         this._server = null;
+        this._cookies = new Map;
         if (server)
             this.configure(server);
     }
@@ -50,6 +51,8 @@ class RemoteAPI {
         };
     }
 
+    clearCookies() { this._cookies = new Map; }
+
     getJSON(path)
     {
         return this.sendHttpRequest(path, 'GET', null, null).then(function (result) {
@@ -69,7 +72,7 @@ class RemoteAPI {
     postJSON(path, data)
     {
         const contentType = 'application/json';
-        const payload = JSON.stringify(data);
+        const payload = JSON.stringify(data || {});
         return this.sendHttpRequest(path, 'POST', 'application/json', payload).then(function (result) {
             try {
                 return JSON.parse(result.responseText);
@@ -77,6 +80,15 @@ class RemoteAPI {
                 console.error(result.responseText);
                 throw error;
             }
+        });
+    }
+
+    postJSONWithStatus(path, data)
+    {
+        return this.postJSON(path, data).then(function (result) {
+            if (result['status'] != 'OK')
+                return Promise.reject(result);
+            return result;
         });
     }
 
@@ -92,6 +104,7 @@ class RemoteAPI {
     sendHttpRequest(path, method, contentType, content)
     {
         let server = this._server;
+        const self = this;
         return new Promise(function (resolve, reject) {
             let options = {
                 hostname: server.host,
@@ -105,13 +118,27 @@ class RemoteAPI {
                 let responseText = '';
                 response.setEncoding('utf8');
                 response.on('data', function (chunk) { responseText += chunk; });
-                response.on('end', function () { resolve({statusCode: response.statusCode, responseText: responseText}); });
+                response.on('end', function () {
+                    if ('set-cookie' in response.headers) {
+                        for (const cookie of response.headers['set-cookie']) {
+                            var nameValue = cookie.split('=')
+                            self._cookies.set(nameValue[0], nameValue[1]);
+                        }
+                    }
+                    resolve({statusCode: response.statusCode, responseText: responseText});
+                });
             });
 
             request.on('error', reject);
 
             if (contentType)
                 request.setHeader('Content-Type', contentType);
+
+            if (self._cookies.size) {
+                request.setHeader('Cookie', Array.from(self._cookies.keys()).map(function (key) {
+                    return `${key}=${self._cookies.get(key)}`;
+                }).join('; '));
+            }
 
             if (content)
                 request.write(content);
