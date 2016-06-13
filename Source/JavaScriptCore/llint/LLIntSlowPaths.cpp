@@ -49,6 +49,7 @@
 #include "JSString.h"
 #include "JSWithScope.h"
 #include "LLIntCommon.h"
+#include "LLIntData.h"
 #include "LLIntExceptions.h"
 #include "LowLevelInterpreter.h"
 #include "ObjectConstructor.h"
@@ -1622,5 +1623,16 @@ extern "C" NO_RETURN_DUE_TO_CRASH void llint_crash()
 {
     CRASH();
 }
+
+#if ENABLE(LLINT_STATS)
+
+LLINT_SLOW_PATH_DECL(count_opcode)
+{
+    OpcodeID opcodeID = exec->vm().interpreter->getOpcodeID(pc[0].u.opcode);
+    Data::opcodeStats(opcodeID).count++;
+    LLINT_END_IMPL();
+}
+
+#endif // ENABLE(LLINT_STATS)
 
 } } // namespace JSC::LLInt

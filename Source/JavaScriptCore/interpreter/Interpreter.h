@@ -35,7 +35,6 @@
 #include "JSCell.h"
 #include "JSObject.h"
 #include "JSStack.h"
-#include "LLIntData.h"
 #include "Opcode.h"
 #include "SourceProvider.h"
 #include "StackAlignment.h"

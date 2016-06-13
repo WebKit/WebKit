@@ -57,6 +57,7 @@
 #import "WorkQueueItem.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <JavaScriptCore/HeapStatistics.h>
+#import <JavaScriptCore/LLIntData.h>
 #import <JavaScriptCore/Options.h>
 #import <WebCore/Logging.h>
 #import <WebKit/DOMElement.h>
@@ -1442,6 +1443,8 @@ int DumpRenderTreeMain(int argc, const char *argv[])
     [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts
     if (JSC::Options::logHeapStatisticsAtExit())
         JSC::HeapStatistics::reportSuccess();
+    if (JSC::Options::reportLLIntStats())
+        JSC::LLInt::Data::dumpStats();
     [pool release];
     returningFromMain = true;
     return 0;

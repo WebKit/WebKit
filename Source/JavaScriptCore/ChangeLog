@@ -1,3 +1,75 @@
+2016-06-13  Mark Lam  <mark.lam@apple.com>
+
+        Add a mechanism for collecting LLINT stats.
+        https://bugs.webkit.org/show_bug.cgi?id=158668
+
+        Reviewed by Filip Pizlo.
+
+        This patch will add a mechanism for collecting the stats on LLINT opcode
+        execution counts.  The changes made to enable this are:
+
+        1. Refactored how Options availability work so that we can add a new category:
+           Configurable (in addition to the pre-existing Normal and Restricted
+           availability).
+               Normal options - always available.
+               Restricted options - only available on debug builds.
+               Configurable options - depends on #define flag options.
+
+           This change is necessary so that:
+           a. we won't have to rebuild the world when we want to enable that #define flag
+              to make that Configurable option available.
+           b. when the #define flag is disabled, the option will be invisible to the user.
+
+           With this, we add our first configurable option, JSC_reportLLIntStats, which
+           is dependent on the ENABLE_LLINT_STATS flag.  See next.
+
+        2. Added the ENABLE_LLINT_STATS flag in LLIntCommon.h.  To enable LLINT stats
+           collection, we'll need to set this flag to a non-zero value, and rebuilding
+           the project.  By design, this will only require a minimal set of files to
+           be rebuilt.
+
+           ENABLE_LLINT_STATS is 0 (i.e. disabled) by default.
+
+        3. Added a slow path callback to the LLINT's traceExecution() macro, to call
+           _llint_count_opcode(), which in turns counts the opcode.  This callback will
+           only be built into the LLINT if ENABLE_LLINT_STATS is non-zero.
+
+        4. Added s_opcodeStatsArray to LLInt::Data.  This is where the stats are
+           recorded and stored.
+
+        5. Added calls to LLInt::Data::dumpStats() in jsc.cpp and DumpRenderTree.mm
+           to dump the LLINT stats if enabled.  If enabled, the LLINT stats will be
+           sorted and dumped (via dataLog) before the programs terminate.
+
+        * interpreter/Interpreter.h:
+        * jsc.cpp:
+        (main):
+        * llint/LLIntCommon.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        (JSC::LLInt::Data::dumpStats):
+        * llint/LLIntData.h:
+        (JSC::LLInt::Data::opcodeStats):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_crash):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/Options.cpp:
+        (JSC::parse):
+        (JSC::Options::isAvailable):
+        (JSC::overrideOptionWithHeuristic):
+        (JSC::scaleJITPolicy):
+        (JSC::Options::initialize):
+        (JSC::Options::setOptionWithoutAlias):
+        (JSC::Options::dumpAllOptions):
+        (JSC::Options::dumpOption):
+        * runtime/Options.h:
+        (JSC::Option::Option):
+        (JSC::Option::operator!=):
+        (JSC::Option::id):
+
 2016-06-11  Mark Lam  <mark.lam@apple.com>
 
         Minimize the amount of memcpy done for allocating Error stacks.

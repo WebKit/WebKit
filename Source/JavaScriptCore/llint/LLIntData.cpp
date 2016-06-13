@@ -25,12 +25,14 @@
 
 #include "config.h"
 #include "LLIntData.h"
+
 #include "BytecodeConventions.h"
 #include "CodeBlock.h"
 #include "CodeType.h"
 #include "Instruction.h"
 #include "JSScope.h"
 #include "LLIntCLoop.h"
+#include "LLIntCommon.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "Opcode.h"
 #include "PropertyOffset.h"
@@ -43,6 +45,7 @@ namespace JSC { namespace LLInt {
 
 Instruction* Data::s_exceptionInstructions = 0;
 Opcode Data::s_opcodeMap[numOpcodeIDs] = { };
+OpcodeStatsArray* Data::s_opcodeStatsArray = nullptr;
 
 #if ENABLE(JIT)
 extern "C" void llint_entry(void*);
@@ -62,6 +65,13 @@ void initialize()
         Data::s_exceptionInstructions[i].u.pointer =
             LLInt::getCodePtr(llint_throw_from_slow_path_trampoline);
 #endif // ENABLE(JIT)
+
+#if ENABLE(LLINT_STATS)
+    Data::s_opcodeStatsArray = new OpcodeStatsArray();
+    unsigned i = 0;
+    for (auto& stats : *Data::s_opcodeStatsArray)
+        stats.id = static_cast<OpcodeID>(i++);
+#endif
 }
 
 #if COMPILER(CLANG)
@@ -216,5 +226,26 @@ void Data::performAssertions(VM& vm)
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif
+
+void Data::dumpStats()
+{
+#if ENABLE(LLINT_STATS)
+    if (!Options::reportLLIntStats())
+        return;
+
+    auto statsCopy = *s_opcodeStatsArray;
+    std::sort(statsCopy.begin(), statsCopy.end(), [] (OpcodeStats& a, OpcodeStats& b) -> bool {
+        return a.count > b.count;
+    });
+    
+    dataLog("Opcode stats:\n");
+    unsigned i = 0;
+    for (auto& stats : statsCopy) {
+        if (stats.count)
+            dataLog("   [", i++, "]: fast:", stats.count, " ", opcodeNames[stats.id], "\n");
+    }
+#endif
+}
+
 
 } } // namespace JSC::LLInt

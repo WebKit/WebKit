@@ -1,3 +1,13 @@
+2016-06-13  Mark Lam  <mark.lam@apple.com>
+
+        Add a mechanism for collecting LLINT stats.
+        https://bugs.webkit.org/show_bug.cgi?id=158668
+
+        Reviewed by Filip Pizlo.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (DumpRenderTreeMain):
+
 2016-06-13  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [GTK] Enabling Shadow DOM by default

@@ -726,6 +726,9 @@ macro restoreStackPointerAfterCall()
 end
 
 macro traceExecution()
+    if COLLECT_STATS
+        callSlowPath(_llint_count_opcode)
+    end
     if EXECUTION_TRACING
         callSlowPath(_llint_trace)
     end
