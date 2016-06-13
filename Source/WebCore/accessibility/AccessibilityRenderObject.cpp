@@ -3014,7 +3014,7 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     // In order to connect the AX hierarchy from the SVG root element from the loaded resource
     // the parent must be set, because there's no other way to get back to who created the image.
     ASSERT(!createIfNecessary || rootSVGObject);
-    if (!is<AccessibilitySVGRoot>(*rootSVGObject))
+    if (!is<AccessibilitySVGRoot>(rootSVGObject))
         return nullptr;
     
     return downcast<AccessibilitySVGRoot>(rootSVGObject);
