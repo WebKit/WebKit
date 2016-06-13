@@ -785,11 +785,9 @@ webkit.org/b/47091 http/tests/misc/copy-resolves-urls.html [ Skip ]
 # Sometimes fail or timeout
 webkit.org/b/48455 transitions/cancel-transition.html [ Pass Failure ]
 webkit.org/b/48456 transitions/change-values-during-transition.html [ Pass Failure ]
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Skip ]
 webkit.org/b/48750 fast/frames/sandboxed-iframe-storage.html [ Failure ]
 webkit.org/b/48753 http/tests/security/window-events-clear-port.html [ Pass Timeout ]
 webkit.org/b/48753 http/tests/security/window-properties-clear-port.html [ Pass Timeout ]
-fast/workers/worker-document-leak.html [ Skip ] # Timeout
 ################################################################################
 ######################            Media tests             ######################
 ################################################################################
@@ -3144,7 +3142,6 @@ security/autocomplete-cleared-on-back.html [ Skip ]  # Timeout
 
 transitions/move-after-transition.html [ Failure Timeout ]
 
-fast/workers/worker-lifecycle.html [ Skip ] # Timeout
 inspector/css/stylesheet-with-mutations.html [ Skip ] # Timeout
 
 webkit.org/b/142017 fast/attachment/attachment-dom.html [ Skip ]
