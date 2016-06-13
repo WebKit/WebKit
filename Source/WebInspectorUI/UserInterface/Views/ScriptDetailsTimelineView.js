@@ -37,6 +37,7 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
         columns.name.width = "10%";
         columns.name.icon = true;
         columns.name.disclosure = true;
+        columns.name.locked = true;
 
         columns.location.title = WebInspector.UIString("Location");
         columns.location.icon = true;
@@ -72,7 +73,10 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
             columns[column].sortable = true;
 
         this._dataGrid = new WebInspector.ScriptTimelineDataGrid(columns);
+        this._dataGrid.identifier = "script-timeline-view";
         this._dataGrid.sortDelegate = this;
+
+        // FIXME: Remove once <webkit.org/b/158675> is fixed.
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("script-timeline-view-sort", "startTime");
         this._dataGrid.sortOrderSetting = new WebInspector.Setting("script-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
 

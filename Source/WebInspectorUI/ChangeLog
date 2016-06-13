@@ -1,3 +1,55 @@
+2016-06-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add ability to show/hide DataGird columns
+        https://bugs.webkit.org/show_bug.cgi?id=158676
+        <rdar://problem/26761573>
+
+        Reviewed by Timothy Hatcher.
+
+        Make it possible to show/hide grid columns using the grid header
+        context menu. This patch enables the new behavior for most of the
+        timeline grids.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.get identifier):
+        (WebInspector.DataGrid.prototype.set identifier):
+        An identifier for the grid instance, for managing per-grid settings.
+        Setting the id causes settings to be created, and their values to be
+        applied to the grid.
+
+        (WebInspector.DataGrid.prototype.get columnChooserEnabled):
+        (WebInspector.DataGrid.prototype.set columnChooserEnabled):
+        Enable showing/hiding columns via the grid header.
+
+        (WebInspector.DataGrid.prototype.insertColumn):
+        (WebInspector.DataGrid.prototype.showColumn):
+        Set column visibility and hidden column setting, then perform layout.
+
+        (WebInspector.DataGrid.prototype._collapseColumnGroupWithCell):
+        (WebInspector.DataGrid.prototype._contextMenuInHeader):
+        Create column chooser menu items if necessary.
+
+        (WebInspector.DataGrid.prototype._showColumn): Deleted.
+        (WebInspector.DataGrid.prototype._hideColumn): Deleted.
+        Replaced by `showColumn`.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+        Always show "type" and "name" columns.
+
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WebInspector.ScriptDetailsTimelineView):
+        Always show "name" column.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid):
+        Enable column chooser.
+
 2016-06-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: <template> content should not be hidden as Shadow Content

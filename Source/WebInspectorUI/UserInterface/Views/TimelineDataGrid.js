@@ -58,6 +58,8 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         this.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sort, this);
 
         window.addEventListener("resize", this);
+
+        this.columnChooserEnabled = true;
     }
 
     static createColumnScopeBar(prefix, map)

@@ -44,9 +44,11 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         columns.type.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("layout", typeToLabelMap);
         columns.type.hidden = true;
+        columns.type.locked = true;
 
         columns.name.disclosure = true;
         columns.name.icon = true;
+        columns.name.locked = true;
 
         this._scopeBar = columns.type.scopeBar;
 
@@ -75,6 +77,9 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         this.setupDataGrid(this._dataGrid);
 
+        this._dataGrid.identifier = "layout-timeline-view";
+
+        // FIXME: Remove once <webkit.org/b/158675> is fixed.
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("layout-timeline-view-sort", "startTime");
         this._dataGrid.sortOrderSetting = new WebInspector.Setting("layout-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
 
