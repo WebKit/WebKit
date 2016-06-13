@@ -40,6 +40,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "Logging.h"
+#include "Page.h"
 #include "PathUtilities.h"
 #include "RenderBlock.h"
 #include "RenderChildIterator.h"

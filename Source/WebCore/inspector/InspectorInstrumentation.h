@@ -38,7 +38,6 @@
 #include "HitTestResult.h"
 #include "InspectorInstrumentationCookie.h"
 #include "MemoryPressureHandler.h"
-#include "Page.h"
 #include "ScriptExecutionContext.h"
 #include "StorageArea.h"
 #include "WebSocketFrame.h"
@@ -80,6 +79,7 @@ class InspectorInstrumentation;
 class InspectorTimelineAgent;
 class InstrumentingAgents;
 class Node;
+class Page;
 class PseudoElement;
 class RenderLayer;
 class RenderLayerBacking;

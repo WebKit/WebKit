@@ -26,8 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EmptyClients_h
-#define EmptyClients_h
+#pragma once
 
 #include "ChromeClient.h"
 #include "ContextMenuClient.h"
@@ -42,6 +41,8 @@
 #include "InspectorClient.h"
 #include "ProgressTrackerClient.h"
 #include "ResourceError.h"
+#include "SessionID.h"
+#include "SocketProvider.h"
 #include "TextCheckerClient.h"
 #include "VisitedLinkStore.h"
 #include <wtf/text/StringView.h>
@@ -71,6 +72,7 @@ namespace WebCore {
 
 class GraphicsContext3D;
 class Page;
+class PageConfiguration;
 
 class EmptyChromeClient : public ChromeClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -642,8 +644,9 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
     void logDiagnosticMessageWithValue(const String&, const String&, const String&, ShouldSample) override { }
 };
 
+class EmptySocketProvider final : public SocketProvider {
+};
+    
 void fillWithEmptyClients(PageConfiguration&);
 
 }
-
-#endif // EmptyClients_h

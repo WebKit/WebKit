@@ -32,6 +32,7 @@
 #include "CSSValueKeywords.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLNames.h"
+#include "Page.h"
 #include "WheelEvent.h"
 
 namespace WebCore {

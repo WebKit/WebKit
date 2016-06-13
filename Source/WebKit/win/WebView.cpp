@@ -69,6 +69,7 @@
 #include "WebPreferences.h"
 #include "WebResourceLoadScheduler.h"
 #include "WebScriptWorld.h"
+#include "WebSocketProvider.h"
 #include "WebStorageNamespaceProvider.h"
 #include "WebViewGroup.h"
 #include "WebVisitedLinkStore.h"
@@ -2909,7 +2910,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
 
     m_inspectorClient = new WebInspectorClient(this);
 
-    PageConfiguration configuration(makeUniqueRef<WebEditorClient>(this));
+    PageConfiguration configuration(makeUniqueRef<WebEditorClient>(this), makeUniqueRef<WebSocketProvider>());
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);
     configuration.dragClient = new WebDragClient(this);

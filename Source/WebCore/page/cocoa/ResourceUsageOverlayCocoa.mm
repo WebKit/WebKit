@@ -34,6 +34,7 @@
 #include <CoreGraphics/CGContext.h>
 #include <QuartzCore/CALayer.h>
 #include <QuartzCore/CATransaction.h>
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 

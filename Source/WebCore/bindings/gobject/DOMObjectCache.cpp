@@ -27,6 +27,7 @@
 #include <glib-object.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 

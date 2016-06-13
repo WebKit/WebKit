@@ -31,6 +31,7 @@
 #include "ChromeClient.h"
 #include "MainFrame.h"
 #include "NodeTraversal.h"
+#include "Page.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
 #include "RenderLayer.h"

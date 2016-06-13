@@ -36,6 +36,7 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MainFrame.h"
+#include "Page.h"
 #include "RequestAnimationFrameCallback.h"
 #include "Settings.h"
 #include <wtf/Ref.h>

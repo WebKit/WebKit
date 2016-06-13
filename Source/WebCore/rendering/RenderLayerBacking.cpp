@@ -45,6 +45,7 @@
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "MainFrame.h"
+#include "Page.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
 #include "RenderFlowThread.h"

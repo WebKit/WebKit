@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "MainFrame.h"
+#include "Page.h"
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"
 #include <wtf/NeverDestroyed.h>

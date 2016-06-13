@@ -38,6 +38,7 @@
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "MainFrame.h"
+#include "Page.h"
 #include "ProgressEvent.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"

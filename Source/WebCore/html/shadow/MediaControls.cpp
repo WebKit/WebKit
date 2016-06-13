@@ -30,6 +30,7 @@
 #include "MediaControls.h"
 
 #include "ExceptionCodePlaceholder.h"
+#include "Page.h"
 #include "Settings.h"
 
 namespace WebCore {

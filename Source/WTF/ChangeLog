@@ -1,3 +1,16 @@
+2016-06-13  Alex Christensen  <achristensen@webkit.org>
+
+        Add WebSocketProvider stub
+        https://bugs.webkit.org/show_bug.cgi?id=158702
+
+        Reviewed by Brady Eidson.
+
+        * wtf/UniqueRef.h:
+        (WTF::UniqueRef::operator->):
+        (WTF::UniqueRef::operator T&):
+        (WTF::UniqueRef::operator const T&):
+        Added operator T& to avoid unneeded .get() calls.
+
 2016-06-13  Sam Weinig  <sam@webkit.org>
 
         Make HashMap and HashSet work with Refs

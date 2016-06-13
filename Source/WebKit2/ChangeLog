@@ -1,3 +1,15 @@
+2016-06-13  Alex Christensen  <achristensen@webkit.org>
+
+        Add WebSocketProvider stub
+        https://bugs.webkit.org/show_bug.cgi?id=158702
+
+        Reviewed by Brady Eidson.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebSocketProvider.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents):
+
 2016-06-10  Ada Chan  <adachan@apple.com>
 
         Use the video element's video box when getting the inline video rect in WebVideoFullscreenManager

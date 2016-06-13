@@ -39,6 +39,7 @@
 #include "IntRect.h"
 #include "JSDOMWindowBase.h"
 #include "MainFrame.h"
+#include "Page.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
 #include "RenderStyle.h"
@@ -379,7 +380,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         return true;
 
     if (allDataReceived) {
-        PageConfiguration pageConfiguration(makeUniqueRef<EmptyEditorClient>());
+        PageConfiguration pageConfiguration(makeUniqueRef<EmptyEditorClient>(), makeUniqueRef<EmptySocketProvider>());
         fillWithEmptyClients(pageConfiguration);
         m_chromeClient = std::make_unique<SVGImageChromeClient>(this);
         pageConfiguration.chromeClient = m_chromeClient.get();

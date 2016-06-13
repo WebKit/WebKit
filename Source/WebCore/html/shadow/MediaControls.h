@@ -33,7 +33,6 @@
 #include "HTMLDivElement.h"
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
-#include "Page.h"
 #include "RenderTheme.h"
 #include "Text.h"
 #include <wtf/RefPtr.h>
@@ -46,7 +45,6 @@ namespace WebCore {
 
 class Document;
 class Event;
-class Page;
 class MediaPlayer;
 
 class RenderBox;

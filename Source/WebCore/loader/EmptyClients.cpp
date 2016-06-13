@@ -39,6 +39,7 @@
 #include "FrameNetworkingContext.h"
 #include "HTMLFormElement.h"
 #include "InProcessIDBServer.h"
+#include "Page.h"
 #include "PageConfiguration.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"

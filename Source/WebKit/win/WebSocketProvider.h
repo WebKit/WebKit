@@ -25,55 +25,7 @@
 
 #pragma once
 
-#include <memory>
-#include <wtf/Assertions.h>
+#include <WebCore/SocketProvider.h>
 
-namespace WTF {
-
-template<typename T> class UniqueRef;
-
-template<typename T, class... Args>
-UniqueRef<T> makeUniqueRef(Args&&... args)
-{
-    return UniqueRef<T>(*new T(std::forward<Args>(args)...));
-}
-
-template<typename T>
-class UniqueRef {
-public:
-    template <typename U>
-    UniqueRef(UniqueRef<U>&& other)
-        : m_ref(WTFMove(other.m_ref))
-    {
-        ASSERT(m_ref);
-    }
-
-    T& get() { ASSERT(m_ref); return *m_ref; }
-    const T& get() const { ASSERT(m_ref); return *m_ref; }
-
-    T* operator&() { ASSERT(m_ref); return m_ref.get(); }
-    const T* operator&() const { ASSERT(m_ref); return m_ref.get(); }
-
-    T* operator->() { ASSERT(m_ref); return m_ref.get(); }
-    const T* operator->() const { ASSERT(m_ref); return m_ref.get(); }
-    
-    operator T&() { ASSERT(m_ref); return *m_ref; }
-    operator const T&() const { ASSERT(m_ref); return *m_ref; }
-
-private:
-    template<class U, class... Args> friend UniqueRef<U> makeUniqueRef(Args&&...);
-    template<class U> friend class UniqueRef;
-
-    UniqueRef(T& other)
-        : m_ref(&other)
-    {
-        ASSERT(m_ref);
-    }
-
-    std::unique_ptr<T> m_ref;
+class WebSocketProvider final : public WebCore::SocketProvider {
 };
-
-} // namespace WTF
-
-using WTF::UniqueRef;
-using WTF::makeUniqueRef;

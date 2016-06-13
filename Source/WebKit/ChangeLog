@@ -1,3 +1,12 @@
+2016-06-13  Alex Christensen  <achristensen@webkit.org>
+
+        Add WebSocketProvider stub
+        https://bugs.webkit.org/show_bug.cgi?id=158702
+
+        Reviewed by Brady Eidson.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2016-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

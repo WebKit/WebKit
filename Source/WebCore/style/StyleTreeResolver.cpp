@@ -39,6 +39,7 @@
 #include "LoaderStrategy.h"
 #include "MainFrame.h"
 #include "NodeRenderStyle.h"
+#include "Page.h"
 #include "PlatformStrategies.h"
 #include "Settings.h"
 #include "ShadowRoot.h"

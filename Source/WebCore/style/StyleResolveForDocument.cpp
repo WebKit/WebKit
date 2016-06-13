@@ -36,6 +36,7 @@
 #include "HTMLIFrameElement.h"
 #include "LocaleToScriptMapping.h"
 #include "NodeRenderStyle.h"
+#include "Page.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "RenderView.h"

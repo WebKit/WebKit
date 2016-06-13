@@ -64,6 +64,7 @@
 #include "MemoryCache.h"
 #include "MemoryPressureHandler.h"
 #include "OverflowEvent.h"
+#include "Page.h"
 #include "PageCache.h"
 #include "PageOverlayController.h"
 #include "ProgressTracker.h"

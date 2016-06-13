@@ -43,6 +43,7 @@
 #include "HTMLVideoElement.h"
 #include "KeyboardEvent.h"
 #include "NodeList.h"
+#include "Page.h"
 #include "RawDataDocumentParser.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
