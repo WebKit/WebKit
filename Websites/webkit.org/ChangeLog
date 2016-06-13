@@ -1,5 +1,14 @@
 2016-06-13  Jon Davis  <jond@apple.com>
 
+        Minor style updates for figcaptions and post forewords.
+
+        * wp-content/themes/webkit/style.css:
+        (article .foreword):
+        (figure.aligncenter figcaption):
+        (figure.aligncenter figcaption::before):
+
+2016-06-13  Jon Davis  <jond@apple.com>
+
         Adds support for foreword custom meta and display styles on blog posts.
         https://bugs.webkit.org/show_bug.cgi?id=158707.
 

@@ -1012,7 +1012,8 @@ article div.note {
 }
 
 article .foreword {
-    padding: 3rem;
+    padding: 1.6rem 2.2rem 1.6rem;
+    line-height: 2.6rem;
     background-color: #f0f0f0;
     border: 1px solid #e6e6e6;
     color: #8E8E93;
@@ -1209,6 +1210,18 @@ article figcaption::before {
     display: inline-block;
     box-sizing: border-box;
     position: absolute;
+}
+
+figure.aligncenter figcaption {
+    text-align: center;
+    padding-left: 0;
+}
+
+figure.aligncenter figcaption::before {
+    margin: 0 auto;
+    width: 20%;
+    left: 50%;
+    transform: translate(-50%);
 }
 
 article .clipbottom + p + figcaption {
