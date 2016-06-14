@@ -23,6 +23,8 @@ window.addEventListener("error", function(e) {
     log("message: " + e.message);
     log("filename: " + lastPathComponent(e.filename));
     log("lineno: " + e.lineno);
+    log("colno: " + e.colno);
+    log("error: " + e.error);
     e.preventDefault();
 }, false);
 

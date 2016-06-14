@@ -57,7 +57,6 @@ public:
     JSC::JSValue detail() const { return m_detail.jsValue(); }
     
     RefPtr<SerializedScriptValue> trySerializeDetail(JSC::ExecState&);
-    void visitAdditionalChildren(JSC::SlotVisitor&);
 
 private:
     CustomEvent();

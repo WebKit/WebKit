@@ -1,3 +1,103 @@
+2016-06-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        window.onerror should pass the ErrorEvent's 'error' property as the 5th argument to the event handler
+        https://bugs.webkit.org/show_bug.cgi?id=55092
+        <rdar://problem/25731279>
+
+        Reviewed by Dean Jackson.
+
+        * platform/wk2/TestExpectations:
+        Skip new userscript test on WebKit2 like others.
+
+        * fast/events/constructors/error-event-constructor-expected.txt:
+        * fast/events/constructors/error-event-constructor.html:
+        Test for the new any "error" initialization property.
+
+        * fast/events/event-leak-objects-expected.txt:
+        * fast/events/event-leak-objects.html:
+        * fast/events/event-properties-gc-expected.txt:
+        * fast/events/event-properties-gc.html:
+        Like CustomEvent.details, ErrorEvent.error should not leak
+        objects across isolated worlds.
+
+        * fast/events/window-onerror-exception-in-attr-expected.txt:
+        * fast/events/window-onerror-exception-in-attr.html:
+        * fast/events/window-onerror-syntax-error-in-attr-expected.txt:
+        * fast/events/window-onerror-syntax-error-in-attr.html:
+        * fast/events/window-onerror1-expected.txt:
+        * fast/events/window-onerror1.html:
+        * fast/events/window-onerror10-expected.txt:
+        * fast/events/window-onerror10.html:
+        * fast/events/window-onerror11-expected.txt:
+        * fast/events/window-onerror11.html:
+        * fast/events/window-onerror12-expected.txt:
+        * fast/events/window-onerror12.html:
+        * fast/events/window-onerror13.html:
+        * fast/events/window-onerror14.html:
+        * fast/events/window-onerror16.html:
+        * fast/events/window-onerror17-expected.txt: Added.
+        * fast/events/window-onerror17.html: Copied from LayoutTests/fast/events/window-onerror12.html.
+        * fast/events/window-onerror2-expected.txt:
+        * fast/events/window-onerror2.html:
+        * fast/events/window-onerror3-expected.txt:
+        * fast/events/window-onerror3.html:
+        * fast/events/window-onerror4-expected.txt:
+        * fast/events/window-onerror4.html:
+        * fast/events/window-onerror5-expected.txt:
+        * fast/events/window-onerror5.html:
+        * fast/events/window-onerror6-expected.txt:
+        * fast/events/window-onerror6.html:
+        * fast/events/window-onerror7-expected.txt:
+        * fast/events/window-onerror7.html:
+        * fast/events/window-onerror8-expected.txt:
+        * fast/events/window-onerror8.html:
+        * fast/events/window-onerror9-expected.txt:
+        * fast/events/window-onerror9.html:
+        Include output for the column number and error object where possible.
+
+        * fast/files/resources/setup-for-read-common.js:
+        * fast/files/workers/worker-apply-blob-url-to-xhr.html:
+        * fast/workers/resources/worker-error-in-handling-script-error.js:
+        * fast/workers/resources/worker-script-error-bubbled.js:
+        * fast/workers/resources/worker-script-error-handled.js:
+        * fast/workers/resources/worker-script-error.js:
+        * fast/workers/worker-script-error-expected.txt:
+        Test "onerror" within Workers, and the "error" event on
+        the Worker from the spawning context.
+
+        * http/tests/security/cross-origin-script-error-event-expected.txt: Added.
+        * http/tests/security/cross-origin-script-error-event-redirected-expected.txt: Added.
+        * http/tests/security/cross-origin-script-error-event-redirected.html: Added.
+        * http/tests/security/cross-origin-script-error-event.html: Added.
+        * http/tests/security/cross-origin-script-window-onerror-expected.txt:
+        * http/tests/security/cross-origin-script-window-onerror-redirected-expected.txt:
+        * http/tests/security/cross-origin-script-window-onerror-redirected.html:
+        * http/tests/security/cross-origin-script-window-onerror.html:
+        * http/tests/security/script-crossorigin-error-event-information-expected.txt: Added.
+        * http/tests/security/script-crossorigin-error-event-information.html: Added.
+        * http/tests/security/script-crossorigin-onerror-information-expected.txt:
+        * http/tests/security/script-crossorigin-onerror-information.html:
+        * http/tests/security/script-no-crossorigin-error-event-should-be-sanitized-expected.txt: Added.
+        * http/tests/security/script-no-crossorigin-error-event-should-be-sanitized.html: Copied from LayoutTests/http/tests/security/script-no-crossorigin-onerror-should-be-sanitized.html.
+        * http/tests/security/script-no-crossorigin-onerror-should-be-sanitized-expected.txt:
+        * http/tests/security/script-no-crossorigin-onerror-should-be-sanitized.html:
+        * http/tests/security/window-onerror-exception-in-iframe-expected.txt:
+        * http/tests/security/window-onerror-exception-in-iframe.html:
+        * http/tests/workers/worker-importScriptsOnError-expected.txt:
+        * js/dom/exception-line-number-expected.txt:
+        * js/dom/script-tests/exception-line-number.js:
+        (window.onerror):
+
+        * userscripts/window-onerror-for-isolated-world-1-expected.txt:
+        * userscripts/window-onerror-for-isolated-world-1.html:
+        * userscripts/window-onerror-for-isolated-world-2-expected.txt:
+        * userscripts/window-onerror-for-isolated-world-2.html:
+        * userscripts/window-onerror-for-isolated-world-3-expected.txt: Added.
+        * userscripts/window-onerror-for-isolated-world-3.html: Added.
+        Add an explicit test for error objects crossing isolated world boundaries.
+        In the Isolated World case, serializable values are cloned, but unserializable
+        values cause the error object to return to null to avoid leaking across worlds.
+
 2016-06-13  Dean Jackson  <dino@apple.com>
 
         SVG elements don't blend correctly into HTML

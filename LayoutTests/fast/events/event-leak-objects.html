@@ -11,7 +11,8 @@ window.jsTestIsAsync = true;
 var events = [
     { eventKind: "CustomEvent", propName: "detail" },
     { eventKind: "MessageEvent", propName: "data"  },
-    { eventKind: "PopStateEvent", propName: "state" }
+    { eventKind: "PopStateEvent", propName: "state" },
+    { eventKind: "ErrorEvent", propName: "error" },
 ];
 
 // Types we can put in the property of the Event
@@ -103,12 +104,21 @@ window.addEventListener("message", function(message) {
 
 // Keep a count to make a unique string
 var count = 1;
+var lastEventKind, lastPropertyName;
 function runNextTest () {
     var test = tests.pop();
     if (!test) {
         finishJSTest();
         return;
     }
+
+    if (test.eventKind !== lastEventKind) {
+        debug("");
+        debug("Testing " + test.eventKind + "." + test.propName);
+        lastEventKind = test.eventKind;
+        lastPropertyName = test.propName;
+    }
+
     runScript(test.eventKind, test.propName, test.propValue, count++);
 };
 

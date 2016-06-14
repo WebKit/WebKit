@@ -528,8 +528,9 @@ http/tests/navigation/redirect-on-back-updates-history-item.html
 http/tests/navigation/redirect-on-reload-updates-history-item.html
 
 # Newly added test fails in WebKit2 for mysterious reasons
-userscripts/window-onerror-for-isolated-world-1.html
-userscripts/window-onerror-for-isolated-world-2.html
+webkit.org/b/158703 userscripts/window-onerror-for-isolated-world-1.html [ Skip ]
+webkit.org/b/158703 userscripts/window-onerror-for-isolated-world-2.html [ Skip ]
+webkit.org/b/158703 userscripts/window-onerror-for-isolated-world-3.html [ Skip ]
 
 # These transition tests are flaky, sometimes it seems like the transition timing
 # is off when the test completes

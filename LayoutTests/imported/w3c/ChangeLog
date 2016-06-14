@@ -1,3 +1,13 @@
+2016-06-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        window.onerror should pass the ErrorEvent's 'error' property as the 5th argument to the event handler
+        https://bugs.webkit.org/show_bug.cgi?id=55092
+        <rdar://problem/25731279>
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-06-08  Chris Dumez  <cdumez@apple.com>
 
         Import new AddEventListenerOptions test from W3C web-platform-tests

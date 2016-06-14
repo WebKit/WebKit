@@ -1,6 +1,7 @@
-onerror = function(message, url, lineno, colno)
+onerror = function(message, url, lineno, colno, error)
 {
-    postMessage("onerror invoked for a script that has script error '" + message + "' at line " + lineno + " and column " + colno);
+    splitUrl = url.split('/');
+    postMessage("onerror invoked for a script that has script error '" + message + "' at " + splitUrl[splitUrl.length - 1] + ":" + lineno + ":" + colno + " with error object " + error);
     return true;
 }
 

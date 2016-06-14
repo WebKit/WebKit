@@ -16,6 +16,7 @@ var testCases = [
     "testScriptErrorBubbledAndReportedToUser",
     "testScriptErrorHandled",
     "testExceptionInTimeoutCallback",
+    "testScriptErrorInWorkerAndSpawner",
 ];
 var testIndex = 0;
 
@@ -157,6 +158,23 @@ function testExceptionInTimeoutCallback()
             runNextTest();
             return false;
         }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testScriptErrorInWorkerAndSpawner()
+{
+    try {
+        var worker = new Worker("resources/worker-script-error.js");
+        worker.addEventListener("message", function(event) {
+            log("PASS: message received from WorkerGlobalScope.onerror: " + event.data);
+        });
+        worker.addEventListener("error", function(event) {
+            log("PASS: Main World saw error event with: " + event.error);
+            runNextTest();
+        });
     } catch (ex) {
         log("FAIL: unexpected exception " + ex);
         runNextTest();

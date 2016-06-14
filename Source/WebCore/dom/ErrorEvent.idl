@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,5 +37,6 @@
     [InitializedByEventConstructor] readonly attribute DOMString filename;
     [InitializedByEventConstructor] readonly attribute unsigned long lineno;
     [InitializedByEventConstructor] readonly attribute unsigned long colno;
+    [InitializedByEventConstructor, CustomGetter] readonly attribute any error;
 };
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,6 +33,8 @@
 #define ErrorEvent_h
 
 #include "Event.h"
+#include "SerializedScriptValue.h"
+#include <bindings/ScriptValue.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,13 +44,14 @@ struct ErrorEventInit : public EventInit {
     String filename;
     unsigned lineno { 0 };
     unsigned colno { 0 };
+    Deprecated::ScriptValue error;
 };
 
 class ErrorEvent final : public Event {
 public:
-    static Ref<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber)
+    static Ref<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, const Deprecated::ScriptValue& error)
     {
-        return adoptRef(*new ErrorEvent(message, fileName, lineNumber, columnNumber));
+        return adoptRef(*new ErrorEvent(message, fileName, lineNumber, columnNumber, error));
     }
 
     static Ref<ErrorEvent> createForBindings(const AtomicString& type, const ErrorEventInit& initializer)
@@ -61,12 +65,16 @@ public:
     const String& filename() const { return m_fileName; }
     unsigned lineno() const { return m_lineNumber; }
     unsigned colno() const { return m_columnNumber; }
+    const Deprecated::ScriptValue& error() const { return m_error; }
+    JSC::JSValue sanitizedErrorValue(JSC::ExecState&, JSC::JSGlobalObject&);
 
     EventInterface eventInterface() const override;
 
 private:
-    ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber);
+    ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, const Deprecated::ScriptValue& error);
     ErrorEvent(const AtomicString&, const ErrorEventInit&);
+
+    RefPtr<SerializedScriptValue> trySerializeError(JSC::ExecState&);
 
     bool isErrorEvent() const override;
 
@@ -74,6 +82,9 @@ private:
     String m_fileName;
     unsigned m_lineNumber;
     unsigned m_columnNumber;
+    Deprecated::ScriptValue m_error;
+    RefPtr<SerializedScriptValue> m_serializedDetail;
+    bool m_triedToSerialize { false };
 };
 
 } // namespace WebCore

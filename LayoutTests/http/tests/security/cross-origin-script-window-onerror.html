@@ -12,8 +12,8 @@ if (window.testRunner) {
   testRunner.dumpAsText();
 }
 
-window.onerror = function(message, url, line) {
-  document.getElementById("result").textContent = "window.onerror message: " + message + " at " + url + ": " + line;
+window.onerror = function(message, url, line, column, error) {
+  document.getElementById("result").textContent = "window.onerror message: " + message + " at " + url + ": " + line + ":" + column + " " + error;
   if (window.testRunner)
     testRunner.notifyDone();
   return true;

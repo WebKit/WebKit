@@ -7,5 +7,7 @@ phase: 2
 currentTarget is the global object: true
 message: Error: My fault.
 filename: window-onerror10.html
-lineno: 29
+lineno: 31
+colno: 29
+error: Error: My fault.
 

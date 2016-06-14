@@ -10,10 +10,10 @@ function log(msg) {
     document.getElementById("console").innerHTML += msg + "<br>";
 }
 
-window.onerror = function(msg, url, line, column)
+window.onerror = function(msg, url, line, column, error)
 {
     url = url ? url.match( /[^\/]+\/?$/ )[0] : url;
-    log("Main frame window.onerror: " + msg + " at " + url + ", line: " + line + ", column: " + column);
+    log("Main frame window.onerror: " + msg + " at " + url + ", line: " + line + ", column: " + column + ", error: " + error);
     return true;
 }
 </script>

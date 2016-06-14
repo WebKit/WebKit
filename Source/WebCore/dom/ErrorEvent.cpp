@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,7 +32,10 @@
 #include "config.h"
 #include "ErrorEvent.h"
 
+#include "DOMWrapperWorld.h"
 #include "EventNames.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
@@ -41,15 +45,17 @@ ErrorEvent::ErrorEvent(const AtomicString& type, const ErrorEventInit& initializ
     , m_fileName(initializer.filename)
     , m_lineNumber(initializer.lineno)
     , m_columnNumber(initializer.colno)
+    , m_error(initializer.error)
 {
 }
 
-ErrorEvent::ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber)
+ErrorEvent::ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, const Deprecated::ScriptValue& error)
     : Event(eventNames().errorEvent, false, true)
     , m_message(message)
     , m_fileName(fileName)
     , m_lineNumber(lineNumber)
     , m_columnNumber(columnNumber)
+    , m_error(error)
 {
 }
 
@@ -60,6 +66,33 @@ ErrorEvent::~ErrorEvent()
 EventInterface ErrorEvent::eventInterface() const
 {
     return ErrorEventInterfaceType;
+}
+
+JSValue ErrorEvent::sanitizedErrorValue(ExecState& exec, JSGlobalObject& globalObject)
+{    
+    auto error = m_error.jsValue();
+    if (!error)
+        return jsNull();
+
+    if (error.isObject() && &worldForDOMObject(error.getObject()) != &currentWorld(&exec)) {
+        // We need to make sure ErrorEvents do not leak their error property across isolated DOM worlds.
+        // Ideally, we would check that the worlds have different privileges but that's not possible yet.
+        auto serializedError = trySerializeError(exec);
+        if (!serializedError)
+            return jsNull();
+        return serializedError->deserialize(&exec, &globalObject, nullptr);
+    }
+
+    return error;
+}
+
+RefPtr<SerializedScriptValue> ErrorEvent::trySerializeError(ExecState& exec)
+{
+    if (!m_triedToSerialize) {
+        m_serializedDetail = SerializedScriptValue::create(&exec, m_error, nullptr, nullptr, NonThrowing);
+        m_triedToSerialize = true;
+    }
+    return m_serializedDetail;
 }
 
 bool ErrorEvent::isErrorEvent() const

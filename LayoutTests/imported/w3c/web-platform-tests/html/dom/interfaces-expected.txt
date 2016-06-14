@@ -4554,7 +4554,7 @@ PASS ErrorEvent interface: attribute message
 PASS ErrorEvent interface: attribute filename 
 PASS ErrorEvent interface: attribute lineno 
 PASS ErrorEvent interface: attribute colno 
-FAIL ErrorEvent interface: attribute error assert_true: The prototype object must have a property "error" expected true got false
+PASS ErrorEvent interface: attribute error 
 PASS Navigator interface: existence and properties of interface object 
 PASS Navigator interface object length 
 PASS Navigator interface object name 

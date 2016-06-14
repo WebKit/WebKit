@@ -1,4 +1,4 @@
-onerror = function(message, url, lineno)
+onerror = function(message, url, lineno, colno, error)
 {
     bar.foo = 0;
     return false;

@@ -6,10 +6,12 @@ PASS: onerror invoked for a script that has script error 'ReferenceError: Can't 
 PASS: event listener invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at line 1 and column 4.
 PASS: onerror invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at line 7 and column 4.
 PASS: onerror invoked for a script that has script error 'ReferenceError: Can't find variable: bar' at line 3 and column 8.
-message from worker: "PASS: onerror in worker context invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at line 10 in worker-script-error-bubbled.js".
+message from worker: "PASS: onerror in worker context invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at worker-script-error-bubbled.js:10:4 with error object ReferenceError: Can't find variable: foo".
 PASS: onerror invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at line 10 and column 4.
 PASS: onerror invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at line 10 and column 4.
-PASS: message received from WorkerGlobalScope.onerror: onerror invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at line 7 and column 14.
+PASS: message received from WorkerGlobalScope.onerror: onerror invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at worker-script-error-handled.js:8:14 with error object ReferenceError: Can't find variable: foo.
 PASS: onerror invoked for an exception in setTimeout callback.
+PASS: message received from WorkerGlobalScope.onerror: Worker saw: WorkerScriptError
+PASS: Main World saw error event with: null
 DONE
 

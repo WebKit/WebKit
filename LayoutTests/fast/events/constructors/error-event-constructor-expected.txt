@@ -64,6 +64,14 @@ PASS new ErrorEvent('eventType', { colno: 0 }).colno is 0
 PASS new ErrorEvent('eventType', { colno: 1 }).colno is 1
 PASS new ErrorEvent('eventType', { colno: 4294967294 }).colno is 4294967294
 PASS new ErrorEvent('eventType', { colno: 4294967295 }).colno is 4294967295
+PASS new ErrorEvent('eventType', { error: undefined }).error is undefined
+PASS new ErrorEvent('eventType', { error: null }).error is null
+PASS new ErrorEvent('eventType', { error: '' }).error is ''
+PASS new ErrorEvent('eventType', { error: '12345' }).error is '12345'
+PASS new ErrorEvent('eventType', { error: [] }).error is []
+PASS new ErrorEvent('eventType', { error: [12345] }).error is [12345]
+PASS new ErrorEvent('eventType', { error: [12345, 67890] }).error is [12345, 67890]
+PASS new ErrorEvent('eventType', { error: {moemoe: 12345} }).error.moemoe is 12345
 PASS new ErrorEvent('eventType', { colno: 9007199254740991 }).colno is 4294967295
 PASS new ErrorEvent('eventType', { colno: 18446744073709551615 }).colno is 0
 PASS new ErrorEvent('eventType', { colno: 12345678901234567890 }).colno is 3944679424
@@ -82,12 +90,13 @@ PASS new ErrorEvent('eventType', { colno: [12345, 67890] }).colno is 0
 PASS new ErrorEvent('eventType', { colno: {} }).colno is 0
 PASS new ErrorEvent('eventType', { colno: {moemoe: 12345} }).colno is 0
 PASS new ErrorEvent('eventType', { colno: {valueOf: function () { return 12345; }} }).colno is 12345
-PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).bubbles is true
-PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).cancelable is true
-PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).message is "sakuranbo"
-PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).filename is "amaenbo"
-PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).lineno is 12345
-PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).colno is 23456
+PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456, error: 42 }).bubbles is true
+PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456, error: 42 }).cancelable is true
+PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456, error: 42 }).message is "sakuranbo"
+PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456, error: 42 }).filename is "amaenbo"
+PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456, error: 42 }).lineno is 12345
+PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456, error: 42 }).colno is 23456
+PASS new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456, error: 42 }).error is 42
 PASS successfullyParsed is true
 
 TEST COMPLETE

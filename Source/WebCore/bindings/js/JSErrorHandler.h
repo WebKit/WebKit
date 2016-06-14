@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class JSErrorHandler : public JSEventListener {
+class JSErrorHandler final : public JSEventListener {
 public:
     static Ref<JSErrorHandler> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
     {

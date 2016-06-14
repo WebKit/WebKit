@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 1: SomeError
+The test passes if error event gets unsanitized information about the script error.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.message.match(/SomeError/)[0] is "SomeError"
+PASS event.filename is "http://localhost:8000/security/resources/cors-script.php?fail=true"
+PASS event.lineno is 1
+PASS event.colno is 52
+PASS event.error.toString() is "SomeError"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

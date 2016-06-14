@@ -147,9 +147,9 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
         // We don't bother checking the askedToTerminate() flag here, because exceptions should *always* be reported even if the thread is terminated.
         // This is intentionally different than the behavior in MessageWorkerTask, because terminated workers no longer deliver messages (section 4.6 of the WebWorker spec), but they do report exceptions.
 
-        bool errorHandled = !workerObject->dispatchEvent(ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber));
+        bool errorHandled = !workerObject->dispatchEvent(ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber, Deprecated::ScriptValue()));
         if (!errorHandled)
-            context.reportException(errorMessage, lineNumber, columnNumber, sourceURL, 0);
+            context.reportException(errorMessage, lineNumber, columnNumber, sourceURL, nullptr, nullptr);
     });
 }
 

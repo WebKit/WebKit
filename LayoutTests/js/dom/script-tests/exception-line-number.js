@@ -25,10 +25,10 @@ shouldBe("result", '"LayoutTests/js/dom/script-tests/exception-line-number.js:6,
 
 // Test window.onerror:
 
-window.onerror = function(msg, url, line) {
+window.onerror = function(msg, url, line, column, error) {
     url = String(url.match(/LayoutTests\/[^:]+/g));
-    result = url + ':' + line;
-    shouldBe("result", '"LayoutTests/js/dom/script-tests/exception-line-number.js:36"');
+    result = url + ':' + line + ':' + column;
+    shouldBe("result", '"LayoutTests/js/dom/script-tests/exception-line-number.js:36:15"');
     return true;  // We handled it.
 }
 

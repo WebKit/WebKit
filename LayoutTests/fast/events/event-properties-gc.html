@@ -10,7 +10,7 @@ window.jsTestIsAsync = true;
 function addListener(eventType, prop) {
     document.addEventListener(eventType, function(event) {
         window.prop = prop;
-        // Despite the earlier assignement of the local variable to null and
+        // Despite the earlier assignment of the local variable to null and
         // the following garabage collection, the property should still be
         // present here.
         shouldBeEqualToString("event[prop]", "foo");
@@ -33,7 +33,8 @@ function newEvent(eventType, prop, value) {
 var events = [
     { eventType: "CustomEvent", prop: "detail" },
     { eventType: "MessageEvent", prop: "data" },
-    { eventType: "PopStateEvent", prop: "state" }
+    { eventType: "PopStateEvent", prop: "state" },
+    { eventType: "ErrorEvent", prop: "error" },
 ];
 
 function runNextTest () {
@@ -42,6 +43,9 @@ function runNextTest () {
         finishJSTest();
         return;
     }
+
+    debug("");
+    debug("Testing: " + evt.eventType + "." + evt.prop);
     var value = "foo";
     var eventToDispatch = newEvent(evt.eventType, evt.prop, value);
     value = null;

@@ -38,7 +38,7 @@ function startWorker(testFiles, workerScriptURL)
     }
     worker.onerror = function(event)
     {
-        log("Received error from worker: " + event.message);
+        log("Received error from worker: " + event.message + " at " + event.filename + ":" + event.lineno + ":" + event.colno + " " + event.error);
         if (window.testRunner)
             testRunner.notifyDone();
     }
