@@ -67,7 +67,7 @@ public:
     const Vector<RefPtr<RTCRtpReceiver>>& getReceivers() const { return m_transceiverSet->getReceivers(); }
     const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const override { return m_transceiverSet->list(); }
 
-    RefPtr<RTCRtpSender> addTrack(Ref<MediaStreamTrack>&&, Vector<MediaStream*>, ExceptionCode&);
+    RefPtr<RTCRtpSender> addTrack(Ref<MediaStreamTrack>&&, const Vector<MediaStream*>&, ExceptionCode&);
     void removeTrack(RTCRtpSender&, ExceptionCode&);
 
     // This enum is mirrored in RTCRtpTransceiver.h

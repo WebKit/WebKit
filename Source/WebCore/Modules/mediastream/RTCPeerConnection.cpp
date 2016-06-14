@@ -100,7 +100,7 @@ RTCPeerConnection::~RTCPeerConnection()
     stop();
 }
 
-RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, Vector<MediaStream*> streams, ExceptionCode& ec)
+RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const Vector<MediaStream*>& streams, ExceptionCode& ec)
 {
     if (m_signalingState == SignalingState::Closed) {
         ec = INVALID_STATE_ERR;
