@@ -538,8 +538,7 @@ if (typeof(SDP) == "undefined")
 
     var expectedProperties = {
         "session": [ "version", "originator", "sessionName", "startTime", "stopTime" ],
-        "mline": [ "type", "port", "protocol", "mode", "payloads", "rtcp", "mediaStreamId",
-            "mediaStreamTrackId", "dtls", "ssrcs", "cname", "ice" ],
+        "mline": [ "type", "port", "protocol", "mode", "payloads", "rtcp", "dtls", "ice" ],
         "mlineSubObjects": {
             "rtcp": [ "mux" ],
             "ice": [ "ufrag", "password" ],

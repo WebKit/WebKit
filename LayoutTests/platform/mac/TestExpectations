@@ -196,6 +196,7 @@ fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html
 fast/mediastream/RTCTrackEvent-constructor.html
 fast/mediastream/RTCPeerConnection-inspect-answer.html
 fast/mediastream/RTCPeerConnection-media-setup-single-dialog.html
+fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html
 
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]
