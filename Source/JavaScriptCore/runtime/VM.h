@@ -88,7 +88,7 @@ class TypeProfilerLog;
 class HeapProfiler;
 class Identifier;
 class Interpreter;
-class JSBoundSlotBaseFunction;
+class JSCustomGetterSetterFunction;
 class JSGlobalObject;
 class JSObject;
 class LLIntOffsetsExtractor;
@@ -337,7 +337,7 @@ public:
     NumericStrings numericStrings;
     DateInstanceCache dateInstanceCache;
     WTF::SimpleStats machineCodeBytesPerBytecodeWordForBaselineJIT;
-    WeakGCMap<std::pair<CustomGetterSetter*, int>, JSBoundSlotBaseFunction> customGetterSetterFunctionMap;
+    WeakGCMap<std::pair<CustomGetterSetter*, int>, JSCustomGetterSetterFunction> customGetterSetterFunctionMap;
     WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> stringCache;
     Strong<JSString> lastCachedString;
 

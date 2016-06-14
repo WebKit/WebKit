@@ -37,8 +37,8 @@
 #include "GetterSetter.h"
 #include "HeapSnapshotBuilder.h"
 #include "IndexingHeaderInlines.h"
-#include "JSBoundSlotBaseFunction.h"
 #include "JSCInlines.h"
+#include "JSCustomGetterSetterFunction.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Lookup.h"
@@ -2827,15 +2827,15 @@ Butterfly* JSObject::growOutOfLineStorage(VM& vm, size_t oldSize, size_t newSize
     return Butterfly::createOrGrowPropertyStorage(m_butterfly.get(), vm, this, structure(vm), oldSize, newSize);
 }
 
-static JSBoundSlotBaseFunction* getBoundSlotBaseFunctionForGetterSetter(ExecState* exec, PropertyName propertyName, JSC::PropertySlot& slot, CustomGetterSetter* getterSetter, JSBoundSlotBaseFunction::Type type)
+static JSCustomGetterSetterFunction* getCustomGetterSetterFunctionForGetterSetter(ExecState* exec, PropertyName propertyName, CustomGetterSetter* getterSetter, JSCustomGetterSetterFunction::Type type)
 {
     auto key = std::make_pair(getterSetter, (int)type);
-    JSBoundSlotBaseFunction* boundSlotBase = exec->vm().customGetterSetterFunctionMap.get(key);
-    if (!boundSlotBase) {
-        boundSlotBase = JSBoundSlotBaseFunction::create(exec->vm(), exec->lexicalGlobalObject(), slot.slotBase(), getterSetter, type, propertyName.publicName());
-        exec->vm().customGetterSetterFunctionMap.set(key, boundSlotBase);
+    JSCustomGetterSetterFunction* customGetterSetterFunction = exec->vm().customGetterSetterFunctionMap.get(key);
+    if (!customGetterSetterFunction) {
+        customGetterSetterFunction = JSCustomGetterSetterFunction::create(exec->vm(), exec->lexicalGlobalObject(), getterSetter, type, propertyName.publicName());
+        exec->vm().customGetterSetterFunctionMap.set(key, customGetterSetterFunction);
     }
-    return boundSlotBase;
+    return customGetterSetterFunction;
 }
 
 bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
@@ -2875,9 +2875,9 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
         ASSERT(maybeGetterSetter);
         auto* getterSetter = jsCast<CustomGetterSetter*>(maybeGetterSetter);
         if (getterSetter->getter())
-            descriptor.setGetter(getBoundSlotBaseFunctionForGetterSetter(exec, propertyName, slot, getterSetter, JSBoundSlotBaseFunction::Type::Getter));
+            descriptor.setGetter(getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, getterSetter, JSCustomGetterSetterFunction::Type::Getter));
         if (getterSetter->setter())
-            descriptor.setSetter(getBoundSlotBaseFunctionForGetterSetter(exec, propertyName, slot, getterSetter, JSBoundSlotBaseFunction::Type::Setter));
+            descriptor.setSetter(getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, getterSetter, JSCustomGetterSetterFunction::Type::Setter));
     } else
         descriptor.setDescriptor(slot.getValue(exec, propertyName), slot.attributes());
     return true;

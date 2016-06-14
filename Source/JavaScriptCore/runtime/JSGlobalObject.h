@@ -288,7 +288,7 @@ public:
     WriteBarrier<Structure> m_calleeStructure;
     WriteBarrier<Structure> m_functionStructure;
     LazyProperty<JSGlobalObject, Structure> m_boundFunctionStructure;
-    LazyProperty<JSGlobalObject, Structure> m_boundSlotBaseFunctionStructure;
+    LazyProperty<JSGlobalObject, Structure> m_customGetterSetterFunctionStructure;
     WriteBarrier<Structure> m_getterSetterStructure;
     LazyProperty<JSGlobalObject, Structure> m_nativeStdFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_namedFunctionStructure;
@@ -557,7 +557,7 @@ public:
     Structure* calleeStructure() const { return m_calleeStructure.get(); }
     Structure* functionStructure() const { return m_functionStructure.get(); }
     Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(this); }
-    Structure* boundSlotBaseFunctionStructure() const { return m_boundSlotBaseFunctionStructure.get(this); }
+    Structure* customGetterSetterFunctionStructure() const { return m_customGetterSetterFunctionStructure.get(this); }
     Structure* getterSetterStructure() const { return m_getterSetterStructure.get(); }
     Structure* nativeStdFunctionStructure() const { return m_nativeStdFunctionStructure.get(this); }
     Structure* namedFunctionStructure() const { return m_namedFunctionStructure.get(this); }

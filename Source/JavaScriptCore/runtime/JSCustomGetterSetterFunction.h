@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSBoundSlotBaseFunction_h
-#define JSBoundSlotBaseFunction_h
+#ifndef JSCustomGetterSetterFunction_h
+#define JSCustomGetterSetterFunction_h
 
 #include "JSFunction.h"
 
@@ -32,9 +32,7 @@ namespace JSC {
 
 class CustomGetterSetter;
 
-EncodedJSValue JSC_HOST_CALL boundSlotBaseFunctionCall(ExecState*);
-
-class JSBoundSlotBaseFunction : public JSFunction {
+class JSCustomGetterSetterFunction : public JSFunction {
 public:
     typedef JSFunction Base;
 
@@ -49,11 +47,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
     }
 
-    static JSBoundSlotBaseFunction* create(VM&, JSGlobalObject*, JSObject*, CustomGetterSetter*, const Type, const String&);
-
-    JSObject* boundSlotBase() const { return m_boundSlotBase.get(); }
-    CustomGetterSetter* customGetterSetter() const { return m_getterSetter.get(); }
-    bool isSetter() const { return m_type == Type::Setter; }
+    static JSCustomGetterSetterFunction* create(VM&, JSGlobalObject*, CustomGetterSetter*, const Type, const PropertyName&);
 
     DECLARE_EXPORT_INFO;
 
@@ -61,15 +55,20 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    JSBoundSlotBaseFunction(VM&, JSGlobalObject*, Structure*, Type);
+    JSCustomGetterSetterFunction(VM&, JSGlobalObject*, Structure*, Type, const PropertyName&);
+    void finishCreation(VM&, NativeExecutable*, CustomGetterSetter*, const String&);
 
-    void finishCreation(VM&, NativeExecutable*, JSObject*, CustomGetterSetter*, const String&);
+    static EncodedJSValue JSC_HOST_CALL customGetterSetterFunctionCall(ExecState*);
 
-    WriteBarrier<JSObject> m_boundSlotBase;
+    CustomGetterSetter* customGetterSetter() const { return m_getterSetter.get(); }
+    bool isSetter() const { return m_type == Type::Setter; }
+    const PropertyName& propertyName() const { return m_propertyName; }
+
     WriteBarrier<CustomGetterSetter> m_getterSetter;
     Type m_type;
+    PropertyName m_propertyName;
 };
 
 } // namespace JSC
 
-#endif // JSBoundSlotBaseFunction_h
+#endif // JSCustomGetterSetterFunction_h

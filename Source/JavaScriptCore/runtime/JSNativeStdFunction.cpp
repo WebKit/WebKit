@@ -66,7 +66,7 @@ static EncodedJSValue JSC_HOST_CALL runStdFunction(ExecState* state)
 
 JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeStdFunction&& nativeStdFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
-    NativeExecutable* executable = lookUpOrCreateNativeExecutable(vm, runStdFunction, intrinsic, nativeConstructor, name);
+    NativeExecutable* executable = vm.getHostFunction(runStdFunction, intrinsic, nativeConstructor, name);
     NativeStdFunctionCell* functionCell = NativeStdFunctionCell::create(vm, WTFMove(nativeStdFunction));
     Structure* structure = globalObject->nativeStdFunctionStructure();
     JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm.heap)) JSNativeStdFunction(vm, globalObject, structure);

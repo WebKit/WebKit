@@ -178,8 +178,6 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 
-    static NativeExecutable* lookUpOrCreateNativeExecutable(VM&, NativeFunction, Intrinsic, NativeFunction nativeConstructor, const String& name);
-
 private:
     static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
     {

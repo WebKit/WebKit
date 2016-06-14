@@ -1,3 +1,74 @@
+2016-06-13  Gavin & Ellie Barraclough  <barraclough@apple.com>
+
+        JSBoundSlotBaseFunction no longer binds slot base
+        https://bugs.webkit.org/show_bug.cgi?id=157978
+
+        Reviewed by Geoff Garen.
+
+        This class is basically currently named after a bug. We should never have
+        been binding function to slot bases - this was not ever correct behavior.
+        This was fixed earlier in the year, but there is still some cruft including
+        the class name to clean up.
+
+            - renamed JSBoundSlotBaseFunction -> JSCustomGetterSetterFunction
+            - removed m_boundSlotBase - don't retain the original slot base
+              (we were not really using it anyway).
+            - ASSERT customGetterSetter->getter/setter are non-null, rather than checking.
+            - Store the PropertyName such that we can pass this to the getter
+              (we're currently reperforming the String->Identifier conversion every time).
+            - Removed JSFunction::lookUpOrCreateNativeExecutable - this is just overhead,
+              and not used consistently.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSBoundSlotBaseFunction.cpp: Removed.
+        * runtime/JSBoundSlotBaseFunction.h: Removed.
+            - JSBoundSlotBaseFunction -> JSCustomGetterSetterFunction
+        * runtime/JSCustomGetterSetterFunction.cpp: Copied from Source/JavaScriptCore/runtime/JSBoundSlotBaseFunction.cpp.
+        (JSC::JSCustomGetterSetterFunction::customGetterSetterFunctionCall):
+            - made a static function on JSCustomGetterSetterFunction such that accessor
+              to member properties could be made private. Call variant of callCustomSetter
+              that does not require slotBase, ASSERT getter/setter present, pass stored
+              PropertyName to getter.
+        (JSC::JSCustomGetterSetterFunction::JSCustomGetterSetterFunction):
+            - renamed, store propertyName.
+        (JSC::JSCustomGetterSetterFunction::create):
+            - use same function name to Executable as is being passed to Function::finishCreation.
+        (JSC::JSCustomGetterSetterFunction::visitChildren):
+        (JSC::JSCustomGetterSetterFunction::finishCreation):
+            - removed m_boundSlotBase.
+        * runtime/JSCustomGetterSetterFunction.h: Copied from Source/JavaScriptCore/runtime/JSBoundSlotBaseFunction.h.
+        (JSC::JSCustomGetterSetterFunction::customGetterSetter):
+        (JSC::JSCustomGetterSetterFunction::isSetter):
+            - made private.
+        (JSC::JSCustomGetterSetterFunction::propertyName):
+            - new accessor.
+        (JSC::JSBoundSlotBaseFunction::boundSlotBase): Deleted.
+            - removed.
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        (JSC::JSFunction::lookUpOrCreateNativeExecutable): Deleted.
+            - removed lookUpOrCreateNativeExecutable. This inconsistently used wrapper was providing no value, only bloat.
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+            - renamed JSBoundSlotBaseFunction -> JSCustomGetterSetterFunction, etc.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::customGetterSetterFunctionStructure):
+        (JSC::JSGlobalObject::boundSlotBaseFunctionStructure): Deleted.
+            - renamed JSBoundSlotBaseFunction -> JSCustomGetterSetterFunction, etc.
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::JSNativeStdFunction::create):
+            - removed lookUpOrCreateNativeExecutable.
+        * runtime/JSObject.cpp:
+        (JSC::getCustomGetterSetterFunctionForGetterSetter):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::getBoundSlotBaseFunctionForGetterSetter): Deleted.
+            - renamed JSBoundSlotBaseFunction -> JSCustomGetterSetterFunction, etc.
+        * runtime/VM.h:
+            - renamed JSBoundSlotBaseFunction -> JSCustomGetterSetterFunction, etc.
+
 2016-06-13  Saam Barati  <sbarati@apple.com>
 
         The sampling profiler should further protect itself against certain forms of sampling bias that arise due to the sampling interval being in sync with some other system process

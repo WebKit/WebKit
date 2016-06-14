@@ -685,10 +685,10 @@ set(JavaScriptCore_SOURCES
     runtime/JSArrayBufferView.cpp
     runtime/JSArrayIterator.cpp
     runtime/JSBoundFunction.cpp
-    runtime/JSBoundSlotBaseFunction.cpp
     runtime/JSCJSValue.cpp
     runtime/JSCallee.cpp
     runtime/JSCell.cpp
+    runtime/JSCustomGetterSetterFunction.cpp
     runtime/JSDataView.cpp
     runtime/JSDataViewPrototype.cpp
     runtime/JSDateMath.cpp

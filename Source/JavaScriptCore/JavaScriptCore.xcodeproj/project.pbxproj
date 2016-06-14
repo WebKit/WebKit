@@ -1157,8 +1157,6 @@
 		43C392AB1C3BEB0500241F53 /* AssemblerCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4443AE3316E188D90076F110 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		46D4DCBD1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46D4DCBB1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.cpp */; };
-		46D4DCBE1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D4DCBC1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.h */; };
 		52678F8E1A031009006A306D /* BasicBlockLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52678F8C1A031009006A306D /* BasicBlockLocation.cpp */; };
 		52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F8D1A031009006A306D /* BasicBlockLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F901A04177C006A306D /* ControlFlowProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1272,6 +1270,8 @@
 		70ECA6071AFDBEA200449739 /* TemplateRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA6021AFDBEA200449739 /* TemplateRegistry.cpp */; };
 		70ECA6081AFDBEA200449739 /* TemplateRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6031AFDBEA200449739 /* TemplateRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70ECA6091AFDBEA200449739 /* TemplateRegistryKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6041AFDBEA200449739 /* TemplateRegistryKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		72AAF7CD1D0D31B3005E60BE /* JSCustomGetterSetterFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72AAF7CB1D0D318B005E60BE /* JSCustomGetterSetterFunction.cpp */; };
+		72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */; };
 		79160DBD1C8E3EC8008C085A /* ProxyRevoke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79160DBB1C8E3EC8008C085A /* ProxyRevoke.cpp */; };
 		79160DBE1C8E3EC8008C085A /* ProxyRevoke.h in Headers */ = {isa = PBXBuildFile; fileRef = 79160DBC1C8E3EC8008C085A /* ProxyRevoke.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		792CB3491C4EED5C00D13AF3 /* PCToCodeOriginMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 792CB3471C4EED5C00D13AF3 /* PCToCodeOriginMap.cpp */; };
@@ -3295,8 +3295,6 @@
 		449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		451539B812DC994500EF7AC4 /* Yarr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Yarr.h; path = yarr/Yarr.h; sourceTree = "<group>"; };
 		45E12D8806A49B0F00E9DF84 /* jsc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsc.cpp; sourceTree = "<group>"; tabWidth = 4; };
-		46D4DCBB1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBoundSlotBaseFunction.cpp; sourceTree = "<group>"; };
-		46D4DCBC1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBoundSlotBaseFunction.h; sourceTree = "<group>"; };
 		51F0EB6105C86C6B00E6DF1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		52678F8C1A031009006A306D /* BasicBlockLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicBlockLocation.cpp; sourceTree = "<group>"; };
@@ -3453,6 +3451,8 @@
 		70ECA6021AFDBEA200449739 /* TemplateRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemplateRegistry.cpp; sourceTree = "<group>"; };
 		70ECA6031AFDBEA200449739 /* TemplateRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateRegistry.h; sourceTree = "<group>"; };
 		70ECA6041AFDBEA200449739 /* TemplateRegistryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateRegistryKey.h; sourceTree = "<group>"; };
+		72AAF7CB1D0D318B005E60BE /* JSCustomGetterSetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomGetterSetterFunction.cpp; sourceTree = "<group>"; };
+		72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomGetterSetterFunction.h; sourceTree = "<group>"; };
 		79160DBB1C8E3EC8008C085A /* ProxyRevoke.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyRevoke.cpp; sourceTree = "<group>"; };
 		79160DBC1C8E3EC8008C085A /* ProxyRevoke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyRevoke.h; sourceTree = "<group>"; };
 		792CB3471C4EED5C00D13AF3 /* PCToCodeOriginMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PCToCodeOriginMap.cpp; sourceTree = "<group>"; };
@@ -5708,8 +5708,6 @@
 				A7BDAEC517F4EA1400F6140C /* JSArrayIterator.h */,
 				86FA9E8F142BBB2D001773B7 /* JSBoundFunction.cpp */,
 				86FA9E90142BBB2E001773B7 /* JSBoundFunction.h */,
-				46D4DCBB1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.cpp */,
-				46D4DCBC1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.h */,
 				657CF45619BF6662004ACBF2 /* JSCallee.cpp */,
 				657CF45719BF6662004ACBF2 /* JSCallee.h */,
 				BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */,
@@ -5719,6 +5717,8 @@
 				F692A8870255597D01FF60F7 /* JSCJSValue.cpp */,
 				14ABB36E099C076400E2A24F /* JSCJSValue.h */,
 				865A30F0135007E100CDB49E /* JSCJSValueInlines.h */,
+				72AAF7CB1D0D318B005E60BE /* JSCustomGetterSetterFunction.cpp */,
+				72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */,
 				0F2B66BD17B6B5AB00A7AE3F /* JSDataView.cpp */,
 				0F2B66BE17B6B5AB00A7AE3F /* JSDataView.h */,
 				0F2B66BF17B6B5AB00A7AE3F /* JSDataViewPrototype.cpp */,
@@ -7353,6 +7353,7 @@
 				A741017F179DAF80002EB8BA /* DFGSaneStringGetByValSlowPathGenerator.h in Headers */,
 				0F2FCCFD18A60070001A27F8 /* DFGScannable.h in Headers */,
 				86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */,
+				72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */,
 				0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */,
 				0FFB921D16D02F300055A5DB /* DFGSlowPathGenerator.h in Headers */,
 				86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */,
@@ -7978,7 +7979,6 @@
 				A5FD0070189B00AA00633231 /* ScriptCallStack.h in Headers */,
 				A5FD007E189B0B4C00633231 /* ScriptCallStackFactory.h in Headers */,
 				A503FA22188EFF6800110F14 /* ScriptDebugListener.h in Headers */,
-				46D4DCBE1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.h in Headers */,
 				A503FA26188EFFFD00110F14 /* ScriptDebugServer.h in Headers */,
 				A55D93A6185012A800400DED /* ScriptFunctionCall.h in Headers */,
 				A54CF2FA184EAEDA00237F19 /* ScriptObject.h in Headers */,
@@ -8852,7 +8852,6 @@
 				0F1725FF1B48719A00AC3A55 /* DFGMinifiedGraph.cpp in Sources */,
 				0F2BDC4D1522818600CD8910 /* DFGMinifiedNode.cpp in Sources */,
 				0F8F14351ADF090100ED792C /* DFGMovHintRemovalPhase.cpp in Sources */,
-				46D4DCBD1C5AB2D500D8D321 /* JSBoundSlotBaseFunction.cpp in Sources */,
 				0FF2CD5B1B61A4F8004955A8 /* DFGMultiGetByOffsetData.cpp in Sources */,
 				A737810D1799EA2E00817533 /* DFGNaturalLoops.cpp in Sources */,
 				79B00CBE1C6AB07E0088C65D /* ProxyObject.cpp in Sources */,
@@ -9256,6 +9255,7 @@
 				0FF9CE731B9CD6D0004EDCA6 /* PolymorphicAccess.cpp in Sources */,
 				0FE834171A6EF97B00D04847 /* PolymorphicCallStubRoutine.cpp in Sources */,
 				0F338E141BF0276C0013C88F /* B3ValueKey.cpp in Sources */,
+				72AAF7CD1D0D31B3005E60BE /* JSCustomGetterSetterFunction.cpp in Sources */,
 				0F98206016BFE38100240D02 /* PreciseJumpTargets.cpp in Sources */,
 				0FF729AD166AD35C000F5BA3 /* ProfilerBytecode.cpp in Sources */,
 				0FF729AE166AD35C000F5BA3 /* ProfilerBytecodes.cpp in Sources */,
