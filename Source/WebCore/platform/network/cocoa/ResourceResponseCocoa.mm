@@ -159,6 +159,12 @@ static NSString *copyNSURLResponseStatusLine(NSURLResponse *response)
     return (NSString *)CFHTTPMessageCopyResponseStatusLine(cfHTTPMessage);
 }
 
+static void addToHTTPHeaderMap(const void* key, const void* value, void* context)
+{
+    HTTPHeaderMap* httpHeaderMap = (HTTPHeaderMap*)context;
+    httpHeaderMap->set((CFStringRef)key, (CFStringRef)value);
+}
+
 void ResourceResponse::platformLazyInit(InitLevel initLevel)
 {
     if (m_initLevel >= initLevel)
@@ -187,10 +193,14 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             m_httpStatusCode = [httpResponse statusCode];
             
             if (initLevel < AllFields) {
-                NSDictionary *headers = [httpResponse allHeaderFields];
-                for (NSString *name : commonHeaderFields) {
-                    if (NSString* headerValue = [headers objectForKey:name])
-                        m_httpHeaderFields.set(name, headerValue);
+                CFHTTPMessageRef messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
+
+                // Avoid calling [NSURLResponse allHeaderFields] to minimize copying (<rdar://problem/26778863>).
+                RetainPtr<CFDictionaryRef> headers = adoptCF(CFHTTPMessageCopyAllHeaderFields(messageRef));
+                for (auto& commonHeader : commonHeaderFields) {
+                    CFStringRef value;
+                    if (CFDictionaryGetValueIfPresent(headers.get(), commonHeader, (const void **)&value))
+                        m_httpHeaderFields.set(commonHeader, value);
                 }
             }
         } else
@@ -212,9 +222,9 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             CFHTTPMessageRef messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
             m_httpVersion = String(adoptCF(CFHTTPMessageCopyVersion(messageRef)).get()).convertToASCIIUppercase();
 
-            NSDictionary *headers = [httpResponse allHeaderFields];
-            for (NSString *name in headers)
-                m_httpHeaderFields.set(name, [headers objectForKey:name]);
+            // Avoid calling [NSURLResponse allHeaderFields] to minimize copying (<rdar://problem/26778863>).
+            RetainPtr<CFDictionaryRef> headers = adoptCF(CFHTTPMessageCopyAllHeaderFields(messageRef));
+            CFDictionaryApplyFunction(headers.get(), addToHTTPHeaderMap, &m_httpHeaderFields);
             
             [pool drain];
         }
