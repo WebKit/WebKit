@@ -154,12 +154,6 @@ bool MacApplication::isSolidStateNetworksDownloader()
     return isSolidStateNetworksDownloader;
 }
 
-bool MacApplication::isHipChat()
-{
-    static bool isHipChat = applicationBundleIsEqualTo("com.hipchat.HipChat");
-    return isHipChat;
-}
-
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS)
