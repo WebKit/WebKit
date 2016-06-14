@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
+#import <wtf/RetainPtr.h>
 
 #if USE(QTKIT)
 #import "QTKitSPI.h"
@@ -130,9 +131,9 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 #if USE(QTKIT)
         if (_videoElement->platformMedia().type == PlatformMedia::QTMovieType) {
             QTMovie *movie = _videoElement->platformMedia().media.qtMovie;
-            QTMovieLayer *layer = [allocQTMovieLayerInstance() init];
-            [layer setMovie:movie];
-            [self setupVideoOverlay:layer];
+            RetainPtr<QTMovieLayer> layer = adoptNS([allocQTMovieLayerInstance() init]);
+            [layer.get() setMovie:movie];
+            [self setupVideoOverlay:layer.get()];
 
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(rateChanged:)
@@ -143,9 +144,9 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 #endif
         if (_videoElement->platformMedia().type == PlatformMedia::AVFoundationMediaPlayerType) {
             AVPlayer *player = _videoElement->platformMedia().media.avfMediaPlayer;
-            AVPlayerLayer *layer = [allocAVPlayerLayerInstance() init];
-            [self setupVideoOverlay:layer];
-            [layer setPlayer:player];
+            RetainPtr<AVPlayerLayer> layer = adoptNS([allocAVPlayerLayerInstance() init]);
+            [self setupVideoOverlay:layer.get()];
+            [layer.get() setPlayer:player];
 
             [player addObserver:self forKeyPath:@"rate" options:0 context:nullptr];
         }
