@@ -47,11 +47,24 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     ${WTF_DIR}/icu
 )
 
+# Common ${TestNetscapePlugin_SOURCES} from CMakeLists.txt are C++ source files.
+list(APPEND TestNetscapePlugin_Cpp_SOURCES
+    ${TestNetscapePlugin_SOURCES}
+)
+
 list(APPEND TestNetscapePlugin_ObjCpp_SOURCES
     TestNetscapePlugIn/PluginObjectMac.mm
 )
 
-set(TestNetscapePlugin_SOURCES ${TestNetscapePlugin_ObjCpp_SOURCES})
+set(TestNetscapePlugin_SOURCES
+    ${TestNetscapePlugin_Cpp_SOURCES}
+    ${TestNetscapePlugin_ObjCpp_SOURCES}
+)
+
+# Common ${DumpRenderTree_SOURCES} from CMakeLists.txt are C++ source files.
+list(APPEND DumpRenderTree_Cpp_SOURCES
+    ${DumpRenderTree_SOURCES}
+)
 
 list(APPEND DumpRenderTree_ObjC_SOURCES
     DefaultPolicyDelegate.m
@@ -100,13 +113,17 @@ list(APPEND DumpRenderTree_ObjCpp_SOURCES
     mac/WorkQueueItemMac.mm
 )
 
-set(DumpRenderTree_SOURCES ${DumpRenderTree_ObjC_SOURCES} ${DumpRenderTree_ObjCpp_SOURCES} ${DumpRenderTree_Cpp_Sources})
+set(DumpRenderTree_SOURCES
+    ${DumpRenderTree_Cpp_Sources}
+    ${DumpRenderTree_ObjC_SOURCES}
+    ${DumpRenderTree_ObjCpp_SOURCES}
+)
 
 foreach (_file ${DumpRenderTree_ObjC_SOURCES})
     set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-std=c99")
 endforeach ()
 
-foreach (_file ${DumpRenderTree_Cpp_SOURCES})
+foreach (_file ${DumpRenderTree_Cpp_SOURCES} ${TestNetscapePlugin_Cpp_SOURCES})
     set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-std=c++14")
 endforeach ()
 

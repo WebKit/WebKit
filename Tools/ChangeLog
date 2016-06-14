@@ -1,5 +1,33 @@
 2016-06-14  David Kilzer  <ddkilzer@apple.com>
 
+        Follow-up fix: REGRESSION (r202020): El Capitan CMake Debug build broken
+        <https://webkit.org/b/158743>
+
+        Unreviewed build fix.
+
+        The fix in r202056 clobbered DumpRenderTree_SOURCES and
+        TestNetscapePlugin_SOURCES from DumpRenderTree/CMakeLists.txt,
+        so the build failure is now that we're not building the common
+        sources.
+
+        Fix that by saving the common sources (which are all C++ source
+        files) into *_Cpp_SOURCES lists first, then setting the compiler
+        flags, then creating the final *_SOURCES lists.
+
+        * DumpRenderTree/PlatformMac.cmake: Add
+        ${TestNetscapePlugin_Cpp_SOURCES} to list that needs
+        "-std=c++14" compiler switch.
+        (TestNetscapePlugin_Cpp_SOURCES): Add new list for C++ source
+        files for TestNetscapePlugin.  Seeded with
+        ${TestNetscapePlugin_SOURCES} from CMakeLists.txt.
+        (TestNetscapePlugin_SOURCES): Add
+        ${TestNetscapePlugin_Cpp_SOURCES} to the list of files.
+        (DumpRenderTree_Cpp_SOURCES): Seed list for C++ source files
+        with ${DumpRenderTree_SOURCES} from CMakeLists.txt.
+        (DumpRenderTree_SOURCES): Reformat and sort source lists.
+
+2016-06-14  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r202020): El Capitan CMake Debug build broken
         <https://webkit.org/b/158743>
 
