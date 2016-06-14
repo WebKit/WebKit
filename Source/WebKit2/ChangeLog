@@ -1,3 +1,14 @@
+2016-06-13  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] Web Content service with a restricted entitlement may load arbitrary dylibs
+        https://bugs.webkit.org/show_bug.cgi?id=156668
+        <rdar://problem/26714558>
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebContentService.xcconfig: Enable library validation when the Web Content
+          service is given the XPC domain extension entitlement when targeting macOS Sierra or later.
+
 2016-06-13  Alex Christensen  <achristensen@webkit.org>
 
         Add WebSocketProvider stub
