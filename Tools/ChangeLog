@@ -1,3 +1,28 @@
+2016-06-14  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r202020): El Capitan CMake Debug build broken
+        <https://webkit.org/b/158743>
+
+        Reviewed by Alex Christensen.
+
+        The bug was that pure C++ source files (and Objective-C source
+        files) were being compiled as Objective-C++ source files.  This
+        is obviously incorrect, so the fix was to split out the list of
+        source files by language, then define compiler switches based on
+        each file type.
+
+        * DumpRenderTree/PlatformMac.cmake: Replace add_definitions()
+        with separate foreach loops that set compiler flags based on
+        each source file's type.
+        (TestNetscapePlugin_ObjCpp_SOURCES): Rename from
+        TestNetscapePlugin_SOURCES.
+        (TestNetscapePlugin_SOURCES): Create based on
+        ${TestNetscapePlugin_ObjCpp_SOURCES}.
+        (DumpRenderTree_ObjC_SOURCES): Split from DumpRenderTree_SOURCES.
+        (DumpRenderTree_Cpp_SOURCES): Ditto.
+        (DumpRenderTree_ObjCpp_SOURCES): Ditto.
+        (DumpRenderTree_SOURCES): Create from above three lists.
+
 2016-06-14  Lucas Forschler  <lforschler@apple.com>
 
         <rdar://problem/26685782>
