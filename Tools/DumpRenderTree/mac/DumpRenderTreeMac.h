@@ -67,7 +67,10 @@ extern DefaultPolicyDelegate *defaultPolicyDelegate;
 void setWaitToDumpWatchdog(CFRunLoopTimerRef);
 bool shouldSetWaitToDumpWatchdog();
 
-WebView* createWebViewAndOffscreenWindow();
+#ifdef __OBJC__
+WebView *createWebViewAndOffscreenWindow() NS_RETURNS_RETAINED;
+#endif
+
 void setPersistentUserStyleSheetLocation(CFStringRef);
 
 unsigned worldIDForWorld(WebScriptWorld *);

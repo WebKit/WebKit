@@ -1,3 +1,20 @@
+2016-06-13  David Kilzer  <ddkilzer@apple.com>
+
+        False-positive over-release of WebView in destroyWebViewAndOffscreenWindow() in DumpRenderTree.mm
+        <https://webkit.org/b/158716>
+
+        Reviewed by Andy Estes.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (destroyWebViewAndOffscreenWindow): Change this function to take
+        a WebView, and assert that it's the same as [mainFrame webView].
+        (dumpRenderTree): Pass 'webView' into
+        destroyWebViewAndOffscreenWindow().
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        (createWebViewAndOffscreenWindow): Add NS_RETURNS_RETAINED since
+        this function returns a +1 WebView.  Declare this method only for
+        Objective-C[++] source.
+
 2016-06-13  Sam Weinig  <sam@webkit.org>
 
         Make HashMap and HashSet work with Refs

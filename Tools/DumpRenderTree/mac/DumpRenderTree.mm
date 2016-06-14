@@ -855,9 +855,9 @@ WebView *createWebViewAndOffscreenWindow()
     return webView;
 }
 
-static void destroyWebViewAndOffscreenWindow()
+static void destroyWebViewAndOffscreenWindow(WebView *webView)
 {
-    WebView *webView = [mainFrame webView];
+    ASSERT(webView == [mainFrame webView]);
 #if !PLATFORM(IOS)
     NSWindow *window = [webView window];
 #endif
@@ -1313,7 +1313,7 @@ void dumpRenderTree(int argc, const char *argv[])
     if (threaded)
         stopJavaScriptThreads();
 
-    destroyWebViewAndOffscreenWindow();
+    destroyWebViewAndOffscreenWindow(webView);
     
     releaseGlobalControllers();
     
