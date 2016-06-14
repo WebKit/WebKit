@@ -67,12 +67,12 @@ testRunner.addUserScript("(" + triggerExceptions + ")('user script')", false, tr
 setTimeout(function() {
     header("Main World");
     triggerExceptions("main world");
-}, 50);
+}, 100);
 
 setTimeout(function() {
     header("Isolated World");
     testRunner.evaluateScriptInIsolatedWorld(0, "(" + triggerExceptions + ")('isolated script')");
-}, 100);
+}, 200);
 </script>
 </body>
 </html>
