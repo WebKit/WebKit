@@ -1,3 +1,30 @@
+2016-06-13  Saam Barati  <sbarati@apple.com>
+
+        The sampling profiler should further protect itself against certain forms of sampling bias that arise due to the sampling interval being in sync with some other system process
+        https://bugs.webkit.org/show_bug.cgi?id=158678
+
+        Reviewed by Benjamin Poulain.
+
+        I first became aware of this problem when I read this paper:
+        http://plv.colorado.edu/papers/mytkowicz-pldi10.pdf
+
+        To provide background for this change, I'll quote a paragraph
+        from section 6.2:
+        "One statically sound method for collecting random samples is to collect a
+        sample at every t + r milliseconds, where t is the desired sampling interval
+        and r is a random number between −t and t. One might think that sampling every
+        t seconds is enough (i.e., drop the r component) but it is not: specifically,
+        if a profiler samples every t seconds, the sampling rate would be synchronized
+        with any program or system activity that occurs at regular time intervals [17].
+        For example, if the thread scheduler switches between threads every 10ms and our
+        sampling interval was also 10ms, then we may always take samples immediately after
+        a thread switch. Because performance is often different immediately after a thread
+        switch than at other points (e.g., due to cache and TLB warm-up effects) we would
+        get biased data. The random component, r, guards against such situations."
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::timerLoop):
+
 2016-06-13  Oliver Hunt  <oliver@apple.com>
 
         DFG Validation fails when performing a concatenation with only a single entry

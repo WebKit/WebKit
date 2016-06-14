@@ -48,6 +48,7 @@
 #include "VM.h"
 #include "VMEntryScope.h"
 #include <wtf/HashSet.h>
+#include <wtf/RandomNumber.h>
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -233,7 +234,13 @@ void SamplingProfiler::timerLoop()
             m_lastTime = m_stopwatch->elapsedTime();
         }
 
-        std::this_thread::sleep_for(m_timingInterval - std::min(m_timingInterval, stackTraceProcessingTime));
+        // Read section 6.2 of this paper for more elaboration of why we add a random
+        // fluctuation here. The main idea is to prevent our timer from being in sync
+        // with some system process such as a scheduled context switch.
+        // http://plv.colorado.edu/papers/mytkowicz-pldi10.pdf
+        double randomSignedNumber = (randomNumber() * 2.0) - 1.0; // A random number between [-1, 1).
+        std::chrono::microseconds randomFluctuation = std::chrono::microseconds(static_cast<uint64_t>(randomSignedNumber * static_cast<double>(m_timingInterval.count()) * 0.20l));
+        std::this_thread::sleep_for(m_timingInterval - std::min(m_timingInterval, stackTraceProcessingTime) + randomFluctuation);
     }
 }
 
