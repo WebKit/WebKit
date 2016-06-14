@@ -1,5 +1,22 @@
 2016-06-14  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
+        WebRTC: Imlement MediaEndpointPeerConnection::addIceCandidate()
+        https://bugs.webkit.org/show_bug.cgi?id=158690
+
+        Reviewed by Eric Carlson.
+
+        Add test for RTCPeerConnection.addIceCandidate() that verifies:
+        - Candidate line parsing
+        - That a underlying media description can be identified using either sdpMid or sdpMLineIndex
+        - That sdpMid takes precedence over sdpMLineIndex
+
+        * fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-addIceCandidate.html: Added.
+        * platform/mac/TestExpectations:
+        The mac port is not building with WEB_RTC yet.
+
+2016-06-14  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
         WebRTC: Add media setup test where media is set up in one direction at a time
         https://bugs.webkit.org/show_bug.cgi?id=158691
 

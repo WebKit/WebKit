@@ -173,10 +173,10 @@ MediaEndpoint::UpdateResult MockMediaEndpoint::updateSendConfiguration(MediaEndp
     return UpdateResult::Success;
 }
 
-void MockMediaEndpoint::addRemoteCandidate(IceCandidate& candidate, unsigned mdescIndex, const String& ufrag, const String& password)
+void MockMediaEndpoint::addRemoteCandidate(IceCandidate& candidate, const String& mid, const String& ufrag, const String& password)
 {
     UNUSED_PARAM(candidate);
-    UNUSED_PARAM(mdescIndex);
+    UNUSED_PARAM(mid);
     UNUSED_PARAM(ufrag);
     UNUSED_PARAM(password);
 }

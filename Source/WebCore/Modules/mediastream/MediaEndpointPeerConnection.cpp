@@ -38,6 +38,7 @@
 #include "MediaStream.h"
 #include "MediaStreamTrack.h"
 #include "PeerMediaDescription.h"
+#include "RTCIceCandidate.h"
 #include "RTCOfferAnswerOptions.h"
 #include "RTCRtpTransceiver.h"
 #include "RTCTrackEvent.h"
@@ -599,11 +600,67 @@ void MediaEndpointPeerConnection::setConfiguration(RTCConfiguration& configurati
 
 void MediaEndpointPeerConnection::addIceCandidate(RTCIceCandidate& rtcCandidate, PeerConnection::VoidPromise&& promise)
 {
-    UNUSED_PARAM(rtcCandidate);
+    runTask([this, protectedCandidate = RefPtr<RTCIceCandidate>(&rtcCandidate), protectedPromise = WTFMove(promise)]() mutable {
+        addIceCandidateTask(*protectedCandidate, protectedPromise);
+    });
+}
 
-    notImplemented();
+void MediaEndpointPeerConnection::addIceCandidateTask(RTCIceCandidate& rtcCandidate, PeerConnection::VoidPromise& promise)
+{
+    if (m_client->internalSignalingState() == SignalingState::Closed)
+        return;
 
-    promise.reject(NOT_SUPPORTED_ERR);
+    if (!internalRemoteDescription()) {
+        promise.reject(INVALID_STATE_ERR, "No remote description set");
+        return;
+    }
+
+    const MediaDescriptionVector& remoteMediaDescriptions = internalRemoteDescription()->configuration()->mediaDescriptions();
+    PeerMediaDescription* targetMediaDescription = nullptr;
+
+    // When identifying the target media description, sdpMid takes precedence over sdpMLineIndex
+    // if both are present.
+    if (!rtcCandidate.sdpMid().isNull()) {
+        const String& mid = rtcCandidate.sdpMid();
+        for (auto& description : remoteMediaDescriptions) {
+            if (description->mid() == mid) {
+                targetMediaDescription = description.get();
+                break;
+            }
+        }
+
+        if (!targetMediaDescription) {
+            promise.reject(OperationError, "sdpMid did not match any media description");
+            return;
+        }
+    } else if (rtcCandidate.sdpMLineIndex()) {
+        unsigned short sdpMLineIndex = rtcCandidate.sdpMLineIndex().value();
+        if (sdpMLineIndex >= remoteMediaDescriptions.size()) {
+            promise.reject(OperationError, "sdpMLineIndex is out of range");
+            return;
+        }
+        targetMediaDescription = remoteMediaDescriptions[sdpMLineIndex].get();
+    } else {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr<IceCandidate> candidate;
+    SDPProcessor::Result result = m_sdpProcessor->parseCandidateLine(rtcCandidate.candidate(), candidate);
+    if (result != SDPProcessor::Result::Success) {
+        if (result == SDPProcessor::Result::ParseError)
+            promise.reject(OperationError, "Invalid candidate content");
+        else
+            LOG_ERROR("SDPProcessor internal error");
+        return;
+    }
+
+    targetMediaDescription->addIceCandidate(candidate.copyRef());
+
+    m_mediaEndpoint->addRemoteCandidate(*candidate, targetMediaDescription->mid(), targetMediaDescription->iceUfrag(),
+        targetMediaDescription->icePassword());
+
+    promise.resolve(nullptr);
 }
 
 void MediaEndpointPeerConnection::getStats(MediaStreamTrack*, PeerConnection::StatsPromise&& promise)

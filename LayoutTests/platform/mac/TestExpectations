@@ -175,6 +175,7 @@ fast/mediastream/RTCPeerConnection-have-local-pranswer.html
 fast/mediastream/RTCPeerConnection-have-remote-offer.html
 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html
 fast/mediastream/RTCPeerConnection-ice.html
+fast/mediastream/RTCPeerConnection-addIceCandidate.html
 fast/mediastream/RTCPeerConnection-localDescription.html
 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html
 fast/mediastream/RTCPeerConnection-remoteDescription.html

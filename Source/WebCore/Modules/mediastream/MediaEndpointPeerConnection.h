@@ -92,6 +92,8 @@ private:
     void setLocalDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
     void setRemoteDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
 
+    void addIceCandidateTask(RTCIceCandidate&, PeerConnection::VoidPromise&);
+
     void replaceTrackTask(RTCRtpSender&, const String& mid, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&);
 
     bool localDescriptionTypeValidForState(RTCSessionDescription::SdpType) const;
