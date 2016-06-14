@@ -145,7 +145,8 @@ if ($wksi) {
     } else {
         push(@librariesToCopy, (
             "libWebKitSystemInterfaceYosemite.a",
-            "libWebKitSystemInterfaceElCapitan.a"
+            "libWebKitSystemInterfaceElCapitan.a",
+            "libWebKitSystemInterfaceOSX10.12.a"
         ));
     }
 
