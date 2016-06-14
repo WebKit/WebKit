@@ -46,7 +46,7 @@ class NetworkLoad : public WebCore::ResourceHandleClient
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NetworkLoad(NetworkLoadClient&, const NetworkLoadParameters&);
+    NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&);
     ~NetworkLoad();
 
     void setDefersLoading(bool);

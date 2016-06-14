@@ -208,7 +208,7 @@ void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
     NetworkLoadParameters parameters = m_parameters;
     parameters.defersLoading = m_defersLoading;
     parameters.request = request;
-    m_networkLoad = std::make_unique<NetworkLoad>(*this, parameters);
+    m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters));
 }
 
 void NetworkResourceLoader::setDefersLoading(bool defers)

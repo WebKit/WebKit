@@ -1,3 +1,25 @@
+2016-06-14  Chris Dumez  <cdumez@apple.com>
+
+        Reduce copying of NetworkLoadParameters
+        https://bugs.webkit.org/show_bug.cgi?id=158744
+
+        Reviewed by Alex Christensen.
+
+        Reduce copying of NetworkLoadParameters by moving it around instead.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::PendingDownload):
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+
 2016-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ThreadedCompositor] Opening the inspector in a window causes a crash.

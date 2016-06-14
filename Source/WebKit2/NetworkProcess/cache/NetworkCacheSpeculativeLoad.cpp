@@ -55,7 +55,7 @@ SpeculativeLoad::SpeculativeLoad(const GlobalFrameID& frameID, const ResourceReq
     parameters.allowStoredCredentials = AllowStoredCredentials;
     parameters.contentSniffingPolicy = DoNotSniffContent;
     parameters.request = m_originalRequest;
-    m_networkLoad = std::make_unique<NetworkLoad>(*this, parameters);
+    m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters));
 }
 
 SpeculativeLoad::~SpeculativeLoad()

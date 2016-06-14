@@ -38,8 +38,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PendingDownload::PendingDownload(const NetworkLoadParameters& parameters, DownloadID downloadID)
-    : m_networkLoad(std::make_unique<NetworkLoad>(*this, parameters))
+PendingDownload::PendingDownload(NetworkLoadParameters&& parameters, DownloadID downloadID)
+    : m_networkLoad(std::make_unique<NetworkLoad>(*this, WTFMove(parameters)))
 {
     m_networkLoad->setPendingDownloadID(downloadID);
     m_networkLoad->setPendingDownload(*this);

@@ -44,7 +44,7 @@ class NetworkLoadParameters;
 class PendingDownload : public NetworkLoadClient, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PendingDownload(const NetworkLoadParameters&, DownloadID);
+    PendingDownload(NetworkLoadParameters&&, DownloadID);
 
     void continueWillSendRequest(WebCore::ResourceRequest&&);
     void continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate);
