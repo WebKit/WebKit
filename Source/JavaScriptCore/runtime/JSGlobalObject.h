@@ -55,6 +55,7 @@ class JSGlobalObjectInspectorController;
 
 namespace JSC {
 
+class ArrayConstructor;
 class ArrayPrototype;
 class BooleanPrototype;
 class ConsoleClient;
@@ -226,6 +227,7 @@ public:
     WriteBarrier<NativeErrorConstructor> m_typeErrorConstructor;
     LazyProperty<JSGlobalObject, NativeErrorConstructor> m_URIErrorConstructor;
     WriteBarrier<ObjectConstructor> m_objectConstructor;
+    WriteBarrier<ArrayConstructor> m_arrayConstructor;
     WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
     WriteBarrier<JSInternalPromiseConstructor> m_internalPromiseConstructor;
 
@@ -458,9 +460,12 @@ public:
     // The following accessors return pristine values, even if a script 
     // replaces the global object's associated property.
 
+    GetterSetter* speciesGetterSetter() const { return m_speciesGetterSetter.get(); }
+
     RegExpConstructor* regExpConstructor() const { return m_regExpConstructor.get(); }
 
     ErrorConstructor* errorConstructor() const { return m_errorConstructor.get(); }
+    ArrayConstructor* arrayConstructor() const { return m_arrayConstructor.get(); }
     ObjectConstructor* objectConstructor() const { return m_objectConstructor.get(); }
     JSPromiseConstructor* promiseConstructor() const { return m_promiseConstructor.get(); }
     JSInternalPromiseConstructor* internalPromiseConstructor() const { return m_internalPromiseConstructor.get(); }

@@ -1,5 +1,47 @@
 2016-06-14  Keith Miller  <keith_miller@apple.com>
 
+        The Array species constructor watchpoints should be created the first time they are needed rather than on creation
+        https://bugs.webkit.org/show_bug.cgi?id=158754
+
+        Reviewed by Benjamin Poulain.
+
+        We use adaptive watchpoints for some Array prototype functions to
+        ensure that the user has not overridden the value of the
+        Array.prototype.constructor or Array[Symbol.species]. This patch
+        changes when the Array species constructor watchpoints are
+        initialized. Before, those watchpoints would be created when the
+        global object is initialized. This had the advantage that it did
+        not require validating the constructor and Symbol.species
+        properties. On the other hand, it also meant that if the user were
+        to reconfigure properties Array.prototype, which would cause the
+        structure of the property to become an uncachable dictionary,
+        prior to running code that the watchpoints would be
+        invalidated. It turns out that JSBench amazon, for instance, does
+        reconfigure some of Array.prototype's properties. This patch
+        initializes the watchpoints the first time they are needed. Since
+        we only initialize once we also flatten the structure of Array and
+        Array.prototype.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::speciesConstructArray):
+        (JSC::ArrayPrototype::attemptToInitializeSpeciesWatchpoint):
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire):
+        (JSC::ArrayPrototype::setConstructor): Deleted.
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::speciesWatchpointStatus):
+        (JSC::ArrayPrototype::didChangeConstructorOrSpeciesProperties): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::speciesGetterSetter):
+        (JSC::JSGlobalObject::arrayConstructor):
+        * tests/stress/array-symbol-species-lazy-watchpoints.js: Added.
+        (test):
+        (arrayEq):
+        (A):
+
+2016-06-14  Keith Miller  <keith_miller@apple.com>
+
         REGRESSION(202002-202014): 845 32-bit JSC Stress Test failures
         https://bugs.webkit.org/show_bug.cgi?id=158737
 

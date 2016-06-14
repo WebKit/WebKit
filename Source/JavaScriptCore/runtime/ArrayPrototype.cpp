@@ -32,6 +32,7 @@
 #include "CodeBlock.h"
 #include "CopiedSpaceInlines.h"
 #include "Error.h"
+#include "GetterSetter.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JSArrayIterator.h"
@@ -183,11 +184,16 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
     // ECMA 9.4.2.3: https://tc39.github.io/ecma262/#sec-arrayspeciescreate
     JSValue constructor = jsUndefined();
     if (LIKELY(isArray(exec, thisObject))) {
+        ArrayPrototype* arrayPrototype = thisObject->globalObject()->arrayPrototype();
+        ArrayPrototype::SpeciesWatchpointStatus status = arrayPrototype->speciesWatchpointStatus();
+        if (UNLIKELY(status == ArrayPrototype::SpeciesWatchpointStatus::Uninitialized))
+            status = arrayPrototype->attemptToInitializeSpeciesWatchpoint(exec);
+        ASSERT(status != ArrayPrototype::SpeciesWatchpointStatus::Uninitialized);
         // Fast path in the normal case where the user has not set an own constructor and the Array.prototype.constructor is normal.
         // We need prototype check for subclasses of Array, which are Array objects but have a different prototype by default.
         if (LIKELY(!thisObject->hasCustomProperties()
-            && thisObject->globalObject()->arrayPrototype() == thisObject->getPrototypeDirect()
-            && !thisObject->globalObject()->arrayPrototype()->didChangeConstructorOrSpeciesProperties()))
+            && arrayPrototype == thisObject->getPrototypeDirect()
+            && status == ArrayPrototype::SpeciesWatchpointStatus::Initialized))
             return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
 
         constructor = thisObject->get(exec, exec->propertyNames().constructor);
@@ -1079,6 +1085,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
 
 // -------------------- ArrayPrototype.constructor Watchpoint ------------------
 
+static bool verbose = false;
+
 class ArrayPrototypeAdaptiveInferredPropertyWatchpoint : public AdaptiveInferredPropertyValueWatchpointBase {
 public:
     typedef AdaptiveInferredPropertyValueWatchpointBase Base;
@@ -1090,32 +1098,61 @@ private:
     ArrayPrototype* m_arrayPrototype;
 };
 
-void ArrayPrototype::setConstructor(VM& vm, JSObject* constructorProperty, unsigned attributes)
+ArrayPrototype::SpeciesWatchpointStatus ArrayPrototype::attemptToInitializeSpeciesWatchpoint(ExecState* exec)
 {
-    putDirectWithoutTransition(vm, vm.propertyNames->constructor, constructorProperty, attributes);
+    ASSERT(m_speciesWatchpointStatus == SpeciesWatchpointStatus::Uninitialized);
 
-    // Do the watchpoint on our constructor property
-    PropertyOffset offset = this->structure()->get(vm, vm.propertyNames->constructor);
-    ASSERT(isValidOffset(offset));
-    this->structure()->startWatchingPropertyForReplacements(vm, offset);
+    VM& vm = exec->vm();
 
-    ObjectPropertyCondition condition = ObjectPropertyCondition::equivalence(vm, this, this, vm.propertyNames->constructor.impl(), constructorProperty);
-    ASSERT(condition.isWatchable());
+    if (verbose)
+        dataLog("Attempting to initialize Array species watchpoints for Array.prototype: ", pointerDump(this), " with structure: ", pointerDump(this->structure()), "\nand Array: ", pointerDump(this->globalObject()->arrayConstructor()), " with structure: ", pointerDump(this->globalObject()->arrayConstructor()->structure()), "\n");
+    // First we need to make sure that the Array.prototype.constructor property points to Array
+    // and that Array[Symbol.species] is the primordial GetterSetter.
 
-    m_constructorWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(condition, this);
+    // We only initialize once so flattening the structures does not have any real cost.
+    Structure* prototypeStructure = this->structure(vm);
+    if (prototypeStructure->isDictionary())
+        prototypeStructure = prototypeStructure->flattenDictionaryStructure(vm, this);
+    RELEASE_ASSERT(!prototypeStructure->isDictionary());
+
+    JSGlobalObject* globalObject = this->globalObject();
+    ArrayConstructor* arrayConstructor = globalObject->arrayConstructor();
+
+    PropertySlot constructorSlot(this, PropertySlot::InternalMethodType::VMInquiry);
+    JSValue(this).get(exec, vm.propertyNames->constructor, constructorSlot);
+    if (constructorSlot.slotBase() != this
+        || !constructorSlot.isCacheableValue()
+        || constructorSlot.getValue(exec, vm.propertyNames->constructor) != arrayConstructor)
+        return m_speciesWatchpointStatus = SpeciesWatchpointStatus::Fired;
+
+    Structure* constructorStructure = arrayConstructor->structure(vm);
+    if (constructorStructure->isDictionary())
+        constructorStructure = constructorStructure->flattenDictionaryStructure(vm, arrayConstructor);
+
+    PropertySlot speciesSlot(arrayConstructor, PropertySlot::InternalMethodType::VMInquiry);
+    JSValue(arrayConstructor).get(exec, vm.propertyNames->speciesSymbol, speciesSlot);
+    if (speciesSlot.slotBase() != arrayConstructor
+        || !speciesSlot.isCacheableGetter()
+        || speciesSlot.getterSetter() != globalObject->speciesGetterSetter())
+        return m_speciesWatchpointStatus = SpeciesWatchpointStatus::Fired;
+
+    // Now we need to setup the watchpoints to make sure these conditions remain valid.
+    prototypeStructure->startWatchingPropertyForReplacements(vm, constructorSlot.cachedOffset());
+    constructorStructure->startWatchingPropertyForReplacements(vm, speciesSlot.cachedOffset());
+
+    ObjectPropertyCondition constructorCondition = ObjectPropertyCondition::equivalence(vm, this, this, vm.propertyNames->constructor.impl(), arrayConstructor);
+    ObjectPropertyCondition speciesCondition = ObjectPropertyCondition::equivalence(vm, this, arrayConstructor, vm.propertyNames->speciesSymbol.impl(), globalObject->speciesGetterSetter());
+
+    if (!constructorCondition.isWatchable() || !speciesCondition.isWatchable())
+        return m_speciesWatchpointStatus = SpeciesWatchpointStatus::Fired;
+
+    m_constructorWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(constructorCondition, this);
     m_constructorWatchpoint->install();
-    
-    // Do the watchpoint on the constructor's Symbol.species property
-    offset = constructorProperty->structure()->get(vm, vm.propertyNames->speciesSymbol);
-    ASSERT(isValidOffset(offset));
-    constructorProperty->structure()->startWatchingPropertyForReplacements(vm, offset);
 
-    ASSERT(constructorProperty->getDirect(offset).isGetterSetter());
-    condition = ObjectPropertyCondition::equivalence(vm, this, constructorProperty, vm.propertyNames->speciesSymbol.impl(), constructorProperty->getDirect(offset));
-    ASSERT(condition.isWatchable());
-
-    m_constructorSpeciesWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(condition, this);
+    m_constructorSpeciesWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(speciesCondition, this);
     m_constructorSpeciesWatchpoint->install();
+
+    return m_speciesWatchpointStatus = SpeciesWatchpointStatus::Initialized;
 }
 
 ArrayPrototypeAdaptiveInferredPropertyWatchpoint::ArrayPrototypeAdaptiveInferredPropertyWatchpoint(const ObjectPropertyCondition& key, ArrayPrototype* prototype)
@@ -1131,7 +1168,10 @@ void ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire(const FireDeta
 
     StringFireDetail stringDetail(out.toCString().data());
 
-    m_arrayPrototype->m_didChangeConstructorOrSpeciesProperties = true;
+    if (verbose)
+        WTF::dataLog(stringDetail, "\n");
+
+    m_arrayPrototype->m_speciesWatchpointStatus = ArrayPrototype::SpeciesWatchpointStatus::Fired;
 }
 
 } // namespace JSC

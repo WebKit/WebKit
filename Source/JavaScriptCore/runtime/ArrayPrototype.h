@@ -35,6 +35,12 @@ private:
 public:
     typedef JSArray Base;
 
+    enum class SpeciesWatchpointStatus {
+        Uninitialized,
+        Initialized,
+        Fired
+    };
+
     static ArrayPrototype* create(VM&, JSGlobalObject*, Structure*);
         
     DECLARE_INFO;
@@ -44,9 +50,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info(), ArrayClass);
     }
 
-    void setConstructor(VM&, JSObject* constructorProperty, unsigned attributes);
-
-    bool didChangeConstructorOrSpeciesProperties() const { return m_didChangeConstructorOrSpeciesProperties; }
+    SpeciesWatchpointStatus speciesWatchpointStatus() const { return m_speciesWatchpointStatus; }
+    SpeciesWatchpointStatus attemptToInitializeSpeciesWatchpoint(ExecState*);
 
     static const bool needsDestruction = false;
     // We don't need destruction since we use a finalizer.
@@ -60,7 +65,7 @@ private:
     friend ArrayPrototypeAdaptiveInferredPropertyWatchpoint;
     std::unique_ptr<ArrayPrototypeAdaptiveInferredPropertyWatchpoint> m_constructorWatchpoint;
     std::unique_ptr<ArrayPrototypeAdaptiveInferredPropertyWatchpoint> m_constructorSpeciesWatchpoint;
-    bool m_didChangeConstructorOrSpeciesProperties = false;
+    SpeciesWatchpointStatus m_speciesWatchpointStatus { SpeciesWatchpointStatus::Uninitialized };
 };
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*);
