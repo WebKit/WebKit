@@ -41,7 +41,9 @@ extern "C" {
     && !((defined(__CC_ARM) || defined(__ARMCC__)) && !defined(__linux__)) /* RVCT */
 /*!
 @typedef JSChar
-@abstract A Unicode character.
+@abstract A UTF-16 code unit. One, or a sequence of two, can encode any Unicode
+ character. As with all scalar types, endianness depends on the underlying
+ architecture.
 */
     typedef unsigned short JSChar;
 #else
