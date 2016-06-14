@@ -1,3 +1,12 @@
+2016-06-14  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up fix #2: REGRESSION (r202020): El Capitan CMake Debug build broken
+        <https://webkit.org/b/158743>
+
+        Unreviewed build fix.
+
+        * DumpRenderTree/PlatformMac.cmake: Fix silly typo.
+
 2016-06-14  Aakash Jain  <aakash_jain@apple.com>
 
         Too much log data generated during layout-tests on iOS Simulator

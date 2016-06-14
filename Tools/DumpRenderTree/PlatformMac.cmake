@@ -114,7 +114,7 @@ list(APPEND DumpRenderTree_ObjCpp_SOURCES
 )
 
 set(DumpRenderTree_SOURCES
-    ${DumpRenderTree_Cpp_Sources}
+    ${DumpRenderTree_Cpp_SOURCES}
     ${DumpRenderTree_ObjC_SOURCES}
     ${DumpRenderTree_ObjCpp_SOURCES}
 )
