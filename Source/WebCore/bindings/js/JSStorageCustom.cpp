@@ -59,8 +59,6 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
     // the native property slots manually.
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
 
-    static_assert(!hasStaticPropertyTable, "This function does not handle static instance properties");
-
     JSValue prototype = thisObject->getPrototypeDirect();
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(exec, propertyName, slot))
         return Base::deleteProperty(thisObject, exec, propertyName);
@@ -76,7 +74,6 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
 
 bool JSStorage::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
-    static_assert(!hasStaticPropertyTable, "This function does not handle static instance properties");
     return deleteProperty(cell, exec, Identifier::from(exec, propertyName));
 }
 
@@ -104,7 +101,6 @@ bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue 
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
     // the native property slots manually.
     PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
-    static_assert(!hasStaticPropertyTable, "This function does not handle static instance properties");
 
     JSValue prototype = this->getPrototypeDirect();
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(exec, propertyName, slot))

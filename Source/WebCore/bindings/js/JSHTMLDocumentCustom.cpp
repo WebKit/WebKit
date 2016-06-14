@@ -89,8 +89,6 @@ bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
         return true;
     }
 
-    static_assert(!hasStaticPropertyTable, "This method does not handle static instance properties");
-
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
