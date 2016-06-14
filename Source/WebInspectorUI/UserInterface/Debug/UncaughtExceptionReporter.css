@@ -110,4 +110,5 @@
     margin-bottom: 20px;
     word-break: break-word;
     -webkit-user-select: text;
+    white-space: pre;
 }

@@ -56,6 +56,7 @@ function handleError(error) {
         url: parseURL(error.sourceURL).lastPathComponent,
         lineNumber: error.line,
         columnNumber: error.column,
+        stack: error.stack,
     });
 }
 
@@ -65,6 +66,7 @@ function handleUncaughtException(event) {
         url: parseURL(event.filename).lastPathComponent,
         lineNumber: event.lineno,
         columnNumber: event.colno,
+        stack: typeof event.error === "object" ? event.error.stack : null,
     });
 }
 
@@ -147,12 +149,31 @@ function createErrorSheet() {
             dismissErrorSheet();
     }
 
+    function formattedEntry(entry) {
+        let message = `${entry.message} (at ${entry.url}:${entry.lineNumber}:${entry.columnNumber})`;
+        if (!entry.stack)
+            return message;
+
+        const indent = "    ";
+        let results = [];
+        let lines = entry.stack.split(/\n/g);
+        for (let line of lines) {
+            let atIndex = line.indexOf("@");
+            let slashIndex = Math.max(line.lastIndexOf("/"), atIndex);
+            let functionName = line.substring(0, atIndex) || "?";
+            let location = line.substring(slashIndex + 1, line.length);
+            results.push(`${indent}${functionName} @ ${location}`);
+        }
+
+        return message + "\n" + results.join("\n");
+    }
+
     let inspectedPageURL = null;
     try {
         inspectedPageURL = WebInspector.frameResourceManager.mainFrame.url;
     } catch (e) { }
 
-    let formattedErrorDetails = window.__uncaughtExceptions.map((entry) => `${entry.message} (at ${entry.url}:${entry.lineNumber}:${entry.columnNumber})`);
+    let formattedErrorDetails = window.__uncaughtExceptions.map((entry) => formattedEntry(entry));
     let detailsForBugReport = formattedErrorDetails.map((line) => ` - ${line}`).join("\n");
     let encodedBugDescription = encodeURIComponent(`-------
 Auto-generated details:

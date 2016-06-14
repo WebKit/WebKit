@@ -1,3 +1,22 @@
+2016-06-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show Exception Stack in UncaughtExceptionReporter view
+        https://bugs.webkit.org/show_bug.cgi?id=158657
+        <rdar://problem/26754441>
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.css:
+        (.uncaught-exception-sheet li):
+        Make newlines significant.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (unblockEventHandlers):
+        (handleError):
+        (handleLinkClick):
+        (formattedEntry):
+        Format the exception and a possible stack with a bit of sanitizing.
+
 2016-06-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Filter Records not applying to new records
