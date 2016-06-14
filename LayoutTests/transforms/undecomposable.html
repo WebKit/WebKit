@@ -1,0 +1,32 @@
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+
+    window.addEventListener("load", function () {
+        document.querySelector(".box").addEventListener("animationend", function () {
+            window.testRunner.notifyDone();
+        }, false);
+    }, false);
+}
+</script>
+<style>
+.box {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    animation-name: funky;
+    animation-duration: 100ms;
+}
+
+@keyframes funky {
+  from {
+      transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0);
+  }
+  to {
+      transform: matrix3d(2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2);
+  }
+}
+</style>
+<div class="box"></div>
+

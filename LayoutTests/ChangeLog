@@ -1,3 +1,14 @@
+2016-06-14  Dean Jackson  <dino@apple.com>
+
+        decompose4 return value is unchecked, leading to potentially uninitialized data.
+        https://bugs.webkit.org/show_bug.cgi?id=158761
+        <rdar://problem/17526268>
+
+        Reviewed by Simon Fraser.
+
+        * transforms/undecomposable-expected.txt: Added.
+        * transforms/undecomposable.html: Added.
+
 2016-06-14  Keith Miller  <keith_miller@apple.com>
 
         The Array species constructor watchpoints should be created the first time they are needed rather than on creation

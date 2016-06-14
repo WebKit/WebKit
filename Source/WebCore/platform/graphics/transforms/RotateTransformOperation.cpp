@@ -78,7 +78,8 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
     
     // Extract the result as a quaternion
     TransformationMatrix::Decomposed4Type decomp;
-    toT.decompose4(decomp);
+    if (!toT.decompose4(decomp))
+        return RotateTransformOperation::create(m_x, m_y, m_z, m_angle - m_angle * progress, m_type);;
     
     // Convert that to Axis/Angle form
     double x = -decomp.quaternionX;
