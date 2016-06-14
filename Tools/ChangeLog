@@ -1,3 +1,16 @@
+2016-06-14  David Kilzer  <ddkilzer@apple.com>
+
+        Modernize DumpRenderTreeMac.h
+        <https://webkit.org/b/158721>
+
+        Reviewed by Andy Estes.
+
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        - Update copyright.
+        - Update license.
+        - Use #pragma once.
+        - Use OBJC_CLASS macro.
+
 2016-06-13  David Kilzer  <ddkilzer@apple.com>
 
         False-positive over-release of WebView in destroyWebViewAndOffscreenWindow() in DumpRenderTree.mm
