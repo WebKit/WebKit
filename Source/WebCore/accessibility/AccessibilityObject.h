@@ -512,6 +512,7 @@ public:
     virtual bool isSliderThumb() const { return false; }
     virtual bool isInputSlider() const { return false; }
     virtual bool isControl() const { return false; }
+    virtual bool isLabel() const { return false; }
     virtual bool isList() const { return false; }
     virtual bool isTable() const { return false; }
     virtual bool isDataTable() const { return false; }

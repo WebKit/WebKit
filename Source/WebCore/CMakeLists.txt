@@ -1050,6 +1050,7 @@ set(WebCore_SOURCES
     accessibility/AccessibilityARIAGridRow.cpp
     accessibility/AccessibilityAttachment.cpp
     accessibility/AccessibilityImageMapLink.cpp
+    accessibility/AccessibilityLabel.cpp
     accessibility/AccessibilityList.cpp
     accessibility/AccessibilityListBox.cpp
     accessibility/AccessibilityListBoxOption.cpp

@@ -1,0 +1,13 @@
+ second choice
+This tests that if a label element's children's textContent changes, the string value updates
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS label.role is 'AXRole: AXStaticText'
+PASS initialStringValue is 'AXValue: first choice'
+PASS mutatedStringValue is 'AXValue: second choice'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

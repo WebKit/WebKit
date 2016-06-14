@@ -33,6 +33,7 @@
 
 #import "AXObjectCache.h"
 #import "AccessibilityARIAGridRow.h"
+#import "AccessibilityLabel.h"
 #import "AccessibilityList.h"
 #import "AccessibilityListBox.h"
 #import "AccessibilityRenderObject.h"
@@ -2232,6 +2233,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleAttribute];
 #pragma clang diagnostic pop
     AccessibilityRole role = m_object->roleValue();
+
+    if (role == LabelRole && is<AccessibilityLabel>(*m_object) && downcast<AccessibilityLabel>(*m_object).containsOnlyStaticText())
+        role = StaticTextRole;
+
     if (role == CanvasRole && m_object->canvasHasFallbackContent())
         role = GroupRole;
     NSString* string = roleValueToNSString(role);

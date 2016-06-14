@@ -1,3 +1,29 @@
+2016-06-14  Doug Russell  <d_russell@apple.com>
+
+        AX: Form label text should be exposed as static text if it contains only static text
+        https://bugs.webkit.org/show_bug.cgi?id=158634
+
+        Reviewed by Chris Fleizach.
+
+        Use AccessibilityLabel to represent HTMLLabelElement to assistive technology.
+        AccessibilityLabel::containsOnlyStaticText() searches label subtree to evaluate 
+        if all children are static text.
+        AccessibilityLabel::stringValue() consults containsOnlyStaticText() and returns
+        textUnderElement() if true.
+        WebAccessibilityObjectWrapperMac consults containsOnlyStaticText() and substitutes
+        StaticTextRole for LabelRole if true.
+        Cache containsOnlyStaticText() in the common case when updating children.
+
+        * accessibility/aria-labelledby-overrides-label-expected.txt:
+        * accessibility/mac/label-element-all-text-string-value-expected.txt: Added.
+        * accessibility/mac/label-element-all-text-string-value.html: Added.
+        * accessibility/mac/label-element-with-hidden-control-expected.txt:
+        * accessibility/mac/label-element-with-hidden-control.html:
+        * accessibility/mac/label-element-with-link-string-value-expected.txt: Added.
+        * accessibility/mac/label-element-with-link-string-value.html: Added.
+        * accessibility/mac/slider-allows-title-ui-element-expected.txt:
+        * accessibility/mac/slider-allows-title-ui-element.html:
+
 2016-06-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Increase timeouts for userscripts/window-onerror-for-isolated-world-3.html to fix flakiness.

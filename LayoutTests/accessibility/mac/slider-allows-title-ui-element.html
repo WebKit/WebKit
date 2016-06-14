@@ -24,7 +24,7 @@
         var title = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0).childAtIndex(0);
 
         shouldBeTrue("slider.titleUIElement().isEqual(title)");
-        shouldBe("title.role", "'AXRole: AXGroup'");
+        shouldBe("title.role", "'AXRole: AXStaticText'");
         shouldBe("title.childAtIndex(0).role", "'AXRole: AXStaticText'");
     }
 

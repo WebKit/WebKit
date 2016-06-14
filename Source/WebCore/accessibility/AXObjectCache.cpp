@@ -37,6 +37,7 @@
 #include "AccessibilityARIAGridRow.h"
 #include "AccessibilityAttachment.h"
 #include "AccessibilityImageMapLink.h"
+#include "AccessibilityLabel.h"
 #include "AccessibilityList.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
@@ -427,6 +428,9 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
         return AccessibilityTree::create(renderer);
     if (nodeHasRole(node, "treeitem"))
         return AccessibilityTreeItem::create(renderer);
+
+    if (node && is<HTMLLabelElement>(node))
+        return AccessibilityLabel::create(renderer);
 
 #if ENABLE(VIDEO)
     // media controls

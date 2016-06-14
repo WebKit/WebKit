@@ -31,6 +31,7 @@
 #include "AccessibilityARIAGridRow.cpp"
 #include "AccessibilityAttachment.cpp"
 #include "AccessibilityImageMapLink.cpp"
+#include "AccessibilityLabel.cpp"
 #include "AccessibilityList.cpp"
 #include "AccessibilityListBox.cpp"
 #include "AccessibilityListBoxOption.cpp"
