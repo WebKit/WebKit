@@ -108,7 +108,6 @@ template<> WebKitVideoSink* refGPtr<WebKitVideoSink>(WebKitVideoSink* ptr);
 template<> void derefGPtr<WebKitVideoSink>(WebKitVideoSink* ptr);
 
 template<> GRefPtr<WebKitWebSrc> adoptGRef(WebKitWebSrc* ptr);
-GRefPtr<WebKitWebSrc> ensureGRef(WebKitWebSrc* ptr);
 template<> WebKitWebSrc* refGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
 template<> void derefGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
 
