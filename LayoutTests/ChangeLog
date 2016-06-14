@@ -1,3 +1,14 @@
+2016-06-13  Dean Jackson  <dino@apple.com>
+
+        SVG elements don't blend correctly into HTML
+        https://bugs.webkit.org/show_bug.cgi?id=158718
+        <rdar://problem/26782004>
+
+        Reviewed by Antoine Quint.
+
+        * svg/css/mix-blend-mode-with-inline-svg-expected.html: Added.
+        * svg/css/mix-blend-mode-with-inline-svg.html: Added.
+
 2016-06-13  Brady Eidson  <beidson@apple.com>
 
         storage/indexeddb/modern/leaks-1.html leaks the database connection handle.
