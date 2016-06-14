@@ -57,7 +57,7 @@ public:
     void addRemoteCandidate(IceCandidate&, unsigned mdescIndex, const String& ufrag, const String& password) override;
 
     Ref<RealtimeMediaSource> createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type) override;
-    void replaceSendSource(RealtimeMediaSource&, unsigned mdescIndex) override;
+    void replaceSendSource(RealtimeMediaSource&, const String& mid) override;
 
     void stop() override;
 

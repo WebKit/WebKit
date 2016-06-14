@@ -1,3 +1,20 @@
+2016-06-13  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Imlement MediaEndpointPeerConnection::replaceTrack()
+        https://bugs.webkit.org/show_bug.cgi?id=158688
+
+        Reviewed by Eric Carlson.
+
+        Update existing test for RTCRtpSender.replaceTrack.
+
+        * fast/mediastream/RTCRtpSender-replaceTrack-expected.txt:
+        * fast/mediastream/RTCRtpSender-replaceTrack.html:
+        Add test cases where a "not yet negotiated track" is directly replaced. Also check that the
+        old track id is used in later offers.
+        * fast/mediastream/resources/promise-utils.js:
+        (promiseShouldResolve):
+        Added utility method to test promise expressions that are expected to resolve.
+
 2016-06-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         window.onerror should pass the ErrorEvent's 'error' property as the 5th argument to the event handler

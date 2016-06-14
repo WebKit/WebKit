@@ -145,7 +145,7 @@ private:
     PeerConnectionStates::IceConnectionState internalIceConnectionState() const override { return m_iceConnectionState; }
 
     // RTCRtpSenderClient
-    void replaceTrack(RTCRtpSender&, MediaStreamTrack&, PeerConnection::VoidPromise&&) override;
+    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) override;
 
     PeerConnectionStates::SignalingState m_signalingState;
     PeerConnectionStates::IceGatheringState m_iceGatheringState;

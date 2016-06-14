@@ -15,6 +15,25 @@ function ensurePromise(expr) {
     return p;
 }
 
+function promiseShouldResolve(expr) {
+    return new Promise(function (done) {
+        var p = ensurePromise(expr);
+        if (!p) {
+            done();
+            return;
+        }
+
+        p.then(function (value) {
+            testPassed("promise " + expr + " fulfilled with " + value);
+            done();
+        })
+        .catch(function (reason) {
+            testFailed("promise " + expr + " rejected unexpectedly.");
+            done();
+        });
+    });
+}
+
 function promiseShouldReject(expr, reasonArg) {
     return new Promise(function (done) {
         var p = ensurePromise(expr);

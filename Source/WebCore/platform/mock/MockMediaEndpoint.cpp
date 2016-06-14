@@ -190,10 +190,10 @@ Ref<RealtimeMediaSource> MockMediaEndpoint::createMutedRemoteSource(const String
     return MockRealtimeVideoSource::createMuted("remote video");
 }
 
-void MockMediaEndpoint::replaceSendSource(RealtimeMediaSource& newSource, unsigned mdescIndex)
+void MockMediaEndpoint::replaceSendSource(RealtimeMediaSource& newSource, const String& mid)
 {
     UNUSED_PARAM(newSource);
-    UNUSED_PARAM(mdescIndex);
+    UNUSED_PARAM(mid);
 }
 
 void MockMediaEndpoint::stop()

@@ -107,7 +107,7 @@ public:
     virtual void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) = 0;
 
     virtual RefPtr<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) = 0;
-    virtual void replaceTrack(RTCRtpSender&, MediaStreamTrack&, PeerConnection::VoidPromise&&) = 0;
+    virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) = 0;
 
     virtual void stop() = 0;
 

@@ -495,9 +495,9 @@ void RTCPeerConnection::fireEvent(Event& event)
     dispatchEvent(event);
 }
 
-void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, MediaStreamTrack& withTrack, PeerConnection::VoidPromise&& promise)
+void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, PeerConnection::VoidPromise&& promise)
 {
-    m_backend->replaceTrack(sender, withTrack, WTFMove(promise));
+    m_backend->replaceTrack(sender, WTFMove(withTrack), WTFMove(promise));
 }
 
 } // namespace WebCore

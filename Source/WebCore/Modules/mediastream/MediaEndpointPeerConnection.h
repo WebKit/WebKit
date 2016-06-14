@@ -74,7 +74,7 @@ public:
     void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) override;
 
     RefPtr<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) override;
-    void replaceTrack(RTCRtpSender&, MediaStreamTrack&, PeerConnection::VoidPromise&&) override;
+    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) override;
 
     void stop() override;
 
@@ -91,6 +91,8 @@ private:
 
     void setLocalDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
     void setRemoteDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
+
+    void replaceTrackTask(RTCRtpSender&, const String& mid, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&);
 
     bool localDescriptionTypeValidForState(RTCSessionDescription::SdpType) const;
     bool remoteDescriptionTypeValidForState(RTCSessionDescription::SdpType) const;

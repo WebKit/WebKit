@@ -2,6 +2,7 @@
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
+        <script src="resources/promise-utils.js"></script>
     </head>
     <body>
         <script>
@@ -10,6 +11,7 @@
             var audioTrack2;
             var videoTrack;
             var sender;
+            var offer;
 
             description("Test basic behavior of RTCRtpSender.replaceTrack()");
 
@@ -38,34 +40,49 @@
                 shouldBe("sender.track", "audioTrack");
 
                 promiseShouldReject("sender.replaceTrack()")
-                .catch(function () {
+                .then(function () {
                     return promiseShouldReject("sender.replaceTrack(null)");
                 })
-                .catch(function () {
+                .then(function () {
                     return promiseShouldReject("sender.replaceTrack({})");
                 })
-                .catch(function () {
+                .then(function () {
                     debug("Test mismatching track kind");
                     return promiseShouldReject("sender.replaceTrack(videoTrack)");
                 })
-                .catch(function () {
-                    debug("This is a valid call but will be rejected until the PeerConnectionBackend implementation has proper support");
-                    return promiseShouldReject("sender.replaceTrack(audioTrack2)");
+                .then(function () {
+                    return promiseShouldResolve("sender.replaceTrack(audioTrack2)");
                 })
-                .catch(function () {
+                .then(function () {
+                    testPassed("Track successfully replaced");
+                    shouldBe("sender.track", "audioTrack2");
+
+                    debug("Sender should still use old track (audioTrack) id in negotiation.");
+                    return pc.createOffer();
+                })
+                .then(function (o) {
+                    offer = o;
+                    testPassed("offer created");
+                    shouldNotBe("offer.sdp.indexOf(audioTrack.id)", "-1");
+                    shouldBe("offer.sdp.indexOf(audioTrack2.id)", "-1");
+
                     debug("Stop sender, and try replacing the track");
                     pc.removeTrack(sender);
                     return promiseShouldReject("sender.replaceTrack(audioTrack2)");
                 })
-                .catch(function () {
+                .then(function () {
                     debug("Create a new sender");
                     shouldNotThrow("sender = pc.addTrack(audioTrack2, stream)");
                     debug("Close pc and try replacing the track");
                     pc.close();
                     return promiseShouldReject("sender.replaceTrack(audioTrack3)");
                 })
-                .catch(function () {
+                .then(function () {
                     debug("End of promise chain");
+                    finishJSTest();
+                })
+                .catch(function (error) {
+                    testFailed("Error in promise chain: " + error);
                     finishJSTest();
                 });
             })
@@ -73,31 +90,6 @@
                 testFailed("getUserMedia error: " + error);
                 finishJSTest();
             });
-
-            function promiseShouldReject(expr) {
-                var p;
-                try {
-                    p = eval(expr);
-                } catch (e) {
-                    testFailed("evaluating " + expr + " threw exception " + e);
-                    return Promise.reject();
-                }
-
-                if (!(p instanceof Promise)) {
-                    testFailed(expr + " does not evaluate to a promise.");
-                    return Promise.reject();
-                }
-
-                p.then(function () {
-                    testFailed("promise " + expr + " fulfilled unexpectedly.");
-                });
-
-                p.catch(function (reason) {
-                    testPassed("promise " + expr + " rejected with " + reason);
-                });
-
-                return p;
-            }
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

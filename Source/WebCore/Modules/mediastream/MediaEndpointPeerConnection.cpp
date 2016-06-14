@@ -625,15 +625,35 @@ RefPtr<RTCRtpReceiver> MediaEndpointPeerConnection::createReceiver(const String&
     return RTCRtpReceiver::create(WTFMove(remoteTrack));
 }
 
-void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, MediaStreamTrack& withTrack, PeerConnection::VoidPromise&& promise)
+void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, PeerConnection::VoidPromise&& promise)
 {
-    UNUSED_PARAM(sender);
-    UNUSED_PARAM(withTrack);
-    UNUSED_PARAM(promise);
+    RTCRtpTransceiver* transceiver = matchTransceiver(m_client->getTransceivers(), [&sender] (RTCRtpTransceiver& current) {
+        return current.sender() == &sender;
+    });
+    ASSERT(transceiver);
 
-    notImplemented();
+    const String& mid = transceiver->mid();
+    if (mid.isNull()) {
+        // Transceiver is not associated with a media description yet.
+        sender.setTrack(WTFMove(withTrack));
+        promise.resolve(nullptr);
+        return;
+    }
 
-    promise.reject(NOT_SUPPORTED_ERR);
+    runTask([this, protectedSender = RefPtr<RTCRtpSender>(&sender), mid, protectedTrack = WTFMove(withTrack), protectedPromise = WTFMove(promise)]() mutable {
+        replaceTrackTask(*protectedSender, mid, WTFMove(protectedTrack), protectedPromise);
+    });
+}
+
+void MediaEndpointPeerConnection::replaceTrackTask(RTCRtpSender& sender, const String& mid, RefPtr<MediaStreamTrack>&& withTrack, PeerConnection::VoidPromise& promise)
+{
+    if (m_client->internalSignalingState() == SignalingState::Closed)
+        return;
+
+    m_mediaEndpoint->replaceSendSource(withTrack->source(), mid);
+
+    sender.setTrack(WTFMove(withTrack));
+    promise.resolve(nullptr);
 }
 
 void MediaEndpointPeerConnection::stop()

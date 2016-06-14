@@ -12,8 +12,13 @@ PASS promise sender.replaceTrack(null) rejected with TypeError: Argument 1 ('wit
 PASS promise sender.replaceTrack({}) rejected with TypeError: Argument 1 ('withTrack') to RTCRtpSender.replaceTrack must be an instance of MediaStreamTrack
 Test mismatching track kind
 PASS promise sender.replaceTrack(videoTrack) rejected with TypeError: Type error
-This is a valid call but will be rejected until the PeerConnectionBackend implementation has proper support
-PASS promise sender.replaceTrack(audioTrack2) rejected with Error: NotSupportedError: DOM Exception 9
+PASS promise sender.replaceTrack(audioTrack2) fulfilled with undefined
+PASS Track successfully replaced
+PASS sender.track is audioTrack2
+Sender should still use old track (audioTrack) id in negotiation.
+PASS offer created
+PASS offer.sdp.indexOf(audioTrack.id) is not -1
+PASS offer.sdp.indexOf(audioTrack2.id) is -1
 Stop sender, and try replacing the track
 PASS promise sender.replaceTrack(audioTrack2) rejected with Error: InvalidStateError: DOM Exception 11
 Create a new sender

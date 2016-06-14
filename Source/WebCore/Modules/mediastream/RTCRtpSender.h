@@ -41,7 +41,7 @@ namespace WebCore {
 
 class RTCRtpSenderClient {
 public:
-    virtual void replaceTrack(RTCRtpSender&, MediaStreamTrack&, PeerConnection::VoidPromise&&) = 0;
+    virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) = 0;
 
     virtual ~RTCRtpSenderClient() { }
 };
