@@ -322,6 +322,7 @@ class Driver(object):
 
     def _setup_environ_for_driver(self, environment):
         build_root_path = str(self._port._build_path())
+        # FIXME: DYLD_* variables should be Mac-only. Even iOS Simulator doesn't need them, as LayoutTestRelay is a host binary.
         self._append_environment_variable_path(environment, 'DYLD_LIBRARY_PATH', build_root_path)
         self._append_environment_variable_path(environment, '__XPC_DYLD_LIBRARY_PATH', build_root_path)
         self._append_environment_variable_path(environment, 'DYLD_FRAMEWORK_PATH', build_root_path)
