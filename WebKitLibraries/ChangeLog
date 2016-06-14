@@ -1,3 +1,16 @@
+2016-06-14  Lucas Forschler  <lforschler@apple.com>
+
+        Update existing WebKitSystemInterface Libraries.
+        Add macOS Sierra WebKitSystemInterface.
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * libWebKitSystemInterfaceElCapitan.a:
+        * libWebKitSystemInterfaceIOSDevice9.2.a:
+        * libWebKitSystemInterfaceIOSSimulator9.2.a:
+        * libWebKitSystemInterfaceOSX10.12.a: Added.
+        * libWebKitSystemInterfaceYosemite.a:
+
 2016-06-09  Alex Christensen  <achristensen@webkit.org>
 
         Clean up Visual Studio properties files after switching to CMake.
