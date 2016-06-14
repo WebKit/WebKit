@@ -40,13 +40,13 @@ CompositingRunLoop::CompositingRunLoop(std::function<void ()>&& updateFunction)
 {
 }
 
-void CompositingRunLoop::performTask(std::function<void ()>&& function)
+void CompositingRunLoop::performTask(NoncopyableFunction<void ()>&& function)
 {
     ASSERT(isMainThread());
     m_runLoop.dispatch(WTFMove(function));
 }
 
-void CompositingRunLoop::performTaskSync(std::function<void ()>&& function)
+void CompositingRunLoop::performTaskSync(NoncopyableFunction<void ()>&& function)
 {
     ASSERT(isMainThread());
     LockHolder locker(m_dispatchSyncConditionMutex);
@@ -58,7 +58,7 @@ void CompositingRunLoop::performTaskSync(std::function<void ()>&& function)
     m_dispatchSyncCondition.wait(m_dispatchSyncConditionMutex);
 }
 
-void CompositingRunLoop::setUpdateTimer(UpdateTiming timing)
+void CompositingRunLoop::startUpdateTimer(UpdateTiming timing)
 {
     if (m_updateTimer.isActive())
         return;
@@ -71,16 +71,21 @@ void CompositingRunLoop::setUpdateTimer(UpdateTiming timing)
     m_updateTimer.startOneShot(nextUpdateTime);
 }
 
-void CompositingRunLoop::stopUpdateTimer()
-{
-    if (m_updateTimer.isActive())
-        m_updateTimer.stop();
-}
-
 void CompositingRunLoop::updateTimerFired()
 {
     m_updateFunction();
     m_lastUpdateTime = monotonicallyIncreasingTime();
+}
+
+void CompositingRunLoop::run()
+{
+    m_runLoop.run();
+}
+
+void CompositingRunLoop::stop()
+{
+    m_updateTimer.stop();
+    m_runLoop.stop();
 }
 
 } // namespace WebKit

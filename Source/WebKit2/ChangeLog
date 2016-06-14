@@ -1,5 +1,42 @@
 2016-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Threaded Compositor] Modernize and simplify threaded compositor code
+        https://bugs.webkit.org/show_bug.cgi?id=158615
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::performTask): Use NoncopyableFunction.
+        (WebKit::CompositingRunLoop::performTaskSync): Ditto.
+        (WebKit::CompositingRunLoop::startUpdateTimer): Just renamed to start instead of set.
+        (WebKit::CompositingRunLoop::run): Expose run/stop methods instead of the internal RunLoop object.
+        (WebKit::CompositingRunLoop::stop): Also stop the update timer instead of relying on the caller to do it.
+        (WebKit::CompositingRunLoop::setUpdateTimer): Deleted.
+        (WebKit::CompositingRunLoop::stopUpdateTimer): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing): Protects this directly in lambda capture.
+        (WebKit::ThreadedCompositor::setDeviceScaleFactor): Ditto.
+        (WebKit::ThreadedCompositor::didChangeViewportSize): Ditto.
+        (WebKit::ThreadedCompositor::didChangeViewportAttribute): Ditto.
+        (WebKit::ThreadedCompositor::didChangeContentsSize): Ditto.
+        (WebKit::ThreadedCompositor::scrollTo): Ditto.
+        (WebKit::ThreadedCompositor::scrollBy): Ditto.
+        (WebKit::ThreadedCompositor::updateViewport): Use startUpdateTimer().
+        (WebKit::ThreadedCompositor::scheduleDisplayImmediately): Ditto.
+        (WebKit::ThreadedCompositor::didChangeVisibleRect): Improve lambda captures.
+        (WebKit::ThreadedCompositor::renderLayerTree): Use m_viewportController directly.
+        (WebKit::ThreadedCompositor::createCompositingThread): Use createThread() version that receives a function.
+        (WebKit::ThreadedCompositor::runCompositingThread): Use run method and don't stop the update timer when the run
+        loop finishes.
+        (WebKit::ThreadedCompositor::terminateCompositingThread): Use stop method.
+        (WebKit::ThreadedCompositor::ThreadedCompositor): Deleted.
+        (WebKit::ThreadedCompositor::compositingThreadEntry): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        (WebKit::ThreadedCompositor::viewportController): Deleted.
+
+2016-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [Threaded Compositor] Flickering and rendering artifacts when resizing the web view
         https://bugs.webkit.org/show_bug.cgi?id=154070
 

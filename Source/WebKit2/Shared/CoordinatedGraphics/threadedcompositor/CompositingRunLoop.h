@@ -46,13 +46,13 @@ public:
 
     CompositingRunLoop(std::function<void ()>&&);
 
-    void performTask(std::function<void ()>&&);
-    void performTaskSync(std::function<void ()>&&);
+    void performTask(NoncopyableFunction<void ()>&&);
+    void performTaskSync(NoncopyableFunction<void ()>&&);
 
-    void setUpdateTimer(UpdateTiming timing = Immediate);
-    void stopUpdateTimer();
+    void startUpdateTimer(UpdateTiming = Immediate);
 
-    RunLoop& runLoop() { return m_runLoop; }
+    void run();
+    void stop();
 
 private:
     void updateTimerFired();
