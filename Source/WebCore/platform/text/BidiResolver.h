@@ -632,7 +632,7 @@ void BidiResolverBase<Iterator, Run, Subclass>::createBidiRunsForLine(const Iter
 
         // We ignore all character directionality while in unicode-bidi: isolate spans.
         // We'll handle ordering the isolated characters in a second pass.
-        if (inIsolate())
+        if (inIsolate() || dirCurrent == U_FIRST_STRONG_ISOLATE || dirCurrent == U_LEFT_TO_RIGHT_ISOLATE || dirCurrent == U_RIGHT_TO_LEFT_ISOLATE || dirCurrent == U_POP_DIRECTIONAL_ISOLATE)
             dirCurrent = U_OTHER_NEUTRAL;
 
         ASSERT(m_status.eor != U_OTHER_NEUTRAL || m_eor.atEnd());
