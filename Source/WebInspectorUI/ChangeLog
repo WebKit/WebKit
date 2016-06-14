@@ -1,3 +1,39 @@
+2016-06-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Introduce --navigation-bar-height CSS variable
+        https://bugs.webkit.org/show_bug.cgi?id=158752
+
+        Reviewed by Timothy Hatcher.
+
+        Abstract a commonly repeated height value (29px) into a variable.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content.has-filter-bar):
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger > :matches(.content, .empty-content-placeholder)):
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar):
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar):
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation > .content):
+        (.sidebar > .panel.navigation > .overflow-shadow.top):
+        * UserInterface/Views/NetworkSidebarPanel.css:
+        (.sidebar > .panel.navigation.network > .title-bar):
+        * UserInterface/Views/ResourceSidebarPanel.css:
+        (.sidebar > .panel.navigation.resource > :matches(.content, .empty-content-placeholder)):
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search > :matches(.content, .empty-content-placeholder)):
+        (.sidebar > .panel.navigation.search > .search-bar):
+        * UserInterface/Views/Sidebar.css:
+        (.sidebar.has-navigation-bar > .panel):
+        * UserInterface/Views/StorageSidebarPanel.css:
+        (.sidebar > .panel.navigation.storage > :matches(.content, .empty-content-placeholder)):
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-browser .recording-progress):
+        * UserInterface/Views/Variables.css:
+        (:root):
+
 2016-06-14  Saam Barati  <sbarati@apple.com>
 
         Follow up to: Web Inspector: Call Trees view should have a 'Top Functions'-like mode

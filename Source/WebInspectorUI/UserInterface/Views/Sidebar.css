@@ -57,7 +57,7 @@
 }
 
 .sidebar.has-navigation-bar > .panel {
-    top: 29px;
+    top: var(--navigation-bar-height);
 }
 
 .sidebar > .panel.selected {

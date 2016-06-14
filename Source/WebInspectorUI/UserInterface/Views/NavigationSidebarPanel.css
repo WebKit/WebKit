@@ -24,7 +24,7 @@
  */
 
 .sidebar > .panel.navigation > .content {
-    bottom: 29px;
+    bottom: var(--navigation-bar-height);
 }
 
 .sidebar > .panel.navigation > .filter-bar {
@@ -49,7 +49,7 @@
 }
 
 .sidebar > .panel.navigation > .overflow-shadow.top {
-    top: 28px;
+    top: calc(var(--navigation-bar-height) - 1px);
     bottom: initial;
 }
 

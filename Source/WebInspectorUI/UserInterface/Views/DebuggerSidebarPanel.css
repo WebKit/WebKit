@@ -24,7 +24,7 @@
  */
 
 .sidebar > .panel.navigation.debugger > :matches(.content, .empty-content-placeholder) {
-    top: 29px;
+    top: var(--navigation-bar-height);
 }
 
 .sidebar > .panel.navigation.debugger > .navigation-bar {

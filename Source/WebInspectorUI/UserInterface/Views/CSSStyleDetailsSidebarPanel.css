@@ -35,7 +35,7 @@
 }
 
 .sidebar > .panel.details.css-style > .content.has-filter-bar {
-    bottom: 28px;
+    bottom: calc(var(--navigation-bar-height) - 1px);
 }
 
 .sidebar > .panel.details.css-style > .content > .pseudo-classes {

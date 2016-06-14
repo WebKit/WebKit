@@ -75,6 +75,7 @@
 
     --toolbar-height: 36px;
     --tab-bar-height: 24px;
+    --navigation-bar-height: 29px;
 }
 
 body.window-inactive {

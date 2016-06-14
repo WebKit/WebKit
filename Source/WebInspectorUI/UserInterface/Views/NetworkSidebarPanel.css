@@ -36,7 +36,7 @@
 
 .sidebar > .panel.navigation.network > .title-bar {
     position: absolute;
-    top: 29px;
+    top: var(--navigation-bar-height);
     left: 0;
     right: 0;
 

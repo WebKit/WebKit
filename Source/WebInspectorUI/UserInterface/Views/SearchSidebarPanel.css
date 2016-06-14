@@ -24,7 +24,7 @@
  */
 
 .sidebar > .panel.navigation.search > :matches(.content, .empty-content-placeholder) {
-    top: 28px;
+    top: calc(var(--navigation-bar-height) - 1px);
 }
 
 .sidebar > .panel.navigation.search > .search-bar {
@@ -35,7 +35,7 @@
 
     display: flex;
 
-    height: 28px;
+    height: calc(var(--navigation-bar-height) - 1px);
 
     white-space: nowrap;
     overflow: hidden;

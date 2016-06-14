@@ -24,7 +24,7 @@
  */
 
 .sidebar > .panel.navigation.resource > :matches(.content, .empty-content-placeholder) {
-    top: 29px;
+    top: var(--navigation-bar-height);
 }
 
 .sidebar > .panel.navigation.resource > .navigation-bar {
