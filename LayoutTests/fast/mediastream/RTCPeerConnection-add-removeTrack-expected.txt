@@ -32,7 +32,7 @@ PASS transceiver.sender is sender
 PASS transceiver.receiver is receiver
 PASS transceiver.stopped is false
 Try to add same track again
-PASS sender = pc.addTrack(track, stream) threw exception Error: InvalidModificationError: DOM Exception 13.
+PASS sender = pc.addTrack(track, stream) threw exception Error: InvalidAccessError: DOM Exception 15.
 PASS sender2 = pc.addTrack(track2, stream, stream2) did not throw exception.
 PASS pc.getSenders().length is 2
 PASS pc.getSenders()[0] is sender

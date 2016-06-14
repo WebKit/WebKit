@@ -115,8 +115,7 @@ RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, 
 
     for (auto& sender : m_transceiverSet->getSenders()) {
         if (sender->trackId() == track->id()) {
-            // FIXME: Spec says InvalidParameter
-            ec = INVALID_MODIFICATION_ERR;
+            ec = INVALID_ACCESS_ERR;
             return nullptr;
         }
     }

@@ -1,3 +1,14 @@
+2016-06-14  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        WebRTC: RTCPeerConnection::addTrack() should throw InvalidAccessError instead of InvalidModificationError.
+        https://bugs.webkit.org/show_bug.cgi?id=158735
+
+        Reviewed by Eric Carlson.
+
+        Check that an InvalidAccessError exception is thrown when the track already exists in set of senders.
+
+        * fast/mediastream/RTCPeerConnection-add-removeTrack-expected.txt:
+
 2016-06-14  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Imlement MediaEndpointPeerConnection::addIceCandidate()
