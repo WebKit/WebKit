@@ -12,6 +12,10 @@ Issuing a simple request to the object store
 Observing GC on the transaction and request. 
 PASS txObserver.wasCollected is true
 PASS reqObserver.wasCollected is true
+PASS versionChangeObserver.wasCollected is true
+PASS dbObserver.wasCollected is true
+PASS openRequestObserver.wasCollected is true
+PASS objectStoreObserver.wasCollected is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

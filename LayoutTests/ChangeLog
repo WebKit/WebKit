@@ -1,3 +1,13 @@
+2016-06-13  Brady Eidson  <beidson@apple.com>
+
+        storage/indexeddb/modern/leaks-1.html leaks the database connection handle.
+        https://bugs.webkit.org/show_bug.cgi?id=158643
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/leak-1-expected.txt:
+        * storage/indexeddb/modern/resources/leak-1.js:
+
 2016-06-13  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add test that verifies that RTCPeerConnection.addTrack can reuse an existing RTCRtpSender

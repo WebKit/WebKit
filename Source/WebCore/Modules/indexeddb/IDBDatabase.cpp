@@ -68,7 +68,14 @@ IDBDatabase::~IDBDatabase()
 bool IDBDatabase::hasPendingActivity() const
 {
     ASSERT(currentThread() == originThreadID());
-    return !m_closedInServer;
+
+    if (m_closedInServer)
+        return false;
+
+    if (!m_activeTransactions.isEmpty() || !m_committingTransactions.isEmpty() || !m_abortingTransactions.isEmpty())
+        return true;
+
+    return hasEventListeners(eventNames().abortEvent) || hasEventListeners(eventNames().errorEvent) || hasEventListeners(eventNames().versionchangeEvent);
 }
 
 const String IDBDatabase::name() const

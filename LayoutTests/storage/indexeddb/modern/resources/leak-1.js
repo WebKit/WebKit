@@ -19,13 +19,22 @@ function asyncNext()
 }
 
 var db;
+var versionChangeObserver;
+var dbObserver;
+var openRequestObserver;
+var objectStoreObserver;
 
 function prepareDatabase(event)
 {
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
+    versionChangeObserver = internals.observeGC(event.target.transaction);
+    dbObserver = internals.observeGC(event.target.result);
+    openRequestObserver = internals.observeGC(event.target);
+
     db = event.target.result;
-    db.createObjectStore("foo");
+    objectStoreObserver = internals.observeGC(db.createObjectStore("foo"));
+
     event.target.onsuccess = function() {
         testGenerator = testSteps();
         testGenerator.next();
@@ -51,6 +60,7 @@ function* testSteps()
     
     tx = null;
     req = null;
+    db = null;
     
     // Make sure we are no longer handling any IDB events.
     asyncNext();
@@ -60,6 +70,10 @@ function* testSteps()
     
     shouldBeTrue("txObserver.wasCollected");
     shouldBeTrue("reqObserver.wasCollected");
+    shouldBeTrue("versionChangeObserver.wasCollected");
+    shouldBeTrue("dbObserver.wasCollected");
+    shouldBeTrue("openRequestObserver.wasCollected");
+    shouldBeTrue("objectStoreObserver.wasCollected");
 
     finishJSTest();
  }
