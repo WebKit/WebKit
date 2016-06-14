@@ -46,14 +46,11 @@ namespace WebCore {
     template <class Type, class Base> bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot, Type* element)
     {
         if (!element->globalObject()->world().isNormal()) {
-            if (Type::hasStaticPropertyTable && Type::getOwnPropertySlot(element, exec, propertyName, slot))
-                return true;
-
             JSC::JSValue proto = element->getPrototypeDirect();
             if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(exec, propertyName))
                 return false;
         }
-        
+
         return pluginElementCustomGetOwnPropertySlot(exec, propertyName, slot, element);
     }
 
