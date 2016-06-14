@@ -1,5 +1,27 @@
 2016-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Threaded Compositor] Flickering and rendering artifacts when resizing the web view
+        https://bugs.webkit.org/show_bug.cgi?id=154070
+
+        Reviewed by Žan Doberšek.
+
+        Resizing the web view is expected to be a sync operation, the UI process creates a new backing store state ID,
+        sends UpdateBackingStoreState message with the flag RespondImmediately to the web process and waits up to 500ms
+        for the reply (DidUpdateBackingStoreState message). When using the threaded compositor, we schedule a task in
+        the compositing thread to update the viewport size, and return immediately, so that we reply to the UI process
+        before the compositing thread has actually updated its size. There's a moment in which sizes are out of sync
+        causing the flickering and rendering artifacts, the UI process continues rendering at the new size, while the
+        web process is still rendering at the previous size. We can prevent this from happening just by making the
+        resize task synchronous in the threaded compositor.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::performTaskSync): Add sync version of performTask().
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::didChangeViewportSize): Use performTaskSync().
+
+2016-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix Soup downloads after r201943.
 
         This is a follow up of r201943. The DownloadClient used in DownloadSoup was not updated to the new API of the

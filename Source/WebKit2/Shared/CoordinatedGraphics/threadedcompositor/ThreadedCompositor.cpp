@@ -82,7 +82,7 @@ void ThreadedCompositor::setDeviceScaleFactor(float scale)
 void ThreadedCompositor::didChangeViewportSize(const IntSize& size)
 {
     RefPtr<ThreadedCompositor> protector(this);
-    m_compositingRunLoop->performTask([protector, size] {
+    m_compositingRunLoop->performTaskSync([protector, size] {
         protector->viewportController()->didChangeViewportSize(size);
     });
 }

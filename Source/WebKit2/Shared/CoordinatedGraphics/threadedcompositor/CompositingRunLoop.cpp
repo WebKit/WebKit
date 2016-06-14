@@ -37,7 +37,6 @@ CompositingRunLoop::CompositingRunLoop(std::function<void ()>&& updateFunction)
     : m_runLoop(RunLoop::current())
     , m_updateTimer(m_runLoop, this, &CompositingRunLoop::updateTimerFired)
     , m_updateFunction(WTFMove(updateFunction))
-    , m_lastUpdateTime(0)
 {
 }
 
@@ -45,6 +44,18 @@ void CompositingRunLoop::performTask(std::function<void ()>&& function)
 {
     ASSERT(isMainThread());
     m_runLoop.dispatch(WTFMove(function));
+}
+
+void CompositingRunLoop::performTaskSync(std::function<void ()>&& function)
+{
+    ASSERT(isMainThread());
+    LockHolder locker(m_dispatchSyncConditionMutex);
+    m_runLoop.dispatch([this, function = WTFMove(function)] {
+        LockHolder locker(m_dispatchSyncConditionMutex);
+        function();
+        m_dispatchSyncCondition.notifyOne();
+    });
+    m_dispatchSyncCondition.wait(m_dispatchSyncConditionMutex);
 }
 
 void CompositingRunLoop::setUpdateTimer(UpdateTiming timing)

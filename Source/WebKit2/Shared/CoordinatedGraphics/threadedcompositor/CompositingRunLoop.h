@@ -47,6 +47,7 @@ public:
     CompositingRunLoop(std::function<void ()>&&);
 
     void performTask(std::function<void ()>&&);
+    void performTaskSync(std::function<void ()>&&);
 
     void setUpdateTimer(UpdateTiming timing = Immediate);
     void stopUpdateTimer();
@@ -59,8 +60,10 @@ private:
     RunLoop& m_runLoop;
     RunLoop::Timer<CompositingRunLoop> m_updateTimer;
     std::function<void ()> m_updateFunction;
+    Lock m_dispatchSyncConditionMutex;
+    Condition m_dispatchSyncCondition;
 
-    double m_lastUpdateTime;
+    double m_lastUpdateTime { 0 };
 };
 
 } // namespace WebKit
