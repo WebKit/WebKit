@@ -1,3 +1,16 @@
+2016-06-14  Keith Miller  <keith_miller@apple.com>
+
+        REGRESSION(202002-202014): 845 32-bit JSC Stress Test failures
+        https://bugs.webkit.org/show_bug.cgi?id=158737
+
+        Reviewed by Filip Pizlo.
+
+        When the this child and arguments child for the varargs nodes was switched I missed one
+        case in the 32-bit build.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+
 2016-06-13  Gavin & Ellie Barraclough  <barraclough@apple.com>
 
         setUpStaticFunctionSlot does not handle Builtin|Accessor properties
