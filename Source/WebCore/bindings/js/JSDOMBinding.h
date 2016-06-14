@@ -304,7 +304,6 @@ void printErrorMessageForFrame(Frame*, const String& message);
 String propertyNameToString(JSC::PropertyName);
 AtomicString propertyNameToAtomicString(JSC::PropertyName);
 
-template<typename DOMClass> const JSC::HashTableValue* getStaticValueSlotEntryWithoutCaching(JSC::ExecState*, JSC::PropertyName);
 template<JSC::NativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 
 // Inline functions and template definitions.
@@ -772,20 +771,6 @@ inline String propertyNameToString(JSC::PropertyName propertyName)
 inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)
 {
     return AtomicString(propertyName.uid() ? propertyName.uid() : propertyName.publicName());
-}
-
-template<typename DOMClass> inline const JSC::HashTableValue* getStaticValueSlotEntryWithoutCaching(JSC::ExecState* exec, JSC::PropertyName propertyName)
-{
-    if (DOMClass::hasStaticPropertyTable) {
-        if (auto* entry = DOMClass::info()->staticPropHashTable->entry(propertyName))
-            return entry;
-    }
-    return getStaticValueSlotEntryWithoutCaching<typename DOMClass::Base>(exec, propertyName);
-}
-
-template<> inline const JSC::HashTableValue* getStaticValueSlotEntryWithoutCaching<JSDOMObject>(JSC::ExecState*, JSC::PropertyName)
-{
-    return nullptr;
 }
 
 template<JSC::NativeFunction nativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState* exec, JSC::EncodedJSValue, JSC::PropertyName propertyName)
