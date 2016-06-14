@@ -381,7 +381,7 @@
         "url": "http://dev.w3.org/csswg/selectors-4/#placeholder",
         "specification": "CSS Selectors Level 4",
         "description": "The selector :placeholder-shown matches any input element that has a visible placeholder.",
-        "comment": "Styling the placeholder can be done through the WebKit pseudo-element \"::-webkit-input-placeholder\".",
+        "comment": "Styling the placeholder can be done through the WebKit pseudo-element \"::placeholder\".",
         "contact": {
             "name": "Benjamin Poulain",
             "twitter": "@awfulben",

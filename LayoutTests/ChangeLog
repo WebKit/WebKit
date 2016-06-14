@@ -1,3 +1,35 @@
+2016-06-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add the unprefixed version of the pseudo element ::placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=158653
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-selector-text.html:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/css-set-selector-text.html:
+        This covers CSSOM for the prefixed version.
+
+        * fast/forms/placeholder-pseudo-element-with-webkit-prefix-expected.html: Added.
+        * fast/forms/placeholder-pseudo-element-with-webkit-prefix.html: Added.
+        This verifies both version of the pseudo elements are equivalent.
+
+        * fast/css/pseudo-cache-stale-expected.html:
+        * fast/css/pseudo-cache-stale.html:
+        * fast/forms/input-placeholder-paint-order-2-expected.html:
+        * fast/forms/input-placeholder-paint-order-2.html:
+        * fast/forms/input-placeholder-paint-order.html:
+        * fast/forms/input-placeholder-text-indent.html:
+        * fast/forms/input-user-modify.html:
+        * fast/forms/isindex-placeholder.html:
+        * fast/forms/placeholder-position.html:
+        * fast/forms/placeholder-pseudo-style.html:
+        * fast/forms/textarea-placeholder-pseudo-style.html:
+        * fast/forms/textarea/textarea-placeholder-paint-order-2-expected.html:
+        * fast/forms/textarea/textarea-placeholder-paint-order-2.html:
+        * fast/forms/textarea/textarea-placeholder-paint-order.html:
+
 2016-06-14  Doug Russell  <d_russell@apple.com>
 
         AX: Form label text should be exposed as static text if it contains only static text

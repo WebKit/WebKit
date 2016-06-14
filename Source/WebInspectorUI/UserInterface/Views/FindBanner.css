@@ -209,7 +209,7 @@ body .find-banner.console-find-banner {
     height: 22px;    
 }
 
-.find-banner.console-find-banner > input[type="search"]::-webkit-input-placeholder {
+.find-banner.console-find-banner > input[type="search"]::placeholder {
     color: hsla(0, 0%, 0%, 0.35);
 }
 

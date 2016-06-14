@@ -61,7 +61,7 @@
     outline: none;
 }
 
-.open-resource-dialog > .field > input::-webkit-input-placeholder {
+.open-resource-dialog > .field > input::placeholder {
     color: hsl(0, 0%, 52%);
 }
 

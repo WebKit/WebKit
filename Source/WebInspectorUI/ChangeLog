@@ -1,3 +1,27 @@
+2016-06-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add the unprefixed version of the pseudo element ::placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=158653
+
+        Reviewed by Dean Jackson.
+
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > input[type="search"]::placeholder):
+        (.filter-bar > input[type="search"]::-webkit-input-placeholder): Deleted.
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner.console-find-banner > input[type="search"]::placeholder):
+        (.find-banner.console-find-banner > input[type="search"]::-webkit-input-placeholder): Deleted.
+        * UserInterface/Views/GoToLineDialog.css:
+        (.go-to-line-dialog > div > input::placeholder):
+        (.go-to-line-dialog > div > input::-webkit-input-placeholder): Deleted.
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog > .field > input::placeholder):
+        (.open-resource-dialog > .field > input::-webkit-input-placeholder): Deleted.
+        * UserInterface/Views/SearchBar.css:
+        (.search-bar > input[type="search"]::placeholder):
+        (.search-bar > input[type="search"]::-webkit-input-placeholder): Deleted.
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css:
+
 2016-06-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Introduce --navigation-bar-height CSS variable

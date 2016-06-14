@@ -145,7 +145,7 @@ Optional<ElementStyle> TextControlInnerTextElement::resolveCustomStyle(const Ren
 TextControlPlaceholderElement::TextControlPlaceholderElement(Document& document)
     : HTMLDivElement(divTag, document)
 {
-    setPseudo(AtomicString("-webkit-input-placeholder", AtomicString::ConstructFromLiteral));
+    setPseudo(AtomicString("placeholder", AtomicString::ConstructFromLiteral));
     setHasCustomStyleResolveCallbacks();
 }
 

@@ -39,7 +39,7 @@
     height: 22px;
 }
 
-.search-bar > input[type="search"]::-webkit-input-placeholder {
+.search-bar > input[type="search"]::placeholder {
     color: hsla(0, 0%, 0%, 0.35);
 }
 

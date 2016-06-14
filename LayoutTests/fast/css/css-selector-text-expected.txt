@@ -207,6 +207,15 @@ PASS parseThenSerializeRule('a.b::-webkit-slider-thumb { }') is 'a.b::-webkit-sl
 PASS parseThenSerializeRule('a#b::-webkit-slider-thumb { }') is 'a#b::-webkit-slider-thumb { }'
 PASS parseThenSerializeRule('a[b].c#d::-webkit-slider-thumb { }') is 'a[b].c#d::-webkit-slider-thumb { }'
 
+PASS parseThenSerializeRule('a[b]::placeholder { }') is 'a[b]::placeholder { }'
+PASS parseThenSerializeRule('a.b::placeholder { }') is 'a.b::placeholder { }'
+PASS parseThenSerializeRule('a#b::placeholder { }') is 'a#b::placeholder { }'
+PASS parseThenSerializeRule('a[b].c#d::placeholder { }') is 'a[b].c#d::placeholder { }'
+PASS parseThenSerializeRule('a[b]::-webkit-input-placeholder { }') is 'a[b]::-webkit-input-placeholder { }'
+PASS parseThenSerializeRule('a.b::-webkit-input-placeholder { }') is 'a.b::-webkit-input-placeholder { }'
+PASS parseThenSerializeRule('a#b::-webkit-input-placeholder { }') is 'a#b::-webkit-input-placeholder { }'
+PASS parseThenSerializeRule('a[b].c#d::-webkit-input-placeholder { }') is 'a[b].c#d::-webkit-input-placeholder { }'
+
 PASS parseThenSerializeRule('input:not([type="file"]):focus { }') is 'input:not([type="file"]):focus { }'
 PASS parseThenSerializeRule(':-webkit-any([type="file"]) { }') is ':-webkit-any([type="file"]) { }'
 PASS parseThenSerializeRule(':-webkit-any(:hover) { }') is ':-webkit-any(:hover) { }'

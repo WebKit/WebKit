@@ -206,6 +206,11 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementSelector(CSSParserString
     auto selector = std::make_unique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::PseudoElement);
     selector->m_selector->setPseudoElementType(pseudoType);
+    if (pseudoType == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed) {
+        ASSERT_WITH_MESSAGE(name == "-webkit-input-placeholder", "-webkit-input-placeholder is the only LegacyPrefix pseudo type.");
+        if (name == "-webkit-input-placeholder")
+            name = AtomicString("placeholder", AtomicString::ConstructFromLiteral);
+    }
     selector->m_selector->setValue(name);
     return selector.release();
 }

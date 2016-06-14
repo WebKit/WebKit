@@ -305,6 +305,7 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
     case PseudoElementUnknown:
     case PseudoElementUserAgentCustom:
     case PseudoElementWebKitCustom:
+    case PseudoElementWebKitCustomLegacyPrefixed:
         return NOPSEUDO;
     }
 
@@ -660,6 +661,10 @@ String CSSSelector::selectorText(const String& rightSide) const
                 str.append(')');
                 break;
 #endif
+            case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
+                if (cs->value() == "placeholder")
+                    str.appendLiteral("::-webkit-input-placeholder");
+                break;
             default:
                 str.appendLiteral("::");
                 str.append(cs->value());
