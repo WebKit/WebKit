@@ -1,3 +1,27 @@
+2016-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix Soup downloads after r201943.
+
+        This is a follow up of r201943. The DownloadClient used in DownloadSoup was not updated to the new API of the
+        ResourceHandleClient because it was not using override on the virtual methods, so it was unnoticed. That broke
+        the downloads soup implementation, because didReceiveResponse is no longer used in the DownloadClient. This
+        patch updates the DownloadClient to the new ResourceHandleClient API adding also override to all the virtual
+        methods to prevent this from happening in the future.
+
+        * NetworkProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::DownloadClient::DownloadClient):
+        (WebKit::DownloadClient::downloadFailed):
+        (WebKit::DownloadClient::didReceiveResponse):
+        (WebKit::DownloadClient::didReceiveData):
+        (WebKit::DownloadClient::didFinishLoading):
+        (WebKit::DownloadClient::didFail):
+        (WebKit::DownloadClient::wasBlocked): Deleted.
+        (WebKit::DownloadClient::cannotShowURL): Deleted.
+        (WebKit::DownloadClient::cancel):
+        (WebKit::DownloadClient::handleResponse):
+
 2016-06-13  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Web Content service with a restricted entitlement may load arbitrary dylibs
