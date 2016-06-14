@@ -50,6 +50,7 @@ public:
     void performTaskSync(NoncopyableFunction<void ()>&&);
 
     void startUpdateTimer(UpdateTiming = Immediate);
+    void stopUpdateTimer();
 
     void run();
     void stop();

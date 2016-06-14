@@ -88,7 +88,7 @@ private:
     void scheduleDisplayImmediately();
     void didChangeVisibleRect() override;
 
-    bool ensureGLContext();
+    bool tryEnsureGLContext();
     WebCore::GLContext* glContext();
 
     void createCompositingThread();

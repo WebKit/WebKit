@@ -198,6 +198,7 @@ void ThreadedCoordinatedLayerTreeHost::setNativeSurfaceHandleForCompositing(uint
 {
     m_layerTreeContext.contextID = handle;
     m_compositor->setNativeSurfaceHandleForCompositing(handle);
+    scheduleLayerFlush();
 }
 #endif
 

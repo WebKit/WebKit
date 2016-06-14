@@ -1,5 +1,32 @@
 2016-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [ThreadedCompositor] Opening the inspector in a window causes a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=154444
+
+        Reviewed by Žan Doberšek.
+
+        The threaded compositor doesn't handle the case of changing or removing the native surface handle. When the web
+        view is reparented, the current native surface handle is destroyed when the view is removed from the parent, and
+        a new one is created when added to the new parent. We need to handle this case in the threaded compositor.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::stopUpdateTimer): Allow users to stop the update timer.
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing): Use performTaskSync because this is called
+        from a synchronous IPC message and right after it returns, the current native surface is destroyed by the UI
+        process. So we need to ensure we finish all pending operations for the current native surface in the compositing
+        thread before it's destroyed. Then we enable or disable the scene depending on whether the native surface has
+        been created or destroyed and destroy the current context in case the new handle is 0.
+        (WebKit::ThreadedCompositor::tryEnsureGLContext): Just renamed to make it clear that it can fail.
+        (WebKit::ThreadedCompositor::glContext):
+        (WebKit::ThreadedCompositor::renderLayerTree): Return early if scene is not active.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::setNativeSurfaceHandleForCompositing): Schedule a new layer flush
+        after the native surface handle changed.
+
+2016-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [Threaded Compositor] Modernize and simplify threaded compositor code
         https://bugs.webkit.org/show_bug.cgi?id=158615
 

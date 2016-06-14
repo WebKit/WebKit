@@ -61,9 +61,15 @@ ThreadedCompositor::~ThreadedCompositor()
 
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
-    m_compositingRunLoop->performTask([this, protectedThis = Ref<ThreadedCompositor>(*this), handle] {
+    m_compositingRunLoop->stopUpdateTimer();
+    m_compositingRunLoop->performTaskSync([this, protectedThis = Ref<ThreadedCompositor>(*this), handle] {
+        m_scene->setActive(!!handle);
+
+        // A new native handle can't be set without destroying the previous one first if any.
+        ASSERT(!!handle ^ !!m_nativeSurfaceHandle);
         m_nativeSurfaceHandle = handle;
-        m_scene->setActive(true);
+        if (!m_nativeSurfaceHandle)
+            m_context = nullptr;
     });
 }
 
@@ -130,7 +136,7 @@ void ThreadedCompositor::commitScrollOffset(uint32_t layerID, const IntSize& off
     m_client->commitScrollOffset(layerID, offset);
 }
 
-bool ThreadedCompositor::ensureGLContext()
+bool ThreadedCompositor::tryEnsureGLContext()
 {
     if (!glContext())
         return false;
@@ -156,7 +162,7 @@ GLContext* ThreadedCompositor::glContext()
         return m_context.get();
 
     if (!m_nativeSurfaceHandle)
-        return 0;
+        return nullptr;
 
     m_context = GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(m_nativeSurfaceHandle), GLContext::sharingContext());
     return m_context.get();
@@ -181,10 +187,10 @@ void ThreadedCompositor::didChangeVisibleRect()
 void ThreadedCompositor::renderLayerTree()
 {
     ASSERT(&RunLoop::current() == &m_compositingRunLoop->runLoop());
-    if (!m_scene)
+    if (!m_scene || !m_scene->isActive())
         return;
 
-    if (!ensureGLContext())
+    if (!tryEnsureGLContext())
         return;
 
     FloatRect clipRect(0, 0, m_viewportSize.width(), m_viewportSize.height());

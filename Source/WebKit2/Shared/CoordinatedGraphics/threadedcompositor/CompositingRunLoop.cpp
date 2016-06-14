@@ -71,6 +71,11 @@ void CompositingRunLoop::startUpdateTimer(UpdateTiming timing)
     m_updateTimer.startOneShot(nextUpdateTime);
 }
 
+void CompositingRunLoop::stopUpdateTimer()
+{
+    m_updateTimer.stop();
+}
+
 void CompositingRunLoop::updateTimerFired()
 {
     m_updateFunction();
