@@ -1,3 +1,16 @@
+2016-06-14  Aakash Jain  <aakash_jain@apple.com>
+
+        Continuous "Reentrancy avoided" error messages in run-webkit-tests if Simulator quits unexpectedly
+        https://bugs.webkit.org/show_bug.cgi?id=158756
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator.wait_until_device_is_booted): If checking Simulator boot state fails, verify if
+        the "simulator device" is still in booted state. Since we ensured that simulator device 
+        was in booted state earlier in this method, this indicates that simulator device has shut down
+        unexpectedly.
+
 2016-06-14  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up fix #2: REGRESSION (r202020): El Capitan CMake Debug build broken

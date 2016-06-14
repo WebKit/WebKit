@@ -283,7 +283,9 @@ class Simulator(object):
                     if re.search("A[\s]+com.apple.springboard.services", state):
                         return
                 except subprocess.CalledProcessError:
-                    _log.warn("Error in checking Simulator boot status.")
+                    if Simulator.device_state(udid) != Simulator.DeviceState.BOOTED:
+                        raise RuntimeError('Simuator device quit unexpectedly.')
+                    _log.warn("Error in checking Simulator boot status. Will retry in 1 second.")
                 time.sleep(1)
 
     @staticmethod
