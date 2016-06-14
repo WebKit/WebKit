@@ -240,7 +240,7 @@ class IOSSimulatorPort(Port):
 
     def _quit_ios_simulator(self):
         # FIXME: We should kill only the Simulators we started.
-        subprocess.call(["killall", "-9", "-v", "-m", "Simulator"])
+        subprocess.call(["killall", "-9", "-m", "Simulator"])
 
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
@@ -257,7 +257,7 @@ class IOSSimulatorPort(Port):
             if not os.path.exists(self.get_simulator_path(i)):
                 continue
             try:
-                subprocess.call([self.LSREGISTER_PATH, "-v", "-u", self.get_simulator_path(i)])
+                subprocess.call([self.LSREGISTER_PATH, "-u", self.get_simulator_path(i)])
                 shutil.rmtree(self.get_simulator_path(i), ignore_errors=True)
                 shutil.rmtree(os.path.join(os.path.expanduser("~"), "Library/Logs/CoreSimulator/",
                     self.testing_device(i).udid), ignore_errors=True)
@@ -497,4 +497,4 @@ class IOSSimulatorPort(Port):
         subprocess.check_output(["/usr/libexec/PlistBuddy", "-c", command, plist_path])
         subprocess.check_output(["install_name_tool", "-add_rpath", self.developer_dir + "/Library/PrivateFrameworks/", destination + "/Contents/MacOS/Simulator"])
         subprocess.check_output(["codesign", "-fs", "-", destination])
-        subprocess.check_output([self.LSREGISTER_PATH, "-v", "-f", destination])
+        subprocess.check_output([self.LSREGISTER_PATH, "-f", destination])

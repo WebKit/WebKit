@@ -1,3 +1,15 @@
+2016-06-14  Aakash Jain  <aakash_jain@apple.com>
+
+        Too much log data generated during layout-tests on iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=158751
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort._quit_ios_simulator): Do not use -v flag.
+        (IOSSimulatorPort.clean_up_test_run): Ditto.
+        (IOSSimulatorPort._createSimulatorApp): Ditto.
+
 2016-06-14  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up fix: REGRESSION (r202020): El Capitan CMake Debug build broken
