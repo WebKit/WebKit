@@ -56,30 +56,7 @@ bool setUpStaticFunctionSlot(VM& vm, const HashTableValue* entry, JSObject* this
         if (thisObject->staticPropertiesReified())
             return false;
 
-        if (entry->attributes() & Builtin)
-            thisObject->putDirectBuiltinFunction(vm, thisObject->globalObject(), propertyName, entry->builtinGenerator()(vm), attributesForStructure(entry->attributes()));
-        else if (entry->attributes() & Function) {
-            thisObject->putDirectNativeFunction(
-                vm, thisObject->globalObject(), propertyName, entry->functionLength(),
-                entry->function(), entry->intrinsic(), attributesForStructure(entry->attributes()));
-        } else if (isAccessor)
-            reifyStaticAccessor(vm, *entry, *thisObject, propertyName);
-        else if (entry->attributes() & CellProperty) {
-            LazyCellProperty* property = bitwise_cast<LazyCellProperty*>(
-                bitwise_cast<char*>(thisObject) + entry->lazyCellPropertyOffset());
-            JSCell* result = property->get(thisObject);
-            thisObject->putDirect(vm, propertyName, result, attributesForStructure(entry->attributes()));
-        } else if (entry->attributes() & ClassStructure) {
-            LazyClassStructure* structure = bitwise_cast<LazyClassStructure*>(
-                bitwise_cast<char*>(thisObject) + entry->lazyClassStructureOffset());
-            structure->get(jsCast<JSGlobalObject*>(thisObject));
-        } else if (entry->attributes() & PropertyCallback) {
-            JSValue result = entry->lazyPropertyCallback()(vm, thisObject);
-            thisObject->putDirect(vm, propertyName, result, attributesForStructure(entry->attributes()));
-        } else {
-            dataLog("Static hashtable entry for ", propertyName, " has weird attributes: ", entry->attributes(), "\n");
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        reifyStaticProperty(vm, propertyName, *entry, *thisObject);
 
         offset = thisObject->getDirectOffset(vm, propertyName, attributes);
         if (!isValidOffset(offset)) {

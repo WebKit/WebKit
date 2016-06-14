@@ -289,7 +289,7 @@ inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSObject* base
     return true;
 }
 
-inline void reifyStaticProperty(VM& vm, const Identifier& propertyName, const HashTableValue& value, JSObject& thisObj)
+inline void reifyStaticProperty(VM& vm, const PropertyName& propertyName, const HashTableValue& value, JSObject& thisObj)
 {
     if (value.attributes() & Builtin) {
         if (value.attributes() & Accessor)

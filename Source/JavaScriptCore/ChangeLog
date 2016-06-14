@@ -1,5 +1,24 @@
 2016-06-13  Gavin & Ellie Barraclough  <barraclough@apple.com>
 
+        setUpStaticFunctionSlot does not handle Builtin|Accessor properties
+        https://bugs.webkit.org/show_bug.cgi?id=158637
+
+        Reviewed by Geoff Garen.
+
+        setUpStaticFunctionSlot contains a duplicate copy of the body of the function reifyStaticProperty
+        - however it is missing handling for Accessor type under Builtin functions.
+        Fix the bug by de-duplicating - setUpStaticFunctionSlot should just call reifyStaticProperty.
+
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+            - should just call reifyStaticProperty.
+        * runtime/Lookup.h:
+        (JSC::lookupPut):
+        (JSC::reifyStaticProperty):
+            - changed reifyStaticProperty to take PropertyName.
+
+2016-06-13  Gavin & Ellie Barraclough  <barraclough@apple.com>
+
         JSBoundSlotBaseFunction no longer binds slot base
         https://bugs.webkit.org/show_bug.cgi?id=157978
 
