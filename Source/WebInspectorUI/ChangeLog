@@ -1,3 +1,17 @@
+2016-06-14  Saam Barati  <sbarati@apple.com>
+
+        Follow up to: Web Inspector: Call Trees view should have a 'Top Functions'-like mode
+        https://bugs.webkit.org/show_bug.cgi?id=158555
+        <rdar://problem/26712544>
+
+        Unreviewed follow up patch.
+
+        - Move a long if-else sequence to a switch statement.
+        - Fix a copy-paste typo in a Symbol(.) enum.
+
+        * UserInterface/Models/CallingContextTree.js:
+        (WebInspector.CallingContextTree.prototype.updateTreeWithStackTrace):
+
 2016-06-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Exception Stack in UncaughtExceptionReporter view

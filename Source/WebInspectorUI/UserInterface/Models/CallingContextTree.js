@@ -57,19 +57,22 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
         let node = this._root;
         node.addTimestampAndExpressionLocation(timestamp, duration, null);
 
-        if (this._type === WebInspector.CallingContextTree.Type.TopDown) {
+        switch (this._type) {
+        case WebInspector.CallingContextTree.Type.TopDown:
             for (let i = stackFrames.length; i--; ) {
                 let stackFrame = stackFrames[i];
                 node = node.findOrMakeChild(stackFrame);
                 node.addTimestampAndExpressionLocation(timestamp, duration, stackFrame.expressionLocation || null, i === 0);
             }
-        } else if (this._type === WebInspector.CallingContextTree.Type.BottomUp) {
+            break;
+        case WebInspector.CallingContextTree.Type.BottomUp:
             for (let i = 0; i < stackFrames.length; ++i) {
                 let stackFrame = stackFrames[i];
                 node = node.findOrMakeChild(stackFrame);
                 node.addTimestampAndExpressionLocation(timestamp, duration, stackFrame.expressionLocation || null, i === 0);
             }
-        } else if (this._type === WebInspector.CallingContextTree.Type.TopFunctionsTopDown){
+            break;
+        case WebInspector.CallingContextTree.Type.TopFunctionsTopDown:
             for (let i = stackFrames.length; i--; ) {
                 node = this._root;
                 for (let j = i + 1; j--; ) {
@@ -78,8 +81,8 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
                     node.addTimestampAndExpressionLocation(timestamp, duration, stackFrame.expressionLocation || null, j === 0);
                 }
             }
-        } else {
-            console.assert(this._type === WebInspector.CallingContextTree.Type.TopFunctionsBottomUp);
+            break;
+        case WebInspector.CallingContextTree.Type.TopFunctionsBottomUp:
             for (let i = 0; i < stackFrames.length; i++) {
                 node = this._root;
                 for (let j = i; j < stackFrames.length; j++) {
@@ -88,6 +91,10 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
                     node.addTimestampAndExpressionLocation(timestamp, duration, stackFrame.expressionLocation || null, j === 0);
                 }
             }
+            break;
+        default:
+            console.assert(false, "This should not be reached.");
+            break;
         }
     }
 
@@ -382,5 +389,5 @@ WebInspector.CallingContextTree.Type = {
     TopDown: Symbol("TopDown"),
     BottomUp: Symbol("BottomUp"),
     TopFunctionsTopDown: Symbol("TopFunctionsTopDown"),
-    TopFunctionsBottomUp: Symbol("TopFunctionsTopDown"),
+    TopFunctionsBottomUp: Symbol("TopFunctionsBottomUp"),
 };
