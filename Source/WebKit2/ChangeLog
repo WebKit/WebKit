@@ -1,5 +1,17 @@
 2016-06-14  Chris Dumez  <cdumez@apple.com>
 
+        Add missing WTFMove() in NetworkResourceLoader::didReceiveResponse()
+        https://bugs.webkit.org/show_bug.cgi?id=158745
+
+        Reviewed by Darin Adler.
+
+        Add missing WTFMove() in NetworkResourceLoader::didReceiveResponse()
+        to avoid copying the ResourceResponse.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+
+2016-06-14  Chris Dumez  <cdumez@apple.com>
+
         Reduce copying of NetworkLoadParameters
         https://bugs.webkit.org/show_bug.cgi?id=158744
 
