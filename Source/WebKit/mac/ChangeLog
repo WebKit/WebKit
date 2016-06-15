@@ -1,3 +1,28 @@
+2016-06-15  Dean Jackson  <dino@apple.com>
+
+        RTL <select> forms are misplaced
+        https://bugs.webkit.org/show_bug.cgi?id=158810
+        <rdar://problem/24847541>
+
+        Reviewed by Eric Carlson.
+
+        AppKit made a change in Sierra that causes popup menus
+        to snap to a different point when the system language is RTL.
+        We need to be more explicit about what directionality
+        we want, and override the location of the popup based
+        on the text direction.
+
+        I also made a small tweak to the fudge offsets we use
+        in order to make button text and menu text to be
+        more consistent.
+
+        Unfortunately since this is just about the location
+        of the popup menu, it's unable to be tested in our
+        current infrastructure.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::show):
+
 2016-06-15  Chris Dumez  <cdumez@apple.com>
 
         Drop some unnecessary header includes

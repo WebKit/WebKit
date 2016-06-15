@@ -123,7 +123,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 #endif
 
     // These values were borrowed from AppKit to match their placement of the menu.
-    const int popOverHorizontalAdjust = -10;
+    const int popOverHorizontalAdjust = -13;
     const int popUnderHorizontalAdjust = 6;
     const int popUnderVerticalAdjust = 6;
     
@@ -134,13 +134,21 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
         NSRect titleFrame = [m_popup  titleRectForBounds:rect];
         if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
             titleFrame = rect;
-        float verticalOffset = roundf((NSMaxY(rect) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
-        float horizontalOffset = textDirection == LTR ? popOverHorizontalAdjust : 0;
-        location = NSMakePoint(NSMinX(rect) + horizontalOffset, NSMaxY(rect) - verticalOffset);
+        float verticalOffset = roundf((NSMaxY(rect) - NSMaxY(titleFrame)) + NSHeight(titleFrame)) + 1;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+        if (textDirection == LTR)
+            location = NSMakePoint(NSMinX(rect) + popOverHorizontalAdjust, NSMaxY(rect) - verticalOffset);
+        else
+            location = NSMakePoint(NSMaxX(rect) - popOverHorizontalAdjust, NSMaxY(rect) - verticalOffset);
+#else
+        location = NSMakePoint(NSMinX(rect) + popOverHorizontalAdjust, NSMaxY(rect) - verticalOffset);
+#endif
+
     } else
         location = NSMakePoint(NSMinX(rect) + popUnderHorizontalAdjust, NSMaxY(rect) + popUnderVerticalAdjust);  
 
     RetainPtr<NSView> dummyView = adoptNS([[NSView alloc] initWithFrame:rect]);
+    [dummyView.get() setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
     [m_webView addSubview:dummyView.get()];
     location = [dummyView convertPoint:location fromView:m_webView];
 

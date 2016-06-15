@@ -163,7 +163,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
     CTFontRef font = m_client->menuStyle().font().primaryFont().getCTFont();
 
     // These values were borrowed from AppKit to match their placement of the menu.
-    const int popOverHorizontalAdjust = -10;
+    const int popOverHorizontalAdjust = -13;
     const int popUnderHorizontalAdjust = 6;
     const int popUnderVerticalAdjust = 6;
     if (m_client->shouldPopOver()) {
@@ -175,9 +175,14 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
         auto defaultFont = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, CTFontGetSize(font), nil));
         vertOffset += CTFontGetDescent(font) - CTFontGetDescent(defaultFont.get());
         vertOffset = fminf(NSHeight(r), vertOffset);
-
-        float horizontalOffset = textDirection == LTR ? popOverHorizontalAdjust : 0;
-        location = NSMakePoint(NSMinX(r) + horizontalOffset, NSMaxY(r) - vertOffset);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+        if (textDirection == LTR)
+            location = NSMakePoint(NSMinX(r) + popOverHorizontalAdjust, NSMaxY(r) - vertOffset);
+        else
+            location = NSMakePoint(NSMinX(r) - popOverHorizontalAdjust, NSMaxY(r) - vertOffset);
+#else
+        location = NSMakePoint(NSMinX(r) + popOverHorizontalAdjust, NSMaxY(r) - vertOffset);
+#endif
     } else
         location = NSMakePoint(NSMinX(r) + popUnderHorizontalAdjust, NSMaxY(r) + popUnderVerticalAdjust);    
 
