@@ -26,14 +26,8 @@
 #ifndef MathCommon_h
 #define MathCommon_h
 
-#include "JITOperations.h"
-#include "MacroAssemblerCodeRef.h"
 #include <cmath>
 #include <wtf/Optional.h>
-
-#ifndef JIT_OPERATION
-#define JIT_OPERATION
-#endif
 
 namespace JSC {
 

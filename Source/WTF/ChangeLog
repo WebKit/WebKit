@@ -1,3 +1,12 @@
+2016-06-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Move calling convention flags to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=158661
+
+        Reviewed by Keith Miller.
+
+        * wtf/Platform.h:
+
 2016-06-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Honor bidi unicode codepoints
@@ -159,6 +168,8 @@
 
         Make platformUserPreferredLanguages() thread safe on Windows. The
         Mac and Unix implementations are already thread-safe.
+
+        HAS_FASTCALL_CALLING_CONVENTION is changed to COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION).
 
 2016-06-10  Alex Christensen  <achristensen@webkit.org>
 

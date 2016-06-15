@@ -1,3 +1,20 @@
+2016-06-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Move calling convention flags to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=158661
+
+        Reviewed by Keith Miller.
+
+        Due to some calling convention flags and JIT_OPERATION flags, MathCommon.h includes MacroAssemblerCodeRef and JITOperations.h.
+        But MacroAssembler and JIT part should not be necessary for the MathCommon component.
+        As with other calling convention flags like JSC_HOST_CALL, these flags should be in WTF.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        * jit/JITOperations.h:
+        Add wtf/Platform.h inclusion driven by the Windows port build failure.
+
+        * runtime/MathCommon.h:
+
 2016-06-15  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         Enabling Shadow DOM for all platforms

@@ -51,32 +51,6 @@
 #define ASSERT_VALID_CODE_OFFSET(offset) // Anything goes!
 #endif
 
-#if CPU(X86) && OS(WINDOWS)
-#define CALLING_CONVENTION_IS_STDCALL 1
-#ifndef CDECL
-#if COMPILER(MSVC)
-#define CDECL __cdecl
-#else
-#define CDECL __attribute__ ((__cdecl))
-#endif // COMPILER(MSVC)
-#endif // CDECL
-#else
-#define CALLING_CONVENTION_IS_STDCALL 0
-#endif
-
-#if CPU(X86)
-#define HAS_FASTCALL_CALLING_CONVENTION 1
-#ifndef FASTCALL
-#if COMPILER(MSVC)
-#define FASTCALL __fastcall
-#else
-#define FASTCALL  __attribute__ ((fastcall))
-#endif // COMPILER(MSVC)
-#endif // FASTCALL
-#else
-#define HAS_FASTCALL_CALLING_CONVENTION 0
-#endif // CPU(X86)
-
 namespace JSC {
 
 // FunctionPtr:
@@ -178,7 +152,7 @@ public:
     }
 #endif
 
-#if HAS_FASTCALL_CALLING_CONVENTION
+#if COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
 
     template<typename returnType>
     FunctionPtr(returnType (FASTCALL *value)())

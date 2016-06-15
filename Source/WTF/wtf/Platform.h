@@ -832,6 +832,38 @@
 #define JSC_HOST_CALL
 #endif
 
+#if CPU(X86) && OS(WINDOWS)
+#define CALLING_CONVENTION_IS_STDCALL 1
+#ifndef CDECL
+#if COMPILER(MSVC)
+#define CDECL __cdecl
+#else
+#define CDECL __attribute__ ((__cdecl))
+#endif
+#endif
+#else
+#define CALLING_CONVENTION_IS_STDCALL 0
+#endif
+
+#if CPU(X86)
+#define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 1
+#ifndef FASTCALL
+#if COMPILER(MSVC)
+#define FASTCALL __fastcall
+#else
+#define FASTCALL  __attribute__ ((fastcall))
+#endif
+#endif
+#else
+#define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 0
+#endif
+
+#if ENABLE(JIT) && CALLING_CONVENTION_IS_STDCALL
+#define JIT_OPERATION __cdecl
+#else
+#define JIT_OPERATION
+#endif
+
 /* Configure the interpreter */
 #if COMPILER(GCC_OR_CLANG)
 #define HAVE_COMPUTED_GOTO 1
