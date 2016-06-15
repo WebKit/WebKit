@@ -1,3 +1,26 @@
+2016-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Add tests for zooming to text fields on focus
+        https://bugs.webkit.org/show_bug.cgi?id=158786
+
+        Reviewed by Enrica Casucci.
+
+        Add tests that focus form controls, and test the resulting scroll position and zoom level.
+
+        * TestExpectations:
+        * fast/forms/ios/focus-input-via-button-expected.txt: Added.
+        * fast/forms/ios/focus-input-via-button-no-scaling-expected.txt: Added.
+        * fast/forms/ios/focus-input-via-button-no-scaling.html: Added.
+        * fast/forms/ios/focus-input-via-button.html: Added.
+        * fast/forms/ios/resources/zooming-test-utils.js: Added.
+        (testZoomAfterTap):
+        (tableFromJSON):
+        * fast/forms/ios/zoom-after-input-tap-expected.txt: Added.
+        * fast/forms/ios/zoom-after-input-tap-wide-input-expected.txt: Added.
+        * fast/forms/ios/zoom-after-input-tap-wide-input.html: Added.
+        * fast/forms/ios/zoom-after-input-tap.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-06-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add media setup test using the legacy callback APIs
