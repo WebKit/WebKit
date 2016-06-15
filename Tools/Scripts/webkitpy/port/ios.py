@@ -469,6 +469,7 @@ class IOSSimulatorPort(Port):
             return fallback
 
     @property
+    @memoized
     def developer_dir(self):
         return self._executive.run_command(['xcode-select', '--print-path']).rstrip()
 
