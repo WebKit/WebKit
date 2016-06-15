@@ -2978,7 +2978,7 @@ begin
     KRAKEN.add KrakenBenchmark.new(name)
   }
   
-  JSBENCH = BenchmarkSuite.new("JSBench", :arithmeticMean, 0)
+  JSBENCH = BenchmarkSuite.new("JSBench", :geometricMean, 0)
   [["amazon-chrome", "urem"], ["amazon-chrome-win", "urem"], ["amazon-firefox", "urm"],
    ["amazon-firefox-win", "urm"], ["amazon-safari", "urem"], ["facebook-chrome", "urem"],
    ["facebook-chrome-win", "urem"], ["facebook-firefox", "urem"],

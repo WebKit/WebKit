@@ -1,3 +1,16 @@
+2016-06-14  Keith Miller  <keith_miller@apple.com>
+
+        JSBench should use geometric mean
+        https://bugs.webkit.org/show_bug.cgi?id=158775
+
+        Reviewed by Mark Lam.
+
+        For some reason JSBench was using algebraic mean. Since each test
+        is pretty substantially different it should use geometric mean
+        instead.
+
+        * Scripts/run-jsc-benchmarks:
+
 2016-06-14  Alexey Proskuryakov  <ap@apple.com>
 
         Debug crash logs are not fully symbolicated on Yosemite
