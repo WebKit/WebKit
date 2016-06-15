@@ -71,13 +71,13 @@ void WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(c
     identifierBase() = base;
 }
 
-void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
+NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
 #if USE(CFNETWORK)
     ASSERT(isMainThread());
 
     if (privateSession())
-        return;
+        return *privateSession();
 
     String base;
     if (identifierBase().isNull()) {
@@ -88,7 +88,9 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
         base = identifierBase();
 
     privateSession() = NetworkStorageSession::createPrivateBrowsingSession(SessionID::legacyPrivateSessionID(), base);
+
 #endif
+    return *privateSession();
 }
 
 void WebFrameNetworkingContext::destroyPrivateBrowsingSession()

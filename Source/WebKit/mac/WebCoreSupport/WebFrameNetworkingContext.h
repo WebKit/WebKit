@@ -35,7 +35,7 @@ public:
         return adoptRef(new WebFrameNetworkingContext(frame));
     }
 
-    static void ensurePrivateBrowsingSession();
+    static WebCore::NetworkStorageSession& ensurePrivateBrowsingSession();
     static void destroyPrivateBrowsingSession();
 
 private:

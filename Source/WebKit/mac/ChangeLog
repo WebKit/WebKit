@@ -1,3 +1,28 @@
+2016-06-15  Antti Koivisto  <antti@apple.com>
+
+        Vary:Cookie validation doesn't work in private browsing
+        https://bugs.webkit.org/show_bug.cgi?id=158616
+        <rdar://problem/26755067>
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::create):
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        (privateSession):
+        (WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+
+            Expose the private browsing session.
+
+        (WebFrameNetworkingContext::destroyPrivateBrowsingSession):
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue):
+
+            Implement SessionID version of the function.
+
+        (WebPlatformStrategies::getRawCookies):
+
 2016-06-13  Alex Christensen  <achristensen@webkit.org>
 
         Add WebSocketProvider stub

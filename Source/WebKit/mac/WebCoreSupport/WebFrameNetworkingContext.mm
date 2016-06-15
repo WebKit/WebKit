@@ -50,14 +50,16 @@ static std::unique_ptr<NetworkStorageSession>& privateSession()
     return session;
 }
 
-void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
+NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
     ASSERT(isMainThread());
 
     if (privateSession())
-        return;
+        return *privateSession();
 
     privateSession() = NetworkStorageSession::createPrivateBrowsingSession(SessionID::legacyPrivateSessionID(), [[NSBundle mainBundle] bundleIdentifier]);
+
+    return *privateSession();
 }
 
 void WebFrameNetworkingContext::destroyPrivateBrowsingSession()

@@ -38,7 +38,7 @@ public:
     static void setCookieAcceptPolicyForAllContexts(WebKitCookieStorageAcceptPolicy);
 #endif
     static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
-    static void ensurePrivateBrowsingSession();
+    static WebCore::NetworkStorageSession& ensurePrivateBrowsingSession();
     static void destroyPrivateBrowsingSession();
 
 private:

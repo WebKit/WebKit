@@ -26,6 +26,7 @@
 #ifndef CookiesStrategy_h
 #define CookiesStrategy_h
 
+#include "SessionID.h"
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -43,6 +44,7 @@ public:
     virtual void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String& cookieString) = 0;
     virtual bool cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&) = 0;
     virtual String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&) = 0;
+    virtual String cookieRequestHeaderFieldValue(SessionID, const URL& firstParty, const URL&) = 0;
     virtual bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&) = 0;
     virtual void deleteCookie(const NetworkStorageSession&, const URL&, const String& cookieName) = 0;
     virtual void addCookie(const NetworkStorageSession&, const URL&, const Cookie&) = 0;

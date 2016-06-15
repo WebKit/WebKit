@@ -1,3 +1,18 @@
+2016-06-15  Antti Koivisto  <antti@apple.com>
+
+        Vary:Cookie validation doesn't work in private browsing
+        https://bugs.webkit.org/show_bug.cgi?id=158616
+        <rdar://problem/26755067>
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::cookieRequestHeaderFieldValue):
+
+            Implement SessionID version of the function.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2016-06-14  Chris Dumez  <cdumez@apple.com>
 
         Avoid constructing a AuthenticationChallenge unnecessarily in the NetworkLoad constructor
