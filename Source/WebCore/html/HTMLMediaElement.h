@@ -721,7 +721,7 @@ private:
 
     void changeNetworkStateFromLoadingToIdle();
 
-    void removeBehaviorsRestrictionsAfterFirstUserGesture();
+    void removeBehaviorsRestrictionsAfterFirstUserGesture(MediaElementSession::BehaviorRestrictions mask = MediaElementSession::AllRestrictions);
 
     void updateMediaController();
     bool isBlocked() const;

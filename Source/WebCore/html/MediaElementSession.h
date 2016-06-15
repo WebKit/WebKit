@@ -86,16 +86,15 @@ public:
         RequirePageConsentToLoadMedia = 1 << 3,
         RequirePageConsentToResumeMedia = 1 << 4,
         RequireUserGestureForAudioRateChange = 1 << 5,
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
         RequireUserGestureToShowPlaybackTargetPicker = 1 << 6,
         WirelessVideoPlaybackDisabled =  1 << 7,
         RequireUserGestureToAutoplayToExternalDevice = 1 << 8,
-#endif
         MetadataPreloadingNotPermitted = 1 << 9,
         AutoPreloadingNotPermitted = 1 << 10,
         InvisibleAutoplayNotPermitted = 1 << 11,
         OverrideUserGestureRequirementForMainContent = 1 << 12,
         RequireUserGestureToControlControlsManager = 1 << 13,
+        AllRestrictions = ~NoRestrictions,
     };
     typedef unsigned BehaviorRestrictions;
 

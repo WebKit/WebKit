@@ -1058,6 +1058,12 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     }
 #endif
 
+    if (m_muted) {
+        // Clear m_muted so setMuted doesn't return without doing anything.
+        m_muted = false;
+        [m_avPlayer.get() setMuted:m_muted];
+    }
+
     if (player()->client().mediaPlayerIsVideo())
         createAVPlayerLayer();
 
@@ -1395,11 +1401,26 @@ void MediaPlayerPrivateAVFoundationObjC::setVolume(float volume)
     UNUSED_PARAM(volume);
     return;
 #else
-    if (!metaDataAvailable())
+    if (!m_avPlayer)
         return;
 
     [m_avPlayer.get() setVolume:volume];
 #endif
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setMuted(bool muted)
+{
+    if (m_muted == muted)
+        return;
+
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setMuted(%p) - set to %s", this, boolString(muted));
+
+    m_muted = muted;
+
+    if (!m_avPlayer)
+        return;
+
+    [m_avPlayer.get() setMuted:m_muted];
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(bool closedCaptionsVisible)

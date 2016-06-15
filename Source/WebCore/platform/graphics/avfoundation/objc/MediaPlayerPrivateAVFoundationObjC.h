@@ -176,6 +176,8 @@ private:
     void platformPause() override;
     MediaTime currentMediaTime() const override;
     void setVolume(float) override;
+    bool supportsMuting() const override { return true; }
+    void setMuted(bool) override;
     void setClosedCaptionsVisible(bool) override;
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
@@ -424,6 +426,7 @@ private:
     bool m_haveBeenAskedToCreateLayer;
     bool m_cachedCanPlayFastForward;
     bool m_cachedCanPlayFastReverse;
+    bool m_muted { false };
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     mutable bool m_allowsWirelessVideoPlayback;
     bool m_shouldPlayToPlaybackTarget { false };

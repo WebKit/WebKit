@@ -82,7 +82,6 @@ static String restrictionName(MediaElementSession::BehaviorRestrictions restrict
     CASE(RequireUserGestureToShowPlaybackTargetPicker);
     CASE(WirelessVideoPlaybackDisabled);
 #endif
-    CASE(RequireUserGestureForAudioRateChange);
     CASE(InvisibleAutoplayNotPermitted);
     CASE(OverrideUserGestureRequirementForMainContent);
 
