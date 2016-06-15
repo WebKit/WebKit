@@ -786,7 +786,7 @@ void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float 
 
     realizeSaves();
 
-    if (auto inverse = newTransform.inverse()) {
+    if (auto inverse = transform.inverse()) {
         modifiableState().transform = newTransform;
         c->concatCTM(transform);
         m_path.transform(inverse.value());

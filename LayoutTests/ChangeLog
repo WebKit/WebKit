@@ -1,3 +1,13 @@
+2016-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix 2d canvas transform after r192900
+        https://bugs.webkit.org/show_bug.cgi?id=158725
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/canvas-transform-inverse-expected.html: Added.
+        * fast/canvas/canvas-transform-inverse.html: Added.
+
 2016-06-15  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Make HTMLMediaElement.muted mutable
