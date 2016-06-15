@@ -388,6 +388,40 @@ TEST(WTF_HashSet, Ref)
         RefLogger a("a");
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
+
+        auto aOut = set.take(&a);
+        ASSERT_TRUE(static_cast<bool>(aOut));
+        ASSERT_EQ(&a, aOut.value().ptr());
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        HashSet<Ref<RefLogger>> set;
+
+        RefLogger a("a");
+        Ref<RefLogger> ref(a);
+        set.add(WTFMove(ref));
+
+        auto aOut = set.takeAny();
+        ASSERT_TRUE(static_cast<bool>(aOut));
+        ASSERT_EQ(&a, aOut.value().ptr());
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        HashSet<Ref<RefLogger>> set;
+        auto emptyTake = set.takeAny();
+        ASSERT_FALSE(static_cast<bool>(emptyTake));
+    }
+
+    {
+        HashSet<Ref<RefLogger>> set;
+
+        RefLogger a("a");
+        Ref<RefLogger> ref(a);
+        set.add(WTFMove(ref));
         
         ASSERT_TRUE(set.contains(&a));
     }

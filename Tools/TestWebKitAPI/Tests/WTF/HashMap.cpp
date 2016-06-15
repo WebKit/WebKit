@@ -833,10 +833,18 @@ TEST(WTF_HashMap, Ref_Value)
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
         
-        ASSERT_EQ(map.get(1), &a);
+        auto aGet = map.get(1);
+        ASSERT_EQ(aGet, &a);
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        HashMap<int, Ref<RefLogger>> map;
+        
+        auto emptyGet = map.get(1);
+        ASSERT_TRUE(emptyGet == nullptr);
+    }
 
     {
         HashMap<int, Ref<RefLogger>> map;
@@ -845,10 +853,19 @@ TEST(WTF_HashMap, Ref_Value)
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
         
-        Ref<RefLogger> aOut = map.take(1);
+        auto aOut = map.take(1);
+        ASSERT_TRUE(static_cast<bool>(aOut));
+        ASSERT_EQ(&a, aOut.value().ptr());
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        HashMap<int, Ref<RefLogger>> map;
+        
+        auto emptyTake = map.take(1);
+        ASSERT_FALSE(static_cast<bool>(emptyTake));
+    }
 
     {
         HashMap<int, Ref<RefLogger>> map;

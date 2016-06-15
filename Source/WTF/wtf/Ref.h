@@ -123,6 +123,9 @@ public:
     bool isHashTableEmptyValue() const { return m_ptr == hashTableEmptyValue(); }
     static T* hashTableEmptyValue() { return nullptr; }
 
+    const T* ptrAllowingHashTableEmptyValue() const { ASSERT(m_ptr || isHashTableEmptyValue()); return m_ptr; }
+    T* ptrAllowingHashTableEmptyValue() { ASSERT(m_ptr || isHashTableEmptyValue()); return m_ptr; }
+
     void assignToHashTableEmptyValue(Ref&& reference)
     {
         ASSERT(m_ptr == hashTableEmptyValue());

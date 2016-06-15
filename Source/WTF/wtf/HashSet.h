@@ -38,6 +38,7 @@ namespace WTF {
     private:
         typedef HashArg HashFunctions;
         typedef TraitsArg ValueTraits;
+        typedef typename ValueTraits::TakeType TakeType;
 
     public:
         typedef typename ValueTraits::TraitType ValueType;
@@ -105,15 +106,15 @@ namespace WTF {
         void removeIf(const Functor&);
         void clear();
 
-        ValueType take(const ValueType&);
-        ValueType take(iterator);
-        ValueType takeAny();
+        TakeType take(const ValueType&);
+        TakeType take(iterator);
+        TakeType takeAny();
 
         // Overloads for smart pointer values that take the raw pointer type as the parameter.
         template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type find(typename GetPtrHelper<V>::PtrType) const;
         template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type contains(typename GetPtrHelper<V>::PtrType) const;
         template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type remove(typename GetPtrHelper<V>::PtrType);
-        template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, ValueType>::type take(typename GetPtrHelper<V>::PtrType);
+        template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, TakeType>::type take(typename GetPtrHelper<V>::PtrType);
 
         static bool isValidValue(const ValueType&);
 
@@ -269,24 +270,24 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V>
-    inline auto HashSet<T, U, V>::take(iterator it) -> ValueType
+    inline auto HashSet<T, U, V>::take(iterator it) -> TakeType
     {
         if (it == end())
-            return ValueTraits::emptyValue();
+            return ValueTraits::take(ValueTraits::emptyValue());
 
-        ValueType result = WTFMove(const_cast<ValueType&>(*it));
+        auto result = ValueTraits::take(WTFMove(const_cast<ValueType&>(*it)));
         remove(it);
         return result;
     }
 
     template<typename T, typename U, typename V>
-    inline auto HashSet<T, U, V>::take(const ValueType& value) -> ValueType
+    inline auto HashSet<T, U, V>::take(const ValueType& value) -> TakeType
     {
         return take(find(value));
     }
 
     template<typename T, typename U, typename V>
-    inline auto HashSet<T, U, V>::takeAny() -> ValueType
+    inline auto HashSet<T, U, V>::takeAny() -> TakeType
     {
         return take(begin());
     }
@@ -314,7 +315,7 @@ namespace WTF {
 
     template<typename Value, typename HashFunctions, typename Traits>
     template<typename V>
-    inline auto HashSet<Value, HashFunctions, Traits>::take(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, ValueType>::type
+    inline auto HashSet<Value, HashFunctions, Traits>::take(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, TakeType>::type
     {
         return take(find(value));
     }

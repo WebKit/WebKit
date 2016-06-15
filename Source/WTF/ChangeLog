@@ -1,3 +1,45 @@
+2016-06-15  Sam Weinig  <sam@webkit.org>
+
+        Improve HashMap and HashSet support for Ref
+        https://bugs.webkit.org/show_bug.cgi?id=158789
+
+        Reviewed by Chris Dumez.
+
+        Tests: Add more cases to WTF_HashMap.Ref_Key, WTF_HashMap.Ref_Value and WTF_HashSet.Ref
+
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        Add a MappedTakeType typedef and rework the take functions to use it and HashTraits::take(...).
+
+        * wtf/HashTraits.h:
+        (WTF::GenericHashTraits::assignToEmpty):
+        Move to GenericHashTraits rather than GenericHashTraitsBase, since it is not different
+        between integral and non-integral HashTraits.
+
+        (WTF::GenericHashTraits::take):
+        Add a trait function for take that defaults as a forward. This allows us to override take
+        just like we do with get/peek.
+
+        (WTF::HashTraits<Ref<P>>::emptyValue):
+        Remove unnecessary explicit construction.
+
+        (WTF::HashTraits<Ref<P>>::peek):
+        Fix assertion that could happen if you did a HashMap.get() on an empty Ref value.
+
+        (WTF::HashTraits<Ref<P>>::take):
+        Make the TakeType of a Ref<P> be Optional<Ref<P>>, to avoid having empty
+        Refs returned from HashMap and HashSet. Implement an explicit take() function to
+        construct one.
+
+        (WTF::HashTraits<Ref<P>>::customDeleteBucket): Deleted.
+        Remove unnecessary customDeleteBucket implementation. Ref does not assign nullptr to
+        it's m_ptr in destruction, so there is no dead store to avoid here.
+
+        * wtf/Ref.h:
+        (WTF::Ref::ptrAllowingHashTableEmptyValue):
+        Add HashTrait helper to allow getting the value of m_ptr even when it is null. This
+        allows us to avoid a branch in HashTraits<Ref<P>>::peek().
+
 2016-06-15  Konstantin Tokarev  <annulen@yandex.ru>
 
         Only Mac port needs ObjC API for JSC
