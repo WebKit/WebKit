@@ -859,7 +859,7 @@
 #endif
 
 #if ENABLE(JIT) && CALLING_CONVENTION_IS_STDCALL
-#define JIT_OPERATION __cdecl
+#define JIT_OPERATION CDECL
 #else
 #define JIT_OPERATION
 #endif
