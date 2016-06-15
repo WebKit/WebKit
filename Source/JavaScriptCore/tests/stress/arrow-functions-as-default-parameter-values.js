@@ -106,23 +106,98 @@ test(function() {
     foo();
 });
 
-// FIXME: Our parser throws a syntax error here but it should not.
-// https://bugs.webkit.org/show_bug.cgi?id=157872
-/*
 test(function() {
     class C {
         constructor() { this._x = 45; }
         get foo() { return this._x;}
     }
     class D extends C {
-        //constructor(x = ()=>super.foo) {
-        //    super();
-        //    assert(x() === 45);
-        //}
+        constructor(x = () => super.foo) {
+            super();
+            assert(x() === 45);
+        }
         x(x = ()=>super.foo) {
             return x();
         }
     }
-    //(new D).x();
+    assert((new D).x() === 45);
 });
-*/
+
+test(function() {
+    class C {
+        constructor() { this._x = 45; }
+        get foo() { return this._x;}
+    }
+    class D extends C {
+        x(x = () => {return super.foo}) {
+            return x();
+        }
+    }
+    assert((new D).x() === 45);
+});
+
+test(function() {
+    class C {
+        constructor() { this._x = 45; }
+        get foo() { return this._x;}
+    }
+    class D extends C {
+        x(x = () => {return () => super.foo}) {
+            return x()();
+        }
+    }
+    assert((new D).x() === 45);
+});
+
+test(function() {
+    class C {
+        constructor() { this._x = 45; }
+        get foo() { return this._x;}
+    }
+
+    class D extends C {
+        x(y = (y = () => super.foo) => {return y()}) {
+            return y();
+        }
+    }
+    assert((new D).x() === 45);
+});
+
+test(function() {
+    class C {
+        constructor() { this._x = 45; }
+        get foo() { return this._x;}
+    }
+
+    class D extends C {
+        constructor(x = () => super.foo) {
+            super();
+            this._x_f = x;
+        }
+
+        x() {
+            return this._x_f(); 
+        }
+    }
+    assert((new D).x() === 45);
+});
+
+test(function() {
+    class C {
+        constructor() { this._x = 45; }
+        get foo() { return this._x;}
+    }
+
+    class D extends C {
+
+        constructor(x = () => super()) {
+            x();
+        }
+
+        x() {
+            return super.foo;
+        }
+    }
+    assert((new D).x() === 45);
+});
+

@@ -1,3 +1,26 @@
+2016-06-14  Caio Lima  <ticaiolima@gmail.com>
+
+        The parser doesn't properly parse "super" when default parameter is an
+        arrow function.
+        https://bugs.webkit.org/show_bug.cgi?id=157872.
+
+        Reviewed by Saam Barati.
+
+        The "super" member or "super()" could not be used when default parameter is an
+        arrow function, resuling in sytax error. It happened because the
+        "closestOrdinaryFunctionScope" was not being initialized properly
+        before "parseFunctionParameters" step and the condition
+        "functionSuperBinding == SuperBinding::NotNeeded" or
+        "functionConstructorKind != ConstructorKind::Derived" on
+        "Parser<LexerType>::parseMemberExpression" step were being true
+        resulting in SyntaxError.
+
+        * parser/Parser.cpp: 
+        (JSC::Parser<LexerType>::parseFunctionInfo): setting
+        "functionScope->setExpectedSuperBinding(expectedSuperBinding)" and
+        "functionScope->setConstructorKind(constructorKind)" before
+        "parseFunctionParameters" step.
+
 2016-06-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rename Timeline.setAutoCaptureInstruments to Timeline.setInstruments

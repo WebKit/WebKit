@@ -1259,6 +1259,18 @@ PASS Invalid: "var f = cond ? x=>{x.foo :} : x=>x + x + x + x + x + x + x"
 PASS Invalid: "function f() { var f = cond ? x=>{x.foo :} : x=>x + x + x + x + x + x + x }"
 PASS Invalid: "var f = cond ? x=>{x.foo } => : x=>x + x + x + x + x + x + x"
 PASS Invalid: "function f() { var f = cond ? x=>{x.foo } => : x=>x + x + x + x + x + x + x }"
+PASS Valid:   "class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = () => super.foo) { return y(); } }"
+PASS Valid:   "function f() { class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = () => super.foo) { return y(); } } }"
+PASS Valid:   "class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = () => {return super.foo}) { return y(); } }"
+PASS Valid:   "function f() { class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = () => {return super.foo}) { return y(); } } }"
+PASS Valid:   "class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = () => {return () => super.foo}) { return y()(); } }"
+PASS Valid:   "function f() { class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = () => {return () => super.foo}) { return y()(); } } }"
+PASS Valid:   "class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = (y = () => super.foo) => {return y()}) { return y(); } }"
+PASS Valid:   "function f() { class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = (y = () => super.foo) => {return y()}) { return y(); } } }"
+PASS Valid:   "class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super.foo) { super(); this._x_f = x; } x() { return this._x_f(); } }"
+PASS Valid:   "function f() { class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super.foo) { super(); this._x_f = x; } x() { return this._x_f(); } } }"
+PASS Valid:   "class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super()) { x(); } x() { return super.foo; } }"
+PASS Valid:   "function f() { class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super()) { x(); } x() { return super.foo; } } }"
 PASS e.line is 1
 PASS foo is 'PASS'
 PASS bar is 'PASS'
