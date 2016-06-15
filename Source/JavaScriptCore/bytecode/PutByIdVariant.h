@@ -112,7 +112,10 @@ public:
     
     // We don't support intrinsics for Setters (it would be sweet if we did) but we need this for templated helpers.
     Intrinsic intrinsic() const { return NoIntrinsic; }
-    
+
+    // This is needed for templated helpers.
+    bool isPropertyUnset() const { return false; }
+
     PropertyOffset offset() const
     {
         ASSERT(isSet());

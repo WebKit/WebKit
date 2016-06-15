@@ -218,7 +218,8 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
 
                 switch (access.type()) {
                 case AccessCase::Load:
-                case AccessCase::GetGetter: {
+                case AccessCase::GetGetter:
+                case AccessCase::Miss: {
                     break;
                 }
                 case AccessCase::IntrinsicGetter: {
@@ -238,7 +239,8 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                     // future. https://bugs.webkit.org/show_bug.cgi?id=133052
                     return GetByIdStatus(slowPathState, true);
                 } }
-                 
+
+                ASSERT((AccessCase::Miss == access.type()) == (access.offset() == invalidOffset));
                 GetByIdVariant variant(
                     StructureSet(structure), complexGetStatus.offset(),
                     complexGetStatus.conditionSet(), WTFMove(callLinkStatus),

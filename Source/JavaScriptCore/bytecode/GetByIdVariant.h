@@ -64,6 +64,8 @@ public:
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
     Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
 
+    bool isPropertyUnset() const { return offset() == invalidOffset; }
+
     bool attemptToMerge(const GetByIdVariant& other);
     
     void dump(PrintStream&) const;

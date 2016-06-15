@@ -3008,11 +3008,11 @@ Node* ByteCodeParser::load(
         Structure* structure = base->constant()->structure();
         if (!structure->dfgShouldWatch()) {
             if (!variant.conditionSet().isEmpty()) {
-                // This means that we're loading from a prototype. We expect the base not to have the
-                // property. We can only use ObjectPropertyCondition if all of the structures in the
-                // variant.structureSet() agree on the prototype (it would be hilariously rare if they
-                // didn't). Note that we are relying on structureSet() having at least one element. That
-                // will always be true here because of how GetByIdStatus/PutByIdStatus work.
+                // This means that we're loading from a prototype or we have a property miss. We expect
+                // the base not to have the property. We can only use ObjectPropertyCondition if all of
+                // the structures in the variant.structureSet() agree on the prototype (it would be
+                // hilariously rare if they didn't). Note that we are relying on structureSet() having
+                // at least one element. That will always be true here because of how GetByIdStatus/PutByIdStatus work.
                 JSObject* prototype = variant.structureSet()[0]->storedPrototypeObject();
                 bool allAgree = true;
                 for (unsigned i = 1; i < variant.structureSet().size(); ++i) {
@@ -3049,7 +3049,13 @@ Node* ByteCodeParser::load(
 
     if (needStructureCheck)
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), base);
-    
+
+    if (variant.isPropertyUnset()) {
+        if (m_graph.watchConditions(variant.conditionSet()))
+            return jsConstant(jsUndefined());
+        return nullptr;
+    }
+
     SpeculatedType loadPrediction;
     NodeType loadOp;
     if (variant.callLinkStatus() || variant.intrinsic() != NoIntrinsic) {
@@ -3144,7 +3150,7 @@ void ByteCodeParser::handleGetById(
         //    optimal, if there is some rarely executed case in the chain that requires a lot
         //    of checks and those checks are not watchpointable.
         for (const GetByIdVariant& variant : getByIdStatus.variants()) {
-            if (variant.intrinsic() != NoIntrinsic) {
+            if (variant.intrinsic() != NoIntrinsic || variant.isPropertyUnset()) {
                 set(VirtualRegister(destinationOperand),
                     addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
                 return;

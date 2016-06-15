@@ -1,3 +1,29 @@
+2016-06-15  Keith Miller  <keith_miller@apple.com>
+
+        DFGByteCodeParser should be able to infer a property is unset from the Baseline inline cache.
+        https://bugs.webkit.org/show_bug.cgi?id=158774
+
+        Reviewed by Filip Pizlo.
+
+        This patch allows the DFGByteCodeParser to speculatively convert a property access into a
+        constant if that access was always a miss in the Baseline inline cache. This patch does
+        not add support for MultiGetByOffset and unset properties. That functionality will come
+        a future patch.
+
+        * bytecode/ComplexGetStatus.cpp:
+        (JSC::ComplexGetStatus::computeFor):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::isPropertyUnset):
+        * bytecode/PutByIdVariant.h:
+        (JSC::PutByIdVariant::isPropertyUnset):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::load):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        * tests/stress/undefined-access-then-self-change.js: Added.
+        (foo):
+
 2016-06-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Move calling convention flags to WTF
