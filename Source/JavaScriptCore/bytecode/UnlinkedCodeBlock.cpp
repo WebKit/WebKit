@@ -72,6 +72,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_firstLine(0)
     , m_lineCount(0)
     , m_endColumn(UINT_MAX)
+    , m_didOptimize(MixedTriState)
     , m_parseMode(info.parseMode())
     , m_features(0)
     , m_codeType(codeType)

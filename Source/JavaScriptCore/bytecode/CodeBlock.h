@@ -664,15 +664,9 @@ public:
         m_llintExecuteCounter.deferIndefinitely();
     }
 
-    void jitAfterWarmUp()
-    {
-        m_llintExecuteCounter.setNewThreshold(Options::thresholdForJITAfterWarmUp(), this);
-    }
-
-    void jitSoon()
-    {
-        m_llintExecuteCounter.setNewThreshold(Options::thresholdForJITSoon(), this);
-    }
+    int32_t thresholdForJIT(int32_t threshold);
+    void jitAfterWarmUp();
+    void jitSoon();
 
     const BaselineExecutionCounter& llintExecuteCounter() const
     {

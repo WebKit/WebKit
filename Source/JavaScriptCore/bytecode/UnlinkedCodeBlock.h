@@ -43,6 +43,7 @@
 #include "VirtualRegister.h"
 #include <wtf/FastBitVector.h>
 #include <wtf/RefCountedArray.h>
+#include <wtf/TriState.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -370,6 +371,9 @@ public:
 
     bool wasCompiledWithDebuggingOpcodes() const { return m_wasCompiledWithDebuggingOpcodes; }
 
+    TriState didOptimize() const { return m_didOptimize; }
+    void setDidOptimize(TriState didOptimize) { m_didOptimize = didOptimize; }
+
 protected:
     UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&, DebuggerMode);
     ~UnlinkedCodeBlock();
@@ -416,6 +420,7 @@ private:
     unsigned m_lineCount;
     unsigned m_endColumn;
 
+    TriState m_didOptimize;
     SourceParseMode m_parseMode;
     CodeFeatures m_features;
     CodeType m_codeType;

@@ -1388,6 +1388,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t byte
         }
 
         codeBlock->optimizeSoon();
+        codeBlock->unlinkedCodeBlock()->setDidOptimize(TrueTriState);
         return encodeResult(vm.getCTIStub(DFG::osrEntryThunkGenerator).code().executableAddress(), dataBuffer);
     }
 

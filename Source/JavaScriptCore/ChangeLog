@@ -1,3 +1,38 @@
+2016-06-14  Geoffrey Garen  <ggaren@apple.com>
+
+        compilation policy should adapt to past behavior
+        https://bugs.webkit.org/show_bug.cgi?id=158759
+
+        Reviewed by Saam Barati.
+
+        This looks like a ~9% speedup on JSBench.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock): Record when a CodeBlock dies without ever
+        making it to DFG.
+
+        (JSC::CodeBlock::thresholdForJIT): CodeBlocks that make it to DFG should
+        compile sooner; CodeBlocks that don't should compile later. The goal is
+        to use past behavior, in addition to execution counts, to determine
+        whether compilation is profitable.
+
+        (JSC::CodeBlock::jitAfterWarmUp):
+        (JSC::CodeBlock::jitSoon): Apply the thresholdForJIT rule.
+
+        * bytecode/CodeBlock.h: Moved some code into the .cpp file so I could
+        change stuff without recompiling.
+        (JSC::CodeBlock::jitAfterWarmUp): Deleted.
+        (JSC::CodeBlock::jitSoon): Deleted.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::didOptimize):
+        (JSC::UnlinkedCodeBlock::setDidOptimize): Added a piece of data to track
+        whether we made it to DFG.
+
+        * jit/JITOperations.cpp: Record when we make it to DFG.
+
 2016-06-15  Konstantin Tokarev  <annulen@yandex.ru>
 
         Only Mac port needs ObjC API for JSC.

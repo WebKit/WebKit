@@ -2418,7 +2418,10 @@ CodeBlock::~CodeBlock()
 {
     if (m_vm->m_perBytecodeProfiler)
         m_vm->m_perBytecodeProfiler->notifyDestruction(this);
-    
+
+    if (unlinkedCodeBlock()->didOptimize() == MixedTriState)
+        unlinkedCodeBlock()->setDidOptimize(FalseTriState);
+
 #if ENABLE(VERBOSE_VALUE_PROFILE)
     dumpValueProfiles();
 #endif
@@ -4433,6 +4436,28 @@ Optional<unsigned> CodeBlock::bytecodeOffsetFromCallSiteIndex(CallSiteIndex call
     }
 
     return bytecodeOffset;
+}
+
+int32_t CodeBlock::thresholdForJIT(int32_t threshold)
+{
+    switch (unlinkedCodeBlock()->didOptimize()) {
+    case MixedTriState:
+        return threshold;
+    case FalseTriState:
+        return threshold * 4;
+    case TrueTriState:
+        return threshold / 2;
+    }
+}
+
+void CodeBlock::jitAfterWarmUp()
+{
+    m_llintExecuteCounter.setNewThreshold(thresholdForJIT(Options::thresholdForJITAfterWarmUp()), this);
+}
+
+void CodeBlock::jitSoon()
+{
+    m_llintExecuteCounter.setNewThreshold(thresholdForJIT(Options::thresholdForJITSoon()), this);
 }
 
 } // namespace JSC
