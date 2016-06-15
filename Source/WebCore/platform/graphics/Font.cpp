@@ -185,9 +185,13 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
             buffer[rightToLeftEmbed - start] = zeroWidthSpace;
             buffer[leftToRightOverride - start] = zeroWidthSpace;
             buffer[rightToLeftOverride - start] = zeroWidthSpace;
+            buffer[leftToRightIsolate - start] = zeroWidthSpace;
+            buffer[rightToLeftIsolate - start] = zeroWidthSpace;
             buffer[zeroWidthNonJoiner - start] = zeroWidthSpace;
             buffer[zeroWidthJoiner - start] = zeroWidthSpace;
             buffer[popDirectionalFormatting - start] = zeroWidthSpace;
+            buffer[popDirectionalIsolate - start] = zeroWidthSpace;
+            buffer[firstStrongIsolate - start] = zeroWidthSpace;
         } else if (start == (objectReplacementCharacter & ~(GlyphPage::size - 1))) {
             // Object replacement character must not render at all.
             buffer[objectReplacementCharacter - start] = zeroWidthSpace;

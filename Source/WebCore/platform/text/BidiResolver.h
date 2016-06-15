@@ -630,9 +630,16 @@ void BidiResolverBase<Iterator, Run, Subclass>::createBidiRunsForLine(const Iter
                 dirCurrent = m_status.last;
         }
 
+#if PLATFORM(WIN)
+        // Our Windows build hasn't updated its headers from ICU 6.1, which doesn't have these symbols.
+        const UCharDirection U_FIRST_STRONG_ISOLATE = static_cast<UCharDirection>(19);
+        const UCharDirection U_LEFT_TO_RIGHT_ISOLATE = static_cast<UCharDirection>(20);
+        const UCharDirection U_RIGHT_TO_LEFT_ISOLATE = static_cast<UCharDirection>(21);
+        const UCharDirection U_POP_DIRECTIONAL_ISOLATE = static_cast<UCharDirection>(22);
+#endif
         // We ignore all character directionality while in unicode-bidi: isolate spans.
         // We'll handle ordering the isolated characters in a second pass.
-        if (inIsolate())
+        if (inIsolate() || dirCurrent == U_FIRST_STRONG_ISOLATE || dirCurrent == U_LEFT_TO_RIGHT_ISOLATE || dirCurrent == U_RIGHT_TO_LEFT_ISOLATE || dirCurrent == U_POP_DIRECTIONAL_ISOLATE)
             dirCurrent = U_OTHER_NEUTRAL;
 
         ASSERT(m_status.eor != U_OTHER_NEUTRAL || m_eor.atEnd());
