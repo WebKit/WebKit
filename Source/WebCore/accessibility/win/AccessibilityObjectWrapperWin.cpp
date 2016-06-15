@@ -65,6 +65,15 @@ void AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomicString&
         V_BSTR(result) = WebCore::BString(m_object->getAttribute(WebCore::HTMLNames::idAttr)).release();
         return;
     }
+
+    if (attributeName == "AXSelectedTextRangeAttribute") {
+        ASSERT(V_VT(result) == VT_EMPTY);
+        V_VT(result) = VT_BSTR;
+        PlainTextRange textRange = m_object->selectedTextRange();
+        String range = String::format("{%u, %u}", textRange.start, textRange.length);
+        V_BSTR(result) = WebCore::BString(range).release();
+        return;
+    }
 }
 
 

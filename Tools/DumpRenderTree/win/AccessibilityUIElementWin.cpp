@@ -686,7 +686,16 @@ AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned colu
 
 JSStringRef AccessibilityUIElement::selectedTextRange()
 {
-    return JSStringCreateWithCharacters(0, 0);    
+    COMPtr<IAccessibleComparable> comparable = comparableObject(platformUIElement().get());
+    if (!comparable)
+        return JSStringCreateWithCharacters(0, 0);
+
+    _variant_t value;
+    if (FAILED(comparable->get_attribute(_bstr_t(L"AXSelectedTextRangeAttribute"), &value.GetVARIANT())))
+        return JSStringCreateWithCharacters(0, 0);    
+
+    ASSERT(V_VT(&value) == VT_BSTR);
+    return JSStringCreateWithBSTR(value.bstrVal);
 }
 
 void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
