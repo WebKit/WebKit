@@ -1,5 +1,17 @@
 2016-06-15  Per Arne Vollan  <pvollan@apple.com>
 
+        [Win] MiniBrowser is not DPI aware.
+        https://bugs.webkit.org/show_bug.cgi?id=158733
+
+        Reviewed by Brent Fulgham.
+
+        Call Win32 api function to let Windows know that we will scale the contents ourselves.
+
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain):
+
+2016-06-15  Per Arne Vollan  <pvollan@apple.com>
+
         Unreviewed: add new email address to contributors.json.
 
         * Scripts/webkitpy/common/config/contributors.json:

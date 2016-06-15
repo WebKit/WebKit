@@ -69,6 +69,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     // Init COM
     OleInitialize(nullptr);
 
+    ::SetProcessDPIAware();
+
     float scaleFactor = WebCore::deviceScaleFactorForWindow(nullptr);
 
     if (usesLayeredWebView) {
