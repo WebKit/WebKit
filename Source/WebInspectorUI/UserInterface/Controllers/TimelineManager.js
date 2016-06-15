@@ -990,7 +990,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (!window.TimelineAgent)
             return;
 
-        if (!TimelineAgent.setAutoCaptureInstruments)
+        if (!TimelineAgent.setInstruments)
             return;
 
         let instrumentSet = new Set;
@@ -1015,7 +1015,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             }
         }
 
-        TimelineAgent.setAutoCaptureInstruments([...instrumentSet]);
+        TimelineAgent.setInstruments([...instrumentSet]);
     }
 };
 

@@ -1,3 +1,13 @@
+2016-06-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Rename Timeline.setAutoCaptureInstruments to Timeline.setInstruments
+        https://bugs.webkit.org/show_bug.cgi?id=158762
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/timeline/setInstruments-errors-expected.txt: Renamed from LayoutTests/inspector/timeline/setAutoCaptureInstruments-errors-expected.txt.
+        * inspector/timeline/setInstruments-errors.html: Renamed from LayoutTests/inspector/timeline/setAutoCaptureInstruments-errors.html.
+
 2016-06-14  Dean Jackson  <dino@apple.com>
 
         decompose4 return value is unchecked, leading to potentially uninitialized data.

@@ -1,3 +1,16 @@
+2016-06-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Rename Timeline.setAutoCaptureInstruments to Timeline.setInstruments
+        https://bugs.webkit.org/show_bug.cgi?id=158762
+
+        Reviewed by Timothy Hatcher.
+
+        Rename the protocol methods since the backend may use the instruments
+        for purposes other then auto-capture, such as programmatic capture
+        via console.profile.
+
+        * inspector/protocol/Timeline.json:
+
 2016-06-14  David Kilzer  <ddkilzer@apple.com>
 
         Document the native format of JSChar type

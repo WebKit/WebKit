@@ -107,7 +107,7 @@ void InspectorTimelineAgent::willDestroyFrontendAndBackend(Inspector::Disconnect
     stop(unused);
 
     m_autoCaptureEnabled = false;
-    m_autoCaptureInstruments.clear();
+    m_instruments.clear();
 }
 
 void InspectorTimelineAgent::start(ErrorString&, const int* maxCallStackDepth)
@@ -129,7 +129,7 @@ void InspectorTimelineAgent::setAutoCaptureEnabled(ErrorString&, bool enabled)
     m_autoCaptureEnabled = enabled;
 }
 
-void InspectorTimelineAgent::setAutoCaptureInstruments(ErrorString& errorString, const InspectorArray& instruments)
+void InspectorTimelineAgent::setInstruments(ErrorString& errorString, const InspectorArray& instruments)
 {
     Vector<Protocol::Timeline::Instrument> newInstruments;
     newInstruments.reserveCapacity(instruments.length());
@@ -150,7 +150,7 @@ void InspectorTimelineAgent::setAutoCaptureInstruments(ErrorString& errorString,
         newInstruments.uncheckedAppend(*instrumentType);
     }
 
-    m_autoCaptureInstruments.swap(newInstruments);
+    m_instruments.swap(newInstruments);
 }
 
 void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
@@ -393,7 +393,7 @@ void InspectorTimelineAgent::mainFrameStartedLoading()
     if (!m_autoCaptureEnabled)
         return;
 
-    if (m_autoCaptureInstruments.isEmpty())
+    if (m_instruments.isEmpty())
         return;
 
     // Pre-emptively disable breakpoints. The frontend must re-enable them.
@@ -406,7 +406,7 @@ void InspectorTimelineAgent::mainFrameStartedLoading()
     m_frontendDispatcher->autoCaptureStarted();
 
     // Enable instruments.
-    for (auto instrumentType : m_autoCaptureInstruments) {
+    for (auto instrumentType : m_instruments) {
         switch (instrumentType) {
         case Inspector::Protocol::Timeline::Instrument::ScriptProfiler: {
             if (m_scriptProfilerAgent) {

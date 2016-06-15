@@ -73,8 +73,8 @@
             ]
         },
         {
-            "name": "setAutoCaptureInstruments",
-            "description": "Instruments to enable when an auto capture starts.",
+            "name": "setInstruments",
+            "description": "Instruments to enable when capture starts on the backend (e.g. auto capture or programmatic capture).",
             "parameters": [
                 { "name": "instruments", "type": "array", "items": { "$ref": "Instrument" }, "description": "Instruments to enable." }
             ]

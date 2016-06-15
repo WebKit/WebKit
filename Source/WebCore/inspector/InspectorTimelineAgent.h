@@ -102,7 +102,7 @@ public:
     void start(ErrorString&, const int* maxCallStackDepth = nullptr) final;
     void stop(ErrorString&) final;
     void setAutoCaptureEnabled(ErrorString&, bool) final;
-    void setAutoCaptureInstruments(ErrorString&, const Inspector::InspectorArray&) final;
+    void setInstruments(ErrorString&, const Inspector::InspectorArray&) final;
 
     int id() const { return m_id; }
 
@@ -208,7 +208,7 @@ private:
     bool m_enabledFromFrontend { false };
 
     bool m_autoCaptureEnabled { false };
-    Vector<Inspector::Protocol::Timeline::Instrument> m_autoCaptureInstruments;
+    Vector<Inspector::Protocol::Timeline::Instrument> m_instruments;
 
 #if PLATFORM(COCOA)
     std::unique_ptr<WebCore::RunLoopObserver> m_frameStartObserver;
