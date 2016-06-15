@@ -1,3 +1,10 @@
+2016-06-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed GCC build fix after r202098.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::thresholdForJIT):
+
 2016-06-14  Geoffrey Garen  <ggaren@apple.com>
 
         compilation policy should adapt to past behavior

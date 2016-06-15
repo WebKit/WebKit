@@ -4448,6 +4448,8 @@ int32_t CodeBlock::thresholdForJIT(int32_t threshold)
     case TrueTriState:
         return threshold / 2;
     }
+    ASSERT_NOT_REACHED();
+    return threshold;
 }
 
 void CodeBlock::jitAfterWarmUp()
