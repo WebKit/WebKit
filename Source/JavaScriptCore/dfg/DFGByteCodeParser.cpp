@@ -2942,7 +2942,11 @@ GetByOffsetMethod ByteCodeParser::planLoad(const ObjectPropertyConditionSet& con
             break;
         }
     }
-    RELEASE_ASSERT(!!result);
+    if (!result) {
+        // We have a unset property.
+        ASSERT(!conditionSet.numberOfConditionsWithKind(PropertyCondition::Presence));
+        return GetByOffsetMethod::constant(m_constantUndefined);
+    }
     return result;
 }
 
@@ -3150,7 +3154,7 @@ void ByteCodeParser::handleGetById(
         //    optimal, if there is some rarely executed case in the chain that requires a lot
         //    of checks and those checks are not watchpointable.
         for (const GetByIdVariant& variant : getByIdStatus.variants()) {
-            if (variant.intrinsic() != NoIntrinsic || variant.isPropertyUnset()) {
+            if (variant.intrinsic() != NoIntrinsic) {
                 set(VirtualRegister(destinationOperand),
                     addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
                 return;
@@ -3163,7 +3167,7 @@ void ByteCodeParser::handleGetById(
                         GetByOffsetMethod::load(variant.offset())));
                 continue;
             }
-            
+
             GetByOffsetMethod method = planLoad(variant.conditionSet());
             if (!method) {
                 set(VirtualRegister(destinationOperand),

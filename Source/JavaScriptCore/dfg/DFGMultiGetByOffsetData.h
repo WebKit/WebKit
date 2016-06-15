@@ -40,6 +40,9 @@ class GetByOffsetMethod {
 public:
     enum Kind {
         Invalid,
+        // Constant might mean either that we have some fixed property or that the
+        // property is unset and we know the result is undefined. We don't distingish
+        // between these cases because no one cares about this distintion yet.
         Constant,
         Load,
         LoadFromPrototype
