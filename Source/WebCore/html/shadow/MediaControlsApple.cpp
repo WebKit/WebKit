@@ -30,6 +30,7 @@
 #include "MediaControlsApple.h"
 
 #include "CSSValueKeywords.h"
+#include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLNames.h"
 #include "Page.h"

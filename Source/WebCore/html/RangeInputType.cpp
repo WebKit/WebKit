@@ -33,6 +33,7 @@
 #include "RangeInputType.h"
 
 #include "AXObjectCache.h"
+#include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"

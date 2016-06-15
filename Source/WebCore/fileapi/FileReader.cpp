@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
-
 #include "FileReader.h"
 
+#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "File.h"
 #include "Logging.h"

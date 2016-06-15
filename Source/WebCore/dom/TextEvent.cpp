@@ -29,6 +29,7 @@
 
 #include "DocumentFragment.h"
 #include "Editor.h"
+#include "EventNames.h"
 
 namespace WebCore {
 

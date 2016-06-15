@@ -29,7 +29,6 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMTimer.h"
-#include "ResourceRequest.h"
 #include "SecurityContext.h"
 #include "Supplementable.h"
 #include <runtime/ConsoleTypes.h>
@@ -59,6 +58,7 @@ class EventQueue;
 class EventTarget;
 class MessagePort;
 class PublicURLManager;
+class ResourceRequest;
 class SecurityOrigin;
 class URL;
 

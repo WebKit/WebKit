@@ -30,6 +30,7 @@
 #include "CachedSVGDocument.h"
 #include "ElementIterator.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
 #include "ShadowRoot.h"

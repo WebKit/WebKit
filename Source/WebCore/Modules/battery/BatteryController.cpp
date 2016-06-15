@@ -19,13 +19,14 @@
  */
 
 #include "config.h"
-#include "BatteryController.h"
 
 #if ENABLE(BATTERY_STATUS)
+#include "BatteryController.h"
 
 #include "BatteryClient.h"
 #include "BatteryStatus.h"
 #include "Event.h"
+#include "EventNames.h"
 
 namespace WebCore {
 

@@ -28,6 +28,7 @@
 #include "MessagePort.h"
 
 #include "Document.h"
+#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "MessageEvent.h"
 #include "SecurityOrigin.h"

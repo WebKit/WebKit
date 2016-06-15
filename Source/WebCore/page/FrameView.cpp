@@ -38,6 +38,7 @@
 #include "DebugPageOverlays.h"
 #include "DocumentMarkerController.h"
 #include "EventHandler.h"
+#include "EventNames.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "FrameLoader.h"

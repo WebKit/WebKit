@@ -35,6 +35,7 @@
 #include "Supplementable.h"
 #include <functional>
 #include <memory>
+#include <wtf/HashSet.h>
 #include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 

@@ -30,6 +30,7 @@
 #include "config.h"
 #include "WebKitNamedFlow.h"
 
+#include "EventNames.h"
 #include "NamedFlowCollection.h"
 #include "NoEventDispatchAssertion.h"
 #include "RenderNamedFlowFragment.h"

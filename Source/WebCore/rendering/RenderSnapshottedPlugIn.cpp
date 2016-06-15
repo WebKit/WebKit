@@ -30,6 +30,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Cursor.h"
+#include "EventNames.h"
 #include "Filter.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"

@@ -2646,6 +2646,7 @@ sub GenerateImplementation
                 push(@implContent, "    auto& impl = castedThis->wrapped();\n");
                 push(@implContent, "    return JSValue::encode(shouldAllowAccessToNode(state, impl." . $attribute->signature->name . "()) ? " . NativeToJSValue($attribute->signature, 0, $interface, "impl.$implGetterFunctionName()", "castedThis") . " : jsNull());\n");
             } elsif ($type eq "EventHandler") {
+                $implIncludes{"EventNames.h"} = 1;
                 my $getter = $attribute->signature->extendedAttributes->{"WindowEventHandler"} ? "windowEventHandlerAttribute"
                     : $attribute->signature->extendedAttributes->{"DocumentEventHandler"} ? "documentEventHandlerAttribute"
                     : "eventHandlerAttribute";

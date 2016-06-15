@@ -27,6 +27,7 @@
 #include "config.h"
 #include "XMLHttpRequestProgressEventThrottle.h"
 
+#include "EventNames.h"
 #include "EventTarget.h"
 #include "XMLHttpRequestProgressEvent.h"
 

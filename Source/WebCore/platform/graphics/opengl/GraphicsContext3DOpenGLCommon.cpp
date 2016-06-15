@@ -57,6 +57,7 @@
 #include <runtime/Uint8Array.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MainThread.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <yarr/RegularExpression.h>
@@ -76,6 +77,7 @@
 #endif
 #endif
 
+using namespace WTF;
 
 namespace WebCore {
 

@@ -23,6 +23,7 @@
 #include "CharacterData.h"
 
 #include "ElementTraversal.h"
+#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FrameSelection.h"
 #include "InspectorInstrumentation.h"

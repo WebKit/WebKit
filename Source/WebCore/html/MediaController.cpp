@@ -29,6 +29,7 @@
 #include "MediaController.h"
 
 #include "Clock.h"
+#include "EventNames.h"
 #include "HTMLMediaElement.h"
 #include "TimeRanges.h"
 #include <wtf/CurrentTime.h>

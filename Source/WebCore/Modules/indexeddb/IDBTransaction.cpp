@@ -31,6 +31,7 @@
 #include "DOMError.h"
 #include "DOMWindow.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "EventQueue.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"

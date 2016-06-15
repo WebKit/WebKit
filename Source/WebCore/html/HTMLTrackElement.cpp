@@ -29,6 +29,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "Logging.h"

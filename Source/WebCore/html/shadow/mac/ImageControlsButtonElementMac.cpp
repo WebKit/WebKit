@@ -30,6 +30,7 @@
 
 #include "ContextMenuController.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLDivElement.h"

@@ -37,6 +37,7 @@
 #include "EXTShaderTextureLOD.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTsRGB.h"
+#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Extensions3D.h"
 #include "Frame.h"

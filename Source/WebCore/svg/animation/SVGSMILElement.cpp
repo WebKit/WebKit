@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
+#include "EventNames.h"
 #include "EventSender.h"
 #include "FloatConversion.h"
 #include "FrameView.h"

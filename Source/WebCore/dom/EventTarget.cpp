@@ -32,6 +32,7 @@
 #include "config.h"
 #include "EventTarget.h"
 
+#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "NoEventDispatchAssertion.h"

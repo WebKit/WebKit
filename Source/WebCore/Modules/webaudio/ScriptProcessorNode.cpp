@@ -35,6 +35,7 @@
 #include "AudioNodeOutput.h"
 #include "AudioProcessingEvent.h"
 #include "Document.h"
+#include "EventNames.h"
 #include <runtime/Float32Array.h>
 #include <wtf/MainThread.h>
 

@@ -27,6 +27,7 @@
 #include "XMLHttpRequestUpload.h"
 
 #include "Event.h"
+#include "EventNames.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/AtomicString.h>

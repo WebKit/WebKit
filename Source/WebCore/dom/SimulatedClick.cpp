@@ -29,6 +29,7 @@
 #include "DataTransfer.h"
 #include "Element.h"
 #include "EventDispatcher.h"
+#include "EventNames.h"
 #include "MouseEvent.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>

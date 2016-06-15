@@ -27,6 +27,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCStatsResponse.h"
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

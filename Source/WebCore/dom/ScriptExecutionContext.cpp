@@ -36,6 +36,7 @@
 #include "MessagePort.h"
 #include "NoEventDispatchAssertion.h"
 #include "PublicURLManager.h"
+#include "ResourceRequest.h"
 #include "ScriptState.h"
 #include "Settings.h"
 #include "WorkerGlobalScope.h"

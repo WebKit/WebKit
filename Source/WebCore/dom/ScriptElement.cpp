@@ -31,6 +31,7 @@
 #include "CrossOriginAccessControl.h"
 #include "CurrentScriptIncrementer.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"

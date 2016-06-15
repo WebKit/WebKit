@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "DOMStringList.h"
+#include "EventNames.h"
 #include "EventQueue.h"
 #include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"

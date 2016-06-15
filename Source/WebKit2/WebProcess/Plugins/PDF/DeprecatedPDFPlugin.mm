@@ -55,6 +55,7 @@
 #import <WebCore/Cursor.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/EventNames.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FormState.h>
 #import <WebCore/Frame.h>

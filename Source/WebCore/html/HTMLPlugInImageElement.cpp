@@ -25,6 +25,7 @@
 #include "ChromeClient.h"
 #include "Event.h"
 #include "EventHandler.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"

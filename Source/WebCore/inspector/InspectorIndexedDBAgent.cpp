@@ -41,6 +41,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
+#include "EventNames.h"
 #include "EventTarget.h"
 #include "ExceptionCode.h"
 #include "Frame.h"

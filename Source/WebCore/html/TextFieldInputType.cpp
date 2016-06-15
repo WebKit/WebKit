@@ -36,6 +36,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Editor.h"
+#include "EventNames.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "FrameSelection.h"

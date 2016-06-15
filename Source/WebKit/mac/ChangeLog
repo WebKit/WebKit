@@ -1,3 +1,14 @@
+2016-06-15  Chris Dumez  <cdumez@apple.com>
+
+        Drop some unnecessary header includes
+        https://bugs.webkit.org/show_bug.cgi?id=158788
+
+        Reviewed by Alexey Proskuryakov.
+
+        Drop some unnecessary header includes in headers to speed up build time.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2016-06-15  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         Enabling Shadow DOM for all platforms

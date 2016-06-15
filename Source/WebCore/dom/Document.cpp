@@ -127,6 +127,7 @@
 #include "PageTransitionEvent.h"
 #include "PlatformLocale.h"
 #include "PlatformMediaSessionManager.h"
+#include "PlatformScreen.h"
 #include "PlatformStrategies.h"
 #include "PlugInsResources.h"
 #include "PluginDocument.h"

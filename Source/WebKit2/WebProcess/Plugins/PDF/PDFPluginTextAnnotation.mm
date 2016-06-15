@@ -37,6 +37,7 @@
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/Event.h>
+#import <WebCore/EventNames.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>

@@ -29,6 +29,7 @@
 #include "ChromeClient.h"
 #include "Cursor.h"
 #include "EventHandler.h"
+#include "EventNames.h"
 #include "FontCascade.h"
 #include "FontSelector.h"
 #include "Frame.h"

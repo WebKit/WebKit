@@ -26,6 +26,7 @@
 
 #include "Document.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "EventSender.h"
 #include "HTMLNames.h"
 #include "MediaList.h"

@@ -36,6 +36,7 @@
 #include "CSSValueKeywords.h"
 #include "Event.h"
 #include "EventHandler.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"

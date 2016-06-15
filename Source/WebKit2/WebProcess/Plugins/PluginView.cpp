@@ -42,6 +42,7 @@
 #include <WebCore/CredentialStorage.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/EventHandler.h>
+#include <WebCore/EventNames.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>

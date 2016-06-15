@@ -37,6 +37,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Element.h>
+#include <WebCore/EventNames.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>

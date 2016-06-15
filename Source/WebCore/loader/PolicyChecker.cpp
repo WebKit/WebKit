@@ -34,6 +34,7 @@
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
+#include "EventNames.h"
 #include "FormState.h"
 #include "Frame.h"
 #include "FrameLoader.h"

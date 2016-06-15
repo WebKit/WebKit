@@ -29,6 +29,7 @@
 #include "config.h"
 #include "DOMNamedFlowCollection.h"
 
+#include "EventNames.h"
 
 namespace WebCore {
 

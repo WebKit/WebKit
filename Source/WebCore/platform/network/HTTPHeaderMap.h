@@ -30,9 +30,6 @@
 #include <utility>
 #include <wtf/HashMap.h>
 #include <wtf/Optional.h>
-#include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

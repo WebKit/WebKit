@@ -82,6 +82,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/EventNames.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FormState.h>
 #import <WebCore/FrameLoader.h>

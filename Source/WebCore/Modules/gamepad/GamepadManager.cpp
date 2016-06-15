@@ -29,6 +29,7 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "EventNames.h"
 #include "Gamepad.h"
 #include "GamepadEvent.h"
 #include "GamepadProvider.h"

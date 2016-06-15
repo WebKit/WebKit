@@ -32,6 +32,8 @@
 #include "CDMSession.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventNames.h"
+#include "FileSystem.h"
 #include "GenericEventQueue.h"
 #include "MediaKeyError.h"
 #include "MediaKeyMessageEvent.h"

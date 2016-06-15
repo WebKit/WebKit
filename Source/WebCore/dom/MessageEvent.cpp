@@ -30,6 +30,7 @@
 
 #include "Blob.h"
 #include "DOMWindow.h"
+#include "EventNames.h"
 #include <runtime/JSCInlines.h>
 
 namespace WebCore {

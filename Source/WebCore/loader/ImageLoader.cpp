@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "EventSender.h"
 #include "Frame.h"
 #include "HTMLNames.h"

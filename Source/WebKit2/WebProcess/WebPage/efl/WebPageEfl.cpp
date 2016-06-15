@@ -30,6 +30,7 @@
 
 #include "EditorState.h"
 #include "EventHandler.h"
+#include "EventNames.h"
 #include "NotImplemented.h"
 #include "WebEvent.h"
 #include "WebPageProxyMessages.h"

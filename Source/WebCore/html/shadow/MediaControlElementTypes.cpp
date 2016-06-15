@@ -33,6 +33,7 @@
 #include "MediaControlElementTypes.h"
 
 #include "CSSValueKeywords.h"
+#include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLNames.h"
 #include "MouseEvent.h"

@@ -30,6 +30,7 @@
 
 #include "DOMError.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "EventQueue.h"
 #include "IDBBindingUtilities.h"
 #include "IDBConnectionProxy.h"

@@ -23,6 +23,7 @@
 
 #if ENABLE(DETAILS_ELEMENT)
 #include "DetailsMarkerControl.h"
+#include "EventNames.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLSlotElement.h"

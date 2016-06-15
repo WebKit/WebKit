@@ -35,6 +35,7 @@
 #include "DOMTokenList.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "EventSender.h"
 #include "Frame.h"
 #include "FrameLoader.h"

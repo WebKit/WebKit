@@ -42,6 +42,7 @@
 #include "DocumentParser.h"
 #include "DocumentWriter.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "ExtensionStyleSheets.h"
 #include "FormState.h"
 #include "FrameLoader.h"

@@ -30,6 +30,7 @@
 #include "ClassCollection.h"
 #include "ContainerNodeAlgorithms.h"
 #include "Editor.h"
+#include "EventNames.h"
 #include "FloatRect.h"
 #include "FrameView.h"
 #include "GenericCachedHTMLCollection.h"

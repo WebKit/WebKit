@@ -31,7 +31,6 @@
 #ifndef DocumentOrderedMap_h
 #define DocumentOrderedMap_h
 
-#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>

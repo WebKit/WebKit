@@ -36,6 +36,7 @@
 
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "PerformanceEntry.h"
 #include "PerformanceNavigation.h"

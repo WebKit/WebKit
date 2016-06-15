@@ -28,6 +28,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include "EventNames.h"
 #include "PlatformSpeechSynthesisVoice.h"
 #include "PlatformSpeechSynthesizer.h"
 #include "ScriptController.h"

@@ -36,6 +36,7 @@
 
 #include "AudioTrackList.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
 #include "GenericEventQueue.h"
 #include "HTMLMediaElement.h"

@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "Event.h"
+#include "EventNames.h"
 #include "SourceBuffer.h"
 
 namespace WebCore {

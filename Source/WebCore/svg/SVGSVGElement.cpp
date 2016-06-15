@@ -25,6 +25,7 @@
 
 #include "CSSHelper.h"
 #include "ElementIterator.h"
+#include "EventNames.h"
 #include "FrameSelection.h"
 #include "MainFrame.h"
 #include "RenderSVGResource.h"

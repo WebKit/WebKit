@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioUtilities.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "ScriptController.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>

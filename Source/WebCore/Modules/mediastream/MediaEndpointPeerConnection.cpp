@@ -33,6 +33,7 @@
 #if ENABLE(WEB_RTC)
 #include "MediaEndpointPeerConnection.h"
 
+#include "EventNames.h"
 #include "JSRTCSessionDescription.h"
 #include "MediaEndpointSessionConfiguration.h"
 #include "MediaStream.h"

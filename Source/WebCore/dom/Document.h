@@ -32,14 +32,12 @@
 #include "ContainerNode.h"
 #include "DocumentEventQueue.h"
 #include "DocumentTiming.h"
-#include "EventTrackingRegions.h"
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
 #include "MediaProducer.h"
 #include "MutationObserver.h"
 #include "PageVisibilityState.h"
 #include "PlatformEvent.h"
-#include "PlatformScreen.h"
 #include "ReferrerPolicy.h"
 #include "Region.h"
 #include "RenderPtr.h"
@@ -55,9 +53,15 @@
 #include <chrono>
 #include <memory>
 #include <wtf/Deque.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/AtomicStringHash.h>
+
+#if PLATFORM(IOS)
+#include "EventTrackingRegions.h"
+#endif
 
 namespace JSC {
 class ExecState;
@@ -167,6 +171,8 @@ class XPathNSResolver;
 class XPathResult;
 
 enum class ShouldOpenExternalURLsPolicy;
+
+using PlatformDisplayID = uint32_t;
 
 #if ENABLE(XSLT)
 class TransformSource;

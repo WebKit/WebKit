@@ -26,6 +26,7 @@
 #include "Document.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "PlatformKeyboardEvent.h"
 #include "Settings.h"

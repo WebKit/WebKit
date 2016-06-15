@@ -120,6 +120,7 @@
 #include <WebCore/DragData.h>
 #include <WebCore/ElementIterator.h>
 #include <WebCore/EventHandler.h>
+#include <WebCore/EventNames.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FormState.h>
 #include <WebCore/FrameLoadRequest.h>

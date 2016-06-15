@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

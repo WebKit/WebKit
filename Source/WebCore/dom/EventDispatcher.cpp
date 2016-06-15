@@ -27,6 +27,7 @@
 #include "EventDispatcher.h"
 
 #include "EventContext.h"
+#include "EventNames.h"
 #include "EventPath.h"
 #include "FrameView.h"
 #include "HTMLInputElement.h"

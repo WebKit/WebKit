@@ -38,6 +38,7 @@
 #include "AudioTrackList.h"
 #include "ContentType.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
 #include "GenericEventQueue.h"

@@ -32,7 +32,6 @@
 #define EventTarget_h
 
 #include "EventListenerMap.h"
-#include "EventNames.h"
 #include "EventTargetInterfaces.h"
 #include "ScriptWrappable.h"
 #include <memory>

@@ -30,6 +30,7 @@
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "ScriptExecutionContext.h"
+#include "URL.h"
 #include "WorkerEventQueue.h"
 #include "WorkerScriptController.h"
 #include <memory>
