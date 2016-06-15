@@ -78,10 +78,12 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
             columns.name.title = WebInspector.UIString("Name");
             columns.name.sortable = true;
             columns.name.width = "24%";
+            columns.name.locked = true;
 
             columns.value.title = WebInspector.UIString("Value");
             columns.value.sortable = true;
             columns.value.width = "34%";
+            columns.value.locked = true;
 
             columns.domain.title = WebInspector.UIString("Domain");
             columns.domain.sortable = true;
@@ -111,6 +113,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
             columns.secure.width = "7%";
 
             this._dataGrid = new WebInspector.DataGrid(columns, null, this._deleteCallback.bind(this));
+            this._dataGrid.columnChooserEnabled = true;
             this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 
             this.addSubview(this._dataGrid);

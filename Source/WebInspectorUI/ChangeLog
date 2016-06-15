@@ -1,3 +1,15 @@
+2016-06-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Storage tab should allow hiding columns in the cookies grid
+        https://bugs.webkit.org/show_bug.cgi?id=158767
+        <rdar://problem/26803568>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype._rebuildTable):
+        Enable column chooser, exclude Name and Value columns.
+
 2016-06-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Visual Sidebar: Remove "Text -> Content" subsection
