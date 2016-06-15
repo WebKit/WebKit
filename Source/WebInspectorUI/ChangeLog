@@ -1,3 +1,21 @@
+2016-06-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Visual Sidebar: Remove "Text -> Content" subsection
+        https://bugs.webkit.org/show_bug.cgi?id=158758
+        <rdar://problem/26799628>
+
+        Reviewed by Timothy Hatcher.
+
+        "content" CSS property only works with pseudo elements ::before and ::after.
+        It doesn't do anything for regular (non pseudo) elements. Remove it to
+        reduce UI clutter.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype.initialLayout):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateContentSection): Deleted.
+        * UserInterface/Views/VisualStylePropertyEditor.css:
+        (.visual-style-property-container > *:first-child:matches(.visual-style-property-value-container)): Deleted.
+
 2016-06-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rename Timeline.setAutoCaptureInstruments to Timeline.setInstruments
