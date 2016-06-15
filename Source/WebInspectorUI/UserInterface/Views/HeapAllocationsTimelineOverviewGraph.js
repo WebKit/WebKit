@@ -108,7 +108,9 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
         }
 
         let imageElement = this.selectedRecord[WebInspector.HeapAllocationsTimelineOverviewGraph.RecordElementAssociationSymbol];
-        console.assert(imageElement, "Missing snapshot image element for selected record", this.selectedRecord);
+        if (!imageElement)
+            return;
+
         imageElement.classList.add("selected");
 
         this._selectedImageElement = imageElement;
