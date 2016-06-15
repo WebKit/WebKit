@@ -122,10 +122,7 @@ inline void ElementRuleCollector::addMatchedRule(const RuleData& ruleData, unsig
 void ElementRuleCollector::clearMatchedRules()
 {
     m_matchedRules.clear();
-#if ENABLE(SHADOW_DOM)
     m_keepAliveSlottedPseudoElementRules.clear();
-#endif
-
 }
 
 inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, bool isCacheable)
@@ -221,19 +218,16 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
     collectMatchingRules(matchRequest, ruleRange);
     collectMatchingRulesForRegion(matchRequest, ruleRange);
 
-#if ENABLE(SHADOW_DOM)
     auto* parent = m_element.parentElement();
     if (parent && parent->shadowRoot())
         matchSlottedPseudoElementRules(matchRequest, ruleRange);
 
     if (m_element.shadowRoot())
         matchHostPseudoClassRules(matchRequest, ruleRange);
-#endif
 
     sortAndTransferMatchedRules();
 }
 
-#if ENABLE(SHADOW_DOM)
 void ElementRuleCollector::matchHostPseudoClassRules(MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
 {
     ASSERT(m_element.shadowRoot());
@@ -313,7 +307,6 @@ std::unique_ptr<RuleSet::RuleDataVector> ElementRuleCollector::collectSlottedPse
 
     return ruleDataVector;
 }
-#endif
 
 void ElementRuleCollector::matchUserRules(bool includeEmptyRules)
 {
@@ -356,7 +349,6 @@ void ElementRuleCollector::matchUARules(RuleSet* rules)
     sortAndTransferMatchedRules();
 }
 
-#if ENABLE(SHADOW_DOM)
 static const CSSSelector* findSlottedPseudoElementSelector(const CSSSelector* selector)
 {
     for (; selector; selector = selector->tagHistory()) {
@@ -368,7 +360,6 @@ static const CSSSelector* findSlottedPseudoElementSelector(const CSSSelector* se
     };
     return nullptr;
 }
-#endif
 
 inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned& specificity)
 {
@@ -448,13 +439,11 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 #endif // ENABLE(CSS_SELECTOR_JIT)
     {
         auto* selector = ruleData.selector();
-#if ENABLE(SHADOW_DOM)
         if (m_isMatchingSlottedPseudoElements) {
             selector = findSlottedPseudoElementSelector(ruleData.selector());
             if (!selector)
                 return false;
         }
-#endif
         // Slow path.
         SelectorChecker selectorChecker(m_element.document());
         selectorMatches = selectorChecker.match(*selector, m_element, context, specificity);

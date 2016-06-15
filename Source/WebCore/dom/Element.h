@@ -254,10 +254,8 @@ public:
         ShadowRootMode mode;
     };
 
-#if ENABLE(SHADOW_DOM)
     ShadowRoot* shadowRootForBindings(JSC::ExecState&) const;
     RefPtr<ShadowRoot> attachShadow(const ShadowRootInit&, ExceptionCode&);
-#endif
 
     ShadowRoot* userAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();

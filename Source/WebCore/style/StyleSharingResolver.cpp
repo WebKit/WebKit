@@ -97,10 +97,8 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Element& searchEleme
         return nullptr;
     if (elementHasDirectionAuto(element))
         return nullptr;
-#if ENABLE(SHADOW_DOM)
     if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle()->hostPseudoClassRules().isEmpty())
         return nullptr;
-#endif
 
     Context context {
         update,
@@ -285,10 +283,8 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (element.matchesInvalidPseudoClass() != element.matchesValidPseudoClass())
         return false;
 
-#if ENABLE(SHADOW_DOM)
     if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle()->hostPseudoClassRules().isEmpty())
         return false;
-#endif
 
 #if ENABLE(FULLSCREEN_API)
     if (&element == m_document.webkitCurrentFullScreenElement() || &element == m_document.webkitCurrentFullScreenElement())

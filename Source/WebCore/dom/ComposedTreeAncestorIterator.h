@@ -83,12 +83,7 @@ inline ComposedTreeAncestorIterator& ComposedTreeAncestorIterator::traverseParen
     };
 
     if (auto* shadowRoot = parent->shadowRoot()) {
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
         m_current = shadowRoot->findAssignedSlot(*m_current);
-#else
-        UNUSED_PARAM(shadowRoot);
-        m_current = nullptr;
-#endif
         return *this;
     }
 

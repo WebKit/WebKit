@@ -1131,7 +1131,6 @@ Ref<Element> Document::createElement(const QualifiedName& name, bool createdByPa
     return element.releaseNonNull();
 }
 
-#if ENABLE(CUSTOM_ELEMENTS) || ENABLE(SHADOW_DOM)
 CustomElementNameValidationStatus Document::validateCustomElementName(const AtomicString& localName)
 {
     bool containsHyphen = false;
@@ -1163,7 +1162,6 @@ CustomElementNameValidationStatus Document::validateCustomElementName(const Atom
 
     return CustomElementNameValidationStatus::Valid;
 }
-#endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
 bool Document::isCSSGridLayoutEnabled() const

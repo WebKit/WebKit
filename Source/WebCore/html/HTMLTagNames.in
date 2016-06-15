@@ -113,7 +113,7 @@ samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser
 section interfaceName=HTMLElement
 select constructorNeedsFormElement
-slot conditional=SHADOW_DOM
+slot 
 small interfaceName=HTMLElement
 source
 span

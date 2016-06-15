@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SlotAssignment.h"
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
 #include "HTMLSlotElement.h"
 #include "ShadowRoot.h"
@@ -275,5 +274,4 @@ void SlotAssignment::assignToSlot(Node& child, const AtomicString& slotName)
 
 }
 
-#endif
 

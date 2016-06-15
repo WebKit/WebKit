@@ -319,12 +319,10 @@ void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change
         pushScope(*shadowRoot);
         parent.didPushScope = true;
     }
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     else if (is<HTMLSlotElement>(element) && downcast<HTMLSlotElement>(element).assignedNodes()) {
         pushEnclosingScope();
         parent.didPushScope = true;
     }
-#endif
 
     m_parentStack.append(WTFMove(parent));
 }

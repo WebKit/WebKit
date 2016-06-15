@@ -112,14 +112,12 @@ EventPath::EventPath(Node& originalTarget, Event& event)
             if (!parent)
                 return;
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
             if (ShadowRoot* shadowRootOfParent = parent->shadowRoot()) {
                 if (auto* assignedSlot = shadowRootOfParent->findAssignedSlot(*node)) {
                     // node is assigned to a slot. Continue dispatching the event at this slot.
                     parent = assignedSlot;
                 }
             }
-#endif
             node = parent;
         }
 

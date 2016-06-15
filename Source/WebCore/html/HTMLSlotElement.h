@@ -25,7 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
 #include "HTMLElement.h"
 
@@ -58,4 +57,3 @@ private:
 
 }
 
-#endif

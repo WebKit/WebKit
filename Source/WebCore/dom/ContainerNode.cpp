@@ -100,9 +100,7 @@ void ContainerNode::removeDetachedChildren()
 static inline void destroyRenderTreeIfNeeded(Node& child)
 {
     bool childIsHTMLSlotElement = false;
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     childIsHTMLSlotElement = is<HTMLSlotElement>(child);
-#endif
     // FIXME: Get rid of the named flow test.
     if (!child.renderer() && !child.isNamedFlowContentNode() && !childIsHTMLSlotElement)
         return;

@@ -62,20 +62,16 @@ private:
     void traverseNextInShadowTree();
     void traverseNextLeavingContext();
     void traverseShadowRoot(ShadowRoot&);
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     bool advanceInSlot(int direction);
     void traverseSiblingInSlot(int direction);
-#endif
 
     struct Context {
         Context();
         Context(ContainerNode& root, FirstChildTag);
         Context(ContainerNode& root, Node& node);
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
         enum SlottedTag { Slotted };
         Context(ContainerNode& root, Node& node, SlottedTag);
-#endif
         ElementAndTextDescendantIterator iterator;
         ElementAndTextDescendantIterator end;
         size_t slotNodeIndex { notFound };
@@ -121,24 +117,20 @@ inline ComposedTreeIterator& ComposedTreeIterator::traverseNextSkippingChildren(
 
 inline ComposedTreeIterator& ComposedTreeIterator::traverseNextSibling()
 {
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (current().parentNode()->shadowRoot()) {
         traverseSiblingInSlot(1);
         return *this;
     }
-#endif
     context().iterator.traverseNextSibling();
     return *this;
 }
 
 inline ComposedTreeIterator& ComposedTreeIterator::traversePreviousSibling()
 {
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (current().parentNode()->shadowRoot()) {
         traverseSiblingInSlot(-1);
         return *this;
     }
-#endif
     context().iterator.traversePreviousSibling();
     return *this;
 }

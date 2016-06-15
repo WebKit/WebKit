@@ -76,11 +76,9 @@ private:
     void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
 
     void matchUARules(RuleSet*);
-#if ENABLE(SHADOW_DOM)
     void matchHostPseudoClassRules(MatchRequest&, StyleResolver::RuleRange&);
     void matchSlottedPseudoElementRules(MatchRequest&, StyleResolver::RuleRange&);
     std::unique_ptr<RuleSet::RuleDataVector> collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules);
-#endif
 
     void collectMatchingRules(const MatchRequest&, StyleResolver::RuleRange&);
     void collectMatchingRulesForRegion(const MatchRequest&, StyleResolver::RuleRange&);
@@ -102,10 +100,8 @@ private:
     PseudoStyleRequest m_pseudoStyleRequest { NOPSEUDO };
     bool m_sameOriginOnly { false };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
-#if ENABLE(SHADOW_DOM)
     bool m_isMatchingSlottedPseudoElements { false };
     Vector<std::unique_ptr<RuleSet::RuleDataVector>> m_keepAliveSlottedPseudoElementRules;
-#endif
 
     Vector<MatchedRule, 64> m_matchedRules;
 

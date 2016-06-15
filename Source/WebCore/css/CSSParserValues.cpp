@@ -233,7 +233,6 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementCueFunctionSelector(cons
 }
 #endif
 
-#if ENABLE(SHADOW_DOM)
 CSSParserSelector* CSSParserSelector::parsePseudoElementSlottedFunctionSelector(const CSSParserString& functionIdentifier, CSSParserSelector* parsedSelector)
 {
     ASSERT_UNUSED(functionIdentifier, String(functionIdentifier) == "slotted(");
@@ -281,7 +280,6 @@ CSSParserSelector* CSSParserSelector::parsePseudoClassHostFunctionSelector(const
     selector->adoptSelectorVector(*selectorVector);
     return selector.release();
 }
-#endif
 
 CSSParserSelector* CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector(CSSParserString& pseudoTypeString)
 {

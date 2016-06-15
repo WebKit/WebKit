@@ -5047,12 +5047,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(!!enabled);
 #endif
 
-#if ENABLE(SHADOW_DOM)
     hr = prefsPrivate->shadowDOMEnabled(&enabled);
     if (FAILED(hr))
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(!!enabled);
-#endif
 
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))

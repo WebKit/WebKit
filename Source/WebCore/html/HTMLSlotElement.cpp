@@ -26,7 +26,6 @@
 #include "config.h"
 #include "HTMLSlotElement.h"
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
 #include "Event.h"
 #include "EventNames.h"
@@ -147,4 +146,3 @@ void HTMLSlotElement::dispatchSlotChangeEvent()
 
 }
 
-#endif

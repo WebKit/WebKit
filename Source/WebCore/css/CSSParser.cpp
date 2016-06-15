@@ -11982,12 +11982,10 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
             return true;
         }
 #endif
-#if ENABLE(SHADOW_DOM)
         if (isEqualToCSSIdentifier(name, "host")) {
             m_token = HOSTFUNCTION;
             return true;
         }
-#endif
         return false;
 
     case 7:
@@ -11995,12 +11993,10 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
             m_token = MATCHESFUNCTION;
             return true;
         }
-#if ENABLE(SHADOW_DOM)
         if (isEqualToCSSIdentifier(name, "slotted")) {
             m_token = SLOTTEDFUNCTION;
             return true;
         }
-#endif
         return false;
 
     case 9:

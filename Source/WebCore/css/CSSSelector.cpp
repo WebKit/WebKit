@@ -299,9 +299,7 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
 #if ENABLE(VIDEO_TRACK)
     case PseudoElementCue:
 #endif
-#if ENABLE(SHADOW_DOM)
     case PseudoElementSlotted:
-#endif
     case PseudoElementUnknown:
     case PseudoElementUserAgentCustom:
     case PseudoElementWebKitCustom:
@@ -639,11 +637,9 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassWindowInactive:
                 str.appendLiteral(":window-inactive");
                 break;
-#if ENABLE(SHADOW_DOM)
             case CSSSelector::PseudoClassHost:
                 str.appendLiteral(":host");
                 break;
-#endif
 #if ENABLE(CUSTOM_ELEMENTS)
             case CSSSelector::PseudoClassDefined:
                 str.appendLiteral(":defined");
@@ -654,13 +650,11 @@ String CSSSelector::selectorText(const String& rightSide) const
             }
         } else if (cs->match() == CSSSelector::PseudoElement) {
             switch (cs->pseudoElementType()) {
-#if ENABLE(SHADOW_DOM)
             case CSSSelector::PseudoElementSlotted:
                 str.appendLiteral("::slotted(");
                 cs->selectorList()->buildSelectorsText(str);
                 str.append(')');
                 break;
-#endif
             case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
                 if (cs->value() == "placeholder")
                     str.appendLiteral("::-webkit-input-placeholder");

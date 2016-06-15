@@ -77,13 +77,11 @@ static inline bool isFocusScopeOwner(const Element& element)
 {
     if (element.shadowRoot() && !hasCustomFocusLogic(element))
         return true;
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (is<HTMLSlotElement>(element) && downcast<HTMLSlotElement>(element).assignedNodes()) {
         ShadowRoot* root = element.containingShadowRoot();
         if (root && root->host() && !hasCustomFocusLogic(*root->host()))
             return true;
-    }
-#endif
+    } 
     return false;
 }
 
@@ -110,14 +108,10 @@ private:
 
     explicit FocusNavigationScope(TreeScope&);
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     explicit FocusNavigationScope(HTMLSlotElement&);
-#endif
 
     TreeScope* m_rootTreeScope { nullptr };
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     HTMLSlotElement* m_slotElement { nullptr };
-#endif
 };
 
 // FIXME: Focus navigation should work with shadow trees that have slots.
@@ -140,10 +134,8 @@ Node* FocusNavigationScope::parentInScope(const Node& node) const
     if (is<Element>(node) && isFocusScopeOwner(downcast<Element>(node)))
         return nullptr;
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (UNLIKELY(m_slotElement && m_slotElement == node.assignedSlot()))
         return nullptr;
-#endif
 
     ContainerNode* parent = node.parentNode();
     if (parent && is<Element>(parent) && isFocusScopeOwner(downcast<Element>(*parent)))
@@ -154,7 +146,6 @@ Node* FocusNavigationScope::parentInScope(const Node& node) const
 
 Node* FocusNavigationScope::nextSiblingInScope(const Node& node) const
 {
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (UNLIKELY(m_slotElement && m_slotElement == node.assignedSlot())) {
         for (Node* current = node.nextSibling(); current; current = current->nextSibling()) {
             if (current->assignedSlot() == m_slotElement)
@@ -162,13 +153,11 @@ Node* FocusNavigationScope::nextSiblingInScope(const Node& node) const
         }
         return nullptr;
     }
-#endif
     return node.nextSibling();
 }
 
 Node* FocusNavigationScope::previousSiblingInScope(const Node& node) const
 {
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (UNLIKELY(m_slotElement && m_slotElement == node.assignedSlot())) {
         for (Node* current = node.previousSibling(); current; current = current->previousSibling()) {
             if (current->assignedSlot() == m_slotElement)
@@ -176,32 +165,27 @@ Node* FocusNavigationScope::previousSiblingInScope(const Node& node) const
         }
         return nullptr;
     }
-#endif
     return node.previousSibling();
 }
 
 Node* FocusNavigationScope::firstNodeInScope() const
 {
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (UNLIKELY(m_slotElement)) {
         auto* assigneNodes = m_slotElement->assignedNodes();
         ASSERT(assigneNodes);
         return assigneNodes->first();
     }
-#endif
     ASSERT(m_rootTreeScope);
     return &m_rootTreeScope->rootNode();
 }
 
 Node* FocusNavigationScope::lastNodeInScope() const
 {
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (UNLIKELY(m_slotElement)) {
         auto* assigneNodes = m_slotElement->assignedNodes();
         ASSERT(assigneNodes);
         return assigneNodes->last();
     }
-#endif
     ASSERT(m_rootTreeScope);
     return &m_rootTreeScope->rootNode();
 }
@@ -235,19 +219,15 @@ FocusNavigationScope::FocusNavigationScope(TreeScope& treeScope)
 {
 }
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 FocusNavigationScope::FocusNavigationScope(HTMLSlotElement& slotElement)
     : m_slotElement(&slotElement)
 {
 }
-#endif
 
 Element* FocusNavigationScope::owner() const
 {
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (m_slotElement)
         return m_slotElement;
-#endif
 
     ASSERT(m_rootTreeScope);
     ContainerNode& root = m_rootTreeScope->rootNode();
@@ -264,12 +244,10 @@ FocusNavigationScope FocusNavigationScope::scopeOf(Node& startingNode)
     Node* root = nullptr;
     for (Node* currentNode = &startingNode; currentNode; currentNode = currentNode->parentNode()) {
         root = currentNode;
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
         if (HTMLSlotElement* slot = currentNode->assignedSlot()) {
             if (isFocusScopeOwner(*slot))
                 return FocusNavigationScope(*slot);
         }
-#endif
         if (is<ShadowRoot>(currentNode))
             return FocusNavigationScope(downcast<ShadowRoot>(*currentNode));
     }
@@ -279,11 +257,9 @@ FocusNavigationScope FocusNavigationScope::scopeOf(Node& startingNode)
 
 FocusNavigationScope FocusNavigationScope::scopeOwnedByScopeOwner(Element& element)
 {
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     ASSERT(element.shadowRoot() || is<HTMLSlotElement>(element));
     if (is<HTMLSlotElement>(element))
         return FocusNavigationScope(downcast<HTMLSlotElement>(element));
-#endif
     return FocusNavigationScope(*element.shadowRoot());
 }
 

@@ -822,9 +822,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if (style.display() == CONTENTS) {
             // FIXME: Enable for all elements.
             bool elementSupportsDisplayContents = false;
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
             elementSupportsDisplayContents = is<HTMLSlotElement>(element);
-#endif
             if (!elementSupportsDisplayContents)
                 style.setDisplay(INLINE);
         }

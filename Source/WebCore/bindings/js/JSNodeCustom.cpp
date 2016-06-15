@@ -232,11 +232,9 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
             wrapper = CREATE_DOM_WRAPPER(globalObject, DocumentType, WTFMove(node));
             break;
         case Node::DOCUMENT_FRAGMENT_NODE:
-#if ENABLE(SHADOW_DOM)
             if (node->isShadowRoot())
                 wrapper = CREATE_DOM_WRAPPER(globalObject, ShadowRoot, WTFMove(node));
             else
-#endif
                 wrapper = CREATE_DOM_WRAPPER(globalObject, DocumentFragment, WTFMove(node));
             break;
         default:

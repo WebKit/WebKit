@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SHADOW_DOM,
     EnabledAtRuntime=ShadowDOM,
     JSGenerateToNativeObject
 ] interface HTMLSlotElement : HTMLElement {

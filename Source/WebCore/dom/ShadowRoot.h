@@ -53,12 +53,10 @@ public:
         return adoptRef(*new ShadowRoot(document, type));
     }
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     static Ref<ShadowRoot> create(Document& document, std::unique_ptr<SlotAssignment>&& assignment)
     {
         return adoptRef(*new ShadowRoot(document, WTFMove(assignment)));
     }
-#endif
 
     virtual ~ShadowRoot();
 
@@ -85,7 +83,6 @@ public:
 
     void removeAllEventListeners() override;
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     HTMLSlotElement* findAssignedSlot(const Node&);
 
     void addSlotElementByName(const AtomicString&, HTMLSlotElement&);
@@ -98,14 +95,11 @@ public:
     void innerSlotDidChange(const AtomicString&);
 
     const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&);
-#endif
 
 protected:
     ShadowRoot(Document&, Type);
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
-#endif
 
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
     bool isOrphan() const { return !m_host; }
@@ -123,9 +117,7 @@ private:
     std::unique_ptr<StyleResolver> m_styleResolver;
     std::unique_ptr<AuthorStyleSheets> m_authorStyleSheets;
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     std::unique_ptr<SlotAssignment> m_slotAssignment;
-#endif
 };
 
 inline Element* ShadowRoot::activeElement() const

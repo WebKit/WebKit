@@ -159,9 +159,7 @@ namespace WebCore {
             PseudoClassDir,
             PseudoClassRole,
 #endif
-#if ENABLE(SHADOW_DOM)
             PseudoClassHost,
-#endif
 #if ENABLE(CUSTOM_ELEMENTS)
             PseudoClassDefined,
 #endif
@@ -184,9 +182,7 @@ namespace WebCore {
             PseudoElementScrollbarTrack,
             PseudoElementScrollbarTrackPiece,
             PseudoElementSelection,
-#if ENABLE(SHADOW_DOM)
             PseudoElementSlotted,
-#endif
             PseudoElementUserAgentCustom,
             PseudoElementWebKitCustom,
 

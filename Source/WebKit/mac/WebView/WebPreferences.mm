@@ -606,9 +606,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
         [NSNumber numberWithBool:NO], WebKitMockCaptureDevicesEnabledPreferenceKey,
 #endif
-#if ENABLE(SHADOW_DOM)
         [NSNumber numberWithBool:YES], WebKitShadowDOMEnabledPreferenceKey,
-#endif
 #if ENABLE(CUSTOM_ELEMENTS)
         [NSNumber numberWithBool:NO], WebKitCustomElementsEnabledPreferenceKey,
 #endif

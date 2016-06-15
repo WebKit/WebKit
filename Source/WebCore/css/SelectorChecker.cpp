@@ -207,7 +207,6 @@ bool SelectorChecker::match(const CSSSelector& selector, const Element& element,
     return true;
 }
 
-#if ENABLE(SHADOW_DOM)
 bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const Element& element, CheckingContext& checkingContext, unsigned& specificity) const
 {
     ASSERT(element.shadowRoot());
@@ -232,7 +231,6 @@ bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const El
     }
     return true;
 }
-#endif
 
 inline static bool hasScrollbarPseudoElement(const PseudoIdSet& dynamicPseudoIdSet)
 {
@@ -1023,11 +1021,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                     return true;
                 break;
             }
-#if ENABLE(SHADOW_DOM)
         case CSSSelector::PseudoClassHost:
             // :host matches based on context. Cases that reach selector checker don't match.
             return false;
-#endif
 #if ENABLE(CUSTOM_ELEMENTS)
         case CSSSelector::PseudoClassDefined:
             return isDefinedElement(element);
@@ -1080,13 +1076,11 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         return false;
     }
 #endif
-#if ENABLE(SHADOW_DOM)
     if (selector.match() == CSSSelector::PseudoElement && selector.pseudoElementType() == CSSSelector::PseudoElementSlotted) {
         // We see ::slotted() pseudo elements when collecting slotted rules from the slot shadow tree only.
         ASSERT(checkingContext.resolvingMode == Mode::CollectingRules);
         return is<HTMLSlotElement>(element);
     }
-#endif
     return true;
 }
 

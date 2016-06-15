@@ -195,10 +195,8 @@ public:
     bool webAnimationsEnabled() const { return m_areWebAnimationsEnabled; }
 #endif
 
-#if ENABLE(SHADOW_DOM)
     void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
     bool shadowDOMEnabled() const { return m_isShadowDOMEnabled; }
-#endif
 
 #if ENABLE(CUSTOM_ELEMENTS)
     void setCustomElementsEnabled(bool areEnabled) { m_areCustomElementsEnabled = areEnabled; }
@@ -312,9 +310,7 @@ private:
     bool m_areWebAnimationsEnabled;
 #endif
     
-#if ENABLE(SHADOW_DOM)
     bool m_isShadowDOMEnabled;
-#endif
 
 #if ENABLE(CUSTOM_ELEMENTS)
     bool m_areCustomElementsEnabled;

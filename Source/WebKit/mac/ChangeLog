@@ -1,3 +1,16 @@
+2016-06-15  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        Enabling Shadow DOM for all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=158738
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed Shadow DOM from options (enabled by default)
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebView/WebPreferences.mm:
+        * WebView/WebView.mm:
+
 2016-06-15  Antti Koivisto  <antti@apple.com>
 
         Vary:Cookie validation doesn't work in private browsing

@@ -54,10 +54,8 @@ JSValue JSDocumentFragment::append(ExecState& state)
 
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<DocumentFragment>&& impl)
 {
-#if ENABLE(SHADOW_DOM)
     if (impl->isShadowRoot())
         return CREATE_DOM_WRAPPER(globalObject, ShadowRoot, WTFMove(impl));
-#endif
     return createWrapper<JSDocumentFragment>(globalObject, WTFMove(impl));
 }
 

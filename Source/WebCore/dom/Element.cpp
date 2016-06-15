@@ -1260,14 +1260,12 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
             if (needsStyleInvalidation() && isInShadowTree())
                 setNeedsStyleRecalc(FullStyleChange);
         }
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
         else if (name == HTMLNames::slotAttr) {
             if (auto* parent = parentElement()) {
                 if (auto* shadowRoot = parent->shadowRoot())
                     shadowRoot->hostChildElementDidChangeSlotAttribute(oldValue, newValue);
             }
         }
-#endif
     }
 
     parseAttribute(name, newValue);
@@ -1518,12 +1516,10 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 #endif
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (parentNode() == &insertionPoint) {
         if (auto* shadowRoot = parentNode()->shadowRoot())
             shadowRoot->hostChildElementDidChange(*this);
     }
-#endif
 
     if (!insertionPoint.isInTreeScope())
         return InsertionDone;
@@ -1604,12 +1600,10 @@ void Element::removedFrom(ContainerNode& insertionPoint)
         }
     }
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (!parentNode()) {
         if (auto* shadowRoot = insertionPoint.shadowRoot())
             shadowRoot->hostChildElementDidChange(*this);
     }
-#endif
 
     ContainerNode::removedFrom(insertionPoint);
 
@@ -1685,7 +1679,6 @@ RefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
     return nullptr;
 }
 
-#if ENABLE(SHADOW_DOM)
 
 static bool canAttachAuthorShadowRoot(const Element& element)
 {
@@ -1752,7 +1745,6 @@ ShadowRoot* Element::shadowRootForBindings(JSC::ExecState& state) const
     return root;
 }
 
-#endif // ENABLE(SHADOW_DOM)
 
 ShadowRoot* Element::userAgentShadowRoot() const
 {
@@ -1890,7 +1882,6 @@ void Element::childrenChanged(const ChildChange& change)
         checkForSiblingStyleChanges(*this, checkType, change.previousSiblingElement, change.nextSiblingElement);
     }
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (ShadowRoot* shadowRoot = this->shadowRoot()) {
         switch (change.type) {
         case ElementInserted:
@@ -1909,7 +1900,6 @@ void Element::childrenChanged(const ChildChange& change)
             break;
         }
     }
-#endif
 }
 
 void Element::setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)

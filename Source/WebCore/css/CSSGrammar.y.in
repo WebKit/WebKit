@@ -365,12 +365,10 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 
 #endif
 
-#if ENABLE_SHADOW_DOM
 
 %token <string> SLOTTEDFUNCTION
 %token <string> HOSTFUNCTION
 
-#endif
 
 %%
 
@@ -1375,14 +1373,12 @@ pseudo:
         $$ = CSSParserSelector::parsePseudoElementCueFunctionSelector($3, $5);
     }
 #endif
-#if ENABLE_SHADOW_DOM
     | ':' ':' SLOTTEDFUNCTION maybe_space compound_selector maybe_space ')' {
         $$ = CSSParserSelector::parsePseudoElementSlottedFunctionSelector($3, $5);
     }
     | ':' HOSTFUNCTION maybe_space compound_selector maybe_space ')' {
         $$ = CSSParserSelector::parsePseudoClassHostFunctionSelector($2, $4);
     }
-#endif
     // use by :-webkit-any.
     // FIXME: should we support generic selectors here or just simple_selectors?
     // Use simple_selector_list for now to match -moz-any.

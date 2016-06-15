@@ -258,7 +258,6 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
             }
         }
 
-#if ENABLE(SHADOW_DOM)
         if (selector->match() == CSSSelector::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHost) {
             m_hostPseudoClassRules.append(ruleData);
             return;
@@ -269,7 +268,6 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
             m_slottedPseudoElementRules.append(ruleData);
             return;
         }
-#endif
         if (selector->relation() != CSSSelector::SubSelector)
             break;
         selector = selector->tagHistory();
@@ -425,10 +423,8 @@ void RuleSet::shrinkToFit()
 #if ENABLE(VIDEO_TRACK)
     m_cuePseudoRules.shrinkToFit();
 #endif
-#if ENABLE(SHADOW_DOM)
     m_hostPseudoClassRules.shrinkToFit();
     m_slottedPseudoElementRules.shrinkToFit();
-#endif
     m_focusPseudoClassRules.shrinkToFit();
     m_universalRules.shrinkToFit();
     m_pageRules.shrinkToFit();

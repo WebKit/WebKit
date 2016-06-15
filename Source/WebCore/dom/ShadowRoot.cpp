@@ -44,9 +44,7 @@ struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     void* styleResolver;
     void* authorStyleSheets;
     void* host;
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     void* slotAssignment;
-#endif
 };
 
 COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_should_stay_small);
@@ -58,7 +56,6 @@ ShadowRoot::ShadowRoot(Document& document, Type type)
 {
 }
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
 ShadowRoot::ShadowRoot(Document& document, std::unique_ptr<SlotAssignment>&& slotAssignment)
     : DocumentFragment(document, CreateShadowRoot)
@@ -68,7 +65,6 @@ ShadowRoot::ShadowRoot(Document& document, std::unique_ptr<SlotAssignment>&& slo
 {
 }
 
-#endif
 
 ShadowRoot::~ShadowRoot()
 {
@@ -178,7 +174,6 @@ void ShadowRoot::removeAllEventListeners()
         node->removeAllEventListeners();
 }
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
 HTMLSlotElement* ShadowRoot::findAssignedSlot(const Node& node)
 {
@@ -208,6 +203,5 @@ const Vector<Node*>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slo
     return m_slotAssignment->assignedNodesForSlot(slot, *this);
 }
 
-#endif
 
 }

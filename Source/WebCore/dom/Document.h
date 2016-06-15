@@ -395,9 +395,7 @@ public:
     WEBCORE_EXPORT RefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
     WEBCORE_EXPORT Ref<Element> createElement(const QualifiedName&, bool createdByParser);
 
-#if ENABLE(CUSTOM_ELEMENTS) || ENABLE(SHADOW_DOM)
     static CustomElementNameValidationStatus validateCustomElementName(const AtomicString&);
-#endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
     bool isCSSGridLayoutEnabled() const;

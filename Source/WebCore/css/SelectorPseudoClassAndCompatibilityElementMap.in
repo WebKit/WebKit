@@ -26,6 +26,7 @@ first-line, PseudoClassUnknown, PseudoElementFirstLine
 first-of-type
 focus
 horizontal
+host
 hover
 in-range
 increment
@@ -73,10 +74,6 @@ window-inactive
 #if ENABLE(VIDEO_TRACK)
 future
 past
-#endif
-
-#if ENABLE(SHADOW_DOM)
-host
 #endif
 
 #if ENABLE(CUSTOM_ELEMENTS)
