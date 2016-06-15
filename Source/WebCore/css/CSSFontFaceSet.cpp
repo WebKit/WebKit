@@ -190,8 +190,8 @@ void CSSFontFaceSet::add(CSSFontFace& face)
         incrementActiveCount();
 
     if (face.cssConnection()) {
-        auto addResult = m_constituentCSSConnections.add(face.cssConnection(), &face);
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        ASSERT(!m_constituentCSSConnections.contains(face.cssConnection()));
+        m_constituentCSSConnections.add(face.cssConnection(), &face);
     }
 }
 
@@ -229,8 +229,8 @@ void CSSFontFaceSet::remove(const CSSFontFace& face)
         removeFromFacesLookupTable(face, *face.families());
 
     if (face.cssConnection()) {
-        bool removed = m_constituentCSSConnections.remove(face.cssConnection());
-        ASSERT_UNUSED(removed, removed);
+        ASSERT(m_constituentCSSConnections.get(face.cssConnection()) == &face);
+        m_constituentCSSConnections.remove(face.cssConnection());
     }
 
     for (size_t i = 0; i < m_faces.size(); ++i) {
