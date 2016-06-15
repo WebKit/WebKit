@@ -1,3 +1,18 @@
+2016-06-15  Antti Koivisto  <antti@apple.com>
+
+        GoogleMaps transit schedule explorer comes up blank initially
+        https://bugs.webkit.org/show_bug.cgi?id=158803
+        rdar://problem/25818080
+
+        Reviewed by Andreas Kling
+
+        Expand the tests to cover this case.
+
+        * fast/css/style-invalidation-attribute-change-descendants-expected.txt:
+        * fast/css/style-invalidation-attribute-change-descendants.html:
+        * fast/css/style-invalidation-class-change-descendants-expected.txt:
+        * fast/css/style-invalidation-class-change-descendants.html:
+
 2016-06-15  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-sizing] Item borders are missing with 'min-width:-webkit-fill-available' and zero available width
