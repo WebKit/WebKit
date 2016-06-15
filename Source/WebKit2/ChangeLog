@@ -1,3 +1,20 @@
+2016-06-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Make it possible to test the Next/Previous buttons in the keyboard accessory bar
+        https://bugs.webkit.org/show_bug.cgi?id=158714
+
+        Reviewed by Enrica Casucci.
+
+        Add UIScriptController.keyboardAccessoryBar{Next,Previous} and hook it up to the WKContentView
+        method that gets called from UIKit.
+
+        Add a test that exercises it.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView keyboardAssistantBarNext]):
+        (-[WKWebView keyboardAssistantBarPrevious]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2016-06-15  Dean Jackson  <dino@apple.com>
 
         RTL <select> forms are misplaced

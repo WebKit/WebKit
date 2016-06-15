@@ -1,3 +1,24 @@
+2016-06-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Make it possible to test the Next/Previous buttons in the keyboard accessory bar
+        https://bugs.webkit.org/show_bug.cgi?id=158714
+
+        Reviewed by Enrica Casucci.
+
+        Add UIScriptController.keyboardAccessoryBar{Next,Previous} and hook it up to the WKContentView
+        method that gets called from UIKit.
+
+        Add a test that exercises it.
+
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::keyboardAccessoryBarNext):
+        (WTR::UIScriptController::keyboardAccessoryBarPrevious):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::keyboardAccessoryBarNext):
+        (WTR::UIScriptController::keyboardAccessoryBarPrevious):
+
 2016-06-15  Sam Weinig  <sam@webkit.org>
 
         Improve HashMap and HashSet support for Ref

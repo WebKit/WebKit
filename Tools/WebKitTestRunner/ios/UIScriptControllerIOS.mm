@@ -175,6 +175,18 @@ void UIScriptController::keyUpUsingHardwareKeyboard(JSStringRef character, JSVal
     }];
 }
 
+void UIScriptController::keyboardAccessoryBarNext()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView keyboardAccessoryBarNext];
+}
+
+void UIScriptController::keyboardAccessoryBarPrevious()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView keyboardAccessoryBarPrevious];
+}
+
 double UIScriptController::minimumZoomScale() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

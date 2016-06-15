@@ -1,0 +1,16 @@
+Tests zooming into a text input on tap.
+
+
+After focus first field
+
+tap location	{ x: 38.000, y: 446.000 }
+scale	0.749
+visibleRect	{ left: 0.000, top: 266.208, width: 427.000, height: 640.500 }
+After move to second field
+
+scale	0.749
+visibleRect	{ left: 0.000, top: 687.203, width: 427.000, height: 640.500 }
+After move to first field
+
+scale	0.749
+visibleRect	{ left: 0.000, top: 266.208, width: 427.000, height: 640.500 }

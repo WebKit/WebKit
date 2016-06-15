@@ -150,6 +150,14 @@ void UIScriptController::keyDownUsingHardwareKeyboard(JSStringRef, JSValueRef)
 {
 }
 
+void UIScriptController::keyboardAccessoryBarNext()
+{
+}
+
+void UIScriptController::keyboardAccessoryBarPrevious()
+{
+}
+
 double UIScriptController::zoomScale() const
 {
     return 1;

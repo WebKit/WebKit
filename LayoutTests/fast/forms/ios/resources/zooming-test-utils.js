@@ -4,9 +4,8 @@ function testZoomAfterTap(targetElement, xOffset, yOffset)
     if (!window.testRunner || !testRunner.runUIScript)
         return;
 
-    // Tap near the right end of the text.
     var point = getPointInsideElement(targetElement, xOffset, yOffset);
-    
+
     var uiScript = zoomAfterSingleTapUIScript(point.x, point.y);
     testRunner.runUIScript(uiScript, function(result) {
         var results = tableFromJSON(result);
@@ -25,7 +24,7 @@ function zoomAfterSingleTapUIScript(x, y)
                     'scale' : uiController.zoomScale,
                     'visibleRect' : uiController.contentVisibleRect
                 };
-            
+
                 var result = JSON.stringify(result, function(key, value) {
                       if (typeof value === "number")
                           return value.toFixed(3);

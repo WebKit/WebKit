@@ -57,6 +57,9 @@ public:
     void keyDownUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
     void keyUpUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
 
+    void keyboardAccessoryBarNext();
+    void keyboardAccessoryBarPrevious();
+
     void setWillBeginZoomingCallback(JSValueRef);
     JSValueRef willBeginZoomingCallback() const;
 

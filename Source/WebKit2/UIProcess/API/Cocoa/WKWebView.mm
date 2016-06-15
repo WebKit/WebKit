@@ -4438,6 +4438,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return [self convertPoint:point toView:self._currentContentView];
 }
 
+- (void)keyboardAccessoryBarNext
+{
+    [_contentView accessoryTab:YES];
+}
+
+- (void)keyboardAccessoryBarPrevious
+{
+    [_contentView accessoryTab:NO];
+}
+
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)

@@ -42,6 +42,9 @@ interface UIScriptController {
     void keyDownUsingHardwareKeyboard(DOMString character, object callback);
     void keyUpUsingHardwareKeyboard(DOMString character, object callback);
 
+    void keyboardAccessoryBarNext();
+    void keyboardAccessoryBarPrevious();
+
     attribute object didShowKeyboardCallback;
     attribute object didHideKeyboardCallback;
 
