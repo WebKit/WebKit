@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="resources/promise-utils.js"></script>
+    </head>
+    <body>
+        <script>
+            let stream;
+            let offer;
+
+            description("Test setting up media between two RTCPeerConnection instances with a single SDP dialog using legacy callbacks API.");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            debug("Create RTCPeerConnection A");
+            const pcA = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            debug("Create RTCPeerConnection B");
+            const pcB = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            pcA.ontrack = function () {
+                debug("----------");
+                testPassed("A: got remote track event");
+                debug("----------");
+            };
+
+            pcB.ontrack = function () {
+                debug("----------");
+                testPassed("B: got remote track event");
+                debug("----------");
+            };
+
+            navigator.mediaDevices.getUserMedia({ "audio": true })
+            .then(function (s) {
+                stream = s;
+
+                startTestWithMedia();
+            })
+            .catch(function (error) {
+                testFailed(`Unable to get user media: ${error}`);
+                finishJSTest();
+            });
+
+            function startTestWithMedia() {
+                debug("A: add media");
+                pcA.addTrack(stream.getAudioTracks()[0], stream);
+
+                debug("A: create offer");
+                return pcA.createOffer(offer => {
+                    debug("A: got offer, set it as local description");
+                    pcA.setLocalDescription(offer, () => {
+                        debug("A: local offer set");
+                        shouldBe("pcA.signalingState", "'have-local-offer'");
+
+                        debug("A: send offer to B");
+                        debug("A --- offer --> B");
+                        offerToPcB(pcA.localDescription);
+                    }, gotError);
+
+                }, gotError);
+            }
+
+            function offerToPcB(offer) {
+                debug("B: got offer from A, set it as remote description");
+                pcB.setRemoteDescription(offer, () => {
+                    debug("B: remote offer set");
+                    shouldBe("pcB.signalingState", "'have-remote-offer'");
+
+                    debug("B: add media (to include in answer)");
+                    pcB.addTrack(stream.getAudioTracks()[0], stream);
+
+                    debug("B: create answer");
+                    return pcB.createAnswer(answer => {
+                        debug("B: got answer, set it as local description");
+                        pcB.setLocalDescription(answer, () => {
+                            debug("B: local answer set");
+                            shouldBe("pcB.signalingState", "'stable'");
+
+                            debug("B: send answer to A");
+                            debug("A <-- answer -- B");
+                            answerToA(pcB.localDescription);
+                        }, gotError);
+                    }, gotError);
+                }, gotError);
+            }
+
+            function answerToA(answer) {
+                debug("A: got answer from B, set it as remote description");
+                pcA.setRemoteDescription(answer, () => {
+                    debug("A: remote answer set");
+                    shouldBe("pcA.signalingState", "'stable'");
+
+                    testPassed("Offer/answer dialog completed")
+                    debug("");
+
+                    finishJSTest();
+                }, gotError);
+            }
+
+            function gotError() {
+                testFailed("Unexpected error callback fired");
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>
