@@ -7,14 +7,8 @@ function foo(o, start) {
 
 noInline(foo);
 
-
-var p = {};
-p.f = 42;
-var o = Object.create(p);
-
-var q = {}
-q.f = 42;
-
+var o = {};
+o.f = 42;
 var f = {};
 
 for (var i = 0; i < 10000; ++i)
@@ -22,11 +16,6 @@ for (var i = 0; i < 10000; ++i)
 o.f = 42;
 
 for (var i = 0; i < 10000; ++i) {
-    if (i % 100 === 0) {
-        if (foo(q) !== 42000)
-            throw new Error("bad result: " + result);
-    }
-
     if (foo(o) !== 4200)
         throw new Error("bad result: " + result);
     var result = foo(f);

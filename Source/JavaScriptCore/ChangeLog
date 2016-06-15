@@ -1,5 +1,12 @@
 2016-06-15  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix typo in test and move tests to the correct files.
+
+        * tests/stress/multi-get-by-offset-proto-or-unset.js:
+        * tests/stress/multi-get-by-offset-proto-self-or-unset.js:
+
+2016-06-15  Keith Miller  <keith_miller@apple.com>
+
         DFGByteCodeParser should be able to infer the value of unset properties in MultiGetByOffset
         https://bugs.webkit.org/show_bug.cgi?id=158802
 

@@ -7,8 +7,14 @@ function foo(o, start) {
 
 noInline(foo);
 
-var o = {};
-o.f = 42;
+
+var p = {};
+p.f = 42;
+var o = Object.create(p);
+
+var q = {}
+q.f = 42;
+
 var f = {};
 
 for (var i = 0; i < 10000; ++i)
@@ -16,11 +22,17 @@ for (var i = 0; i < 10000; ++i)
 o.f = 42;
 
 for (var i = 0; i < 10000; ++i) {
+    if (i % 100 === 0) {
+        let result = foo(q)
+        if (result !== 4200)
+            throw new Error("bad result: " + result);
+    }
+
     if (foo(o) !== 4200)
         throw new Error("bad result: " + result);
     var result = foo(f);
     if (!Number.isNaN(result))
-        throw "Error: bad result: " + result;
+        throw new Error("bad result: " + result);
 }
 
 var q = {};
