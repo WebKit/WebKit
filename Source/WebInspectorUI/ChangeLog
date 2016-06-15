@@ -1,5 +1,25 @@
 2016-06-14  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Rename DataGrid.showColumn to setColumnVisible
+        https://bugs.webkit.org/show_bug.cgi?id=158764
+        <rdar://problem/26801448>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        Drive-by update to initialize "this._columnChooserEnabled".
+
+        (WebInspector.DataGrid.prototype.set identifier):
+        (WebInspector.DataGrid.prototype.insertColumn):
+        (WebInspector.DataGrid.prototype._collapseColumnGroupWithCell):
+        Use new method name.
+
+        (WebInspector.DataGrid.prototype._contextMenuInHeader):
+        Drive-by style update.
+
+2016-06-14  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Storage tab should allow hiding columns in the cookies grid
         https://bugs.webkit.org/show_bug.cgi?id=158767
         <rdar://problem/26803568>

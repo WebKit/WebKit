@@ -38,6 +38,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._sortOrder = WebInspector.DataGrid.SortOrder.Indeterminate;
         this._sortOrderSetting = null;
         this._hiddenColumnSetting = null;
+        this._columnChooserEnabled = false;
 
         this._rows = [];
 
@@ -226,7 +227,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             return;
 
         for (let columnIdentifier of this._hiddenColumnSetting.value)
-            this.showColumn(columnIdentifier, false);
+            this.setColumnVisible(columnIdentifier, false);
     }
 
     get columnChooserEnabled() { return this._columnChooserEnabled; }
@@ -769,7 +770,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         listeners.install();
 
-        this.showColumn(columnIdentifier, !column.hidden);
+        this.setColumnVisible(columnIdentifier, !column.hidden);
     }
 
     removeColumn(columnIdentifier)
@@ -908,7 +909,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         return !this.columns.get(columnIdentifier)["hidden"];
     }
 
-    showColumn(columnIdentifier, visible)
+    setColumnVisible(columnIdentifier, visible)
     {
         let column = this.columns.get(columnIdentifier);
         console.assert(column, "Missing column info for identifier: " + columnIdentifier);
@@ -1539,7 +1540,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         for (var [identifier, column] of this.columns) {
             if (column["group"] === cell.collapsesGroup)
-                this.showColumn(identifier, !columnsWillCollapse);
+                this.setColumnVisible(identifier, !columnsWillCollapse);
         }
 
         var collapserButton = cell.querySelector(".collapser-button");
@@ -1625,21 +1626,20 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             }
         }
 
-        if (!this._columnChooserEnabled)
-            return;
+        if (this._columnChooserEnabled) {
+            let didAddSeparator = false;
 
-        let didAddSeparator = false;
+            for (let [identifier, columnInfo] of this.columns) {
+                if (columnInfo.locked)
+                    continue;
 
-        for (let [identifier, columnInfo] of this.columns) {
-            if (columnInfo.locked)
-                continue;
+                if (!didAddSeparator) {
+                    contextMenu.appendSeparator();
+                    didAddSeparator = true;
+                }
 
-            if (!didAddSeparator) {
-                contextMenu.appendSeparator();
-                didAddSeparator = true;
+                contextMenu.appendCheckboxItem(columnInfo.title, () => { this.setColumnVisible(identifier, columnInfo.hidden); }, !columnInfo.hidden);
             }
-
-            contextMenu.appendCheckboxItem(columnInfo.title, () => { this.showColumn(identifier, columnInfo.hidden); }, !columnInfo.hidden);
         }
     }
 
