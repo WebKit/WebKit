@@ -47,7 +47,6 @@
 #include "StringWithDirection.h"
 #include "StyleChange.h"
 #include "Supplementable.h"
-#include "TextAutoSizing.h"
 #include "TextResourceDecoder.h"
 #include "Timer.h"
 #include "TreeScope.h"
@@ -214,6 +213,12 @@ class DeviceOrientationController;
 struct TextAutoSizingHash;
 class TextAutoSizingKey;
 class TextAutoSizingValue;
+
+struct TextAutoSizingTraits : WTF::GenericHashTraits<TextAutoSizingKey> {
+    static const bool emptyValueIsZero = true;
+    static void constructDeletedValue(TextAutoSizingKey& slot);
+    static bool isDeletedValue(const TextAutoSizingKey& value);
+};
 #endif
 
 #if ENABLE(MEDIA_SESSION)

@@ -475,7 +475,7 @@
 		0F54DCE11880F901003EEDBB /* DOMGestureEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F54DCDE1880F901003EEDBB /* DOMGestureEvent.mm */; };
 		0F54DCE21880F901003EEDBB /* DOMGestureEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCDF1880F901003EEDBB /* DOMGestureEventInternal.h */; };
 		0F54DCE51881051D003EEDBB /* TextAutoSizing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */; };
-		0F54DCE61881051D003EEDBB /* TextAutoSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCE41881051D003EEDBB /* TextAutoSizing.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F54DCE61881051D003EEDBB /* TextAutoSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCE41881051D003EEDBB /* TextAutoSizing.h */; };
 		0F54DD081881D5F5003EEDBB /* Touch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DD051881D5F5003EEDBB /* Touch.h */; };
 		0F54DD091881D5F5003EEDBB /* TouchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DD061881D5F5003EEDBB /* TouchEvent.h */; };
 		0F54DD0A1881D5F5003EEDBB /* TouchList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DD071881D5F5003EEDBB /* TouchList.h */; };

@@ -71,18 +71,6 @@ struct TextAutoSizingHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-struct TextAutoSizingTraits : WTF::GenericHashTraits<TextAutoSizingKey> {
-    static const bool emptyValueIsZero = true;
-    static void constructDeletedValue(TextAutoSizingKey& slot)
-    {
-        new (NotNull, &slot) TextAutoSizingKey(TextAutoSizingKey::Deleted);
-    }
-    static bool isDeletedValue(const TextAutoSizingKey& value)
-    {
-        return value.isDeleted();
-    }
-};
-
 struct TextAutoSizingHashTranslator {
     static unsigned hash(const RenderStyle& style)
     {

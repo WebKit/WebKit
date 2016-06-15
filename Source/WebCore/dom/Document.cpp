@@ -167,6 +167,7 @@
 #include "StyleSheetList.h"
 #include "StyleTreeResolver.h"
 #include "SubresourceLoader.h"
+#include "TextAutoSizing.h"
 #include "TextEvent.h"
 #include "TextNodeTraversal.h"
 #include "TransformSource.h"
@@ -418,6 +419,20 @@ static void printNavigationErrorMessage(Frame* frame, const URL& activeURL, cons
     // FIXME: should we print to the console of the document performing the navigation instead?
     frame->document()->domWindow()->printErrorMessage(message);
 }
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+
+void TextAutoSizingTraits::constructDeletedValue(TextAutoSizingKey& slot)
+{
+    new (NotNull, &slot) TextAutoSizingKey(TextAutoSizingKey::Deleted);
+}
+
+bool TextAutoSizingTraits::isDeletedValue(const TextAutoSizingKey& value)
+{
+    return value.isDeleted();
+}
+
+#endif
 
 uint64_t Document::s_globalTreeVersion = 0;
 
