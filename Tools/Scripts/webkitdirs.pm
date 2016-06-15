@@ -1904,6 +1904,13 @@ sub shouldRemoveCMakeCache(@)
         return 1;
     }
 
+    if(isAnyWindows()) {
+        my $winConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "OptionsWin.cmake");
+        if ($cacheFileModifiedTime < stat($winConfiguration)->mtime) {
+            return 1;
+        }
+    }
+
     return 0;
 }
 

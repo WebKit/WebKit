@@ -1,3 +1,16 @@
+2016-06-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win][CMake] Changes in WebKit options are not reflected in incremental builds.
+        https://bugs.webkit.org/show_bug.cgi?id=158727
+
+        Reviewed by Alex Christensen.
+
+        Delete CMake cache file if WebKit options have been modified.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (shouldRemoveCMakeCache):
+
 2016-06-15  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         Enabling Shadow DOM for all platforms

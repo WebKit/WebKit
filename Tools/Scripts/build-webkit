@@ -243,6 +243,9 @@ if (isCMakeBuild() && !isAnyWindows()) {
 
 my $baseProductDir = baseProductDir();
 if (isAppleWinWebKit() || isWinCairo()) {
+    my @featureArgs = cMakeArgsFromFeatures();
+    removeCMakeCache(@featureArgs);
+
     chdirWebKit();
     if (exitStatus(generateBuildSystemFromCMakeProject())) {
         die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
