@@ -264,6 +264,15 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #endif /* PLATFORM(COCOA) */
 
+#if !PLATFORM(COCOA)
+
+#if !defined(JSC_OBJC_API_ENABLED)
+#define JSC_OBJC_API_ENABLED 0
+#endif
+
+#endif /* !PLATFORM(COCOA) */
+
+
 /* --------- Apple Windows port --------- */
 #if PLATFORM(WIN) && !PLATFORM(WIN_CAIRO)
 
