@@ -359,15 +359,15 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
     ASSERT(m_challengeCompletionHandler);
     auto completionHandler = std::exchange(m_challengeCompletionHandler, nullptr);
     if (!result) {
-        if (m_task && m_task->allowsSpecificHTTPSCertificateForHost(m_challenge))
-            completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(m_challenge));
+        if (m_task && m_task->allowsSpecificHTTPSCertificateForHost(*m_challenge))
+            completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(*m_challenge));
         else
             completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
         return;
     }
     
-    if (m_challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-        completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(m_challenge));
+    if (m_challenge->protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+        completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(*m_challenge));
         return;
     }
     
@@ -378,9 +378,9 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
     
     if (m_task) {
         if (auto* pendingDownload = m_task->pendingDownload())
-            NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, m_challenge, completionHandler);
+            NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, *m_challenge, completionHandler);
         else
-            NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, m_challenge, completionHandler);
+            NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, *m_challenge, completionHandler);
     }
 #endif
     if (m_handle)

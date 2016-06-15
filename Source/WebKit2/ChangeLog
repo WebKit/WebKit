@@ -1,5 +1,20 @@
 2016-06-14  Chris Dumez  <cdumez@apple.com>
 
+        Avoid constructing a AuthenticationChallenge unnecessarily in the NetworkLoad constructor
+        https://bugs.webkit.org/show_bug.cgi?id=158746
+
+        Reviewed by Darin Adler.
+
+        Avoid constructing a AuthenticationChallenge unnecessarily in the
+        NetworkLoad constructor by using WTF::Optional<> for this data
+        member.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        * NetworkProcess/NetworkLoad.h:
+
+2016-06-14  Chris Dumez  <cdumez@apple.com>
+
         Add missing WTFMove() in NetworkResourceLoader::didReceiveResponse()
         https://bugs.webkit.org/show_bug.cgi?id=158745
 
