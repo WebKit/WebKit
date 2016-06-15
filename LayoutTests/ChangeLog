@@ -1,3 +1,15 @@
+2016-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        fast/events/ios tests are marked as flakey, but really just fail in OpenSource and WK1
+        https://bugs.webkit.org/show_bug.cgi?id=158804
+        
+        Test gardening.
+
+        fast/events/ios is skipped globally. Ideally it would be re-enabled in /ios-simulator-wk2/TestExpectations, but relies on unreleased
+        software, so leave disabled for now.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-06-15  Antti Koivisto  <antti@apple.com>
 
         Vary:Cookie validation doesn't work in private browsing
