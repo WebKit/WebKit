@@ -2035,10 +2035,11 @@ Controller.prototype = {
 
     updateHasVideo: function()
     {
-        if (this.hasVideo())
-            this.controls.panel.classList.remove(this.ClassNames.noVideo);
-        else
-            this.controls.panel.classList.add(this.ClassNames.noVideo);
+        this.controls.panel.classList.toggle(this.ClassNames.noVideo, !this.hasVideo());
+        // The availability of the picture-in-picture button as well as the full-screen
+        // button depends no the value returned by hasVideo(), so make sure we invalidate
+        // the availability of both controls.
+        this.updateFullscreenButtons();
     },
 
     updateVolume: function()
