@@ -1,3 +1,14 @@
+2016-06-15  Dean Jackson  <dino@apple.com>
+
+        [mac] LayoutTest transforms/undecomposable.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=158816
+
+        Unflakify this test by putting the script in a place that
+        will execute it before the load event (by which time the animation
+        may have started).
+
+        * transforms/undecomposable.html:
+
 2016-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Add tests for zooming to text fields on focus

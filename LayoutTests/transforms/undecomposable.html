@@ -1,15 +1,3 @@
-<script>
-if (window.testRunner) {
-    window.testRunner.dumpAsText();
-    window.testRunner.waitUntilDone();
-
-    window.addEventListener("load", function () {
-        document.querySelector(".box").addEventListener("animationend", function () {
-            window.testRunner.notifyDone();
-        }, false);
-    }, false);
-}
-</script>
 <style>
 .box {
     width: 100px;
@@ -29,4 +17,13 @@ if (window.testRunner) {
 }
 </style>
 <div class="box"></div>
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+    document.querySelector(".box").addEventListener("animationend", function () {
+        window.testRunner.notifyDone();
+    }, false);
+}
+</script>
 
