@@ -584,22 +584,30 @@ ControllerIOS.prototype = {
 
         var scaleValue = 1 / newScaleFactor;
         var scaleTransform = "scale(" + scaleValue + ")";
+
+        function applyScaleFactorToElement(element) {
+            if (scaleValue > 1) {
+                element.style.zoom = scaleValue;
+                element.style.webkitTransform = "scale(1)";
+            } else {
+                element.style.zoom = 1;
+                element.style.webkitTransform = scaleTransform;
+            }
+        }
+
         if (this.controls.startPlaybackButton)
-            this.controls.startPlaybackButton.style.webkitTransform = scaleTransform;
+            applyScaleFactorToElement(this.controls.startPlaybackButton);
         if (this.controls.panel) {
+            applyScaleFactorToElement(this.controls.panel);
             if (scaleValue > 1) {
                 this.controls.panel.style.width = "100%";
-                this.controls.panel.style.zoom = scaleValue;
-                this.controls.panel.style.webkitTransform = "scale(1)";
                 this.controls.timelineBox.style.webkitTextSizeAdjust = (100 * scaleValue) + "%";
             } else {
                 var bottomAligment = -2 * scaleValue;
                 this.controls.panel.style.bottom = bottomAligment + "px";
                 this.controls.panel.style.paddingBottom = -(newScaleFactor * bottomAligment) + "px";
                 this.controls.panel.style.width = Math.round(newScaleFactor * 100) + "%";
-                this.controls.panel.style.webkitTransform = scaleTransform;
                 this.controls.timelineBox.style.webkitTextSizeAdjust = "auto";
-                this.controls.panel.style.zoom = 1;
             }
             this.controls.panelBackground.style.height = (50 * scaleValue) + "px";
 
