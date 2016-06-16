@@ -33,7 +33,10 @@
 #import "WebCoreURLResponse.h"
 #import <Foundation/Foundation.h>
 #import <limits>
+#import <wtf/AutodrainedPool.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -145,19 +148,6 @@ NSURLResponse *ResourceResponse::nsURLResponse() const
         initNSURLResponse();
     return m_nsResponse.get();
 }
-    
-static NSString *copyNSURLResponseStatusLine(NSURLResponse *response)
-{
-    CFURLResponseRef cfResponse = [response _CFURLResponse];
-    if (!cfResponse)
-        return nil;
-
-    CFHTTPMessageRef cfHTTPMessage = CFURLResponseGetHTTPResponse(cfResponse);
-    if (!cfHTTPMessage)
-        return nil;
-
-    return (NSString *)CFHTTPMessageCopyResponseStatusLine(cfHTTPMessage);
-}
 
 static void addToHTTPHeaderMap(const void* key, const void* value, void* context)
 {
@@ -165,69 +155,73 @@ static void addToHTTPHeaderMap(const void* key, const void* value, void* context
     httpHeaderMap->set((CFStringRef)key, (CFStringRef)value);
 }
 
+static inline AtomicString stripLeadingAndTrailingDoubleQuote(const String& value)
+{
+    unsigned length = value.length();
+    if (length < 2 || value[0u] != '"' || value[length - 1] != '"')
+        return value;
+
+    return StringView(value).substring(1, length - 2).toAtomicString();
+}
+
+enum class OnlyCommonHeaders { No, Yes };
+static inline void initializeHTTPHeaders(OnlyCommonHeaders onlyCommonHeaders, NSHTTPURLResponse *httpResponse, HTTPHeaderMap& headersMap)
+{
+    headersMap.clear();
+    auto messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
+
+    // Avoid calling [NSURLResponse allHeaderFields] to minimize copying (<rdar://problem/26778863>).
+    auto headers = adoptCF(CFHTTPMessageCopyAllHeaderFields(messageRef));
+    if (onlyCommonHeaders == OnlyCommonHeaders::Yes) {
+        for (auto& commonHeader : commonHeaderFields) {
+            const void* value;
+            if (CFDictionaryGetValueIfPresent(headers.get(), commonHeader, &value))
+                headersMap.set(commonHeader, (CFStringRef) value);
+        }
+        return;
+    }
+    CFDictionaryApplyFunction(headers.get(), addToHTTPHeaderMap, &headersMap);
+}
+
+static inline AtomicString extractHTTPStatusText(CFHTTPMessageRef messageRef)
+{
+    if (auto httpStatusLine = adoptCF(CFHTTPMessageCopyResponseStatusLine(messageRef)))
+        return extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
+
+    static NeverDestroyed<AtomicString> defaultStatusText("OK", AtomicString::ConstructFromLiteral);
+    return defaultStatusText;
+}
+
 void ResourceResponse::platformLazyInit(InitLevel initLevel)
 {
+    ASSERT(initLevel >= CommonFieldsOnly);
+
     if (m_initLevel >= initLevel)
         return;
 
     if (m_isNull || !m_nsResponse)
         return;
     
-    if (m_initLevel < CommonFieldsOnly && initLevel >= CommonFieldsOnly) {
-        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    AutodrainedPool pool;
 
-        m_httpHeaderFields.clear();
+    NSHTTPURLResponse *httpResponse = [m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]] ? (NSHTTPURLResponse *)m_nsResponse.get() : nullptr;
+
+    if (m_initLevel < CommonFieldsOnly) {
         m_url = [m_nsResponse.get() URL];
         m_mimeType = [m_nsResponse.get() MIMEType];
         m_expectedContentLength = [m_nsResponse.get() expectedContentLength];
-        m_textEncodingName = [m_nsResponse.get() textEncodingName];
-
-        // Workaround for <rdar://problem/8757088>, can be removed once that is fixed.
-        unsigned textEncodingNameLength = m_textEncodingName.length();
-        if (textEncodingNameLength >= 2 && m_textEncodingName[0U] == '"' && m_textEncodingName[textEncodingNameLength - 1] == '"')
-            m_textEncodingName = m_textEncodingName.string().substring(1, textEncodingNameLength - 2);
-
-        if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
-
-            m_httpStatusCode = [httpResponse statusCode];
-            
-            if (initLevel < AllFields) {
-                CFHTTPMessageRef messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
-
-                // Avoid calling [NSURLResponse allHeaderFields] to minimize copying (<rdar://problem/26778863>).
-                RetainPtr<CFDictionaryRef> headers = adoptCF(CFHTTPMessageCopyAllHeaderFields(messageRef));
-                for (auto& commonHeader : commonHeaderFields) {
-                    CFStringRef value;
-                    if (CFDictionaryGetValueIfPresent(headers.get(), commonHeader, (const void **)&value))
-                        m_httpHeaderFields.set(commonHeader, value);
-                }
-            }
-        } else
-            m_httpStatusCode = 0;
-        
-        [pool drain];
+        // Stripping double quotes as a workaround for <rdar://problem/8757088>, can be removed once that is fixed.
+        m_textEncodingName = stripLeadingAndTrailingDoubleQuote([m_nsResponse.get() textEncodingName]);
+        m_httpStatusCode = httpResponse ? [httpResponse statusCode] : 0;
     }
-
-    if (m_initLevel < AllFields && initLevel == AllFields) {
-        if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
-            NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
-            if (RetainPtr<NSString> httpStatusLine = adoptNS(copyNSURLResponseStatusLine(httpResponse)))
-                m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
-            else
-                m_httpStatusText = AtomicString("OK", AtomicString::ConstructFromLiteral);
-
-            CFHTTPMessageRef messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
+    if (httpResponse) {
+        if (initLevel == AllFields) {
+            auto messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
+            m_httpStatusText = extractHTTPStatusText(messageRef);
             m_httpVersion = String(adoptCF(CFHTTPMessageCopyVersion(messageRef)).get()).convertToASCIIUppercase();
-
-            // Avoid calling [NSURLResponse allHeaderFields] to minimize copying (<rdar://problem/26778863>).
-            RetainPtr<CFDictionaryRef> headers = adoptCF(CFHTTPMessageCopyAllHeaderFields(messageRef));
-            CFDictionaryApplyFunction(headers.get(), addToHTTPHeaderMap, &m_httpHeaderFields);
-            
-            [pool drain];
-        }
+            initializeHTTPHeaders(OnlyCommonHeaders::No, httpResponse, m_httpHeaderFields);
+        } else
+            initializeHTTPHeaders(OnlyCommonHeaders::Yes, httpResponse, m_httpHeaderFields);
     }
 
     m_initLevel = initLevel;

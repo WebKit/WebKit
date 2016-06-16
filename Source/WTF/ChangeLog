@@ -1,3 +1,16 @@
+2016-06-15  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Clean up / optimize ResourceResponse::platformLazyInit(InitLevel)
+        https://bugs.webkit.org/show_bug.cgi?id=158809
+
+        Reviewed by Darin Adler.
+
+        Add toAtomicString() method to StringView to avoid having to call toString()
+        and then atomizing the String at call sites.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::toAtomicString):
+
 2016-06-15  Sam Weinig  <sam@webkit.org>
 
         Improve HashMap and HashSet support for Ref

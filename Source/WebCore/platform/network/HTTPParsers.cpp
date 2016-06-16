@@ -461,12 +461,13 @@ ContentTypeOptionsDisposition parseContentTypeOptionsHeader(const String& header
 }
 #endif
 
-String extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
+AtomicString extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
 {
-    size_t spacePos = statusLine.find(' ');
+    StringView view = statusLine;
+    size_t spacePos = view.find(' ');
     // Remove status code from the status line.
-    spacePos = statusLine.find(' ', spacePos + 1);
-    return statusLine.substring(spacePos + 1);
+    spacePos = view.find(' ', spacePos + 1);
+    return view.substring(spacePos + 1).toAtomicString();
 }
 
 XFrameOptionsDisposition parseXFrameOptionsHeader(const String& header)

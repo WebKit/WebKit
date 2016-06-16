@@ -86,6 +86,7 @@ public:
 
     String toString() const;
     String toStringWithoutCopying() const;
+    AtomicString toAtomicString() const;
 
 #if USE(CF)
     // This function converts null strings to empty strings.
@@ -449,6 +450,13 @@ inline String StringView::toString() const
     if (is8Bit())
         return String(characters8(), m_length);
     return String(characters16(), length());
+}
+
+inline AtomicString StringView::toAtomicString() const
+{
+    if (is8Bit())
+        return AtomicString(characters8(), m_length);
+    return AtomicString(characters16(), length());
 }
 
 inline float StringView::toFloat(bool& isValid) const
