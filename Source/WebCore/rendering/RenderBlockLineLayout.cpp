@@ -2304,6 +2304,10 @@ void RenderBlockFlow::marginCollapseLinesFromStart(LineLayoutState& layoutState,
     if (!stopLine->hasAnonymousInlineBlock())
         return;
 
+    // We already handled top of block with startLine.
+    if (stopLine == firstRootBox())
+        return;
+
     // Re-run margin collapsing on the block sequence that stopLine is a part of.
     // First go backwards to get the entire sequence.
     RootInlineBox* prev = stopLine;
