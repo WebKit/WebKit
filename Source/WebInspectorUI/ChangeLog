@@ -1,5 +1,13 @@
 2016-06-16  Matt Baker  <mattbaker@apple.com>
 
+        Unreviewed build fix.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.createSettings):
+        "showColumn" -> "setColumnVisible".
+
+2016-06-16  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: DataGrid should manage its own settings
         https://bugs.webkit.org/show_bug.cgi?id=158675
         <rdar://problem/26761338>

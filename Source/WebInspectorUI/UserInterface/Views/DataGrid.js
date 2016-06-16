@@ -359,7 +359,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         }
 
         for (let columnIdentifier of this._hiddenColumnSetting.value)
-            this.showColumn(columnIdentifier, false);
+            this.setColumnVisible(columnIdentifier, false);
     }
 
     _updateScrollListeners()
