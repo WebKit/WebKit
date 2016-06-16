@@ -1,3 +1,21 @@
+2016-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Revert part of r196034
+        https://bugs.webkit.org/show_bug.cgi?id=158805
+        rdar://problem/26788138
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::~NetworkLoad):
+        If the WebResourceLoader was destroyed and received a canAuthenticateAgainstProtectionSpace
+        but did not send a continueCanAuthenticateAgainstProtectionSpace answer because there's no
+        core loader, then the NetworkLoad will be destroyed.  When this happens, we still need to call
+        the callback for the challenge.
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::canAuthenticateAgainstProtectionSpace):
+        If there's no core loader, we can't send IPC.
+
 2016-06-13  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Make it possible to test the Next/Previous buttons in the keyboard accessory bar

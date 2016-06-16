@@ -75,6 +75,8 @@ NetworkLoad::~NetworkLoad()
 #if USE(NETWORK_SESSION)
     if (m_responseCompletionHandler)
         m_responseCompletionHandler(PolicyIgnore);
+    if (m_challengeCompletionHandler)
+        m_challengeCompletionHandler(AuthenticationChallengeDisposition::Cancel, { });
     if (m_task)
         m_task->clearClient();
 #endif
