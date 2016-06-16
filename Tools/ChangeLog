@@ -1,3 +1,19 @@
+2016-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r202002 and r202111.
+
+        Ryosuke says this was a JSBench regression on iOS
+
+        Reverted changesets:
+
+        "Make HashMap and HashSet work with Refs"
+        https://bugs.webkit.org/show_bug.cgi?id=158638
+        http://trac.webkit.org/changeset/202002
+
+        "Improve HashMap and HashSet support for Ref"
+        https://bugs.webkit.org/show_bug.cgi?id=158789
+        http://trac.webkit.org/changeset/202111
+
 2016-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] On iPad, indirect focussing of a text field doesn't always scroll to the correct location

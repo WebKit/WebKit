@@ -279,14 +279,11 @@ namespace WTF {
         const_iterator m_iterator;
     };
 
-    template<typename ValueTraits, typename HashFunctions> class IdentityHashTranslator {
+    template<typename HashFunctions> class IdentityHashTranslator {
     public:
         template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
         template<typename T, typename U> static bool equal(const T& a, const U& b) { return HashFunctions::equal(a, b); }
-        template<typename T, typename U, typename V> static void translate(T& location, const U&, V&& value)
-        { 
-            ValueTraits::assignToEmpty(location, std::forward<V>(value)); 
-        }
+        template<typename T, typename U, typename V> static void translate(T& location, const U&, V&& value) { location = std::forward<V>(value); }
     };
 
     template<typename IteratorType> struct HashTableAddResult {
@@ -306,7 +303,7 @@ namespace WTF {
         typedef Traits ValueTraits;
         typedef Key KeyType;
         typedef Value ValueType;
-        typedef IdentityHashTranslator<ValueTraits, HashFunctions> IdentityTranslatorType;
+        typedef IdentityHashTranslator<HashFunctions> IdentityTranslatorType;
         typedef HashTableAddResult<iterator> AddResult;
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE

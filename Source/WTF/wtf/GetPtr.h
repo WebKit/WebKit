@@ -25,9 +25,6 @@
 
 namespace WTF {
 
-enum HashTableDeletedValueType { HashTableDeletedValue };
-enum HashTableEmptyValueType { HashTableEmptyValue };
-
 template <typename T> inline T* getPtr(T* p) { return p; }
 
 template <typename T> struct IsSmartPtr {

@@ -21,11 +21,10 @@
 #ifndef WTF_HashTraits_h
 #define WTF_HashTraits_h
 
-#include <limits>
-#include <utility>
 #include <wtf/HashFunctions.h>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
+#include <utility>
+#include <limits>
 
 namespace WTF {
 
@@ -62,18 +61,9 @@ template<typename T> struct GenericHashTraits : GenericHashTraitsBase<std::is_in
 
     static T emptyValue() { return T(); }
 
-    template<typename U, typename V> 
-    static void assignToEmpty(U& emptyValue, V&& value)
-    { 
-        emptyValue = std::forward<V>(value);
-    }
-
     // Type for return value of functions that do not transfer ownership, such as get.
     typedef T PeekType;
     template<typename U> static U&& peek(U&& value) { return std::forward<U>(value); }
-
-    typedef T TakeType;
-    template<typename U> static TakeType take(U&& value) { return std::forward<U>(value); }
 };
 
 template<typename T> struct HashTraits : GenericHashTraits<T> { };
@@ -173,23 +163,6 @@ template<typename P> struct HashTraits<RefPtr<P>> : SimpleClassHashTraits<RefPtr
         auto valueToBeDestroyed = WTFMove(value);
         SimpleClassHashTraits<RefPtr<P>>::constructDeletedValue(value);
     }
-};
-
-template<typename P> struct HashTraits<Ref<P>> : SimpleClassHashTraits<Ref<P>> {
-    static const bool emptyValueIsZero = true;
-    static Ref<P> emptyValue() { return HashTableEmptyValue; }
-
-    static const bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const Ref<P>& value) { return value.isHashTableEmptyValue(); }
-
-    static void assignToEmpty(Ref<P>& emptyValue, Ref<P>&& newValue) { ASSERT(isEmptyValue(emptyValue)); emptyValue.assignToHashTableEmptyValue(WTFMove(newValue)); }
-
-    typedef P* PeekType;
-    static PeekType peek(const Ref<P>& value) { return const_cast<PeekType>(value.ptrAllowingHashTableEmptyValue()); }
-    static PeekType peek(P* value) { return value; }
-
-    typedef Optional<Ref<P>> TakeType;
-    static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? Nullopt : Optional<Ref<P>>(WTFMove(value)); }
 };
 
 template<> struct HashTraits<String> : SimpleClassHashTraits<String> {

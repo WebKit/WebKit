@@ -38,7 +38,6 @@ namespace WTF {
     private:
         typedef HashArg HashFunctions;
         typedef TraitsArg ValueTraits;
-        typedef typename ValueTraits::TakeType TakeType;
 
     public:
         typedef typename ValueTraits::TraitType ValueType;
@@ -106,15 +105,15 @@ namespace WTF {
         void removeIf(const Functor&);
         void clear();
 
-        TakeType take(const ValueType&);
-        TakeType take(iterator);
-        TakeType takeAny();
+        ValueType take(const ValueType&);
+        ValueType take(iterator);
+        ValueType takeAny();
 
         // Overloads for smart pointer values that take the raw pointer type as the parameter.
         template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type find(typename GetPtrHelper<V>::PtrType) const;
         template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type contains(typename GetPtrHelper<V>::PtrType) const;
         template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type remove(typename GetPtrHelper<V>::PtrType);
-        template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, TakeType>::type take(typename GetPtrHelper<V>::PtrType);
+        template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, ValueType>::type take(typename GetPtrHelper<V>::PtrType);
 
         static bool isValidValue(const ValueType&);
 
@@ -129,14 +128,11 @@ namespace WTF {
         template<typename T> static const T& extract(const T& t) { return t; }
     };
 
-    template<typename ValueTraits, typename HashFunctions>
+    template<typename HashFunctions>
     struct HashSetTranslator {
         template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
         template<typename T, typename U> static bool equal(const T& a, const U& b) { return HashFunctions::equal(a, b); }
-        template<typename T, typename U, typename V> static void translate(T& location, U&&, V&& value)
-        { 
-            ValueTraits::assignToEmpty(location, std::forward<V>(value));
-        }
+        template<typename T, typename U, typename V> static void translate(T& location, U&&, V&& value) { location = std::forward<V>(value); }
     };
 
     template<typename Translator>
@@ -270,24 +266,24 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V>
-    inline auto HashSet<T, U, V>::take(iterator it) -> TakeType
+    inline auto HashSet<T, U, V>::take(iterator it) -> ValueType
     {
         if (it == end())
-            return ValueTraits::take(ValueTraits::emptyValue());
+            return ValueTraits::emptyValue();
 
-        auto result = ValueTraits::take(WTFMove(const_cast<ValueType&>(*it)));
+        ValueType result = WTFMove(const_cast<ValueType&>(*it));
         remove(it);
         return result;
     }
 
     template<typename T, typename U, typename V>
-    inline auto HashSet<T, U, V>::take(const ValueType& value) -> TakeType
+    inline auto HashSet<T, U, V>::take(const ValueType& value) -> ValueType
     {
         return take(find(value));
     }
 
     template<typename T, typename U, typename V>
-    inline auto HashSet<T, U, V>::takeAny() -> TakeType
+    inline auto HashSet<T, U, V>::takeAny() -> ValueType
     {
         return take(begin());
     }
@@ -296,14 +292,14 @@ namespace WTF {
     template<typename V>
     inline auto HashSet<Value, HashFunctions, Traits>::find(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type
     {
-        return m_impl.template find<HashSetTranslator<Traits, HashFunctions>>(value);
+        return m_impl.template find<HashSetTranslator<HashFunctions>>(value);
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
     template<typename V>
     inline auto HashSet<Value, HashFunctions, Traits>::contains(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
     {
-        return m_impl.template contains<HashSetTranslator<Traits, HashFunctions>>(value);
+        return m_impl.template contains<HashSetTranslator<HashFunctions>>(value);
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
@@ -315,7 +311,7 @@ namespace WTF {
 
     template<typename Value, typename HashFunctions, typename Traits>
     template<typename V>
-    inline auto HashSet<Value, HashFunctions, Traits>::take(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, TakeType>::type
+    inline auto HashSet<Value, HashFunctions, Traits>::take(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, ValueType>::type
     {
         return take(find(value));
     }

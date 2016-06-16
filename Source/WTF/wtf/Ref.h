@@ -114,25 +114,6 @@ public:
         return *this;
     }
 
-    // Hash table deleted/empty values, which are only constructed and never copied or destroyed.
-    Ref(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
-    bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
-    static T* hashTableDeletedValue() { return reinterpret_cast<T*>(-1); }
-
-    Ref(HashTableEmptyValueType) : m_ptr(hashTableEmptyValue()) { }
-    bool isHashTableEmptyValue() const { return m_ptr == hashTableEmptyValue(); }
-    static T* hashTableEmptyValue() { return nullptr; }
-
-    const T* ptrAllowingHashTableEmptyValue() const { ASSERT(m_ptr || isHashTableEmptyValue()); return m_ptr; }
-    T* ptrAllowingHashTableEmptyValue() { ASSERT(m_ptr || isHashTableEmptyValue()); return m_ptr; }
-
-    void assignToHashTableEmptyValue(Ref&& reference)
-    {
-        ASSERT(m_ptr == hashTableEmptyValue());
-        m_ptr = &reference.leakRef();
-        ASSERT(m_ptr);
-    }
-
     const T* operator->() const { ASSERT(m_ptr); return m_ptr; }
     T* operator->() { ASSERT(m_ptr); return m_ptr; }
 
@@ -205,16 +186,12 @@ struct GetPtrHelper<Ref<T>> {
     static T* getPtr(const Ref<T>& p) { return const_cast<T*>(p.ptr()); }
 };
 
-template <typename T> 
-struct IsSmartPtr<Ref<T>> {
-    static const bool value = true;
-};
-
 template<typename T>
 inline Ref<T> adoptRef(T& reference)
 {
     adopted(&reference);
     return Ref<T>(reference, Ref<T>::Adopt);
+
 }
 
 template<typename ExpectedType, typename ArgType> inline bool is(Ref<ArgType>& source)
