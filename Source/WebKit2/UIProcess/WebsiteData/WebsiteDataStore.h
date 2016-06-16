@@ -117,13 +117,8 @@ private:
     const uint64_t m_identifier;
     const WebCore::SessionID m_sessionID;
 
-    const String m_networkCacheDirectory;
-    const String m_applicationCacheDirectory;
-    const String m_applicationCacheFlatFileSubdirectoryName;
-    const String m_mediaCacheDirectory;
+    const Configuration m_configuration;
 
-    const String m_webSQLDatabaseDirectory;
-    const String m_mediaKeysStorageDirectory;
     const RefPtr<StorageManager> m_storageManager;
     const RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
 

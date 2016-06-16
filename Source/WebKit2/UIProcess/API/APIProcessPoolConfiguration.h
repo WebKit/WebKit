@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "CacheModel.h"
+#include "WebsiteDataStore.h"
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -38,7 +39,8 @@ class ProcessPoolConfiguration final : public ObjectImpl<Object::Type::ProcessPo
 public:
     static Ref<ProcessPoolConfiguration> create();
     static Ref<ProcessPoolConfiguration> createWithLegacyOptions();
-    
+    static Ref<ProcessPoolConfiguration> createWithWebsiteDataStoreConfiguration(const WebKit::WebsiteDataStore::Configuration&);
+
     explicit ProcessPoolConfiguration();
     virtual ~ProcessPoolConfiguration();
     

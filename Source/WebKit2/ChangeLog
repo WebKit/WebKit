@@ -1,3 +1,21 @@
+2016-06-16  Brady Eidson  <beidson@apple.com>
+
+        When a WebsiteDataStore finds no ProcessPools and creates one from scratch, it should represent the data store's config.
+        rdar://problem/26586991 and https://bugs.webkit.org/show_bug.cgi?id=158844
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::processPools):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2016-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] On iPad, indirect focussing of a text field doesn't always scroll to the correct location
