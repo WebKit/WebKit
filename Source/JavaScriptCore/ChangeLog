@@ -1,3 +1,22 @@
+2016-06-15  Mark Lam  <mark.lam@apple.com>
+
+        Assertion failure when returning incomplete property descriptor from proxy trap.
+        https://bugs.webkit.org/show_bug.cgi?id=157078
+
+        Reviewed by Saam Barati.
+
+        If the proxy returns a descriptor that expects a value but does not specify one,
+        we should use undefined for the value.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        * tests/stress/proxy-returning-incomplete-property-descriptor.js: Added.
+        (truthiness):
+        (compare):
+        (shouldBe):
+        (test):
+        (get test):
+
 2016-06-15  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, fix typo in test and move tests to the correct files.

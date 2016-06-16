@@ -262,7 +262,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
         if (exec->hadException())
             return false;
         slot.setGetterSlot(this, trapResultAsDescriptor.attributes(), getterSetter);
-    } else if (trapResultAsDescriptor.isDataDescriptor())
+    } else if (trapResultAsDescriptor.isDataDescriptor() && !trapResultAsDescriptor.value().isEmpty())
         slot.setValue(this, trapResultAsDescriptor.attributes(), trapResultAsDescriptor.value());
     else
         slot.setValue(this, trapResultAsDescriptor.attributes(), jsUndefined()); // We use undefined because it's the default value in object properties.
