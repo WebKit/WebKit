@@ -131,6 +131,10 @@ public:
     WEBCORE_EXPORT bool contains(const String&) const;
     bool remove(const String&);
 
+#if USE(CF)
+    void set(CFStringRef name, const String& value);
+#endif
+
     WEBCORE_EXPORT String get(HTTPHeaderName) const;
     void set(HTTPHeaderName, const String& value);
     void add(HTTPHeaderName, const String& value);

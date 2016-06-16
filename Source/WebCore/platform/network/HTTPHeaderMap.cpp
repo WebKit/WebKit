@@ -61,6 +61,26 @@ String HTTPHeaderMap::get(const String& name) const
     return m_commonHeaders.get(headerName);
 }
 
+#if USE(CF)
+
+void HTTPHeaderMap::set(CFStringRef name, const String& value)
+{
+    // Fast path: avoid constructing a temporary String in the common header case.
+    if (auto* nameCharacters = CFStringGetCStringPtr(name, kCFStringEncodingASCII)) {
+        unsigned length = CFStringGetLength(name);
+        HTTPHeaderName headerName;
+        if (findHTTPHeaderName(StringView(reinterpret_cast<const LChar*>(nameCharacters), length), headerName))
+            m_commonHeaders.set(headerName, value);
+        else
+            m_uncommonHeaders.set(String(nameCharacters, length), value);
+        return;
+    }
+
+    set(String(name), value);
+}
+
+#endif // USE(CF)
+
 void HTTPHeaderMap::set(const String& name, const String& value)
 {
     HTTPHeaderName headerName;
