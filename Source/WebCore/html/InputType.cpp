@@ -339,24 +339,30 @@ bool InputType::isInRange(const String& value) const
     if (!isSteppable())
         return false;
 
+    StepRange stepRange(createStepRange(RejectAny));
+    if (!stepRange.hasRangeLimitations())
+        return false;
+    
     const Decimal numericValue = parseToNumberOrNaN(value);
     if (!numericValue.isFinite())
         return true;
 
-    StepRange stepRange(createStepRange(RejectAny));
     return numericValue >= stepRange.minimum() && numericValue <= stepRange.maximum();
 }
 
 bool InputType::isOutOfRange(const String& value) const
 {
-    if (!isSteppable())
+    if (!isSteppable() || value.isEmpty())
+        return false;
+
+    StepRange stepRange(createStepRange(RejectAny));
+    if (!stepRange.hasRangeLimitations())
         return false;
 
     const Decimal numericValue = parseToNumberOrNaN(value);
     if (!numericValue.isFinite())
         return true;
 
-    StepRange stepRange(createStepRange(RejectAny));
     return numericValue < stepRange.minimum() || numericValue > stepRange.maximum();
 }
 

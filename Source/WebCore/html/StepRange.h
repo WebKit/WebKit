@@ -31,6 +31,11 @@ class HTMLInputElement;
 
 enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
 
+enum class RangeLimitations {
+    Valid,
+    Invalid
+};
+
 class StepRange {
 public:
     enum StepValueShouldBe {
@@ -71,11 +76,12 @@ public:
 
     StepRange();
     StepRange(const StepRange&);
-    StepRange(const Decimal& stepBase, const Decimal& minimum, const Decimal& maximum, const Decimal& step, const StepDescription&);
+    StepRange(const Decimal& stepBase, RangeLimitations, const Decimal& minimum, const Decimal& maximum, const Decimal& step, const StepDescription&);
     Decimal acceptableError() const;
     Decimal alignValueForStep(const Decimal& currentValue, const Decimal& newValue) const;
     Decimal clampValue(const Decimal& value) const;
     bool hasStep() const { return m_hasStep; }
+    bool hasRangeLimitations() const { return m_hasRangeLimitations; }
     Decimal maximum() const { return m_maximum; }
     Decimal minimum() const { return m_minimum; }
     static Decimal parseStep(AnyStepHandling, const StepDescription&, const String&);
@@ -114,7 +120,8 @@ private:
     const Decimal m_step;
     const Decimal m_stepBase;
     const StepDescription m_stepDescription;
-    const bool m_hasStep;
+    const bool m_hasRangeLimitations { false };
+    const bool m_hasStep { false };
 };
 
 }

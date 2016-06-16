@@ -35,7 +35,6 @@ StepRange::StepRange()
     , m_minimum(0)
     , m_step(1)
     , m_stepBase(0)
-    , m_hasStep(false)
 {
 }
 
@@ -45,16 +44,18 @@ StepRange::StepRange(const StepRange& stepRange)
     , m_step(stepRange.m_step)
     , m_stepBase(stepRange.m_stepBase)
     , m_stepDescription(stepRange.m_stepDescription)
+    , m_hasRangeLimitations(stepRange.m_hasRangeLimitations)
     , m_hasStep(stepRange.m_hasStep)
 {
 }
 
-StepRange::StepRange(const Decimal& stepBase, const Decimal& minimum, const Decimal& maximum, const Decimal& step, const StepDescription& stepDescription)
+StepRange::StepRange(const Decimal& stepBase, RangeLimitations rangeLimitations, const Decimal& minimum, const Decimal& maximum, const Decimal& step, const StepDescription& stepDescription)
     : m_maximum(maximum)
     , m_minimum(minimum)
     , m_step(step.isFinite() ? step : 1)
     , m_stepBase(stepBase.isFinite() ? stepBase : 1)
     , m_stepDescription(stepDescription)
+    , m_hasRangeLimitations(rangeLimitations == RangeLimitations::Valid)
     , m_hasStep(step.isFinite())
 {
     ASSERT(m_maximum.isFinite());

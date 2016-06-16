@@ -1,3 +1,15 @@
+2016-06-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        :in-range & :out-of-range CSS pseudo-classes shouldn't match inputs without range limitations
+        https://bugs.webkit.org/show_bug.cgi?id=156558
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange-expected.txt:
+        One of the previous match was erroneous.
+        Our results are still very far from being correct. There are several
+        bugs affecting our range validation.
+
 2016-06-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         window.onerror should pass the ErrorEvent's 'error' property as the 5th argument to the event handler
