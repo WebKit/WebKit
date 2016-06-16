@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPage_h
-#define WebPage_h
+#pragma once
 
 #include "APIInjectedBundleFormClient.h"
 #include "APIInjectedBundlePageContextMenuClient.h"
@@ -48,6 +47,7 @@
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "UserData.h"
+#include "UserInterfaceLayoutDirection.h"
 #include "UserMediaPermissionRequestManager.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
@@ -1199,6 +1199,7 @@ private:
 #endif
 
     void setResourceCachingDisabled(bool);
+    void setUserInterfaceLayoutDirection(uint32_t);
 
     uint64_t m_pageID;
 
@@ -1468,8 +1469,9 @@ private:
 #if USE(OS_STATE)
     std::chrono::system_clock::time_point m_loadCommitTime;
 #endif
+
+    UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
 };
 
 } // namespace WebKit
 
-#endif // WebPage_h

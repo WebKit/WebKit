@@ -1,3 +1,27 @@
+2016-06-15  Sam Weinig  <sam@webkit.org>
+
+        Forward/Back keyboard shortcuts need to flip for RTL
+        https://bugs.webkit.org/show_bug.cgi?id=158823
+        <rdar://problem/25975359>
+
+        Reviewed by Darin Adler.
+
+        Add tests for flipping the behavior of command-left and command-right
+        under RTL mode.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/CommandBackForward.mm: Added.
+        (-[CommandBackForwardOffscreenWindow isKeyWindow]):
+        (-[CommandBackForwardOffscreenWindow isVisible]):
+        (simulateCommandArrow):
+        (WebKit2_CommandBackForwardTest::SetUp):
+        (WebKit2_CommandBackForwardTestWKView::didFinishLoadForFrame):
+        (WebKit2_CommandBackForwardTestWKView::SetUp):
+        (WebKit2_CommandBackForwardTestWKView::loadFiles):
+        (-[CommandBackForwardNavigationDelegate webView:didFinishNavigation:]):
+        (WebKit2_CommandBackForwardTestWKWebView::SetUp):
+        (WebKit2_CommandBackForwardTestWKWebView::loadFiles):
+
 2016-06-15  Tim Horton  <timothy_horton@apple.com>
 
         Expose _shouldExpandContentToViewHeightForAutoLayout SPI on WKWebView

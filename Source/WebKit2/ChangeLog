@@ -1,3 +1,56 @@
+2016-06-15  Sam Weinig  <sam@webkit.org>
+
+        Forward/Back keyboard shortcuts need to flip for RTL
+        https://bugs.webkit.org/show_bug.cgi?id=158823
+        <rdar://problem/25975359>
+
+        Reviewed by Darin Adler.
+
+        Pipe the UserInterfaceLayoutDirection down to the WebContentProcess on initialization
+        and when it changes, and use it to flip the behavior of command-left and command-right
+        when in RTL mode.
+
+        Tests:
+            WebKit2_CommandBackForwardTestWKView.LTR
+            WebKit2_CommandBackForwardTestWKView.RTL
+            WebKit2_CommandBackForwardTestWKWebView.LTR
+            WebKit2_CommandBackForwardTestWKWebView.RTL
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _webViewPrintFormatter]):
+        (-[WKWebView setSemanticContentAttribute:]):
+        (-[WKWebView _printOperationWithPrintInfo:forFrame:]):
+        (-[WKWebView setUserInterfaceLayoutDirection:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setUserInterfaceLayoutDirection:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::windowIsFrontWindowUnderMouse):
+        (WebKit::toUserInterfaceLayoutDirection):
+        (WebKit::WebViewImpl::userInterfaceLayoutDirection):
+        (WebKit::WebViewImpl::setUserInterfaceLayoutDirection):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::userInterfaceLayoutDirection):
+        (WebKit::WebPageProxy::setUserInterfaceLayoutDirection):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::hasHadSelectionChangesFromUserInteraction):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_userInterfaceLayoutDirection):
+        (WebKit::WebPage::setResourceCachingDisabled):
+        (WebKit::WebPage::setUserInterfaceLayoutDirection):
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performNonEditingBehaviorForSelector):
+
 2016-06-15  Tim Horton  <timothy_horton@apple.com>
 
         Expose _shouldExpandContentToViewHeightForAutoLayout SPI on WKWebView

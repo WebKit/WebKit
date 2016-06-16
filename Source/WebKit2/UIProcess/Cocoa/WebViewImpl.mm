@@ -4029,7 +4029,29 @@ bool WebViewImpl::windowIsFrontWindowUnderMouse(NSEvent *event)
     return m_view.window.windowNumber != eventWindowNumber;
 }
 
-    
+static UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUserInterfaceLayoutDirection direction)
+{
+    switch (direction) {
+    case NSUserInterfaceLayoutDirectionLeftToRight:
+        return UserInterfaceLayoutDirection::LTR;
+    case NSUserInterfaceLayoutDirectionRightToLeft:
+        return UserInterfaceLayoutDirection::RTL;
+    }
+
+    ASSERT_NOT_REACHED();
+    return UserInterfaceLayoutDirection::LTR;
+}
+
+UserInterfaceLayoutDirection WebViewImpl::userInterfaceLayoutDirection()
+{
+    return toUserInterfaceLayoutDirection(m_view.userInterfaceLayoutDirection);
+}
+
+void WebViewImpl::setUserInterfaceLayoutDirection(NSUserInterfaceLayoutDirection direction)
+{
+    m_page->setUserInterfaceLayoutDirection(toUserInterfaceLayoutDirection(direction));
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

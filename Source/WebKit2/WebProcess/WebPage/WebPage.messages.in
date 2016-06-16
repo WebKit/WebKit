@@ -428,4 +428,6 @@ messages -> WebPage LegacyReceiver {
 #endif
 
     SetResourceCachingDisabled(bool disabled)
+
+    SetUserInterfaceLayoutDirection(uint32_t direction)
 }

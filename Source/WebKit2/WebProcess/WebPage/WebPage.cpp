@@ -377,6 +377,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
     , m_mainFrameProgressCompleted(false)
     , m_shouldDispatchFakeMouseMoveEvents(true)
+    , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
 {
     ASSERT(m_pageID);
 
@@ -5366,6 +5367,11 @@ void WebPage::didRestoreScrollPosition()
 void WebPage::setResourceCachingDisabled(bool disabled)
 {
     m_page->setResourceCachingDisabled(disabled);
+}
+
+void WebPage::setUserInterfaceLayoutDirection(uint32_t direction)
+{
+    m_userInterfaceLayoutDirection = static_cast<UserInterfaceLayoutDirection>(direction);
 }
 
 } // namespace WebKit

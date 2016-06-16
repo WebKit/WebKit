@@ -4298,6 +4298,27 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return (_WKWebViewPrintFormatter *)viewPrintFormatter;
 }
 
+static WebKit::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISemanticContentAttribute contentAttribute)
+{
+    auto direction = [UIView userInterfaceLayoutDirectionForSemanticContentAttribute:contentAttribute];
+    switch (direction) {
+    case UIUserInterfaceLayoutDirectionLeftToRight:
+        return WebKit::UserInterfaceLayoutDirection::LTR;
+    case UIUserInterfaceLayoutDirectionRightToLeft:
+        return WebKit::UserInterfaceLayoutDirection::RTL;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebKit::UserInterfaceLayoutDirection::LTR;
+}
+
+- (void)setSemanticContentAttribute:(UISemanticContentAttribute)contentAttribute
+{
+    [super setSemanticContentAttribute:contentAttribute];
+
+    _page->setUserInterfaceLayoutDirection(toUserInterfaceLayoutDirection(contentAttribute));
+}
+
 #else // #if PLATFORM(IOS)
 
 #pragma mark - OS X-specific methods
@@ -4422,6 +4443,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (auto webFrameProxy = _page->process().webFrame(frameHandle._frameID))
         return _impl->printOperationWithPrintInfo(printInfo, *webFrameProxy);
     return nil;
+}
+
+- (void)setUserInterfaceLayoutDirection:(NSUserInterfaceLayoutDirection)userInterfaceLayoutDirection
+{
+    [super setUserInterfaceLayoutDirection:userInterfaceLayoutDirection];
+
+    _impl->setUserInterfaceLayoutDirection(userInterfaceLayoutDirection);
 }
 
 #endif
