@@ -3,8 +3,7 @@
     width: 100px;
     height: 100px;
     background-color: blue;
-    animation-name: funky;
-    animation-duration: 100ms;
+    animation-duration: 200ms;
 }
 
 @keyframes funky {
@@ -25,5 +24,8 @@ if (window.testRunner) {
         window.testRunner.notifyDone();
     }, false);
 }
+window.addEventListener("load", function () {
+    document.querySelector(".box").style.animationName = "funky";
+}, false);
 </script>
 
