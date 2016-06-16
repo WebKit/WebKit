@@ -1,3 +1,18 @@
+2016-06-16  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Check type of this in RTCPeerConnection JS built-in functions
+        https://bugs.webkit.org/show_bug.cgi?id=151303
+
+        Reviewed by Youenn Fablet.
+
+        Verify that the RTCPeerConnection JS built-in methods checks 'this'. The test has expected
+        failures (bug: http://webkit.org/b/158831).
+
+        * fast/mediastream/RTCPeerConnection-js-built-ins-check-this-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-js-built-ins-check-this.html: Added.
+        * platform/mac/TestExpectations:
+        The mac port does not build with WEB_RTC enabled yet.
+
 2016-06-16  Dean Jackson  <dino@apple.com>
 
         [mac] LayoutTest transforms/undecomposable.html is a flaky timeout

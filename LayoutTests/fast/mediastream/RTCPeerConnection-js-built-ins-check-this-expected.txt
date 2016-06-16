@@ -1,0 +1,28 @@
+Verify that the RTCPeerConnection JS built-in methods check calling 'this'
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS promise webkitRTCPeerConnection.prototype.createOffer.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise webkitRTCPeerConnection.prototype.createAnswer.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise webkitRTCPeerConnection.prototype.setLocalDescription.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise webkitRTCPeerConnection.prototype.setRemoteDescription.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise webkitRTCPeerConnection.prototype.addIceCandidate.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise webkitRTCPeerConnection.prototype.getStats.call({}, null) rejected with TypeError: Function should be called on an RTCPeerConnection
+FAIL promise objectWithPcPrototype.createOffer() rejected with TypeError: Can only call RTCPeerConnection.queuedCreateOffer on instances of RTCPeerConnection; expected reason TypeError: Function should be called on an RTCPeerConnection
+FAIL promise objectWithPcPrototype.createAnswer() rejected with TypeError: Can only call RTCPeerConnection.queuedCreateAnswer on instances of RTCPeerConnection; expected reason TypeError: Function should be called on an RTCPeerConnection
+FAIL promise objectWithPcPrototype.setLocalDescription() rejected with TypeError: Not enough arguments; expected reason TypeError: Function should be called on an RTCPeerConnection
+FAIL promise objectWithPcPrototype.setRemoteDescription() rejected with TypeError: Not enough arguments; expected reason TypeError: Function should be called on an RTCPeerConnection
+FAIL promise objectWithPcPrototype.addIceCandidate() rejected with TypeError: Not enough arguments; expected reason TypeError: Function should be called on an RTCPeerConnection
+FAIL promise objectWithPcPrototype.getStats() rejected with TypeError: Can only call RTCPeerConnection.privateGetStats on instances of RTCPeerConnection; expected reason TypeError: Function should be called on an RTCPeerConnection
+FAIL promise pcWithEmptyPrototype.createOffer() fulfilled unexpectedly.
+FAIL promise pcWithEmptyPrototype.createAnswer() rejected with Error: InvalidStateError: DOM Exception 11; expected reason TypeError: Function should be called on an RTCPeerConnection
+FAIL promise pcWithEmptyPrototype.setLocalDescription() rejected with TypeError: Not enough arguments; expected reason TypeError: Function should be called on an RTCPeerConnection
+FAIL promise pcWithEmptyPrototype.setRemoteDescription() rejected with TypeError: Not enough arguments; expected reason TypeError: Function should be called on an RTCPeerConnection
+FAIL promise pcWithEmptyPrototype.addIceCandidate() rejected with TypeError: Not enough arguments; expected reason TypeError: Function should be called on an RTCPeerConnection
+FAIL promise pcWithEmptyPrototype.getStats() rejected with Error: NotSupportedError: DOM Exception 9; expected reason TypeError: Function should be called on an RTCPeerConnection
+PASS End of test promise chain
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

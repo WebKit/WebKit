@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="resources/promise-utils.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Verify that the RTCPeerConnection JS built-in methods check calling 'this'");
+
+            const reason = "TypeError: Function should be called on an RTCPeerConnection";
+
+            function Foo() {}
+            Foo.prototype = webkitRTCPeerConnection.prototype;
+            let objectWithPcPrototype = new Foo();
+
+            webkitRTCPeerConnection.prototype = {};
+            let pcWithEmptyPrototype = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            promiseShouldReject("webkitRTCPeerConnection.prototype.createOffer.call({})", "reason")
+            .then(() => promiseShouldReject("webkitRTCPeerConnection.prototype.createAnswer.call({})", "reason"))
+            .then(() => promiseShouldReject("webkitRTCPeerConnection.prototype.setLocalDescription.call({})", "reason"))
+            .then(() => promiseShouldReject("webkitRTCPeerConnection.prototype.setRemoteDescription.call({})", "reason"))
+            .then(() => promiseShouldReject("webkitRTCPeerConnection.prototype.addIceCandidate.call({})", "reason"))
+            .then(() => promiseShouldReject("webkitRTCPeerConnection.prototype.getStats.call({}, null)", "reason"))
+
+            // Tests are expected to fail below this point: http://webkit.org/b/158831
+            .then(() => promiseShouldReject("objectWithPcPrototype.createOffer()", "reason"))
+            .then(() => promiseShouldReject("objectWithPcPrototype.createAnswer()", "reason"))
+            .then(() => promiseShouldReject("objectWithPcPrototype.setLocalDescription()", "reason"))
+            .then(() => promiseShouldReject("objectWithPcPrototype.setRemoteDescription()", "reason"))
+            .then(() => promiseShouldReject("objectWithPcPrototype.addIceCandidate()", "reason"))
+            .then(() => promiseShouldReject("objectWithPcPrototype.getStats()", "reason"))
+
+            .then(() => promiseShouldReject("pcWithEmptyPrototype.createOffer()", "reason"))
+            .then(() => promiseShouldReject("pcWithEmptyPrototype.createAnswer()", "reason"))
+            .then(() => promiseShouldReject("pcWithEmptyPrototype.setLocalDescription()", "reason"))
+            .then(() => promiseShouldReject("pcWithEmptyPrototype.setRemoteDescription()", "reason"))
+            .then(() => promiseShouldReject("pcWithEmptyPrototype.addIceCandidate()", "reason"))
+            .then(() => promiseShouldReject("pcWithEmptyPrototype.getStats()", "reason"))
+
+            .then(() => {
+                testPassed("End of test promise chain");
+                finishJSTest();
+            })
+            .catch(error => {
+                testFailed("Error in promise chain: " + error);
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>
