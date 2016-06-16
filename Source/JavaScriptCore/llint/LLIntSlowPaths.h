@@ -55,6 +55,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(trace_arityCheck_for_construct);
 LLINT_SLOW_PATH_HIDDEN_DECL(trace);
 LLINT_SLOW_PATH_HIDDEN_DECL(special_trace);
 LLINT_SLOW_PATH_HIDDEN_DECL(count_opcode);
+LLINT_SLOW_PATH_HIDDEN_DECL(count_opcode_slow_path);
 LLINT_SLOW_PATH_HIDDEN_DECL(entry_osr);
 LLINT_SLOW_PATH_HIDDEN_DECL(entry_osr_function_for_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(entry_osr_function_for_construct);

@@ -46,6 +46,7 @@ namespace LLInt {
 struct OpcodeStats {
     OpcodeID id;
     size_t count { 0 };
+    size_t slowPathCount { 0 };
 };
 typedef std::array<OpcodeStats, numOpcodeIDs> OpcodeStatsArray;
 

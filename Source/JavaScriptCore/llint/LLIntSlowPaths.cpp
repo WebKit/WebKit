@@ -1655,6 +1655,13 @@ LLINT_SLOW_PATH_DECL(count_opcode)
     LLINT_END_IMPL();
 }
 
+LLINT_SLOW_PATH_DECL(count_opcode_slow_path)
+{
+    OpcodeID opcodeID = exec->vm().interpreter->getOpcodeID(pc[0].u.opcode);
+    Data::opcodeStats(opcodeID).slowPathCount++;
+    LLINT_END_IMPL();
+}
+
 #endif // ENABLE(LLINT_STATS)
 
 } } // namespace JSC::LLInt

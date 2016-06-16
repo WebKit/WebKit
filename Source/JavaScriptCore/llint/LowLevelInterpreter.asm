@@ -735,6 +735,17 @@ macro traceExecution()
     end
 end
 
+macro traceSlowPathExecution()
+    if COLLECT_STATS
+        callSlowPath(_llint_count_opcode_slow_path)
+    end
+end
+
+macro callOpcodeSlowPath(slowPath)
+    traceSlowPathExecution()
+    callSlowPath(slowPath)
+end
+
 macro callTargetFunction(callee)
     if C_LOOP
         cloopCallJSFunction callee
@@ -799,6 +810,7 @@ macro prepareForTailCall(callee, temp1, temp2, temp3)
 end
 
 macro slowPathForCall(slowPath, prepareCall)
+    traceSlowPathExecution()
     callCallSlowPath(
         slowPath,
         # Those are r0 and r1
@@ -839,7 +851,7 @@ macro checkSwitchToJITForEpilogue()
     checkSwitchToJIT(
         10,
         macro ()
-            callSlowPath(_llint_replace)
+            callOpcodeSlowPath(_llint_replace)
         end)
 end
 
@@ -1222,162 +1234,162 @@ end
 # Value-representation-agnostic code.
 _llint_op_create_direct_arguments:
     traceExecution()
-    callSlowPath(_slow_path_create_direct_arguments)
+    callOpcodeSlowPath(_slow_path_create_direct_arguments)
     dispatch(2)
 
 
 _llint_op_create_scoped_arguments:
     traceExecution()
-    callSlowPath(_slow_path_create_scoped_arguments)
+    callOpcodeSlowPath(_slow_path_create_scoped_arguments)
     dispatch(3)
 
 
 _llint_op_create_cloned_arguments:
     traceExecution()
-    callSlowPath(_slow_path_create_cloned_arguments)
+    callOpcodeSlowPath(_slow_path_create_cloned_arguments)
     dispatch(2)
 
 
 _llint_op_new_func:
     traceExecution()
-    callSlowPath(_llint_slow_path_new_func)
+    callOpcodeSlowPath(_llint_slow_path_new_func)
     dispatch(4)
 
 
 _llint_op_new_generator_func:
     traceExecution()
-    callSlowPath(_llint_slow_path_new_generator_func)
+    callOpcodeSlowPath(_llint_slow_path_new_generator_func)
     dispatch(4)
 
 
 _llint_op_new_array:
     traceExecution()
-    callSlowPath(_llint_slow_path_new_array)
+    callOpcodeSlowPath(_llint_slow_path_new_array)
     dispatch(5)
 
 
 _llint_op_new_array_with_size:
     traceExecution()
-    callSlowPath(_llint_slow_path_new_array_with_size)
+    callOpcodeSlowPath(_llint_slow_path_new_array_with_size)
     dispatch(4)
 
 
 _llint_op_new_array_buffer:
     traceExecution()
-    callSlowPath(_llint_slow_path_new_array_buffer)
+    callOpcodeSlowPath(_llint_slow_path_new_array_buffer)
     dispatch(5)
 
 
 _llint_op_new_regexp:
     traceExecution()
-    callSlowPath(_llint_slow_path_new_regexp)
+    callOpcodeSlowPath(_llint_slow_path_new_regexp)
     dispatch(3)
 
 
 _llint_op_less:
     traceExecution()
-    callSlowPath(_slow_path_less)
+    callOpcodeSlowPath(_slow_path_less)
     dispatch(4)
 
 
 _llint_op_lesseq:
     traceExecution()
-    callSlowPath(_slow_path_lesseq)
+    callOpcodeSlowPath(_slow_path_lesseq)
     dispatch(4)
 
 
 _llint_op_greater:
     traceExecution()
-    callSlowPath(_slow_path_greater)
+    callOpcodeSlowPath(_slow_path_greater)
     dispatch(4)
 
 
 _llint_op_greatereq:
     traceExecution()
-    callSlowPath(_slow_path_greatereq)
+    callOpcodeSlowPath(_slow_path_greatereq)
     dispatch(4)
 
 
 _llint_op_mod:
     traceExecution()
-    callSlowPath(_slow_path_mod)
+    callOpcodeSlowPath(_slow_path_mod)
     dispatch(4)
 
 
 _llint_op_typeof:
     traceExecution()
-    callSlowPath(_slow_path_typeof)
+    callOpcodeSlowPath(_slow_path_typeof)
     dispatch(3)
 
 
 _llint_op_is_object_or_null:
     traceExecution()
-    callSlowPath(_slow_path_is_object_or_null)
+    callOpcodeSlowPath(_slow_path_is_object_or_null)
     dispatch(3)
 
 _llint_op_is_function:
     traceExecution()
-    callSlowPath(_slow_path_is_function)
+    callOpcodeSlowPath(_slow_path_is_function)
     dispatch(3)
 
 
 _llint_op_in:
     traceExecution()
-    callSlowPath(_slow_path_in)
+    callOpcodeSlowPath(_slow_path_in)
     dispatch(4)
 
 
 _llint_op_try_get_by_id:
     traceExecution()
-    callSlowPath(_llint_slow_path_try_get_by_id)
+    callOpcodeSlowPath(_llint_slow_path_try_get_by_id)
     dispatch(4)
 
 
 _llint_op_del_by_id:
     traceExecution()
-    callSlowPath(_llint_slow_path_del_by_id)
+    callOpcodeSlowPath(_llint_slow_path_del_by_id)
     dispatch(4)
 
 
 _llint_op_del_by_val:
     traceExecution()
-    callSlowPath(_llint_slow_path_del_by_val)
+    callOpcodeSlowPath(_llint_slow_path_del_by_val)
     dispatch(4)
 
 
 _llint_op_put_by_index:
     traceExecution()
-    callSlowPath(_llint_slow_path_put_by_index)
+    callOpcodeSlowPath(_llint_slow_path_put_by_index)
     dispatch(4)
 
 
 _llint_op_put_getter_by_id:
     traceExecution()
-    callSlowPath(_llint_slow_path_put_getter_by_id)
+    callOpcodeSlowPath(_llint_slow_path_put_getter_by_id)
     dispatch(5)
 
 
 _llint_op_put_setter_by_id:
     traceExecution()
-    callSlowPath(_llint_slow_path_put_setter_by_id)
+    callOpcodeSlowPath(_llint_slow_path_put_setter_by_id)
     dispatch(5)
 
 
 _llint_op_put_getter_setter_by_id:
     traceExecution()
-    callSlowPath(_llint_slow_path_put_getter_setter_by_id)
+    callOpcodeSlowPath(_llint_slow_path_put_getter_setter_by_id)
     dispatch(6)
 
 
 _llint_op_put_getter_by_val:
     traceExecution()
-    callSlowPath(_llint_slow_path_put_getter_by_val)
+    callOpcodeSlowPath(_llint_slow_path_put_getter_by_val)
     dispatch(5)
 
 
 _llint_op_put_setter_by_val:
     traceExecution()
-    callSlowPath(_llint_slow_path_put_setter_by_val)
+    callOpcodeSlowPath(_llint_slow_path_put_setter_by_val)
     dispatch(5)
 
 
@@ -1496,23 +1508,23 @@ end
 
 _llint_op_switch_string:
     traceExecution()
-    callSlowPath(_llint_slow_path_switch_string)
+    callOpcodeSlowPath(_llint_slow_path_switch_string)
     dispatch(0)
 
 
 _llint_op_new_func_exp:
     traceExecution()
-    callSlowPath(_llint_slow_path_new_func_exp)
+    callOpcodeSlowPath(_llint_slow_path_new_func_exp)
     dispatch(4)
 
 _llint_op_new_generator_func_exp:
     traceExecution()
-    callSlowPath(_llint_slow_path_new_generator_func_exp)
+    callOpcodeSlowPath(_llint_slow_path_new_generator_func_exp)
     dispatch(4)
 
 _llint_op_set_function_name:
     traceExecution()
-    callSlowPath(_llint_slow_path_set_function_name)
+    callOpcodeSlowPath(_llint_slow_path_set_function_name)
     dispatch(3)
 
 _llint_op_call:
@@ -1531,7 +1543,7 @@ _llint_op_construct:
     doCall(_llint_slow_path_construct, prepareForRegularCall)
 
 macro doCallVarargs(frameSlowPath, slowPath, prepareCall)
-    callSlowPath(frameSlowPath)
+    callOpcodeSlowPath(frameSlowPath)
     branchIfException(_llint_throw_from_slow_path_trampoline)
     # calleeFrame in r1
     if JSVALUE64
@@ -1618,49 +1630,49 @@ _llint_generic_return_point:
 
 _llint_op_strcat:
     traceExecution()
-    callSlowPath(_slow_path_strcat)
+    callOpcodeSlowPath(_slow_path_strcat)
     dispatch(4)
 
 
 _llint_op_push_with_scope:
     traceExecution()
-    callSlowPath(_slow_path_push_with_scope)
+    callOpcodeSlowPath(_slow_path_push_with_scope)
     dispatch(4)
 
 
 _llint_op_assert:
     traceExecution()
-    callSlowPath(_slow_path_assert)
+    callOpcodeSlowPath(_slow_path_assert)
     dispatch(3)
 
 
 _llint_op_save:
     traceExecution()
-    callSlowPath(_slow_path_save)
+    callOpcodeSlowPath(_slow_path_save)
     dispatch(4)
 
 
 _llint_op_resume:
     traceExecution()
-    callSlowPath(_slow_path_resume)
+    callOpcodeSlowPath(_slow_path_resume)
     dispatch(3)
 
 
 _llint_op_create_lexical_environment:
     traceExecution()
-    callSlowPath(_slow_path_create_lexical_environment)
+    callOpcodeSlowPath(_slow_path_create_lexical_environment)
     dispatch(5)
 
 
 _llint_op_throw:
     traceExecution()
-    callSlowPath(_llint_slow_path_throw)
+    callOpcodeSlowPath(_llint_slow_path_throw)
     dispatch(2)
 
 
 _llint_op_throw_static_error:
     traceExecution()
-    callSlowPath(_llint_slow_path_throw_static_error)
+    callOpcodeSlowPath(_llint_slow_path_throw_static_error)
     dispatch(3)
 
 
@@ -1669,7 +1681,7 @@ _llint_op_debug:
     loadp CodeBlock[cfr], t0
     loadi CodeBlock::m_debuggerRequests[t0], t0
     btiz t0, .opDebugDone
-    callSlowPath(_llint_slow_path_debug)
+    callOpcodeSlowPath(_llint_slow_path_debug)
 .opDebugDone:                    
     dispatch(3)
 
@@ -1683,77 +1695,77 @@ _llint_native_construct_trampoline:
 
 _llint_op_get_enumerable_length:
     traceExecution()
-    callSlowPath(_slow_path_get_enumerable_length)
+    callOpcodeSlowPath(_slow_path_get_enumerable_length)
     dispatch(3)
 
 _llint_op_has_indexed_property:
     traceExecution()
-    callSlowPath(_slow_path_has_indexed_property)
+    callOpcodeSlowPath(_slow_path_has_indexed_property)
     dispatch(5)
 
 _llint_op_has_structure_property:
     traceExecution()
-    callSlowPath(_slow_path_has_structure_property)
+    callOpcodeSlowPath(_slow_path_has_structure_property)
     dispatch(5)
 
 _llint_op_has_generic_property:
     traceExecution()
-    callSlowPath(_slow_path_has_generic_property)
+    callOpcodeSlowPath(_slow_path_has_generic_property)
     dispatch(4)
 
 _llint_op_get_direct_pname:
     traceExecution()
-    callSlowPath(_slow_path_get_direct_pname)
+    callOpcodeSlowPath(_slow_path_get_direct_pname)
     dispatch(7)
 
 _llint_op_get_property_enumerator:
     traceExecution()
-    callSlowPath(_slow_path_get_property_enumerator)
+    callOpcodeSlowPath(_slow_path_get_property_enumerator)
     dispatch(3)
 
 _llint_op_enumerator_structure_pname:
     traceExecution()
-    callSlowPath(_slow_path_next_structure_enumerator_pname)
+    callOpcodeSlowPath(_slow_path_next_structure_enumerator_pname)
     dispatch(4)
 
 _llint_op_enumerator_generic_pname:
     traceExecution()
-    callSlowPath(_slow_path_next_generic_enumerator_pname)
+    callOpcodeSlowPath(_slow_path_next_generic_enumerator_pname)
     dispatch(4)
 
 _llint_op_to_index_string:
     traceExecution()
-    callSlowPath(_slow_path_to_index_string)
+    callOpcodeSlowPath(_slow_path_to_index_string)
     dispatch(3)
 
 _llint_op_copy_rest:
     traceExecution()
-    callSlowPath(_slow_path_copy_rest)
+    callOpcodeSlowPath(_slow_path_copy_rest)
     dispatch(4)
 
 _llint_op_instanceof:
     traceExecution()
-    callSlowPath(_llint_slow_path_instanceof)
+    callOpcodeSlowPath(_llint_slow_path_instanceof)
     dispatch(4)
 
 _llint_op_get_by_id_with_this:
     traceExecution()
-    callSlowPath(_slow_path_get_by_id_with_this)
+    callOpcodeSlowPath(_slow_path_get_by_id_with_this)
     dispatch(5)
 
 _llint_op_get_by_val_with_this:
     traceExecution()
-    callSlowPath(_slow_path_get_by_val_with_this)
+    callOpcodeSlowPath(_slow_path_get_by_val_with_this)
     dispatch(5)
 
 _llint_op_put_by_id_with_this:
     traceExecution()
-    callSlowPath(_slow_path_put_by_id_with_this)
+    callOpcodeSlowPath(_slow_path_put_by_id_with_this)
     dispatch(5)
 
 _llint_op_put_by_val_with_this:
     traceExecution()
-    callSlowPath(_slow_path_put_by_val_with_this)
+    callOpcodeSlowPath(_slow_path_put_by_val_with_this)
     dispatch(5)
 
 # Lastly, make sure that we can link even though we don't support all opcodes.

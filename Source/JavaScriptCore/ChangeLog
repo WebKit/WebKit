@@ -1,3 +1,20 @@
+2016-06-16  Mark Lam  <mark.lam@apple.com>
+
+        Add collecting of LLINT slow path stats.
+        https://bugs.webkit.org/show_bug.cgi?id=158829
+
+        Reviewed by Keith Miller.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::dumpStats):
+        * llint/LLIntData.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2016-06-15  Keith Miller  <keith_miller@apple.com>
 
         Add support for Symbol.isConcatSpreadable (round 2)

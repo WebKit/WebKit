@@ -236,14 +236,18 @@ void Data::dumpStats()
 
     auto statsCopy = *s_opcodeStatsArray;
     std::sort(statsCopy.begin(), statsCopy.end(), [] (OpcodeStats& a, OpcodeStats& b) -> bool {
-        return a.count > b.count;
+        if (a.count > b.count)
+            return true;
+        if (a.count < b.count)
+            return false;
+        return a.slowPathCount > b.slowPathCount;
     });
     
     dataLog("Opcode stats:\n");
     unsigned i = 0;
     for (auto& stats : statsCopy) {
         if (stats.count)
-            dataLog("   [", i++, "]: fast:", stats.count, " ", opcodeNames[stats.id], "\n");
+            dataLog("   [", i++, "]: fast:", stats.count, " slow:", stats.slowPathCount, " ", opcodeNames[stats.id], "\n");
     }
 #endif
 }

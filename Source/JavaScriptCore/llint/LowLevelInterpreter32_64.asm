@@ -673,7 +673,7 @@ _llint_op_enter:
     addi 1, t2
     btinz t2, .opEnterLoop
 .opEnterDone:
-    callSlowPath(_slow_path_enter)
+    callOpcodeSlowPath(_slow_path_enter)
     dispatch(1)
 
 
@@ -719,7 +719,7 @@ _llint_op_create_this:
     dispatch(5)
 
 .opCreateThisSlow:
-    callSlowPath(_slow_path_create_this)
+    callOpcodeSlowPath(_slow_path_create_this)
     dispatch(5)
 
 
@@ -734,7 +734,7 @@ _llint_op_to_this:
     dispatch(4)
 
 .opToThisSlow:
-    callSlowPath(_slow_path_to_this)
+    callOpcodeSlowPath(_slow_path_to_this)
     dispatch(4)
 
 
@@ -750,7 +750,7 @@ _llint_op_new_object:
     dispatch(4)
 
 .opNewObjectSlow:
-    callSlowPath(_llint_slow_path_new_object)
+    callOpcodeSlowPath(_llint_slow_path_new_object)
     dispatch(4)
 
 
@@ -759,7 +759,7 @@ _llint_op_check_tdz:
     loadisFromInstruction(1, t0)
     loadConstantOrVariableTag(t0, t1)
     bineq t1, EmptyValueTag, .opNotTDZ
-    callSlowPath(_slow_path_throw_tdz_error)
+    callOpcodeSlowPath(_slow_path_throw_tdz_error)
 
 .opNotTDZ:
     dispatch(2)
@@ -787,7 +787,7 @@ _llint_op_not:
     dispatch(3)
 
 .opNotSlow:
-    callSlowPath(_slow_path_not)
+    callOpcodeSlowPath(_slow_path_not)
     dispatch(3)
 
 
@@ -807,7 +807,7 @@ _llint_op_eq:
     dispatch(4)
 
 .opEqSlow:
-    callSlowPath(_slow_path_eq)
+    callOpcodeSlowPath(_slow_path_eq)
     dispatch(4)
 
 
@@ -854,7 +854,7 @@ _llint_op_neq:
     dispatch(4)
 
 .opNeqSlow:
-    callSlowPath(_slow_path_neq)
+    callOpcodeSlowPath(_slow_path_neq)
     dispatch(4)
     
 
@@ -903,7 +903,7 @@ macro strictEq(equalityOperation, slowPath)
     dispatch(4)
 
 .slow:
-    callSlowPath(slowPath)
+    callOpcodeSlowPath(slowPath)
     dispatch(4)
 end
 
@@ -927,7 +927,7 @@ _llint_op_inc:
     dispatch(2)
 
 .opIncSlow:
-    callSlowPath(_slow_path_inc)
+    callOpcodeSlowPath(_slow_path_inc)
     dispatch(2)
 
 
@@ -941,7 +941,7 @@ _llint_op_dec:
     dispatch(2)
 
 .opDecSlow:
-    callSlowPath(_slow_path_dec)
+    callOpcodeSlowPath(_slow_path_dec)
     dispatch(2)
 
 
@@ -958,7 +958,7 @@ _llint_op_to_number:
     dispatch(3)
 
 .opToNumberSlow:
-    callSlowPath(_slow_path_to_number)
+    callOpcodeSlowPath(_slow_path_to_number)
     dispatch(3)
 
 
@@ -975,7 +975,7 @@ _llint_op_to_string:
     dispatch(3)
 
 .opToStringSlow:
-    callSlowPath(_slow_path_to_string)
+    callOpcodeSlowPath(_slow_path_to_string)
     dispatch(3)
 
 
@@ -998,7 +998,7 @@ _llint_op_negate:
     dispatch(3)
 
 .opNegateSlow:
-    callSlowPath(_slow_path_negate)
+    callOpcodeSlowPath(_slow_path_negate)
     dispatch(3)
 
 
@@ -1040,7 +1040,7 @@ macro binaryOpCustomStore(integerOperationAndStore, doubleOperation, slowPath)
     dispatch(5)
 
 .slow:
-    callSlowPath(slowPath)
+    callOpcodeSlowPath(slowPath)
     dispatch(5)
 end
 
@@ -1121,7 +1121,7 @@ macro bitOp(operation, slowPath, advance)
     dispatch(advance)
 
 .slow:
-    callSlowPath(slowPath)
+    callOpcodeSlowPath(slowPath)
     dispatch(advance)
 end
 
@@ -1159,7 +1159,7 @@ _llint_op_unsigned:
     storei Int32Tag, TagOffset[cfr, t0, 8]
     dispatch(3)
 .opUnsignedSlow:
-    callSlowPath(_slow_path_unsigned)
+    callOpcodeSlowPath(_slow_path_unsigned)
     dispatch(3)
 
 
@@ -1219,7 +1219,7 @@ _llint_op_overrides_has_instance:
 
 _llint_op_instanceof_custom:
     traceExecution()
-    callSlowPath(_llint_slow_path_instanceof_custom)
+    callOpcodeSlowPath(_llint_slow_path_instanceof_custom)
     dispatch(5)
 
 
@@ -1382,7 +1382,7 @@ _llint_op_get_by_id:
     dispatch(9)
 
 .opGetByIdSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
+    callOpcodeSlowPath(_llint_slow_path_get_by_id)
     dispatch(9)
 
 
@@ -1402,7 +1402,7 @@ _llint_op_get_by_id_proto_load:
     dispatch(9)
 
 .opGetByIdProtoSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
+    callOpcodeSlowPath(_llint_slow_path_get_by_id)
     dispatch(9)
 
 
@@ -1419,7 +1419,7 @@ _llint_op_get_by_id_unset:
     dispatch(9)
 
 .opGetByIdUnsetSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
+    callOpcodeSlowPath(_llint_slow_path_get_by_id)
     dispatch(9)
 
 
@@ -1442,7 +1442,7 @@ _llint_op_get_array_length:
     dispatch(9)
 
 .opGetArrayLengthSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
+    callOpcodeSlowPath(_llint_slow_path_get_by_id)
     dispatch(9)
 
 
@@ -1573,7 +1573,7 @@ _llint_op_put_by_id:
     dispatch(9)
 
 .opPutByIdSlow:
-    callSlowPath(_llint_slow_path_put_by_id)
+    callOpcodeSlowPath(_llint_slow_path_put_by_id)
     dispatch(9)
 
 
@@ -1627,7 +1627,7 @@ _llint_op_get_by_val:
     loadpFromInstruction(4, t0)
     storeb 1, ArrayProfile::m_outOfBounds[t0]
 .opGetByValSlow:
-    callSlowPath(_llint_slow_path_get_by_val)
+    callOpcodeSlowPath(_llint_slow_path_get_by_val)
     dispatch(6)
 
 
@@ -1719,7 +1719,7 @@ macro putByVal(slowPath)
     loadpFromInstruction(4, t0)
     storeb 1, ArrayProfile::m_outOfBounds[t0]
 .opPutByValSlow:
-    callSlowPath(slowPath)
+    callOpcodeSlowPath(slowPath)
     dispatch(5)
 end
 
@@ -1744,7 +1744,7 @@ macro jumpTrueOrFalse(conditionOp, slow)
     dispatchBranch(8[PC])
 
 .slow:
-    callSlowPath(slow)
+    callOpcodeSlowPath(slow)
     dispatch(0)
 end
 
@@ -1842,7 +1842,7 @@ macro compare(integerCompare, doubleCompare, slowPath)
     dispatchBranch(12[PC])
 
 .slow:
-    callSlowPath(slowPath)
+    callOpcodeSlowPath(slowPath)
     dispatch(0)
 end
 
@@ -1871,7 +1871,7 @@ _llint_op_switch_imm:
     dispatchBranch(8[PC])
 
 .opSwitchImmSlow:
-    callSlowPath(_llint_slow_path_switch_imm)
+    callOpcodeSlowPath(_llint_slow_path_switch_imm)
     dispatch(0)
 
 
@@ -1908,7 +1908,7 @@ _llint_op_switch_char:
     dispatchBranch(8[PC])
 
 .opSwitchOnRope:
-    callSlowPath(_llint_slow_path_switch_char)
+    callOpcodeSlowPath(_llint_slow_path_switch_char)
     dispatch(0)
 
 
@@ -1967,7 +1967,7 @@ _llint_op_to_primitive:
     dispatch(3)
 
 .opToPrimitiveSlowCase:
-    callSlowPath(_slow_path_to_primitive)
+    callOpcodeSlowPath(_slow_path_to_primitive)
     dispatch(3)
 
 
@@ -1987,7 +1987,7 @@ _llint_op_catch:
 
     loadi VM::targetInterpreterPCForThrow[t3], PC
 
-    callSlowPath(_llint_slow_path_check_if_exception_is_uncatchable_and_notify_profiler)
+    callOpcodeSlowPath(_llint_slow_path_check_if_exception_is_uncatchable_and_notify_profiler)
     bpeq r1, 0, .isCatchableException
     jmp _llint_throw_from_slow_path_trampoline
 
@@ -2182,7 +2182,7 @@ _llint_op_resolve_scope:
     dispatch(7)
 
 .rDynamic:
-    callSlowPath(_slow_path_resolve_scope)
+    callOpcodeSlowPath(_slow_path_resolve_scope)
     dispatch(7)
 
 
@@ -2282,7 +2282,7 @@ _llint_op_get_from_scope:
     dispatch(8)
 
 .gDynamic:
-    callSlowPath(_llint_slow_path_get_from_scope)
+    callOpcodeSlowPath(_llint_slow_path_get_from_scope)
     dispatch(8)
 
 
@@ -2393,11 +2393,11 @@ _llint_op_put_to_scope:
 
 .pModuleVar:
     bineq t0, ModuleVar, .pDynamic
-    callSlowPath(_slow_path_throw_strict_mode_readonly_property_write_error)
+    callOpcodeSlowPath(_slow_path_throw_strict_mode_readonly_property_write_error)
     dispatch(7)
 
 .pDynamic:
-    callSlowPath(_llint_slow_path_put_to_scope)
+    callOpcodeSlowPath(_llint_slow_path_put_to_scope)
     dispatch(7)
 
 
@@ -2477,7 +2477,7 @@ _llint_op_profile_type:
 
     loadp TypeProfilerLog::m_logEndPtr[t1], t1
     bpneq t2, t1, .opProfileTypeDone
-    callSlowPath(_slow_path_profile_type_clear_log)
+    callOpcodeSlowPath(_slow_path_profile_type_clear_log)
 
 .opProfileTypeDone:
     dispatch(6)
@@ -2524,7 +2524,7 @@ _llint_op_log_shadow_chicken_prologue:
     storep t1, ShadowChicken::Packet::scope[t0]
     dispatch(2)
 .opLogShadowChickenPrologueSlow:
-    callSlowPath(_llint_slow_path_log_shadow_chicken_prologue)
+    callOpcodeSlowPath(_llint_slow_path_log_shadow_chicken_prologue)
     dispatch(2)
 
 
@@ -2544,5 +2544,5 @@ _llint_op_log_shadow_chicken_tail:
     storei PC, ShadowChicken::Packet::callSiteIndex[t0]
     dispatch(3)
 .opLogShadowChickenTailSlow:
-    callSlowPath(_llint_slow_path_log_shadow_chicken_tail)
+    callOpcodeSlowPath(_llint_slow_path_log_shadow_chicken_tail)
     dispatch(3)
