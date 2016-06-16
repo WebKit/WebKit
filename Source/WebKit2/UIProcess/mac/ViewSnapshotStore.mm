@@ -132,7 +132,7 @@ void ViewSnapshotStore::discardSnapshotImages()
 }
 
 #if USE(IOSURFACE)
-Ref<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<IOSurface> surface)
+Ref<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<WebCore::IOSurface> surface)
 {
     return adoptRef(*new ViewSnapshot(WTFMove(surface)));
 }
@@ -144,7 +144,7 @@ Ref<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, size_t ima
 #endif
 
 #if USE(IOSURFACE)
-ViewSnapshot::ViewSnapshot(std::unique_ptr<IOSurface> surface)
+ViewSnapshot::ViewSnapshot(std::unique_ptr<WebCore::IOSurface> surface)
     : m_surface(WTFMove(surface))
 #else
 ViewSnapshot::ViewSnapshot(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
@@ -207,12 +207,12 @@ id ViewSnapshot::asLayerContents()
     if (!m_surface)
         return nullptr;
 
-    if (m_surface->setIsVolatile(false) != IOSurface::SurfaceState::Valid) {
+    if (m_surface->setIsVolatile(false) != WebCore::IOSurface::SurfaceState::Valid) {
         clearImage();
         return nullptr;
     }
 
-    return (id)m_surface->surface();
+    return m_surface->asLayerContents();
 #else
     return [CAContext objectForSlot:m_slotID];
 #endif

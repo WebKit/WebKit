@@ -150,7 +150,7 @@ bool RemoteLayerBackingStore::decode(IPC::ArgumentDecoder& decoder, RemoteLayerB
         MachSendRight sendRight;
         if (!decoder.decode(sendRight))
             return false;
-        result.m_frontBuffer.surface = IOSurface::createFromSendRight(sendRight, ColorSpaceSRGB);
+        result.m_frontBuffer.surface = WebCore::IOSurface::createFromSendRight(sendRight, ColorSpaceSRGB);
         return true;
     }
 #endif
@@ -185,12 +185,11 @@ IntSize RemoteLayerBackingStore::backingStoreSize() const
 unsigned RemoteLayerBackingStore::bytesPerPixel() const
 {
 #if USE(IOSURFACE)
-    WebCore::IOSurface::Format format = bufferFormat(m_isOpaque);
-    switch (format) {
-    case IOSurface::Format::RGBA: return 4;
-    case IOSurface::Format::YUV422: return 2;
-    case IOSurface::Format::RGB10: return 4;
-    case IOSurface::Format::RGB10A8: return 5;
+    switch (bufferFormat(m_isOpaque)) {
+    case WebCore::IOSurface::Format::RGBA: return 4;
+    case WebCore::IOSurface::Format::YUV422: return 2;
+    case WebCore::IOSurface::Format::RGB10: return 4;
+    case WebCore::IOSurface::Format::RGB10A8: return 5;
     }
 #endif
     return 4;
@@ -211,7 +210,7 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
         std::swap(m_frontBuffer, m_backBuffer);
 
         if (!m_frontBuffer.surface)
-            m_frontBuffer.surface = IOSurface::create(expandedScaledSize, ColorSpaceSRGB, bufferFormat(m_isOpaque));
+            m_frontBuffer.surface = WebCore::IOSurface::create(expandedScaledSize, ColorSpaceSRGB, bufferFormat(m_isOpaque));
 
         setBufferVolatility(BufferType::Front, false);
         return;
@@ -401,7 +400,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
 
 #if USE(IOSURFACE)
     if (acceleratesDrawing()) {
-        layer.contents = (id)m_frontBuffer.surface->surface();
+//        layer.contents = (id)m_frontBuffer.surface->surface();
         return;
     }
 #endif
@@ -424,11 +423,11 @@ bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolati
             if (isVolatile)
                 m_frontBuffer.surface->releaseGraphicsContext();
             if (!isVolatile || !m_frontBuffer.surface->isInUse()) {
-                IOSurface::SurfaceState previousState = m_frontBuffer.surface->setIsVolatile(isVolatile);
+                auto previousState = m_frontBuffer.surface->setIsVolatile(isVolatile);
                 m_frontBuffer.isVolatile = isVolatile;
 
                 // Becoming non-volatile and the front buffer was purged, so we need to repaint.
-                if (!isVolatile && (previousState == IOSurface::SurfaceState::Empty))
+                if (!isVolatile && (previousState == WebCore::IOSurface::SurfaceState::Empty))
                     setNeedsDisplay();
             } else
                 return false;
@@ -470,7 +469,7 @@ void RemoteLayerBackingStore::Buffer::discard()
 {
 #if USE(IOSURFACE)
     if (surface)
-        IOSurface::moveToPool(WTFMove(surface));
+        WebCore::IOSurface::moveToPool(WTFMove(surface));
     isVolatile = false;
 #endif
     bitmap = nullptr;

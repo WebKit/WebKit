@@ -1,3 +1,25 @@
+2016-06-16  Anders Carlsson  <andersca@apple.com>
+
+        Fix macOS Sierra build
+        https://bugs.webkit.org/show_bug.cgi?id=158849
+
+        Reviewed by Tim Horton.
+
+        Add WebCore:: qualifiers for IOSurface, to avoid conflicts with the IOSurface Objective-C class
+        and adopt IOSurface::asLayerContents().
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::decode):
+        (WebKit::RemoteLayerBackingStore::bytesPerPixel):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+        (WebKit::RemoteLayerBackingStore::Buffer::discard):
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshot::create):
+        (WebKit::ViewSnapshot::ViewSnapshot):
+        (WebKit::ViewSnapshot::asLayerContents):
+
 2016-06-16  Brady Eidson  <beidson@apple.com>
 
         When a WebsiteDataStore finds no ProcessPools and creates one from scratch, it should represent the data store's config.
