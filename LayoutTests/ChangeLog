@@ -1,3 +1,13 @@
+2016-06-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Sporadic crash in HashTableAddResult following CSSValuePool::createFontFamilyValue
+        https://bugs.webkit.org/show_bug.cgi?id=158297
+
+        Reviewed by Darin Adler.
+
+        * fast/text/placeholder-renderstyle-null-font-expected.txt: Added.
+        * fast/text/placeholder-renderstyle-null-font.html: Added.
+
 2016-06-15  Keith Miller  <keith_miller@apple.com>
 
         Add support for Symbol.isConcatSpreadable (round 2)
