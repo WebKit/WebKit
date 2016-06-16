@@ -707,12 +707,12 @@ set(WebCore_FORWARDING_HEADERS_FILES
     platform/cf/RunLoopObserver.h
 
     platform/cocoa/MachSendRight.h
+    platform/cocoa/SoftLinking.h
 
     platform/graphics/cocoa/IOSurface.h
 
     platform/graphics/transforms/AffineTransform.h
 
-    platform/mac/SoftLinking.h
     platform/mac/WebCoreSystemInterface.h
 
     platform/network/cf/CertificateInfo.h
