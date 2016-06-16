@@ -1,3 +1,25 @@
+2016-06-15  Alexey Proskuryakov  <ap@apple.com>
+
+        +[WebHTMLRepresentation supportedMIMETypes] leaks
+        https://bugs.webkit.org/show_bug.cgi?id=158683
+
+        Reviewed by Darin Adler.
+
+        The problem occurred when chaining newArrayByConcatenatingArrays calls.
+
+        Also refactored the code to avoid returning NSMutableArrays disguised as NSArrays,
+        and removed __unsafe_unretained modifiers that were added in http://trac.webkit.org/r149453
+        for no apparent reason.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (newArrayWithStrings):
+        (+[WebHTMLRepresentation supportedMIMETypes]):
+        (+[WebHTMLRepresentation supportedMediaMIMETypes]):
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]):
+        (+[WebHTMLRepresentation supportedImageMIMETypes]):
+        (+[WebHTMLRepresentation unsupportedTextMIMETypes]):
+        (newArrayByConcatenatingArrays): Deleted.
+
 2016-06-15  Dean Jackson  <dino@apple.com>
 
         RTL <select> forms are misplaced

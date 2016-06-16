@@ -87,51 +87,42 @@ using JSC::Yarr::RegularExpression;
 
 @implementation WebHTMLRepresentation
 
-static NSMutableArray *newArrayWithStrings(const HashSet<String, ASCIICaseInsensitiveHash>&) NS_RETURNS_RETAINED;
-static NSMutableArray *newArrayWithStrings(const HashSet<String, ASCIICaseInsensitiveHash>& set)
+static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseInsensitiveHash>& set)
 {
-    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:set.size()];
-    for (auto& string : set)
-        [array addObject:(NSString *)string];
-    return array;
-}
-
-static NSMutableArray *newArrayByConcatenatingArrays(NSArray *first, NSArray *second) NS_RETURNS_RETAINED;
-static NSMutableArray *newArrayByConcatenatingArrays(NSArray *first, NSArray *second)
-{
-    NSMutableArray *result = [first mutableCopy];
-    [result addObjectsFromArray:second];
-    return result;
+    Vector<NSString *> vector;
+    copyToVector(set, vector);
+    return adoptNS([[NSArray alloc] initWithObjects:vector.data() count:vector.size()]);
 }
 
 + (NSArray *)supportedMIMETypes
 {
-    static __unsafe_unretained NSArray *staticSupportedMIMETypes = newArrayByConcatenatingArrays([self supportedNonImageMIMETypes],
-        newArrayByConcatenatingArrays([self supportedImageMIMETypes], [self supportedMediaMIMETypes]));
+    static NSArray *staticSupportedMIMETypes = [[[[self supportedNonImageMIMETypes] arrayByAddingObjectsFromArray:
+        [self supportedImageMIMETypes]] arrayByAddingObjectsFromArray:
+        [self supportedMediaMIMETypes]] retain];
     return staticSupportedMIMETypes;
 }
 
 + (NSArray *)supportedMediaMIMETypes
 {
-    static __unsafe_unretained NSArray *staticSupportedMediaMIMETypes = newArrayWithStrings(MIMETypeRegistry::getSupportedMediaMIMETypes());
+    static NSArray *staticSupportedMediaMIMETypes = newArrayWithStrings(MIMETypeRegistry::getSupportedMediaMIMETypes()).leakRef();
     return staticSupportedMediaMIMETypes;
 }
 
 + (NSArray *)supportedNonImageMIMETypes
 {
-    static __unsafe_unretained NSArray *staticSupportedNonImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::getSupportedNonImageMIMETypes());
+    static NSArray *staticSupportedNonImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::getSupportedNonImageMIMETypes()).leakRef();
     return staticSupportedNonImageMIMETypes;
 }
 
 + (NSArray *)supportedImageMIMETypes
 {
-    static __unsafe_unretained NSArray *staticSupportedImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::getSupportedImageMIMETypes());
+    static NSArray *staticSupportedImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::getSupportedImageMIMETypes()).leakRef();
     return staticSupportedImageMIMETypes;
 }
 
 + (NSArray *)unsupportedTextMIMETypes
 {
-    static __unsafe_unretained NSArray *staticUnsupportedTextMIMETypes = newArrayWithStrings(MIMETypeRegistry::getUnsupportedTextMIMETypes());
+    static NSArray *staticUnsupportedTextMIMETypes = newArrayWithStrings(MIMETypeRegistry::getUnsupportedTextMIMETypes()).leakRef();
     return staticUnsupportedTextMIMETypes;
 }
 
