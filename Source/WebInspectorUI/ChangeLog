@@ -1,3 +1,56 @@
+2016-06-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: DataGrid should manage its own settings
+        https://bugs.webkit.org/show_bug.cgi?id=158675
+        <rdar://problem/26761338>
+
+        Reviewed by Timothy Hatcher.
+
+        Move grid sorting settings (sort order, column identifier) into DataGrid,
+        removing duplicated code from various views. A new grid method, "createSettings",
+        takes an identifier which is used as a prefix for naming the grid's settings.
+
+        So that the new behavior is easy to use and hard to misuse, default values
+        for each setting are set to the current value of the associated property.
+        The result is that:
+
+            grid.sortColumnIdentifier = "columnA";
+            grid.createSettings("myGrid");
+
+        will use "columnA" as the default value the first time the setting is created.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView.prototype._createDataGrid):
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype._rebuildTable):
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView):
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.createSettings):
+        (WebInspector.DataGrid.prototype.get identifier): Deleted.
+        (WebInspector.DataGrid.prototype.set identifier): Deleted.
+        (WebInspector.DataGrid.prototype.set sortOrderSetting): Deleted.
+        (WebInspector.DataGrid.prototype.set sortColumnIdentifierSetting): Deleted.
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView):
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WebInspector.HeapSnapshotContentView):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._buildDataGridSection):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        * UserInterface/Views/ProfileView.js:
+        (WebInspector.ProfileView):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WebInspector.ScriptDetailsTimelineView):
+
 2016-06-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: TypeError: undefined is not an object (evaluating 'imageElement.classList')

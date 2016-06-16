@@ -78,11 +78,9 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
             columns[column].sortable = true;
 
         this._dataGrid = new WebInspector.TimelineDataGrid(columns);
-        this._dataGrid.identifier = "rendering-frame-timeline-view";
-
-        // FIXME: Remove once <webkit.org/b/158675> is fixed.
-        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("rendering-frame-timeline-view-sort", "startTime");
-        this._dataGrid.sortOrderSetting = new WebInspector.Setting("rendering-frame-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
+        this._dataGrid.sortColumnIdentifier = "startTime";
+        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.createSettings("rendering-frame-timeline-view");
 
         this.setupDataGrid(this._dataGrid);
 

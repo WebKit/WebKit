@@ -89,12 +89,10 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
             columns[column].sortable = true;
 
         this._dataGrid = new WebInspector.TimelineDataGrid(columns);
-        this._dataGrid.identifier = "network-timeline-view";
         this._dataGrid.sortDelegate = this;
-
-        // FIXME: Remove once <webkit.org/b/158675> is fixed.
-        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("network-timeline-view-sort", "requestSent");
-        this._dataGrid.sortOrderSetting = new WebInspector.Setting("network-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
+        this._dataGrid.sortColumnIdentifier = "requestSent";
+        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.createSettings("network-timeline-view");
 
         this.setupDataGrid(this._dataGrid);
 

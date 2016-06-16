@@ -77,11 +77,9 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         this.setupDataGrid(this._dataGrid);
 
-        this._dataGrid.identifier = "layout-timeline-view";
-
-        // FIXME: Remove once <webkit.org/b/158675> is fixed.
-        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("layout-timeline-view-sort", "startTime");
-        this._dataGrid.sortOrderSetting = new WebInspector.Setting("layout-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
+        this._dataGrid.sortColumnIdentifier = "startTime";
+        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.createSettings("layout-timeline-view");
 
         this._hoveredTreeElement = null;
         this._hoveredDataGridNode = null;

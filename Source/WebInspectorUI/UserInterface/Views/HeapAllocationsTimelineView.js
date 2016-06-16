@@ -77,9 +77,11 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         this._snapshotListPathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.Clicked, this._snapshotListPathComponentClicked, this);
 
         this._dataGrid = new WebInspector.TimelineDataGrid(columns);
-        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("heap-allocations-timeline-view-sort", "timestamp");
-        this._dataGrid.sortOrderSetting = new WebInspector.Setting("heap-allocations-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
+        this._dataGrid.sortColumnIdentifier = "timestamp";
+        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.createSettings("heap-allocations-timeline-view");
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+
         this.addSubview(this._dataGrid);
 
         this._contentViewContainer = new WebInspector.ContentViewContainer;

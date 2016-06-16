@@ -32,7 +32,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this.columns = new Map;
         this.orderedColumns = [];
 
-        this._identifier = null;
+        this._settingsIdentifier = null;
         this._sortColumnIdentifier = null;
         this._sortColumnIdentifierSetting = null;
         this._sortOrder = WebInspector.DataGrid.SortOrder.Indeterminate;
@@ -209,27 +209,6 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         return dataGrid;
     }
 
-    get identifier() { return this._identifier; }
-
-    set identifier(x)
-    {
-        console.assert(x && typeof x === "string");
-
-        if (this._identifier === x)
-            return;
-
-        this._identifier = x;
-
-        // FIXME: Add sortColumnIdentifierSetting and sortOrderSetting as part of <webkit.org/b/158675>.
-        this._hiddenColumnSetting = new WebInspector.Setting(this._identifier + "-hidden-columns", []);
-
-        if (!this.columns)
-            return;
-
-        for (let columnIdentifier of this._hiddenColumnSetting.value)
-            this.setColumnVisible(columnIdentifier, false);
-    }
-
     get columnChooserEnabled() { return this._columnChooserEnabled; }
     set columnChooserEnabled(x) { this._columnChooserEnabled = x; }
 
@@ -269,15 +248,6 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this.dispatchEventToListeners(WebInspector.DataGrid.Event.SortChanged);
     }
 
-    set sortOrderSetting(setting)
-    {
-        console.assert(setting instanceof WebInspector.Setting);
-
-        this._sortOrderSetting = setting;
-        if (this._sortOrderSetting.value)
-            this.sortOrder = this._sortOrderSetting.value;
-    }
-
     get sortColumnIdentifier()
     {
         return this._sortColumnIdentifier;
@@ -294,15 +264,6 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         let oldSortColumnIdentifier = this._sortColumnIdentifier;
         this._sortColumnIdentifier = columnIdentifier;
         this._updateSortedColumn(oldSortColumnIdentifier);
-    }
-
-    set sortColumnIdentifierSetting(setting)
-    {
-        console.assert(setting instanceof WebInspector.Setting);
-
-        this._sortColumnIdentifierSetting = setting;
-        if (this._sortColumnIdentifierSetting.value)
-            this.sortColumnIdentifier = this._sortColumnIdentifierSetting.value;
     }
 
     get inline() { return this._inline; }
@@ -375,6 +336,30 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (!this._hasFilterDelegate())
             return true;
         return this._filterDelegate.dataGridMatchNodeAgainstCustomFilters(node);
+    }
+
+    createSettings(identifier)
+    {
+        console.assert(identifier && typeof identifier === "string");
+        if (this._settingsIdentifier === identifier)
+            return;
+
+        this._settingsIdentifier = identifier;
+
+        this._sortColumnIdentifierSetting = new WebInspector.Setting(this._settingsIdentifier + "-sort", this._sortColumnIdentifier);
+        this._sortOrderSetting = new WebInspector.Setting(this._settingsIdentifier + "-sort-order", this._sortOrder);
+        this._hiddenColumnSetting = new WebInspector.Setting(this._settingsIdentifier + "-hidden-columns", []);
+
+        if (!this.columns)
+            return;
+
+        if (this._sortColumnIdentifierSetting.value) {
+            this.sortColumnIdentifier = this._sortColumnIdentifierSetting.value;
+            this.sortOrder = this._sortOrderSetting.value;
+        }
+
+        for (let columnIdentifier of this._hiddenColumnSetting.value)
+            this.showColumn(columnIdentifier, false);
     }
 
     _updateScrollListeners()

@@ -65,8 +65,9 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
         this._dataGrid.element.addEventListener("mouseover", this._mouseOverDataGrid.bind(this));
         this._dataGrid.element.addEventListener("mouseleave", this._mouseLeaveDataGrid.bind(this));
         this._dataGrid.indentWidth = 20;
-        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("profile-view-sort", "totalTime");
-        this._dataGrid.sortOrderSetting = new WebInspector.Setting("profile-view-sort-order", WebInspector.DataGrid.SortOrder.Descending);
+        this._dataGrid.sortColumnIdentifier = "totalTime";
+        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Descending;
+        this._dataGrid.createSettings("profile-view");
 
         this.addSubview(this._dataGrid);
     }

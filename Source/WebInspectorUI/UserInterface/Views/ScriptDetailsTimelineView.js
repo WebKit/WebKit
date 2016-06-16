@@ -73,12 +73,10 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
             columns[column].sortable = true;
 
         this._dataGrid = new WebInspector.ScriptTimelineDataGrid(columns);
-        this._dataGrid.identifier = "script-timeline-view";
         this._dataGrid.sortDelegate = this;
-
-        // FIXME: Remove once <webkit.org/b/158675> is fixed.
-        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("script-timeline-view-sort", "startTime");
-        this._dataGrid.sortOrderSetting = new WebInspector.Setting("script-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
+        this._dataGrid.sortColumnIdentifier = "startTime";
+        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.createSettings("script-timeline-view");
 
         this.setupDataGrid(this._dataGrid);
 

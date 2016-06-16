@@ -34,8 +34,9 @@ WebInspector.HeapSnapshotContentView = class HeapSnapshotContentView extends Web
         this.element.classList.add("heap-snapshot");
 
         this._dataGrid = new WebInspector.DataGrid(columns);
-        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting(identifier + "-sort", "retainedSize");
-        this._dataGrid.sortOrderSetting = new WebInspector.Setting(identifier + "-sort-order", WebInspector.DataGrid.SortOrder.Descending);
+        this._dataGrid.sortColumnIdentifier = "retainedSize";
+        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Descending;
+        this._dataGrid.createSettings(identifier);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 
         let sortComparator = WebInspector.HeapSnapshotDataGridTree.buildSortComparator(this._dataGrid.sortColumnIdentifier, this._dataGrid.sortOrder);
