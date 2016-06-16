@@ -997,48 +997,72 @@ BytecodeKills& Graph::killsFor(InlineCallFrame* inlineCallFrame)
 
 bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
 {
+    static const bool verbose = false;
+    
+    if (verbose)
+        dataLog("Checking of operand is live: ", operand, "\n");
     CodeOrigin* codeOriginPtr = &codeOrigin;
     for (;;) {
         VirtualRegister reg = VirtualRegister(
             operand.offset() - codeOriginPtr->stackOffset());
+        
+        if (verbose)
+            dataLog("reg = ", reg, "\n");
         
         if (operand.offset() < codeOriginPtr->stackOffset() + JSStack::CallFrameHeaderSize) {
             if (reg.isArgument()) {
                 RELEASE_ASSERT(reg.offset() < JSStack::CallFrameHeaderSize);
                 
                 if (codeOriginPtr->inlineCallFrame->isClosureCall
-                    && reg.offset() == JSStack::Callee)
+                    && reg.offset() == JSStack::Callee) {
+                    if (verbose)
+                        dataLog("Looks like a callee.\n");
                     return true;
+                }
                 
                 if (codeOriginPtr->inlineCallFrame->isVarargs()
-                    && reg.offset() == JSStack::ArgumentCount)
+                    && reg.offset() == JSStack::ArgumentCount) {
+                    if (verbose)
+                        dataLog("Looks like the argument count.\n");
                     return true;
+                }
                 
                 return false;
             }
-            
+
+            if (verbose)
+                dataLog("Asking the bytecode liveness.\n");
             return livenessFor(codeOriginPtr->inlineCallFrame).operandIsLive(
                 reg.offset(), codeOriginPtr->bytecodeIndex);
         }
         
         InlineCallFrame* inlineCallFrame = codeOriginPtr->inlineCallFrame;
-        if (!inlineCallFrame)
-            break;
+        if (!inlineCallFrame) {
+            if (verbose)
+                dataLog("Ran out of stack, returning true.\n");
+            return true;
+        }
 
         // Arguments are always live. This would be redundant if it wasn't for our
         // op_call_varargs inlining.
         if (reg.isArgument()
-            && static_cast<size_t>(reg.toArgument()) < inlineCallFrame->arguments.size())
+            && static_cast<size_t>(reg.toArgument()) < inlineCallFrame->arguments.size()) {
+            if (verbose)
+                dataLog("Argument is live.\n");
             return true;
+        }
         
         codeOriginPtr = inlineCallFrame->getCallerSkippingTailCalls();
 
         // The first inline call frame could be an inline tail call
-        if (!codeOriginPtr)
-            break;
+        if (!codeOriginPtr) {
+            if (verbose)
+                dataLog("Dead because of tail inlining.\n");
+            return false;
+        }
     }
     
-    return true;
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 BitVector Graph::localsLiveInBytecode(CodeOrigin codeOrigin)

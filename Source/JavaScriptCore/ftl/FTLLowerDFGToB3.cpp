@@ -10810,10 +10810,11 @@ private:
             
             Availability availability = availabilityMap.m_locals[i];
             
-            if (Options::validateFTLOSRExitLiveness()) {
-                DFG_ASSERT(
-                    m_graph, m_node,
-                    (!(availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), exitOrigin))) || m_graph.m_plan.mode == FTLForOSREntryMode);
+            if (Options::validateFTLOSRExitLiveness()
+                && m_graph.m_plan.mode != FTLForOSREntryMode) {
+                
+                if (availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), exitOrigin))
+                    DFG_CRASH(m_graph, m_node, toCString("Live bytecode local not available: operand = ", VirtualRegister(operand), ", availability = ", availability, ", origin = ", exitOrigin).data());
             }
             ExitValue exitValue = exitValueForAvailability(arguments, map, availability);
             if (exitValue.hasIndexInStackmapLocations())

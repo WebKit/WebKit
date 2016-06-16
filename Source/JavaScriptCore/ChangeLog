@@ -1,3 +1,20 @@
+2016-06-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Kraken/stanford-crypto-pbkdf2.js sometimes crashes with an OSR assertion in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=158850
+
+        Reviewed by Keith Miller.
+        
+        Bytecode liveness was incorrectly claiming that all tail-deleted locals are live! That's
+        crazy! We never noticed this because extending OSR liveness is usually not a showstopper and
+        until recently we didn't have a lot of tail-call test cases to play with. Well, we do now,
+        thanks to the increasing reliance on tail calls in our builtins.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::localsLiveInBytecode): Fix the bug and add some optional tracing. Also restructure the code so that we don't break to return true, since that's counterintuitive.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::buildExitArguments): Make this assertion print more useful information.
+
 2016-06-16  Mark Lam  <mark.lam@apple.com>
 
         Add collecting of LLINT slow path stats.
