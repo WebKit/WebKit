@@ -1,3 +1,22 @@
+2016-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] On iPad, indirect focussing of a text field doesn't always scroll to the correct location
+        https://bugs.webkit.org/show_bug.cgi?id=158828
+
+        Reviewed by Enrica Casucci.
+        
+        Add various tests for focusing form fields. focus-input-via-button-ipad.html tests
+        the change in the current patch.
+
+        * fast/forms/ios/focus-input-in-fixed-expected.txt: Added.
+        * fast/forms/ios/focus-input-in-fixed.html: Added.
+        * fast/forms/ios/focus-input-via-button-ipad-expected.txt: Added.
+        * fast/forms/ios/focus-input-via-button-ipad.html: Added.
+        * fast/forms/ios/focus-long-textarea-expected.txt: Added.
+        * fast/forms/ios/focus-long-textarea.html: Added.
+        * fast/forms/ios/resources/zooming-test-utils.js:
+        (testZoomAfterTap):
+
 2016-06-16  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Check type of this in RTCPeerConnection JS built-in functions

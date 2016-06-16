@@ -29,13 +29,13 @@
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
-#import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/MainThread.h>
 
 namespace WTR {
@@ -83,6 +83,7 @@ void TestController::platformResetPreferencesToConsistentValues()
 void TestController::platformResetStateToConsistentValues()
 {
     cocoaResetStateToConsistentValues();
+    [mainWebView()->platformView() setForceIPadStyleZoomOnInputFocus:NO];
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)

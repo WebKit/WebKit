@@ -2516,9 +2516,8 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 {
     layoutIfNeeded();
 
-    // FIXME: This should return the selection rect, but when this is called at focus time
+    // FIXME: information.selectionRect should be set to the actual selection rect, but when this is called at focus time
     // we don't have a selection yet. Using the last interaction location is a reasonable approximation for now.
-    // FIXME: should the selection rect always be inside the elementRect?
     information.selectionRect = IntRect(m_lastInteractionLocation, IntSize(1, 1));
 
     if (RenderObject* renderer = m_assistedNode->renderer()) {
@@ -2538,8 +2537,12 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
             information.elementRect = frameView->contentsToRootView(renderer->absoluteBoundingBoxRect());
             frameView->setCustomFixedPositionLayoutRect(currentFixedPositionRect);
             
-            if (!information.elementRect.contains(information.selectionRect))
+            if (!information.elementRect.contains(m_lastInteractionLocation))
                 information.selectionRect.setLocation(information.elementRect.location());
+        } else {
+            // Don't use the selection rect if interaction was outside the element rect.
+            if (!information.elementRect.contains(m_lastInteractionLocation))
+                information.selectionRect = IntRect();
         }
     } else
         information.elementRect = IntRect();

@@ -1067,8 +1067,9 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
                   fontSize:_assistedNodeInformation.nodeFontSize
               minimumScale:_assistedNodeInformation.minimumScaleFactor
               maximumScale:_assistedNodeInformation.maximumScaleFactor
-              allowScaling:(_assistedNodeInformation.allowsUserScalingIgnoringForceAlwaysScaling && !UICurrentUserInterfaceIdiomIsPad())
-               forceScroll:[self requiresAccessoryView]];
+              allowScaling:(_assistedNodeInformation.allowsUserScalingIgnoringForceAlwaysScaling && (!UICurrentUserInterfaceIdiomIsPad() || _forceIPadStyleZoomOnInputFocus))
+               forceScroll:[self requiresAccessoryView:_forceIPadStyleZoomOnInputFocus]];
+
     _didAccessoryTabInitiateFocus = NO;
     [self _ensureFormAccessoryView];
     [self _updateAccessory];
@@ -1579,7 +1580,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [_textSelectionAssistant didEndScrollingOverflow];
 }
 
-- (BOOL)requiresAccessoryView
+- (BOOL)requiresAccessoryView:(BOOL)forceIPadBehavior
 {
     if ([_formInputSession accessoryViewShouldNotShow])
         return NO;
@@ -1595,10 +1596,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case InputType::Phone:
     case InputType::Number:
     case InputType::NumberPad:
-        return !UICurrentUserInterfaceIdiomIsPad();
     case InputType::ContentEditable:
     case InputType::TextArea:
-        return !UICurrentUserInterfaceIdiomIsPad();
     case InputType::Select:
     case InputType::Date:
     case InputType::DateTime:
@@ -1606,7 +1605,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case InputType::Month:
     case InputType::Week:
     case InputType::Time:
-        return !UICurrentUserInterfaceIdiomIsPad();
+        return !(UICurrentUserInterfaceIdiomIsPad() || forceIPadBehavior);
     }
 }
 
@@ -1621,7 +1620,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (UIView *)inputAccessoryView
 {
-    if (![self requiresAccessoryView])
+    if (![self requiresAccessoryView:NO])
         return nil;
 
     return self.formAccessoryView;
@@ -4111,6 +4110,21 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 @end
 
 #endif
+
+@implementation WKContentView (WKInteractionTesting)
+
+- (BOOL)forceIPadStyleZoomOnInputFocus
+{
+    return _forceIPadStyleZoomOnInputFocus;
+}
+
+- (void)setForceIPadStyleZoomOnInputFocus:(BOOL)forceIPadStyleZoom
+{
+    _forceIPadStyleZoomOnInputFocus = forceIPadStyleZoom;
+}
+
+@end
+
 
 // UITextRange, UITextPosition and UITextSelectionRect implementations for WK2
 

@@ -60,5 +60,8 @@ interface UIScriptController {
 
     readonly attribute object contentVisibleRect; // Returned object has 'left', 'top', 'width', 'height' properties.
 
+    // Behavior
+    attribute boolean forceIPadStyleZoomOnInputFocus;
+
     void uiScriptComplete(DOMString result);
 };

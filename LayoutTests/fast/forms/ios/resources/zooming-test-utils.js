@@ -1,12 +1,12 @@
 
-function testZoomAfterTap(targetElement, xOffset, yOffset)
+function testZoomAfterTap(targetElement, xOffset, yOffset, useIPadBehavior)
 {
     if (!window.testRunner || !testRunner.runUIScript)
         return;
 
     var point = getPointInsideElement(targetElement, xOffset, yOffset);
 
-    var uiScript = zoomAfterSingleTapUIScript(point.x, point.y);
+    var uiScript = zoomAfterSingleTapUIScript(point.x, point.y, useIPadBehavior);
     testRunner.runUIScript(uiScript, function(result) {
         var results = tableFromJSON(result);
         document.body.appendChild(results);
@@ -14,7 +14,7 @@ function testZoomAfterTap(targetElement, xOffset, yOffset)
     });
 }
 
-function zoomAfterSingleTapUIScript(x, y)
+function zoomAfterSingleTapUIScript(x, y, useIPadBehavior)
 {
     return `
         (function() {
@@ -34,6 +34,8 @@ function zoomAfterSingleTapUIScript(x, y)
                 uiController.uiScriptComplete(result);
             };
 
+            if (${useIPadBehavior})
+                uiController.forceIPadStyleZoomOnInputFocus = true;
             uiController.singleTapAtPoint(${x}, ${y}, function() {});
         })();`
 }

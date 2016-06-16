@@ -1,3 +1,24 @@
+2016-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] On iPad, indirect focussing of a text field doesn't always scroll to the correct location
+        https://bugs.webkit.org/show_bug.cgi?id=158828
+
+        Reviewed by Enrica Casucci.
+        
+        Expose "forceIPadStyleZoomOnInputFocus" on UIScriptController, which allows iPad-style
+        zooming behavior on <input> focus in the iPhone simulator, which is used for testing.
+
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::forceIPadStyleZoomOnInputFocus):
+        (WTR::UIScriptController::setForceIPadStyleZoomOnInputFocus):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::forceIPadStyleZoomOnInputFocus):
+        (WTR::UIScriptController::setForceIPadStyleZoomOnInputFocus):
+
 2016-06-15  Sam Weinig  <sam@webkit.org>
 
         Forward/Back keyboard shortcuts need to flip for RTL

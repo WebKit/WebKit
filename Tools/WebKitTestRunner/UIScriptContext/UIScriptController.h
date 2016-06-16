@@ -80,6 +80,9 @@ public:
     double maximumZoomScale() const;
 
     JSObjectRef contentVisibleRect() const;
+    
+    bool forceIPadStyleZoomOnInputFocus() const;
+    void setForceIPadStyleZoomOnInputFocus(bool);
 
     void uiScriptComplete(JSStringRef result);
 
