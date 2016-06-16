@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    if (window.internals)
+        window.internals.settings.setAttachmentElementEnabled(true)
+</script>
+<body>
+<attachment id="wideAttachment" subtitle="VERY LONG SUBTITLE THAT WILL MAKE THE ATTACHMENT VERY WIDE"></attachment>
+<attachment id="skinnyAttachment" subtitle="skinny but wider than icon"></attachment>
+<attachment id="resizedAttachment" subtitle="skinny but wider than icon"></attachment>
+<script>
+description("This tests that attachments which resize will only grow in width, never shrink.");
+
+var wideAttachmentEl = document.getElementById("wideAttachment");
+var skinnyAttachmentEl = document.getElementById("skinnyAttachment");
+var resizedAttachmentEl = document.getElementById("resizedAttachment");
+
+var wideAttachmentWidth = wideAttachmentEl.offsetWidth;
+var skinnyAttachmentWidth = skinnyAttachmentEl.offsetWidth;
+
+function assert(value, description)
+{
+    if (value)
+        testPassed(description);
+    else
+        testFailed(description);
+}
+
+assert(wideAttachmentWidth > skinnyAttachmentWidth, "wideAttachmentWidth > skinnyAttachmentWidth");
+
+assert(resizedAttachmentEl.offsetWidth == skinnyAttachmentWidth, "Attachment starts out skinny.");
+
+resizedAttachmentEl.setAttribute("subtitle", "VERY LONG SUBTITLE THAT WILL MAKE THE ATTACHMENT VERY WIDE");
+assert(resizedAttachmentEl.offsetWidth == wideAttachmentWidth, "Attachment resized from skinny to wide becomes wide.");
+
+resizedAttachmentEl.setAttribute("subtitle", "skinny but wider than icon");
+assert(resizedAttachmentEl.offsetWidth == wideAttachmentWidth, "Attachment resized from wide to skinny remains wide.");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

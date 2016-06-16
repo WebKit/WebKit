@@ -73,6 +73,7 @@
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
 #import "WebCoreSystemInterface.h"
+#import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
@@ -2188,6 +2189,7 @@ static Color attachmentTitleInactiveBackgroundColor() { return Color(204, 204, 2
 static Color attachmentTitleInactiveTextColor() { return Color(100, 100, 100, 255); }
 
 const CGFloat attachmentSubtitleFontSize = 10;
+const int attachmentSubtitleWidthIncrement = 10;
 static Color attachmentSubtitleTextColor() { return Color(82, 145, 214, 255); }
 
 const CGFloat attachmentProgressBarWidth = 30;
@@ -2381,7 +2383,11 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment)
     attachmentRect = iconBackgroundRect;
     for (const auto& line : lines)
         attachmentRect.unite(line.backgroundRect);
-    attachmentRect.unite(subtitleTextRect);
+    if (!subtitleTextRect.isEmpty()) {
+        FloatRect roundedSubtitleTextRect = subtitleTextRect;
+        roundedSubtitleTextRect.inflateX(attachmentSubtitleWidthIncrement - clampToInteger(ceilf(subtitleTextRect.width())) % attachmentSubtitleWidthIncrement);
+        attachmentRect.unite(roundedSubtitleTextRect);
+    }
     attachmentRect.inflate(attachmentMargin);
     attachmentRect = encloseRectToDevicePixels(attachmentRect, attachment.document().deviceScaleFactor());
 }
@@ -2594,7 +2600,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
     GraphicsContextStateSaver saver(context);
 
     context.translate(toFloatSize(paintRect.location()));
-    context.translate(FloatSize((layout.attachmentRect.width() - attachmentIconBackgroundSize) / 2, 0));
+    context.translate(floorSizeToDevicePixels(LayoutSize((paintRect.width() - attachmentIconBackgroundSize) / 2, 0), renderer.document().deviceScaleFactor()));
 
     bool useSelectedStyle = attachment.selectionState() != RenderObject::SelectionNone;
     bool usePlaceholder = validProgress && !progress;

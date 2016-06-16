@@ -54,6 +54,9 @@ http/tests/misc/will-send-request-with-client-provided-http-body.html [ Skip ]
 fast/harness/ui-side-scripts.html [ Skip ]
 fast/harness/concurrent-ui-side-scripts.html [ Skip ]
 
+# This test only makes sense on Mac
+fast/attachment/attachment-subtitle-resize.html
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

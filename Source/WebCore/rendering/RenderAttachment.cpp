@@ -53,7 +53,10 @@ HTMLAttachmentElement& RenderAttachment::attachmentElement() const
 
 void RenderAttachment::layout()
 {
-    setIntrinsicSize(document().page()->theme().attachmentIntrinsicSize(*this));
+    LayoutSize newIntrinsicSize = document().page()->theme().attachmentIntrinsicSize(*this);
+    m_minimumIntrinsicWidth = std::max(m_minimumIntrinsicWidth, newIntrinsicSize.width());
+    newIntrinsicSize.setWidth(m_minimumIntrinsicWidth);
+    setIntrinsicSize(newIntrinsicSize);
 
     RenderReplaced::layout();
 }

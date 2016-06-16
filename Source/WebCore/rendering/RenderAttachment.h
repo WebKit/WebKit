@@ -50,6 +50,8 @@ private:
     void layout() override;
 
     int baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const override;
+
+    LayoutUnit m_minimumIntrinsicWidth;
 };
 
 inline RenderAttachment* HTMLAttachmentElement::renderer() const

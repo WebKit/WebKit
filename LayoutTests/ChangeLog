@@ -1,3 +1,14 @@
+2016-06-15  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> elements jump around a lot around when subtitle text changes slightly
+        https://bugs.webkit.org/show_bug.cgi?id=158818
+        <rdar://problem/24450270>
+
+        Reviewed by Simon Fraser.
+
+        * fast/attachment/attachment-subtitle-resize-expected.txt: Added.
+        * fast/attachment/attachment-subtitle-resize.html: Added.
+
 2016-06-13  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Make it possible to test the Next/Previous buttons in the keyboard accessory bar
