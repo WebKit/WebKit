@@ -332,6 +332,7 @@ const SymbolType = 7
 const ObjectType = 20
 const FinalObjectType = 21
 const JSFunctionType = 23
+const ArrayType = 29
 
 # The typed array types need to be numbered in a particular order because of the manually written
 # switch statement in get_by_val and put_by_val.

@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ArrayConstructor.h"
 #include "DFGAbstractInterpreter.h"
 #include "GetByIdStatus.h"
 #include "GetterSetter.h"
@@ -1026,6 +1027,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case IsEmpty:
+    case IsJSArray:
     case IsUndefined:
     case IsBoolean:
     case IsNumber:
@@ -1038,6 +1040,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (child.value()) {
             bool constantWasSet = true;
             switch (node->op()) {
+            case IsJSArray:
+                setConstant(node, jsBoolean(child.value().isObject() && child.value().getObject()->type() == ArrayType));
+                break;
             case IsUndefined:
                 setConstant(node, jsBoolean(
                     child.value().isCell()
@@ -1106,6 +1111,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         bool constantWasSet = false;
         switch (node->op()) {
+        case IsJSArray:
+            // We don't have a SpeculatedType for Proxies yet so we can't do better at proving false.
+            if (!(child.m_type & ~SpecArray)) {
+                setConstant(node, jsBoolean(true));
+                constantWasSet = true;
+                break;
+            }
+
+            if (!(child.m_type & SpecObject)) {
+                setConstant(node, jsBoolean(false));
+                constantWasSet = true;
+                break;
+            }
+
+            break;
         case IsEmpty: {
             if (child.m_type && !(child.m_type & SpecEmpty)) {
                 setConstant(node, jsBoolean(false));
@@ -1904,7 +1924,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         ASSERT(node->structure());
         forNode(node).set(m_graph, node->structure());
         break;
-        
+
+    case CallObjectConstructor: {
+        AbstractValue& source = forNode(node->child1());
+        AbstractValue& destination = forNode(node);
+
+        if (!(source.m_type & ~SpecObject)) {
+            m_state.setFoundConstants(true);
+            destination = source;
+            break;
+        }
+
+        forNode(node).setType(m_graph, SpecObject);
+        break;
+    }
+
     case PhantomNewObject:
     case PhantomNewFunction:
     case PhantomNewGeneratorFunction:

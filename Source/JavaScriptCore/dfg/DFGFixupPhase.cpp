@@ -1056,7 +1056,18 @@ private:
             fixEdge<Int32Use>(node->child1());
             break;
         }
-            
+
+        case CallObjectConstructor: {
+            if (node->child1()->shouldSpeculateObject()) {
+                fixEdge<ObjectUse>(node->child1());
+                node->convertToIdentity();
+                break;
+            }
+
+            fixEdge<UntypedUse>(node->child1());
+            break;
+        }
+
         case ToThis: {
             fixupToThis(node);
             break;
@@ -1535,6 +1546,7 @@ private:
         case NewRegexp:
         case DeleteById:
         case DeleteByVal:
+        case IsJSArray:
         case IsEmpty:
         case IsUndefined:
         case IsBoolean:

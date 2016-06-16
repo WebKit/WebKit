@@ -45,6 +45,7 @@
 #include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
 #include "JSModuleEnvironment.h"
+#include "ObjectConstructor.h"
 #include "PreciseJumpTargets.h"
 #include "PutByIdFlags.h"
 #include "PutByIdStatus.h"
@@ -2673,7 +2674,16 @@ bool ByteCodeParser::handleConstantInternalFunction(
         set(VirtualRegister(resultOperand), result);
         return true;
     }
-    
+
+    // FIXME: This should handle construction as well. https://bugs.webkit.org/show_bug.cgi?id=155591
+    if (function->classInfo() == ObjectConstructor::info() && kind == CodeForCall) {
+        insertChecks();
+
+        Node* result = addToGraph(CallObjectConstructor, get(virtualRegisterForArgument(1, registerOffset)));
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
     for (unsigned typeIndex = 0; typeIndex < NUMBER_OF_TYPED_ARRAY_TYPES; ++typeIndex) {
         bool result = handleTypedArrayConstructor(
             resultOperand, function, registerOffset, argumentCountIncludingThis,
@@ -3854,6 +3864,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(IsString, value));
             NEXT_OPCODE(op_is_string);
+        }
+
+        case op_is_jsarray: {
+            Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(IsJSArray, value));
+            NEXT_OPCODE(op_is_jsarray);
         }
 
         case op_is_object: {

@@ -313,11 +313,9 @@
     macro(with) \
     macro(yield)
 
-#define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL_NOT_IMPLEMENTED_YET(macro)\
-    macro(isConcatSpreadable) \
-
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
     macro(hasInstance) \
+    macro(isConcatSpreadable) \
     macro(iterator) \
     macro(match) \
     macro(replace) \
@@ -423,6 +421,8 @@
     macro(isArrayConstructor) \
     macro(isConstructor) \
     macro(isRegExpObject) \
+    macro(concatMemcpy) \
+    macro(appendMemcpy) \
     macro(predictFinalLengthFromArgumunts) \
     macro(print) \
     macro(isSet) \

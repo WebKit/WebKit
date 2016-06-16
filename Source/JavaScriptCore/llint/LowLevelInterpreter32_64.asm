@@ -1296,6 +1296,21 @@ _llint_op_is_string:
     dispatch(3)
 
 
+_llint_op_is_jsarray:
+    traceExecution()
+    loadi 8[PC], t1
+    loadi 4[PC], t2
+    loadConstantOrVariable(t1, t0, t3)
+    storei BooleanTag, TagOffset[cfr, t2, 8]
+    bineq t0, CellTag, .opIsJSArrayNotCell
+    cbeq JSCell::m_type[t3], ArrayType, t1
+    storei t1, PayloadOffset[cfr, t2, 8]
+    dispatch(3)
+.opIsJSArrayNotCell:
+    storep 0, PayloadOffset[cfr, t2, 8]
+    dispatch(3)
+
+
 _llint_op_is_object:
     traceExecution()
     loadi 8[PC], t1

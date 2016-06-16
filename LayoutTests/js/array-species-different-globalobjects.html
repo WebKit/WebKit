@@ -33,6 +33,10 @@ function testFunction(testArgs) {
 
 testFunctions.forEach(testFunction);
 
+Array[Symbol.species] = false;
+
+testFunctions.forEach(testFunction);
+
 
 </script>
 <script src="../resources/js-test-post.js"></script>

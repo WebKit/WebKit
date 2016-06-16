@@ -158,6 +158,7 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(ObjectType == 20);
     STATIC_ASSERT(FinalObjectType == 21);
     STATIC_ASSERT(JSFunctionType == 23);
+    STATIC_ASSERT(ArrayType == 29);
     STATIC_ASSERT(Int8ArrayType == 100);
     STATIC_ASSERT(Int16ArrayType == 101);
     STATIC_ASSERT(Int32ArrayType == 102);

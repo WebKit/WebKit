@@ -628,6 +628,7 @@ namespace JSC {
         RegisterID* emitEnumeratorGenericPropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index);
         RegisterID* emitToIndexString(RegisterID* dst, RegisterID* index);
 
+        RegisterID* emitIsJSArray(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_is_jsarray, dst, src); }
         RegisterID* emitIsObject(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsUndefined(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsEmpty(RegisterID* dst, RegisterID* src);

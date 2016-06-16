@@ -1,3 +1,150 @@
+2016-06-15  Keith Miller  <keith_miller@apple.com>
+
+        Add support for Symbol.isConcatSpreadable (round 2)
+        https://bugs.webkit.org/show_bug.cgi?id=158769
+
+        Reviewed by Mark Lam.
+
+        This patch adds support for Symbol.isConcatSpreadable. In order to
+        do so, it was necessary to move the Array.prototype.concat function
+        to JS. A number of different optimizations were needed to make
+        such the move to a builtin performant. First, this patch adds a
+        new Bytecode intrinsic, isJSArray, that checks if the value is a
+        JSArray object. Specifically, isJSArray checks that the array
+        object is a normal instance of JSArray and not a RuntimeArray or
+        Array.prototype. isJSArray can also be converted into a constant
+        by the DFG if we are able to prove that the incomming value is
+        already a JSArray.
+
+        In order to further improve the perfomance we also now cover more
+        indexing types in our fast path memcpy code. Before we would only
+        memcpy Arrays if they had the same indexing type and did not have
+        Array storage or were undecided. Now the memcpy code covers the
+        following additional three cases:
+
+        1) One array is undecided and the other does not have array storage
+
+        2) One array is Int32 and the other is contiguous (we map this
+        into a contiguous array).
+
+        3) The this value is an array and first argument is a non-array
+        that does not have Symbol.isConcatSpreadable set.
+
+        This patch also adds a new fast path for concat with more than one
+        array argument by using memcpy to append values onto the result
+        array. This works roughly the same as the two array fast path
+        using the same methodology to decide if we can memcpy the other
+        butterfly into the result butterfly.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ArrayPrototype.js:
+        (concatSlowPath):
+        (concat):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsJSArray):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isJSArray):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compileIsJSArray):
+        (JSC::DFG::SpeculativeJIT::compileCallObjectConstructor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallObjectConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::isArray):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_is_jsarray):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_is_jsarray):
+        * jit/JITOperations.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayConstructor.h:
+        (JSC::isArrayConstructor):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        (JSC::speciesWatchpointsValid):
+        (JSC::speciesConstructArray):
+        (JSC::moveElements):
+        (JSC::concatAppendOne):
+        (JSC::arrayProtoFuncConcat): Deleted.
+        * runtime/ArrayPrototype.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/IndexingType.h:
+        (JSC::indexingTypeForValue):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::fastConcatWith): Deleted.
+        * runtime/JSArray.h:
+        (JSC::JSArray::createStructure):
+        (JSC::isJSArray):
+        (JSC::JSArray::fastConcatType): Deleted.
+        * runtime/JSArrayInlines.h: Added.
+        (JSC::JSArray::mergeIndexingTypeForCopying):
+        (JSC::JSArray::canFastCopy):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertUndecidedForValue):
+        * runtime/JSType.h:
+        * runtime/ObjectConstructor.h:
+        (JSC::constructObject):
+        * tests/es6.yaml:
+        * tests/stress/array-concat-spread-object.js: Added.
+        (arrayEq):
+        * tests/stress/array-concat-spread-proxy-exception-check.js: Added.
+        (arrayEq):
+        * tests/stress/array-concat-spread-proxy.js: Added.
+        (arrayEq):
+        * tests/stress/array-concat-with-slow-indexingtypes.js: Added.
+        (arrayEq):
+        * tests/stress/array-species-config-array-constructor.js:
+
 2016-06-15  Mark Lam  <mark.lam@apple.com>
 
         Assertion failure when returning incomplete property descriptor from proxy trap.

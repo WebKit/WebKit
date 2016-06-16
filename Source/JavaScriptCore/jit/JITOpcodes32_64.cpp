@@ -368,6 +368,24 @@ void JIT::emit_op_is_string(Instruction* currentInstruction)
     emitStoreBool(dst, regT0);
 }
 
+void JIT::emit_op_is_jsarray(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
+
+    emitLoad(value, regT1, regT0);
+    Jump isNotCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
+
+    compare8(Equal, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(ArrayType), regT0);
+    Jump done = jump();
+
+    isNotCell.link(this);
+    move(TrustedImm32(0), regT0);
+
+    done.link(this);
+    emitStoreBool(dst, regT0);
+}
+
 void JIT::emit_op_is_object(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;

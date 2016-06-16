@@ -783,6 +783,7 @@ private:
         case OverridesHasInstance:
         case InstanceOf:
         case InstanceOfCustom:
+        case IsJSArray:
         case IsEmpty:
         case IsUndefined:
         case IsBoolean:
@@ -808,6 +809,10 @@ private:
             break;
         }
 
+        case CallObjectConstructor: {
+            setPrediction(SpecObject);
+            break;
+        }
         case SkipScope:
         case GetGlobalObject: {
             setPrediction(SpecObjectOther);

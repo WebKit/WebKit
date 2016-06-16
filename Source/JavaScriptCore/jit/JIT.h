@@ -524,6 +524,7 @@ namespace JSC {
         void emit_op_is_boolean(Instruction*);
         void emit_op_is_number(Instruction*);
         void emit_op_is_string(Instruction*);
+        void emit_op_is_jsarray(Instruction*);
         void emit_op_is_object(Instruction*);
         void emit_op_jeq_null(Instruction*);
         void emit_op_jfalse(Instruction*);

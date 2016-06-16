@@ -1062,16 +1062,18 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm)
 
 void JSObject::convertUndecidedForValue(VM& vm, JSValue value)
 {
-    if (value.isInt32()) {
+    IndexingType type = indexingTypeForValue(value);
+    if (type == Int32Shape) {
         convertUndecidedToInt32(vm);
         return;
     }
     
-    if (value.isDouble() && value.asNumber() == value.asNumber()) {
+    if (type == DoubleShape) {
         convertUndecidedToDouble(vm);
         return;
     }
-    
+
+    ASSERT(type == ContiguousShape);
     convertUndecidedToContiguous(vm);
 }
 

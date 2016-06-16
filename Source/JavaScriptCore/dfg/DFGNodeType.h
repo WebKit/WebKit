@@ -306,6 +306,8 @@ namespace JSC { namespace DFG {
     macro(OverridesHasInstance, NodeMustGenerate | NodeResultBoolean) \
     macro(InstanceOf, NodeResultBoolean) \
     macro(InstanceOfCustom, NodeMustGenerate | NodeResultBoolean) \
+    \
+    macro(IsJSArray, NodeResultBoolean) \
     macro(IsEmpty, NodeResultBoolean) \
     macro(IsUndefined, NodeResultBoolean) \
     macro(IsBoolean, NodeResultBoolean) \
@@ -319,6 +321,7 @@ namespace JSC { namespace DFG {
     macro(LogicalNot, NodeResultBoolean) \
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate) \
     macro(ToString, NodeResultJS | NodeMustGenerate) \
+    macro(CallObjectConstructor, NodeResultJS) \
     macro(CallStringConstructor, NodeResultJS | NodeMustGenerate) \
     macro(NewStringObject, NodeResultJS) \
     macro(MakeRope, NodeResultJS) \

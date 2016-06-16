@@ -1,3 +1,20 @@
+2016-06-15  Keith Miller  <keith_miller@apple.com>
+
+        Add support for Symbol.isConcatSpreadable (round 2)
+        https://bugs.webkit.org/show_bug.cgi?id=158769
+
+        Reviewed by Mark Lam.
+
+        Fix tests for Symbol.isConcatSpreadable. Also, add new test that
+        the array species construction does not use the callees' global
+        object's Array[Symbol.species] when given an array from another
+        global object.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/array-species-different-globalobjects.html:
+        * js/dom/array-prototype-properties-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2016-06-15  Zalan Bujtas  <zalan@apple.com>
 
         Decouple the percent height and positioned descendants maps.

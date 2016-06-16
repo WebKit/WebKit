@@ -152,6 +152,17 @@ static inline bool shouldUseSlowPut(IndexingType indexingType)
     return (indexingType & IndexingShapeMask) == SlowPutArrayStorageShape;
 }
 
+inline IndexingType indexingTypeForValue(JSValue value)
+{
+    if (value.isInt32())
+        return Int32Shape;
+
+    if (value.isNumber() && value.asNumber() == value.asNumber())
+        return DoubleShape;
+
+    return ContiguousShape;
+}
+
 // Return an indexing type that can handle all of the elements of both indexing types.
 IndexingType leastUpperBoundOfIndexingTypes(IndexingType, IndexingType);
 

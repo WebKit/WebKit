@@ -1101,6 +1101,10 @@ void CodeBlock::dumpBytecode(
             printUnaryOp(out, exec, location, it, "is_string");
             break;
         }
+        case op_is_jsarray: {
+            printUnaryOp(out, exec, location, it, "is_jsarray");
+            break;
+        }
         case op_is_object: {
             printUnaryOp(out, exec, location, it, "is_object");
             break;

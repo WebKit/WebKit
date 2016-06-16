@@ -43,6 +43,7 @@ class Identifier;
     macro(argumentCount) \
     macro(assert) \
     macro(isObject) \
+    macro(isJSArray) \
     macro(tailCallForwardArguments) \
     macro(tryGetById) \
     macro(putByValDirect) \
@@ -55,6 +56,7 @@ class Identifier;
     macro(arrayIterationKindValue) \
     macro(arrayIterationKindKeyValue) \
     macro(MAX_STRING_LENGTH) \
+    macro(MAX_SAFE_INTEGER) \
     macro(promiseStatePending) \
     macro(promiseStateFulfilled) \
     macro(promiseStateRejected) \

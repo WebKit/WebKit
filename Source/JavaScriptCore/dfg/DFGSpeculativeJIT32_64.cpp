@@ -3972,6 +3972,11 @@ void SpeculativeJIT::compile(Node* node)
         cellResult(resultPayload.gpr(), node);
         break;
     }
+
+    case CallObjectConstructor: {
+        compileCallObjectConstructor(node);
+        break;
+    }
         
     case ToThis: {
         ASSERT(node->child1().useKind() == UntypedUse);
@@ -4686,6 +4691,11 @@ void SpeculativeJIT::compile(Node* node)
         
         done.link(&m_jit);
         booleanResult(result.gpr(), node);
+        break;
+    }
+
+    case IsJSArray: {
+        compileIsJSArray(node);
         break;
     }
 

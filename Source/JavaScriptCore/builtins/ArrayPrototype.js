@@ -691,6 +691,86 @@ function sort(comparator)
     return array;
 }
 
+function concatSlowPath()
+{
+    "use strict";
+    if (this == null) {
+        if (this === null)
+            throw new @TypeError("Array.prototype.concat requires that |this| not be null");
+        throw new @TypeError("Array.prototype.concat requires that |this| not be undefined");
+    }
+
+    var currentElement = @Object(this);
+
+    var constructor;
+    if (@isArray(currentElement)) {
+        constructor = currentElement.constructor;
+        // We have this check so that if some array from a different global object
+        // calls this map they don't get an array with the Array.prototype of the
+        // other global object.
+        if (@isArrayConstructor(constructor) && @Array !== constructor)
+            constructor = @undefined;
+        else if (@isObject(constructor)) {
+            constructor = constructor.@speciesSymbol;
+            if (constructor === null)
+                constructor = @Array;
+        }
+    }
+    if (constructor === @undefined)
+        constructor = @Array;
+
+    var argCount = arguments.length;
+    var result = new constructor(0);
+    var resultIsArray = @isJSArray(result);
+
+    var resultIndex = 0;
+    var argIndex = 0;
+
+    do {
+        let spreadable = @isObject(currentElement) && currentElement.@isConcatSpreadableSymbol;
+        if ((spreadable === @undefined && @isArray(currentElement)) || spreadable) {
+            let length = @toLength(currentElement.length);
+            if (resultIsArray && @isJSArray(currentElement)) {
+                @appendMemcpy(result, currentElement, resultIndex);
+                resultIndex += length;
+            } else {
+                if (length + resultIndex > @MAX_SAFE_INTEGER)
+                    throw @TypeError("length exceeded the maximum safe integer");
+                for (var i = 0; i < length; i++) {
+                    if (i in currentElement)
+                        @putByValDirect(result, resultIndex, currentElement[i]);
+                    resultIndex++;
+                }
+            }
+        } else {
+            if (resultIndex >= @MAX_SAFE_INTEGER)
+                throw @TypeError("length exceeded the maximum safe integer");
+            @putByValDirect(result, resultIndex++, currentElement);
+        }
+        currentElement = arguments[argIndex];
+    } while (argIndex++ < argCount);
+
+    result.length = resultIndex;
+    return result;
+}
+
+function concat(first)
+{
+    "use strict";
+
+    if (@argumentCount() === 1
+        && @isJSArray(this)
+        && this.@isConcatSpreadableSymbol === @undefined
+        && (!@isObject(first) || first.@isConcatSpreadableSymbol === @undefined)) {
+
+        let result = @concatMemcpy(this, first);
+        if (result !== null)
+            return result;
+    }
+
+    return @tailCallForwardArguments(@concatSlowPath, this);
+}
+
 function copyWithin(target, start /*, end */)
 {
     "use strict";

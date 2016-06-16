@@ -926,6 +926,15 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toString(BytecodeGenerator& ge
 
     return generator.moveToDestinationIfNeeded(dst, generator.emitToString(generator.tempDestination(dst), src.get()));
 }
+    
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isJSArray(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> src = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    return generator.moveToDestinationIfNeeded(dst, generator.emitIsJSArray(generator.tempDestination(dst), src.get()));
+}
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isObject(BytecodeGenerator& generator, RegisterID* dst)
 {
