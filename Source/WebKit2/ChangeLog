@@ -1,3 +1,44 @@
+2016-06-16  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Improve serialization of SubresourcesEntry to network disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=158851
+
+        Reviewed by Antti Koivisto.
+
+        Improve serialization of SubresourcesEntry to network disk cache:
+        - Do not bother serializing SubresourceInfo's first party for cookies
+          and HTTP headers data members if the resource is transient. This is
+          because those are never used for transient resources. This patch also
+          makes it so that we do not even bother initializing those data members
+          if the transient flag is set.
+        - Update SubresourceInfo::encode() / decode() to encode and decode
+          the HTTPHeaderMap data member with the right NetworkCache::Coder
+          template specialization instead of using directly HTTPHeaderMap::decode()
+          and HTTPHeaderMap::encode(). HTTPHeaderMap::decode() / encode() is
+          unsafe in the disk cache case (see r200394).
+
+        Also update entry types as so:
+        - "resource" -> "Resource"
+        - "subresources" -> "SubResources"
+
+        These entry types are used a folder names in the disk cache and other
+        folder names were capitalized. Antti suggested this was a good time
+        to harmonize since we're bumping the cache version.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourceInfo::encode):
+        (WebKit::NetworkCache::SubresourceInfo::decode):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        (WebKit::NetworkCache::SubresourceInfo::SubresourceInfo):
+        (WebKit::NetworkCache::SubresourceInfo::isTransient):
+        (WebKit::NetworkCache::SubresourceInfo::firstPartyForCookies):
+        (WebKit::NetworkCache::SubresourceInfo::requestHeaders):
+
 2016-06-16  Anders Carlsson  <andersca@apple.com>
 
         Fix macOS Sierra build

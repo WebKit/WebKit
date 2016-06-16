@@ -55,7 +55,7 @@ namespace NetworkCache {
 static const AtomicString& resourceType()
 {
     ASSERT(WTF::isMainThread());
-    static NeverDestroyed<const AtomicString> resource("resource", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> resource("Resource", AtomicString::ConstructFromLiteral);
     return resource;
 }
 

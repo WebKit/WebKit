@@ -46,7 +46,7 @@ Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<W
     , m_varyingRequestHeaders(varyingRequestHeaders)
     , m_buffer(WTFMove(buffer))
 {
-    ASSERT(m_key.type() == "resource");
+    ASSERT(m_key.type() == "Resource");
 }
 
 Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest, const Vector<std::pair<String, String>>& varyingRequestHeaders)
@@ -55,7 +55,7 @@ Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, const We
     , m_response(response)
     , m_varyingRequestHeaders(varyingRequestHeaders)
 {
-    ASSERT(m_key.type() == "resource");
+    ASSERT(m_key.type() == "Resource");
     // Redirect body is not needed even if exists.
 
     m_redirectRequest = std::make_unique<WebCore::ResourceRequest>();
@@ -78,7 +78,7 @@ Entry::Entry(const Storage::Record& storageEntry)
     , m_timeStamp(storageEntry.timeStamp)
     , m_sourceStorageRecord(storageEntry)
 {
-    ASSERT(m_key.type() == "resource");
+    ASSERT(m_key.type() == "Resource");
 }
 
 Storage::Record Entry::encodeAsStorageRecord() const

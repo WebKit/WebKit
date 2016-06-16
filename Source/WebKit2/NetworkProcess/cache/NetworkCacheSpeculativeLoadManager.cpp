@@ -75,7 +75,7 @@ static void logSpeculativeLoadingDiagnosticMessage(const GlobalFrameID& frameID,
 static const AtomicString& subresourcesType()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<const AtomicString> resource("subresources", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> resource("SubResources", AtomicString::ConstructFromLiteral);
     return resource;
 }
 
@@ -87,8 +87,8 @@ static inline Key makeSubresourcesKey(const Key& resourceKey)
 static inline ResourceRequest constructRevalidationRequest(const Entry& entry, const SubresourceInfo& subResourceInfo)
 {
     ResourceRequest revalidationRequest(entry.key().identifier());
-    revalidationRequest.setHTTPHeaderFields(subResourceInfo.requestHeaders);
-    revalidationRequest.setFirstPartyForCookies(subResourceInfo.firstPartyForCookies);
+    revalidationRequest.setHTTPHeaderFields(subResourceInfo.requestHeaders());
+    revalidationRequest.setFirstPartyForCookies(subResourceInfo.firstPartyForCookies());
 #if ENABLE(CACHE_PARTITIONING)
     if (entry.key().hasPartition())
         revalidationRequest.setCachePartition(entry.key().partition());
@@ -504,7 +504,7 @@ void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& f
     for (auto& subresourcePair : entry.subresources()) {
         auto& key = subresourcePair.key;
         auto& subresourceInfo = subresourcePair.value;
-        if (!subresourceInfo.isTransient)
+        if (!subresourceInfo.isTransient())
             preloadEntry(key, subresourceInfo, frameID);
         else {
             LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Not preloading '%s' because it is marked as transient", key.identifier().utf8().data());
@@ -518,7 +518,7 @@ void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& f
 
 void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>&& completionHandler)
 {
-    ASSERT(storageKey.type() == "resource");
+    ASSERT(storageKey.type() == "Resource");
     auto subresourcesStorageKey = makeSubresourcesKey(storageKey);
     m_storage.retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler = WTFMove(completionHandler)](auto record) {
         if (!record) {

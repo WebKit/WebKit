@@ -141,7 +141,7 @@ void Statistics::bootstrapFromNetworkCache(const String& networkCachePath)
     LOG(NetworkCache, "(NetworkProcess) Bootstrapping the network cache statistics database from the network cache...");
 
     HashSet<String> hashes;
-    traverseRecordsFiles(networkCachePath, ASCIILiteral("resource"), [&hashes](const String& fileName, const String& hashString, const String& type, bool isBodyBlob, const String& recordDirectoryPath) {
+    traverseRecordsFiles(networkCachePath, ASCIILiteral("Resource"), [&hashes](const String& fileName, const String& hashString, const String& type, bool isBodyBlob, const String& recordDirectoryPath) {
         if (isBodyBlob)
             return;
 

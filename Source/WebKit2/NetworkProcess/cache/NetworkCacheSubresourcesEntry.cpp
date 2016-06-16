@@ -38,19 +38,30 @@ namespace NetworkCache {
 
 void SubresourceInfo::encode(Encoder& encoder) const
 {
-    encoder << firstPartyForCookies;
-    encoder << isTransient;
-    requestHeaders.encode(encoder);
+    encoder << m_isTransient;
+
+    // Do not bother serializing other data members of transient resources as they are empty.
+    if (m_isTransient)
+        return;
+
+    encoder << m_firstPartyForCookies;
+    encoder << m_requestHeaders;
 }
 
 bool SubresourceInfo::decode(Decoder& decoder, SubresourceInfo& info)
 {
-    if (!decoder.decode(info.firstPartyForCookies))
+    if (!decoder.decode(info.m_isTransient))
         return false;
-    if (!decoder.decode(info.isTransient))
+
+    if (info.m_isTransient)
+        return true;
+
+    if (!decoder.decode(info.m_firstPartyForCookies))
         return false;
-    if (!WebCore::HTTPHeaderMap::decode(decoder, info.requestHeaders))
+
+    if (!decoder.decode(info.m_requestHeaders))
         return false;
+
     return true;
 }
 
@@ -84,14 +95,14 @@ SubresourcesEntry::SubresourcesEntry(const Storage::Record& storageEntry)
     : m_key(storageEntry.key)
     , m_timeStamp(storageEntry.timeStamp)
 {
-    ASSERT(m_key.type() == "subresources");
+    ASSERT(m_key.type() == "SubResources");
 }
 
 SubresourcesEntry::SubresourcesEntry(Key&& key, const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads)
     : m_key(WTFMove(key))
     , m_timeStamp(std::chrono::system_clock::now())
 {
-    ASSERT(m_key.type() == "subresources");
+    ASSERT(m_key.type() == "SubResources");
     for (auto& subresourceLoad : subresourceLoads)
         m_subresources.add(subresourceLoad->key, SubresourceInfo(subresourceLoad->request));
 }

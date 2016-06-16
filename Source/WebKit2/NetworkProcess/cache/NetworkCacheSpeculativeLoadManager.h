@@ -40,8 +40,8 @@ namespace NetworkCache {
 
 class Entry;
 class SpeculativeLoad;
+class SubresourceInfo;
 class SubresourcesEntry;
-struct SubresourceInfo;
 
 class SpeculativeLoadManager {
     WTF_MAKE_FAST_ALLOCATED;
