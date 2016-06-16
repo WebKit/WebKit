@@ -1,3 +1,18 @@
+2016-06-15  Zalan Bujtas  <zalan@apple.com>
+
+        Decouple the percent height and positioned descendants maps.
+        https://bugs.webkit.org/show_bug.cgi?id=158773
+
+        Reviewed by David Hyatt and Chris Dumez.
+
+        Various dynamic containing block changing tests.
+
+        * fast/block/fixed-position-reparent-when-transition-is-removed.html:
+        * fast/block/positioning/change-containing-block-for-absolute-positioned-expected.txt: Added.
+        * fast/block/positioning/change-containing-block-for-absolute-positioned.html: Added.
+        * fast/block/positioning/change-containing-block-for-fixed-positioned-expected.txt: Added.
+        * fast/block/positioning/change-containing-block-for-fixed-positioned.html: Added.
+
 2016-06-15  Tim Horton  <timothy_horton@apple.com>
 
         <attachment> elements jump around a lot around when subtitle text changes slightly

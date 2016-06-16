@@ -28,7 +28,7 @@ setTimeout(function() {
     removeThis.parentNode.removeChild(removeThis);
       setTimeout(function() {
         var newChild = document.createElement("div");
-        newChild.style.positioned = "absolute";
+        newChild.style.position = "absolute";
         container.appendChild(newChild);
         if (window.testRunner)
           testRunner.notifyDone();

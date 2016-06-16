@@ -81,7 +81,7 @@ public:
     virtual void invalidateLineLayoutPath() { }
 
     void insertPositionedObject(RenderBox&);
-    static void removePositionedObject(RenderBox&);
+    static void removePositionedObject(const RenderBox&);
     void removePositionedObjects(const RenderBlock*, ContainingBlockState = SameContainingBlock);
 
     TrackedRendererListHashSet* positionedObjects() const;

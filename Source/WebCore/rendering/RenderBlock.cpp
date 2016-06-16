@@ -92,55 +92,44 @@ struct SameSizeAsRenderBlock : public RenderBox {
 
 COMPILE_ASSERT(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), RenderBlock_should_stay_small);
 
-typedef WTF::HashMap<const RenderBlock*, std::unique_ptr<TrackedRendererListHashSet>> TrackedDescendantsMap;
-typedef WTF::HashMap<const RenderBox*, std::unique_ptr<HashSet<const RenderBlock*>>> TrackedContainerMap;
+typedef HashMap<const RenderBlock*, std::unique_ptr<TrackedRendererListHashSet>> TrackedDescendantsMap;
+typedef HashMap<const RenderBox*, std::unique_ptr<HashSet<const RenderBlock*>>> TrackedContainerMap;
 
-static TrackedDescendantsMap* gPositionedDescendantsMap;
-static TrackedDescendantsMap* gPercentHeightDescendantsMap;
+static TrackedDescendantsMap* percentHeightDescendantsMap;
+static TrackedContainerMap* percentHeightContainerMap;
 
-static TrackedContainerMap* gPositionedContainerMap;
-static TrackedContainerMap* gPercentHeightContainerMap;
-
-static void insertIntoTrackedRendererMaps(const RenderBlock& container, RenderBox& descendant, TrackedDescendantsMap*& descendantsMap, TrackedContainerMap*& containerMap, bool forceNewEntry)
+static void insertIntoTrackedRendererMaps(const RenderBlock& container, RenderBox& descendant)
 {
-    if (!descendantsMap) {
-        descendantsMap = new TrackedDescendantsMap;
-        containerMap = new TrackedContainerMap;
+    if (!percentHeightDescendantsMap) {
+        percentHeightDescendantsMap = new TrackedDescendantsMap;
+        percentHeightContainerMap = new TrackedContainerMap;
     }
     
-    auto* descendantSet = descendantsMap->get(&container);
-    if (!descendantSet) {
-        descendantSet = new TrackedRendererListHashSet;
-        descendantsMap->set(&container, std::unique_ptr<TrackedRendererListHashSet>(descendantSet));
-    }
-    
-    if (forceNewEntry) {
-        descendantSet->remove(&descendant);
-        containerMap->remove(&descendant);
-    }
-    
+    auto& descendantSet = percentHeightDescendantsMap->ensure(&container, [] {
+        return std::make_unique<TrackedRendererListHashSet>();
+    }).iterator->value;
+
     bool added = descendantSet->add(&descendant).isNewEntry;
     if (!added) {
-        ASSERT(containerMap->get(&descendant));
-        ASSERT(containerMap->get(&descendant)->contains(&container));
+        ASSERT(percentHeightContainerMap->get(&descendant));
+        ASSERT(percentHeightContainerMap->get(&descendant)->contains(&container));
         return;
     }
     
-    auto* containerSet = containerMap->get(&descendant);
-    if (!containerSet) {
-        containerSet = new HashSet<const RenderBlock*>;
-        containerMap->set(&descendant, std::unique_ptr<HashSet<const RenderBlock*>>(containerSet));
-    }    
+    auto& containerSet = percentHeightContainerMap->ensure(&descendant, [] {
+        return std::make_unique<HashSet<const RenderBlock*>>();
+    }).iterator->value;
+
     ASSERT(!containerSet->contains(&container));
     containerSet->add(&container);
 }
 
-static void removeFromTrackedRendererMaps(RenderBox& descendant, TrackedDescendantsMap*& descendantsMap, TrackedContainerMap*& containerMap)
+static void removeFromTrackedRendererMaps(RenderBox& descendant)
 {
-    if (!descendantsMap)
+    if (!percentHeightDescendantsMap)
         return;
     
-    std::unique_ptr<HashSet<const RenderBlock*>> containerSet = containerMap->take(&descendant);
+    std::unique_ptr<HashSet<const RenderBlock*>> containerSet = percentHeightContainerMap->take(&descendant);
     if (!containerSet)
         return;
     
@@ -149,16 +138,89 @@ static void removeFromTrackedRendererMaps(RenderBox& descendant, TrackedDescenda
         // bugs associated with positioned objects not properly cleared from
         // their ancestor chain before being moved. See webkit bug 93766.
         // ASSERT(descendant->isDescendantOf(container));
-        auto descendantsMapIterator = descendantsMap->find(container);
-        ASSERT(descendantsMapIterator != descendantsMap->end());
-        if (descendantsMapIterator == descendantsMap->end())
+        auto descendantsMapIterator = percentHeightDescendantsMap->find(container);
+        ASSERT(descendantsMapIterator != percentHeightDescendantsMap->end());
+        if (descendantsMapIterator == percentHeightDescendantsMap->end())
             continue;
-        auto* descendantSet = descendantsMapIterator->value.get();
+        auto& descendantSet = descendantsMapIterator->value;
         ASSERT(descendantSet->contains(&descendant));
         descendantSet->remove(&descendant);
         if (descendantSet->isEmpty())
-            descendantsMap->remove(descendantsMapIterator);
+            percentHeightDescendantsMap->remove(descendantsMapIterator);
     }
+}
+
+class PositionedDescendantsMap {
+public:
+    enum class MoveDescendantToEnd { No, Yes };
+    void addDescendant(const RenderBlock& containingBlock, RenderBox& positionedDescendant, MoveDescendantToEnd moveDescendantToEnd)
+    {
+        // Protect against double insert where a descendant would end up with multiple containing blocks.
+        auto* previousContainingBlock = m_containerMap.get(&positionedDescendant);
+        if (previousContainingBlock && previousContainingBlock != &containingBlock) {
+            if (auto* descendants = m_descendantsMap.get(previousContainingBlock))
+                descendants->remove(&positionedDescendant);
+        }
+
+        auto& descendants = m_descendantsMap.ensure(&containingBlock, [] {
+            return std::make_unique<TrackedRendererListHashSet>();
+        }).iterator->value;
+
+        bool isNewEntry = moveDescendantToEnd == MoveDescendantToEnd::Yes ? descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry
+            : descendants->add(&positionedDescendant).isNewEntry;
+        if (!isNewEntry) {
+            ASSERT(m_containerMap.contains(&positionedDescendant));
+            return;
+        }
+        m_containerMap.set(&positionedDescendant, &containingBlock);
+    }
+
+    void removeDescendant(const RenderBox& positionedDescendant)
+    {
+        auto* containingBlock = m_containerMap.take(&positionedDescendant);
+        if (!containingBlock)
+            return;
+
+        auto descendantsIterator = m_descendantsMap.find(containingBlock);
+        ASSERT(descendantsIterator != m_descendantsMap.end());
+        if (descendantsIterator == m_descendantsMap.end())
+            return;
+
+        auto& descendants = descendantsIterator->value;
+        ASSERT(descendants->contains(const_cast<RenderBox*>(&positionedDescendant)));
+
+        descendants->remove(const_cast<RenderBox*>(&positionedDescendant));
+        if (descendants->isEmpty())
+            m_descendantsMap.remove(descendantsIterator);
+    }
+    
+    void removeContainingBlock(const RenderBlock& containingBlock)
+    {
+        auto descendants = m_descendantsMap.take(&containingBlock);
+        if (!descendants)
+            return;
+
+        for (auto* renderer : *descendants)
+            m_containerMap.remove(renderer);
+    }
+    
+    TrackedRendererListHashSet* positionedRenderers(const RenderBlock& containingBlock) const
+    {
+        return m_descendantsMap.get(&containingBlock);
+    }
+
+private:
+    using DescendantsMap = HashMap<const RenderBlock*, std::unique_ptr<TrackedRendererListHashSet>>;
+    using ContainerMap = HashMap<const RenderBox*, const RenderBlock*>;
+    
+    DescendantsMap m_descendantsMap;
+    ContainerMap m_containerMap;
+};
+
+static PositionedDescendantsMap& positionedDescendantsMap()
+{
+    static NeverDestroyed<PositionedDescendantsMap> mapForPositionedDescendants;
+    return mapForPositionedDescendants;
 }
 
 typedef HashMap<RenderBlock*, std::unique_ptr<ListHashSet<RenderInline*>>> ContinuationOutlineTableMap;
@@ -255,21 +317,24 @@ RenderBlock::RenderBlock(Document& document, RenderStyle&& style, BaseTypeFlags 
 {
 }
 
-static void removeBlockFromDescendantAndContainerMaps(RenderBlock* block, TrackedDescendantsMap*& descendantMap, TrackedContainerMap*& containerMap)
+static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock* block)
 {
-    if (std::unique_ptr<TrackedRendererListHashSet> descendantSet = descendantMap->take(block)) {
-        TrackedRendererListHashSet::iterator end = descendantSet->end();
-        for (TrackedRendererListHashSet::iterator descendant = descendantSet->begin(); descendant != end; ++descendant) {
-            TrackedContainerMap::iterator it = containerMap->find(*descendant);
-            ASSERT(it != containerMap->end());
-            if (it == containerMap->end())
-                continue;
-            auto* containerSet = it->value.get();
-            ASSERT(containerSet->contains(block));
-            containerSet->remove(block);
-            if (containerSet->isEmpty())
-                containerMap->remove(it);
-        }
+    if (!percentHeightDescendantsMap)
+        return;
+    std::unique_ptr<TrackedRendererListHashSet> descendantSet = percentHeightDescendantsMap->take(block);
+    if (!descendantSet)
+        return;
+    
+    for (auto* descendant : *descendantSet) {
+        auto it = percentHeightContainerMap->find(descendant);
+        ASSERT(it != percentHeightContainerMap->end());
+        if (it == percentHeightContainerMap->end())
+            continue;
+        auto* containerSet = it->value.get();
+        ASSERT(containerSet->contains(block));
+        containerSet->remove(block);
+        if (containerSet->isEmpty())
+            percentHeightContainerMap->remove(it);
     }
 }
 
@@ -279,10 +344,8 @@ RenderBlock::~RenderBlock()
 
     if (gRareDataMap)
         gRareDataMap->remove(this);
-    if (gPercentHeightDescendantsMap)
-        removeBlockFromDescendantAndContainerMaps(this, gPercentHeightDescendantsMap, gPercentHeightContainerMap);
-    if (gPositionedDescendantsMap)
-        removeBlockFromDescendantAndContainerMaps(this, gPositionedDescendantsMap, gPositionedContainerMap);
+    removeBlockFromPercentageDescendantAndContainerMaps(this);
+    positionedDescendantsMap().removeContainingBlock(*this);
 }
 
 void RenderBlock::willBeDestroyed()
@@ -1222,10 +1285,10 @@ void RenderBlock::updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, R
 
 void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
 {
-    if (!gPercentHeightDescendantsMap)
+    if (!percentHeightDescendantsMap)
         return;
 
-    TrackedRendererListHashSet* descendants = gPercentHeightDescendantsMap->get(this);
+    TrackedRendererListHashSet* descendants = percentHeightDescendantsMap->get(this);
     if (!descendants)
         return;
 
@@ -2178,9 +2241,7 @@ RenderBlock* RenderBlock::blockBeforeWithinSelectionRoot(LayoutSize& offset) con
 
 TrackedRendererListHashSet* RenderBlock::positionedObjects() const
 {
-    if (gPositionedDescendantsMap)
-        return gPositionedDescendantsMap->get(this);
-    return nullptr;
+    return positionedDescendantsMap().positionedRenderers(*this);
 }
 
 void RenderBlock::insertPositionedObject(RenderBox& positioned)
@@ -2190,12 +2251,13 @@ void RenderBlock::insertPositionedObject(RenderBox& positioned)
     if (positioned.isRenderFlowThread())
         return;
 
-    insertIntoTrackedRendererMaps(*this, positioned, gPositionedDescendantsMap, gPositionedContainerMap, isRenderView());
+    positionedDescendantsMap().addDescendant(*this, positioned, isRenderView() ? PositionedDescendantsMap::MoveDescendantToEnd::Yes
+        : PositionedDescendantsMap::MoveDescendantToEnd::No);
 }
 
-void RenderBlock::removePositionedObject(RenderBox& rendererToRemove)
+void RenderBlock::removePositionedObject(const RenderBox& rendererToRemove)
 {
-    removeFromTrackedRendererMaps(rendererToRemove, gPositionedDescendantsMap, gPositionedContainerMap);
+    positionedDescendantsMap().removeDescendant(rendererToRemove);
 }
 
 void RenderBlock::removePositionedObjects(const RenderBlock* newContainingBlockCandidate, ContainingBlockState containingBlockState)
@@ -2225,31 +2287,31 @@ void RenderBlock::removePositionedObjects(const RenderBlock* newContainingBlockC
 
 void RenderBlock::addPercentHeightDescendant(RenderBox& descendant)
 {
-    insertIntoTrackedRendererMaps(*this, descendant, gPercentHeightDescendantsMap, gPercentHeightContainerMap, false);
+    insertIntoTrackedRendererMaps(*this, descendant);
 }
 
 void RenderBlock::removePercentHeightDescendant(RenderBox& descendant)
 {
-    removeFromTrackedRendererMaps(descendant, gPercentHeightDescendantsMap, gPercentHeightContainerMap);
+    removeFromTrackedRendererMaps(descendant);
 }
 
 TrackedRendererListHashSet* RenderBlock::percentHeightDescendants() const
 {
-    return gPercentHeightDescendantsMap ? gPercentHeightDescendantsMap->get(this) : 0;
+    return percentHeightDescendantsMap ? percentHeightDescendantsMap->get(this) : nullptr;
 }
 
 bool RenderBlock::hasPercentHeightContainerMap()
 {
-    return gPercentHeightContainerMap;
+    return percentHeightContainerMap;
 }
 
 bool RenderBlock::hasPercentHeightDescendant(RenderBox& descendant)
 {
-    // We don't null check gPercentHeightContainerMap since the caller
+    // We don't null check percentHeightContainerMap since the caller
     // already ensures this and we need to call this function on every
     // descendant in clearPercentHeightDescendantsFrom().
-    ASSERT(gPercentHeightContainerMap);
-    return gPercentHeightContainerMap->contains(&descendant);
+    ASSERT(percentHeightContainerMap);
+    return percentHeightContainerMap->contains(&descendant);
 }
 
 void RenderBlock::removePercentHeightDescendantIfNeeded(RenderBox& descendant)
@@ -2268,7 +2330,7 @@ void RenderBlock::removePercentHeightDescendantIfNeeded(RenderBox& descendant)
 
 void RenderBlock::clearPercentHeightDescendantsFrom(RenderBox& parent)
 {
-    ASSERT(gPercentHeightContainerMap);
+    ASSERT(percentHeightContainerMap);
     for (RenderObject* child = parent.firstChild(); child; child = child->nextInPreOrder(&parent)) {
         if (!is<RenderBox>(*child))
             continue;
@@ -3766,17 +3828,12 @@ RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const Rend
 #ifndef NDEBUG
 void RenderBlock::checkPositionedObjectsNeedLayout()
 {
-    if (!gPositionedDescendantsMap)
+    auto* positionedDescendants = positionedObjects();
+    if (!positionedDescendants)
         return;
 
-    TrackedRendererListHashSet* positionedDescendantSet = positionedObjects();
-    if (!positionedDescendantSet)
-        return;
-
-    for (auto it = positionedDescendantSet->begin(), end = positionedDescendantSet->end(); it != end; ++it) {
-        RenderBox* currBox = *it;
-        ASSERT(!currBox->needsLayout());
-    }
+    for (auto* renderer : *positionedDescendants)
+        ASSERT(!renderer->needsLayout());
 }
 
 #endif
