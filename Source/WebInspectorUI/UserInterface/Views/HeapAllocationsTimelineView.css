@@ -46,7 +46,3 @@
     left: 0;
     right: 0;
 }
-
-.timeline-view.heap-allocations > .content-view-container > .content-view {
-    border-top: 1px solid var(--border-color);
-}
