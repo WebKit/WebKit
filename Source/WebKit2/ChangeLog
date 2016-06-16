@@ -1,3 +1,19 @@
+2016-06-15  Tim Horton  <timothy_horton@apple.com>
+
+        Expose _shouldExpandContentToViewHeightForAutoLayout SPI on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=158824
+        <rdar://problem/23713857>
+
+        Reviewed by Simon Fraser.
+
+        Test: TestWebKitAPI/WebKit2.AutoLayoutIntegration
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _shouldExpandContentToViewHeightForAutoLayout]):
+        (-[WKWebView _setShouldExpandContentToViewHeightForAutoLayout:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        This property exists on WKView; expose it on WKWebView.
+
 2016-06-15  Alex Christensen  <achristensen@webkit.org>
 
         Revert part of r196034

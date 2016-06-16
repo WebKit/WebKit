@@ -1,3 +1,18 @@
+2016-06-15  Tim Horton  <timothy_horton@apple.com>
+
+        Expose _shouldExpandContentToViewHeightForAutoLayout SPI on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=158824
+        <rdar://problem/23713857>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AutoLayoutIntegration.mm:
+        (-[AutoLayoutWKWebView load:withWidth:expectingContentSize:]):
+        (-[AutoLayoutWKWebView load:withWidth:expectingContentSize:resettingWidth:]):
+        (-[AutoLayoutWKWebView layoutAtMinimumWidth:andExpectContentSizeChange:resettingWidth:]):
+        (TEST):
+        Add a test for _shouldExpandContentToViewHeightForAutoLayout.
+
 2016-06-13  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Make it possible to test the Next/Previous buttons in the keyboard accessory bar
