@@ -254,7 +254,8 @@ fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
 fast/scrolling/scroll-animator-select-list-events.html [ Skip ]
 fast/events/prevent-default-prevents-interaction-with-scrollbars.html [ Skip ]
 fast/text/text-disappear-on-deselect.html [ ImageOnlyFailure ]
-
+http/tests/dom/window-open-about-blank-and-access-document.html [ Skip ]
+http/tests/dom/window-open-about-webkit-org-and-access-document.html [ Skip ]
 
 webkit.org/b/148695 fast/shadow-dom [ Pass ]
 
