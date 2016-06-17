@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function triggerProgrammaticCapture(message) {
+    console.profile();
+    console.log(`Inside ${message} profile`);
+    console.profileEnd();
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Timeline.setInstruments.programmatic-capture");
+
+    let heapExpected = false;
+    let programmaticCaptureStopped = null;
+
+    InspectorProtocol.eventHandler["Timeline.programmaticCaptureStarted"] = () => {
+        ProtocolTest.pass("Timeline.programmaticCaptureStarted");
+    };
+    InspectorProtocol.eventHandler["Timeline.programmaticCaptureStopped"] = () => {
+        ProtocolTest.pass("Timeline.programmaticCaptureStopped");
+        programmaticCaptureStopped();
+    };
+
+    InspectorProtocol.eventHandler["ScriptProfiler.trackingStart"] = () => {
+        ProtocolTest.pass("ScriptProfiler.startTracking");
+    };
+
+    InspectorProtocol.eventHandler["Heap.trackingStart"] = () => {
+        if (heapExpected)
+            ProtocolTest.pass("Heap.trackingStart");
+        else
+            ProtocolTest.fail("Unexpected Heap.trackingStart");
+    };
+
+    suite.addTestCase({
+        name: "NoInstrumentsProgrammaticCapture",
+        test: (resolve, reject) => {
+            heapExpected = false;
+            programmaticCaptureStopped = resolve;
+
+            InspectorProtocol.sendCommand("Timeline.setInstruments", {instruments: []}, (messageObject) => {
+                ProtocolTest.expectThat(!messageObject.error, "Should not be an error setting valid instruments.");
+            });
+            ProtocolTest.evaluateInPage("triggerProgrammaticCapture('NoInstrumentsProgrammaticCapture')");
+        }
+    });
+
+    suite.addTestCase({
+        name: "MultipleInstrumentsProgrammaticCapture",
+        test: (resolve, reject) => {
+            heapExpected = true;
+            programmaticCaptureStopped = resolve;
+
+            InspectorProtocol.sendCommand("Timeline.setInstruments", {instruments: ["ScriptProfiler", "Heap"]}, (messageObject) => {
+                ProtocolTest.expectThat(!messageObject.error, "Should not be an error setting valid instruments.");
+            });
+            ProtocolTest.evaluateInPage("triggerProgrammaticCapture('MultipleInstrumentsProgrammaticCapture')");
+        }
+    });
+
+    suite.addTestCase({
+        name: "NoInstrumentsProgrammaticCaptureAgain",
+        test: (resolve, reject) => {
+            heapExpected = true;
+            programmaticCaptureStopped = resolve;
+
+            InspectorProtocol.sendCommand("Timeline.setInstruments", {instruments: []}, (messageObject) => {
+                ProtocolTest.expectThat(!messageObject.error, "Should not be an error setting valid instruments.");
+            });
+            ProtocolTest.evaluateInPage("triggerProgrammaticCapture('NoInstrumentsProgrammaticCaptureAgain')");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests programmatic capture (console.profile/profileEnd) automatically starts instruments set via Timeline.setInstruments.</p>
+</body>
+</html>

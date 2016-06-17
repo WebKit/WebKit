@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: line 8: Inside NoInstrumentsProgrammaticCapture profile
+CONSOLE MESSAGE: line 8: Inside MultipleInstrumentsProgrammaticCapture profile
+CONSOLE MESSAGE: line 8: Inside NoInstrumentsProgrammaticCaptureAgain profile
+Tests programmatic capture (console.profile/profileEnd) automatically starts instruments set via Timeline.setInstruments.
+
+
+== Running test suite: Timeline.setInstruments.programmatic-capture
+-- Running test case: NoInstrumentsProgrammaticCapture
+PASS: Should not be an error setting valid instruments.
+PASS: Timeline.programmaticCaptureStarted
+PASS: ScriptProfiler.startTracking
+PASS: Timeline.programmaticCaptureStopped
+
+-- Running test case: MultipleInstrumentsProgrammaticCapture
+PASS: Should not be an error setting valid instruments.
+PASS: Timeline.programmaticCaptureStarted
+PASS: ScriptProfiler.startTracking
+PASS: Heap.trackingStart
+PASS: Timeline.programmaticCaptureStopped
+
+-- Running test case: NoInstrumentsProgrammaticCaptureAgain
+PASS: Should not be an error setting valid instruments.
+PASS: Timeline.programmaticCaptureStarted
+PASS: ScriptProfiler.startTracking
+PASS: Timeline.programmaticCaptureStopped
+

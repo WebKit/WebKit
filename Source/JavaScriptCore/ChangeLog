@@ -1,3 +1,61 @@
+2016-06-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.profile should use the new Sampling Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=153499
+        <rdar://problem/24352431>
+
+        Reviewed by Timothy Hatcher.
+
+        Currently console.profile/profileEnd behave slightly differently
+        between JSContext and Web inspection. Unifying will be part of:
+        <https://webkit.org/b/158753> Generalize the concept of Instruments on the backend
+
+        Both JSContext and Web inspection keep track of active
+        profiles started and stopped via console.profile/profileEnd.
+
+        JSContext inspection sends its programmatic start/stop
+        via the ScriptProfiler domain.
+
+        Web inspection sends its programmatic start/stop
+        via the Timeline domain, and also will start/stop backend
+        list of Instruments.
+
+        The functional differences between these is that for JSContext
+        inspection, console.profile only starts/stops the ScriptProfiler
+        domain, and does not auto-start other instruments. This isn't really
+        a problem right now given the instruments available for JSContext
+        inspection; but it will be nice to unify as we add more instruments.
+        Also, JSContext inspection won't have "Profile (name)" records in
+        its Events view, since those are currently generated only by the
+        Web's Timeline domain.
+
+        * inspector/protocol/ScriptProfiler.json:
+        * inspector/protocol/Timeline.json:
+        Events to inform the frontend of programmatic start/stop.
+
+        * debugger/Debugger.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::breakpointsActive):
+        (Inspector::InspectorDebuggerAgent::isPaused):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        Expose breakpoints active state, since programmatic recording
+        will temporarily disabled breakpoints if needed.
+
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient):
+        (Inspector::JSGlobalObjectConsoleClient::profile):
+        (Inspector::JSGlobalObjectConsoleClient::profileEnd):
+        (Inspector::JSGlobalObjectConsoleClient::startConsoleProfile):
+        (Inspector::JSGlobalObjectConsoleClient::stopConsoleProfile):
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::programmaticCaptureStarted):
+        (Inspector::InspectorScriptProfilerAgent::programmaticCaptureStopped):
+        * inspector/agents/InspectorScriptProfilerAgent.h:
+        JSContext implementation of console.profile/profileEnd.
+
 2016-06-16  Filip Pizlo  <fpizlo@apple.com>
 
         Kraken/stanford-crypto-pbkdf2.js sometimes crashes with an OSR assertion in FTL

@@ -1,3 +1,15 @@
+2016-06-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.profile should use the new Sampling Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=153499
+        <rdar://problem/24352431>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/timeline/setInstruments-programmatic-capture-expected.txt: Added.
+        * inspector/timeline/setInstruments-programmatic-capture.html: Added.
+        New test that the backend auto-starts instruments during programmatic capture.
+
 2016-06-16  John Wilander  <wilander@apple.com>
 
         Restrict security origin inheritance to empty, about:blank, and about:srcdoc URLs
