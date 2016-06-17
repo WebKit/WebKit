@@ -1,3 +1,45 @@
+2016-06-17  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::NoncopyableFunction in NetworkDataTaskClient
+        https://bugs.webkit.org/show_bug.cgi?id=158887
+
+        Reviewed by Alex Christensen.
+
+        Use WTF::NoncopyableFunction in NetworkDataTaskClient instead of std::function
+        and consistently move it around. This avoids some unnecessary copying.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::willDecidePendingDownloadDestination):
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::willPerformHTTPRedirection):
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::didReceiveChallenge):
+        (WebKit::NetworkDataTask::didReceiveResponse):
+        (WebKit::NetworkDataTask::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTask::tryPasswordBasedAuthentication):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::addChallengeToChallengeMap):
+        (WebKit::AuthenticationManager::coalesceChallengesMatching):
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        (WebKit::AuthenticationManager::tryUseCertificateInfoForChallenge):
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        (WebKit::AuthenticationManager::tryUseCertificateInfoForChallenge):
+
 2016-06-17  Antoine Quint  <graouts@apple.com>
 
         Web video playback controls should have RTL volume slider

@@ -48,17 +48,17 @@ public:
     }
     
 private:
-    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler completionHandler) override
+    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&& completionHandler) override
     {
         completionHandler({ });
         delete this;
     }
-    void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler completionHandler) override
+    void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&& completionHandler) override
     {
         completionHandler(AuthenticationChallengeDisposition::Cancel, { });
         delete this;
     }
-    void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler completionHandler) override
+    void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler&& completionHandler) override
     {
         completionHandler(WebCore::PolicyAction::PolicyIgnore);
         delete this;

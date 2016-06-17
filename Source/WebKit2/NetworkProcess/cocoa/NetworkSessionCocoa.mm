@@ -197,7 +197,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
                 completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
             Block_release(completionHandlerCopy);
         };
-        networkDataTask->didReceiveChallenge(challenge, challengeCompletionHandler);
+        networkDataTask->didReceiveChallenge(challenge, WTFMove(challengeCompletionHandler));
     } else {
         LOG(NetworkSession, "%llu didReceiveChallenge completionHandler (cancel)", taskIdentifier);
         completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
