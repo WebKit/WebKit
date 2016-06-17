@@ -359,7 +359,7 @@
 
                   var results = "";
                   // Note that (0, 0) may be affected by anti-alias.
-                  var img = ctx.getImageData(1, 1, 1, 1).data;
+                  var img = ctx.getImageData(8, 4, 1, 1).data;
                   var actualColor = [img[0], img[1], img[2], img[3]];
                   if (isDifferentColor(actualColor, expectedColor.source)) {
                       results += "Unexpected source! expected: " + expectedColor.source + " actual: " + actualColor + errorSuffix;
@@ -370,7 +370,7 @@
                   if (isDifferentColor(actualColor, expectedColor.destination)) {
                       results += "Unexpected destination! expected: " + expectedColor.destination + " actual: " + actualColor + errorSuffix;
                   }
-                  img = ctx.getImageData(12, 12, 1, 1).data;
+                  img = ctx.getImageData(12, 14, 1, 1).data;
                   actualColor = [img[0], img[1], img[2], img[3]];
                   if (isDifferentColor(actualColor, expectedColor.composition)) {
                       results += "Unexpected composition! expected: " + expectedColor.composition + " actual: " + actualColor + errorSuffix;
@@ -386,11 +386,11 @@
 
                   // Dump colors into text area for debugging purpose.
                   var debugText = document.getElementById("debug");
-                  img = ctx.getImageData(0, 0, 1, 1).data;
+                  img = ctx.getImageData(8, 4, 1, 1).data;
                   debugText.value += img[0] + "," + img[1] + "," + img[2] + "," + img[3] + "\n";
-                  img = ctx.getImageData(12, 12, 1, 1).data;
+                  img = ctx.getImageData(12, 14, 1, 1).data;
                   debugText.value += img[0] + "," + img[1] + "," + img[2] + "," + img[3] + "\n";
-                  img = ctx.getImageData(24, 24, 1, 1).data;
+                  img = ctx.getImageData(23, 23, 1, 1).data;
                   debugText.value += img[0] + "," + img[1] + "," + img[2] + "," + img[3] + "\n";
               }
           }

@@ -1,5 +1,17 @@
 2016-06-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Update LayoutTest fast/canvas/canvas-composite-text-alpha.html
+        https://bugs.webkit.org/show_bug.cgi?id=158710
+
+        Reviewed by Alexey Proskuryakov.
+
+        Though this test passes, opening the test file directly reports multiple failures. Updating the
+        readback locations to get the correct results.
+
+        * fast/canvas/canvas-composite-text-alpha.html:
+
+2016-06-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking media/video-controls-show-on-kb-or-ax-event.html as flaky on Mac
         https://bugs.webkit.org/show_bug.cgi?id=158889
 
