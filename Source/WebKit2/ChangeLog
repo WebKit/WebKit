@@ -1,3 +1,48 @@
+2016-06-16  Enrica Casucci  <enrica@apple.com>
+
+        Support configurable autocapitalization.
+        https://bugs.webkit.org/show_bug.cgi?id=158860
+        rdar://problem/26231403
+
+        Reviewed by Tim Horton.
+
+        The behavior of spellchecker should be configurable to avoid
+        unwanted autocapitalization.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::initialCapitalizationEnabled):
+        (API::PageConfiguration::setInitialCapitalizationEnabled):
+        * UIProcess/API/C/WKPageConfigurationRef.cpp:
+        (WKPageConfigurationSetIntialCapitalizationEnabled):
+        * UIProcess/API/C/WKPageConfigurationRef.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _initialCapitalizationEnabled]):
+        (-[WKWebViewConfiguration _setInitialCapitalizationEnabled:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/TextChecker.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::checkTextOfParagraph):
+        (WebKit::WebPageProxy::getGuessesForWord):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::getGuessesForWord):
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::getGuessesForWord):
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::getGuessesForWord):
+
 2016-06-17  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::NoncopyableFunction in NetworkDataTaskClient

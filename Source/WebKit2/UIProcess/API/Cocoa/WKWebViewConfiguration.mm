@@ -122,6 +122,7 @@ private:
     BOOL _imageControlsEnabled;
     BOOL _requiresUserActionForEditingControlsManager;
 #endif
+    BOOL _initialCapitalizationEnabled;
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKWebViewConfigurationIvars.mm>
@@ -171,6 +172,7 @@ private:
     _imageControlsEnabled = NO;
     _requiresUserActionForEditingControlsManager = NO;
 #endif
+    _initialCapitalizationEnabled = YES;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     _allowsAirPlayForMediaPlayback = YES;
@@ -278,6 +280,7 @@ private:
     configuration->_attachmentElementEnabled = self->_attachmentElementEnabled;
     configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
     configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
+    configuration->_initialCapitalizationEnabled = self->_initialCapitalizationEnabled;
 
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
@@ -647,6 +650,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setMainContentUserGestureOverrideEnabled:(BOOL)mainContentUserGestureOverrideEnabled
 {
     _mainContentUserGestureOverrideEnabled = mainContentUserGestureOverrideEnabled;
+}
+
+- (BOOL)_initialCapitalizationEnabled
+{
+    return _initialCapitalizationEnabled;
+}
+
+- (void)_setInitialCapitalizationEnabled:(BOOL)initialCapitalizationEnabled
+{
+    _initialCapitalizationEnabled = initialCapitalizationEnabled;
 }
 
 #if PLATFORM(MAC)

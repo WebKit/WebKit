@@ -89,6 +89,8 @@ public:
     bool alwaysRunsAtForegroundPriority() { return m_alwaysRunsAtForegroundPriority; }
     void setAlwaysRunsAtForegroundPriority(bool alwaysRunsAtForegroundPriority) { m_alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority; } 
 #endif
+    bool initialCapitalizationEnabled() { return m_initialCapitalizationEnabled; }
+    void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_initialCapitalizationEnabled = initialCapitalizationEnabled; }
 
 private:
 
@@ -109,6 +111,7 @@ private:
 #if PLATFORM(IOS)
     bool m_alwaysRunsAtForegroundPriority = false;
 #endif
+    bool m_initialCapitalizationEnabled = true;
 };
 
 } // namespace API

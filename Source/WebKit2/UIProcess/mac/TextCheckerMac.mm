@@ -47,6 +47,13 @@ static NSString* const WebAutomaticDashSubstitutionEnabled = @"WebAutomaticDashS
 static NSString* const WebAutomaticLinkDetectionEnabled = @"WebAutomaticLinkDetectionEnabled";
 static NSString* const WebAutomaticTextReplacementEnabled = @"WebAutomaticTextReplacementEnabled";
 
+#if HAVE(ADVANCED_SPELL_CHECKING)
+// FIXME: this needs to be removed and replaced with NSTextCheckingSuppressInitialCapitalizationKey as soon as
+// rdar://problem/26800924 is fixed.
+
+static NSString* const WebTextCheckingSuppressInitialCapitalizationKey = @"SuppressInitialCapitalization";
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -291,14 +298,17 @@ void TextChecker::closeSpellDocumentWithTag(int64_t tag)
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, int32_t insertionPoint, uint64_t checkingTypes)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, int32_t insertionPoint, uint64_t checkingTypes, bool initialCapitalizationEnabled)
 {
     Vector<TextCheckingResult> results;
 
     RetainPtr<NSString> textString = text.createNSStringWithoutCopying();
     NSDictionary *options = nil;
 #if HAVE(ADVANCED_SPELL_CHECKING)
-    options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPoint] };
+    options = @{ NSTextCheckingInsertionPointKey : @(insertionPoint),
+                 WebTextCheckingSuppressInitialCapitalizationKey : @(!initialCapitalizationEnabled) };
+#else
+    UNUSED_PARAM(initialCapitalizationEnabled);
 #endif
     NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString.get()
                                                                           range:NSMakeRange(0, text.length())
@@ -430,14 +440,15 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String& badGr
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict.get()];
 }
 
-void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, int32_t insertionPoint, Vector<String>& guesses)
+void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, int32_t insertionPoint, Vector<String>& guesses, bool initialCapitalizationEnabled)
 {
     NSString* language = nil;
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     NSDictionary *options = nil;
 #if HAVE(ADVANCED_SPELL_CHECKING)
-    options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPoint] };
+    options = @{ NSTextCheckingInsertionPointKey : @(insertionPoint),
+                 WebTextCheckingSuppressInitialCapitalizationKey : @(!initialCapitalizationEnabled) };
 #endif
     if (context.length()) {
         [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:options inSpellDocumentWithTag:spellDocumentTag orthography:&orthography wordCount:0];

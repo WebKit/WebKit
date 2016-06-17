@@ -67,6 +67,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
 #if PLATFORM(IOS)
     copy->m_alwaysRunsAtForegroundPriority = this->m_alwaysRunsAtForegroundPriority;
 #endif
+    copy->m_initialCapitalizationEnabled = this->m_initialCapitalizationEnabled;
 
     return copy;
 }

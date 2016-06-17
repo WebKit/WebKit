@@ -54,6 +54,8 @@ WK_EXPORT void WKPageConfigurationSetRelatedPage(WKPageConfigurationRef configur
 WK_EXPORT WKWebsiteDataStoreRef WKPageConfigurationGetWebsiteDataStore(WKPageConfigurationRef configuration);
 WK_EXPORT void WKPageConfigurationSetWebsiteDataStore(WKPageConfigurationRef configuration, WKWebsiteDataStoreRef websiteDataStore);
 
+WK_EXPORT void WKPageConfigurationSetInitialCapitalizationEnabled(WKPageConfigurationRef configuration, bool enabled);
+
 #ifdef __cplusplus
 }
 #endif
