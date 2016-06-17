@@ -27,13 +27,14 @@
 #define SimpleLineLayoutTextFragmentIterator_h
 
 #include "RenderLineBreak.h"
-#include "RenderStyle.h"
 #include "SimpleLineLayoutFlowContents.h"
 #include "TextBreakIterator.h"
 #include "break_lines.h"
 
 namespace WebCore {
+
 class RenderBlockFlow;
+class RenderStyle;
 
 namespace SimpleLineLayout {
 

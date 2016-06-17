@@ -24,13 +24,17 @@
 #define TextPainter_h
 
 #include "AffineTransform.h"
-#include "RenderText.h"
+#include "FloatRect.h"
+#include "ShadowData.h"
 #include "TextFlags.h"
 #include "TextPaintStyle.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
+class FontCascade;
 class RenderCombineText;
+class TextRun;
 
 struct TextPaintStyle;
 

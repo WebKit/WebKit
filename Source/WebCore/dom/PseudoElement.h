@@ -29,7 +29,6 @@
 
 #include "Element.h"
 #include "Event.h"
-#include "RenderStyle.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -71,11 +70,6 @@ private:
 };
 
 const QualifiedName& pseudoElementTagName();
-
-inline bool pseudoElementRendererIsNeeded(const RenderStyle* style)
-{
-    return style && style->display() != NONE && (style->contentData() || style->hasFlowFrom());
-}
 
 } // namespace WebCore
 

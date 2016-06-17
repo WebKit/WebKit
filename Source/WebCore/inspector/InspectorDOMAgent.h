@@ -32,7 +32,6 @@
 
 #include "EventTarget.h"
 #include "InspectorWebAgentBase.h"
-#include "RenderLayer.h"
 #include "Timer.h"
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
@@ -49,6 +48,7 @@ class InjectedScriptManager;
 }
 
 namespace JSC {
+class ExecState;
 class JSValue;
 }
 
@@ -61,6 +61,8 @@ class DOMEditor;
 class Document;
 class Element;
 class Event;
+class FloatQuad;
+class Frame;
 class InspectorHistory;
 class InspectorOverlay;
 class InspectorPageAgent;
@@ -68,6 +70,7 @@ class HitTestResult;
 class HTMLElement;
 class NameNodeMap;
 class Node;
+class PseudoElement;
 class RevalidateStyleAttributeTask;
 class ShadowRoot;
 

@@ -25,7 +25,6 @@
 #ifndef NodeRenderStyle_h
 #define NodeRenderStyle_h
 
-#include "RenderElement.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "Node.h"

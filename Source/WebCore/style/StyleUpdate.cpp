@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "NodeRenderStyle.h"
+#include "RenderElement.h"
 #include "Text.h"
 
 namespace WebCore {

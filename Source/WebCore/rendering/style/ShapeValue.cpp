@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CSS_SHAPES)
 #include "ShapeValue.h"
 
 #include "CachedImage.h"
@@ -62,3 +64,5 @@ bool ShapeValue::operator==(const ShapeValue& other) const
 
 
 } // namespace WebCore
+
+#endif // ENABLE(CSS_SHAPES)

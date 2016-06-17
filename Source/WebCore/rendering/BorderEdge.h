@@ -26,14 +26,16 @@
 #ifndef BorderEdge_h
 #define BorderEdge_h
 
-#include "RenderObject.h"
+#include "Color.h"
+#include "LayoutUnit.h"
+#include "RenderObjectEnums.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 
 typedef unsigned BorderEdgeFlags;
 
 class RenderStyle;
-class LayoutUnit;
 
 class BorderEdge {
 public:

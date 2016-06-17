@@ -30,6 +30,8 @@
 #include "ElementChildIterator.h"
 #include "SpaceSplitString.h"
 #include "StyleInvalidationAnalysis.h"
+#include "StyleResolver.h"
+#include <wtf/BitVector.h>
 
 namespace WebCore {
 namespace Style {

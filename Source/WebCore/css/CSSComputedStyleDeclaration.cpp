@@ -62,6 +62,7 @@
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "SVGElement.h"
+#include "ShapeValue.h"
 #include "StyleInheritedData.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
@@ -78,10 +79,6 @@
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "RenderGrid.h"
-#endif
-
-#if ENABLE(CSS_SHAPES)
-#include "ShapeValue.h"
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)

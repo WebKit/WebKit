@@ -38,7 +38,6 @@
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
 #include "PerspectiveTransformOperation.h"
-#include "RenderStyle.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "SkewTransformOperation.h"

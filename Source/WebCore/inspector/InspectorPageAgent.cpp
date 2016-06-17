@@ -62,6 +62,7 @@
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
+#include "RenderObject.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"

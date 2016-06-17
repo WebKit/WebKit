@@ -24,6 +24,7 @@
 #define RenderElement_h
 
 #include "AnimationController.h"
+#include "LengthFunctions.h"
 #include "RenderObject.h"
 #include "StyleInheritedData.h"
 

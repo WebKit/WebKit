@@ -26,14 +26,13 @@
 #ifndef ClassChangeInvalidation_h
 #define ClassChangeInvalidation_h
 
-#include "Document.h"
 #include "Element.h"
-#include "StyleResolver.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class DocumentRuleSets;
+class RuleSet;
 class SpaceSplitString;
 
 namespace Style {

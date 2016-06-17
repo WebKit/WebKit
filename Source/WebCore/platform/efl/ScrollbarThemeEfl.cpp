@@ -29,6 +29,7 @@
 #include "config.h"
 #include "ScrollbarThemeEfl.h"
 
+#include "Frame.h"
 #include "FrameView.h"
 #include "NotImplemented.h"
 #include "Page.h"

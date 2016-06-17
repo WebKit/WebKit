@@ -33,7 +33,6 @@
 #endif
 #include "PaintInfo.h"
 #include "PopupMenuStyle.h"
-#include "RenderObject.h"
 #include "ScrollTypes.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -45,14 +44,18 @@ class Element;
 class FileList;
 class HTMLInputElement;
 class Icon;
+class Page;
 class PopupMenu;
 class RenderAttachment;
+class RenderBox;
 class RenderMenuList;
 #if ENABLE(METER_ELEMENT)
 class RenderMeter;
 #endif
+class RenderObject;
 class RenderProgress;
 class RenderSnapshottedPlugIn;
+class StyleResolver;
 
 class RenderTheme : public RefCounted<RenderTheme> {
 protected:

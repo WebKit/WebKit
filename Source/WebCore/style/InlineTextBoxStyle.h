@@ -27,11 +27,12 @@
 #define InlineTextBoxStyle_h
 
 #include "FontCascade.h"
-#include "RenderStyle.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
     
 class InlineTextBox;
+class RenderStyle;
 
 inline float textDecorationStrokeThickness(float fontSize)
 {

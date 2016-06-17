@@ -26,7 +26,7 @@
 #ifndef SimpleLineLayoutFlowContents_h
 #define SimpleLineLayoutFlowContents_h
 
-#include "RenderText.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 class RenderBlockFlow;

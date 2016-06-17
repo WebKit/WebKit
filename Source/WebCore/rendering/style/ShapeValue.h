@@ -27,8 +27,9 @@
  * SUCH DAMAGE.
  */
 
-#ifndef ShapeValue_h
-#define ShapeValue_h
+#pragma once
+
+#if ENABLE(CSS_SHAPES)
 
 #include "BasicShapes.h"
 #include "CSSValueKeywords.h"
@@ -113,4 +114,4 @@ private:
 
 }
 
-#endif
+#endif // ENABLE(CSS_SHAPES)

@@ -28,6 +28,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 #include "AsyncScrollingCoordinator.h"
 
+#include "Document.h"
 #include "EditorClient.h"
 #include "Frame.h"
 #include "FrameView.h"

@@ -32,6 +32,7 @@
 #include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
 #include "Page.h"
+#include "RenderElement.h"
 #include "Settings.h"
 
 namespace WebCore {

@@ -26,12 +26,12 @@
 
 #include <wtf/StdLibExtras.h>
 #include "BidiResolver.h"
-#include "RenderText.h"
 
 namespace WebCore {
 
 class BidiContext;
 class InlineBox;
+class RenderObject;
 
 struct BidiRun : BidiCharacterRun {
     BidiRun(int start, int stop, RenderObject&, BidiContext*, UCharDirection);

@@ -35,7 +35,6 @@
 #include "PseudoElement.h"
 #include "RenderListItem.h"
 #include "RenderObject.h"
-#include "RenderStyle.h"
 
 namespace WebCore {
     

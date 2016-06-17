@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "LayoutRect.h"
 #include "PaintPhase.h"
+#include "RenderObjectEnums.h"
 #include "RenderStyle.h"
 #include "ScrollBehavior.h"
 #include "StyleImage.h"
@@ -72,48 +73,6 @@ class SelectionRect;
 #endif
 
 struct PaintInfo;
-
-enum CursorDirective {
-    SetCursorBasedOnStyle,
-    SetCursor,
-    DoNotSetCursor
-};
-
-enum HitTestFilter {
-    HitTestAll,
-    HitTestSelf,
-    HitTestDescendants
-};
-
-enum HitTestAction {
-    HitTestBlockBackground,
-    HitTestChildBlockBackground,
-    HitTestChildBlockBackgrounds,
-    HitTestFloat,
-    HitTestForeground
-};
-
-// Sides used when drawing borders and outlines. The values should run clockwise from top.
-enum BoxSide {
-    BSTop,
-    BSRight,
-    BSBottom,
-    BSLeft
-};
-
-enum MarkingBehavior {
-    MarkOnlyThis,
-    MarkContainingBlockChain,
-};
-
-enum class ScheduleRelayout { No, Yes };
-
-enum MapCoordinatesMode {
-    IsFixed             = 1 << 0,
-    UseTransforms       = 1 << 1,
-    ApplyContainerFlip  = 1 << 2
-};
-typedef unsigned MapCoordinatesFlags;
 
 #if PLATFORM(IOS)
 const int caretWidth = 2; // This value should be kept in sync with UIKit. See <rdar://problem/15580601>.
