@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Security-Policy" content="media-src *">
-<script src="media-file.js"></script>
+<script src="../../media/media-file.js"></script>
 <script>
 if (window.testRunner)
     testRunner.waitUntilDone();
@@ -34,7 +34,7 @@ function runTest()
     var x = fileInput.offsetLeft + fileInput.offsetWidth / 2;
     var y = fileInput.offsetTop + fileInput.offsetHeight / 2;
 
-    eventSender.beginDragWithFiles([findMediaFile("video", "content/test")]);
+    eventSender.beginDragWithFiles(["../../media/" + findMediaFile("video", "content/test")]);
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
 }

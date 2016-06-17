@@ -60,8 +60,8 @@ webkit.org/b/153460 [ Debug ] inspector/codemirror/prettyprinting-css-rules.html
 
 webkit.org/b/154297 [ Debug ] fast/events/keydown-1.html [ Pass Failure ]
 
-webkit.org/b/155196 media/video-with-blob-url-allowed-by-csp-media-src-star.html [ Skip ]
-webkit.org/b/155196 media/video-with-data-url-allowed-by-csp-media-src-star.html [ Skip ]
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Skip ]
 
 webkit.org/b/153143 [ Yosemite ] media/track/track-in-band-style.html [ Pass Crash ]
 

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Security-Policy" content="media-src *">
-<script src="media-file.js"></script>
+<script src="../../media/media-file.js"></script>
 <script>
 if (window.testRunner)
     testRunner.waitUntilDone();
@@ -24,7 +24,7 @@ window.onload = function ()
         window.setTimeout(testFinished, 0);
     }
     video.onerror = testFinished;
-    video.src = findMediaFile("video", "content/test");
+    video.src = "../../media/" + findMediaFile("video", "content/test");
 }
 </script>
 </head>

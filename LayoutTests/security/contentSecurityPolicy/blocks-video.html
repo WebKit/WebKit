@@ -1,10 +1,10 @@
 <meta http-equiv="Content-Security-Policy" content="media-src 'none'">
 <video controls></video>
-<script src=media-file.js></script>
-<script src=video-test.js></script>
+<script src=../../media/media-file.js></script>
+<script src=../../media/video-test.js></script>
 <p>This test passes if it doesn't alert failure.</p>
 <script>
-var mediaFile = findMediaFile("video", "content/test");
+var mediaFile = "../../media/" + findMediaFile("video", "content/test");
 video.src = mediaFile;
 
 waitForEvent('loadedmetadata', function () { 

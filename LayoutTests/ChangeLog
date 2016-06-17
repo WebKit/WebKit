@@ -1,3 +1,56 @@
+2016-06-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Move most of CSP tests into security/contentSecurityPolicy/
+        https://bugs.webkit.org/show_bug.cgi?id=158859
+
+        Reviewed by Daniel Bates.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * security/contentSecurityPolicy/blocks-video-expected.txt: Renamed from LayoutTests/media/csp-blocks-video-expected.txt.
+        * security/contentSecurityPolicy/blocks-video.html: Renamed from LayoutTests/media/csp-blocks-video.html.
+        * security/contentSecurityPolicy/font-loading-block-all-expected.txt: Renamed from LayoutTests/fast/text/font-loading-csp-block-all-expected.txt.
+        * security/contentSecurityPolicy/font-loading-block-all.html: Renamed from LayoutTests/fast/text/font-loading-csp-block-all.html.
+        * security/contentSecurityPolicy/image-with-blob-url-allowed-by-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Renamed from LayoutTests/fast/dom/HTMLImageElement/image-with-blob-url-allowed-by-csp-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html.
+        * security/contentSecurityPolicy/image-with-blob-url-allowed-by-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Renamed from LayoutTests/fast/dom/HTMLImageElement/image-with-blob-url-allowed-by-csp-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html.
+        * security/contentSecurityPolicy/image-with-blob-url-blocked-by-img-src-star-expected.html: Renamed from LayoutTests/fast/dom/HTMLImageElement/image-with-blob-url-blocked-by-csp-img-src-star-expected.html.
+        * security/contentSecurityPolicy/image-with-blob-url-blocked-by-img-src-star.html: Renamed from LayoutTests/fast/dom/HTMLImageElement/image-with-blob-url-blocked-by-csp-img-src-star.html.
+        * security/contentSecurityPolicy/image-with-data-url-allowed-by-img-src-star-expected.html: Renamed from LayoutTests/fast/dom/HTMLImageElement/image-with-data-url-allowed-by-csp-img-src-star-expected.html.
+        * security/contentSecurityPolicy/image-with-data-url-allowed-by-img-src-star.html: Renamed from LayoutTests/fast/dom/HTMLImageElement/image-with-data-url-allowed-by-csp-img-src-star.html.
+        * security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Renamed from LayoutTests/fast/dom/HTMLImageElement/image-with-file-url-allowed-by-csp-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html.
+        * security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Renamed from LayoutTests/fast/dom/HTMLImageElement/image-with-file-url-allowed-by-csp-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html.
+        * security/contentSecurityPolicy/image-with-file-url-blocked-by-img-src-star-expected.html: Renamed from LayoutTests/fast/dom/HTMLImageElement/image-with-file-url-blocked-by-csp-img-src-star-expected.html.
+        * security/contentSecurityPolicy/image-with-file-url-blocked-by-img-src-star.html: Renamed from LayoutTests/fast/dom/HTMLImageElement/image-with-file-url-blocked-by-csp-img-src-star.html.
+        * security/contentSecurityPolicy/link-with-blob-url-allowed-by-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-blob-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html.
+        * security/contentSecurityPolicy/link-with-blob-url-allowed-by-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-blob-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html.
+        * security/contentSecurityPolicy/link-with-blob-url-blocked-by-style-src-star-expected.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-blob-url-blocked-by-csp-style-src-star-expected.html.
+        * security/contentSecurityPolicy/link-with-blob-url-blocked-by-style-src-star.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-blob-url-blocked-by-csp-style-src-star.html.
+        * security/contentSecurityPolicy/link-with-data-url-allowed-by-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-data-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html.
+        * security/contentSecurityPolicy/link-with-data-url-allowed-by-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-data-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html.
+        * security/contentSecurityPolicy/link-with-data-url-blocked-by-style-src-star-expected.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-data-url-blocked-by-csp-style-src-star-expected.html.
+        * security/contentSecurityPolicy/link-with-data-url-blocked-by-style-src-star.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-data-url-blocked-by-csp-style-src-star.html.
+        * security/contentSecurityPolicy/link-with-file-url-allowed-by-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-file-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html.
+        * security/contentSecurityPolicy/link-with-file-url-allowed-by-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-file-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html.
+        * security/contentSecurityPolicy/link-with-file-url-blocked-by-style-src-star-expected.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-file-url-blocked-by-csp-style-src-star-expected.html.
+        * security/contentSecurityPolicy/link-with-file-url-blocked-by-style-src-star.html: Renamed from LayoutTests/fast/dom/HTMLLinkElement/link-with-file-url-blocked-by-csp-style-src-star.html.
+        * security/contentSecurityPolicy/resources/worker-inherits-blocks-eval.js: Renamed from LayoutTests/fast/workers/resources/worker-inherits-csp-blocks-eval.js.
+        (catch):
+        * security/contentSecurityPolicy/resources/worker-inherits-blocks-xhr.js: Renamed from LayoutTests/fast/workers/resources/worker-inherits-csp-blocks-xhr.js.
+        (catch):
+        * security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star-expected.html: Renamed from LayoutTests/media/video-with-blob-url-allowed-by-csp-media-src-star-expected.html.
+        * security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html: Renamed from LayoutTests/media/video-with-blob-url-allowed-by-csp-media-src-star.html.
+        * security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star-expected.html: Renamed from LayoutTests/media/video-with-data-url-allowed-by-csp-media-src-star-expected.html.
+        * security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html: Renamed from LayoutTests/media/video-with-data-url-allowed-by-csp-media-src-star.html.
+        * security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Renamed from LayoutTests/media/video-with-file-url-allowed-by-csp-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html.
+        * security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Renamed from LayoutTests/media/video-with-file-url-allowed-by-csp-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html.
+        * security/contentSecurityPolicy/video-with-file-url-blocked-by-media-src-star-expected.html: Renamed from LayoutTests/media/video-with-file-url-blocked-by-csp-media-src-star-expected.html.
+        * security/contentSecurityPolicy/video-with-file-url-blocked-by-media-src-star.html: Renamed from LayoutTests/media/video-with-file-url-blocked-by-csp-media-src-star.html.
+        * security/contentSecurityPolicy/worker-inherits-blocks-eval-expected.txt: Renamed from LayoutTests/fast/workers/worker-inherits-csp-blocks-eval-expected.txt.
+        * security/contentSecurityPolicy/worker-inherits-blocks-eval.html: Renamed from LayoutTests/fast/workers/worker-inherits-csp-blocks-eval.html.
+        * security/contentSecurityPolicy/worker-inherits-blocks-xhr-expected.txt: Renamed from LayoutTests/fast/workers/worker-inherits-csp-blocks-xhr-expected.txt.
+        * security/contentSecurityPolicy/worker-inherits-blocks-xhr.html: Renamed from LayoutTests/fast/workers/worker-inherits-csp-blocks-xhr.html.
+
 2016-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         Focus event dispatched in iframe causes parent document to scroll incorrectly
