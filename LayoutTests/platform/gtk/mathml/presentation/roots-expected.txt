@@ -198,7 +198,7 @@ layer at (0,0) size 800x491
           text run at (0,8) width 185: "long index w/ complex base: "
         RenderMathMLMath {math} at (185,0) size 90x41 [padding: 0 1 0 1]
           RenderMathMLRoot {mroot} at (1,0) size 88x41
-            RenderMathMLRootWrapper at (4,8) size 40x33
+            RenderMathMLRootWrapper at (4,6) size 40x35
               RenderMathMLRow {mrow} at (0,0) size 39x8
                 RenderMathMLToken {mi} at (0,2) size 6x5 [padding: 0 1 0 0]
                   RenderMathMLBlock (anonymous, flex) at (0,0) size 5x5
@@ -555,7 +555,7 @@ layer at (0,0) size 800x491
                                         RenderText at (0,-47) size 12x106
                                           text run at (0,-47) width 12: "+"
                                   RenderMathMLRoot {mroot} at (27,0) size 183x49
-                                    RenderMathMLRootWrapper at (4,11) size 6x38
+                                    RenderMathMLRootWrapper at (4,9) size 6x40
                                       RenderMathMLToken {mn} at (0,0) size 5x8
                                         RenderMathMLBlock (anonymous, flex) at (0,0) size 5x8
                                           RenderBlock (anonymous) at (0,0) size 5x8
@@ -580,7 +580,7 @@ layer at (0,0) size 800x491
                                               RenderText at (0,-47) size 12x106
                                                 text run at (0,-47) width 12: "+"
                                         RenderMathMLRoot {mroot} at (27,0) size 139x41
-                                          RenderMathMLRootWrapper at (4,9) size 6x32
+                                          RenderMathMLRootWrapper at (4,6) size 6x35
                                             RenderMathMLToken {mn} at (0,0) size 5x7
                                               RenderMathMLBlock (anonymous, flex) at (0,0) size 5x7
                                                 RenderBlock (anonymous) at (0,0) size 5x7
@@ -605,7 +605,7 @@ layer at (0,0) size 800x491
                                                     RenderText at (0,-47) size 12x106
                                                       text run at (0,-47) width 12: "+"
                                               RenderMathMLRoot {mroot} at (27,0) size 94x31
-                                                RenderMathMLRootWrapper at (4,5) size 6x26
+                                                RenderMathMLRootWrapper at (4,4) size 6x27
                                                   RenderMathMLToken {mn} at (0,0) size 5x7
                                                     RenderMathMLBlock (anonymous, flex) at (0,0) size 5x7
                                                       RenderBlock (anonymous) at (0,0) size 5x7

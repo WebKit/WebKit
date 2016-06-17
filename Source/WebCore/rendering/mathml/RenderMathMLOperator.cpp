@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Alex Milowski (alex@milowski.com). All rights reserved.
  * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
- * Copyright (C) 2013 Igalia S.L.
+ * Copyright (C) 2013, 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -207,6 +207,9 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
     }
     m_stretchHeightAboveBaseline *= aspect;
     m_stretchDepthBelowBaseline *= aspect;
+
+    m_mathOperator.stretchTo(style(), m_stretchHeightAboveBaseline, m_stretchDepthBelowBaseline);
+
     updateStyle();
 }
 
@@ -219,6 +222,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit width)
         return;
 
     m_stretchWidth = width;
+    m_mathOperator.stretchTo(style(), width);
 
     setOperatorProperties();
 
@@ -234,21 +238,6 @@ void RenderMathMLOperator::resetStretchSize()
         m_stretchWidth = 0;
 }
 
-static inline FloatRect boundsForGlyph(const GlyphData& data)
-{
-    return data.font && data.glyph ? data.font->boundsForGlyph(data.glyph) : FloatRect();
-}
-
-static inline float heightForGlyph(const GlyphData& data)
-{
-    return boundsForGlyph(data).height();
-}
-
-static inline float advanceWidthForGlyph(const GlyphData& data)
-{
-    return data.font && data.glyph ? data.font->widthForGlyph(data.glyph) : 0;
-}
-
 void RenderMathMLOperator::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
@@ -259,29 +248,15 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         if (isInvisibleOperator()) {
             // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
             GlyphData data = style().fontCascade().glyphDataForCharacter(m_textContent, false);
-            float glyphWidth = advanceWidthForGlyph(data);
+            float glyphWidth = data.isValid() ? data.font->widthForGlyph(data.glyph) : 0;
             ASSERT(glyphWidth <= m_minPreferredLogicalWidth);
             m_minPreferredLogicalWidth -= glyphWidth;
             m_maxPreferredLogicalWidth -= glyphWidth;
         }
-        return;
-    }
-
-    // FIXME: We should not use stretchSize during the preferred width calculation nor should we leave logical width dirty (http://webkit.org/b/152244).
-    MathOperator::Type type;
-    if (isLargeOperatorInDisplayStyle())
-        type = MathOperator::Type::DisplayOperator;
-    else
-        type = m_isVertical ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
-    m_mathOperator.setOperator(style(), m_textContent, type);
-    float maximumGlyphWidth;
-    if (!m_isVertical) {
-        maximumGlyphWidth = m_mathOperator.width();
-        if (maximumGlyphWidth < stretchSize())
-            maximumGlyphWidth = stretchSize();
     } else
-        maximumGlyphWidth = m_mathOperator.maxPreferredWidth();
-    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_leadingSpace + maximumGlyphWidth + m_trailingSpace;
+        m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_leadingSpace + m_mathOperator.maxPreferredWidth() + m_trailingSpace;
+
+    setPreferredLogicalWidthsDirty(false);
 }
 
 void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
@@ -302,6 +277,17 @@ void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
     // FIXME: This does not handle <mo> operators with multiple characters (https://bugs.webkit.org/show_bug.cgi?id=124828).
     m_textContent = textContent.length() == 1 ? textContent[0] : 0;
     setOperatorProperties();
+
+    if (shouldAllowStretching()) {
+        MathOperator::Type type;
+        if (isLargeOperatorInDisplayStyle())
+            type = MathOperator::Type::DisplayOperator;
+        else
+            type = m_isVertical ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
+        m_mathOperator.setOperator(style(), m_textContent, type);
+    } else
+        m_mathOperator.unstretch();
+
     updateStyle();
     setNeedsLayoutAndPrefWidthsRecalc();
 }
@@ -320,8 +306,7 @@ void RenderMathMLOperator::updateTokenContent()
 
 void RenderMathMLOperator::updateFromElement()
 {
-    setOperatorProperties();
-    RenderMathMLToken::updateFromElement();
+    updateTokenContent();
 }
 
 void RenderMathMLOperator::updateOperatorProperties()
@@ -340,6 +325,7 @@ bool RenderMathMLOperator::shouldAllowStretching() const
 void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
+    m_mathOperator.reset(style());
     updateOperatorProperties();
 }
 
@@ -349,8 +335,6 @@ void RenderMathMLOperator::updateStyle()
     if (!firstChild())
         return;
 
-    m_mathOperator.unstretch();
-    m_mathOperator.m_italicCorrection = 0;
     // We add spacing around the operator.
     // FIXME: The spacing should be added to the whole embellished operator (https://bugs.webkit.org/show_bug.cgi?id=124831).
     // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
@@ -360,118 +344,36 @@ void RenderMathMLOperator::updateStyle()
     newStyle.setMarginEnd(Length(m_trailingSpace, Fixed));
     wrapper->setStyle(WTFMove(newStyle));
     wrapper->setNeedsLayoutAndPrefWidthsRecalc();
-
-    if (!shouldAllowStretching())
-        return;
-
-    MathOperator::Type type;
-    if (isLargeOperatorInDisplayStyle())
-        type = MathOperator::Type::DisplayOperator;
-    else
-        type = m_isVertical ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
-    m_mathOperator.setOperator(style(), m_textContent, type);
-    if (m_isVertical && isLargeOperatorInDisplayStyle())
-        m_mathOperator.calculateDisplayStyleLargeOperator(style());
-    else {
-        m_mathOperator.calculateStretchyData(style(), false, stretchSize());
-        if (!m_mathOperator.isStretched())
-            return;
-    }
-
-    if (m_isVertical && m_mathOperator.m_stretchType == MathOperator::StretchType::SizeVariant) {
-        // We resize the operator to match the one of the size variant.
-        if (isLargeOperatorInDisplayStyle()) {
-            // The stretch size is actually not involved in the selection of the size variant in findDisplayStyleLargeOperator.
-            // We simply use the height and depth of the selected size variant glyph.
-            FloatRect glyphBounds = boundsForGlyph(m_mathOperator.m_variant);
-            m_stretchHeightAboveBaseline = -glyphBounds.y();
-            m_stretchDepthBelowBaseline = glyphBounds.maxY();
-        } else {
-            // We rescale the height and depth proportionately.
-            float variantSize = heightForGlyph(m_mathOperator.m_variant);
-            float size = stretchSize();
-            float aspect = size > 0 ? variantSize / size : 1.0;
-            m_stretchHeightAboveBaseline *= aspect;
-            m_stretchDepthBelowBaseline *= aspect;
-        }
-    }
-
-    if (!m_isVertical) {
-        if (m_mathOperator.m_stretchType == MathOperator::StretchType::SizeVariant) {
-            FloatRect glyphBounds = boundsForGlyph(m_mathOperator.m_variant);
-            m_stretchHeightAboveBaseline = -glyphBounds.y();
-            m_stretchDepthBelowBaseline = glyphBounds.maxY();
-            m_stretchWidth = advanceWidthForGlyph(m_mathOperator.m_variant);
-        } else if (m_mathOperator.m_stretchType == MathOperator::StretchType::GlyphAssembly) {
-            FloatRect glyphBounds;
-            m_stretchHeightAboveBaseline = 0;
-            m_stretchDepthBelowBaseline = 0;
-
-            glyphBounds = boundsForGlyph(m_mathOperator.m_assembly.bottomOrLeft);
-            m_stretchHeightAboveBaseline = std::max<LayoutUnit>(m_stretchHeightAboveBaseline, -glyphBounds.y());
-            m_stretchDepthBelowBaseline = std::max<LayoutUnit>(m_stretchDepthBelowBaseline, glyphBounds.maxY());
-
-            glyphBounds = boundsForGlyph(m_mathOperator.m_assembly.topOrRight);
-            m_stretchHeightAboveBaseline = std::max<LayoutUnit>(m_stretchHeightAboveBaseline, -glyphBounds.y());
-            m_stretchDepthBelowBaseline = std::max<LayoutUnit>(m_stretchDepthBelowBaseline, glyphBounds.maxY());
-
-            glyphBounds = boundsForGlyph(m_mathOperator.m_assembly.extension);
-            m_stretchHeightAboveBaseline = std::max<LayoutUnit>(m_stretchHeightAboveBaseline, -glyphBounds.y());
-            m_stretchDepthBelowBaseline = std::max<LayoutUnit>(m_stretchDepthBelowBaseline, glyphBounds.maxY());
-
-            if (m_mathOperator.m_assembly.middle.isValid()) {
-                glyphBounds = boundsForGlyph(m_mathOperator.m_assembly.middle);
-                m_stretchHeightAboveBaseline = std::max<LayoutUnit>(m_stretchHeightAboveBaseline, -glyphBounds.y());
-                m_stretchDepthBelowBaseline = std::max<LayoutUnit>(m_stretchDepthBelowBaseline, glyphBounds.maxY());
-            }
-        }
-    }
 }
 
 Optional<int> RenderMathMLOperator::firstLineBaseline() const
 {
     if (m_mathOperator.isStretched())
-        return Optional<int>(m_stretchHeightAboveBaseline);
+        return Optional<int>(m_mathOperator.ascent());
     return RenderMathMLToken::firstLineBaseline();
 }
 
 void RenderMathMLOperator::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
     if (m_mathOperator.isStretched())
-        logicalHeight = m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline;
+        logicalHeight = m_mathOperator.ascent() + m_mathOperator.descent();
     RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
 }
 
 void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLToken::paint(info, paintOffset);
-
-    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || !m_mathOperator.isStretched())
+    if (!m_mathOperator.isStretched())
         return;
 
-    GraphicsContextStateSaver stateSaver(info.context());
-    info.context().setFillColor(style().visitedDependentColor(CSSPropertyColor));
-
-    if (m_mathOperator.m_stretchType == MathOperator::StretchType::SizeVariant) {
-        ASSERT(m_mathOperator.m_variant.isValid());
-        GlyphBuffer buffer;
-        buffer.add(m_mathOperator.m_variant.glyph, m_mathOperator.m_variant.font, advanceWidthForGlyph(m_mathOperator.m_variant));
-        LayoutPoint operatorTopLeft = ceiledIntPoint(paintOffset + location());
-        FloatRect glyphBounds = boundsForGlyph(m_mathOperator.m_variant);
-        LayoutPoint operatorOrigin(operatorTopLeft.x(), operatorTopLeft.y() - glyphBounds.y());
-        info.context().drawGlyphs(style().fontCascade(), *m_mathOperator.m_variant.font, buffer, 0, 1, operatorOrigin);
-        return;
-    }
-
-    m_mathOperator.m_ascent = m_stretchHeightAboveBaseline;
-    m_mathOperator.m_descent = m_stretchDepthBelowBaseline;
-    m_mathOperator.m_width = logicalWidth();
     LayoutPoint operatorTopLeft = paintOffset + location();
     operatorTopLeft.move(style().isLeftToRightDirection() ? m_leadingSpace : m_trailingSpace, 0);
-    if (m_isVertical)
-        m_mathOperator.paintVerticalGlyphAssembly(style(), info, operatorTopLeft);
-    else
-        m_mathOperator.paintHorizontalGlyphAssembly(style(), info, operatorTopLeft);
+
+    // Center horizontal operators.
+    if (!m_isVertical)
+        operatorTopLeft.move(-(m_mathOperator.width() - width()) / 2, 0);
+
+    m_mathOperator.paint(style(), info, operatorTopLeft);
 }
 
 void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
@@ -484,28 +386,9 @@ void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint
 
 LayoutUnit RenderMathMLOperator::trailingSpaceError()
 {
-    const auto& primaryFont = style().fontCascade().primaryFont();
-    if (!primaryFont.mathData())
-        return 0;
-
     // For OpenType MATH font, the layout is based on RenderMathOperator for which the preferred width is sometimes overestimated (bug https://bugs.webkit.org/show_bug.cgi?id=130326).
     // Hence we determine the error in the logical width with respect to the actual width of the glyph(s) used to paint the operator.
-    LayoutUnit width = logicalWidth();
-
-    if (!m_mathOperator.isStretched()) {
-        GlyphData data = style().fontCascade().glyphDataForCharacter(textContent(), !style().isLeftToRightDirection());
-        return width - advanceWidthForGlyph(data);
-    }
-
-    if (m_mathOperator.m_stretchType == MathOperator::StretchType::SizeVariant)
-        return width - advanceWidthForGlyph(m_mathOperator.m_variant);
-
-    float assemblyWidth = advanceWidthForGlyph(m_mathOperator.m_assembly.topOrRight);
-    assemblyWidth = std::max(assemblyWidth, advanceWidthForGlyph(m_mathOperator.m_assembly.bottomOrLeft));
-    assemblyWidth = std::max(assemblyWidth, advanceWidthForGlyph(m_mathOperator.m_assembly.extension));
-    if (m_mathOperator.m_assembly.middle.isValid())
-        assemblyWidth = std::max(assemblyWidth, advanceWidthForGlyph(m_mathOperator.m_assembly.middle));
-    return width - assemblyWidth;
+    return m_mathOperator.maxPreferredWidth() - m_mathOperator.width();
 }
 
 }

@@ -1,3 +1,31 @@
+2016-06-16  Frederic Wang  <fwang@igalia.com>
+
+        Add separate MathOperator for selection/measuring/drawing of stretchy operators
+        https://bugs.webkit.org/show_bug.cgi?id=152244
+
+        Reviewed by Brent Fulgham.
+
+        Update expectations for some MathML tests containing operators/radicals
+        to take into account small rendering changes.
+
+        * platform/gtk/mathml/opentype/horizontal-expected.png:
+        * platform/gtk/mathml/opentype/horizontal-expected.txt:
+        * platform/gtk/mathml/opentype/horizontal-munderover-expected.txt:
+        * platform/gtk/mathml/opentype/large-operators-expected.png:
+        * platform/gtk/mathml/opentype/large-operators-expected.txt:
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.png:
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.png:
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+        * platform/gtk/mathml/opentype/vertical-expected.png:
+        * platform/gtk/mathml/opentype/vertical-expected.txt:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt:
+        * platform/gtk/mathml/presentation/roots-expected.txt:
+        * platform/ios-simulator/mathml/opentype/horizontal-munderover-expected.txt:
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.png:
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+
 2016-06-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         CSP: Content Security Policy should allow '*' to match the originating page's scheme
