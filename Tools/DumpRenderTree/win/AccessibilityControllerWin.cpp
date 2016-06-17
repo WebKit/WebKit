@@ -160,6 +160,11 @@ AccessibilityUIElement AccessibilityController::rootElement()
     if (FAILED(viewPrivate->viewWindow(&webViewWindow)))
         return 0;
 
+    // Make sure the layout is up to date, so we can find all accessible elements.
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (framePrivate)
+        framePrivate->layout();
+
     // Get the root accessible object by querying for the accessible object for the
     // WebView's window.
     COMPtr<IAccessible> rootAccessible;

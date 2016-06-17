@@ -1,3 +1,15 @@
+2016-06-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Accessibility implementation unable to recurse through document (sometimes) to find named elements
+        https://bugs.webkit.org/show_bug.cgi?id=140798
+
+        Reviewed by Brent Fulgham.
+       
+        Make sure layout is up-to-date before trying to find named elements. 
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::rootElement):
+
 2016-06-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r202002 and r202111.
