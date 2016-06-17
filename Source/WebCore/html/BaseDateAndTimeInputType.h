@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -66,6 +67,7 @@ private:
     bool typeMismatch() const override;
     bool valueMissing(const String&) const override;
     Decimal defaultValueForStepUp() const override;
+    void minOrMaxAttributeChanged() override;
     bool isSteppable() const override;
     virtual String serializeWithMilliseconds(double) const;
     String localizeValue(const String&) const override;

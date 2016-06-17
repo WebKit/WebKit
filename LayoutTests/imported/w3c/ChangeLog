@@ -1,5 +1,14 @@
 2016-06-16  Benjamin Poulain  <bpoulain@apple.com>
 
+        :in-range & :out-of-range CSS pseudo-classes shouldn't match disabled or readonly inputs
+        https://bugs.webkit.org/show_bug.cgi?id=156530
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange-expected.txt:
+
+2016-06-16  Benjamin Poulain  <bpoulain@apple.com>
+
         :in-range & :out-of-range CSS pseudo-classes shouldn't match inputs without range limitations
         https://bugs.webkit.org/show_bug.cgi?id=156558
 
