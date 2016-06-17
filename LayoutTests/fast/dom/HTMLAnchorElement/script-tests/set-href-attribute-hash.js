@@ -34,7 +34,7 @@ shouldBe("a.href", "'https://www.mydomain.com/path/testurl.html#null'");
 debug("Set hash to empty string");
 a.href = "https://www.mydomain.com/path/testurl.html#middle";
 a.hash = "";
-shouldBe("a.href", "'https://www.mydomain.com/path/testurl.html#'");
+shouldBe("a.href", "'https://www.mydomain.com/path/testurl.html'");
 
 // Firefox 3.5.2 does not allow setting hash to mailto: scheme, and it should.
 debug("Add hash to mailto: protocol");
@@ -52,7 +52,7 @@ shouldBe("a.href", "'file:///some%20path#hash value'");
 debug("Set hash to '#'");
 a.href = "http://mydomain.com#middle";
 a.hash = "#";
-shouldBe("a.href", "'http://mydomain.com/#'");
+shouldBe("a.href", "'http://mydomain.com/'");
 
 // Firefox 3.5.2 does not allow setting hash to foo: scheme, and it should.
 debug("Add hash to non-standard protocol");

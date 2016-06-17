@@ -284,10 +284,11 @@ template <typename T>
 void URLUtils<T>::setHash(const String& value)
 {
     URL url = href();
-    if (value[0U] == '#')
-        url.setFragmentIdentifier(value.substring(1));
+    String newFragment = value[0U] == '#' ? value.substring(1) : value;
+    if (newFragment.isEmpty())
+        url.removeFragmentIdentifier();
     else
-        url.setFragmentIdentifier(value);
+        url.setFragmentIdentifier(newFragment);
     setHref(url.string());
 }
 

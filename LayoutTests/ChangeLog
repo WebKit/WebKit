@@ -1,3 +1,19 @@
+2016-06-17  Chris Dumez  <cdumez@apple.com>
+
+        URL hash setter does not remove fragment identifier if argument is an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=158869
+        <rdar://problem/26863430>
+
+        Reviewed by Darin Adler.
+
+        Update existing layout tests now that setting hash to "" or "#" clears
+        the fragment identifier.
+
+        * fast/dom/DOMURL/set-href-attribute-hash-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-hash.html:
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-hash.js:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt:
+
 2016-06-17  John Wilander  <wilander@apple.com>
 
         Ignore case in the check for security origin inheritance

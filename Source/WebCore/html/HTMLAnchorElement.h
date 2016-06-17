@@ -27,6 +27,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "LinkHash.h"
+#include "URLUtils.h"
 
 namespace WebCore {
 
@@ -55,7 +56,7 @@ enum {
 //     RelationUp          = 0x00020000,
 };
 
-class HTMLAnchorElement : public HTMLElement {
+class HTMLAnchorElement : public HTMLElement, public URLUtils<HTMLAnchorElement> {
 public:
     static Ref<HTMLAnchorElement> create(Document&);
     static Ref<HTMLAnchorElement> create(const QualifiedName&, Document&);
@@ -66,33 +67,6 @@ public:
     void setHref(const AtomicString&);
 
     const AtomicString& name() const;
-
-    String hash() const;
-    void setHash(const String&);
-
-    String host() const;
-    void setHost(const String&);
-
-    String username() const;
-    void setUsername(const String&);
-
-    String password() const;
-    void setPassword(const String&);
-
-    String hostname() const;
-    void setHostname(const String&);
-
-    String pathname() const;
-    void setPathname(const String&);
-
-    String port() const;
-    void setPort(const String&);
-
-    String protocol() const;
-    void setProtocol(const String&);
-
-    String search() const;
-    void setSearch(const String&);
 
     String origin() const;
 
