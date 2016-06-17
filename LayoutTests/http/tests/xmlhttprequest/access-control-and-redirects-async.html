@@ -24,11 +24,12 @@ function runTestAsync(url, credentials, addCustomHeader, expectSuccess) {
 
     xhr.onload = function() {
         log((expectSuccess ? "PASS" : "FAIL") + ": " + xhr.responseText);
-        nextTest();
     }
     xhr.onerror = function() {
         log((expectSuccess ? "FAIL" : "PASS") + ": " + xhr.status);
-        nextTest();
+    }
+    xhr.onloadend = function() {
+         nextTest();
     }
     xhr.send(null);
 }

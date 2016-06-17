@@ -1,3 +1,15 @@
+2016-06-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        CORS preflight with a non-200 response should be a preflight failure
+        https://bugs.webkit.org/show_bug.cgi?id=111008
+
+        Reviewed by Darin Adler.
+
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async.html:
+        * http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple-expected.txt:
+        * http/tests/xmlhttprequest/workers/access-control-basic-get-fail-non-simple-expected.txt:
+
 2016-06-17  Frederic Wang  <fred.wang@free.fr>
 
         MathOperator: Add fallback mechanisms for stretching and mirroring radical symbols

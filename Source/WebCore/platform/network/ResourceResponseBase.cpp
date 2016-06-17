@@ -193,6 +193,12 @@ String ResourceResponseBase::suggestedFilename() const
     return static_cast<const ResourceResponse*>(this)->platformSuggestedFilename();
 }
 
+bool ResourceResponseBase::isSuccessful() const
+{
+    int code = httpStatusCode();
+    return code >= 200 && code < 300;
+}
+
 int ResourceResponseBase::httpStatusCode() const
 {
     lazyInit(CommonFieldsOnly);

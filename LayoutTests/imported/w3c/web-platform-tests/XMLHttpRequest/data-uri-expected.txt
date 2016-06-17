@@ -5,9 +5,9 @@ CONSOLE MESSAGE: line 40: XMLHttpRequest cannot load data:text/html;charset=UTF-
 CONSOLE MESSAGE: line 40: XMLHttpRequest cannot load data:image/png,Hello, World!. Cross origin requests are only supported for HTTP.
 CONSOLE MESSAGE: line 40: XMLHttpRequest cannot load data:text/plain,Hello, World!. Cross origin requests are only supported for HTTP.
 CONSOLE MESSAGE: line 40: XMLHttpRequest cannot load data:text/plain,Hello, World!. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: XMLHttpRequest cannot load data:text/plain,Hello, World!. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load data:text/plain,Hello, World!. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load data:text/plain,Hello, World!. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load data:text/plain,Hello, World!. Preflight response is not successful
+CONSOLE MESSAGE: XMLHttpRequest cannot load data:text/plain,Hello, World!. Preflight response is not successful
+CONSOLE MESSAGE: XMLHttpRequest cannot load data:text/plain,Hello, World!. Preflight response is not successful
 
 FAIL XHR method GET with charset text/plain assert_equals: expected "Hello, World!" but got ""
 FAIL XHR method GET with charset text/plain (base64) assert_equals: expected "Hello, World!" but got ""

@@ -64,7 +64,7 @@ public:
     const String& url() const { return m_response.url().string(); }
     bool redirected() const { return m_response.isRedirected(); }
     int status() const { return m_response.httpStatusCode(); }
-    bool ok() const { return status() >= 200 && status() <= 299; }
+    bool ok() const { return m_response.isSuccessful(); }
     const String& statusText() const { return m_response.httpStatusText(); }
 
     FetchHeaders& headers() { return m_headers; }

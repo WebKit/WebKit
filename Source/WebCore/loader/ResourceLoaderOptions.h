@@ -136,8 +136,9 @@ struct ResourceLoaderOptions {
     void setDefersLoadingPolicy(DefersLoadingPolicy defersLoadingPolicy) { m_defersLoadingPolicy = defersLoadingPolicy; }
     CachingPolicy cachingPolicy() const { return m_cachingPolicy; }
     void setCachingPolicy(CachingPolicy cachingPolicy) { m_cachingPolicy = cachingPolicy; }
-    FetchOptions fetchOptions() const { return m_fetchOptions; }
-    void setFetchOptions(FetchOptions fetchOptions) { m_fetchOptions = fetchOptions; }
+    const FetchOptions& fetchOptions() const { return m_fetchOptions; }
+    FetchOptions& fetchOptions() { return m_fetchOptions; }
+    void setFetchOptions(const FetchOptions& fetchOptions) { m_fetchOptions = fetchOptions; }
 
     unsigned m_sendLoadCallbacks : 1;
     unsigned m_sniffContent : 1;

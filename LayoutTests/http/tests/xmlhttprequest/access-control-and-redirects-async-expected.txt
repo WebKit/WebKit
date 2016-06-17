@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&%20%20url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&%20%20access-control-allow-origin=*. Preflight response is not successful
 Tests that asynchronous XMLHttpRequests handle redirects according to the CORS standard.
 
 Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi without credentials

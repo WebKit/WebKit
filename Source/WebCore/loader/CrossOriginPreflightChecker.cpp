@@ -72,9 +72,14 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     auto cookie = InspectorInstrumentation::willReceiveResourceResponse(frame);
     InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, frame->loader().documentLoader(), response, 0);
 
+    if (!response.isSuccessful()) {
+        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), ASCIILiteral("Preflight response is not successful")));
+        return;
+    }
+
     String description;
     if (!passesAccessControlCheck(response, loader.options().allowCredentials(), loader.securityOrigin(), description)) {
-        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, response.url(), description));
+        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), description));
         return;
     }
 
@@ -82,7 +87,7 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     if (!result->parse(response, description)
         || !result->allowsCrossOriginMethod(request.httpMethod(), description)
         || !result->allowsCrossOriginHeaders(request.httpHeaderFields(), description)) {
-        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, response.url(), description));
+        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), description));
         return;
     }
 
@@ -110,6 +115,8 @@ void CrossOriginPreflightChecker::startPreflight()
     options.setSniffContent(DoNotSniffContent);
     // Keep buffering the data for the preflight request.
     options.setDataBufferingPolicy(BufferData);
+
+    options.fetchOptions().redirect = FetchOptions::Redirect::Manual;
 
     CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, m_loader.securityOrigin()), options);
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
