@@ -1,5 +1,14 @@
 2016-06-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking media/video-controls-show-on-kb-or-ax-event.html as flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=158889
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-06-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skip security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html on Mac
         https://bugs.webkit.org/show_bug.cgi?id=155196
 

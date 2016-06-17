@@ -1367,3 +1367,5 @@ webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ 
 # These tests hardcode platform-specific font aliases.
 webkit.org/b/158649 [ Yosemite ] fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure ]
 webkit.org/b/158649 [ ElCapitan ] fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure ]
