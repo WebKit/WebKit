@@ -1,5 +1,18 @@
 2016-06-16  Chris Dumez  <cdumez@apple.com>
 
+        No need to ref connection in lambda inside NetworkResourceLoader::tryStoreAsCacheEntry()
+        https://bugs.webkit.org/show_bug.cgi?id=158862
+
+        Reviewed by Darin Adler.
+
+        Add NoncopyableFunction constructor that takes a nullptr_t in, in order
+        to match the std::function API and make porting from one to the other
+        easier.
+
+        * wtf/NoncopyableFunction.h:
+
+2016-06-16  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r202002 and r202111.
 
         Ryosuke says this was a JSBench regression on iOS

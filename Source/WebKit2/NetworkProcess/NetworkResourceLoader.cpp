@@ -515,10 +515,7 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     if (!m_bufferedDataForCache)
         return;
 
-    // Keep the connection alive.
-    RefPtr<NetworkConnectionToWebProcess> connection(&connectionToWebProcess());
-    RefPtr<NetworkResourceLoader> loader(this);
-    NetworkCache::singleton().store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader, connection](auto& mappedBody) {
+    NetworkCache::singleton().store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader = Ref<NetworkResourceLoader>(*this)](auto& mappedBody) mutable {
 #if ENABLE(SHAREABLE_RESOURCE)
         if (mappedBody.shareableResourceHandle.isNull())
             return;

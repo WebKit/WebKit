@@ -62,7 +62,7 @@ public:
     typedef std::function<bool (std::unique_ptr<Record>)> RetrieveCompletionHandler;
     void retrieve(const Key&, unsigned priority, RetrieveCompletionHandler&&);
 
-    typedef std::function<void (const Data& mappedBody)> MappedBodyHandler;
+    typedef NoncopyableFunction<void (const Data& mappedBody)> MappedBodyHandler;
     void store(const Record&, MappedBodyHandler&&);
 
     void remove(const Key&);

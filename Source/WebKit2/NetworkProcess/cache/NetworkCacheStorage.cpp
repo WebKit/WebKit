@@ -99,9 +99,9 @@ bool Storage::ReadOperation::finish()
 struct Storage::WriteOperation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WriteOperation(const Record& record, const MappedBodyHandler& mappedBodyHandler)
+    WriteOperation(const Record& record, MappedBodyHandler&& mappedBodyHandler)
         : record(record)
-        , mappedBodyHandler(mappedBodyHandler)
+        , mappedBodyHandler(WTFMove(mappedBodyHandler))
     { }
     
     const Record record;

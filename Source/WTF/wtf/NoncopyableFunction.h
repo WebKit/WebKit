@@ -36,6 +36,7 @@ template <typename Out, typename... In>
 class NoncopyableFunction<Out(In...)> {
 public:
     NoncopyableFunction() = default;
+    NoncopyableFunction(std::nullptr_t) { }
 
     template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
     NoncopyableFunction(CallableType&& callable)

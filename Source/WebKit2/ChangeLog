@@ -1,5 +1,27 @@
 2016-06-16  Chris Dumez  <cdumez@apple.com>
 
+        No need to ref connection in lambda inside NetworkResourceLoader::tryStoreAsCacheEntry()
+        https://bugs.webkit.org/show_bug.cgi?id=158862
+
+        Reviewed by Darin Adler.
+
+        No need to ref connection in lambda inside NetworkResourceLoader::tryStoreAsCacheEntry().
+        We already ref the NetworkResourceLoader which hold a ref to the connection. Also update
+        the lambda capture to use Ref<> for the NetworkResourceLoader instead of RefPtr<>.
+        Switch callback type from std::function to WTF::NoncopyableFunction so we can capture a
+        Ref<>.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::WriteOperation::WriteOperation):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
+2016-06-16  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Improve serialization of SubresourcesEntry to network disk cache
         https://bugs.webkit.org/show_bug.cgi?id=158851
 
