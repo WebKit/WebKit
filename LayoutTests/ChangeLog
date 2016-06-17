@@ -1,3 +1,18 @@
+2016-06-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r202147.
+        https://bugs.webkit.org/show_bug.cgi?id=158867
+
+        Broke scrolling tests on iOS Simulator (Requested by ap on
+        #webkit).
+
+        Reverted changeset:
+
+        "Focus event dispatched in iframe causes parent document to
+        scroll incorrectly"
+        https://bugs.webkit.org/show_bug.cgi?id=158629
+        http://trac.webkit.org/changeset/202147
+
 2016-06-16  Benjamin Poulain  <bpoulain@apple.com>
 
         :in-range & :out-of-range CSS pseudo-classes shouldn't match disabled or readonly inputs
