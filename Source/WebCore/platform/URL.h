@@ -129,6 +129,7 @@ public:
     bool protocolIsInHTTPFamily() const;
     WEBCORE_EXPORT bool isLocalFile() const;
     bool isBlankURL() const;
+    bool shouldInheritSecurityOriginFromOwner() const;
 
     WEBCORE_EXPORT bool setProtocol(const String&);
     void setHost(const String&);
