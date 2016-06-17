@@ -1975,6 +1975,13 @@ bool URL::isBlankURL() const
     return protocolIs("about");
 }
 
+bool URL::shouldInheritSecurityOriginFromOwner() const
+{
+    return isEmpty()
+        || m_string == blankURL().string()
+        || m_string == "about:srcdoc";
+}
+
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
 {
     if (protocol.isEmpty())

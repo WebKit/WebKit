@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 45: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "about". Protocols must match.
+
+CONSOLE MESSAGE: line 347: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "about". Protocols must match.
+
+
+PASS newWindow.document is undefined.
+
