@@ -1,3 +1,13 @@
+2016-06-17  John Wilander  <wilander@apple.com>
+
+        Ignore case in the check for security origin inheritance
+        https://bugs.webkit.org/show_bug.cgi?id=158878
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/dom/window-open-about-uppercase-blank-and-access-document-expected.txt: Added.
+        * http/tests/dom/window-open-about-uppercase-blank-and-access-document.html: Added.
+
 2016-06-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping two new LayoutTests that rely on mouse events on ios-simulator.
