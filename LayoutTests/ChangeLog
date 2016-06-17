@@ -1,3 +1,21 @@
+2016-06-17  Frederic Wang  <fred.wang@free.fr>
+
+        MathOperator: Add fallback mechanisms for stretching and mirroring radical symbols
+        https://bugs.webkit.org/show_bug.cgi?id=156836
+
+        Reviewed by Sergio Villar Senin.
+
+        We add a pixel test to verify the result of stretching a radical operator.
+        We test RTL/LTR direction as well as default/sans-serif font in order to check the fallback code.
+
+        * mathml/radical-fallback.html: Added.
+        * platform/gtk/mathml/radical-fallback-expected.png: Added.
+        * platform/gtk/mathml/radical-fallback-expected.txt: Added.
+        * platform/ios-simulator/mathml/radical-fallback-expected.txt: Added.
+        * platform/mac/mathml/radical-fallback-expected.png: Added.
+        * platform/mac/mathml/radical-fallback-expected.txt: Added.
+        * platform/ios-simulator/mathml/presentation/roots.txt: Updated.
+
 2016-06-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202147.

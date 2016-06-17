@@ -36,10 +36,6 @@ namespace WebCore {
 class RenderMathMLRadicalOperator final : public RenderMathMLOperator {
 public:
     RenderMathMLRadicalOperator(Document&, RenderStyle&&);
-    void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline) override;
-    void computePreferredLogicalWidths() override;
-    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
-    void paint(PaintInfo&, const LayoutPoint& paintOffset) override;
 
 private:
     bool isRenderMathMLRadicalOperator() const override { return true; }

@@ -52,7 +52,7 @@ public:
 
     void stretchTo(const RenderStyle&, LayoutUnit ascent, LayoutUnit descent);
     void stretchTo(const RenderStyle&, LayoutUnit width);
-    bool isStretched() const { return m_stretchType != StretchType::Unstretched; }
+    bool isStretched() const { return m_stretchType != StretchType::Unstretched || m_radicalVerticalScale > 1; }
     void unstretch() { m_stretchType = StretchType::Unstretched; }
 
     void paint(const RenderStyle&, PaintInfo&, const LayoutPoint&);
@@ -100,6 +100,7 @@ private:
     LayoutUnit m_ascent { 0 };
     LayoutUnit m_descent { 0 };
     LayoutUnit m_italicCorrection { 0 };
+    float m_radicalVerticalScale { 1 };
 };
 
 }

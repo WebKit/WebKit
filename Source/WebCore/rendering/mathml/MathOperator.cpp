@@ -31,6 +31,8 @@
 #include "RenderStyle.h"
 #include "StyleInheritedData.h"
 
+static const unsigned kRadicalOperator = 0x221A;
+
 namespace WebCore {
 
 static inline FloatRect boundsForGlyph(const GlyphData& data)
@@ -97,6 +99,7 @@ void MathOperator::reset(const RenderStyle& style)
     m_ascent = 0;
     m_descent = 0;
     m_italicCorrection = 0;
+    m_radicalVerticalScale = 1;
 
     // We use the base size for the calculation of the preferred width.
     GlyphData baseGlyph;
@@ -347,6 +350,19 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, bool calculat
             }
         }
 
+        // Unicode contains U+23B7 RADICAL SYMBOL BOTTOM but it is generally not provided by fonts without a MATH table.
+        // Moreover, it's not clear what the proper vertical extender or top hook would be.
+        // Hence we fallback to scaling the base glyph vertically.
+        if (!calculateMaxPreferredWidth && m_baseCharacter == kRadicalOperator) {
+            LayoutUnit height = m_ascent + m_descent;
+            if (height > 0 && height < targetSize) {
+                m_radicalVerticalScale = targetSize.toFloat() / height;
+                m_ascent *= m_radicalVerticalScale;
+                m_descent *= m_radicalVerticalScale;
+            }
+            return;
+        }
+
         // If we didn't find a stretchy character set for this character, we don't know how to stretch it.
         if (!stretchyCharacter)
             return;
@@ -592,6 +608,16 @@ void MathOperator::paint(const RenderStyle& style, PaintInfo& info, const Layout
 
     GraphicsContextStateSaver stateSaver(info.context());
     info.context().setFillColor(style.visitedDependentColor(CSSPropertyColor));
+
+    // For a radical character, we may need some scale transform to stretch it vertically or mirror it.
+    if (m_baseCharacter == kRadicalOperator) {
+        float radicalHorizontalScale = style.isLeftToRightDirection() ? 1 : -1;
+        if (radicalHorizontalScale == -1 || m_radicalVerticalScale > 1) {
+            LayoutPoint scaleOrigin = paintOffset;
+            scaleOrigin.move(m_width / 2, 0);
+            info.applyTransform(AffineTransform().translate(scaleOrigin).scale(radicalHorizontalScale, m_radicalVerticalScale).translate(-scaleOrigin));
+        }
+    }
 
     if (m_stretchType == StretchType::GlyphAssembly) {
         if (m_operatorType == Type::VerticalOperator)
