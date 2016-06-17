@@ -1,3 +1,16 @@
+2016-06-16  John Wilander  <wilander@apple.com>
+
+        Restrict security origin inheritance to empty, about:blank, and about:srcdoc URLs
+        https://bugs.webkit.org/show_bug.cgi?id=158855
+        <rdar://problem/26142632>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/dom/window-open-about-blank-and-access-document-expected.txt: Added.
+        * http/tests/dom/window-open-about-blank-and-access-document.html: Added.
+        * http/tests/dom/window-open-about-webkit-org-and-access-document-expected.txt: Added.
+        * http/tests/dom/window-open-about-webkit-org-and-access-document.html: Added.
+
 2016-06-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Move most of CSP tests into security/contentSecurityPolicy/

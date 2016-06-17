@@ -2062,6 +2062,13 @@ bool URL::isBlankURL() const
     return protocolIs("about");
 }
 
+bool URL::shouldInheritSecurityOriginFromOwner() const
+{
+    return isEmpty()
+        || m_string == blankURL().string()
+        || m_string == "about:srcdoc";
+}
+
 typedef HashMap<String, unsigned short, ASCIICaseInsensitiveHash> DefaultPortsMap;
 static const DefaultPortsMap& defaultPortsMap()
 {
