@@ -25,10 +25,11 @@
 
 [
     Conditional=TOUCH_EVENTS,
+    ConstructorTemplate=Event,
 ] interface TouchEvent : UIEvent {
-    readonly attribute TouchList touches;
-    readonly attribute TouchList targetTouches;
-    readonly attribute TouchList changedTouches;
+    [InitializedByEventConstructor] readonly attribute TouchList touches;
+    [InitializedByEventConstructor] readonly attribute TouchList targetTouches;
+    [InitializedByEventConstructor] readonly attribute TouchList changedTouches;
     readonly attribute boolean ctrlKey;
     readonly attribute boolean shiftKey;
     readonly attribute boolean altKey;

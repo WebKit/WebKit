@@ -67,6 +67,10 @@
 #include "JSGamepad.h"
 #endif
 
+#if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(TOUCH_EVENTS)
+#include "JSTouchList.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -323,6 +327,13 @@ void JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, RefPtr
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Gamepad>& result)
 {
     result = JSGamepad::toWrapped(value);
+}
+#endif
+
+#if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(TOUCH_EVENTS)
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<TouchList>& result)
+{
+    result = JSTouchList::toWrapped(value);
 }
 #endif
 

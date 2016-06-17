@@ -36,6 +36,12 @@
 
 namespace WebCore {
 
+struct TouchEventInit : public MouseRelatedEventInit {
+    RefPtr<TouchList> touches;
+    RefPtr<TouchList> targetTouches;
+    RefPtr<TouchList> changedTouches;
+};
+
 class TouchEvent final : public MouseRelatedEvent {
 public:
     virtual ~TouchEvent();
@@ -53,6 +59,10 @@ public:
     static Ref<TouchEvent> createForBindings()
     {
         return adoptRef(*new TouchEvent);
+    }
+    static Ref<TouchEvent> createForBindings(const AtomicString& type, const TouchEventInit& initializer)
+    {
+        return adoptRef(*new TouchEvent(type, initializer));
     }
 
     void initTouchEvent(TouchList* touches, TouchList* targetTouches,
@@ -80,6 +90,7 @@ private:
             AbstractView*, int screenX, int screenY, int pageX,
             int pageY,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
+    TouchEvent(const AtomicString&, const TouchEventInit&);
 
     RefPtr<TouchList> m_touches;
     RefPtr<TouchList> m_targetTouches;

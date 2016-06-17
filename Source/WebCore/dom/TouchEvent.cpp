@@ -55,6 +55,14 @@ TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches,
 {
 }
 
+TouchEvent::TouchEvent(const AtomicString& type, const TouchEventInit& initializer)
+    : MouseRelatedEvent(type, initializer)
+    , m_touches(initializer.touches ? initializer.touches : TouchList::create())
+    , m_targetTouches(initializer.targetTouches ? initializer.targetTouches : TouchList::create())
+    , m_changedTouches(initializer.changedTouches ? initializer.changedTouches : TouchList::create())
+{
+}
+
 TouchEvent::~TouchEvent()
 {
 }
