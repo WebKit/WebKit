@@ -6942,6 +6942,11 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             m_backingLayer->setNeedsDisplay();
             m_layerTreeHost->setRootChildLayer(PlatformCALayer::platformCALayer(m_backingLayer->platformLayer()));
 
+            TransformationMatrix m;
+            m.scale(deviceScaleFactor());
+            m_backingLayer->setAnchorPoint(FloatPoint3D());
+            m_backingLayer->setTransform(m);
+
             // We aren't going to be using our backing store while we're in accelerated compositing
             // mode. But don't delete it immediately, in case we switch out of accelerated
             // compositing mode soon (e.g., if we're only compositing for a :hover animation).

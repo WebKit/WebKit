@@ -1,3 +1,15 @@
+2016-06-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Rendering is not scaled correctly if process is DPI aware.
+        https://bugs.webkit.org/show_bug.cgi?id=158781
+
+        Reviewed by Brent Fulgham.
+
+        Scale the root graphics layer with the device scale factor.
+
+        * WebView.cpp:
+        (WebView::setAcceleratedCompositing):
+
 2016-06-15  Chris Dumez  <cdumez@apple.com>
 
         Drop some unnecessary header includes
