@@ -1,3 +1,32 @@
+2016-06-17  Mark Lam  <mark.lam@apple.com>
+
+        OOM Assertion failure in JSON.stringify.
+        https://bugs.webkit.org/show_bug.cgi?id=158794
+        <rdar://problem/26826254>
+
+        Reviewed by Saam Barati.
+
+        The bug was actually in StringBuilder::appendQuotedJSONString() where it failed
+        to detect an imminent unsigned int overflow.  The fix is to use Checked<unsigned>
+        for the needed math, and RELEASE_ASSERT afterwards that we did not overflow.
+
+        I also added more assertions to detect sooner if any there are any problems with
+        StringBuilder's m_buffer or m_length being incorrectly sized.  These assertions
+        have been run on the JSC and layout tests without any issue.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::resize):
+        (WTF::StringBuilder::allocateBuffer):
+        (WTF::StringBuilder::allocateBufferUpConvert):
+        (WTF::StringBuilder::reallocateBuffer<LChar>):
+        (WTF::StringBuilder::reallocateBuffer<UChar>):
+        (WTF::StringBuilder::reserveCapacity):
+        (WTF::StringBuilder::appendUninitializedSlow):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::appendQuotedJSONString):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::swap):
+
 2016-06-14  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT should be concurrent

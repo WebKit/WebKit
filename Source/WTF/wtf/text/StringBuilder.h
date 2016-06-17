@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2010, 2012-2013, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -276,6 +276,7 @@ public:
         m_buffer.swap(stringBuilder.m_buffer);
         std::swap(m_is8Bit, stringBuilder.m_is8Bit);
         std::swap(m_bufferCharacters8, stringBuilder.m_bufferCharacters8);
+        ASSERT(!m_buffer || m_buffer->length() >= m_length);
     }
 
 private:
