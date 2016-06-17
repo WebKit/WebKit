@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,6 +70,14 @@ public:
         Header::fromPayload(m_data)->length = size;
         ASSERT(Header::fromPayload(m_data)->length == size);
         VectorTypeOperations<T>::initialize(begin(), end());
+    }
+
+    RefCountedArray clone() const
+    {
+        RefCountedArray result(size());
+        for (unsigned i = size(); i--;)
+            result[i] = at(i);
+        return result;
     }
 
     template<size_t inlineCapacity, typename OverflowHandler>

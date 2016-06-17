@@ -125,9 +125,13 @@ void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry
 
     load64(Address(stackPointerRegister, sizeof(Register) * JSStack::Callee - sizeof(CallerFrameAndPC)), regT0);
     move(TrustedImmPtr(info), regT2);
-    MacroAssemblerCodeRef virtualThunk = virtualThunkFor(m_vm, *info);
-    info->setSlowStub(createJITStubRoutine(virtualThunk, *m_vm, nullptr, true));
-    emitNakedCall(virtualThunk.code());
+    Call call = emitNakedCall();
+    addLinkTask(
+        [=] (LinkBuffer& linkBuffer) {
+            MacroAssemblerCodeRef virtualThunk = virtualThunkFor(m_vm, *info);
+            info->setSlowStub(createJITStubRoutine(virtualThunk, *m_vm, nullptr, true));
+            linkBuffer.link(call, CodeLocationLabel(virtualThunk.code()));
+        });
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 

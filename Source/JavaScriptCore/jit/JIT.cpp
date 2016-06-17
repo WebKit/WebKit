@@ -45,6 +45,7 @@
 #include "ResultType.h"
 #include "SlowPathCall.h"
 #include "StackAlignment.h"
+#include "SuperSampler.h"
 #include "TypeProfilerLog.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 
@@ -108,8 +109,10 @@ void JIT::emitEnterOptimizationCheck()
 
 void JIT::emitNotifyWrite(WatchpointSet* set)
 {
-    if (!set || set->state() == IsInvalidated)
+    if (!set || set->state() == IsInvalidated) {
+        addSlowCase(Jump());
         return;
+    }
     
     addSlowCase(branch8(NotEqual, AbsoluteAddress(set->addressOfState()), TrustedImm32(IsInvalidated)));
 }
@@ -155,11 +158,14 @@ void JIT::assertStackPointerOffset()
 
 void JIT::privateCompileMainPass()
 {
+    if (false)
+        dataLog("Compiling ", *m_codeBlock, "\n");
+    
     jitAssertTagsInPlace();
     jitAssertArgumentCountSane();
     
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
-    unsigned instructionCount = m_codeBlock->instructions().size();
+    unsigned instructionCount = m_instructions.size();
 
     m_callLinkInfoIndex = 0;
 
@@ -501,11 +507,16 @@ void JIT::privateCompileSlowCases()
 #endif
 }
 
-CompilationResult JIT::privateCompile(JITCompilationEffort effort)
+void JIT::compileWithoutLinking(JITCompilationEffort effort)
 {
     double before = 0;
     if (UNLIKELY(computeCompileTimes()))
         before = monotonicallyIncreasingTimeMS();
+    
+    {
+        ConcurrentJITLocker locker(m_codeBlock->m_lock);
+        m_instructions = m_codeBlock->instructions().clone();
+    }
 
     DFG::CapabilityLevel level = m_codeBlock->capabilityLevel();
     switch (level) {
@@ -537,8 +548,6 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         m_codeBlock->m_shouldAlwaysBeInlined &= canInline(level) && DFG::mightInlineFunction(m_codeBlock);
         break;
     }
-
-    m_codeBlock->setCalleeSaveRegisters(RegisterSet::llintBaselineCalleeSaveRegisters()); // Might be able to remove as this is probably already set to this value.
 
     // This ensures that we have the most up to date type information when performing typecheck optimizations for op_profile_type.
     if (m_vm->typeProfiler())
@@ -601,6 +610,8 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 
     emitSaveCalleeSaves();
     emitMaterializeTagCheckRegisters();
+    
+    RELEASE_ASSERT(!JITCode::isJIT(m_codeBlock->jitType()));
 
     privateCompileMainPass();
     privateCompileLinkPass();
@@ -616,9 +627,8 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
     callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
 
-    Label arityCheck;
     if (m_codeBlock->codeType() == FunctionCode) {
-        arityCheck = label();
+        m_arityCheck = label();
         store8(TrustedImm32(0), &m_codeBlock->m_shouldAlwaysBeInlined);
         emitFunctionPrologue();
         emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
@@ -652,10 +662,30 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         m_disassembler->setEndOfCode(label());
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
+    m_linkBuffer = std::unique_ptr<LinkBuffer>(new LinkBuffer(*m_vm, *this, m_codeBlock, effort));
 
-    LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock, effort);
+    double after;
+    if (UNLIKELY(computeCompileTimes())) {
+        after = monotonicallyIncreasingTimeMS();
+
+        if (Options::reportTotalCompileTimes())
+            totalBaselineCompileTime += after - before;
+    }
+    if (UNLIKELY(reportCompileTimes())) {
+        CString codeBlockName = toCString(*m_codeBlock);
+        
+        dataLog("Optimized ", codeBlockName, " with Baseline JIT into ", m_linkBuffer->size(), " bytes in ", after - before, " ms.\n");
+    }
+}
+
+CompilationResult JIT::link()
+{
+    LinkBuffer& patchBuffer = *m_linkBuffer;
+    
     if (patchBuffer.didFailToAllocate())
         return CompilationFailed;
+
+    m_codeBlock->setCalleeSaveRegisters(RegisterSet::llintBaselineCalleeSaveRegisters()); // Might be able to remove as this is probably already set to this value.
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
@@ -738,7 +768,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 
     MacroAssemblerCodePtr withArityCheck;
     if (m_codeBlock->codeType() == FunctionCode)
-        withArityCheck = patchBuffer.locationOf(arityCheck);
+        withArityCheck = patchBuffer.locationOf(m_arityCheck);
 
     if (Options::dumpDisassembly()) {
         m_disassembler->dump(patchBuffer);
@@ -759,30 +789,23 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     
     m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT.add(
         static_cast<double>(result.size()) /
-        static_cast<double>(m_codeBlock->instructions().size()));
+        static_cast<double>(m_instructions.size()));
 
     m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
     m_codeBlock->setJITCode(
         adoptRef(new DirectJITCode(result, withArityCheck, JITCode::BaselineJIT)));
-
-    double after;
-    if (UNLIKELY(computeCompileTimes())) {
-        after = monotonicallyIncreasingTimeMS();
-
-        if (Options::reportTotalCompileTimes())
-            totalBaselineCompileTime += after - before;
-    }
-    if (UNLIKELY(reportCompileTimes())) {
-        CString codeBlockName = toCString(*m_codeBlock);
-        
-        dataLog("Optimized ", codeBlockName, " with Baseline JIT into ", patchBuffer.size(), " bytes in ", after - before, " ms.\n");
-    }
 
 #if ENABLE(JIT_VERBOSE)
     dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
 #endif
     
     return CompilationSuccessful;
+}
+
+CompilationResult JIT::privateCompile(JITCompilationEffort effort)
+{
+    compileWithoutLinking(effort);
+    return link();
 }
 
 void JIT::privateCompileExceptionHandlers()

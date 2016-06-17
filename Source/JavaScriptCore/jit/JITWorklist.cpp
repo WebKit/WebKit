@@ -1,0 +1,285 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "JITWorklist.h"
+
+#if ENABLE(JIT)
+
+#include "JIT.h"
+#include "JSCInlines.h"
+#include "VMInlines.h"
+
+namespace JSC {
+
+class JITWorklist::Plan : public ThreadSafeRefCounted<JITWorklist::Plan> {
+public:
+    Plan(CodeBlock* codeBlock)
+        : m_codeBlock(codeBlock)
+        , m_jit(codeBlock->vm(), codeBlock)
+    {
+    }
+    
+    void compileInThread()
+    {
+        m_jit.compileWithoutLinking(JITCompilationCanFail);
+        
+        LockHolder locker(m_lock);
+        m_isFinishedCompiling = true;
+    }
+    
+    void finalize()
+    {
+        CompilationResult result = m_jit.link();
+        switch (result) {
+        case CompilationFailed:
+            CODEBLOCK_LOG_EVENT(m_codeBlock, "delayJITCompile", ("compilation failed"));
+            if (Options::verboseOSR())
+                dataLogF("    JIT compilation failed.\n");
+            m_codeBlock->dontJITAnytimeSoon();
+            m_codeBlock->m_didFailJITCompilation = true;
+            return;
+        case CompilationSuccessful:
+            if (Options::verboseOSR())
+                dataLogF("    JIT compilation successful.\n");
+            m_codeBlock->ownerScriptExecutable()->installCode(m_codeBlock);
+            m_codeBlock->jitSoon();
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+        
+        LockHolder locker(m_lock);
+        m_isFinalized = true;
+    }
+    
+    CodeBlock* codeBlock() { return m_codeBlock; }
+    VM* vm() { return m_codeBlock->vm(); }
+    
+    bool isFinishedCompiling()
+    {
+        LockHolder locker(m_lock);
+        return m_isFinishedCompiling;
+    }
+    bool isFinalized()
+    {
+        LockHolder locker(m_lock);
+        return m_isFinalized;
+    }
+    
+private:
+    CodeBlock* m_codeBlock;
+    JIT m_jit;
+    Lock m_lock;
+    bool m_isFinishedCompiling { false };
+    bool m_isFinalized { false };
+};
+
+JITWorklist::JITWorklist()
+{
+    createThread("JIT Worklist Worker Thread", [this] () { runThread(); });
+}
+
+JITWorklist::~JITWorklist()
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
+void JITWorklist::completeAllForVM(VM& vm)
+{
+    DeferGC deferGC(vm.heap);
+    for (;;) {
+        Vector<RefPtr<Plan>, 32> myPlans;
+        {
+            LockHolder locker(m_lock);
+            for (;;) {
+                bool didFindUnfinishedPlan = false;
+                m_plans.removeAllMatching(
+                    [&] (RefPtr<Plan>& plan) {
+                        if (plan->vm() != &vm)
+                            return false;
+                        if (!plan->isFinishedCompiling()) {
+                            didFindUnfinishedPlan = true;
+                            return false;
+                        }
+                        myPlans.append(WTFMove(plan));
+                        return true;
+                    });
+                
+                // If we found plans then we should finalize them now.
+                if (!myPlans.isEmpty())
+                    break;
+                
+                // If we don't find plans, then we're either done or we need to wait, depending on
+                // whether we found some unfinished plans.
+                if (!didFindUnfinishedPlan)
+                    return;
+                
+                m_condition.wait(m_lock);
+            }
+        }
+        
+        finalizePlans(myPlans);
+    }
+}
+
+void JITWorklist::poll(VM& vm)
+{
+    DeferGC deferGC(vm.heap);
+    Plans myPlans;
+    {
+        LockHolder locker(m_lock);
+        m_plans.removeAllMatching(
+            [&] (RefPtr<Plan>& plan) {
+                if (plan->vm() != &vm)
+                    return false;
+                if (!plan->isFinishedCompiling())
+                    return false;
+                myPlans.append(WTFMove(plan));
+                return true;
+            });
+    }
+    
+    finalizePlans(myPlans);
+}
+
+void JITWorklist::compileLater(CodeBlock* codeBlock)
+{
+    DeferGC deferGC(codeBlock->vm()->heap);
+    RELEASE_ASSERT(codeBlock->jitType() == JITCode::InterpreterThunk);
+    
+    if (codeBlock->m_didFailJITCompilation) {
+        codeBlock->dontJITAnytimeSoon();
+        return;
+    }
+    
+    if (!Options::useConcurrentJIT()) {
+        Plan plan(codeBlock);
+        plan.compileInThread();
+        plan.finalize();
+        return;
+    }
+    
+    codeBlock->jitSoon();
+    
+    Plans myPlans;
+    LockHolder locker(m_lock);
+    
+    if (!m_planned.add(codeBlock).isNewEntry)
+        return;
+    
+    RefPtr<Plan> plan = adoptRef(new Plan(codeBlock));
+    m_plans.append(plan);
+    m_queue.append(plan);
+    m_condition.notifyAll();
+}
+
+void JITWorklist::compileNow(CodeBlock* codeBlock)
+{
+    // If this ever happens, we'll have a bad time because the baseline JIT does not clean up its
+    // changes to the CodeBlock after a failed compilation.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=158806
+    RELEASE_ASSERT(!codeBlock->m_didFailJITCompilation);
+    
+    DeferGC deferGC(codeBlock->vm()->heap);
+    if (codeBlock->jitType() != JITCode::InterpreterThunk)
+        return;
+    
+    bool isPlanned;
+    {
+        LockHolder locker(m_lock);
+        isPlanned = m_planned.contains(codeBlock);
+    }
+    
+    if (isPlanned) {
+        RELEASE_ASSERT(Options::useConcurrentJIT());
+        // This is expensive, but probably good enough.
+        completeAllForVM(*codeBlock->vm());
+    }
+    
+    // Now it might be compiled!
+    if (codeBlock->jitType() != JITCode::InterpreterThunk)
+        return;
+    
+    // OK, just compile it.
+    JIT::compile(codeBlock->vm(), codeBlock, JITCompilationMustSucceed);
+    codeBlock->ownerScriptExecutable()->installCode(codeBlock);
+}
+
+void JITWorklist::runThread()
+{
+    for (;;) {
+        Plans myPlans;
+        {
+            LockHolder locker(m_lock);
+            while (m_queue.isEmpty())
+                m_condition.wait(m_lock);
+            
+            // This is a fun way to dequeue. I don't know if it's any better or worse than dequeuing
+            // one thing at a time.
+            myPlans = WTFMove(m_queue);
+        }
+        
+        RELEASE_ASSERT(!myPlans.isEmpty());
+        
+        for (RefPtr<Plan>& plan : myPlans) {
+            plan->compileInThread();
+            plan = nullptr;
+            
+            // Make sure that the main thread realizes that we just compiled something. Notifying
+            // a WTF condition is basically free if nobody is waiting.
+            LockHolder locker(m_lock);
+            m_condition.notifyAll();
+        }
+    }
+}
+
+void JITWorklist::finalizePlans(Plans& myPlans)
+{
+    for (RefPtr<Plan>& plan : myPlans) {
+        plan->finalize();
+        
+        LockHolder locker(m_lock);
+        m_planned.remove(plan->codeBlock());
+    }
+}
+
+JITWorklist* JITWorklist::instance()
+{
+    static JITWorklist* worklist;
+    static std::once_flag once;
+    std::call_once(
+        once,
+        [] {
+            worklist = new JITWorklist();
+        });
+    return worklist;
+}
+
+} // namespace JSC
+
+#endif // ENABLE(JIT)
+

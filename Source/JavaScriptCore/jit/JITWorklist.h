@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,61 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGOSRExitPreparation.h"
+#ifndef JITWorklist_h
+#define JITWorklist_h
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
-#include "CodeBlock.h"
-#include "Executable.h"
-#include "JIT.h"
-#include "JITCode.h"
-#include "JITWorklist.h"
-#include "JSCInlines.h"
+#include <wtf/Condition.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/HashSet.h>
+#include <wtf/Lock.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
-void prepareCodeOriginForOSRExit(ExecState* exec, CodeOrigin codeOrigin)
-{
-    VM& vm = exec->vm();
-    DeferGC deferGC(vm.heap);
+class CodeBlock;
+class VM;
+
+class JITWorklist {
+    WTF_MAKE_NONCOPYABLE(JITWorklist);
+    WTF_MAKE_FAST_ALLOCATED;
+
+    class Plan;
+    typedef Vector<RefPtr<Plan>, 32> Plans;
     
-    for (; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->directCaller) {
-        CodeBlock* codeBlock = codeOrigin.inlineCallFrame->baselineCodeBlock.get();
-        JITWorklist::instance()->compileNow(codeBlock);
-    }
-}
+public:
+    ~JITWorklist();
+    
+    void completeAllForVM(VM&);
+    void poll(VM&);
+    
+    void compileLater(CodeBlock*);
+    
+    void compileNow(CodeBlock*);
+    
+    static JITWorklist* instance();
+    
+private:
+    JITWorklist();
+    
+    NO_RETURN void runThread();
+    
+    void finalizePlans(Plans&);
+    
+    Plans m_queue;
+    Plans m_plans;
+    HashSet<CodeBlock*> m_planned;
+    
+    Lock m_lock;
+    Condition m_condition; // We use One True Condition for everything because that's easier.
+};
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(JIT)
+
+#endif // JITWorklist_h
 

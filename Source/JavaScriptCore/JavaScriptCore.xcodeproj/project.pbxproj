@@ -1978,6 +1978,8 @@
 		C4F4B6F51A05C984005CAB76 /* generate_objc_protocol_types_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D71A05C76F005CAB76 /* generate_objc_protocol_types_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4F4B6F61A05C984005CAB76 /* objc_generator_templates.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D81A05C76F005CAB76 /* objc_generator_templates.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC00039319D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h in Headers */ = {isa = PBXBuildFile; fileRef = DC00039019D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h */; };
+		DC0184191D10C1890057B053 /* JITWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = DC0184181D10C1870057B053 /* JITWorklist.h */; };
+		DC01841A1D10C18C0057B053 /* JITWorklist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC0184171D10C1870057B053 /* JITWorklist.cpp */; };
 		DC17E8171C9C91D6008A6AB3 /* ShadowChicken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC17E8131C9C7FD4008A6AB3 /* ShadowChicken.cpp */; };
 		DC17E8181C9C91D9008A6AB3 /* ShadowChicken.h in Headers */ = {isa = PBXBuildFile; fileRef = DC17E8141C9C7FD4008A6AB3 /* ShadowChicken.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC17E8191C9C91DB008A6AB3 /* ShadowChickenInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = DC17E8151C9C7FD4008A6AB3 /* ShadowChickenInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4195,6 +4197,8 @@
 		D21202280AD4310C00ED79B6 /* DateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateConversion.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateConversion.h; sourceTree = "<group>"; };
 		DC00039019D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPreciseLocalClobberize.h; path = dfg/DFGPreciseLocalClobberize.h; sourceTree = "<group>"; };
+		DC0184171D10C1870057B053 /* JITWorklist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITWorklist.cpp; sourceTree = "<group>"; };
+		DC0184181D10C1870057B053 /* JITWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITWorklist.h; sourceTree = "<group>"; };
 		DC17E8131C9C7FD4008A6AB3 /* ShadowChicken.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowChicken.cpp; sourceTree = "<group>"; };
 		DC17E8141C9C7FD4008A6AB3 /* ShadowChicken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowChicken.h; sourceTree = "<group>"; };
 		DC17E8151C9C7FD4008A6AB3 /* ShadowChickenInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowChickenInlines.h; sourceTree = "<group>"; };
@@ -5071,6 +5075,8 @@
 				0F5EF91C16878F78003E5C25 /* JITThunks.h */,
 				0FC712E017CD878F008CC93C /* JITToDFGDeferredCompilationCallback.cpp */,
 				0FC712E117CD878F008CC93C /* JITToDFGDeferredCompilationCallback.h */,
+				DC0184171D10C1870057B053 /* JITWorklist.cpp */,
+				DC0184181D10C1870057B053 /* JITWorklist.h */,
 				A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */,
 				A76C51741182748D00715B05 /* JSInterfaceJIT.h */,
 				792CB3471C4EED5C00D13AF3 /* PCToCodeOriginMap.cpp */,
@@ -7858,6 +7864,7 @@
 				90213E3E123A40C200D422F3 /* MemoryStatistics.h in Headers */,
 				0FB5467B14F5C7E1002C2989 /* MethodOfGettingAValueProfile.h in Headers */,
 				7C008CE7187631B600955C24 /* Microtask.h in Headers */,
+				DC0184191D10C1890057B053 /* JITWorklist.h in Headers */,
 				86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */,
 				C4703CD7192844CC0013FBEA /* models.py in Headers */,
 				E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */,
@@ -9158,6 +9165,7 @@
 				E3EF88741B66DF23003F26CB /* JSPropertyNameIterator.cpp in Sources */,
 				862553D116136DA9009F17D0 /* JSProxy.cpp in Sources */,
 				A552C37F1ADDB8FE00139726 /* JSRemoteInspector.cpp in Sources */,
+				DC01841A1D10C18C0057B053 /* JITWorklist.cpp in Sources */,
 				9928FF3B18AC4AEC00B8CF12 /* JSReplayInputs.cpp in Sources */,
 				14874AE515EBDE4A002E3587 /* JSScope.cpp in Sources */,
 				A7C0C4AD1681067E0017011D /* JSScriptRef.cpp in Sources */,

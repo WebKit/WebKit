@@ -1,3 +1,17 @@
+2016-06-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT should be concurrent
+        https://bugs.webkit.org/show_bug.cgi?id=158755
+
+        Reviewed by Geoffrey Garen.
+        
+        This change revealed a latent bug in the LLInt.  The non-llint version of this new test
+        would usually fail because it was still in LLInt.  This new test always fails.
+
+        * js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-llint.html: Added.
+        * js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-llint-expected.txt: Added.
+        * js/dom/script-tests/prototype-chain-caching-with-impure-get-own-property-slot-traps-llint.js: Added.
+
 2016-06-16  Frederic Wang  <fwang@igalia.com>
 
         Add separate MathOperator for selection/measuring/drawing of stretchy operators

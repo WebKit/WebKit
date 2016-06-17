@@ -466,7 +466,7 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     int base = currentInstruction[1].u.operand;
     int property = currentInstruction[2].u.operand;
     int value = currentInstruction[3].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
+    JITArrayMode mode = m_byValCompilationInfo[m_byValInstructionIndex].arrayMode;
     ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
 
     linkSlowCaseIfNotJSCell(iter, base); // base cell check
@@ -476,7 +476,6 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     
     linkSlowCase(iter); // out of bounds
     
-    JITArrayMode mode = chooseArrayMode(profile);
     switch (mode) {
     case JITInt32:
     case JITDouble:
@@ -730,7 +729,7 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
     int scope = currentInstruction[2].u.operand;
-    ResolveType resolveType = static_cast<ResolveType>(currentInstruction[4].u.operand);
+    ResolveType resolveType = static_cast<ResolveType>(copiedInstruction(currentInstruction)[4].u.operand);
     unsigned depth = currentInstruction[5].u.operand;
 
     auto emitCode = [&] (ResolveType resolveType) {
@@ -805,7 +804,7 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    ResolveType resolveType = static_cast<ResolveType>(currentInstruction[4].u.operand);
+    ResolveType resolveType = static_cast<ResolveType>(copiedInstruction(currentInstruction)[4].u.operand);
     if (resolveType == GlobalProperty || resolveType == GlobalVar || resolveType == ClosureVar || resolveType == GlobalLexicalVar || resolveType == ModuleVar)
         return;
 
@@ -849,7 +848,7 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
     int scope = currentInstruction[2].u.operand;
-    ResolveType resolveType = GetPutInfo(currentInstruction[4].u.operand).resolveType();
+    ResolveType resolveType = GetPutInfo(copiedInstruction(currentInstruction)[4].u.operand).resolveType();
     Structure** structureSlot = currentInstruction[5].u.structure.slot();
     uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&currentInstruction[6].u.pointer);
 
@@ -944,7 +943,7 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
 void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     int dst = currentInstruction[1].u.operand;
-    ResolveType resolveType = GetPutInfo(currentInstruction[4].u.operand).resolveType();
+    ResolveType resolveType = GetPutInfo(copiedInstruction(currentInstruction)[4].u.operand).resolveType();
 
     if (resolveType == GlobalVar || resolveType == ClosureVar)
         return;
@@ -998,7 +997,7 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
 {
     int scope = currentInstruction[1].u.operand;
     int value = currentInstruction[3].u.operand;
-    GetPutInfo getPutInfo = GetPutInfo(currentInstruction[4].u.operand);
+    GetPutInfo getPutInfo = GetPutInfo(copiedInstruction(currentInstruction)[4].u.operand);
     ResolveType resolveType = getPutInfo.resolveType();
     Structure** structureSlot = currentInstruction[5].u.structure.slot();
     uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&currentInstruction[6].u.pointer);
@@ -1095,15 +1094,15 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    GetPutInfo getPutInfo = GetPutInfo(currentInstruction[4].u.operand);
+    GetPutInfo getPutInfo = GetPutInfo(copiedInstruction(currentInstruction)[4].u.operand);
     ResolveType resolveType = getPutInfo.resolveType();
     unsigned linkCount = 0;
     if (resolveType != GlobalVar && resolveType != ClosureVar && resolveType != LocalClosureVar && resolveType != GlobalLexicalVar)
         linkCount++;
-    if ((resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks 
-         || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks 
-         || resolveType == LocalClosureVar)
-        && currentInstruction[5].u.watchpointSet->state() != IsInvalidated)
+    if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks 
+        || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks 
+        || resolveType == ClosureVar || resolveType == ClosureVarWithVarInjectionChecks
+        || resolveType == LocalClosureVar)
         linkCount++;
     if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks)
         linkCount++; // bad structure

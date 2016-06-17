@@ -238,6 +238,8 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
         out.print(" (DidTryToEnterInLoop)");
     if (ownerScriptExecutable()->isStrictMode())
         out.print(" (StrictMode)");
+    if (m_didFailJITCompilation)
+        out.print(" (JITFail)");
     if (this->jitType() == JITCode::BaselineJIT && m_didFailFTLCompilation)
         out.print(" (FTLFail)");
     if (this->jitType() == JITCode::BaselineJIT && m_hasBeenCompiledWithFTL)
@@ -1836,6 +1838,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
 #if ENABLE(JIT)
     , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
 #endif
+    , m_didFailJITCompilation(false)
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
     , m_isConstructor(other.m_isConstructor)
@@ -1901,6 +1904,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
 #if ENABLE(JIT)
     , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
 #endif
+    , m_didFailJITCompilation(false)
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
     , m_isConstructor(unlinkedCodeBlock->isConstructor())
@@ -2392,6 +2396,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, WebAssemblyExecutable* ownerE
 #if ENABLE(JIT)
     , m_capabilityLevelState(DFG::CannotCompile)
 #endif
+    , m_didFailJITCompilation(false)
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
     , m_isConstructor(false)
@@ -3885,7 +3890,7 @@ bool CodeBlock::shouldReoptimizeFromLoopNow()
 }
 #endif
 
-ArrayProfile* CodeBlock::getArrayProfile(unsigned bytecodeOffset)
+ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJITLocker&, unsigned bytecodeOffset)
 {
     for (unsigned i = 0; i < m_arrayProfiles.size(); ++i) {
         if (m_arrayProfiles[i].bytecodeOffset() == bytecodeOffset)
@@ -3894,12 +3899,36 @@ ArrayProfile* CodeBlock::getArrayProfile(unsigned bytecodeOffset)
     return 0;
 }
 
-ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
+ArrayProfile* CodeBlock::getArrayProfile(unsigned bytecodeOffset)
 {
-    ArrayProfile* result = getArrayProfile(bytecodeOffset);
+    ConcurrentJITLocker locker(m_lock);
+    return getArrayProfile(locker, bytecodeOffset);
+}
+
+ArrayProfile* CodeBlock::addArrayProfile(const ConcurrentJITLocker&, unsigned bytecodeOffset)
+{
+    m_arrayProfiles.append(ArrayProfile(bytecodeOffset));
+    return &m_arrayProfiles.last();
+}
+
+ArrayProfile* CodeBlock::addArrayProfile(unsigned bytecodeOffset)
+{
+    ConcurrentJITLocker locker(m_lock);
+    return addArrayProfile(locker, bytecodeOffset);
+}
+
+ArrayProfile* CodeBlock::getOrAddArrayProfile(const ConcurrentJITLocker& locker, unsigned bytecodeOffset)
+{
+    ArrayProfile* result = getArrayProfile(locker, bytecodeOffset);
     if (result)
         return result;
-    return addArrayProfile(bytecodeOffset);
+    return addArrayProfile(locker, bytecodeOffset);
+}
+
+ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
+{
+    ConcurrentJITLocker locker(m_lock);
+    return getOrAddArrayProfile(locker, bytecodeOffset);
 }
 
 #if ENABLE(DFG_JIT)

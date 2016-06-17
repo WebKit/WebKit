@@ -1102,9 +1102,10 @@ void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowC
     unsigned linkCount = 0;
     if (resolveType != GlobalVar && resolveType != ClosureVar && resolveType != LocalClosureVar && resolveType != GlobalLexicalVar)
         linkCount++;
-    if ((resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == LocalClosureVar
-        || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
-        && currentInstruction[5].u.watchpointSet->state() != IsInvalidated)
+    if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks 
+        || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks 
+        || resolveType == ClosureVar || resolveType == ClosureVarWithVarInjectionChecks
+        || resolveType == LocalClosureVar)
         linkCount++;
     if (!isInitialization(getPutInfo.initializationMode()) && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) // TDZ check.
         linkCount++;

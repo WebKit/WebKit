@@ -57,6 +57,7 @@
 #include "InferredTypeTable.h"
 #include "Interpreter.h"
 #include "JITCode.h"
+#include "JITWorklist.h"
 #include "JSAPIValueWrapper.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
@@ -342,6 +343,10 @@ VM::~VM()
     }
 #endif // ENABLE(SAMPLING_PROFILER)
     
+#if ENABLE(JIT)
+    JITWorklist::instance()->completeAllForVM(*this);
+#endif // ENABLE(JIT)
+
 #if ENABLE(DFG_JIT)
     // Make sure concurrent compilations are done, but don't install them, since there is
     // no point to doing so.

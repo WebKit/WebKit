@@ -1001,10 +1001,10 @@ def runProfiler
 
     profilerOutput = uniqueFilename(".json")
     if $canRunDisplayProfilerOutput
-        addRunCommand("profiler", ["ruby", (pathToHelpers + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, pathToVM.to_s, "-p", profilerOutput.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
+        addRunCommand("profiler", ["ruby", (pathToHelpers + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, pathToVM.to_s, "--useConcurrentJIT=false", "-p", profilerOutput.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
     else
         puts "Running simple version of #{$collectionName}/#{$benchmark} because some required Ruby features are unavailable."
-        run("profiler-simple", "-p", profilerOutput.to_s)
+        run("profiler-simple", "--useConcurrentJIT=false", "-p", profilerOutput.to_s)
     end
 end
 

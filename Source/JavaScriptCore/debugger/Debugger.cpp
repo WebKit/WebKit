@@ -212,7 +212,7 @@ void Debugger::setSteppingMode(SteppingMode mode)
     if (mode == m_steppingMode)
         return;
 
-    m_vm.heap.completeAllDFGPlans();
+    m_vm.heap.completeAllJITPlans();
 
     m_steppingMode = mode;
     SetSteppingModeFunctor functor(this, mode);
@@ -313,7 +313,7 @@ private:
 
 void Debugger::toggleBreakpoint(Breakpoint& breakpoint, Debugger::BreakpointState enabledOrNot)
 {
-    m_vm.heap.completeAllDFGPlans();
+    m_vm.heap.completeAllJITPlans();
 
     ToggleBreakpointFunctor functor(this, breakpoint, enabledOrNot);
     m_vm.heap.forEachCodeBlock(functor);
@@ -487,7 +487,7 @@ private:
 
 void Debugger::clearBreakpoints()
 {
-    m_vm.heap.completeAllDFGPlans();
+    m_vm.heap.completeAllJITPlans();
 
     m_topBreakpointID = noBreakpointID;
     m_breakpointIDToBreakpoint.clear();
@@ -517,7 +517,7 @@ private:
 
 void Debugger::clearDebuggerRequests(JSGlobalObject* globalObject)
 {
-    m_vm.heap.completeAllDFGPlans();
+    m_vm.heap.completeAllJITPlans();
 
     ClearDebuggerRequestsFunctor functor(globalObject);
     m_vm.heap.forEachCodeBlock(functor);

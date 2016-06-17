@@ -1355,6 +1355,12 @@ ALWAYS_INLINE void JIT::emitTagBool(RegisterID reg)
     or32(TrustedImm32(static_cast<int32_t>(ValueFalse)), reg);
 }
 
+inline Instruction* JIT::copiedInstruction(Instruction* inst)
+{
+    ASSERT(inst >= m_codeBlock->instructions().begin() && inst < m_codeBlock->instructions().end());
+    return m_instructions.begin() + (inst - m_codeBlock->instructions().begin());
+}
+
 #endif // USE(JSVALUE32_64)
 
 } // namespace JSC

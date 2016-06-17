@@ -1,3 +1,116 @@
+2016-06-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT should be concurrent
+        https://bugs.webkit.org/show_bug.cgi?id=158755
+
+        Reviewed by Geoffrey Garen.
+        
+        This makes the baseline JIT concurrent. We want it to be concurrent because it takes up
+        about 1% of PLT3 and 10% of JSBench (though the JSBench number might be down from recent
+        optimizations).
+        
+        The idea is really simple: I separated the compile and link phases of JIT::privateCompile(),
+        and arranged to call the compile phase from another thread. This doesn't reuse the old
+        DFG::Worklist code, because that code does things we don't need (like compilation plan
+        cancellation to allow GC to interleave with compilations) and is structured in a way that
+        would have required more changes to the baseline JIT. Also, I think that code uses the wrong
+        API, and as a result, clients of that API have a bad time. For example, it's never clear who
+        has the responsibility of setting the JIT thresholds and the DFG::Worklist goes to great
+        lengths to try to help its client set those things correctly, but since it doesn't set them
+        directly, the client then has to have additional complex logic to combine what it learned
+        from the Worklist and what it knows to set the thresholds. This patch takes a simpler
+        approach: the JITWorklist takes complete control over scheduling compilations. It's like a
+        combination of DFG::Worklist and operationOptimize().
+        
+        Because the baseline JIT runs quickly, we can take some shortcuts. The JITWorklist requires
+        that all of its plans complete before a GC begins. This ensures that we don't have to worry
+        about interactions between the concurrent baseline JIT and the GC.
+        
+        I needed to do a bunch of minor changes to the JIT to handle the races that emerged. For
+        example, I needed to do things to opcodes that read profiling both in the main path code
+        generator and the slow path one. One trick I used was to create a copy of the instruction
+        stream and provide that for anyone interested in the original value of the profiles. Most
+        code still uses the CodeBlock's instruction stream because it may emit JIT code that points
+        at the stream.
+        
+        This also fixes a LLInt bug in prototype caching. This bug was revealed by this change
+        because more of our LayoutTests now run in LLInt.
+        
+        This looks like it might be a ~1% Octane speed-up (on command line) and a ~0.7% PLT3
+        speed-up. This also looks like a ~2% JSBench speed-up.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::setSteppingMode):
+        (JSC::Debugger::toggleBreakpoint):
+        (JSC::Debugger::clearBreakpoints):
+        (JSC::Debugger::clearDebuggerRequests):
+        * dfg/DFGOSRExitPreparation.cpp:
+        (JSC::DFG::prepareCodeOriginForOSRExit):
+        * heap/Heap.cpp:
+        (JSC::Heap::didFinishIterating):
+        (JSC::Heap::completeAllJITPlans):
+        (JSC::Heap::deleteAllCodeBlocks):
+        (JSC::Heap::collectImpl):
+        (JSC::Heap::completeAllDFGPlans): Deleted.
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::forEachCodeBlock):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitNotifyWrite):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::link):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::JIT::compile):
+        (JSC::JIT::getSlowCase):
+        (JSC::JIT::linkSlowCase):
+        (JSC::JIT::linkDummySlowCase):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitTagBool):
+        (JSC::JIT::originalInstruction):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * jit/JITWorklist.cpp: Added.
+        (JSC::JITWorklist::Plan::Plan):
+        (JSC::JITWorklist::Plan::compileInThread):
+        (JSC::JITWorklist::Plan::finalize):
+        (JSC::JITWorklist::Plan::codeBlock):
+        (JSC::JITWorklist::Plan::vm):
+        (JSC::JITWorklist::Plan::isFinishedCompiling):
+        (JSC::JITWorklist::Plan::isFinalized):
+        (JSC::JITWorklist::JITWorklist):
+        (JSC::JITWorklist::~JITWorklist):
+        (JSC::JITWorklist::completeAllForVM):
+        (JSC::JITWorklist::poll):
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::compileNow):
+        (JSC::JITWorklist::runThread):
+        (JSC::JITWorklist::finalizePlans):
+        (JSC::JITWorklist::instance):
+        * jit/JITWorklist.h: Added.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+
 2016-06-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.profile should use the new Sampling Profiler

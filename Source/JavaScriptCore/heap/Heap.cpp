@@ -40,6 +40,7 @@
 #include "HeapVerifier.h"
 #include "IncrementalSweeper.h"
 #include "Interpreter.h"
+#include "JITWorklist.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
@@ -519,8 +520,11 @@ void Heap::didFinishIterating()
     m_objectSpace.didFinishIterating();
 }
 
-void Heap::completeAllDFGPlans()
+void Heap::completeAllJITPlans()
 {
+#if ENABLE(JIT)
+    JITWorklist::instance()->completeAllForVM(*m_vm);
+#endif // ENABLE(JIT)
 #if ENABLE(DFG_JIT)
     DFG::completeAllPlansForVM(*m_vm);
 #endif
@@ -1045,7 +1049,7 @@ void Heap::deleteAllCodeBlocks()
     RELEASE_ASSERT(!m_vm->entryScope);
     ASSERT(m_operationInProgress == NoOperation);
 
-    completeAllDFGPlans();
+    completeAllJITPlans();
 
     for (ExecutableBase* executable : m_executables)
         executable->clearCode();
@@ -1140,6 +1144,13 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
         DeferGCForAWhile awhile(*this);
         vm()->typeProfilerLog()->processLogEntries(ASCIILiteral("GC"));
     }
+
+#if ENABLE(JIT)
+    {
+        DeferGCForAWhile awhile(*this);
+        JITWorklist::instance()->completeAllForVM(*m_vm);
+    }
+#endif // ENABLE(JIT)
 
     vm()->shadowChicken().update(*vm(), vm()->topCallFrame);
 

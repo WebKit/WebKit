@@ -40,6 +40,7 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITExceptions.h"
+#include "JITWorklist.h"
 #include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
@@ -326,6 +327,8 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         return false;
     }
     
+    JITWorklist::instance()->poll(vm);
+    
     switch (codeBlock->jitType()) {
     case JITCode::BaselineJIT: {
         if (Options::verboseOSR())
@@ -334,24 +337,8 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         return true;
     }
     case JITCode::InterpreterThunk: {
-        CompilationResult result = JIT::compile(&vm, codeBlock, JITCompilationCanFail);
-        switch (result) {
-        case CompilationFailed:
-            CODEBLOCK_LOG_EVENT(codeBlock, "delayJITCompile", ("compilation failed"));
-            if (Options::verboseOSR())
-                dataLogF("    JIT compilation failed.\n");
-            codeBlock->dontJITAnytimeSoon();
-            return false;
-        case CompilationSuccessful:
-            if (Options::verboseOSR())
-                dataLogF("    JIT compilation successful.\n");
-            codeBlock->ownerScriptExecutable()->installCode(codeBlock);
-            codeBlock->jitSoon();
-            return true;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return false;
-        }
+        JITWorklist::instance()->compileLater(codeBlock);
+        return codeBlock->jitType() == JITCode::BaselineJIT;
     }
     default:
         dataLog("Unexpected code block in LLInt: ", *codeBlock, "\n");
@@ -588,6 +575,9 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc,
     Structure* structure = baseCell->structure();
 
     if (structure->typeInfo().prohibitsPropertyCaching())
+        return;
+    
+    if (structure->needImpurePropertyWatchpoint())
         return;
 
     if (structure->isDictionary()) {

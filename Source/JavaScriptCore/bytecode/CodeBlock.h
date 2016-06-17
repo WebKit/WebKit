@@ -461,12 +461,11 @@ public:
 
     unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
     const ArrayProfileVector& arrayProfiles() { return m_arrayProfiles; }
-    ArrayProfile* addArrayProfile(unsigned bytecodeOffset)
-    {
-        m_arrayProfiles.append(ArrayProfile(bytecodeOffset));
-        return &m_arrayProfiles.last();
-    }
+    ArrayProfile* addArrayProfile(const ConcurrentJITLocker&, unsigned bytecodeOffset);
+    ArrayProfile* addArrayProfile(unsigned bytecodeOffset);
+    ArrayProfile* getArrayProfile(const ConcurrentJITLocker&, unsigned bytecodeOffset);
     ArrayProfile* getArrayProfile(unsigned bytecodeOffset);
+    ArrayProfile* getOrAddArrayProfile(const ConcurrentJITLocker&, unsigned bytecodeOffset);
     ArrayProfile* getOrAddArrayProfile(unsigned bytecodeOffset);
 
     // Exception handling support
@@ -868,6 +867,7 @@ public:
 
     bool m_allTransitionsHaveBeenMarked : 1; // Initialized and used on every GC.
 
+    bool m_didFailJITCompilation : 1;
     bool m_didFailFTLCompilation : 1;
     bool m_hasBeenCompiledWithFTL : 1;
     bool m_isConstructor : 1;
