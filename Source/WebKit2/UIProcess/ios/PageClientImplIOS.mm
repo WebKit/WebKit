@@ -740,11 +740,11 @@ void PageClientImpl::didRestoreScrollPosition()
 {
 }
 
-UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
+WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
 {
     if (!m_webView)
-        return UserInterfaceLayoutDirection::LTR;
-    return ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:[m_webView semanticContentAttribute]] == UIUserInterfaceLayoutDirectionLeftToRight) ? UserInterfaceLayoutDirection::LTR : UserInterfaceLayoutDirection::RTL;
+        return WebCore::UserInterfaceLayoutDirection::LTR;
+    return ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:[m_webView semanticContentAttribute]] == UIUserInterfaceLayoutDirectionLeftToRight) ? WebCore::UserInterfaceLayoutDirection::LTR : WebCore::UserInterfaceLayoutDirection::RTL;
 }
 
 } // namespace WebKit

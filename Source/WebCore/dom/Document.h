@@ -1038,6 +1038,9 @@ public:
     void registerForPageScaleFactorChangedCallbacks(HTMLMediaElement*);
     void unregisterForPageScaleFactorChangedCallbacks(HTMLMediaElement*);
     void pageScaleFactorChangedAndStable();
+    void registerForUserInterfaceLayoutDirectionChangedCallbacks(HTMLMediaElement&);
+    void unregisterForUserInterfaceLayoutDirectionChangedCallbacks(HTMLMediaElement&);
+    void userInterfaceLayoutDirectionChanged();
 #endif
 
     void registerForVisibilityStateChangedCallbacks(Element*);
@@ -1607,6 +1610,7 @@ private:
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     HashSet<HTMLMediaElement*> m_pageScaleFactorChangedElements;
+    HashSet<HTMLMediaElement*> m_userInterfaceLayoutDirectionChangedElements;
 #endif
 
     HashSet<Element*> m_visibilityStateCallbackElements;

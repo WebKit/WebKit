@@ -486,6 +486,9 @@ public:
 
     RefPtr<GCObservation> observeGC(JSC::JSValue);
 
+    enum class UserInterfaceLayoutDirection { LTR, RTL };
+    void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

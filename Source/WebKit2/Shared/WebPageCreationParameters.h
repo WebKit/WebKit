@@ -29,7 +29,6 @@
 #include "DrawingAreaInfo.h"
 #include "LayerTreeContext.h"
 #include "SessionState.h"
-#include "UserInterfaceLayoutDirection.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageGroupData.h"
 #include "WebPreferencesStore.h"
@@ -39,6 +38,7 @@
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SessionID.h>
+#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ViewState.h>
 #include <wtf/text/WTFString.h>
 
@@ -135,7 +135,7 @@ struct WebPageCreationParameters {
     bool appleMailPaginationQuirkEnabled;
     bool shouldScaleViewToFitDocument;
 
-    UserInterfaceLayoutDirection userInterfaceLayoutDirection;
+    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection;
 };
 
 } // namespace WebKit

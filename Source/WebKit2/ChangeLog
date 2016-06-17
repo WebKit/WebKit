@@ -1,3 +1,46 @@
+2016-06-17  Antoine Quint  <graouts@apple.com>
+
+        Web video playback controls should have RTL volume slider
+        https://bugs.webkit.org/show_bug.cgi?id=158856
+        <rdar://problem/25971769>
+
+        Reviewed by Tim Horton.
+
+        We now call setUserInterfaceLayoutDirection() on WebCore::Page to propagate
+        the user interface layout direction down to the Web content. To facilitate this,
+        the UserInterfaceLayoutDirection enum is now defined in WebCore.
+
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (convertSystemLayoutDirection):
+        (toUserInterfaceLayoutDirection):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::toUserInterfaceLayoutDirection):
+        (WebKit::WebViewImpl::userInterfaceLayoutDirection):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::userInterfaceLayoutDirection):
+        (WebKit::WebPageProxy::setUserInterfaceLayoutDirection):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/WebView.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::userInterfaceLayoutDirection):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::userInterfaceLayoutDirection):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe):
+        (WebKit::ViewGestureController::isPhysicallySwipingLeft):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_userInterfaceLayoutDirection):
+        (WebKit::WebPage::setUserInterfaceLayoutDirection):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performNonEditingBehaviorForSelector):
+
 2016-06-17  Dean Jackson  <dino@apple.com>
 
         REGRESSION: Double tap to zoom does not work on yahoo finance

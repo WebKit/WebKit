@@ -65,6 +65,11 @@ enum AutoFillButtonType {
     "AutoFillButtonTypeCredentials"
 };
 
+enum UserInterfaceLayoutDirection {
+    "LTR",
+    "RTL"
+};
+
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     NoInterfaceObject,
@@ -458,4 +463,6 @@ enum AutoFillButtonType {
     boolean isProcessingUserGesture();
 
     GCObservation observeGC(any observed);
+
+    void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);
 };

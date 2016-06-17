@@ -6307,12 +6307,12 @@ void WebPageProxy::setResourceCachingDisabled(bool disabled)
     m_process->send(Messages::WebPage::SetResourceCachingDisabled(disabled), m_pageID);
 }
 
-UserInterfaceLayoutDirection WebPageProxy::userInterfaceLayoutDirection()
+WebCore::UserInterfaceLayoutDirection WebPageProxy::userInterfaceLayoutDirection()
 {
     return m_pageClient.userInterfaceLayoutDirection();
 }
 
-void WebPageProxy::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection)
+void WebPageProxy::setUserInterfaceLayoutDirection(WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection)
 {
     if (!isValid())
         return;

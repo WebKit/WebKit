@@ -191,7 +191,7 @@ private:
 
     void didRestoreScrollPosition() override;
 
-    UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
+    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
     WKContentView *m_contentView;
     WKWebView *m_webView;

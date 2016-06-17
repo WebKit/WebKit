@@ -220,7 +220,7 @@ private:
     void startWindowDrag() override;
     NSWindow *platformWindow() override;
 
-    UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
+    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
 #if WK_API_ENABLED
     NSView *inspectorAttachmentView() override;

@@ -2597,6 +2597,7 @@
 		71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */; };
 		71B1E125164048F700B1880A /* InspectorLayerTreeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 71B1E124164048CC00B1880A /* InspectorLayerTreeAgent.h */; };
 		71B1E1261640491A00B1880A /* InspectorLayerTreeAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71B1E123164048CC00B1880A /* InspectorLayerTreeAgent.cpp */; };
+		71C916081D1483A300ACA47D /* UserInterfaceLayoutDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 71C916071D1483A300ACA47D /* UserInterfaceLayoutDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71CC7A20152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71CC7A1F152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp */; };
 		71DCB7011568197600862271 /* JSSVGZoomAndPan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71DCB6FF1568197600862271 /* JSSVGZoomAndPan.cpp */; };
 		71DCB7021568197600862271 /* JSSVGZoomAndPan.h in Headers */ = {isa = PBXBuildFile; fileRef = 71DCB7001568197600862271 /* JSSVGZoomAndPan.h */; };
@@ -10244,6 +10245,7 @@
 		71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathUtilities.h; sourceTree = "<group>"; };
 		71B1E123164048CC00B1880A /* InspectorLayerTreeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorLayerTreeAgent.cpp; sourceTree = "<group>"; };
 		71B1E124164048CC00B1880A /* InspectorLayerTreeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorLayerTreeAgent.h; sourceTree = "<group>"; };
+		71C916071D1483A300ACA47D /* UserInterfaceLayoutDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInterfaceLayoutDirection.h; sourceTree = "<group>"; };
 		71CC7A1F152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedEnumeration.cpp; sourceTree = "<group>"; };
 		71DCB6FF1568197600862271 /* JSSVGZoomAndPan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomAndPan.cpp; sourceTree = "<group>"; };
 		71DCB7001568197600862271 /* JSSVGZoomAndPan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomAndPan.h; sourceTree = "<group>"; };
@@ -23080,6 +23082,7 @@
 				BCBD21AA0E417AD400A070F2 /* URLHash.h */,
 				868160D1187669C40021E79D /* UserActivity.cpp */,
 				868160D2187669C40021E79D /* UserActivity.h */,
+				71C916071D1483A300ACA47D /* UserInterfaceLayoutDirection.h */,
 				2E3BBF051162DA1100B9409A /* UUID.cpp */,
 				2E3BBF061162DA1100B9409A /* UUID.h */,
 				9A1142031832D134000BB8AD /* ValueToString.h */,
@@ -28087,6 +28090,7 @@
 				A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */,
 				E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */,
 				A8EA800A0A19516E00A8EF5F /* StyleSheetList.h in Headers */,
+				71C916081D1483A300ACA47D /* UserInterfaceLayoutDirection.h in Headers */,
 				BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */,
 				BC5EB8100E81F2CE00B25965 /* StyleTransformData.h in Headers */,
 				E4DEAA1817A93DC3000E0430 /* StyleTreeResolver.h in Headers */,

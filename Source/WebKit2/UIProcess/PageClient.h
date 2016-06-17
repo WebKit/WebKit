@@ -27,12 +27,12 @@
 #define PageClient_h
 
 #include "ShareableBitmap.h"
-#include "UserInterfaceLayoutDirection.h"
 #include "WebColorPicker.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxy.h"
 #include <WebCore/AlternativeTextClient.h>
 #include <WebCore/EditorClient.h>
+#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <wtf/Forward.h>
 
 #if PLATFORM(COCOA)
@@ -364,7 +364,7 @@ public:
 
     virtual bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) { return false; }
 
-    virtual UserInterfaceLayoutDirection userInterfaceLayoutDirection() = 0;
+    virtual WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() = 0;
 };
 
 } // namespace WebKit

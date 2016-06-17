@@ -47,7 +47,6 @@
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "UserData.h"
-#include "UserInterfaceLayoutDirection.h"
 #include "UserMediaPermissionRequestManager.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
@@ -66,6 +65,7 @@
 #include <WebCore/TextIndicator.h>
 #include <WebCore/UserActivity.h>
 #include <WebCore/UserContentTypes.h>
+#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/UserScriptTypes.h>
 #include <WebCore/ViewState.h>
 #include <WebCore/ViewportConfiguration.h>
@@ -1470,7 +1470,7 @@ private:
     std::chrono::system_clock::time_point m_loadCommitTime;
 #endif
 
-    UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
+    WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { WebCore::UserInterfaceLayoutDirection::LTR };
 };
 
 } // namespace WebKit

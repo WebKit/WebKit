@@ -1,3 +1,19 @@
+2016-06-17  Antoine Quint  <graouts@apple.com>
+
+        Web video playback controls should have RTL volume slider
+        https://bugs.webkit.org/show_bug.cgi?id=158856
+        <rdar://problem/25971769>
+
+        Reviewed by Tim Horton.
+
+        New test that checks that the volume box has the correct CSS class name and the expected
+        CSS transform value applied to it when the user interface layout direction is right-to-left
+        and that changing the user interface layout direction dynamically update the media element
+        shadow tree as expected.
+
+        * fullscreen/video-controls-rtl-expected.txt: Added.
+        * fullscreen/video-controls-rtl.html: Added.
+
 2016-06-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update LayoutTest fast/canvas/canvas-composite-text-alpha.html

@@ -897,6 +897,21 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     mainFrame().pageOverlayController().didChangeDeviceScaleFactor();
 }
 
+void Page::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection)
+{
+    if (m_userInterfaceLayoutDirection == userInterfaceLayoutDirection)
+        return;
+
+    m_userInterfaceLayoutDirection = userInterfaceLayoutDirection;
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
+        frame->document()->userInterfaceLayoutDirectionChanged();
+    }
+#endif
+}
+
 void Page::setTopContentInset(float contentInset)
 {
     if (m_topContentInset == contentInset)

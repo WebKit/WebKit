@@ -377,11 +377,11 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 {
     switch (direction) {
     case NSUserInterfaceLayoutDirectionLeftToRight:
-        return static_cast<uint32_t>(WebCore::LTR);
+        return static_cast<uint32_t>(WebCore::UserInterfaceLayoutDirection::LTR);
     case NSUserInterfaceLayoutDirectionRightToLeft:
-        return static_cast<uint32_t>(WebCore::RTL);
+        return static_cast<uint32_t>(WebCore::UserInterfaceLayoutDirection::RTL);
     }
-    return static_cast<uint32_t>(WebCore::LTR);
+    return static_cast<uint32_t>(WebCore::UserInterfaceLayoutDirection::LTR);
 }
 #endif
 
@@ -4303,18 +4303,18 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return (_WKWebViewPrintFormatter *)viewPrintFormatter;
 }
 
-static WebKit::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISemanticContentAttribute contentAttribute)
+static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISemanticContentAttribute contentAttribute)
 {
     auto direction = [UIView userInterfaceLayoutDirectionForSemanticContentAttribute:contentAttribute];
     switch (direction) {
     case UIUserInterfaceLayoutDirectionLeftToRight:
-        return WebKit::UserInterfaceLayoutDirection::LTR;
+        return WebCore::UserInterfaceLayoutDirection::LTR;
     case UIUserInterfaceLayoutDirectionRightToLeft:
-        return WebKit::UserInterfaceLayoutDirection::RTL;
+        return WebCore::UserInterfaceLayoutDirection::RTL;
     }
 
     ASSERT_NOT_REACHED();
-    return WebKit::UserInterfaceLayoutDirection::LTR;
+    return WebCore::UserInterfaceLayoutDirection::LTR;
 }
 
 - (void)setSemanticContentAttribute:(UISemanticContentAttribute)contentAttribute

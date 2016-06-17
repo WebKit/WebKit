@@ -4029,20 +4029,20 @@ bool WebViewImpl::windowIsFrontWindowUnderMouse(NSEvent *event)
     return m_view.window.windowNumber != eventWindowNumber;
 }
 
-static UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUserInterfaceLayoutDirection direction)
+static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUserInterfaceLayoutDirection direction)
 {
     switch (direction) {
     case NSUserInterfaceLayoutDirectionLeftToRight:
-        return UserInterfaceLayoutDirection::LTR;
+        return WebCore::UserInterfaceLayoutDirection::LTR;
     case NSUserInterfaceLayoutDirectionRightToLeft:
-        return UserInterfaceLayoutDirection::RTL;
+        return WebCore::UserInterfaceLayoutDirection::RTL;
     }
 
     ASSERT_NOT_REACHED();
-    return UserInterfaceLayoutDirection::LTR;
+    return WebCore::UserInterfaceLayoutDirection::LTR;
 }
 
-UserInterfaceLayoutDirection WebViewImpl::userInterfaceLayoutDirection()
+WebCore::UserInterfaceLayoutDirection WebViewImpl::userInterfaceLayoutDirection()
 {
     return toUserInterfaceLayoutDirection(m_view.userInterfaceLayoutDirection);
 }

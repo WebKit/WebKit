@@ -144,7 +144,7 @@ private:
     bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;
 #endif
 
-    UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return UserInterfaceLayoutDirection::LTR; }
+    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return WebCore::UserInterfaceLayoutDirection::LTR; }
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;

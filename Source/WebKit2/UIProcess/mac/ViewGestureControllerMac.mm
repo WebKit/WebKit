@@ -31,7 +31,6 @@
 #import "FrameLoadState.h"
 #import "Logging.h"
 #import "NativeWebWheelEvent.h"
-#import "UserInterfaceLayoutDirection.h"
 #import "ViewGestureControllerMessages.h"
 #import "ViewGestureGeometryCollectorMessages.h"
 #import "ViewSnapshotStore.h"
@@ -300,7 +299,7 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe(NSEve
 
     bool willSwipeBack = false;
     bool willSwipeForward = false;
-    if (m_webPageProxy.userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::LTR) {
+    if (m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::LTR) {
         willSwipeBack = event.scrollingDeltaX > 0 && isPinnedToLeft && m_webPageProxy.backForwardList().backItem();
         willSwipeForward = event.scrollingDeltaX < 0 && isPinnedToRight && m_webPageProxy.backForwardList().forwardItem();
     } else {
@@ -678,7 +677,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
 bool ViewGestureController::isPhysicallySwipingLeft(SwipeDirection direction) const
 {
-    bool isLTR = m_webPageProxy.userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::LTR;
+    bool isLTR = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::LTR;
     bool isSwipingForward = direction == SwipeDirection::Forward;
     return isLTR != isSwipingForward;
 }

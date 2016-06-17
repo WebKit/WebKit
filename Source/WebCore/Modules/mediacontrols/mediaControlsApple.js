@@ -117,6 +117,7 @@ Controller.prototype = {
         out: 'out',
         pictureInPictureButton: 'picture-in-picture-button',
         placeholderShowing: 'placeholder-showing',
+        usesLTRUserInterfaceLayoutDirection: 'uses-ltr-user-interface-layout-direction'
     },
     KeyCodes: {
         enter: 13,
@@ -2234,6 +2235,11 @@ Controller.prototype = {
             return;
 
         this._pageScaleFactor = newScaleFactor;
+    },
+
+    set usesLTRUserInterfaceLayoutDirection(usesLTRUserInterfaceLayoutDirection)
+    {
+        this.controls.volumeBox.classList.toggle(this.ClassNames.usesLTRUserInterfaceLayoutDirection, usesLTRUserInterfaceLayoutDirection);
     },
 
     handleRootResize: function(event)

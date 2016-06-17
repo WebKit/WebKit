@@ -29,11 +29,11 @@
 #if PLATFORM(MAC)
 
 #include "PluginComplexTextInputState.h"
-#include "UserInterfaceLayoutDirection.h"
 #include "WKLayoutMode.h"
 #include "WebPageProxy.h"
 #include "_WKOverlayScrollbarStyle.h"
 #include <WebCore/TextIndicatorWindow.h>
+#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <functional>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -486,7 +486,7 @@ public:
     void setRequiresUserActionForEditingControlsManager(bool requiresUserActionForEditingControlsManager) { m_requiresUserActionForEditingControlsManager = requiresUserActionForEditingControlsManager; }
     bool requiresUserActionForEditingControlsManager() const { return m_requiresUserActionForEditingControlsManager; }
 
-    UserInterfaceLayoutDirection userInterfaceLayoutDirection();
+    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection();
     void setUserInterfaceLayoutDirection(NSUserInterfaceLayoutDirection);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 

@@ -15,7 +15,7 @@ EXPECTED (video.duration == 'Infinity') OK
 -webkit-media-controls-play-button: classes: [paused]
 -webkit-media-controls-status-display: classes: []
 none: classes: [mute-box]
--webkit-media-controls-volume-slider-container: classes: [volume-box]
+-webkit-media-controls-volume-slider-container: classes: [volume-box uses-ltr-user-interface-layout-direction]
 -webkit-media-controls-volume-slider-container-background: classes: []
 -webkit-media-controls-volume-slider-container-tint: classes: []
 -webkit-media-controls-volume-slider: classes: []

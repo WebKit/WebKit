@@ -840,11 +840,11 @@ bool PageClientImpl::windowIsFrontWindowUnderMouse(const NativeWebMouseEvent& ev
     return m_impl->windowIsFrontWindowUnderMouse(event.nativeEvent());
 }
 
-UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
+WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
 {
     if (!m_view)
-        return UserInterfaceLayoutDirection::LTR;
-    return (m_view.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionLeftToRight) ? UserInterfaceLayoutDirection::LTR : UserInterfaceLayoutDirection::RTL;
+        return WebCore::UserInterfaceLayoutDirection::LTR;
+    return (m_view.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionLeftToRight) ? WebCore::UserInterfaceLayoutDirection::LTR : WebCore::UserInterfaceLayoutDirection::RTL;
 }
 
 } // namespace WebKit

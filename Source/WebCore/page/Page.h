@@ -33,6 +33,7 @@
 #include "ScrollTypes.h"
 #include "SessionID.h"
 #include "Supplementable.h"
+#include "UserInterfaceLayoutDirection.h"
 #include "ViewState.h"
 #include "ViewportArguments.h"
 #include "WheelEventTestTrigger.h"
@@ -280,6 +281,9 @@ public:
 
     WEBCORE_EXPORT void setPageScaleFactor(float scale, const IntPoint& origin, bool inStableState = true);
     float pageScaleFactor() const { return m_pageScaleFactor; }
+
+    UserInterfaceLayoutDirection userInterfaceLayoutDirection() const { return m_userInterfaceLayoutDirection; }
+    WEBCORE_EXPORT void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection);
 
     // The view scale factor is multiplied into the page scale factor by all
     // callers of setPageScaleFactor.
@@ -716,6 +720,7 @@ private:
     bool m_showAllPlugins { false };
     bool m_controlledByAutomation { false };
     bool m_resourceCachingDisabled { false };
+    UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
 };
 
 inline PageGroup& Page::group()

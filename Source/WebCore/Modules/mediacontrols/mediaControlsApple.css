@@ -764,6 +764,10 @@ video:-webkit-full-screen::-webkit-media-controls-panel .volume-box {
     border: none;
 }
 
+video:-webkit-full-screen::-webkit-media-controls-panel .volume-box:not(.uses-ltr-user-interface-layout-direction) {
+    transform: translateX(23px) scaleX(-1);
+}
+
 video:-webkit-full-screen::-webkit-media-controls-volume-slider {
     -webkit-transform: none;
     background-color: transparent;

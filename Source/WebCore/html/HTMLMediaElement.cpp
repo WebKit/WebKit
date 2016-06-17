@@ -596,6 +596,7 @@ void HTMLMediaElement::registerWithDocument(Document& document)
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_mediaControlsDependOnPageScaleFactor)
         document.registerForPageScaleFactorChangedCallbacks(this);
+    document.registerForUserInterfaceLayoutDirectionChangedCallbacks(*this);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -630,6 +631,7 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_mediaControlsDependOnPageScaleFactor)
         document.unregisterForPageScaleFactorChangedCallbacks(this);
+    document.unregisterForUserInterfaceLayoutDirectionChangedCallbacks(*this);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -6488,13 +6490,40 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     return true;
 }
 
-static void setPageScaleFactorProperty(JSC::ExecState* exec, JSC::JSValue controllerValue, float pageScaleFactor)
+void HTMLMediaElement::updatePageScaleFactorJSProperty()
 {
+    Page* page = document().page();
+    if (!page)
+        return;
+
+    setControllerJSProperty("pageScaleFactor", JSC::jsNumber(page->pageScaleFactor()));
+}
+
+void HTMLMediaElement::updateUsesLTRUserInterfaceLayoutDirectionJSProperty()
+{
+    Page* page = document().page();
+    if (!page)
+        return;
+
+    bool usesLTRUserInterfaceLayoutDirectionProperty = page->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::LTR;
+    setControllerJSProperty("usesLTRUserInterfaceLayoutDirection", JSC::jsBoolean(usesLTRUserInterfaceLayoutDirectionProperty));
+}
+
+void HTMLMediaElement::setControllerJSProperty(const char* propertyName, JSC::JSValue propertyValue)
+{
+    DOMWrapperWorld& world = ensureIsolatedWorld();
+    ScriptController& scriptController = document().frame()->script();
+    JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::ExecState* exec = globalObject->globalExec();
+    JSC::JSLockHolder lock(exec);
+
+    JSC::JSValue controllerValue = controllerJSValue(*exec, *globalObject, *this);
     JSC::PutPropertySlot propertySlot(controllerValue);
     JSC::JSObject* controllerObject = controllerValue.toObject(exec);
     if (!controllerObject)
         return;
-    controllerObject->methodTable()->put(controllerObject, exec, JSC::Identifier::fromString(exec, "pageScaleFactor"), JSC::jsNumber(pageScaleFactor), propertySlot);
+
+    controllerObject->methodTable()->put(controllerObject, exec, JSC::Identifier::fromString(exec, propertyName), propertyValue, propertySlot);
 }
 
 void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
@@ -6571,7 +6600,8 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 
     mediaControlsHostJSWrapperObject->putDirect(exec->vm(), controller, controllerValue, JSC::DontDelete | JSC::DontEnum | JSC::ReadOnly);
 
-    setPageScaleFactorProperty(exec, controllerValue, page->pageScaleFactor());
+    updatePageScaleFactorJSProperty();
+    updateUsesLTRUserInterfaceLayoutDirectionJSProperty();
 
     if (exec->hadException())
         exec->clearException();
@@ -6635,20 +6665,12 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
 
 void HTMLMediaElement::pageScaleFactorChanged()
 {
-    Page* page = document().page();
-    if (!page)
-        return;
+    updatePageScaleFactorJSProperty();
+}
 
-    LOG(Media, "HTMLMediaElement::pageScaleFactorChanged(%p) = %f", this, page->pageScaleFactor());
-    DOMWrapperWorld& world = ensureIsolatedWorld();
-    ScriptController& scriptController = document().frame()->script();
-    JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
-    JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
-
-    JSC::JSValue controllerValue = controllerJSValue(*exec, *globalObject, *this);
-
-    setPageScaleFactorProperty(exec, controllerValue, page->pageScaleFactor());
+void HTMLMediaElement::userInterfaceLayoutDirectionChanged()
+{
+    updateUsesLTRUserInterfaceLayoutDirectionJSProperty();
 }
 
 String HTMLMediaElement::getCurrentMediaControlsStatus()

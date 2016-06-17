@@ -38,6 +38,7 @@
 #include "MediaElementSession.h"
 #include "MediaProducer.h"
 #include "PageThrottler.h"
+#include "UserInterfaceLayoutDirection.h"
 
 #if ENABLE(VIDEO_TRACK)
 #include "AudioTrack.h"
@@ -444,6 +445,7 @@ public:
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     void pageScaleFactorChanged();
+    void userInterfaceLayoutDirectionChanged();
     WEBCORE_EXPORT String getCurrentMediaControlsStatus();
 #endif
 
@@ -780,6 +782,10 @@ private:
     void updatePlaybackControlsManager();
 
     void updateRenderer();
+
+    void updatePageScaleFactorJSProperty();
+    void updateUsesLTRUserInterfaceLayoutDirectionJSProperty();
+    void setControllerJSProperty(const char*, JSC::JSValue);
 
     Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
