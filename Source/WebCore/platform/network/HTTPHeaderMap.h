@@ -133,6 +133,9 @@ public:
 
 #if USE(CF)
     void set(CFStringRef name, const String& value);
+#ifdef __OBJC__
+    void set(NSString *name, const String& value) { set((__bridge CFStringRef)name, value); }
+#endif
 #endif
 
     WEBCORE_EXPORT String get(HTTPHeaderName) const;
