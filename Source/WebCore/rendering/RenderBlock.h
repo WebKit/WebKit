@@ -314,7 +314,7 @@ protected:
     void layoutPositionedObjects(bool relayoutChildren, bool fixedPositionObjectsOnly = false);
     virtual void layoutPositionedObject(RenderBox&, bool relayoutChildren, bool fixedPositionObjectsOnly);
     
-    void markFixedPositionObjectForLayoutIfNeeded(RenderObject& child);
+    void markFixedPositionObjectForLayoutIfNeeded(RenderBox& child);
 
     LayoutUnit marginIntrinsicLogicalWidthForChild(RenderBox&) const;
 
