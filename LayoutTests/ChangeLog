@@ -1,3 +1,26 @@
+2016-06-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        CSP: Content Security Policy should allow '*' to match the originating page's scheme
+        https://bugs.webkit.org/show_bug.cgi?id=158811
+        <rdar://problem/26819568>
+
+        Reviewed by Daniel Bates.
+
+        * security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star-expected.html: Added.
+        * security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html: Added.
+        * security/contentSecurityPolicy/image-with-file-url-blocked-by-img-src-star-expected.html: Removed.
+        * security/contentSecurityPolicy/image-with-file-url-blocked-by-img-src-star.html: Removed.
+        * security/contentSecurityPolicy/link-with-file-url-allowed-by-style-src-star-expected.html: Added.
+        * security/contentSecurityPolicy/link-with-file-url-allowed-by-style-src-star.html: Added.
+        * security/contentSecurityPolicy/link-with-file-url-blocked-by-style-src-star-expected.html: Removed.
+        * security/contentSecurityPolicy/link-with-file-url-blocked-by-style-src-star.html: Removed.
+        * security/contentSecurityPolicy/resources/alert-pass.js: Added.
+        * security/contentSecurityPolicy/script-with-file-url-allowed-by-script-src-star-expected.txt: Added.
+        * security/contentSecurityPolicy/script-with-file-url-allowed-by-script-src-star.html: Added.
+        * security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-expected.html: Copied from LayoutTests/security/contentSecurityPolicy/video-with-file-url-blocked-by-media-src-star.html.
+        * security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html: Renamed from LayoutTests/security/contentSecurityPolicy/video-with-file-url-blocked-by-media-src-star.html.
+        * security/contentSecurityPolicy/video-with-file-url-blocked-by-media-src-star-expected.html: Removed.
+
 2016-06-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.profile should use the new Sampling Profiler
