@@ -1,3 +1,20 @@
+2016-06-17  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        Update test-expected file for failing fullscreen test
+        https://bugs.webkit.org/show_bug.cgi?id=158838
+
+        Reviewed by Carlos Garcia Campos.
+
+        Used MAC version of the test as the default version since only MAC and
+        GTK do not skip this test and expect the same result. Removed 
+        test-expected files specific to each port when there was one. Prior to
+        this patch, GTK test was failing unexpectedly.
+
+        * fullscreen/video-controls-override-expected.txt:
+        * platform/efl/fullscreen/video-controls-override-expected.txt: Removed.
+        * platform/gtk/fullscreen/video-controls-override-expected.txt: Removed.
+        * platform/mac/fullscreen/video-controls-override-expected.txt: Removed.
+
 2016-06-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         CORS preflight with a non-200 response should be a preflight failure
