@@ -1,3 +1,9 @@
+2016-06-17  Enrique Ocaña González  <eocanha@igalia.com>
+
+        Unreviewed. Added myself to the list of committers.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-06-16  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL][GTK] LayoutTest doesn't run on Ubuntu 16.04

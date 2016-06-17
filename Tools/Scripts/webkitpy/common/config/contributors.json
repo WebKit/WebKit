@@ -906,6 +906,16 @@
             "epoger"
          ]
       },
+      "Enrique Oca\u00F1a Gonz\u00E1lez" : {
+         "emails" : [
+            "eocanha@igalia.com",
+            "eocanha@gmail.com"
+         ],
+         "expertise" : "GStreamer, Media Source Extensions",
+         "nicks" : [
+            "eocanha"
+         ]
+      },
       "Eric Roman" : {
          "emails" : [
             "eroman@chromium.org"
