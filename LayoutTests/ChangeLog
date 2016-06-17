@@ -1,3 +1,12 @@
+2016-06-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=155196
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-06-17  Dean Jackson  <dino@apple.com>
 
         REGRESSION: Double tap to zoom does not work on yahoo finance
