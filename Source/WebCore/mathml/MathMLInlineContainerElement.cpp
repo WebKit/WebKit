@@ -38,7 +38,6 @@
 #include "RenderMathMLRoot.h"
 #include "RenderMathMLRow.h"
 #include "RenderMathMLScripts.h"
-#include "RenderMathMLSquareRoot.h"
 #include "RenderMathMLUnderOver.h"
 
 namespace WebCore {
@@ -57,20 +56,10 @@ Ref<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const Qua
 
 void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
 {
-    if (renderer()) {
-        // FIXME: Parsing of operator properties should be done in the element classes rather than in the renderer classes.
-        // See http://webkit.org/b/156537
-        if (is<RenderMathMLRow>(*renderer()))
-            downcast<RenderMathMLRow>(*renderer()).updateOperatorProperties();
-        else if (hasTagName(msqrtTag)) {
-            // Update operator properties for the base wrapper.
-            // FIXME: This won't be necessary when RenderMathMLSquareRoot derives from RenderMathMLRow and does not use anonymous wrappers.
-            // See http://webkit.org/b/153987
-            auto* childRenderer = renderer()->lastChild();
-            if (is<RenderMathMLRow>(childRenderer))
-                downcast<RenderMathMLRow>(*childRenderer).updateOperatorProperties();
-        }
-    }
+    // FIXME: Parsing of operator properties should be done in the element classes rather than in the renderer classes.
+    // See https://webkit.org/b/156537
+    if (renderer() && is<RenderMathMLRow>(*renderer()))
+        downcast<RenderMathMLRow>(*renderer()).updateOperatorProperties();
     MathMLElement::childrenChanged(change);
 }
 
@@ -96,9 +85,7 @@ RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(Ren
         return createRenderer<RenderMathMLUnderOver>(*this, WTFMove(style));
     if (hasTagName(mfracTag))
         return createRenderer<RenderMathMLFraction>(*this, WTFMove(style));
-    if (hasTagName(msqrtTag))
-        return createRenderer<RenderMathMLSquareRoot>(*this, WTFMove(style));
-    if (hasTagName(mrootTag))
+    if (hasTagName(msqrtTag) || hasTagName(mrootTag))
         return createRenderer<RenderMathMLRoot>(*this, WTFMove(style));
     if (hasTagName(mfencedTag))
         return createRenderer<RenderMathMLFenced>(*this, WTFMove(style));

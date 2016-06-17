@@ -65,6 +65,8 @@ public:
     RenderPtr<RenderMathMLBlock> createAnonymousMathMLBlock();
 
     LayoutUnit mathAxisHeight() const;
+    LayoutUnit mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth = 0) const;
+    LayoutUnit mirrorIfNeeded(LayoutUnit horizontalOffset, const RenderBox& child) const { return mirrorIfNeeded(horizontalOffset, child.logicalWidth()); }
     
 protected:
     static LayoutUnit ascentForChild(const RenderBox& child)

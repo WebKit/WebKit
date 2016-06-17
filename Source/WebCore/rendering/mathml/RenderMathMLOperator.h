@@ -63,7 +63,6 @@ public:
     void updateTokenContent() final;
     void updateOperatorProperties();
     void updateFromElement() final;
-    LayoutUnit trailingSpaceError();
 
 protected:
     virtual void setOperatorProperties();

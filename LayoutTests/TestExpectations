@@ -115,9 +115,6 @@ webkit.org/b/126166 [ Debug ] js/dfg-uint32array-overflow-values.html [ Skip ]
 
 webkit.org/b/127860 [ Debug ] js/function-apply-aliased.html [ Skip ]
 
-# This test verifies dynamic manipulation of the mroot and msqrt elements.
-mathml/roots-removeChild.html [ ImageOnlyFailure ]
-
 # For now we ignore margin/padding/border properties of MathML renderers.
 mathml/presentation/bug97990.html [ Skip ]
 

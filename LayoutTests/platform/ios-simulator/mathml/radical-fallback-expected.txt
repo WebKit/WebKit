@@ -7,45 +7,17 @@ layer at (0,0) size 800x226
         RenderText {#text} at (0,69) size 132x19
           text run at (0,69) width 132: "Large LTR radicals: "
         RenderMathMLMath {math} at (131,0) size 21x84 [padding: 0 1 0 1]
-          RenderMathMLSquareRoot {msqrt} at (1,0) size 9x84
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x84
-              RenderMathMLRadicalOperator (anonymous) at (0,0) size 9x84
-                RenderMathMLBlock (anonymous, flex) at (0,0) size 9x83
-                  RenderBlock (anonymous) at (0,0) size 9x83
-                    RenderText at (0,1) size 9x17
-                      text run at (0,1) width 9: "\x{221A}"
-            RenderMathMLRootWrapper at (8,3) size 0x81
-              RenderMathMLSpace {mspace} at (0,0) size 0x80
-          RenderMathMLSquareRoot {msqrt} at (9,0) size 10x84
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x84
-              RenderMathMLRadicalOperator (anonymous) at (0,0) size 9x84
-                RenderMathMLBlock (anonymous, flex) at (0,0) size 9x83
-                  RenderBlock (anonymous) at (0,0) size 9x83
-                    RenderText at (0,-1) size 9x20
-                      text run at (0,-1) width 9: "\x{221A}"
-            RenderMathMLRootWrapper at (8,3) size 0x81
-              RenderMathMLSpace {mspace} at (0,0) size 0x80
+          RenderMathMLRoot {msqrt} at (1,0) size 9x84
+            RenderMathMLSpace {mspace} at (8,3) size 0x81
+          RenderMathMLRoot {msqrt} at (9,0) size 10x84
+            RenderMathMLSpace {mspace} at (8,3) size 0x81
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,105) size 784x89
         RenderText {#text} at (0,69) size 132x19
           text run at (0,69) width 132: "Large RTL radicals: "
         RenderMathMLMath {math} at (131,0) size 21x84 [padding: 0 1 0 1]
-          RenderMathMLSquareRoot {msqrt} at (9,0) size 10x84
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x84
-              RenderMathMLRadicalOperator (anonymous) at (0,0) size 9x84
-                RenderMathMLBlock (anonymous, flex) at (0,0) size 9x83
-                  RenderBlock (anonymous) at (0,0) size 9x83
-                    RenderText at (0,1) size 9x17
-                      text run at (0,1) width 9 RTL: "\x{221A}"
-            RenderMathMLRootWrapper at (0,3) size 0x81
-              RenderMathMLSpace {mspace} at (0,0) size 0x80
-          RenderMathMLSquareRoot {msqrt} at (1,0) size 9x84
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x84
-              RenderMathMLRadicalOperator (anonymous) at (0,0) size 9x84
-                RenderMathMLBlock (anonymous, flex) at (0,0) size 9x83
-                  RenderBlock (anonymous) at (0,0) size 9x83
-                    RenderText at (0,-1) size 9x20
-                      text run at (0,-1) width 9 RTL: "\x{221A}"
-            RenderMathMLRootWrapper at (0,3) size 0x81
-              RenderMathMLSpace {mspace} at (0,0) size 0x80
+          RenderMathMLRoot {msqrt} at (9,0) size 10x84
+            RenderMathMLSpace {mspace} at (0,3) size 0x81
+          RenderMathMLRoot {msqrt} at (1,0) size 9x84
+            RenderMathMLSpace {mspace} at (0,3) size 0x81
         RenderText {#text} at (0,0) size 0x0

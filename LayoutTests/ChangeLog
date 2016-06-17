@@ -1,3 +1,28 @@
+2016-06-17  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLRoot layout function to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=153987
+
+        Reviewed by Brent Fulgham.
+
+        Update expectations for some MathML tests containing radical operators.
+
+        * TestExpectations: mathml/roots-removeChild.html works as expected now
+        that we do not manage anonymous wrappers anymore.
+        * mathml/presentation/roots.xhtml: Add one test for RTL roots.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt: Update expectation to
+        take into change in the render tree.
+        * platform/gtk/mathml/presentation/roots-expected.txt: Ditto.
+        * platform/gtk/mathml/presentation/roots-expected.png: Update expectation to take
+        into account small rendering changes.
+        * platform/ios-simulator/mathml/presentation/roots-expected.txt: Ditto.
+        * platform/gtk/mathml/radical-fallback-expected.txt: Ditto.
+        * platform/gtk/mathml/radical-fallback-expected.png: Ditto.
+        * platform/mac/mathml/radical-fallback-expected.txt: Ditto.
+        * platform/mac/mathml/radical-fallback-expected.png: Ditto.
+        * platform/ios-simulator/mathml/radical-fallback-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/radical-fallback-expected.png: Added.
+
 2016-06-17  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         Update test-expected file for failing fullscreen test

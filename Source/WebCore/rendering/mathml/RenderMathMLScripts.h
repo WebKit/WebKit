@@ -51,7 +51,6 @@ private:
     LayoutUnit italicCorrection(RenderBox* base);
     void computePreferredLogicalWidths() override;
     void getScriptMetricsAndLayoutIfNeeded(RenderBox* base, RenderBox* script, LayoutUnit& minSubScriptShift, LayoutUnit& minSupScriptShift, LayoutUnit& maxScriptDescent, LayoutUnit& maxScriptAscent);
-    LayoutUnit mirrorIfNeeded(LayoutUnit horizontalOffset, const RenderBox& child);
 
     enum ScriptsType { Sub, Super, SubSup, Multiscripts };
 

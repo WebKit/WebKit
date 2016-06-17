@@ -303,14 +303,6 @@ void RenderMathMLScripts::getScriptMetricsAndLayoutIfNeeded(RenderBox* base, Ren
     }
 }
 
-LayoutUnit RenderMathMLScripts::mirrorIfNeeded(LayoutUnit horizontalOffset, const RenderBox& child)
-{
-    if (style().direction() == RTL)
-        return logicalWidth() - child.logicalWidth() - horizontalOffset;
-
-    return horizontalOffset;
-}
-
 void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());

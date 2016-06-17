@@ -1648,16 +1648,12 @@
 		439046DE12DA25E800AF80A2 /* RenderMathMLMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046CA12DA25E800AF80A2 /* RenderMathMLMath.h */; };
 		439046DF12DA25E17BAF80A2 /* MathMLOperatorDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046CB12DA25E17BAF80A2 /* MathMLOperatorDictionary.cpp */; };
 		439046DF12DA25E800AF80A2 /* RenderMathMLOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046CB12DA25E800AF80A2 /* RenderMathMLOperator.cpp */; };
-		439046DF12DA25E800BF80A3 /* RenderMathMLRadicalOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046CB12DA25E800BF80A3 /* RenderMathMLRadicalOperator.cpp */; };
 		439046E012DA25E17BAF80A2 /* MathMLOperatorDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046CC12DA25E17BAF80A2 /* MathMLOperatorDictionary.h */; };
 		439046E012DA25E800AF80A2 /* RenderMathMLOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046CC12DA25E800AF80A2 /* RenderMathMLOperator.h */; };
-		439046E012DA25E800BF80A3 /* RenderMathMLRadicalOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046CC12DA25E800BF80A3 /* RenderMathMLRadicalOperator.h */; };
 		439046E112DA25E800AF80A2 /* RenderMathMLRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046CD12DA25E800AF80A2 /* RenderMathMLRoot.cpp */; };
 		439046E212DA25E800AF80A2 /* RenderMathMLRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046CE12DA25E800AF80A2 /* RenderMathMLRoot.h */; };
 		439046E312DA25E800AF80A2 /* RenderMathMLRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046CF12DA25E800AF80A2 /* RenderMathMLRow.cpp */; };
 		439046E412DA25E800AF80A2 /* RenderMathMLRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046D012DA25E800AF80A2 /* RenderMathMLRow.h */; };
-		439046E512DA25E800AF80A2 /* RenderMathMLSquareRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046D112DA25E800AF80A2 /* RenderMathMLSquareRoot.cpp */; };
-		439046E612DA25E800AF80A2 /* RenderMathMLSquareRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046D212DA25E800AF80A2 /* RenderMathMLSquareRoot.h */; };
 		439046E712DA25E800AF80A2 /* RenderMathMLScripts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046D312DA25E800AF80A2 /* RenderMathMLScripts.cpp */; };
 		439046E812DA25E800AF80A2 /* RenderMathMLScripts.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046D412DA25E800AF80A2 /* RenderMathMLScripts.h */; };
 		439046E912DA25E800AF80A2 /* RenderMathMLUnderOver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046D512DA25E800AF80A2 /* RenderMathMLUnderOver.cpp */; };
@@ -9204,16 +9200,12 @@
 		439046CA12DA25E800AF80A2 /* RenderMathMLMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLMath.h; sourceTree = "<group>"; };
 		439046CB12DA25E17BAF80A2 /* MathMLOperatorDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLOperatorDictionary.cpp; sourceTree = "<group>"; };
 		439046CB12DA25E800AF80A2 /* RenderMathMLOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLOperator.cpp; sourceTree = "<group>"; };
-		439046CB12DA25E800BF80A3 /* RenderMathMLRadicalOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLRadicalOperator.cpp; sourceTree = "<group>"; };
 		439046CC12DA25E17BAF80A2 /* MathMLOperatorDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLOperatorDictionary.h; sourceTree = "<group>"; };
 		439046CC12DA25E800AF80A2 /* RenderMathMLOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLOperator.h; sourceTree = "<group>"; };
-		439046CC12DA25E800BF80A3 /* RenderMathMLRadicalOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLRadicalOperator.h; sourceTree = "<group>"; };
 		439046CD12DA25E800AF80A2 /* RenderMathMLRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLRoot.cpp; sourceTree = "<group>"; };
 		439046CE12DA25E800AF80A2 /* RenderMathMLRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLRoot.h; sourceTree = "<group>"; };
 		439046CF12DA25E800AF80A2 /* RenderMathMLRow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLRow.cpp; sourceTree = "<group>"; };
 		439046D012DA25E800AF80A2 /* RenderMathMLRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLRow.h; sourceTree = "<group>"; };
-		439046D112DA25E800AF80A2 /* RenderMathMLSquareRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLSquareRoot.cpp; sourceTree = "<group>"; };
-		439046D212DA25E800AF80A2 /* RenderMathMLSquareRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLSquareRoot.h; sourceTree = "<group>"; };
 		439046D312DA25E800AF80A2 /* RenderMathMLScripts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLScripts.cpp; sourceTree = "<group>"; };
 		439046D412DA25E800AF80A2 /* RenderMathMLScripts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLScripts.h; sourceTree = "<group>"; };
 		439046D512DA25E800AF80A2 /* RenderMathMLUnderOver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLUnderOver.cpp; sourceTree = "<group>"; };
@@ -16945,8 +16937,6 @@
 				A208E222A56A0C7575F2A72E /* RenderMathMLMenclose.h */,
 				439046CB12DA25E800AF80A2 /* RenderMathMLOperator.cpp */,
 				439046CC12DA25E800AF80A2 /* RenderMathMLOperator.h */,
-				439046CB12DA25E800BF80A3 /* RenderMathMLRadicalOperator.cpp */,
-				439046CC12DA25E800BF80A3 /* RenderMathMLRadicalOperator.h */,
 				439046CD12DA25E800AF80A2 /* RenderMathMLRoot.cpp */,
 				439046CE12DA25E800AF80A2 /* RenderMathMLRoot.h */,
 				439046CF12DA25E800AF80A2 /* RenderMathMLRow.cpp */,
@@ -16955,8 +16945,6 @@
 				439046D412DA25E800AF80A2 /* RenderMathMLScripts.h */,
 				DBFCB0EBFF5CD77EBEB35395 /* RenderMathMLSpace.cpp */,
 				331FF67DE197B57393C46AA7 /* RenderMathMLSpace.h */,
-				439046D112DA25E800AF80A2 /* RenderMathMLSquareRoot.cpp */,
-				439046D212DA25E800AF80A2 /* RenderMathMLSquareRoot.h */,
 				439046D712DA25E800AF80A9 /* RenderMathMLToken.cpp */,
 				439046D812DA25E800AF80A9 /* RenderMathMLToken.h */,
 				439046D512DA25E800AF80A2 /* RenderMathMLUnderOver.cpp */,
@@ -27680,11 +27668,9 @@
 				439046DC12DA25E800AF80A2 /* RenderMathMLFraction.h in Headers */,
 				439046DE12DA25E800AF80A2 /* RenderMathMLMath.h in Headers */,
 				439046E012DA25E800AF80A2 /* RenderMathMLOperator.h in Headers */,
-				439046E012DA25E800BF80A3 /* RenderMathMLRadicalOperator.h in Headers */,
 				439046E212DA25E800AF80A2 /* RenderMathMLRoot.h in Headers */,
 				439046E412DA25E800AF80A2 /* RenderMathMLRow.h in Headers */,
 				439046E812DA25E800AF80A2 /* RenderMathMLScripts.h in Headers */,
-				439046E612DA25E800AF80A2 /* RenderMathMLSquareRoot.h in Headers */,
 				439046EC12DA25E800AF80A9 /* RenderMathMLToken.h in Headers */,
 				439046EA12DA25E800AF80A2 /* RenderMathMLUnderOver.h in Headers */,
 				439046EA12DA25E812AF80AC /* MathOperator.h in Headers */,
@@ -31360,12 +31346,10 @@
 				439046DD12DA25E800AF80A2 /* RenderMathMLMath.cpp in Sources */,
 				3571883EEF618793751E4089 /* RenderMathMLMenclose.cpp in Sources */,
 				439046DF12DA25E800AF80A2 /* RenderMathMLOperator.cpp in Sources */,
-				439046DF12DA25E800BF80A3 /* RenderMathMLRadicalOperator.cpp in Sources */,
 				439046E112DA25E800AF80A2 /* RenderMathMLRoot.cpp in Sources */,
 				439046E312DA25E800AF80A2 /* RenderMathMLRow.cpp in Sources */,
 				439046E712DA25E800AF80A2 /* RenderMathMLScripts.cpp in Sources */,
 				5B7A208D2E12979B4AE19DE6 /* RenderMathMLSpace.cpp in Sources */,
-				439046E512DA25E800AF80A2 /* RenderMathMLSquareRoot.cpp in Sources */,
 				439046EB12DA25E800AF80A9 /* RenderMathMLToken.cpp in Sources */,
 				439046E912DA25E800AF80A2 /* RenderMathMLUnderOver.cpp in Sources */,
 				439046E912DA25E812AF80AC /* MathOperator.cpp in Sources */,

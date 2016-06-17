@@ -131,9 +131,7 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit& ascent, LayoutUnit& descent)
     }
 
     width += borderEnd() + paddingEnd();
-    // FIXME: RenderMathMLRoot classes should also recalculate the exact logical width instead of using the preferred width.
-    // See http://webkit.org/b/153987
-    if ((!isRenderMathMLMath() || style().display() == INLINE) && !isRenderMathMLRoot())
+    if ((!isRenderMathMLMath() || style().display() == INLINE))
         setLogicalWidth(width);
 
     LayoutUnit verticalOffset = borderTop() + paddingTop();

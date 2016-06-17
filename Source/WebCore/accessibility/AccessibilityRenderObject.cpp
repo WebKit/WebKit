@@ -3629,7 +3629,7 @@ bool AccessibilityRenderObject::isMathSubscriptSuperscript() const
 
 bool AccessibilityRenderObject::isMathRow() const
 {
-    return m_renderer && m_renderer->isRenderMathMLRow();
+    return m_renderer && m_renderer->isRenderMathMLRow() && !isMathRoot();
 }
 
 bool AccessibilityRenderObject::isMathUnderOver() const
@@ -3781,26 +3781,26 @@ AccessibilityObject* AccessibilityRenderObject::mathRadicandObject()
 {
     if (!isMathRoot())
         return nullptr;
-    RenderMathMLRoot* root = &downcast<RenderMathMLRoot>(*m_renderer);
-    AccessibilityObject* rootRadicandWrapper = axObjectCache()->getOrCreate(root->baseWrapper());
-    if (!rootRadicandWrapper)
+
+    // For MathSquareRoot, we actually return the first child of the base.
+    // See also https://webkit.org/b/146452
+    const auto& children = this->children();
+    if (children.size() < 1)
         return nullptr;
-    AccessibilityObject* rootRadicand = rootRadicandWrapper->children().first().get();
-    ASSERT(rootRadicand && children().contains(rootRadicand));
-    return rootRadicand;
+
+    return children[0].get();
 }
 
 AccessibilityObject* AccessibilityRenderObject::mathRootIndexObject()
 {
-    if (!isMathRoot())
+    if (!isMathRoot() || isMathSquareRoot())
         return nullptr;
-    RenderMathMLRoot* root = &downcast<RenderMathMLRoot>(*m_renderer);
-    AccessibilityObject* rootIndexWrapper = axObjectCache()->getOrCreate(root->indexWrapper());
-    if (!rootIndexWrapper)
+
+    const auto& children = this->children();
+    if (children.size() < 2)
         return nullptr;
-    AccessibilityObject* rootIndex = rootIndexWrapper->children().first().get();
-    ASSERT(rootIndex && children().contains(rootIndex));
-    return rootIndex;
+
+    return children[1].get();
 }
 
 AccessibilityObject* AccessibilityRenderObject::mathNumeratorObject()

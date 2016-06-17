@@ -337,7 +337,6 @@ public:
     virtual bool isRenderMathMLBlock() const { return false; }
     virtual bool isRenderMathMLTable() const { return false; }
     virtual bool isRenderMathMLOperator() const { return false; }
-    virtual bool isRenderMathMLRadicalOperator() const { return false; }
     virtual bool isRenderMathMLRow() const { return false; }
     virtual bool isRenderMathMLMath() const { return false; }
     virtual bool isRenderMathMLMenclose() const { return false; }

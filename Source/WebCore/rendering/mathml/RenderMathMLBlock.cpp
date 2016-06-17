@@ -74,6 +74,14 @@ LayoutUnit RenderMathMLBlock::mathAxisHeight() const
     return style().fontMetrics().xHeight() / 2;
 }
 
+LayoutUnit RenderMathMLBlock::mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth) const
+{
+    if (style().direction() == RTL)
+        return logicalWidth() - boxWidth - horizontalOffset;
+
+    return horizontalOffset;
+}
+
 int RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     // mathml.css sets math { -webkit-line-box-contain: glyphs replaced; line-height: 0; }, so when linePositionMode == PositionOfInteriorLineBoxes we want to

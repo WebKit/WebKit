@@ -384,13 +384,6 @@ void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint
     RenderMathMLToken::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
 }
 
-LayoutUnit RenderMathMLOperator::trailingSpaceError()
-{
-    // For OpenType MATH font, the layout is based on RenderMathOperator for which the preferred width is sometimes overestimated (bug https://bugs.webkit.org/show_bug.cgi?id=130326).
-    // Hence we determine the error in the logical width with respect to the actual width of the glyph(s) used to paint the operator.
-    return m_mathOperator.maxPreferredWidth() - m_mathOperator.width();
-}
-
 }
 
 #endif
