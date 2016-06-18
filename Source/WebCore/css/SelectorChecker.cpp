@@ -983,7 +983,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassChecked:
             return isChecked(element);
         case CSSSelector::PseudoClassIndeterminate:
-            return shouldAppearIndeterminate(element);
+            return matchesIndeterminatePseudoClass(element);
         case CSSSelector::PseudoClassRoot:
             if (&element == element.document().documentElement())
                 return true;

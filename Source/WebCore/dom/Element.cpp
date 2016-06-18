@@ -4,7 +4,7 @@
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2004-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -2753,6 +2753,11 @@ void Element::clearAfterPseudoElement()
 bool Element::matchesReadWritePseudoClass() const
 {
     return false;
+}
+
+bool Element::matchesIndeterminatePseudoClass() const
+{
+    return shouldAppearIndeterminate();
 }
 
 bool Element::matches(const String& selector, ExceptionCode& ec)

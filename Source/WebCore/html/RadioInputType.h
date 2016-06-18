@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -51,7 +52,7 @@ private:
     void willDispatchClick(InputElementClickState&) override;
     void didDispatchClick(Event*, const InputElementClickState&) override;
     bool isRadioButton() const override;
-    bool supportsIndeterminateAppearance() const override;
+    bool matchesIndeterminatePseudoClass() const override;
 };
 
 } // namespace WebCore

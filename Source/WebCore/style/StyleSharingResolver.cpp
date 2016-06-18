@@ -179,8 +179,6 @@ static bool canShareStyleWithControl(const HTMLFormControlElement& element, cons
         return false;
     if (thisInputElement.shouldAppearChecked() != otherInputElement.shouldAppearChecked())
         return false;
-    if (thisInputElement.shouldAppearIndeterminate() != otherInputElement.shouldAppearIndeterminate())
-        return false;
     if (thisInputElement.isRequired() != otherInputElement.isRequired())
         return false;
 
@@ -283,6 +281,9 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (element.matchesInvalidPseudoClass() != element.matchesValidPseudoClass())
         return false;
 
+    if (candidateElement.matchesIndeterminatePseudoClass() != element.matchesIndeterminatePseudoClass())
+        return false;
+
     if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle()->hostPseudoClassRules().isEmpty())
         return false;
 
@@ -328,11 +329,6 @@ bool SharingResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(const
 
     if (const_cast<StyledElement&>(element).presentationAttributeStyle() != const_cast<StyledElement&>(sharingCandidate).presentationAttributeStyle())
         return false;
-
-    if (element.hasTagName(HTMLNames::progressTag)) {
-        if (element.shouldAppearIndeterminate() != sharingCandidate.shouldAppearIndeterminate())
-            return false;
-    }
 
     return true;
 }

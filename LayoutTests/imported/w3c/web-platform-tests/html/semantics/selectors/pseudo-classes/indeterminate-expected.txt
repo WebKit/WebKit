@@ -1,7 +1,7 @@
         
 
-FAIL ':progress' matches <input>s radio buttons whose radio button group contains no checked input and <progress> elements without value attribute assert_array_equals: lengths differ, expected 5 got 1
-FAIL dynamically check a radio input in a radio button group assert_array_equals: lengths differ, expected 3 got 1
+PASS ':progress' matches <input>s radio buttons whose radio button group contains no checked input and <progress> elements without value attribute 
+PASS dynamically check a radio input in a radio button group 
 FAIL click on radio4 which is in the indeterminate state assert_array_equals: lengths differ, expected 2 got 1
 PASS adding a value to progress1 should put it in a determinate state 
 PASS removing progress2's value should put it in an indeterminate state 

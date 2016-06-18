@@ -47,7 +47,8 @@ private:
     void willDispatchClick(InputElementClickState&) override;
     void didDispatchClick(Event*, const InputElementClickState&) override;
     bool isCheckbox() const override;
-    bool supportsIndeterminateAppearance() const override;
+    bool matchesIndeterminatePseudoClass() const override;
+    bool shouldAppearIndeterminate() const override;
 };
 
 } // namespace WebCore

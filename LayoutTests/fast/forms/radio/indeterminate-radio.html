@@ -27,9 +27,6 @@
     {
         try
         {
-
-        document.getElementsByTagName("input")[0].indeterminate = true;
-
         function ArrayContains(array, value, ci)
         {
             ci = ci == true ? true : false;
@@ -46,11 +43,15 @@
             }
             return false;
         }
+
         var target = document.getElementById("test");
         var val = getComputedStyle(target, null).getPropertyValue("color");
-        var aExpectedValues = new Array("green", "#008000", "rgb(0, 128, 0)");
+        var aExpectedValues = new Array("red", "#FF0000", "rgb(255, 0, 0)");
+        let wasIndeterminate = ArrayContains(aExpectedValues, val, true);
 
-        if (ArrayContains(aExpectedValues, val, true))
+        document.getElementsByTagName("input")[0].indeterminate = true;
+
+        if (wasIndeterminate && ArrayContains(aExpectedValues, val, true))
         {
 
           document.getElementById("testresult").innerHTML = "Pass";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2011, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -151,13 +151,6 @@ void RadioInputType::willDispatchClick(InputElementClickState& state)
     state.checked = element().checked();
     state.checkedRadioButton = element().checkedRadioButtonForGroup();
 
-#if PLATFORM(IOS)
-    state.indeterminate = element().indeterminate();
-
-    if (element().indeterminate())
-        element().setIndeterminate(false);
-#endif
-
     element().setChecked(true, DispatchChangeEvent);
 }
 
@@ -173,11 +166,6 @@ void RadioInputType::didDispatchClick(Event* event, const InputElementClickState
                 && checkedRadioButton->name() == element().name()) {
             checkedRadioButton->setChecked(true);
         }
-
-#if PLATFORM(IOS)        
-        element().setIndeterminate(state.indeterminate);
-#endif
-
     }
 
     // The work we did in willDispatchClick was default handling.
@@ -189,13 +177,12 @@ bool RadioInputType::isRadioButton() const
     return true;
 }
 
-bool RadioInputType::supportsIndeterminateAppearance() const
+bool RadioInputType::matchesIndeterminatePseudoClass() const
 {
-#if PLATFORM(IOS)
-    return true;
-#else
-    return false;
-#endif
+    const HTMLInputElement& element = this->element();
+    if (const RadioButtonGroups* radioButtonGroups = element.radioButtonGroups())
+        return !radioButtonGroups->hasCheckedButton(&element);
+    return !element.checked();
 }
 
 } // namespace WebCore

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2010, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -162,6 +162,7 @@ public:
     void setIndeterminate(bool);
     // shouldAppearChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
     bool shouldAppearChecked() const;
+    bool matchesIndeterminatePseudoClass() const final;
     bool shouldAppearIndeterminate() const final;
 
     unsigned size() const;
@@ -274,6 +275,8 @@ public:
     Vector<HTMLInputElement*> radioButtonGroup() const;
     HTMLInputElement* checkedRadioButtonForGroup() const;
     bool isInRequiredRadioButtonGroup();
+    // Returns null if this isn't associated with any radio button group.
+    RadioButtonGroups* radioButtonGroups() const;
 
     // Functions for InputType classes.
     void setValueInternal(const String&, TextFieldEventBehavior);
@@ -422,8 +425,6 @@ private:
     void maxLengthAttributeChanged(const AtomicString& newValue);
     void updateValueIfNeeded();
 
-    // Returns null if this isn't associated with any radio button group.
-    RadioButtonGroups* radioButtonGroups() const;
     void addToRadioButtonGroup();
     void removeFromRadioButtonGroup();
 

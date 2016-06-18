@@ -1,3 +1,34 @@
+2016-06-17  Benjamin Poulain  <benjamin@webkit.org>
+
+        :indeterminate pseudo-class should match radios whose group has no checked radio
+        https://bugs.webkit.org/show_bug.cgi?id=156270
+
+        Reviewed by Simon Fraser.
+
+        There are two important aspect to cover for this change:
+        1) The style is updated correctly when a Button Group composition change.
+        2) When the checkness changes for a Button Group, all its elements
+           are invalidated to match :indeterminate.
+
+        * fast/forms/radio/indeterminate-radio.html:
+        This test was verifying that the property "indeterminate" of the input element
+        is not reflected to the style through :indeterminate.
+        I updated the test to still verify that except that we now match :indeterminate
+        before changing the property.
+
+        * fast/css/pseudo-indeterminate-radio-buttons-basics-expected.html: Added.
+        * fast/css/pseudo-indeterminate-radio-buttons-basics.html: Added.
+
+        * fast/css/pseudo-indeterminate-with-radio-buttons-style-invalidation-expected.txt: Added.
+        * fast/css/pseudo-indeterminate-with-radio-buttons-style-invalidation.html: Added.
+        Verify that we don't invalidate everything when the checked button changes.
+        We only need to invalidate everything if the checked state of the whole group changes.
+
+        * fast/selectors/detached-radio-button-checked-and-indeterminate-states-expected.txt: Added.
+        * fast/selectors/detached-radio-button-checked-and-indeterminate-states.html: Added.
+        * fast/selectors/pseudo-indeterminate-with-radio-buttons-style-update-expected.txt: Added.
+        * fast/selectors/pseudo-indeterminate-with-radio-buttons-style-update.html: Added.
+
 2016-06-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202152.

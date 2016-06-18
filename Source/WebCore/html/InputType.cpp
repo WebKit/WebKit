@@ -966,7 +966,12 @@ Optional<Decimal> InputType::findClosestTickMarkValue(const Decimal&)
 }
 #endif
 
-bool InputType::supportsIndeterminateAppearance() const
+bool InputType::matchesIndeterminatePseudoClass() const
+{
+    return false;
+}
+
+bool InputType::shouldAppearIndeterminate() const
 {
     return false;
 }

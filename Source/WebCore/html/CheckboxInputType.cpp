@@ -92,9 +92,14 @@ bool CheckboxInputType::isCheckbox() const
     return true;
 }
 
-bool CheckboxInputType::supportsIndeterminateAppearance() const
+bool CheckboxInputType::matchesIndeterminatePseudoClass() const
 {
-    return true;
+    return shouldAppearIndeterminate();
+}
+
+bool CheckboxInputType::shouldAppearIndeterminate() const
+{
+    return element().indeterminate();
 }
 
 } // namespace WebCore

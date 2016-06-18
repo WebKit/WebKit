@@ -39,6 +39,7 @@ public:
     void requiredAttributeChanged(HTMLInputElement*);
     void removeButton(HTMLInputElement*);
     HTMLInputElement* checkedButtonForGroup(const AtomicString& groupName) const;
+    bool hasCheckedButton(const HTMLInputElement*) const;
     bool isInRequiredGroup(HTMLInputElement*) const;
     Vector<HTMLInputElement*> groupMembers(const HTMLInputElement&) const;
 

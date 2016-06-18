@@ -1,3 +1,13 @@
+2016-06-17  Benjamin Poulain  <benjamin@webkit.org>
+
+        :indeterminate pseudo-class should match radios whose group has no checked radio
+        https://bugs.webkit.org/show_bug.cgi?id=156270
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-expected.txt:
+        One more pass on official tests :)
+
 2016-06-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         CORS preflight with a non-200 response should be a preflight failure

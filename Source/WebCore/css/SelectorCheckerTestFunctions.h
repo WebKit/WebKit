@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Dhi Aurrahman <diorahman@rockybars.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -221,9 +221,9 @@ ALWAYS_INLINE bool matchesReadWritePseudoClass(const Element& element)
     return element.matchesReadWritePseudoClass();
 }
 
-ALWAYS_INLINE bool shouldAppearIndeterminate(const Element& element)
+ALWAYS_INLINE bool matchesIndeterminatePseudoClass(const Element& element)
 {
-    return element.shouldAppearIndeterminate();
+    return element.matchesIndeterminatePseudoClass();
 }
 
 ALWAYS_INLINE bool scrollbarMatchesEnabledPseudoClass(const SelectorChecker::CheckingContext& context)
