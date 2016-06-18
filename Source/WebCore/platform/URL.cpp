@@ -1983,8 +1983,8 @@ bool URL::isBlankURL() const
 bool URL::shouldInheritSecurityOriginFromOwner() const
 {
     return isEmpty()
-        || m_string == blankURL().string()
-        || m_string == "about:srcdoc";
+        || equalIgnoringASCIICase(m_string, blankURL().string())
+        || equalIgnoringASCIICase(m_string, "about:srcdoc");
 }
 
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
