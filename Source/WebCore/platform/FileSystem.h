@@ -31,7 +31,6 @@
 #ifndef FileSystem_h
 #define FileSystem_h
 
-#include <sys/stat.h>
 #include <time.h>
 #include <utility>
 #include <wtf/Forward.h>
@@ -48,7 +47,6 @@ typedef const struct __CFData* CFDataRef;
 #endif
 
 #if OS(WINDOWS)
-#include <io.h>
 // These are to avoid including <winbase.h> in a header for Chromium
 typedef void *HANDLE;
 // Assuming STRICT
@@ -112,12 +110,6 @@ const PlatformFileHandle invalidPlatformFileHandle = reinterpret_cast<HANDLE>(-1
 typedef int PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = -1;
 #endif
-    
-#if OS(WINDOWS)
-typedef struct _stat PlatformStat;
-#else
-typedef struct stat PlatformStat;
-#endif
 
 enum FileOpenMode {
     OpenForRead = 0,
@@ -180,8 +172,6 @@ bool truncateFile(PlatformFileHandle, long long offset);
 WEBCORE_EXPORT int writeToFile(PlatformFileHandle, const char* data, int length);
 // Returns number of bytes actually written if successful, -1 otherwise.
 int readFromFile(PlatformFileHandle, char* data, int length);
-bool filesHaveSameVolume(const String&, const String&);
-int platformFileStat(PlatformFileHandle, PlatformStat*);
 
 // Appends the contents of the file found at 'path' to the open PlatformFileHandle.
 // Returns true if the write was successful, false if it was not.

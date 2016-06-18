@@ -1,3 +1,17 @@
+2016-06-17  Daniel Bates  <dabates@apple.com>
+
+        Unreviewed, rolling out r202186.
+
+        Broke the Apple Windows, Apple Yosemite, GTK, and WinCairo
+        builds.
+
+        Reverted changeset:
+
+        "File scheme should not allow access of a resource on a
+        different volume."
+        https://bugs.webkit.org/show_bug.cgi?id=158552
+        http://trac.webkit.org/changeset/202186
+
 2016-06-17  Pranjal Jumde  <pjumde@apple.com>
 
         File scheme should not allow access of a resource on a different volume.

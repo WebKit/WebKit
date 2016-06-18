@@ -349,11 +349,6 @@ bool SecurityOrigin::canDisplay(const URL& url) const
 {
     if (m_universalAccess)
         return true;
-    
-    if (isLocal() && url.isLocalFile()) {
-        if (!filesHaveSameVolume(m_filePath, url.path()))
-            return false;
-    }
 
     if (isFeedWithNestedProtocolInHTTPFamily(url))
         return true;
