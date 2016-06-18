@@ -319,4 +319,40 @@ MappedFileData::MappedFileData(const String& filePath, bool& success)
 #endif
 }
 
+int platformFileStat(PlatformFileHandle handle, PlatformStat* buffer)
+{
+#if OS(WINDOW)
+    return _fstat(handle, buffer);
+#else
+    return fstat(handle, buffer);
+#endif
+}
+    
+bool filesHaveSameVolume(const String& sourceFile, const String& destFile)
+{
+    CString fsRepSourceFile, fsRepDestFile;
+    PlatformStat sourceFileStat, destFileStat;
+    PlatformFileHandle sourceHandle = -1, destHandle = -1;
+    bool result = true;
+    
+    fsRepSourceFile = fileSystemRepresentation(sourceFile);
+    fsRepDestFile = fileSystemRepresentation(destFile);
+        
+    if (!fsRepSourceFile.isNull() && !fsRepDestFile.isNull()) {
+        sourceHandle = openFile(fsRepSourceFile.data(), OpenForRead);
+        destHandle = openFile(fsRepDestFile.data(), OpenForRead);
+    }
+        
+    if (sourceHandle > -1 && destHandle > -1) {
+        if (platformFileStat(sourceHandle, &sourceFileStat) > -1 && platformFileStat(destHandle, &destFileStat) > -1) {
+            if (sourceFileStat.st_dev != destFileStat.st_dev)
+                result = false;
+        }
+    }
+    
+    close(sourceHandle);
+    close(destHandle);
+    return result;
+}
+
 } // namespace WebCore

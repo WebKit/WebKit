@@ -62,6 +62,8 @@
 		37D36ED71AF42ECD00BAF5D9 /* LoadAlternateHTMLString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37D36ED61AF42ECD00BAF5D9 /* LoadAlternateHTMLString.mm */; };
 		37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */; };
 		37E1064C1697681800B78BD0 /* DOMHTMLTableCellElementCellAbove.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */; };
+		400B2EA51D1328DD00393CDC /* CrossPartitionFileSchemeAccess.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 400B2EA41D1328B900393CDC /* CrossPartitionFileSchemeAccess.html */; };
+		407F29D01D10ED4D00DA63FF /* CrossPartitionFileSchemeAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 407F29CE1D10ED4D00DA63FF /* CrossPartitionFileSchemeAccess.mm */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
 		51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */; };
 		5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */; };
@@ -462,10 +464,11 @@
 		};
 		BCB9F4FB112384C000A137E0 /* Copy Resources */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				400B2EA51D1328DD00393CDC /* CrossPartitionFileSchemeAccess.html in Copy Resources */,
 				9984FACE1CFFB090008D198C /* editable-body.html in Copy Resources */,
 				51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */,
 				51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */,
@@ -672,6 +675,8 @@
 		37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLTableCellCellAbove.mm; sourceTree = "<group>"; };
 		37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DOMHTMLTableCellElementCellAbove.html; sourceTree = "<group>"; };
 		37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewDidRemoveFrameFromHierarchy.mm; sourceTree = "<group>"; };
+		400B2EA41D1328B900393CDC /* CrossPartitionFileSchemeAccess.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CrossPartitionFileSchemeAccess.html; sourceTree = "<group>"; };
+		407F29CE1D10ED4D00DA63FF /* CrossPartitionFileSchemeAccess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CrossPartitionFileSchemeAccess.mm; sourceTree = "<group>"; };
 		41973B5A1AF2286A006C7B36 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystem.cpp; sourceTree = "<group>"; };
 		41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBuffer.cpp; sourceTree = "<group>"; };
 		440A1D3814A0103A008A66F2 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
@@ -1629,6 +1634,7 @@
 				A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */,
 				764322D51B61CCA40024F801 /* WordBoundaryTypingAttributes.mm */,
 				536770331CC8022800D425B1 /* WebScriptObjectDescription.mm */,
+				407F29CE1D10ED4D00DA63FF /* CrossPartitionFileSchemeAccess.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1636,6 +1642,7 @@
 		C07E6CB013FD737C0038B22B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				400B2EA41D1328B900393CDC /* CrossPartitionFileSchemeAccess.html */,
 				379028B814FABE49007E6B43 /* acceptsFirstMouse.html */,
 				B55F11B9151916E600915916 /* Ahem.ttf */,
 				B55F11B01517A2C400915916 /* attributedStringCustomFont.html */,
@@ -2186,6 +2193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */,
+				407F29D01D10ED4D00DA63FF /* CrossPartitionFileSchemeAccess.mm in Sources */,
 				2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
