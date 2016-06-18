@@ -119,8 +119,8 @@ NO_RETURN void ResourceUsageThread::threadBody()
         platformThreadBody(m_vm, data);
         notifyObservers(WTFMove(data));
 
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start);
-        auto difference = std::chrono::milliseconds(500) - duration;
+        auto duration = std::chrono::system_clock::now() - start;
+        auto difference = 500ms - duration;
         std::this_thread::sleep_for(difference);
     }
 }

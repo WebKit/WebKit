@@ -327,7 +327,7 @@ const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, bool checkingAlternateName)
 {
     if (!m_purgeTimer.isActive())
-        m_purgeTimer.startOneShot(std::chrono::milliseconds::zero());
+        m_purgeTimer.startOneShot(0ms);
 
     FontPlatformData* platformData = getCachedFontPlatformData(fontDescription, family, fontFaceFeatures, fontFaceVariantSettings, checkingAlternateName);
     if (!platformData)

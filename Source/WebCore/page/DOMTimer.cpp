@@ -52,8 +52,8 @@
 
 namespace WebCore {
 
-static const std::chrono::milliseconds maxIntervalForUserGestureForwarding = std::chrono::milliseconds(1000); // One second matches Gecko.
-static const std::chrono::milliseconds minIntervalForNonUserObservableChangeTimers = std::chrono::milliseconds(1000); // Empirically determined to maximize battery life.
+static const auto maxIntervalForUserGestureForwarding = 1000ms; // One second matches Gecko.
+static const auto minIntervalForNonUserObservableChangeTimers = 1000ms; // Empirically determined to maximize battery life.
 static const int maxTimerNestingLevel = 5;
 
 class DOMTimerFireState {
@@ -406,7 +406,7 @@ std::chrono::milliseconds DOMTimer::intervalClampedToMinimum() const
     ASSERT(scriptExecutionContext());
     ASSERT(m_nestingLevel <= maxTimerNestingLevel);
 
-    auto interval = std::max(std::chrono::milliseconds(1), m_originalInterval);
+    auto interval = std::max(1ms, m_originalInterval);
 
     // Only apply throttling to repeating timers.
     if (m_nestingLevel < maxTimerNestingLevel)
@@ -422,7 +422,7 @@ std::chrono::milliseconds DOMTimer::intervalClampedToMinimum() const
 Optional<std::chrono::milliseconds> DOMTimer::alignedFireTime(std::chrono::milliseconds fireTime) const
 {
     auto alignmentInterval = scriptExecutionContext()->timerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel);
-    if (alignmentInterval == std::chrono::milliseconds::zero())
+    if (alignmentInterval == 0ms)
         return Nullopt;
     
     static const double randomizedProportion = randomNumber();

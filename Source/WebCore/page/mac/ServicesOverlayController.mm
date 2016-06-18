@@ -436,7 +436,7 @@ bool ServicesOverlayController::mouseIsOverHighlight(Highlight& highlight, bool&
 std::chrono::milliseconds ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown(Highlight* highlight) const
 {
     if (!highlight)
-        return std::chrono::milliseconds::zero();
+        return 0ms;
 
     auto minimumTimeUntilHighlightShouldBeShown = 200ms;
     Page* page = m_mainFrame.page();

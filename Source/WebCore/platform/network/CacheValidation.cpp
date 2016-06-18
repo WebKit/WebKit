@@ -103,8 +103,8 @@ std::chrono::microseconds computeCurrentAge(const ResourceResponse& response, st
     // http://tools.ietf.org/html/rfc7234#section-4.2.3
     // No compensation for latency as that is not terribly important in practice.
     auto dateValue = response.date();
-    auto apparentAge = dateValue ? std::max(microseconds::zero(), duration_cast<microseconds>(responseTime - dateValue.value())) : microseconds::zero();
-    auto ageValue = response.age().valueOr(microseconds::zero());
+    auto apparentAge = dateValue ? std::max(0us, duration_cast<microseconds>(responseTime - *dateValue)) : 0us;
+    auto ageValue = response.age().valueOr(0us);
     auto correctedInitialAge = std::max(apparentAge, ageValue);
     auto residentTime = duration_cast<microseconds>(system_clock::now() - responseTime);
     return correctedInitialAge + residentTime;
@@ -119,26 +119,25 @@ std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceRe
     // http://tools.ietf.org/html/rfc7234#section-4.2.1
     auto maxAge = response.cacheControlMaxAge();
     if (maxAge)
-        return maxAge.value();
-    auto expires = response.expires();
+        return *maxAge;
+
     auto date = response.date();
-    auto dateValue = date ? date.value() : responseTime;
-    if (expires)
-        return duration_cast<microseconds>(expires.value() - dateValue);
+    auto effectiveDate = date.valueOr(responseTime);
+    if (auto expires = response.expires())
+        return duration_cast<microseconds>(*expires - effectiveDate);
 
     // Implicit lifetime.
     switch (response.httpStatusCode()) {
     case 301: // Moved Permanently
     case 410: // Gone
         // These are semantically permanent and so get long implicit lifetime.
-        return hours(365 * 24);
+        return 365 * 24h;
     default:
         // Heuristic Freshness:
         // http://tools.ietf.org/html/rfc7234#section-4.2.2
-        auto lastModified = response.lastModified();
-        if (lastModified)
-            return duration_cast<microseconds>((dateValue - lastModified.value()) * 0.1);
-        return microseconds::zero();
+        if (auto lastModified = response.lastModified())
+            return duration_cast<microseconds>((effectiveDate - *lastModified) * 0.1);
+        return 0us;
     }
 }
 

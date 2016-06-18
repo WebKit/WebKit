@@ -60,7 +60,7 @@ static const unsigned loadStalledHeartbeatCount = 4;
 // How many bytes are required between heartbeats to consider it progress.
 static const unsigned minumumBytesPerHeartbeatForProgress = 1024;
 
-static const std::chrono::milliseconds progressNotificationTimeInterval = std::chrono::milliseconds(200);
+static const auto progressNotificationTimeInterval = 200ms;
 
 struct ProgressItem {
     WTF_MAKE_NONCOPYABLE(ProgressItem); WTF_MAKE_FAST_ALLOCATED;
@@ -137,7 +137,7 @@ void ProgressTracker::progressStarted(Frame& frame)
         bool isMainFrame = !m_originatingProgressFrame->tree().parent();
         auto elapsedTimeSinceMainLoadComplete = std::chrono::steady_clock::now() - m_mainLoadCompletionTime;
 
-        static const auto subframePartOfMainLoadThreshold = std::chrono::seconds(1);
+        static const auto subframePartOfMainLoadThreshold = 1s;
         m_isMainLoad = isMainFrame || elapsedTimeSinceMainLoadComplete < subframePartOfMainLoadThreshold;
 
         m_client.progressStarted(*m_originatingProgressFrame);

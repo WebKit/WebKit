@@ -37,8 +37,8 @@
 namespace WebCore {
 
 // These values are at the discretion of the user agent.
-static const auto defaultPreflightCacheTimeout = std::chrono::seconds(5);
-static const auto maxPreflightCacheTimeout = std::chrono::seconds(600); // Should be short enough to minimize the risk of using a poisoned cache after switching to a secure network.
+static const auto defaultPreflightCacheTimeout = 5s;
+static const auto maxPreflightCacheTimeout = 600s; // Should be short enough to minimize the risk of using a poisoned cache after switching to a secure network.
 
 CrossOriginPreflightResultCache::CrossOriginPreflightResultCache()
 {
