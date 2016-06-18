@@ -272,23 +272,11 @@ public:
     };
 
     struct Decomposed4Type {
-        double scaleX { 1 };
-        double scaleY { 1 };
-        double scaleZ { 1 };
-        double skewXY { 0 };
-        double skewXZ { 0 };
-        double skewYZ { 0 };
-        double quaternionX { 0 };
-        double quaternionY { 0 };
-        double quaternionZ { 0 };
-        double quaternionW { 0 };
-        double translateX { 0 };
-        double translateY { 0 };
-        double translateZ { 0 };
-        double perspectiveX { 0 };
-        double perspectiveY { 0 };
-        double perspectiveZ { 0 };
-        double perspectiveW { 1 };
+        double scaleX, scaleY, scaleZ;
+        double skewXY, skewXZ, skewYZ;
+        double quaternionX, quaternionY, quaternionZ, quaternionW;
+        double translateX, translateY, translateZ;
+        double perspectiveX, perspectiveY, perspectiveZ, perspectiveW;
 
         bool operator==(const Decomposed4Type& other) const
         {

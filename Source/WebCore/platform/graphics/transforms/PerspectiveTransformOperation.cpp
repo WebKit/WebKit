@@ -60,11 +60,11 @@ Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOper
     toT.applyPerspective(floatValueForLength(toP, 1));
     toT.blend(fromT, progress);
     TransformationMatrix::Decomposed4Type decomp;
-    if (toT.decompose4(decomp)) {
-        if (decomp.perspectiveZ) {
-            double val = -1.0 / decomp.perspectiveZ;
-            return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(val), Fixed));
-        }
+    toT.decompose4(decomp);
+
+    if (decomp.perspectiveZ) {
+        double val = -1.0 / decomp.perspectiveZ;
+        return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(val), Fixed));
     }
     return PerspectiveTransformOperation::create(Length(0, Fixed));
 }
