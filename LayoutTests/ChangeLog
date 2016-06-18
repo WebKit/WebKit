@@ -1,3 +1,19 @@
+2016-06-17  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r199819): CrashTracer: [GraphicsContext3D::getInternalFramebufferSize
+        https://bugs.webkit.org/show_bug.cgi?id=158895
+        <rdar://problem/26423617>
+
+        Reviewed by Zalan Bujtas.
+
+        New test to access the contexts after loss. Also cleaned
+        up the JavaScript code in the existing test (and made sure
+        it ran outside of the test system).
+
+        * webgl/many-contexts-access-after-loss-expected.txt: Added.
+        * webgl/many-contexts-access-after-loss.html: Added.
+        * webgl/many-contexts.html:
+
 2016-06-17  Antoine Quint  <graouts@apple.com>
 
         Web video playback controls should have RTL volume slider

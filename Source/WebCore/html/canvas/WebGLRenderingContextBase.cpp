@@ -804,6 +804,9 @@ void WebGLRenderingContextBase::reshape(int width, int height)
 
 int WebGLRenderingContextBase::drawingBufferWidth() const
 {
+    if (isContextLost())
+        return 0;
+
     if (m_isPendingPolicyResolution && !m_hasRequestedPolicyResolution)
         return 0;
 
@@ -812,6 +815,9 @@ int WebGLRenderingContextBase::drawingBufferWidth() const
 
 int WebGLRenderingContextBase::drawingBufferHeight() const
 {
+    if (isContextLost())
+        return 0;
+
     if (m_isPendingPolicyResolution && !m_hasRequestedPolicyResolution)
         return 0;
 
