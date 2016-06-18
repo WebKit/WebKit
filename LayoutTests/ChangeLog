@@ -1,3 +1,14 @@
+2016-06-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: HTML indeterminate IDL attribute not mapped to checkbox value=2 for native checkboxes
+        https://bugs.webkit.org/show_bug.cgi?id=158876
+        <rdar://problem/26842619>
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/checkbox-mixed-value-expected.txt: Added.
+        * accessibility/checkbox-mixed-value.html: Added.
+
 2016-06-17  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r199819): CrashTracer: [GraphicsContext3D::getInternalFramebufferSize

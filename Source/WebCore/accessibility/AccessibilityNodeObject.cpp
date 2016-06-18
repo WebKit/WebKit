@@ -665,8 +665,7 @@ bool AccessibilityNodeObject::isEnabled() const
 
 bool AccessibilityNodeObject::isIndeterminate() const
 {
-    auto* node = this->node();
-    return is<HTMLInputElement>(node) && downcast<HTMLInputElement>(*node).shouldAppearIndeterminate();
+    return equalLettersIgnoringASCIICase(getAttribute(indeterminateAttr), "true");
 }
 
 bool AccessibilityNodeObject::isPressed() const
@@ -938,7 +937,7 @@ AccessibilityObject* AccessibilityNodeObject::selectedTabItem()
 AccessibilityButtonState AccessibilityNodeObject::checkboxOrRadioValue() const
 {
     if (isNativeCheckboxOrRadio())
-        return isChecked() ? ButtonStateOn : ButtonStateOff;
+        return isIndeterminate() ? ButtonStateMixed : isChecked() ? ButtonStateOn : ButtonStateOff;
 
     return AccessibilityObject::checkboxOrRadioValue();
 }
