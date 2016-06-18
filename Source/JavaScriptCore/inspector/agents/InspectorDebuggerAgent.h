@@ -83,8 +83,7 @@ public:
     void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
     void setOverlayMessage(ErrorString&, const String*) override;
 
-    bool isPaused() const;
-    bool breakpointsActive() const;
+    bool isPaused();
 
     void setSuppressAllPauses(bool);
 

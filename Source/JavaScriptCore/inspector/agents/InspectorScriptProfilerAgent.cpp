@@ -216,14 +216,4 @@ void InspectorScriptProfilerAgent::trackingComplete()
 #endif // ENABLE(SAMPLING_PROFILER)
 }
 
-void InspectorScriptProfilerAgent::programmaticCaptureStarted()
-{
-    m_frontendDispatcher->programmaticCaptureStarted();
-}
-
-void InspectorScriptProfilerAgent::programmaticCaptureStopped()
-{
-    m_frontendDispatcher->programmaticCaptureStopped();
-}
-
 } // namespace Inspector

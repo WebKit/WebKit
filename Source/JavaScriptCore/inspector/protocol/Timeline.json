@@ -105,14 +105,6 @@
         {
             "name": "autoCaptureStarted",
             "description": "Fired when auto capture started."
-        },
-        {
-            "name": "programmaticCaptureStarted",
-            "description": "Fired when programmatic capture starts (console.profile)."
-        },
-        {
-            "name": "programmaticCaptureStopped",
-            "description": "Fired when programmatic capture stops (console.profileEnd)."
         }
     ]
 }

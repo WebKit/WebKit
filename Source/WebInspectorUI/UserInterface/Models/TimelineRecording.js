@@ -127,17 +127,15 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
             instrument.startInstrumentation();
     }
 
-    stop(programmatic)
+    stop()
     {
         console.assert(this._capturing, "Attempted to stop an already stopped session.");
         console.assert(!this._readonly, "Attempted to stop a readonly session.");
 
         this._capturing = false;
 
-        if (!programmatic) {
-            for (let instrument of this._instruments)
-                instrument.stopInstrumentation();
-        }
+        for (let instrument of this._instruments)
+            instrument.stopInstrumentation();
     }
 
     saveIdentityToCookie()
@@ -307,19 +305,6 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
     discontinuitiesInTimeRange(startTime, endTime)
     {
         return this._discontinuities.filter((item) => item.startTime < endTime && item.endTime > startTime);
-    }
-
-    addScriptInstrumentForProgrammaticCapture()
-    {
-        for (let instrument of this._instruments) {
-            if (instrument instanceof WebInspector.ScriptInstrument)
-                return;
-        }
-
-        this.addInstrument(new WebInspector.ScriptInstrument);
-
-        let instrumentTypes = this._instruments.map((instrument) => instrument.timelineRecordType);
-        WebInspector.timelineManager.enabledTimelineTypes = instrumentTypes;
     }
 
     computeElapsedTime(timestamp)

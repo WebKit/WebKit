@@ -78,7 +78,6 @@ public:
     void clearBreakpoints();
     void activateBreakpoints() { setBreakpointsActivated(true); }
     void deactivateBreakpoints() { setBreakpointsActivated(false); }
-    bool breakpointsActive() const { return m_breakpointsActivated; }
 
     enum PauseOnExceptionsState {
         DontPauseOnExceptions,

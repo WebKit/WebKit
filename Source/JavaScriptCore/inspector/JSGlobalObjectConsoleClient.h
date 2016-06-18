@@ -23,22 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSGlobalObjectConsoleClient_h
+#define JSGlobalObjectConsoleClient_h
 
 #include "ConsoleClient.h"
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
 class InspectorConsoleAgent;
-class InspectorDebuggerAgent;
-class InspectorScriptProfilerAgent;
 
 class JSGlobalObjectConsoleClient final : public JSC::ConsoleClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit JSGlobalObjectConsoleClient(InspectorConsoleAgent*, InspectorDebuggerAgent*, InspectorScriptProfilerAgent*);
+    explicit JSGlobalObjectConsoleClient(InspectorConsoleAgent*);
     virtual ~JSGlobalObjectConsoleClient() { }
 
     static bool logToSystemConsole();
@@ -58,14 +55,9 @@ private:
     void warnUnimplemented(const String& method);
     void internalAddMessage(MessageType, MessageLevel, JSC::ExecState*, RefPtr<ScriptArguments>&&);
 
-    void startConsoleProfile();
-    void stopConsoleProfile();
-
     InspectorConsoleAgent* m_consoleAgent;
-    InspectorDebuggerAgent* m_debuggerAgent;
-    InspectorScriptProfilerAgent* m_scriptProfilerAgent;
-    Vector<String> m_profiles;
-    bool m_profileRestoreBreakpointActiveValue { false };
 };
 
 }
+
+#endif // !defined(JSGlobalObjectConsoleClient_h)

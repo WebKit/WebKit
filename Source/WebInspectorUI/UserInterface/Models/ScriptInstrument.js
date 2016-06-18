@@ -56,4 +56,5 @@ WebInspector.ScriptInstrument = class ScriptInstrument extends WebInspector.Inst
 
         ScriptProfilerAgent.stopTracking();
     }
+
 };
