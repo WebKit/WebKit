@@ -45,6 +45,8 @@
 
 namespace WTF {
 
+using CharacterMatchFunction = bool (*)(UChar);
+
 // StringView is a non-owning reference to a string, similar to the proposed std::string_view.
 // Whether the string is 8-bit or 16-bit is encoded in the upper bit of the length member.
 // This means that strings longer than 2 gigacharacters cannot be represented.
@@ -110,6 +112,7 @@ public:
     StringView substring(unsigned start, unsigned length = std::numeric_limits<unsigned>::max()) const;
 
     size_t find(UChar, unsigned start = 0) const;
+    size_t find(CharacterMatchFunction, unsigned start = 0) const;
 
     WTF_EXPORT_STRING_API size_t find(StringView, unsigned start) const;
 
@@ -498,6 +501,13 @@ inline size_t StringView::find(UChar character, unsigned start) const
     if (is8Bit())
         return WTF::find(characters8(), m_length, character, start);
     return WTF::find(characters16(), length(), character, start);
+}
+
+inline size_t StringView::find(CharacterMatchFunction matchFunction, unsigned start) const
+{
+    if (is8Bit())
+        return WTF::find(characters8(), m_length, matchFunction, start);
+    return WTF::find(characters16(), length(), matchFunction, start);
 }
 
 #if !CHECK_STRINGVIEW_LIFETIME

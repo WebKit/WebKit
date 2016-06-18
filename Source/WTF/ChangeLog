@@ -1,3 +1,16 @@
+2016-06-17  Chris Dumez  <cdumez@apple.com>
+
+        Optimize parseCacheHeader() by using StringView
+        https://bugs.webkit.org/show_bug.cgi?id=158891
+
+        Reviewed by Darin Adler.
+
+        Add a StringView::find() overload which takes a CharacterMatchFunction
+        to match the one on String.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::find):
+
 2016-06-17  Mark Lam  <mark.lam@apple.com>
 
         OOM Assertion failure in JSON.stringify.

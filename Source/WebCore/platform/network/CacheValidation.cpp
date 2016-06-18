@@ -34,6 +34,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -202,21 +203,22 @@ inline bool isCacheHeaderSeparator(UChar c)
     }
 }
 
-inline bool isControlCharacter(UChar c)
+inline bool isControlCharacterOrSpace(UChar character)
 {
-    return c < ' ' || c == 127;
+    return character <= ' ' || character == 127;
 }
 
-inline String trimToNextSeparator(const String& str)
+inline StringView trimToNextSeparator(StringView string)
 {
-    return str.substring(0, str.find(isCacheHeaderSeparator));
+    return string.substring(0, string.find(isCacheHeaderSeparator));
 }
 
 static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
 {
     Vector<std::pair<String, String>> result;
 
-    const String safeHeader = header.removeCharacters(isControlCharacter);
+    String safeHeaderString = header.removeCharacters(isControlCharacterOrSpace);
+    StringView safeHeader = safeHeaderString;
     unsigned max = safeHeader.length();
     unsigned pos = 0;
     while (pos < max) {
@@ -224,30 +226,30 @@ static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
         size_t nextEqualSignPosition = safeHeader.find('=', pos);
         if (nextEqualSignPosition == notFound && nextCommaPosition == notFound) {
             // Add last directive to map with empty string as value
-            result.append(std::make_pair(trimToNextSeparator(safeHeader.substring(pos, max - pos).stripWhiteSpace()), ""));
+            result.append({ trimToNextSeparator(safeHeader.substring(pos, max - pos)).toString(), emptyString() });
             return result;
         }
         if (nextCommaPosition != notFound && (nextCommaPosition < nextEqualSignPosition || nextEqualSignPosition == notFound)) {
             // Add directive to map with empty string as value
-            result.append(std::make_pair(trimToNextSeparator(safeHeader.substring(pos, nextCommaPosition - pos).stripWhiteSpace()), ""));
+            result.append({ trimToNextSeparator(safeHeader.substring(pos, nextCommaPosition - pos)).toString(), emptyString() });
             pos += nextCommaPosition - pos + 1;
             continue;
         }
         // Get directive name, parse right hand side of equal sign, then add to map
-        String directive = trimToNextSeparator(safeHeader.substring(pos, nextEqualSignPosition - pos).stripWhiteSpace());
+        String directive = trimToNextSeparator(safeHeader.substring(pos, nextEqualSignPosition - pos)).toString();
         pos += nextEqualSignPosition - pos + 1;
 
-        String value = safeHeader.substring(pos, max - pos).stripWhiteSpace();
+        StringView value = safeHeader.substring(pos, max - pos);
         if (value[0] == '"') {
             // The value is a quoted string
             size_t nextDoubleQuotePosition = value.find('"', 1);
             if (nextDoubleQuotePosition == notFound) {
                 // Parse error; just use the rest as the value
-                result.append(std::make_pair(directive, trimToNextSeparator(value.substring(1, value.length() - 1).stripWhiteSpace())));
+                result.append({ directive, trimToNextSeparator(value.substring(1, value.length() - 1)).toString() });
                 return result;
             }
             // Store the value as a quoted string without quotes
-            result.append(std::make_pair(directive, value.substring(1, nextDoubleQuotePosition - 1).stripWhiteSpace()));
+            result.append({ directive, value.substring(1, nextDoubleQuotePosition - 1).toString() });
             pos += (safeHeader.find('"', pos) - pos) + nextDoubleQuotePosition + 1;
             // Move past next comma, if there is one
             size_t nextCommaPosition2 = safeHeader.find(',', pos);
@@ -260,11 +262,11 @@ static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
         size_t nextCommaPosition2 = value.find(',');
         if (nextCommaPosition2 == notFound) {
             // The rest is the value; no change to value needed
-            result.append(std::make_pair(directive, trimToNextSeparator(value)));
+            result.append({ directive, trimToNextSeparator(value).toString() });
             return result;
         }
         // The value is delimited by the next comma
-        result.append(std::make_pair(directive, trimToNextSeparator(value.substring(0, nextCommaPosition2).stripWhiteSpace())));
+        result.append({ directive, trimToNextSeparator(value.substring(0, nextCommaPosition2)).toString() });
         pos += (safeHeader.find(',', pos) - pos) + 1;
     }
     return result;
