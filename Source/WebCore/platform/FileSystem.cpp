@@ -330,18 +330,19 @@ int platformFileStat(PlatformFileHandle handle, PlatformStat* buffer)
     
 bool filesHaveSameVolume(const String& sourceFile, const String& destFile)
 {
-    
-    auto fsRepSourceFile = fileSystemRepresentation(sourceFile);
-    auto fsRepDestFile = fileSystemRepresentation(destFile);
-        
+    CString fsRepSourceFile, fsRepDestFile;
+    PlatformStat sourceFileStat, destFileStat;
     PlatformFileHandle sourceHandle = -1, destHandle = -1;
+    bool result = true;
+    
+    fsRepSourceFile = fileSystemRepresentation(sourceFile);
+    fsRepDestFile = fileSystemRepresentation(destFile);
+        
     if (!fsRepSourceFile.isNull() && !fsRepDestFile.isNull()) {
         sourceHandle = openFile(fsRepSourceFile.data(), OpenForRead);
         destHandle = openFile(fsRepDestFile.data(), OpenForRead);
     }
         
-    bool result = true;
-    PlatformStat sourceFileStat, destFileStat;
     if (sourceHandle > -1 && destHandle > -1) {
         if (platformFileStat(sourceHandle, &sourceFileStat) > -1 && platformFileStat(destHandle, &destFileStat) > -1) {
             if (sourceFileStat.st_dev != destFileStat.st_dev)
