@@ -28,6 +28,7 @@ namespace WebCore {
 class WEBCORE_TESTSUPPORT_EXPORT JSTestNode : public JSNode {
 public:
     typedef JSNode Base;
+    typedef TestNode DOMWrapped;
     static JSTestNode* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNode>&& impl)
     {
         JSTestNode* ptr = new (NotNull, JSC::allocateCell<JSTestNode>(globalObject->vm().heap)) JSTestNode(structure, *globalObject, WTFMove(impl));
