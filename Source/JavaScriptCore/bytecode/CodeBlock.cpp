@@ -441,6 +441,9 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
         case CacheType::Unset:
             out.printf("unset");
             break;
+        case CacheType::ArrayLength:
+            out.printf("ArrayLength");
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;

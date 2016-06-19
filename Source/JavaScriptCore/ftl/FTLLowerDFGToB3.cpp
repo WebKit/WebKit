@@ -6183,21 +6183,19 @@ private:
 
                                 jit.addLinkTask(
                                     [=] (LinkBuffer& linkBuffer) {
-                                        CodeLocationCall callReturnLocation =
-                                            linkBuffer.locationOf(slowPathCall);
-                                        stubInfo->patch.deltaCallToDone =
-                                            CCallHelpers::differenceBetweenCodePtr(
-                                                callReturnLocation,
-                                                linkBuffer.locationOf(done));
-                                        stubInfo->patch.deltaCallToJump =
-                                            CCallHelpers::differenceBetweenCodePtr(
-                                                callReturnLocation,
-                                                linkBuffer.locationOf(jump));
-                                        stubInfo->callReturnLocation = callReturnLocation;
-                                        stubInfo->patch.deltaCallToSlowCase =
-                                            CCallHelpers::differenceBetweenCodePtr(
-                                                callReturnLocation,
-                                                linkBuffer.locationOf(slowPathBegin));
+                                        CodeLocationLabel start = linkBuffer.locationOf(jump);
+                                        stubInfo->patch.start = start;
+                                        ptrdiff_t inlineSize = MacroAssembler::differenceBetweenCodePtr(
+                                            start, linkBuffer.locationOf(done));
+                                        RELEASE_ASSERT(inlineSize >= 0);
+                                        stubInfo->patch.inlineSize = inlineSize;
+
+                                        stubInfo->patch.deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
+                                            start, linkBuffer.locationOf(slowPathCall));
+
+                                        stubInfo->patch.deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
+                                            start, linkBuffer.locationOf(slowPathBegin));
+
                                     });
                             });
                     });
@@ -7616,7 +7614,7 @@ private:
 
                 auto generator = Box<JITGetByIdGenerator>::create(
                     jit.codeBlock(), node->origin.semantic, callSiteIndex,
-                    params.unavailableRegisters(), JSValueRegs(params[1].gpr()),
+                    params.unavailableRegisters(), uid, JSValueRegs(params[1].gpr()),
                     JSValueRegs(params[0].gpr()), type);
 
                 generator->generateFastPath(jit);

@@ -1551,11 +1551,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     state.ident = &ident;
     
     state.baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
-    state.valueRegs = JSValueRegs(
-#if USE(JSVALUE32_64)
-        static_cast<GPRReg>(stubInfo.patch.valueTagGPR),
-#endif
-        static_cast<GPRReg>(stubInfo.patch.valueGPR));
+    state.valueRegs = stubInfo.valueRegs();
 
     ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
     state.allocator = &allocator;
@@ -1753,14 +1749,11 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         return AccessGenerationResult::GaveUp;
     }
 
-    CodeLocationLabel successLabel =
-        stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone);
+    CodeLocationLabel successLabel = stubInfo.doneLocation();
         
     linkBuffer.link(state.success, successLabel);
 
-    linkBuffer.link(
-        failure,
-        stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase));
+    linkBuffer.link(failure, stubInfo.slowPathStartLocation());
     
     if (verbose)
         dataLog(*codeBlock, " ", stubInfo.codeOrigin, ": Generating polymorphic access stub for ", listDump(cases), "\n");

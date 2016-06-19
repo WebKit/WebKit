@@ -2004,6 +2004,43 @@ public:
         m_formatter.twoWordOp16Op16(OP_NOP_T2a, OP_NOP_T2b);
     }
     
+    static constexpr int16_t nopPseudo16()
+    {
+        return OP_NOP_T1;
+    }
+
+    static constexpr int32_t nopPseudo32()
+    {
+        return OP_NOP_T2a | (OP_NOP_T2b << 16);
+    }
+
+    static void fillNops(void* base, size_t size, bool isCopyingToExecutableMemory)
+    {
+        RELEASE_ASSERT(!(size % sizeof(int16_t)));
+
+        char* ptr = static_cast<char*>(base);
+        const size_t num32s = size / sizeof(int32_t);
+        for (size_t i = 0; i < num32s; i++) {
+            const int32_t insn = nopPseudo32();
+            if (isCopyingToExecutableMemory)
+                performJITMemcpy(ptr, &insn, sizeof(int32_t));
+            else
+                memcpy(ptr, &insn, sizeof(int32_t));
+            ptr += sizeof(int32_t);
+        }
+
+        const size_t num16s = (size % sizeof(int32_t)) / sizeof(int16_t);
+        ASSERT(num16s == 0 || num16s == 1);
+        ASSERT(num16s * sizeof(int16_t) + num32s * sizeof(int32_t) == size);
+        if (num16s) {
+            const int16_t insn = nopPseudo16();
+            if (isCopyingToExecutableMemory)
+                performJITMemcpy(ptr, &insn, sizeof(int16_t));
+            else
+                memcpy(ptr, &insn, sizeof(int16_t));
+        }
+    }
+
     void dmbSY()
     {
         m_formatter.twoWordOp16Op16(OP_DMB_SY_T2a, OP_DMB_SY_T2b);

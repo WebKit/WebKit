@@ -1484,13 +1484,16 @@ public:
         insn(nopPseudo());
     }
     
-    static void fillNops(void* base, size_t size)
+    static void fillNops(void* base, size_t size, bool isCopyingToExecutableMemory)
     {
         RELEASE_ASSERT(!(size % sizeof(int32_t)));
         size_t n = size / sizeof(int32_t);
         for (int32_t* ptr = static_cast<int32_t*>(base); n--;) {
             int insn = nopPseudo();
-            performJITMemcpy(ptr++, &insn, sizeof(int));
+            if (isCopyingToExecutableMemory)
+                performJITMemcpy(ptr++, &insn, sizeof(int));
+            else
+                memcpy(ptr++, &insn, sizeof(int));
         }
     }
     

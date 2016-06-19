@@ -258,11 +258,20 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
     for (unsigned i = 0; i < m_ins.size(); ++i) {
         StructureStubInfo& info = *m_ins[i].m_stubInfo;
-        CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->call());
-        info.patch.deltaCallToDone = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_ins[i].m_done));
-        info.patch.deltaCallToJump = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_ins[i].m_jump));
-        info.callReturnLocation = callReturnLocation;
-        info.patch.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->label()));
+
+        CodeLocationLabel start = linkBuffer.locationOf(m_ins[i].m_jump);
+        info.patch.start = start;
+
+        ptrdiff_t inlineSize = MacroAssembler::differenceBetweenCodePtr(
+            start, linkBuffer.locationOf(m_ins[i].m_done));
+        RELEASE_ASSERT(inlineSize >= 0);
+        info.patch.inlineSize = inlineSize;
+
+        info.patch.deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
+            start, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->call()));
+
+        info.patch.deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
+            start, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->label()));
     }
     
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {

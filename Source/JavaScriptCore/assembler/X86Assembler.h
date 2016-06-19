@@ -2946,8 +2946,9 @@ public:
         m_formatter.oneByteOp(OP_NOP);
     }
 
-    static void fillNops(void* base, size_t size)
+    static void fillNops(void* base, size_t size, bool isCopyingToExecutableMemory)
     {
+        UNUSED_PARAM(isCopyingToExecutableMemory);
 #if CPU(X86_64)
         static const uint8_t nops[10][10] = {
             // nop

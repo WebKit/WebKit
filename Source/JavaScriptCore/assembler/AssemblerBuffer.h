@@ -62,39 +62,62 @@ namespace JSC {
     };
 
     class AssemblerData {
+        WTF_MAKE_NONCOPYABLE(AssemblerData);
+        static const size_t InlineCapacity = 128;
     public:
         AssemblerData()
-            : m_buffer(nullptr)
-            , m_capacity(0)
+            : m_buffer(m_inlineBuffer)
+            , m_capacity(InlineCapacity)
         {
         }
 
-        AssemblerData(unsigned initialCapacity)
+        AssemblerData(size_t initialCapacity)
         {
-            m_capacity = initialCapacity;
-            m_buffer = static_cast<char*>(fastMalloc(m_capacity));
+            if (initialCapacity <= InlineCapacity) {
+                m_capacity = InlineCapacity;
+                m_buffer = m_inlineBuffer;
+            } else {
+                m_capacity = initialCapacity;
+                m_buffer = static_cast<char*>(fastMalloc(m_capacity));
+            }
         }
 
         AssemblerData(AssemblerData&& other)
         {
-            m_buffer = other.m_buffer;
-            other.m_buffer = nullptr;
+            if (other.isInlineBuffer()) {
+                ASSERT(other.m_capacity == InlineCapacity);
+                memcpy(m_inlineBuffer, other.m_inlineBuffer, InlineCapacity);
+                m_buffer = m_inlineBuffer;
+            } else
+                m_buffer = other.m_buffer;
             m_capacity = other.m_capacity;
+
+            other.m_buffer = nullptr;
             other.m_capacity = 0;
         }
 
         AssemblerData& operator=(AssemblerData&& other)
         {
-            m_buffer = other.m_buffer;
-            other.m_buffer = nullptr;
+            if (m_buffer && !isInlineBuffer())
+                fastFree(m_buffer);
+
+            if (other.isInlineBuffer()) {
+                ASSERT(other.m_capacity == InlineCapacity);
+                memcpy(m_inlineBuffer, other.m_inlineBuffer, InlineCapacity);
+                m_buffer = m_inlineBuffer;
+            } else
+                m_buffer = other.m_buffer;
             m_capacity = other.m_capacity;
+
+            other.m_buffer = nullptr;
             other.m_capacity = 0;
             return *this;
         }
 
         ~AssemblerData()
         {
-            fastFree(m_buffer);
+            if (m_buffer && !isInlineBuffer())
+                fastFree(m_buffer);
         }
 
         char* buffer() const { return m_buffer; }
@@ -104,19 +127,24 @@ namespace JSC {
         void grow(unsigned extraCapacity = 0)
         {
             m_capacity = m_capacity + m_capacity / 2 + extraCapacity;
-            m_buffer = static_cast<char*>(fastRealloc(m_buffer, m_capacity));
+            if (isInlineBuffer()) {
+                m_buffer = static_cast<char*>(fastMalloc(m_capacity));
+                memcpy(m_buffer, m_inlineBuffer, InlineCapacity);
+            } else
+                m_buffer = static_cast<char*>(fastRealloc(m_buffer, m_capacity));
         }
 
     private:
+        bool isInlineBuffer() const { return m_buffer == m_inlineBuffer; }
         char* m_buffer;
+        char m_inlineBuffer[InlineCapacity];
         unsigned m_capacity;
     };
 
     class AssemblerBuffer {
-        static const int initialCapacity = 128;
     public:
         AssemblerBuffer()
-            : m_storage(initialCapacity)
+            : m_storage()
             , m_index(0)
         {
         }
@@ -128,7 +156,7 @@ namespace JSC {
 
         void ensureSpace(unsigned space)
         {
-            if (!isAvailable(space))
+            while (!isAvailable(space))
                 outOfLineGrow();
         }
 
@@ -156,6 +184,15 @@ namespace JSC {
             return m_index;
         }
 
+        void setCodeSize(size_t index)
+        {
+            // Warning: Only use this if you know exactly what you are doing.
+            // For example, say you want 40 bytes of nops, it's ok to grow
+            // and then fill 40 bytes of nops using bigger instructions.
+            m_index = index;
+            ASSERT(m_index <= m_storage.capacity());
+        }
+
         AssemblerLabel label() const
         {
             return AssemblerLabel(m_index);
@@ -163,7 +200,7 @@ namespace JSC {
 
         unsigned debugOffset() { return m_index; }
 
-        AssemblerData releaseAssemblerData() { return WTFMove(m_storage); }
+        AssemblerData&& releaseAssemblerData() { return WTFMove(m_storage); }
 
         // LocalWriter is a trick to keep the storage buffer and the index
         // in memory while issuing multiple Stores.

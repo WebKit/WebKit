@@ -186,8 +186,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
                     baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
                 RELEASE_ASSERT(stubInfo);
 
-                jumpTarget = stubInfo->callReturnLocation.labelAtOffset(
-                    stubInfo->patch.deltaCallToDone).executableAddress();
+                jumpTarget = stubInfo->doneLocation().executableAddress();
                 break;
             }
 

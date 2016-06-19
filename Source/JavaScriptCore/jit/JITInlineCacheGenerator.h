@@ -68,30 +68,30 @@ public:
     void reportSlowPathCall(MacroAssembler::Label slowPathBegin, MacroAssembler::Call call)
     {
         m_slowPathBegin = slowPathBegin;
-        m_call = call;
+        m_slowPathCall = call;
     }
     
     MacroAssembler::Label slowPathBegin() const { return m_slowPathBegin; }
-    MacroAssembler::Jump slowPathJump() const { return m_structureCheck.m_jump; }
+    MacroAssembler::Jump slowPathJump() const
+    {
+        ASSERT(m_slowPathJump.isSet());
+        return m_slowPathJump;
+    }
 
     void finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
     void finalize(LinkBuffer&);
     
 protected:
-    void generateFastPathChecks(MacroAssembler&);
+    void generateFastCommon(MacroAssembler&, size_t size);
     
     JSValueRegs m_base;
     JSValueRegs m_value;
     
-    MacroAssembler::DataLabel32 m_structureImm;
-    MacroAssembler::PatchableJump m_structureCheck;
-    AssemblerLabel m_loadOrStore;
-#if USE(JSVALUE32_64)
-    AssemblerLabel m_tagLoadOrStore;
-#endif
+    MacroAssembler::Label m_start;
     MacroAssembler::Label m_done;
     MacroAssembler::Label m_slowPathBegin;
-    MacroAssembler::Call m_call;
+    MacroAssembler::Call m_slowPathCall;
+    MacroAssembler::Jump m_slowPathJump;
 };
 
 class JITGetByIdGenerator : public JITByIdGenerator {
@@ -99,10 +99,13 @@ public:
     JITGetByIdGenerator() { }
 
     JITGetByIdGenerator(
-        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base,
-        JSValueRegs value, AccessType);
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, UniquedStringImpl* propertyName,
+        JSValueRegs base, JSValueRegs value, AccessType);
     
     void generateFastPath(MacroAssembler&);
+
+private:
+    bool m_isLengthAccess;
 };
 
 class JITPutByIdGenerator : public JITByIdGenerator {

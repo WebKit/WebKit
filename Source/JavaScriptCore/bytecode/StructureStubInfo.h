@@ -57,7 +57,8 @@ enum class CacheType : int8_t {
     Unset,
     GetByIdSelf,
     PutByIdReplace,
-    Stub
+    Stub,
+    ArrayLength
 };
 
 class StructureStubInfo {
@@ -68,6 +69,7 @@ public:
     ~StructureStubInfo();
 
     void initGetByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
+    void initArrayLength();
     void initPutByIdReplace(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
     void initStub(CodeBlock*, std::unique_ptr<PolymorphicAccess>);
 
@@ -143,12 +145,10 @@ public:
         return false;
     }
 
-    CodeLocationCall callReturnLocation;
+    bool containsPC(void* pc) const;
 
     CodeOrigin codeOrigin;
     CallSiteIndex callSiteIndex;
-
-    bool containsPC(void* pc) const;
 
     union {
         struct {
@@ -165,24 +165,38 @@ public:
     StructureSet bufferedStructures;
     
     struct {
+        CodeLocationLabel start; // This is either the start of the inline IC for *byId caches, or the location of patchable jump for 'in' caches.
+        RegisterSet usedRegisters;
+        uint32_t inlineSize;
+        int32_t deltaFromStartToSlowPathCallLocation;
+        int32_t deltaFromStartToSlowPathStart;
+
         int8_t baseGPR;
+        int8_t valueGPR;
 #if USE(JSVALUE32_64)
         int8_t valueTagGPR;
         int8_t baseTagGPR;
 #endif
-        int8_t valueGPR;
-        RegisterSet usedRegisters;
-        int32_t deltaCallToDone;
-        int32_t deltaCallToJump;
-        int32_t deltaCallToSlowCase;
-        int32_t deltaCheckImmToCall;
-#if USE(JSVALUE64)
-        int32_t deltaCallToLoadOrStore;
-#else
-        int32_t deltaCallToTagLoadOrStore;
-        int32_t deltaCallToPayloadLoadOrStore;
-#endif
     } patch;
+
+    CodeLocationCall slowPathCallLocation() { return patch.start.callAtOffset(patch.deltaFromStartToSlowPathCallLocation); }
+    CodeLocationLabel doneLocation() { return patch.start.labelAtOffset(patch.inlineSize); }
+    CodeLocationLabel slowPathStartLocation() { return patch.start.labelAtOffset(patch.deltaFromStartToSlowPathStart); }
+    CodeLocationJump patchableJumpForIn()
+    { 
+        ASSERT(accessType == AccessType::In);
+        return patch.start.jumpAtOffset(0);
+    }
+
+    JSValueRegs valueRegs() const
+    {
+        return JSValueRegs(
+#if USE(JSVALUE32_64)
+            static_cast<GPRReg>(patch.valueTagGPR),
+#endif
+            static_cast<GPRReg>(patch.valueGPR));
+    }
+
 
     AccessType accessType;
     CacheType cacheType;

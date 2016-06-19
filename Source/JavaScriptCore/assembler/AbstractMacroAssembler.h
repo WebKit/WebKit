@@ -27,7 +27,6 @@
 #define AbstractMacroAssembler_h
 
 #include "AbortReason.h"
-#include "AssemblerBuffer.h"
 #include "CodeLocation.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Options.h"
@@ -1038,6 +1037,17 @@ public:
     void addLinkTask(const Functor& functor)
     {
         m_linkTasks.append(createSharedTask<void(LinkBuffer&)>(functor));
+    }
+
+    void emitNops(size_t memoryToFillWithNopsInBytes)
+    {
+        AssemblerBuffer& buffer = m_assembler.buffer();
+        size_t startCodeSize = buffer.codeSize();
+        size_t targetCodeSize = startCodeSize + memoryToFillWithNopsInBytes;
+        buffer.ensureSpace(memoryToFillWithNopsInBytes);
+        bool isCopyingToExecutableMemory = false;
+        AssemblerType::fillNops(static_cast<char*>(buffer.data()) + startCodeSize, memoryToFillWithNopsInBytes, isCopyingToExecutableMemory);
+        buffer.setCodeSize(targetCodeSize);
     }
 
 protected:
