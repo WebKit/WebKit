@@ -1,5 +1,14 @@
 2016-06-19  Lucas Forschler  <lforschler@apple.com>
 
+        Fix master.cfg
+        
+        Unreviewed build fix.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileWebKit.start):
+
+2016-06-19  Lucas Forschler  <lforschler@apple.com>
+
         Test another commit.
         
         Unreviewed.
