@@ -1,3 +1,15 @@
+2016-06-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Remove Sidebar z-index:0 workaround for scrollbars and position:sticky section headers
+        https://bugs.webkit.org/show_bug.cgi?id=158882
+
+        Reviewed by Darin Adler.
+
+        The z-index:0 workaround is no longer needed as it doesn't change anything.
+
+        * UserInterface/Views/Sidebar.css:
+        (.sidebar > .panel): Deleted.
+
 2016-06-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202152.
