@@ -5,6 +5,13 @@
         * BuildSlaveSupport/build.webkit.org-config/master.cfg:
         (CompileWebKit.start):
 
+2016-06-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Another buid fix for master.cfg.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileWebKit.start):
+
 2016-06-19  Lucas Forschler  <lforschler@apple.com>
 
         Fix master.cfg
