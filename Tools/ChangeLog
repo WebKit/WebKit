@@ -1,6 +1,6 @@
 2016-06-19  Lucas Forschler  <lforschler@apple.com>
 
-        Testing yet another fix for trac-mirror.
+        Test post-commit after apache restart.
         
         Unreviewed.
 
