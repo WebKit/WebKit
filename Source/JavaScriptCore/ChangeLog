@@ -1,3 +1,54 @@
+2016-06-19  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(concurrent baseline JIT): Kraken/ai-astar runs 20% slower
+        https://bugs.webkit.org/show_bug.cgi?id=158906
+
+        Reviewed by Benjamin Poulain.
+        
+        The concurrent baseline JIT was a 2-3% progression on JSBench, possibly a 1% progression
+        on PLT3, but a 2-5% regression on Kraken. This patch fixes the Kraken regression without
+        affecting the other tests.
+        
+        The problem is that Kraken/ai-astar's initialization code had a ginormous piece of init
+        code that took about 16ms to compile in baseline. There's no good way to avoid letting it
+        tier-up into baseline since it has a compute loop. The time it takes to run this code is
+        never measured. The concurrent baseline JIT caused us to schedule the compilation of this
+        huge code rather than doing it eagerly. This meant that after initialization was done and
+        we started actually running real stuff, all of the real stuff's compiles would be convoyed
+        behind this super-expensive baseline compile. Note that DFG and FTL compiles convoy behind
+        baseline compiles, since you can't schedule a DFG compile for a code block until that code
+        block is in baseline.
+        
+        This uses the simplest fix: if we are thinking about scheduling some compile and the
+        thread is busy, do the compile on the main thread instead. This doesn't completely
+        eliminate the ai-astar regression (we still have a 4% regression on that test) but it now
+        results in concurrent baseline JIT being an overall progression on Kraken as a whole (1%
+        on my machine). This is because concurrent baseline appears to help on other tests.
+
+        In the future, we could fix this even better by allowing the JITWorklist to spawn more
+        threads or by being smarter about baseline compilation. I think it's nasty that if a giant
+        piece of initialization code ends in a compute loop, we compile all of the code instead of
+        just the loop. It's also gross that a constant-like object creation expression will result
+        in so much code. It would result in less code if we allowed ourselves to do a bit more
+        static reasoning about object literals.
+        
+        But for now, I think that this is a great way to recover the Kraken regression while still
+        keeping the other progressions from concurrent baseline.
+
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Plan::Plan):
+        (JSC::JITWorklist::Plan::compileInThread):
+        (JSC::JITWorklist::Plan::finalize):
+        (JSC::JITWorklist::Plan::codeBlock):
+        (JSC::JITWorklist::Plan::isFinishedCompiling):
+        (JSC::JITWorklist::Plan::compileNow):
+        (JSC::JITWorklist::JITWorklist):
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::compileNow):
+        (JSC::JITWorklist::runThread):
+        (JSC::JITWorklist::Plan::isFinalized): Deleted.
+        * jit/JITWorklist.h:
+
 2016-06-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202152.

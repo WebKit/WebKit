@@ -71,9 +71,6 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
             return;
         }
-        
-        LockHolder locker(m_lock);
-        m_isFinalized = true;
     }
     
     CodeBlock* codeBlock() { return m_codeBlock; }
@@ -84,10 +81,12 @@ public:
         LockHolder locker(m_lock);
         return m_isFinishedCompiling;
     }
-    bool isFinalized()
+    
+    static void compileNow(CodeBlock* codeBlock)
     {
-        LockHolder locker(m_lock);
-        return m_isFinalized;
+        Plan plan(codeBlock);
+        plan.compileInThread();
+        plan.finalize();
     }
     
 private:
@@ -95,7 +94,6 @@ private:
     JIT m_jit;
     Lock m_lock;
     bool m_isFinishedCompiling { false };
-    bool m_isFinalized { false };
 };
 
 JITWorklist::JITWorklist()
@@ -177,24 +175,45 @@ void JITWorklist::compileLater(CodeBlock* codeBlock)
     }
     
     if (!Options::useConcurrentJIT()) {
-        Plan plan(codeBlock);
-        plan.compileInThread();
-        plan.finalize();
+        Plan::compileNow(codeBlock);
         return;
     }
     
     codeBlock->jitSoon();
-    
-    Plans myPlans;
-    LockHolder locker(m_lock);
-    
-    if (!m_planned.add(codeBlock).isNewEntry)
-        return;
-    
-    RefPtr<Plan> plan = adoptRef(new Plan(codeBlock));
-    m_plans.append(plan);
-    m_queue.append(plan);
-    m_condition.notifyAll();
+
+    {
+        LockHolder locker(m_lock);
+        
+        if (m_planned.contains(codeBlock))
+            return;
+        
+        if (m_numAvailableThreads) {
+            m_planned.add(codeBlock);
+            RefPtr<Plan> plan = adoptRef(new Plan(codeBlock));
+            m_plans.append(plan);
+            m_queue.append(plan);
+            m_condition.notifyAll();
+            return;
+        }
+    }
+
+    // Compiling on the main thread if the helper thread isn't available is a defense against this
+    // pathology:
+    //
+    // 1) Do something that is allowed to take a while, like load a giant piece of initialization
+    //    code. This plans the compile of the init code, but doesn't finish it. It will take a
+    //    while.
+    //
+    // 2) Do something that is supposed to be quick. Now all baseline compiles, and so all DFG and
+    //    FTL compiles, of everything is blocked on the long-running baseline compile of that
+    //    initialization code.
+    //
+    // The single-threaded concurrent JIT has this tendency to convoy everything while at the same
+    // time postponing when it happens, which means that the convoy delays are less predictable.
+    // This works around the issue. If the concurrent JIT thread is convoyed, we revert to main
+    // thread compiles. This is probably not as good as if we had multiple JIT threads. Maybe we
+    // can do that someday.
+    Plan::compileNow(codeBlock);
 }
 
 void JITWorklist::compileNow(CodeBlock* codeBlock)
@@ -235,8 +254,10 @@ void JITWorklist::runThread()
         Plans myPlans;
         {
             LockHolder locker(m_lock);
+            m_numAvailableThreads++;
             while (m_queue.isEmpty())
                 m_condition.wait(m_lock);
+            m_numAvailableThreads--;
             
             // This is a fun way to dequeue. I don't know if it's any better or worse than dequeuing
             // one thing at a time.

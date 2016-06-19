@@ -73,6 +73,8 @@ private:
     
     Lock m_lock;
     Condition m_condition; // We use One True Condition for everything because that's easier.
+    
+    unsigned m_numAvailableThreads { 0 };
 };
 
 } // namespace JSC
