@@ -1,3 +1,21 @@
+2016-06-19  Frederic Wang  <fred.wang@free.fr>
+
+        Update Brotli to version 0.4.0
+        https://bugs.webkit.org/show_bug.cgi?id=158907
+
+        Reviewed by Michael Catanzaro.
+
+        * brotli/README.webkit:
+        * brotli/dec/bit_reader.h:
+        * brotli/dec/decode.c:
+        * brotli/dec/decode.h:
+        * brotli/dec/huffman.c:
+        * brotli/dec/huffman.h:
+        * brotli/dec/port.h:
+        (BrotliDump):
+        * brotli/dec/state.c:
+        * brotli/dec/state.h:
+
 2016-05-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         woff2_dec.cc triggers -Wsign-compare, -Wunused-but-set-variable
