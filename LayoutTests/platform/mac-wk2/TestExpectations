@@ -510,3 +510,9 @@ webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-d
 
 # <rdar://problem/25063128>
 [ Sierra+ ] media/media-controls-drag-timeline-set-controls-property.html [ Pass Timeout ]
+
+# <rdar://problem/23379930> swipe tests crashing
+[ Sierra+ ] swipe/basic-cached-back-swipe.html [ Skip ]
+[ Sierra+ ] swipe/main-frame-pinning-requirement.html [ Skip ]
+[ Sierra+ ] swipe/pushState-cached-back-swipe.html [ Skip ]
+[ Sierra+ ] swipe/swipe-start-hysteresis-failures.html [ Skip ]

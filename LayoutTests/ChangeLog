@@ -5,6 +5,13 @@
         * platform/mac-wk2/TestExpectations:
         * platform/mac/TestExpectations:
 
+2016-06-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Test expectation gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-06-19  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Mark shadow-dom tests to pass because it was enabled by r202091
