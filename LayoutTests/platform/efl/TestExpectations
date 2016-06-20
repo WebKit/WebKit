@@ -1337,12 +1337,6 @@ imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-slotted-rule.html [ Pas
 imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-with-outside-rules.html [ Pass ]
 imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-with-rules-no-style-leak.html [ Pass ]
 imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-with-rules.html [ Pass ]
-fast/shadow-dom/insert-child-to-assigned-node.html [ Pass ]
-fast/shadow-dom/shadow-layout-after-attach-shadow.html [ Pass ]
-fast/shadow-dom/shadow-layout-after-host-child-changes.html [ Pass ]
-fast/shadow-dom/shadow-layout-after-inserting-or-removing-host-child.html [ Pass ]
-fast/shadow-dom/shadow-layout-after-slot-changes.html [ Pass ]
-fast/shadow-dom/shadow-layout-after-slot-fallback-changes.html [ Pass ]
 
 webkit.org/b/155875 svg/W3C-SVG-1.1/animate-elem-20-t.svg [ Pass ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/interact-events-01-b.svg [ Pass ]
@@ -1366,6 +1360,8 @@ fast/scrolling/rtl-scrollbars-positioning.html
 fast/scrolling/rtl-scrollbars-text-selection-scrolled.html
 fast/scrolling/rtl-scrollbars-text-selection.html
 fast/scrolling/rtl-scrollbars.html
+
+webkit.org/b/148695 fast/shadow-dom [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
@@ -2533,9 +2529,6 @@ webkit.org/b/155945 storage/indexeddb/modern/get-keyrange-private.html [ Failure
 webkit.org/b/155945 storage/indexeddb/modern/get-keyrange.html [ Failure ]
 webkit.org/b/155945 storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
 webkit.org/b/155945 storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
-
-# Shadow dom is not enabled on EFL port yet.
-Bug(EFL) fast/shadow-dom/slot-removal-crash-2.html
 
 webkit.org/b/155959 svg/text/kerning.svg [ Failure ]
 webkit.org/b/155959 svg/text/multichar-glyph.svg [ Failure ]
