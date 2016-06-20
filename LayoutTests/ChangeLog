@@ -1,3 +1,15 @@
+2016-06-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Test expectations gardening for
+        https://bugs.webkit.org/show_bug.cgi?id=155196
+
+        Marked the tests as flaky instead of skipping, to make the results visible on the
+        flakiness dashboard. Also added video-with-data-url-allowed-by-media-src-star.html,
+        which is very flaky too.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-06-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.profile should use the new Sampling Profiler

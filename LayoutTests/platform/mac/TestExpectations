@@ -1365,8 +1365,11 @@ webkit.org/b/156983 media/video-fullscreen-restriction-removed.html [ Pass Failu
 
 webkit.org/b/156320 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
 
-webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Skip ]
-webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ Skip ]
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Pass ImageOnlyFailure ]
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/158101 imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Pass Timeout ]
 
