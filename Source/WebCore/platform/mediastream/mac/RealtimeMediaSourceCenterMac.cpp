@@ -116,10 +116,10 @@ void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreat
         }
         // FIXME: Consider the constraints when choosing among multiple devices. For now just select the first available
         // device of the appropriate type.
-        RefPtr<RealtimeMediaSource> audioSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Audio, audioConstraints.get()).at(0);
+        auto audioSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Audio, audioConstraints.get()).at(0);
         ASSERT(audioSource);
         
-        audioSources.append(audioSource.release());
+        audioSources.append(WTFMove(audioSource));
     }
     
     if (videoConstraints) {
@@ -131,10 +131,10 @@ void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreat
         }
         // FIXME: Consider the constraints when choosing among multiple devices. For now just select the first available
         // device of the appropriate type.
-        RefPtr<RealtimeMediaSource> videoSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Video, videoConstraints.get()).at(0);
+        auto videoSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Video, videoConstraints.get()).at(0);
         ASSERT(videoSource);
         
-        videoSources.append(videoSource.release());
+        videoSources.append(WTFMove(videoSource));
     }
     
     client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
@@ -147,14 +147,14 @@ void RealtimeMediaSourceCenterMac::createMediaStream(MediaStreamCreationClient* 
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
 
     if (!audioDeviceID.isEmpty()) {
-        RefPtr<RealtimeMediaSource> audioSource = AVCaptureDeviceManager::singleton().sourceWithUID(audioDeviceID, RealtimeMediaSource::Audio, nullptr);
+        auto audioSource = AVCaptureDeviceManager::singleton().sourceWithUID(audioDeviceID, RealtimeMediaSource::Audio, nullptr);
         if (audioSource)
-            audioSources.append(audioSource.release());
+            audioSources.append(WTFMove(audioSource));
     }
     if (!videoDeviceID.isEmpty()) {
-        RefPtr<RealtimeMediaSource> videoSource = AVCaptureDeviceManager::singleton().sourceWithUID(videoDeviceID, RealtimeMediaSource::Video, nullptr);
+        auto videoSource = AVCaptureDeviceManager::singleton().sourceWithUID(videoDeviceID, RealtimeMediaSource::Video, nullptr);
         if (videoSource)
-            videoSources.append(videoSource.release());
+            videoSources.append(WTFMove(videoSource));
     }
 
     client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));

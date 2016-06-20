@@ -221,13 +221,13 @@ void InbandGenericTextTrack::newCuesParsed()
     parser().getNewCues(cues);
 
     for (auto& cueData : cues) {
-        RefPtr<VTTCue> vttCue = VTTCue::create(*scriptExecutionContext(), *cueData);
+        auto vttCue = VTTCue::create(*scriptExecutionContext(), *cueData);
 
-        if (hasCue(vttCue.get(), TextTrackCue::IgnoreDuration)) {
+        if (hasCue(vttCue.ptr(), TextTrackCue::IgnoreDuration)) {
             LOG(Media, "InbandGenericTextTrack::newCuesParsed ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n", vttCue->startTime(), vttCue->endTime(), vttCue->text().utf8().data());
             return;
         }
-        addCue(vttCue.release(), ASSERT_NO_EXCEPTION);
+        addCue(WTFMove(vttCue), ASSERT_NO_EXCEPTION);
     }
 }
 

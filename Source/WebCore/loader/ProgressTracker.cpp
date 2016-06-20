@@ -168,7 +168,7 @@ void ProgressTracker::finalProgressComplete()
 {
     LOG(Progress, "Final progress complete (%p)", this);
     
-    RefPtr<Frame> frame = m_originatingProgressFrame.release();
+    auto frame = WTFMove(m_originatingProgressFrame);
     
     // Before resetting progress value be sure to send client a least one notification
     // with final progress value.

@@ -129,8 +129,8 @@
 
 - (WKBundleNodeHandleRef)_copyBundleNodeHandleRef
 {
-    RefPtr<WebKit::InjectedBundleNodeHandle> nodeHandle = WebKit::InjectedBundleNodeHandle::getOrCreate(_impl.get());
-    return toAPI(nodeHandle.release().leakRef());
+    auto nodeHandle = WebKit::InjectedBundleNodeHandle::getOrCreate(_impl.get());
+    return toAPI(nodeHandle.leakRef());
 }
 
 @end

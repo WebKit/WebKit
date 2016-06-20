@@ -56,7 +56,7 @@ PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerT
 
     context.layerWasCreated(*layer, layerType);
 
-    return layer.release();
+    return WTFMove(layer);
 }
 
 PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
@@ -66,11 +66,11 @@ PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *p
 
 PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCALayerRemote& other, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
-    RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemote(other, owner, context));
+    auto layer = adoptRef(*new PlatformCALayerRemote(other, owner, context));
 
-    context.layerWasCreated(*layer, other.layerType());
+    context.layerWasCreated(layer.get(), other.layerType());
 
-    return layer.release();
+    return WTFMove(layer);
 }
 
 PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
@@ -95,12 +95,12 @@ PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other,
 
 PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* owner) const
 {
-    RefPtr<PlatformCALayerRemote> clone = PlatformCALayerRemote::create(*this, owner, *m_context);
+    auto clone = PlatformCALayerRemote::create(*this, owner, *m_context);
 
     updateClonedLayerProperties(*clone);
 
     clone->setClonedLayer(this);
-    return clone.release();
+    return WTFMove(clone);
 }
 
 PlatformCALayerRemote::~PlatformCALayerRemote()

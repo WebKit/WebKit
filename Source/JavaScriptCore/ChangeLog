@@ -1,3 +1,55 @@
+2016-06-20  Keith Rollin  <krollin@apple.com>
+
+        Remove RefPtr::release() and change calls sites to use WTFMove()
+        https://bugs.webkit.org/show_bug.cgi?id=158369
+
+        Reviewed by Chris Dumez.
+
+        RefPtr::release() releases its managed pointer awkwardly. It's more
+        direct and clearer to use WTFMove to transfer ownership of the managed
+        pointer.
+
+        As part of this cleanup, also change a lot of explicit data types to
+        'auto'.
+
+        * API/JSObjectRef.cpp:
+        (JSClassCreate):
+        * API/JSScriptRef.cpp:
+        * API/JSValueRef.cpp:
+        (JSValueToStringCopy):
+        * bytecompiler/StaticPropertyAnalyzer.h:
+        (JSC::StaticPropertyAnalyzer::newObject):
+        (JSC::StaticPropertyAnalyzer::mov):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::invalidate):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * inspector/InspectorValues.cpp:
+        (Inspector::InspectorValue::parseJSON):
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::activateExtraDomain):
+        (Inspector::InspectorAgent::activateExtraDomains):
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::breakpointActionProbe):
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::create):
+        (JSC::GenericTypedArrayView<Adaptor>::createUninitialized):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer):
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::releaseData):
+        * runtime/Structure.cpp:
+        (JSC::Structure::toStructureShape):
+        * runtime/TypeSet.cpp:
+        (JSC::StructureShape::merge):
+        * tools/FunctionOverrides.cpp:
+        (JSC::initializeOverrideInfo):
+
 2016-06-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.profile should use the new Sampling Profiler

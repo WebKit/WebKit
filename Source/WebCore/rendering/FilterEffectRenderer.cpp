@@ -288,7 +288,7 @@ bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations
                 effect->inputEffects().append(previousEffect);
                 m_effects.append(effect);
             }
-            previousEffect = effect.release();
+            previousEffect = WTFMove(effect);
         }
     }
 

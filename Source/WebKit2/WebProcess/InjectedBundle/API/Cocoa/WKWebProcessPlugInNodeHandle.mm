@@ -48,20 +48,20 @@ using namespace WebKit;
 {
     JSContextRef contextRef = [context JSGlobalContextRef];
     JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], 0);
-    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef);
+    auto nodeHandle = InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef);
     if (!nodeHandle)
         return nil;
 
-    return [wrapper(*nodeHandle.release().leakRef()) autorelease];
+    return [wrapper(*nodeHandle.leakRef()) autorelease];
 }
 
 - (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame
 {
-    RefPtr<WebFrame> frame = _nodeHandle->htmlIFrameElementContentFrame();
+    auto frame = _nodeHandle->htmlIFrameElementContentFrame();
     if (!frame)
         return nil;
 
-    return [wrapper(*frame.release().leakRef()) autorelease];
+    return [wrapper(*frame.leakRef()) autorelease];
 }
 
 #if PLATFORM(IOS)

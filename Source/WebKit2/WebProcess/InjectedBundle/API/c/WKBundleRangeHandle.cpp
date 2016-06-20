@@ -43,7 +43,7 @@ WKTypeID WKBundleRangeHandleGetTypeID()
 WKBundleRangeHandleRef WKBundleRangeHandleCreate(JSContextRef contextRef, JSObjectRef objectRef)
 {
     RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(contextRef, objectRef);
-    return toAPI(rangeHandle.release().leakRef());
+    return toAPI(rangeHandle.leakRef());
 }
 
 WKRect WKBundleRangeHandleGetBoundingRectInWindowCoordinates(WKBundleRangeHandleRef rangeHandleRef)
@@ -55,5 +55,5 @@ WKRect WKBundleRangeHandleGetBoundingRectInWindowCoordinates(WKBundleRangeHandle
 WKImageRef WKBundleRangeHandleCopySnapshotWithOptions(WKBundleRangeHandleRef rangeHandleRef, WKSnapshotOptions options)
 {
     RefPtr<WebImage> image = toImpl(rangeHandleRef)->renderedImage(toSnapshotOptions(options));
-    return toAPI(image.release().leakRef());
+    return toAPI(image.leakRef());
 }

@@ -136,9 +136,9 @@ void ClearTextCommand::CreateAndApply(const RefPtr<Frame> frame)
     
     const VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().selectAll();
-    RefPtr<ClearTextCommand> clearCommand = adoptRef(new ClearTextCommand(*frame->document()));
+    auto clearCommand = adoptRef(*new ClearTextCommand(*frame->document()));
     clearCommand->setStartingSelection(oldSelection);
-    applyCommand(clearCommand.release());
+    applyCommand(WTFMove(clearCommand));
 }
 
 using namespace HTMLNames;
@@ -2433,16 +2433,16 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     bool asynchronous = m_frame.settings().asynchronousSpellCheckingEnabled() && !shouldShowCorrectionPanel;
 
     // In asynchronous mode, we intentionally check paragraph-wide sentence.
-    RefPtr<SpellCheckRequest> request = SpellCheckRequest::create(resolveTextCheckingTypeMask(textCheckingOptions), TextCheckingProcessIncremental, asynchronous ? paragraphRange : rangeToCheck, paragraphRange);
+    auto request = SpellCheckRequest::create(resolveTextCheckingTypeMask(textCheckingOptions), TextCheckingProcessIncremental, asynchronous ? paragraphRange : rangeToCheck, paragraphRange);
 
     if (asynchronous) {
-        m_spellChecker->requestCheckingFor(request.release());
+        m_spellChecker->requestCheckingFor(WTFMove(request));
         return;
     }
 
     Vector<TextCheckingResult> results;
     checkTextOfParagraph(*textChecker(), paragraphToCheck.text(), resolveTextCheckingTypeMask(textCheckingOptions), results, m_frame.selection().selection());
-    markAndReplaceFor(request.release(), results);
+    markAndReplaceFor(WTFMove(request), results);
 }
 
 static bool isAutomaticTextReplacementType(TextCheckingType type)

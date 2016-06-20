@@ -2278,7 +2278,7 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, DataTransf
             m_shouldOnlyFireDragOverEvent = false;
         }
     }
-    m_dragTarget = newTarget.release();
+    m_dragTarget = WTFMove(newTarget);
     return accept;
 }
 

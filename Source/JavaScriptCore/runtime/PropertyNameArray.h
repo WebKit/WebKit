@@ -76,7 +76,7 @@ public:
 
     void setData(PassRefPtr<PropertyNameArrayData> data) { m_data = data; }
     PropertyNameArrayData* data() { return m_data.get(); }
-    PassRefPtr<PropertyNameArrayData> releaseData() { return m_data.release(); }
+    PassRefPtr<PropertyNameArrayData> releaseData() { return WTFMove(m_data); }
 
     // FIXME: Remove these functions.
     bool canAddKnownUniqueForStructure() const { return m_data->propertyNameVector().isEmpty(); }

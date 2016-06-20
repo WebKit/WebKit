@@ -249,8 +249,8 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uin
     WebPageProxy* page = WebProcessProxy::webPage(pageID);
     MESSAGE_CHECK(page);
 
-    RefPtr<AuthenticationChallengeProxy> authenticationChallenge = AuthenticationChallengeProxy::create(coreChallenge, challengeID, connection());
-    page->didReceiveAuthenticationChallengeProxy(frameID, authenticationChallenge.release());
+    auto authenticationChallenge = AuthenticationChallengeProxy::create(coreChallenge, challengeID, connection());
+    page->didReceiveAuthenticationChallengeProxy(frameID, WTFMove(authenticationChallenge));
 }
 
 void NetworkProcessProxy::didFetchWebsiteData(uint64_t callbackID, const WebsiteData& websiteData)

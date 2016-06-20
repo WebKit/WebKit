@@ -92,7 +92,7 @@ PassRefPtr<BidiContext> BidiContext::copyStackRemovingUnicodeEmbeddingContexts()
     for (int i = contexts.size() - 1; i > 0; --i)
         topContext = copyContextAndRebaselineLevel(contexts[i - 1], topContext.get());
 
-    return topContext.release();
+    return WTFMove(topContext);
 }
 
 bool operator==(const BidiContext& c1, const BidiContext& c2)

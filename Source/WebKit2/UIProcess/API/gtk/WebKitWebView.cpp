@@ -1837,7 +1837,7 @@ WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFea
     webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), windowFeatures);
 
     RefPtr<WebPageProxy> newPage = getPage(newWebView);
-    return newPage.release().leakRef();
+    return newPage.leakRef();
 }
 
 void webkitWebViewReadyToShowPage(WebKitWebView* webView)
@@ -1925,7 +1925,7 @@ void webkitWebViewMouseTargetChanged(WebKitWebView* webView, const WebHitTestRes
 
 void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
 {
-    GRefPtr<WebKitPrintOperation> printOperation = adoptGRef(webkit_print_operation_new(webView));
+    auto printOperation = adoptGRef(webkit_print_operation_new(webView));
     webkitPrintOperationSetPrintMode(printOperation.get(), PrintInfo::PrintModeSync);
     gboolean returnValue;
     g_signal_emit(webView, signals[PRINT], 0, printOperation.get(), &returnValue);
@@ -3204,7 +3204,7 @@ static void fileReplaceContentsCallback(GObject* object, GAsyncResult* result, g
 
 static void getContentsAsMHTMLDataCallback(API::Data* wkData, GTask* taskPtr)
 {
-    GRefPtr<GTask> task = adoptGRef(taskPtr);
+    auto task = adoptGRef(taskPtr);
     if (g_task_return_error_if_cancelled(task.get()))
         return;
 

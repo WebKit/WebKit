@@ -200,11 +200,11 @@ public:
     template<class T>
     RefPtr<T> take(uint64_t callbackID)
     {
-        RefPtr<CallbackBase> base = m_map.take(callbackID);
+        auto base = m_map.take(callbackID);
         if (!base)
             return nullptr;
 
-        return adoptRef(base.release().leakRef()->as<T>());
+        return adoptRef(base.leakRef()->as<T>());
     }
 
     void invalidate(CallbackBase::Error error)

@@ -190,7 +190,7 @@ RefPtr<FilterEffect> SVGFESpecularLightingElement::build(SVGFilterBuilder* filte
     if (!input1)
         return nullptr;
 
-    RefPtr<LightSource> lightSource = SVGFELightElement::findLightSource(this);
+    auto lightSource = SVGFELightElement::findLightSource(this);
     if (!lightSource)
         return nullptr;
 
@@ -201,7 +201,7 @@ RefPtr<FilterEffect> SVGFESpecularLightingElement::build(SVGFilterBuilder* filte
     Color color = renderer->style().svgStyle().lightingColor();
 
     RefPtr<FilterEffect> effect = FESpecularLighting::create(filter, color, surfaceScale(), specularConstant(),
-                                          specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), lightSource.release());
+                                          specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), WTFMove(lightSource));
     effect->inputEffects().append(input1);
     return effect;
 }

@@ -38,8 +38,8 @@ WKTypeID WKBooleanGetTypeID()
 
 WKBooleanRef WKBooleanCreate(bool value)
 {
-    RefPtr<API::Boolean> booleanObject = API::Boolean::create(value);
-    return toAPI(booleanObject.release().leakRef());
+    auto booleanObject = API::Boolean::create(value);
+    return toAPI(&booleanObject.leakRef());
 }
 
 bool WKBooleanGetValue(WKBooleanRef booleanRef)
@@ -54,8 +54,8 @@ WKTypeID WKDoubleGetTypeID()
 
 WKDoubleRef WKDoubleCreate(double value)
 {
-    RefPtr<API::Double> doubleObject = API::Double::create(value);
-    return toAPI(doubleObject.release().leakRef());
+    auto doubleObject = API::Double::create(value);
+    return toAPI(&doubleObject.leakRef());
 }
 
 double WKDoubleGetValue(WKDoubleRef doubleRef)
@@ -70,8 +70,8 @@ WKTypeID WKUInt64GetTypeID()
 
 WKUInt64Ref WKUInt64Create(uint64_t value)
 {
-    RefPtr<API::UInt64> uint64Object = API::UInt64::create(value);
-    return toAPI(uint64Object.release().leakRef());
+    auto uint64Object = API::UInt64::create(value);
+    return toAPI(&uint64Object.leakRef());
 }
 
 uint64_t WKUInt64GetValue(WKUInt64Ref uint64Ref)

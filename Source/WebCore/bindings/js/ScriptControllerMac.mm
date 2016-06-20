@@ -66,10 +66,10 @@ RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(
     if (!widgetView)
         return nullptr;
 
-    RefPtr<RootObject> rootObject = createRootObject(widgetView);
+    auto rootObject = createRootObject(widgetView);
 
     if ([widgetView respondsToSelector:@selector(createPluginBindingsInstance:)])
-        return [widgetView createPluginBindingsInstance:rootObject.release()];
+        return [widgetView createPluginBindingsInstance:WTFMove(rootObject)];
         
     if ([widgetView respondsToSelector:@selector(objectForWebScript)]) {
         id objectForWebScript = [widgetView objectForWebScript];

@@ -70,9 +70,9 @@ PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Ran
     if (!result.isNewEntry)
         return PassRefPtr<InjectedBundleRangeHandle>(result.iterator->value);
 
-    RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::create(range);
-    result.iterator->value = rangeHandle.get();
-    return rangeHandle.release();
+    auto rangeHandle = InjectedBundleRangeHandle::create(range);
+    result.iterator->value = rangeHandle.ptr();
+    return WTFMove(rangeHandle);
 }
 
 Ref<InjectedBundleRangeHandle> InjectedBundleRangeHandle::create(Range* range)

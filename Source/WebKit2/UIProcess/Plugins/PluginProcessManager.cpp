@@ -125,10 +125,10 @@ PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(uint64_t plug
     for (size_t i = 0; i < m_pluginProcessTokens.size(); ++i) {
         auto& attributesAndToken = m_pluginProcessTokens[i];
         if (attributesAndToken.second == pluginProcessToken) {
-            RefPtr<PluginProcessProxy> pluginProcess = PluginProcessProxy::create(this, attributesAndToken.first, attributesAndToken.second);
-            PluginProcessProxy* pluginProcessPtr = pluginProcess.get();
+            auto pluginProcess = PluginProcessProxy::create(this, attributesAndToken.first, attributesAndToken.second);
+            PluginProcessProxy* pluginProcessPtr = pluginProcess.ptr();
 
-            m_pluginProcesses.append(pluginProcess.release());
+            m_pluginProcesses.append(WTFMove(pluginProcess));
             return pluginProcessPtr;
         }
     }

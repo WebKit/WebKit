@@ -43,16 +43,16 @@ void CreateLinkCommand::doApply()
     if (endingSelection().isNone())
         return;
         
-    RefPtr<HTMLAnchorElement> anchorElement = HTMLAnchorElement::create(document());
+    auto anchorElement = HTMLAnchorElement::create(document());
     anchorElement->setHref(m_url);
     
     if (endingSelection().isRange())
-        applyStyledElement(anchorElement.release());
+        applyStyledElement(WTFMove(anchorElement));
     else {
-        insertNodeAt(anchorElement.get(), endingSelection().start());
-        RefPtr<Text> textNode = Text::create(document(), m_url);
-        appendNode(textNode.release(), anchorElement.get());
-        setEndingSelection(VisibleSelection(positionInParentBeforeNode(anchorElement.get()), positionInParentAfterNode(anchorElement.get()), DOWNSTREAM, endingSelection().isDirectional()));
+        insertNodeAt(anchorElement.ptr(), endingSelection().start());
+        auto textNode = Text::create(document(), m_url);
+        appendNode(WTFMove(textNode), anchorElement.ptr());
+        setEndingSelection(VisibleSelection(positionInParentBeforeNode(anchorElement.ptr()), positionInParentAfterNode(anchorElement.ptr()), DOWNSTREAM, endingSelection().isDirectional()));
     }
 }
 

@@ -262,7 +262,7 @@ void StorageAreaMap::applyChange(const String& key, const String& newValue)
 
     if (!key) {
         // A null key means clear.
-        RefPtr<StorageMap> newStorageMap = StorageMap::create(m_quotaInBytes);
+        auto newStorageMap = StorageMap::create(m_quotaInBytes);
 
         // Any changes that were made locally after the clear must still be kept around in the new map.
         for (auto it = m_pendingValueChanges.begin().keys(), end = m_pendingValueChanges.end().keys(); it != end; ++it) {
@@ -278,7 +278,7 @@ void StorageAreaMap::applyChange(const String& key, const String& newValue)
             newStorageMap->setItemIgnoringQuota(key, oldValue);
         }
 
-        m_storageMap = newStorageMap.release();
+        m_storageMap = WTFMove(newStorageMap);
         return;
     }
 

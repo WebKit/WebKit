@@ -522,7 +522,7 @@ void CompositeEditCommand::removeChildrenInRange(PassRefPtr<Node> node, unsigned
         children.append(child);
 
     for (auto& child : children)
-        removeNode(child.release());
+        removeNode(WTFMove(child));
 }
 
 void CompositeEditCommand::removeNode(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
@@ -541,7 +541,7 @@ void CompositeEditCommand::removeNodeAndPruneAncestors(PassRefPtr<Node> node)
 {
     RefPtr<ContainerNode> parent = node->parentNode();
     removeNode(node);
-    prune(parent.release());
+    prune(WTFMove(parent));
 }
 
 void CompositeEditCommand::moveRemainingSiblingsToNewParent(Node* node, Node* pastLastNodeToMove, PassRefPtr<Element> prpNewParent)
@@ -583,7 +583,7 @@ HTMLElement* CompositeEditCommand::replaceElementWithSpanPreservingChildrenAndAt
 void CompositeEditCommand::prune(PassRefPtr<Node> node)
 {
     if (RefPtr<Node> highestNodeToRemove = highestNodeToRemoveInPruning(node.get()))
-        removeNode(highestNodeToRemove.release());
+        removeNode(WTFMove(highestNodeToRemove));
 }
 
 void CompositeEditCommand::splitTextNode(PassRefPtr<Text> node, unsigned offset)
@@ -688,7 +688,7 @@ Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
     RefPtr<Text> textNode = start.containerText();
     replaceTextInNode(textNode, start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
 
-    return Position(textNode.release(), start.offsetInContainerNode() + text.length());
+    return Position(WTFMove(textNode), start.offsetInContainerNode() + text.length());
 }
 
 static Vector<RenderedDocumentMarker> copyMarkers(const Vector<RenderedDocumentMarker*>& markerPointers)
@@ -872,7 +872,7 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(PassRefPtr<Text> p
                                                              isEndOfParagraph(visibleDownstreamPos) || (unsigned)downstream == text.length());
     
     if (string != rebalancedString)
-        replaceTextInNodePreservingMarkers(textNode.release(), upstream, length, rebalancedString);
+        replaceTextInNodePreservingMarkers(WTFMove(textNode), upstream, length, rebalancedString);
 }
 
 void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& position)

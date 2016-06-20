@@ -369,7 +369,7 @@ void ApplicationCacheGroup::disassociateDocumentLoader(DocumentLoader* loader)
 
     // Release our reference to the newest cache. This could cause us to be deleted.
     // Any ongoing updates will be stopped from destructor.
-    m_newestCache.release();
+    m_newestCache = nullptr;
 }
 
 void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
@@ -594,7 +594,7 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
     
     ASSERT(m_cacheBeingUpdated);
 
-    m_cacheBeingUpdated->addResource(m_currentResource.release());
+    m_cacheBeingUpdated->addResource(WTFMove(m_currentResource));
     m_currentHandle = nullptr;
 
     // While downloading check to see if we have exceeded the available quota.
@@ -868,7 +868,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
 
         ASSERT(m_cacheBeingUpdated);
         if (m_manifestResource)
-            m_cacheBeingUpdated->setManifestResource(m_manifestResource.release());
+            m_cacheBeingUpdated->setManifestResource(WTFMove(m_manifestResource));
         else {
             // We can get here as a result of retrying the Complete step, following
             // a failure of the cache storage to save the newest cache due to hitting
@@ -888,7 +888,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
             didReachOriginQuota(totalSpaceNeeded);
 
         ApplicationCacheStorage::FailureReason failureReason;
-        setNewestCache(m_cacheBeingUpdated.release());
+        setNewestCache(WTFMove(m_cacheBeingUpdated));
         if (m_storage->storeNewestCache(this, oldNewestCache.get(), failureReason)) {
             // New cache stored, now remove the old cache.
             if (oldNewestCache)
@@ -919,10 +919,10 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
                 // save the new cache.
 
                 // Save a reference to the new cache.
-                m_cacheBeingUpdated = m_newestCache.release();
+                m_cacheBeingUpdated = WTFMove(m_newestCache);
                 if (oldNewestCache) {
                     // Reinstate the oldNewestCache.
-                    setNewestCache(oldNewestCache.release());
+                    setNewestCache(WTFMove(oldNewestCache));
                 }
                 scheduleReachedMaxAppCacheSizeCallback();
                 return;
@@ -945,7 +945,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
             // Reinstate the oldNewestCache, if there was one.
             if (oldNewestCache) {
                 // This will discard the failed new cache.
-                setNewestCache(oldNewestCache.release());
+                setNewestCache(WTFMove(oldNewestCache));
             } else {
                 // We must have been deleted by the last call to disassociateDocumentLoader().
                 return;

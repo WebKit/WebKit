@@ -840,7 +840,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
         if (run.dummyElement)
             removeNode(run.dummyElement);
         if (run.startAndEndAreStillInDocument())
-            applyInlineStyleChange(run.start.release(), run.end.release(), run.change, AddStyledElement);
+            applyInlineStyleChange(WTFMove(run.start), WTFMove(run.end), run.change, AddStyledElement);
     }
 }
 

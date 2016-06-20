@@ -73,7 +73,7 @@ protected:
 
     ScrollingStateTree* scrollingStateTree() { return m_scrollingStateTree.get(); }
 
-    PassRefPtr<ScrollingTree> releaseScrollingTree() { return m_scrollingTree.release(); }
+    PassRefPtr<ScrollingTree> releaseScrollingTree() { return WTFMove(m_scrollingTree); }
 
     void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
 

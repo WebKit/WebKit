@@ -663,7 +663,7 @@ static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSamp
     UNUSED_PARAM(buffer);
 #endif
 
-    RefPtr<TimeRanges> erasedRanges = TimeRanges::create();
+    auto erasedRanges = TimeRanges::create();
     MediaTime microsecond(1, 1000000);
     for (auto sampleIt : samples) {
         const DecodeOrderSampleMap::KeyType& decodeKey = sampleIt.first;
@@ -698,7 +698,7 @@ static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSamp
         LOG(MediaSource, "SourceBuffer::%s(%p) removed %zu bytes, start(%lf), end(%lf)", logPrefix, buffer, bytesRemoved, earliestSample, latestSample);
 #endif
 
-    return erasedRanges.release();
+    return WTFMove(erasedRanges);
 }
 
 void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end)
@@ -1751,7 +1751,7 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString track
         // FIXME(rdar://problem/20635969): Remove this re-entrancy protection when the aforementioned radar is resolved; protecting
         // against re-entrancy introduces a small inefficency when removing appended samples from the decode queue one at a time
         // rather than when all samples have been enqueued.
-        RefPtr<MediaSample> sample = trackBuffer.decodeQueue.begin()->second;
+        auto sample = trackBuffer.decodeQueue.begin()->second;
         trackBuffer.decodeQueue.erase(trackBuffer.decodeQueue.begin());
 
         // Do not enqueue samples spanning a significant unbuffered gap.
@@ -1767,7 +1767,7 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString track
 
         trackBuffer.lastEnqueuedPresentationTime = sample->presentationTime();
         trackBuffer.lastEnqueuedDecodeEndTime = sample->decodeTime() + sample->duration();
-        m_private->enqueueSample(sample.release(), trackID);
+        m_private->enqueueSample(WTFMove(sample), trackID);
 #if !LOG_DISABLED
         ++enqueuedSamples;
 #endif

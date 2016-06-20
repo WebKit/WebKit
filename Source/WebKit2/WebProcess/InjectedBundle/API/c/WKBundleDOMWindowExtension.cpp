@@ -41,7 +41,7 @@ WKTypeID WKBundleDOMWindowExtensionGetTypeID()
 WKBundleDOMWindowExtensionRef WKBundleDOMWindowExtensionCreate(WKBundleFrameRef frame, WKBundleScriptWorldRef world)
 {
     RefPtr<InjectedBundleDOMWindowExtension> extension = InjectedBundleDOMWindowExtension::create(toImpl(frame), toImpl(world));
-    return toAPI(extension.release().leakRef());
+    return toAPI(extension.leakRef());
 }
 
 WKBundleFrameRef WKBundleDOMWindowExtensionGetFrame(WKBundleDOMWindowExtensionRef extension)

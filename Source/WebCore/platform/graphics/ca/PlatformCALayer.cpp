@@ -135,13 +135,13 @@ PassRefPtr<PlatformCALayer> PlatformCALayer::createCompatibleLayerOrTakeFromPool
 
     if ((layer = layerPool().takeLayerWithSize(size))) {
         layer->setOwner(client);
-        return layer.release();
+        return WTFMove(layer);
     }
 
     layer = createCompatibleLayer(layerType, client);
     layer->setBounds(FloatRect(FloatPoint(), size));
     
-    return layer.release();
+    return WTFMove(layer);
 }
 
 void PlatformCALayer::moveToLayerPool()

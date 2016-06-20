@@ -272,7 +272,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     instance->setRenderContextID(reply->m_renderContextID);
     instance->setRendererType(reply->m_rendererType);
 
-    return instance.release();
+    return WTFMove(instance);
 }
 
 void NetscapePluginHostManager::createPropertyListFile(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier)

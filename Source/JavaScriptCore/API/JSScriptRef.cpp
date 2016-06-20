@@ -93,7 +93,7 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
 
     startingLineNumber = std::max(1, startingLineNumber);
 
-    RefPtr<OpaqueJSScript> result = OpaqueJSScript::create(vm, url ? url->string() : String(), startingLineNumber, String(StringImpl::createFromLiteral(source, length)));
+    auto result = OpaqueJSScript::create(vm, url ? url->string() : String(), startingLineNumber, String(StringImpl::createFromLiteral(source, length)));
 
     ParserError error;
     if (!parseScript(vm, SourceCode(result), error)) {
@@ -104,7 +104,7 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
         return nullptr;
     }
 
-    return result.release().leakRef();
+    return result.leakRef();
 }
 
 JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef url, int startingLineNumber, JSStringRef source, JSStringRef* errorMessage, int* errorLine)
@@ -114,7 +114,7 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
 
     startingLineNumber = std::max(1, startingLineNumber);
 
-    RefPtr<OpaqueJSScript> result = OpaqueJSScript::create(vm, url ? url->string() : String(), startingLineNumber, source->string());
+    auto result = OpaqueJSScript::create(vm, url ? url->string() : String(), startingLineNumber, source->string());
 
     ParserError error;
     if (!parseScript(vm, SourceCode(result), error)) {
@@ -125,7 +125,7 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
         return nullptr;
     }
 
-    return result.release().leakRef();
+    return result.leakRef();
 }
 
 void JSScriptRetain(JSScriptRef script)

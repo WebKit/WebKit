@@ -58,7 +58,7 @@ Eina_List* EwkStorageManager::createOriginList(WKArrayRef origins) const
             origin = EwkSecurityOrigin::create(wkOriginRef);
             m_wrapperCache.set(wkOriginRef, origin);
         }
-        originList = eina_list_append(originList, origin.release().leakRef());
+        originList = eina_list_append(originList, origin.leakRef());
     }
 
     return originList;

@@ -6169,11 +6169,11 @@ void WebPageProxy::installViewStateChangeCompletionHandler(void (^completionHand
     }
 
     auto copiedCompletionHandler = Block_copy(completionHandler);
-    RefPtr<VoidCallback> voidCallback = VoidCallback::create([copiedCompletionHandler] (CallbackBase::Error) {
+    auto voidCallback = VoidCallback::create([copiedCompletionHandler] (CallbackBase::Error) {
         copiedCompletionHandler();
         Block_release(copiedCompletionHandler);
     }, m_process->throttler().backgroundActivityToken());
-    uint64_t callbackID = m_callbacks.put(voidCallback.release());
+    uint64_t callbackID = m_callbacks.put(WTFMove(voidCallback));
     m_nextViewStateChangeCallbacks.append(callbackID);
 }
 

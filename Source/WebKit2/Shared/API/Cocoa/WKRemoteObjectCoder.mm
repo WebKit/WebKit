@@ -108,9 +108,9 @@ static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
     size_t position = encoder->_objectStream->size();
     encoder->_objectStream->elements().append(nullptr);
 
-    RefPtr<API::Dictionary> encodedObject = createEncodedObject(encoder, value);
+    auto encodedObject = createEncodedObject(encoder, value);
     ASSERT(!encoder->_objectStream->elements()[position]);
-    encoder->_objectStream->elements()[position] = encodedObject.release();
+    encoder->_objectStream->elements()[position] = WTFMove(encodedObject);
 }
 
 static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocation *invocation, NSUInteger firstArgument)

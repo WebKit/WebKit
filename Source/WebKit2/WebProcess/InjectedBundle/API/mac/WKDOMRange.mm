@@ -156,8 +156,8 @@
 
 - (WKBundleRangeHandleRef)_copyBundleRangeHandleRef
 {
-    RefPtr<WebKit::InjectedBundleRangeHandle> rangeHandle = WebKit::InjectedBundleRangeHandle::getOrCreate(_impl.get());
-    return toAPI(rangeHandle.release().leakRef());
+    auto rangeHandle = WebKit::InjectedBundleRangeHandle::getOrCreate(_impl.get());
+    return toAPI(rangeHandle.leakRef());
 }
 
 @end

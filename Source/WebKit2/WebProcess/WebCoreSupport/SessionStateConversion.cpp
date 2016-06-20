@@ -123,7 +123,7 @@ PageState toPageState(const WebCore::HistoryItem& historyItem)
 
 static PassRefPtr<FormData> toFormData(const HTTPBody& httpBody)
 {
-    RefPtr<FormData> formData = FormData::create();
+    auto formData = FormData::create();
 
     for (const auto& element : httpBody.elements) {
         switch (element.type) {
@@ -141,7 +141,7 @@ static PassRefPtr<FormData> toFormData(const HTTPBody& httpBody)
         }
     }
 
-    return formData.release();
+    return WTFMove(formData);
 }
 
 static void applyFrameState(HistoryItem& historyItem, const FrameState& frameState)

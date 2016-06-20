@@ -125,7 +125,7 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart> blobPart
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
 
-    RefPtr<BlobData> blobData = BlobData::create(contentType);
+    auto blobData = BlobData::create(contentType);
 
     // The blob data is stored in the "canonical" way. That is, it only contains a list of Data and File items.
     // 1) The Data item is denoted by the raw data and the range.
@@ -151,7 +151,7 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart> blobPart
         }
     }
 
-    m_blobs.set(url.string(), blobData.release());
+    m_blobs.set(url.string(), WTFMove(blobData));
 }
 
 void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
@@ -208,11 +208,11 @@ void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL
         end = originalSize;
 
     unsigned long long newLength = end - start;
-    RefPtr<BlobData> newData = BlobData::create(originalData->contentType());
+    auto newData = BlobData::create(originalData->contentType());
 
-    appendStorageItems(newData.get(), originalData->items(), start, newLength);
+    appendStorageItems(newData.ptr(), originalData->items(), start, newLength);
 
-    m_blobs.set(url.string(), newData.release());
+    m_blobs.set(url.string(), WTFMove(newData));
 }
 
 void BlobRegistryImpl::unregisterBlobURL(const URL& url)

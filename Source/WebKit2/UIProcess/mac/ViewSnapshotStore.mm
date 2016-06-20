@@ -114,7 +114,7 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwar
 
     webPageProxy.willRecordNavigationSnapshot(item);
 
-    RefPtr<ViewSnapshot> snapshot = webPageProxy.takeViewSnapshot();
+    auto snapshot = webPageProxy.takeViewSnapshot();
     if (!snapshot)
         return;
 
@@ -122,7 +122,7 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwar
     snapshot->setDeviceScaleFactor(webPageProxy.deviceScaleFactor());
     snapshot->setBackgroundColor(webPageProxy.pageExtendedBackgroundColor());
 
-    item.setSnapshot(snapshot.release());
+    item.setSnapshot(WTFMove(snapshot));
 }
 
 void ViewSnapshotStore::discardSnapshotImages()

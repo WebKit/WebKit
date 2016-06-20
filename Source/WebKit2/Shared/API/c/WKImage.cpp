@@ -38,8 +38,8 @@ WKTypeID WKImageGetTypeID()
 
 WKImageRef WKImageCreate(WKSize size, WKImageOptions options)
 {
-    RefPtr<WebImage> webImage = WebImage::create(toIntSize(size), toImageOptions(options));
-    return toAPI(webImage.release().leakRef());
+    auto webImage = WebImage::create(toIntSize(size), toImageOptions(options));
+    return toAPI(webImage.leakRef());
 }
 
 WKSize WKImageGetSize(WKImageRef imageRef)

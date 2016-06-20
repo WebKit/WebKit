@@ -43,38 +43,38 @@ WKTypeID WKWebArchiveGetTypeID()
 
 WKWebArchiveRef WKWebArchiveCreate(WKWebArchiveResourceRef mainResourceRef, WKArrayRef subresourcesRef, WKArrayRef subframeArchivesRef)
 {
-    RefPtr<API::WebArchive> webArchive = API::WebArchive::create(toImpl(mainResourceRef), toImpl(subresourcesRef), toImpl(subframeArchivesRef));
-    return toAPI(webArchive.release().leakRef());
+    auto webArchive = API::WebArchive::create(toImpl(mainResourceRef), toImpl(subresourcesRef), toImpl(subframeArchivesRef));
+    return toAPI(&webArchive.leakRef());
 }
 
 WKWebArchiveRef WKWebArchiveCreateWithData(WKDataRef dataRef)
 {
-    RefPtr<API::WebArchive> webArchive = API::WebArchive::create(toImpl(dataRef));
-    return toAPI(webArchive.release().leakRef());
+    auto webArchive = API::WebArchive::create(toImpl(dataRef));
+    return toAPI(&webArchive.leakRef());
 }
 
 WKWebArchiveRef WKWebArchiveCreateFromRange(WKBundleRangeHandleRef rangeHandleRef)
 {
-    RefPtr<API::WebArchive> webArchive = API::WebArchive::create(toImpl(rangeHandleRef)->coreRange());
-    return toAPI(webArchive.release().leakRef());
+    auto webArchive = API::WebArchive::create(toImpl(rangeHandleRef)->coreRange());
+    return toAPI(&webArchive.leakRef());
 }
 
 WKWebArchiveResourceRef WKWebArchiveCopyMainResource(WKWebArchiveRef webArchiveRef)
 {
     RefPtr<API::WebArchiveResource> mainResource = toImpl(webArchiveRef)->mainResource();
-    return toAPI(mainResource.release().leakRef());
+    return toAPI(mainResource.leakRef());
 }
 
 WKArrayRef WKWebArchiveCopySubresources(WKWebArchiveRef webArchiveRef)
 {
     RefPtr<API::Array> subresources = toImpl(webArchiveRef)->subresources();
-    return toAPI(subresources.release().leakRef());
+    return toAPI(subresources.leakRef());
 }
 
 WKArrayRef WKWebArchiveCopySubframeArchives(WKWebArchiveRef webArchiveRef)
 {
     RefPtr<API::Array> subframeArchives = toImpl(webArchiveRef)->subframeArchives();
-    return toAPI(subframeArchives.release().leakRef());
+    return toAPI(subframeArchives.leakRef());
 }
 
 WKDataRef WKWebArchiveCopyData(WKWebArchiveRef webArchiveRef)

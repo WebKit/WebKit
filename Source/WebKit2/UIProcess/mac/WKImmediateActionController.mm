@@ -263,7 +263,7 @@ using namespace WebKit;
     else
         hitTestResult = _page->lastMouseMoveHitTestResult();
 
-    return hitTestResult.release();
+    return WTFMove(hitTestResult);
 }
 
 #pragma mark Immediate actions

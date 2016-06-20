@@ -578,7 +578,7 @@ PassRefPtr<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea& scrollable
         widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, &selectElement());
     else
         widget = Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
-    return widget.release();
+    return WTFMove(widget);
 }
 
 int RenderMenuList::clientInsetLeft() const

@@ -169,10 +169,10 @@ void NetscapePlugin::loadURL(const String& method, const String& urlString, cons
 
     if (target.isNull()) {
         // The browser is going to send the data in a stream, create a plug-in stream.
-        RefPtr<NetscapePluginStream> pluginStream = NetscapePluginStream::create(this, requestID, urlString, sendNotification, notificationData);
+        auto pluginStream = NetscapePluginStream::create(this, requestID, urlString, sendNotification, notificationData);
         ASSERT(!m_streams.contains(requestID));
 
-        m_streams.set(requestID, pluginStream.release());
+        m_streams.set(requestID, WTFMove(pluginStream));
         return;
     }
 

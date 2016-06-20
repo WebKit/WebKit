@@ -343,10 +343,10 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
 
             // Avoid lazily creating attribute nodes for attributes that we do not need anyway.
             if (m_nodeTest.m_kind == NodeTest::NameTest && m_nodeTest.m_data != starAtom) {
-                RefPtr<Attr> attr = contextElement.getAttributeNodeNS(m_nodeTest.m_namespaceURI, m_nodeTest.m_data);
+                auto attr = contextElement.getAttributeNodeNS(m_nodeTest.m_namespaceURI, m_nodeTest.m_data);
                 if (attr && attr->namespaceURI() != XMLNSNames::xmlnsNamespaceURI) { // In XPath land, namespace nodes are not accessible on the attribute axis.
                     if (nodeMatches(*attr, AttributeAxis, m_nodeTest)) // Still need to check merged predicates.
-                        nodes.append(attr.release());
+                        nodes.append(WTFMove(attr));
                 }
                 return;
             }
@@ -355,9 +355,9 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
                 return;
 
             for (const Attribute& attribute : contextElement.attributesIterator()) {
-                RefPtr<Attr> attr = contextElement.ensureAttr(attribute.name());
-                if (nodeMatches(*attr, AttributeAxis, m_nodeTest))
-                    nodes.append(attr.release());
+                auto attr = contextElement.ensureAttr(attribute.name());
+                if (nodeMatches(attr.get(), AttributeAxis, m_nodeTest))
+                    nodes.append(WTFMove(attr));
             }
             return;
         }

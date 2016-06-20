@@ -238,7 +238,7 @@ WebProcessPool::~WebProcessPool()
 
     m_iconDatabase->invalidate();
     m_iconDatabase->clearProcessPool();
-    WebIconDatabase* rawIconDatabase = m_iconDatabase.release().leakRef();
+    WebIconDatabase* rawIconDatabase = m_iconDatabase.leakRef();
     rawIconDatabase->derefWhenAppropriate();
 
     invalidateCallbackMap(m_dictionaryCallbacks, CallbackBase::Error::OwnerWasInvalidated);

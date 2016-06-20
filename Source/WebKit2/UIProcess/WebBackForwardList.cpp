@@ -100,7 +100,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         removedItems.reserveCapacity(m_entries.size() - targetSize);
         while (m_entries.size() > targetSize) {
             didRemoveItem(*m_entries.last());
-            removedItems.append(m_entries.last().release());
+            removedItems.append(WTFMove(m_entries.last()));
             m_entries.removeLast();
         }
 
@@ -108,7 +108,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         // (or even if we are, if we only want 1 entry).
         if (m_entries.size() == m_capacity && (m_currentIndex || m_capacity == 1)) {
             didRemoveItem(*m_entries[0]);
-            removedItems.append(m_entries[0].release());
+            removedItems.append(WTFMove(m_entries[0]));
             m_entries.remove(0);
 
             if (m_entries.isEmpty())
@@ -127,7 +127,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
             if (!m_entries[i])
                 continue;
             didRemoveItem(*m_entries[i]);
-            removedItems.append(m_entries[i].release());
+            removedItems.append(WTFMove(m_entries[i]));
         }
         m_entries.clear();
     }
@@ -357,7 +357,7 @@ void WebBackForwardList::clear()
                 continue;
 
             didRemoveItem(*m_entries[i]);
-            removedItems.append(m_entries[i].release());
+            removedItems.append(WTFMove(m_entries[i]));
         }
 
         m_entries.clear();
@@ -376,14 +376,14 @@ void WebBackForwardList::clear()
     removedItems.reserveCapacity(size - 1);
     for (size_t i = 0; i < size; ++i) {
         if (i != m_currentIndex && m_hasCurrentIndex && m_entries[i])
-            removedItems.append(m_entries[i].release());
+            removedItems.append(WTFMove(m_entries[i]));
     }
 
     m_currentIndex = 0;
 
     if (currentItem) {
         m_entries.shrink(1);
-        m_entries[0] = currentItem.release();
+        m_entries[0] = WTFMove(currentItem);
     } else {
         m_entries.clear();
         m_hasCurrentIndex = false;

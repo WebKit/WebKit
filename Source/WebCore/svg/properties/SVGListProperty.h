@@ -203,7 +203,7 @@ public:
             m_wrappers->at(index) = wrapper;
         }
 
-        return wrapper.release();
+        return WTFMove(wrapper);
     }
 
     // SVGList::insertItemBefore()
@@ -250,7 +250,7 @@ public:
 
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         if (!processIncomingListItemWrapper(newItem, &index))
-            return newItem.release();
+            return WTFMove(newItem);
 
         // Spec: Inserts a new item into the list at the specified position. The index of the item before which the new item is to be
         // inserted. The first item is number 0. If the index is equal to 0, then the new item is inserted at the front of the list.
@@ -260,7 +260,7 @@ public:
         m_wrappers->insert(index, newItem);
 
         commitChange();
-        return newItem;
+        return WTFMove(newItem);
     }
 
     // SVGList::replaceItem()
@@ -385,7 +385,7 @@ public:
         m_values->remove(index);
 
         commitChange();
-        return oldItem.release();
+        return WTFMove(oldItem);
     }
 
     // SVGList::appendItem()

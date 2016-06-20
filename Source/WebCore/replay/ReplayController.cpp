@@ -284,7 +284,7 @@ void ReplayController::unloadSegment(bool suppressNotifications)
     LOG(WebReplay, "%-20s Clearing input cursors for page: %p\n", "ReplayController", &m_page);
 
     m_activeCursor = nullptr;
-    RefPtr<ReplaySessionSegment> unloadedSegment = m_loadedSegment.release();
+    auto unloadedSegment = WTFMove(m_loadedSegment);
     for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         frame->script().globalObject(mainThreadNormalWorld())->setInputCursor(m_emptyCursor.copyRef());
         frame->document()->setInputCursor(m_emptyCursor.copyRef());

@@ -219,9 +219,9 @@ void StorageManager::StorageArea::setItem(IPC::Connection* sourceConnection, uin
 
     String oldValue;
 
-    RefPtr<StorageMap> newStorageMap = m_storageMap->setItem(key, value, oldValue, quotaException);
+    auto newStorageMap = m_storageMap->setItem(key, value, oldValue, quotaException);
     if (newStorageMap)
-        m_storageMap = newStorageMap.release();
+        m_storageMap = WTFMove(newStorageMap);
 
     if (quotaException)
         return;
@@ -237,9 +237,9 @@ void StorageManager::StorageArea::removeItem(IPC::Connection* sourceConnection, 
     openDatabaseAndImportItemsIfNeeded();
 
     String oldValue;
-    RefPtr<StorageMap> newStorageMap = m_storageMap->removeItem(key, oldValue);
+    auto newStorageMap = m_storageMap->removeItem(key, oldValue);
     if (newStorageMap)
-        m_storageMap = newStorageMap.release();
+        m_storageMap = WTFMove(newStorageMap);
 
     if (oldValue.isNull())
         return;
@@ -686,10 +686,10 @@ void StorageManager::createLocalStorageMap(IPC::Connection& connection, uint64_t
     // FIXME: This should be a message check.
     ASSERT(localStorageNamespace);
 
-    RefPtr<StorageArea> storageArea = localStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
+    auto storageArea = localStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
     storageArea->addListener(connection, storageMapID);
 
-    result.iterator->value = storageArea.release();
+    result.iterator->value = WTFMove(storageArea);
 }
 
 void StorageManager::createTransientLocalStorageMap(IPC::Connection& connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& topLevelOriginData, const SecurityOriginData& securityOriginData)

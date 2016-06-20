@@ -109,7 +109,8 @@ void InlineStyleSheetOwner::createSheetFromTextContents(Element& element)
 void InlineStyleSheetOwner::clearSheet()
 {
     ASSERT(m_sheet);
-    m_sheet.release()->clearOwnerNode();
+    auto sheet = WTFMove(m_sheet);
+    sheet->clearOwnerNode();
 }
 
 inline bool isValidCSSContentType(Element& element, const AtomicString& type)

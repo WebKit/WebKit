@@ -911,7 +911,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     while ((node = [nodeEnum nextObject]))
         nodesVector.append(core(node));
 
-    RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
+    auto fragment = document->createDocumentFragment();
 
     for (auto* node : nodesVector) {
         auto element = createDefaultParagraphElement(*document);
@@ -919,7 +919,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         fragment->appendChild(element);
     }
 
-    return kit(fragment.release().get());
+    return kit(fragment.ptr());
 }
 
 - (void)_replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle

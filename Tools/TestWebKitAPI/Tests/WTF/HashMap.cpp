@@ -309,7 +309,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingRelease)
 
     DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
-    map.add(ptr.release(), 0);
+    map.add(WTFMove(ptr), 0);
 
     EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
 }
@@ -373,7 +373,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
 
     {
         RefPtr<RefLogger> ptr2(&a);
-        auto addResult = map.add(ptr2.release(), 0);
+        auto addResult = map.add(WTFMove(ptr2), 0);
         EXPECT_FALSE(addResult.isNewEntry);
     }
 
@@ -419,7 +419,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingRelease)
 
     DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
-    map.set(ptr.release(), 0);
+    map.set(WTFMove(ptr), 0);
 
     EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
 }
@@ -481,7 +481,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingReleaseKeyAlreadyPresent)
 
     {
         RefPtr<RefLogger> ptr2(&a);
-        auto addResult = map.set(ptr2.release(), 1);
+        auto addResult = map.set(WTFMove(ptr2), 1);
         EXPECT_FALSE(addResult.isNewEntry);
         EXPECT_EQ(1, map.get(ptr.get()));
     }

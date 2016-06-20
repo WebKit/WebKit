@@ -73,8 +73,8 @@ WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextR
     if (plugin.path.isNull())
         return 0;
 
-    RefPtr<API::Dictionary> dictionary = createPluginInformationDictionary(plugin);
-    return toAPI(dictionary.release().leakRef());
+    auto dictionary = createPluginInformationDictionary(plugin);
+    return toAPI(&dictionary.leakRef());
 #else
     return 0;
 #endif

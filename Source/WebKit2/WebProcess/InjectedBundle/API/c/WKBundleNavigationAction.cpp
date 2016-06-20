@@ -58,13 +58,13 @@ WKEventMouseButton WKBundleNavigationActionGetEventMouseButton(WKBundleNavigatio
 WKBundleHitTestResultRef WKBundleNavigationActionCopyHitTestResult(WKBundleNavigationActionRef navigationActionRef)
 {
     RefPtr<InjectedBundleHitTestResult> hitTestResult = toImpl(navigationActionRef)->hitTestResult();
-    return toAPI(hitTestResult.release().leakRef());
+    return toAPI(hitTestResult.leakRef());
 }
 
 WKBundleNodeHandleRef WKBundleNavigationActionCopyFormElement(WKBundleNavigationActionRef navigationActionRef)
 {
     RefPtr<InjectedBundleNodeHandle> formElement = toImpl(navigationActionRef)->formElement();
-    return toAPI(formElement.release().leakRef());
+    return toAPI(formElement.leakRef());
 }
 
 bool WKBundleNavigationActionGetShouldOpenExternalURLs(WKBundleNavigationActionRef navigationActionRef)

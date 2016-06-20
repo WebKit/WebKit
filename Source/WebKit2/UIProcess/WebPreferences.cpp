@@ -45,14 +45,14 @@ Ref<WebPreferences> WebPreferences::create(const String& identifier, const Strin
 
 PassRefPtr<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
 {
-    RefPtr<WebPreferences> preferences = adoptRef(new WebPreferences(identifier, keyPrefix, globalDebugKeyPrefix));
+    auto preferences = WebPreferences::create(identifier, keyPrefix, globalDebugKeyPrefix);
     // FIXME: The registerDefault...ValueForKey machinery is unnecessarily heavyweight and complicated.
     // We can just compute different defaults for modern and legacy APIs in WebPreferencesDefinitions.h macros.
     preferences->registerDefaultBoolValueForKey(WebPreferencesKey::javaEnabledKey(), true);
     preferences->registerDefaultBoolValueForKey(WebPreferencesKey::javaEnabledForLocalFilesKey(), true);
     preferences->registerDefaultBoolValueForKey(WebPreferencesKey::pluginsEnabledKey(), true);
     preferences->registerDefaultUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey(), WebCore::SecurityOrigin::AllowAllStorage);
-    return preferences.release();
+    return WTFMove(preferences);
 }
 
 WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
@@ -78,7 +78,7 @@ WebPreferences::~WebPreferences()
 
 PassRefPtr<WebPreferences> WebPreferences::copy() const
 {
-    return adoptRef(new WebPreferences(*this));
+    return adoptRef(*new WebPreferences(*this));
 }
 
 void WebPreferences::addPage(WebPageProxy& webPageProxy)

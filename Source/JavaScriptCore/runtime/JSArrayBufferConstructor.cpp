@@ -99,7 +99,7 @@ static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState* exec)
     Structure* arrayBufferStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), constructor->globalObject()->arrayBufferStructure());
     if (exec->hadException())
         return JSValue::encode(JSValue());
-    JSArrayBuffer* result = JSArrayBuffer::create(exec->vm(), arrayBufferStructure, buffer.release());
+    JSArrayBuffer* result = JSArrayBuffer::create(exec->vm(), arrayBufferStructure, WTFMove(buffer));
     
     return JSValue::encode(result);
 }

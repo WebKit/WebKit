@@ -168,9 +168,9 @@ void CompositeAnimation::updateTransitions(RenderElement* renderer, const Render
                 // <https://bugs.webkit.org/show_bug.cgi?id=24787>
                 if (!equal && isActiveTransition) {
                     // Add the new transition
-                    RefPtr<ImplicitAnimation> implicitAnimation = ImplicitAnimation::create(animation, prop, renderer, this, modifiedCurrentStyle ? modifiedCurrentStyle.get() : fromStyle);
-                    LOG(Animations, "Created ImplicitAnimation %p on renderer %p for property %s duration %.2f delay %.2f", implicitAnimation.get(), renderer, getPropertyName(prop), animation.duration(), animation.delay());
-                    m_transitions.set(prop, implicitAnimation.release());
+                    auto implicitAnimation = ImplicitAnimation::create(animation, prop, renderer, this, modifiedCurrentStyle ? modifiedCurrentStyle.get() : fromStyle);
+                    LOG(Animations, "Created ImplicitAnimation %p on renderer %p for property %s duration %.2f delay %.2f", implicitAnimation.ptr(), renderer, getPropertyName(prop), animation.duration(), animation.delay());
+                    m_transitions.set(prop, WTFMove(implicitAnimation));
                 }
                 
                 // We only need one pass for the single prop case

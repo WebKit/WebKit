@@ -462,8 +462,8 @@ void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId, int depth)
         return;
     }
 
-    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> children = buildArrayForContainerChildren(node, depth, nodeMap);
-    m_frontendDispatcher->setChildNodes(nodeId, children.release());
+    auto children = buildArrayForContainerChildren(node, depth, nodeMap);
+    m_frontendDispatcher->setChildNodes(nodeId, WTFMove(children));
 }
 
 void InspectorDOMAgent::discardBindings()

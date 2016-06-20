@@ -284,8 +284,8 @@ void HTMLFormElement::prepareForSubmission(Event* event)
 
     StringPairVector controlNamesAndValues;
     getTextFieldValues(controlNamesAndValues);
-    RefPtr<FormState> formState = FormState::create(this, controlNamesAndValues, &document(), NotSubmittedByJavaScript);
-    frame->loader().client().dispatchWillSendSubmitEvent(formState.release());
+    auto formState = FormState::create(this, controlNamesAndValues, &document(), NotSubmittedByJavaScript);
+    frame->loader().client().dispatchWillSendSubmitEvent(WTFMove(formState));
 
     Ref<HTMLFormElement> protectedThis(*this);
     // Event handling can result in m_shouldSubmit becoming true, regardless of dispatchEvent() return value.

@@ -82,7 +82,7 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> 
         coreSubframeLegacyWebArchives.uncheckedAppend(subframeWebArchive->coreLegacyWebArchive());
     }
 
-    m_legacyWebArchive = LegacyWebArchive::create(coreMainResource.release(), WTFMove(coreArchiveResources), WTFMove(coreSubframeLegacyWebArchives));
+    m_legacyWebArchive = LegacyWebArchive::create(WTFMove(coreMainResource), WTFMove(coreArchiveResources), WTFMove(coreSubframeLegacyWebArchives));
 }
 
 WebArchive::WebArchive(API::Data* data)

@@ -101,9 +101,9 @@ bool TextTrackCueList::add(PassRefPtr<TextTrackCue> prpCue, size_t start, size_t
 
     size_t index = (start + end) / 2;
     if (cue->isOrderedBefore(m_list[index].get()))
-        return add(cue.release(), start, index);
+        return add(WTFMove(cue), start, index);
 
-    return add(cue.release(), index + 1, end);
+    return add(WTFMove(cue), index + 1, end);
 }
 
 bool TextTrackCueList::remove(TextTrackCue* cue)

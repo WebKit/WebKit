@@ -40,7 +40,7 @@ WKTypeID WKBundleScriptWorldGetTypeID()
 WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld()
 {
     RefPtr<InjectedBundleScriptWorld> world = InjectedBundleScriptWorld::create();
-    return toAPI(world.release().leakRef());
+    return toAPI(world.leakRef());
 }
 
 WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld()

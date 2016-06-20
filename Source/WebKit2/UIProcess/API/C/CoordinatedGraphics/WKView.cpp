@@ -32,8 +32,8 @@ using namespace WebKit;
 
 WKViewRef WKViewCreate(WKPageConfigurationRef pageConfiguration)
 {
-    RefPtr<WebView> webView = WebView::create(*toImpl(pageConfiguration));
-    return toAPI(webView.release().leakRef());
+    auto webView = WebView::create(*toImpl(pageConfiguration));
+    return toAPI(&webView.leakRef());
 }
 
 WKSize WKViewGetSize(WKViewRef viewRef)

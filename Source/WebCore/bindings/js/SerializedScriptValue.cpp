@@ -2354,7 +2354,7 @@ private:
                 fail();
                 return JSValue();
             }
-            JSValue result = JSArrayBuffer::create(m_exec->vm(), m_globalObject->arrayBufferStructure(), arrayBuffer.release());
+            JSValue result = JSArrayBuffer::create(m_exec->vm(), m_globalObject->arrayBufferStructure(), WTFMove(arrayBuffer));
             m_gcBuffer.append(result);
             return result;
         }

@@ -330,7 +330,7 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
     } else
         return nullptr;
 
-    return idbKey.release();
+    return idbKey;
 }
 
 static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const InspectorObject* keyRange)

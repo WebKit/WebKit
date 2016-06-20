@@ -116,7 +116,7 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     newProviderStr.append(origHeader);
     newProviderStr.append(newBody);
 
-    RefPtr<SourceProvider> newProvider = StringSourceProvider::create(newProviderStr, "<overridden>");
+    auto newProvider = StringSourceProvider::create(newProviderStr, "<overridden>");
 
     info.firstLine = 1;
     info.lineCount = 1; // Faking it. This doesn't really matter for now.
@@ -127,7 +127,7 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     info.typeProfilingEndOffset = newProviderStr.length() - 1;
 
     info.sourceCode =
-        SourceCode(newProvider.release(), info.typeProfilingStartOffset, info.typeProfilingEndOffset + 1, 1, 1);
+        SourceCode(WTFMove(newProvider), info.typeProfilingStartOffset, info.typeProfilingEndOffset + 1, 1, 1);
 }
     
 bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, FunctionOverrides::OverrideInfo& result)

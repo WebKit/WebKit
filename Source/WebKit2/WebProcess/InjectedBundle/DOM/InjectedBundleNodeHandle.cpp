@@ -140,7 +140,7 @@ static PassRefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& re
     float scaleFactor = frameView->frame().page()->deviceScaleFactor();
     bitmapSize.scale(scaleFactor);
 
-    RefPtr<WebImage> snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
+    auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
     if (!snapshot->bitmap())
         return 0;
 
@@ -164,7 +164,7 @@ static PassRefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& re
     frameView->paintContentsForSnapshot(*graphicsContext.get(), rect, shouldPaintSelection, FrameView::DocumentCoordinates);
     frameView->setPaintBehavior(oldPaintBehavior);
 
-    return snapshot.release();
+    return snapshot;
 }
 
 PassRefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options)
@@ -187,10 +187,10 @@ PassRefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions opt
     IntRect paintingRect = snappedIntRect(renderer->paintingRootRect(topLevelRect));
 
     frameView->setNodeToDraw(m_node.ptr());
-    RefPtr<WebImage> image = imageForRect(frameView, paintingRect, options);
+    auto image = imageForRect(frameView, paintingRect, options);
     frameView->setNodeToDraw(0);
 
-    return image.release();
+    return image;
 }
 
 PassRefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange()

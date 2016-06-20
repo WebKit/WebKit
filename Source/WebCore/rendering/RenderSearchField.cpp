@@ -354,7 +354,7 @@ PassRefPtr<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea& scrolla
         widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, &inputElement());
     else
         widget = Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
-    return widget.release();
+    return WTFMove(widget);
 }
 
 LayoutUnit RenderSearchField::computeLogicalHeightLimit() const

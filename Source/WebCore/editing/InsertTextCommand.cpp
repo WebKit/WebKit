@@ -120,7 +120,7 @@ bool InsertTextCommand::performOverwrite(const String& text, bool selectInserted
 
     replaceTextInNode(textNode, start.offsetInContainerNode(), count, text);
 
-    Position endPosition = Position(textNode.release(), start.offsetInContainerNode() + text.length());
+    Position endPosition = Position(WTFMove(textNode), start.offsetInContainerNode() + text.length());
     setEndingSelectionWithoutValidation(start, endPosition);
     if (!selectInsertedText)
         setEndingSelection(VisibleSelection(endingSelection().visibleEnd(), endingSelection().isDirectional()));
@@ -245,7 +245,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     if (isTabSpanTextNode(node)) {
         RefPtr<Text> textNode = downcast<Text>(node);
         insertTextIntoNode(textNode, offset, "\t");
-        return Position(textNode.release(), offset + 1);
+        return Position(WTFMove(textNode), offset + 1);
     }
     
     // create new tab span

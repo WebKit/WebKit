@@ -3116,7 +3116,7 @@ PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientat
         }
     }
     renderer().view().frameView().addChild(widget.get());
-    return widget.release();
+    return WTFMove(widget);
 }
 
 void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)

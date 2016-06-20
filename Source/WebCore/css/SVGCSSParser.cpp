@@ -272,9 +272,9 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
         if (id == CSSValueNone)
             valid_primitive = true;
         else {
-            RefPtr<CSSValueList> shadowValueList = parseShadow(*m_valueList, propId);
+            auto shadowValueList = parseShadow(*m_valueList, propId);
             if (shadowValueList) {
-                addProperty(propId, shadowValueList.release(), important);
+                addProperty(propId, WTFMove(shadowValueList), important);
                 m_valueList->next();
                 return true;
             }
@@ -336,7 +336,7 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
     if (!parsedValue || (m_valueList->current() && !inShorthand()))
         return false;
 
-    addProperty(propId, parsedValue.release(), important);
+    addProperty(propId, WTFMove(parsedValue), important);
     return true;
 }
 

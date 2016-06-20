@@ -39,14 +39,14 @@ WKTypeID WKSerializedScriptValueGetTypeID()
 
 WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, JSValueRef value, JSValueRef* exception)
 {
-    RefPtr<API::SerializedScriptValue> serializedValue = API::SerializedScriptValue::create(context, value, exception);
-    return toAPI(serializedValue.release().leakRef());
+    auto serializedValue = API::SerializedScriptValue::create(context, value, exception);
+    return toAPI(serializedValue.leakRef());
 }
 
 WKSerializedScriptValueRef WKSerializedScriptValueCreateWithInternalRepresentation(void* internalRepresentation)
 {
-    RefPtr<API::SerializedScriptValue> serializedValue = API::SerializedScriptValue::create(static_cast<WebCore::SerializedScriptValue*>(internalRepresentation));
-    return toAPI(serializedValue.release().leakRef());
+    auto serializedValue = API::SerializedScriptValue::create(static_cast<WebCore::SerializedScriptValue*>(internalRepresentation));
+    return toAPI(&serializedValue.leakRef());
 }
 
 JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValueRef, JSContextRef contextRef, JSValueRef* exception)

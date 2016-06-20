@@ -762,7 +762,7 @@ inline PassRefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleReso
     }
 
     if (shape)
-        return ShapeValue::createShapeValue(shape.release(), referenceBox);
+        return ShapeValue::createShapeValue(WTFMove(shape), referenceBox);
 
     if (referenceBox != BoxMissing)
         return ShapeValue::createBoxShapeValue(referenceBox);

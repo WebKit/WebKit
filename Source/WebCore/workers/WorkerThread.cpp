@@ -153,7 +153,7 @@ void WorkerThread::workerThread()
 
     {
         LockHolder lock(m_threadCreationMutex);
-        m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_userAgent, m_startupData->m_contentSecurityPolicyResponseHeaders, m_startupData->m_shouldBypassMainWorldContentSecurityPolicy, m_startupData->m_topOrigin.release());
+        m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_userAgent, m_startupData->m_contentSecurityPolicyResponseHeaders, m_startupData->m_shouldBypassMainWorldContentSecurityPolicy, WTFMove(m_startupData->m_topOrigin));
 
         if (m_runLoop.terminated()) {
             // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet,

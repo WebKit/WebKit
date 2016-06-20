@@ -812,13 +812,13 @@ Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
     if (!page)
         return 0;
 
-    RefPtr<StorageArea> storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
+    auto storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
     if (!storageArea->canAccessStorage(m_frame)) {
         ec = SECURITY_ERR;
         return 0;
     }
 
-    m_sessionStorage = Storage::create(m_frame, storageArea.release());
+    m_sessionStorage = Storage::create(m_frame, WTFMove(storageArea));
     return m_sessionStorage.get();
 }
 
@@ -858,14 +858,14 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     if (!page->settings().localStorageEnabled())
         return nullptr;
 
-    RefPtr<StorageArea> storageArea = page->storageNamespaceProvider().localStorageArea(*document);
+    auto storageArea = page->storageNamespaceProvider().localStorageArea(*document);
 
     if (!storageArea->canAccessStorage(m_frame)) {
         ec = SECURITY_ERR;
         return nullptr;
     }
 
-    m_localStorage = Storage::create(m_frame, storageArea.release());
+    m_localStorage = Storage::create(m_frame, WTFMove(storageArea));
     return m_localStorage.get();
 }
 

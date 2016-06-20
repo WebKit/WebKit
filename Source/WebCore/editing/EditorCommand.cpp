@@ -165,12 +165,12 @@ static bool executeInsertFragment(Frame& frame, PassRefPtr<DocumentFragment> fra
 
 static bool executeInsertNode(Frame& frame, Ref<Node>&& content)
 {
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(*frame.document());
+    auto fragment = DocumentFragment::create(*frame.document());
     ExceptionCode ec = 0;
     fragment->appendChild(content, ec);
     if (ec)
         return false;
-    return executeInsertFragment(frame, fragment.release());
+    return executeInsertFragment(frame, WTFMove(fragment));
 }
 
 static bool expandSelectionToGranularity(Frame& frame, TextGranularity granularity)

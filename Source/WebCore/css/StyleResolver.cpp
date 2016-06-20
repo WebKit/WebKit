@@ -2193,8 +2193,8 @@ void StyleResolver::loadPendingImages()
                 if (is<ImageContentData>(*contentData)) {
                     auto& styleImage = downcast<ImageContentData>(*contentData).image();
                     if (is<StylePendingImage>(styleImage)) {
-                        if (RefPtr<StyleImage> loadedImage = loadPendingImage(downcast<StylePendingImage>(styleImage)))
-                            downcast<ImageContentData>(*contentData).setImage(loadedImage.release());
+                        if (auto loadedImage = loadPendingImage(downcast<StylePendingImage>(styleImage)))
+                            downcast<ImageContentData>(*contentData).setImage(WTFMove(loadedImage));
                     }
                 }
             }
@@ -2228,8 +2228,8 @@ void StyleResolver::loadPendingImages()
                 const NinePieceImage& maskImage = reflection->mask();
                 auto* styleImage = maskImage.image();
                 if (is<StylePendingImage>(styleImage)) {
-                    RefPtr<StyleImage> loadedImage = loadPendingImage(downcast<StylePendingImage>(*styleImage));
-                    reflection->setMask(NinePieceImage(loadedImage.release(), maskImage.imageSlices(), maskImage.fill(), maskImage.borderSlices(), maskImage.outset(), maskImage.horizontalRule(), maskImage.verticalRule()));
+                    auto loadedImage = loadPendingImage(downcast<StylePendingImage>(*styleImage));
+                    reflection->setMask(NinePieceImage(WTFMove(loadedImage), maskImage.imageSlices(), maskImage.fill(), maskImage.borderSlices(), maskImage.outset(), maskImage.horizontalRule(), maskImage.verticalRule()));
                 }
             }
             break;

@@ -114,11 +114,11 @@ Ref<ShareableResource> ShareableResource::create(PassRefPtr<SharedMemory> shared
 
 PassRefPtr<ShareableResource> ShareableResource::map(const Handle& handle)
 {
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::map(handle.m_handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = SharedMemory::map(handle.m_handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return 0;
 
-    return create(sharedMemory.release(), handle.m_offset, handle.m_size);
+    return create(WTFMove(sharedMemory), handle.m_offset, handle.m_size);
 }
 
 ShareableResource::ShareableResource(PassRefPtr<SharedMemory> sharedMemory, unsigned offset, unsigned size)

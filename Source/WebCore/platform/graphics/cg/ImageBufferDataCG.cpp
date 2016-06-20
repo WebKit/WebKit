@@ -96,7 +96,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
     if (area.hasOverflowed())
         return nullptr;
 
-    RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
+    auto result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
     unsigned char* resultData = result->data();
     if (!resultData) {
         WTFLogAlways("ImageBufferData: Unable to create buffer. Requested size was %d x %d = %u\n", rect.width(), rect.height(), area.unsafeGet());
@@ -139,7 +139,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
     Checked<int> height = endy - originy;
     
     if (width.unsafeGet() <= 0 || height.unsafeGet() <= 0)
-        return result.release();
+        return result;
     
     unsigned destBytesPerRow = 4 * rect.width();
     unsigned char* destRows = resultData + desty * destBytesPerRow + destx * 4;

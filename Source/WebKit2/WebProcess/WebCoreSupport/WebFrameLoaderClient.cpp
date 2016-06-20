@@ -1435,11 +1435,11 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElem
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginElement, parameters, parameters.mimeType);
+    auto plugin = m_frame->page()->createPlugin(m_frame, pluginElement, parameters, parameters.mimeType);
     if (!plugin)
         return nullptr;
 
-    return PluginView::create(pluginElement, plugin.release(), parameters);
+    return PluginView::create(pluginElement, WTFMove(plugin), parameters);
 #else
     UNUSED_PARAM(pluginElement);
     return nullptr;
@@ -1454,8 +1454,8 @@ void WebFrameLoaderClient::recreatePlugin(Widget* widget)
 
     PluginView* pluginView = static_cast<PluginView*>(widget);
     String newMIMEType;
-    RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginView->pluginElement(), pluginView->initialParameters(), newMIMEType);
-    pluginView->recreateAndInitialize(plugin.release());
+    auto plugin = m_frame->page()->createPlugin(m_frame, pluginView->pluginElement(), pluginView->initialParameters(), newMIMEType);
+    pluginView->recreateAndInitialize(WTFMove(plugin));
 #else
     UNUSED_PARAM(widget);
 #endif
@@ -1488,7 +1488,7 @@ WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const St
 PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* appletElement, const URL&, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    RefPtr<Widget> plugin = createPlugin(pluginSize, appletElement, URL(), paramNames, paramValues, appletElement->serviceType(), false);
+    auto plugin = createPlugin(pluginSize, appletElement, URL(), paramNames, paramValues, appletElement->serviceType(), false);
     if (!plugin) {
         if (WebPage* webPage = m_frame->page()) {
             String frameURLString = m_frame->coreFrame()->loader().documentLoader()->responseURL().string();
@@ -1496,7 +1496,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& p
             webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(appletElement->serviceType(), frameURLString, pageURLString));
         }
     }
-    return plugin.release();
+    return WTFMove(plugin);
 #else
     UNUSED_PARAM(pluginSize);
     UNUSED_PARAM(appletElement);
@@ -1701,8 +1701,8 @@ bool WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL(const WebCore:
 
 PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
 {
-    RefPtr<WebFrameNetworkingContext> context = WebFrameNetworkingContext::create(m_frame);
-    return context.release();
+    auto context = WebFrameNetworkingContext::create(m_frame);
+    return WTFMove(context);
 }
 
 #if ENABLE(CONTENT_FILTERING)

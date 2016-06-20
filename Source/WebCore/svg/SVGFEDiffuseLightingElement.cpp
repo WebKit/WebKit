@@ -179,7 +179,7 @@ RefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filter
     if (!input1)
         return nullptr;
 
-    RefPtr<LightSource> lightSource = SVGFELightElement::findLightSource(this);
+    auto lightSource = SVGFELightElement::findLightSource(this);
     if (!lightSource)
         return nullptr;
 
@@ -190,7 +190,7 @@ RefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filter
     Color color = renderer->style().svgStyle().lightingColor();
 
     RefPtr<FilterEffect> effect = FEDiffuseLighting::create(filter, color, surfaceScale(), diffuseConstant(),
-                                                                kernelUnitLengthX(), kernelUnitLengthY(), lightSource.release());
+                                                                kernelUnitLengthX(), kernelUnitLengthY(), WTFMove(lightSource));
     effect->inputEffects().append(input1);
     return effect;
 }

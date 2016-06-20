@@ -192,9 +192,9 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(m_findPageOverlay, PageOverlay::FadeMode::Fade);
     } else {
         if (!m_findPageOverlay) {
-            RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
-            m_findPageOverlay = findPageOverlay.get();
-            m_webPage->mainFrame()->pageOverlayController().installPageOverlay(findPageOverlay.release(), PageOverlay::FadeMode::Fade);
+            auto findPageOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
+            m_findPageOverlay = findPageOverlay.ptr();
+            m_webPage->mainFrame()->pageOverlayController().installPageOverlay(WTFMove(findPageOverlay), PageOverlay::FadeMode::Fade);
         }
         m_findPageOverlay->setNeedsDisplay();
     }

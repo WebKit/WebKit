@@ -200,7 +200,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     FormCreationContext* formContext = static_cast<FormCreationContext*>(context);
 
     FormStreamFields* newInfo = new FormStreamFields;
-    newInfo->formData = formContext->formData.release();
+    newInfo->formData = WTFMove(formContext->formData);
     newInfo->currentStream = 0;
     newInfo->currentStreamRangeLength = BlobDataItem::toEndOfFile;
     newInfo->formStream = stream; // Don't retain. That would create a reference cycle.

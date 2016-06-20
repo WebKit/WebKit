@@ -911,7 +911,7 @@ PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
         }
     }
     view().frameView().addChild(widget.get());
-    return widget.release();
+    return WTFMove(widget);
 }
 
 void RenderListBox::destroyScrollbar()

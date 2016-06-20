@@ -54,13 +54,13 @@ DisplayRefreshMonitor* DisplayRefreshMonitorManager::createMonitorForClient(Disp
         return monitor.get();
     }
 
-    RefPtr<DisplayRefreshMonitor> monitor = DisplayRefreshMonitor::create(client);
+    auto monitor = DisplayRefreshMonitor::create(client);
     if (!monitor)
         return nullptr;
 
     monitor->addClient(client);
     DisplayRefreshMonitor* result = monitor.get();
-    m_monitors.append(monitor.release());
+    m_monitors.append(WTFMove(monitor));
     return result;
 }
 

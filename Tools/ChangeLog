@@ -1,3 +1,27 @@
+2016-06-20  Keith Rollin  <krollin@apple.com>
+
+        Remove RefPtr::release() and change calls sites to use WTFMove()
+        https://bugs.webkit.org/show_bug.cgi?id=158369
+
+        Reviewed by Chris Dumez.
+
+        RefPtr::release() releases its managed pointer awkwardly. It's more
+        direct and clearer to use WTFMove to transfer ownership of the managed
+        pointer.
+
+        As part of this cleanup, also change a lot of explicit data types to
+        'auto'.
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+        (createPagedBitmapContext):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setMockGeolocationPosition):
+        * TestWebKitAPI/Tests/WTF/HashCountedSet.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-06-20  Tim Horton  <timothy_horton@apple.com>
 
         Add a API test for *DeferringViewInWindowChanges as fixed in r202230

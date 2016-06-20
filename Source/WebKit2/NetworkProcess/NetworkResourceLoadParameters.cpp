@@ -127,8 +127,8 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
         if (!decoder.decode(requestBodySandboxExtensionHandles))
             return false;
         for (size_t i = 0; i < requestBodySandboxExtensionHandles.size(); ++i) {
-            if (RefPtr<SandboxExtension> extension = SandboxExtension::create(requestBodySandboxExtensionHandles[i]))
-                result.requestBodySandboxExtensions.append(extension.release());
+            if (auto extension = SandboxExtension::create(requestBodySandboxExtensionHandles[i]))
+                result.requestBodySandboxExtensions.append(WTFMove(extension));
         }
     }
 

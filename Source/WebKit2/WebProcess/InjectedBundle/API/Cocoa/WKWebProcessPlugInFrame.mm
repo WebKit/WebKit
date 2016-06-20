@@ -71,8 +71,8 @@ using namespace WebKit;
 
 - (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point
 {
-    RefPtr<InjectedBundleHitTestResult> hitTestResult = _frame->hitTest(WebCore::IntPoint(point));
-    return [wrapper(*hitTestResult.release().leakRef()) autorelease];
+    auto hitTestResult = _frame->hitTest(WebCore::IntPoint(point));
+    return [wrapper(*hitTestResult.leakRef()) autorelease];
 }
 
 - (JSValue *)jsNodeForNodeHandle:(WKWebProcessPlugInNodeHandle *)nodeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world

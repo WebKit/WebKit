@@ -37,8 +37,8 @@ WKSessionRef WKSessionCreate(bool isEphemeral)
     if (!isEphemeral)
         return nullptr;
 
-    RefPtr<API::Session> session = API::Session::createEphemeral();
-    return toAPI(session.release().leakRef());
+    auto session = API::Session::createEphemeral();
+    return toAPI(&session.leakRef());
 }
 
 WKTypeID WKSessionGetTypeID()

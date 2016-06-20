@@ -48,10 +48,10 @@ static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
 
 PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
-    RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemoteCustom(PlatformCALayerCocoa::layerTypeForPlatformLayer(platformLayer), platformLayer, owner, context));
-    context.layerWasCreated(*layer, layer->layerType());
+    auto layer = adoptRef(*new PlatformCALayerRemoteCustom(PlatformCALayerCocoa::layerTypeForPlatformLayer(platformLayer), platformLayer, owner, context));
+    context.layerWasCreated(layer.get(), layer->layerType());
 
-    return layer.release();
+    return WTFMove(layer);
 }
 
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(LayerType layerType, PlatformLayer * customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
@@ -127,13 +127,13 @@ PassRefPtr<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(Platform
         copyContents = false;
     }
 
-    RefPtr<PlatformCALayerRemote> clone = adoptRef(new PlatformCALayerRemoteCustom(layerType(), clonedLayer.get(), owner, *context()));
-    context()->layerWasCreated(*clone, clone->layerType());
+    auto clone = adoptRef(*new PlatformCALayerRemoteCustom(layerType(), clonedLayer.get(), owner, *context()));
+    context()->layerWasCreated(clone.get(), clone->layerType());
 
-    updateClonedLayerProperties(*clone, copyContents);
+    updateClonedLayerProperties(clone.get(), copyContents);
 
     clone->setClonedLayer(this);
-    return clone.release();
+    return WTFMove(clone);
 }
 
 CFTypeRef PlatformCALayerRemoteCustom::contents() const

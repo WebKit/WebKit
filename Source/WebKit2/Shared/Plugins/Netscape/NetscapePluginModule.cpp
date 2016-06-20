@@ -145,13 +145,13 @@ PassRefPtr<NetscapePluginModule> NetscapePluginModule::getOrCreate(const String&
             return pluginModule;
     }
 
-    RefPtr<NetscapePluginModule> pluginModule(adoptRef(new NetscapePluginModule(pluginPath)));
+    auto pluginModule(adoptRef(*new NetscapePluginModule(pluginPath)));
     
     // Try to load and initialize the plug-in module.
     if (!pluginModule->load())
-        return 0;
+        return nullptr;
     
-    return pluginModule.release();
+    return WTFMove(pluginModule);
 }
 
 void NetscapePluginModule::incrementLoadCount()

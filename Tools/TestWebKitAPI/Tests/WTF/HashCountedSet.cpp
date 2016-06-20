@@ -370,7 +370,7 @@ TEST(WTF_HashCountedSet, RefPtrKey_AddUsingRelease)
     
     DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
-    hashCountedSet.add(ptr.release());
+    hashCountedSet.add(WTFMove(ptr));
     
     EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
 }
@@ -436,7 +436,7 @@ TEST(WTF_HashCountedSet, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
     
     {
         RefPtr<RefLogger> ptr2(&a);
-        auto addResult = hashCountedSet.add(ptr2.release());
+        auto addResult = hashCountedSet.add(WTFMove(ptr2));
         EXPECT_FALSE(addResult.isNewEntry);
     }
     

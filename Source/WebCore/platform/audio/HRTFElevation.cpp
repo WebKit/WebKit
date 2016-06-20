@@ -74,12 +74,12 @@ static AudioBus* getConcatenatedImpulseResponsesForSubject(const String& subject
     AudioBus* bus;
     AudioBusMap::iterator iterator = audioBusMap.get().find(subjectName);
     if (iterator == audioBusMap.get().end()) {
-        RefPtr<AudioBus> concatenatedImpulseResponses = AudioBus::loadPlatformResource(subjectName.utf8().data(), ResponseSampleRate);
+        auto concatenatedImpulseResponses = AudioBus::loadPlatformResource(subjectName.utf8().data(), ResponseSampleRate);
         ASSERT(concatenatedImpulseResponses);
         if (!concatenatedImpulseResponses)
             return 0;
 
-        bus = concatenatedImpulseResponses.release().leakRef();
+        bus = concatenatedImpulseResponses.leakRef();
         audioBusMap.get().set(subjectName, bus);
     } else
         bus = iterator->value;

@@ -1197,16 +1197,16 @@ PassRefPtr<StructureShape> Structure::toStructureShape(JSValue value)
         curShape->markAsFinal();
 
         if (curStructure->storedPrototypeStructure()) {
-            RefPtr<StructureShape> newShape = StructureShape::create();
-            curShape->setProto(newShape);
-            curShape = newShape.release();
+            auto newShape = StructureShape::create();
+            curShape->setProto(newShape.ptr());
+            curShape = WTFMove(newShape);
             curValue = curStructure->storedPrototype();
         }
 
         curStructure = curStructure->storedPrototypeStructure();
     }
     
-    return baseShape.release();
+    return WTFMove(baseShape);
 }
 
 bool Structure::canUseForAllocationsOf(Structure* other)

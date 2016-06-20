@@ -115,16 +115,16 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
             return 0;
 
         if (nodeType == FrameScrollingNode && parentID) {
-            if (RefPtr<ScrollingStateNode> orphanedNode = m_orphanedSubframeNodes.take(newNodeID)) {
+            if (auto orphanedNode = m_orphanedSubframeNodes.take(newNodeID)) {
                 newNode = orphanedNode.get();
-                parent->appendChild(orphanedNode.release());
+                parent->appendChild(WTFMove(orphanedNode));
             }
         }
 
         if (!newNode) {
-            RefPtr<ScrollingStateNode> stateNode = createNode(nodeType, newNodeID);
+            auto stateNode = createNode(nodeType, newNodeID);
             newNode = stateNode.get();
-            parent->appendChild(stateNode.release());
+            parent->appendChild(WTFMove(stateNode));
         }
     }
 

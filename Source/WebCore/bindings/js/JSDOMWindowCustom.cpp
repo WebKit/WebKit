@@ -539,9 +539,7 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
     if (state.hadException())
         return jsUndefined();
 
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(&state, state.argument(0),
-                                                                         &messagePorts,
-                                                                         &arrayBuffers);
+    auto message = SerializedScriptValue::create(&state, state.argument(0), &messagePorts, &arrayBuffers);
 
     if (state.hadException())
         return jsUndefined();
@@ -551,7 +549,7 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    impl.postMessage(message.release(), &messagePorts, targetOrigin, callerDOMWindow(&state), ec);
+    impl.postMessage(WTFMove(message), &messagePorts, targetOrigin, callerDOMWindow(&state), ec);
     setDOMException(&state, ec);
 
     return jsUndefined();

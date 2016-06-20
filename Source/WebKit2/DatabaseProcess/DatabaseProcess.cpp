@@ -182,8 +182,8 @@ void DatabaseProcess::createDatabaseToWebProcessConnection()
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
 
     // Create a listening connection.
-    RefPtr<DatabaseToWebProcessConnection> connection = DatabaseToWebProcessConnection::create(IPC::Connection::Identifier(listeningPort));
-    m_databaseToWebProcessConnections.append(connection.release());
+    auto connection = DatabaseToWebProcessConnection::create(IPC::Connection::Identifier(listeningPort));
+    m_databaseToWebProcessConnections.append(WTFMove(connection));
 
     IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidCreateDatabaseToWebProcessConnection(clientPort), 0);

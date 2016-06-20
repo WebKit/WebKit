@@ -558,7 +558,7 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
             icon = getOrCreateIconRecord(iconURL);
     
         // Update the data and set the time stamp
-        icon->setImageData(data.release());
+        icon->setImageData(WTFMove(data));
         icon->setTimestamp((int)currentTime());
         
         // Copy the current retaining pageURLs - if any - to notify them of the change
@@ -893,10 +893,10 @@ PassRefPtr<IconRecord> IconDatabase::getOrCreateIconRecord(const String& iconURL
     if (IconRecord* icon = m_iconURLToRecordMap.get(iconURL))
         return icon;
 
-    RefPtr<IconRecord> newIcon = IconRecord::create(iconURL);
-    m_iconURLToRecordMap.set(iconURL, newIcon.get());
+    auto newIcon = IconRecord::create(iconURL);
+    m_iconURLToRecordMap.set(iconURL, newIcon.ptr());
 
-    return newIcon.release();
+    return WTFMove(newIcon);
 }
 
 // This method retrieves the existing PageURLRecord, or creates a new one and marks it as "interested in the import" for later notification
@@ -1493,7 +1493,7 @@ bool IconDatabase::readFromDatabase()
     
     for (unsigned i = 0; i < icons.size(); ++i) {
         didAnyWork = true;
-        RefPtr<SharedBuffer> imageData = getImageDataForIconURLFromSQLDatabase(icons[i]->iconURL());
+        auto imageData = getImageDataForIconURLFromSQLDatabase(icons[i]->iconURL());
 
         // Verify this icon still wants to be read from disk
         {
@@ -1503,7 +1503,7 @@ bool IconDatabase::readFromDatabase()
                 
                 if (m_iconsPendingReading.contains(icons[i])) {
                     // Set the new data
-                    icons[i]->setImageData(imageData.release());
+                    icons[i]->setImageData(WTFMove(imageData));
                     
                     // Remove this icon from the set that needs to be read
                     m_iconsPendingReading.remove(icons[i]);
@@ -1936,7 +1936,7 @@ PassRefPtr<SharedBuffer> IconDatabase::getImageDataForIconURLFromSQLDatabase(con
 
     m_getImageDataForIconURLStatement->reset();
     
-    return imageData.release();
+    return WTFMove(imageData);
 }
 
 void IconDatabase::removeIconFromSQLDatabase(const String& iconURL)

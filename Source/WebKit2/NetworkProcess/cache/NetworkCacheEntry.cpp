@@ -145,12 +145,11 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
 #if ENABLE(SHAREABLE_RESOURCE)
 void Entry::initializeShareableResourceHandleFromStorageRecord() const
 {
-    RefPtr<SharedMemory> sharedMemory = m_sourceStorageRecord.body.tryCreateSharedMemory();
+    auto sharedMemory = m_sourceStorageRecord.body.tryCreateSharedMemory();
     if (!sharedMemory)
         return;
 
-    RefPtr<ShareableResource> shareableResource = ShareableResource::create(sharedMemory.release(), 0, m_sourceStorageRecord.body.size());
-    ASSERT(shareableResource);
+    auto shareableResource = ShareableResource::create(WTFMove(sharedMemory), 0, m_sourceStorageRecord.body.size());
     shareableResource->createHandle(m_shareableResourceHandle);
 }
 #endif

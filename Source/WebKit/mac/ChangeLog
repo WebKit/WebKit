@@ -1,3 +1,35 @@
+2016-06-20  Keith Rollin  <krollin@apple.com>
+
+        Remove RefPtr::release() and change calls sites to use WTFMove()
+        https://bugs.webkit.org/show_bug.cgi?id=158369
+
+        Reviewed by Chris Dumez.
+
+        RefPtr::release() releases its managed pointer awkwardly. It's more
+        direct and clearer to use WTFMove to transfer ownership of the managed
+        pointer.
+
+        As part of this cleanup, also change a lot of explicit data types to
+        'auto'.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::create):
+        (WebKit::NetscapePluginInstanceProxy::loadRequest):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValueFromArray):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (-[WebFramePolicyListener receivedPolicyDecision:]):
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin initWithURL:]):
+        * WebView/WebArchive.mm:
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]):
+        (-[WebArchive initWithData:]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource mainResource]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _documentFragmentWithNodesAsParagraphs:]):
+
 2016-06-15  Alexey Proskuryakov  <ap@apple.com>
 
         +[WebHTMLRepresentation supportedMIMETypes] leaks

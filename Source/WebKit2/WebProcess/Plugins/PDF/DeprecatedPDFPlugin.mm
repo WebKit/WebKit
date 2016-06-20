@@ -651,7 +651,7 @@ const PluginView* PDFPlugin::pluginView() const
 
 PassRefPtr<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
 {
-    RefPtr<Scrollbar> widget = Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
+    auto widget = Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
     if (orientation == HorizontalScrollbar) {
         m_horizontalScrollbarLayer = adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
         [m_containerLayer addSublayer:m_horizontalScrollbarLayer.get()];
@@ -667,7 +667,7 @@ PassRefPtr<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientatio
         }
     }
     pluginView()->frame()->view()->addChild(widget.get());
-    return widget.release();
+    return widget;
 }
 
 void PDFPlugin::destroyScrollbar(ScrollbarOrientation orientation)

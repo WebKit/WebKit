@@ -38,8 +38,8 @@ WKTypeID WKObjCTypeWrapperGetTypeID()
 
 WKObjCTypeWrapperRef WKObjCTypeWrapperCreate(id object)
 {
-    RefPtr<ObjCObjectGraph> objectWrapper = ObjCObjectGraph::create(object);
-    return toAPI(objectWrapper.release().leakRef());
+    auto objectWrapper = ObjCObjectGraph::create(object);
+    return toAPI(&objectWrapper.leakRef());
 }
 
 id WKObjCTypeWrapperGetObject(WKObjCTypeWrapperRef wrapperRef)

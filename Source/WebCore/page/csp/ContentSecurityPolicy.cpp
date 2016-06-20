@@ -628,7 +628,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     // sent explicitly. As for which directive was violated, that's pretty
     // harmless information.
 
-    RefPtr<InspectorObject> cspReport = InspectorObject::create();
+    auto cspReport = InspectorObject::create();
     cspReport->setString(ASCIILiteral("document-uri"), documentURI);
     cspReport->setString(ASCIILiteral("referrer"), referrer);
     cspReport->setString(ASCIILiteral("violated-directive"), violatedDirectiveText);
@@ -643,7 +643,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     }
 
     RefPtr<InspectorObject> reportObject = InspectorObject::create();
-    reportObject->setObject(ASCIILiteral("csp-report"), cspReport.release());
+    reportObject->setObject(ASCIILiteral("csp-report"), WTFMove(cspReport));
 
     RefPtr<FormData> report = FormData::create(reportObject->toJSONString().utf8());
     for (const auto& url : reportURIs)

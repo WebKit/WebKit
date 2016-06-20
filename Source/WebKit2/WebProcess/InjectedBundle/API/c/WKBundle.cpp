@@ -62,7 +62,7 @@ void WKBundlePostSynchronousMessage(WKBundleRef bundleRef, WKStringRef messageNa
     RefPtr<API::Object> returnData;
     toImpl(bundleRef)->postSynchronousMessage(toWTFString(messageNameRef), toImpl(messageBodyRef), returnData);
     if (returnDataRef)
-        *returnDataRef = toAPI(returnData.release().leakRef());
+        *returnDataRef = toAPI(returnData.leakRef());
 }
 
 WKConnectionRef WKBundleGetApplicationConnection(WKBundleRef bundleRef)

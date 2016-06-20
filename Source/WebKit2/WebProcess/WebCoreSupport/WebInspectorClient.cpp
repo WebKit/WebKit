@@ -107,9 +107,9 @@ void WebInspectorClient::highlight()
 {
 #if !PLATFORM(IOS)
     if (!m_highlightOverlay) {
-        RefPtr<PageOverlay> highlightOverlay = PageOverlay::create(*this);
-        m_highlightOverlay = highlightOverlay.get();
-        m_page->mainFrame()->pageOverlayController().installPageOverlay(highlightOverlay.release(), PageOverlay::FadeMode::Fade);
+        auto highlightOverlay = PageOverlay::create(*this);
+        m_highlightOverlay = highlightOverlay.ptr();
+        m_page->mainFrame()->pageOverlayController().installPageOverlay(WTFMove(highlightOverlay), PageOverlay::FadeMode::Fade);
         m_highlightOverlay->setNeedsDisplay();
     } else {
         m_highlightOverlay->stopFadeOutAnimation();

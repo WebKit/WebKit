@@ -37,12 +37,12 @@ namespace WebKit {
 
 PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& data)
 {
-    RefPtr<WebPageGroupProxy> pageGroup = adoptRef(new WebPageGroupProxy(data));
-    
-    if (pageGroup->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
-        WebProcess::singleton().injectedBundle()->didInitializePageGroup(pageGroup.get());
+    auto pageGroup = adoptRef(*new WebPageGroupProxy(data));
 
-    return pageGroup.release();
+    if (pageGroup->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
+        WebProcess::singleton().injectedBundle()->didInitializePageGroup(pageGroup.ptr());
+
+    return WTFMove(pageGroup);
 }
 
 WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)

@@ -620,9 +620,9 @@ void ServicesOverlayController::createOverlayIfNeeded()
     if (!m_mainFrame.settings().serviceControlsEnabled())
         return;
 
-    RefPtr<PageOverlay> overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
-    m_servicesOverlay = overlay.get();
-    m_mainFrame.pageOverlayController().installPageOverlay(overlay.release(), PageOverlay::FadeMode::DoNotFade);
+    auto overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
+    m_servicesOverlay = overlay.ptr();
+    m_mainFrame.pageOverlayController().installPageOverlay(WTFMove(overlay), PageOverlay::FadeMode::DoNotFade);
 }
 
 Vector<RefPtr<Range>> ServicesOverlayController::telephoneNumberRangesForFocusedFrame()
@@ -739,7 +739,7 @@ void ServicesOverlayController::determineActiveHighlight(bool& mouseIsOverActive
             return;
         }
 
-        m_activeHighlight = m_nextActiveHighlight.release();
+        m_activeHighlight = WTFMove(m_nextActiveHighlight);
 
         if (m_activeHighlight) {
             m_servicesOverlay->layer().addChild(m_activeHighlight->layer());

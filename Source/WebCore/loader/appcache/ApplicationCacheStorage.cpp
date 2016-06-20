@@ -121,14 +121,14 @@ ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const URL& manife
     
     unsigned newestCacheStorageID = static_cast<unsigned>(statement.getColumnInt64(2));
 
-    RefPtr<ApplicationCache> cache = loadCache(newestCacheStorageID);
+    auto cache = loadCache(newestCacheStorageID);
     if (!cache)
         return nullptr;
         
     ApplicationCacheGroup* group = new ApplicationCacheGroup(*this, manifestURL);
       
     group->setStorageID(static_cast<unsigned>(statement.getColumnInt64(0)));
-    group->setNewestCache(cache.release());
+    group->setNewestCache(WTFMove(cache));
 
     return group;
 }    
@@ -239,7 +239,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
         // We found a cache group that matches. Now check if the newest cache has a resource with
         // a matching URL.
         unsigned newestCacheID = static_cast<unsigned>(statement.getColumnInt64(2));
-        RefPtr<ApplicationCache> cache = loadCache(newestCacheID);
+        auto cache = loadCache(newestCacheID);
         if (!cache)
             continue;
 
@@ -252,7 +252,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
         ApplicationCacheGroup* group = new ApplicationCacheGroup(*this, manifestURL);
         
         group->setStorageID(static_cast<unsigned>(statement.getColumnInt64(0)));
-        group->setNewestCache(cache.release());
+        group->setNewestCache(WTFMove(cache));
         
         m_cachesInMemory.set(group->manifestURL(), group);
         
@@ -309,7 +309,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
         // We found a cache group that matches. Now check if the newest cache has a resource with
         // a matching fallback namespace.
         unsigned newestCacheID = static_cast<unsigned>(statement.getColumnInt64(2));
-        RefPtr<ApplicationCache> cache = loadCache(newestCacheID);
+        auto cache = loadCache(newestCacheID);
 
         URL fallbackURL;
         if (cache->isURLInOnlineWhitelist(url))
@@ -322,7 +322,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
         ApplicationCacheGroup* group = new ApplicationCacheGroup(*this, manifestURL);
         
         group->setStorageID(static_cast<unsigned>(statement.getColumnInt64(0)));
-        group->setNewestCache(cache.release());
+        group->setNewestCache(WTFMove(cache));
         
         m_cachesInMemory.set(group->manifestURL(), group);
         
@@ -1119,7 +1119,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     
     cacheStatement.bindInt64(1, storageID);
 
-    RefPtr<ApplicationCache> cache = ApplicationCache::create();
+    auto cache = ApplicationCache::create();
 
     String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
 
@@ -1134,7 +1134,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
         Vector<char> blob;
         cacheStatement.getColumnBlobAsVector(6, blob);
         
-        RefPtr<SharedBuffer> data = SharedBuffer::adoptVector(blob);
+        auto data = SharedBuffer::adoptVector(blob);
         
         String path = cacheStatement.getColumnText(7);
         long long size = 0;
@@ -1154,12 +1154,12 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
         String headers = cacheStatement.getColumnText(5);
         parseHeaders(headers, response);
         
-        RefPtr<ApplicationCacheResource> resource = ApplicationCacheResource::create(url, response, type, data.release(), path);
+        auto resource = ApplicationCacheResource::create(url, response, type, WTFMove(data), path);
 
         if (type & ApplicationCacheResource::Manifest)
-            cache->setManifestResource(resource.release());
+            cache->setManifestResource(WTFMove(resource));
         else
-            cache->addResource(resource.release());
+            cache->addResource(WTFMove(resource));
     }
 
     if (result != SQLITE_DONE)
@@ -1217,7 +1217,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     
     cache->setStorageID(storageID);
 
-    return cache.release();
+    return WTFMove(cache);
 }    
     
 void ApplicationCacheStorage::remove(ApplicationCache* cache)

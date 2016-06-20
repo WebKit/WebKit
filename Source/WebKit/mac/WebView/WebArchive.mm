@@ -175,7 +175,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
         return nil;
     }
     
-    RefPtr<ArchiveResource> coreMainResource = mainResource ? [mainResource _coreResource] : 0;
+    RefPtr<ArchiveResource> coreMainResource = mainResource ? [mainResource _coreResource] : nullptr;
 
     Vector<RefPtr<ArchiveResource>> coreResources;
     for (WebResource *subresource in subresources)
@@ -185,13 +185,13 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     for (WebArchive *subframeArchive in subframeArchives)
         coreArchives.append([subframeArchive->_private coreArchive]);
 
-    RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(coreMainResource.release(), WTFMove(coreResources), WTFMove(coreArchives));
+    auto coreArchive = LegacyWebArchive::create(WTFMove(coreMainResource), WTFMove(coreResources), WTFMove(coreArchives));
     if (!coreArchive) {
         [self release];
         return nil;
     }
 
-    [_private setCoreArchive:coreArchive.release()];
+    [_private setCoreArchive:WTFMove(coreArchive)];
 
     return self;
 }
@@ -209,13 +209,13 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 #endif
 
     _private = [[WebArchivePrivate alloc] init];
-    RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(SharedBuffer::wrapNSData(data));
+    auto coreArchive = LegacyWebArchive::create(SharedBuffer::wrapNSData(data));
     if (!coreArchive) {
         [self release];
         return nil;
     }
         
-    [_private setCoreArchive:coreArchive.release()];
+    [_private setCoreArchive:WTFMove(coreArchive)];
         
 #if !LOG_DISABLED
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();

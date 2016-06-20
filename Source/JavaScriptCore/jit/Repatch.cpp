@@ -865,7 +865,7 @@ void linkPolymorphicCall(
         patchBuffer.link(done, callLinkInfo.hotPathOther().labelAtOffset(0));
     patchBuffer.link(slow, CodeLocationLabel(vm->getCTIStub(linkPolymorphicCallThunkGenerator).code()));
     
-    RefPtr<PolymorphicCallStubRoutine> stubRoutine = adoptRef(new PolymorphicCallStubRoutine(
+    auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
         FINALIZE_CODE_FOR(
             callerCodeBlock, patchBuffer,
             ("Polymorphic call stub for %s, return point %p, targets %s",
@@ -884,7 +884,7 @@ void linkPolymorphicCall(
     
     // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
     // that it's no longer on stack.
-    callLinkInfo.setStub(stubRoutine.release());
+    callLinkInfo.setStub(WTFMove(stubRoutine));
     
     // The call link info no longer has a call cache apart from the jump to the polymorphic call
     // stub.

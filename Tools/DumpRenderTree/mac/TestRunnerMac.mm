@@ -427,8 +427,8 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
         // Test the exposed API.
         position = [[WebGeolocationPosition alloc] initWithTimestamp:currentTime() latitude:latitude longitude:longitude accuracy:accuracy];
     } else {
-        RefPtr<WebCore::GeolocationPosition> coreGeolocationPosition = WebCore::GeolocationPosition::create(currentTime(), latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
-        position = [[WebGeolocationPosition alloc] initWithGeolocationPosition:(coreGeolocationPosition.release())];
+        auto coreGeolocationPosition = WebCore::GeolocationPosition::create(currentTime(), latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
+        position = [[WebGeolocationPosition alloc] initWithGeolocationPosition:(WTFMove(coreGeolocationPosition))];
     }
     [[MockGeolocationProvider shared] setPosition:position];
     [position release];

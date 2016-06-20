@@ -548,7 +548,7 @@ PassRefPtr<StructureShape> StructureShape::merge(const PassRefPtr<StructureShape
     RefPtr<StructureShape> b = prpB;
     ASSERT(a->hasSamePrototypeChain(b));
 
-    RefPtr<StructureShape> merged = StructureShape::create();
+    auto merged = StructureShape::create();
     for (auto field : a->m_fields) {
         if (b->m_fields.contains(field))
             merged->m_fields.add(field);
@@ -578,7 +578,7 @@ PassRefPtr<StructureShape> StructureShape::merge(const PassRefPtr<StructureShape
 
     merged->markAsFinal();
 
-    return merged.release();
+    return WTFMove(merged);
 }
 
 void StructureShape::enterDictionaryMode()

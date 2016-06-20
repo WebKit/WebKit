@@ -80,15 +80,15 @@ void UserMediaRequest::start(Document* document, const Dictionary& options, Medi
         return;
     }
 
-    RefPtr<MediaConstraints> audioConstraints = parseOptions(options, AtomicString("audio", AtomicString::ConstructFromLiteral));
-    RefPtr<MediaConstraints> videoConstraints = parseOptions(options, AtomicString("video", AtomicString::ConstructFromLiteral));
+    auto audioConstraints = parseOptions(options, AtomicString("audio", AtomicString::ConstructFromLiteral));
+    auto videoConstraints = parseOptions(options, AtomicString("video", AtomicString::ConstructFromLiteral));
 
     if (!audioConstraints && !videoConstraints) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
 
-    Ref<UserMediaRequest> request = adoptRef(*new UserMediaRequest(document, userMedia, audioConstraints.release(), videoConstraints.release(), WTFMove(promise)));
+    auto request = adoptRef(*new UserMediaRequest(document, userMedia, WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise)));
     request->start();
 }
 

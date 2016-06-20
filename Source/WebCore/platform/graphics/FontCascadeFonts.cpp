@@ -324,7 +324,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 c, const FontCasc
     if (!originalFont)
         originalFont = &primaryRanges.fontForFirstRange();
 
-    RefPtr<Font> systemFallbackFont = originalFont->systemFallbackFontForCharacter(c, description, m_isForPlatformFont);
+    auto systemFallbackFont = originalFont->systemFallbackFontForCharacter(c, description, m_isForPlatformFont);
     if (!systemFallbackFont)
         return GlyphData();
 
@@ -348,7 +348,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 c, const FontCasc
 
     // Keep the system fallback fonts we use alive.
     if (fallbackGlyphData.glyph)
-        m_systemFallbackFontSet.add(systemFallbackFont.release());
+        m_systemFallbackFontSet.add(WTFMove(systemFallbackFont));
 
     return fallbackGlyphData;
 }

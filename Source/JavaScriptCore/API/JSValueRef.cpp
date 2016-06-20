@@ -401,10 +401,10 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
 
     JSValue jsValue = toJS(exec, value);
     
-    RefPtr<OpaqueJSString> stringRef(OpaqueJSString::create(jsValue.toString(exec)->value(exec)));
+    auto stringRef(OpaqueJSString::create(jsValue.toString(exec)->value(exec)));
     if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
         stringRef = nullptr;
-    return stringRef.release().leakRef();
+    return stringRef.leakRef();
 }
 
 JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exception)

@@ -54,8 +54,8 @@ using namespace WebCore;
     if (!self)
         return nil;
 
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(URL([url absoluteURL]));
-    SecurityOrigin* rawOrigin = origin.release().leakRef();
+    auto origin = SecurityOrigin::create(URL([url absoluteURL]));
+    SecurityOrigin* rawOrigin = &origin.leakRef();
     _private = reinterpret_cast<WebSecurityOriginPrivate *>(rawOrigin);
 
     return self;

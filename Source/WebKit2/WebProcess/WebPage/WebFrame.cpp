@@ -110,18 +110,18 @@ static uint64_t generateListenerID()
 
 PassRefPtr<WebFrame> WebFrame::createWithCoreMainFrame(WebPage* page, WebCore::Frame* coreFrame)
 {
-    RefPtr<WebFrame> frame = create(std::unique_ptr<WebFrameLoaderClient>(static_cast<WebFrameLoaderClient*>(&coreFrame->loader().client())));
+    auto frame = create(std::unique_ptr<WebFrameLoaderClient>(static_cast<WebFrameLoaderClient*>(&coreFrame->loader().client())));
     page->send(Messages::WebPageProxy::DidCreateMainFrame(frame->frameID()), page->pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 
     frame->m_coreFrame = coreFrame;
     frame->m_coreFrame->tree().setName(String());
     frame->m_coreFrame->init();
-    return frame.release();
+    return frame;
 }
 
 PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
 {
-    RefPtr<WebFrame> frame = create(std::make_unique<WebFrameLoaderClient>());
+    auto frame = create(std::make_unique<WebFrameLoaderClient>());
     page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()), page->pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 
     Ref<WebCore::Frame> coreFrame = Frame::create(page->corePage(), ownerElement, frame->m_frameLoaderClient.get());
@@ -132,17 +132,17 @@ PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frame
         ownerElement->document().frame()->tree().appendChild(WTFMove(coreFrame));
     }
     frame->m_coreFrame->init();
-    return frame.release();
+    return frame;
 }
 
 PassRefPtr<WebFrame> WebFrame::create(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
 {
-    RefPtr<WebFrame> frame = adoptRef(new WebFrame(WTFMove(frameLoaderClient)));
+    auto frame = adoptRef(*new WebFrame(WTFMove(frameLoaderClient)));
 
     // Add explict ref() that will be balanced in WebFrameLoaderClient::frameLoaderDestroyed().
     frame->ref();
 
-    return frame.release();
+    return WTFMove(frame);
 }
 
 WebFrame::WebFrame(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
@@ -818,7 +818,7 @@ PassRefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
     if (!snapshot)
         return nullptr;
 
-    RefPtr<ShareableBitmap> sharedSnapshot = ShareableBitmap::createShareable(snapshot->internalSize(), ShareableBitmap::SupportsAlpha);
+    auto sharedSnapshot = ShareableBitmap::createShareable(snapshot->internalSize(), ShareableBitmap::SupportsAlpha);
     if (!sharedSnapshot)
         return nullptr;
 
@@ -829,7 +829,7 @@ PassRefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
     graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
     graphicsContext->drawConsumingImageBuffer(WTFMove(snapshot), FloatPoint());
 
-    return sharedSnapshot.release();
+    return WTFMove(sharedSnapshot);
 }
     
 } // namespace WebKit

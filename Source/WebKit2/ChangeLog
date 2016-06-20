@@ -1,3 +1,251 @@
+2016-06-20  Keith Rollin  <krollin@apple.com>
+
+        Remove RefPtr::release() and change calls sites to use WTFMove()
+        https://bugs.webkit.org/show_bug.cgi?id=158369
+
+        Reviewed by Chris Dumez.
+
+        RefPtr::release() releases its managed pointer awkwardly. It's more
+        direct and clearer to use WTFMove to transfer ownership of the managed
+        pointer.
+
+        As part of this cleanup, also change a lot of explicit data types to
+        'auto'.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::createDatabaseToWebProcessConnection):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::initializeShareableResourceHandleFromStorageRecord):
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::allocate):
+        (WebKit::SharedMemory::create):
+        (WebKit::SharedMemory::map):
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::createWebProcessConnection):
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeToObjectStream):
+        * Shared/API/c/WKImage.cpp:
+        (WKImageCreate):
+        * Shared/API/c/WKNumber.cpp:
+        (WKBooleanCreate):
+        (WKDoubleCreate):
+        (WKUInt64Create):
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        (WKSecurityOriginCreate):
+        * Shared/API/c/WKSerializedScriptValue.cpp:
+        (WKSerializedScriptValueCreate):
+        (WKSerializedScriptValueCreateWithInternalRepresentation):
+        * Shared/API/c/cairo/WKImageCairo.cpp:
+        (WKImageCreateFromCairoSurface):
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateFromCGImage):
+        * Shared/API/c/mac/WKCertificateInfoMac.mm:
+        (WKCertificateInfoCreateWithCertficateChain):
+        * Shared/API/c/mac/WKObjCTypeWrapperRef.mm:
+        (WKObjCTypeWrapperCreate):
+        * Shared/API/c/mac/WKWebArchive.cpp:
+        (WKWebArchiveCreate):
+        (WKWebArchiveCreateWithData):
+        (WKWebArchiveCreateFromRange):
+        (WKWebArchiveCopyMainResource):
+        (WKWebArchiveCopySubresources):
+        (WKWebArchiveCopySubframeArchives):
+        * Shared/API/c/mac/WKWebArchiveResource.cpp:
+        (WKWebArchiveResourceCreate):
+        * Shared/APIWebArchive.mm:
+        (API::WebArchive::WebArchive):
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::getOrCreate):
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::create):
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::map):
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (IPC::ArgumentCoder<DragData>::decode):
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewCreate):
+        * UIProcess/API/C/WKBatteryStatus.cpp:
+        (WKBatteryStatusCreate):
+        * UIProcess/API/C/WKGeolocationPosition.cpp:
+        (WKGeolocationPositionCreate_b):
+        * UIProcess/API/C/WKGrammarDetail.cpp:
+        (WKGrammarDetailCreate):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopySessionState):
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupCreateWithIdentifier):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreate):
+        (WKPreferencesCreateWithIdentifier):
+        (WKPreferencesCreateCopy):
+        * UIProcess/API/C/WKSessionRef.cpp:
+        (WKSessionCreate):
+        * UIProcess/API/C/WKSessionStateRef.cpp:
+        (WKSessionStateCopyData):
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextCopyPlugInInfoForBundleIdentifier):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadRequest:]):
+        (-[WKWebView loadFileURL:allowingReadAccessToURL:]):
+        (-[WKWebView loadData:MIMEType:characterEncodingName:baseURL:]):
+        (-[WKWebView goToBackForwardListItem:]):
+        (-[WKWebView goBack]):
+        (-[WKWebView goForward]):
+        (-[WKWebView reload]):
+        (-[WKWebView reloadFromOrigin]):
+        (-[WKWebView _loadData:MIMEType:characterEncodingName:baseURL:userData:]):
+        (-[WKWebView _reloadWithoutContentBlockers]):
+        (-[WKWebView _sessionStateData]):
+        (-[WKWebView _restoreSessionState:andNavigate:]):
+        * UIProcess/API/efl/ewk_database_manager.cpp:
+        (EwkDatabaseManager::createOriginList):
+        * UIProcess/API/efl/ewk_storage_manager.cpp:
+        (EwkStorageManager::createOriginList):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewCreateNewPage):
+        (webkitWebViewPrintFrame):
+        (getContentsAsMHTMLDataCallback):
+        * UIProcess/Cocoa/SessionStateCoding.mm:
+        (WebKit::encodeSessionState):
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackMap::take):
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp:
+        (WebKit::GeolocationPermissionRequestManagerProxy::createRequest):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp:
+        (WebKit::NotificationPermissionRequestManagerProxy::createRequest):
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getOrCreatePluginProcess):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::setItem):
+        (WebKit::StorageManager::StorageArea::removeItem):
+        (WebKit::StorageManager::createLocalStorageMap):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::clear):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies):
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::installViewStateChangeCompletionHandler):
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::createWithLegacyDefaults):
+        (WebKit::WebPreferences::copy):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::~WebProcessPool):
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _webHitTestResult]):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _askPageToComputePageRects]):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setDragImage):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame hitTest:]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm:
+        (-[WKWebProcessPlugInHitTestResult nodeHandle]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (+[WKWebProcessPlugInNodeHandle nodeHandleWithJSValue:inContext:]):
+        (-[WKWebProcessPlugInNodeHandle htmlIFrameElementContentFrame]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm:
+        (+[WKWebProcessPlugInScriptWorld world]):
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundlePostSynchronousMessage):
+        * WebProcess/InjectedBundle/API/c/WKBundleDOMWindowExtension.cpp:
+        (WKBundleDOMWindowExtensionCreate):
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        (WKBundleHitTestResultCopyNodeHandle):
+        (WKBundleHitTestResultCopyURLElementHandle):
+        * WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp:
+        (WKBundleNavigationActionCopyHitTestResult):
+        (WKBundleNavigationActionCopyFormElement):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleCreate):
+        (WKBundleNodeHandleCopyDocument):
+        (WKBundleNodeHandleCopySnapshotWithOptions):
+        (WKBundleNodeHandleCopyVisibleRange):
+        (WKBundleNodeHandleCopyHTMLTableCellElementCellAbove):
+        (WKBundleNodeHandleCopyDocumentFrame):
+        (WKBundleNodeHandleCopyHTMLFrameElementContentFrame):
+        (WKBundleNodeHandleCopyHTMLIFrameElementContentFrame):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCreateSnapshotWithOptions):
+        (WKBundlePageCreateSnapshotInViewCoordinates):
+        (WKBundlePageCreateSnapshotInDocumentCoordinates):
+        (WKBundlePageCreateScaledSnapshotInDocumentCoordinates):
+        (WKBundlePagePostSynchronousMessageForTesting):
+        * WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp:
+        (WKBundleRangeHandleCreate):
+        (WKBundleRangeHandleCopySnapshotWithOptions):
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp:
+        (WKBundleScriptWorldCreateWorld):
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        (-[WKDOMNode _copyBundleNodeHandleRef]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange _copyBundleRangeHandleRef]):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp:
+        (WebKit::InjectedBundleCSSStyleDeclarationHandle::getOrCreate):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+        (WebKit::InjectedBundleNodeHandle::renderedImage):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::getOrCreate):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::create):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::loadURL):
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::createScrollbar):
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::applyChange):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFormData):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        (WebKit::WebFrameLoaderClient::recreatePlugin):
+        (WebKit::WebFrameLoaderClient::createJavaAppletWidget):
+        (WebKit::WebFrameLoaderClient::createNetworkingContext):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::getOrCreate):
+        (WebKit::VisitedLinkTableController::setVisitedLinkTable):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createWithCoreMainFrame):
+        (WebKit::WebFrame::createSubframe):
+        (WebKit::WebFrame::create):
+        (WebKit::WebFrame::createSelectionSnapshot):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        (WebKit::WebPage::snapshotAtSize):
+        (WebKit::WebPage::snapshotNode):
+        (WebKit::WebPage::willPerformLoadDragDestinationAction):
+        (WebKit::WebPage::SandboxExtensionTracker::didStartProvisionalLoad):
+        (WebKit::WebPage::SandboxExtensionTracker::didCommitProvisionalLoad):
+        (WebKit::WebPage::drawRectToImage):
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::create):
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::Properties::decode):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::create):
+        (WebKit::PlatformCALayerRemote::clone):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::create):
+        (WebKit::PlatformCALayerRemoteCustom::clone):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::createDisplayRefreshMonitor):
+
 2016-06-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202179.

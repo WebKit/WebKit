@@ -294,7 +294,7 @@ bool PlatformCAAnimationRemote::Properties::decode(IPC::ArgumentDecoder& decoder
                 break;
             }
             
-            properties.timingFunctions.uncheckedAppend(timingFunction.release());
+            properties.timingFunctions.uncheckedAppend(WTFMove(timingFunction));
         }
     }
 

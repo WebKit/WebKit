@@ -1313,9 +1313,9 @@ Ref<MutableStyleProperties> StyleProperties::copyPropertiesInSet(const CSSProper
     Vector<CSSProperty, 256> list;
     list.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
-        RefPtr<CSSValue> value = getPropertyCSSValueInternal(set[i]);
+        auto value = getPropertyCSSValueInternal(set[i]);
         if (value)
-            list.append(CSSProperty(set[i], value.release(), false));
+            list.append(CSSProperty(set[i], WTFMove(value), false));
     }
     return MutableStyleProperties::create(list.data(), list.size());
 }

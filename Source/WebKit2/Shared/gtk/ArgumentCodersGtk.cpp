@@ -229,7 +229,7 @@ bool ArgumentCoder<DragData>::decode(ArgumentDecoder& decoder, DragData& dragDat
             return false;
     }
 
-    dragData = DragData(platformData.release().leakRef(), clientPosition, globalPosition, static_cast<DragOperation>(sourceOperationMask),
+    dragData = DragData(platformData.leakRef(), clientPosition, globalPosition, static_cast<DragOperation>(sourceOperationMask),
                         static_cast<DragApplicationFlags>(flags));
 
     return true;

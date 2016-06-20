@@ -248,9 +248,9 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
 
 PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginInstanceProxy::create(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView, bool fullFramePlugin)
 {
-    RefPtr<NetscapePluginInstanceProxy> proxy = adoptRef(new NetscapePluginInstanceProxy(pluginHostProxy, pluginView, fullFramePlugin));
-    pluginHostProxy->addPluginInstance(proxy.get());
-    return proxy.release();
+    auto proxy = adoptRef(*new NetscapePluginInstanceProxy(pluginHostProxy, pluginView, fullFramePlugin));
+    pluginHostProxy->addPluginInstance(proxy.ptr());
+    return WTFMove(proxy);
 }
 
 NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy()
@@ -801,8 +801,8 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
             return NPERR_INVALID_PARAM;
         }
 
-        RefPtr<PluginRequest> pluginRequest = PluginRequest::create(requestID, request, target, allowPopups);
-        m_pluginRequests.append(pluginRequest.release());
+        auto pluginRequest = PluginRequest::create(requestID, request, target, allowPopups);
+        m_pluginRequests.append(WTFMove(pluginRequest));
         m_requestTimer.startOneShot(0);
     } else {
         RefPtr<HostedNetscapePluginStream> stream = HostedNetscapePluginStream::create(this, requestID, request);
@@ -1372,11 +1372,11 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
             if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
                 return false;
 
-            RefPtr<RootObject> rootObject = frame->script().createRootObject(m_pluginView);
+            auto rootObject = frame->script().createRootObject(m_pluginView);
             if (!rootObject)
                 return false;
             
-            result = ProxyInstance::create(rootObject.release(), this, objectID)->createRuntimeObject(exec);
+            result = ProxyInstance::create(WTFMove(rootObject), this, objectID)->createRuntimeObject(exec);
             return true;
         }
         default:

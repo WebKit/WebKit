@@ -111,9 +111,9 @@ GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
 
 RefPtr<DisplayRefreshMonitor> RemoteLayerTreeDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
-    RefPtr<RemoteLayerTreeDisplayRefreshMonitor> monitor = RemoteLayerTreeDisplayRefreshMonitor::create(displayID, *this);
-    m_displayRefreshMonitors.add(monitor.get());
-    return monitor.release();
+    auto monitor = RemoteLayerTreeDisplayRefreshMonitor::create(displayID, *this);
+    m_displayRefreshMonitors.add(monitor.ptr());
+    return WTFMove(monitor);
 }
 
 void RemoteLayerTreeDrawingArea::willDestroyDisplayRefreshMonitor(DisplayRefreshMonitor* monitor)

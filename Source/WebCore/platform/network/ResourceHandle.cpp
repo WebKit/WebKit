@@ -93,13 +93,13 @@ RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const 
     if (protocolMapItem != builtinResourceHandleConstructorMap().end())
         return protocolMapItem->value(request, client);
 
-    RefPtr<ResourceHandle> newHandle(adoptRef(new ResourceHandle(context, request, client, defersLoading, shouldContentSniff)));
+    auto newHandle = adoptRef(*new ResourceHandle(context, request, client, defersLoading, shouldContentSniff));
 
     if (newHandle->d->m_scheduledFailureType != NoFailure)
-        return newHandle.release();
+        return WTFMove(newHandle);
 
     if (newHandle->start())
-        return newHandle.release();
+        return WTFMove(newHandle);
 
     return nullptr;
 }

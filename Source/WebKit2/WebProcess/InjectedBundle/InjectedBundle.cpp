@@ -90,13 +90,13 @@ namespace WebKit {
 
 PassRefPtr<InjectedBundle> InjectedBundle::create(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
 {
-    RefPtr<InjectedBundle> bundle = adoptRef(new InjectedBundle(parameters));
+    auto bundle = adoptRef(*new InjectedBundle(parameters));
 
     bundle->m_sandboxExtension = SandboxExtension::create(parameters.injectedBundlePathExtensionHandle);
     if (!bundle->initialize(parameters, initializationUserData))
         return nullptr;
 
-    return bundle.release();
+    return WTFMove(bundle);
 }
 
 InjectedBundle::InjectedBundle(const WebProcessCreationParameters& parameters)

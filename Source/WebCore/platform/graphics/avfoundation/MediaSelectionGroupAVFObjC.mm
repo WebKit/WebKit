@@ -129,10 +129,10 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
     AVMediaSelectionOption* selectedOption = [m_playerItem selectedMediaOptionInMediaSelectionGroup:m_mediaSelectionGroup.get()];
 
     for (AVMediaSelectionOption* addedAVOption in addedAVOptions.get()) {
-        RefPtr<MediaSelectionOptionAVFObjC> addedOption = MediaSelectionOptionAVFObjC::create(*this, addedAVOption);
+        auto addedOption = MediaSelectionOptionAVFObjC::create(*this, addedAVOption);
         if (addedAVOption == selectedOption)
             m_selectedOption = addedOption.get();
-        m_options.set(addedAVOption, addedOption.release());
+        m_options.set(addedAVOption, WTFMove(addedOption));
     }
 
     if (!m_shouldSelectOptionAutomatically)

@@ -435,12 +435,12 @@ void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
 static StyleProperties* leakBorderStyle(CSSValueID value)
 {
-    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
+    auto style = MutableStyleProperties::create();
     style->setProperty(CSSPropertyBorderTopStyle, value);
     style->setProperty(CSSPropertyBorderBottomStyle, value);
     style->setProperty(CSSPropertyBorderLeftStyle, value);
     style->setProperty(CSSPropertyBorderRightStyle, value);
-    return style.release().leakRef();
+    return &style.leakRef();
 }
 
 const StyleProperties* HTMLTableElement::additionalPresentationAttributeStyle() const
@@ -539,7 +539,7 @@ const StyleProperties* HTMLTableElement::additionalCellStyle()
 
 static StyleProperties* leakGroupBorderStyle(int rows)
 {
-    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
+    auto style = MutableStyleProperties::create();
     if (rows) {
         style->setProperty(CSSPropertyBorderTopWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin);
@@ -551,7 +551,7 @@ static StyleProperties* leakGroupBorderStyle(int rows)
         style->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
         style->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
     }
-    return style.release().leakRef();
+    return &style.leakRef();
 }
 
 const StyleProperties* HTMLTableElement::additionalGroupStyle(bool rows)

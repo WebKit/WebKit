@@ -518,8 +518,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (WebResource *)mainResource
 {
-    RefPtr<ArchiveResource> coreResource = toPrivate(_private)->loader->mainResource();
-    return [[[WebResource alloc] _initWithCoreResource:coreResource.release()] autorelease];
+    auto coreResource = toPrivate(_private)->loader->mainResource();
+    return [[[WebResource alloc] _initWithCoreResource:WTFMove(coreResource)] autorelease];
 }
 
 - (NSArray *)subresources

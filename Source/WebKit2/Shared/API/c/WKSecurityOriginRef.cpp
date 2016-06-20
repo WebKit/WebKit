@@ -48,8 +48,8 @@ WKSecurityOriginRef WKSecurityOriginCreateFromDatabaseIdentifier(WKStringRef ide
 
 WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef host, int port)
 {
-    RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(toImpl(protocol)->string(), toImpl(host)->string(), port);
-    return toAPI(securityOrigin.release().leakRef());
+    auto securityOrigin = API::SecurityOrigin::create(toImpl(protocol)->string(), toImpl(host)->string(), port);
+    return toAPI(securityOrigin.leakRef());
 }
 
 WKStringRef WKSecurityOriginCopyDatabaseIdentifier(WKSecurityOriginRef securityOrigin)

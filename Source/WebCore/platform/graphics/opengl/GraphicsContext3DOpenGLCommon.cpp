@@ -132,8 +132,10 @@ static uint64_t nameHashForShader(const char* name, size_t length)
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::createForCurrentGLContext()
 {
-    RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(Attributes(), 0, GraphicsContext3D::RenderToCurrentGLContext));
-    return context->m_private ? context.release() : 0;
+    auto context = adoptRef(*new GraphicsContext3D(Attributes(), 0, GraphicsContext3D::RenderToCurrentGLContext));
+    if (!context->m_private)
+        return nullptr;
+    return WTFMove(context);
 }
 
 void GraphicsContext3D::validateDepthStencil(const char* packedDepthStencilExtension)
@@ -205,7 +207,7 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
     if (m_attrs.premultipliedAlpha)
         return 0;
 
-    RefPtr<ImageData> imageData = ImageData::create(IntSize(m_currentWidth, m_currentHeight));
+    auto imageData = ImageData::create(IntSize(m_currentWidth, m_currentHeight));
     unsigned char* pixels = imageData->data()->data();
     int totalBytes = 4 * m_currentWidth * m_currentHeight;
 
@@ -215,7 +217,7 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
     for (int i = 0; i < totalBytes; i += 4)
         std::swap(pixels[i], pixels[i + 2]);
 
-    return imageData.release();
+    return WTFMove(imageData);
 }
 
 void GraphicsContext3D::prepareTexture()

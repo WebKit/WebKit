@@ -76,9 +76,9 @@ ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url
 
 PassRefPtr<Archive> ArchiveResourceCollection::popSubframeArchive(const String& frameName, const URL& url)
 {
-    RefPtr<Archive> archive = m_subframes.take(frameName);
+    auto archive = m_subframes.take(frameName);
     if (archive)
-        return archive.release();
+        return WTFMove(archive);
 
     return m_subframes.take(url.string());
 }

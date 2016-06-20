@@ -66,11 +66,11 @@ using namespace JSC;
 JSClassRef JSClassCreate(const JSClassDefinition* definition)
 {
     initializeThreading();
-    RefPtr<OpaqueJSClass> jsClass = (definition->attributes & kJSClassAttributeNoAutomaticPrototype)
+    auto jsClass = (definition->attributes & kJSClassAttributeNoAutomaticPrototype)
         ? OpaqueJSClass::createNoAutomaticPrototype(definition)
         : OpaqueJSClass::create(definition);
     
-    return jsClass.release().leakRef();
+    return &jsClass.leakRef();
 }
 
 JSClassRef JSClassRetain(JSClassRef jsClass)

@@ -334,8 +334,8 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
                 return false;
             }
             
-            if (RefPtr<ArchiveResource> subresource = createResource(subresourceDict))
-                addSubresource(subresource.release());
+            if (auto subresource = createResource(subresourceDict))
+                addSubresource(WTFMove(subresource));
         }
     }
     
@@ -354,9 +354,9 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
                 return false;
             }
             
-            RefPtr<LegacyWebArchive> subframeArchive = create();
+            auto subframeArchive = create();
             if (subframeArchive->extract(subframeDict))
-                addSubframeArchive(subframeArchive.release());
+                addSubframeArchive(WTFMove(subframeArchive));
             else
                 LOG(Archives, "LegacyWebArchive - Invalid subframe archive skipped");
         }
@@ -547,8 +547,8 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Fr
         const String& iconURL = iconDatabase().synchronousIconURLForPageURL(responseURL);
         if (!iconURL.isEmpty() && iconDatabase().synchronousIconDataKnownForIconURL(iconURL)) {
             if (Image* iconImage = iconDatabase().synchronousIconForPageURL(responseURL, IntSize(16, 16))) {
-                if (RefPtr<ArchiveResource> resource = ArchiveResource::create(iconImage->data(), URL(ParsedURLString, iconURL), "image/x-icon", "", ""))
-                    subresources.append(resource.release());
+                if (auto resource = ArchiveResource::create(iconImage->data(), URL(ParsedURLString, iconURL), "image/x-icon", "", ""))
+                    subresources.append(WTFMove(resource));
             }
         }
     }
@@ -582,9 +582,9 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
     // Wrap the frameset document in an iframe so it can be pasted into
     // another document (which will have a body or frameset of its own). 
     String iframeMarkup = "<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"" + frame->loader().documentLoader()->response().url().string() + "\"></iframe>";
-    RefPtr<ArchiveResource> iframeResource = ArchiveResource::create(utf8Buffer(iframeMarkup), blankURL(), "text/html", "UTF-8", String());
+    auto iframeResource = ArchiveResource::create(utf8Buffer(iframeMarkup), blankURL(), "text/html", "UTF-8", String());
 
-    return create(iframeResource.release(), Vector<RefPtr<ArchiveResource>>(), Vector<RefPtr<LegacyWebArchive>> { archive });
+    return create(WTFMove(iframeResource), Vector<RefPtr<ArchiveResource>>(), Vector<RefPtr<LegacyWebArchive>> { archive });
 }
 
 }

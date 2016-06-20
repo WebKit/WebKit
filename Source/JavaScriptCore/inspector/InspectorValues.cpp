@@ -459,7 +459,7 @@ RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UC
         return nullptr;
     }
     *valueTokenEnd = tokenEnd;
-    return result.release();
+    return result;
 }
 
 inline bool escapeChar(UChar c, StringBuilder& dst)
@@ -551,11 +551,11 @@ bool InspectorValue::parseJSON(const String& jsonInput, RefPtr<InspectorValue>& 
     const UChar* start = characters;
     const UChar* end = start + jsonInput.length();
     const UChar* tokenEnd;
-    RefPtr<InspectorValue> result = buildValue(start, end, &tokenEnd, 0);
+    auto result = buildValue(start, end, &tokenEnd, 0);
     if (!result || tokenEnd != end)
         return false;
 
-    output = result.release();
+    output = WTFMove(result);
     return true;
 }
 

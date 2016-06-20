@@ -755,8 +755,8 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 #if ENABLE(PDFKIT_PLUGIN)
         String path = parameters.url.path();
         if (shouldUsePDFPlugin() && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(parameters.mimeType) || (parameters.mimeType.isEmpty() && (path.endsWith(".pdf", false) || path.endsWith(".ps", false))))) {
-            RefPtr<PDFPlugin> pdfPlugin = PDFPlugin::create(frame);
-            return pdfPlugin.release();
+            auto pdfPlugin = PDFPlugin::create(frame);
+            return WTFMove(pdfPlugin);
         }
 #else
         UNUSED_PARAM(frame);
@@ -1871,7 +1871,7 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
     float verticalScaleFactor = static_cast<float>(bitmapSize.height()) / rect.height();
     float scaleFactor = std::max(horizontalScaleFactor, verticalScaleFactor);
 
-    RefPtr<WebImage> snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
+    auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
     if (!snapshot->bitmap())
         return nullptr;
 
@@ -1879,7 +1879,7 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
 
     if (options & SnapshotOptionsPrinting) {
         PrintContext::spoolAllPagesWithBoundaries(*coreFrame, *graphicsContext, snapshotRect.size());
-        return snapshot.release();
+        return snapshot;
     }
 
     Color documentBackgroundColor = frameView->documentBackgroundColor();
@@ -1911,7 +1911,7 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
         graphicsContext->strokeRect(selectionRectangle, 1);
     }
     
-    return snapshot.release();
+    return snapshot;
 }
 
 PassRefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions options, unsigned maximumPixelCount)
@@ -1940,7 +1940,7 @@ PassRefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions 
         snapshotSize = IntSize(snapshotSize.width() * scaleFactor, maximumHeight);
     }
 
-    RefPtr<WebImage> snapshot = WebImage::create(snapshotSize, snapshotOptionsToImageOptions(options));
+    auto snapshot = WebImage::create(snapshotSize, snapshotOptionsToImageOptions(options));
     if (!snapshot->bitmap())
         return nullptr;
 
@@ -1964,7 +1964,7 @@ PassRefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions 
     frameView->setBaseBackgroundColor(savedBackgroundColor);
     frameView->setNodeToDraw(nullptr);
 
-    return snapshot.release();
+    return snapshot;
 }
 
 void WebPage::pageDidScroll()
@@ -3420,7 +3420,7 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
 
 void WebPage::willPerformLoadDragDestinationAction()
 {
-    m_sandboxExtensionTracker.willPerformLoadDragDestinationAction(m_pendingDropSandboxExtension.release());
+    m_sandboxExtensionTracker.willPerformLoadDragDestinationAction(WTFMove(m_pendingDropSandboxExtension));
 }
 
 void WebPage::mayPerformUploadDragDestinationAction()
@@ -3973,7 +3973,7 @@ void WebPage::SandboxExtensionTracker::didStartProvisionalLoad(WebFrame* frame)
 
     ASSERT(!m_provisionalSandboxExtension);
 
-    m_provisionalSandboxExtension = m_pendingProvisionalSandboxExtension.release();
+    m_provisionalSandboxExtension = WTFMove(m_pendingProvisionalSandboxExtension);
     if (!m_provisionalSandboxExtension)
         return;
 
@@ -3990,7 +3990,7 @@ void WebPage::SandboxExtensionTracker::didCommitProvisionalLoad(WebFrame* frame)
     if (m_committedSandboxExtension)
         m_committedSandboxExtension->revoke();
 
-    m_committedSandboxExtension = m_provisionalSandboxExtension.release();
+    m_committedSandboxExtension = WTFMove(m_provisionalSandboxExtension);
 
     // We can also have a non-null m_pendingProvisionalSandboxExtension if a new load is being started.
     // This extension is not cleared, because it does not pertain to the failed load, and will be needed.
@@ -4149,7 +4149,7 @@ void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, cons
         ASSERT(coreFrame->document()->printing());
 #endif
 
-        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(imageSize, ShareableBitmap::SupportsAlpha);
+        auto bitmap = ShareableBitmap::createShareable(imageSize, ShareableBitmap::SupportsAlpha);
         auto graphicsContext = bitmap->createGraphicsContext();
 
         float printingScale = static_cast<float>(imageSize.width()) / rect.width();
@@ -4167,7 +4167,7 @@ void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, cons
             m_printContext->spoolRect(*graphicsContext, rect);
         }
 
-        image = WebImage::create(bitmap.release());
+        image = WebImage::create(WTFMove(bitmap));
     }
 #endif
 

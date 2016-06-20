@@ -51,9 +51,9 @@ PassRefPtr<InjectedBundleCSSStyleDeclarationHandle> InjectedBundleCSSStyleDeclar
     if (!result.isNewEntry)
         return PassRefPtr<InjectedBundleCSSStyleDeclarationHandle>(result.iterator->value);
 
-    RefPtr<InjectedBundleCSSStyleDeclarationHandle> styleDeclarationHandle = adoptRef(new InjectedBundleCSSStyleDeclarationHandle(*styleDeclaration));
-    result.iterator->value = styleDeclarationHandle.get();
-    return styleDeclarationHandle.release();
+    auto styleDeclarationHandle = adoptRef(*new InjectedBundleCSSStyleDeclarationHandle(*styleDeclaration));
+    result.iterator->value = styleDeclarationHandle.ptr();
+    return WTFMove(styleDeclarationHandle);
 }
 
 InjectedBundleCSSStyleDeclarationHandle::InjectedBundleCSSStyleDeclarationHandle(CSSStyleDeclaration& styleDeclaration)

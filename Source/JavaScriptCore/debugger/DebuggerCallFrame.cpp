@@ -278,7 +278,7 @@ void DebuggerCallFrame::invalidate()
             frame->m_scope->invalidateChain();
             frame->m_scope.clear();
         }
-        frame = frame->m_caller.release();
+        frame = WTFMove(frame->m_caller);
     }
 }
 

@@ -68,8 +68,8 @@ public:
                 m_scriptExecutionContext = nullptr;
                 return;
             }
-            scriptExecutionContextPtr = m_scriptExecutionContext.release().leakRef();
-            callback = m_callback.release().leakRef();
+            scriptExecutionContextPtr = m_scriptExecutionContext.leakRef();
+            callback = m_callback.leakRef();
         }
         scriptExecutionContextPtr->postTask({
             ScriptExecutionContext::Task::CleanupTask,

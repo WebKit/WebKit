@@ -120,7 +120,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     size_t pixelsHigh = static_cast<size_t>(webViewSize.height * deviceScaleFactor);
     size_t rowBytes = 0;
     void* buffer = nullptr;
-    RefPtr<BitmapContext> bitmapContext = createBitmapContext(pixelsWide, pixelsHigh, rowBytes, buffer);
+    auto bitmapContext = createBitmapContext(pixelsWide, pixelsHigh, rowBytes, buffer);
     if (!bitmapContext)
         return nullptr;
     CGContextRef context = bitmapContext->cgContext();
@@ -194,7 +194,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
         CGContextRestoreGState(context);
     }
     
-    return bitmapContext.release();
+    return bitmapContext;
 }
 
 PassRefPtr<BitmapContext> createPagedBitmapContext()
@@ -207,10 +207,10 @@ PassRefPtr<BitmapContext> createPagedBitmapContext()
 
     int totalHeight = numberOfPages * (pageHeightInPixels + 1) - 1;
 
-    RefPtr<BitmapContext> bitmapContext = createBitmapContext(pageWidthInPixels, totalHeight, rowBytes, buffer);
+    auto bitmapContext = createBitmapContext(pageWidthInPixels, totalHeight, rowBytes, buffer);
     CGContextRef context = bitmapContext->cgContext();
     CGContextTranslateCTM(context, 0, totalHeight);
     CGContextScaleCTM(context, 1, -1);
     [mainFrame printToCGContext:context pageWidth:pageWidthInPixels pageHeight:pageHeightInPixels];
-    return bitmapContext.release();
+    return bitmapContext;
 }

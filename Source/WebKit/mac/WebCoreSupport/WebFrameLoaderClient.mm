@@ -2348,7 +2348,7 @@ void WebFrameLoaderClient::prefetchDNS(const String& hostname)
 
 - (void)receivedPolicyDecision:(PolicyAction)action
 {
-    RefPtr<Frame> frame = _frame.release();
+    auto frame = WTFMove(_frame);
     if (!frame)
         return;
 

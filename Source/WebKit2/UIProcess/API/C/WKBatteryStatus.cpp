@@ -46,8 +46,8 @@ WKTypeID WKBatteryStatusGetTypeID()
 WKBatteryStatusRef WKBatteryStatusCreate(bool isCharging, double chargingTime, double dischargingTime, double level)
 {
 #if ENABLE(BATTERY_STATUS)
-    RefPtr<WebBatteryStatus> status = WebBatteryStatus::create(isCharging, chargingTime, dischargingTime, level);
-    return toAPI(status.release().leakRef());
+    auto status = WebBatteryStatus::create(isCharging, chargingTime, dischargingTime, level);
+    return toAPI(&status.leakRef());
 #else
     UNUSED_PARAM(isCharging);
     UNUSED_PARAM(chargingTime);

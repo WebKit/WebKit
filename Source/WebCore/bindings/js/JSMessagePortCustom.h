@@ -56,12 +56,12 @@ namespace WebCore {
         MessagePortArray portArray;
         ArrayBufferArray arrayBufferArray;
         fillMessagePortArray(state, state.argument(1), portArray, arrayBufferArray);
-        RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(&state, state.uncheckedArgument(0), &portArray, &arrayBufferArray);
+        auto message = SerializedScriptValue::create(&state, state.uncheckedArgument(0), &portArray, &arrayBufferArray);
         if (state.hadException())
             return JSC::jsUndefined();
 
         ExceptionCode ec = 0;
-        impl->postMessage(message.release(), &portArray, ec);
+        impl->postMessage(WTFMove(message), &portArray, ec);
         setDOMException(&state, ec);
         return JSC::jsUndefined();
     }

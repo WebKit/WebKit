@@ -74,13 +74,13 @@ void ScrollingStateNode::setPropertyChanged(unsigned propertyBit)
 
 PassRefPtr<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateTree& adoptiveTree)
 {
-    RefPtr<ScrollingStateNode> clone = this->clone(adoptiveTree);
+    auto clone = this->clone(adoptiveTree);
 
     // Now that this node is cloned, reset our change properties.
     resetChangedProperties();
 
-    cloneAndResetChildren(*clone, adoptiveTree);
-    return clone.release();
+    cloneAndResetChildren(clone.get(), adoptiveTree);
+    return WTFMove(clone);
 }
 
 void ScrollingStateNode::cloneAndResetChildren(ScrollingStateNode& clone, ScrollingStateTree& adoptiveTree)

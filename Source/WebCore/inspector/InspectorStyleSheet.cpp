@@ -925,7 +925,7 @@ Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForS
             selectors->addItem(buildObjectForSelector(selector, element));
     }
     auto result = Inspector::Protocol::CSS::SelectorList::create()
-        .setSelectors(selectors.release())
+        .setSelectors(WTFMove(selectors))
         .setText(selectorText)
         .release();
     if (sourceData)

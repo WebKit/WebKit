@@ -238,8 +238,8 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement* form, const Attribut
     formData->setIdentifier(generateFormDataIdentifier());
     formData->setContainsPasswordData(containsPasswordData);
     String targetOrBaseTarget = copiedAttributes.target().isEmpty() ? document.baseTarget() : copiedAttributes.target();
-    RefPtr<FormState> formState = FormState::create(form, formValues, &document, trigger);
-    return adoptRef(*new FormSubmission(copiedAttributes.method(), actionURL, targetOrBaseTarget, encodingType, formState.release(), formData.release(), boundary, lockHistory, event));
+    auto formState = FormState::create(form, formValues, &document, trigger);
+    return adoptRef(*new FormSubmission(copiedAttributes.method(), actionURL, targetOrBaseTarget, encodingType, WTFMove(formState), WTFMove(formData), boundary, lockHistory, event));
 }
 
 URL FormSubmission::requestURL() const

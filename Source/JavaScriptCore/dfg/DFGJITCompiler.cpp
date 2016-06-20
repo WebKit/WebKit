@@ -390,7 +390,7 @@ void JITCompiler::compile()
     disassemble(*linkBuffer);
     
     m_graph.m_plan.finalizer = std::make_unique<JITFinalizer>(
-        m_graph.m_plan, m_jitCode.release(), WTFMove(linkBuffer));
+        m_graph.m_plan, WTFMove(m_jitCode), WTFMove(linkBuffer));
 }
 
 void JITCompiler::compileFunction()
@@ -487,7 +487,7 @@ void JITCompiler::compileFunction()
     MacroAssemblerCodePtr withArityCheck = linkBuffer->locationOf(m_arityCheck);
 
     m_graph.m_plan.finalizer = std::make_unique<JITFinalizer>(
-        m_graph.m_plan, m_jitCode.release(), WTFMove(linkBuffer), withArityCheck);
+        m_graph.m_plan, WTFMove(m_jitCode), WTFMove(linkBuffer), withArityCheck);
 }
 
 void JITCompiler::disassemble(LinkBuffer& linkBuffer)

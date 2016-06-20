@@ -48,5 +48,5 @@ WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data)
 
 WKDataRef WKSessionStateCopyData(WKSessionStateRef sessionState)
 {
-    return WebKit::toAPI(WebKit::encodeLegacySessionState(WebKit::toImpl(sessionState)->sessionState()).release().leakRef());
+    return WebKit::toAPI(WebKit::encodeLegacySessionState(WebKit::toImpl(sessionState)->sessionState()).leakRef());
 }

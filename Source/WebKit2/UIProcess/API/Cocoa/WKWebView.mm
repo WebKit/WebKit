@@ -662,7 +662,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     if (!navigation)
         return nil;
 
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL
@@ -677,7 +677,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     if (!navigation)
         return nil;
 
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
@@ -693,7 +693,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     if (!navigation)
         return nil;
 
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
@@ -702,7 +702,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     if (!navigation)
         return nil;
 
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (NSString *)title
@@ -759,7 +759,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     if (!navigation)
         return nil;
  
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (WKNavigation *)goForward
@@ -768,7 +768,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     if (!navigation)
         return nil;
 
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (WKNavigation *)reload
@@ -779,7 +779,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     if (!navigation)
         return nil;
 
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (WKNavigation *)reloadFromOrigin
@@ -790,7 +790,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     if (!navigation)
         return nil;
 
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (void)stopLoading
@@ -3178,7 +3178,7 @@ WEBCORE_COMMAND(yankAndSelect)
     if (!navigation)
         return nil;
 
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (NSArray *)_certificateChain
@@ -3259,7 +3259,7 @@ WEBCORE_COMMAND(yankAndSelect)
     if (!navigation)
         return nil;
     
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (void)_killWebContentProcessAndResetState
@@ -3340,7 +3340,7 @@ static int32_t activeOrientation(WKWebView *webView)
     WebKit::SessionState sessionState = _page->sessionState();
 
     // FIXME: This should not use the legacy session state encoder.
-    return [wrapper(*WebKit::encodeLegacySessionState(sessionState).release().leakRef()) autorelease];
+    return [wrapper(*WebKit::encodeLegacySessionState(sessionState).leakRef()) autorelease];
 }
 
 - (_WKSessionState *)_sessionState
@@ -3364,7 +3364,7 @@ static int32_t activeOrientation(WKWebView *webView)
     if (!navigation)
         return nil;
 
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [wrapper(*navigation.leakRef()) autorelease];
 }
 
 - (void)_close

@@ -210,7 +210,7 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
         ASSERT(!m_treeBuilder->hasParserBlockingScriptWork());
         // We will not have a scriptRunner when parsing a DocumentFragment.
         if (m_scriptRunner)
-            m_scriptRunner->execute(scriptElement.release(), scriptStartPosition);
+            m_scriptRunner->execute(WTFMove(scriptElement), scriptStartPosition);
     }
 }
 

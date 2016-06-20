@@ -46,20 +46,20 @@ WKTypeID WKPreferencesGetTypeID()
 
 WKPreferencesRef WKPreferencesCreate()
 {
-    RefPtr<WebPreferences> preferences = WebPreferences::createWithLegacyDefaults(String(), "WebKit2.", "WebKit2.");
-    return toAPI(preferences.release().leakRef());
+    auto preferences = WebPreferences::createWithLegacyDefaults(String(), "WebKit2.", "WebKit2.");
+    return toAPI(preferences.leakRef());
 }
 
 WKPreferencesRef WKPreferencesCreateWithIdentifier(WKStringRef identifierRef)
 {
-    RefPtr<WebPreferences> preferences = WebPreferences::createWithLegacyDefaults(toWTFString(identifierRef), "WebKit2.", "WebKit2.");
-    return toAPI(preferences.release().leakRef());
+    auto preferences = WebPreferences::createWithLegacyDefaults(toWTFString(identifierRef), "WebKit2.", "WebKit2.");
+    return toAPI(preferences.leakRef());
 }
 
 WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef preferencesRef)
 {
-    RefPtr<WebPreferences> preferences = toImpl(preferencesRef)->copy();
-    return toAPI(preferences.release().leakRef());
+    auto preferences = toImpl(preferencesRef)->copy();
+    return toAPI(preferences.leakRef());
 }
 
 void WKPreferencesEnableAllExperimentalFeatures(WKPreferencesRef preferencesRef)

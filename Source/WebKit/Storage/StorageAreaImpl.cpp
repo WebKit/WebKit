@@ -139,9 +139,9 @@ void StorageAreaImpl::setItem(Frame* sourceFrame, const String& key, const Strin
     blockUntilImportComplete();
 
     String oldValue;
-    RefPtr<StorageMap> newMap = m_storageMap->setItem(key, value, oldValue, quotaException);
+    auto newMap = m_storageMap->setItem(key, value, oldValue, quotaException);
     if (newMap)
-        m_storageMap = newMap.release();
+        m_storageMap = WTFMove(newMap);
 
     if (quotaException)
         return;
@@ -161,9 +161,9 @@ void StorageAreaImpl::removeItem(Frame* sourceFrame, const String& key)
     blockUntilImportComplete();
 
     String oldValue;
-    RefPtr<StorageMap> newMap = m_storageMap->removeItem(key, oldValue);
+    auto newMap = m_storageMap->removeItem(key, oldValue);
     if (newMap)
-        m_storageMap = newMap.release();
+        m_storageMap = WTFMove(newMap);
 
     if (oldValue.isNull())
         return;

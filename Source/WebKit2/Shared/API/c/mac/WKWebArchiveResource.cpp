@@ -39,8 +39,8 @@ WKTypeID WKWebArchiveResourceGetTypeID()
 
 WKWebArchiveResourceRef WKWebArchiveResourceCreate(WKDataRef dataRef, WKURLRef URLRef, WKStringRef MIMETypeRef, WKStringRef textEncodingRef)
 {
-    RefPtr<API::WebArchiveResource> webArchiveResource = API::WebArchiveResource::create(toImpl(dataRef), toWTFString(URLRef), toWTFString(MIMETypeRef), toWTFString(textEncodingRef));
-    return toAPI(webArchiveResource.release().leakRef());
+    auto webArchiveResource = API::WebArchiveResource::create(toImpl(dataRef), toWTFString(URLRef), toWTFString(MIMETypeRef), toWTFString(textEncodingRef));
+    return toAPI(&webArchiveResource.leakRef());
 }
 
 WKDataRef WKWebArchiveResourceCopyData(WKWebArchiveResourceRef webArchiveResourceRef)

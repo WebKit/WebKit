@@ -3815,8 +3815,8 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
 
         for (auto* childLayer : childLayers) {
             GraphicsLayerCA& childLayerCA = downcast<GraphicsLayerCA>(*childLayer);
-            if (RefPtr<PlatformCALayer> platformLayer = childLayerCA.fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel))
-                clonalSublayers.append(platformLayer.release());
+            if (auto platformLayer = childLayerCA.fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel))
+                clonalSublayers.append(WTFMove(platformLayer));
         }
 
         replicaState.pop();

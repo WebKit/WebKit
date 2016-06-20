@@ -151,8 +151,8 @@ void PluginProcess::createWebProcessConnection()
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
 
-    RefPtr<WebProcessConnection> connection = WebProcessConnection::create(socketPair.server);
-    m_webProcessConnections.append(connection.release());
+    auto connection = WebProcessConnection::create(socketPair.server);
+    m_webProcessConnections.append(WTFMove(connection));
 
     IPC::Attachment clientSocket(socketPair.client);
     parentProcessConnection()->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientSocket, m_supportsAsynchronousPluginInitialization), 0);
@@ -162,7 +162,7 @@ void PluginProcess::createWebProcessConnection()
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
 
     // Create a listening connection.
-    RefPtr<WebProcessConnection> connection = WebProcessConnection::create(IPC::Connection::Identifier(listeningPort));
+    auto connection = WebProcessConnection::create(IPC::Connection::Identifier(listeningPort));
 
     if (m_audioHardwareListener) {
         if (m_audioHardwareListener->hardwareActivity() == WebCore::AudioHardwareActivityType::IsActive)
@@ -171,7 +171,7 @@ void PluginProcess::createWebProcessConnection()
             connection->audioHardwareDidBecomeInactive();
     }
 
-    m_webProcessConnections.append(connection.release());
+    m_webProcessConnections.append(WTFMove(connection));
 
     IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     parentProcessConnection()->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientPort, m_supportsAsynchronousPluginInitialization), 0);

@@ -405,7 +405,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
         
         LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - adding cue \"%s\" for time = %.2f, end = %.2f, position =  %.2f, line =  %.2f", this, cueData->content().utf8().data(), cueData->startTime().toDouble(), cueData->endTime().toDouble(), cueData->position(), cueData->line());
 
-        client()->addGenericCue(this, cueData.release());
+        client()->addGenericCue(this, WTFMove(cueData));
     }
 
     m_pendingCueStatus = seeking() ? DeliveredDuringSeek : Valid;
