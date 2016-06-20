@@ -1,3 +1,13 @@
+2016-06-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        WebKitTestRunner: Missing \n at the line of "#PROCESS UNRESPONSIVE"
+        https://bugs.webkit.org/show_bug.cgi?id=158931
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpWebProcessUnresponsiveness): Appended missing \n at the end of line.
+
 2016-06-17  Alexey Proskuryakov  <ap@apple.com>
 
         Add test expectations for macOS Sierra

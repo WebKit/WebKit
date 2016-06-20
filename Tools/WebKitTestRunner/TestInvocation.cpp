@@ -194,7 +194,7 @@ void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
     pid_t pid = WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page());
     sprintf(errorMessageToStderr, "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName(), static_cast<long>(pid));
 #else
-    sprintf(errorMessageToStderr, "#PROCESS UNRESPONSIVE - %s", TestController::webProcessName());
+    sprintf(errorMessageToStderr, "#PROCESS UNRESPONSIVE - %s\n", TestController::webProcessName());
 #endif
 
     dump(errorMessage, errorMessageToStderr, true);
