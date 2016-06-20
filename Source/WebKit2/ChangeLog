@@ -1,3 +1,10 @@
+2016-06-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix erroneously commented line added in r202142.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+
 2016-06-16  Enrica Casucci  <enrica@apple.com>
 
         Support configurable autocapitalization.
