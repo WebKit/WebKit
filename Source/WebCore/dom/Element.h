@@ -60,6 +60,12 @@ enum SpellcheckAttributeState {
     SpellcheckAttributeDefault
 };
 
+enum class SelectionRevealMode {
+    Reveal,
+    RevealUpToMainFrame, // Scroll overflow and iframes, but not the main frame.
+    DoNotReveal
+};
+
 class Element : public ContainerNode {
 public:
     static Ref<Element> create(const QualifiedName&, Document&);

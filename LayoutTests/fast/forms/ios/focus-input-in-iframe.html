@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=0.5">
+    <style>
+        button {
+            display: block;
+        }
+        iframe {
+            margin-top: 800px;
+        }
+    </style>
+    
+    <script src="resources/zooming-test-utils.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    if (window.internals)
+        internals.settings.setFrameFlatteningEnabled(true);
+    
+    function buttonClicked()
+    {
+        document.getElementById('frame').contentDocument.getElementById('input').focus();
+    }
+
+    function doTest()
+    {
+        testZoomAfterTap(document.getElementById('target'), 10, 10);
+    }
+
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<p>Tests zooming into a text input on tap.</p>
+<button id="target" onclick="buttonClicked()">Click to focus input</button>
+
+<iframe id="frame" srcdoc="<style>input { margin: 400px 20px; }</style>
+<input id='input' type='text'>
+"></iframe>
+
+</body>
+</html>

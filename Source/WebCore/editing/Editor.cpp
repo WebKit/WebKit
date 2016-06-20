@@ -1204,7 +1204,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
             // Reveal the current selection
             if (Frame* editedFrame = document->frame())
                 if (Page* page = editedFrame->page())
-                    page->focusController().focusedOrMainFrame().selection().revealSelection(ScrollAlignment::alignCenterIfNeeded);
+                    page->focusController().focusedOrMainFrame().selection().revealSelection(SelectionRevealMode::Reveal, ScrollAlignment::alignCenterIfNeeded);
         }
     }
 
@@ -2799,7 +2799,7 @@ void Editor::revealSelectionAfterEditingOperation(const ScrollAlignment& alignme
     if (m_ignoreCompositionSelectionChange)
         return;
 
-    m_frame.selection().revealSelection(alignment, revealExtentOption);
+    m_frame.selection().revealSelection(SelectionRevealMode::Reveal, alignment, revealExtentOption);
 }
 
 void Editor::setIgnoreCompositionSelectionChange(bool ignore, RevealSelection shouldRevealExistingSelection)
@@ -3147,7 +3147,7 @@ RefPtr<Range> Editor::findStringAndScrollToVisible(const String& target, Range* 
     if (!nextMatch)
         return nullptr;
 
-    nextMatch->firstNode()->renderer()->scrollRectToVisible(nextMatch->absoluteBoundingBox(),
+    nextMatch->firstNode()->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, nextMatch->absoluteBoundingBox(),
         ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded);
 
     return nextMatch;
