@@ -1,3 +1,9 @@
+2016-06-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Test result gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-06-20  Benjamin Poulain  <benjamin@webkit.org>
 
         :default CSS pseudo-class should match checkboxes+radios with a `checked` attribute
