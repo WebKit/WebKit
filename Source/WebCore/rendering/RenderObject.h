@@ -844,6 +844,8 @@ private:
     void setNeedsLayoutIsForbidden(bool flag) { m_setNeedsLayoutForbidden = flag; }
 #endif
 
+    bool inPageCache() const final { return document().inPageCache(); }
+
     void addAbsoluteRectForLayer(LayoutRect& result);
     void setLayerNeedsFullRepaint();
     void setLayerNeedsFullRepaintForPositionedMovementLayout();

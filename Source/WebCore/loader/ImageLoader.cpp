@@ -472,4 +472,9 @@ inline void ImageLoader::clearFailedLoadURL()
     m_failedLoadURL = AtomicString();
 }
 
+bool ImageLoader::inPageCache() const
+{
+    return m_element.document().inPageCache();
+}
+
 }

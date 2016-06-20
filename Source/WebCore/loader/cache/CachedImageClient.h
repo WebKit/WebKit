@@ -42,6 +42,8 @@ public:
 
     // Called when GIF animation progresses.
     virtual void newImageAnimationFrameAvailable(CachedImage& image) { imageChanged(&image); }
+
+    virtual bool inPageCache() const { return false; }
 };
 
 }

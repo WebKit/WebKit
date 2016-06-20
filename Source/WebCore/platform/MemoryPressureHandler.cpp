@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "MemoryPressureHandler.h"
 
 #include "CSSValuePool.h"
+#include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -162,7 +163,6 @@ void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
 
 void MemoryPressureHandler::jettisonExpensiveObjectsOnTopLevelNavigation()
 {
-#if PLATFORM(IOS)
     // Protect against doing excessive jettisoning during repeated navigations.
     const auto minimumTimeSinceNavigation = 2s;
 
@@ -174,6 +174,15 @@ void MemoryPressureHandler::jettisonExpensiveObjectsOnTopLevelNavigation()
     if (!shouldJettison)
         return;
 
+    MemoryCache::singleton().forEachResource([](CachedResource& resource) {
+        if (resource.isImage()
+            && resource.decodedSize()
+            && downcast<CachedImage>(resource).areAllClientsInPageCache()) {
+            resource.destroyDecodedData();
+        }
+    });
+
+#if PLATFORM(IOS)
     // Throw away linked JS code. Linked code is tied to a global object and is not reusable.
     // The immediate memory savings outweigh the cost of recompilation in case we go back again.
     GCController::singleton().deleteAllLinkedCode();
