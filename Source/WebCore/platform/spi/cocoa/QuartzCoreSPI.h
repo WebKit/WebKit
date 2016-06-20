@@ -59,6 +59,9 @@
 - (mach_port_t)createFencePort;
 - (void)setFencePort:(mach_port_t)port;
 - (void)setFencePort:(mach_port_t)port commitHandler:(void(^)(void))block;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+@property uint32_t commitPriority;
+#endif
 #if PLATFORM(MAC)
 @property BOOL colorMatchUntaggedContent;
 #endif
