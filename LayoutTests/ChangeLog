@@ -1,3 +1,9 @@
+2016-06-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline test now that TouchEvent has a constructor.
+
+        * fast/events/touch/document-create-touch-list-ios-expected.txt:
+
 2016-06-19  Antti Koivisto  <antti@apple.com>
 
         Updating class name of a shadow host does not update the style applied by :host()
