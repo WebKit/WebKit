@@ -244,7 +244,7 @@ static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
             size_t nextDoubleQuotePosition = value.find('"', 1);
             if (nextDoubleQuotePosition == notFound) {
                 // Parse error; just use the rest as the value
-                result.append({ directive, trimToNextSeparator(value.substring(1, value.length() - 1)).toString() });
+                result.append({ directive, trimToNextSeparator(value.substring(1)).toString() });
                 return result;
             }
             // Store the value as a quoted string without quotes
