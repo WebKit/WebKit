@@ -116,6 +116,7 @@ public:
     bool wasUserSubmitted() const;
 
     HTMLFormControlElement* defaultButton() const;
+    void resetDefaultButton();
 
     bool checkValidity();
 
@@ -186,6 +187,7 @@ private:
     std::unique_ptr<PastNamesMap> m_pastNamesMap;
 
     RadioButtonGroups m_radioButtonGroups;
+    mutable HTMLFormControlElement* m_defaultButton { nullptr };
 
     unsigned m_associatedElementsBeforeIndex;
     unsigned m_associatedElementsAfterIndex;

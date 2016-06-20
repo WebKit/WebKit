@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2016 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -562,11 +562,6 @@ void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedEleme
 HTMLFormElement* HTMLFormControlElement::virtualForm() const
 {
     return FormAssociatedElement::form();
-}
-
-bool HTMLFormControlElement::isDefaultButtonForForm() const
-{
-    return isSuccessfulSubmitButton() && form() && form()->defaultButton() == this;
 }
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)

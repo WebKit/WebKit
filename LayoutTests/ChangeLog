@@ -1,3 +1,15 @@
+2016-06-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        :default CSS pseudo-class should match checkboxes+radios with a `checked` attribute
+        https://bugs.webkit.org/show_bug.cgi?id=156230
+
+        Reviewed by Alex Christensen.
+
+        * fast/css/pseudo-default-basics-expected.html: Added.
+        * fast/css/pseudo-default-basics.html: Added.
+        * fast/selectors/default-style-update-expected.txt: Added.
+        * fast/selectors/default-style-update.html: Added.
+
 2016-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Focus event dispatched in iframe causes parent document to scroll incorrectly

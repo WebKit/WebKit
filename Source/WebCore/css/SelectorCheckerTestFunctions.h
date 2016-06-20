@@ -46,9 +46,9 @@ ALWAYS_INLINE bool isAutofilled(const Element& element)
     return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilled();
 }
 
-ALWAYS_INLINE bool isDefaultButtonForForm(const Element& element)
+ALWAYS_INLINE bool matchesDefaultPseudoClass(const Element& element)
 {
-    return element.isDefaultButtonForForm();
+    return element.matchesDefaultPseudoClass();
 }
 
 ALWAYS_INLINE bool isDisabled(const Element& element)

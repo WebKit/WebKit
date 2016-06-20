@@ -1,3 +1,12 @@
+2016-06-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        :default CSS pseudo-class should match checkboxes+radios with a `checked` attribute
+        https://bugs.webkit.org/show_bug.cgi?id=156230
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/default-expected.txt:
+
 2016-06-17  Benjamin Poulain  <benjamin@webkit.org>
 
         :indeterminate pseudo-class should match radios whose group has no checked radio

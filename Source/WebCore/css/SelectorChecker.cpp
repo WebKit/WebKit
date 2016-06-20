@@ -965,7 +965,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassFullPageMedia:
             return isMediaDocument(element);
         case CSSSelector::PseudoClassDefault:
-            return isDefaultButtonForForm(element);
+            return matchesDefaultPseudoClass(element);
         case CSSSelector::PseudoClassDisabled:
             return isDisabled(element);
         case CSSSelector::PseudoClassReadOnly:

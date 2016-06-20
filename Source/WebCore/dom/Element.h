@@ -391,8 +391,11 @@ public:
     bool childNeedsShadowWalker() const;
     void didShadowTreeAwareChildrenChange();
 
+    virtual bool matchesValidPseudoClass() const;
+    virtual bool matchesInvalidPseudoClass() const;
     virtual bool matchesReadWritePseudoClass() const;
     virtual bool matchesIndeterminatePseudoClass() const;
+    virtual bool matchesDefaultPseudoClass() const;
     bool matches(const String& selectors, ExceptionCode&);
     Element* closest(const String& selectors, ExceptionCode&);
     virtual bool shouldAppearIndeterminate() const;
@@ -405,14 +408,11 @@ public:
     virtual bool isMediaElement() const { return false; }
 #endif
 
-    virtual bool matchesValidPseudoClass() const { return false; }
-    virtual bool matchesInvalidPseudoClass() const { return false; }
     virtual bool isFormControlElement() const { return false; }
     virtual bool isSpinButtonElement() const { return false; }
     virtual bool isTextFormControl() const { return false; }
     virtual bool isOptionalFormControl() const { return false; }
     virtual bool isRequiredFormControl() const { return false; }
-    virtual bool isDefaultButtonForForm() const { return false; }
     virtual bool isInRange() const { return false; }
     virtual bool isOutOfRange() const { return false; }
     virtual bool isFrameElementBase() const { return false; }

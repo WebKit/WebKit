@@ -185,9 +185,6 @@ static bool canShareStyleWithControl(const HTMLFormControlElement& element, cons
     if (formElement.isDisabledFormControl() != element.isDisabledFormControl())
         return false;
 
-    if (formElement.isDefaultButtonForForm() != element.isDefaultButtonForForm())
-        return false;
-
     if (formElement.isInRange() != element.isInRange())
         return false;
 
@@ -282,6 +279,9 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
 
     if (candidateElement.matchesIndeterminatePseudoClass() != element.matchesIndeterminatePseudoClass())
+        return false;
+
+    if (candidateElement.matchesDefaultPseudoClass() != element.matchesDefaultPseudoClass())
         return false;
 
     if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle()->hostPseudoClassRules().isEmpty())

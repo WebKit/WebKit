@@ -535,7 +535,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isChecked));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassDefault:
-        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDefaultButtonForForm));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesDefaultPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassDisabled:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDisabled));

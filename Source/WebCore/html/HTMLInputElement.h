@@ -380,6 +380,7 @@ private:
     bool appendFormData(FormDataList&, bool) final;
 
     bool isSuccessfulSubmitButton() const final;
+    bool matchesDefaultPseudoClass() const final;
 
     void reset() final;
 

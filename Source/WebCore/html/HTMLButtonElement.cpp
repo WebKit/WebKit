@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2010, 2016 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -96,13 +96,18 @@ bool HTMLButtonElement::isPresentationAttribute(const QualifiedName& name) const
 void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == typeAttr) {
+        Type oldType = m_type;
         if (equalLettersIgnoringASCIICase(value, "reset"))
             m_type = RESET;
         else if (equalLettersIgnoringASCIICase(value, "button"))
             m_type = BUTTON;
         else
             m_type = SUBMIT;
-        setNeedsWillValidateCheck();
+        if (oldType != m_type) {
+            setNeedsWillValidateCheck();
+            if (form() && (oldType == SUBMIT || m_type == SUBMIT))
+                form()->resetDefaultButton();
+        }
     } else
         HTMLFormControlElement::parseAttribute(name, value);
 }
@@ -162,6 +167,11 @@ bool HTMLButtonElement::isSuccessfulSubmitButton() const
     // HTML spec says that buttons must have names to be considered successful.
     // However, other browsers do not impose this constraint.
     return m_type == SUBMIT && !isDisabledFormControl();
+}
+
+bool HTMLButtonElement::matchesDefaultPseudoClass() const
+{
+    return isSuccessfulSubmitButton() && form() && form()->defaultButton() == this;
 }
 
 bool HTMLButtonElement::isActivatedSubmit() const

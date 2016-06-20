@@ -88,6 +88,7 @@ HTMLFormElement::~HTMLFormElement()
     if (!shouldAutocomplete())
         document().unregisterForDocumentSuspensionCallbacks(this);
 
+    m_defaultButton = nullptr;
     for (auto& associatedElement : m_associatedElements)
         associatedElement->formWillBeDestroyed();
     for (auto& imageElement : m_imageElements)
@@ -593,6 +594,16 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
 void HTMLFormElement::registerFormElement(FormAssociatedElement* e)
 {
     m_associatedElements.insert(formElementIndex(e), e);
+
+    if (is<HTMLFormControlElement>(e)) {
+        HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*e);
+        if (control.isSuccessfulSubmitButton()) {
+            if (!m_defaultButton)
+                control.setNeedsStyleRecalc();
+            else
+                resetDefaultButton();
+        }
+    }
 }
 
 void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
@@ -605,6 +616,9 @@ void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
         --m_associatedElementsAfterIndex;
     removeFromPastNamesMap(e);
     m_associatedElements.remove(index);
+
+    if (e == m_defaultButton)
+        resetDefaultButton();
 }
 
 void HTMLFormElement::registerInvalidAssociatedFormControl(const HTMLFormControlElement& formControlElement)
@@ -703,15 +717,38 @@ bool HTMLFormElement::wasUserSubmitted() const
 
 HTMLFormControlElement* HTMLFormElement::defaultButton() const
 {
-    for (auto& associatedElement : m_associatedElements) {
-        if (!is<HTMLFormControlElement>(*associatedElement))
-            continue;
-        HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*associatedElement);
-        if (control.isSuccessfulSubmitButton())
-            return &control;
+    if (!m_defaultButton) {
+        for (auto& associatedElement : m_associatedElements) {
+            if (!is<HTMLFormControlElement>(*associatedElement))
+                continue;
+            HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*associatedElement);
+            if (control.isSuccessfulSubmitButton()) {
+                m_defaultButton = &control;
+                break;
+            }
+        }
+    }
+    return m_defaultButton;
+}
+
+void HTMLFormElement::resetDefaultButton()
+{
+    if (!m_defaultButton) {
+        // Computing the default button is not cheap, we don't want to do it unless needed.
+        // If there was no default button set, the only style to invalidate is the element
+        // being added to the form. This is done explicitely in registerFormElement().
+        return;
     }
 
-    return nullptr;
+    HTMLFormControlElement* oldDefault = m_defaultButton;
+    m_defaultButton = nullptr;
+    defaultButton();
+    if (m_defaultButton != oldDefault) {
+        if (oldDefault)
+            oldDefault->setNeedsStyleRecalc();
+        if (m_defaultButton)
+            m_defaultButton->setNeedsStyleRecalc();
+    }
 }
 
 bool HTMLFormElement::checkValidity()

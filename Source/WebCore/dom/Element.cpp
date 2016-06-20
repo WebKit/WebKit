@@ -2747,6 +2747,16 @@ void Element::clearAfterPseudoElement()
     elementRareData()->setAfterPseudoElement(nullptr);
 }
 
+bool Element::matchesValidPseudoClass() const
+{
+    return false;
+}
+
+bool Element::matchesInvalidPseudoClass() const
+{
+    return false;
+}
+
 bool Element::matchesReadWritePseudoClass() const
 {
     return false;
@@ -2755,6 +2765,11 @@ bool Element::matchesReadWritePseudoClass() const
 bool Element::matchesIndeterminatePseudoClass() const
 {
     return shouldAppearIndeterminate();
+}
+
+bool Element::matchesDefaultPseudoClass() const
+{
+    return false;
 }
 
 bool Element::matches(const String& selector, ExceptionCode& ec)

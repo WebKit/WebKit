@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
- * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2010, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
@@ -96,6 +96,11 @@ bool HTMLOptionElement::isFocusable() const
     return style && style->display() != NONE;
 }
 
+bool HTMLOptionElement::matchesDefaultPseudoClass() const
+{
+    return fastHasAttribute(selectedAttr);
+}
+
 String HTMLOptionElement::text() const
 {
     String text = collectOptionInnerText();
@@ -174,6 +179,8 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomicSt
                 renderer()->theme().stateChanged(*renderer(), ControlStates::EnabledState);
         }
     } else if (name == selectedAttr) {
+        setNeedsStyleRecalc();
+
         // FIXME: This doesn't match what the HTML specification says.
         // The specification implies that removing the selected attribute or
         // changing the value of a selected attribute that is already present

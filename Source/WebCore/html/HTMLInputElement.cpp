@@ -465,6 +465,7 @@ void HTMLInputElement::updateType()
     bool didStoreValue = m_inputType->storesValueSeparateFromAttribute();
     bool neededSuspensionCallback = needsSuspensionCallback();
     bool didRespectHeightAndWidth = m_inputType->shouldRespectHeightAndWidthAttributes();
+    bool wasSuccessfulSubmitButtonCandidate = m_inputType->canBeSuccessfulSubmitButton();
 
     m_inputType->destroyShadowSubtree();
 
@@ -506,6 +507,9 @@ void HTMLInputElement::updateType()
         if (const Attribute* align = findAttributeByName(alignAttr))
             attributeChanged(alignAttr, nullAtom, align->value());
     }
+
+    if (form() && wasSuccessfulSubmitButtonCandidate != m_inputType->canBeSuccessfulSubmitButton())
+        form()->resetDefaultButton();
 
     runPostTypeUpdateTasks();
 }
@@ -677,6 +681,9 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         updateValidity();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
     } else if (name == checkedAttr) {
+        if (m_inputType->isCheckable())
+            setNeedsStyleRecalc();
+
         // Another radio button in the same group might be checked by state
         // restore. We shouldn't call setChecked() even if this has the checked
         // attribute. So, delay the setChecked() call until
@@ -814,6 +821,14 @@ bool HTMLInputElement::isSuccessfulSubmitButton() const
     // HTML spec says that buttons must have names to be considered successful.
     // However, other browsers do not impose this constraint. So we do not.
     return !isDisabledFormControl() && m_inputType->canBeSuccessfulSubmitButton();
+}
+
+bool HTMLInputElement::matchesDefaultPseudoClass() const
+{
+    ASSERT(m_inputType);
+    if (m_inputType->canBeSuccessfulSubmitButton())
+        return !isDisabledFormControl() && form() && form()->defaultButton() == this;
+    return m_inputType->isCheckable() && fastHasAttribute(checkedAttr);
 }
 
 bool HTMLInputElement::isActivatedSubmit() const
