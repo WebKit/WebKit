@@ -1,3 +1,17 @@
+2016-06-20  Zalan Bujtas  <zalan@apple.com>
+
+        Set the end position on the placeholder BidiRun properly.
+        https://bugs.webkit.org/show_bug.cgi?id=158958
+
+        Reviewed by Myles C. Maxfield.
+        rdar://problem/26609266
+
+        The second paramenter for BidiRun indicates the end position and not the length of the run.
+        This was regressed at r102875 where only the start position was changed from 0 to pos.
+
+        * fast/text/international/bidi-style-in-isolate-crash-expected.txt: Added.
+        * fast/text/international/bidi-style-in-isolate-crash.html: Added.
+
 2016-06-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         A composition underline is placed to wrong position in RTL

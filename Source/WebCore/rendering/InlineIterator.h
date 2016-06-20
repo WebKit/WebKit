@@ -493,7 +493,7 @@ static inline unsigned numberOfIsolateAncestors(const InlineIterator& iter)
 // of BidiResolver which knows nothing about RenderObjects.
 static inline void addPlaceholderRunForIsolatedInline(InlineBidiResolver& resolver, RenderObject& obj, unsigned pos, RenderElement& root)
 {
-    std::unique_ptr<BidiRun> isolatedRun = std::make_unique<BidiRun>(pos, 0, obj, resolver.context(), resolver.dir());
+    std::unique_ptr<BidiRun> isolatedRun = std::make_unique<BidiRun>(pos, pos, obj, resolver.context(), resolver.dir());
     // FIXME: isolatedRuns() could be a hash of object->run and then we could cheaply
     // ASSERT here that we didn't create multiple objects for the same inline.
     resolver.setWhitespaceCollapsingTransitionForIsolatedRun(*isolatedRun, resolver.whitespaceCollapsingState().currentTransition());
