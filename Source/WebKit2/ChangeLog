@@ -1,3 +1,10 @@
+2016-06-20  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the iOS build after r202142 and r202224.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+
 2016-06-19  Simon Fraser  <simon.fraser@apple.com>
 
         Fix erroneously commented line added in r202142.

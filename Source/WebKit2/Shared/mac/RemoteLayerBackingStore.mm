@@ -400,7 +400,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
 
 #if USE(IOSURFACE)
     if (acceleratesDrawing()) {
-        layer.contents = (id)m_frontBuffer.surface->surface();
+        layer.contents = m_frontBuffer.surface->asLayerContents();
         return;
     }
 #endif
