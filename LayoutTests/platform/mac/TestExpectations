@@ -701,7 +701,10 @@ webkit.org/b/112176 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pa
 # Once the bug 112176 is fixed, potentially restore the following test expectations.
 
 # Always very slow, frequently timing out (only on bots, not locally).
-webkit.org/b/121331 http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout ]
+webkit.org/b/121331 [ Yosemite ElCapitan ] http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout ]
+
+# <rdar://problem/26701829> com.apple.WebKit.WebContent.Development crashed in com.apple.security: Security::Mutex::unlock + 9
+[ Sierra+ ] http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout Crash ]
 
 # isProtocolHandlerRegistered() isn't supported yet.
 webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
@@ -1109,9 +1112,19 @@ webkit.org/b/136109 [ Yosemite+ ] fast/multicol/mixed-opacity-fixed-test.html  [
 webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Pass Timeout ]
 
 # Verified passing, so override generic skip
-webkit.org/b/89235 css3/line-break [ Pass ]
-webkit.org/b/138115 css3/line-break/line-break-auto-hyphens.html [ ImageOnlyFailure ]
-webkit.org/b/138115 css3/line-break/line-break-auto-sound-marks.html [ ImageOnlyFailure ]
+webkit.org/b/89235 [ Yosemite ElCapitan ] css3/line-break [ Pass ]
+webkit.org/b/138115 [ Yosemite ElCapitan ] css3/line-break/line-break-auto-hyphens.html [ ImageOnlyFailure ]
+webkit.org/b/138115 [ Yosemite ElCapitan ] css3/line-break/line-break-auto-sound-marks.html [ ImageOnlyFailure ]
+
+# We have language-sensitive fallback, so css3/line-break-language-sensitive is used instead.
+[ Sierra+ ] css3/line-break [ Pass ImageOnlyFailure ]
+
+# These operating systems do not have language-sensitive font fallback.
+[ Yosemite ElCapitan ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
+
+# Language-specific font fallback is disabled on certain versions of OS X
+webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han.html [ ImageOnlyFailure ]
+webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ Pass ImageOnlyFailure ]
 
@@ -1159,7 +1172,7 @@ webkit.org/b/141534 [ Yosemite ] media/video-load-networkState.html [ Pass Crash
 webkit.org/b/142726 [ Yosemite+ ] fast/images/animated-png.html [ ImageOnlyFailure ]
 
 # Fails when an actual AppleTV is nearby.
-webkit.org/b/148912 media/controls/airplay-picker.html [ Pass Failure ]
+webkit.org/b/148912 [ ElCapitan+ ] media/controls/airplay-picker.html [ Pass Failure ]
 
 # OS X 10.10.3+ has the necessary glyphs.
 webkit.org/b/142548 [ Yosemite+ ] editing/selection/extend-by-character-007.html [ Pass ]
@@ -1192,10 +1205,6 @@ webkit.org/b/150978 fast/canvas/webgl/oes-texture-half-float-linear.html [ Pass 
 
 webkit.org/b/147763 [ Yosemite ] accessibility/mac/loaded-notification.html [ Skip ]
 
-# Language-specific font fallback is disabled on certain versions of OS X
-webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han.html [ ImageOnlyFailure ]
-webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
-
 # These tests rely on iOS-specific font fallback.
 [ Yosemite ElCapitan ] fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ Pass ImageOnlyFailure ]
 [ Yosemite ElCapitan ] fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
@@ -1205,9 +1214,6 @@ webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.h
 
 # This test tests a particular system font, which is only on iOS and El Capitan.
 webkit.org/b/148119 [ Yosemite ] fast/text/trak-optimizeLegibility.html [ Failure ]
-
-# These operating systems do not have language-sensitive font fallback.
-[ Yosemite ElCapitan ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
 
 webkit.org/b/148636 inspector/css/createStyleSheet.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/css/get-system-fonts.html [ Pass Timeout ]
@@ -1345,9 +1351,9 @@ webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/use
 
 webkit.org/b/154688 inspector/controller/runtime-controller.html [ Pass Timeout ]
 
-webkit.org/b/156112 [ ElCapitan ] media/audio-controls-rendering.html [ Pass Failure ]
-webkit.org/b/156112 [ ElCapitan ] media/controls-strict.html [ Pass Failure ]
-webkit.org/b/156112 [ ElCapitan ] media/controls-without-preload.html [ Pass Failure ]
+webkit.org/b/156112 [ ElCapitan+ ] media/audio-controls-rendering.html [ Pass Failure ]
+webkit.org/b/156112 [ ElCapitan+ ] media/controls-strict.html [ Pass Failure ]
+webkit.org/b/156112 [ ElCapitan+ ] media/controls-without-preload.html [ Pass Failure ]
 
 webkit.org/b/156351 storage/indexeddb/modern/autoincrement-abort-private.html [ Pass Timeout ]
 
@@ -1366,6 +1372,74 @@ webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ 
 
 # These tests hardcode platform-specific font aliases.
 webkit.org/b/158649 [ Yosemite ] fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure ]
-webkit.org/b/158649 [ ElCapitan ] fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
+webkit.org/b/158649 [ ElCapitan+ ] fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure ]
+
+# <rdar://problem/22950905> REGRESSION (Sierra): canvas-alphaImageData-behavior very flaky
+[ Sierra+ ] fast/canvas/canvas-alphaImageData-behavior.html [ Pass Failure ]
+
+# <rdar://problem/23379930> swipe tests crashing
+[ Sierra+ ] swipe/basic-cached-back-swipe.html [ Skip ]
+[ Sierra+ ] swipe/main-frame-pinning-requirement.html [ Skip ]
+[ Sierra+ ] swipe/pushState-cached-back-swipe.html [ Skip ]
+[ Sierra+ ] swipe/swipe-start-hysteresis-failures.html [ Skip ]
+
+# <rdar://problem/23500327> storage/websql/alter-to-info-table.html
+[ Sierra+ ] storage/websql/alter-to-info-table.html [ Pass Failure ]
+
+# <rdar://problem/23504749> imported/w3c/web-platform-tests/XMLHttpRequest/response-method.htm failing
+[ Sierra+ ] imported/w3c/web-platform-tests/XMLHttpRequest/response-method.htm [ Pass Failure ]
+
+# <rdar://problem/23505582> Fails on iMac10,1 and iMac11,1
+[ Sierra+ ] fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Pass Failure ]
+
+# <rdar://problem/23601055>
+[ Sierra+ ] media/track/track-in-band-style.html [ Pass Failure ]
+
+# Sierra supports true font feature coverage queries. We use the -coverage versions of these tests instead.
+[ Sierra+ ] css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
+[ Sierra+ ] css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
+
+# <rdar://problem/24025664> 2d.gradient.interpolate.colouralpha.html LayoutTests failing
+[ Sierra+ ] imported/w3c/canvas/2d.gradient.interpolate.colouralpha.html [ Skip ]
+[ Sierra+ ] canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Skip ]
+
+# <rdar://problem/25279189> LayoutTest http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html is flaky
+[ Sierra+ ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Pass Failure ]
+
+# <rdar://problem/25536266> [Mac][iOS][NETWORK_SESSION] Unable to download BLOB URLs (156180)
+[ Sierra+ ] fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
+[ Sierra+ ] fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
+[ Sierra+ ] http/tests/security/anchor-download-allow-data.html [ Skip ]
+[ Sierra+ ] http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
+[ Sierra+ ] http/tests/security/anchor-download-allow-blob.html [ Skip ]
+
+# <rdar://problem/25780035> CSP does not ignore paths for media redirects
+[ Sierra+ ] http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Skip ]
+[ Sierra+ ] http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html [ Skip ]
+
+# <rdar://problem/26369661> Line drawing failures
+[ Sierra+ ] canvas/philip/tests/2d.line.cap.open.html [ Failure ]
+[ Sierra+ ] canvas/philip/tests/2d.line.join.open.html [ Failure ]
+[ Sierra+ ] imported/w3c/canvas/2d.line.cap.open.html [ Failure ]
+[ Sierra+ ] imported/w3c/canvas/2d.line.join.open.html [ Failure ]
+
+# <rdar://problem/26376752> REGRESSION: LayoutTest css3/filters/backdrop/effect-hw.html failing
+[ Sierra+ ] css3/filters/backdrop/effect-hw.html [ ImageOnlyFailure ]
+
+# <rdar://problem/26590623> LayoutTest http/tests/preload/single_download_preload_runner.html failing
+[ Sierra+ ] http/tests/preload/single_download_preload_runner.html [ Pass Failure ]
+
+# <rdar://problem/26187657> LayoutTests timing out in NSCorrectionPanel code
+[ Sierra+ ] editing/input/password-echo-textnode.html [ Timeout ]
+
+# <rdar://problem/26561453> LayoutTest http/tests/contentextensions/make-https.html failing
+[ Sierra+ ] http/tests/contentextensions/make-https.html [ Failure ]
+
+# <rdar://problem/26706803> 2 tests broken in css3/filters/backdrop
+[ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
+[ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
+
+# <rdar://problem/26632402> LayoutTest media/video-loop.html is a flaky timeout
+[ Sierra+ ] media/video-loop.html [ Pass Timeout ]

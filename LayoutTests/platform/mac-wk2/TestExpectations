@@ -465,3 +465,45 @@ webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ P
 webkit.org/b/158237 fast/scrolling/scroll-container-horizontally.html [ Pass Timeout ]
 
 webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-delete-objectstore-db.html [ Pass Timeout ]
+
+# This test only produces an RTL token on Sierra.
+[ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
+
+# PiP tests are only enabled for Sierra WebKit2.
+[ Sierra+ ] media/click-placeholder-not-pausing.html [ Pass ]
+[ Sierra+ ] media/controls/picture-in-picture.html [ Pass ]
+[ Sierra+ ] media/element-containing-pip-video-going-into-fullscreen.html [ Pass ]
+[ Sierra+ ] media/fullscreen-api-enabled-media-with-presentation-mode.html [ Pass ]
+[ Sierra+ ] media/fullscreen-video-going-into-pip.html [ Pass ]
+[ Sierra+ ] media/navigate-with-pip-should-not-crash.html [ Pass ]
+[ Sierra+ ] media/pip-video-going-into-fullscreen.html [ Pass ]
+[ Sierra+ ] media/video-contained-in-fullscreen-element-going-into-pip.html [ Pass ]
+
+# RTL Scrollbars are enabled on Sierra WebKit2.
+[ Sierra+ ] fast/scrolling/rtl-scrollbars.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-simple.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-overflow-contents.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-overflow-padding.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-overflow-simple.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-overflow.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-overflow-elementFromPoint.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-overflow-position-absolute.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-overflow-text-selection-scrolled.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-position-absolute.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-position-fixed.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-text-selection-scrolled.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-text-selection.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-iframe-offset.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-elementFromPoint-static.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-positioning.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-listbox-select-left.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-listbox-select-right.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-listbox-simple.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-listbox.html [ Pass ]
+[ Sierra+ ] fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
+
+# <rdar://problem/25063128>
+[ Sierra+ ] media/media-controls-drag-timeline-set-controls-property.html [ Pass Timeout ]

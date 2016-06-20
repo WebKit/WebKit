@@ -44,7 +44,7 @@ _log = logging.getLogger(__name__)
 class MacPort(ApplePort):
     port_name = "mac"
 
-    VERSION_FALLBACK_ORDER = ['mac-snowleopard', 'mac-lion', 'mac-mountainlion', 'mac-mavericks', 'mac-yosemite', 'mac-elcapitan']
+    VERSION_FALLBACK_ORDER = ['mac-snowleopard', 'mac-lion', 'mac-mountainlion', 'mac-mavericks', 'mac-yosemite', 'mac-elcapitan', 'mac-sierra']
 
     ARCHITECTURES = ['x86_64', 'x86']
 
@@ -91,9 +91,10 @@ class MacPort(ApplePort):
 
     def configuration_specifier_macros(self):
         return {
-            "elcapitan+": ["elcapitan", "future"],
-            "mavericks+": ["mavericks", "yosemite", "elcapitan", "future"],
-            "yosemite+": ["yosemite", "elcapitan", "future"],
+            "sierra+": ["sierra", "future"],
+            "elcapitan+": ["elcapitan", "sierra", "future"],
+            "mavericks+": ["mavericks", "yosemite", "elcapitan", "sierra", "future"],
+            "yosemite+": ["yosemite", "elcapitan", "sierra", "future"],
         }
 
     def setup_environ_for_server(self, server_name=None):

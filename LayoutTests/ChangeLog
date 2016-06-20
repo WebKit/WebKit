@@ -1,3 +1,107 @@
+2016-06-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Add test expectations for macOS Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=158903
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * media/click-placeholder-not-pausing-expected.txt: Added.
+        * media/click-placeholder-not-pausing.html: Added.
+        * media/controls/picture-in-picture-expected.txt: Added.
+        * media/controls/picture-in-picture.html: Added.
+        * media/element-containing-pip-video-going-into-fullscreen-expected.txt: Added.
+        * media/element-containing-pip-video-going-into-fullscreen.html: Added.
+        * media/fullscreen-api-enabled-media-with-presentation-mode-expected.txt: Added.
+        * media/fullscreen-api-enabled-media-with-presentation-mode.html: Added.
+        * media/fullscreen-video-going-into-pip-expected.txt: Added.
+        * media/fullscreen-video-going-into-pip.html: Added.
+        * media/navigate-with-pip-should-not-crash-expected.txt: Added.
+        * media/navigate-with-pip-should-not-crash.html: Added.
+        * media/pip-video-going-into-fullscreen-expected.txt: Added.
+        * media/pip-video-going-into-fullscreen.html: Added.
+        * media/video-contained-in-fullscreen-element-going-into-pip-expected.txt: Added.
+        * media/video-contained-in-fullscreen-element-going-into-pip.html: Added.
+        * platform/mac-elcapitan: Added.
+        * platform/mac-elcapitan/compositing: Added.
+        * platform/mac-elcapitan/compositing/rtl: Added.
+        * platform/mac-elcapitan/compositing/rtl/rtl-overflow-scrolling-expected.txt: Copied from LayoutTests/platform/mac/compositing/rtl/rtl-overflow-scrolling-expected.txt.
+        * platform/mac-elcapitan/fast: Added.
+        * platform/mac-elcapitan/fast/block: Added.
+        * platform/mac-elcapitan/fast/block/float: Added.
+        * platform/mac-elcapitan/fast/block/float/026-expected.png: Copied from LayoutTests/platform/mac/fast/block/float/026-expected.png.
+        * platform/mac-elcapitan/fast/block/float/026-expected.txt: Copied from LayoutTests/platform/mac/fast/block/float/026-expected.txt.
+        * platform/mac-elcapitan/fast/block/float/028-expected.png: Copied from LayoutTests/platform/mac/fast/block/float/028-expected.png.
+        * platform/mac-elcapitan/fast/block/float/028-expected.txt: Copied from LayoutTests/platform/mac/fast/block/float/028-expected.txt.
+        * platform/mac-elcapitan/fast/overflow: Added.
+        * platform/mac-elcapitan/fast/overflow/unreachable-overflow-rtl-bug-expected.png: Copied from LayoutTests/platform/mac/fast/overflow/unreachable-overflow-rtl-bug-expected.png.
+        * platform/mac-elcapitan/fast/overflow/unreachable-overflow-rtl-bug-expected.txt: Copied from LayoutTests/platform/mac/fast/overflow/unreachable-overflow-rtl-bug-expected.txt.
+        * platform/mac-elcapitan/fast/ruby: Added.
+        * platform/mac-elcapitan/fast/ruby/bopomofo-expected.png: Copied from LayoutTests/platform/mac/fast/ruby/bopomofo-expected.png.
+        * platform/mac-elcapitan/fast/ruby/bopomofo-expected.txt: Copied from LayoutTests/platform/mac/fast/ruby/bopomofo-expected.txt.
+        * platform/mac-elcapitan/fast/ruby/bopomofo-letter-spacing-expected.png: Copied from LayoutTests/platform/mac/fast/ruby/bopomofo-letter-spacing-expected.png.
+        * platform/mac-elcapitan/fast/ruby/bopomofo-letter-spacing-expected.txt: Copied from LayoutTests/platform/mac/fast/ruby/bopomofo-letter-spacing-expected.txt.
+        * platform/mac-elcapitan/fast/ruby/bopomofo-rl-expected.png: Copied from LayoutTests/platform/mac/fast/ruby/bopomofo-rl-expected.png.
+        * platform/mac-elcapitan/fast/ruby/bopomofo-rl-expected.txt: Copied from LayoutTests/platform/mac/fast/ruby/bopomofo-rl-expected.txt.
+        * platform/mac-elcapitan/fast/text: Added.
+        * platform/mac-elcapitan/fast/text/crash-complex-text-surrogate-expected.txt: Copied from LayoutTests/platform/mac/fast/text/crash-complex-text-surrogate-expected.txt.
+        * platform/mac-elcapitan/fast/text/justify-ideograph-complex-expected.png: Copied from LayoutTests/platform/mac/fast/text/justify-ideograph-complex-expected.png.
+        * platform/mac-elcapitan/fast/text/justify-ideograph-complex-expected.txt: Copied from LayoutTests/platform/mac/fast/text/justify-ideograph-complex-expected.txt.
+        * platform/mac-elcapitan/fast/text/line-initial-and-final-swashes-expected.png: Copied from LayoutTests/platform/mac/fast/text/line-initial-and-final-swashes-expected.png.
+        * platform/mac-elcapitan/fast/text/line-initial-and-final-swashes-expected.txt: Copied from LayoutTests/platform/mac/fast/text/line-initial-and-final-swashes-expected.txt.
+        * platform/mac-elcapitan/http: Added.
+        * platform/mac-elcapitan/http/tests: Added.
+        * platform/mac-elcapitan/http/tests/cookies: Added.
+        * platform/mac-elcapitan/http/tests/cookies/third-party-cookie-relaxing-expected.txt: Copied from LayoutTests/http/tests/cookies/third-party-cookie-relaxing-expected.txt.
+        * platform/mac-elcapitan/http/tests/security: Added.
+        * platform/mac-elcapitan/http/tests/security/mixedContent: Added.
+        * platform/mac-elcapitan/http/tests/security/mixedContent/insecure-audio-video-in-main-frame-expected.txt: Copied from LayoutTests/platform/mac/http/tests/security/mixedContent/insecure-audio-video-in-main-frame-expected.txt.
+        * platform/mac-elcapitan/media: Added.
+        * platform/mac-elcapitan/media/controls-strict-expected.png: Copied from LayoutTests/platform/mac/media/controls-strict-expected.png.
+        * platform/mac-elcapitan/media/controls-strict-expected.txt: Copied from LayoutTests/platform/mac/media/controls-strict-expected.txt.
+        * platform/mac-elcapitan/media/controls-without-preload-expected.png: Copied from LayoutTests/platform/mac/media/controls-without-preload-expected.png.
+        * platform/mac-elcapitan/media/controls-without-preload-expected.txt: Copied from LayoutTests/platform/mac/media/controls-without-preload-expected.txt.
+        * platform/mac-elcapitan/media/track: Added.
+        * platform/mac-elcapitan/media/track/video-track-alternate-groups-expected.txt: Copied from LayoutTests/platform/mac/media/track/video-track-alternate-groups-expected.txt.
+        * platform/mac-elcapitan/media/video-controls-rendering-expected.txt: Copied from LayoutTests/platform/mac/media/video-controls-rendering-expected.txt.
+        * platform/mac-elcapitan/media/video-display-toggle-expected.png: Copied from LayoutTests/platform/mac/media/video-display-toggle-expected.png.
+        * platform/mac-elcapitan/media/video-display-toggle-expected.txt: Copied from LayoutTests/platform/mac/media/video-display-toggle-expected.txt.
+        * platform/mac-elcapitan/media/video-no-audio-expected.txt: Copied from LayoutTests/platform/mac/media/video-no-audio-expected.txt.
+        * platform/mac-elcapitan/media/video-volume-slider-expected.txt: Copied from LayoutTests/platform/mac/media/video-volume-slider-expected.txt.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/fast/scrolling: Added.
+        * platform/mac-wk2/fast/scrolling/rtl-scrollbars-animation-property-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/compositing/rtl/rtl-overflow-scrolling-expected.png: Added.
+        * platform/mac/compositing/rtl/rtl-overflow-scrolling-expected.txt:
+        * platform/mac/fast/block/float/026-expected.png:
+        * platform/mac/fast/block/float/026-expected.txt:
+        * platform/mac/fast/block/float/028-expected.png:
+        * platform/mac/fast/block/float/028-expected.txt:
+        * platform/mac/fast/overflow/unreachable-overflow-rtl-bug-expected.png:
+        * platform/mac/fast/overflow/unreachable-overflow-rtl-bug-expected.txt:
+        * platform/mac/fast/ruby/bopomofo-expected.png:
+        * platform/mac/fast/ruby/bopomofo-expected.txt:
+        * platform/mac/fast/ruby/bopomofo-letter-spacing-expected.png:
+        * platform/mac/fast/ruby/bopomofo-letter-spacing-expected.txt:
+        * platform/mac/fast/ruby/bopomofo-rl-expected.png:
+        * platform/mac/fast/ruby/bopomofo-rl-expected.txt:
+        * platform/mac/fast/text/crash-complex-text-surrogate-expected.txt:
+        * platform/mac/fast/text/justify-ideograph-complex-expected.png:
+        * platform/mac/fast/text/justify-ideograph-complex-expected.txt:
+        * platform/mac/fast/text/line-initial-and-final-swashes-expected.png:
+        * platform/mac/fast/text/line-initial-and-final-swashes-expected.txt:
+        * platform/mac/http/tests/cookies/third-party-cookie-relaxing-expected.txt: Added.
+        * platform/mac/http/tests/security/mixedContent/insecure-audio-video-in-main-frame-expected.txt:
+        * platform/mac/media/controls-strict-expected.png: Removed.
+        * platform/mac/media/controls-without-preload-expected.png: Removed.
+        * platform/mac/media/track/video-track-alternate-groups-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.png: Removed.
+        * platform/mac/media/video-display-toggle-expected.png: Removed.
+        * platform/mac/media/video-no-audio-expected.png: Removed.
+        * platform/mac/media/video-volume-slider-expected.png: Removed.
+
 2016-06-17  Benjamin Poulain  <benjamin@webkit.org>
 
         :indeterminate pseudo-class should match radios whose group has no checked radio

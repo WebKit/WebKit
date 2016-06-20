@@ -21,8 +21,8 @@ Test that media containing six audio tracks, with three audio tracks each referr
 RUN(video.src = findMediaFile("video", "../content/audio-tracks-alternate-group-with-fallback"))
 EVENT(canplaythrough)
 EXPECTED (video.audioTracks.length == '3') OK
-TRACK id:3 kind:main language:en
-TRACK id:5 kind:main language:fr
-TRACK id:7 kind:main language:es
+TRACK id:2 kind:main language:en
+TRACK id:4 kind:main language:fr
+TRACK id:6 kind:main language:es
 END OF TEST
 

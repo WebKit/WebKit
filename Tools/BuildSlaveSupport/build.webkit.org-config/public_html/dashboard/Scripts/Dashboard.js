@@ -25,6 +25,7 @@
 
 Dashboard = {
     Platform: {
+        macOSSierra: { name: "macos-sierra", readableName: "macOS Sierra", order: 8 },
         MacOSXElCapitan: { name: "mac-os-x-elcapitan", readableName: "OS X El Capitan", order: 9 },
         MacOSXYosemite: { name: "mac-os-x-yosemite", readableName: "OS X Yosemite", order: 10 },
         MacOSXMavericks: { name: "mac-os-x-mavericks", readableName: "OS X Mavericks", order: 20 },

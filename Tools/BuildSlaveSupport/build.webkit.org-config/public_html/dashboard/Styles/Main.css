@@ -184,6 +184,10 @@ table.queue-grid tr.platform.mac-os-x-elcapitan img.logo {
     content: -webkit-image-set(url(../Images/ElCapitan@2x.png) 2x, url(../Images/ElCapitan.png) 1x);
 }
 
+table.queue-grid tr.platform.macos-sierra img.logo {
+    content: -webkit-image-set(url(../Images/Sierra@2x.png) 2x, url(../Images/Sierra.png) 1x);
+}
+
 table.queue-grid tr.platform.mac-os-x-yosemite img.logo {
     content: -webkit-image-set(url(../Images/Yosemite@2x.png) 2x, url(../Images/Yosemite.png) 1x);
 }

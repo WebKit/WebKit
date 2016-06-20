@@ -55,6 +55,12 @@ var PLATFORMS = {
                             'WK2': { fallbackPlatforms: ['APPLE_MAC_ELCAPITAN', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
                         }
                     },
+                    'SIERRA': {
+                        subPlatforms: {
+                            'WK1': { fallbackPlatforms: ['APPLE_MAC_SIERRA', 'APPLE_MAC'] },
+                            'WK2': { fallbackPlatforms: ['APPLE_MAC_SIERRA', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
+                        }
+                    },
                 }
             },
             'WIN': {
@@ -348,6 +354,8 @@ function determineBuilderPlatform(builderNameUpperCase)
     if (string.contains(builderNameUpperCase, 'WIN XP'))
         return 'APPLE_WIN_XP';
 
+    if (string.contains(builderNameUpperCase, 'SIERRA'))
+        return determineWKPlatform(builderNameUpperCase, 'SIERRA');
     if (string.contains(builderNameUpperCase, 'EL CAPITAN'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_ELCAPITAN');
     if (string.contains(builderNameUpperCase, 'YOSEMITE'))
@@ -698,6 +706,7 @@ function getParsedExpectations(data)
             'Mavericks': 'MAVERICKS',
             'Yosemite': 'YOSEMITE',
             'ElCapitan': 'ELCAPITAN',
+            'Sierra': 'SIERRA',
             'Win7': 'WIN7',
             'XP': 'XP',
             'Vista': 'VISTA',

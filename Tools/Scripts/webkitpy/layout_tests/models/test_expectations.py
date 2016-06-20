@@ -209,7 +209,7 @@ class TestExpectationParser(object):
 
     # FIXME: Update the original modifiers and remove this once the old syntax is gone.
     _configuration_tokens_list = [
-        'Mac', 'SnowLeopard', 'Lion', 'MountainLion', 'Mavericks', 'Yosemite', 'ElCapitan',
+        'Mac', 'SnowLeopard', 'Lion', 'MountainLion', 'Mavericks', 'Yosemite', 'ElCapitan', 'Sierra',
         'Win', 'XP', 'Vista', 'Win7',
         'Linux',
         'Android',
