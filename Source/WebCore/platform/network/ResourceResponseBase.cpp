@@ -39,11 +39,6 @@
 
 namespace WebCore {
 
-inline const ResourceResponse& ResourceResponseBase::asResourceResponse() const
-{
-    return *static_cast<const ResourceResponse*>(this);
-}
-
 ResourceResponseBase::ResourceResponseBase()
     : m_isNull(true)
     , m_expectedContentLength(0)
