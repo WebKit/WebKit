@@ -1,3 +1,18 @@
+2016-06-20  Tim Horton  <timothy_horton@apple.com>
+
+        Add a API test for *DeferringViewInWindowChanges as fixed in r202230
+        https://bugs.webkit.org/show_bug.cgi?id=158947
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/DeferredViewInWindowStateChange.mm: Added.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        Add a test ensuring that in-window state changes are deferred when using
+        the SPI for deferring them, as fixed in r202230.
+
 2016-06-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         WebKitTestRunner: Missing \n at the line of "#PROCESS UNRESPONSIVE"
