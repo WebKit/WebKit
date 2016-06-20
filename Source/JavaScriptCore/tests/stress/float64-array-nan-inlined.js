@@ -1,3 +1,6 @@
+//@ defaultRun
+//@ runNoJIT
+
 function foo(o) {
     return o[0];
 }

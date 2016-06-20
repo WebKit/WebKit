@@ -1,3 +1,13 @@
+2016-06-20  Filip Pizlo  <fpizlo@apple.com>
+
+        LLInt64 Float64 get_by_val doesn't purify NaN
+        https://bugs.webkit.org/show_bug.cgi?id=158956
+
+        Reviewed by Michael Saboff.
+
+        * llint/LowLevelInterpreter64.asm: Fix the bug.
+        * tests/stress/float64-array-nan-inlined.js: Make this test also run in LLInt-only mode to catch this bug.
+
 2016-06-20  Keith Rollin  <krollin@apple.com>
 
         Remove RefPtr::release() and change calls sites to use WTFMove()

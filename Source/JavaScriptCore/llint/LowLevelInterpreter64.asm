@@ -1586,6 +1586,7 @@ _llint_op_get_by_val:
 
     # We have Float64ArrayType.
     loadd [t3, t1, 8], ft0
+    bdnequn ft0, ft0, .opGetByValSlow
     finishDoubleGetByVal(ft0, t0, t1)
 
 .opGetByValSlow:
