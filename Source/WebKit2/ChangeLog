@@ -1,5 +1,20 @@
 2016-06-20  Tim Horton  <timothy_horton@apple.com>
 
+        REGRESSION (r191499): Tab content "jumps" down when focusing tabs that load in the background
+        https://bugs.webkit.org/show_bug.cgi?id=158904
+        <rdar://problem/26025831>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        During the large refactor that was r191499, we somehow ended up with two
+        different members for the same thing - one that got written, and one that
+        got read. We should only have one.
+
+2016-06-20  Tim Horton  <timothy_horton@apple.com>
+
         Try to fix the iOS build after r202142 and r202224.
 
         * Shared/mac/RemoteLayerBackingStore.mm:

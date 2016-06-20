@@ -1191,7 +1191,7 @@ void WebViewImpl::viewDidMoveToWindow()
         windowDidChangeScreen();
 
         WebCore::ViewState::Flags viewStateChanges = WebCore::ViewState::WindowIsActive | WebCore::ViewState::IsVisible;
-        if (m_isDeferringViewInWindowChanges)
+        if (m_shouldDeferViewInWindowChanges)
             m_viewInWindowChangeWasDeferred = true;
         else
             viewStateChanges |= WebCore::ViewState::IsInWindow;
@@ -1220,7 +1220,7 @@ void WebViewImpl::viewDidMoveToWindow()
             [m_view addGestureRecognizer:m_immediateActionGestureRecognizer.get()];
     } else {
         WebCore::ViewState::Flags viewStateChanges = WebCore::ViewState::WindowIsActive | WebCore::ViewState::IsVisible;
-        if (m_isDeferringViewInWindowChanges)
+        if (m_shouldDeferViewInWindowChanges)
             m_viewInWindowChangeWasDeferred = true;
         else
             viewStateChanges |= WebCore::ViewState::IsInWindow;

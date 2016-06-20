@@ -545,7 +545,6 @@ private:
     bool m_clipsToVisibleRect { false };
     bool m_needsViewFrameInWindowCoordinates;
     bool m_didScheduleWindowAndViewFrameUpdate { false };
-    bool m_isDeferringViewInWindowChanges { false };
     bool m_windowOcclusionDetectionEnabled { true };
 
     bool m_automaticallyAdjustsContentInsets { false };
