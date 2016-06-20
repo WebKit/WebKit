@@ -1154,9 +1154,6 @@ sub GenerateHeader
 
     if (InstancePropertyCount($interface) > 0) {
         $structureFlags{"JSC::HasStaticPropertyTable"} = 1;
-        push(@headerContent, "    static const bool hasStaticPropertyTable = true;\n\n");
-    } else {
-        push(@headerContent, "    static const bool hasStaticPropertyTable = false;\n\n");
     }
 
     # Prototype

@@ -40,8 +40,6 @@ public:
 
     static const bool needsDestruction = false;
 
-    static const bool hasStaticPropertyTable = true;
-
     static TestGlobalObject* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
 
