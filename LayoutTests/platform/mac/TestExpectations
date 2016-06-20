@@ -1122,6 +1122,9 @@ webkit.org/b/138115 [ Yosemite ElCapitan ] css3/line-break/line-break-auto-sound
 # These operating systems do not have language-sensitive font fallback.
 [ Yosemite ElCapitan ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
 
+# rdar://problem/26884906
+[ Sierra+ ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
+
 # Language-specific font fallback is disabled on certain versions of OS X
 webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han.html [ ImageOnlyFailure ]
 webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
@@ -1434,12 +1437,18 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 # <rdar://problem/26187657> LayoutTests timing out in NSCorrectionPanel code
 [ Sierra+ ] editing/input/password-echo-textnode.html [ Timeout ]
 
-# <rdar://problem/26561453> LayoutTest http/tests/contentextensions/make-https.html failing
-[ Sierra+ ] http/tests/contentextensions/make-https.html [ Failure ]
-
 # <rdar://problem/26706803> 2 tests broken in css3/filters/backdrop
 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
 
 # <rdar://problem/26632402> LayoutTest media/video-loop.html is a flaky timeout
 [ Sierra+ ] media/video-loop.html [ Pass Timeout ]
+
+# rdar://problem/26215686
+[ Sierra+ ] fast/canvas/canvas-composite-text-alpha.html [ Failure ]
+
+# rdar://problem/25578897
+[ Sierra+ ] fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ Pass ImageOnlyFailure ]
+
+# rdar://problem/26884958
+[ Sierra+ ] fast/canvas/canvas-strokeRect-alpha-shadow.html [ Failure ]
