@@ -691,22 +691,28 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const F
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), compositionColor);
 }
 
+static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction, float& start, float width)
+{
+    if (direction == LTR)
+        return;
+    start = logicalWidth - width - start;
+}
+
 void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade& font, RenderCombineText* combinedText, const TextRun& textRun, const FloatPoint& textOrigin,
     const FloatRect& boxRect, TextDecoration decoration, TextPaintStyle textPaintStyle, const ShadowData* shadow)
 {
     if (m_truncation == cFullTruncation)
         return;
 
-    FloatPoint localOrigin = boxRect.location();
     updateGraphicsContext(context, textPaintStyle);
     if (combinedText)
         context.concatCTM(rotation(boxRect, Clockwise));
 
+    float start = 0;
     float width = m_logicalWidth;
     if (m_truncation != cNoTruncation) {
         width = renderer().width(m_start, m_truncation, textPos(), isFirstLine());
-        if (!isLeftToRightDirection())
-            localOrigin.move(m_logicalWidth - width, 0);
+        mirrorRTLSegment(m_logicalWidth, direction(), start, width);
     }
     
     int baseline = lineStyle().fontMetrics().ascent();
@@ -718,6 +724,8 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade&
     decorationPainter.setIsHorizontal(isHorizontal());
     decorationPainter.addTextShadow(shadow);
 
+    FloatPoint localOrigin = boxRect.location();
+    localOrigin.move(start, 0);
     decorationPainter.paintTextDecoration(textRun, textOrigin, localOrigin);
 
     if (combinedText)
@@ -934,6 +942,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext& context, const Fl
     }
     if (!useWholeWidth) {
         width = renderer().width(paintStart, paintEnd - paintStart, textPos() + start, isFirstLine());
+        mirrorRTLSegment(m_logicalWidth, direction(), start, width);
     }
 
     // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
