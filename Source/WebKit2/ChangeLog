@@ -1,3 +1,16 @@
+2016-06-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Allow Spotlight suggestions to be read by any process
+        https://bugs.webkit.org/show_bug.cgi?id=158950
+        <rdar://problem/26865374>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Extend sandbox to allow all web processes to read Spotlight results.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2016-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Focus event dispatched in iframe causes parent document to scroll incorrectly

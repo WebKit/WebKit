@@ -187,6 +187,8 @@
 
     (subpath "/Library/ColorSync")
 
+    (home-literal "/Library/Preferences/com.apple.lookup.shared.plist")
+
     ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
     (subpath "/Library/Keychains"))
 
