@@ -1,3 +1,18 @@
+2016-06-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r202179.
+        https://bugs.webkit.org/show_bug.cgi?id=158946
+
+        The test either fails or times out 100% of the time (Requested
+        by ap on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION: Double tap to zoom does not work on yahoo
+        finance"
+        https://bugs.webkit.org/show_bug.cgi?id=158886
+        http://trac.webkit.org/changeset/202179
+
 2016-06-20  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r191499): Tab content "jumps" down when focusing tabs that load in the background
