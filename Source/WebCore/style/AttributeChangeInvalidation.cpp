@@ -28,11 +28,22 @@
 
 #include "DocumentRuleSets.h"
 #include "ElementIterator.h"
+#include "ShadowRoot.h"
 #include "StyleInvalidationAnalysis.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
 namespace Style {
+
+static bool mayBeAffectedByHostStyle(ShadowRoot& shadowRoot, bool isHTML, const QualifiedName& attributeName)
+{
+    auto& shadowRuleSets = shadowRoot.styleResolver().ruleSets();
+    if (shadowRuleSets.authorStyle()->hostPseudoClassRules().isEmpty())
+        return false;
+
+    auto& nameSet = isHTML ? shadowRuleSets.features().attributeCanonicalLocalNamesInRules : shadowRuleSets.features().attributeLocalNamesInRules;
+    return nameSet.contains(attributeName.localName().impl());
+}
 
 void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
 {
@@ -43,8 +54,13 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
     bool isHTML = m_element.isHTMLElement();
 
     auto& nameSet = isHTML ? ruleSets.features().attributeCanonicalLocalNamesInRules : ruleSets.features().attributeLocalNamesInRules;
-    bool shouldInvalidate = nameSet.contains(attributeName.localName().impl());
-    if (!shouldInvalidate)
+    bool mayAffectStyle = nameSet.contains(attributeName.localName().impl());
+
+    auto* shadowRoot = m_element.shadowRoot();
+    if (!mayAffectStyle && shadowRoot && mayBeAffectedByHostStyle(*shadowRoot, isHTML, attributeName))
+        mayAffectStyle = true;
+
+    if (!mayAffectStyle)
         return;
 
     if (!isHTML) {

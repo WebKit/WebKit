@@ -28,6 +28,7 @@
 
 #include "DocumentRuleSets.h"
 #include "ElementChildIterator.h"
+#include "ShadowRoot.h"
 #include "SpaceSplitString.h"
 #include "StyleInvalidationAnalysis.h"
 #include "StyleResolver.h"
@@ -84,22 +85,36 @@ static ClassChangeVector computeClassChange(const SpaceSplitString& oldClasses, 
     return changedClasses;
 }
 
+static bool mayBeAffectedByHostStyle(ShadowRoot& shadowRoot, AtomicStringImpl* changedClass)
+{
+    auto& shadowRuleSets = shadowRoot.styleResolver().ruleSets();
+    if (shadowRuleSets.authorStyle()->hostPseudoClassRules().isEmpty())
+        return false;
+    return shadowRuleSets.features().classesInRules.contains(changedClass);
+}
+
 void ClassChangeInvalidation::invalidateStyle(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
 {
     auto changedClasses = computeClassChange(oldClasses, newClasses);
 
     auto& ruleSets = m_element.styleResolver().ruleSets();
+    auto* shadowRoot = m_element.shadowRoot();
 
     ClassChangeVector changedClassesAffectingStyle;
     for (auto* changedClass : changedClasses) {
-        if (ruleSets.features().classesInRules.contains(changedClass))
+        bool mayAffectStyle = ruleSets.features().classesInRules.contains(changedClass);
+
+        if (!mayAffectStyle && shadowRoot && mayBeAffectedByHostStyle(*shadowRoot, changedClass))
+            mayAffectStyle = true;
+
+        if (mayAffectStyle)
             changedClassesAffectingStyle.append(changedClass);
     };
 
     if (changedClassesAffectingStyle.isEmpty())
         return;
 
-    if (m_element.shadowRoot() && ruleSets.authorStyle()->hasShadowPseudoElementRules()) {
+    if (shadowRoot && ruleSets.authorStyle()->hasShadowPseudoElementRules()) {
         m_element.setNeedsStyleRecalc(FullStyleChange);
         return;
     }

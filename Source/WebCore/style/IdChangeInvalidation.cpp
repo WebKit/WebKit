@@ -28,10 +28,20 @@
 
 #include "DocumentRuleSets.h"
 #include "ElementChildIterator.h"
+#include "ShadowRoot.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
 namespace Style {
+
+static bool mayBeAffectedByHostStyle(ShadowRoot& shadowRoot, const AtomicString& changedId)
+{
+    auto& shadowRuleSets = shadowRoot.styleResolver().ruleSets();
+    if (shadowRuleSets.authorStyle()->hostPseudoClassRules().isEmpty())
+        return false;
+
+    return shadowRuleSets.features().idsInRules.contains(changedId.impl());
+}
 
 void IdChangeInvalidation::invalidateStyle(const AtomicString& changedId)
 {
@@ -41,6 +51,11 @@ void IdChangeInvalidation::invalidateStyle(const AtomicString& changedId)
     auto& ruleSets = m_element.styleResolver().ruleSets();
 
     bool mayAffectStyle = ruleSets.features().idsInRules.contains(changedId.impl());
+
+    auto* shadowRoot = m_element.shadowRoot();
+    if (!mayAffectStyle && shadowRoot && mayBeAffectedByHostStyle(*shadowRoot, changedId))
+        mayAffectStyle = true;
+
     if (!mayAffectStyle)
         return;
 

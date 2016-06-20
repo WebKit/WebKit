@@ -1,3 +1,14 @@
+2016-06-19  Antti Koivisto  <antti@apple.com>
+
+        Updating class name of a shadow host does not update the style applied by :host()
+        https://bugs.webkit.org/show_bug.cgi?id=158900
+        <rdar://problem/26883707>
+
+        Reviewed by Simon Fraser.
+
+        * fast/shadow-dom/shadow-host-style-update-expected.html: Added.
+        * fast/shadow-dom/shadow-host-style-update.html: Added.
+
 2016-06-19  Alexey Proskuryakov  <ap@apple.com>
 
         Test expectation gardening.
