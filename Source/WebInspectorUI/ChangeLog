@@ -1,3 +1,36 @@
+2016-06-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.profile should use the new Sampling Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=153499
+        <rdar://problem/24352431>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.programmaticCaptureStarted):
+        (WebInspector.TimelineManager.prototype.programmaticCaptureStopped):
+        (WebInspector.TimelineManager.prototype.scriptProfilerProgrammaticCaptureStarted):
+        (WebInspector.TimelineManager.prototype.scriptProfilerProgrammaticCaptureStopped):
+        For programmatic captures, automatically show the Script Timeline, since
+        that is guarenteed to have been started by the backend. Start capturing
+        without creating a new recording.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.stop):
+        (WebInspector.TimelineRecording.prototype.addScriptInstrumentForProgrammaticCapture):
+        When stopping for programmatic capture we don't need to disable
+        instruments, the backend would have already done this.
+
+        * UserInterface/Protocol/ScriptProfilerObserver.js:
+        (WebInspector.ScriptProfilerObserver.prototype.programmaticCaptureStarted):
+        (WebInspector.ScriptProfilerObserver.prototype.programmaticCaptureStopped):
+        (WebInspector.ScriptProfilerObserver):
+        * UserInterface/Protocol/TimelineObserver.js:
+        (WebInspector.TimelineObserver.prototype.programmaticCaptureStarted):
+        (WebInspector.TimelineObserver.prototype.programmaticCaptureStopped):
+        (WebInspector.TimelineObserver):
+        Pass through Web and JSContext programmatic capture events.
+
 2016-06-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Remove Sidebar z-index:0 workaround for scrollbars and position:sticky section headers

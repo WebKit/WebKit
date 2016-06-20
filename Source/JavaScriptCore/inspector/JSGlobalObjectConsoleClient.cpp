@@ -28,6 +28,8 @@
 
 #include "ConsoleMessage.h"
 #include "InspectorConsoleAgent.h"
+#include "InspectorDebuggerAgent.h"
+#include "InspectorScriptProfilerAgent.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
@@ -52,9 +54,11 @@ void JSGlobalObjectConsoleClient::setLogToSystemConsole(bool shouldLog)
     sLogToSystemConsole = shouldLog;
 }
 
-JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient(InspectorConsoleAgent* consoleAgent)
+JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient(InspectorConsoleAgent* consoleAgent, InspectorDebuggerAgent* debuggerAgent, InspectorScriptProfilerAgent* scriptProfilerAgent)
     : ConsoleClient()
     , m_consoleAgent(consoleAgent)
+    , m_debuggerAgent(debuggerAgent)
+    , m_scriptProfilerAgent(scriptProfilerAgent)
 {
 }
 
@@ -73,14 +77,71 @@ void JSGlobalObjectConsoleClient::count(ExecState* exec, RefPtr<ScriptArguments>
     m_consoleAgent->count(exec, arguments);
 }
 
-void JSGlobalObjectConsoleClient::profile(JSC::ExecState*, const String&)
+void JSGlobalObjectConsoleClient::profile(JSC::ExecState*, const String& title)
 {
-    // FIXME: support |console.profile| for JSContexts. <https://webkit.org/b/136466>
+    if (!m_consoleAgent->enabled())
+        return;
+
+    // Allow duplicate unnamed profiles. Disallow duplicate named profiles.
+    if (!title.isEmpty()) {
+        for (auto& existingTitle : m_profiles) {
+            if (existingTitle == title) {
+                // FIXME: Send an enum to the frontend for localization?
+                String warning = title.isEmpty() ? ASCIILiteral("Unnamed Profile already exists") : makeString("Profile \"", title, "\" already exists");
+                m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Profile, MessageLevel::Warning, warning));
+                return;
+            }
+        }
+    }
+
+    m_profiles.append(title);
+    startConsoleProfile();
 }
 
-void JSGlobalObjectConsoleClient::profileEnd(JSC::ExecState*, const String&)
+void JSGlobalObjectConsoleClient::profileEnd(JSC::ExecState*, const String& title)
 {
-    // FIXME: support |console.profile| for JSContexts. <https://webkit.org/b/136466>
+    if (!m_consoleAgent->enabled())
+        return;
+
+    // Stop profiles in reverse order. If the title is empty, then stop the last profile.
+    // Otherwise, match the title of the profile to stop.
+    for (ptrdiff_t i = m_profiles.size() - 1; i >= 0; --i) {
+        if (title.isEmpty() || m_profiles[i] == title) {
+            m_profiles.remove(i);
+            if (m_profiles.isEmpty())
+                stopConsoleProfile();
+            return;
+        }
+    }
+
+    // FIXME: Send an enum to the frontend for localization?
+    String warning = title.isEmpty() ? ASCIILiteral("No profiles exist") : makeString("Profile \"", title, "\" does not exist");
+    m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::ProfileEnd, MessageLevel::Warning, warning));
+}
+
+void JSGlobalObjectConsoleClient::startConsoleProfile()
+{
+    // FIXME: <https://webkit.org/b/158753> Generalize the concept of Instruments on the backend to work equally for JSContext and Web inspection
+    m_scriptProfilerAgent->programmaticCaptureStarted();
+
+    m_profileRestoreBreakpointActiveValue = m_debuggerAgent->breakpointsActive();
+
+    ErrorString unused;
+    m_debuggerAgent->setBreakpointsActive(unused, false);
+
+    const bool includeSamples = true;
+    m_scriptProfilerAgent->startTracking(unused, &includeSamples);
+}
+
+void JSGlobalObjectConsoleClient::stopConsoleProfile()
+{
+    ErrorString unused;
+    m_scriptProfilerAgent->stopTracking(unused);
+
+    m_debuggerAgent->setBreakpointsActive(unused, m_profileRestoreBreakpointActiveValue);
+
+    // FIXME: <https://webkit.org/b/158753> Generalize the concept of Instruments on the backend to work equally for JSContext and Web inspection
+    m_scriptProfilerAgent->programmaticCaptureStopped();
 }
 
 void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String& title)
