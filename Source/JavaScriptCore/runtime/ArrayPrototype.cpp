@@ -36,7 +36,6 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JSArrayInlines.h"
-#include "JSArrayIterator.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
 #include "JSStringBuilder.h"

@@ -25,6 +25,7 @@
  */
 
 @constructor
+@globalPrivate
 function createArrayIterator(iteratedObject, kind, iterationFunction)
 {
     this.@iteratedObject = iteratedObject;

@@ -28,7 +28,6 @@
 
 #include "ArrayIteratorPrototype.lut.h"
 #include "IteratorOperations.h"
-#include "JSArrayIterator.h"
 #include "JSCInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -37,7 +36,6 @@
 #include "StructureInlines.h"
 
 namespace JSC {
-
 
 const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_info, &arrayIteratorPrototypeTable, CREATE_METHOD_TABLE(ArrayIteratorPrototype) };
 

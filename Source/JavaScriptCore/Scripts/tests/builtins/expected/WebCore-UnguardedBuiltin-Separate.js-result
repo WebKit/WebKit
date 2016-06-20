@@ -156,6 +156,7 @@ inline void UnguardedBuiltinBuiltinsWrapper::exportNames()
 
 #include "WebCoreJSClientData.h"
 #include <runtime/Executable.h>
+#include <runtime/Intrinsic.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
@@ -164,12 +165,12 @@ inline void UnguardedBuiltinBuiltinsWrapper::exportNames()
 namespace WebCore {
 
 const JSC::ConstructAbility s_unguardedBuiltinIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_unguardedBuiltinIsReadableStreamLockedCodeLength = 71;
+const int s_unguardedBuiltinIsReadableStreamLockedCodeLength = 70;
+static const JSC::Intrinsic s_unguardedBuiltinIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_unguardedBuiltinIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
-    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;
@@ -179,7 +180,7 @@ const char* s_unguardedBuiltinIsReadableStreamLockedCode =
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \
-    return clientData->builtinFunctions().unguardedBuiltinBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().unguardedBuiltinBuiltins().codeName##Source()); \
+    return clientData->builtinFunctions().unguardedBuiltinBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().unguardedBuiltinBuiltins().codeName##Source(), Nullopt, s_##codeName##Intrinsic); \
 }
 WEBCORE_FOREACH_UNGUARDEDBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR

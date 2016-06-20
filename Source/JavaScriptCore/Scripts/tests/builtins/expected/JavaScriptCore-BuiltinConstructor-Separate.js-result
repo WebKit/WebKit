@@ -109,20 +109,20 @@ JSC_FOREACH_BUILTINCONSTRUCTOR_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 #include "BuiltinExecutables.h"
 #include "Executable.h"
+#include "Intrinsic.h"
 #include "JSCellInlines.h"
 #include "VM.h"
 
 namespace JSC {
 
 const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_builtinConstructorOfCodeLength = 294;
+const int s_builtinConstructorOfCodeLength = 286;
+static const JSC::Intrinsic s_builtinConstructorOfCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_builtinConstructorOfCode =
     "(function ()\n" \
     "{\n" \
     "    \"use strict\";\n" \
-    "\n" \
     "    var length = arguments.length;\n" \
-    "    //\n" \
     "    var array = typeof this === 'function' ? new this(length) : new @Array(length);\n" \
     "    for (var k = 0; k < length; ++k)\n" \
     "        @putByValDirect(array, k, arguments[k]);\n" \
@@ -132,49 +132,35 @@ const char* s_builtinConstructorOfCode =
 ;
 
 const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_builtinConstructorFromCodeLength = 2046;
+const int s_builtinConstructorFromCodeLength = 1979;
+static const JSC::Intrinsic s_builtinConstructorFromCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_builtinConstructorFromCode =
     "(function (items )\n" \
     "{\n" \
     "    \"use strict\";\n" \
-    "\n" \
     "    var thisObj = this;\n" \
-    "\n" \
     "    var mapFn = arguments.length > 1 ? arguments[1] : undefined;\n" \
-    "\n" \
     "    var thisArg;\n" \
-    "\n" \
     "    if (mapFn !== undefined) {\n" \
     "        if (typeof mapFn !== \"function\")\n" \
     "            throw new @TypeError(\"Array.from requires that the second argument, when provided, be a function\");\n" \
-    "\n" \
     "        if (arguments.length > 2)\n" \
     "            thisArg = arguments[2];\n" \
     "    }\n" \
-    "\n" \
     "    if (items == null)\n" \
     "        throw new @TypeError(\"Array.from requires an array-like object - not null or undefined\");\n" \
-    "\n" \
     "    var iteratorMethod = items[@symbolIterator];\n" \
     "    if (iteratorMethod != null) {\n" \
     "        if (typeof iteratorMethod !== \"function\")\n" \
     "            throw new @TypeError(\"Array.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function\");\n" \
-    "\n" \
-    "        //\n" \
     "        var result = (typeof thisObj === \"function\") ? @Object(new thisObj()) : [];\n" \
-    "\n" \
     "        var k = 0;\n" \
     "        var iterator = iteratorMethod.@call(items);\n" \
-    "\n" \
-    "        //\n" \
-    "        //\n" \
-    "        //\n" \
     "        var wrapper = {\n" \
     "            [@symbolIterator]() {\n" \
     "                return iterator;\n" \
     "            }\n" \
     "        };\n" \
-    "\n" \
     "        for (var value of wrapper) {\n" \
     "            if (mapFn)\n" \
     "                @putByValDirect(result, k, thisArg === undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));\n" \
@@ -182,17 +168,12 @@ const char* s_builtinConstructorFromCode =
     "                @putByValDirect(result, k, value);\n" \
     "            k += 1;\n" \
     "        }\n" \
-    "\n" \
     "        result.length = k;\n" \
     "        return result;\n" \
     "    }\n" \
-    "\n" \
     "    var arrayLike = @Object(items);\n" \
     "    var arrayLikeLength = @toLength(arrayLike.length);\n" \
-    "\n" \
-    "    //\n" \
     "    var result = (typeof thisObj === \"function\") ? @Object(new thisObj(arrayLikeLength)) : new @Array(arrayLikeLength);\n" \
-    "\n" \
     "    var k = 0;\n" \
     "    while (k < arrayLikeLength) {\n" \
     "        var value = arrayLike[k];\n" \
@@ -202,7 +183,6 @@ const char* s_builtinConstructorFromCode =
     "            @putByValDirect(result, k, value);\n" \
     "        k += 1;\n" \
     "    }\n" \
-    "\n" \
     "    result.length = arrayLikeLength;\n" \
     "    return result;\n" \
     "})\n" \
@@ -212,7 +192,7 @@ const char* s_builtinConstructorFromCode =
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
-    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source()); }
+    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source(), Nullopt, s_##codeName##Intrinsic); }
 JSC_FOREACH_BUILTINCONSTRUCTOR_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
 

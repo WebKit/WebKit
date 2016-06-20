@@ -41,6 +41,7 @@ function next()
     return next.@call(this);
 }
 
+@globalPrivate
 function arrayIteratorValueNext()
 {
     "use strict";
@@ -63,6 +64,7 @@ function arrayIteratorValueNext()
     return { done, value };
 }
 
+@globalPrivate
 function arrayIteratorKeyNext()
 {
     "use strict";
@@ -85,6 +87,7 @@ function arrayIteratorKeyNext()
     return { done, value };
 }
 
+@globalPrivate
 function arrayIteratorKeyValueNext()
 {
     "use strict";

@@ -41,8 +41,9 @@ _FRAMEWORK_CONFIG_MAP = {
 }
 
 functionHeadRegExp = re.compile(r"(?:@[\w|=]+\s*\n)*function\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
-functionIntrinsicRegExp = re.compile(r"^@intrinsic=(\w+)\s*\n", re.MULTILINE | re.DOTALL)
-functionIsConstructorRegExp = re.compile(r"^@constructor", re.MULTILINE | re.DOTALL)
+functionGlobalPrivateRegExp = re.compile(r".*^@globalPrivate", re.MULTILINE | re.DOTALL)
+functionIntrinsicRegExp = re.compile(r".*^@intrinsic=(\w+)", re.MULTILINE | re.DOTALL)
+functionIsConstructorRegExp = re.compile(r".*^@constructor", re.MULTILINE | re.DOTALL)
 functionNameRegExp = re.compile(r"function\s+(\w+)\s*\(", re.MULTILINE | re.DOTALL)
 functionParameterFinder = re.compile(r"^function\s+(?:\w+)\s*\(((?:\s*\w+)?\s*(?:\s*,\s*\w+)*)?\s*\)", re.MULTILINE | re.DOTALL)
 
@@ -94,11 +95,12 @@ class BuiltinObject:
 
 
 class BuiltinFunction:
-    def __init__(self, function_name, function_source, is_constructor, parameters, intrinsic):
+    def __init__(self, function_name, function_source, parameters, is_constructor, is_global_private, intrinsic):
         self.function_name = function_name
         self.function_source = function_source
-        self.is_constructor = is_constructor
         self.parameters = parameters
+        self.is_constructor = is_constructor
+        self.is_global_private = is_global_private
         self.intrinsic = intrinsic
         self.object = None  # Set by the owning BuiltinObject
 
@@ -119,11 +121,12 @@ class BuiltinFunction:
 
         function_name = functionNameRegExp.findall(function_source)[0]
         is_constructor = functionIsConstructorRegExp.match(function_source) != None
+        is_global_private = functionGlobalPrivateRegExp.match(function_source) != None
         parameters = [s.strip() for s in functionParameterFinder.findall(function_source)[0].split(',')]
         if len(parameters[0]) == 0:
             parameters = []
 
-        return BuiltinFunction(function_name, function_source, is_constructor, parameters, intrinsic)
+        return BuiltinFunction(function_name, function_source, parameters, is_constructor, is_global_private, intrinsic)
 
     def __str__(self):
         interface = "%s(%s)" % (self.function_name, ', '.join(self.parameters))

@@ -48,6 +48,7 @@
 #include "JIT.h"
 #include "JITExceptions.h"
 #include "JSCInlines.h"
+#include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "ObjectConstructor.h"
 #include "Repatch.h"
