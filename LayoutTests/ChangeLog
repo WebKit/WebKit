@@ -1,3 +1,14 @@
+2016-06-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r202253): Broke inspector/unit-tests/heap-snapshot-collection-event.html
+        https://bugs.webkit.org/show_bug.cgi?id=158973
+
+        Unreviewed fix after r202253.
+
+        * inspector/unit-tests/heap-snapshot-collection-event-expected.txt:
+        * inspector/unit-tests/heap-snapshot-collection-event.html:
+        Update the method name.
+
 2016-06-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202243.

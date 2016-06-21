@@ -58,10 +58,10 @@ function test()
     });
 
     suite.addTestCase({
-        name: "HeapSnapshot.prototype.updateCategories",
+        name: "HeapSnapshot.prototype.update",
         test: (resolve, reject) => {
             let categoriesBefore = snapshot.categories;
-            snapshot.updateCategories(() => {
+            snapshot.update(() => {
                 let categoriesAfter = snapshot.categories;
                 InspectorTest.expectThat(categoriesBefore.get("Object").deadCount === 0, "0 Objects were dead before.");
                 InspectorTest.expectThat(categoriesAfter.get("Object").deadCount >= 100, "At least 100 Objects are dead after.");
