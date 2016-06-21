@@ -50,7 +50,6 @@ public:
     virtual void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) = 0;
     virtual void gotIceCandidate(unsigned mdescIndex, RefPtr<IceCandidate>&&) = 0;
     virtual void doneGatheringCandidates(unsigned mdescIndex) = 0;
-    virtual void gotRemoteSource(unsigned mdescIndex, RefPtr<RealtimeMediaSource>&&) = 0;
 
     virtual ~MediaEndpointClient() { }
 };

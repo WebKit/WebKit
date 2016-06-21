@@ -806,16 +806,6 @@ void MediaEndpointPeerConnection::doneGatheringCandidates(unsigned mdescIndex)
     notImplemented();
 }
 
-void MediaEndpointPeerConnection::gotRemoteSource(unsigned mdescIndex, RefPtr<RealtimeMediaSource>&& source)
-{
-    ASSERT(isMainThread());
-
-    UNUSED_PARAM(mdescIndex);
-    UNUSED_PARAM(source);
-
-    notImplemented();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

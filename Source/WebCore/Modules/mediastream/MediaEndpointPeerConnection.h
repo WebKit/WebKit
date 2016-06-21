@@ -107,7 +107,6 @@ private:
     void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) override;
     void gotIceCandidate(unsigned mdescIndex, RefPtr<IceCandidate>&&) override;
     void doneGatheringCandidates(unsigned mdescIndex) override;
-    void gotRemoteSource(unsigned mdescIndex, RefPtr<RealtimeMediaSource>&&) override;
 
     PeerConnectionBackendClient* m_client;
     std::unique_ptr<MediaEndpoint> m_mediaEndpoint;
