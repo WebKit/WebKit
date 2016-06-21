@@ -59,6 +59,13 @@ bool MarkedAllocator::isPagedOut(double deadline)
     return false;
 }
 
+void MarkedAllocator::retire(MarkedBlock* block, MarkedBlock::FreeList& freeList)
+{
+    m_blockList.remove(block);
+    m_retiredBlocks.push(block);
+    block->didRetireBlock(freeList);
+}
+
 inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
 {
     if (m_currentBlock) {
@@ -76,9 +83,7 @@ inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
         double utilization = ((double)MarkedBlock::blockSize - (double)freeList.bytes) / (double)MarkedBlock::blockSize;
         if (utilization >= Options::minMarkedBlockUtilization()) {
             ASSERT(freeList.bytes || !freeList.head);
-            m_blockList.remove(block);
-            m_retiredBlocks.push(block);
-            block->didRetireBlock(freeList);
+            retire(block, freeList);
             continue;
         }
 
@@ -216,6 +221,16 @@ void MarkedAllocator::reset()
         m_blockList.append(m_retiredBlocks);
 
     m_nextBlockToSweep = m_blockList.head();
+
+    if (UNLIKELY(Options::useImmortalObjects())) {
+        MarkedBlock* next;
+        for (MarkedBlock*& block = m_nextBlockToSweep; block; block = next) {
+            next = block->next();
+
+            MarkedBlock::FreeList freeList = block->sweep(MarkedBlock::SweepToFreeList);
+            retire(block, freeList);
+        }
+    }
 }
 
 struct LastChanceToFinalize : MarkedBlock::VoidFunctor {

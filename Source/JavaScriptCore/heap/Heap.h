@@ -342,7 +342,6 @@ private:
     void didFinishCollection(double gcStartTime);
     void resumeCompilerThreads();
     void zombifyDeadObjects();
-    void markDeadObjects();
     void gatherExtraHeapSnapshotData(HeapProfiler&);
     void removeDeadHeapSnapshotNodes(HeapProfiler&);
 

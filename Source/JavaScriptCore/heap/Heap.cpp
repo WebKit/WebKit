@@ -252,20 +252,6 @@ static inline bool isValidThreadState(VM* vm)
     return true;
 }
 
-struct MarkObject : public MarkedBlock::VoidFunctor {
-    inline void visit(JSCell* cell)
-    {
-        if (cell->isZapped())
-            return;
-        Heap::heap(cell)->setMarked(cell);
-    }
-    IterationStatus operator()(JSCell* cell)
-    {
-        visit(cell);
-        return IterationStatus::Continue;
-    }
-};
-
 struct Count : public MarkedBlock::CountFunctor {
     void operator()(JSCell*) { count(1); }
 };
@@ -1472,9 +1458,6 @@ void Heap::didFinishCollection(double gcStartTime)
     if (Options::useZombieMode())
         zombifyDeadObjects();
 
-    if (Options::useImmortalObjects())
-        markDeadObjects();
-
     if (Options::dumpObjectStatistics())
         HeapStatistics::dumpObjectStatistics(this);
 
@@ -1501,12 +1484,6 @@ void Heap::resumeCompilerThreads()
         worklist->resumeAllThreads();
     m_suspendedCompilerWorklists.clear();
 #endif
-}
-
-void Heap::markDeadObjects()
-{
-    HeapIterationScope iterationScope(*this);
-    m_objectSpace.forEachDeadCell<MarkObject>(iterationScope);
 }
 
 void Heap::setFullActivityCallback(PassRefPtr<FullGCActivityCallback> activityCallback)

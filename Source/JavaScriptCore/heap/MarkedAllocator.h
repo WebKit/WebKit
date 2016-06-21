@@ -72,6 +72,7 @@ private:
     void* tryPopFreeList(size_t);
     MarkedBlock* allocateBlock(size_t);
     ALWAYS_INLINE void doTestCollectionsIfNeeded();
+    void retire(MarkedBlock*, MarkedBlock::FreeList&);
     
     MarkedBlock::FreeList m_freeList;
     MarkedBlock* m_currentBlock;

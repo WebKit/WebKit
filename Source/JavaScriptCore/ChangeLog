@@ -1,3 +1,31 @@
+2016-06-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Options::useImmortalObjects is not safe for conservative GC
+        https://bugs.webkit.org/show_bug.cgi?id=158999
+
+        Reviewed by Geoffrey Garen.
+
+        useImmortalObjects set the mark bit to keep an object from being
+        reallocated. This had the negative side-effect of convincing the
+        conservative marker that the object was a valid and live cell, which
+        would cause us to visit garbage.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::resumeCompilerThreads):
+        (JSC::Heap::setFullActivityCallback):
+        (JSC::Heap::markDeadObjects): Deleted.
+        * heap/Heap.h: Don't set the mark bit on a dead object. That's a bug in
+        a conservative GC.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::retire): New helper.
+
+        (JSC::MarkedAllocator::reset): Automatically retire old blocks when
+        we're doing the immortal objects thing. This has the effect of
+        preserving memory for debugging because we never recycle a previously
+        allocated block.
+
 2016-06-21  Anders Carlsson  <andersca@apple.com>
 
         Begin moving the Apple Pay code to the open source repository
