@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSPromise.h"
 
-#include "BuiltinNames.h"
 #include "Error.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -59,10 +58,10 @@ JSPromise::JSPromise(VM& vm, Structure* structure)
 void JSPromise::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    putDirect(vm, vm.propertyNames->builtinNames().promiseStatePrivateName(), jsNumber(static_cast<unsigned>(Status::Pending)));
-    putDirect(vm, vm.propertyNames->builtinNames().promiseFulfillReactionsPrivateName(), jsUndefined());
-    putDirect(vm, vm.propertyNames->builtinNames().promiseRejectReactionsPrivateName(), jsUndefined());
-    putDirect(vm, vm.propertyNames->builtinNames().promiseResultPrivateName(), jsUndefined());
+    putDirect(vm, vm.propertyNames->promiseStatePrivateName, jsNumber(static_cast<unsigned>(Status::Pending)));
+    putDirect(vm, vm.propertyNames->promiseFulfillReactionsPrivateName, jsUndefined());
+    putDirect(vm, vm.propertyNames->promiseRejectReactionsPrivateName, jsUndefined());
+    putDirect(vm, vm.propertyNames->promiseResultPrivateName, jsUndefined());
 }
 
 void JSPromise::initialize(ExecState* exec, JSGlobalObject* globalObject, JSValue executor)
@@ -79,14 +78,14 @@ void JSPromise::initialize(ExecState* exec, JSGlobalObject* globalObject, JSValu
 
 auto JSPromise::status(VM& vm) const -> Status
 {
-    JSValue value = getDirect(vm, vm.propertyNames->builtinNames().promiseStatePrivateName());
+    JSValue value = getDirect(vm, vm.propertyNames->promiseStatePrivateName);
     ASSERT(value.isUInt32());
     return static_cast<Status>(value.asUInt32());
 }
 
 JSValue JSPromise::result(VM& vm) const
 {
-    return getDirect(vm, vm.propertyNames->builtinNames().promiseResultPrivateName());
+    return getDirect(vm, vm.propertyNames->promiseResultPrivateName);
 }
 
 } // namespace JSC

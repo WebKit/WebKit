@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2016 Yusuke Suzuki <yusuke.suzuki@sslab.ics.keio.ac.jp>
- * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +27,6 @@
 
 #if ENABLE(INTL)
 
-#include "BuiltinNames.h"
 #include "IntlObject.h"
 #include "JSObject.h"
 
@@ -51,7 +49,7 @@ JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(ExecState& s
             if (state.hadException())
                 return jsUndefined();
 
-            thisObject->putDirect(vm, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName(), instance);
+            thisObject->putDirect(vm, vm.propertyNames->intlSubstituteValuePrivateName, instance);
             return thisObject;
         }
     }

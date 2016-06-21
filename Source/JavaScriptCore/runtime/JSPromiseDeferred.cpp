@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ JSPromiseDeferred* JSPromiseDeferred::create(ExecState* exec, JSGlobalObject* gl
 
     JSValue deferred = newPromiseCapability(exec, globalObject, globalObject->promiseConstructor());
 
-    JSValue promise = deferred.get(exec, vm.propertyNames->builtinNames().promisePrivateName());
+    JSValue promise = deferred.get(exec, vm.propertyNames->promisePrivateName);
     ASSERT(promise.inherits(JSPromise::info()));
     JSValue resolve = deferred.get(exec, vm.propertyNames->builtinNames().resolvePrivateName());
     JSValue reject = deferred.get(exec, vm.propertyNames->builtinNames().rejectPrivateName());

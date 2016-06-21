@@ -26,10 +26,8 @@
 
 #include "config.h"
 #include "BytecodeIntrinsicRegistry.h"
-
-#include "ArrayIteratorPrototype.h"
-#include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
+#include "JSArrayIterator.h"
 #include "JSCJSValueInlines.h"
 #include "JSGeneratorFunction.h"
 #include "JSPromise.h"
@@ -38,7 +36,7 @@
 
 namespace JSC {
 
-#define INITIALIZE_BYTECODE_INTRINSIC_NAMES_TO_SET(name) m_bytecodeIntrinsicMap.add(vm.propertyNames->builtinNames().name##PrivateName().impl(), &BytecodeIntrinsicNode::emit_intrinsic_##name);
+#define INITIALIZE_BYTECODE_INTRINSIC_NAMES_TO_SET(name) m_bytecodeIntrinsicMap.add(vm.propertyNames->name##PrivateName.impl(), &BytecodeIntrinsicNode::emit_intrinsic_##name);
 
 BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     : m_vm(vm)

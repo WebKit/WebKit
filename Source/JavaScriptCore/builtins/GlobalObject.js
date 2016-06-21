@@ -26,7 +26,6 @@
 
 // @internal
 
-@globalPrivate
 function toInteger(target)
 {
     "use strict";
@@ -39,7 +38,6 @@ function toInteger(target)
     return @trunc(numberValue);
 }
 
-@globalPrivate
 function toLength(target)
 {
     "use strict";
@@ -50,7 +48,6 @@ function toLength(target)
     return length > 0 ? (length < maxSafeInteger ? length : maxSafeInteger) : 0;
 }
 
-@globalPrivate
 function isDictionary(object)
 {
     "use strict";
@@ -60,13 +57,11 @@ function isDictionary(object)
 
 // FIXME: this needs to have it's name changed to "get [Symbol.species]".
 // see: https://bugs.webkit.org/show_bug.cgi?id=151363
-@globalPrivate
 function speciesGetter()
 {
     return this;
 }
 
-@globalPrivate
 function speciesConstructor(obj, defaultConstructor)
 {
     var constructor = obj.constructor;

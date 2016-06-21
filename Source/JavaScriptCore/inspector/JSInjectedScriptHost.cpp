@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "InjectedScriptHost.h"
 #include "IteratorOperations.h"
 #include "JSArray.h"
+#include "JSArrayIterator.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
@@ -175,7 +176,8 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
     if (value.inherits(JSWeakSet::info()))
         return jsNontrivialString(exec, ASCIILiteral("weakset"));
 
-    if (value.inherits(JSMapIterator::info())
+    if (value.inherits(JSArrayIterator::info())
+        || value.inherits(JSMapIterator::info())
         || value.inherits(JSSetIterator::info())
         || value.inherits(JSStringIterator::info())
         || value.inherits(JSPropertyNameIterator::info()))
@@ -315,6 +317,28 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, "kind", kind));
             return array;
         }
+    }
+
+    if (JSArrayIterator* arrayIterator = jsDynamicCast<JSArrayIterator*>(value)) {
+        String kind;
+        switch (arrayIterator->kind(exec)) {
+        case ArrayIterateKey:
+            kind = ASCIILiteral("key");
+            break;
+        case ArrayIterateValue:
+            kind = ASCIILiteral("value");
+            break;
+        case ArrayIterateKeyValue:
+            kind = ASCIILiteral("key+value");
+            break;
+        }
+        unsigned index = 0;
+        JSArray* array = constructEmptyArray(exec, nullptr, 2);
+        if (UNLIKELY(vm.exception()))
+            return jsUndefined();
+        array->putDirectIndex(exec, index++, constructInternalProperty(exec, "array", arrayIterator->iteratedValue(exec)));
+        array->putDirectIndex(exec, index++, constructInternalProperty(exec, "kind", jsNontrivialString(exec, kind)));
+        return array;
     }
 
     if (JSMapIterator* mapIterator = jsDynamicCast<JSMapIterator*>(value)) {

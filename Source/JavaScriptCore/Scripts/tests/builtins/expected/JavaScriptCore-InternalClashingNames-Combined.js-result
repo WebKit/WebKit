@@ -59,8 +59,6 @@ extern const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLocked
 #define JSC_FOREACH_BUILTIN_FUNCTION_NAME(macro) \
     macro(isReadableStreamLocked) \
 
-#define JSC_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(macro) \
-
 #define DECLARE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
     JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
 
@@ -108,30 +106,29 @@ JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 #include "BuiltinExecutables.h"
 #include "Executable.h"
-#include "Intrinsic.h"
 #include "JSCellInlines.h"
 #include "VM.h"
 
 namespace JSC {
 
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 70;
-static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
+const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 const char* s_internalClashingNamesIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
+    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;
 
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 70;
-static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
+const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 const char* s_internalClashingNamesIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
+    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;
@@ -140,7 +137,7 @@ const char* s_internalClashingNamesIsReadableStreamLockedCode =
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
-    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source(), Nullopt, s_##codeName##Intrinsic); }
+    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source()); }
 JSC_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
 

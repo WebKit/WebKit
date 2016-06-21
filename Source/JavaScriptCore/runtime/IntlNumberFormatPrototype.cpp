@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (thetalecrafter@gmail.com)
- * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +28,6 @@
 
 #if ENABLE(INTL)
 
-#include "BuiltinNames.h"
 #include "Error.h"
 #include "IntlNumberFormat.h"
 #include "JSBoundFunction.h"
@@ -107,7 +105,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!nf)
-        nf = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, state->vm().propertyNames->builtinNames().intlSubstituteValuePrivateName()));
+        nf = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, state->vm().propertyNames->intlSubstituteValuePrivateName));
 
     if (!nf)
         return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat")));
@@ -143,7 +141,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(ExecSt
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!numberFormat)
-        numberFormat = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, state->vm().propertyNames->builtinNames().intlSubstituteValuePrivateName()));
+        numberFormat = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, state->vm().propertyNames->intlSubstituteValuePrivateName));
 
     if (!numberFormat)
         return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat")));

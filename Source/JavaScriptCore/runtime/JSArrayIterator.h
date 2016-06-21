@@ -23,41 +23,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ArrayIteratorPrototype_h
-#define ArrayIteratorPrototype_h
+#ifndef JSArrayIterator_h
+#define JSArrayIterator_h
 
 #include "JSObject.h"
 
 namespace JSC {
 
-class ArrayIteratorPrototype : public JSNonFinalObject {
+enum ArrayIterationKind : uint32_t {
+    ArrayIterateKey,
+    ArrayIterateValue,
+    ArrayIterateKeyValue
+};
+
+class JSArrayIterator : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = HasStaticPropertyTable | Base::StructureFlags;
 
-    static ArrayIteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
-    {
-        ArrayIteratorPrototype* prototype = new (NotNull, allocateCell<ArrayIteratorPrototype>(vm.heap)) ArrayIteratorPrototype(vm, structure);
-        prototype->finishCreation(vm, globalObject);
-        return prototype;
-    }
-
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
+    static JSArrayIterator* create(ExecState* exec, Structure* structure, ArrayIterationKind kind, JSObject* iteratedObject)
+    {
+        VM& vm = exec->vm();
+        JSArrayIterator* instance = new (NotNull, allocateCell<JSArrayIterator>(vm.heap)) JSArrayIterator(vm, structure);
+        instance->finishCreation(vm, structure->globalObject(), kind, iteratedObject);
+        return instance;
+    }
+
+    ArrayIterationKind kind(ExecState*) const;
+    JSValue iteratedValue(ExecState*) const;
+    JSArrayIterator* clone(ExecState*);
+
+    using JSNonFinalObject::arrayStorageOrNull;
 private:
-    ArrayIteratorPrototype(VM& vm, Structure* structure)
+    JSArrayIterator(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
     }
 
-    void finishCreation(VM&, JSGlobalObject*);
+    void finishCreation(VM&, JSGlobalObject*, ArrayIterationKind, JSObject* iteratedObject);
 };
 
 }
 
-#endif // !defined(ArrayIteratorPrototype_h)
+#endif // !defined(JSArrayIterator_h)

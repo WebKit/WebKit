@@ -29,6 +29,7 @@
 #include "GCIncomingRefCountedInlines.h"
 #include "GenericTypedArrayViewInlines.h"
 #include "JSArrayBufferViewInlines.h"
+#include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSGenericTypedArrayViewPrototypeInlines.h"
 

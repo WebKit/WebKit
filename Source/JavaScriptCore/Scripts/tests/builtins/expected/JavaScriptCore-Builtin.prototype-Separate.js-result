@@ -111,19 +111,18 @@ JSC_FOREACH_BUILTIN.PROTOTYPE_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 #include "BuiltinExecutables.h"
 #include "Executable.h"
-#include "Intrinsic.h"
 #include "JSCellInlines.h"
 #include "VM.h"
 
 namespace JSC {
 
 const JSC::ConstructAbility s_builtinPrototypeEveryCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_builtinPrototypeEveryCodeLength = 760;
-static const JSC::Intrinsic s_builtinPrototypeEveryCodeIntrinsic = JSC::NoIntrinsic;
+const int s_builtinPrototypeEveryCodeLength = 762;
 const char* s_builtinPrototypeEveryCode =
     "(function (callback )\n" \
     "{\n" \
     "    \"use strict\";\n" \
+    "\n" \
     "    if (this === null)\n" \
     "        throw new @TypeError(\"Array.prototype.every requires that |this| not be null\");\n" \
     "    \n" \
@@ -132,6 +131,7 @@ const char* s_builtinPrototypeEveryCode =
     "    \n" \
     "    var array = @Object(this);\n" \
     "    var length = @toLength(array.length);\n" \
+    "\n" \
     "    if (typeof callback !== \"function\")\n" \
     "        throw new @TypeError(\"Array.prototype.every callback must be a function\");\n" \
     "    \n" \
@@ -149,12 +149,12 @@ const char* s_builtinPrototypeEveryCode =
 ;
 
 const JSC::ConstructAbility s_builtinPrototypeForEachCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_builtinPrototypeForEachCodeLength = 692;
-static const JSC::Intrinsic s_builtinPrototypeForEachCodeIntrinsic = JSC::NoIntrinsic;
+const int s_builtinPrototypeForEachCodeLength = 694;
 const char* s_builtinPrototypeForEachCode =
     "(function (callback )\n" \
     "{\n" \
     "    \"use strict\";\n" \
+    "\n" \
     "    if (this === null)\n" \
     "        throw new @TypeError(\"Array.prototype.forEach requires that |this| not be null\");\n" \
     "    \n" \
@@ -163,6 +163,7 @@ const char* s_builtinPrototypeForEachCode =
     "    \n" \
     "    var array = @Object(this);\n" \
     "    var length = @toLength(array.length);\n" \
+    "\n" \
     "    if (typeof callback !== \"function\")\n" \
     "        throw new @TypeError(\"Array.prototype.forEach callback must be a function\");\n" \
     "    \n" \
@@ -179,7 +180,7 @@ const char* s_builtinPrototypeForEachCode =
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
-    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source(), Nullopt, s_##codeName##Intrinsic); }
+    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source()); }
 JSC_FOREACH_BUILTIN.PROTOTYPE_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
 

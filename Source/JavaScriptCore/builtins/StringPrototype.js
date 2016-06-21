@@ -46,7 +46,6 @@ function match(regexp)
     return createdRegExp.@matchSymbol(thisString);
 }
 
-@globalPrivate
 function repeatSlowPath(string, count)
 {
     "use strict";
@@ -85,7 +84,7 @@ function repeatSlowPath(string, count)
     }
 }
 
-@globalPrivate
+
 function repeatCharactersSlowPath(string, count)
 {
     "use strict";
@@ -203,7 +202,6 @@ function padEnd(maxLength/*, fillString*/)
     return string + truncatedStringFiller;
 }
 
-@globalPrivate
 function hasObservableSideEffectsForStringReplace(regexp, replacer) {
     if (replacer !== @regExpPrototypeSymbolReplace)
         return true;

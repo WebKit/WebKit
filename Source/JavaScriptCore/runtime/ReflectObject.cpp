@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ReflectObject.h"
 
-#include "BuiltinNames.h"
 #include "JSCInlines.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSPropertyNameIterator.h"
@@ -86,8 +85,8 @@ void ReflectObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().ownKeysPrivateName(), reflectObjectOwnKeys, DontEnum | DontDelete | ReadOnly, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getOwnPropertyDescriptorPrivateName(), reflectObjectGetOwnPropertyDescriptor, DontEnum | DontDelete | ReadOnly, 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->ownKeysPrivateName, reflectObjectOwnKeys, DontEnum | DontDelete | ReadOnly, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->getOwnPropertyDescriptorPrivateName, reflectObjectGetOwnPropertyDescriptor, DontEnum | DontDelete | ReadOnly, 2);
 }
 
 // ------------------------------ Functions --------------------------------

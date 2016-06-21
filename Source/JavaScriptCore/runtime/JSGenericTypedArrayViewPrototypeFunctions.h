@@ -30,6 +30,7 @@
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSArrayBufferViewInlines.h"
+#include "JSArrayIterator.h"
 #include "JSCBuiltins.h"
 #include "JSCJSValueInlines.h"
 #include "JSFunction.h"

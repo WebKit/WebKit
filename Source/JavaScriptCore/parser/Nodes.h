@@ -26,7 +26,6 @@
 #ifndef Nodes_h
 #define Nodes_h
 
-#include "BuiltinNames.h"
 #include "Error.h"
 #include "JITCode.h"
 #include "Opcode.h"

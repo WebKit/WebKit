@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +25,6 @@
 
 // @internal
 
-@globalPrivate
 function isPromise(promise)
 {
     "use strict";
@@ -34,7 +32,6 @@ function isPromise(promise)
     return @isObject(promise) && !!promise.@promiseState;
 }
 
-@globalPrivate
 function newPromiseReaction(capability, handler)
 {
     "use strict";
@@ -45,7 +42,6 @@ function newPromiseReaction(capability, handler)
     };
 }
 
-@globalPrivate
 function newPromiseCapability(constructor)
 {
     "use strict";
@@ -84,7 +80,6 @@ function newPromiseCapability(constructor)
     return promiseCapability;
 }
 
-@globalPrivate
 function triggerPromiseReactions(reactions, argument)
 {
     "use strict";
@@ -93,7 +88,6 @@ function triggerPromiseReactions(reactions, argument)
         @enqueueJob(@promiseReactionJob, [reactions[index], argument]);
 }
 
-@globalPrivate
 function rejectPromise(promise, reason)
 {
     "use strict";
@@ -109,7 +103,6 @@ function rejectPromise(promise, reason)
     @triggerPromiseReactions(reactions, reason);
 }
 
-@globalPrivate
 function fulfillPromise(promise, value)
 {
     "use strict";
@@ -125,7 +118,6 @@ function fulfillPromise(promise, value)
     @triggerPromiseReactions(reactions, value);
 }
 
-@globalPrivate
 function createResolvingFunctions(promise)
 {
     "use strict";
@@ -172,7 +164,6 @@ function createResolvingFunctions(promise)
     };
 }
 
-@globalPrivate
 function promiseReactionJob(reaction, argument)
 {
     "use strict";
@@ -189,7 +180,6 @@ function promiseReactionJob(reaction, argument)
     return promiseCapability.@resolve.@call(@undefined, result);
 }
 
-@globalPrivate
 function promiseResolveThenableJob(promiseToResolve, thenable, then)
 {
     "use strict";
@@ -203,7 +193,6 @@ function promiseResolveThenableJob(promiseToResolve, thenable, then)
     }
 }
 
-@globalPrivate
 function initializePromise(executor)
 {
     "use strict";
