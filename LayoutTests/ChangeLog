@@ -1,3 +1,16 @@
+2016-06-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rolling out r200678.
+
+        This incompleted feature broke http://m.yahoo.co.jp. Roll it
+        out together with r200619.
+
+        Reverted changeset:
+
+        "Ensure DOM iterators remain done"
+        https://bugs.webkit.org/show_bug.cgi?id=157453
+        http://trac.webkit.org/changeset/200678
+
 2016-06-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Skip HeapSnapshot test on WebKit1. Shared VM skews the data.
