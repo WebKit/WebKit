@@ -1,3 +1,17 @@
+2016-06-21  David Kilzer  <ddkilzer@apple.com>
+
+        CODE_SIGN_ENTITLEMENTS should be applied to iOS Simulator builds
+        <https://webkit.org/b/158990>
+        <rdar://problem/26906273>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/JSC.xcconfig:
+        (CODE_SIGN_ENTITLEMENTS): Change [sdk=iphoneos*] to
+        [sdk=iphone*] to apply setting to iOS Simulator as well.
+        * Configurations/ToolExecutable.xcconfig:
+        (CODE_SIGN_ENTITLEMENTS): Ditto.
+
 2016-06-21  Keith Miller  <keith_miller@apple.com>
 
         It should be easy to add a private global helper function for builtins
