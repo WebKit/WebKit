@@ -1203,8 +1203,14 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
 
             // Reveal the current selection
             if (Frame* editedFrame = document->frame())
-                if (Page* page = editedFrame->page())
-                    page->focusController().focusedOrMainFrame().selection().revealSelection(SelectionRevealMode::Reveal, ScrollAlignment::alignCenterIfNeeded);
+                if (Page* page = editedFrame->page()) {
+#if PLATFORM(IOS)
+                    SelectionRevealMode revealMode = SelectionRevealMode::RevealUpToMainFrame;
+#else
+                    SelectionRevealMode revealMode = SelectionRevealMode::Reveal;
+#endif
+                    page->focusController().focusedOrMainFrame().selection().revealSelection(revealMode, ScrollAlignment::alignCenterIfNeeded);
+                }
         }
     }
 

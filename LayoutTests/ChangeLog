@@ -1,5 +1,17 @@
 2016-06-20  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS] Typing text into a text field or text area causes screen to scroll down (hiding text entry)
+        https://bugs.webkit.org/show_bug.cgi?id=158970
+
+        Reviewed by Ryosuke Niwa.
+
+        Test that focuses an input in a frame and then types a character, then checks for scrolling.
+
+        * fast/forms/ios/typing-in-input-in-iframe-expected.txt: Added.
+        * fast/forms/ios/typing-in-input-in-iframe.html: Added.
+
+2016-06-20  Simon Fraser  <simon.fraser@apple.com>
+
         Focus event dispatched in iframe causes parent document to scroll incorrectly
         https://bugs.webkit.org/show_bug.cgi?id=158629
         rdar://problem/26521616
