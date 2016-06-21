@@ -76,8 +76,8 @@ ElementAncestorIteratorAdapter<Element> elementAncestors(Element* descendant);
 ElementAncestorConstIteratorAdapter<Element> elementAncestors(const Element* descendant);
 template <typename ElementType> ElementAncestorIteratorAdapter<ElementType> lineageOfType(Element& first);
 template <typename ElementType> ElementAncestorConstIteratorAdapter<ElementType> lineageOfType(const Element& first);
-template <typename ElementType> ElementAncestorIteratorAdapter<ElementType> ancestorsOfType(Element& descendant);
-template <typename ElementType> ElementAncestorConstIteratorAdapter<ElementType> ancestorsOfType(const Element& descendant);
+template <typename ElementType> ElementAncestorIteratorAdapter<ElementType> ancestorsOfType(Node& descendant);
+template <typename ElementType> ElementAncestorConstIteratorAdapter<ElementType> ancestorsOfType(const Node& descendant);
 
 // ElementAncestorIterator
 
@@ -198,14 +198,14 @@ inline ElementAncestorConstIteratorAdapter<ElementType> lineageOfType(const Elem
 }
 
 template <typename ElementType>
-inline ElementAncestorIteratorAdapter<ElementType> ancestorsOfType(Element& descendant)
+inline ElementAncestorIteratorAdapter<ElementType> ancestorsOfType(Node& descendant)
 {
     ElementType* first = findElementAncestorOfType<ElementType>(descendant);
     return ElementAncestorIteratorAdapter<ElementType>(first);
 }
 
 template <typename ElementType>
-inline ElementAncestorConstIteratorAdapter<ElementType> ancestorsOfType(const Element& descendant)
+inline ElementAncestorConstIteratorAdapter<ElementType> ancestorsOfType(const Node& descendant)
 {
     const ElementType* first = findElementAncestorOfType<const ElementType>(descendant);
     return ElementAncestorConstIteratorAdapter<ElementType>(first);

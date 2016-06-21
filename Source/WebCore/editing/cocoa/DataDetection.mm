@@ -29,6 +29,7 @@
 #import "Attr.h"
 #import "CSSStyleDeclaration.h"
 #import "DataDetectorsSPI.h"
+#import "ElementAncestorIterator.h"
 #import "ElementTraversal.h"
 #import "FrameView.h"
 #import "HTMLAnchorElement.h"
@@ -276,8 +277,7 @@ static void removeResultLinksFromAnchor(Element& element)
 static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode, bool& didModifyDOM)
 {
     didModifyDOM = false;
-    Node* node = &startNode;
-    while (node) {
+    for (Node* node = &startNode; node; NodeTraversal::next(*node)) {
         if (is<HTMLAnchorElement>(*node)) {
             auto& anchor = downcast<HTMLAnchorElement>(*node);
             if (!equalIgnoringASCIICase(anchor.fastGetAttribute(x_apple_data_detectorsAttr), "true"))
@@ -289,33 +289,13 @@ static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode,
         if (node == &endNode) {
             // If we found the end node and no link, return false unless an ancestor node is a link.
             // The only ancestors not tested at this point are in the direct line from self's parent to the top.
-            node = startNode.parentNode();
-            while (node) {
-                if (is<HTMLAnchorElement>(*node)) {
-                    auto& anchor = downcast<HTMLAnchorElement>(*node);
-                    if (!equalIgnoringASCIICase(anchor.fastGetAttribute(x_apple_data_detectorsAttr), "true"))
-                        return true;
-                    removeResultLinksFromAnchor(anchor);
-                    didModifyDOM = true;
-                }
-                node = node->parentNode();
+            for (auto& anchor : ancestorsOfType<HTMLAnchorElement>(startNode)) {
+                if (!equalIgnoringASCIICase(anchor.fastGetAttribute(x_apple_data_detectorsAttr), "true"))
+                    return true;
+                removeResultLinksFromAnchor(anchor);
+                didModifyDOM = true;
             }
             return false;
-        }
-        
-        RefPtr<NodeList> childNodes = node->childNodes();
-        if (childNodes->length())
-            node = childNodes->item(0);
-        else {
-            Node* newNode = node->nextSibling();
-            Node* parentNode = node;
-            while (!newNode) {
-                parentNode = parentNode->parentNode();
-                if (!parentNode)
-                    return false;
-                newNode = parentNode->nextSibling();
-            }
-            node = newNode;
         }
     }
     return false;

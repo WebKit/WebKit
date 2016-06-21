@@ -192,7 +192,7 @@ inline void ElementIterator<ElementType>::dropAssertions()
 }
 
 template <typename ElementType>
-inline ElementType* findElementAncestorOfType(const Element& current)
+inline ElementType* findElementAncestorOfType(const Node& current)
 {
     for (Element* ancestor = current.parentElement(); ancestor; ancestor = ancestor->parentElement()) {
         if (is<ElementType>(*ancestor))
@@ -202,7 +202,7 @@ inline ElementType* findElementAncestorOfType(const Element& current)
 }
 
 template <>
-inline Element* findElementAncestorOfType<Element>(const Element& current)
+inline Element* findElementAncestorOfType<Element>(const Node& current)
 {
     return current.parentElement();
 }
