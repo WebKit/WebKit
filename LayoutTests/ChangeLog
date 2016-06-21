@@ -1,5 +1,11 @@
 2016-06-21  Alexey Proskuryakov  <ap@apple.com>
 
+        Add an expectation for another copy of fast/canvas/webgl/premultiplyalpha-test.html
+
+        * platform/mac/TestExpectations:
+
+2016-06-21  Alexey Proskuryakov  <ap@apple.com>
+
         Update Sierra test expectations for fast/canvas/webgl/premultiplyalpha-test.html
 
         * platform/mac/TestExpectations:

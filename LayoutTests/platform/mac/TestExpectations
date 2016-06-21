@@ -1452,3 +1452,4 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 
 # rdar://problem/26924977
 [ Sierra+ ] fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
+[ Sierra+ ] webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
