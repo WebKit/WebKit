@@ -1,3 +1,13 @@
+2016-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Begin moving the Apple Pay code to the open source repository
+        https://bugs.webkit.org/show_bug.cgi?id=158998
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add ENABLE_APPLE_PAY.
+
 2016-06-21  Saam Barati  <sbarati@apple.com>
 
         CodeBlock::shrinkToFit is racy

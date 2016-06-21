@@ -27,10 +27,6 @@
 #include <functional>
 #include <wtf/text/AtomicString.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/EventNamesAdditions.h>
-#endif
-
 namespace WebCore {
 
 #if !defined(ADDITIONAL_DOM_EVENT_NAMES_FOR_EACH)
@@ -72,6 +68,7 @@ namespace WebCore {
     macro(blur) \
     macro(boundary) \
     macro(cached) \
+    macro(cancel) \
     macro(canplay) \
     macro(canplaythrough) \
     macro(change) \
@@ -169,6 +166,8 @@ namespace WebCore {
     macro(pageshow) \
     macro(paste) \
     macro(pause) \
+    macro(paymentauthorized) \
+    macro(paymentmethodselected) \
     macro(play) \
     macro(playing) \
     macro(pointerlockchange) \
@@ -194,6 +193,8 @@ namespace WebCore {
     macro(select) \
     macro(selectionchange) \
     macro(selectstart) \
+    macro(shippingmethodselected) \
+    macro(shippingcontactselected) \
     macro(show) \
     macro(signalingstatechange) \
     macro(slotchange) \
@@ -230,6 +231,7 @@ namespace WebCore {
     macro(updateready) \
     macro(updatestart) \
     macro(upgradeneeded) \
+    macro(validatemerchant) \
     macro(versionchange) \
     macro(visibilitychange) \
     macro(volumechange) \

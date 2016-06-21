@@ -754,6 +754,11 @@
 		1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CF40D7E2B82007C3983 /* runtime_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CF50D7E2B82007C3983 /* runtime_root.cpp */; };
 		1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CF60D7E2B82007C3983 /* runtime_root.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A58E8651D19D4EB00C0EA73 /* PaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A58E8641D19D4DF00C0EA73 /* PaymentRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A58E8661D19D4F000C0EA73 /* PaymentCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A58E8621D19D3BF00C0EA73 /* PaymentCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A58E8671D19D80E00C0EA73 /* PaymentRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A58E8631D19D4DF00C0EA73 /* PaymentRequest.cpp */; };
+		1A58E86D1D19E42D00C0EA73 /* PaymentCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A58E86B1D19E42D00C0EA73 /* PaymentCoordinator.cpp */; };
+		1A58E86E1D19E42D00C0EA73 /* PaymentCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A58E86C1D19E42D00C0EA73 /* PaymentCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A71D57B0F33819000F9CE4E /* IdentifierRep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A71D5790F33819000F9CE4E /* IdentifierRep.cpp */; };
 		1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A71D57A0F33819000F9CE4E /* IdentifierRep.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A750D5C0A90DEE1000FF215 /* JSTreeWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A750D5A0A90DEE1000FF215 /* JSTreeWalker.cpp */; };
@@ -791,6 +796,7 @@
 		1A874ADF19085E9100B03171 /* WAKViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A874ADE19085E9100B03171 /* WAKViewInternal.h */; };
 		1A88A90417553CD7000C74F9 /* FileIconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A88A90217553CD7000C74F9 /* FileIconLoader.cpp */; };
 		1A88A90517553CD7000C74F9 /* FileIconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A88A90317553CD7000C74F9 /* FileIconLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A8A64321D19E69B00D0E00F /* PaymentCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A58E86A1D19D94600C0EA73 /* PaymentCocoa.mm */; };
 		1A8F6B020DB53006001DB794 /* SubstituteResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6B010DB53006001DB794 /* SubstituteResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8F6BBC0DB55CDC001DB794 /* ApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8F6BB10DB55CDC001DB794 /* ApplicationCache.cpp */; };
 		1A8F6BBD0DB55CDC001DB794 /* ApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6BB20DB55CDC001DB794 /* ApplicationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8212,6 +8218,12 @@
 		1A569CF40D7E2B82007C3983 /* runtime_object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = runtime_object.h; sourceTree = "<group>"; };
 		1A569CF50D7E2B82007C3983 /* runtime_root.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = runtime_root.cpp; sourceTree = "<group>"; };
 		1A569CF60D7E2B82007C3983 /* runtime_root.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = runtime_root.h; sourceTree = "<group>"; };
+		1A58E8621D19D3BF00C0EA73 /* PaymentCoordinatorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentCoordinatorClient.h; sourceTree = "<group>"; };
+		1A58E8631D19D4DF00C0EA73 /* PaymentRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentRequest.cpp; sourceTree = "<group>"; };
+		1A58E8641D19D4DF00C0EA73 /* PaymentRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentRequest.h; sourceTree = "<group>"; };
+		1A58E86A1D19D94600C0EA73 /* PaymentCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PaymentCocoa.mm; path = Modules/applepay/cocoa/PaymentCocoa.mm; sourceTree = SOURCE_ROOT; };
+		1A58E86B1D19E42D00C0EA73 /* PaymentCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentCoordinator.cpp; sourceTree = "<group>"; };
+		1A58E86C1D19E42D00C0EA73 /* PaymentCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentCoordinator.h; sourceTree = "<group>"; };
 		1A71D5790F33819000F9CE4E /* IdentifierRep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdentifierRep.cpp; sourceTree = "<group>"; };
 		1A71D57A0F33819000F9CE4E /* IdentifierRep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdentifierRep.h; sourceTree = "<group>"; };
 		1A750D3C0A90DE35000FF215 /* TreeWalker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TreeWalker.idl; sourceTree = "<group>"; };
@@ -16153,6 +16165,28 @@
 			path = objc;
 			sourceTree = "<group>";
 		};
+		1A58E8611D19D37300C0EA73 /* applepay */ = {
+			isa = PBXGroup;
+			children = (
+				1A58E8691D19D8C000C0EA73 /* cocoa */,
+				1A58E86B1D19E42D00C0EA73 /* PaymentCoordinator.cpp */,
+				1A58E86C1D19E42D00C0EA73 /* PaymentCoordinator.h */,
+				1A58E8621D19D3BF00C0EA73 /* PaymentCoordinatorClient.h */,
+				1A58E8631D19D4DF00C0EA73 /* PaymentRequest.cpp */,
+				1A58E8641D19D4DF00C0EA73 /* PaymentRequest.h */,
+			);
+			path = applepay;
+			sourceTree = "<group>";
+		};
+		1A58E8691D19D8C000C0EA73 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				1A58E86A1D19D94600C0EA73 /* PaymentCocoa.mm */,
+			);
+			name = cocoa;
+			path = applepay/cocoa;
+			sourceTree = "<group>";
+		};
 		1A88A90117553CD7000C74F9 /* forms */ = {
 			isa = PBXGroup;
 			children = (
@@ -19558,6 +19592,7 @@
 			isa = PBXGroup;
 			children = (
 				CE26169D187E6554007955F3 /* airplay */,
+				1A58E8611D19D37300C0EA73 /* applepay */,
 				CDA98DBD16014E0800FEA3B1 /* encryptedmedia */,
 				41F54F7C1C50C4F600338488 /* fetch */,
 				518F4FE9194CA4B60081BAAE /* gamepad */,
@@ -25798,6 +25833,7 @@
 				85E711A70AC5D5350053270F /* DOMHTMLElementInternal.h in Headers */,
 				8540756A0AD6CBF900620C57 /* DOMHTMLEmbedElement.h in Headers */,
 				855247D00AD850B80012093B /* DOMHTMLEmbedElementInternal.h in Headers */,
+				1A58E8651D19D4EB00C0EA73 /* PaymentRequest.h in Headers */,
 				85BA4CDF0AA6861B0088052D /* DOMHTMLFieldSetElement.h in Headers */,
 				85E711A80AC5D5350053270F /* DOMHTMLFieldSetElementInternal.h in Headers */,
 				85ECBEEF0AA7626900544F0B /* DOMHTMLFontElement.h in Headers */,
@@ -26102,6 +26138,7 @@
 				84730D8B1248F0B300D3A9C9 /* FETile.h in Headers */,
 				84730D8D1248F0B300D3A9C9 /* FETurbulence.h in Headers */,
 				FD31609512B026F700C1A359 /* FFTConvolver.h in Headers */,
+				1A58E86E1D19E42D00C0EA73 /* PaymentCoordinator.h in Headers */,
 				FD31609712B026F700C1A359 /* FFTFrame.h in Headers */,
 				976D6C81122B8A3D001FD1F7 /* File.h in Headers */,
 				066C772B0AB603B700238CC4 /* FileChooser.h in Headers */,
@@ -27438,6 +27475,7 @@
 				E16982551134629D00894115 /* ObjCRuntimeObject.h in Headers */,
 				7E5D7A77161D3F8F00896C34 /* OESElementIndexUint.h in Headers */,
 				9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */,
+				1A58E8661D19D4F000C0EA73 /* PaymentCoordinatorClient.h in Headers */,
 				6EBF0E4912A8926100DB1709 /* OESTextureFloat.h in Headers */,
 				3146FE6E184420A8001A937C /* OESTextureFloatLinear.h in Headers */,
 				A31C4E4F16E02AB4002F7957 /* OESTextureHalfFloat.h in Headers */,
@@ -29827,6 +29865,7 @@
 				84730D8C1248F0B300D3A9C9 /* FETurbulence.cpp in Sources */,
 				FD31609412B026F700C1A359 /* FFTConvolver.cpp in Sources */,
 				FD31609612B026F700C1A359 /* FFTFrame.cpp in Sources */,
+				1A58E8671D19D80E00C0EA73 /* PaymentRequest.cpp in Sources */,
 				FD3160C012B0272A00C1A359 /* FFTFrameMac.cpp in Sources */,
 				976D6C80122B8A3D001FD1F7 /* File.cpp in Sources */,
 				934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */,
@@ -31232,6 +31271,7 @@
 				CD7D33431C7A123F00041293 /* PixelBufferConformerCV.cpp in Sources */,
 				0FDF45A71BD1C6FD00E4FA8C /* PlatformCAAnimation.cpp in Sources */,
 				4958782112A57DDF007238AC /* PlatformCAAnimationCocoa.mm in Sources */,
+				1A58E86D1D19E42D00C0EA73 /* PaymentCoordinator.cpp in Sources */,
 				0F13164016ED0CDE0035CC04 /* PlatformCAFiltersCocoa.mm in Sources */,
 				2D70BA1518074F860001908A /* PlatformCALayer.cpp in Sources */,
 				4958782212A57DDF007238AC /* PlatformCALayerCocoa.mm in Sources */,
@@ -31695,6 +31735,7 @@
 				A80E6DFB0A199067007FB8C5 /* StyleProperties.cpp in Sources */,
 				E1B25106152A0BAF0069B779 /* StylePropertyShorthand.cpp in Sources */,
 				83C05A5A1A686212007E5DEA /* StylePropertyShorthandFunctions.cpp in Sources */,
+				1A8A64321D19E69B00D0E00F /* PaymentCocoa.mm in Sources */,
 				BC2272E30E82EE9B00E7F975 /* StyleRareInheritedData.cpp in Sources */,
 				BC2272BC0E82EAAE00E7F975 /* StyleRareNonInheritedData.cpp in Sources */,
 				E461802F1C8DD4D20026C02C /* StyleRelations.cpp in Sources */,

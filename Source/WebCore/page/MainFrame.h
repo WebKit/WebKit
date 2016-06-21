@@ -30,14 +30,11 @@
 #include "Frame.h"
 #include <wtf/Vector.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MainFrameIncludes.h>
-#endif
-
 namespace WebCore {
 
 class PageConfiguration;
 class PageOverlayController;
+class PaymentCoordinator;
 class ScrollLatchingState;
 class ServicesOverlayController;
 class WheelEventDeltaFilter;
