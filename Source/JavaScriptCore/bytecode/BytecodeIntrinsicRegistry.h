@@ -57,6 +57,12 @@ class Identifier;
     macro(arrayIterationKindKeyValue) \
     macro(MAX_STRING_LENGTH) \
     macro(MAX_SAFE_INTEGER) \
+    macro(ModuleFetch) \
+    macro(ModuleTranslate) \
+    macro(ModuleInstantiate) \
+    macro(ModuleResolveDependencies) \
+    macro(ModuleLink) \
+    macro(ModuleReady) \
     macro(promiseStatePending) \
     macro(promiseStateFulfilled) \
     macro(promiseStateRejected) \

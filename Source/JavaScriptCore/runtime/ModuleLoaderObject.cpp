@@ -107,15 +107,6 @@ void ModuleLoaderObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-
-    // Constant values for the state.
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "Fetch"), jsNumber(Status::Fetch));
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "Translate"), jsNumber(Status::Translate));
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "Instantiate"), jsNumber(Status::Instantiate));
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "ResolveDependencies"), jsNumber(Status::ResolveDependencies));
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "Link"), jsNumber(Status::Link));
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "Ready"), jsNumber(Status::Ready));
-
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "registry"), JSMap::create(vm, globalObject->mapStructure()));
 }
 

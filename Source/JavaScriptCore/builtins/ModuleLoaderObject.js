@@ -97,7 +97,7 @@ function newRegistryEntry(key)
 
     return {
         key: key,
-        state: this.Fetch,
+        state: @ModuleFetch,
         metadata: @undefined,
         fetch: @undefined,
         translate: @undefined,
@@ -143,7 +143,7 @@ function fulfillFetch(entry, payload)
     if (!entry.fetch)
         entry.fetch = @newPromiseCapability(@InternalPromise).@promise;
     this.forceFulfillPromise(entry.fetch, payload);
-    this.setStateToMax(entry, this.Translate);
+    this.setStateToMax(entry, @ModuleTranslate);
 }
 
 function fulfillTranslate(entry, source)
@@ -155,7 +155,7 @@ function fulfillTranslate(entry, source)
     if (!entry.translate)
         entry.translate = @newPromiseCapability(@InternalPromise).@promise;
     this.forceFulfillPromise(entry.translate, source);
-    this.setStateToMax(entry, this.Instantiate);
+    this.setStateToMax(entry, @ModuleInstantiate);
 }
 
 function fulfillInstantiate(entry, optionalInstance, source)
@@ -207,7 +207,7 @@ function commitInstantiated(entry, optionalInstance, source)
     entry.dependencies = dependencies;
     entry.dependenciesMap = dependenciesMap;
     entry.module = moduleRecord;
-    this.setStateToMax(entry, this.ResolveDependencies);
+    this.setStateToMax(entry, @ModuleResolveDependencies);
 }
 
 function instantiation(result, source, entry)
@@ -230,7 +230,7 @@ function requestFetch(key)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state > this.Link) {
+    if (entry.state > @ModuleLink) {
         var deferred = @newPromiseCapability(@InternalPromise);
         deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
         return deferred.@promise;
@@ -248,7 +248,7 @@ function requestFetch(key)
     //     For example, JavaScriptCore shell can provide the hook fetching the resource
     //     from the local file system.
     var fetchPromise = this.fetch(key).then(function (payload) {
-        loader.setStateToMax(entry, loader.Translate);
+        loader.setStateToMax(entry, @ModuleTranslate);
         return payload;
     });
     entry.fetch = fetchPromise;
@@ -262,7 +262,7 @@ function requestTranslate(key)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state > this.Link) {
+    if (entry.state > @ModuleLink) {
         var deferred = @newPromiseCapability(@InternalPromise);
         deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
         return deferred.@promise;
@@ -279,7 +279,7 @@ function requestTranslate(key)
         //     Take the key and the fetched source code and translate it to the ES6 source code.
         //     Typically it is used by the transpilers.
         return loader.translate(key, payload).then(function (source) {
-            loader.setStateToMax(entry, loader.Instantiate);
+            loader.setStateToMax(entry, @ModuleInstantiate);
             return source;
         });
     });
@@ -294,7 +294,7 @@ function requestInstantiate(key)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state > this.Link) {
+    if (entry.state > @ModuleLink) {
         var deferred = @newPromiseCapability(@InternalPromise);
         deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
         return deferred.@promise;
@@ -336,7 +336,7 @@ function requestResolveDependencies(key)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state > this.Link) {
+    if (entry.state > @ModuleLink) {
         var deferred = @newPromiseCapability(@InternalPromise);
         deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
         return deferred.@promise;
@@ -384,7 +384,7 @@ function requestResolveDependencies(key)
         }
 
         return @InternalPromise.internalAll(depLoads).then(function (modules) {
-            loader.setStateToMax(entry, loader.Link);
+            loader.setStateToMax(entry, @ModuleLink);
             return entry;
         });
     });
@@ -409,7 +409,7 @@ function requestLink(key)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state > this.Link) {
+    if (entry.state > @ModuleLink) {
         var deferred = @newPromiseCapability(@InternalPromise);
         deferred.@resolve.@call(@undefined, entry.module);
         return deferred.@promise;
@@ -446,9 +446,9 @@ function link(entry)
     // So Link's step 3 is skipped.
     // https://bugs.webkit.org/show_bug.cgi?id=148171
 
-    if (entry.state === this.Ready)
+    if (entry.state === @ModuleReady)
         return;
-    this.setStateToMax(entry, this.Ready);
+    this.setStateToMax(entry, @ModuleReady);
 
     // Since we already have the "dependencies" field,
     // we can call moduleDeclarationInstantiation with the correct order
@@ -494,23 +494,23 @@ function provide(key, stage, value)
 
     var entry = this.ensureRegistered(key);
 
-    if (stage === this.Fetch) {
-        if (entry.status > this.Fetch)
+    if (stage === @ModuleFetch) {
+        if (entry.status > @ModuleFetch)
             throw new @TypeError("Requested module is already fetched.");
         this.fulfillFetch(entry, value);
         return;
     }
 
-    if (stage === this.Translate) {
-        if (entry.status > this.Translate)
+    if (stage === @ModuleTranslate) {
+        if (entry.status > @ModuleTranslate)
             throw new @TypeError("Requested module is already translated.");
         this.fulfillFetch(entry, @undefined);
         this.fulfillTranslate(entry, value);
         return;
     }
 
-    if (stage === this.Instantiate) {
-        if (entry.status > this.Instantiate)
+    if (stage === @ModuleInstantiate) {
+        if (entry.status > @ModuleInstantiate)
             throw new @TypeError("Requested module is already instantiated.");
         this.fulfillFetch(entry, @undefined);
         this.fulfillTranslate(entry, value);
