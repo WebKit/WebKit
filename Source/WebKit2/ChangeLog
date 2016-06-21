@@ -1,3 +1,33 @@
+2016-06-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Web view is not redrawn when reparented in force compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=158689
+
+        Reviewed by Žan Doberšek.
+
+        When the web view is reparented in accelerated compositing mode, the UI process always exits the accelerated
+        mode when the view is unrealized, because the native surface handle for compositing is destroyed, but it doesn't
+        enter again when the view is realized and a new native surface handle for compositing is used. This happens
+        because the UI and Web processes are not in sync regarding whether the page is in accelerated compositing or
+        not. The Web process never exits accelerated mode when compositing mode is forced, but the UI process doesn't
+        check that setting at all.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseResizeRedirectedWindow): Helper function to ensure the redirected window size is properly updated.
+        (webkitWebViewBaseRealize): Resize the redirected window if the view is already in AC mode when realized.
+        (webkitWebViewRenderAcceleratedCompositingResults): Use webkitWebViewBaseResizeRedirectedWindow().
+        (webkitWebViewBaseSizeAllocate): Ditto.
+        (webkitWebViewBaseWillEnterAcceleratedCompositingMode): Ditto.
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::alwaysUseCompositing): Return true in force compositing mode.
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode): Update assert.
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode): Do not exit AC mode compositing mode is always enabled.
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (WebKit::DrawingAreaProxyImpl::isInAcceleratedCompositingMode): Return true also in force compositing mode.
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp:
+        (WebKit::RedirectedXCompositeWindow::surface): Ensure we never return an uninitialized surface to prevent
+        rendering artifacts in in force compositing mode when waiting for the first update on the redirected window.
+
 2016-06-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202243.

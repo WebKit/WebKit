@@ -44,7 +44,7 @@ public:
 
     void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 
-    bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
+    bool isInAcceleratedCompositingMode() const { return alwaysUseCompositing() || !m_layerTreeContext.isEmpty(); }
 
     bool hasReceivedFirstUpdate() const { return m_hasReceivedFirstUpdate; }
 
@@ -81,6 +81,7 @@ private:
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
     void updateAcceleratedCompositingMode(const LayerTreeContext&);
+    bool alwaysUseCompositing() const;
 
     void discardBackingStoreSoon();
     void discardBackingStore();

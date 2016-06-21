@@ -354,6 +354,17 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
         priv->toplevelWindowRealizedID = g_signal_connect_swapped(window, "realize", G_CALLBACK(toplevelWindowRealized), webViewBase);
 }
 
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+static void webkitWebViewBaseResizeRedirectedWindow(WebKitWebViewBase* webView)
+{
+    WebKitWebViewBasePrivate* priv = webView->priv;
+    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
+    ASSERT(drawingArea);
+    priv->redirectedWindow->setDeviceScaleFactor(priv->pageProxy->deviceScaleFactor());
+    priv->redirectedWindow->resize(drawingArea->size());
+}
+#endif
+
 static void webkitWebViewBaseRealize(GtkWidget* widget)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
@@ -370,8 +381,11 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
                     gtk_widget_queue_draw(GTK_WIDGET(webView));
             });
         if (priv->redirectedWindow) {
-            if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea()))
+            if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea())) {
                 drawingArea->setNativeSurfaceHandleForCompositing(priv->redirectedWindow->windowID());
+                if (drawingArea->isInAcceleratedCompositingMode())
+                    webkitWebViewBaseResizeRedirectedWindow(webView);
+            }
         }
     }
 #endif
@@ -575,9 +589,7 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     if (!priv->redirectedWindow)
         return false;
 
-    priv->redirectedWindow->setDeviceScaleFactor(webViewBase->priv->pageProxy->deviceScaleFactor());
-    priv->redirectedWindow->resize(drawingArea->size());
-
+    webkitWebViewBaseResizeRedirectedWindow(webViewBase);
     if (cairo_surface_t* surface = priv->redirectedWindow->surface()) {
         cairo_save(cr);
         cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
@@ -691,7 +703,7 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
 
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (priv->redirectedWindow && drawingArea->isInAcceleratedCompositingMode())
-        priv->redirectedWindow->resize(viewRect.size());
+        webkitWebViewBaseResizeRedirectedWindow(webViewBase);
 #endif
 
     drawingArea->setSize(viewRect.size(), IntSize(), IntSize());
@@ -1557,8 +1569,7 @@ void webkitWebViewBaseWillEnterAcceleratedCompositingMode(WebKitWebViewBase* web
     if (!drawingArea)
         return;
 
-    priv->redirectedWindow->setDeviceScaleFactor(webkitWebViewBase->priv->pageProxy->deviceScaleFactor());
-    priv->redirectedWindow->resize(drawingArea->size());
+    webkitWebViewBaseResizeRedirectedWindow(webkitWebViewBase);
 
     // Clear the redirected window if we don't enter AC mode in the end.
     webkitWebViewBaseClearRedirectedWindowSoon(webkitWebViewBase);

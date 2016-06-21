@@ -263,14 +263,15 @@ cairo_surface_t* RedirectedXCompositeWindow::surface()
     RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_xlib_surface_create(m_display, newPixmap.get(), windowAttributes.visual, m_size.width(), m_size.height()));
     cairoSurfaceSetDeviceScale(newSurface.get(), m_deviceScale, m_deviceScale);
 
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(newSurface.get()));
+    cairo_set_source_rgb(cr.get(), 1, 1, 1);
+    cairo_paint(cr.get());
+
     // Nvidia drivers seem to prepare their redirected window pixmap asynchronously, so for a few fractions
     // of a second after each resize, while doing continuous resizing (which constantly destroys and creates
     // pixmap window-backings), the pixmap memory is uninitialized. To work around this issue, paint the old
     // pixmap to the new one to properly initialize it.
     if (m_surface) {
-        RefPtr<cairo_t> cr = adoptRef(cairo_create(newSurface.get()));
-        cairo_set_source_rgb(cr.get(), 1, 1, 1);
-        cairo_paint(cr.get());
         cairo_set_source_surface(cr.get(), m_surface.get(), 0, 0);
         cairo_paint(cr.get());
     }

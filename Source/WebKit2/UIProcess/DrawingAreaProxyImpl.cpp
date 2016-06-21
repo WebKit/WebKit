@@ -58,6 +58,11 @@ DrawingAreaProxyImpl::~DrawingAreaProxyImpl()
         exitAcceleratedCompositingMode();
 }
 
+bool DrawingAreaProxyImpl::alwaysUseCompositing() const
+{
+    return m_webPageProxy.preferences().acceleratedCompositingEnabled() && m_webPageProxy.preferences().forceCompositingMode();
+}
+
 void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, const IntRect& rect, Region& unpaintedRegion)
 {
     unpaintedRegion = rect;
@@ -295,7 +300,7 @@ void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState()
 
 void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    ASSERT(!isInAcceleratedCompositingMode());
+    ASSERT(alwaysUseCompositing() || !isInAcceleratedCompositingMode());
 
     m_backingStore = nullptr;
     m_layerTreeContext = layerTreeContext;
@@ -329,8 +334,9 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 {
     ASSERT(isInAcceleratedCompositingMode());
 
-    m_layerTreeContext = LayerTreeContext();    
-    m_webPageProxy.exitAcceleratedCompositingMode();
+    m_layerTreeContext = LayerTreeContext();
+    if (!alwaysUseCompositing())
+        m_webPageProxy.exitAcceleratedCompositingMode();
 }
 
 void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
