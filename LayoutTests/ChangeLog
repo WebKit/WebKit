@@ -1,3 +1,14 @@
+2016-06-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Skip HeapSnapshot test on WebKit1. Shared VM skews the data.
+
+        Unreviewed gardening.
+
+        In this case, snapshots with snapshots with snapshots in the same VM
+        causes the test to run out of memory. This does not happen in WebKit2.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-06-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening for platform-specific font-fallback on macOS Sierra

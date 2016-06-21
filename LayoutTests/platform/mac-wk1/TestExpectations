@@ -179,6 +179,7 @@ inspector/script-profiler/event-type-API.html [ Skip ]
 inspector/heap/getPreview.html [ Skip ]
 inspector/heap/getRemoteObject.html [ Skip ]
 inspector/unit-tests/heap-snapshot.html [ Skip ]
+inspector/unit-tests/heap-snapshot-collection-event.html [ Skip ]
 
 # This test checks ScrollAnimator events only for main frame scrollbars that use native widgets in WK1.
 fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
