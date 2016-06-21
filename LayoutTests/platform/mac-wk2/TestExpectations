@@ -475,13 +475,16 @@ webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-d
 [ Yosemite ElCapitan ] fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
 
 # PiP tests are only enabled for Sierra WebKit2.
-[ Sierra+ ] media/click-placeholder-not-pausing.html [ Pass ]
 [ Sierra+ ] media/controls/picture-in-picture.html [ Pass ]
 [ Sierra+ ] media/fullscreen-api-enabled-media-with-presentation-mode.html [ Pass ]
 [ Sierra+ ] media/fullscreen-video-going-into-pip.html [ Pass ]
 [ Sierra+ ] media/navigate-with-pip-should-not-crash.html [ Pass ]
 [ Sierra+ ] media/pip-video-going-into-fullscreen.html [ Pass ]
 [ Sierra+ ] media/video-contained-in-fullscreen-element-going-into-pip.html [ Pass ]
+
+# rdar://problem/26885345
+[ Release Sierra+ ] media/click-placeholder-not-pausing.html [ Pass ]
+[ Debug Sierra+ ] media/click-placeholder-not-pausing.html [ Skip ]
 
 # rdar://problem/26901714
 [ Sierra+ ] media/element-containing-pip-video-going-into-fullscreen.html [ Pass Failure ]
