@@ -82,21 +82,26 @@
             finishJSTest();
         }
 
+        function performSwipeGestureOnElementEnd()
+        {
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'begin');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'continue');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        }
+
         function performSwipeGestureOnElement(divTarget)
         {
             var windowPosition = locationInWindowCoordinates(divTarget);
             var startPosX = windowPosition.x + 0.5 * divTarget.clientWidth;
             var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
 
+            eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(startPosX, startPosY);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'begin');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'continue');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
         }
 
         function scrollInSecondDiv()
@@ -109,7 +114,12 @@
 
             performSwipeGestureOnElement(divTarget);
 
-            eventSender.callAfterScrollingCompletes(function() { return checkForSecondaryScrollGlide(); });           
+            eventSender.callAfterScrollingCompletes(function() { 
+                performSwipeGestureOnElementEnd();
+                eventSender.callAfterScrollingCompletes(function() {
+                    setTimeout(function() { checkForSecondaryScrollGlide(); }, 10); 
+                });
+            });           
         }
 
         function checkForScrollSnap()
@@ -119,12 +129,13 @@
             var actualPosition = divTarget.scrollLeft;
 
             // The div should have snapped back to the previous position
-            if (actualPosition != divScrollPositionBeforeSnap)
-                testFailed("div did not snap back to proper location for " + targetLabel +". Expected " + divScrollPositionBeforeSnap + ", but got " + actualPosition);
-            else
+            if (actualPosition != divScrollPositionBeforeSnap) {
+                testFailed("div did not snap back to proper location for " + divTarget +". Expected " + divScrollPositionBeforeSnap + ", but got " + actualPosition);
+                finishJSTest();
+                return;
+            } else
                 testPassed("div honored snap points.");
-
-            setTimeout(function() { scrollInSecondDiv() }, 0);
+            scrollInSecondDiv();
         }
 
         function scrollSnapTest()
@@ -137,12 +148,13 @@
             var startPosX = windowPosition.x + 0.5 * divTarget.clientWidth;
             var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
 
+            eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-            eventSender.callAfterScrollingCompletes(function() { return checkForScrollSnap(); });
+            eventSender.callAfterScrollingCompletes(function() { checkForScrollSnap(); });
         }
 
         function checkForScrollGlide(targetLabel)
@@ -155,10 +167,12 @@
             // The div should have scrolled (glided) to the next snap point.
             if (actualPosition == expectedPosition)
                 testPassed("div scrolled to next window.");
-            else
+            else {
                 testFailed("div did not honor snap points. Expected " + expectedPosition + ", but got " + actualPosition);
-
-            setTimeout(function() { scrollSnapTest() }, 0);
+                finishJSTest();
+                return;
+            }
+            scrollSnapTest();
         }
 
         function scrollGlideTest()
@@ -168,17 +182,19 @@
             divScrollPositionBeforeGlide = divTarget.scrollLeft;
 
             performSwipeGestureOnElement(divTarget);
-    
-            eventSender.callAfterScrollingCompletes(function() { return checkForScrollGlide(); });
+            eventSender.callAfterScrollingCompletes(function() { 
+                performSwipeGestureOnElementEnd();
+                eventSender.callAfterScrollingCompletes(function() {
+                    setTimeout(function() { checkForScrollGlide(); }, 10); 
+                });
+            });           
         }
 
         function onLoad()
         {
             if (window.eventSender) {
-                eventSender.monitorWheelEvents();
                 testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-                setTimeout(function() { scrollGlideTest() }, 0);
+                scrollGlideTest();
             } else {
                 var messageLocationH = document.getElementById('itemH0');
                 var message = document.createElement('div');
