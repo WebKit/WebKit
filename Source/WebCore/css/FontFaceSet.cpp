@@ -76,11 +76,12 @@ FontFaceSet::Iterator::Iterator(FontFaceSet& set)
 {
 }
 
-RefPtr<FontFace> FontFaceSet::Iterator::next()
+Optional<WTF::KeyValuePair<RefPtr<FontFace>, RefPtr<FontFace>>> FontFaceSet::Iterator::next()
 {
     if (m_index == m_target->size())
-        return nullptr;
-    return m_target->backing()[m_index++].wrapper();
+        return Nullopt;
+    RefPtr<FontFace> item = m_target->backing()[m_index++].wrapper();
+    return WTF::KeyValuePair<RefPtr<FontFace>, RefPtr<FontFace>>(item, item);
 }
 
 FontFaceSet::PendingPromise::PendingPromise(LoadPromise&& promise)

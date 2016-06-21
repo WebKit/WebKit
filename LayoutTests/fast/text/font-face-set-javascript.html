@@ -23,12 +23,9 @@ fontFaceSet.add(fontFace1);
 var iterator = fontFaceSet.entries();
 var item = iterator.next();
 shouldBeFalse("item.done");
-shouldBe("item.value.length", "2");
-shouldBe("item.value[0]", "0");
-shouldBe("item.value[1]", "fontFace1");
+shouldBe("item.value", "[fontFace1, fontFace1]");
 item = iterator.next();
 shouldBeTrue("item.done");
-shouldBe("item.value", "undefined");
 
 iterator = fontFaceSet.keys();
 item = iterator.next();
