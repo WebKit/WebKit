@@ -75,8 +75,6 @@ public:
     void addDataBuffer(SharedBuffer&) override;
     void finishLoading(SharedBuffer*) override;
 
-    bool areAllClientsInPageCache() const;
-
     enum SizeType {
         UsedSize,
         IntrinsicSize

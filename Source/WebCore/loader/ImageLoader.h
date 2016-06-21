@@ -79,8 +79,6 @@ private:
     virtual void dispatchLoadEvent() = 0;
     virtual String sourceURI(const AtomicString&) const = 0;
 
-    bool inPageCache() const final;
-
     void updatedHasPendingEvent();
 
     void dispatchPendingBeforeLoadEvent();

@@ -527,16 +527,4 @@ CachedResource::RevalidationDecision CachedImage::makeRevalidationDecision(Cache
     return CachedResource::makeRevalidationDecision(cachePolicy);
 }
 
-bool CachedImage::areAllClientsInPageCache() const
-{
-    for (auto& entry : m_clients) {
-        auto& client = *entry.key;
-        if (client.resourceClientType() != CachedImageClient::expectedType())
-            continue;
-        if (!static_cast<CachedImageClient&>(client).inPageCache())
-            return false;
-    }
-    return true;
-}
-
 } // namespace WebCore
