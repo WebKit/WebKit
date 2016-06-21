@@ -60,6 +60,16 @@ private:
     void finishCreation(JSC::VM&, JSC::JSGlobalObject*);
 };
 
+template<typename IteratorValue>
+class IteratorInspector {
+private:
+    template<typename T> static constexpr auto test(int) -> decltype(std::declval<T>()->key, std::declval<T>()->value, bool()) { return true; }
+    template<typename T> static constexpr bool test(...) { return false; }
+public:
+    static constexpr bool isMap = test<IteratorValue>(0);
+    static constexpr bool isSet = !isMap;
+};
+
 enum class IterationKind { Key, Value, KeyValue };
 
 template<typename JSWrapper>
