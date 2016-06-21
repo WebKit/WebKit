@@ -3236,6 +3236,8 @@ bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, unsigned column)
 
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
+    ConcurrentJITLocker locker(m_lock);
+
     m_rareCaseProfiles.shrinkToFit();
     m_resultProfiles.shrinkToFit();
     

@@ -1,3 +1,26 @@
+2016-06-21  Saam Barati  <sbarati@apple.com>
+
+        CodeBlock::shrinkToFit is racy
+        https://bugs.webkit.org/show_bug.cgi?id=158994
+        <rdar://problem/26920212>
+
+        Reviewed by Filip Pizlo.
+
+        To see why this is racy, consider the following scenario:
+        - CodeBlock A is link()ing its baseline compile.
+        - CodeBlock B is inlining A, and asks A for a result profile in DFGBytecodeParser.
+        - The race occurs when the link() step of the baseline compile calls shrinkToFit
+          on its m_resultProfiles field without grabbing a lock. This leads to a bad
+          time because the DFG compile will be reading from that vector as it's getting
+          changed by the baseline link() method.
+
+        This race has always existed, though the move to a concurrent baseline
+        JIT has made it more likely to occur. The solution is to have CodeBlock::shrinkToFit
+        grab its lock before shrinking the vector.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shrinkToFit):
+
 2016-06-21  David Kilzer  <ddkilzer@apple.com>
 
         Migrate testair & testb3 settings from Xcode project to ToolExecutable.xcconfig
