@@ -30,7 +30,9 @@
 
 #import "AVKitSPI.h"
 #import "IntRect.h"
+#import "Logging.h"
 #import "MediaTimeAVFoundation.h"
+#import "PIPSPI.h"
 #import "TimeRanges.h"
 #import "WebPlaybackSessionInterfaceMac.h"
 #import "WebVideoFullscreenChangeObserver.h"
@@ -42,9 +44,307 @@
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebVideoFullscreenInterfaceMacAdditions.mm>
-#endif
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(PIP)
+SOFT_LINK_CLASS_OPTIONAL(PIP, PIPViewController)
+
+using namespace WebCore;
+
+@class WebVideoViewContainer;
+
+@protocol WebVideoViewContainerDelegate <NSObject>
+
+- (void)boundsDidChangeForVideoViewContainer:(WebVideoViewContainer *)videoViewContainer;
+- (void)superviewDidChangeForVideoViewContainer:(WebVideoViewContainer *)videoViewContainer;
+
+@end
+
+@interface WebVideoViewContainer : NSView {
+    id <WebVideoViewContainerDelegate> _videoViewContainerDelegate;
+}
+
+@property (nonatomic, assign) id <WebVideoViewContainerDelegate> videoViewContainerDelegate;
+
+@end
+
+@implementation WebVideoViewContainer
+
+@synthesize videoViewContainerDelegate=_videoViewContainerDelegate;
+
+- (void)resizeWithOldSuperviewSize:(NSSize)oldBoundsSize
+{
+    [super resizeWithOldSuperviewSize:oldBoundsSize];
+
+    [_videoViewContainerDelegate boundsDidChangeForVideoViewContainer:self];
+}
+
+- (void)viewDidMoveToSuperview
+{
+    [super viewDidMoveToSuperview];
+
+    [_videoViewContainerDelegate superviewDidChangeForVideoViewContainer:self];
+}
+
+@end
+
+enum class PIPState {
+    NotInPIP,
+    InPIP,
+    ExitingPIP
+};
+
+@interface WebVideoFullscreenInterfaceMacObjC : NSObject <PIPViewControllerDelegate, WebVideoViewContainerDelegate> {
+    WebCore::WebVideoFullscreenInterfaceMac* _webVideoFullscreenInterfaceMac;
+    NSSize _videoDimensions;
+    RetainPtr<PIPViewController> _pipViewController;
+    RetainPtr<NSViewController> _videoViewContainerController;
+    RetainPtr<WebVideoViewContainer> _videoViewContainer;
+    PIPState _pipState;
+    RetainPtr<NSWindow> _returningWindow;
+    NSRect _returningRect;
+    BOOL _playing;
+    BOOL _didRequestExitingPIP;
+    BOOL _exitingToStandardFullscreen;
+}
+
+- (instancetype)initWithWebVideoFullscreenInterfaceMac:(WebCore::WebVideoFullscreenInterfaceMac*)webVideoFullscreenInterfaceMac;
+- (void)invalidateFullscreenState;
+- (void)invalidate;
+
+// Tracking video playback state
+@property (nonatomic) NSSize videoDimensions;
+@property (nonatomic, getter=isPlaying) BOOL playing;
+- (void)updateIsPlaying:(BOOL)isPlaying newPlaybackRate:(float)playbackRate;
+
+// Handling PIP transitions
+@property (nonatomic, readonly) BOOL didRequestExitingPIP;
+@property (nonatomic, getter=isExitingToStandardFullscreen) BOOL exitingToStandardFullscreen;
+
+- (void)setUpPIPForVideoView:(NSView *)videoView withFrame:(NSRect)frame inWindow:(NSWindow *)window;
+- (void)enterPIP;
+- (void)exitPIP;
+- (void)exitPIPAnimatingToRect:(NSRect)rect inWindow:(NSWindow *)window;
+
+@end
+
+@implementation WebVideoFullscreenInterfaceMacObjC
+
+@synthesize playing=_playing;
+@synthesize videoDimensions=_videoDimensions;
+@synthesize didRequestExitingPIP=_didRequestExitingPIP;
+@synthesize exitingToStandardFullscreen=_exitingToStandardFullscreen;
+
+- (instancetype)initWithWebVideoFullscreenInterfaceMac:(WebCore::WebVideoFullscreenInterfaceMac*)webVideoFullscreenInterfaceMac
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _webVideoFullscreenInterfaceMac = webVideoFullscreenInterfaceMac;
+    _pipState = PIPState::NotInPIP;
+
+    return self;
+}
+
+- (void)invalidateFullscreenState
+{
+    [_pipViewController setDelegate:nil];
+    _pipViewController = nil;
+    [_videoViewContainer removeFromSuperview];
+    [_videoViewContainer setVideoViewContainerDelegate:nil];
+    _videoViewContainer = nil;
+    _videoViewContainerController = nil;
+    _pipState = PIPState::NotInPIP;
+    _didRequestExitingPIP = NO;
+    _exitingToStandardFullscreen = NO;
+    _returningWindow = nil;
+    _returningRect = NSZeroRect;
+}
+
+- (void)invalidate
+{
+    [self invalidateFullscreenState];
+    _webVideoFullscreenInterfaceMac = nullptr;
+    _videoDimensions = NSZeroSize;
+}
+
+- (void)updateIsPlaying:(BOOL)isPlaying newPlaybackRate:(float)playbackRate
+{
+    _playing = isPlaying && playbackRate;
+
+    if ([_pipViewController respondsToSelector:@selector(setPlaying:)])
+        [_pipViewController setPlaying:_playing];
+}
+
+- (void)setVideoDimensions:(NSSize)videoDimensions
+{
+    _videoDimensions = videoDimensions;
+
+    if ([_pipViewController respondsToSelector:@selector(setAspectRatio:)])
+        [_pipViewController setAspectRatio:_videoDimensions];
+}
+
+- (void)setUpPIPForVideoView:(NSView *)videoView withFrame:(NSRect)frame inWindow:(NSWindow *)window
+{
+    ASSERT(!_pipViewController);
+    ASSERT(!_videoViewContainerController);
+    ASSERT(!_videoViewContainer);
+
+    _pipViewController = adoptNS([[getPIPViewControllerClass() alloc] init]);
+    [_pipViewController setDelegate:self];
+    if ([_pipViewController respondsToSelector:@selector(setUserCanResize:)])
+        [_pipViewController setUserCanResize:YES];
+    if ([_pipViewController respondsToSelector:@selector(setPlaying:)])
+        [_pipViewController setPlaying:_playing];
+    [self setVideoDimensions:NSEqualSizes(_videoDimensions, NSZeroSize) ? frame.size : _videoDimensions];
+    if (_webVideoFullscreenInterfaceMac && _webVideoFullscreenInterfaceMac->webVideoFullscreenModel())
+        _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->setVideoLayerGravity(WebVideoFullscreenModel::VideoGravityResizeAspectFill);
+
+    _videoViewContainer = adoptNS([[WebVideoViewContainer alloc] initWithFrame:frame]);
+    [_videoViewContainer setVideoViewContainerDelegate:self];
+    [_videoViewContainer addSubview:videoView];
+    videoView.frame = [_videoViewContainer bounds];
+    videoView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+
+    _videoViewContainerController = adoptNS([[NSViewController alloc] init]);
+    [_videoViewContainerController setView:_videoViewContainer.get()];
+    [window.contentView addSubview:_videoViewContainer.get() positioned:NSWindowAbove relativeTo:nil];
+}
+
+- (void)enterPIP
+{
+    if (_pipState == PIPState::InPIP)
+        return;
+
+    [_videoViewContainerController view].layer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
+    [_pipViewController presentViewControllerAsPictureInPicture:_videoViewContainerController.get()];
+    _pipState = PIPState::InPIP;
+}
+
+- (void)exitPIP
+{
+    if (_pipState != PIPState::InPIP || !_pipViewController || !_videoViewContainerController)
+        return;
+
+    _didRequestExitingPIP = YES;
+    [_videoViewContainerController view].layer.backgroundColor = CGColorGetConstantColor(kCGColorClear);
+    [_pipViewController dismissViewController:_videoViewContainerController.get()];
+    _pipState = PIPState::ExitingPIP;
+}
+
+- (void)exitPIPAnimatingToRect:(NSRect)rect inWindow:(NSWindow *)window
+{
+    _returningWindow = window;
+    _returningRect = rect;
+    
+    [_pipViewController setReplacementRect:rect];
+    [_pipViewController setReplacementWindow:window];
+
+    [self exitPIP];
+}
+
+// WebVideoViewContainerDelegate
+
+- (void)boundsDidChangeForVideoViewContainer:(WebVideoViewContainer *)videoViewContainer
+{
+    if (!_videoViewContainer || !_pipViewController)
+        return;
+
+    ASSERT_UNUSED(videoViewContainer, videoViewContainer == _videoViewContainer);
+
+    if (_webVideoFullscreenInterfaceMac && _webVideoFullscreenInterfaceMac->webVideoFullscreenModel())
+        _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->setVideoLayerFrame([_videoViewContainer bounds]);
+}
+
+- (void)superviewDidChangeForVideoViewContainer:(WebVideoViewContainer *)videoViewContainer
+{
+    if (!_videoViewContainer || !_pipViewController)
+        return;
+
+    ASSERT(videoViewContainer == _videoViewContainer);
+
+    if (![videoViewContainer isDescendantOf:[_pipViewController view]])
+        return;
+
+    // Once the view is moved into the pip view, make sure it resizes with the pip view.
+    videoViewContainer.frame = [videoViewContainer superview].bounds;
+    videoViewContainer.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+}
+
+// PIPViewControllerDelegate
+
+- (BOOL)pipShouldClose:(PIPViewController *)pip
+{
+    ASSERT_UNUSED(pip, pip == _pipViewController);
+
+    if (!_webVideoFullscreenInterfaceMac || !_webVideoFullscreenInterfaceMac->webVideoFullscreenChangeObserver())
+        return YES;
+
+    _didRequestExitingPIP = YES;
+    _webVideoFullscreenInterfaceMac->webVideoFullscreenChangeObserver()->fullscreenMayReturnToInline();
+
+    return NO;
+}
+
+- (void)pipDidClose:(PIPViewController *)pip
+{
+    ASSERT_UNUSED(pip, pip == _pipViewController);
+
+    if (_webVideoFullscreenInterfaceMac && _webVideoFullscreenInterfaceMac->webVideoFullscreenModel() && _videoViewContainer && _returningWindow && !NSEqualRects(_returningRect, NSZeroRect)) {
+        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+            context.allowsImplicitAnimation = NO;
+            [_videoViewContainer setFrame:_returningRect];
+            _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->setVideoLayerFrame([_videoViewContainer bounds]);
+            _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->setVideoLayerGravity(WebVideoFullscreenModel::VideoGravityResizeAspect);
+
+            [[_returningWindow contentView] addSubview:_videoViewContainer.get() positioned:NSWindowAbove relativeTo:nil];
+        } completionHandler:nil];
+    }
+
+    if (_webVideoFullscreenInterfaceMac) {
+        if (!self.isExitingToStandardFullscreen) {
+            if (WebVideoFullscreenModel* videoFullscreenModel = _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()) {
+                videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+                videoFullscreenModel->setVideoLayerGravity(WebVideoFullscreenModel::VideoGravityResizeAspect);
+            }
+        }
+
+        _webVideoFullscreenInterfaceMac->clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+
+        if (WebVideoFullscreenChangeObserver* fullscreenChangeObserver = _webVideoFullscreenInterfaceMac->webVideoFullscreenChangeObserver())
+            fullscreenChangeObserver->didExitFullscreen();
+    }
+}
+
+- (void)pipActionPlay:(PIPViewController *)pip
+{
+    ASSERT_UNUSED(pip, pip == _pipViewController);
+
+    if (_webVideoFullscreenInterfaceMac && _webVideoFullscreenInterfaceMac->webPlaybackSessionModel())
+        _webVideoFullscreenInterfaceMac->webPlaybackSessionModel()->play();
+}
+
+- (void)pipActionPause:(PIPViewController *)pip
+{
+    ASSERT_UNUSED(pip, pip == _pipViewController);
+
+    if (_webVideoFullscreenInterfaceMac && _webVideoFullscreenInterfaceMac->webPlaybackSessionModel())
+        _webVideoFullscreenInterfaceMac->webPlaybackSessionModel()->pause();
+}
+
+- (void)pipActionStop:(PIPViewController *)pip
+{
+    ASSERT_UNUSED(pip, pip == _pipViewController);
+
+    if (!_webVideoFullscreenInterfaceMac)
+        return;
+
+    if (WebPlaybackSessionModel* playbackSessionModel = _webVideoFullscreenInterfaceMac->webPlaybackSessionModel())
+        playbackSessionModel->pause();
+
+    // FIXME 25096170: Should animate only if the page with the video is unobscured. For now, always close without animation.
+    [self exitPIP];
+}
+
+@end
 
 namespace WebCore {
 
@@ -109,12 +409,7 @@ void WebVideoFullscreenInterfaceMac::setRate(bool isPlaying, float playbackRate)
 
 void WebVideoFullscreenInterfaceMac::rateChanged(bool isPlaying, float playbackRate)
 {
-#if USE(APPLE_INTERNAL_SDK)
     [videoFullscreenInterfaceObjC() updateIsPlaying:isPlaying newPlaybackRate:playbackRate];
-#else
-    UNUSED_PARAM(isPlaying);
-    UNUSED_PARAM(playbackRate);
-#endif
 }
 
 void WebVideoFullscreenInterfaceMac::setSeekableRanges(const TimeRanges& timeRanges)
@@ -137,53 +432,144 @@ void WebVideoFullscreenInterfaceMac::ensureControlsManager()
     m_playbackSessionInterface->ensureControlsManager();
 }
 
-#if !USE(APPLE_INTERNAL_SDK)
-void WebVideoFullscreenInterfaceMac::setupFullscreen(NSView&, const IntRect&, NSWindow *, HTMLMediaElementEnums::VideoFullscreenMode, bool)
+WebVideoFullscreenInterfaceMacObjC *WebVideoFullscreenInterfaceMac::videoFullscreenInterfaceObjC()
 {
+    if (!m_webVideoFullscreenInterfaceObjC)
+        m_webVideoFullscreenInterfaceObjC = adoptNS([[WebVideoFullscreenInterfaceMacObjC alloc] initWithWebVideoFullscreenInterfaceMac:this]);
+
+    return m_webVideoFullscreenInterfaceObjC.get();
+}
+
+void WebVideoFullscreenInterfaceMac::setupFullscreen(NSView& layerHostedView, const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback)
+{
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::setupFullscreen(%p), initialRect:{%d, %d, %d, %d}, parentWindow:%p, mode:%d", this, initialRect.x(), initialRect.y(), initialRect.width(), initialRect.height(), parentWindow, mode);
+
+    UNUSED_PARAM(allowsPictureInPicturePlayback);
+    ASSERT(mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+
+    m_mode = mode;
+
+    [videoFullscreenInterfaceObjC() setUpPIPForVideoView:&layerHostedView withFrame:(NSRect)initialRect inWindow:parentWindow];
+
+    RefPtr<WebVideoFullscreenInterfaceMac> protectedThis(this);
+    dispatch_async(dispatch_get_main_queue(), [protectedThis, this] {
+        if (m_fullscreenChangeObserver)
+            m_fullscreenChangeObserver->didSetupFullscreen();
+    });
 }
 
 void WebVideoFullscreenInterfaceMac::enterFullscreen()
 {
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::enterFullscreen(%p)", this);
+
+    if (mode() == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
+        [m_webVideoFullscreenInterfaceObjC enterPIP];
+
+        if (m_fullscreenChangeObserver)
+            m_fullscreenChangeObserver->didEnterFullscreen();
+    } else
+        ASSERT_NOT_REACHED();
 }
 
-void WebVideoFullscreenInterfaceMac::exitFullscreen(const IntRect&, NSWindow *)
+void WebVideoFullscreenInterfaceMac::exitFullscreen(const IntRect& finalRect, NSWindow *parentWindow)
 {
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::exitFullscreen(%p), finalRect:{%d, %d, %d, %d}, parentWindow:%p", this, finalRect.x(), finalRect.y(), finalRect.width(), finalRect.height(), parentWindow);
+
+    if ([m_webVideoFullscreenInterfaceObjC didRequestExitingPIP])
+        return;
+
+    if (finalRect.isEmpty())
+        [m_webVideoFullscreenInterfaceObjC exitPIP];
+    else
+        [m_webVideoFullscreenInterfaceObjC exitPIPAnimatingToRect:finalRect inWindow:parentWindow];
 }
 
-void WebVideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode)
+void WebVideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode(%p), mode:%d", this, mode);
+
+    if ([m_webVideoFullscreenInterfaceObjC didRequestExitingPIP])
+        return;
+
+    [m_webVideoFullscreenInterfaceObjC setExitingToStandardFullscreen:mode == HTMLMediaElementEnums::VideoFullscreenModeStandard];
+    [m_webVideoFullscreenInterfaceObjC exitPIP];
 }
 
 void WebVideoFullscreenInterfaceMac::cleanupFullscreen()
 {
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::cleanupFullscreen(%p)", this);
+
+    [m_webVideoFullscreenInterfaceObjC exitPIP];
+    [m_webVideoFullscreenInterfaceObjC invalidateFullscreenState];
+
+    if (m_fullscreenChangeObserver)
+        m_fullscreenChangeObserver->didCleanupFullscreen();
 }
 
 void WebVideoFullscreenInterfaceMac::invalidate()
 {
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::invalidate(%p)", this);
+
+    m_videoFullscreenModel = nil;
+    m_fullscreenChangeObserver = nil;
+
+    cleanupFullscreen();
+
+    [m_webVideoFullscreenInterfaceObjC invalidate];
+    m_webVideoFullscreenInterfaceObjC = nil;
 }
 
-void WebVideoFullscreenInterfaceMac::preparedToReturnToInline(bool, const IntRect&, NSWindow *)
+#if !LOG_DISABLED
+static const char* boolString(bool val)
 {
+    return val ? "true" : "false";
+}
+#endif
+
+void WebVideoFullscreenInterfaceMac::preparedToReturnToInline(bool visible, const IntRect& inlineRect, NSWindow *parentWindow)
+{
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::preparedToReturnToInline(%p), visible:%s, inlineRect:{%d, %d, %d, %d}, parentWindow:%p", this, boolString(visible), inlineRect.x(), inlineRect.y(), inlineRect.width(), inlineRect.height(), parentWindow);
+
+    if (!visible) {
+        [m_webVideoFullscreenInterfaceObjC exitPIP];
+        return;
+    }
+
+    ASSERT(parentWindow);
+    [m_webVideoFullscreenInterfaceObjC exitPIPAnimatingToRect:(NSRect)inlineRect inWindow:parentWindow];
 }
 
-void WebVideoFullscreenInterfaceMac::setVideoDimensions(bool, float, float)
+void WebVideoFullscreenInterfaceMac::setExternalPlayback(bool enabled, ExternalPlaybackTargetType, String)
 {
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::setExternalPlayback(%p), enabled:%s", this, boolString(enabled));
+
+    if (enabled && m_mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
+        exitFullscreen(IntRect(), nil);
+}
+
+void WebVideoFullscreenInterfaceMac::setVideoDimensions(bool hasVideo, float width, float height)
+{
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::setVideoDimensions(%p), hasVideo:%s, width:%.0f, height:%.0f", this, boolString(hasVideo), width, height);
+
+    if (!hasVideo) {
+        exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+        return;
+    }
+
+    // Width and height can be zero when we are transitioning from one video to another. Ignore zero values.
+    if (width && height)
+        [m_webVideoFullscreenInterfaceObjC setVideoDimensions:NSMakeSize(width, height)];
 }
 
 bool WebVideoFullscreenInterfaceMac::isPlayingVideoInEnhancedFullscreen() const
 {
-    return false;
-}
-
-void WebVideoFullscreenInterfaceMac::setExternalPlayback(bool, ExternalPlaybackTargetType, String)
-{
+    return hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && [m_webVideoFullscreenInterfaceObjC isPlaying];
 }
 
 bool supportsPictureInPicture()
 {
-    return false;
+    return PIPLibrary() && getPIPViewControllerClass();
 }
-#endif
 
 }
 

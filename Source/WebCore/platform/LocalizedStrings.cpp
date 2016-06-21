@@ -509,19 +509,15 @@ String contextMenuItemTagExitVideoFullscreen()
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ContextMenuLocalizedStringsAdditions.cpp>
-#else
 String contextMenuItemTagEnterVideoEnhancedFullscreen()
 {
-    return { };
+    return WEB_UI_STRING("Enter Picture-in-Picture", "menu item");
 }
 
 String contextMenuItemTagExitVideoEnhancedFullscreen()
 {
-    return { };
+    return WEB_UI_STRING("Exit Picture-in-Picture", "menu item");
 }
-#endif
 
 #endif
 
@@ -693,9 +689,9 @@ String AXARIAContentGroupText(const String& ariaType)
     if (ariaType == "ARIAApplicationAlert")
         return WEB_UI_STRING("alert", "An ARIA accessibility group that acts as an alert.");
     if (ariaType == "ARIAApplicationAlertDialog")
-        return WEB_UI_STRING("alert dialog", "An ARIA accessibility group that acts as an alert dialog.");
+        return WEB_UI_STRING("web alert dialog", "An ARIA accessibility group that acts as an alert dialog.");
     if (ariaType == "ARIAApplicationDialog")
-        return WEB_UI_STRING("dialog", "An ARIA accessibility group that acts as an dialog.");
+        return WEB_UI_STRING("web dialog", "An ARIA accessibility group that acts as an dialog.");
     if (ariaType == "ARIAApplicationLog")
         return WEB_UI_STRING("log", "An ARIA accessibility group that acts as a console log.");
     if (ariaType == "ARIAApplicationMarquee")

@@ -256,10 +256,8 @@ bool WebVideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElemen
 #if PLATFORM(IOS)
     UNUSED_PARAM(mode);
     return Settings::avKitEnabled();
-#elif USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebVideoFullscreenManagerSupportsVideoFullscreenMac.mm>
 #else
-    return false;
+    return mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture && supportsPictureInPicture();
 #endif
 }
 

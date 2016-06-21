@@ -149,9 +149,8 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
 bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode) const
 {
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/HTMLVideoElementSupportsFullscreenAdditions.cpp>
-#endif
+    if (videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture && !mediaSession().allowsPictureInPicture(*this))
+        return false;
 
     Page* page = document().page();
     if (!page) 

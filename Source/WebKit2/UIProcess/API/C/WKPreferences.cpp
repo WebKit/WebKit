@@ -35,10 +35,6 @@
 
 using namespace WebKit;
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKPreferencesAdditions.cpp>
-#endif
-
 WKTypeID WKPreferencesGetTypeID()
 {
     return toAPI(WebPreferences::APIType);
@@ -1524,4 +1520,14 @@ void WKPreferencesSetSelectionPaintingWithoutSelectionGapsEnabled(WKPreferencesR
 bool WKPreferencesGetSelectionPaintingWithoutSelectionGapsEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->selectionPaintingWithoutSelectionGapsEnabled();
+}
+
+void WKPreferencesSetAllowsPictureInPictureMediaPlayback(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setAllowsPictureInPictureMediaPlayback(enabled);
+}
+
+bool WKPreferencesGetAllowsPictureInPictureMediaPlayback(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->allowsPictureInPictureMediaPlayback();
 }

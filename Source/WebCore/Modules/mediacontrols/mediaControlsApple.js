@@ -624,8 +624,10 @@ Controller.prototype = {
         this.controls.panel.appendChild(this.controls.seekForwardButton);
         this.controls.panel.appendChild(this.controls.wirelessTargetPicker);
         this.controls.panel.appendChild(this.controls.captionButton);
-        if (!this.isAudio())
+        if (!this.isAudio()) {
+            this.updatePictureInPictureButton();
             this.controls.panel.appendChild(this.controls.fullscreenButton);
+        }
         if (!this.isLive) {
             this.controls.panel.appendChild(this.controls.timelineBox);
             this.controls.timelineBox.appendChild(this.controls.currentTime);

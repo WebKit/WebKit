@@ -36,10 +36,7 @@
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSWindow;
-
-#if USE(APPLE_INTERNAL_SDK)
 OBJC_CLASS WebVideoFullscreenInterfaceMacObjC;
-#endif
 
 namespace WebCore {
 class IntRect;
@@ -100,9 +97,7 @@ public:
 
     void rateChanged(bool isPlaying, float playbackRate) override;
 
-#if USE(APPLE_INTERNAL_SDK)
     WEBCORE_EXPORT WebVideoFullscreenInterfaceMacObjC *videoFullscreenInterfaceObjC();
-#endif
 
 private:
     WebVideoFullscreenInterfaceMac(WebPlaybackSessionInterfaceMac&);
@@ -110,10 +105,7 @@ private:
     WebVideoFullscreenModel* m_videoFullscreenModel { nullptr };
     WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
-
-#if USE(APPLE_INTERNAL_SDK)
     RetainPtr<WebVideoFullscreenInterfaceMacObjC> m_webVideoFullscreenInterfaceObjC;
-#endif
 };
 
 }

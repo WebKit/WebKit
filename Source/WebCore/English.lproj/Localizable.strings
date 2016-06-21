@@ -238,8 +238,14 @@
 /* Video Enter Fullscreen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
 
+/* menu item */
+"Enter Picture-in-Picture" = "Enter Picture-in-Picture";
+
 /* Video Exit Fullscreen context menu item */
 "Exit Full Screen" = "Exit Full Screen";
+
+/* menu item */
+"Exit Picture-in-Picture" = "Exit Picture-in-Picture";
 
 /* Default application name for Open With context menu */
 "Finder" = "Finder";
@@ -712,12 +718,6 @@
 /* An ARIA accessibility group that acts as an alert. */
 "alert" = "alert";
 
-/* An ARIA accessibility group that acts as an alert dialog. */
-"alert dialog" = "web alert dialog";
-
-/* An ARIA accessibility group that acts as an application. */
-"web application" = "web application";
-
 /* An ARIA accessibility group that acts as a status update. */
 "application status" = "application status";
 
@@ -789,9 +789,6 @@
 
 /* accessibility role description of a description list */
 "description list" = "description list";
-
-/* An ARIA accessibility group that acts as an dialog. */
-"dialog" = "web dialog";
 
 /* An ARIA accessibility group that acts as a document. */
 "document" = "document";
@@ -1110,4 +1107,13 @@
 
 /* accessibility label for video element controller */
 "video playback" = "video playback";
+
+/* An ARIA accessibility group that acts as an alert dialog. */
+"web alert dialog" = "web alert dialog";
+
+/* An ARIA accessibility group that acts as an application. */
+"web application" = "web application";
+
+/* An ARIA accessibility group that acts as an dialog. */
+"web dialog" = "web dialog";
 

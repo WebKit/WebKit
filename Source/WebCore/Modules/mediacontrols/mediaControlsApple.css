@@ -1136,3 +1136,9 @@ video::-webkit-media-controls-panel.picture-in-picture {
     opacity: 0;
     pointer-events: none;
 }
+
+video:-webkit-full-screen::-webkit-media-controls-panel .picture-in-picture-button {
+    margin-top: 7px;
+    margin-right: 24px;
+    margin-left: 0px;
+}
