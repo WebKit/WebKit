@@ -34,8 +34,6 @@ namespace WTF {
 template<typename T> class RefPtr;
 template<typename T> RefPtr<T> adoptRef(T*);
 
-enum HashTableDeletedValueType { HashTableDeletedValue };
-
 template<typename T> class RefPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
