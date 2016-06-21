@@ -569,6 +569,9 @@ void WebPageProxy::setNavigationClient(std::unique_ptr<API::NavigationClient> na
 
 void WebPageProxy::setLoaderClient(std::unique_ptr<API::LoaderClient> loaderClient)
 {
+    if (m_navigationClient && loaderClient)
+        m_navigationClient = nullptr;
+
     if (!loaderClient) {
         m_loaderClient = std::make_unique<API::LoaderClient>();
         return;
