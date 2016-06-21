@@ -1,3 +1,9 @@
+2016-06-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Correct which test is marked as flaky, copy/paste mistake.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-06-21  Miguel Gomez  <magomez@igalia.com>
 
         [GStreamer] video orientation support
