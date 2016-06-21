@@ -114,6 +114,28 @@ JSC::EncodedJSValue createKeyValueIterator(JSC::ExecState& state, IterationKind 
     return JSC::JSValue::encode(JSDOMIterator<JSWrapper>::create(globalObject.vm(), getDOMStructure<JSDOMIterator<JSWrapper>>(globalObject.vm(), globalObject), *wrapper, kind));
 }
 
+template<typename IteratorValue> typename std::enable_if<IteratorInspector<IteratorValue>::isMap, JSC::JSValue>::type
+toJS(JSC::ExecState& state, JSDOMGlobalObject* globalObject, IteratorValue& value, IterationKind kind)
+{
+    ASSERT(value);
+    if (kind != IterationKind::KeyValue)
+        return toJS(&state, globalObject, (kind == IterationKind::Key) ? value->key : value->value);
+
+    return jsPair(state, globalObject, value->key, value->value);
+}
+
+template<typename IteratorValue> typename std::enable_if<IteratorInspector<IteratorValue>::isSet, JSC::JSValue>::type
+toJS(JSC::ExecState& state, JSDOMGlobalObject* globalObject, IteratorValue& value, IterationKind kind)
+{
+    ASSERT(value);
+    JSC::JSValue result = toJS(&state, globalObject, *value);
+    if (kind != IterationKind::KeyValue)
+        return result;
+
+    // FIXME: first pair value should be the index of result.
+    return jsPair(state, globalObject, result, result);
+}
+
 template<typename JSWrapper>
 JSC::EncodedJSValue keyValueIteratorForEach(JSC::ExecState& state, const char* propertyName)
 {
