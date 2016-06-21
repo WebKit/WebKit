@@ -66,7 +66,7 @@ function handleUncaughtException(event) {
         url: parseURL(event.filename).lastPathComponent,
         lineNumber: event.lineno,
         columnNumber: event.colno,
-        stack: typeof event.error === "object" ? event.error.stack : null,
+        stack: typeof event.error === "object" && event.error !== null ? event.error.stack : null,
     });
 }
 

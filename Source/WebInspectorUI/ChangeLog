@@ -1,5 +1,16 @@
 2016-06-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: UncaughtExceptionReporter should handle null event.error
+        https://bugs.webkit.org/show_bug.cgi?id=158971
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        Since `typeof null === "object"` handle uncaught exceptions where the
+        Error object itself is null.
+
+2016-06-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Snapshot List should show the total size and the total live size
         https://bugs.webkit.org/show_bug.cgi?id=157904
         <rdar://problem/26372833>
