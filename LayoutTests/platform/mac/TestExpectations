@@ -1449,3 +1449,6 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 
 # rdar://problem/26884958
 [ Sierra+ ] fast/canvas/canvas-strokeRect-alpha-shadow.html [ Failure ]
+
+# rdar://problem/26924977
+[ Sierra+ ] fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
