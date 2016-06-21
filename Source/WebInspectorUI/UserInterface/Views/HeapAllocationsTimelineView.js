@@ -51,6 +51,12 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
                 sortable: true,
                 aligned: "right",
             },
+            liveSize: {
+                title: WebInspector.UIString("Live Size"),
+                width: "80px",
+                sortable: true,
+                aligned: "right",
+            },
         };
 
         let snapshotTooltip = WebInspector.UIString("Take snapshot");
@@ -233,6 +239,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
 
         this._contentViewContainer.closeAllContentViews();
 
+        WebInspector.ContentView.removeEventListener(null, null, this);
         WebInspector.HeapSnapshotWorkerProxy.singleton().removeEventListener("HeapSnapshot.CollectionEvent", this._heapSnapshotCollectionEvent, this);
     }
 
@@ -296,8 +303,6 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
             updateHeapSnapshotForEvent(record.heapSnapshot);
         if (this._heapSnapshotDiff)
             updateHeapSnapshotForEvent(this._heapSnapshotDiff);
-
-        // FIXME: <https://webkit.org/b/157904> Web Inspector: Snapshot List should show the total size and the total live size
     }
 
     _snapshotListPathComponentClicked(event)

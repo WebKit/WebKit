@@ -1,5 +1,54 @@
 2016-06-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Snapshot List should show the total size and the total live size
+        https://bugs.webkit.org/show_bug.cgi?id=157904
+        <rdar://problem/26372833>
+
+        Reviewed by Brian Burg.
+
+        Include the live size of a snapshot in the snapshot list.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New "Live Size" string.
+
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshot.js:
+        (HeapSnapshot):
+        (HeapSnapshot.updateCategoriesAndMetadata):
+        (HeapSnapshot.prototype.update):
+        (HeapSnapshot.prototype.serialize):
+        (HeapSnapshotDiff):
+        (HeapSnapshotDiff.prototype.update):
+        (HeapSnapshot.buildCategories): Deleted.
+        (HeapSnapshot.prototype.updateCategories): Deleted.
+        (HeapSnapshotDiff.prototype.updateCategories): Deleted.
+        * UserInterface/Proxies/HeapSnapshotDiffProxy.js:
+        (WebInspector.HeapSnapshotDiffProxy.prototype.updateForCollectionEvent):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.update):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.updateCategories): Deleted.
+        * UserInterface/Proxies/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotProxy):
+        (WebInspector.HeapSnapshotProxy.deserialize):
+        (WebInspector.HeapSnapshotProxy.prototype.get liveSize):
+        (WebInspector.HeapSnapshotProxy.prototype.updateForCollectionEvent):
+        (WebInspector.HeapSnapshotProxy.prototype.update):
+        (WebInspector.HeapSnapshotProxy.prototype.updateCategories): Deleted.
+        Rename "updateCategories" to "update" and update both categories
+        and metadata, like the liveSize.
+
+        * UserInterface/Views/HeapAllocationsTimelineDataGridNode.js:
+        (WebInspector.HeapAllocationsTimelineDataGridNode):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype._heapSnapshotCollectedNodes):
+        Update live size after collection.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView):
+        Include a live size column in the DataGrid.
+        (WebInspector.HeapAllocationsTimelineView.prototype.closed):
+        Cleanup listeners appropriately.
+
+2016-06-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: console.profile should use the new Sampling Profiler
         https://bugs.webkit.org/show_bug.cgi?id=153499
         <rdar://problem/24352431>

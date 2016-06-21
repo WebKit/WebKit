@@ -132,13 +132,16 @@ HeapSnapshot = class HeapSnapshot
 
         this._nodeOrdinalIsDead = new Uint8Array(this._nodeCount);
 
-        this._categories = HeapSnapshot.buildCategories(this);
+        let {liveSize, categories} = HeapSnapshot.updateCategoriesAndMetadata(this);
+        this._liveSize = liveSize;
+        this._categories = categories;
     }
 
     // Static
 
-    static buildCategories(snapshot, allowNodeIdentifierCallback)
+    static updateCategoriesAndMetadata(snapshot, allowNodeIdentifierCallback)
     {
+        let liveSize = 0;
         let categories = {};
 
         let nodes = snapshot._nodes;
@@ -171,9 +174,11 @@ HeapSnapshot = class HeapSnapshot
                 category.internalCount += 1;
             if (dead)
                 category.deadCount += 1;
+            else
+                liveSize += size;
         }
 
-        return categories;
+        return {liveSize, categories};
     }
 
     static allocationBucketCounts(snapshot, bucketSizes, allowNodeIdentifierCallback)
@@ -239,9 +244,9 @@ HeapSnapshot = class HeapSnapshot
         return HeapSnapshot.instancesWithClassName(this, className);
     }
 
-    updateCategories()
+    update()
     {
-        return HeapSnapshot.buildCategories(this);
+        return HeapSnapshot.updateCategoriesAndMetadata(this);
     }
 
     nodeWithIdentifier(nodeIdentifier)
@@ -390,13 +395,12 @@ HeapSnapshot = class HeapSnapshot
 
     serialize()
     {
-        // FIXME: <https://webkit.org/b/157904> Web Inspector: Snapshot List should show the total size and the total live size
-
         return {
             identifier: this._identifier,
             title: this._title,
             totalSize: this._totalSize,
             totalObjectCount: this._nodeCount - 1, // <root>.
+            liveSize: this._liveSize,
             categories: this._categories,
         };
     }
@@ -792,7 +796,8 @@ HeapSnapshotDiff = class HeapSnapshotDiff
             }
         }
 
-        this._categories = HeapSnapshot.buildCategories(this._snapshot2, (nodeIdentifier) => this._addedNodeIdentifiers.has(nodeIdentifier));
+        let {liveSize, categories} = HeapSnapshot.updateCategoriesAndMetadata(this._snapshot2, (nodeIdentifier) => this._addedNodeIdentifiers.has(nodeIdentifier));
+        this._categories = categories;
     }
 
     // Worker Methods
@@ -807,9 +812,9 @@ HeapSnapshotDiff = class HeapSnapshotDiff
         return HeapSnapshot.instancesWithClassName(this._snapshot2, className, (nodeIdentifier) => this._addedNodeIdentifiers.has(nodeIdentifier));
     }
 
-    updateCategories()
+    update()
     {
-        return HeapSnapshot.buildCategories(this._snapshot2, (nodeIdentifier) => this._addedNodeIdentifiers.has(nodeIdentifier));
+        return HeapSnapshot.updateCategoriesAndMetadata(this._snapshot2, (nodeIdentifier) => this._addedNodeIdentifiers.has(nodeIdentifier));
     }
 
     nodeWithIdentifier(nodeIdentifier) { return this._snapshot2.nodeWithIdentifier(nodeIdentifier); }

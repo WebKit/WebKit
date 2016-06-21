@@ -25,7 +25,7 @@
 
 WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Object
 {
-    constructor(snapshotObjectId, identifier, title, totalSize, totalObjectCount, categories)
+    constructor(snapshotObjectId, identifier, title, totalSize, totalObjectCount, liveSize, categories)
     {
         super();
 
@@ -35,6 +35,7 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
         this._title = title;
         this._totalSize = totalSize;
         this._totalObjectCount = totalObjectCount;
+        this._liveSize = liveSize;
         this._categories = Map.fromObject(categories);
     }
 
@@ -42,8 +43,8 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
 
     static deserialize(objectId, serializedSnapshot)
     {
-        let {identifier, title, totalSize, totalObjectCount, categories} = serializedSnapshot;
-        return new WebInspector.HeapSnapshotProxy(objectId, identifier, title, totalSize, totalObjectCount, categories);
+        let {identifier, title, totalSize, totalObjectCount, liveSize, categories} = serializedSnapshot;
+        return new WebInspector.HeapSnapshotProxy(objectId, identifier, title, totalSize, totalObjectCount, liveSize, categories);
     }
 
     // Public
@@ -53,6 +54,7 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
     get title() { return this._title; }
     get totalSize() { return this._totalSize; }
     get totalObjectCount() { return this._totalObjectCount; }
+    get liveSize() { return this._liveSize; }
     get categories() { return this._categories; }
 
     updateForCollectionEvent(event)
@@ -60,7 +62,7 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
         if (!event.data.affectedSnapshots.includes(this._identifier))
             return;
 
-        this.updateCategories(() => {
+        this.update(() => {
             this.dispatchEventToListeners(WebInspector.HeapSnapshotProxy.Event.CollectedNodes, event.data);
         });
     }
@@ -77,9 +79,10 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
         });
     }
 
-    updateCategories(callback)
+    update(callback)
     {
-        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "updateCategories", (categories) => {
+        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "update", ({liveSize, categories}) => {
+            this._liveSize = liveSize;
             this._categories = Map.fromObject(categories);
             callback();
         });
