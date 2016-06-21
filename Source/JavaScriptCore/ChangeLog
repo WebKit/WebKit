@@ -1,3 +1,19 @@
+2016-06-21  David Kilzer  <ddkilzer@apple.com>
+
+        Migrate testair & testb3 settings from Xcode project to ToolExecutable.xcconfig
+        <https://webkit.org/b/158989>
+
+        Reviewed by Andy Estes.
+
+        * Configurations/ToolExecutable.xcconfig:
+        (CODE_SIGN_ENTITLEMENTS_ios_testair): Add from Xcode project.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        (CODE_SIGN_ENTITLEMENTS_ios_testair): Move to
+        ToolExecutable.xcconfig.
+        (PRODUCT_NAME): Remove.  This variable is already set for both
+        testair and testb3 since those build configurations use
+        ToolExecutable.xcconfig as a base.
+
 2016-06-21  Saam Barati  <sbarati@apple.com>
 
         LLInt doesn't throw stack exception overflow from parent frame

@@ -9555,8 +9555,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS_ios_testair = entitlements.plist;
-				PRODUCT_NAME = testair;
 			};
 			name = Debug;
 		};
@@ -9564,8 +9562,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS_ios_testair = entitlements.plist;
-				PRODUCT_NAME = testair;
 			};
 			name = Release;
 		};
@@ -9573,8 +9569,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS_ios_testair = entitlements.plist;
-				PRODUCT_NAME = testair;
 			};
 			name = Profiling;
 		};
@@ -9582,8 +9576,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS_ios_testair = entitlements.plist;
-				PRODUCT_NAME = testair;
 			};
 			name = Production;
 		};
@@ -9619,7 +9611,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = testb3;
 			};
 			name = Debug;
 		};
@@ -9627,7 +9618,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = testb3;
 			};
 			name = Release;
 		};
@@ -9635,7 +9625,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = testb3;
 			};
 			name = Profiling;
 		};
@@ -9643,7 +9632,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = testb3;
 			};
 			name = Production;
 		};
