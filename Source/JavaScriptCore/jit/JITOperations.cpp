@@ -93,8 +93,10 @@ void JIT_OPERATION operationThrowStackOverflowError(ExecState* exec, CodeBlock* 
 
     VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
     CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
-    if (!callerFrame)
+    if (!callerFrame) {
         callerFrame = exec;
+        vmEntryFrame = vm->topVMEntryFrame;
+    }
 
     NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
     throwStackOverflowError(callerFrame);

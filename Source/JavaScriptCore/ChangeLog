@@ -1,3 +1,27 @@
+2016-06-21  Saam Barati  <sbarati@apple.com>
+
+        LLInt doesn't throw stack exception overflow from parent frame
+        https://bugs.webkit.org/show_bug.cgi?id=158962
+        <rdar://problem/26902188>
+
+        Reviewed by Filip Pizlo.
+
+        All JIT tiers will throw stack overflow exceptions from the parent frame.
+        The LLInt, on the other hand, did not use to. I've changed the LLInt to be
+        consistent with the JITs. The reason I found this bug is because we had a
+        test that would give different results depending on if the function was compiled
+        in the baseline or the LLInt. Since Filip recently landed the concurrent baseline
+        JIT patch, this otherwise deterministic test became dependent on it being compiled
+        in the LLInt or one of the JIT tiers. I've added a new test that is deterministic
+        because it runs the test with --useJIT=false.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * tests/stress/llint-stack-overflow-location.js: Added.
+        (stackTraceDescription):
+        (foo):
+        (catch):
+
 2016-06-21  David Kilzer  <ddkilzer@apple.com>
 
         CODE_SIGN_ENTITLEMENTS should be applied to iOS Simulator builds

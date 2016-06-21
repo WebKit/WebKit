@@ -466,7 +466,17 @@ LLINT_SLOW_PATH_DECL(replace)
 
 LLINT_SLOW_PATH_DECL(stack_check)
 {
-    LLINT_BEGIN();
+    VM& vm = exec->vm();
+    VMEntryFrame* vmEntryFrame = vm.topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
+    if (!callerFrame) {
+        callerFrame = exec;
+        vmEntryFrame = vm.topVMEntryFrame;
+    }
+    NativeCallFrameTracerWithRestore tracer(&vm, vmEntryFrame, callerFrame);
+
+    LLINT_SET_PC_FOR_STUBS();
+
 #if LLINT_SLOW_PATH_TRACING
     dataLogF("Checking stack height with exec = %p.\n", exec);
     dataLogF("CodeBlock = %p.\n", exec->codeBlock());
@@ -493,10 +503,9 @@ LLINT_SLOW_PATH_DECL(stack_check)
         LLINT_RETURN_TWO(pc, 0);
 #endif
 
-    vm.topCallFrame = exec;
     ErrorHandlingScope errorScope(vm);
-    vm.throwException(exec, createStackOverflowError(exec));
-    pc = returnToThrow(exec);
+    throwStackOverflowError(callerFrame);
+    pc = returnToThrow(callerFrame);
     LLINT_RETURN_TWO(pc, exec);
 }
 
