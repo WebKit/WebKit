@@ -211,7 +211,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
 
     m_mathOperator.stretchTo(style(), m_stretchHeightAboveBaseline, m_stretchDepthBelowBaseline);
 
-    updateStyle();
+    setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent());
 }
 
 void RenderMathMLOperator::stretchTo(LayoutUnit width)
@@ -227,7 +227,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit width)
 
     setOperatorProperties();
 
-    updateStyle();
+    setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent());
 }
 
 void RenderMathMLOperator::resetStretchSize()
@@ -258,6 +258,24 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_leadingSpace + m_mathOperator.maxPreferredWidth() + m_trailingSpace;
 
     setPreferredLogicalWidthsDirty(false);
+}
+
+void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
+{
+    ASSERT(needsLayout());
+
+    if (!relayoutChildren && simplifiedLayout())
+        return;
+
+    if (useMathOperator()) {
+        for (auto child = firstChildBox(); child; child = child->nextSiblingBox())
+            child->layoutIfNeeded();
+        setLogicalWidth(m_leadingSpace + m_mathOperator.width() + m_trailingSpace);
+        setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent());
+    } else
+        RenderMathMLToken::layoutBlock(relayoutChildren, pageLogicalHeight);
+
+    clearNeedsLayout();
 }
 
 void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
@@ -362,13 +380,6 @@ Optional<int> RenderMathMLOperator::firstLineBaseline() const
     if (useMathOperator())
         return Optional<int>(std::lround(static_cast<float>(m_mathOperator.ascent())));
     return RenderMathMLToken::firstLineBaseline();
-}
-
-void RenderMathMLOperator::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
-{
-    if (useMathOperator())
-        logicalHeight = m_mathOperator.ascent() + m_mathOperator.descent();
-    RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
 }
 
 void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset)
