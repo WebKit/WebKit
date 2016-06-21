@@ -45,6 +45,22 @@ static NSHTTPCookieStorage *cookieStorage(const NetworkStorageSession&);
 
 namespace WebCore {
 
+static NSArray *httpCookiesForURL(CFHTTPCookieStorageRef cookieStorage, NSURL *firstParty, NSURL *url)
+{
+    if (!cookieStorage) {
+        // FIXME: The fallback to NSHTTPCookieStorage should not be present when USE(CFNETWORK) is defined.
+        return [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:url];
+    }
+
+    bool secure = ![[url scheme] caseInsensitiveCompare:@"https"];
+    
+    auto cookies = adoptCF(_CFHTTPCookieStorageCopyCookiesForURLWithMainDocumentURL(cookieStorage, static_cast<CFURLRef>(url), static_cast<CFURLRef>(firstParty), secure));
+    NSArray *nsCookies = [NSHTTPCookie _cf2nsCookies:cookies.get()];
+
+    return nsCookies;
+}
+
+    
 static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
 {
     NSUInteger count = [unfilteredCookies count];
@@ -118,7 +134,7 @@ static NSArray *cookiesForURL(const NetworkStorageSession& session, const URL& f
     if (NSArray *cookies = cookiesInPartitionForURL(session, firstParty, url))
         return cookies;
 #endif
-    return wkHTTPCookiesForURL(session.cookieStorage().get(), firstParty, url);
+    return httpCookiesForURL(session.cookieStorage().get(), firstParty, url);
 }
 
 enum IncludeHTTPOnlyOrNot { DoNotIncludeHTTPOnly, IncludeHTTPOnly };
@@ -232,7 +248,7 @@ void deleteCookie(const NetworkStorageSession& session, const URL& url, const St
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = session.cookieStorage();
-    NSArray *cookies = wkHTTPCookiesForURL(cookieStorage.get(), 0, url);
+    NSArray *cookies = httpCookiesForURL(cookieStorage.get(), nil, url);
 
     NSString *cookieNameString = cookieName;
 

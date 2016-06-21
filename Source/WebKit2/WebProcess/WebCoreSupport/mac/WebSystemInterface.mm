@@ -83,7 +83,6 @@ void InitWebCoreSystemInterface(void)
         INIT(CopyRequestWithStorageSession);
         INIT(GetHTTPCookieAcceptPolicy);
         INIT(HTTPCookies);
-        INIT(HTTPCookiesForURL);
         INIT(SetHTTPCookiesForURL);
         INIT(DeleteAllHTTPCookies);
         INIT(DeleteHTTPCookie);
