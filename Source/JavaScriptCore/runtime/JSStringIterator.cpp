@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +27,7 @@
 #include "config.h"
 #include "JSStringIterator.h"
 
+#include "BuiltinNames.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "StructureInlines.h"
@@ -38,23 +40,23 @@ void JSStringIterator::finishCreation(VM& vm, JSGlobalObject*, JSString* iterate
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->iteratedStringPrivateName, iteratedString);
-    putDirect(vm, vm.propertyNames->stringIteratorNextIndexPrivateName, jsNumber(0));
+    putDirect(vm, vm.propertyNames->builtinNames().iteratedStringPrivateName(), iteratedString);
+    putDirect(vm, vm.propertyNames->builtinNames().stringIteratorNextIndexPrivateName(), jsNumber(0));
 }
 
 JSValue JSStringIterator::iteratedValue(ExecState* exec) const
 {
-    return getDirect(exec->vm(), exec->vm().propertyNames->iteratedStringPrivateName);
+    return getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().iteratedStringPrivateName());
 }
 
 JSStringIterator* JSStringIterator::clone(ExecState* exec)
 {
     VM& vm = exec->vm();
-    JSValue iteratedString = getDirect(vm, vm.propertyNames->iteratedStringPrivateName);
-    JSValue nextIndex = getDirect(vm, vm.propertyNames->stringIteratorNextIndexPrivateName);
+    JSValue iteratedString = getDirect(vm, vm.propertyNames->builtinNames().iteratedStringPrivateName());
+    JSValue nextIndex = getDirect(vm, vm.propertyNames->builtinNames().stringIteratorNextIndexPrivateName());
 
     auto clone = JSStringIterator::create(exec, exec->callee()->globalObject()->stringIteratorStructure(), asString(iteratedString));
-    clone->putDirect(vm, vm.propertyNames->stringIteratorNextIndexPrivateName, nextIndex);
+    clone->putDirect(vm, vm.propertyNames->builtinNames().stringIteratorNextIndexPrivateName(), nextIndex);
     return clone;
 }
 

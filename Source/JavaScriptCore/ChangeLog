@@ -1,3 +1,130 @@
+2016-06-21  Keith Miller  <keith_miller@apple.com>
+
+        It should be easy to add a private global helper function for builtins
+        https://bugs.webkit.org/show_bug.cgi?id=158893
+
+        Reviewed by Mark Lam.
+
+        This patch does two things. First it moves all the builtin names
+        out of CommonIdentifiers and into BuiltinNames. This means that
+        adding a new function to the Builtins does not require rebuilding
+        all of JavaScriptCore. This patch also adds a new decorator to our
+        builtins @privateGlobal that will automatically put the function
+        on the global object. The name of the property will be the same as
+        the private name of the function.
+
+        This patch, also, removes the JSArrayIterator.h/.cpp files
+        as they no longer appear to be used in any real way. Finally,
+        the builtins tests have been rebaselined. It appears this has
+        not been done for a while so the expected files contain other
+        changes.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/builtins/builtins_generate_combined_header.py:
+        (BuiltinsCombinedHeaderGenerator.generate_output):
+        (generate_section_for_code_name_macro):
+        (generate_section_for_global_private_code_name_macro):
+        * Scripts/builtins/builtins_model.py:
+        (BuiltinFunction.__init__):
+        (BuiltinFunction.fromString):
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-result:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+        * builtins/ArrayIteratorPrototype.js:
+        * builtins/ArrayPrototype.js:
+        * builtins/BuiltinNames.h:
+        * builtins/GeneratorPrototype.js:
+        * builtins/GlobalObject.js:
+        * builtins/PromiseOperations.js:
+        * builtins/RegExpPrototype.js:
+        * builtins/StringPrototype.js:
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        (JSC::BytecodeGenerator::expectedFunctionForIdentifier):
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        (JSC::BytecodeGenerator::emitLoadNewTargetFromArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitPutNewTargetToArrowFunctionContextScope):
+        (JSC::BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope):
+        (JSC::BytecodeGenerator::emitGeneratorStateChange):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::emitHomeObjectForCallee):
+        (JSC::emitPutHomeObject):
+        (JSC::FunctionNode::emitBytecode):
+        * dfg/DFGOperations.cpp:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        (Inspector::JSInjectedScriptHost::getInternalProperties): Deleted.
+        * parser/Lexer.cpp:
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::createGeneratorParameters):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        * runtime/ArrayIteratorPrototype.cpp:
+        * runtime/ArrayIteratorPrototype.h:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers): Deleted.
+        * runtime/CommonIdentifiers.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/IntlDateTimeFormat.cpp:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        (JSC::IntlDateTimeFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        (JSC::IntlNumberFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlObjectInlines.h:
+        (JSC::constructIntlInstanceWithWorkaroundForLegacyIntlConstructor):
+        * runtime/JSArrayIterator.cpp: Removed.
+        (JSC::JSArrayIterator::finishCreation): Deleted.
+        (JSC::JSArrayIterator::kind): Deleted.
+        (JSC::JSArrayIterator::iteratedValue): Deleted.
+        * runtime/JSArrayIterator.h: Removed.
+        (JSC::JSArrayIterator::createStructure): Deleted.
+        (JSC::JSArrayIterator::create): Deleted.
+        (JSC::JSArrayIterator::JSArrayIterator): Deleted.
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSInternalPromise.cpp:
+        * runtime/JSInternalPromiseDeferred.cpp:
+        (JSC::JSInternalPromiseDeferred::create):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::finishCreation):
+        (JSC::JSPromise::result):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::create):
+        * runtime/JSStringIterator.cpp:
+        (JSC::JSStringIterator::finishCreation):
+        (JSC::JSStringIterator::iteratedValue):
+        (JSC::JSStringIterator::clone):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        * runtime/ReflectObject.cpp:
+        (JSC::ReflectObject::finishCreation):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        * runtime/TypedArrayInlines.h:
+
 2016-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use bytecode intrinsic to expose Module's loading status to builtin JS

@@ -21,7 +21,6 @@
 #ifndef CommonIdentifiers_h
 #define CommonIdentifiers_h
 
-#include "BytecodeIntrinsicRegistry.h"
 #include "Identifier.h"
 #include <wtf/Noncopyable.h>
 
@@ -326,132 +325,6 @@
     macro(toStringTag) \
     macro(unscopables)
 
-#define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
-    JSC_COMMON_BYTECODE_INTRINSIC_FUNCTIONS_EACH_NAME(macro) \
-    JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
-    macro(iteratedObject) \
-    macro(arrayIteratorNextIndex) \
-    macro(arrayIterationKind) \
-    macro(arrayIteratorNext) \
-    macro(arrayIteratorIsDone) \
-    macro(arrayIteratorKind) \
-    macro(charCodeAt) \
-    macro(iteratedString) \
-    macro(stringIteratorNextIndex) \
-    macro(promise) \
-    macro(fulfillmentHandler) \
-    macro(rejectionHandler) \
-    macro(index) \
-    macro(deferred) \
-    macro(countdownHolder) \
-    macro(Object) \
-    macro(ownEnumerablePropertyKeys) \
-    macro(Number) \
-    macro(Array) \
-    macro(String) \
-    macro(RegExp) \
-    macro(Map) \
-    macro(Promise) \
-    macro(Reflect) \
-    macro(InternalPromise) \
-    macro(abs) \
-    macro(floor) \
-    macro(trunc) \
-    macro(isFinite) \
-    macro(isNaN) \
-    macro(create) \
-    macro(defineProperty) \
-    macro(getPrototypeOf) \
-    macro(getOwnPropertyDescriptor) \
-    macro(getOwnPropertyNames) \
-    macro(ownKeys) \
-    macro(Error) \
-    macro(RangeError) \
-    macro(TypeError) \
-    macro(typedArrayLength) \
-    macro(typedArraySort) \
-    macro(typedArrayGetOriginalConstructor) \
-    macro(BuiltinLog) \
-    macro(homeObject) \
-    macro(getTemplateObject) \
-    macro(enqueueJob) \
-    macro(handler) \
-    macro(promiseState) \
-    macro(promiseFulfillReactions) \
-    macro(promiseRejectReactions) \
-    macro(promiseResult) \
-    macro(push) \
-    macro(repeatCharacter) \
-    macro(capabilities) \
-    macro(starDefault) \
-    macro(InspectorInstrumentation) \
-    macro(get) \
-    macro(set) \
-    macro(shift) \
-    macro(allocateTypedArray) \
-    macro(Int8Array) \
-    macro(Int16Array) \
-    macro(Int32Array) \
-    macro(Uint8Array) \
-    macro(Uint8ClampedArray) \
-    macro(Uint16Array) \
-    macro(Uint32Array) \
-    macro(Float32Array) \
-    macro(Float64Array) \
-    macro(exec) \
-    macro(generator) \
-    macro(generatorNext) \
-    macro(generatorState) \
-    macro(generatorFrame) \
-    macro(generatorValue) \
-    macro(generatorThis) \
-    macro(generatorResumeMode) \
-    macro(Collator) \
-    macro(DateTimeFormat) \
-    macro(NumberFormat) \
-    macro(intlSubstituteValue) \
-    macro(thisTimeValue) \
-    macro(thisNumberValue) \
-    macro(newTargetLocal) \
-    macro(derivedConstructor) \
-    macro(isBoundFunction) \
-    macro(hasInstanceBoundFunction) \
-    macro(instanceOf) \
-    macro(isArray) \
-    macro(isArrayConstructor) \
-    macro(isConstructor) \
-    macro(isRegExpObject) \
-    macro(concatMemcpy) \
-    macro(appendMemcpy) \
-    macro(predictFinalLengthFromArgumunts) \
-    macro(print) \
-    macro(isSet) \
-    macro(isMap) \
-    macro(regExpCreate) \
-    macro(SetIterator) \
-    macro(setIteratorNext) \
-    macro(replaceUsingRegExp) \
-    macro(replaceUsingStringSearch) \
-    macro(MapIterator) \
-    macro(mapIteratorNext) \
-    macro(regExpBuiltinExec) \
-    macro(regExpMatchFast) \
-    macro(regExpProtoFlagsGetter) \
-    macro(regExpProtoGlobalGetter) \
-    macro(regExpProtoIgnoreCaseGetter) \
-    macro(regExpProtoMultilineGetter) \
-    macro(regExpProtoSourceGetter) \
-    macro(regExpProtoStickyGetter) \
-    macro(regExpProtoUnicodeGetter) \
-    macro(regExpPrototypeSymbolReplace) \
-    macro(regExpReplaceFast) \
-    macro(regExpSearchFast) \
-    macro(regExpSplitFast) \
-    macro(regExpTestFast) \
-    macro(stringIncludesInternal) \
-    macro(stringSplitFast) \
-    macro(stringSubstrInternal) \
-
 namespace JSC {
     
     class BuiltinNames;
@@ -483,10 +356,6 @@ namespace JSC {
 #define JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) const Identifier name;
         JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL
-
-#define JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL(name) const Identifier name##PrivateName;
-        JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL)
-#undef JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL
 
 #define JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL(name) const Identifier name##Symbol;
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL)

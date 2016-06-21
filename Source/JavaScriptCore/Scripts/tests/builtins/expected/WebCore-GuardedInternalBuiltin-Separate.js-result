@@ -194,6 +194,7 @@ inline void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor& visi
 
 #include "WebCoreJSClientData.h"
 #include <runtime/Executable.h>
+#include <runtime/Intrinsic.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
@@ -202,12 +203,12 @@ inline void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor& visi
 namespace WebCore {
 
 const JSC::ConstructAbility s_guardedInternalBuiltinIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_guardedInternalBuiltinIsReadableStreamLockedCodeLength = 71;
+const int s_guardedInternalBuiltinIsReadableStreamLockedCodeLength = 70;
+static const JSC::Intrinsic s_guardedInternalBuiltinIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_guardedInternalBuiltinIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
-    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;
@@ -217,7 +218,7 @@ const char* s_guardedInternalBuiltinIsReadableStreamLockedCode =
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \
-    return clientData->builtinFunctions().guardedInternalBuiltinBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().guardedInternalBuiltinBuiltins().codeName##Source()); \
+    return clientData->builtinFunctions().guardedInternalBuiltinBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().guardedInternalBuiltinBuiltins().codeName##Source(), Nullopt, s_##codeName##Intrinsic); \
 }
 WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR

@@ -30,6 +30,12 @@
 
 namespace JSC {
 
+enum ArrayIterationKind : uint32_t {
+    ArrayIterateKey,
+    ArrayIterateValue,
+    ArrayIterateKeyValue
+};
+
 class ArrayIteratorPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;

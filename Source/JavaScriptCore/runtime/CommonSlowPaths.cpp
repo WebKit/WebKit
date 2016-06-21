@@ -25,7 +25,9 @@
 
 #include "config.h"
 #include "CommonSlowPaths.h"
+
 #include "ArrayConstructor.h"
+#include "BuiltinNames.h"
 #include "CallFrame.h"
 #include "ClonedArguments.h"
 #include "CodeProfiling.h"
@@ -717,7 +719,7 @@ SLOW_PATH_DECL(slow_path_save)
     BEGIN();
     JSValue generator = OP(1).jsValue();
     GeneratorFrame* frame = nullptr;
-    JSValue value = generator.get(exec, exec->propertyNames().generatorFramePrivateName);
+    JSValue value = generator.get(exec, exec->propertyNames().builtinNames().generatorFramePrivateName());
     if (!value.isNull())
         frame = jsCast<GeneratorFrame*>(value);
     else {
@@ -725,7 +727,7 @@ SLOW_PATH_DECL(slow_path_save)
         // https://bugs.webkit.org/show_bug.cgi?id=151545
         frame = GeneratorFrame::create(exec->vm(),  exec->codeBlock()->numCalleeLocals());
         PutPropertySlot slot(generator, true, PutPropertySlot::PutById);
-        asObject(generator)->methodTable(exec->vm())->put(asObject(generator), exec, exec->propertyNames().generatorFramePrivateName, frame, slot);
+        asObject(generator)->methodTable(exec->vm())->put(asObject(generator), exec, exec->propertyNames().builtinNames().generatorFramePrivateName(), frame, slot);
     }
     unsigned liveCalleeLocalsIndex = pc[2].u.unsignedValue;
     frame->save(exec, exec->codeBlock()->liveCalleeLocalsAtYield(liveCalleeLocalsIndex));
@@ -736,7 +738,7 @@ SLOW_PATH_DECL(slow_path_resume)
 {
     BEGIN();
     JSValue generator = OP(1).jsValue();
-    GeneratorFrame* frame = jsCast<GeneratorFrame*>(generator.get(exec, exec->propertyNames().generatorFramePrivateName));
+    GeneratorFrame* frame = jsCast<GeneratorFrame*>(generator.get(exec, exec->propertyNames().builtinNames().generatorFramePrivateName()));
     unsigned liveCalleeLocalsIndex = pc[2].u.unsignedValue;
     frame->resume(exec, exec->codeBlock()->liveCalleeLocalsAtYield(liveCalleeLocalsIndex));
     END();

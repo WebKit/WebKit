@@ -208,6 +208,7 @@ inline void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
 
 #include "WebCoreJSClientData.h"
 #include <runtime/Executable.h>
+#include <runtime/Intrinsic.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
@@ -216,23 +217,23 @@ inline void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
 namespace WebCore {
 
 const JSC::ConstructAbility s_xmlCasingTestXMLCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_xmlCasingTestXMLCasingTestCodeLength = 71;
+const int s_xmlCasingTestXMLCasingTestCodeLength = 70;
+static const JSC::Intrinsic s_xmlCasingTestXMLCasingTestCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_xmlCasingTestXMLCasingTestCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
-    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;
 
 const JSC::ConstructAbility s_xmlCasingTestCssCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_xmlCasingTestCssCasingTestCodeLength = 402;
+const int s_xmlCasingTestCssCasingTestCodeLength = 401;
+static const JSC::Intrinsic s_xmlCasingTestCssCasingTestCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_xmlCasingTestCssCasingTestCode =
     "(function (stream, reason)\n" \
     "{\n" \
     "    \"use strict\";\n" \
-    "\n" \
     "    if (stream.@state === @readableStreamClosed)\n" \
     "        return Promise.resolve();\n" \
     "    if (stream.@state === @readableStreamErrored)\n" \
@@ -244,12 +245,12 @@ const char* s_xmlCasingTestCssCasingTestCode =
 ;
 
 const JSC::ConstructAbility s_xmlCasingTestUrlCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_xmlCasingTestUrlCasingTestCodeLength = 338;
+const int s_xmlCasingTestUrlCasingTestCodeLength = 337;
+static const JSC::Intrinsic s_xmlCasingTestUrlCasingTestCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_xmlCasingTestUrlCasingTestCode =
     "(function (object, key, args)\n" \
     "{\n" \
     "    \"use strict\";\n" \
-    "\n" \
     "    try {\n" \
     "        var method = object[key];\n" \
     "        if (typeof method === \"undefined\")\n" \
@@ -268,7 +269,7 @@ const char* s_xmlCasingTestUrlCasingTestCode =
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \
-    return clientData->builtinFunctions().xmlCasingTestBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().xmlCasingTestBuiltins().codeName##Source()); \
+    return clientData->builtinFunctions().xmlCasingTestBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().xmlCasingTestBuiltins().codeName##Source(), Nullopt, s_##codeName##Intrinsic); \
 }
 WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR

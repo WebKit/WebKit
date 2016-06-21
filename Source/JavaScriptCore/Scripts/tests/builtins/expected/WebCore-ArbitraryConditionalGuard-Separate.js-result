@@ -162,6 +162,7 @@ inline void ArbitraryConditionalGuardBuiltinsWrapper::exportNames()
 
 #include "WebCoreJSClientData.h"
 #include <runtime/Executable.h>
+#include <runtime/Intrinsic.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
@@ -170,12 +171,12 @@ inline void ArbitraryConditionalGuardBuiltinsWrapper::exportNames()
 namespace WebCore {
 
 const JSC::ConstructAbility s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_arbitraryConditionalGuardIsReadableStreamLockedCodeLength = 71;
+const int s_arbitraryConditionalGuardIsReadableStreamLockedCodeLength = 70;
+static const JSC::Intrinsic s_arbitraryConditionalGuardIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_arbitraryConditionalGuardIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
-    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;
@@ -185,7 +186,7 @@ const char* s_arbitraryConditionalGuardIsReadableStreamLockedCode =
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \
-    return clientData->builtinFunctions().arbitraryConditionalGuardBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().arbitraryConditionalGuardBuiltins().codeName##Source()); \
+    return clientData->builtinFunctions().arbitraryConditionalGuardBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().arbitraryConditionalGuardBuiltins().codeName##Source(), Nullopt, s_##codeName##Intrinsic); \
 }
 WEBCORE_FOREACH_ARBITRARYCONDITIONALGUARD_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR

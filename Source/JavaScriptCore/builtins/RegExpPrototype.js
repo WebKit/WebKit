@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+@globalPrivate
 function advanceStringIndex(string, index, unicode)
 {
     // This function implements AdvanceStringIndex described in ES6 21.2.5.2.3.
@@ -45,6 +46,7 @@ function advanceStringIndex(string, index, unicode)
     return index + 2;
 }
 
+@globalPrivate
 function regExpExec(regexp, str)
 {
     "use strict";
@@ -60,6 +62,7 @@ function regExpExec(regexp, str)
     return builtinExec.@call(regexp, str);
 }
 
+@globalPrivate
 function hasObservableSideEffectsForRegExpMatch(regexp) {
     // This is accessed by the RegExpExec internal function.
     let regexpExec = @tryGetById(regexp, "exec");
@@ -326,6 +329,7 @@ function search(strArg)
     return result.index;
 }
 
+@globalPrivate
 function hasObservableSideEffectsForRegExpSplit(regexp) {
     // This is accessed by the RegExpExec internal function.
     let regexpExec = @tryGetById(regexp, "exec");
