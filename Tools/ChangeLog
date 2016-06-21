@@ -1,3 +1,14 @@
+2016-06-21  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        Add system tracing points for requestAnimationFrame() workflow
+        https://bugs.webkit.org/show_bug.cgi?id=158723
+
+        Reviewed by Simon Fraser.
+
+        Add new plist entries to be used by kdebug_trace() viewing tools.
+
+        * Tracing/SystemTracePoints.plist:
+
 2016-06-21  Sam Weinig  <sam@webkit.org>
 
         WKWebView with no WKNavigationDelegate does not follow universal links

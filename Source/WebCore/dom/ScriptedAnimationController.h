@@ -58,6 +58,7 @@ public:
     }
     ~ScriptedAnimationController();
     void clearDocumentPointer() { m_document = nullptr; }
+    bool requestAnimationFrameEnabled() const;
 
     typedef int CallbackId;
 

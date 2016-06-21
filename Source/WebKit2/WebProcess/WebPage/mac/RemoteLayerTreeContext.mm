@@ -35,6 +35,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
+#import <wtf/SystemTracing.h>
 #import <wtf/TemporaryChange.h>
 
 using namespace WebCore;
@@ -106,6 +107,8 @@ std::unique_ptr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(WebCo
 
 void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transaction, PlatformCALayer& rootLayer)
 {
+    TraceScope tracingScope(RAFBuildTransactionStart, RAFBuildTransactionEnd);
+
     PlatformCALayerRemote& rootLayerRemote = downcast<PlatformCALayerRemote>(rootLayer);
     transaction.setRootLayerID(rootLayerRemote.layerID());
 
