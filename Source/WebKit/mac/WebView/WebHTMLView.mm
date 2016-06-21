@@ -3146,7 +3146,7 @@ WEBCORE_COMMAND(toggleUnderline)
     COMMAND_PROLOGUE
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->selection().revealSelection(SelectionRevealMode::Reveal, ScrollAlignment::alignCenterAlways);
+        coreFrame->selection().revealSelection(ScrollAlignment::alignCenterAlways);
 }
 
 #if !PLATFORM(IOS)
@@ -5345,7 +5345,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     COMMAND_PROLOGUE
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->selection().revealSelection(SelectionRevealMode::Reveal, ScrollAlignment::alignCenterAlways);
+        coreFrame->selection().revealSelection(ScrollAlignment::alignCenterAlways);
 }
 
 #if !PLATFORM(IOS)

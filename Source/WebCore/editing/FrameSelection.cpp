@@ -127,6 +127,7 @@ FrameSelection::FrameSelection(Frame* frame)
 #if PLATFORM(IOS)
     , m_updateAppearanceEnabled(false)
     , m_caretBlinks(true)
+    , m_scrollingSuppressCount(0)
 #endif
 {
     if (shouldAlwaysUseDirectionalSelection(m_frame))
@@ -387,7 +388,7 @@ void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& int
         else
             alignment = m_alwaysAlignCursorOnScrollWhenRevealingSelection ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignToEdgeIfNeeded;
 
-        revealSelection(SelectionRevealMode::Reveal, alignment, RevealExtent);
+        revealSelection(alignment, RevealExtent);
     }
 
     notifyAccessibilityForSelectionChange(intent);
@@ -2289,11 +2290,8 @@ HTMLFormElement* FrameSelection::currentForm() const
     return scanForForm(start);
 }
 
-void FrameSelection::revealSelection(SelectionRevealMode revealMode, const ScrollAlignment& alignment, RevealExtentOption revealExtentOption)
+void FrameSelection::revealSelection(const ScrollAlignment& alignment, RevealExtentOption revealExtentOption)
 {
-    if (revealMode == SelectionRevealMode::DoNotReveal)
-        return;
-
     LayoutRect rect;
 
     switch (m_selection.selectionType()) {
@@ -2314,7 +2312,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
             if (!m_scrollingSuppressCount) {
                 layer->setAdjustForIOSCaretWhenScrolling(true);
-                layer->scrollRectToVisible(revealMode, rect, alignment, alignment);
+                layer->scrollRectToVisible(rect, alignment, alignment);
                 layer->setAdjustForIOSCaretWhenScrolling(false);
                 updateAppearance();
                 if (m_frame->page())
@@ -2325,7 +2323,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         // FIXME: This code only handles scrolling the startContainer's layer, but
         // the selection rect could intersect more than just that.
         // See <rdar://problem/4799899>.
-        if (start.deprecatedNode()->renderer()->scrollRectToVisible(revealMode, rect, alignment, alignment))
+        if (start.deprecatedNode()->renderer()->scrollRectToVisible(rect, alignment, alignment))
             updateAppearance();
 #endif
     }

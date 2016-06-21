@@ -205,7 +205,7 @@ public:
 
     void availableContentSizeChanged(AvailableSizeChangeReason) override;
 
-    void scrollRectToVisible(SelectionRevealMode, const LayoutRect&, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
+    void scrollRectToVisible(const LayoutRect&, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
 
     LayoutRect getRectToExpose(const LayoutRect& visibleRect, const LayoutRect& visibleRectRelativeToDocument, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
 

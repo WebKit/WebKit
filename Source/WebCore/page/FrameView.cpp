@@ -3050,11 +3050,11 @@ void FrameView::scrollToAnchor()
     // Scroll nested layers and frames to reveal the anchor.
     // Align to the top and to the closest side (this matches other browsers).
     if (anchorNode->renderer()->style().isHorizontalWritingMode())
-        anchorNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, rect, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways);
+        anchorNode->renderer()->scrollRectToVisible(rect, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways);
     else if (anchorNode->renderer()->style().isFlippedBlocksWritingMode())
-        anchorNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, rect, ScrollAlignment::alignRightAlways, ScrollAlignment::alignToEdgeIfNeeded);
+        anchorNode->renderer()->scrollRectToVisible(rect, ScrollAlignment::alignRightAlways, ScrollAlignment::alignToEdgeIfNeeded);
     else
-        anchorNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, rect, ScrollAlignment::alignLeftAlways, ScrollAlignment::alignToEdgeIfNeeded);
+        anchorNode->renderer()->scrollRectToVisible(rect, ScrollAlignment::alignLeftAlways, ScrollAlignment::alignToEdgeIfNeeded);
 
     if (AXObjectCache* cache = frame().document()->existingAXObjectCache())
         cache->handleScrolledToAnchor(anchorNode.get());

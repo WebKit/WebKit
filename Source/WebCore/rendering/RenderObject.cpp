@@ -358,16 +358,13 @@ RenderLayer* RenderObject::enclosingLayer() const
     return nullptr;
 }
 
-bool RenderObject::scrollRectToVisible(SelectionRevealMode revealMode, const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
+bool RenderObject::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
-    if (revealMode == SelectionRevealMode::DoNotReveal)
-        return false;
-
     RenderLayer* enclosingLayer = this->enclosingLayer();
     if (!enclosingLayer)
         return false;
 
-    enclosingLayer->scrollRectToVisible(revealMode, rect, alignX, alignY);
+    enclosingLayer->scrollRectToVisible(rect, alignX, alignY);
     return true;
 }
 

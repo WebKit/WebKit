@@ -1,3 +1,18 @@
+2016-06-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r202243.
+        https://bugs.webkit.org/show_bug.cgi?id=158972
+
+        Broke Windows build and iOS tests (Requested by ap on
+        #webkit).
+
+        Reverted changeset:
+
+        "Focus event dispatched in iframe causes parent document to
+        scroll incorrectly"
+        https://bugs.webkit.org/show_bug.cgi?id=158629
+        http://trac.webkit.org/changeset/202243
+
 2016-06-20  Zalan Bujtas  <zalan@apple.com>
 
         Set the end position on the placeholder BidiRun properly.

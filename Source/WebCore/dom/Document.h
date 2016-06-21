@@ -282,6 +282,11 @@ enum class SelectionRestorationMode {
     SetDefault,
 };
 
+enum class SelectionRevealMode {
+    Reveal,
+    DoNotReveal
+};
+
 enum class HttpEquivPolicy {
     Enabled,
     DisabledBySettings,
