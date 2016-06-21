@@ -60,6 +60,7 @@ public:
 
     bool hasManagedTexture() const { return m_hasManagedTexture; }
     void setUnmanagedBufferDataHolder(std::unique_ptr<UnmanagedBufferDataHolder> holder) { m_unmanagedBufferDataHolder = WTFMove(holder); }
+    void setExtraFlags(TextureMapperGL::Flags flags) { m_extraFlags = flags; }
 
 private:
 

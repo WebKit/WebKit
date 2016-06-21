@@ -51,14 +51,16 @@ bool TextureMapperPlatformLayerBuffer::canReuseWithoutReset(const IntSize& size,
 
 void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
+    TextureMapperGL& texmapGL = static_cast<TextureMapperGL&>(textureMapper);
+
     if (m_hasManagedTexture) {
         ASSERT(m_texture);
-        textureMapper.drawTexture(*m_texture, targetRect, modelViewMatrix, opacity);
+        BitmapTextureGL* textureGL = static_cast<BitmapTextureGL*>(m_texture.get());
+        texmapGL.drawTexture(textureGL->id(), m_extraFlags, textureGL->size(), targetRect, modelViewMatrix, opacity);
         return;
     }
 
     ASSERT(m_textureID);
-    TextureMapperGL& texmapGL = static_cast<TextureMapperGL&>(textureMapper);
     texmapGL.drawTexture(m_textureID, m_extraFlags, m_size, targetRect, modelViewMatrix, opacity);
 }
 

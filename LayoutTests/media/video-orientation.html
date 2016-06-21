@@ -1,0 +1,99 @@
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>&lt;video&gt; rotation test</title>
+        <script src=video-test.js></script>
+
+        <script>
+
+            var movieInfo =
+            {
+                current:0,
+                movies:
+                [
+                    {
+                        url:"content/no-rotation.mp4",
+                        description:"video with no rotation tag set, size 352x288",
+                        width:352,
+                        height:288
+                    },
+                    {
+                        url:"content/rotation-90.mp4",
+                        description:"video with rotation-90 tag set, size 352x288",
+                        width:288,
+                        height:352
+                    },
+                    {
+                        url:"content/rotation-180.mp4",
+                        description:"video with rotation-180 tag set, size 352x288",
+                        width:352,
+                        height:288
+                    },
+                    {
+                        url:"content/rotation-270.mp4",
+                        description:"video with rotation-270 tag set, size 352x288",
+                        width:288,
+                        height:352
+                    },
+                ]
+            };
+
+            function testSize()
+            {
+                var movie = movieInfo.movies[movieInfo.current];
+
+                testExpected("video.videoWidth", movie.width);
+                testExpected("video.videoHeight", movie.height);
+
+                movieInfo.current++;
+                openNextMovie();
+            }
+
+            function openNextMovie()
+            {
+                consoleWrite("");
+                if (movieInfo.current >= movieInfo.movies.length)
+                {
+                    endTest();
+                    return;
+                }
+
+                var url = movieInfo.movies[movieInfo.current].url;
+                video.src = url;
+                var desc = "<b>Loading</b> <em>\""+ url + "\"</em>" +
+                            ". Movie " + movieInfo.movies[movieInfo.current].description + ".</em>";
+                consoleWrite(desc);
+                if (movieInfo.current > 0)
+                    video.load();
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                waitForEvent("error");
+                waitForEvent("loadstart");
+                waitForEvent("waiting");
+                waitForEvent("ratechange");
+                waitForEvent("durationchange");
+                waitForEvent("pause");
+                waitForEvent("play");
+                waitForEvent("playing");
+
+                waitForEvent('loadedmetadata', testSize);
+
+                consoleWrite("<b>Test size before movie is open:</b>");
+                testExpected("video.videoWidth", 0, "==");
+                testExpected("video.videoHeight", 0, "==");
+
+                openNextMovie();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+
+        <video></video>
+
+    </body>
+</html>

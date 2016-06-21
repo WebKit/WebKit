@@ -560,6 +560,18 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& pr
     }
 
     TransformationMatrix patternTransform = this->patternTransform();
+    if (flags & ShouldRotateTexture90) {
+        patternTransform.rotate(-90);
+        patternTransform.translate(-1, 0);
+    }
+    if (flags & ShouldRotateTexture180) {
+        patternTransform.rotate(180);
+        patternTransform.translate(-1, -1);
+    }
+    if (flags & ShouldRotateTexture270) {
+        patternTransform.rotate(-270);
+        patternTransform.translate(0, -1);
+    }
     if (flags & ShouldFlipTexture)
         patternTransform.flipY();
     if (flags & ShouldUseARBTextureRect)

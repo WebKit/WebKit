@@ -47,7 +47,10 @@ public:
         ShouldBlend = 0x01,
         ShouldFlipTexture = 0x02,
         ShouldUseARBTextureRect = 0x04,
-        ShouldAntialias = 0x08
+        ShouldAntialias = 0x08,
+        ShouldRotateTexture90 = 0x10,
+        ShouldRotateTexture180 = 0x20,
+        ShouldRotateTexture270 = 0x40
     };
 
     typedef int Flags;

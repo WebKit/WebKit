@@ -34,6 +34,9 @@
 #include <wtf/Condition.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
+#if USE(TEXTURE_MAPPER_GL)
+#include "TextureMapperGL.h"
+#endif
 
 typedef struct _GstBaseSink GstBaseSink;
 typedef struct _GstMessage GstMessage;
@@ -57,6 +60,13 @@ class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface
 {
 
 public:
+    enum VideoSourceRotation {
+        NoVideoSourceRotation,
+        VideoSourceRotation90,
+        VideoSourceRotation180,
+        VideoSourceRotation270
+    };
+
     virtual ~MediaPlayerPrivateGStreamerBase();
 
     FloatSize naturalSize() const override;
@@ -116,6 +126,8 @@ public:
 #if USE(GSTREAMER_GL)
     NativeImagePtr nativeImageForCurrentTime() override;
 #endif
+
+    void setVideoSourceRotation(VideoSourceRotation);
 
 protected:
     MediaPlayerPrivateGStreamerBase(MediaPlayer*);
@@ -193,6 +205,11 @@ protected:
     RefPtr<GraphicsContext3D> m_context3D;
     Condition m_drawCondition;
     Lock m_drawMutex;
+#endif
+
+    VideoSourceRotation m_videoSourceRotation;
+#if USE(TEXTURE_MAPPER_GL)
+    TextureMapperGL::Flags m_textureMapperRotationFlag;
 #endif
 };
 }
