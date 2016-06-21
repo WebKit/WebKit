@@ -408,7 +408,6 @@ webkit.org/b/137883 transitions/transition-timing-function.html [ Pass Failure ]
 imported/w3c/web-platform-tests/common [ Skip ]
 imported/w3c/web-platform-tests/fonts [ Skip ]
 imported/w3c/web-platform-tests/images [ Skip ]
-imported/w3c/web-platform-tests/tools [ Skip ]
 
 # W3C domparsing test suite
 # Tests marked as pass or fail until wpt server proves to be stable enough
