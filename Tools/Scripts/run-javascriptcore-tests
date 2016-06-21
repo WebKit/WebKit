@@ -59,6 +59,7 @@ my $runTestAPI = isAppleMacWebKit() || isAppleWinWebKit() || isWinCairo();
 
 my $runJSCStress = 1;
 my $runJITStressTests = 1;
+my $runMozillaTests = 1;
 my $runQuickMode = 0;
 my $envVars = "";
 my $gmallocPath = undef;
@@ -77,6 +78,7 @@ my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
 my $testapiDefault = $runTestAPI ? "will run" : "will not run";
 my $jscStressDefault = $runJSCStress ? "will run" : " will not run";
 my $jitStressTestsDefault = $runJITStressTests ? "will run" : " will not run";
+my $mozillaTestsDefault = $runMozillaTests ? "will run" : " will not run";
 my $quickModeDefault = $runQuickMode ? "some" : "all";
 my $failFastDefault = $failFast ? "fail fast" : "don't fail fast";
 my $filter;
@@ -89,6 +91,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]testapi                Run (or don't run) testapi (default: $testapiDefault)
   --[no-]jsc-stress             Run (or don't run) the JSC stress tests (default: $jscStressDefault)
   --[no-]jit-stress-tests       Run (or don't run) the JIT stress tests (default: $jitStressTestsDefault)
+  --[no-]mozilla-tests          Run (or don't run) the Mozilla tests (default: $mozillaTestsDefault)
   --[no-]quick                  Run some (or all) of the regular testing modes (default: $quickModeDefault)
                                 If the runner only runs some it will run the default and no-cjit-validate modes.
                                 Note, this will not change the behavior of tests that specify their own modes.
@@ -119,6 +122,7 @@ GetOptions(
     'testapi!' => \$runTestAPI,
     'jsc-stress!' => \$runJSCStress,
     'jit-stress-tests!' => \$runJITStressTests,
+    'mozilla-tests!' => \$runMozillaTests,
     'quick!' => \$runQuickMode,
     'fail-fast!' => \$failFast,
     'json-output=s' => \$jsonFileName,
@@ -240,7 +244,6 @@ sub runJSCStressTests
             "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",
             "PerformanceTests/SunSpider/shadow-chicken.yaml",
             "PerformanceTests/SunSpider/tests/v8-v6",
-            "Source/JavaScriptCore/tests/mozilla/mozilla-tests.yaml",
             "Source/JavaScriptCore/tests/stress",
             "LayoutTests/js/regress/script-tests",
             "PerformanceTests/SunSpider/profiler-test.yaml",
@@ -249,10 +252,11 @@ sub runJSCStressTests
             "Source/JavaScriptCore/tests/controlFlowProfiler.yaml",
             "Source/JavaScriptCore/tests/es6.yaml",
             "Source/JavaScriptCore/tests/modules.yaml");
-    } else {
-        @testList = ("Source/JavaScriptCore/tests/mozilla/mozilla-tests.yaml");
     }
 
+    if ($runMozillaTests) {
+        push(@testList, "Source/JavaScriptCore/tests/mozilla/mozilla-tests.yaml");
+    }
 
     # Set LANG environment variable so the stress tests will work with newer ruby (<rdar://problem/15010705>)
     $ENV{LANG}="en_US.UTF-8";
