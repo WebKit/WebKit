@@ -1,3 +1,11 @@
+2016-06-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Test expectation update for
+        https://bugs.webkit.org/show_bug.cgi?id=158320
+        REGRESSION (r201476?): LayoutTest tiled-drawing/scrolling/latched-div-with-scroll-snap.html is flaky
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-06-20  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: RTCIceCandidate init dictionary don't handle explicit null or undefined values correctly
