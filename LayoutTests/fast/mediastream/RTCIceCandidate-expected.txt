@@ -24,8 +24,28 @@ PASS new RTCIceCandidate({sdpMid:"bar", sdpMLineIndex:6}); threw exception TypeE
 PASS new RTCIceCandidate({sdpMid:"bar"}); threw exception TypeError: Type error.
 PASS new RTCIceCandidate({sdpMLineIndex:6}); threw exception TypeError: Type error.
 
-One of the 'sdpMid' or 'sdpMLineIndex' members must be present.
+One of the 'sdpMid' or 'sdpMLineIndex' members must be present (and not null or undefined).
 PASS new RTCIceCandidate({candidate:"foo"}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: null}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: undefined}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex: null}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex: undefined}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: null}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: undefined, sdpMLineIndex: undefined}); threw exception TypeError: Type error.
+
+Test that sdpMid or sdpMLineIndex explicitly set to null or undefined, results in a null value.
+PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: 1}); did not throw exception.
+PASS candidate.sdpMid is null
+PASS candidate.sdpMLineIndex is 1
+PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid: undefined, sdpMLineIndex: 1}); did not throw exception.
+PASS candidate.sdpMid is null
+PASS candidate.sdpMLineIndex is 1
+PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid: "foo", sdpMLineIndex: null}); did not throw exception.
+PASS candidate.sdpMid is 'foo'
+PASS candidate.sdpMLineIndex is null
+PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid: "foo", sdpMLineIndex: undefined}); did not throw exception.
+PASS candidate.sdpMid is 'foo'
+PASS candidate.sdpMLineIndex is null
 
 When one of the 'sdpMid' or 'sdpMLineIndex' members is set, the other must be null.
 PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid:"bar"}); did not throw exception.

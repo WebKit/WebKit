@@ -34,8 +34,32 @@
             shouldThrow('new RTCIceCandidate({sdpMLineIndex:6});');
             debug("");
 
-            debug("One of the 'sdpMid' or 'sdpMLineIndex' members must be present.");
+            debug("One of the 'sdpMid' or 'sdpMLineIndex' members must be present (and not null or undefined).");
             shouldThrow('new RTCIceCandidate({candidate:"foo"});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid: null});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid: undefined});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMLineIndex: null});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMLineIndex: undefined});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: null});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid: undefined, sdpMLineIndex: undefined});');
+            debug("");
+
+            debug("Test that sdpMid or sdpMLineIndex explicitly set to null or undefined, results in a null value.");
+            shouldNotThrow('candidate = new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: 1});');
+            shouldBeNull("candidate.sdpMid");
+            shouldBe("candidate.sdpMLineIndex", "1");
+
+            shouldNotThrow('candidate = new RTCIceCandidate({candidate:"foo", sdpMid: undefined, sdpMLineIndex: 1});');
+            shouldBeNull("candidate.sdpMid");
+            shouldBe("candidate.sdpMLineIndex", "1");
+
+            shouldNotThrow('candidate = new RTCIceCandidate({candidate:"foo", sdpMid: "foo", sdpMLineIndex: null});');
+            shouldBe("candidate.sdpMid", "'foo'");
+            shouldBeNull("candidate.sdpMLineIndex");
+
+            shouldNotThrow('candidate = new RTCIceCandidate({candidate:"foo", sdpMid: "foo", sdpMLineIndex: undefined});');
+            shouldBe("candidate.sdpMid", "'foo'");
+            shouldBeNull("candidate.sdpMLineIndex");
             debug("");
 
             debug("When one of the 'sdpMid' or 'sdpMLineIndex' members is set, the other must be null.");

@@ -50,12 +50,12 @@ RefPtr<RTCIceCandidate> RTCIceCandidate::create(const Dictionary& dictionary, Ex
     }
 
     String sdpMid;
-    dictionary.get("sdpMid", sdpMid);
+    dictionary.getWithUndefinedOrNullCheck("sdpMid", sdpMid);
 
     Optional<unsigned short> sdpMLineIndex;
     String sdpMLineIndexString;
 
-    if (dictionary.get("sdpMLineIndex", sdpMLineIndexString)) {
+    if (dictionary.getWithUndefinedOrNullCheck("sdpMLineIndex", sdpMLineIndexString)) {
         bool intConversionOk;
         unsigned result = sdpMLineIndexString.toUIntStrict(&intConversionOk);
         if (!intConversionOk || result > USHRT_MAX) {

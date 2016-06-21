@@ -1,3 +1,16 @@
+2016-06-20  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: RTCIceCandidate init dictionary don't handle explicit null or undefined values correctly
+        https://bugs.webkit.org/show_bug.cgi?id=158873
+
+        Reviewed by Alejandro G. Castro.
+
+        Updated test to verify that explicit null and undefined values, passed to the
+        RTCIceCandidate init dictionary, are handled correctly.
+
+        * fast/mediastream/RTCIceCandidate-expected.txt:
+        * fast/mediastream/RTCIceCandidate.html:
+
 2016-06-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r202253): Broke inspector/unit-tests/heap-snapshot-collection-event.html
