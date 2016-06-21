@@ -67,8 +67,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSBuiltinConstructor<JSTestJSBuiltinConstructor> JSTestJSBuiltinConstructorConstructor;
@@ -95,28 +93,6 @@ template<> const ClassInfo JSTestJSBuiltinConstructorConstructor::s_info = { "Te
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestJSBuiltinConstructorPrototypeTableIndex[18] = {
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 0, 17 },
-    { 1, 16 },
-    { -1, -1 },
-    { -1, -1 },
-    { 4, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 3, -1 },
-    { 5, -1 },
-};
-
-
 static const HashTableValue JSTestJSBuiltinConstructorPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestJSBuiltinConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestJSBuiltinConstructorConstructor) } },
@@ -127,13 +103,12 @@ static const HashTableValue JSTestJSBuiltinConstructorPrototypeTableValues[] =
     { "testCustomFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction), (intptr_t) (0) } },
 };
 
-static const HashTable JSTestJSBuiltinConstructorPrototypeTable = { 6, 15, true, JSTestJSBuiltinConstructorPrototypeTableValues, JSTestJSBuiltinConstructorPrototypeTableIndex };
-const ClassInfo JSTestJSBuiltinConstructorPrototype::s_info = { "TestJSBuiltinConstructorPrototype", &Base::s_info, &JSTestJSBuiltinConstructorPrototypeTable, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorPrototype) };
+const ClassInfo JSTestJSBuiltinConstructorPrototype::s_info = { "TestJSBuiltinConstructorPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorPrototype) };
 
 void JSTestJSBuiltinConstructorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSTestJSBuiltinConstructorPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestJSBuiltinConstructor::s_info = { "TestJSBuiltinConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructor) };

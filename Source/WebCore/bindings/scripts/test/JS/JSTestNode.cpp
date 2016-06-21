@@ -72,8 +72,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructor<JSTestNode> JSTestNodeConstructor;
@@ -101,28 +99,6 @@ template<> const ClassInfo JSTestNodeConstructor::s_info = { "TestNode", &Base::
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestNodePrototypeTableIndex[18] = {
-    { 4, -1 },
-    { -1, -1 },
-    { 3, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 5, -1 },
-    { -1, -1 },
-    { 0, 16 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 1, 17 },
-    { 2, -1 },
-};
-
-
 static const HashTableValue JSTestNodePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNodeConstructor) } },
@@ -133,13 +109,12 @@ static const HashTableValue JSTestNodePrototypeTableValues[] =
     { "forEach", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionForEach), (intptr_t) (1) } },
 };
 
-static const HashTable JSTestNodePrototypeTable = { 6, 15, true, JSTestNodePrototypeTableValues, JSTestNodePrototypeTableIndex };
-const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, &JSTestNodePrototypeTable, CREATE_METHOD_TABLE(JSTestNodePrototype) };
+const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
 
 void JSTestNodePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSTestNodePrototypeTableValues, *this);
     putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral("[Symbol.Iterator]"), jsTestNodePrototypeFunctionSymbolIterator), ReadOnly | DontEnum);
 }
 

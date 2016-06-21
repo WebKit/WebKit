@@ -59,8 +59,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSBuiltinConstructor<JSTestClassWithJSBuiltinConstructor> JSTestClassWithJSBuiltinConstructorConstructor;
@@ -87,24 +85,17 @@ template<> const ClassInfo JSTestClassWithJSBuiltinConstructorConstructor::s_inf
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestClassWithJSBuiltinConstructorPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
 static const HashTableValue JSTestClassWithJSBuiltinConstructorPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestClassWithJSBuiltinConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestClassWithJSBuiltinConstructorConstructor) } },
 };
 
-static const HashTable JSTestClassWithJSBuiltinConstructorPrototypeTable = { 1, 1, true, JSTestClassWithJSBuiltinConstructorPrototypeTableValues, JSTestClassWithJSBuiltinConstructorPrototypeTableIndex };
-const ClassInfo JSTestClassWithJSBuiltinConstructorPrototype::s_info = { "TestClassWithJSBuiltinConstructorPrototype", &Base::s_info, &JSTestClassWithJSBuiltinConstructorPrototypeTable, CREATE_METHOD_TABLE(JSTestClassWithJSBuiltinConstructorPrototype) };
+const ClassInfo JSTestClassWithJSBuiltinConstructorPrototype::s_info = { "TestClassWithJSBuiltinConstructorPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestClassWithJSBuiltinConstructorPrototype) };
 
 void JSTestClassWithJSBuiltinConstructorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSTestClassWithJSBuiltinConstructorPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestClassWithJSBuiltinConstructor::s_info = { "TestClassWithJSBuiltinConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestClassWithJSBuiltinConstructor) };

@@ -61,8 +61,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSTestException> JSTestExceptionConstructor;
@@ -98,24 +96,17 @@ template<> const ClassInfo JSTestExceptionConstructor::s_info = { "TestException
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestExceptionPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
 static const HashTableValue JSTestExceptionPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestExceptionConstructor) } },
 };
 
-static const HashTable JSTestExceptionPrototypeTable = { 1, 1, true, JSTestExceptionPrototypeTableValues, JSTestExceptionPrototypeTableIndex };
-const ClassInfo JSTestExceptionPrototype::s_info = { "TestExceptionPrototype", &Base::s_info, &JSTestExceptionPrototypeTable, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
+const ClassInfo JSTestExceptionPrototype::s_info = { "TestExceptionPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
 
 void JSTestExceptionPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSTestExceptionPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestException::s_info = { "TestException", &Base::s_info, &JSTestExceptionTable, CREATE_METHOD_TABLE(JSTestException) };

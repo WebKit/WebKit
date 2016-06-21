@@ -147,8 +147,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructor<JSTestInterface> JSTestInterfaceConstructor;
@@ -274,77 +272,6 @@ template<> const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterface
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestInterfacePrototypeTableIndex[67] = {
-    { -1, -1 },
-    { 3, 64 },
-    { 13, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 7, 66 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 20, -1 },
-    { -1, -1 },
-    { 6, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 5, -1 },
-    { -1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { 17, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 14, -1 },
-    { 1, -1 },
-    { 8, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 16, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 10, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 18, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 15, -1 },
-    { 9, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-    { 19, -1 },
-    { -1, -1 },
-    { 4, 65 },
-    { 11, -1 },
-    { 12, -1 },
-};
-
-
 static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceConstructor) } },
@@ -450,13 +377,12 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #endif
 };
 
-static const HashTable JSTestInterfacePrototypeTable = { 21, 63, true, JSTestInterfacePrototypeTableValues, JSTestInterfacePrototypeTableIndex };
-const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, &JSTestInterfacePrototypeTable, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
+const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
 
 void JSTestInterfacePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSTestInterfacePrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestInterface) };

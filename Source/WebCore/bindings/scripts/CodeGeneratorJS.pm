@@ -2263,18 +2263,24 @@ sub GenerateImplementation
         $hashSize++;
     }
 
+    my $justGenerateValueArray = !IsDOMGlobalObject($interface);
+
     $object->GenerateHashTable($hashName, $hashSize,
                                \@hashKeys, \@hashSpecials,
                                \@hashValue1, \@hashValue2,
-                               \%conditionals, 0);
+                               \%conditionals, $justGenerateValueArray);
 
-    push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+    if ($justGenerateValueArray) {
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+    } else {
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+    }
 
     if (PrototypeHasStaticPropertyTable($interface) && !IsDOMGlobalObject($interface)) {
         push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(vm);\n");
-        push(@implContent, "    convertToDictionary(vm);\n");
+        push(@implContent, "    reifyStaticProperties(vm, ${className}PrototypeTableValues, *this);\n");
 
         my @runtimeEnabledProperties = @runtimeEnabledFunctions;
         push(@runtimeEnabledProperties, @runtimeEnabledAttributes);
@@ -4826,8 +4832,9 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "    }\n");
 
     if (PrototypeHasStaticPropertyTable($interface)) {
-        $structureFlags{"JSC::HasStaticPropertyTable"} = 1;
-        if (!IsDOMGlobalObject($interface)) {
+        if (IsDOMGlobalObject($interface)) {
+            $structureFlags{"JSC::HasStaticPropertyTable"} = 1;
+        } else {
             push(@$outputArray, "\n");
             push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
         }

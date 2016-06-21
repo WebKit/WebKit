@@ -67,8 +67,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructor<JSTestEventConstructor> JSTestEventConstructorConstructor;
@@ -135,19 +133,6 @@ template<> const ClassInfo JSTestEventConstructorConstructor::s_info = { "TestEv
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestEventConstructorPrototypeTableIndex[9] = {
-    { 3, -1 },
-    { 0, 8 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-};
-
-
 static const HashTableValue JSTestEventConstructorPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestEventConstructorConstructor) } },
@@ -160,13 +145,12 @@ static const HashTableValue JSTestEventConstructorPrototypeTableValues[] =
 #endif
 };
 
-static const HashTable JSTestEventConstructorPrototypeTable = { 4, 7, true, JSTestEventConstructorPrototypeTableValues, JSTestEventConstructorPrototypeTableIndex };
-const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &Base::s_info, &JSTestEventConstructorPrototypeTable, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
+const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
 
 void JSTestEventConstructorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSTestEventConstructorPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventConstructor) };

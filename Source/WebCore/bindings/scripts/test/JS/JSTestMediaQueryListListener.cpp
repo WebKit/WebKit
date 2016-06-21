@@ -65,8 +65,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSTestMediaQueryListListener> JSTestMediaQueryListListenerConstructor;
@@ -88,27 +86,18 @@ template<> const ClassInfo JSTestMediaQueryListListenerConstructor::s_info = { "
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestMediaQueryListListenerPrototypeTableIndex[4] = {
-    { 1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
-
 static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMediaQueryListListenerConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestMediaQueryListListenerConstructor) } },
     { "method", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t) (1) } },
 };
 
-static const HashTable JSTestMediaQueryListListenerPrototypeTable = { 2, 3, true, JSTestMediaQueryListListenerPrototypeTableValues, JSTestMediaQueryListListenerPrototypeTableIndex };
-const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, &JSTestMediaQueryListListenerPrototypeTable, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
+const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
 
 void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSTestMediaQueryListListenerPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };

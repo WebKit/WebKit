@@ -67,8 +67,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSTestActiveDOMObject> JSTestActiveDOMObjectConstructor;
@@ -104,19 +102,6 @@ template<> const ClassInfo JSTestActiveDOMObjectConstructor::s_info = { "TestAct
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestActiveDOMObjectPrototypeTableIndex[9] = {
-    { -1, -1 },
-    { 0, 8 },
-    { -1, -1 },
-    { -1, -1 },
-    { 1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-};
-
-
 static const HashTableValue JSTestActiveDOMObjectPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestActiveDOMObjectConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestActiveDOMObjectConstructor) } },
@@ -124,13 +109,12 @@ static const HashTableValue JSTestActiveDOMObjectPrototypeTableValues[] =
     { "postMessage", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestActiveDOMObjectPrototypeFunctionPostMessage), (intptr_t) (1) } },
 };
 
-static const HashTable JSTestActiveDOMObjectPrototypeTable = { 3, 7, true, JSTestActiveDOMObjectPrototypeTableValues, JSTestActiveDOMObjectPrototypeTableIndex };
-const ClassInfo JSTestActiveDOMObjectPrototype::s_info = { "TestActiveDOMObjectPrototype", &Base::s_info, &JSTestActiveDOMObjectPrototypeTable, CREATE_METHOD_TABLE(JSTestActiveDOMObjectPrototype) };
+const ClassInfo JSTestActiveDOMObjectPrototype::s_info = { "TestActiveDOMObjectPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectPrototype) };
 
 void JSTestActiveDOMObjectPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSTestActiveDOMObjectPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestActiveDOMObject::s_info = { "TestActiveDOMObject", &Base::s_info, &JSTestActiveDOMObjectTable, CREATE_METHOD_TABLE(JSTestActiveDOMObject) };

@@ -65,8 +65,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSTestCustomNamedGetter> JSTestCustomNamedGetterConstructor;
@@ -88,27 +86,18 @@ template<> const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestC
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestCustomNamedGetterPrototypeTableIndex[4] = {
-    { -1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { 1, -1 },
-};
-
-
 static const HashTableValue JSTestCustomNamedGetterPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCustomNamedGetterConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCustomNamedGetterConstructor) } },
     { "anotherFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCustomNamedGetterPrototypeFunctionAnotherFunction), (intptr_t) (1) } },
 };
 
-static const HashTable JSTestCustomNamedGetterPrototypeTable = { 2, 3, true, JSTestCustomNamedGetterPrototypeTableValues, JSTestCustomNamedGetterPrototypeTableIndex };
-const ClassInfo JSTestCustomNamedGetterPrototype::s_info = { "TestCustomNamedGetterPrototype", &Base::s_info, &JSTestCustomNamedGetterPrototypeTable, CREATE_METHOD_TABLE(JSTestCustomNamedGetterPrototype) };
+const ClassInfo JSTestCustomNamedGetterPrototype::s_info = { "TestCustomNamedGetterPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterPrototype) };
 
 void JSTestCustomNamedGetterPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSTestCustomNamedGetterPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestCustomNamedGetter::s_info = { "TestCustomNamedGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetter) };

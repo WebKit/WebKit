@@ -61,8 +61,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSattribute> JSattributeConstructor;
@@ -98,24 +96,17 @@ template<> const ClassInfo JSattributeConstructor::s_info = { "attribute", &Base
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSattributePrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
 static const HashTableValue JSattributePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSattributeConstructor) } },
 };
 
-static const HashTable JSattributePrototypeTable = { 1, 1, true, JSattributePrototypeTableValues, JSattributePrototypeTableIndex };
-const ClassInfo JSattributePrototype::s_info = { "attributePrototype", &Base::s_info, &JSattributePrototypeTable, CREATE_METHOD_TABLE(JSattributePrototype) };
+const ClassInfo JSattributePrototype::s_info = { "attributePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattributePrototype) };
 
 void JSattributePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSattributePrototypeTableValues, *this);
 }
 
 const ClassInfo JSattribute::s_info = { "attribute", &Base::s_info, &JSattributeTable, CREATE_METHOD_TABLE(JSattribute) };

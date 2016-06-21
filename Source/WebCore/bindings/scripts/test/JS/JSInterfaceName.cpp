@@ -58,8 +58,6 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSInterfaceName> JSInterfaceNameConstructor;
@@ -81,24 +79,17 @@ template<> const ClassInfo JSInterfaceNameConstructor::s_info = { "InterfaceName
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSInterfaceNamePrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
 static const HashTableValue JSInterfaceNamePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsInterfaceNameConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSInterfaceNameConstructor) } },
 };
 
-static const HashTable JSInterfaceNamePrototypeTable = { 1, 1, true, JSInterfaceNamePrototypeTableValues, JSInterfaceNamePrototypeTableIndex };
-const ClassInfo JSInterfaceNamePrototype::s_info = { "InterfaceNamePrototype", &Base::s_info, &JSInterfaceNamePrototypeTable, CREATE_METHOD_TABLE(JSInterfaceNamePrototype) };
+const ClassInfo JSInterfaceNamePrototype::s_info = { "InterfaceNamePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSInterfaceNamePrototype) };
 
 void JSInterfaceNamePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    convertToDictionary(vm);
+    reifyStaticProperties(vm, JSInterfaceNamePrototypeTableValues, *this);
 }
 
 const ClassInfo JSInterfaceName::s_info = { "InterfaceName", &Base::s_info, 0, CREATE_METHOD_TABLE(JSInterfaceName) };
