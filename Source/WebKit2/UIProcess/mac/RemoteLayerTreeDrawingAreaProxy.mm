@@ -81,7 +81,6 @@ using namespace WebCore;
 {
     ASSERT(isUIThread());
     _drawingAreaProxy->didRefreshDisplay(sender.timestamp);
-    _displayLink.paused = YES;
 }
 
 - (void)invalidate
@@ -93,6 +92,11 @@ using namespace WebCore;
 - (void)schedule
 {
     _displayLink.paused = NO;
+}
+
+- (void)pause
+{
+    _displayLink.paused = YES;
 }
 
 @end
@@ -219,11 +223,12 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     m_webPageProxy.layerTreeCommitComplete();
 
-    m_haveSentDidUpdateSinceLastCommit = false;
-
 #if PLATFORM(IOS)
+    if (std::exchange(m_didUpdateMessageState, NotSent) == MissedCommit)
+        didRefreshDisplay(monotonicallyIncreasingTime());
     [m_displayLinkHandler schedule];
 #else
+    m_didUpdateMessageState = NotSent;
     didRefreshDisplay(monotonicallyIncreasingTime());
 #endif
 
@@ -391,10 +396,15 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(double)
     if (!m_webPageProxy.isValid())
         return;
 
-    if (m_haveSentDidUpdateSinceLastCommit)
+    if (m_didUpdateMessageState != NotSent) {
+        m_didUpdateMessageState = MissedCommit;
+#if PLATFORM(IOS)
+        [m_displayLinkHandler pause];
+#endif
         return;
+    }
     
-    m_haveSentDidUpdateSinceLastCommit = true;
+    m_didUpdateMessageState = Sent;
 
     // Waiting for CA to commit is insufficient, because the render server can still be
     // using our backing store. We can improve this by waiting for the render server to commit

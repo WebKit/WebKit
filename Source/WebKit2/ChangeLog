@@ -1,3 +1,29 @@
+2016-06-21  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        [iOS][WK2] When an animation frame is missed, the UI process should immediately notify the Web process once a frame is committed
+        https://bugs.webkit.org/show_bug.cgi?id=158933
+
+        Reviewed by Simon Fraser.
+
+        When a frame is committed, the UI process schedules a CADisplayLink and waits until
+        the next didRefreshDisplay event is fired. This causes more delay in the scenario
+        where there are frames are dropped. didRefreshDisplay() should be called immediately
+        when commitLayerTree message is received and the last frame was dropped.
+
+        The fix is to have the CADisplayLink active all the times. It should be paused
+        only when we detect at least one frame is dropped. In this case we should not
+        send a message to the UI process since it has not sent the last requested LayerTree.
+        Also we should not waste the CPU time by scheduling a new CADisplayLink since we
+        have not processed the last event. We should resume CADisplayLink timer once a
+        commitLayerTree message is received.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (-[WKOneShotDisplayLinkHandler pause]):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay):
+        (-[WKOneShotDisplayLinkHandler displayLinkFired:]):
+
 2016-06-21  Amir Alavi  <aalavi@apple.com>
 
         Upstream WKHTTPCookiesForURL from WebKitSystemInterface to OpenSource
