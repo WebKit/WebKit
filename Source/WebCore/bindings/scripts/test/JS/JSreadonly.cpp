@@ -58,6 +58,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSreadonly> JSreadonlyConstructor;
@@ -79,17 +81,24 @@ template<> const ClassInfo JSreadonlyConstructor::s_info = { "readonly", &Base::
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSreadonlyPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
 static const HashTableValue JSreadonlyPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsreadonlyConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSreadonlyConstructor) } },
 };
 
-const ClassInfo JSreadonlyPrototype::s_info = { "readonlyPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonlyPrototype) };
+static const HashTable JSreadonlyPrototypeTable = { 1, 1, true, JSreadonlyPrototypeTableValues, JSreadonlyPrototypeTableIndex };
+const ClassInfo JSreadonlyPrototype::s_info = { "readonlyPrototype", &Base::s_info, &JSreadonlyPrototypeTable, CREATE_METHOD_TABLE(JSreadonlyPrototype) };
 
 void JSreadonlyPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSreadonlyPrototypeTableValues, *this);
+    convertToDictionary(vm);
 }
 
 const ClassInfo JSreadonly::s_info = { "readonly", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonly) };

@@ -58,6 +58,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructor<JSTestCustomConstructorWithNoInterfaceObject> JSTestCustomConstructorWithNoInterfaceObjectConstructor;
@@ -84,17 +86,24 @@ template<> const ClassInfo JSTestCustomConstructorWithNoInterfaceObjectConstruct
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestCustomConstructorWithNoInterfaceObjectPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
 static const HashTableValue JSTestCustomConstructorWithNoInterfaceObjectPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCustomConstructorWithNoInterfaceObjectConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCustomConstructorWithNoInterfaceObjectConstructor) } },
 };
 
-const ClassInfo JSTestCustomConstructorWithNoInterfaceObjectPrototype::s_info = { "TestCustomConstructorWithNoInterfaceObjectPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomConstructorWithNoInterfaceObjectPrototype) };
+static const HashTable JSTestCustomConstructorWithNoInterfaceObjectPrototypeTable = { 1, 1, true, JSTestCustomConstructorWithNoInterfaceObjectPrototypeTableValues, JSTestCustomConstructorWithNoInterfaceObjectPrototypeTableIndex };
+const ClassInfo JSTestCustomConstructorWithNoInterfaceObjectPrototype::s_info = { "TestCustomConstructorWithNoInterfaceObjectPrototype", &Base::s_info, &JSTestCustomConstructorWithNoInterfaceObjectPrototypeTable, CREATE_METHOD_TABLE(JSTestCustomConstructorWithNoInterfaceObjectPrototype) };
 
 void JSTestCustomConstructorWithNoInterfaceObjectPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestCustomConstructorWithNoInterfaceObjectPrototypeTableValues, *this);
+    convertToDictionary(vm);
 }
 
 const ClassInfo JSTestCustomConstructorWithNoInterfaceObject::s_info = { "TestCustomConstructorWithNoInterfaceObject", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomConstructorWithNoInterfaceObject) };

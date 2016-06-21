@@ -58,6 +58,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSTestGenerateIsReachable> JSTestGenerateIsReachableConstructor;
@@ -79,17 +81,24 @@ template<> const ClassInfo JSTestGenerateIsReachableConstructor::s_info = { "Tes
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestGenerateIsReachablePrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
 static const HashTableValue JSTestGenerateIsReachablePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateIsReachableConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGenerateIsReachableConstructor) } },
 };
 
-const ClassInfo JSTestGenerateIsReachablePrototype::s_info = { "TestGenerateIsReachablePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestGenerateIsReachablePrototype) };
+static const HashTable JSTestGenerateIsReachablePrototypeTable = { 1, 1, true, JSTestGenerateIsReachablePrototypeTableValues, JSTestGenerateIsReachablePrototypeTableIndex };
+const ClassInfo JSTestGenerateIsReachablePrototype::s_info = { "TestGenerateIsReachablePrototype", &Base::s_info, &JSTestGenerateIsReachablePrototypeTable, CREATE_METHOD_TABLE(JSTestGenerateIsReachablePrototype) };
 
 void JSTestGenerateIsReachablePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestGenerateIsReachablePrototypeTableValues, *this);
+    convertToDictionary(vm);
 }
 
 const ClassInfo JSTestGenerateIsReachable::s_info = { "TestGenerateIsReachable", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestGenerateIsReachable) };

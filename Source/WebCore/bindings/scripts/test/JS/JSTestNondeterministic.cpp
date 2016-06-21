@@ -81,6 +81,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSTestNondeterministic> JSTestNondeterministicConstructor;
@@ -102,6 +104,27 @@ template<> const ClassInfo JSTestNondeterministicConstructor::s_info = { "TestNo
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestNondeterministicPrototypeTableIndex[17] = {
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { -1, -1 },
+    { 6, -1 },
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 1, 16 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { 5, -1 },
+    { 4, -1 },
+};
+
+
 static const HashTableValue JSTestNondeterministicPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNondeterministicConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNondeterministicConstructor) } },
@@ -113,12 +136,13 @@ static const HashTableValue JSTestNondeterministicPrototypeTableValues[] =
     { "nondeterministicZeroArgFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNondeterministicPrototypeFunctionNondeterministicZeroArgFunction), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestNondeterministicPrototype::s_info = { "TestNondeterministicPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNondeterministicPrototype) };
+static const HashTable JSTestNondeterministicPrototypeTable = { 7, 15, true, JSTestNondeterministicPrototypeTableValues, JSTestNondeterministicPrototypeTableIndex };
+const ClassInfo JSTestNondeterministicPrototype::s_info = { "TestNondeterministicPrototype", &Base::s_info, &JSTestNondeterministicPrototypeTable, CREATE_METHOD_TABLE(JSTestNondeterministicPrototype) };
 
 void JSTestNondeterministicPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNondeterministicPrototypeTableValues, *this);
+    convertToDictionary(vm);
 }
 
 const ClassInfo JSTestNondeterministic::s_info = { "TestNondeterministic", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNondeterministic) };

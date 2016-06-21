@@ -67,6 +67,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSTestOverrideBuiltins> JSTestOverrideBuiltinsConstructor;
@@ -88,18 +90,27 @@ template<> const ClassInfo JSTestOverrideBuiltinsConstructor::s_info = { "TestOv
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestOverrideBuiltinsPrototypeTableIndex[4] = {
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 1, -1 },
+};
+
+
 static const HashTableValue JSTestOverrideBuiltinsPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverrideBuiltinsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestOverrideBuiltinsConstructor) } },
     { "namedItem", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestOverrideBuiltinsPrototypeFunctionNamedItem), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestOverrideBuiltinsPrototype::s_info = { "TestOverrideBuiltinsPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestOverrideBuiltinsPrototype) };
+static const HashTable JSTestOverrideBuiltinsPrototypeTable = { 2, 3, true, JSTestOverrideBuiltinsPrototypeTableValues, JSTestOverrideBuiltinsPrototypeTableIndex };
+const ClassInfo JSTestOverrideBuiltinsPrototype::s_info = { "TestOverrideBuiltinsPrototype", &Base::s_info, &JSTestOverrideBuiltinsPrototypeTable, CREATE_METHOD_TABLE(JSTestOverrideBuiltinsPrototype) };
 
 void JSTestOverrideBuiltinsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestOverrideBuiltinsPrototypeTableValues, *this);
+    convertToDictionary(vm);
 }
 
 const ClassInfo JSTestOverrideBuiltins::s_info = { "TestOverrideBuiltins", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestOverrideBuiltins) };

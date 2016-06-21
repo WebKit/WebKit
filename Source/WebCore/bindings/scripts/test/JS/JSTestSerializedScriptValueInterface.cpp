@@ -71,6 +71,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
 typedef JSDOMConstructorNotConstructable<JSTestSerializedScriptValueInterface> JSTestSerializedScriptValueInterfaceConstructor;
@@ -92,6 +94,27 @@ template<> const ClassInfo JSTestSerializedScriptValueInterfaceConstructor::s_in
 
 /* Hash table for prototype */
 
+static const struct CompactHashIndex JSTestSerializedScriptValueInterfacePrototypeTableIndex[17] = {
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, 16 },
+    { -1, -1 },
+    { 4, -1 },
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 5, -1 },
+};
+
+
 static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterfaceConstructor) } },
@@ -102,12 +125,13 @@ static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableVa
     { "cachedReadonlyValue", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceCachedReadonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestSerializedScriptValueInterfacePrototype::s_info = { "TestSerializedScriptValueInterfacePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfacePrototype) };
+static const HashTable JSTestSerializedScriptValueInterfacePrototypeTable = { 6, 15, true, JSTestSerializedScriptValueInterfacePrototypeTableValues, JSTestSerializedScriptValueInterfacePrototypeTableIndex };
+const ClassInfo JSTestSerializedScriptValueInterfacePrototype::s_info = { "TestSerializedScriptValueInterfacePrototype", &Base::s_info, &JSTestSerializedScriptValueInterfacePrototypeTable, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfacePrototype) };
 
 void JSTestSerializedScriptValueInterfacePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestSerializedScriptValueInterfacePrototypeTableValues, *this);
+    convertToDictionary(vm);
 }
 
 const ClassInfo JSTestSerializedScriptValueInterface::s_info = { "TestSerializedScriptValueInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterface) };
