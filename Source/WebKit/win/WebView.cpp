@@ -3972,7 +3972,7 @@ HRESULT WebView::centerSelectionInVisibleArea(_In_opt_ IUnknown* /* sender */)
     if (!coreFrame)
         return E_UNEXPECTED;
 
-    coreFrame->selection().revealSelection(ScrollAlignment::alignCenterAlways);
+    coreFrame->selection().revealSelection(SelectionRevealMode::Reveal, ScrollAlignment::alignCenterAlways);
     return S_OK;
 }
 

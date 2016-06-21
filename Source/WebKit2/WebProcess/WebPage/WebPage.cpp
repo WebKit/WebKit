@@ -2396,7 +2396,7 @@ bool WebPage::scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
 void WebPage::centerSelectionInVisibleArea()
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    frame.selection().revealSelection(ScrollAlignment::alignCenterAlways);
+    frame.selection().revealSelection(SelectionRevealMode::Reveal, ScrollAlignment::alignCenterAlways);
     m_findController.showFindIndicatorInSelection();
 }
 

@@ -28,6 +28,7 @@
 
 #include "AXTextStateChangeIntent.h"
 #include "EditingStyle.h"
+#include "Element.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
 #include "Range.h"
@@ -266,7 +267,7 @@ public:
 
     WEBCORE_EXPORT HTMLFormElement* currentForm() const;
 
-    WEBCORE_EXPORT void revealSelection(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
+    WEBCORE_EXPORT void revealSelection(SelectionRevealMode = SelectionRevealMode::Reveal, const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
     WEBCORE_EXPORT void setSelectionFromNone();
 
     bool shouldShowBlockCursor() const { return m_shouldShowBlockCursor; }
@@ -350,7 +351,7 @@ private:
     bool m_updateAppearanceEnabled : 1;
     bool m_caretBlinks : 1;
     Color m_caretColor;
-    int m_scrollingSuppressCount;
+    int m_scrollingSuppressCount { 0 };
 #endif
 };
 

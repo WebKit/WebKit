@@ -260,8 +260,8 @@ void HTMLTextAreaElement::updateFocusAppearance(SelectionRestorationMode restora
     } else
         restoreCachedSelection(Element::defaultFocusTextStateChangeIntent());
 
-    if (document().frame() && revealMode == SelectionRevealMode::Reveal)
-        document().frame()->selection().revealSelection();
+    if (document().frame())
+        document().frame()->selection().revealSelection(revealMode);
 }
 
 void HTMLTextAreaElement::defaultEventHandler(Event* event)

@@ -404,8 +404,8 @@ void HTMLInputElement::updateFocusAppearance(SelectionRestorationMode restoratio
             select(Element::defaultFocusTextStateChangeIntent());
         else
             restoreCachedSelection();
-        if (document().frame() && revealMode == SelectionRevealMode::Reveal)
-            document().frame()->selection().revealSelection();
+        if (document().frame())
+            document().frame()->selection().revealSelection(revealMode);
     } else
         HTMLTextFormControlElement::updateFocusAppearance(restorationMode, revealMode);
 }
