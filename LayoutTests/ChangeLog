@@ -1,3 +1,21 @@
+2016-06-20  Frederic Wang  <fwang@igalia.com>
+
+        Use the MathOperator to handle some non-stretchy operators
+        https://bugs.webkit.org/show_bug.cgi?id=157519
+
+        Reviewed by Brent Fulgham.
+
+        We adjust fenced-mi.html to handle one edge case that we no longer support.
+        We also update some test references on Mac and iOS.
+
+        * mathml/presentation/fenced-mi-expected.html: Indicate that this is no longer supported.
+        * mathml/presentation/fenced-mi.html: Adjust the reference since no text is shown.
+        * platform/mac/mathml/opentype/large-operators-expected.txt: Update reference.
+        * platform/mac/mathml/opentype/opentype-stretchy-expected.txt: Ditto.
+        * platform/mac/mathml/opentype/vertical-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/opentype/horizontal-munderover-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/opentype/opentype-stretchy-expected.txt: Ditto.
+
 2016-06-20  Alexey Proskuryakov  <ap@apple.com>
 
         Test expectation update for media/click-placeholder-not-pausing.html

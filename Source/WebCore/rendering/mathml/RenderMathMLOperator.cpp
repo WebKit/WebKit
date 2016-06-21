@@ -38,6 +38,7 @@
 #include "RenderText.h"
 #include "ScaleTransformOperation.h"
 #include "TransformOperations.h"
+#include <cmath>
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -243,7 +244,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
     ASSERT(preferredLogicalWidthsDirty());
 
     setOperatorProperties();
-    if (!shouldAllowStretching()) {
+    if (!useMathOperator()) {
         RenderMathMLToken::computePreferredLogicalWidths();
         if (isInvisibleOperator()) {
             // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
@@ -278,15 +279,16 @@ void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
     m_textContent = textContent.length() == 1 ? textContent[0] : 0;
     setOperatorProperties();
 
-    if (shouldAllowStretching()) {
+    if (useMathOperator()) {
         MathOperator::Type type;
-        if (isLargeOperatorInDisplayStyle())
+        if (!shouldAllowStretching())
+            type = MathOperator::Type::NormalOperator;
+        else if (isLargeOperatorInDisplayStyle())
             type = MathOperator::Type::DisplayOperator;
         else
             type = m_isVertical ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
         m_mathOperator.setOperator(style(), m_textContent, type);
-    } else
-        m_mathOperator.unstretch();
+    }
 
     updateStyle();
     setNeedsLayoutAndPrefWidthsRecalc();
@@ -322,6 +324,15 @@ bool RenderMathMLOperator::shouldAllowStretching() const
     return m_textContent && (hasOperatorFlag(MathMLOperatorDictionary::Stretchy) || isLargeOperatorInDisplayStyle());
 }
 
+bool RenderMathMLOperator::useMathOperator() const
+{
+    // We use the MathOperator class to handle the following cases:
+    // 1) Stretchy and large operators, since they require special painting.
+    // 2) The minus sign, since it can be obtained from a hyphen in the DOM.
+    // 3) The anonymous operators created by mfenced, since they do not have text content in the DOM.
+    return shouldAllowStretching() || m_textContent == minusSign || isAnonymous();
+}
+
 void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
@@ -348,14 +359,14 @@ void RenderMathMLOperator::updateStyle()
 
 Optional<int> RenderMathMLOperator::firstLineBaseline() const
 {
-    if (m_mathOperator.isStretched())
-        return Optional<int>(m_mathOperator.ascent());
+    if (useMathOperator())
+        return Optional<int>(std::lround(static_cast<float>(m_mathOperator.ascent())));
     return RenderMathMLToken::firstLineBaseline();
 }
 
 void RenderMathMLOperator::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    if (m_mathOperator.isStretched())
+    if (useMathOperator())
         logicalHeight = m_mathOperator.ascent() + m_mathOperator.descent();
     RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
 }
@@ -363,7 +374,7 @@ void RenderMathMLOperator::computeLogicalHeight(LayoutUnit logicalHeight, Layout
 void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLToken::paint(info, paintOffset);
-    if (!m_mathOperator.isStretched())
+    if (!useMathOperator())
         return;
 
     LayoutPoint operatorTopLeft = paintOffset + location();
@@ -379,7 +390,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
 void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
 {
     // We skip painting for invisible operators too to avoid some "missing character" glyph to appear if appropriate math fonts are not available.
-    if (m_mathOperator.isStretched() || isInvisibleOperator())
+    if (useMathOperator() || isInvisibleOperator())
         return;
     RenderMathMLToken::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
 }

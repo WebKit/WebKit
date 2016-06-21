@@ -85,6 +85,7 @@ private:
     void rebuildTokenContent(const String& operatorString);
 
     bool shouldAllowStretching() const;
+    bool useMathOperator() const;
 
     void setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag, const QualifiedName&);
     void setOperatorFlagFromAttributeValue(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
