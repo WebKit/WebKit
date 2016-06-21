@@ -54,6 +54,6 @@ interface FetchResponse {
 
     [NewObject, CallWith=ScriptExecutionContext, RaisesException] FetchResponse clone();
 
-    [Private, RaisesException] void initializeWith(Dictionary parameters);
+    [PrivateIdentifier, RaisesException] void initializeWith(Dictionary parameters);
 };
 FetchResponse implements FetchBody;

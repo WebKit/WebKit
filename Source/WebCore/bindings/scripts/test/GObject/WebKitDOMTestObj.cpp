@@ -1494,6 +1494,17 @@ void webkit_dom_test_obj_method_with_exception_with_message(WebKitDOMTestObj* se
     item->methodWithExceptionWithMessage();
 }
 
+gchar* webkit_dom_test_obj_public_and_private_method(WebKitDOMTestObj* self, const gchar* argument)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    g_return_val_if_fail(argument, 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    WTF::String convertedArgument = WTF::String::fromUTF8(argument);
+    gchar* result = convertToUTF8String(item->publicAndPrivateMethod(convertedArgument));
+    return result;
+}
+
 void webkit_dom_test_obj_with_script_state_void(WebKitDOMTestObj* self)
 {
     WebCore::JSMainThreadNullState state;

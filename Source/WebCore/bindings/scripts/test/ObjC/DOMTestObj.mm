@@ -1238,6 +1238,12 @@
 
 #endif
 
+- (NSString *)publicAndPrivateMethod:(NSString *)argument
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->publicAndPrivateMethod(argument);
+}
+
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     WebCore::JSMainThreadNullState state;

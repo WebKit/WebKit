@@ -106,7 +106,8 @@ ObjCProtocol
 ObjCUseDefaultView
 OverrideBuiltins
 PassContext
-Private
+PrivateIdentifier
+PublicIdentifier
 PutForwards=*
 RaisesException
 RaisesExceptionWithMessage

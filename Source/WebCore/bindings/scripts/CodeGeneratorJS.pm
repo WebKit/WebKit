@@ -1618,7 +1618,7 @@ sub GeneratePropertiesHashTable
     my @functions = @{$interface->functions};
     push(@functions, @{$interface->iterable->functions}) if $interface->iterable;
     foreach my $function (@functions) {
-        next if ($function->signature->extendedAttributes->{"Private"});
+        next if ($function->signature->extendedAttributes->{"PrivateIdentifier"} and not $function->signature->extendedAttributes->{"PublicIdentifier"});
         next if ($function->isStatic);
         next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
         next if OperationShouldBeOnInstance($interface, $function) != $isInstance;
@@ -2295,7 +2295,7 @@ sub GenerateImplementation
 
         my $firstPrivateFunction = 1;
         foreach my $function (@{$interface->functions}) {
-            next unless ($function->signature->extendedAttributes->{"Private"});
+            next unless ($function->signature->extendedAttributes->{"PrivateIdentifier"});
             AddToImplIncludes("WebCoreJSClientData.h");
             push(@implContent, "    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);\n") if $firstPrivateFunction;
             $firstPrivateFunction = 0;

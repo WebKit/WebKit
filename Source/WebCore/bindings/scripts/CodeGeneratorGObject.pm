@@ -384,8 +384,7 @@ sub SkipFunction {
 
     return 1 if $function->signature->extendedAttributes->{"JSBuiltin"};
 
-    return 1 if $function->signature->extendedAttributes->{"Private"};
-
+    return 1 if $function->signature->extendedAttributes->{"PrivateIdentifier"} and not $function->signature->extendedAttributes->{"PublicIdentifier"};
     return 0;
 }
 

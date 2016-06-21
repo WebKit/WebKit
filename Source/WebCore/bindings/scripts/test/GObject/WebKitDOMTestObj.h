@@ -394,6 +394,18 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_exception_with_message(WebKitDOMTestObj* self);
 
 /**
+ * webkit_dom_test_obj_public_and_private_method:
+ * @self: A #WebKitDOMTestObj
+ * @argument: A #gchar
+ *
+ * Returns: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gchar*
+webkit_dom_test_obj_public_and_private_method(WebKitDOMTestObj* self, const gchar* argument);
+
+/**
  * webkit_dom_test_obj_with_script_state_void:
  * @self: A #WebKitDOMTestObj
  *

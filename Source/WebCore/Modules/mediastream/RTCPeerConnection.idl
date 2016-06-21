@@ -97,12 +97,12 @@
 
     // Private API used to implement the overloaded operations above. Queued functions are called by
     // runQueuedOperation() (defined in RTCPeerConnectionInternals.js).
-    [Private] Promise queuedCreateOffer(optional Dictionary offerOptions);
-    [Private] Promise queuedCreateAnswer(optional Dictionary answerOptions);
-    [Private] Promise queuedSetLocalDescription(RTCSessionDescription description);
-    [Private] Promise queuedSetRemoteDescription(RTCSessionDescription description);
-    [Private] Promise queuedAddIceCandidate(RTCIceCandidate candidate);
-    [Private] Promise privateGetStats(MediaStreamTrack? selector);
+    [PrivateIdentifier] Promise queuedCreateOffer(optional Dictionary offerOptions);
+    [PrivateIdentifier] Promise queuedCreateAnswer(optional Dictionary answerOptions);
+    [PrivateIdentifier] Promise queuedSetLocalDescription(RTCSessionDescription description);
+    [PrivateIdentifier] Promise queuedSetRemoteDescription(RTCSessionDescription description);
+    [PrivateIdentifier] Promise queuedAddIceCandidate(RTCIceCandidate candidate);
+    [PrivateIdentifier] Promise privateGetStats(MediaStreamTrack? selector);
 
     [RaisesException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] DOMString label, optional Dictionary options);
 

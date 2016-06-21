@@ -150,7 +150,8 @@ enum TestConfidence { "high", "kinda-low" };
     [Conditional=Condition4, JSBuiltin] readonly attribute TestObj jsBuiltinReadOnlyAttribute;
 
     // Private extended attribute
-    [Private] DOMString privateMethod(DOMString argument);
+    [PrivateIdentifier] DOMString privateMethod(DOMString argument);
+    [PrivateIdentifier, PublicIdentifier] DOMString publicAndPrivateMethod(DOMString argument);
 
     void addEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
     void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);

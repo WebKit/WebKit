@@ -37,5 +37,5 @@
     [JSBuiltin] Promise getUserMedia(Dictionary options);
     [RaisesException] Promise enumerateDevices();
 
-    [Private, RaisesException, ImplementedAs=getUserMedia] Promise getUserMediaFromJS(Dictionary options);
+    [PrivateIdentifier, RaisesException, ImplementedAs=getUserMedia] Promise getUserMediaFromJS(Dictionary options);
 };
