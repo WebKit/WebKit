@@ -29,6 +29,7 @@
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.openbugs import OpenBugs
 
+
 class OpenBugsTest(CommandsTest):
 
     find_bugs_in_string_expectations = [

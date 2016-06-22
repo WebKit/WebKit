@@ -3,7 +3,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -39,6 +39,7 @@ class TrivialCommand(Command):
     name = "trivial"
     show_in_main_help = True
     help_text = "help text"
+
     def __init__(self, **kwargs):
         Command.__init__(self, **kwargs)
 
@@ -127,7 +128,7 @@ class MultiCommandToolTest(unittest.TestCase):
         self.assertEqual(tool.command_by_name("trivial").name, "trivial")
         self.assertEqual(tool.command_by_name("bar"), None)
 
-    def _assert_tool_main_outputs(self, tool, main_args, expected_stdout, expected_stderr = "", expected_exit_code=0):
+    def _assert_tool_main_outputs(self, tool, main_args, expected_stdout, expected_stderr="", expected_exit_code=0):
         exit_code = OutputCapture().assert_outputs(self, tool.main, [main_args], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
         self.assertEqual(exit_code, expected_exit_code)
 
@@ -170,7 +171,6 @@ See 'trivial-tool help COMMAND' for more information on a specific command.
         self._assert_tool_main_outputs(tool, ["tool", "help", "--all-commands"], expected_all_commands_help)
         # Test that arguments can be passed before commands as well
         self._assert_tool_main_outputs(tool, ["tool", "--all-commands", "help"], expected_all_commands_help)
-
 
     def test_command_help(self):
         TrivialCommand.long_help = "LONG HELP"

@@ -1,3 +1,134 @@
+2016-06-21  Aakash Jain  <aakash_jain@apple.com>
+
+        Fix formatting issues reported by check-webkit-style
+        https://bugs.webkit.org/show_bug.cgi?id=159008
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixed the formatting issues as reported by check-webkit-style in webkitpy/tool folder.
+        There is no functionality change.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Restart.execute):
+        (Rollout):
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        (IRCBotTest.test_exception_during_command):
+        (IRCBotTest.test_exception_during_command.CommandWithException):
+        (IRCBotTest.test_exception_during_command.CommandWithException.execute):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (test_missing_unit_test_results_path):
+        (test_layout_test_results):
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        * Scripts/webkitpy/tool/commands/abstractsequencedcommand.py:
+        (AbstractSequencedCommand):
+        (AbstractSequencedCommand.__init__):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (Land):
+        * Scripts/webkitpy/tool/commands/openbugs.py:
+        * Scripts/webkitpy/tool/commands/openbugs_unittest.py:
+        (OpenBugsTest):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PatchesToCommitQueue):
+        (PatchesToCommitQueue.__init__):
+        (PatchesToCommitQueue._needs_commit_queue):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintExpectationsTest.test_platform):
+        (PrintBaselinesTest):
+        (PrintBaselinesTest.setUp):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractQueue):
+        (AbstractQueue.__init__):
+        (AbstractQueue.execute):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (test_auto_retry):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractParallelRebaselineCommand._files_to_add):
+        (AbstractParallelRebaselineCommand):
+        (AbstractParallelRebaselineCommand._rebaseline):
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        (SetupGitClone):
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/commands/stepsequence.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (PostCommits._comment_text_for_commit):
+        (PostCommits):
+        (PostCommits.execute):
+        (MarkBugFixed):
+        (MarkBugFixed.__init__):
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        (UploadCommandsTest):
+        (UploadCommandsTest.test_commit_message_for_current_diff):
+        * Scripts/webkitpy/tool/grammar_unittest.py:
+        (GrammarTest):
+        (GrammarTest.test_join_with_separators):
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        (HelpCommand.__init__):
+        (HelpCommand):
+        (HelpCommand._help_epilog):
+        (HelpCommand._remove_help_options):
+        (MultiCommandTool):
+        (MultiCommandTool.__init__):
+        (MultiCommandTool.main):
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py:
+        (TrivialCommand):
+        (TrivialCommand.__init__):
+        (MultiCommandToolTest):
+        (MultiCommandToolTest._assert_tool_main_outputs):
+        (MultiCommandToolTest.test_retry):
+        (test_command_help):
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/applypatch.py:
+        * Scripts/webkitpy/tool/steps/applypatchwithlocalcommit.py:
+        (ApplyPatchWithLocalCommit):
+        (ApplyPatchWithLocalCommit.options):
+        * Scripts/webkitpy/tool/steps/build.py:
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        (CheckStyle):
+        (CheckStyle.options):
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory.py:
+        * Scripts/webkitpy/tool/steps/closebug.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        (CloseBugForLandDiffTest):
+        (CloseBugForLandDiffTest.test_empty_state):
+        * Scripts/webkitpy/tool/steps/closepatch.py:
+        * Scripts/webkitpy/tool/steps/commit.py:
+        (Commit.run):
+        * Scripts/webkitpy/tool/steps/confirmdiff.py:
+        * Scripts/webkitpy/tool/steps/editchangelog.py:
+        * Scripts/webkitpy/tool/steps/ensurelocalcommitifneeded.py:
+        * Scripts/webkitpy/tool/steps/metastep.py:
+        (MetaStep):
+        (MetaStep.__init__):
+        (MetaStep.run):
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options):
+        * Scripts/webkitpy/tool/steps/postdiff.py:
+        * Scripts/webkitpy/tool/steps/postdiffforcommit.py:
+        * Scripts/webkitpy/tool/steps/postdiffforrevert.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py:
+        (PrepareChangeLogTest):
+        (PrepareChangeLogTest.test_resolve_existing_entry):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        * Scripts/webkitpy/tool/steps/promptforbugortitle.py:
+        * Scripts/webkitpy/tool/steps/reopenbugafterrollout.py:
+        * Scripts/webkitpy/tool/steps/revertrevision.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest):
+        (StepsTest._step_options):
+        * Scripts/webkitpy/tool/steps/update.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittest.py:
+        (UpdateChangeLogsWithReviewerTest):
+        (UpdateChangeLogsWithReviewerTest.test_guess_reviewer_from_bug):
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+
 2016-06-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r202296.

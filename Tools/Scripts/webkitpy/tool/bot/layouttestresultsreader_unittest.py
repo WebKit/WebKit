@@ -74,7 +74,6 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         self.assertIsNotNone(reader.results(), None)
         self.assertEqual(reader.results().failing_tests(), [])
 
-
     def test_layout_test_results(self):
         reader = LayoutTestResultsReader(MockHost(), "/mock-results", "/var/logs")
         reader._read_file_contents = lambda path: None

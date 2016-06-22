@@ -66,7 +66,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     _fail_status = "Fail"
     _error_status = "Error"
 
-    def __init__(self, options=None): # Default values should never be collections (like []) as default values are shared between invocations
+    def __init__(self, options=None):  # Default values should never be collections (like []) as default values are shared between invocations
         options_list = (options or []) + [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--exit-after-iteration", action="store", type="int", dest="iterations", default=None, help="Stop running the queue after iterating this number of times."),
@@ -148,7 +148,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     # Command methods
 
     def execute(self, options, args, tool, engine=QueueEngine):
-        self._options = options # FIXME: This code is wrong.  Command.options is a list, this assumes an Options element!
+        self._options = options  # FIXME: This code is wrong.  Command.options is a list, this assumes an Options element!
         self._tool = tool  # FIXME: This code is wrong too!  Command.bind_to_tool handles this!
         return engine(self.name, self, self._tool.wakeup_event, self._options.seconds_to_sleep).run()
 

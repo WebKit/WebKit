@@ -265,7 +265,6 @@ class AbstractParallelRebaselineCommand(AbstractRebaseliningCommand):
             if not file_added:
                 _log.debug('Could not add file based off output "%s"' % output)
 
-
         return list(files_to_add)
 
     def _rebaseline(self, options, test_list):

@@ -32,6 +32,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.closebugforlanddiff import CloseBugForLandDiff
 
+
 class CloseBugForLandDiffTest(unittest.TestCase):
     def test_empty_state(self):
         capture = OutputCapture()

@@ -385,7 +385,6 @@ MOCK: release_work_item: commit-queue 10007
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=patch, expected_logs=expected_logs)
 
-
     def test_auto_retry(self):
         queue = CommitQueue()
         options = Mock()

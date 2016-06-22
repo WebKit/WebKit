@@ -4,7 +4,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -332,7 +332,7 @@ class PostCommits(Command):
 
     def execute(self, options, args, tool):
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)
-        if len(commit_ids) > 10: # We could lower this limit, 10 is too many for one bug as-is.
+        if len(commit_ids) > 10:  # We could lower this limit, 10 is too many for one bug as-is.
             _log.error("webkit-patch does not support attaching %s at once.  Are you sure you passed the right commit range?" % (pluralize(len(commit_ids), "patch")))
             sys.exit(1)
 
@@ -362,6 +362,7 @@ class MarkBugFixed(Command):
     name = "mark-bug-fixed"
     help_text = "Mark the specified bug as fixed"
     argument_names = "[SVN_REVISION]"
+
     def __init__(self):
         options = [
             make_option("--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),

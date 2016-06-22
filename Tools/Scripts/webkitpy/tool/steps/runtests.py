@@ -40,6 +40,7 @@ from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinde
 
 _log = logging.getLogger(__name__)
 
+
 class RunTests(AbstractStep):
     # FIXME: This knowledge really belongs in the commit-queue.
     NON_INTERACTIVE_FAILURE_LIMIT_COUNT = 30

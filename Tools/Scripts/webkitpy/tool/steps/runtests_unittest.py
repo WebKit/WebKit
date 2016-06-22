@@ -34,6 +34,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.runtests import RunTests
 
+
 class RunTestsTest(unittest.TestCase):
     def test_webkit_run_unit_tests(self):
         tool = MockTool(log_executive=True)

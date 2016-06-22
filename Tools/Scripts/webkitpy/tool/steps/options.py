@@ -28,6 +28,7 @@
 
 from optparse import make_option
 
+
 class Options(object):
     architecture = make_option("--architecture", action="store", type="string", dest="architecture", default=None, help="Target architecture")
     blocks = make_option("--blocks", action="store", type="string", dest="blocks", default=None, help="Bug number which the created bug blocks.")

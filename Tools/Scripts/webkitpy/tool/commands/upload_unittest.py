@@ -31,6 +31,7 @@ from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.upload import *
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
+
 class UploadCommandsTest(CommandsTest):
     def test_commit_message_for_current_diff(self):
         tool = MockTool()

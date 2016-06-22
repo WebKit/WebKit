@@ -4,7 +4,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -170,7 +170,7 @@ class HelpCommand(Command):
             make_option("-a", "--all-commands", action="store_true", dest="show_all_commands", help="Print all available commands"),
         ]
         Command.__init__(self, options)
-        self.show_all_commands = False # A hack used to pass --all-commands to _help_epilog even though it's called by the OptionParser.
+        self.show_all_commands = False  # A hack used to pass --all-commands to _help_epilog even though it's called by the OptionParser.
 
     def _help_epilog(self):
         # Only show commands which are relevant to this checkout's SCM system.  Might this be confusing to some users?
@@ -186,7 +186,7 @@ class HelpCommand(Command):
         epilog += "%s\n" % "".join(command_help_texts)
         epilog += "See '%prog help --all-commands' to list all commands.\n"
         epilog += "See '%prog help COMMAND' for more information on a specific command.\n"
-        return epilog.replace("%prog", self._tool.name()) # Use of %prog here mimics OptionParser.expand_prog_name().
+        return epilog.replace("%prog", self._tool.name())  # Use of %prog here mimics OptionParser.expand_prog_name().
 
     # FIXME: This is a hack so that we don't show --all-commands as a global option:
     def _remove_help_options(self):
@@ -210,7 +210,7 @@ class MultiCommandTool(object):
     global_options = None
 
     def __init__(self, name=None, commands=None):
-        self._name = name or OptionParser(prog=name).get_prog_name() # OptionParser has nice logic for fetching the name.
+        self._name = name or OptionParser(prog=name).get_prog_name()  # OptionParser has nice logic for fetching the name.
         # Allow the unit tests to disable command auto-discovery.
         self.commands = commands or [cls() for cls in self._find_all_commands() if cls.name]
         self.help_command = self.command_by_name(HelpCommand.name)
@@ -298,7 +298,7 @@ class MultiCommandTool(object):
         (should_execute, failure_reason) = self.should_execute_command(command)
         if not should_execute:
             _log.error(failure_reason)
-            return 0 # FIXME: Should this really be 0?
+            return 0  # FIXME: Should this really be 0?
 
         while True:
             try:

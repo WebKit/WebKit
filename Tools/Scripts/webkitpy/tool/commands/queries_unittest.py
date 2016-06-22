@@ -237,6 +237,7 @@ class PrintExpectationsTest(unittest.TestCase):
                        'platform/test-mac-leopard/http/test.html [ Pass ]\n'),
                       platform='test-mac-*')
 
+
 class PrintBaselinesTest(unittest.TestCase):
     def setUp(self):
         self.oc = None

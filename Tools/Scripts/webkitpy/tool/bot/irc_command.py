@@ -148,6 +148,7 @@ class Restart(IRCCommand):
         tool.irc().post("Restarting...")
         raise TerminateQueue()
 
+
 class Rollout(IRCCommand):
     usage_string = "rollout SVN_REVISION [SVN_REVISIONS] REASON"
     help_string = "Opens a rollout bug, CCing author + reviewer, and attaching the reverse-diff of the given revisions marked as commit-queue=?."

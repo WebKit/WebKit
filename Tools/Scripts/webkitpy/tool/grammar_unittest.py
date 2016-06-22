@@ -32,6 +32,7 @@ from webkitpy.tool.grammar import join_with_separators
 from webkitpy.tool.grammar import plural
 from webkitpy.tool.grammar import pluralize
 
+
 class GrammarTest(unittest.TestCase):
 
     def test_join_with_separators(self):

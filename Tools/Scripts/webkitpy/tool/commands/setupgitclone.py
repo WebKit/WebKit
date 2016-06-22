@@ -30,6 +30,7 @@ from webkitpy.tool.multicommandtool import Command
 from webkitpy.common.checkout.scm.git import Git
 from webkitpy.common.system.executive import ScriptError
 
+
 class SetupGitClone(Command):
     name = "setup-git-clone"
     help_text = "Configures a new Git clone for the WebKit development"

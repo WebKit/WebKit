@@ -1,9 +1,9 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -89,7 +89,7 @@ class Commit(AbstractStep):
                 svn_revision = scm.svn_revision_from_commit_text(commit_text)
                 _log.info("Committed r%s: <%s>" % (svn_revision, urls.view_revision_url(svn_revision)))
                 self._state["commit_text"] = commit_text
-                break;
+                break
             except AmbiguousCommitError, e:
                 if self._tool.user.confirm(self._commit_warning(e)):
                     force_squash = True

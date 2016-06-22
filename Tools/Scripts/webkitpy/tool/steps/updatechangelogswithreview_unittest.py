@@ -32,6 +32,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
 
+
 class UpdateChangeLogsWithReviewerTest(unittest.TestCase):
     def test_guess_reviewer_from_bug(self):
         capture = OutputCapture()

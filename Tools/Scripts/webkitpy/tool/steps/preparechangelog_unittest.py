@@ -36,6 +36,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.preparechangelog import PrepareChangeLog
 
+
 class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
     def test_resolve_existing_entry(self):
         step = PrepareChangeLog(MockTool(), MockOptions())

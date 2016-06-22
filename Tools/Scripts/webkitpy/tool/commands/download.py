@@ -96,7 +96,7 @@ class Land(AbstractSequencedCommand):
         steps.AddSvnMimetypeForPng,
         steps.UpdateChangeLogsWithReviewer,
         steps.ValidateReviewer,
-        steps.ValidateChangeLogs, # We do this after UpdateChangeLogsWithReviewer to avoid not having to cache the diff twice.
+        steps.ValidateChangeLogs,  # We do this after UpdateChangeLogsWithReviewer to avoid not having to cache the diff twice.
         steps.Build,
         steps.RunTests,
         steps.Commit,

@@ -91,6 +91,7 @@ class PatchesInCommitQueue(Command):
 class PatchesToCommitQueue(Command):
     name = "patches-to-commit-queue"
     help_text = "Patches which should be added to the commit queue"
+
     def __init__(self):
         options = [
             make_option("--bugs", action="store_true", dest="bugs", help="Output bug links instead of patch links"),
@@ -99,7 +100,7 @@ class PatchesToCommitQueue(Command):
 
     @staticmethod
     def _needs_commit_queue(patch):
-        if patch.commit_queue() == "+": # If it's already cq+, ignore the patch.
+        if patch.commit_queue() == "+":  # If it's already cq+, ignore the patch.
             _log.info("%s already has cq=%s" % (patch.id(), patch.commit_queue()))
             return False
 

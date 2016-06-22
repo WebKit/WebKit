@@ -74,6 +74,7 @@ class IRCBotTest(unittest.TestCase):
         expected_logs = 'MOCK: irc.post: Exception executing command: mock_exception\n'
         OutputCapture().assert_outputs(self, bot.process_message, args=["mock_nick", "ignored message"], expected_logs=expected_logs)
 
+
         class CommandWithException(object):
             def execute(self, nick, args, tool, sheriff):
                 raise KeyboardInterrupt()
