@@ -1,3 +1,29 @@
+2016-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Move the WebKitLegacy Apple Pay code to the open source repository
+        https://bugs.webkit.org/show_bug.cgi?id=159035
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebPaymentCoordinatorClient.h: Added.
+        * WebCoreSupport/WebPaymentCoordinatorClient.mm: Added.
+        (WebPaymentCoordinatorClient::WebPaymentCoordinatorClient):
+        (WebPaymentCoordinatorClient::~WebPaymentCoordinatorClient):
+        (WebPaymentCoordinatorClient::supportsVersion):
+        (WebPaymentCoordinatorClient::canMakePayments):
+        (WebPaymentCoordinatorClient::canMakePaymentsWithActiveCard):
+        (WebPaymentCoordinatorClient::showPaymentUI):
+        (WebPaymentCoordinatorClient::completeMerchantValidation):
+        (WebPaymentCoordinatorClient::completeShippingMethodSelection):
+        (WebPaymentCoordinatorClient::completeShippingContactSelection):
+        (WebPaymentCoordinatorClient::completePaymentMethodSelection):
+        (WebPaymentCoordinatorClient::completePaymentSession):
+        (WebPaymentCoordinatorClient::abortPaymentSession):
+        (WebPaymentCoordinatorClient::mainFrameDestroyed):
+        * WebKitAdditions.mm: Removed.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2016-06-21  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

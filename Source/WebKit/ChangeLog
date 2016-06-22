@@ -1,3 +1,12 @@
+2016-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Move the WebKitLegacy Apple Pay code to the open source repository
+        https://bugs.webkit.org/show_bug.cgi?id=159035
+
+        Reviewed by Tim Horton.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2016-06-20  Keith Rollin  <krollin@apple.com>
 
         Remove RefPtr::release() and change calls sites to use WTFMove()
