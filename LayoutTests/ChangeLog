@@ -1,3 +1,14 @@
+2016-06-17  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: Double tap to zoom does not work on yahoo finance
+        https://bugs.webkit.org/show_bug.cgi?id=158886
+        <rdar://problem/24917760>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/ios/viewport-shrink-to-fit-allows-double-tap-expected.txt: Added.
+        * fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html: Added.
+
 2016-06-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening for css3/line-break-language-sensitive

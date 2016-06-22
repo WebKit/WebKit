@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<meta name="viewport" content="width=device-width">
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return `
+                (function() {
+                    uiController.didEndZoomingCallback = function() {
+                        uiController.uiScriptComplete(uiController.zoomScale);
+                    };
+                    uiController.doubleTapAtPoint(15, 60, function() {});
+                })();`;
+        }
+
+        function runTest()
+        {
+            if (!window.eventSender || !testRunner.runUIScript)
+                return;
+
+            testRunner.runUIScript(getUIScript(), function(result) {
+                document.getElementById("target").innerText = "The viewport zoomed to scale: " + result;
+                testRunner.notifyDone();
+            });
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            min-width: 800px;
+        }
+        p {
+            width: 300px;
+        }
+        #target {
+            height: 100px;
+            width: 100px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body onload="runTest()">
+<div id="target"></div>
+<p>
+    This test ensures that a page with width=device-width but content that
+    causes a shrink-to-fit will not block double-tap-to-zoom. It runs automatically
+    in WebKit tests. If you're viewing this manually, double tap on this text and
+    the page should zoom in.
+</p>
+<p style="height: 3000px; background-color: #f0e0f0">
+    This is an element that will cause shrinkage.
+</p>
+</body>
+</html>

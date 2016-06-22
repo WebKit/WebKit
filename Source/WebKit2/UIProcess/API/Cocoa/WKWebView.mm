@@ -1738,11 +1738,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!_viewportMetaTagWidthWasExplicit || _viewportMetaTagCameFromImageDocument)
         return YES;
 
-    // For scalable viewports, only disable double tap gestures if the viewport width is device width.
+    // If the page set a viewport width that wasn't the device width, then it was
+    // scaled and thus will probably need to zoom.
     if (_viewportMetaTagWidth != WebCore::ViewportArguments::ValueDeviceWidth)
         return YES;
 
-    return !areEssentiallyEqualAsFloat(contentZoomScale(self), _initialScaleFactor);
+    // At this point, we have a page that asked for width = device-width. However,
+    // if the content's width and height were large, we might have had to shrink it.
+    // Since we'll enable double tap zoom whenever we're not at the actual
+    // initial scale, this simply becomes a test of the current scale against 1.
+    return !areEssentiallyEqualAsFloat(contentZoomScale(self), 1);
 }
 
 #pragma mark - UIScrollViewDelegate
