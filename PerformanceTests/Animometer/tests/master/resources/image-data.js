@@ -8,10 +8,10 @@ var ImageDataStage = Utilities.createSubclass(Stage,
         this._offsetIndex = 0;
     }, {
 
-    imageWidth: 100,
-    imageHeight: 100,
+    imageWidth: 50,
+    imageHeight: 50,
     pixelStride: 4,
-    rowStride: 400,
+    rowStride: 200,
     weightNegativeThreshold: 0.04,
     weightPositiveThreshold: 0.96,
     imageSrcs: [

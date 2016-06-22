@@ -1,27 +1,25 @@
 (function() {
 
 var maxVerticalOffset = 50;
-var radius = 10;
-var centerDiameter = 100;
-var sizeVariance = 80;
-var travelDistance = 70;
-
-var minObjectDepth = 0.2;
-var maxObjectDepth = 1.0;
+var minimumDiameter = 30;
+var centerDiameter = 90;
+var sizeVariance = 60;
+var travelDistance = 50;
 
 var opacityMultiplier = 30;
 
 var FocusElement = Utilities.createClass(
     function(stage)
     {
-        var topOffset = maxVerticalOffset * Stage.randomSign();
-        var top = Stage.random(0, stage.size.height - 2 * radius - sizeVariance);
-        var left = Stage.random(0, stage.size.width - 2 * radius - sizeVariance);
+        var size = minimumDiameter + sizeVariance;
 
         // size and blurring are a function of depth
-        this._depth = Utilities.lerp(1 - Math.pow(Pseudo.random(), 2), minObjectDepth, maxObjectDepth);
-        var distance = Utilities.lerp(this._depth, 1, sizeVariance);
-        var size = 2 * radius + sizeVariance - distance;
+        this._depth = Pseudo.random();
+        var distance = Utilities.lerp(this._depth, 0, sizeVariance);
+        size -= distance;
+
+        var top = Stage.random(0, stage.size.height - size) - stage.maxBlurValue * 3;
+        var left = Stage.random(0, stage.size.width - size) - stage.maxBlurValue * 3;
 
         this.container = document.createElement('div');
         this.container.style.width = (size + stage.maxBlurValue * 6) + "px";
@@ -30,16 +28,15 @@ var FocusElement = Utilities.createClass(
         this.container.style.left = left + "px";
         this.container.style.zIndex = Math.round((1 - this._depth) * 10);
 
-        var particle = Utilities.createElement("div", {}, this.container);
-        particle.style.width = size + "px";
-        particle.style.height = size + "px";
-        particle.style.top = (stage.maxBlurValue * 3) + "px";
-        particle.style.left = (stage.maxBlurValue * 3) + "px";
-        this.particle = particle;
+        this.particle = Utilities.createElement("div", {}, this.container);
+        this.particle.style.width = size + "px";
+        this.particle.style.height = size + "px";
+        this.particle.style.top = (stage.maxBlurValue * 3) + "px";
+        this.particle.style.left = (stage.maxBlurValue * 3) + "px";
 
         var depthMultiplier = Utilities.lerp(1 - this._depth, 0.8, 1);
-        this._sinMultiplier = Pseudo.random() * Stage.randomSign() * depthMultiplier;
-        this._cosMultiplier = Pseudo.random() * Stage.randomSign() * depthMultiplier;
+        this._sinMultiplier = Pseudo.random() * Stage.randomSign() * depthMultiplier * travelDistance;
+        this._cosMultiplier = Pseudo.random() * Stage.randomSign() * depthMultiplier * travelDistance;
     }, {
 
     hide: function()
@@ -131,8 +128,8 @@ var FocusStage = Utilities.createSubclass(Stage,
     animate: function()
     {
         var time = this._benchmark.timestamp;
-        var sinFactor = Math.sin(time / this.movementDuration) * travelDistance;
-        var cosFactor = Math.cos(time / this.movementDuration) * travelDistance;
+        var sinFactor = Math.sin(time / this.movementDuration);
+        var cosFactor = Math.cos(time / this.movementDuration);
 
         var focusProgress = 0.5 + 0.5 * Math.sin(time / this.focusDuration);
         this._focalPoint = focusProgress;
