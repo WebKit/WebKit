@@ -2,6 +2,19 @@
 
         Web Inspector: don't start auto capturing if the Inspector window is not visible
         https://bugs.webkit.org/show_bug.cgi?id=159014
+
+        Reviewed by Joseph Pecoraro.
+        <rdar://problem/26931269>
+
+        Followup, add a missing super.closed() call mentioned in review comments.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.prototype.closed):
+
+2016-06-22  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: don't start auto capturing if the Inspector window is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=159014
         <rdar://problem/26931269>
 
         Reviewed by Joseph Pecoraro.

@@ -295,6 +295,8 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
 
     closed()
     {
+        super.closed();
+
         if (WebInspector.FPSInstrument.supported())
             this.contentBrowser.navigationBar.removeEventListener(null, null, this);
 
