@@ -1,3 +1,16 @@
+2016-06-21  Sam Weinig  <sam@webkit.org>
+
+        WKWebView with no WKNavigationDelegate does not follow universal links
+        <rdar://problem/24374110>
+        https://bugs.webkit.org/show_bug.cgi?id=158997
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewDefaultNavigationDelegate.mm: Added.
+        Add a new test that shows that we have a default navigation delegate by swizzling
+        -[NSWorkspace openURL:]. This will only be called if there is a default client.
+
 2016-06-22  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Implement modal dialog support in MiniBrowser.

@@ -1,3 +1,18 @@
+2016-06-21  Sam Weinig  <sam@webkit.org>
+
+        WKWebView with no WKNavigationDelegate does not follow universal links
+        <rdar://problem/24374110>
+        https://bugs.webkit.org/show_bug.cgi?id=158997
+
+        Reviewed by Dan Bernstein.
+
+        API Test:
+             WKWebView.DefaultNavigationDelegate
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        When initializing the WKWebView, set a default navigation client.
+
 2016-06-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r202296.
