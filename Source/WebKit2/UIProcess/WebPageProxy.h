@@ -1116,6 +1116,8 @@ public:
 
     bool hasHadSelectionChangesFromUserInteraction() const { return m_hasHadSelectionChangesFromUserInteraction; }
 
+    bool isAlwaysOnLoggingAllowed() const;
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();

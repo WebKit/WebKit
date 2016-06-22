@@ -1,3 +1,24 @@
+2016-06-22  Chris Dumez  <cdumez@apple.com>
+
+        Add logging related to process assertions to help debug process suspension issues
+        https://bugs.webkit.org/show_bug.cgi?id=159001
+
+        Reviewed by Antti Koivisto.
+
+        Add logging related to process assertions to help debug process suspension issues.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::didChangeIsLoading):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcessProxy::setIsHoldingLockedFiles):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateActivityToken):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setIsHoldingLockedFiles):
+
 2016-06-21  Sam Weinig  <sam@webkit.org>
 
         WKWebView with no WKNavigationDelegate does not follow universal links

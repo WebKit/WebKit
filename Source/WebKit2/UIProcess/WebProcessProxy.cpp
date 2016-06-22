@@ -987,11 +987,14 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
 void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
     if (!isHoldingLockedFiles) {
+        LOG_ALWAYS(true, "UIProcess is releasing a background assertion because the WebContent process is no longer holding locked files");
         m_tokenForHoldingLockedFiles = nullptr;
         return;
     }
-    if (!m_tokenForHoldingLockedFiles)
+    if (!m_tokenForHoldingLockedFiles) {
+        LOG_ALWAYS(true, "UIProcess is taking a background assertion because the WebContent process is holding locked files");
         m_tokenForHoldingLockedFiles = m_throttler.backgroundActivityToken();
+    }
 }
 
 void WebProcessProxy::isResponsive(std::function<void(bool isWebProcessResponsive)> callback)

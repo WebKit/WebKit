@@ -126,9 +126,11 @@ void NetworkProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<Websit
 
     uint64_t callbackID = generateCallbackID();
     auto token = throttler().backgroundActivityToken();
+    LOG_ALWAYS(sessionID.isAlwaysOnLoggingAllowed(), "UIProcess is taking a background assertion because the Network process is fetching Website data");
 
-    m_pendingFetchWebsiteDataCallbacks.add(callbackID, [token, completionHandler](WebsiteData websiteData) {
+    m_pendingFetchWebsiteDataCallbacks.add(callbackID, [token, completionHandler, sessionID](WebsiteData websiteData) {
         completionHandler(WTFMove(websiteData));
+        LOG_ALWAYS(sessionID.isAlwaysOnLoggingAllowed(), "UIProcess is releasing a background assertion because the Network process is done fetching Website data");
     });
 
     send(Messages::NetworkProcess::FetchWebsiteData(sessionID, dataTypes, fetchOptions, callbackID), 0);
@@ -138,9 +140,11 @@ void NetworkProcessProxy::deleteWebsiteData(WebCore::SessionID sessionID, Option
 {
     auto callbackID = generateCallbackID();
     auto token = throttler().backgroundActivityToken();
+    LOG_ALWAYS(sessionID.isAlwaysOnLoggingAllowed(), "UIProcess is taking a background assertion because the Network process is deleting Website data");
 
-    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, [token, completionHandler] {
+    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, [token, completionHandler, sessionID] {
         completionHandler();
+        LOG_ALWAYS(sessionID.isAlwaysOnLoggingAllowed(), "UIProcess is releasing a background assertion because the Network process is done deleting Website data");
     });
     send(Messages::NetworkProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince, callbackID), 0);
 }
@@ -151,9 +155,11 @@ void NetworkProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, Optio
 
     uint64_t callbackID = generateCallbackID();
     auto token = throttler().backgroundActivityToken();
+    LOG_ALWAYS(sessionID.isAlwaysOnLoggingAllowed(), "UIProcess is taking a background assertion because the Network process is deleting Website data for several origins");
 
-    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, [token, completionHandler] {
+    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, [token, completionHandler, sessionID] {
         completionHandler();
+        LOG_ALWAYS(sessionID.isAlwaysOnLoggingAllowed(), "UIProcess is releasing a background assertion because the Network process is done deleting Website data for several origins");
     });
 
     Vector<SecurityOriginData> originData;
@@ -383,11 +389,14 @@ void NetworkProcessProxy::didSetAssertionState(AssertionState)
 void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
     if (!isHoldingLockedFiles) {
+        LOG_ALWAYS(true, "UIProcess is releasing a background assertion because the Network process is no longer holding locked files");
         m_tokenForHoldingLockedFiles = nullptr;
         return;
     }
-    if (!m_tokenForHoldingLockedFiles)
+    if (!m_tokenForHoldingLockedFiles) {
+        LOG_ALWAYS(true, "UIProcess is taking a background assertion because the Network process is holding locked files");
         m_tokenForHoldingLockedFiles = m_throttler.backgroundActivityToken();
+    }
 }
 
 } // namespace WebKit

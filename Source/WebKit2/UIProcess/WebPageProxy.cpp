@@ -180,6 +180,8 @@
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process->connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(m_process->checkURLReceivedFromWebProcess(url), m_process->connection())
 
+#define WEBPAGEPROXY_LOG_ALWAYS(...) LOG_ALWAYS(isAlwaysOnLoggingAllowed(), __VA_ARGS__)
+
 using namespace WebCore;
 
 // Represents the number of wheel events we can hold in the queue before we start pushing them preemptively.
@@ -1485,6 +1487,11 @@ void WebPageProxy::dispatchViewStateChange()
     m_viewWasEverInWindow |= isNowInWindow;
 }
 
+bool WebPageProxy::isAlwaysOnLoggingAllowed() const
+{
+    return sessionID().isAlwaysOnLoggingAllowed();
+}
+
 void WebPageProxy::updateActivityToken()
 {
     if (m_viewState & ViewState::IsVisuallyIdle)
@@ -1493,10 +1500,16 @@ void WebPageProxy::updateActivityToken()
         m_pageIsUserObservableCount = m_process->processPool().userObservablePageCount();
 
 #if PLATFORM(IOS)
-    if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority)
+    if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority) {
+        WEBPAGEPROXY_LOG_ALWAYS("UIProcess is releasing a foreground assertion because the view is no longer visible");
         m_activityToken = nullptr;
-    else if (!m_activityToken)
+    } else if (!m_activityToken) {
+        if (isViewVisible())
+            WEBPAGEPROXY_LOG_ALWAYS("UIProcess is taking a foreground assertion because the view is visible");
+        else
+            WEBPAGEPROXY_LOG_ALWAYS("UIProcess is taking a foreground assertion even though the view is not visible because m_alwaysRunsAtForegroundPriority is true");
         m_activityToken = m_process->throttler().foregroundActivityToken();
+    }
 #endif
 }
 
