@@ -182,8 +182,11 @@ JSC::EncodedJSValue iteratorForEach(JSC::ExecState& state, const char* propertyN
     if (UNLIKELY(!wrapper))
         return throwThisTypeError(state, JSWrapper::info()->className, propertyName);
 
+    JSC::JSValue callback = state.argument(0);
+    JSC::JSValue thisValue = state.argument(1);
+
     JSC::CallData callData;
-    JSC::CallType callType = JSC::getCallData(state.argument(0), callData);
+    JSC::CallType callType = JSC::getCallData(callback, callData);
     if (callType == JSC::CallType::None)
         return throwVMTypeError(&state);
 
@@ -193,10 +196,10 @@ JSC::EncodedJSValue iteratorForEach(JSC::ExecState& state, const char* propertyN
         JSC::MarkedArgumentBuffer arguments;
         appendForEachArguments(state, wrapper->globalObject(), arguments, value, index);
         arguments.append(wrapper);
-        JSC::call(&state, state.argument(0), callType, callData, wrapper, arguments);
+        JSC::call(&state, callback, callType, callData, thisValue, arguments);
         if (state.hadException())
             break;
-    } 
+    }
     return JSC::JSValue::encode(JSC::jsUndefined());
 }
 

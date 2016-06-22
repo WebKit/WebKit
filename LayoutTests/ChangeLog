@@ -1,3 +1,13 @@
+2016-06-22  Youenn Fablet  <youennf@gmail.com>
+
+        JSDOMIterator forEach should support second optional parameter
+        https://bugs.webkit.org/show_bug.cgi?id=159020
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/nodeListIterator-expected.txt:
+        * fast/dom/nodeListIterator.html: Adding 'thisValue' various checks.
+
 2016-06-22  Per Arne Vollan  <pvollan@apple.com>
 
         window.showModalDialog doesn't work in DumpRenderTree on Windows

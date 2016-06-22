@@ -11,9 +11,15 @@ PASS pair[1] is children[1]
 PASS forEachContainer is nodeList
 PASS forEachIndex is index
 PASS node is children[index++]
+PASS thisValue is window
 PASS forEachContainer is nodeList
 PASS forEachIndex is index
 PASS node is children[index++]
+PASS thisValue is window
+PASS thisValue is window
+PASS thisValue is window
+PASS thisValue is givenThisValue
+PASS thisValue is givenThisValue
 PASS iterator.next().value is children[0]
 PASS iterator.next().value is children[1]
 PASS end.done is true

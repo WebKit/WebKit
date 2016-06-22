@@ -39,15 +39,29 @@
             var node;
             var forEachIndex;
             var forEachContainer;
+            var thisValue;
             nodeList.forEach(function(n, i, c) {
                 node = n;
                 forEachIndex = i;
                 forEachContainer = c;
+                thisValue = this;
                 shouldBe('forEachContainer', 'nodeList');
                 shouldBe('forEachIndex', 'index');
                 shouldBe('node', 'children[index++]');
+                shouldBe('thisValue', 'window');
             });
-                                                                   
+
+            nodeList.forEach(function() {
+                thisValue = this;
+                shouldBe('thisValue', 'window');
+            }, undefined);
+
+            var givenThisValue = nodeList;
+            nodeList.forEach(function() {
+                thisValue = this;
+                shouldBe('thisValue', 'givenThisValue');
+            }, givenThisValue);
+
             var iterator = nodeList.keys();
             shouldBe('iterator.next().value', 'children[0]');
             shouldBe('iterator.next().value', 'children[1]');
