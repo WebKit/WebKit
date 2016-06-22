@@ -233,3 +233,7 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 # to have platform specific results that are different between WK1 and WK2.
 [ Sierra+ ] accessibility/mac/document-attributes.html [ Failure ]
 [ Sierra+ ] accessibility/parent-delete.html [ Failure ]
+
+# rdar://problem/26422051
+[ Sierra+ ] fast/html/marquee-scroll.html [ Failure ]
+[ Sierra+ ] fast/inline-block/003.html [ Failure ]
