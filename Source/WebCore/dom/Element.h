@@ -273,10 +273,12 @@ public:
     bool active() const { return isUserActionElement() && isUserActionElementActive(); }
     bool hovered() const { return isUserActionElement() && isUserActionElementHovered(); }
     bool focused() const { return isUserActionElement() && isUserActionElementFocused(); }
+    bool hasFocusWithin() const { return getFlag(HasFocusWithin); };
 
     virtual void setActive(bool flag = true, bool pause = false);
     virtual void setHovered(bool flag = true);
     virtual void setFocus(bool flag);
+    void setHasFocusWithin(bool flag);
 
     bool tabIndexSetExplicitly() const;
     virtual bool supportsFocus() const;
@@ -296,6 +298,7 @@ public:
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
     bool styleAffectedByEmpty() const { return hasRareData() && rareDataStyleAffectedByEmpty(); }
+    bool styleAffectedByFocusWithin() const { return hasRareData() && rareDataStyleAffectedByFocusWithin(); }
     bool childrenAffectedByHover() const { return getFlag(ChildrenAffectedByHoverRulesFlag); }
     bool childrenAffectedByActive() const { return hasRareData() && rareDataChildrenAffectedByActive(); }
     bool childrenAffectedByDrag() const { return hasRareData() && rareDataChildrenAffectedByDrag(); }
@@ -309,6 +312,7 @@ public:
     bool hasFlagsSetDuringStylingOfChildren() const;
 
     void setStyleAffectedByEmpty();
+    void setStyleAffectedByFocusWithin();
     void setChildrenAffectedByHover() { setFlag(ChildrenAffectedByHoverRulesFlag); }
     void setChildrenAffectedByActive();
     void setChildrenAffectedByDrag();
@@ -521,6 +525,10 @@ public:
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
 
+    bool isNamedFlowContentElement() const { return hasRareData() && rareDataIsNamedFlowContentElement(); }
+    void setIsNamedFlowContentElement();
+    void clearIsNamedFlowContentElement();
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
@@ -607,6 +615,8 @@ private:
     const RenderStyle& resolveComputedStyle();
 
     bool rareDataStyleAffectedByEmpty() const;
+    bool rareDataStyleAffectedByFocusWithin() const;
+    bool rareDataIsNamedFlowContentElement() const;
     bool rareDataChildrenAffectedByHover() const;
     bool rareDataChildrenAffectedByActive() const;
     bool rareDataChildrenAffectedByDrag() const;
@@ -747,6 +757,15 @@ inline UniqueElementData& Element::ensureUniqueElementData()
 inline bool shouldIgnoreAttributeCase(const Element& element)
 {
     return element.isHTMLElement() && element.document().isHTMLDocument();
+}
+
+inline void Element::setHasFocusWithin(bool flag)
+{
+    if (hasFocusWithin() == flag)
+        return;
+    setFlag(flag, HasFocusWithin);
+    if (styleAffectedByFocusWithin())
+        setNeedsStyleRecalc();
 }
 
 } // namespace WebCore

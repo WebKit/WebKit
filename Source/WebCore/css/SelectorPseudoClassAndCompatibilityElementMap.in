@@ -25,6 +25,7 @@ first-letter, PseudoClassUnknown, PseudoElementFirstLetter
 first-line, PseudoClassUnknown, PseudoElementFirstLine
 first-of-type
 focus
+focus-within
 horizontal
 host
 hover

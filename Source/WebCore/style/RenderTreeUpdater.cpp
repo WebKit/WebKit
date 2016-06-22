@@ -240,7 +240,7 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
 
 void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUpdate& update)
 {
-    bool shouldTearDownRenderers = update.change == Style::Detach && (element.renderer() || element.isNamedFlowContentNode());
+    bool shouldTearDownRenderers = update.change == Style::Detach && (element.renderer() || element.isNamedFlowContentElement());
     if (shouldTearDownRenderers)
         tearDownRenderers(element, TeardownType::KeepHoverAndActive);
 

@@ -74,10 +74,10 @@ void RenderNamedFlowThread::clearContentElements()
 {
     for (auto& contentElement : m_contentElements) {
         ASSERT(contentElement);
-        ASSERT(contentElement->isNamedFlowContentNode());
+        ASSERT(contentElement->isNamedFlowContentElement());
         ASSERT(&contentElement->document() == &document());
         
-        contentElement->clearIsNamedFlowContentNode();
+        contentElement->clearIsNamedFlowContentElement();
     }
     
     m_contentElements.clear();
@@ -497,7 +497,7 @@ void RenderNamedFlowThread::registerNamedFlowContentElement(Element& contentElem
 {
     ASSERT(&contentElement.document() == &document());
 
-    contentElement.setIsNamedFlowContentNode();
+    contentElement.setIsNamedFlowContentElement();
 
     resetMarkForDestruction();
 
@@ -518,10 +518,10 @@ void RenderNamedFlowThread::registerNamedFlowContentElement(Element& contentElem
 void RenderNamedFlowThread::unregisterNamedFlowContentElement(Element& contentElement)
 {
     ASSERT(m_contentElements.contains(&contentElement));
-    ASSERT(contentElement.isNamedFlowContentNode());
+    ASSERT(contentElement.isNamedFlowContentElement());
     ASSERT(&contentElement.document() == &document());
 
-    contentElement.clearIsNamedFlowContentNode();
+    contentElement.clearIsNamedFlowContentElement();
     m_contentElements.remove(&contentElement);
 
     if (canBeDestroyed())
@@ -616,7 +616,7 @@ static bool boxIntersectsRegion(LayoutUnit logicalTopForBox, LayoutUnit logicalB
 // Retrieve the next node to be visited while computing the ranges inside a region.
 static Node* nextNodeInsideContentElement(const Node& currNode, const Element* contentElement)
 {
-    ASSERT(contentElement && contentElement->isNamedFlowContentNode());
+    ASSERT(contentElement && contentElement->isNamedFlowContentElement());
 
     if (currNode.renderer() && currNode.renderer()->isSVGRoot())
         return NodeTraversal::nextSkippingChildren(currNode, contentElement);

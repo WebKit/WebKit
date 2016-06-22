@@ -230,6 +230,8 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
     if (candidateElement.affectsNextSiblingElementStyle() || candidateElement.styleIsAffectedByPreviousSibling())
         return false;
+    if (candidateElement.styleAffectedByFocusWithin() || element.styleAffectedByFocusWithin())
+        return false;
 
     auto& candidateElementId = candidateElement.idForStyleResolution();
     if (!candidateElementId.isNull() && m_ruleSets.features().idsInRules.contains(candidateElementId.impl()))

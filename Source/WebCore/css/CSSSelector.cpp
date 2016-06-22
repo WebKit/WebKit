@@ -497,6 +497,9 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassFocus:
                 str.appendLiteral(":focus");
                 break;
+            case CSSSelector::PseudoClassFocusWithin:
+                str.appendLiteral(":focus-within");
+                break;
 #if ENABLE(VIDEO_TRACK)
             case CSSSelector::PseudoClassFuture:
                 str.appendLiteral(":future");

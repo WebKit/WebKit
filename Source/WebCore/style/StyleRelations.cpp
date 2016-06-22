@@ -72,6 +72,7 @@ std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, cons
         case Relation::Unique:
             style.setUnique();
             break;
+        case Relation::AffectedByFocusWithin:
         case Relation::AffectedByPreviousSibling:
         case Relation::AffectsNextSibling:
         case Relation::ChildrenAffectedByBackwardPositionalRules:
@@ -101,6 +102,9 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
             break;
         case Relation::AffectedByEmpty:
             element.setStyleAffectedByEmpty();
+            break;
+        case Relation::AffectedByFocusWithin:
+            element.setStyleAffectedByFocusWithin();
             break;
         case Relation::AffectedByHover:
             element.setChildrenAffectedByHover();

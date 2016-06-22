@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2014, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Smith <catfish.man@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -58,8 +58,14 @@ public:
     bool styleAffectedByEmpty() const { return m_styleAffectedByEmpty; }
     void setStyleAffectedByEmpty(bool value) { m_styleAffectedByEmpty = value; }
 
+    bool styleAffectedByFocusWithin() const { return m_styleAffectedByFocusWithin; }
+    void setStyleAffectedByFocusWithin(bool value) { m_styleAffectedByFocusWithin = value; }
+
     RegionOversetState regionOversetState() const { return m_regionOversetState; }
     void setRegionOversetState(RegionOversetState state) { m_regionOversetState = state; }
+
+    bool isNamedFlowContentElement() const { return m_isNamedFlowContentElement; }
+    void setIsNamedFlowContentElement(bool value) { m_isNamedFlowContentElement = value; }
 
 #if ENABLE(FULLSCREEN_API)
     bool containsFullScreenElement() { return m_containsFullScreenElement; }
@@ -116,6 +122,7 @@ private:
     unsigned m_tabIndexWasSetExplicitly : 1;
     unsigned m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
     unsigned m_styleAffectedByEmpty : 1;
+    unsigned m_styleAffectedByFocusWithin : 1;
 #if ENABLE(FULLSCREEN_API)
     unsigned m_containsFullScreenElement : 1;
 #endif
@@ -130,6 +137,7 @@ private:
     unsigned m_childrenAffectedByBackwardPositionalRules : 1;
     unsigned m_childrenAffectedByPropertyBasedBackwardPositionalRules : 1;
     unsigned m_hasDisplayContents : 1;
+    unsigned m_isNamedFlowContentElement : 1;
 
     RegionOversetState m_regionOversetState;
 
@@ -160,6 +168,7 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_tabIndexWasSetExplicitly(false)
     , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
     , m_styleAffectedByEmpty(false)
+    , m_styleAffectedByFocusWithin(false)
 #if ENABLE(FULLSCREEN_API)
     , m_containsFullScreenElement(false)
 #endif
@@ -171,6 +180,7 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_childrenAffectedByBackwardPositionalRules(false)
     , m_childrenAffectedByPropertyBasedBackwardPositionalRules(false)
     , m_hasDisplayContents(false)
+    , m_isNamedFlowContentElement(false)
     , m_regionOversetState(RegionUndefined)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
@@ -200,6 +210,7 @@ inline void ElementRareData::resetComputedStyle()
     m_computedStyle = nullptr;
     m_hasDisplayContents = false;
     setStyleAffectedByEmpty(false);
+    setStyleAffectedByFocusWithin(false);
     setChildIndex(0);
 }
 

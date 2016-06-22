@@ -944,6 +944,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             break;
         case CSSSelector::PseudoClassFocus:
             return matchesFocusPseudoClass(element);
+        case CSSSelector::PseudoClassFocusWithin:
+            addStyleRelation(checkingContext, element, Style::Relation::AffectedByFocusWithin);
+            return element.hasFocusWithin();
         case CSSSelector::PseudoClassHover:
             if (m_strictParsing || element.isLink() || canMatchHoverOrActiveInQuirksMode(context)) {
                 addStyleRelation(checkingContext, element, Style::Relation::AffectedByHover);

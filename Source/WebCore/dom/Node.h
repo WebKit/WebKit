@@ -247,7 +247,6 @@ public:
     bool isDocumentFragment() const { return getFlag(IsDocumentFragmentFlag); }
     bool isShadowRoot() const { return isDocumentFragment() && isTreeScope(); }
 
-    bool isNamedFlowContentNode() const { return getFlag(IsNamedFlowContentNodeFlag); }
     bool hasCustomStyleResolveCallbacks() const { return getFlag(HasCustomStyleResolveCallbacksFlag); }
 
     bool hasSyntheticAttrChildNodes() const { return getFlag(HasSyntheticAttrChildNodesFlag); }
@@ -336,9 +335,6 @@ public:
 
     bool isLink() const { return getFlag(IsLinkFlag); }
     void setIsLink(bool flag) { setFlag(flag, IsLinkFlag); }
-
-    void setIsNamedFlowContentNode() { setFlag(IsNamedFlowContentNodeFlag); }
-    void clearIsNamedFlowContentNode() { clearFlag(IsNamedFlowContentNodeFlag); }
 
     bool hasEventTargetData() const { return getFlag(HasEventTargetDataFlag); }
     void setHasEventTargetData(bool flag) { setFlag(flag, HasEventTargetDataFlag); }
@@ -572,6 +568,7 @@ public:
     static int32_t flagIsElement() { return IsElementFlag; }
     static int32_t flagIsHTML() { return IsHTMLFlag; }
     static int32_t flagIsLink() { return IsLinkFlag; }
+    static int32_t flagHasFocusWithin() { return HasFocusWithin; }
     static int32_t flagHasRareData() { return HasRareDataFlag; }
     static int32_t flagIsParsingChildrenFinished() { return IsParsingChildrenFinishedFlag; }
     static int32_t flagChildrenAffectedByFirstChildRulesFlag() { return ChildrenAffectedByFirstChildRulesFlag; }
@@ -602,7 +599,7 @@ protected:
 
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1) | 1 << (nodeStyleChangeShift + 2),
         IsEditingTextOrUnresolvedCustomElementFlag = 1 << 17,
-        IsNamedFlowContentNodeFlag = 1 << 18,
+        HasFocusWithin = 1 << 18,
         HasSyntheticAttrChildNodesFlag = 1 << 19,
         HasCustomStyleResolveCallbacksFlag = 1 << 20,
         HasEventTargetDataFlag = 1 << 21,

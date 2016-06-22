@@ -42,6 +42,7 @@ struct Relation {
         AffectedByActive,
         AffectedByDrag,
         AffectedByEmpty,
+        AffectedByFocusWithin,
         AffectedByHover,
         AffectedByPreviousSibling,
         // For AffectsNextSibling 'value' tells how many element siblings to mark starting with 'element'.
