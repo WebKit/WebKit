@@ -1113,20 +1113,6 @@ webkit.org/b/136109 [ Yosemite+ ] fast/multicol/mixed-opacity-fixed-test.html  [
 
 webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Pass Timeout ]
 
-# Verified passing, so override generic skip
-webkit.org/b/89235 [ Yosemite ElCapitan ] css3/line-break [ Pass ]
-webkit.org/b/138115 [ Yosemite ElCapitan ] css3/line-break/line-break-auto-hyphens.html [ ImageOnlyFailure ]
-webkit.org/b/138115 [ Yosemite ElCapitan ] css3/line-break/line-break-auto-sound-marks.html [ ImageOnlyFailure ]
-
-# We have language-sensitive fallback, so css3/line-break-language-sensitive is used instead.
-[ Sierra+ ] css3/line-break [ Pass ImageOnlyFailure ]
-
-# These operating systems do not have language-sensitive font fallback.
-[ Yosemite ElCapitan ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
-
-# rdar://problem/26884906
-[ Sierra+ ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
-
 # Language-specific font fallback is disabled on certain versions of OS X
 webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han.html [ ImageOnlyFailure ]
 webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]

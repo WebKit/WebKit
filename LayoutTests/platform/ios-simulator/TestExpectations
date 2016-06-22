@@ -2690,8 +2690,6 @@ platform/ios-simulator/ios/accessibility/set-value.html [ Failure ]
 platform/ios-simulator/ios/fast/css/webkit-overflow-scrolling-parsing.html [ Failure ]
 svg/custom/bug78807.svg [ Failure ]
 
-css3/line-break-language-sensitive/line-break-loose-hyphens.html [ ImageOnlyFailure ]
-css3/line-break-language-sensitive/line-break-normal-hyphens.html [ ImageOnlyFailure ]
 fast/filter-image/background-filter-image.html [ ImageOnlyFailure ]
 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 fast/text/han-generic-font-families.html [ ImageOnlyFailure ]
@@ -2760,10 +2758,12 @@ webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nes
 
 # Flaky tests ( these tests were affected by https://bugs.webkit.org/show_bug.cgi?id=149320 )
 
-css3/line-break-language-sensitive/line-break-loose-centered.html [ ImageOnlyFailure Pass ]
-css3/line-break-language-sensitive/line-break-loose-postfixes.html [ ImageOnlyFailure Pass ]
-css3/line-break-language-sensitive/line-break-loose-sound-marks.html [ ImageOnlyFailure Pass ]
-css3/line-break-language-sensitive/line-break-normal-sound-marks.html [ ImageOnlyFailure Pass ]
+css3/line-break/line-break-loose-hyphens.html [ ImageOnlyFailure ]
+css3/line-break/line-break-normal-hyphens.html [ ImageOnlyFailure ]
+css3/line-break/line-break-loose-centered.html [ ImageOnlyFailure Pass ]
+css3/line-break/line-break-loose-postfixes.html [ ImageOnlyFailure Pass ]
+css3/line-break/line-break-loose-sound-marks.html [ ImageOnlyFailure Pass ]
+css3/line-break/line-break-normal-sound-marks.html [ ImageOnlyFailure Pass ]
 
 # Enable "aria-current" test for iOS
 webkit.org/b/149297 accessibility/aria-current.html [ Pass ]

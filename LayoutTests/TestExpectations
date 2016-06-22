@@ -61,9 +61,6 @@ fast/attachment/attachment-subtitle-resize.html
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-# pending functional patch and per-port verification
-webkit.org/b/109954 css3/line-break [ Skip ]
-
 # media/video-seek-after-end.html is flaky
 webkit.org/b/116293 media/video-seek-after-end.html [ Pass Failure ]
 

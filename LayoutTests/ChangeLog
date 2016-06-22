@@ -1,3 +1,182 @@
+2016-06-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening for css3/line-break-language-sensitive
+        https://bugs.webkit.org/show_bug.cgi?id=159017
+
+        Unreviewed.
+
+        Some reftests had content which ended up outside of the viewport. This patch
+        splits that extra content out into separate tests.
+
+        In addition, this test migrates these tests to using a web font, so the results
+        of this test are not sensitive to platform-specific font fallback.
+
+        Because of the migration to the web font, css3/line-break-language-sensitive is
+        no longer needed.
+
+        * TestExpectations:
+        * css3/line-break-language-sensitive/line-break-auto-centered-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-centered.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-half-kana-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-half-kana.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-hyphens.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-inseparables-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-inseparables.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-iteration-marks-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-iteration-marks.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-postfixes.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-prefixes-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-prefixes.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-sound-marks-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-auto-sound-marks.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-centered.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-half-kana-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-half-kana.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-hyphens.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-inseparables-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-inseparables.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-iteration-marks.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-postfixes.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-prefixes-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-prefixes.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-sound-marks-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-loose-sound-marks.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-centered-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-centered.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-half-kana-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-half-kana.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-hyphens-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-hyphens.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-inseparables-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-inseparables.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-iteration-marks.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-postfixes.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-prefixes-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-prefixes.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-sound-marks-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-normal-sound-marks.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-centered-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-centered.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-half-kana-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-half-kana.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-hyphens.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-inseparables-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-inseparables.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-iteration-marks-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-iteration-marks.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-postfixes.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-prefixes-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-prefixes.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-sound-marks-expected.html: Removed.
+        * css3/line-break-language-sensitive/line-break-strict-sound-marks.html: Removed.
+        * css3/line-break/line-break-auto-centered-2-expected.html: Renamed from LayoutTests/css3/line-break-language-sensitive/line-break-strict-hyphens-expected.html.
+        * css3/line-break/line-break-auto-centered-2.html: Added.
+        * css3/line-break/line-break-auto-centered-expected.html:
+        * css3/line-break/line-break-auto-centered.html:
+        * css3/line-break/line-break-auto-half-kana-2-expected.html: Copied from LayoutTests/css3/line-break-language-sensitive/line-break-loose-postfixes-expected.html.
+        * css3/line-break/line-break-auto-half-kana-2.html: Added.
+        * css3/line-break/line-break-auto-half-kana-3-expected.html: Copied from LayoutTests/css3/line-break-language-sensitive/line-break-loose-postfixes-expected.html.
+        * css3/line-break/line-break-auto-half-kana-3.html: Added.
+        * css3/line-break/line-break-auto-half-kana-4-expected.html: Copied from LayoutTests/css3/line-break-language-sensitive/line-break-strict-postfixes-expected.html.
+        * css3/line-break/line-break-auto-half-kana-4.html: Added.
+        * css3/line-break/line-break-auto-half-kana-5-expected.html: Renamed from LayoutTests/css3/line-break-language-sensitive/line-break-auto-postfixes-expected.html.
+        * css3/line-break/line-break-auto-half-kana-5.html: Added.
+        * css3/line-break/line-break-auto-half-kana-expected.html:
+        * css3/line-break/line-break-auto-half-kana.html:
+        * css3/line-break/line-break-auto-hyphens-expected.html:
+        * css3/line-break/line-break-auto-hyphens.html:
+        * css3/line-break/line-break-auto-inseparables-expected.html:
+        * css3/line-break/line-break-auto-inseparables.html:
+        * css3/line-break/line-break-auto-iteration-marks-expected.html:
+        * css3/line-break/line-break-auto-iteration-marks.html:
+        * css3/line-break/line-break-auto-postfixes-expected.html:
+        * css3/line-break/line-break-auto-postfixes.html:
+        * css3/line-break/line-break-auto-prefixes-expected.html:
+        * css3/line-break/line-break-auto-prefixes.html:
+        * css3/line-break/line-break-auto-sound-marks-expected.html:
+        * css3/line-break/line-break-auto-sound-marks.html:
+        * css3/line-break/line-break-loose-centered-2-expected.html: Renamed from LayoutTests/css3/line-break-language-sensitive/line-break-loose-hyphens-expected.html.
+        * css3/line-break/line-break-loose-centered-2.html: Added.
+        * css3/line-break/line-break-loose-centered-expected.html:
+        * css3/line-break/line-break-loose-centered.html:
+        * css3/line-break/line-break-loose-half-kana-2-expected.html: Copied from LayoutTests/css3/line-break-language-sensitive/line-break-loose-postfixes-expected.html.
+        * css3/line-break/line-break-loose-half-kana-2.html: Added.
+        * css3/line-break/line-break-loose-half-kana-3-expected.html: Copied from LayoutTests/css3/line-break-language-sensitive/line-break-loose-postfixes-expected.html.
+        * css3/line-break/line-break-loose-half-kana-3.html: Added.
+        * css3/line-break/line-break-loose-half-kana-4-expected.html: Renamed from LayoutTests/css3/line-break-language-sensitive/line-break-loose-centered-expected.html.
+        * css3/line-break/line-break-loose-half-kana-4.html: Added.
+        * css3/line-break/line-break-loose-half-kana-5-expected.html: Renamed from LayoutTests/css3/line-break-language-sensitive/line-break-loose-iteration-marks-expected.html.
+        * css3/line-break/line-break-loose-half-kana-5.html: Added.
+        * css3/line-break/line-break-loose-half-kana-expected.html:
+        * css3/line-break/line-break-loose-half-kana.html:
+        * css3/line-break/line-break-loose-hyphens-expected.html:
+        * css3/line-break/line-break-loose-hyphens.html:
+        * css3/line-break/line-break-loose-inseparables-expected.html:
+        * css3/line-break/line-break-loose-inseparables.html:
+        * css3/line-break/line-break-loose-iteration-marks-expected.html:
+        * css3/line-break/line-break-loose-iteration-marks.html:
+        * css3/line-break/line-break-loose-postfixes-expected.html:
+        * css3/line-break/line-break-loose-postfixes.html:
+        * css3/line-break/line-break-loose-prefixes-expected.html:
+        * css3/line-break/line-break-loose-prefixes.html:
+        * css3/line-break/line-break-loose-sound-marks-expected.html:
+        * css3/line-break/line-break-loose-sound-marks.html:
+        * css3/line-break/line-break-normal-centered-2-expected.html: Renamed from LayoutTests/css3/line-break-language-sensitive/line-break-normal-iteration-marks-expected.html.
+        * css3/line-break/line-break-normal-centered-2.html: Added.
+        * css3/line-break/line-break-normal-centered-expected.html:
+        * css3/line-break/line-break-normal-centered.html:
+        * css3/line-break/line-break-normal-half-kana-2-expected.html: Copied from LayoutTests/css3/line-break-language-sensitive/line-break-loose-postfixes-expected.html.
+        * css3/line-break/line-break-normal-half-kana-2.html: Added.
+        * css3/line-break/line-break-normal-half-kana-3-expected.html: Copied from LayoutTests/css3/line-break-language-sensitive/line-break-loose-postfixes-expected.html.
+        * css3/line-break/line-break-normal-half-kana-3.html: Added.
+        * css3/line-break/line-break-normal-half-kana-4-expected.html: Renamed from LayoutTests/css3/line-break-language-sensitive/line-break-loose-postfixes-expected.html.
+        * css3/line-break/line-break-normal-half-kana-4.html: Added.
+        * css3/line-break/line-break-normal-half-kana-5-expected.html: Copied from LayoutTests/css3/line-break/line-break-loose-postfixes-expected.html.
+        * css3/line-break/line-break-normal-half-kana-5.html: Added.
+        * css3/line-break/line-break-normal-half-kana-expected.html:
+        * css3/line-break/line-break-normal-half-kana.html:
+        * css3/line-break/line-break-normal-hyphens-expected.html:
+        * css3/line-break/line-break-normal-hyphens.html:
+        * css3/line-break/line-break-normal-inseparables-expected.html:
+        * css3/line-break/line-break-normal-inseparables.html:
+        * css3/line-break/line-break-normal-iteration-marks-expected.html:
+        * css3/line-break/line-break-normal-iteration-marks.html:
+        * css3/line-break/line-break-normal-postfixes-expected.html:
+        * css3/line-break/line-break-normal-postfixes.html:
+        * css3/line-break/line-break-normal-prefixes-expected.html:
+        * css3/line-break/line-break-normal-prefixes.html:
+        * css3/line-break/line-break-normal-sound-marks-expected.html:
+        * css3/line-break/line-break-normal-sound-marks.html:
+        * css3/line-break/line-break-strict-centered-2-expected.html: Renamed from LayoutTests/css3/line-break-language-sensitive/line-break-auto-hyphens-expected.html.
+        * css3/line-break/line-break-strict-centered-2.html: Added.
+        * css3/line-break/line-break-strict-centered-expected.html:
+        * css3/line-break/line-break-strict-centered.html:
+        * css3/line-break/line-break-strict-half-kana-2-expected.html: Copied from LayoutTests/css3/line-break-language-sensitive/line-break-normal-postfixes-expected.html.
+        * css3/line-break/line-break-strict-half-kana-2.html: Added.
+        * css3/line-break/line-break-strict-half-kana-3-expected.html: Renamed from LayoutTests/css3/line-break-language-sensitive/line-break-strict-postfixes-expected.html.
+        * css3/line-break/line-break-strict-half-kana-3.html: Added.
+        * css3/line-break/line-break-strict-half-kana-4-expected.html: Copied from LayoutTests/css3/line-break-language-sensitive/line-break-normal-postfixes-expected.html.
+        * css3/line-break/line-break-strict-half-kana-4.html: Added.
+        * css3/line-break/line-break-strict-half-kana-5-expected.html: Renamed from LayoutTests/css3/line-break-language-sensitive/line-break-normal-postfixes-expected.html.
+        * css3/line-break/line-break-strict-half-kana-5.html: Added.
+        * css3/line-break/line-break-strict-half-kana-expected.html:
+        * css3/line-break/line-break-strict-half-kana.html:
+        * css3/line-break/line-break-strict-hyphens-expected.html:
+        * css3/line-break/line-break-strict-hyphens.html:
+        * css3/line-break/line-break-strict-inseparables-expected.html:
+        * css3/line-break/line-break-strict-inseparables.html:
+        * css3/line-break/line-break-strict-iteration-marks-expected.html:
+        * css3/line-break/line-break-strict-iteration-marks.html:
+        * css3/line-break/line-break-strict-postfixes-expected.html:
+        * css3/line-break/line-break-strict-postfixes.html:
+        * css3/line-break/line-break-strict-prefixes-expected.html:
+        * css3/line-break/line-break-strict-prefixes.html:
+        * css3/line-break/line-break-strict-sound-marks-expected.html:
+        * css3/line-break/line-break-strict-sound-marks.html:
+        * css3/line-break/resources/AllAhem.svg: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r201629): Weird button glitching on github.com

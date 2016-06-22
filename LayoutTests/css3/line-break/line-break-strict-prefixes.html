@@ -2,10 +2,16 @@
     <head>
         <title>Line breaks using [-webkit-]line-break : strict - after prefixes</title>
         <style>
-          div > div {
-            font-family: 'Lucida Grande';
+          @font-face {
+            font-family: AllAhem;
+            src: url("resources/AllAhem.svg") format("svg");
+          }
+          span > div {
+            font-family: "AllAhem";
             font-size: 16pt;
             width: 1.5em;
+            display: inline-block;
+            margin-right: 60px;
           }
           div > p {
             border: solid blue 1px;
@@ -14,7 +20,7 @@
         </style>
     </head>
     <body>
-        <div lang="en">
+        <span lang="en">
             <div>
                 <p>&#x0024;123</p>
             </div>
@@ -39,8 +45,8 @@
             <div>
                 <p>&#xffe5;123</p>
             </div>
-        </div>
-        <div lang="ja">
+        </span>
+        <span lang="ja">
             <div>
                 <p>&#x0024;123</p>
             </div>
@@ -65,8 +71,8 @@
             <div>
                 <p>&#xffe5;123</p>
             </div>
-        </div>
-        <div lang="ko">
+        </span>
+        <span lang="ko">
             <div>
                 <p>&#x0024;123</p>
             </div>
@@ -91,8 +97,8 @@
             <div>
                 <p>&#xffe5;123</p>
             </div>
-        </div>
-        <div lang="zh">
+        </span>
+        <span lang="zh">
             <div>
                 <p>&#x0024;123</p>
             </div>
@@ -117,6 +123,6 @@
             <div>
                 <p>&#xffe5;123</p>
             </div>
-        </div>
+        </span>
     </body>
 </html>
