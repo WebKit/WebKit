@@ -1,3 +1,26 @@
+2016-06-22  Brian Burg  <bburg@apple.com>
+
+        Web Automation: Automation.inspectBrowsingContext should have an option to enable timeline auto-capturing
+        https://bugs.webkit.org/show_bug.cgi?id=159004
+        <rdar://problem/26931269>
+
+        Reviewed by Joseph Pecoraro.
+
+        Automation.inspectBrowsingContext was added to make it easier to hit breakpoints inside of
+        code evaluated using Automation.evaluateJavaScriptFunction. I recently changed the behavior
+        of this command to automatically start profiling the page as soon as the inspector attached
+        so that a full timeline recording could be obtained. However, starting a timeline recording
+        turns off the debugger, so this command is not so useful for debugging right now.
+
+        Add a new option, enableAutoCapturing, to the inspectBrowsingContext command. Don't toggle
+        profiling automatically unless this optional flag is present and set to true.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::inspectBrowsingContext):
+        (WebKit::WebAutomationSession::inspectorFrontendLoaded): Deleted.
+        * UIProcess/Automation/WebAutomationSession.h:
+
 2016-06-22  Tim Horton  <timothy_horton@apple.com>
 
         Mail snapshot has black webview in multitasking switcher

@@ -433,7 +433,7 @@ void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorSt
     page->reload(reloadFromOrigin, contentBlockersEnabled);
 }
 
-void WebAutomationSession::inspectBrowsingContext(Inspector::ErrorString& errorString, const String& handle, Ref<InspectBrowsingContextCallback>&& callback)
+void WebAutomationSession::inspectBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const bool* optionalEnableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
@@ -445,8 +445,13 @@ void WebAutomationSession::inspectBrowsingContext(Inspector::ErrorString& errorS
 
     // Don't bring the inspector to front since this may be done automatically.
     // We just want it loaded so it can pause if a breakpoint is hit during a command.
-    if (page->inspector())
+    if (page->inspector()) {
         page->inspector()->connect();
+
+        // Start collecting profile information immediately so the entire session is captured.
+        if (optionalEnableAutoCapturing && *optionalEnableAutoCapturing)
+            page->inspector()->togglePageProfiling();
+    }
 }
 
 void WebAutomationSession::navigationOccurredForPage(const WebPageProxy& page)
@@ -459,9 +464,6 @@ void WebAutomationSession::inspectorFrontendLoaded(const WebPageProxy& page)
 {
     if (auto callback = m_pendingInspectorCallbacksPerPage.take(page.pageID()))
         callback->sendSuccess(InspectorObject::create());
-
-    // Start collecting profile information immediately so the entire session is captured.
-    page.inspector()->togglePageProfiling();
 }
 
 void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
