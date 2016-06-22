@@ -448,6 +448,8 @@ static Optional<Vector<PaymentRequest::ShippingMethod>> createShippingMethods(DO
 
         if (auto shippingMethod = createShippingMethod(window, shippingMethodDictionary))
             result.append(*shippingMethod);
+        else
+            return Nullopt;
     }
 
     return result;
@@ -564,8 +566,11 @@ static Optional<PaymentRequest> createPaymentRequest(DOMWindow& window, const Di
     }
 
     if (auto shippingMethodsArray = dictionary.get<ArrayValue>("shippingMethods")) {
-        if (auto shippingMethods = createShippingMethods(window, *shippingMethodsArray))
-            paymentRequest.setShippingMethods(*shippingMethods);
+        auto shippingMethods = createShippingMethods(window, *shippingMethodsArray);
+        if (!shippingMethods)
+            return Nullopt;
+
+        paymentRequest.setShippingMethods(*shippingMethods);
     }
 
     if (auto totalDictionary = dictionary.get<Dictionary>("total")) {
