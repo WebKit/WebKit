@@ -158,12 +158,6 @@ public:
         {
         }
 
-        Task(Task&& other)
-            : m_task(WTFMove(other.m_task))
-            , m_isCleanupTask(other.m_isCleanupTask)
-        {
-        }
-
         void performTask(ScriptExecutionContext& context) { m_task(context); }
         bool isCleanupTask() const { return m_isCleanupTask; }
 
