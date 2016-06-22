@@ -1,3 +1,25 @@
+2016-06-22  Chris Dumez  <cdumez@apple.com>
+
+        Stop using PassRefPtr in ShareableResource
+        https://bugs.webkit.org/show_bug.cgi?id=159043
+
+        Reviewed by Alex Christensen.
+
+        Stop using PassRefPtr in ShareableResource.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::initializeShareableResourceHandleFromStorageRecord):
+        * Shared/ShareableResource.cpp:
+        (WebKit::shareableResourceDeallocate):
+        (WebKit::ShareableResource::wrapInSharedBuffer):
+        (WebKit::ShareableResource::Handle::tryWrapInSharedBuffer):
+        (WebKit::ShareableResource::create):
+        (WebKit::ShareableResource::map):
+        (WebKit::ShareableResource::ShareableResource):
+        * Shared/ShareableResource.h:
+
 2016-06-17  Dean Jackson  <dino@apple.com>
 
         REGRESSION: Double tap to zoom does not work on yahoo finance
