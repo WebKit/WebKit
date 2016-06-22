@@ -1,3 +1,25 @@
+2016-06-22  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add support for the negotiationneeded event in MediaEndpointPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=158985
+
+        Add tests for the RTCPeerConnection negotiationneeded event.
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-more-media-to-negotiate-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html: Added.
+        Verify that a negotiationneeded event is fired when not all local media can be included in
+        an answer. (The answerer cannot reply with more m-lines than the offer had to begin with.)
+        * fast/mediastream/RTCPeerConnection-onnegotiationneeded-expected.txt:
+        * fast/mediastream/RTCPeerConnection-onnegotiationneeded.html:
+        Verify that a negotiationneeded event is fired when tracks are added and removed from an
+        RTCPeerConnection.
+        * platform/gtk/TestExpectations:
+        Unskip fast/mediastream/RTCPeerConnection-onnegotiationneeded.html.
+        * platform/mac/TestExpectations:
+        The mac port does not build with WEB_RTC enabled yet.
+
 2016-06-22  Youenn Fablet  <youennf@gmail.com>
 
         JSDOMIterator forEach should support second optional parameter

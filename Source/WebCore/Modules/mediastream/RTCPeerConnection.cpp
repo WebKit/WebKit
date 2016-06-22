@@ -476,8 +476,8 @@ void RTCPeerConnection::scheduleNegotiationNeededEvent()
 {
     scriptExecutionContext()->postTask([=](ScriptExecutionContext&) {
         if (m_backend->isNegotiationNeeded()) {
-            dispatchEvent(Event::create(eventNames().negotiationneededEvent, false, false));
             m_backend->clearNegotiationNeededState();
+            dispatchEvent(Event::create(eventNames().negotiationneededEvent, false, false));
         }
     });
 }

@@ -78,9 +78,9 @@ public:
 
     void stop() override;
 
-    bool isNegotiationNeeded() const override { return false; };
-    void markAsNeedingNegotiation() override;
-    void clearNegotiationNeededState() override { notImplemented(); };
+    bool isNegotiationNeeded() const override { return m_negotiationNeeded; };
+    void markAsNeedingNegotiation();
+    void clearNegotiationNeededState() override { m_negotiationNeeded = false; };
 
 private:
     void runTask(NoncopyableFunction<void ()>&&);

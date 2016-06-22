@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
@@ -7,9 +7,9 @@
         <script>
             description("Tests RTCPeerConnection onnegotiationneeded.");
 
-            var stream = null;
-            var pc = null;
-            var track = null;
+            let stream;
+            let pc;
+            let audioSender;
 
             function error()
             {
@@ -17,31 +17,21 @@
                 finishJSTest();
             }
 
-            function getUserMedia(dictionary, callback)
-            {
-                try {
-                    navigator.webkitGetUserMedia(dictionary, callback, error);
-                } catch (e) {
-                    testFailed('webkitGetUserMedia threw exception :' + e);
-                    finishJSTest();
-                }
-            }
-
             function onNegotiationNeeded(event)
             {
-                testPassed('onNegotiationNeeded was called.');
+                testPassed('onNegotiationNeeded was called when a track was added.');
                 removeTrack();
             }
 
             function onNegotiationNeeded2(event)
             {
-                testPassed('onNegotiationNeeded was called when track was removed.');
+                testPassed('onNegotiationNeeded2 was called when a track was removed.');
                 addTrack();
             }
 
             function onNegotiationNeeded3(event)
             {
-                testPassed('onNegotiationNeeded was called when track was added.');
+                testPassed('onNegotiationNeeded3 was called when a track was added.');
                 finishJSTest();
             }
 
@@ -53,27 +43,29 @@
                 pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
                 pc.onnegotiationneeded = onNegotiationNeeded;
 
-                pc.addStream(stream);
+                audioSender = pc.addTrack(stream.getAudioTracks()[0], stream);
             }
 
             function removeTrack()
             {
                 pc.onnegotiationneeded = onNegotiationNeeded2;
-                shouldBe('stream.getAudioTracks().length', '1');
-                track = stream.getAudioTracks()[0];
-                stream.removeTrack(track);
-                shouldBe('stream.getAudioTracks().length', '0');
+                pc.removeTrack(audioSender);
             }
 
             function addTrack()
             {
                 pc.onnegotiationneeded = onNegotiationNeeded3;
-                shouldBe('stream.getAudioTracks().length', '0');
-                stream.addTrack(track);
-                shouldBe('stream.getAudioTracks().length', '1');
+                pc.addTrack(stream.getVideoTracks()[0], stream);
             }
 
-            getUserMedia({audio:true, video:true}, gotStream);
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream).catch(error);
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;
