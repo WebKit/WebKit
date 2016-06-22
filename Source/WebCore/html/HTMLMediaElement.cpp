@@ -6861,6 +6861,11 @@ void HTMLMediaElement::updateMediaState(UpdateMediaState updateState)
 
     m_mediaState = state;
     m_mediaSession->mediaStateDidChange(*this, m_mediaState);
+#if ENABLE(MEDIA_SESSION)
+    document().updateIsPlayingMedia(m_elementID);
+#else
+    document().updateIsPlayingMedia();
+#endif
 }
 #endif
 
