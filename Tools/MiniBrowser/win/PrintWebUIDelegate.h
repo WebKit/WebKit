@@ -40,7 +40,7 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE createWebViewWithRequest(_In_opt_ IWebView*, _In_opt_ IWebURLRequest*, _COM_Outptr_opt_ IWebView**);
     virtual HRESULT STDMETHODCALLTYPE webViewShow(_In_opt_ IWebView*) { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE webViewClose(_In_opt_ IWebView*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE webViewClose(_In_opt_ IWebView*);
     virtual HRESULT STDMETHODCALLTYPE webViewFocus(_In_opt_ IWebView*) { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE webViewUnfocus(_In_opt_ IWebView*) { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE webViewFirstResponder(_In_opt_ IWebView*, _Out_ HWND*)  { return E_NOTIMPL; }
@@ -53,8 +53,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setStatusBarVisible(_In_opt_ IWebView*, BOOL) { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE webViewIsResizable(_In_opt_ IWebView*, _Out_ BOOL*) { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE setResizable(_In_opt_ IWebView*, BOOL) { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE setFrame(_In_opt_ IWebView*, _In_ RECT*) { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE webViewFrame(_In_opt_ IWebView*, _Out_ RECT*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE setFrame(_In_opt_ IWebView*, _In_ RECT*);
+    virtual HRESULT STDMETHODCALLTYPE webViewFrame(_In_opt_ IWebView*, _Out_ RECT*);
     virtual HRESULT STDMETHODCALLTYPE setContentRect(_In_opt_ IWebView*, _In_ RECT*) { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE webViewContentRect(_In_opt_ IWebView*, _Out_ RECT*) { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE runJavaScriptAlertPanelWithMessage(_In_opt_ IWebView*, _In_ BSTR);
@@ -93,9 +93,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE drawHeaderInRect(_In_opt_ IWebView*, _In_ RECT*, ULONG_PTR);
     virtual HRESULT STDMETHODCALLTYPE drawFooterInRect(_In_opt_ IWebView*, _In_ RECT*, ULONG_PTR, UINT, UINT);
     virtual HRESULT STDMETHODCALLTYPE webViewPrintingMarginRect(_In_opt_ IWebView*, _Out_ RECT*);
-    virtual HRESULT STDMETHODCALLTYPE canRunModal(_In_opt_ IWebView*, _Out_ BOOL*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE canRunModal(_In_opt_ IWebView*, _Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE createModalDialog(_In_opt_ IWebView*, _In_opt_ IWebURLRequest*, _COM_Outptr_opt_ IWebView**);
-    virtual HRESULT STDMETHODCALLTYPE runModal(_In_opt_ IWebView*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE runModal(_In_opt_ IWebView*);
     virtual HRESULT STDMETHODCALLTYPE isMenuBarVisible(_In_opt_ IWebView*, _Out_ BOOL*) { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE setMenuBarVisible(_In_opt_ IWebView*, BOOL) { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE runDatabaseSizeLimitPrompt(_In_opt_ IWebView*, _In_ BSTR, _In_opt_ IWebFrame*, _Out_ BOOL*) { return E_NOTIMPL; }
@@ -104,6 +104,7 @@ public:
 
 private:
     int m_refCount { 1 };
+    HWND m_modalDialogParent { nullptr };
 };
 
 #endif

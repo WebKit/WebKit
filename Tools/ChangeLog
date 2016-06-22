@@ -1,5 +1,29 @@
 2016-06-22  Per Arne Vollan  <pvollan@apple.com>
 
+        [Win] Implement modal dialog support in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=158976
+
+        Reviewed by Brent Fulgham.
+
+        * MiniBrowser/win/PrintWebUIDelegate.cpp:
+        (PrintWebUIDelegate::createWebViewWithRequest):
+        (getHandleFromWebView):
+        (PrintWebUIDelegate::webViewClose):
+        (PrintWebUIDelegate::setFrame):
+        (PrintWebUIDelegate::webViewFrame):
+        (PrintWebUIDelegate::canRunModal):
+        (findTopLevelParent):
+        (PrintWebUIDelegate::runModal):
+        (PrintWebUIDelegate::createModalDialog):
+        * MiniBrowser/win/PrintWebUIDelegate.h:
+        (PrintWebUIDelegate::webViewClose):
+        (PrintWebUIDelegate::setFrame):
+        (PrintWebUIDelegate::webViewFrame):
+        (PrintWebUIDelegate::canRunModal):
+        (PrintWebUIDelegate::runModal):
+
+2016-06-22  Per Arne Vollan  <pvollan@apple.com>
+
         window.showModalDialog doesn't work in DumpRenderTree on Windows
         https://bugs.webkit.org/show_bug.cgi?id=53675
 
