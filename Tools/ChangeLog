@@ -1,3 +1,25 @@
+2016-06-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should generate files to ignore by WebKit SCM
+        https://bugs.webkit.org/show_bug.cgi?id=142743
+
+        Reviewed by Darin Adler.
+
+        TestDownloader generates the .gitignore file according submodules git repository information.
+        TestImporter requests the generation of .gitignore and the main __init__.py according LayoutTests/imported/w3c/resources/TestRepositories options.
+
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader.generate_gitignore): Generating .gitignore according submodules description.
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.process_test_repositories_import_options): Added the generation of .gitignore/__init__.py if the repo has the right option.
+        (TestImporter):
+        (TestImporter.write_init_py): Writing not empty __init__.py files.
+        (TestImporter.import_tests): Using  of write_init_py. 
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_git_ignore_generation): Added .gitignore test.
+        (TestImporterTest):
+        (TestImporterTest.test_initpy_generation): Added __init__.py test.
+
 2016-06-21  Sam Weinig  <sam@webkit.org>
 
         WKWebView with no WKNavigationDelegate does not follow universal links

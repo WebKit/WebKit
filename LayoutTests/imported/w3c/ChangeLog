@@ -1,3 +1,14 @@
+2016-06-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should generate files to ignore by WebKit SCM
+        https://bugs.webkit.org/show_bug.cgi?id=142743
+
+        Reviewed by Darin Adler.
+
+        * resources/TestRepositories: Added the option to generate .gitignore and __init__.py for wpt repo.
+        * web-platform-tests/.gitignore: Regeneration changes the order of the ignored files and removes the __init__.py which is now committed to WebKit trunk.
+        * web-platform-tests/__init__.py: Added.
+
 2016-06-22  Youenn Fablet  <youennf@gmail.com>
 
         imported/w3c/web-platform-tests/streams/readable-streams/general.https.html is a flaky failure

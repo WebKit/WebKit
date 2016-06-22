@@ -210,7 +210,13 @@ class TestImporter(object):
             if 'generate_git_submodules_description' in test_repository['import_options']:
                 self.filesystem.maybe_make_directory(self.filesystem.join(self.destination_directory, 'resources'))
                 self._test_downloader.generate_git_submodules_description(test_repository, self.filesystem.join(self.destination_directory, 'resources', test_repository['name'] + '-modules.json'))
-            # FIXME: Generate WPT .gitignore and  main __init__.py
+            if 'generate_gitignore' in test_repository['import_options']:
+                self._test_downloader.generate_gitignore(test_repository, self.destination_directory)
+            if 'generate_init_py' in test_repository['import_options']:
+                self.write_init_py(self.filesystem.join(self.destination_directory, test_repository['name'], '__init__.py'))
+
+    def write_init_py(self, filepath):
+        self.filesystem.write_text_file(filepath, '# This file is required for Python to search this directory for modules.')
 
     def test_downloader(self):
         if not self._test_downloader:
@@ -428,7 +434,7 @@ class TestImporter(object):
                         self.filesystem.write_binary_file(new_filepath, converted_file[2])
                 elif orig_filepath.endswith('__init__.py') and not self.filesystem.getsize(orig_filepath):
                     # Some bots dislike empty __init__.py.
-                    self.filesystem.write_text_file(new_filepath, '# This file is required for Python to search this directory for modules.')
+                    self.write_init_py(new_filepath)
                 else:
                     self.filesystem.copyfile(orig_filepath, new_filepath)
 

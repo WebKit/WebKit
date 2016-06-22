@@ -25,9 +25,6 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import optparse
-import shutil
-import tempfile
 import unittest
 
 from webkitpy.common.host_mock import MockHost
@@ -36,7 +33,6 @@ from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.w3c.test_downloader import TestDownloader
 from webkitpy.w3c.test_importer import parse_args, TestImporter
-
 
 FAKE_SOURCE_DIR = '/tests/csswg'
 FAKE_TEST_PATH = 'css-fake-1'
@@ -63,7 +59,7 @@ FAKE_REPOSITORY = {
         "revision": "dd553279c3",
         "paths_to_skip": [],
         "paths_to_import": [],
-        "import_options": ["generate_git_submodules_description"]
+        "import_options": ["generate_git_submodules_description", "generate_gitignore", "generate_init_py"]
     }
 ]
 ''' }
@@ -213,5 +209,39 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitattributes'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/.svn'))
+
+    def test_git_ignore_generation(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
+        }
+
+        FAKE_FILES.update(FAKE_REPOSITORY)
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/.gitignore'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
+        # We should activate these lines but this is not working in mock systems.
+        #self.assertTrue('/tools/.resources.url' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
+        #self.assertTrue('/tools/resources/' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
+
+    def test_initpy_generation(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
+        }
+
+        FAKE_FILES.update(FAKE_REPOSITORY)
+
+        host = MockHost()
+        host.executive = MockExecutive2()
+        host.filesystem = MockFileSystem(files=FAKE_FILES)
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/__init__.py'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/__init__.py'))
+        self.assertTrue(fs.getsize('/mock-checkout/LayoutTests/w3c/web-platform-tests/__init__.py') > 0)
 
     # FIXME: Needs more tests.

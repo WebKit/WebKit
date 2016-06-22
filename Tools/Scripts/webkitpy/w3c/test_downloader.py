@@ -31,7 +31,6 @@
 import json
 import logging
 
-from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.models.test_expectations import TestExpectationParser
@@ -183,6 +182,15 @@ class TestDownloader(object):
 
     def generate_git_submodules_description(self, test_repository, filepath):
         self._filesystem.write_text_file(filepath, json.dumps(self._git_submodules_description(test_repository), sort_keys=True, indent=4))
+
+    def generate_gitignore(self, test_repository, destination_directory):
+        rules = []
+        for submodule in self._git_submodules_description(test_repository):
+            path = list(submodule['path'])
+            path.insert(0, '')
+            rules.append('/'.join(path[:-1]) + '/' + path[-1] + '/')
+            rules.append('/'.join(path[:-1]) + '/.' + path[-1] + '.url')
+        self._filesystem.write_text_file(self._filesystem.join(destination_directory, test_repository['name'], '.gitignore'), '\n'.join(rules))
 
     def download_tests(self, destination_directory, test_paths=[]):
         for test_repository in self.test_repositories:
