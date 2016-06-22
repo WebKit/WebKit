@@ -1,3 +1,42 @@
+2016-06-22  Tim Horton  <timothy_horton@apple.com>
+
+        Mail snapshot has black webview in multitasking switcher
+        https://bugs.webkit.org/show_bug.cgi?id=159036
+        <rdar://problem/25972938>
+
+        Reviewed by Simon Fraser.
+
+        There is a window of time between an application going into the background
+        and SpringBoard's snapshotting mechanism completing where it is possible
+        (though difficult, timing-wise) for RemoteLayerBackingStoreCollection to
+        make still-needed surfaces volatile (and, even worse, for them to get emptied).
+
+        UIKit suggested instead waiting for the window context teardown notification,
+        which does indeed seem to fire after the snapshotting is complete.
+        This may have the convenient side effect of making the volatility timer
+        repeat fewer times in general, because it is now started closer to the
+        last time that the surfaces will be in-use.
+
+        * UIProcess/ApplicationStateTracker.h:
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        (WebKit::ApplicationStateTracker::~ApplicationStateTracker):
+        (WebKit::ApplicationStateTracker::applicationDidFinishSnapshottingAfterEnteringBackground):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didMoveToWindow]):
+        (-[WKContentView _applicationDidFinishSnapshottingAfterEnteringBackground]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView didMoveToWindow]):
+        (-[WKPDFView _applicationDidFinishSnapshottingAfterEnteringBackground]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationDidEnterBackground):
+        (WebKit::WebPage::applicationDidFinishSnapshottingAfterEnteringBackground):
+
 2016-06-22  Chris Dumez  <cdumez@apple.com>
 
         Add logging related to process assertions to help debug process suspension issues

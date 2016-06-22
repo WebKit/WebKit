@@ -284,7 +284,7 @@ private:
         return;
 
     ASSERT(!_applicationStateTracker);
-    _applicationStateTracker = std::make_unique<ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground));
+    _applicationStateTracker = std::make_unique<ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
 }
 
 - (WKBrowsingContextController *)browsingContextController
@@ -599,6 +599,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 {
     _page->applicationDidEnterBackground();
     _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
+}
+
+- (void)_applicationDidFinishSnapshottingAfterEnteringBackground
+{
+    _page->applicationDidFinishSnapshottingAfterEnteringBackground();
 }
 
 - (void)_applicationWillEnterForeground

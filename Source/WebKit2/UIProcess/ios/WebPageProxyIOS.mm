@@ -640,6 +640,11 @@ void WebPageProxy::applicationDidEnterBackground()
     m_process->send(Messages::WebPage::ApplicationDidEnterBackground(isSuspendedUnderLock), m_pageID);
 }
 
+void WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground()
+{
+    m_process->send(Messages::WebPage::ApplicationDidFinishSnapshottingAfterEnteringBackground(), m_pageID);
+}
+
 void WebPageProxy::applicationWillEnterForeground()
 {
     bool isSuspendedUnderLock = [UIApp isSuspendedUnderLock];

@@ -2978,6 +2978,10 @@ void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
 
     m_isSuspendedUnderLock = isSuspendedUnderLock;
     setLayerTreeStateIsFrozen(true);
+}
+
+void WebPage::applicationDidFinishSnapshottingAfterEnteringBackground()
+{
     markLayersVolatile();
 }
 

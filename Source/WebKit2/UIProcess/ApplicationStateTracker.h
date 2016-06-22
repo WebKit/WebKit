@@ -39,17 +39,19 @@ namespace WebKit {
 
 class ApplicationStateTracker {
 public:
-    ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector);
+    ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL didFinishSnapshottingAfterEnteringBackgroundSelector, SEL willEnterForegroundSelector);
     ~ApplicationStateTracker();
 
     bool isInBackground() const { return m_isInBackground; }
 
 private:
     void applicationDidEnterBackground();
+    void applicationDidFinishSnapshottingAfterEnteringBackground();
     void applicationWillEnterForeground();
 
     WeakObjCPtr<UIView> m_view;
     SEL m_didEnterBackgroundSelector;
+    SEL m_didFinishSnapshottingAfterEnteringBackgroundSelector;
     SEL m_willEnterForegroundSelector;
 
     bool m_isInBackground;
@@ -59,6 +61,7 @@ private:
     RetainPtr<BKSApplicationStateMonitor> m_applicationStateMonitor;
 
     id m_didEnterBackgroundObserver;
+    id m_didFinishSnapshottingAfterEnteringBackgroundObserver;
     id m_willEnterForegroundObserver;
 };
 

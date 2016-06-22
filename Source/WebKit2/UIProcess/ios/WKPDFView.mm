@@ -864,7 +864,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
         return;
 
     ASSERT(!_applicationStateTracker);
-    _applicationStateTracker = std::make_unique<ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground));
+    _applicationStateTracker = std::make_unique<ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
 }
 
 - (BOOL)isBackground
@@ -879,6 +879,11 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 {
     _webView->_page->applicationDidEnterBackground();
     _webView->_page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
+}
+
+- (void)_applicationDidFinishSnapshottingAfterEnteringBackground
+{
+    _webView->_page->applicationDidFinishSnapshottingAfterEnteringBackground();
 }
 
 - (void)_applicationWillEnterForeground
