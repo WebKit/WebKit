@@ -286,6 +286,7 @@ void WebVideoFullscreenControllerContext::didCleanupFullscreen()
         m_model->setVideoFullscreenLayer(nil);
         m_model->setWebVideoFullscreenInterface(nullptr);
         m_model->setVideoElement(nullptr);
+        m_model->playbackSessionModel().setMediaElement(nullptr);
         m_model = nullptr;
         m_videoElement = nullptr;
 
@@ -661,6 +662,7 @@ void WebVideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& vide
             m_model = WebVideoFullscreenModelVideoElement::create(WebPlaybackSessionModelMediaElement::create().get());
             m_model->setWebVideoFullscreenInterface(this);
             m_model->setVideoElement(m_videoElement.get());
+            m_model->playbackSessionModel().setMediaElement(m_videoElement.get());
 
             IntRect videoElementClientRect = elementRectInWindow(m_videoElement.get());
             FloatRect videoLayerFrame = FloatRect(FloatPoint(), videoElementClientRect.size());

@@ -88,7 +88,6 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
     m_isListening = false;
 
     m_videoElement = videoElement;
-    m_playbackSessionModel->setMediaElement(videoElement);
 
     if (!m_videoElement)
         return;
