@@ -320,14 +320,12 @@ sub SkipFunction {
     # how to auto-generate callbacks.  Skip functions that have "MediaQueryListListener" or
     # sequence<T> parameters, because this code generator doesn't know how to auto-generate
     # MediaQueryListListener or sequence<T>. Skip EventListeners because they are handled elsewhere.
-    # Skip functions that have variadic parameters because not supported yet.
     foreach my $param (@{$function->parameters}) {
         return 1 if $codeGenerator->IsFunctionOnlyCallbackInterface($param->type);
         return 1 if $param->extendedAttributes->{"Clamp"};
         return 1 if $param->type eq "MediaQueryListListener";
         return 1 if $param->type eq "EventListener";
         return 1 if $codeGenerator->GetSequenceType($param->type);
-        return 1 if $param->isVariadic;
     }
 
     # This is for DataTransferItemList.idl add(File) method
@@ -1090,6 +1088,7 @@ sub GenerateFunction {
     my $functionSig = "${className}* self";
     my $symbolSig = "${className}*";
 
+    my $hasVariadic = 0;
     my @callImplParams;
     foreach my $param (@{$function->parameters}) {
         my $paramIDLType = $param->type;
@@ -1099,8 +1098,12 @@ sub GenerateFunction {
         my $const = $paramType eq "gchar*" ? "const " : "";
         my $paramName = $param->name;
 
-        $functionSig .= ", ${const}$paramType $paramName";
-        $symbolSig .= ", ${const}$paramType";
+        if ($param->isVariadic) {
+            $hasVariadic = 1;
+        } else {
+            $functionSig .= ", ${const}$paramType $paramName";
+            $symbolSig .= ", ${const}$paramType";
+        }
 
         my $paramIsGDOMType = IsGDOMClassType($paramIDLType);
         if ($paramIsGDOMType) {
@@ -1108,9 +1111,10 @@ sub GenerateFunction {
                 $implIncludes{"WebKitDOM${paramIDLType}Private.h"} = 1;
             }
         }
-        if ($paramIsGDOMType || ($paramIDLType eq "DOMString")) {
+        if ($paramIsGDOMType || ($paramIDLType eq "DOMString") || $param->isVariadic) {
             $paramName = "converted" . $codeGenerator->WK_ucfirst($paramName);
             $paramName = "*$paramName" if $codeGenerator->ShouldPassWrapperByReference($param, $parentNode);
+            $paramName = "WTFMove($paramName)" if $param->isVariadic;
         }
         if ($paramIDLType eq "NodeFilter" || $paramIDLType eq "XPathNSResolver") {
             $paramName = "WTF::getPtr(" . $paramName . ")";
@@ -1129,6 +1133,17 @@ sub GenerateFunction {
     $functionSig .= ", GError** error" if $raisesException || $usedToRaiseException;
     $symbolSig .= ", GError**" if $raisesException || $usedToRaiseException;
 
+    if ($hasVariadic) {
+        my $param = @{$function->parameters}[-1];
+        if ($codeGenerator->IsNonPointerType($param->type)) {
+            my $paramName = $param->name;
+            $functionSig .= ", guint n_$paramName";
+            $symbolSig .= ", guint";
+        }
+        $functionSig .= ", ...";
+        $symbolSig .= ", ...";
+    }
+
     my $symbol = "$returnType $functionName($symbolSig)";
     my $isStableClass = scalar(@stableSymbols);
     my ($stableSymbol) = grep {$_ =~ /^\Q$symbol/} @stableSymbols;
@@ -1145,6 +1160,9 @@ sub GenerateFunction {
     push(@functionHeader, " * \@self: A #${className}");
 
     foreach my $param (@{$function->parameters}) {
+        if ($param->isVariadic) {
+            last;
+        }
         my $paramIDLType = $param->type;
         my $arrayOrSequenceType = $codeGenerator->GetArrayOrSequenceType($paramIDLType);
         $paramIDLType = $arrayOrSequenceType if $arrayOrSequenceType ne "";
@@ -1159,6 +1177,18 @@ sub GenerateFunction {
         push(@functionHeader, " * \@${paramName}:${paramAnnotations} A #${paramType}");
     }
     push(@functionHeader, " * \@error: #GError") if $raisesException || $usedToRaiseException;
+    if ($hasVariadic) {
+        my $param = @{$function->parameters}[-1];
+        my $paramName = $param->name;
+        my $paramType = GetGlibTypeName($param->type);
+        $paramType =~ s/\*$//;
+        if ($codeGenerator->IsNonPointerType($param->type)) {
+            push(@functionHeader, " * \@n_${paramName}: number of ${paramName} that will be passed");
+            push(@functionHeader, " * \@...: list of #${paramType}");
+        } else {
+            push(@functionHeader, " * \@...: list of #${paramType} ended by %NULL.");
+        }
+    }
     push(@functionHeader, " *");
     my $returnTypeName = $returnType;
     my $hasReturnTag = 0;
@@ -1206,7 +1236,7 @@ sub GenerateFunction {
         my $paramName = $param->name;
         my $paramIDLType = $param->type;
         my $paramTypeIsPointer = !$codeGenerator->IsNonPointerType($paramIDLType);
-        if ($paramTypeIsPointer) {
+        if ($paramTypeIsPointer && !$param->isVariadic) {
             $gReturnMacro = GetGReturnMacro($paramName, $paramIDLType, $returnType, $functionName);
             push(@cBody, $gReturnMacro);
         }
@@ -1223,20 +1253,54 @@ sub GenerateFunction {
     push(@cBody, "    WebCore::${interfaceName}* item = WebKit::core(self);\n");
 
     $returnParamName = "";
+    my $currentParameterIndex = 0;
     foreach my $param (@{$function->parameters}) {
         my $paramIDLType = $param->type;
         my $paramName = $param->name;
-
+        my $paramType = GetGlibTypeName($paramIDLType);
         my $paramIsGDOMType = IsGDOMClassType($paramIDLType);
-        $convertedParamName = "converted" . $codeGenerator->WK_ucfirst($paramName);
+        my $paramTypeIsPointer = !$codeGenerator->IsNonPointerType($paramIDLType);
+        my $convertedParamName = "converted" . $codeGenerator->WK_ucfirst($paramName);
+
+        my $paramCoreType = $paramType;
+        my $paramConversionFunction = "";
         if ($paramIDLType eq "DOMString") {
-            push(@cBody, "    WTF::String ${convertedParamName} = WTF::String::fromUTF8($paramName);\n");
+            $paramCoreType = "WTF::String";
+            $paramConversionFunction = "WTF::String::fromUTF8";
         } elsif ($paramIDLType eq "NodeFilter" || $paramIDLType eq "XPathNSResolver") {
-            push(@cBody, "    RefPtr<WebCore::$paramIDLType> ${convertedParamName} = WebKit::core($paramName);\n");
+            $paramCoreType = "RefPtr<WebCore::$paramIDLType>";
+            $paramConversionFunction = "WebKit::core"
         } elsif ($paramIsGDOMType) {
-            push(@cBody, "    WebCore::${paramIDLType}* ${convertedParamName} = WebKit::core($paramName);\n");
+            $paramCoreType = "WebCore::${paramIDLType}*";
+            $paramConversionFunction = "WebKit::core"
+        }
+
+        if ($param->isVariadic) {
+            my $previousParamName;
+            if ($raisesException) {
+                $previousParamName = "error";
+            } elsif ($currentParameterIndex == 0) {
+                $previousParamName = "self";
+            } else {
+                $previousParamName = @{$function->parameters}[$currentParameterIndex - 1]->name;
+            }
+            push(@cBody, "    va_list variadicParameterList;\n");
+            push(@cBody, "    Vector<$paramCoreType> $convertedParamName;\n");
+            push(@cBody, "    va_start(variadicParameterList, $previousParamName);\n");
+            if ($paramTypeIsPointer) {
+                push(@cBody, "    while ($paramType variadicParameter = va_arg(variadicParameterList, $paramType))\n");
+                push(@cBody, "        ${convertedParamName}.append(${paramConversionFunction}(variadicParameter));\n");
+            } else {
+                push(@cBody, "    ${convertedParamName}.reserveInitialCapacity(n_$paramName);\n");
+                push(@cBody, "    for (unsigned i = 0; i < n_$paramName; ++i) {\n");
+                push(@cBody, "        ${convertedParamName}.uncheckedAppend(va_arg(variadicParameterList, $paramType));\n");
+            }
+            push(@cBody, "    va_end(variadicParameterList);\n");
+        } elsif ($paramCoreType ne $paramType) {
+            push(@cBody, "    $paramCoreType $convertedParamName = ${paramConversionFunction}($paramName);\n");
         }
         $returnParamName = $convertedParamName if $param->extendedAttributes->{"CustomReturn"};
+        $currentParameterIndex++;
     }
 
     my $assign = "";

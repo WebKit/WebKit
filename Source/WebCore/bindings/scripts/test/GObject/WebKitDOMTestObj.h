@@ -911,6 +911,40 @@ WEBKIT_API gboolean
 webkit_dom_test_obj_strict_function_with_array(WebKitDOMTestObj* self, WebKitDOMTestObj* objArg, glong array, GError** error);
 
 /**
+ * webkit_dom_test_obj_variadic_string_method:
+ * @self: A #WebKitDOMTestObj
+ * @head: A #gchar
+ * @...: list of #gchar ended by %NULL.
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_variadic_string_method(WebKitDOMTestObj* self, const gchar* head, ...);
+
+/**
+ * webkit_dom_test_obj_variadic_double_method:
+ * @self: A #WebKitDOMTestObj
+ * @head: A #gdouble
+ * @n_tail: number of tail that will be passed
+ * @...: list of #gdouble
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_variadic_double_method(WebKitDOMTestObj* self, gdouble head, guint n_tail, ...);
+
+/**
+ * webkit_dom_test_obj_variadic_node_method:
+ * @self: A #WebKitDOMTestObj
+ * @head: A #WebKitDOMNode
+ * @...: list of #WebKitDOMNode ended by %NULL.
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_variadic_node_method(WebKitDOMTestObj* self, WebKitDOMNode* head, ...);
+
+/**
  * webkit_dom_test_obj_any:
  * @self: A #WebKitDOMTestObj
  * @a: A #gfloat
