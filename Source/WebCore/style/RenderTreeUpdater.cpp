@@ -518,16 +518,16 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     auto push = [&] (Element& element) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willDetachRenderers();
-        if (teardownType != TeardownType::KeepHoverAndActive)
-            element.clearHoverAndActiveStatusBeforeDetachingRenderer();
-        element.clearStyleDerivedDataBeforeDetachingRenderer();
-
         teardownStack.append(&element);
     };
 
     auto pop = [&] (unsigned depth) {
         while (teardownStack.size() > depth) {
             auto& element = *teardownStack.takeLast();
+
+            if (teardownType != TeardownType::KeepHoverAndActive)
+                element.clearHoverAndActiveStatusBeforeDetachingRenderer();
+            element.clearStyleDerivedDataBeforeDetachingRenderer();
 
             if (auto* renderer = element.renderer()) {
                 renderer->destroyAndCleanupAnonymousWrappers();

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html id="html">
+<head>
+<style>
+    * {
+        background-color: white;
+        margin: 0;
+        padding: 0;
+    }
+    :hover {
+        background-color: rgb(50, 100, 150) !important;
+    }
+    #prime-ancestor >> div {
+        width: 100px;
+        height: 100px;
+    }
+    #target {
+        width: 100px;
+        height: 100px;
+        background-color: green;
+        position: absolute;
+        left: 100px;
+    }
+    #interceptor {
+        position: absolute;
+        left: 100px;
+    }
+</style>
+</head>
+<script src="../../resources/js-test-pre.js"></script>
+<body id="body">
+    <div id="prime-ancestor">
+        <div id="interceptor">
+        </div>
+        <div id="group">
+            <div id="element-to-remove">
+                <div id="target">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="console">
+    </div>
+    <script>
+    description("Verify the hovered state is updated correctly when an ancestor of the hovered element loses its renderer");
+    window.jsTestIsAsync = true;
+
+    function elementsWithHoverStyle() {
+        let elements = [];
+        for (let element of document.querySelectorAll("*")) {
+            if (getComputedStyle(element).backgroundColor === "rgb(50, 100, 150)")
+                elements.push(element.id);
+        }
+        return elements;
+    }
+    function elementsMatchingHoverSelector() {
+        let elements = [];
+        for (let element of document.querySelectorAll(":hover")) {
+            elements.push(element.id);
+        }
+        return elements;
+    }
+
+    if (!window.eventSender) {
+        debug("This test requires eventSender");
+    }
+    eventSender.mouseMoveTo(300, 50);
+    {
+        // See https://bugs.webkit.org/show_bug.cgi?id=74264
+        eventSender.mouseDown()
+        eventSender.mouseUp()
+    }
+
+    debug("Initial state");
+    shouldBe('elementsWithHoverStyle()', '["html", "body", "prime-ancestor"]');
+    shouldBe('elementsMatchingHoverSelector()', '["html", "body", "prime-ancestor"]');
+
+    debug("Moving over #target")
+    eventSender.mouseMoveTo(150, 50);
+    shouldBe('elementsWithHoverStyle()', '["html", "body", "prime-ancestor", "group", "element-to-remove", "target"]');
+    shouldBe('elementsMatchingHoverSelector()', '["html", "body", "prime-ancestor", "group", "element-to-remove", "target"]');
+
+    debug("Removing the renderer of #element-to-remove");
+    var elementToRemove = document.getElementById("element-to-remove");
+    elementToRemove.style.display = "none";
+    // Force layout.
+    offsetTop = elementToRemove.offsetTop;
+
+    // hover updates happen on timer.
+    setTimeout(function() {
+        shouldBe('elementsWithHoverStyle()', '["html", "body", "prime-ancestor", "interceptor"]');
+        shouldBe('elementsMatchingHoverSelector()', '["html", "body", "prime-ancestor", "interceptor"]');
+        finishJSTest();
+    }, 125);
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
