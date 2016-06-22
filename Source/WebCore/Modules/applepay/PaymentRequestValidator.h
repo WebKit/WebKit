@@ -47,6 +47,9 @@ private:
     bool validateMerchantCapabilities(const PaymentRequest::MerchantCapabilities&) const;
     bool validateSupportedNetworks(const PaymentRequest::SupportedNetworks&) const;
 
+    bool validateShippingMethods(const Vector<PaymentRequest::ShippingMethod>&) const;
+    bool validateShippingMethod(const PaymentRequest::ShippingMethod&) const;
+
     DOMWindow& m_window;
 };
 

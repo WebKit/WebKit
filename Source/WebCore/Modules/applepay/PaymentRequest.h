@@ -112,7 +112,7 @@ public:
     struct ShippingMethod {
         String label;
         String detail;
-        uint64_t amount;
+        int64_t amount;
 
         String identifier;
     };

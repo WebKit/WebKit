@@ -57,7 +57,8 @@ bool PaymentRequestValidator::validate(const PaymentRequest& paymentRequest) con
         return false;
     if (!validateTotal(paymentRequest.total()))
         return false;
-
+    if (!validateShippingMethods(paymentRequest.shippingMethods()))
+        return false;
     return true;
 }
 
@@ -136,11 +137,31 @@ bool PaymentRequestValidator::validateMerchantCapabilities(const PaymentRequest:
     return true;
 }
 
+bool PaymentRequestValidator::validateShippingMethod(const PaymentRequest::ShippingMethod& shippingMethod) const
+{
+    if (shippingMethod.amount < 0) {
+        m_window.printErrorMessage("Shipping method amount must be greater than or equal to zero.");
+        return false;
+    }
+
+    return true;
+}
+
 bool PaymentRequestValidator::validateSupportedNetworks(const PaymentRequest::SupportedNetworks& supportedNetworks) const
 {
     if (!supportedNetworks.amex && !supportedNetworks.chinaUnionPay && !supportedNetworks.discover && !supportedNetworks.interac && !supportedNetworks.masterCard && !supportedNetworks.privateLabel &&!supportedNetworks.visa) {
         m_window.printErrorMessage("Missing supported networks");
         return false;
+    }
+
+    return true;
+}
+
+bool PaymentRequestValidator::validateShippingMethods(const Vector<PaymentRequest::ShippingMethod>& shippingMethods) const
+{
+    for (const auto& shippingMethod : shippingMethods) {
+        if (!validateShippingMethod(shippingMethod))
+            return false;
     }
 
     return true;
