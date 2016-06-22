@@ -2,7 +2,7 @@ Utilities.extendObject(Strings.text, {
     samples: "Samples",
     complexity: "Time Complexity",
     frameRate: "FPS",
-    confidenceInterval: "95% Confidence Interval",
+    confidenceInterval: "80% Confidence Interval",
     mergedRawComplexity: "Raw Complexity",
     graph: "Graph"
 });

@@ -1,28 +1,30 @@
 Utilities.extendObject(window.benchmarkController, {
-    layoutCounter: 0,
-
     updateGraphData: function(testResult, testData, options)
     {
         var element = document.getElementById("test-graph-data");
         element.innerHTML = "";
         element._testResult = testResult;
-        element._testData = testData;
         element._options = options;
-        document.querySelector("hr").style.width = this.layoutCounter++ + "px";
 
         var margins = new Insets(30, 30, 30, 40);
-        var size = Point.elementClientSize(element).subtract(margins.size);
+        var size = Point.elementClientSize(element);
+        size.y = window.innerHeight - element.offsetTop;
+        size = size.subtract(margins.size);
 
-        this.createTimeGraph(testResult, testData[Strings.json.samples][Strings.json.controller], testData[Strings.json.marks], testData[Strings.json.controller], options, margins, size);
+        // Convert from compact JSON output to propertied data
+        var samplesWithProperties = {};
+        [Strings.json.controller, Strings.json.complexity, Strings.json.complexityAverage].forEach(function(seriesName) {
+            var series = testData[Strings.json.samples][seriesName];
+            samplesWithProperties[seriesName] = series.toArray();
+        })
+
+        this.createTimeGraph(testResult, samplesWithProperties[Strings.json.controller], testData[Strings.json.marks], testData[Strings.json.controller], options, margins, size);
         this.onTimeGraphOptionsChanged();
 
-        var hasComplexitySamples = !!testData[Strings.json.samples][Strings.json.complexity];
-        this._showOrHideNodes(hasComplexitySamples, "form[name=graph-type]");
-        if (hasComplexitySamples) {
-            document.forms["graph-type"].elements["type"] = "complexity";
-            this.createComplexityGraph(testResult, testData[Strings.json.controller], testData[Strings.json.samples], options, margins, size);
-            this.onComplexityGraphOptionsChanged();
-        }
+        this._showOrHideNodes(true, "form[name=graph-type]");
+        document.forms["graph-type"].elements["type"] = "complexity";
+        this.createComplexityGraph(testResult, testData[Strings.json.controller], samplesWithProperties, options, margins, size);
+        this.onComplexityGraphOptionsChanged();
 
         this.onGraphTypeChanged();
     },
@@ -569,7 +571,7 @@ Utilities.extendObject(window.benchmarkController, {
         benchmarkController._showOrHideNodes(!isTimeSelected, "#complexity-graph");
         benchmarkController._showOrHideNodes(!isTimeSelected, "form[name=complexity-graph-options]");
 
-        var score, mean;
+        var score = "", mean = "";
         if (isTimeSelected) {
             score = testResult[Strings.json.score].toFixed(2);
 
@@ -596,13 +598,16 @@ Utilities.extendObject(window.benchmarkController, {
             document.getElementById("complexity-regression-aggregate-average").textContent = complexityAverageRegression.complexity.toFixed(2) + ", ±" + complexityAverageRegression.stdev.toFixed(2) + "ms";
 
             var bootstrap = complexityRegression[Strings.json.bootstrap];
-            score = bootstrap.median.toFixed(2);
-            mean = [
-                "95% CI: ",
-                bootstrap.confidenceLow.toFixed(2),
-                "–",
-                bootstrap.confidenceHigh.toFixed(2)
-            ].join("");
+            if (bootstrap) {
+                score = bootstrap.median.toFixed(2);
+                mean = [
+                    (bootstrap.confidencePercentage * 100).toFixed(0),
+                    "% CI: ",
+                    bootstrap.confidenceLow.toFixed(2),
+                    "–",
+                    bootstrap.confidenceHigh.toFixed(2)
+                ].join("");
+            }
         }
 
         sectionsManager.setSectionScore("test-graph", score, mean);

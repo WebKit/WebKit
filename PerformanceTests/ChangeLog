@@ -1,3 +1,207 @@
+2016-06-21  Jon Lee  <jonlee@apple.com>
+
+        Improvements to Animometer benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=157738
+
+        Reviewed by Dean Jackson.
+        Provisionally reviewed by Said Abou-Hallawa.
+
+        Include confidence interval for the final score, and store the canvas
+        size in the serialization so that it is accurately shown in results.
+
+        * Animometer/developer.html: Add a "confidence" div.
+        * Animometer/index.html: Ditto. Convert "mean" to "confidence".
+        * Animometer/resources/debug-runner/animometer.js: Look at options, and
+        if the configuration is included, update the body class based on it
+        (similar to what we do when we first load the page). That way, if you
+        drag-and-drop previous results in, that configuration is reflected in
+        the dashboard. Show the full confidence interval.
+
+        * Animometer/resources/debug-runner/animometer.css:
+        * Animometer/resources/debug-runner/animometer.js: Style update.
+        * Animometer/resources/runner/animometer.css:
+
+        * Animometer/resources/runner/animometer.js:
+        (_processData): Propagate the confidence interval values out and calculate
+        the lower and upper bounds. For now, shortcut the aggregate calculation,
+        since we only go through one iteration.
+        (this._processData.calculateScore): Propagate the confidence interval out
+        to be next to the score. Depending on the controller these values are
+        calculated differently.
+        (this._processData._getResultsProperty): Convenience function.
+        (this._processData.get score): Refactor.
+        (this._processData.get scoreLowerBound): Get the aggregate lower bound.
+        (this._processData.get scoreUpperBound): Get the aggregate upper bound.
+        (window.sectionsManager.setSectionScore):
+        (window.benchmarkController._startBenchmark): When the benchmark starts, note
+        the canvas size and add it to options. That way it will be automatically be
+        serialized.
+        (window.benchmarkController.showResults): Include the maximum deviation
+        percentage.
+        * Animometer/resources/runner/lines.svg: Make the background line up with the
+        skew.
+        * Animometer/resources/runner/tests.js:
+        (Headers.details.text): Refactor.
+        * Animometer/resources/statistics.js:
+        (Statistics.largestDeviationPercentage): Convenience function to calculate
+        the deviation percentage on either end and return the largest deviation.
+        * Animometer/resources/strings.js:
+
+        Allow specifying a regression profile to use instead of taking the one
+        with the lowest error.
+
+        Address an issue in the focus test when the regression calculated ends
+        up overestimating the change point, causing a cascade of tougher
+        ramps. The reason behind this is that at max complexity of an initial
+        ramp, the frame length is very high, and it influences the second
+        segment of the piecewise regression strongly, causing it to be very
+        steep. As a result, the first segment, expected to be flat, ends up
+        covering a higher range of complexity. That makes the change point
+        much higher than it should be. To avoid this, we will add a sanity
+        check on the maximum value of the ramp. If the regression's projected
+        value at the maximum complexity of the current ramp is very slow (less
+        than 20 fps), 1) reduce the maximum complexity by 20%, and 2) do not
+        include the regression's change point in the change point estimator.
+        That estimator is used as the midpoint of the next ramp, and including
+        the change point from a poor regression can bake in the error. The
+        controller already knows how to adjust for ramps that are too easy for
+        the system.
+
+        * Animometer/resources/runner/animometer.js:
+        (this._processData.findRegression): Takes a preferred profile and gives that to
+        Regression.
+        (this._processData.calculateScore): With the ramp controller, take the profile
+        of the ramp that was used the most when calculating the ramp's regression. That
+        profile is what is used for the test's score.
+        * Animometer/resources/statistics.js:
+        (Regression.Utilities.createClass): Update to take an options object which can
+        specify a profile to calculate with. Otherwise it will continue to use both and
+        select the one with the lower error.
+        (_calculateRegression): Fix an issue where we claim 0 error if the regression
+        calculation fails due to divide-by-zero. Instead reject that regression calculation
+        by giving it Number.MAX_VALUE.
+        * Animometer/resources/strings.js: New strings for marking a regression as flat
+        or slope.
+        * Animometer/tests/resources/main.js:
+        (RampController): Rename the thresholds for clarity. Add a threshold that, if
+        exceeded, will lower the maximum complexity of the next ramp.
+        (tune): Relax the cdf check to consider whether the interval definitely falls in
+        the desired frame length threshold.
+        (processSamples): Include the profile in the ramp.
+
+        Update ramp controller test. Increase the length of the test to 30 seconds, and extend
+        the interval to 120 ms during sampling. Improve the estimation of the ramp parameters.
+
+        * Animometer/developer.html: Change default to 30 seconds, and don't show the progress bar
+        by default.
+        * Animometer/resources/runner/animometer.js: Change default to 30 seconds.
+        * Animometer/tests/resources/main.js: A number of improvements to the ramp controller, in
+        the order in which they appear in the patch:
+
+        - With a longer test length use longer ramps with longer intervals to get more data at each
+        complexity. Keep the 100 ms interval length during the ramp up phase since we don't need to
+        spend more time there to find the right order of magnitude, but increase it during the
+        ramps to 120 ms.
+        - The ramp linearly interpolates the complexity to render based on its timestamp, but it would
+        never sample the minimum complexity. Instead of lerping max to min complexity from time
+        0 to t where t is the ramp length, instead lerp from 0 to (t - intervalSampleLength) so that
+        we can have at least one interval sample at the min complexity for that ramp.
+        - Some regression calculations only come out with one line segment rather than the two
+        we expect. This could be due to a noisy ramp or the ramp's range is too narrow. If that's the
+        case, influence the minimum complexity of the next ramp towards the lowest bound of 1, so that
+        we ensure that at least part of the ramp is covering a complexity range that the system can
+        handle at full 60.
+        - Remove an assignment to interpolatedFrameLength since that is never subsequently used.
+
+        Update the format used to serialize the results for analysis.
+
+        Each data point used to have named properties for fields like complexity and frame rate.
+        In addition the serialized numbers had rounding errors that took up many characters.
+        Update the format by introducing a new data container called SampleData, which contains a
+        field map. The map maps a string to an array index. Each data point is an array, so, to
+        get a stat, use the field map to get the array index into the data point. This allows future
+        versions to track other data, and reduces the size of the output string by two-thirds.
+
+        * Animometer/resources/extensions.js:
+        (Utilities.toFixedNumber): Add convenience function that truncates the number to a fixed
+        precision, and converts it back to a number.
+        (SampleData): New class that contains sample data and a field map that maps properties to
+        an array index.
+        (get length): Number of data points.
+        (addField): Add a field to the field map.
+        (push): Add a data point.
+        (sort): Sort the data.
+        (slice): Return new SampleData object with sliced data.
+        (forEach): Iterate over the data with provided function.
+        (createDatum):
+        (getFieldInDatum): Returns the data point associated with the field name by looking it up
+        in the field map in the datum provided, which can be the datum object itself (an array) or
+        an index into the data member variable.
+        (setFieldInDatum): Sets the data point associated with the field name.
+        (at): Returns the data point at the provided index.
+        (toArray): Serializes the data where the field map serves as property names for each point.
+
+        * Animometer/resources/debug-runner/graph.js:
+        (updateGraphData): Remove unused _testData. Convert the data to the old array format for the
+        graph to use, since the old format was much easier to work with when displaying the graphs.
+        (onGraphTypeChanged): For some controllers, no alternative score or mean is provided.
+        * Animometer/resources/runner/animometer.css:
+        * Animometer/resources/runner/animometer.js: Refactor to use SampleData. Update JSON output
+        to only go to 3 digits of precision for purposes of reducing the data size.
+        * Animometer/resources/strings.js: Add new strings to put into the field maps.
+        * Animometer/tests/resources/main.js: Refactor to use SampleData.
+
+        * Animometer/developer.html:
+        * Animometer/index.html: Restructure results table for both pages. Add charset attribute to
+        tests.js include.
+        * Animometer/resources/debug-runner/animometer.css: Clear out styles from release runner.
+        * Animometer/resources/debug-runner/graph.js:
+        (onGraphTypeChanged): Update score and mean if bootstrap results are available from the
+        controller, since not all controllers do bootstrapping.
+        * Animometer/resources/debug-runner/tests.js: Update header text.
+        * Animometer/resources/runner/animometer.css: Include confidence interval in results.
+        * Animometer/resources/runner/animometer.js:
+        (ResultsTable._addHeader): Header contents can be HTML, so use innerHTML instead.
+        (ResultsTable._addBody): Add tbody element.
+        (ResultsTable._addTest): Allow a data cell to invoke a JS function to get its contents.
+        (window.benchmarkController.showResults): Add table that includes tests' confidence intervals.
+        * Animometer/resources/runner/tests.js:
+        (Headers.details.text): Add new details table that includes bootstrap confidence interval.
+        The interval can be asymmetric, but for simplicity, report the maximum deviation percentage
+        on either side of the bootstrap median.
+        * Animometer/resources/statistics.js:
+        (bootstrap): Include the confidence percentage in the return object.
+
+        Report canvas size in results.
+
+        * Animometer/developer.html: Add markup to indicate whether a small, medium, or large
+        canvas was used.
+        * Animometer/index.html: Ditto.
+        * Animometer/resources/debug-runner/animometer.js: Call determineCanvasSize().
+        * Animometer/resources/runner/animometer.css: Update styles to set the canvas based on the
+        body class size.
+        * Animometer/resources/runner/animometer.js:
+        (window.benchmarkController.initialize): Update styles to set the canvas based on the
+        body class size.
+        (window.benchmarkController.determineCanvasSize): Run various media queries and set the body
+        class based on the size of the device.
+
+        * Animometer/developer.html: Refactor to include the main CSS file, and redo
+        the layout so that it doesn't rely on flexbox.
+        * Animometer/resources/debug-runner/animometer.css:
+        * Animometer/resources/debug-runner/animometer.js:
+        (updateDisplay): Since various parts of the script alter the body class, we can't
+        replace the className directly. Instead, remove all display-based values and then add
+        the one that was selected.
+        * Animometer/resources/debug-runner/graph.js:
+        (updateGraphData): To set the size of the graph, use window.innerHeight.
+        * Animometer/resources/runner/animometer.js:
+        (window.sectionsManager.showSection): Since various parts of the script alter the body
+        class, we can't replace the className directly. Remove all of the section classes
+        individually and then add the one desired.
+        * Animometer/tests/resources/stage.css: Remove -apple-system as a font to use in the
+        stage.
+
 2016-06-12  Filip Pizlo  <fpizlo@apple.com>
 
         Fix round-down goof in Air.js's ShuffleCustom.forEachArg

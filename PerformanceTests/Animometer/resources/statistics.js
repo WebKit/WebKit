@@ -70,6 +70,11 @@ Statistics =
           var t = 1.0 / (1.0 + p * value);
           var y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-value * value);
           return sign * y;
+    },
+
+    largestDeviationPercentage: function(low, mean, high)
+    {
+        return Math.max(Math.abs(low / mean - 1), (high / mean - 1));
     }
 };
 
@@ -148,39 +153,49 @@ Experiment.defaults =
 };
 
 Regression = Utilities.createClass(
-    function(samples, getComplexity, getFrameLength, startIndex, endIndex, desiredFrameLength)
+    function(samples, getComplexity, getFrameLength, startIndex, endIndex, options)
     {
-        desiredFrameLength = desiredFrameLength || 1000/60;
-        var slope = this._calculateRegression(samples, getComplexity, getFrameLength, startIndex, endIndex, {
-            shouldClip: true,
-            s1: desiredFrameLength,
-            t1: 0
-        });
-        var flat = this._calculateRegression(samples, getComplexity, getFrameLength, startIndex, endIndex, {
-            shouldClip: true,
-            s1: desiredFrameLength,
-            t1: 0,
-            t2: 0
-        });
-        var desired;
-        if (slope.error < flat.error)
-            desired = slope;
-        else
-            desired = flat;
+        var desiredFrameLength = options.desiredFrameLength || 1000/60;
+        var bestProfile;
+
+        if (!options.preferredProfile || options.preferredProfile == Strings.json.profiles.slope) {
+            var slope = this._calculateRegression(samples, getComplexity, getFrameLength, startIndex, endIndex, {
+                shouldClip: true,
+                s1: desiredFrameLength,
+                t1: 0
+            });
+            if (!bestProfile || slope.error < bestProfile.error) {
+                bestProfile = slope;
+                this.profile = Strings.json.profiles.slope;
+            }
+        }
+        if (!options.preferredProfile || options.preferredProfile == Strings.json.profiles.flat) {
+            var flat = this._calculateRegression(samples, getComplexity, getFrameLength, startIndex, endIndex, {
+                shouldClip: true,
+                s1: desiredFrameLength,
+                t1: 0,
+                t2: 0
+            });
+
+            if (!bestProfile || flat.error < bestProfile.error) {
+                bestProfile = flat;
+                this.profile = Strings.json.profiles.flat;
+            }
+        }
 
         this.startIndex = Math.min(startIndex, endIndex);
         this.endIndex = Math.max(startIndex, endIndex);
 
-        this.complexity = desired.complexity;
-        this.s1 = desired.s1;
-        this.t1 = desired.t1;
-        this.s2 = desired.s2;
-        this.t2 = desired.t2;
-        this.stdev1 = desired.stdev1;
-        this.stdev2 = desired.stdev2;
-        this.n1 = desired.n1;
-        this.n2 = desired.n2;
-        this.error = desired.error;
+        this.complexity = bestProfile.complexity;
+        this.s1 = bestProfile.s1;
+        this.t1 = bestProfile.t1;
+        this.s2 = bestProfile.s2;
+        this.t2 = bestProfile.t2;
+        this.stdev1 = bestProfile.stdev1;
+        this.stdev2 = bestProfile.stdev2;
+        this.n1 = bestProfile.n1;
+        this.n2 = bestProfile.n2;
+        this.error = bestProfile.error;
     }, {
 
     valueAt: function(complexity)
@@ -217,6 +232,7 @@ Regression = Utilities.createClass(
             };
         }
 
+        // x is expected to increase in complexity
         var iterationDirection = endIndex > startIndex ? 1 : -1;
         var lowComplexity = getComplexity(samples, startIndex);
         var highComplexity = getComplexity(samples, endIndex);
@@ -245,7 +261,9 @@ Regression = Utilities.createClass(
             s2_best = s2;
             t2_best = t2;
             error2_best = error2;
+            // Number of samples included in the first segment, inclusive of splitIndex
             n1_best = iterationDirection * (splitIndex - startIndex) + 1;
+            // Number of samples included in the second segment
             n2_best = iterationDirection * (endIndex - splitIndex);
             if (!options.shouldClip || (x_prime >= lowComplexity && x_prime <= highComplexity))
                 x_best = x_prime;
@@ -290,8 +308,8 @@ Regression = Utilities.createClass(
             // Assumes that the two segments meet
             var x_prime = (s1 - s2) / (t2 - t1);
 
-            var error1 = (k1 + a1*s1*s1 + c1*t1*t1 - 2*d1*s1 - 2*h1*t1 + 2*b1*s1*t1) || 0;
-            var error2 = (k2 + a2*s2*s2 + c2*t2*t2 - 2*d2*s2 - 2*h2*t2 + 2*b2*s2*t2) || 0;
+            var error1 = (k1 + a1*s1*s1 + c1*t1*t1 - 2*d1*s1 - 2*h1*t1 + 2*b1*s1*t1) || Number.MAX_VALUE;
+            var error2 = (k2 + a2*s2*s2 + c2*t2*t2 - 2*d2*s2 - 2*h2*t2 + 2*b2*s2*t2) || Number.MAX_VALUE;
 
             if (i == startIndex) {
                 setBest(s1, t1, error1, s2, t2, error2, i, x_prime, x);
@@ -322,8 +340,8 @@ Regression = Utilities.createClass(
                     t2 = options.t2 !== undefined ? options.t2 : ((E + lambda1*(h2 - d2*x - b2*y + a2*yx)) / (F + lambda1*K));
                     x_prime = (s1 - s2) / (t2 - t1);
 
-                    error1 = ((k1 + a1*s1*s1 + c1*t1*t1 - 2*d1*s1 - 2*h1*t1 + 2*b1*s1*t1) - lambda1 * Math.pow(y - (s1 + t1*x), 2)) || 0;
-                    error2 = ((k2 + a2*s2*s2 + c2*t2*t2 - 2*d2*s2 - 2*h2*t2 + 2*b2*s2*t2) + lambda1 * Math.pow(y - (s2 + t2*x), 2)) || 0;
+                    error1 = ((k1 + a1*s1*s1 + c1*t1*t1 - 2*d1*s1 - 2*h1*t1 + 2*b1*s1*t1) - lambda1 * Math.pow(y - (s1 + t1*x), 2)) || Number.MAX_VALUE;
+                    error2 = ((k2 + a2*s2*s2 + c2*t2*t2 - 2*d2*s2 - 2*h2*t2 + 2*b2*s2*t2) + lambda1 * Math.pow(y - (s2 + t2*x), 2)) || Number.MAX_VALUE;
                 } else if (t1 != t2)
                     continue;
             }
@@ -372,7 +390,8 @@ Utilities.extendObject(Regression, {
             confidenceHigh: bootstrapData[Math.round((iterationCount - 1) * (1 + confidencePercentage) / 2)],
             median: bootstrapData[Math.round(iterationCount / 2)],
             mean: bootstrapEstimator.mean(),
-            data: bootstrapData
+            data: bootstrapData,
+            confidencePercentage: confidencePercentage
         };
     }
 });

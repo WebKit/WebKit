@@ -155,6 +155,13 @@ Utilities =
     lerp: function(value, min, max)
     {
         return min + (max - min) * value;
+    },
+
+    toFixedNumber: function(number, precision)
+    {
+        if (number.toFixed)
+            return Number(number.toFixed(precision));
+        return number;
     }
 };
 
@@ -579,5 +586,85 @@ Utilities.extendObject(Heap, {
 
     createMaxHeap: function(maxSize) {
         return new Heap(maxSize, function(a, b) { return a - b; });
+    }
+});
+
+var SampleData = Utilities.createClass(
+    function(fieldMap, data)
+    {
+        this.fieldMap = fieldMap || {};
+        this.data = data || [];
+    }, {
+
+    get length()
+    {
+        return this.data.length;
+    },
+
+    addField: function(name, index)
+    {
+        this.fieldMap[name] = index;
+    },
+
+    push: function(datum)
+    {
+        this.data.push(datum);
+    },
+
+    sort: function(sortFunction)
+    {
+        this.data.sort(sortFunction);
+    },
+
+    slice: function(begin, end)
+    {
+        return new SampleData(this.fieldMap, this.data.slice(begin, end));
+    },
+
+    forEach: function(iterationFunction)
+    {
+        this.data.forEach(iterationFunction);
+    },
+
+    createDatum: function()
+    {
+        return [];
+    },
+
+    getFieldInDatum: function(datum, fieldName)
+    {
+        if (typeof datum === 'number')
+            datum = this.data[datum];
+        return datum[this.fieldMap[fieldName]];
+    },
+
+    setFieldInDatum: function(datum, fieldName, value)
+    {
+        if (typeof datum === 'number')
+            datum = this.data[datum];
+        return datum[this.fieldMap[fieldName]] = value;
+    },
+
+    at: function(index)
+    {
+        return this.data[index];
+    },
+
+    toArray: function()
+    {
+        var array = [];
+
+        this.data.forEach(function(datum) {
+            var newDatum = {};
+            array.push(newDatum);
+
+            for (var fieldName in this.fieldMap) {
+                var value = this.getFieldInDatum(datum, fieldName);
+                if (value !== null && value !== undefined)
+                    newDatum[fieldName] = value;
+            }
+        }, this);
+
+        return array;
     }
 });

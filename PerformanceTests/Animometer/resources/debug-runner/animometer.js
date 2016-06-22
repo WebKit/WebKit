@@ -74,7 +74,7 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
                     className = header.className;
             }
 
-            if (header.title == Strings.text.testName) {
+            if (header.text == Strings.text.testName) {
                 if (isNoisy)
                     className += " noisy-results";
                 var td = Utilities.createElement("td", { class: className }, row);
@@ -92,9 +92,8 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
                 if (typeof data == "number")
                     data = data.toFixed(2);
                 td.textContent = data;
-            } else {
-                td.textContent = header.text(testResult, testName);
-            }
+            } else
+                td.textContent = header.text(testResult);
         }, this);
     }
 });
@@ -213,7 +212,10 @@ window.optionsManager =
 
     updateDisplay: function()
     {
-        document.body.className = "display-" + optionsManager.valueForOption("display");
+        document.body.classList.remove("display-minimal");
+        document.body.classList.remove("display-progress-bar");
+
+        document.body.classList.add("display-" + optionsManager.valueForOption("display"));
     }
 };
 
@@ -505,6 +507,7 @@ Utilities.extendObject(window.benchmarkController, {
         if (benchmarkController.startBenchmarkImmediatelyIfEncoded())
             return;
 
+        benchmarkController.determineCanvasSize();
         benchmarkController.addOrientationListenerIfNecessary();
         suitesManager.createElements();
         suitesManager.updateUIFromLocalStorage();
@@ -606,7 +609,15 @@ Utilities.extendObject(window.benchmarkController, {
             Headers.details[4].disabled = true;
         }
 
-        sectionsManager.setSectionScore("results", dashboard.score.toFixed(2));
+        if (dashboard.options[Strings.json.configuration]) {
+            document.body.classList.remove("small", "medium", "large");
+            document.body.classList.add(dashboard.options[Strings.json.configuration]);
+        }
+
+        var score = dashboard.score;
+        var confidence = ((dashboard.scoreLowerBound / score - 1) * 100).toFixed(2) +
+            "% / +" + ((dashboard.scoreUpperBound / score - 1) * 100).toFixed(2) + "%";
+        sectionsManager.setSectionScore("results", score.toFixed(2), confidence);
         sectionsManager.populateTable("results-header", Headers.testName, dashboard);
         sectionsManager.populateTable("results-score", Headers.score, dashboard);
         sectionsManager.populateTable("results-data", Headers.details, dashboard);
