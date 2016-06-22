@@ -832,7 +832,13 @@ Benchmark = Utilities.createClass(
         switch (options["time-measurement"])
         {
         case "performance":
-            this._getTimestamp = performance.now.bind(performance);
+            if (window.performance && window.performance.now)
+                this._getTimestamp = performance.now.bind(performance);
+            else
+                this._getTimestamp = null;
+            break;
+        case "raf":
+            this._getTimestamp = null;
             break;
         case "date":
             this._getTimestamp = Date.now;
@@ -879,7 +885,7 @@ Benchmark = Utilities.createClass(
     {
         return this.waitUntilReady().then(function() {
             this._finishPromise = new SimplePromise;
-            this._previousTimestamp = this._getTimestamp();
+            this._previousTimestamp = undefined;
             this._didWarmUp = false;
             this._stage.tune(this._controller.initialComplexity - this._stage.complexity());
             this._animateLoop();
@@ -895,21 +901,24 @@ Benchmark = Utilities.createClass(
         return promise;
     },
 
-    _animateLoop: function()
+    _animateLoop: function(timestamp)
     {
-        this._currentTimestamp = this._getTimestamp();
+        timestamp = (this._getTimestamp && this._getTimestamp()) || timestamp;
+        this._currentTimestamp = timestamp;
 
-        if (this._controller.shouldStop(this._currentTimestamp)) {
+        if (this._controller.shouldStop(timestamp)) {
             this._finishPromise.resolve(this._controller.results());
             return;
         }
 
         if (!this._didWarmUp) {
-            if (this._currentTimestamp - this._previousTimestamp >= 100) {
+            if (!this._previousTimestamp)
+                this._previousTimestamp = timestamp;
+            else if (timestamp - this._previousTimestamp >= 100) {
                 this._didWarmUp = true;
-                this._startTimestamp = this._currentTimestamp;
-                this._controller.start(this._currentTimestamp, this._stage);
-                this._previousTimestamp = this._currentTimestamp;
+                this._startTimestamp = timestamp;
+                this._controller.start(timestamp, this._stage);
+                this._previousTimestamp = timestamp;
             }
 
             this._stage.animate(0);
@@ -917,9 +926,9 @@ Benchmark = Utilities.createClass(
             return;
         }
 
-        this._controller.update(this._currentTimestamp, this._stage);
-        this._stage.animate(this._currentTimestamp - this._previousTimestamp);
-        this._previousTimestamp = this._currentTimestamp;
+        this._controller.update(timestamp, this._stage);
+        this._stage.animate(timestamp - this._previousTimestamp);
+        this._previousTimestamp = timestamp;
         requestAnimationFrame(this._animateLoop);
     }
 });

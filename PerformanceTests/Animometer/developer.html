@@ -70,7 +70,8 @@
                                 <li>
                                     <h3>Time measurement method:</h3>
                                     <ul>
-                                        <li><label><input name="time-measurement" type="radio" value="performance" checked> <code>performance.now()</code></label></li>
+                                        <li><label><input name="time-measurement" type="radio" value="performance" checked> <code>performance.now()</code> (if available)</label></li>
+                                        <li><label><input name="time-measurement" type="radio" value="raf"> <code>requestAnimationFrame()</code> timestamp</label></li>
                                         <li><label><input name="time-measurement" type="radio" value="date"> <code>Date.now()</code></label></li>
                                     </ul>
                                 </li>
