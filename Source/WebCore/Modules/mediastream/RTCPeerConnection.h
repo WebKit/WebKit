@@ -60,8 +60,10 @@ class RTCStatsCallback;
 
 class RTCPeerConnection final : public RefCounted<RTCPeerConnection>, public PeerConnectionBackendClient, public RTCRtpSenderClient, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static RefPtr<RTCPeerConnection> create(ScriptExecutionContext&, const Dictionary& rtcConfiguration, ExceptionCode&);
+    static Ref<RTCPeerConnection> create(ScriptExecutionContext&);
     ~RTCPeerConnection();
+
+    void initializeWith(Document&, const Dictionary&, ExceptionCode&);
 
     const Vector<RefPtr<RTCRtpSender>>& getSenders() const { return m_transceiverSet->getSenders(); }
     const Vector<RefPtr<RTCRtpReceiver>>& getReceivers() const { return m_transceiverSet->getReceivers(); }
@@ -117,7 +119,7 @@ public:
     using RefCounted<RTCPeerConnection>::deref;
 
 private:
-    RTCPeerConnection(ScriptExecutionContext&, RefPtr<RTCConfiguration>&&, ExceptionCode&);
+    RTCPeerConnection(ScriptExecutionContext&);
 
     RefPtr<RTCRtpTransceiver> completeAddTransceiver(Ref<RTCRtpTransceiver>&&, const RtpTransceiverInit&);
 
@@ -147,9 +149,9 @@ private:
     // RTCRtpSenderClient
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) override;
 
-    PeerConnectionStates::SignalingState m_signalingState;
-    PeerConnectionStates::IceGatheringState m_iceGatheringState;
-    PeerConnectionStates::IceConnectionState m_iceConnectionState;
+    PeerConnectionStates::SignalingState m_signalingState { PeerConnectionStates::SignalingState::Stable };
+    PeerConnectionStates::IceGatheringState m_iceGatheringState { PeerConnectionStates::IceGatheringState::New };
+    PeerConnectionStates::IceConnectionState m_iceConnectionState { PeerConnectionStates::IceConnectionState::New };
 
     std::unique_ptr<RtpTransceiverSet> m_transceiverSet { std::unique_ptr<RtpTransceiverSet>(new RtpTransceiverSet()) };
 

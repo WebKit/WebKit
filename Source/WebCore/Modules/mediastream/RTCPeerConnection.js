@@ -30,6 +30,27 @@
 
 // @conditional=ENABLE(WEB_RTC)
 
+function initializeRTCPeerConnection(configuration)
+{
+    "use strict";
+
+    if (arguments.length < 1)
+        throw new @TypeError("Not enough arguments");
+
+    if (!@isObject(configuration))
+        throw new @TypeError("RTCPeerConnection argument must be a valid Dictionary");
+
+    // FIXME: Handle errors in a better way than catching and re-throwing (http://webkit.org/b/158936)
+    try {
+        this.@initializeWith(configuration);
+    } catch (e) {
+        const message = e.name === "TypeMismatchError" ? "Invalid RTCPeerConnection constructor arguments"
+            : "Error creating RTCPeerConnection";
+        throw new @TypeError(message);
+    }
+    return this;
+}
+
 function createOffer()
 {
     "use strict";

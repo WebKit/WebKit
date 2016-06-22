@@ -59,46 +59,38 @@ namespace WebCore {
 using namespace PeerConnection;
 using namespace PeerConnectionStates;
 
-RefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context, const Dictionary& rtcConfiguration, ExceptionCode& ec)
+Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context)
 {
-    RefPtr<RTCConfiguration> configuration = RTCConfiguration::create(rtcConfiguration, ec);
-    if (ec)
-        return nullptr;
-
-    RefPtr<RTCPeerConnection> peerConnection = adoptRef(new RTCPeerConnection(context, WTFMove(configuration), ec));
+    Ref<RTCPeerConnection> peerConnection = adoptRef(*new RTCPeerConnection(context));
     peerConnection->suspendIfNeeded();
-    if (ec)
-        return nullptr;
 
     return peerConnection;
 }
 
-RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context, RefPtr<RTCConfiguration>&& configuration, ExceptionCode& ec)
+RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
-    , m_signalingState(SignalingState::Stable)
-    , m_iceGatheringState(IceGatheringState::New)
-    , m_iceConnectionState(IceConnectionState::New)
-    , m_configuration(WTFMove(configuration))
+    , m_backend(PeerConnectionBackend::create(this))
 {
-    Document& document = downcast<Document>(context);
-
-    if (!document.frame()) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    m_backend = PeerConnectionBackend::create(this);
-    if (!m_backend) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    m_backend->setConfiguration(*m_configuration);
 }
 
 RTCPeerConnection::~RTCPeerConnection()
 {
     stop();
+}
+
+void RTCPeerConnection::initializeWith(Document& document, const Dictionary& rtcConfiguration, ExceptionCode& ec)
+{
+    if (!document.frame()) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    if (!m_backend) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    setConfiguration(rtcConfiguration, ec);
 }
 
 RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const Vector<MediaStream*>& streams, ExceptionCode& ec)

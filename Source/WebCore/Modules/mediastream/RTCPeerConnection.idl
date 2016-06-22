@@ -34,10 +34,12 @@
     ActiveDOMObject,
     Conditional=WEB_RTC,
     ConstructorCallWith=ScriptExecutionContext,
-    ConstructorRaisesException,
-    CustomConstructor(Dictionary rtcConfiguration),
+    JSBuiltinConstructor,
     InterfaceName=webkitRTCPeerConnection,
 ] interface RTCPeerConnection : EventTarget {
+    // Private initializer
+    [PrivateIdentifier, CallWith=Document, RaisesException] void initializeWith(Dictionary parameters);
+
     // RTP Media API extensions
     sequence<RTCRtpSender> getSenders();
     sequence<RTCRtpReceiver> getReceivers();
