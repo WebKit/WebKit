@@ -796,9 +796,9 @@
 		1A874ADF19085E9100B03171 /* WAKViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A874ADE19085E9100B03171 /* WAKViewInternal.h */; };
 		1A88A90417553CD7000C74F9 /* FileIconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A88A90217553CD7000C74F9 /* FileIconLoader.cpp */; };
 		1A88A90517553CD7000C74F9 /* FileIconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A88A90317553CD7000C74F9 /* FileIconLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1A8A643A1D19FC5300D0E00F /* Payment.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64371D19FC5300D0E00F /* Payment.h */; };
-		1A8A643B1D19FC5300D0E00F /* PaymentContact.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64381D19FC5300D0E00F /* PaymentContact.h */; };
-		1A8A643C1D19FC5300D0E00F /* PaymentMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64391D19FC5300D0E00F /* PaymentMethod.h */; };
+		1A8A643A1D19FC5300D0E00F /* Payment.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64371D19FC5300D0E00F /* Payment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A8A643B1D19FC5300D0E00F /* PaymentContact.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64381D19FC5300D0E00F /* PaymentContact.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A8A643C1D19FC5300D0E00F /* PaymentMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64391D19FC5300D0E00F /* PaymentMethod.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8A64511D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A643D1D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.cpp */; };
 		1A8A64521D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A643E1D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.h */; };
 		1A8A64541D19FCFC00D0E00F /* ApplePayPaymentMethodSelectedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A64401D19FCFB00D0E00F /* ApplePayPaymentMethodSelectedEvent.cpp */; };
@@ -940,8 +940,8 @@
 		1AE82F900CAAFA9D002237AE /* JSDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE82F8E0CAAFA9D002237AE /* JSDatabase.h */; };
 		1AE82FEC0CAB07EE002237AE /* JSSQLResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */; };
 		1AE82FED0CAB07EE002237AE /* JSSQLResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE82FEB0CAB07EE002237AE /* JSSQLResultSet.h */; };
-		1AE96A881D1A0CEB00B86768 /* PaymentAuthorizationStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A861D1A0CEB00B86768 /* PaymentAuthorizationStatus.h */; };
-		1AE96A891D1A0CEB00B86768 /* PaymentMerchantSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A871D1A0CEB00B86768 /* PaymentMerchantSession.h */; };
+		1AE96A881D1A0CEB00B86768 /* PaymentAuthorizationStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A861D1A0CEB00B86768 /* PaymentAuthorizationStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AE96A891D1A0CEB00B86768 /* PaymentMerchantSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A871D1A0CEB00B86768 /* PaymentMerchantSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE96A8A1D1A0DDD00B86768 /* JSApplePayPaymentAuthorizedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A7A1D1A0A8000B86768 /* JSApplePayPaymentAuthorizedEvent.cpp */; };
 		1AE96A8B1D1A0DDD00B86768 /* JSApplePayPaymentAuthorizedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A7B1D1A0A8000B86768 /* JSApplePayPaymentAuthorizedEvent.h */; };
 		1AE96A8C1D1A0DDD00B86768 /* JSApplePayPaymentMethodSelectedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A7C1D1A0A8000B86768 /* JSApplePayPaymentMethodSelectedEvent.cpp */; };
