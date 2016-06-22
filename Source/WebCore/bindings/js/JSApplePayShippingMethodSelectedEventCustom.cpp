@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include <runtime/IdentifierInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/ObjectConstructor.h>
 #include <runtime/StructureInlines.h>
