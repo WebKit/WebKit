@@ -41,17 +41,31 @@
 #include "InProcessIDBServer.h"
 #include "Page.h"
 #include "PageConfiguration.h"
+#include "PaymentCoordinatorClient.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
 #include "UserContentProvider.h"
 #include <wtf/NeverDestroyed.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/EmptyClientsIncludes.h>
-#endif
-
 namespace WebCore {
+
+#if ENABLE(APPLE_PAY)
+class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
+    bool supportsVersion(unsigned) override { return false; }
+    bool canMakePayments() override { return false; }
+    void canMakePaymentsWithActiveCard(const String&, const String&, std::function<void (bool)> completionHandler) override { callOnMainThread([completionHandler] { completionHandler(false); }); }
+    void showPaymentUI(const URL&, const Vector<URL>&, const PaymentRequest&) override { }
+    void completeMerchantValidation(const PaymentMerchantSession&) override { }
+
+    void completeShippingMethodSelection(PaymentAuthorizationStatus, Optional<PaymentRequest::TotalAndLineItems>) override { }
+    void completeShippingContactSelection(PaymentAuthorizationStatus, const Vector<PaymentRequest::ShippingMethod>&, Optional<PaymentRequest::TotalAndLineItems>) override { }
+    void completePaymentMethodSelection(Optional<WebCore::PaymentRequest::TotalAndLineItems>) override { }
+    void completePaymentSession(PaymentAuthorizationStatus) override { }
+    void abortPaymentSession() override { }
+    void mainFrameDestroyed() override { }
+};
+#endif
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
 #if ENABLE(INDEXED_DATABASE)
@@ -120,6 +134,11 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;
     pageConfiguration.chromeClient = &dummyChromeClient.get();
 
+#if ENABLE(APPLE_PAY)
+    static NeverDestroyed<EmptyPaymentCoordinatorClient> dummyPaymentCoordinatorClient;
+    pageConfiguration.paymentCoordinatorClient = &dummyPaymentCoordinatorClient.get();
+#endif
+
 #if ENABLE(CONTEXT_MENUS)
     static NeverDestroyed<EmptyContextMenuClient> dummyContextMenuClient;
     pageConfiguration.contextMenuClient = &dummyContextMenuClient.get();
@@ -146,10 +165,6 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
     pageConfiguration.storageNamespaceProvider = adoptRef(new EmptyStorageNamespaceProvider);
     pageConfiguration.userContentProvider = adoptRef(new EmptyUserContentProvider);
     pageConfiguration.visitedLinkStore = adoptRef(new EmptyVisitedLinkStore);
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/EmptyClientsFill.cpp>
-#endif
 }
 
 class EmptyPopupMenu : public PopupMenu {

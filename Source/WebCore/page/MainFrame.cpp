@@ -30,6 +30,7 @@
 #include "EmptyClients.h"
 #include "PageConfiguration.h"
 #include "PageOverlayController.h"
+#include "PaymentCoordinator.h"
 #include "ScrollLatchingState.h"
 #include "Settings.h"
 #include "WheelEventDeltaFilter.h"
@@ -37,10 +38,6 @@
 
 #if PLATFORM(MAC)
 #include "ServicesOverlayController.h"
-#endif /* PLATFORM(MAC) */
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MainFrameIncludes.h>
 #endif
 
 namespace WebCore {
@@ -48,17 +45,15 @@ namespace WebCore {
 inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
     : Frame(page, nullptr, *configuration.loaderClientForMainFrame)
     , m_selfOnlyRefCount(0)
-#if PLATFORM(MAC)
-#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     , m_servicesOverlayController(std::make_unique<ServicesOverlayController>(*this))
-#endif
 #endif
     , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
     , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
-{
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MainFrameInitialization.cpp>
+#if ENABLE(APPLE_PAY)
+    , m_paymentCoordinator(std::make_unique<PaymentCoordinator>(*configuration.paymentCoordinatorClient))
 #endif
+{
 }
 
 MainFrame::~MainFrame()

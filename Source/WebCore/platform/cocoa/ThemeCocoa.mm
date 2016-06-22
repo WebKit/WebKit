@@ -53,9 +53,77 @@ static void fitContextToBox(GraphicsContext& context, const FloatSize& srcImageS
     context.scale(FloatSize(scale, scale));
 }
 
+#if ENABLE(APPLE_PAY)
+static NSBundle *passKitBundle()
+{
+    static NSBundle *passKitBundle;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+#if PLATFORM(MAC)
+        passKitBundle = [NSBundle bundleWithURL:[NSURL fileURLWithPath:@"/System/Library/PrivateFrameworks/PassKit.framework"]];
+#else
+        dlopen("/System/Library/Frameworks/PassKit.framework/PassKit", RTLD_NOW);
+        passKitBundle = [NSBundle bundleForClass:NSClassFromString(@"PKPaymentAuthorizationViewController")];
+#endif
+    });
+
+    return passKitBundle;
+}
+
+static RetainPtr<CGPDFPageRef> loadPassKitPDFPage(NSString *imageName)
+{
+    NSURL *url = [passKitBundle() URLForResource:imageName withExtension:@"pdf"];
+    if (!url)
+        return nullptr;
+
+    auto document = adoptCF(CGPDFDocumentCreateWithURL((CFURLRef)url));
+    if (!document)
+        return nullptr;
+
+    if (!CGPDFDocumentGetNumberOfPages(document.get()))
+        return nullptr;
+
+    return CGPDFDocumentGetPage(document.get(), 1);
+};
+
+static CGPDFPageRef applePayButtonLogoBlack()
+{
+    static CGPDFPageRef logoPage;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        logoPage = loadPassKitPDFPage(@"PayButtonLogoBlack").leakRef();
+    });
+
+    return logoPage;
+};
+
+static CGPDFPageRef applePayButtonLogoWhite()
+{
+    static CGPDFPageRef logoPage;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        logoPage = loadPassKitPDFPage(@"PayButtonLogoWhite").leakRef();
+    });
+
+    return logoPage;
+};
+
+static void drawApplePayButton(GraphicsContext& context, CGPDFPageRef page, const FloatRect& rect)
+{
+    CGSize pdfSize = CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size;
+    GraphicsContextStateSaver stateSaver(context);
+    fitContextToBox(context, FloatSize(pdfSize), rect.size());
+
+    CGContextTranslateCTM(context.platformContext(), 0, pdfSize.height);
+    CGContextScaleCTM(context.platformContext(), 1, -1);
+
+    CGContextDrawPDFPage(context.platformContext(), page);
+};
+
+#endif
+
 void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, const FloatRect& rect) const
 {
-    // We only handle one icon at the moment.
     if (name == "wireless-playback") {
         GraphicsContextStateSaver stateSaver(context);
         context.setFillColor(Color::black);
@@ -88,8 +156,20 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, co
         return;
     }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ThemeCocoaDrawNamedImage.mm>
+#if ENABLE(APPLE_PAY)
+    if (name == "apple-pay-logo-black") {
+        if (auto logo = applePayButtonLogoBlack()) {
+            drawApplePayButton(context, logo, rect);
+            return;
+        }
+    }
+
+    if (name == "apple-pay-logo-white") {
+        if (auto logo = applePayButtonLogoWhite()) {
+            drawApplePayButton(context, logo, rect);
+            return;
+        }
+    }
 #endif
 
     Theme::drawNamedImage(name, context, rect);
