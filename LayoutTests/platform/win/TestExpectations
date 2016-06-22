@@ -308,12 +308,7 @@ webkit.org/b/140234 fast/text/midword-break-before-surrogate-pair.html [ Failure
 webkit.org/b/140234 fast/text/midword-break-before-surrogate-pair-2.html [ Failure ]
 webkit.org/b/140234 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
 
-# TODO DRT doesn't support showModalDialog
-webkit.org/b/53675 fast/events/show-modal-dialog-onblur-onfocus.html [ Skip ]
-webkit.org/b/53675 fast/harness/show-modal-dialog.html [ Skip ]
-webkit.org/b/53675 fast/events/scroll-event-during-modal-dialog.html [ Skip ]
-webkit.org/b/53675 fast/dom/Window/open-window-min-size.html [ Skip ]
-webkit.org/b/53675 js/dom/function-length.html [ Skip ]
+fast/events/scroll-event-during-modal-dialog.html [ Failure ]
 
 webkit.org/b/151506 fast/events/beforeunload-showModalDialog.html [ Skip ]
 webkit.org/b/151506 fast/events/pagehide-showModalDialog.html [ Skip ]

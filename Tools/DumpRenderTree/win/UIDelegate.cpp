@@ -313,22 +313,110 @@ HRESULT UIDelegate::webViewPrintingMarginRect(_In_opt_ IWebView*, _Out_ RECT*)
     return E_NOTIMPL;
 }
 
-HRESULT UIDelegate::canRunModal(_In_opt_ IWebView*, _Out_ BOOL* /*canRunBoolean*/)
+HRESULT UIDelegate::canRunModal(_In_opt_ IWebView*, _Out_ BOOL* canRunBoolean)
 {
-    return E_NOTIMPL;
+    if (!canRunBoolean)
+        return E_POINTER;
+    *canRunBoolean = TRUE;
+    return S_OK;
 }
 
-HRESULT UIDelegate::createModalDialog(_In_opt_ IWebView* /*sender*/, _In_opt_ IWebURLRequest* /*request*/, _COM_Outptr_opt_ IWebView** newWebView)
+static HWND getHandleFromWebView(IWebView* webView)
+{
+    COMPtr<IWebViewPrivate2> webViewPrivate;
+    HRESULT hr = webView->QueryInterface(&webViewPrivate);
+    if (FAILED(hr))
+        return nullptr;
+
+    HWND webViewWindow = nullptr;
+    hr = webViewPrivate->viewWindow(&webViewWindow);
+    if (FAILED(hr))
+        return nullptr;
+
+    return webViewWindow;
+}
+
+HRESULT UIDelegate::createModalDialog(_In_opt_ IWebView* sender, _In_opt_ IWebURLRequest*, _COM_Outptr_opt_ IWebView** newWebView)
 {
     if (!newWebView)
         return E_POINTER;
-    *newWebView = nullptr;
-    return E_NOTIMPL;
+
+    COMPtr<IWebView> webView;
+    HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, (void**)&webView);
+    if (FAILED(hr))
+        return hr;
+
+    m_modalDialogParent = ::CreateWindow(L"STATIC", L"ModalDialog", WS_OVERLAPPED | WS_VISIBLE, 0, 0, 0, 0, getHandleFromWebView(sender), nullptr, nullptr, nullptr);
+
+    hr = webView->setHostWindow(m_modalDialogParent);
+    if (FAILED(hr))
+        return hr;
+
+    RECT clientRect = { 0, 0, 0, 0 };
+    hr = webView->initWithFrame(clientRect, 0, _bstr_t(L""));
+    if (FAILED(hr))
+        return hr;
+
+    COMPtr<IWebUIDelegate> uiDelegate;
+    hr = sender->uiDelegate(&uiDelegate);
+    if (FAILED(hr))
+        return hr;
+
+    hr = webView->setUIDelegate(uiDelegate.get());
+    if (FAILED(hr))
+        return hr;
+
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    hr = sender->frameLoadDelegate(&frameLoadDelegate);
+    if (FAILED(hr))
+        return hr;
+
+    hr = webView.get()->setFrameLoadDelegate(frameLoadDelegate.get());
+    if (FAILED(hr))
+        return hr;
+
+    *newWebView = webView.leakRef();
+
+    return S_OK;
 }
 
-HRESULT UIDelegate::runModal(_In_opt_ IWebView*)
+static HWND findTopLevelParent(HWND window)
 {
-    return E_NOTIMPL;
+    if (!window)
+        return nullptr;
+
+    HWND current = window;
+    for (HWND parent = GetParent(current); current; current = parent, parent = GetParent(parent)) {
+        if (!parent)
+            return current;
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+HRESULT UIDelegate::runModal(_In_opt_ IWebView* webView)
+{
+    COMPtr<IWebView> protector(webView);
+
+    auto topLevelParent = findTopLevelParent(::GetWindow(m_modalDialogParent, GW_OWNER));
+
+    ::EnableWindow(topLevelParent, FALSE);
+
+    while (::IsWindow(getHandleFromWebView(webView))) {
+#if USE(CF)
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true);
+#endif
+        MSG msg;
+        if (!::GetMessage(&msg, 0, 0, 0))
+            break;
+
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+    }
+
+    ::EnableWindow(topLevelParent, TRUE);
+
+    return S_OK;
 }
 
 HRESULT UIDelegate::isMenuBarVisible(_In_opt_ IWebView*, _Out_ BOOL* visible)
@@ -483,6 +571,8 @@ HRESULT UIDelegate::webViewClose(_In_opt_ IWebView* sender)
     HWND hostWindow;
     sender->hostWindow(&hostWindow);
     DestroyWindow(hostWindow);
+    if (hostWindow == m_modalDialogParent)
+        m_modalDialogParent = nullptr;
     return S_OK;
 }
 

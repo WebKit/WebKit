@@ -144,6 +144,7 @@ private:
     std::unique_ptr<DRTUndoManager> m_undoManager;
 
     COMPtr<IWebDesktopNotificationsDelegate> m_desktopNotifications;
+    HWND m_modalDialogParent { nullptr };
 };
 
 #endif
