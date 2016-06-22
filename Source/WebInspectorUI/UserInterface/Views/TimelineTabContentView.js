@@ -70,6 +70,8 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, this._capturingStartedOrStopped, this);
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStartedOrStopped, this);
 
+        WebInspector.notifications.addEventListener(WebInspector.Notification.VisibilityStateDidChange, this._inspectorVisibilityChanged, this);
+
         this._displayedRecording = null;
         this._displayedContentView = null;
         this._viewMode = null;
@@ -277,7 +279,8 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         this._toggleRecordingShortcut.disabled = false;
         this._toggleNewRecordingShortcut.disabled = false;
 
-        WebInspector.timelineManager.autoCaptureOnPageLoad = true;
+        if (WebInspector.visible)
+            WebInspector.timelineManager.autoCaptureOnPageLoad = true;
     }
 
     hidden()
@@ -288,6 +291,15 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         this._toggleNewRecordingShortcut.disabled = true;
 
         WebInspector.timelineManager.autoCaptureOnPageLoad = false;
+    }
+
+    closed()
+    {
+        if (WebInspector.FPSInstrument.supported())
+            this.contentBrowser.navigationBar.removeEventListener(null, null, this);
+
+        WebInspector.timelineManager.removeEventListener(null, null, this);
+        WebInspector.notifications.removeEventListener(null, null, this);
     }
 
     canShowRepresentedObject(representedObject)
@@ -360,6 +372,11 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
     {
         let isCapturing = WebInspector.timelineManager.isCapturing();
         this._recordButton.toggled = isCapturing;
+    }
+
+    _inspectorVisibilityChanged(event)
+    {
+        WebInspector.timelineManager.autoCaptureOnPageLoad = !!this.visible && !!WebInspector.visible;
     }
 
     _toggleRecordingOnSpacebar(event)

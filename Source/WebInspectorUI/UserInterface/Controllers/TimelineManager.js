@@ -135,10 +135,15 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
     set autoCaptureOnPageLoad(autoCapture)
     {
+        autoCapture = !!autoCapture;
+
+        if (this._autoCaptureOnPageLoad === autoCapture)
+            return;
+
         this._autoCaptureOnPageLoad = autoCapture;
 
         if (window.TimelineAgent && TimelineAgent.setAutoCaptureEnabled)
-            TimelineAgent.setAutoCaptureEnabled(autoCapture);
+            TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
     }
 
     get enabledTimelineTypes()

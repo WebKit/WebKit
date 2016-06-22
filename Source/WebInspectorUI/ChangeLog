@@ -1,3 +1,32 @@
+2016-06-22  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: don't start auto capturing if the Inspector window is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=159014
+        <rdar://problem/26931269>
+
+        Reviewed by Joseph Pecoraro.
+
+        TimelineTabContentView should not tell the timeline manager to enable
+        auto-capturing unless the Web Inspector UI is visible. If it is preloaded
+        but not shown to the user, then auto-capturing may inadvertently disable
+        the debugger, causing it to miss `debugger` statements and not bring the
+        inspector to front.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.set autoCaptureOnPageLoad):
+        Bail out if nothing changed. Coerce to a boolean since the backend requires a boolean.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView): Listen for UI visibility changes.
+        (WebInspector.TimelineTabContentView.prototype.shown):
+        Enable auto-capturing if the UI is visible.
+
+        (WebInspector.TimelineTabContentView.prototype.closed): Added.
+        Remove listeners on global objects so this tab doesn't leak.
+
+        (WebInspector.TimelineTabContentView.prototype._inspectorVisibilityChanged):
+        Update the auto-capturing setting if the UI became visible or not visible.
+
 2016-06-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Simplify CSS rule for ContentBrowser navigation bar items
