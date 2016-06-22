@@ -49,7 +49,7 @@ struct FetchOptions {
     enum class Redirect { Follow, Error, Manual };
     Redirect redirect { Redirect::Follow };
 
-    enum class ReferrerPolicy { EmptyString, NoReferrer, NoReferrerWhenDowngrade, OriginOnly, OriginWhenCrossOrigin, UnsafeUrl };
+    enum class ReferrerPolicy { EmptyString, NoReferrer, NoReferrerWhenDowngrade, Origin, OriginWhenCrossOrigin, UnsafeUrl };
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
 };
 

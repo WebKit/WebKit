@@ -47,8 +47,8 @@ static bool setReferrerPolicy(FetchOptions& options, const String& referrerPolic
         options.referrerPolicy = FetchOptions::ReferrerPolicy::NoReferrer;
     else if (referrerPolicy == "no-referrer-when-downgrade")
         options.referrerPolicy = FetchOptions::ReferrerPolicy::NoReferrerWhenDowngrade;
-    else if (referrerPolicy == "origin-only")
-        options.referrerPolicy = FetchOptions::ReferrerPolicy::OriginOnly;
+    else if (referrerPolicy == "origin")
+        options.referrerPolicy = FetchOptions::ReferrerPolicy::Origin;
     else if (referrerPolicy == "origin-when-cross-origin")
         options.referrerPolicy = FetchOptions::ReferrerPolicy::OriginWhenCrossOrigin;
     else if (referrerPolicy == "unsafe-url")

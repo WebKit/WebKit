@@ -14,7 +14,7 @@ PASS Check referrer init value of  and associated getter
 PASS Check referrerPolicy init value of  and associated getter 
 PASS Check referrerPolicy init value of no-referrer and associated getter 
 PASS Check referrerPolicy init value of no-referrer-when-downgrade and associated getter 
-PASS Check referrerPolicy init value of origin-only and associated getter 
+PASS Check referrerPolicy init value of origin and associated getter 
 PASS Check referrerPolicy init value of origin-when-cross-origin and associated getter 
 PASS Check referrerPolicy init value of unsafe-url and associated getter 
 PASS Check mode init value of same-origin and associated getter 
