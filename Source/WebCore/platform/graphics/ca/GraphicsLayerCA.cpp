@@ -1439,7 +1439,8 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         FloatRect initialClip(boundsOrigin(), size());
 
         GraphicsContext context;
-        DisplayList::Recorder recorder(context, *m_displayList, initialClip, AffineTransform());
+        // The Recorder is large, so heap-allocate.
+        std::unique_ptr<DisplayList::Recorder> recorder = std::make_unique<DisplayList::Recorder>(context, *m_displayList, initialClip, AffineTransform());
         paintGraphicsLayerContents(context, FloatRect(FloatPoint(), size()));
 
 #ifdef LOG_RECORDING_TIME
