@@ -1,3 +1,16 @@
+2016-06-22  Youenn Fablet  <youennf@gmail.com>
+
+        imported/w3c/web-platform-tests/streams/readable-streams/general.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=155760
+
+        Reviewed by Alexey Proskuryakov.
+
+        Making test more predictable.
+        Upstreamed to w3c repository as https://github.com/w3c/web-platform-tests/pull/3203.
+
+        * web-platform-tests/streams/readable-streams/general.js:
+        (promise_test):
+
 2016-06-21  Youenn Fablet  <youennf@gmail.com>
 
         [Fetch API] Rename 'origin-only' referrer policy to 'origin'
