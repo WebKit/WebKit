@@ -56,15 +56,6 @@ CrossOriginPreflightChecker::~CrossOriginPreflightChecker()
         m_resource->removeClient(this);
 }
 
-void CrossOriginPreflightChecker::handleLoadingFailure(DocumentThreadableLoader& loader, unsigned long identifier, const ResourceError& error)
-{
-    // FIXME: We might want to call preflightFailure instead.
-    Frame* frame = loader.document().frame();
-    ASSERT(frame);
-    InspectorInstrumentation::didFailLoading(frame, frame->loader().documentLoader(), identifier, error);
-    loader.didFail(identifier, error);
-}
-
 void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLoader& loader, ResourceRequest&& request, unsigned long identifier, const ResourceResponse& response)
 {
     Frame* frame = loader.document().frame();
@@ -99,7 +90,7 @@ void CrossOriginPreflightChecker::notifyFinished(CachedResource* resource)
 {
     ASSERT_UNUSED(resource, resource == m_resource);
     if (m_resource->loadFailedOrCanceled()) {
-        handleLoadingFailure(m_loader, m_resource->identifier(), m_resource->resourceError());
+        m_loader.preflightFailure(m_resource->identifier(), m_resource->resourceError());
         return;
     }
     validatePreflightResponse(m_loader, WTFMove(m_request), m_resource->identifier(), m_resource->response());
@@ -140,17 +131,10 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     unsigned identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, loader.options().allowCredentials(), loader.options().clientCredentialPolicy(), error, response, data);
 
     if (!error.isNull() && response.httpStatusCode() <= 0) {
-        handleLoadingFailure(loader, identifier, error);
+        loader.preflightFailure(identifier, error);
         return;
     }
     validatePreflightResponse(loader, WTFMove(request), identifier, response);
-}
-
-void CrossOriginPreflightChecker::redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&)
-{
-    // FIXME: We should call preflightFailure or set redirect mode to error.
-    ASSERT(m_loader.m_client);
-    m_loader.m_client->didFailRedirectCheck();
 }
 
 void CrossOriginPreflightChecker::setDefersLoading(bool value)

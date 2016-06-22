@@ -54,7 +54,6 @@ public:
 
 private:
     void notifyFinished(CachedResource*) final;
-    void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) final;
 
     static void handleLoadingFailure(DocumentThreadableLoader&, unsigned long, const ResourceError&);
     static void validatePreflightResponse(DocumentThreadableLoader&, ResourceRequest&&, unsigned long, const ResourceResponse&);
