@@ -85,6 +85,8 @@ public:
     int maxY() const { return y() + height(); }
     int width() const { return m_size.width(); }
     int height() const { return m_size.height(); }
+    
+    unsigned area() const { return m_size.area(); }
 
     void setX(int x) { m_location.setX(x); }
     void setY(int y) { m_location.setY(y); }

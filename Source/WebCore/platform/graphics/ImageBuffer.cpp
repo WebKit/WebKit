@@ -169,14 +169,14 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     if (size.isEmpty())
         return nullptr;
 
-    FloatSize scaledSize = ImageBuffer::compatibleBufferSize(size, context);
+    IntSize scaledSize = ImageBuffer::compatibleBufferSize(size, context);
 
-    auto buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(scaledSize), 1, ColorSpaceSRGB, context, hasAlpha);
+    auto buffer = ImageBuffer::createCompatibleBuffer(scaledSize, 1, ColorSpaceSRGB, context, hasAlpha);
     if (!buffer)
         return nullptr;
 
     // Set up a corresponding scale factor on the graphics context.
-    buffer->context().scale(context.scaleFactor());
+    buffer->context().scale(FloatSize(scaledSize.width() / size.width(), scaledSize.height() / size.height()));
     return buffer;
 }
 
@@ -185,11 +185,11 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     return create(size, context.renderingMode(), resolutionScale, colorSpace);
 }
 
-FloatSize ImageBuffer::compatibleBufferSize(const FloatSize& size, const GraphicsContext& context)
+IntSize ImageBuffer::compatibleBufferSize(const FloatSize& size, const GraphicsContext& context)
 {
     // Enlarge the buffer size if the context's transform is scaling it so we need a higher
     // resolution than one pixel per unit.
-    return size * context.scaleFactor();
+    return expandedIntSize(size * context.scaleFactor());
 }
 
 bool ImageBuffer::isCompatibleWithContext(const GraphicsContext& context) const

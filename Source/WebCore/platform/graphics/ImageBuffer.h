@@ -83,7 +83,7 @@ public:
     static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const GraphicsContext&, bool hasAlpha = true);
     static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, ColorSpace, const GraphicsContext&, bool hasAlpha);
 
-    static FloatSize compatibleBufferSize(const FloatSize&, const GraphicsContext&);
+    static IntSize compatibleBufferSize(const FloatSize&, const GraphicsContext&);
     bool isCompatibleWithContext(const GraphicsContext&) const;
 
     WEBCORE_EXPORT ~ImageBuffer();
