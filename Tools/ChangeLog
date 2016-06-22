@@ -1,3 +1,12 @@
+2016-06-22  Jon Lee  <jonlee@apple.com>
+
+        Update animometer.plan
+        https://bugs.webkit.org/show_bug.cgi?id=159012
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/animometer.plan: Update to r202318.
+
 2016-06-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should generate files to ignore by WebKit SCM
