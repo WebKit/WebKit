@@ -24,10 +24,9 @@
  */
 
 #import "config.h"
+#import "Payment.h"
 
 #if ENABLE(APPLE_PAY)
-
-#import "Payment.h"
 
 #import "PaymentContact.h"
 #import "PaymentMethod.h"

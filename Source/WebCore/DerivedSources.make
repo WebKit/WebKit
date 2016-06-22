@@ -29,6 +29,7 @@
 VPATH = \
     $(WebCore) \
     $(WebCore)/Modules/airplay \
+    $(WebCore)/Modules/applepay \
     $(WebCore)/Modules/encryptedmedia \
     $(WebCore)/Modules/fetch \
     $(WebCore)/Modules/gamepad \
@@ -76,6 +77,12 @@ VPATH = \
 
 NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
+	$(WebCore)/Modules/applepay/ApplePayPaymentAuthorizedEvent.idl \
+    $(WebCore)/Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl \
+    $(WebCore)/Modules/applepay/ApplePaySession.idl \
+    $(WebCore)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl \
+    $(WebCore)/Modules/applepay/ApplePayShippingMethodSelectedEvent.idl \
+    $(WebCore)/Modules/applepay/ApplePayValidateMerchantEvent.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyMessageEvent.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyNeededEvent.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeySession.idl \
