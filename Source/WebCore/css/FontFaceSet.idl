@@ -35,8 +35,7 @@ enum FontFaceSetLoadStatus {
     boolean has(FontFace font);
 
     // FIXME: We should add support for the setlike declaration.
-    // As a first step this map iterable declaration should be changed to a set iterable.
-    iterable<FontFace, FontFace>;
+    iterable<FontFace>;
 
     readonly attribute long size;
 

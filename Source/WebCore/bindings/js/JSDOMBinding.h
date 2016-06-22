@@ -267,7 +267,8 @@ template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState*
 template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T, inlineCapacity>*);
 WEBCORE_EXPORT JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, DOMStringList*);
 
-template<typename Value1, typename Value2> JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, const Value1&, const Value2&);
+JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, JSC::JSValue, JSC::JSValue);
+template<typename FirstType, typename SecondType> JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, const FirstType&, const SecondType&);
 
 RefPtr<JSC::ArrayBufferView> toArrayBufferView(JSC::JSValue);
 RefPtr<JSC::Int8Array> toInt8Array(JSC::JSValue);
@@ -625,12 +626,17 @@ template<typename T, size_t inlineCapacity> inline JSC::JSValue jsArray(JSC::Exe
     return jsArray(exec, globalObject, *vector);
 }
 
-template<typename Value1, typename Value2> inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObject, const Value1& value1, const Value2& value2)
+inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObject, JSC::JSValue value1, JSC::JSValue value2)
 {
     JSC::MarkedArgumentBuffer args;
-    args.append(toJS(&state, globalObject, value1));
-    args.append(toJS(&state, globalObject, value2));
+    args.append(value1);
+    args.append(value2);
     return constructArray(&state, 0, globalObject, args);
+}
+
+template<typename FirstType, typename SecondType> inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObject, const FirstType& value1, const SecondType& value2)
+{
+    return jsPair(state, globalObject, toJS(&state, globalObject, value1), toJS(&state, globalObject, value2));
 }
 
 inline RefPtr<JSC::ArrayBufferView> toArrayBufferView(JSC::JSValue value)

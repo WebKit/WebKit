@@ -6217,27 +6217,27 @@ const JSC::ClassInfo TestObjIteratorPrototype::s_info = { "TestObject Iterator",
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSymbolIterator(JSC::ExecState* state)
 {
-    return createKeyValueIterator<JSTestObj>(*state, IterationKind::KeyValue, "[Symbol.Iterator]");
+    return iteratorCreate<JSTestObj>(*state, IterationKind::KeyValue, "[Symbol.Iterator]");
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEntries(JSC::ExecState* state)
 {
-    return createKeyValueIterator<JSTestObj>(*state, IterationKind::KeyValue, "entries");
+    return iteratorCreate<JSTestObj>(*state, IterationKind::KeyValue, "entries");
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionKeys(JSC::ExecState* state)
 {
-    return createKeyValueIterator<JSTestObj>(*state, IterationKind::Key, "keys");
+    return iteratorCreate<JSTestObj>(*state, IterationKind::Key, "keys");
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionValues(JSC::ExecState* state)
 {
-    return createKeyValueIterator<JSTestObj>(*state, IterationKind::Value, "values");
+    return iteratorCreate<JSTestObj>(*state, IterationKind::Value, "values");
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionForEach(JSC::ExecState* state)
 {
-    return keyValueIteratorForEach<JSTestObj>(*state, "forEach");
+    return iteratorForEach<JSTestObj>(*state, "forEach");
 }
 
 void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)

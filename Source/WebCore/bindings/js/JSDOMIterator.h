@@ -108,14 +108,25 @@ private:
     {
     }
 
+    template<typename IteratorValue> typename std::enable_if<IteratorInspector<IteratorValue>::isMap, JSC::JSValue>::type
+    asJS(JSC::ExecState&, IteratorValue&);
+    template<typename IteratorValue> typename std::enable_if<IteratorInspector<IteratorValue>::isSet, JSC::JSValue>::type
+    asJS(JSC::ExecState&, IteratorValue&);
+
     static void destroy(JSC::JSCell*);
 
-    typename DOMWrapped::Iterator m_iterator;
+    Optional<typename DOMWrapped::Iterator> m_iterator;
     IterationKind m_kind;
+    size_t m_index { 0 };
 };
 
 template<typename JSWrapper>
-JSC::EncodedJSValue createKeyValueIterator(JSC::ExecState& state, IterationKind kind, const char* propertyName)
+JSC::EncodedJSValue iteratorCreate(JSC::ExecState&, IterationKind, const char*);
+template<typename JSWrapper>
+JSC::EncodedJSValue iteratorForEach(JSC::ExecState&, const char*);
+
+template<typename JSWrapper>
+JSC::EncodedJSValue iteratorCreate(JSC::ExecState& state, IterationKind kind, const char* propertyName)
 {
     auto wrapper = JSC::jsDynamicCast<JSWrapper*>(state.thisValue());
     if (UNLIKELY(!wrapper))
@@ -124,30 +135,48 @@ JSC::EncodedJSValue createKeyValueIterator(JSC::ExecState& state, IterationKind 
     return JSC::JSValue::encode(JSDOMIterator<JSWrapper>::create(globalObject.vm(), getDOMStructure<JSDOMIterator<JSWrapper>>(globalObject.vm(), globalObject), *wrapper, kind));
 }
 
-template<typename IteratorValue> typename std::enable_if<IteratorInspector<IteratorValue>::isMap, JSC::JSValue>::type
-toJS(JSC::ExecState& state, JSDOMGlobalObject* globalObject, IteratorValue& value, IterationKind kind)
+template<typename JSWrapper>
+template<typename IteratorValue> inline typename std::enable_if<IteratorInspector<IteratorValue>::isMap, JSC::JSValue>::type
+JSDOMIterator<JSWrapper>::asJS(JSC::ExecState& state, IteratorValue& value)
 {
     ASSERT(value);
-    if (kind != IterationKind::KeyValue)
-        return toJS(&state, globalObject, (kind == IterationKind::Key) ? value->key : value->value);
+    if (m_kind != IterationKind::KeyValue)
+        return toJS(&state, globalObject(), (m_kind == IterationKind::Key) ? value->key : value->value);
 
-    return jsPair(state, globalObject, value->key, value->value);
-}
-
-template<typename IteratorValue> typename std::enable_if<IteratorInspector<IteratorValue>::isSet, JSC::JSValue>::type
-toJS(JSC::ExecState& state, JSDOMGlobalObject* globalObject, IteratorValue& value, IterationKind kind)
-{
-    ASSERT(value);
-    JSC::JSValue result = toJS(&state, globalObject, *value);
-    if (kind != IterationKind::KeyValue)
-        return result;
-
-    // FIXME: first pair value should be the index of result.
-    return jsPair(state, globalObject, result, result);
+    return jsPair(state, globalObject(), value->key, value->value);
 }
 
 template<typename JSWrapper>
-JSC::EncodedJSValue keyValueIteratorForEach(JSC::ExecState& state, const char* propertyName)
+template<typename IteratorValue> inline typename std::enable_if<IteratorInspector<IteratorValue>::isSet, JSC::JSValue>::type
+JSDOMIterator<JSWrapper>::asJS(JSC::ExecState& state, IteratorValue& value)
+{
+    ASSERT(value);
+    JSC::JSValue result = toJS(&state, globalObject(), *value);
+    if (m_kind != IterationKind::KeyValue)
+        return result;
+
+    return jsPair(state, globalObject(), JSC::jsNumber(m_index++), result);
+}
+
+template<typename IteratorValue> typename std::enable_if<IteratorInspector<IteratorValue>::isMap, void>::type
+appendForEachArguments(JSC::ExecState& state, JSDOMGlobalObject* globalObject, JSC::MarkedArgumentBuffer& arguments, IteratorValue& value, size_t&)
+{
+    ASSERT(value);
+    arguments.append(toJS(&state, globalObject, value->value));
+    arguments.append(toJS(&state, globalObject, value->key));
+}
+
+template<typename IteratorValue> typename std::enable_if<IteratorInspector<IteratorValue>::isSet, void>::type
+appendForEachArguments(JSC::ExecState& state, JSDOMGlobalObject* globalObject, JSC::MarkedArgumentBuffer& arguments, IteratorValue& value, size_t& index)
+{
+    ASSERT(value);
+    JSC::JSValue argument = toJS(&state, globalObject, *value);
+    arguments.append(argument);
+    arguments.append(JSC::jsNumber(index++));
+}
+
+template<typename JSWrapper>
+JSC::EncodedJSValue iteratorForEach(JSC::ExecState& state, const char* propertyName)
 {
     auto wrapper = JSC::jsDynamicCast<JSWrapper*>(state.thisValue());
     if (UNLIKELY(!wrapper))
@@ -158,11 +187,11 @@ JSC::EncodedJSValue keyValueIteratorForEach(JSC::ExecState& state, const char* p
     if (callType == JSC::CallType::None)
         return throwVMTypeError(&state);
 
+    size_t index = 0;
     auto iterator = wrapper->wrapped().createIterator();
     while (auto value = iterator.next()) {
         JSC::MarkedArgumentBuffer arguments;
-        arguments.append(toJS(&state, wrapper->globalObject(), value.value().value));
-        arguments.append(toJS(&state, wrapper->globalObject(), value.value().key));
+        appendForEachArguments(state, wrapper->globalObject(), arguments, value, index);
         arguments.append(wrapper);
         JSC::call(&state, state.argument(0), callType, callData, wrapper, arguments);
         if (state.hadException())
@@ -181,19 +210,13 @@ void JSDOMIterator<JSWrapper>::destroy(JSCell* cell)
 template<typename JSWrapper>
 JSC::JSValue JSDOMIterator<JSWrapper>::next(JSC::ExecState& state)
 {
-    auto iteratorValue = m_iterator.next();
-    if (!iteratorValue)
-        return createIteratorResultObject(&state, JSC::jsUndefined(), true);
-
-    JSC::JSValue value;
-    if (m_kind == IterationKind::Value)
-        value = toJS(&state, globalObject(), iteratorValue.value().value);
-    else if (m_kind == IterationKind::Key)
-        value = toJS(&state, globalObject(), iteratorValue.value().key);
-    else
-        value = jsPair(state, globalObject(), iteratorValue.value().key, iteratorValue.value().value);
-
-    return createIteratorResultObject(&state, value, false);
+    if (m_iterator) {
+        auto iteratorValue = m_iterator->next();
+        if (iteratorValue)
+            return createIteratorResultObject(&state, asJS(state, iteratorValue), false);
+        m_iterator = Nullopt;
+    }
+    return createIteratorResultObject(&state, JSC::jsUndefined(), true);
 }
 
 template<typename JSWrapper>

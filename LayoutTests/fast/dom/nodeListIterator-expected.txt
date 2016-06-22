@@ -1,0 +1,38 @@
+Testing of NodeList iterable capacities.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS nodeList.length is 2
+PASS item is children[index++]
+PASS item is children[index++]
+PASS pair[0] is children[0]
+PASS pair[1] is children[1]
+PASS forEachContainer is nodeList
+PASS forEachIndex is index
+PASS node is children[index++]
+PASS forEachContainer is nodeList
+PASS forEachIndex is index
+PASS node is children[index++]
+PASS iterator.next().value is children[0]
+PASS iterator.next().value is children[1]
+PASS end.done is true
+PASS end.value is undefined
+PASS iterator.next().value is children[0]
+PASS iterator.next().value is children[1]
+PASS end.done is true
+PASS end.value is undefined
+PASS pair.length is 2
+PASS pair[0] is 0
+PASS pair[1] is children[0]
+PASS pair.length is 2
+PASS pair[0] is 1
+PASS pair[1] is children[1]
+PASS end.done is true
+PASS end.value is undefined
+PASS end.done is true
+PASS end.value is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
