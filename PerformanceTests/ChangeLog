@@ -1,5 +1,19 @@
 2016-06-21  Jon Lee  <jonlee@apple.com>
 
+        Update canvas size when benchmark begins
+        https://bugs.webkit.org/show_bug.cgi?id=159010
+
+        Reviewed by Dean Jackson.
+
+        Previously we would evaluate the media queries and assign the canvas size to the test
+        on body.onload. Instead, do it once the user starts the benchmark.
+
+        * Animometer/resources/debug-runner/animometer.js: Move benchmarkController.determineCanvasSize()
+        to benchmarkController._startBenchmark.
+        * Animometer/resources/runner/animometer.js: Ditto.
+
+2016-06-21  Jon Lee  <jonlee@apple.com>
+
         Add new timestamp option
         https://bugs.webkit.org/show_bug.cgi?id=159006
 

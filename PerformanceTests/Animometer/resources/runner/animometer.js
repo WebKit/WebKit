@@ -436,7 +436,6 @@ window.sectionsManager =
 window.benchmarkController = {
     initialize: function()
     {
-        benchmarkController.determineCanvasSize();
         benchmarkController.addOrientationListenerIfNecessary();
     },
 
@@ -488,6 +487,8 @@ window.benchmarkController = {
 
     _startBenchmark: function(suites, options, frameContainerID)
     {
+        benchmarkController.determineCanvasSize();
+
         var configuration = document.body.className.match(/small|medium|large/);
         if (configuration)
             options[Strings.json.configuration] = configuration[0];

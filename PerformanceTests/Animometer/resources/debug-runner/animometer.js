@@ -507,7 +507,6 @@ Utilities.extendObject(window.benchmarkController, {
         if (benchmarkController.startBenchmarkImmediatelyIfEncoded())
             return;
 
-        benchmarkController.determineCanvasSize();
         benchmarkController.addOrientationListenerIfNecessary();
         suitesManager.createElements();
         suitesManager.updateUIFromLocalStorage();
@@ -568,6 +567,7 @@ Utilities.extendObject(window.benchmarkController, {
 
     startBenchmark: function()
     {
+        benchmarkController.determineCanvasSize();
         benchmarkController.options = optionsManager.updateLocalStorageFromUI();
         benchmarkController.suites = suitesManager.updateLocalStorageFromUI();
         this._startBenchmark(benchmarkController.suites, benchmarkController.options, "running-test");
