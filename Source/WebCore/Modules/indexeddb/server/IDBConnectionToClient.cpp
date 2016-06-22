@@ -148,6 +148,29 @@ void IDBConnectionToClient::didGetAllDatabaseNames(uint64_t callbackID, const Ve
     m_delegate->didGetAllDatabaseNames(callbackID, databaseNames);
 }
 
+void IDBConnectionToClient::registerDatabaseConnection(UniqueIDBDatabaseConnection& connection)
+{
+    ASSERT(!m_databaseConnections.contains(&connection));
+    m_databaseConnections.add(&connection);
+}
+
+void IDBConnectionToClient::unregisterDatabaseConnection(UniqueIDBDatabaseConnection& connection)
+{
+    m_databaseConnections.remove(&connection);
+}
+
+void IDBConnectionToClient::connectionToClientClosed()
+{
+    auto databaseConnections = m_databaseConnections;
+
+    for (auto connection : databaseConnections) {
+        if (m_databaseConnections.contains(connection))
+            connection->connectionClosedFromClient();
+    }
+
+    m_databaseConnections.clear();
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

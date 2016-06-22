@@ -58,11 +58,11 @@ WebIDBConnectionToClient::WebIDBConnectionToClient(DatabaseToWebProcessConnectio
 
 WebIDBConnectionToClient::~WebIDBConnectionToClient()
 {
-    DatabaseProcess::singleton().idbServer().unregisterConnection(*m_connectionToClient);
 }
 
 void WebIDBConnectionToClient::disconnectedFromWebProcess()
 {
+    DatabaseProcess::singleton().idbServer().unregisterConnection(*m_connectionToClient);
 }
 
 IPC::Connection* WebIDBConnectionToClient::messageSenderConnection()

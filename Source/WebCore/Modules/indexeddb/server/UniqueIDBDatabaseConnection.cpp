@@ -56,11 +56,13 @@ UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection(UniqueIDBDatabase& data
     , m_openRequestIdentifier(request.requestData().requestIdentifier())
 {
     m_database.server().registerDatabaseConnection(*this);
+    m_connectionToClient.registerDatabaseConnection(*this);
 }
 
 UniqueIDBDatabaseConnection::~UniqueIDBDatabaseConnection()
 {
     m_database.server().unregisterDatabaseConnection(*this);
+    m_connectionToClient.unregisterDatabaseConnection(*this);
 }
 
 bool UniqueIDBDatabaseConnection::hasNonFinishedTransactions() const

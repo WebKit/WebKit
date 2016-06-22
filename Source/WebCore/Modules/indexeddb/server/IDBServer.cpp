@@ -80,6 +80,8 @@ void IDBServer::unregisterConnection(IDBConnectionToClient& connection)
     ASSERT(m_connectionMap.contains(connection.identifier()));
     ASSERT(m_connectionMap.get(connection.identifier()) == &connection);
 
+    connection.connectionToClientClosed();
+
     m_connectionMap.remove(connection.identifier());
 }
 

@@ -1,3 +1,18 @@
+2016-06-22  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess doesn't handle WebProcesses going away uncleanly.
+        https://bugs.webkit.org/show_bug.cgi?id=158894
+
+        Reviewed by Alex Christensen.
+
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::didClose):
+        
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::disconnectedFromWebProcess): Actually unregister this connection
+          from the IDBServer so it can clean up.
+        (WebKit::WebIDBConnectionToClient::~WebIDBConnectionToClient):
+        
 2016-06-22  Chris Dumez  <cdumez@apple.com>
 
         Stop using PassRefPtr in ShareableResource

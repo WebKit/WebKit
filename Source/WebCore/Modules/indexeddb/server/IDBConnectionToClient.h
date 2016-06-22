@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBConnectionToClientDelegate.h"
+#include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -72,10 +73,15 @@ public:
 
     void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames);
 
+    void registerDatabaseConnection(UniqueIDBDatabaseConnection&);
+    void unregisterDatabaseConnection(UniqueIDBDatabaseConnection&);
+    void connectionToClientClosed();
+
 private:
     IDBConnectionToClient(IDBConnectionToClientDelegate&);
     
     Ref<IDBConnectionToClientDelegate> m_delegate;
+    HashSet<UniqueIDBDatabaseConnection*> m_databaseConnections;
 };
 
 } // namespace IDBServer

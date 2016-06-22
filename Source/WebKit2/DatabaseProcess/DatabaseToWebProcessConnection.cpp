@@ -85,7 +85,11 @@ void DatabaseToWebProcessConnection::didReceiveSyncMessage(IPC::Connection& conn
 void DatabaseToWebProcessConnection::didClose(IPC::Connection&)
 {
 #if ENABLE(INDEXED_DATABASE)
-    // FIXME: (Modern IDB) The WebProcess has disconnected, close all of the connections associated with it
+    auto connections = m_webIDBConnections;
+    for (auto& connection : connections.values())
+        connection->disconnectedFromWebProcess();
+
+    m_webIDBConnections.clear();
 #endif
 }
 
