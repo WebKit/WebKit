@@ -1269,7 +1269,10 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 
 void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shift)
 {
-    ASSERT(listIndex >= 0);
+    auto& items = listItems();
+    int listSize = static_cast<int>(items.size());
+    if (listIndex < 0 || listIndex >= listSize)
+        return;
 
     // Save the selection so it can be compared to the new selection when
     // dispatching change events during mouseup, or after autoscroll finishes.
@@ -1280,7 +1283,7 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
     bool shiftSelect = m_multiple && shift;
     bool multiSelect = m_multiple && multi && !shift;
 
-    auto& clickedElement = *listItems()[listIndex];
+    auto& clickedElement = *items[listIndex];
     if (is<HTMLOptionElement>(clickedElement)) {
         // Keep track of whether an active selection (like during drag
         // selection), should select or deselect.
