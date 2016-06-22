@@ -212,17 +212,17 @@ void WorkerRunLoop::terminate()
     m_messageQueue.kill();
 }
 
-void WorkerRunLoop::postTask(ScriptExecutionContext::Task task)
+void WorkerRunLoop::postTask(ScriptExecutionContext::Task&& task)
 {
     postTaskForMode(WTFMove(task), defaultMode());
 }
 
-void WorkerRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task task)
+void WorkerRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task&& task)
 {
     m_messageQueue.appendAndKill(std::make_unique<Task>(WTFMove(task), defaultMode()));
 }
 
-void WorkerRunLoop::postTaskForMode(ScriptExecutionContext::Task task, const String& mode)
+void WorkerRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, const String& mode)
 {
     m_messageQueue.append(std::make_unique<Task>(WTFMove(task), mode));
 }
@@ -233,7 +233,7 @@ void WorkerRunLoop::Task::performTask(const WorkerRunLoop& runLoop, WorkerGlobal
         m_task.performTask(*context);
 }
 
-WorkerRunLoop::Task::Task(ScriptExecutionContext::Task task, const String& mode)
+WorkerRunLoop::Task::Task(ScriptExecutionContext::Task&& task, const String& mode)
     : m_task(WTFMove(task))
     , m_mode(mode.isolatedCopy())
 {

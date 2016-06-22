@@ -72,8 +72,8 @@ namespace WebCore {
         // Implementation of WorkerLoaderProxy.
         // These methods are called on different threads to schedule loading
         // requests and to send callbacks back to WorkerGlobalScope.
-        void postTaskToLoader(ScriptExecutionContext::Task) override;
-        bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task, const String& mode) override;
+        void postTaskToLoader(ScriptExecutionContext::Task&&) override;
+        bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) override;
 
         void workerThreadCreated(PassRefPtr<DedicatedWorkerThread>);
 
