@@ -1,3 +1,9 @@
+2016-06-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Test expectation gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-06-22  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add support for the negotiationneeded event in MediaEndpointPeerConnection

@@ -1446,7 +1446,7 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 [ Sierra+ ] webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
 
 # rdar://problem/26927203
-[ Sierra+ ] css3/font-feature-settings-font-face-rendering.html [ Failure ]
-[ Sierra+ ] css3/font-feature-settings-rendering.html [ Failure ]
-[ Sierra+ ] css3/font-variant-all.html [ Failure ]
-[ Sierra+ ] css3/font-variant-font-face-all.html [ Failure ]
+[ Sierra+ ] css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure ]
+[ Sierra+ ] css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
+[ Sierra+ ] css3/font-variant-all.html [ ImageOnlyFailure ]
+[ Sierra+ ] css3/font-variant-font-face-all.html [ ImageOnlyFailure ]
