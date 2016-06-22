@@ -442,9 +442,6 @@ webkit.org/b/145702 [ Debug Yosemite ] http/tests/misc/acid3.html [ Pass Timeout
 http/tests/contentextensions [ Pass ]
 webkit.org/b/146400 http/tests/contentextensions/character-set-basic-support.html [ Pass Failure ]
 
-# <rdar://problem/26561453>
-[ Sierra+ ] http/tests/contentextensions/make-https.html [ Failure ]
-
 # WebKit1-only failure.
 webkit.org/b/103857 fast/events/mouse-cursor-change.html [ Pass ]
 
