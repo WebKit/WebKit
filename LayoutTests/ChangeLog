@@ -1,5 +1,11 @@
 2016-06-22  Alexey Proskuryakov  <ap@apple.com>
 
+        Test expectation gardening for rdar://problem/26950065
+
+        * platform/mac/TestExpectations:
+
+2016-06-22  Alexey Proskuryakov  <ap@apple.com>
+
         Test expectation gardening.
 
         * platform/mac/TestExpectations:
