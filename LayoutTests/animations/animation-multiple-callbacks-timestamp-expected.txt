@@ -1,0 +1,5 @@
+PASS All the multiple requestAnimationFrame() callbacks, which were fired at the same time, received the same timestamp.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

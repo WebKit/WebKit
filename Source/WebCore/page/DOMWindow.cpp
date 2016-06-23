@@ -745,6 +745,15 @@ Performance* DOMWindow::performance() const
 }
 #endif
 
+double DOMWindow::nowTimestamp() const
+{
+#if ENABLE(WEB_TIMING)
+    return performance() ? performance()->now() / 1000 : 0;
+#else
+    return document() ? document()->monotonicTimestamp() : 0;
+#endif
+}
+
 Location* DOMWindow::location() const
 {
     if (!isCurrentlyDisplayedInFrame())

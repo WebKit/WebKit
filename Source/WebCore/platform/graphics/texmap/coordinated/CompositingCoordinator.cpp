@@ -141,12 +141,20 @@ bool CompositingCoordinator::flushPendingLayerChanges()
     return didSync;
 }
 
+double CompositingCoordinator::timestamp() const
+{
+    auto* document = m_page->mainFrame().document();
+    if (!document)
+        return 0;
+    return document->domWindow() ? document->domWindow()->nowTimestamp() : document->monotonicTimestamp();
+}
+
 void CompositingCoordinator::syncDisplayState()
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER) && !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Make sure that any previously registered animation callbacks are being executed before we flush the layers.
-    m_lastAnimationServiceTime = WTF::monotonicallyIncreasingTime();
-    m_page->mainFrame().view()->serviceScriptedAnimations(m_lastAnimationServiceTime);
+    m_lastAnimationServiceTime = timestamp();
+    m_page->mainFrame().view()->serviceScriptedAnimations();
 #endif
     m_page->mainFrame().view()->updateLayoutAndStyleIfNeededRecursive();
 }
@@ -156,7 +164,7 @@ double CompositingCoordinator::nextAnimationServiceTime() const
 {
     // According to the requestAnimationFrame spec, rAF callbacks should not be faster than 60FPS.
     static const double MinimalTimeoutForAnimations = 1. / 60.;
-    return std::max<double>(0., MinimalTimeoutForAnimations - WTF::monotonicallyIncreasingTime() + m_lastAnimationServiceTime);
+    return std::max<double>(0., MinimalTimeoutForAnimations - timestamp() + m_lastAnimationServiceTime);
 }
 #endif
 

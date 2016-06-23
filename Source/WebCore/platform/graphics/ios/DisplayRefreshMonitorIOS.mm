@@ -69,8 +69,9 @@ using namespace WebCore;
 
 - (void)handleDisplayLink:(CADisplayLink *)sender
 {
+    UNUSED_PARAM(sender);
     ASSERT(isMainThread());
-    m_monitor->displayLinkFired(sender.timestamp);
+    m_monitor->displayLinkFired();
 }
 
 - (void)invalidate
@@ -109,20 +110,12 @@ bool DisplayRefreshMonitorIOS::requestRefreshCallback()
     return true;
 }
 
-static double mediaTimeToCurrentTime(CFTimeInterval t)
-{
-    // FIXME: This may be a no-op if CACurrentMediaTime is *guaranteed* to be mach_absolute_time.
-    return monotonicallyIncreasingTime() + t - CACurrentMediaTime();
-}
-
-void DisplayRefreshMonitorIOS::displayLinkFired(double nowSeconds)
+void DisplayRefreshMonitorIOS::displayLinkFired()
 {
     if (!isPreviousFrameDone())
         return;
 
     setIsPreviousFrameDone(false);
-    setMonotonicAnimationStartTime(mediaTimeToCurrentTime(nowSeconds));
-
     handleDisplayRefreshedNotificationOnMainThread(this);
     
     TracePoint(RAFDisplayLinkFired);

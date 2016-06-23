@@ -68,6 +68,7 @@ public:
     bool hasSameOriginAsPreviousDocument() const { return m_hasSameOriginAsPreviousDocument; }
 
     double referenceMonotonicTime() const { return m_referenceMonotonicTime; }
+    double referenceWallTime() const { return m_referenceWallTime; }
 
 private:
     double m_referenceMonotonicTime;

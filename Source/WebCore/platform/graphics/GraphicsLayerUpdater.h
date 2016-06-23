@@ -60,7 +60,7 @@ public:
 
 private:
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    void displayRefreshFired(double timestamp) override;
+    void displayRefreshFired() override;
     GraphicsLayerUpdaterClient& m_client;
 #endif
     bool m_scheduled { false };

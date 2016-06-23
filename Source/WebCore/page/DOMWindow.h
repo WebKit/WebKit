@@ -316,6 +316,7 @@ namespace WebCore {
 #if ENABLE(WEB_TIMING)
         Performance* performance() const;
 #endif
+        double nowTimestamp() const;
 
 #if PLATFORM(IOS)
         void incrementScrollEventListenersCount();

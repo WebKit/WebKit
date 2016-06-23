@@ -1166,10 +1166,12 @@ public:
     const DocumentTiming& timing() const { return m_documentTiming; }
 #endif
 
+    double monotonicTimestamp() const;
+
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     int requestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>);
     void cancelAnimationFrame(int id);
-    void serviceScriptedAnimations(double monotonicAnimationStartTime);
+    void serviceScriptedAnimations(double timestamp);
 #endif
 
     void sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, const IntPoint& newPosition, const IntRect& visibleRect, const IntSize& contentsSize, Element* target = nullptr);

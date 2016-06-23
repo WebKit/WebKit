@@ -6424,19 +6424,13 @@ void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture(MediaEle
 #if ENABLE(MEDIA_SOURCE)
 RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
 {
-#if ENABLE(WEB_TIMING)
     DOMWindow* domWindow = document().domWindow();
-    Performance* performance = domWindow ? domWindow->performance() : nullptr;
-    double now = performance ? performance->now() : 0;
-#else
-    DocumentLoader* loader = document().loader();
-    double now = loader ? 1000.0 * loader->timing().monotonicTimeToZeroBasedDocumentTime(monotonicallyIncreasingTime()) : 0;
-#endif
+    double timestamp = domWindow ? 1000 * domWindow->nowTimestamp() : 0;
 
     if (!m_player)
-        return VideoPlaybackQuality::create(now, 0, 0, 0, 0);
+        return VideoPlaybackQuality::create(timestamp, 0, 0, 0, 0);
 
-    return VideoPlaybackQuality::create(now,
+    return VideoPlaybackQuality::create(timestamp,
         m_droppedVideoFrames + m_player->totalVideoFrames(),
         m_droppedVideoFrames + m_player->droppedVideoFrames(),
         m_player->corruptedVideoFrames(),

@@ -71,11 +71,9 @@ void GraphicsLayerUpdater::screenDidChange(PlatformDisplayID displayID)
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-void GraphicsLayerUpdater::displayRefreshFired(double timestamp)
+void GraphicsLayerUpdater::displayRefreshFired()
 {
-    UNUSED_PARAM(timestamp);
     m_scheduled = false;
-    
     m_client.flushLayersSoon(*this);
 }
 #endif

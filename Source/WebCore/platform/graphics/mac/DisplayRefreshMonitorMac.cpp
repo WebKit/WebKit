@@ -50,14 +50,10 @@ DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac()
     }
 }
 
-static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp* now, const CVTimeStamp* outputTime, CVOptionFlags, CVOptionFlags*, void* data)
+static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
     DisplayRefreshMonitorMac* monitor = static_cast<DisplayRefreshMonitorMac*>(data);
-
-    double nowSeconds = static_cast<double>(now->videoTime) / static_cast<double>(now->videoTimeScale);
-    double outputTimeSeconds = static_cast<double>(outputTime->videoTime) / static_cast<double>(outputTime->videoTimeScale);
-    monitor->displayLinkFired(nowSeconds, outputTimeSeconds);
-
+    monitor->displayLinkFired();
     return kCVReturnSuccess;
 }
 
@@ -88,19 +84,13 @@ bool DisplayRefreshMonitorMac::requestRefreshCallback()
     return true;
 }
 
-void DisplayRefreshMonitorMac::displayLinkFired(double nowSeconds, double outputTimeSeconds)
+void DisplayRefreshMonitorMac::displayLinkFired()
 {
     LockHolder lock(mutex());
     if (!isPreviousFrameDone())
         return;
 
     setIsPreviousFrameDone(false);
-
-    double webKitMonotonicNow = monotonicallyIncreasingTime();
-    double timeUntilOutput = outputTimeSeconds - nowSeconds;
-    // FIXME: Should this be using webKitMonotonicNow?
-    setMonotonicAnimationStartTime(webKitMonotonicNow + timeUntilOutput);
-
 
     // FIXME: Is it really okay to create a weakPtr on a background thread and then use it on the main thread?
     RunLoop::main().dispatch([weakPtr = m_weakFactory.createWeakPtr()] {

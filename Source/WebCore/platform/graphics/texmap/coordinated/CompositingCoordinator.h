@@ -125,6 +125,8 @@ private:
 
     void releaseInactiveAtlasesTimerFired();
 
+    double timestamp() const;
+
     Page* m_page;
     CompositingCoordinator::Client* m_client;
 

@@ -41,7 +41,7 @@ public:
     virtual ~DisplayRefreshMonitorClient();
 
     // Always called on the main thread.
-    virtual void displayRefreshFired(double timestamp) = 0;
+    virtual void displayRefreshFired() = 0;
 
     virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const = 0;
 
@@ -52,7 +52,7 @@ public:
     void setIsScheduled(bool isScheduled) { m_scheduled = isScheduled; }
     bool isScheduled() const { return m_scheduled; }
 
-    void fireDisplayRefreshIfNeeded(double timestamp);
+    void fireDisplayRefreshIfNeeded();
 
 private:
     bool m_scheduled { false };

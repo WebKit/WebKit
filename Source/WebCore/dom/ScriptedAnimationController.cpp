@@ -28,6 +28,7 @@
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 
+#include "DOMWindow.h"
 #include "DisplayRefreshMonitor.h"
 #include "DisplayRefreshMonitorManager.h"
 #include "Document.h"
@@ -140,15 +141,15 @@ void ScriptedAnimationController::cancelCallback(CallbackId id)
     }
 }
 
-void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTimeNow)
+void ScriptedAnimationController::serviceScriptedAnimations(double timestamp)
 {
     if (!m_callbacks.size() || m_suspendCount || !requestAnimationFrameEnabled())
         return;
 
     TraceScope tracingScope(RAFCallbackStart, RAFCallbackEnd);
-    
-    double highResNowMs = 1000.0 * m_document->loader()->timing().monotonicTimeToZeroBasedDocumentTime(monotonicTimeNow);
-    double legacyHighResNowMs = 1000.0 * m_document->loader()->timing().monotonicTimeToPseudoWallTime(monotonicTimeNow);
+
+    double highResNowMs = 1000 * timestamp;
+    double legacyHighResNowMs = 1000 * (timestamp + m_document->loader()->timing().referenceWallTime());
 
     // First, generate a list of callbacks to consider.  Callbacks registered from this point
     // on are considered only for the "next" frame, not this one.
@@ -216,7 +217,7 @@ void ScriptedAnimationController::scheduleAnimation()
         animationInterval = MinimumThrottledAnimationInterval;
 #endif
 
-    double scheduleDelay = std::max<double>(animationInterval - (monotonicallyIncreasingTime() - m_lastAnimationFrameTimeMonotonic), 0);
+    double scheduleDelay = std::max<double>(animationInterval - (m_document->domWindow()->nowTimestamp() - m_lastAnimationFrameTimestamp), 0);
     m_animationTimer.startOneShot(scheduleDelay);
 #else
     if (FrameView* frameView = m_document->view())
@@ -227,13 +228,13 @@ void ScriptedAnimationController::scheduleAnimation()
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 void ScriptedAnimationController::animationTimerFired()
 {
-    m_lastAnimationFrameTimeMonotonic = monotonicallyIncreasingTime();
-    serviceScriptedAnimations(m_lastAnimationFrameTimeMonotonic);
+    m_lastAnimationFrameTimestamp = m_document->domWindow()->nowTimestamp();
+    serviceScriptedAnimations(m_lastAnimationFrameTimestamp);
 }
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-void ScriptedAnimationController::displayRefreshFired(double monotonicTimeNow)
+void ScriptedAnimationController::displayRefreshFired()
 {
-    serviceScriptedAnimations(monotonicTimeNow);
+    serviceScriptedAnimations(m_document->domWindow()->nowTimestamp());
 }
 #endif
 #endif

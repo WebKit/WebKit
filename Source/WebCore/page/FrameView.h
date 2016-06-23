@@ -149,7 +149,7 @@ public:
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    WEBCORE_EXPORT void serviceScriptedAnimations(double monotonicAnimationStartTime);
+    WEBCORE_EXPORT void serviceScriptedAnimations();
 #endif
 
     void willRecalcStyle();

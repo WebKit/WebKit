@@ -70,8 +70,6 @@ public:
     bool isPreviousFrameDone() const { return m_previousFrameDone; }
     void setIsPreviousFrameDone(bool done) { m_previousFrameDone = done; }
 
-    void setMonotonicAnimationStartTime(double startTime) { m_monotonicAnimationStartTime = startTime; }
-
     Lock& mutex() { return m_mutex; }
 
     static RefPtr<DisplayRefreshMonitor> createDefaultDisplayRefreshMonitor(PlatformDisplayID);
@@ -83,7 +81,6 @@ protected:
 private:
     void displayDidRefresh();
 
-    double m_monotonicAnimationStartTime;
     bool m_active;
     bool m_scheduled;
     bool m_previousFrameDone;

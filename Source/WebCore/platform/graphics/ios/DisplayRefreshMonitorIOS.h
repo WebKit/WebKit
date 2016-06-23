@@ -44,7 +44,7 @@ public:
     
     virtual ~DisplayRefreshMonitorIOS();
 
-    void displayLinkFired(double nowSeconds);
+    void displayLinkFired();
     bool requestRefreshCallback() override;
 
 private:

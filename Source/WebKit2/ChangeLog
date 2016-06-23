@@ -1,3 +1,13 @@
+2016-06-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        requestFrameAnimation() callback timestamp should be very close to Performance.now() 
+        https://bugs.webkit.org/show_bug.cgi?id=159038
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/Cocoa/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers):
+
 2016-06-23  Chris Dumez  <cdumez@apple.com>
 
         [iOS] A WebPageProxy in closed state should not be allowed to hold a process assertion

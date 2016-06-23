@@ -67,8 +67,6 @@ void RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers()
         return;
 
     setIsPreviousFrameDone(false);
-    setMonotonicAnimationStartTime(monotonicallyIncreasingTime());
-
     handleDisplayRefreshedNotificationOnMainThread(this);
 }
 

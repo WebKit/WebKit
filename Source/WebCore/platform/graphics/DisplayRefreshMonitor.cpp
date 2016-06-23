@@ -56,8 +56,7 @@ RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::create(DisplayRefreshMonito
 }
 
 DisplayRefreshMonitor::DisplayRefreshMonitor(PlatformDisplayID displayID)
-    : m_monotonicAnimationStartTime(0)
-    , m_active(true)
+    : m_active(true)
     , m_scheduled(false)
     , m_previousFrameDone(true)
     , m_unscheduledFireCount(0)
@@ -90,8 +89,6 @@ bool DisplayRefreshMonitor::removeClient(DisplayRefreshMonitorClient& client)
 
 void DisplayRefreshMonitor::displayDidRefresh()
 {
-    double monotonicAnimationStartTime;
-
     {
         LockHolder lock(m_mutex);
         if (!m_scheduled)
@@ -100,7 +97,6 @@ void DisplayRefreshMonitor::displayDidRefresh()
             m_unscheduledFireCount = 0;
 
         m_scheduled = false;
-        monotonicAnimationStartTime = m_monotonicAnimationStartTime;
     }
 
     // The call back can cause all our clients to be unregistered, so we need to protect
@@ -113,7 +109,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
     m_clientsToBeNotified = &clientsToBeNotified;
     while (!clientsToBeNotified.isEmpty()) {
         DisplayRefreshMonitorClient* client = clientsToBeNotified.takeAny();
-        client->fireDisplayRefreshIfNeeded(monotonicAnimationStartTime);
+        client->fireDisplayRefreshIfNeeded();
 
         // This checks if this function was reentered. In that case, stop iterating
         // since it's not safe to use the set any more.
