@@ -47,11 +47,8 @@ using namespace WebCore;
 namespace WebKit {
 
 WebSocketServerConnection::WebSocketServerConnection(WebSocketServerClient* client, WebSocketServer* server)
-    : m_identifier(0)
-    , m_mode(HTTP)
-    , m_server(server)
+    : m_server(server)
     , m_client(client)
-    , m_shutdownAfterSend(false)
 {
 }
 
@@ -60,17 +57,17 @@ WebSocketServerConnection::~WebSocketServerConnection()
     shutdownNow();
 }
 
-void WebSocketServerConnection::setSocketHandle(PassRefPtr<WebCore::SocketStreamHandle> socket)
+void WebSocketServerConnection::setSocketHandle(Ref<SocketStreamHandle>&& socket)
 {
     ASSERT(!m_socket);
-    m_socket = socket;
+    m_socket = WTFMove(socket);
 }
 
 void WebSocketServerConnection::shutdownNow()
 {
     if (!m_socket)
         return;
-    RefPtr<SocketStreamHandle> socket = m_socket.release();
+    auto socket = WTFMove(m_socket);
     socket->close();
     m_shutdownAfterSend = false;
 }
@@ -123,7 +120,7 @@ void WebSocketServerConnection::sendRawData(const char* data, size_t length)
     m_socket->send(data, length);
 }
 
-void WebSocketServerConnection::didCloseSocketStream(SocketStreamHandle*)
+void WebSocketServerConnection::didCloseSocketStream(SocketStreamHandle&)
 {
     // Destroy the SocketStreamHandle now to prevent closing an already closed socket later.
     m_socket = nullptr;
@@ -136,7 +133,7 @@ void WebSocketServerConnection::didCloseSocketStream(SocketStreamHandle*)
     m_server->didCloseWebSocketServerConnection(this);
 }
 
-void WebSocketServerConnection::didReceiveSocketStreamData(SocketStreamHandle*, const char* data, int length)
+void WebSocketServerConnection::didReceiveSocketStreamData(SocketStreamHandle&, const char* data, int length)
 {
     // Each didReceiveData call adds more data to our buffer.
     // We clear the buffer when we have handled data from it.
@@ -155,15 +152,10 @@ void WebSocketServerConnection::didReceiveSocketStreamData(SocketStreamHandle*, 
     }
 }
 
-void WebSocketServerConnection::didUpdateBufferedAmount(WebCore::SocketStreamHandle*, size_t)
+void WebSocketServerConnection::didUpdateBufferedAmount(SocketStreamHandle&, size_t)
 {
     if (m_shutdownAfterSend && !m_socket->bufferedAmount())
         shutdownNow();
-}
-
-void WebSocketServerConnection::didFailSocketStream(SocketStreamHandle*, const SocketStreamError&)
-{
-    // Possible read or write error.
 }
 
 void WebSocketServerConnection::readHTTPMessage()

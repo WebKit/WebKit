@@ -1,3 +1,25 @@
+2016-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r201880): WebSockets based remote inspector is broken since r201880
+        https://bugs.webkit.org/show_bug.cgi?id=158613
+
+        Reviewed by Michael Catanzaro.
+
+        In r201880 SocketStreamHandleClient was modified to receive references instead of
+        pointers. WebSocketServerConnection also implements SocketStreamHandleClient but since it's doesn't use
+        override, it was unnoticed and not updated, so we ended up using the default empty implementation instead of
+        the WebSocketServerConnection one.
+
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp:
+        (WebKit::WebSocketServerConnection::WebSocketServerConnection):
+        (WebKit::WebSocketServerConnection::setSocketHandle):
+        (WebKit::WebSocketServerConnection::shutdownNow):
+        (WebKit::WebSocketServerConnection::didCloseSocketStream):
+        (WebKit::WebSocketServerConnection::didReceiveSocketStreamData):
+        (WebKit::WebSocketServerConnection::didUpdateBufferedAmount):
+        (WebKit::WebSocketServerConnection::didFailSocketStream): Deleted.
+        * UIProcess/InspectorServer/WebSocketServerConnection.h:
+
 2016-06-22  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS][WK2] Expand sandbox to read voice services preferences
