@@ -868,6 +868,11 @@ void WebPageProxy::close()
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
+
+#if PLATFORM(IOS)
+    // Make sure we don't hold a process assertion after getting closed.
+    m_activityToken = nullptr;
+#endif
 }
 
 bool WebPageProxy::tryClose()

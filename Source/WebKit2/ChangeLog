@@ -1,3 +1,22 @@
+2016-06-23  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] A WebPageProxy in closed state should not be allowed to hold a process assertion
+        https://bugs.webkit.org/show_bug.cgi?id=159068
+        <rdar://problem/17665473>
+
+        Reviewed by Tim Horton.
+
+        A WebPageProxy in closed state should not be allowed to hold a process assertion. It
+        currently happens that WebPageProxy::close() gets called but that the WebPageProxy is
+        kept alive by Safari (e.g. In case of top-hit preloading). In such cases, we fail to
+        release the foreground process assertion that the WebPageProxy holds.
+
+        We should clear the foreground process assertion that the WebPageProxy holds as soon
+        as WebPageProxy::close() is called.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+
 2016-06-23  Brent Fulgham  <bfulgham@apple.com>
 
         [OS X][WK2] Expand sandbox for new mach endpoints
