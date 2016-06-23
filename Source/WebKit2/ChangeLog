@@ -1,3 +1,14 @@
+2016-06-22  Sam Weinig  <sam@webkit.org>
+
+        Add SPI to allow creating a WKCertificateInfoRef from a SecTrustRef
+        https://bugs.webkit.org/show_bug.cgi?id=159025
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/c/mac/WKCertificateInfoMac.h:
+        * Shared/API/c/mac/WKCertificateInfoMac.mm:
+        (WKCertificateInfoCreateWithServerTrust):
+
 2016-06-22  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess doesn't handle WebProcesses going away uncleanly.

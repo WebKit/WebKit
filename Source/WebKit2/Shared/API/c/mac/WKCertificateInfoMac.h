@@ -34,6 +34,7 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithServerTrust(SecTrustRef serverTrust);
 WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain);
 WK_EXPORT SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfo);
 
