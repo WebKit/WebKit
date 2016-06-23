@@ -56,6 +56,7 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageDebuggerAgent.h"
+#include "PageHeapAgent.h"
 #include "PageRuntimeAgent.h"
 #include "RenderObject.h"
 #include "RenderView.h"
@@ -742,6 +743,9 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
 
         if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
             pageDebuggerAgent->mainFrameNavigated();
+
+        if (PageHeapAgent* pageHeapAgent = instrumentingAgents.pageHeapAgent())
+            pageHeapAgent->mainFrameNavigated();
     }
 
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())

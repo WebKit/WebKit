@@ -185,7 +185,7 @@ void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, 
 
     // FIXME: Provide preview information for Internal Objects? CodeBlock, Executable, etc.
 
-    Structure* structure = cell->structure(m_environment.vm());
+    Structure* structure = cell->structure(vm);
     if (!structure) {
         errorString = ASCIILiteral("Unable to get object details - Structure");
         return;
@@ -226,7 +226,7 @@ void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjec
         return;
 
     JSCell* cell = optionalNode->cell;
-    Structure* structure = cell->structure(m_environment.vm());
+    Structure* structure = cell->structure(vm);
     if (!structure) {
         errorString = ASCIILiteral("Unable to get object details");
         return;
@@ -301,8 +301,13 @@ void InspectorHeapAgent::didGarbageCollect(HeapOperation operation)
 
 void InspectorHeapAgent::clearHeapSnapshots()
 {
-    if (HeapProfiler* heapProfiler = m_environment.vm().heapProfiler())
+    VM& vm = m_environment.vm();
+    JSLockHolder lock(vm);
+
+    if (HeapProfiler* heapProfiler = vm.heapProfiler()) {
         heapProfiler->clearSnapshots();
+        HeapSnapshotBuilder::resetNextAvailableObjectIdentifier();
+    }
 }
 
 } // namespace Inspector

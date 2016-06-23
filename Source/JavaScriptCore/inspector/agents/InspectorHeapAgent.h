@@ -39,7 +39,7 @@ namespace Inspector {
 class InjectedScriptManager;
 typedef String ErrorString;
 
-class JS_EXPORT_PRIVATE InspectorHeapAgent final : public InspectorAgentBase, public HeapBackendDispatcherHandler, public JSC::HeapObserver {
+class JS_EXPORT_PRIVATE InspectorHeapAgent : public InspectorAgentBase, public HeapBackendDispatcherHandler, public JSC::HeapObserver {
     WTF_MAKE_NONCOPYABLE(InspectorHeapAgent);
 public:
     InspectorHeapAgent(AgentContext&);
@@ -51,20 +51,21 @@ public:
     // HeapBackendDispatcherHandler
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
-    void gc(ErrorString&) override;
-    void snapshot(ErrorString&, double* timestamp, String* snapshotData) override;
-    void startTracking(ErrorString&) override;
-    void stopTracking(ErrorString&) override;
-    void getPreview(ErrorString&, int heapObjectId, Inspector::Protocol::OptOutput<String>* resultString, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>& functionDetails, RefPtr<Inspector::Protocol::Runtime::ObjectPreview>& objectPreview) override;
-    void getRemoteObject(ErrorString&, int heapObjectId, const String* optionalObjectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) override;
+    void gc(ErrorString&) final;
+    void snapshot(ErrorString&, double* timestamp, String* snapshotData) final;
+    void startTracking(ErrorString&) final;
+    void stopTracking(ErrorString&) final;
+    void getPreview(ErrorString&, int heapObjectId, Inspector::Protocol::OptOutput<String>* resultString, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>& functionDetails, RefPtr<Inspector::Protocol::Runtime::ObjectPreview>& objectPreview) final;
+    void getRemoteObject(ErrorString&, int heapObjectId, const String* optionalObjectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) final;
 
     // HeapObserver
     void willGarbageCollect() override;
     void didGarbageCollect(JSC::HeapOperation) override;
 
-private:
+protected:
     void clearHeapSnapshots();
 
+private:
     Optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(ErrorString&, unsigned heapObjectIdentifier);
 
     InjectedScriptManager& m_injectedScriptManager;

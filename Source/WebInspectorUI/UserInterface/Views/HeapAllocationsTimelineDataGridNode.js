@@ -40,6 +40,7 @@ WebInspector.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimeline
         };
 
         this._record.heapSnapshot.addEventListener(WebInspector.HeapSnapshotProxy.Event.CollectedNodes, this._heapSnapshotCollectedNodes, this);
+        this._record.heapSnapshot.addEventListener(WebInspector.HeapSnapshotProxy.Event.Invalidated, this._heapSnapshotInvalidated, this);
     }
 
     // Public
@@ -56,10 +57,12 @@ WebInspector.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimeline
             let fragment = document.createDocumentFragment();
             let titleElement = fragment.appendChild(document.createElement("span"));
             titleElement.textContent = this._data.name;
-            let goToButton = fragment.appendChild(WebInspector.createGoToArrowButton());
-            goToButton.addEventListener("click", (event) => {
-                this._heapAllocationsView.showHeapSnapshotTimelineRecord(this._record);
-            });
+            if (!this._record.heapSnapshot.invalid) {
+                let goToButton = fragment.appendChild(WebInspector.createGoToArrowButton());
+                goToButton.addEventListener("click", (event) => {
+                    this._heapAllocationsView.showHeapSnapshotTimelineRecord(this._record);
+                });
+            }
             return fragment;
 
         case "timestamp":
@@ -92,6 +95,16 @@ WebInspector.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimeline
         this.needsRefresh();
     }
 
+    // Protected
+
+    createCells()
+    {
+        super.createCells();
+
+        if (this._record.heapSnapshot.invalid)
+            this.element.classList.add("invalid");
+    }
+
     // Private
 
     _heapSnapshotCollectedNodes()
@@ -104,6 +117,13 @@ WebInspector.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimeline
             return;
 
         this._data.liveSize = newSize;
+        this.needsRefresh();
+    }
+
+    _heapSnapshotInvalidated()
+    {
+        this._data.liveSize = 0;
+
         this.needsRefresh();
     }
 };

@@ -39,6 +39,7 @@ namespace JSC {
     
 unsigned HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1;
 unsigned HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvailableObjectIdentifier++; }
+void HeapSnapshotBuilder::resetNextAvailableObjectIdentifier() { HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1; }
 
 HeapSnapshotBuilder::HeapSnapshotBuilder(HeapProfiler& profiler)
     : m_profiler(profiler)

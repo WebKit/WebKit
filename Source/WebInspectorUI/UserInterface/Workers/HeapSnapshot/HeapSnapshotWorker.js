@@ -42,8 +42,7 @@ HeapSnapshotWorker = class HeapSnapshotWorker
 
     clearSnapshots()
     {
-        // FIXME: <https://webkit.org/b/157907> Web Inspector: Snapshots should be cleared at some point
-        // this._objects.clear();
+        this._objects.clear();
 
         this._snapshots = [];
     }
@@ -105,8 +104,12 @@ HeapSnapshotWorker = class HeapSnapshotWorker
         if (data.methodName) {
             console.assert(data.objectId, "Must have an objectId to call the method on");
             let object = this._objects.get(data.objectId);
-            let result = object[data.methodName](...data.methodArguments);
-            self.postMessage({callId: data.callId, result});
+            if (!object)
+                self.postMessage({callId: data.callId, error: "No such object."});
+            else {
+                let result = object[data.methodName](...data.methodArguments);
+                self.postMessage({callId: data.callId, result});
+            }
             return;
         }
 

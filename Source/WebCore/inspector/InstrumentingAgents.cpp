@@ -64,6 +64,7 @@ void InstrumentingAgents::reset()
     m_inspectorApplicationCacheAgent = nullptr;
     m_inspectorDebuggerAgent = nullptr;
     m_pageDebuggerAgent = nullptr;
+    m_pageHeapAgent = nullptr;
     m_inspectorDOMDebuggerAgent = nullptr;
 }
 

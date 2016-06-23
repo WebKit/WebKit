@@ -100,7 +100,9 @@ WebInspector.HeapSnapshotWorkerProxy = class HeapSnapshotWorkerProxy extends Web
         if (!event.target.isMainFrame())
             return;
 
-        this.clearSnapshots(function(){});
+        this.clearSnapshots(() => {
+            WebInspector.HeapSnapshotProxy.invalidateSnapshotProxies();
+        });
     }
 
     _postMessage()
@@ -111,6 +113,13 @@ WebInspector.HeapSnapshotWorkerProxy = class HeapSnapshotWorkerProxy extends Web
     _handleMessage(event)
     {
         let data = event.data;
+
+        // Error.
+        if (data.error) {
+            console.assert(data.callId);
+            this._callbacks.delete(data.callId);
+            return;
+        }
 
         // Event.
         if (data.eventName) {

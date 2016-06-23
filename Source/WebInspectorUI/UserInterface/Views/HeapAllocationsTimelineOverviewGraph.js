@@ -54,7 +54,11 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
             return;
 
         this.element.removeChildren();
-        this._selectedImageElement = null;
+
+        if (this._selectedImageElement) {
+            this._selectedImageElement.classList.remove("selected");
+            this._selectedImageElement = null;
+        }
 
         // This may display records past the current time marker.
         let visibleRecords = this._heapAllocationsTimeline.recordsInTimeRange(this.startTime, this.endTime);
@@ -76,13 +80,19 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
 
             let imageElement = record[WebInspector.HeapAllocationsTimelineOverviewGraph.RecordElementAssociationSymbol];
             if (!imageElement) {
-                imageElement = document.createElement("img");
+                imageElement = record[WebInspector.HeapAllocationsTimelineOverviewGraph.RecordElementAssociationSymbol] = document.createElement("img");
                 imageElement.classList.add("snapshot");
-                imageElement.addEventListener("click", () => { this.selectedRecord = record; });
-                record[WebInspector.HeapAllocationsTimelineOverviewGraph.RecordElementAssociationSymbol] = imageElement;
+                imageElement.addEventListener("click", () => {
+                    if (record.heapSnapshot.invalid)
+                        return;
+                    this.selectedRecord = record;
+                });
             }
 
             imageElement.style.left = x + "px";
+
+            if (record.heapSnapshot.invalid)
+                imageElement.classList.add("invalid");
 
             this.element.appendChild(imageElement);
         }

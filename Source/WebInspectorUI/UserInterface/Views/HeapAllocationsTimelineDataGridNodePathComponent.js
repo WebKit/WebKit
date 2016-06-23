@@ -23,26 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-overview-graph.heap-allocations {
-    position: relative;
-}
+WebInspector.HeapAllocationsTimelineDataGridNodePathComponent = class HeapAllocationsTimelineDataGridNodePathComponent extends WebInspector.TimelineDataGridNodePathComponent
+{
+    // Protected
 
-.timeline-overview-graph.heap-allocations > img.snapshot {
-    content: url(../Images/HeapSnapshot.svg);
-    position: absolute;
-    top: 9px;
-    width: 16px;
-    height: 16px;
-}
+    get previousSibling()
+    {
+        let previousSibling = this.timelineDataGridNode.previousSibling;
+        while (previousSibling && (previousSibling.hidden || previousSibling.record.heapSnapshot.invalid))
+            previousSibling = previousSibling.previousSibling;
 
-.timeline-overview-graph.heap-allocations > img.snapshot.invalid {
-    opacity: 0.7;
-}
+        if (!previousSibling)
+            return null;
 
-.timeline-overview-graph.heap-allocations > img.snapshot.selected {
-    content: url(../Images/HeapSnapshotSelected.svg);
-}
+        return new WebInspector.HeapAllocationsTimelineDataGridNodePathComponent(previousSibling);
+    }
 
-.timeline-overview-graph.heap-allocations:not(.selected) > img.snapshot.selected {
-    filter: grayscale(100%) brightness(1.3);
-}
+    get nextSibling()
+    {
+        let nextSibling = this.timelineDataGridNode.nextSibling;
+        while (nextSibling && (nextSibling.hidden || nextSibling.record.heapSnapshot.invalid))
+            nextSibling = nextSibling.nextSibling;
+
+        if (!nextSibling)
+            return null;
+
+        return new WebInspector.HeapAllocationsTimelineDataGridNodePathComponent(nextSibling);
+    }
+};

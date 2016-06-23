@@ -106,7 +106,8 @@ public:
     ~HeapSnapshotBuilder();
 
     static unsigned nextAvailableObjectIdentifier;
-    static unsigned getNextObjectIdentifier();    
+    static unsigned getNextObjectIdentifier();
+    static void resetNextAvailableObjectIdentifier();
 
     // Performs a garbage collection that builds a snapshot of all live cells.
     void buildSnapshot();

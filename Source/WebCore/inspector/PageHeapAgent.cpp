@@ -23,26 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-overview-graph.heap-allocations {
-    position: relative;
+#include "config.h"
+#include "PageHeapAgent.h"
+
+using namespace Inspector;
+
+namespace WebCore {
+
+PageHeapAgent::PageHeapAgent(PageAgentContext& context)
+    : InspectorHeapAgent(context)
+    , m_instrumentingAgents(context.instrumentingAgents)
+{
 }
 
-.timeline-overview-graph.heap-allocations > img.snapshot {
-    content: url(../Images/HeapSnapshot.svg);
-    position: absolute;
-    top: 9px;
-    width: 16px;
-    height: 16px;
+void PageHeapAgent::enable(ErrorString& errorString)
+{
+    InspectorHeapAgent::enable(errorString);
+    m_instrumentingAgents.setPageHeapAgent(this);
 }
 
-.timeline-overview-graph.heap-allocations > img.snapshot.invalid {
-    opacity: 0.7;
+void PageHeapAgent::disable(ErrorString& errorString)
+{
+    InspectorHeapAgent::disable(errorString);
+    m_instrumentingAgents.setPageHeapAgent(nullptr);
 }
 
-.timeline-overview-graph.heap-allocations > img.snapshot.selected {
-    content: url(../Images/HeapSnapshotSelected.svg);
+void PageHeapAgent::mainFrameNavigated()
+{
+    clearHeapSnapshots();
 }
 
-.timeline-overview-graph.heap-allocations:not(.selected) > img.snapshot.selected {
-    filter: grayscale(100%) brightness(1.3);
-}
+} // namespace WebCore

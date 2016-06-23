@@ -1,3 +1,91 @@
+2016-06-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Snapshots should be cleared at some point
+        https://bugs.webkit.org/show_bug.cgi?id=157907
+        <rdar://problem/26373610>
+
+        Reviewed by Timothy Hatcher.
+
+        Invalidate HeapSnapshotProxy objects when the page navigates.
+        This allows us to clear our frontend data for the snapshots.
+        When a snapshot is invalidated, it is disabled in the UI.
+        This means you cannot select the snapshot or see content
+        views for the snapshot. If you are in a snapshot when it is
+        invalidated, you are taken out to the snapshot list.
+
+        * UserInterface/Main.html:
+        New files.
+
+        * UserInterface/Proxies/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotProxy):
+        (WebInspector.HeapSnapshotProxy.invalidateSnapshotProxies):
+        (WebInspector.HeapSnapshotProxy.prototype.get invalid):
+        (WebInspector.HeapSnapshotProxy.prototype._invalidate):
+        Keep track of valid snapshots, and provide a static method to invalidate them.
+
+        (WebInspector.HeapSnapshotProxy.prototype.updateForCollectionEvent):
+        (WebInspector.HeapSnapshotProxy.prototype.allocationBucketCounts):
+        (WebInspector.HeapSnapshotProxy.prototype.instancesWithClassName):
+        (WebInspector.HeapSnapshotProxy.prototype.update):
+        (WebInspector.HeapSnapshotProxy.prototype.nodeWithIdentifier):
+        UI should only act on valid snapshots.
+
+        * UserInterface/Proxies/HeapSnapshotDiffProxy.js:
+        (WebInspector.HeapSnapshotDiffProxy.prototype.get invalid):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.updateForCollectionEvent):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.allocationBucketCounts):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.instancesWithClassName):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.update):
+        (WebInspector.HeapSnapshotDiffProxy.prototype.nodeWithIdentifier):
+        UI should only act on valid snapshots.
+
+        * UserInterface/Proxies/HeapSnapshotWorkerProxy.js:
+        (WebInspector.HeapSnapshotWorkerProxy.prototype._mainResourceDidChange):
+        Invalidate and discard snapshots when the main frame navigates.
+
+        (WebInspector.HeapSnapshotWorkerProxy.prototype._handleMessage):
+        (WebInspector.HeapSnapshotWorkerProxy):
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshotWorker.js:
+        (HeapSnapshotWorker.prototype.clearSnapshots):
+        (HeapSnapshotWorker.prototype._handleMessage):
+        (HeapSnapshotWorker):
+        A message may come in for a snapshot before it has been cleared.
+        If that is the case, the object may not exist. Return an error so
+        that the callback can be deleted on the calling side.
+
+        * UserInterface/Views/HeapAllocationsTimelineDataGridNodePathComponent.js:
+        (WebInspector.HeapAllocationsTimelineDataGridNodePathComponent.prototype.get previousSibling):
+        (WebInspector.HeapAllocationsTimelineDataGridNodePathComponent.prototype.get nextSibling):
+        (WebInspector.HeapAllocationsTimelineDataGridNodePathComponent):
+        Don't show invalid snapshots in page component picker.
+
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.css:
+        (.timeline-overview-graph.heap-allocations > img.snapshot.invalid):
+        * UserInterface/Views/HeapAllocationsTimelineDataGridNode.js:
+        (WebInspector.HeapAllocationsTimelineDataGridNode):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.createCells):
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype._heapSnapshotInvalidated):
+        Give invalid snapshots an invalidated appearance in the snapshot list.
+
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.js:
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/HeapAllocationsTimelineView.css:
+        (.timeline-view.heap-allocations > .data-grid tr.invalid):
+        (.timeline-view.heap-allocations > .data-grid:not(:focus, .force-focus) tr.selected.invalid):
+        Give invalid snapshots an invalidated appearance in the overview graph.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView):
+        (WebInspector.HeapAllocationsTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.HeapAllocationsTimelineView.prototype.closed):
+        (WebInspector.HeapAllocationsTimelineView.prototype._heapSnapshotCollectionEvent.updateHeapSnapshotForEvent):
+        (WebInspector.HeapAllocationsTimelineView.prototype._heapSnapshotCollectionEvent):
+        (WebInspector.HeapAllocationsTimelineView.prototype._heapSnapshotInvalidated):
+        (WebInspector.HeapAllocationsTimelineView.prototype._updateCompareHeapSnapshotButton):
+        (WebInspector.HeapAllocationsTimelineView.prototype._dataGridNodeSelected):
+        Handle interactions when snapshots in the list are invalidated.
+
 2016-06-22  Brian Burg  <bburg@apple.com>
 
         Web Inspector: don't start auto capturing if the Inspector window is not visible

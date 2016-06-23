@@ -54,6 +54,7 @@
 #include "NetworkResourcesData.cpp"
 #include "PageConsoleAgent.cpp"
 #include "PageDebuggerAgent.cpp"
+#include "PageHeapAgent.cpp"
 #include "PageRuntimeAgent.cpp"
 #include "PageScriptDebugServer.cpp"
 #include "TimelineRecordFactory.cpp"

@@ -61,9 +61,11 @@ WebInspector.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WebInsp
     get totalSize() { return this._totalSize; }
     get totalObjectCount() { return this._totalObjectCount; }
     get categories() { return this._categories; }
+    get invalid() { return this._snapshot1.invalid || this._snapshot2.invalid; }
 
     updateForCollectionEvent(event)
     {
+        console.assert(!this.invalid);
         if (!event.data.affectedSnapshots.includes(this._snapshot2._identifier))
             return;
 
@@ -74,11 +76,13 @@ WebInspector.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WebInsp
 
     allocationBucketCounts(bucketSizes, callback)
     {
+        console.assert(!this.invalid);
         WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "allocationBucketCounts", bucketSizes, callback);
     }
 
     instancesWithClassName(className, callback)
     {
+        console.assert(!this.invalid);
         WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "instancesWithClassName", className, (serializedNodes) => {
             callback(serializedNodes.map(WebInspector.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId)));
         });
@@ -86,6 +90,7 @@ WebInspector.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WebInsp
 
     update(callback)
     {
+        console.assert(!this.invalid);
         WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "update", ({liveSize, categories}) => {
             this._categories = Map.fromObject(categories);
             callback();
@@ -94,6 +99,7 @@ WebInspector.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WebInsp
 
     nodeWithIdentifier(nodeIdentifier, callback)
     {
+        console.assert(!this.invalid);
         WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "nodeWithIdentifier", nodeIdentifier, (serializedNode) => {
             callback(WebInspector.HeapSnapshotNodeProxy.deserialize(this._proxyObjectId, serializedNode));
         });

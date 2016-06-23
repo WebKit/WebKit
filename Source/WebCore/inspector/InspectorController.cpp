@@ -59,6 +59,7 @@
 #include "Page.h"
 #include "PageConsoleAgent.h"
 #include "PageDebuggerAgent.h"
+#include "PageHeapAgent.h"
 #include "PageRuntimeAgent.h"
 #include "PageScriptDebugServer.h"
 #include "Settings.h"
@@ -70,7 +71,6 @@
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorFrontendRouter.h>
 #include <inspector/agents/InspectorAgent.h>
-#include <inspector/agents/InspectorHeapAgent.h>
 #include <inspector/agents/InspectorScriptProfilerAgent.h>
 #include <runtime/JSLock.h>
 #include <wtf/Stopwatch.h>
@@ -157,7 +157,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
     m_agents.append(WTFMove(domStorageAgentPtr));
 
-    auto heapAgentPtr = std::make_unique<InspectorHeapAgent>(pageContext);
+    auto heapAgentPtr = std::make_unique<PageHeapAgent>(pageContext);
     InspectorHeapAgent* heapAgent = heapAgentPtr.get();
     m_agents.append(WTFMove(heapAgentPtr));
 

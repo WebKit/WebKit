@@ -23,26 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-overview-graph.heap-allocations {
-    position: relative;
-}
+#pragma once
 
-.timeline-overview-graph.heap-allocations > img.snapshot {
-    content: url(../Images/HeapSnapshot.svg);
-    position: absolute;
-    top: 9px;
-    width: 16px;
-    height: 16px;
-}
+#include "InspectorWebAgentBase.h"
+#include "InstrumentingAgents.h"
+#include <inspector/agents/InspectorHeapAgent.h>
 
-.timeline-overview-graph.heap-allocations > img.snapshot.invalid {
-    opacity: 0.7;
-}
+namespace WebCore {
 
-.timeline-overview-graph.heap-allocations > img.snapshot.selected {
-    content: url(../Images/HeapSnapshotSelected.svg);
-}
+typedef String ErrorString;
 
-.timeline-overview-graph.heap-allocations:not(.selected) > img.snapshot.selected {
-    filter: grayscale(100%) brightness(1.3);
-}
+class PageHeapAgent final : public Inspector::InspectorHeapAgent {
+    WTF_MAKE_NONCOPYABLE(PageHeapAgent);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PageHeapAgent(PageAgentContext&);
+    virtual ~PageHeapAgent() { }
+
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+
+    void mainFrameNavigated();
+
+private:
+    InstrumentingAgents& m_instrumentingAgents;
+};
+
+} // namespace WebCore
