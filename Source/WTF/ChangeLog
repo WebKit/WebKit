@@ -1,3 +1,19 @@
+2016-06-23  John Wilander  <wilander@apple.com>
+
+        Enable window.open() for existing versions of Secret Society
+        https://bugs.webkit.org/show_bug.cgi?id=159049
+        <rdar://problem/26528349>
+        
+        Reviewed by Andy Estes.
+
+        The Secret Society Hidden Mystery app has a broken version check treating iOS 10
+        as iOS 1 on iPads. Therefore it believes it can use window.open() in a tap
+        handler. We should allow the existing versions of the app to do this to not break
+        them.
+
+        * wtf/spi/darwin/dyldSPI.h:
+            Added DYLD_IOS_VERSION_10_0.
+
 2016-06-21  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
         Add system tracing points for requestAnimationFrame() workflow

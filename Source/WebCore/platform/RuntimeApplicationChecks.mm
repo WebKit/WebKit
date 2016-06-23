@@ -253,6 +253,12 @@ bool IOSApplication::isXtraMath()
     return isXtraMath;
 }
 
+bool IOSApplication::isTheSecretSocietyHiddenMystery()
+{
+    static bool isTheSecretSocietyHiddenMystery = applicationBundleIsEqualTo("com.g5e.secretsociety");
+    return isTheSecretSocietyHiddenMystery;
+}
+    
 #endif
 
 } // namespace WebCore
