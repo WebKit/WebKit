@@ -37,8 +37,8 @@
 namespace JSC {
 
 TypeSet::TypeSet()
-    : m_seenTypes(TypeNothing)
-    , m_isOverflown(false)
+    : m_isOverflown(false)
+    , m_seenTypes(TypeNothing)
 {
 }
 
@@ -49,7 +49,10 @@ void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> pr
 
     if (structure && newShape && !runtimeTypeIsPrimitive(type)) {
         if (!m_structureSet.contains(structure)) {
-            m_structureSet.add(structure);
+            {
+                ConcurrentJITLocker locker(m_lock);
+                m_structureSet.add(structure);
+            }
             // Make one more pass making sure that: 
             // - We don't have two instances of the same shape. (Same shapes may have different Structures).
             // - We don't have two shapes that share the same prototype chain. If these shapes share the same 
@@ -81,6 +84,7 @@ void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> pr
 
 void TypeSet::invalidateCache()
 {
+    ConcurrentJITLocker locker(m_lock);
     auto keepMarkedStructuresFilter = [] (Structure* structure) -> bool { return Heap::isMarked(structure); };
     m_structureSet.genericFilter(keepMarkedStructuresFilter);
 }

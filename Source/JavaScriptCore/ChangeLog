@@ -1,3 +1,54 @@
+2016-06-22  Saam barati  <sbarati@apple.com>
+
+        TypeProfiler and TypeProfilerLog don't play nicely with the concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=159037
+        <rdar://problem/26935349>
+
+        Reviewed by Benjamin Poulain.
+
+        The primary focus of this patch is to make the concurrent
+        baseline JIT work with the type profiler. We were clearing
+        the type profiler log on the background baseline compiler
+        thread which lead to bad things happening. This patch fixes
+        this by processing the log before we launch the compile on
+        a background thread.
+
+        Secondly, I audited the type profiler code inside the DFG,
+        and found that we were doing some racy things. I haven't
+        seen any crashes because of these things, but it is possible
+        that they exist. We were grabbing a RefPtr to a TypeSet,
+        even though TypeSet was RefCounted and not ThreadSafeRefCounted.
+        This patch makes TypeSet ThreadSafeRefCounted. We were
+        also copying a StructureSet while the execution thread could
+        be augmenting the StructureSet. This patch puts changes to 
+        TypeSet's StructureSet behind a ConcurrentJITLock.
+
+        I've also added two more large running tests that run with the
+        type profiler enabled. These are here just to catch any major bugs
+        in the type profiler implementation.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        (JSC::JIT::doMainThreadPreparationBeforeCompile):
+        (JSC::JIT::frameRegisterCountFor):
+        * jit/JIT.h:
+        (JSC::JIT::compile):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Plan::Plan):
+        (JSC::JITWorklist::Plan::compileInThread):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::addTypeInformation):
+        (JSC::TypeSet::invalidateCache):
+        * runtime/TypeSet.h:
+        (JSC::TypeSet::create):
+        (JSC::TypeSet::isEmpty):
+        (JSC::TypeSet::seenTypes):
+        (JSC::TypeSet::structureSet):
+        * tests/typeProfiler/deltablue-for-of.js: Added.
+        * tests/typeProfiler/getter-richards.js: Added.
+
 2016-06-22  Keith Miller  <keith_miller@apple.com>
 
         We should have a DFG intrinsic that checks if a value is a TypedArrayView

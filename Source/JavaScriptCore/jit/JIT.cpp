@@ -549,10 +549,6 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         break;
     }
 
-    // This ensures that we have the most up to date type information when performing typecheck optimizations for op_profile_type.
-    if (m_vm->typeProfiler())
-        m_vm->typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for JIT compilation."));
-    
     if (Options::dumpDisassembly() || (m_vm->m_perBytecodeProfiler && Options::disassembleBaselineForProfiler()))
         m_disassembler = std::make_unique<JITDisassembler>(m_codeBlock);
     if (m_vm->m_perBytecodeProfiler) {
@@ -804,6 +800,7 @@ CompilationResult JIT::link()
 
 CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 {
+    doMainThreadPreparationBeforeCompile();
     compileWithoutLinking(effort);
     return link();
 }
@@ -846,6 +843,13 @@ void JIT::privateCompileExceptionHandlers()
         m_calls.append(CallRecord(call(), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandler).value()));
         jumpToExceptionHandler();
     }
+}
+
+void JIT::doMainThreadPreparationBeforeCompile()
+{
+    // This ensures that we have the most up to date type information when performing typecheck optimizations for op_profile_type.
+    if (m_vm->typeProfiler())
+        m_vm->typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for JIT compilation."));
 }
 
 unsigned JIT::frameRegisterCountFor(CodeBlock* codeBlock)

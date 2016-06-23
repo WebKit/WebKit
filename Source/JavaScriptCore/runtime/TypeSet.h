@@ -26,10 +26,12 @@
 #ifndef TypeSet_h
 #define TypeSet_h
 
+#include "ConcurrentJITLock.h"
 #include "RuntimeType.h"
 #include "StructureSet.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
 
@@ -79,7 +81,7 @@ private:
     bool m_isInDictionaryMode;
 };
 
-class TypeSet : public RefCounted<TypeSet> {
+class TypeSet : public ThreadSafeRefCounted<TypeSet> {
 
 public:
     static Ref<TypeSet> create() { return adoptRef(*new TypeSet); }
@@ -96,11 +98,12 @@ public:
     bool isEmpty() const { return m_seenTypes == TypeNothing; }
     bool doesTypeConformTo(RuntimeTypeMask test) const;
     RuntimeTypeMask seenTypes() const { return m_seenTypes; }
-    StructureSet structureSet() const { return m_structureSet; };
+    StructureSet structureSet(const ConcurrentJITLocker&) const { return m_structureSet; }
 
+    ConcurrentJITLock m_lock;
 private:
-    RuntimeTypeMask m_seenTypes;
     bool m_isOverflown;
+    RuntimeTypeMask m_seenTypes;
     Vector<RefPtr<StructureShape>> m_structureHistory;
     StructureSet m_structureSet;
 };

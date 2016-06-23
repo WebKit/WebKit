@@ -1025,8 +1025,10 @@ def runTypeProfiler
 
     if $enableFTL
         run("ftl-no-cjit-type-profiler", "--useTypeProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+        run("ftl-type-profiler", "--useTypeProfiler=true", *(FTL_OPTIONS))
     else
         run("no-cjit-type-profiler", "--useTypeProfiler=true", *NO_CJIT_OPTIONS)
+        run("type-profiler", "--useTypeProfiler=true")
     end
 end
 

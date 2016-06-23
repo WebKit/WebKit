@@ -199,6 +199,8 @@ namespace JSC {
 
         void compileWithoutLinking(JITCompilationEffort);
         CompilationResult link();
+
+        void doMainThreadPreparationBeforeCompile();
         
         static CompilationResult compile(VM* vm, CodeBlock* codeBlock, JITCompilationEffort effort)
         {

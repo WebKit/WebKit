@@ -1,3 +1,15 @@
+2016-06-22  Saam barati  <sbarati@apple.com>
+
+        TypeProfiler and TypeProfilerLog don't play nicely with the concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=159037
+        <rdar://problem/26935349>
+
+        Reviewed by Benjamin Poulain.
+
+        Run typeProfiler.yaml tests under an additional CJIT enabled mode.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-06-22  Aakash Jain  <aakash_jain@apple.com>
 
         Fix style issues in webkitpy

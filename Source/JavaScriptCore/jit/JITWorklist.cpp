@@ -40,6 +40,7 @@ public:
         : m_codeBlock(codeBlock)
         , m_jit(codeBlock->vm(), codeBlock)
     {
+        m_jit.doMainThreadPreparationBeforeCompile();
     }
     
     void compileInThread()
