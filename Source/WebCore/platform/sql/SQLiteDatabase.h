@@ -145,24 +145,24 @@ private:
 
     void overrideUnauthorizedFunctions();
 
-    sqlite3* m_db;
-    int m_pageSize;
+    sqlite3* m_db { nullptr };
+    int m_pageSize { -1 };
     
-    bool m_transactionInProgress;
-    bool m_sharable;
+    bool m_transactionInProgress { false };
+    bool m_sharable { false };
     
     Lock m_authorizerLock;
     RefPtr<DatabaseAuthorizer> m_authorizer;
 
     Lock m_lockingMutex;
-    ThreadIdentifier m_openingThread;
+    ThreadIdentifier m_openingThread { 0 };
 
     Lock m_databaseClosingMutex;
 
-    int m_openError;
+    int m_openError { SQLITE_ERROR };
     CString m_openErrorMessage;
 
-    int m_lastChangesCount;
+    int m_lastChangesCount { 0 };
 };
 
 } // namespace WebCore

@@ -49,15 +49,7 @@ static void unauthorizedSQLFunction(sqlite3_context *context, int, sqlite3_value
     sqlite3_result_error(context, errorMessage.utf8().data(), -1);
 }
 
-SQLiteDatabase::SQLiteDatabase()
-    : m_db(0)
-    , m_pageSize(-1)
-    , m_transactionInProgress(false)
-    , m_sharable(false)
-    , m_openingThread(0)
-    , m_openError(SQLITE_ERROR)
-    , m_openErrorMessage()
-    , m_lastChangesCount(0)
+static void initializeSQLiteIfNecessary()
 {
     static std::once_flag flag;
     std::call_once(flag, [] {
@@ -77,6 +69,8 @@ SQLiteDatabase::SQLiteDatabase()
     });
 }
 
+SQLiteDatabase::SQLiteDatabase() = default;
+
 SQLiteDatabase::~SQLiteDatabase()
 {
     close();
@@ -84,6 +78,8 @@ SQLiteDatabase::~SQLiteDatabase()
 
 bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
 {
+    initializeSQLiteIfNecessary();
+
     close();
 
     m_openError = SQLiteFileSystem::openDatabase(filename, &m_db, forWebSQLDatabase);
