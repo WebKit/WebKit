@@ -1440,6 +1440,3 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 
 # rdar://problem/26950065
 [ Sierra+ ] editing/mac/input/unconfirmed-text-navigation-with-page-cache.html [ Skip ]
-
-# rdar://problem/26960385
-[ Sierra+ ] editing/mac/dictionary-lookup/dictionary-lookup-input.html [ Failure ]

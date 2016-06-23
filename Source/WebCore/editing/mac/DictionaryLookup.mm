@@ -141,7 +141,8 @@ RefPtr<Range> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTes
         extractedRange = [luLookupDefinitionModule tokenRangeForString:fullPlainTextString range:rangeToPass options:options];
 
     // This function sometimes returns {NSNotFound, 0} if it was unable to determine a good string.
-    if (extractedRange.location == NSNotFound)
+    // FIXME (159063): We shouldn't need to check for zero length here.
+    if (extractedRange.location == NSNotFound || extractedRange.length == 0)
         return nullptr;
 
     return TextIterator::subrange(fullCharacterRange.get(), extractedRange.location, extractedRange.length);

@@ -1,3 +1,13 @@
+2016-06-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Handle (0, 0) ranges from Lookup
+        https://bugs.webkit.org/show_bug.cgi?id=159062
+        rdar://problem/26960385
+
+        Reviewed by Tim Horton.
+
+        * platform/mac/TestExpectations: Unmark the test that was broken due to this.
+
 2016-06-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         CSSComputedStyleDeclaration::length should recalculate styles if needed to provide the correct value
