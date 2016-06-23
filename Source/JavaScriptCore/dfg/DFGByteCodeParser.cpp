@@ -2314,6 +2314,14 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case IsTypedArrayViewIntrinsic: {
+        ASSERT(argumentCountIncludingThis == 2);
+
+        insertChecks();
+        set(VirtualRegister(resultOperand), addToGraph(IsTypedArrayView, OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset))));
+        return true;
+    }
+
     case StringPrototypeReplaceIntrinsic: {
         if (argumentCountIncludingThis != 3)
             return false;

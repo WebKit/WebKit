@@ -187,6 +187,7 @@ inline CapabilityLevel canCompile(Node* node)
     case IsObjectOrNull:
     case IsFunction:
     case IsRegExpObject:
+    case IsTypedArrayView:
     case CheckTypeInfoFlags:
     case OverridesHasInstance:
     case InstanceOf:

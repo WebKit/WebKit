@@ -64,6 +64,12 @@ namespace JSC {
     RELEASE_ASSERT_NOT_REACHED();                                                               \
 } while (false)
 
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncIsTypedArrayView(ExecState* exec)
+{
+    JSValue value = exec->uncheckedArgument(0);
+    return JSValue::encode(jsBoolean(value.isCell() && isTypedView(value.asCell()->classInfo()->typedArrayStorageType)));
+}
+
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState* exec)
 {
     JSArrayBufferView* thisObject = jsDynamicCast<JSArrayBufferView*>(exec->argument(0));

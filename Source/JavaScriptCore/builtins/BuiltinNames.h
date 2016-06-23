@@ -121,6 +121,7 @@ namespace JSC {
     macro(thisNumberValue) \
     macro(newTargetLocal) \
     macro(derivedConstructor) \
+    macro(isTypedArrayView) \
     macro(isBoundFunction) \
     macro(hasInstanceBoundFunction) \
     macro(instanceOf) \

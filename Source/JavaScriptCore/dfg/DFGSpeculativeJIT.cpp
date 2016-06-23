@@ -3455,6 +3455,36 @@ void SpeculativeJIT::compileIsRegExpObject(Node* node)
     blessedBooleanResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileIsTypedArrayView(Node* node)
+{
+    JSValueOperand value(this, node->child1());
+#if USE(JSVALUE64)
+    GPRTemporary result(this, Reuse, value);
+#else
+    GPRTemporary result(this, Reuse, value, PayloadWord);
+#endif
+
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg resultGPR = result.gpr();
+
+    JITCompiler::Jump isNotCell = m_jit.branchIfNotCell(valueRegs);
+
+    m_jit.load8(JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()), resultGPR);
+    m_jit.sub32(TrustedImm32(Int8ArrayType), resultGPR);
+    m_jit.compare32(JITCompiler::BelowOrEqual,
+        resultGPR,
+        TrustedImm32(Float64ArrayType - Int8ArrayType),
+        resultGPR);
+    blessBoolean(resultGPR);
+    JITCompiler::Jump done = m_jit.jump();
+
+    isNotCell.link(&m_jit);
+    moveFalseTo(resultGPR);
+
+    done.link(&m_jit);
+    blessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileCallObjectConstructor(Node* node)
 {
     RELEASE_ASSERT(node->child1().useKind() == UntypedUse);

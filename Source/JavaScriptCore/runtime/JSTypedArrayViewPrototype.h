@@ -46,6 +46,7 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 };
 
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncIsTypedArrayView(ExecState*);
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSort(ExecState*);
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState*);
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncGetOriginalConstructor(ExecState*);

@@ -1,3 +1,55 @@
+2016-06-22  Keith Miller  <keith_miller@apple.com>
+
+        We should have a DFG intrinsic that checks if a value is a TypedArrayView
+        https://bugs.webkit.org/show_bug.cgi?id=159048
+
+        Reviewed by Saam Barati.
+
+        This patch adds a new DFG Intrinsic that checks if a value is a TypedArrayView.
+        The intrinsic, IsTypedArrayView, works in the same way that the other Is<insert-type>
+        DFG nodes work. Additionally, a new builtin function isTypedArrayView has been added.
+        These changes are needed to fix regressions in %TypedArray%.prototype.subarray.
+
+        * builtins/BuiltinNames.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIsTypedArrayView):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsTypedArrayView):
+        (JSC::FTL::DFG::LowerDFGToB3::isTypedArrayView):
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::typedArrayViewPrivateFuncIsTypedArrayView):
+        * runtime/JSTypedArrayViewPrototype.h:
+        * tests/stress/istypedarrayview-intrinsic.js: Added.
+        (makeFn):
+        (typedArrays.forEach):
+        (let.test):
+        (test):
+
 2016-06-21  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

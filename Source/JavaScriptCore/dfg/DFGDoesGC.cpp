@@ -165,6 +165,7 @@ bool doesGC(Graph& graph, Node* node)
     case IsObjectOrNull:
     case IsFunction:
     case IsRegExpObject:
+    case IsTypedArrayView:
     case TypeOf:
     case LogicalNot:
     case ToPrimitive:

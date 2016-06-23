@@ -1035,7 +1035,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsObject:
     case IsObjectOrNull:
     case IsFunction:
-    case IsRegExpObject: {
+    case IsRegExpObject:
+    case IsTypedArrayView: {
         AbstractValue child = forNode(node->child1());
         if (child.value()) {
             bool constantWasSet = true;
@@ -1096,6 +1097,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             case IsEmpty:
                 setConstant(node, jsBoolean(child.value().isEmpty()));
+                break;
+            case IsTypedArrayView:
+                setConstant(node, jsBoolean(child.value().isObject() && isTypedView(child.value().getObject()->classInfo()->typedArrayStorageType)));
                 break;
             default:
                 constantWasSet = false;
@@ -1262,6 +1266,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             if (!(child.m_type & SpecObject)) {
+                setConstant(node, jsBoolean(false));
+                constantWasSet = true;
+                break;
+            }
+            break;
+
+        case IsTypedArrayView:
+            if (!(child.m_type & ~SpecTypedArrayView)) {
+                setConstant(node, jsBoolean(true));
+                constantWasSet = true;
+                break;
+            }
+            if (!(child.m_type & SpecTypedArrayView)) {
                 setConstant(node, jsBoolean(false));
                 constantWasSet = true;
                 break;

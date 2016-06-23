@@ -317,6 +317,7 @@ namespace JSC { namespace DFG {
     macro(IsObjectOrNull, NodeResultBoolean) \
     macro(IsFunction, NodeResultBoolean) \
     macro(IsRegExpObject, NodeResultBoolean) \
+    macro(IsTypedArrayView, NodeResultBoolean) \
     macro(TypeOf, NodeResultJS) \
     macro(LogicalNot, NodeResultBoolean) \
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate) \

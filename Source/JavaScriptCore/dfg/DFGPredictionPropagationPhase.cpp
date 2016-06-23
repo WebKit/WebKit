@@ -792,7 +792,8 @@ private:
         case IsObject:
         case IsObjectOrNull:
         case IsFunction:
-        case IsRegExpObject: {
+        case IsRegExpObject:
+        case IsTypedArrayView: {
             setPrediction(SpecBoolean);
             break;
         }

@@ -754,6 +754,7 @@ public:
 
     void compileIsJSArray(Node*);
     void compileIsRegExpObject(Node*);
+    void compileIsTypedArrayView(Node*);
 
     void emitCall(Node*);
     

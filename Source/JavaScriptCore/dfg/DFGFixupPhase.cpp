@@ -1547,6 +1547,7 @@ private:
         case DeleteById:
         case DeleteByVal:
         case IsJSArray:
+        case IsTypedArrayView:
         case IsEmpty:
         case IsUndefined:
         case IsBoolean:

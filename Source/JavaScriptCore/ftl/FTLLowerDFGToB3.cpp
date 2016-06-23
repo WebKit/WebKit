@@ -900,6 +900,9 @@ private:
         case IsRegExpObject:
             compileIsRegExpObject();
             break;
+        case IsTypedArrayView:
+            compileIsTypedArrayView();
+            break;
         case TypeOf:
             compileTypeOf();
             break;
@@ -6107,6 +6110,24 @@ private:
         setBoolean(m_out.phi(m_out.boolean, notCellResult, cellResult));
     }
 
+    void compileIsTypedArrayView()
+    {
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
+        ValueFromBlock cellResult = m_out.anchor(isTypedArrayView(value, provenType(m_node->child1())));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(m_out.boolean, notCellResult, cellResult));
+    }
+
     void compileTypeOf()
     {
         Edge child = m_node->child1();
@@ -10075,6 +10096,18 @@ private:
         return m_out.equal(
             m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
             m_out.constInt32(ArrayType));
+    }
+
+    LValue isTypedArrayView(LValue cell, SpeculatedType type = SpecFullTop)
+    {
+        if (LValue proven = isProvenValue(type & SpecCell, SpecTypedArrayView))
+            return proven;
+        LValue jsType = m_out.sub(
+            m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+            m_out.constInt32(Int8ArrayType));
+        return m_out.belowOrEqual(
+            jsType,
+            m_out.constInt32(Float64ArrayType - Int8ArrayType));
     }
     
     LValue isObject(LValue cell, SpeculatedType type = SpecFullTop)
