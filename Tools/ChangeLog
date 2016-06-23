@@ -1,3 +1,13 @@
+2016-06-23  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [jhbuild] Added libxslt module.
+        https://bugs.webkit.org/show_bug.cgi?id=159034
+
+        Unreviewed, followup for r202373.
+
+        * efl/install-dependencies: Removed libxslt 
+        * gtk/install-dependencies: Ditto.
+
 2016-06-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Bump gstreamer version from 1.6.3 to 1.8.0

@@ -124,7 +124,6 @@ function installDependenciesWithApt {
         libvorbis-dev \
         libwebp-dev \
         libxcomposite-dev \
-        libxslt1-dev \
         libxt-dev \
         libxtst-dev \
         libwayland-dev \
@@ -257,7 +256,6 @@ function installDependenciesWithPacman {
         libvorbis \
         libwebp \
         libxcomposite \
-        libxslt \
         libxt \
         libxtst \
         ninja \
@@ -367,7 +365,6 @@ function installDependenciesWithDnf {
         libwebp-devel \
         libwayland-client-devel \
         libwayland-server-devel \
-        libxslt-devel \
         llvm \
         llvm-devel \
         llvm-static \

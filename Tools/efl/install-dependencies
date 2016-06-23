@@ -94,7 +94,6 @@ function installDependenciesWithApt {
         libxinerama-dev \
         libxrandr-dev \
         libxrender-dev \
-        libxslt1-dev \
         libxss-dev \
         libxt-dev \
         libxtst-dev \
