@@ -29,6 +29,10 @@
 
 #include <mach-o/dyld_priv.h>
 
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 100000
+#define DYLD_IOS_VERSION_10_0 0x000A0000
+#endif
+
 #else
 
 #define DYLD_IOS_VERSION_3_0 0x00030000

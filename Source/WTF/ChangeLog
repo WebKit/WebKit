@@ -1,3 +1,14 @@
+2016-06-23  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r202380): iOS 9.x internal builds are broken
+
+        Follow-up fix for: Enable window.open() for existing versions of Secret Society
+        <https://webkit.org/b/159049>
+        <rdar://problem/26528349>
+
+        * wtf/spi/darwin/dyldSPI.h: Define DYLD_IOS_VERSION_10_0 when
+        building on internal SDKs older than iOS 10.
+
 2016-06-23  John Wilander  <wilander@apple.com>
 
         Enable window.open() for existing versions of Secret Society
