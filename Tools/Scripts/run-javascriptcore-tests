@@ -73,6 +73,32 @@ my %jsonData = ();
 my $remoteConfigFile;
 my $jsonFileName;
 
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI}) {
+    if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI} eq "true") {
+        $runTestAPI = 1;
+    } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI} eq "false") {
+        $runTestAPI = 0;
+    } else {
+        print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_TESTAPI environment variable: '"
+            . $ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI} . "'. Should be set to 'true' or 'false'.\n";
+    }
+}
+
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_BUILD}) {
+    if ($ENV{RUN_JAVASCRIPTCORE_TESTS_BUILD} eq "true") {
+        $buildJSC = 1;
+    } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_BUILD} eq "false") {
+        $buildJSC = 0;
+    } else {
+        print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_BUILD environment variable: '"
+            . $ENV{RUN_JAVASCRIPTCORE_TESTS_BUILD} . "'. Should be set to 'true' or 'false'.\n";
+    }
+}
+
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS}) {
+    $extraTests = $ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS};
+}
+
 my $programName = basename($0);
 my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
 my $testapiDefault = $runTestAPI ? "will run" : "will not run";
@@ -112,6 +138,10 @@ Usage: $programName [options] [options to pass to build system]
                                 e.g. \"foo=bar x=y\" (no quotes).
   --gmalloc:                    Run tests with Guard Malloc enabled (if no path is given: $gmallocDefaultPath is used)
 
+Environment Variables:
+  - set RUN_JAVASCRIPTCORE_TESTS_TESTAPI to "true" or "false" (no quotes) to determine if we run the testapi tests.
+  - set RUN_JAVASCRIPTCORE_TESTS_BUILD to "true" or "false" (no quotes) to set the should-we-build-before-running-tests setting.
+  - set RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS to the path of a yaml file or a directory of JS files to be run as part of run-javascriptcore-tests.
 EOF
 
 GetOptions(

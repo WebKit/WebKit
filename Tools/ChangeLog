@@ -1,3 +1,27 @@
+2016-06-22  Saam Barati  <sbarati@apple.com>
+
+        run-javascriptcore-tests should have some environment variables for commonly used settings
+        https://bugs.webkit.org/show_bug.cgi?id=159047
+
+        Reviewed by Keith Miller.
+
+        This patch adds three environment variables that run-javascriptcore-tests
+        consults:
+        - RUN_JAVASCRIPTCORE_TESTS_TESTAPI can be set to 'true' or 'false'. It
+          determines if we should run the api tests or not.
+        - RUN_JAVASCRIPTCORE_TESTS_BUILD can be set to 'true' or 'false'. It
+          determines if we will perform a build or not before running the tests.
+          to set the default should-build setting.
+        - RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS can be set to a directory or to
+          a yaml file. If set, we will run the extra tests it refers to.
+
+        All the values in these environment variables will be overridden if an
+        option is explicitly passed in. For example, the following will run
+        the api tests:
+        `RUN_JAVASCRIPTCORE_TESTS_TESTAPI=false run-javascriptcore-tests --testapi`
+
+        * Scripts/run-javascriptcore-tests:
+
 2016-06-22  Saam barati  <sbarati@apple.com>
 
         TypeProfiler and TypeProfilerLog don't play nicely with the concurrent JIT
