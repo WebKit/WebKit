@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
+#include "JSMediaStream.h"
 #include "JSMediaStreamTrack.h"
 #include "JSRTCIceCandidate.h"
 #include "JSRTCSessionDescription.h"
@@ -83,6 +84,7 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWaitingPrivateName(), jsNumber(5), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWritablePrivateName(), jsNumber(6), DontDelete | ReadOnly),
 #if ENABLE(MEDIA_STREAM)
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().MediaStreamPrivateName(), JSMediaStream::getConstructor(vm, this), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().MediaStreamTrackPrivateName(), JSMediaStreamTrack::getConstructor(vm, this), DontDelete | ReadOnly),
 #endif
 #if ENABLE(STREAMS_API)

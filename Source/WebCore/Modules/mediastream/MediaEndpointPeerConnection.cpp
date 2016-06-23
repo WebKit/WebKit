@@ -37,6 +37,7 @@
 #include "JSRTCSessionDescription.h"
 #include "MediaEndpointSessionConfiguration.h"
 #include "MediaStream.h"
+#include "MediaStreamEvent.h"
 #include "MediaStreamTrack.h"
 #include "PeerMediaDescription.h"
 #include "RTCIceCandidate.h"
@@ -476,6 +477,9 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
         return;
     }
 
+    // One legacy MediaStreamEvent will be fired for every new MediaStream created as this remote description is set.
+    Vector<RefPtr<MediaStreamEvent>> legacyMediaStreamEvents;
+
     for (auto mediaDescription : mediaDescriptions) {
         RTCRtpTransceiver* transceiver = matchTransceiverByMid(transceivers, mediaDescription->mid());
         if (!transceiver) {
@@ -529,6 +533,7 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
                 } else {
                     auto newStream = MediaStream::create(*m_client->scriptExecutionContext(), MediaStreamTrackVector({ receiver.track() }));
                     m_remoteStreamMap.add(id, newStream.copyRef());
+                    legacyMediaStreamEvents.append(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, newStream.copyRef()));
                     trackEventMediaStreams.add(id, WTFMove(newStream));
                 }
             }
@@ -540,6 +545,10 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
                 &receiver, receiver.track(), WTFMove(streams), transceiver));
         }
     }
+
+    // Fire legacy addstream events.
+    for (auto& event : legacyMediaStreamEvents)
+        m_client->fireEvent(*event);
 
     SignalingState newSignalingState;
 
@@ -669,6 +678,13 @@ void MediaEndpointPeerConnection::getStats(MediaStreamTrack*, PeerConnection::St
     notImplemented();
 
     promise.reject(NOT_SUPPORTED_ERR);
+}
+
+Vector<RefPtr<MediaStream>> MediaEndpointPeerConnection::getRemoteStreams() const
+{
+    Vector<RefPtr<MediaStream>> remoteStreams;
+    copyValuesToVector(m_remoteStreamMap, remoteStreams);
+    return remoteStreams;
 }
 
 RefPtr<RTCRtpReceiver> MediaEndpointPeerConnection::createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId)

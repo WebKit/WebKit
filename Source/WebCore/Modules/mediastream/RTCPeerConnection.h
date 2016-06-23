@@ -69,6 +69,9 @@ public:
     const Vector<RefPtr<RTCRtpReceiver>>& getReceivers() const { return m_transceiverSet->getReceivers(); }
     const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const override { return m_transceiverSet->list(); }
 
+    // Part of legacy MediaStream-based API (mostly implemented as JS built-ins)
+    Vector<RefPtr<MediaStream>> getRemoteStreams() const { return m_backend->getRemoteStreams(); }
+
     RefPtr<RTCRtpSender> addTrack(Ref<MediaStreamTrack>&&, const Vector<MediaStream*>&, ExceptionCode&);
     void removeTrack(RTCRtpSender&, ExceptionCode&);
 

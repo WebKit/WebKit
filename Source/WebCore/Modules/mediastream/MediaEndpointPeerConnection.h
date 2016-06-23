@@ -73,6 +73,8 @@ public:
 
     void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) override;
 
+    Vector<RefPtr<MediaStream>> getRemoteStreams() const override;
+
     RefPtr<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) override;
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) override;
 

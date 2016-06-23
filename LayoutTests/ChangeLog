@@ -1,3 +1,17 @@
+2016-06-23  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add support for RTCPeerConnection legacy MediaStream-based API
+        https://bugs.webkit.org/show_bug.cgi?id=158940
+
+        Reviewed by Eric Carlson.
+
+        Add test for RTCPeerConnection legacy MediaStream-based API.
+
+        * fast/mediastream/RTCPeerConnection-legacy-stream-based-api-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-legacy-stream-based-api.html: Added.
+        * platform/mac/TestExpectations:
+        Skip test for mac port (not building with WEB_RTC yet)
+
 2016-06-23  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed test gardening.

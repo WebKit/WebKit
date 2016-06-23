@@ -34,7 +34,7 @@
 
     sequence<MediaStreamTrack> getAudioTracks();
     sequence<MediaStreamTrack> getVideoTracks();
-    sequence<MediaStreamTrack> getTracks();
+    [PrivateIdentifier, PublicIdentifier] sequence<MediaStreamTrack> getTracks();
     MediaStreamTrack getTrackById(DOMString trackId);
 
     void addTrack(MediaStreamTrack track);

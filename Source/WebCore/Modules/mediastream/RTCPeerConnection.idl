@@ -41,15 +41,23 @@
     [PrivateIdentifier, CallWith=Document, RaisesException] void initializeWith(Dictionary parameters);
 
     // RTP Media API extensions
-    sequence<RTCRtpSender> getSenders();
+    [PrivateIdentifier, PublicIdentifier] sequence<RTCRtpSender> getSenders();
     sequence<RTCRtpReceiver> getReceivers();
     sequence<RTCRtpTransceiver> getTransceivers();
 
-    [StrictTypeChecking, RaisesException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
-    [StrictTypeChecking, RaisesException] void removeTrack(RTCRtpSender sender);
+    [PrivateIdentifier, PublicIdentifier, StrictTypeChecking, RaisesException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
+    [PrivateIdentifier, PublicIdentifier, StrictTypeChecking, RaisesException] void removeTrack(RTCRtpSender sender);
 
     [StrictTypeChecking, RaisesException] RTCRtpTransceiver addTransceiver(MediaStreamTrack track, optional RTCRtpTransceiverInit init);
     [StrictTypeChecking, RaisesException] RTCRtpTransceiver addTransceiver(DOMString kind, optional RTCRtpTransceiverInit init);
+
+    // Legacy MediaSream-based API (implemented on top of the RTP Media API)
+    [JSBuiltin] sequence<MediaStream> getLocalStreams();
+    [PrivateIdentifier, PublicIdentifier] sequence<MediaStream> getRemoteStreams();
+    [JSBuiltin] MediaStream getStreamById(DOMString streamId);
+
+    [JSBuiltin] void addStream(MediaStream stream);
+    [JSBuiltin] void removeStream(MediaStream stream);
 
     [JSBuiltin] Promise createOffer(optional Dictionary offerOptions);
     // Legacy signature: Promise createOffer(RTCSessionDescriptionCallback successCallback
@@ -117,6 +125,9 @@
     attribute EventHandler oniceconnectionstatechange;
     attribute EventHandler onicegatheringstatechange;
     attribute EventHandler ondatachannel;
+
+    // Legacy event handler (MediaStream-based API)
+    attribute EventHandler onaddstream;
 };
 
 // This enum is mirrored in RTCRtpTransceiver.idl

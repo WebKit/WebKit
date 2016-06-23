@@ -204,6 +204,7 @@ fast/mediastream/RTCPeerConnection-inspect-answer.html
 fast/mediastream/RTCPeerConnection-media-setup-single-dialog.html
 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html
 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html
+fast/mediastream/RTCPeerConnection-legacy-stream-based-api.html
 
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]

@@ -40,6 +40,7 @@ namespace WebCore {
 
 class DOMError;
 class Event;
+class MediaStream;
 class MediaStreamTrack;
 class PeerConnectionBackend;
 class RTCAnswerOptions;
@@ -105,6 +106,8 @@ public:
     virtual void addIceCandidate(RTCIceCandidate&, PeerConnection::VoidPromise&&) = 0;
 
     virtual void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) = 0;
+
+    virtual Vector<RefPtr<MediaStream>> getRemoteStreams() const = 0;
 
     virtual RefPtr<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) = 0;
     virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) = 0;

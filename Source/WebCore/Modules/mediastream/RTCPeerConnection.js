@@ -48,7 +48,84 @@ function initializeRTCPeerConnection(configuration)
             : "Error creating RTCPeerConnection";
         throw new @TypeError(message);
     }
+
+    this.@localStreams = [];
+
     return this;
+}
+
+function getLocalStreams()
+{
+    "use strict";
+
+    if (!@isRTCPeerConnection(this))
+        throw new @TypeError("Function should be called on an RTCPeerConnection");
+
+    return this.@localStreams.slice();
+}
+
+function getStreamById(streamIdArg)
+{
+    "use strict";
+
+    if (!@isRTCPeerConnection(this))
+        throw new @TypeError("Function should be called on an RTCPeerConnection");
+
+    if (arguments.length < 1)
+        throw new @TypeError("Not enough arguments");
+
+    const streamId = @String(streamIdArg);
+
+    return this.@localStreams.find(stream => stream.id === streamId)
+        || this.@getRemoteStreams().find(stream => stream.id === streamId)
+        || null;
+}
+
+function addStream(stream)
+{
+    "use strict";
+
+    if (!@isRTCPeerConnection(this))
+        throw new @TypeError("Function should be called on an RTCPeerConnection");
+
+    if (arguments.length < 1)
+        throw new @TypeError("Not enough arguments");
+
+    if (!(stream instanceof @MediaStream))
+        throw new @TypeError("Argument 1 ('stream') to RTCPeerConnection.addStream must be an instance of MediaStream");
+
+    if (this.@localStreams.find(localStream => localStream.id === stream.id))
+        return;
+
+    this.@localStreams.@push(stream);
+    stream.@getTracks().forEach(track => this.@addTrack(track, stream));
+}
+
+function removeStream(stream)
+{
+    "use strict";
+
+    if (!@isRTCPeerConnection(this))
+        throw new @TypeError("Function should be called on an RTCPeerConnection");
+
+    if (arguments.length < 1)
+        throw new @TypeError("Not enough arguments");
+
+    if (!(stream instanceof @MediaStream))
+        throw new @TypeError("Argument 1 ('stream') to RTCPeerConnection.removeStream must be an instance of MediaStream");
+
+    const indexOfStreamToRemove = this.@localStreams.findIndex(localStream => localStream.id === stream.id);
+    if (indexOfStreamToRemove === -1)
+        return;
+
+    const senders = this.@getSenders();
+    this.@localStreams[indexOfStreamToRemove].@getTracks().forEach(track => {
+        const senderForTrack = senders.find(sender => sender.track && sender.track.id === track.id);
+        if (senderForTrack)
+            this.@removeTrack(senderForTrack);
+    });
+
+    this.@localStreams.splice(indexOfStreamToRemove, 1);
 }
 
 function createOffer()

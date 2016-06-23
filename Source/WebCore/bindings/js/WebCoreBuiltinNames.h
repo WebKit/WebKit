@@ -32,6 +32,7 @@
 namespace WebCore {
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro)\
+    macro(addTrack) \
     macro(appendFromJS) \
     macro(closeRequested) \
     macro(closedPromiseCapability) \
@@ -40,7 +41,11 @@ namespace WebCore {
     macro(disturbed) \
     macro(fillFromJS) \
     macro(getUserMediaFromJS) \
+    macro(getRemoteStreams) \
+    macro(getSenders) \
+    macro(getTracks) \
     macro(initializeWith) \
+    macro(localStreams) \
     macro(operations) \
     macro(ownerReadableStream) \
     macro(privateGetStats) \
@@ -55,6 +60,7 @@ namespace WebCore {
     macro(reader) \
     macro(readRequests) \
     macro(readyPromiseCapability) \
+    macro(removeTrack) \
     macro(state) \
     macro(started) \
     macro(startedPromise) \
@@ -69,6 +75,7 @@ namespace WebCore {
     macro(underlyingSink) \
     macro(underlyingSource) \
     macro(writing) \
+    macro(MediaStream) \
     macro(MediaStreamTrack) \
     macro(ReadableStream) \
     macro(ReadableStreamReader) \
