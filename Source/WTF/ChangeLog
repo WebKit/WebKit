@@ -1,3 +1,14 @@
+2016-06-23  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/26831566.
+
+    2016-06-23  Dean Jackson  <dino@apple.com>
+
+            Disable some features on safari-602.1.38-branch.
+            <rdar://problem/26831566>
+
+            * wtf/FeatureDefines.h:
+
 2016-06-23  John Wilander  <wilander@apple.com>
 
         Enable window.open() for existing versions of Secret Society

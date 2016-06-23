@@ -1014,7 +1014,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         ASSERT_NOT_REACHED();
         return false;
     }
-#if !ENABLE(CSS_GRID_LAYOUT)
+#if !ENABLE(CSS_COMPOSITING) && !ENABLE(CSS_REGIONS)
     UNUSED_PARAM(parserContext);
 #endif
     return false;
