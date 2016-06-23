@@ -2829,7 +2829,7 @@ public:
     MinifiedGraph* m_minifiedGraph;
     
     Vector<std::unique_ptr<SlowPathGenerator>, 8> m_slowPathGenerators;
-    Vector<std::pair<std::function<void()>, CodeOrigin>, 8> m_slowPathLambdas;
+    Vector<std::pair<std::function<void()>, Node*>, 8> m_slowPathLambdas;
     Vector<SilentRegisterSavePlan> m_plans;
     unsigned m_outOfLineStreamIndex { UINT_MAX };
 };

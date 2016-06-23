@@ -1,3 +1,60 @@
+2016-06-23  Saam Barati  <sbarati@apple.com>
+
+        DFGSpeculativeJIT's m_slowPathLambdas should restore the current node field and DFG OSR entry functions should use DeferGCForAWhile instead of DeferGC
+        https://bugs.webkit.org/show_bug.cgi?id=159064
+        <rdar://problem/26599119>
+
+        Reviewed by Filip Pizlo.
+
+        The DFG has a list of m_slowPathLambdas that are code generators it emits
+        amongst its slow paths. These lambdas, however, did not update the m_currentNode field.
+        This caused us to use whatever Node happened to be used as the currentNode at the time
+        we call the slowPathLambda. This means the wrong CallSiteIndex was stored into the call
+        frame when we made a call. This may lead to a crash if the CallSiteIndex corresponds to
+        the wrong CodeOrigin. For example, the wrong CodeOrigin could have an InlineCallFrame with
+        a calleeRecovery that will not be in sync with the current stack state. Trying
+        to recover that callee will often lead to a crash. The solution is to update
+        m_currentNode to the DFG::Node* it corresponds to when emitting these slowPathLambdas.
+
+        I found this bug because we were inside this bad state when calling an operation
+        that happened to have a DeferGC. When this DeferGC actually GCed, it would
+        take a StackTrace, which would lead to a crash because we were updating
+        ShadowChicken with vm.topCallFrame. It just so happened that the CallSiteIndex
+        in the call frame in this program corresponded to an InlineCallFrame with a calleeRecover.
+        However, this CallSiteIndex didn't correspond to the actual state of execution
+        of the program. I'm adding new options to make reproducing DeferGC related
+        bugs easier by making DeferGC force a GC according to some probability. To
+        always have DeferGC force a GC, you can set that probability to 1.
+
+        There is a second bug that I discovered after solving the above bug. We were
+        using DeferGC instead of DeferGCForAWhile in the OSR entry related functions
+        in the DFG. This would cause us to take a stack trace when the call frame was
+        in an inconsistent state. For example, the operation would call FTL::prepareOSREntry,
+        which would replace the DFG CodeBlock in the call frame with the FTL CodeBlock.
+        However, we wouldn't update the CallSiteIndex to correspond to an FTL CallSiteIndex.
+        This would lead to a crash when taking a stack trace. The solution is to prevent
+        stack traces from being taken when the program is in this state by using
+        DeferGCForAWhie instead of DeferGC.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::addSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::runSlowPathGenerators):
+        * dfg/DFGSpeculativeJIT.h:
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        (JSC::Heap::collectAccordingToDeferGCProbability):
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded):
+        (JSC::Heap::markListSet):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+        * tests/stress/slow-path-generator-updating-current-node-dfg.js: Added.
+        (foo):
+        (bar):
+
 2016-06-23  Filip Pizlo  <fpizlo@apple.com>
 
         Failing baseline JIT compilation of a code block and then trying to compile it from OSR from DFG/FTL will corrupt the CodeBlock

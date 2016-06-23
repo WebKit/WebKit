@@ -388,6 +388,7 @@ static void recomputeDependentOptions()
 
     ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) > 0);
     ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()));
+    ASSERT(Options::deferGCProbability() >= 0.0 && Options::deferGCProbability() <= 1.0);
 }
 
 void Options::initialize()

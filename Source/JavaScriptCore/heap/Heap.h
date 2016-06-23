@@ -170,6 +170,7 @@ public:
     bool shouldCollect();
     JS_EXPORT_PRIVATE void collect(HeapOperation collectionType = AnyCollection);
     bool collectIfNecessaryOrDefer(); // Returns true if it did collect.
+    void collectAccordingToDeferGCProbability();
 
     void completeAllJITPlans();
     

@@ -32,6 +32,7 @@
 #include "Structure.h"
 #include <type_traits>
 #include <wtf/Assertions.h>
+#include <wtf/RandomNumber.h>
 
 namespace JSC {
 
@@ -302,10 +303,28 @@ inline bool Heap::collectIfNecessaryOrDefer()
     return true;
 }
 
+inline void Heap::collectAccordingToDeferGCProbability()
+{
+    if (isDeferred() || !m_isSafeToCollect || m_operationInProgress != NoOperation)
+        return;
+
+    if (randomNumber() < Options::deferGCProbability()) {
+        collect();
+        return;
+    }
+
+    // If our coin flip told us not to GC, we still might GC,
+    // but we GC according to our memory pressure markers.
+    collectIfNecessaryOrDefer();
+}
+
 inline void Heap::decrementDeferralDepthAndGCIfNeeded()
 {
     decrementDeferralDepth();
-    collectIfNecessaryOrDefer();
+    if (UNLIKELY(Options::deferGCShouldCollectWithProbability()))
+        collectAccordingToDeferGCProbability();
+    else
+        collectIfNecessaryOrDefer();
 }
 
 inline HashSet<MarkedArgumentBuffer*>& Heap::markListSet()

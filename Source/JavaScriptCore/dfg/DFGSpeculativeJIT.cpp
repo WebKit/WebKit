@@ -362,7 +362,7 @@ void SpeculativeJIT::addSlowPathGenerator(std::unique_ptr<SlowPathGenerator> slo
 
 void SpeculativeJIT::addSlowPathGenerator(std::function<void()> lambda)
 {
-    m_slowPathLambdas.append(std::make_pair(lambda, m_origin.semantic));
+    m_slowPathLambdas.append(std::make_pair(lambda, m_currentNode));
 }
 
 void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder)
@@ -372,7 +372,9 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
         slowPathGenerator->generate(this);
     }
     for (auto& generatorPair : m_slowPathLambdas) {
-        pcToCodeOriginMapBuilder.appendItem(m_jit.label(), generatorPair.second);
+        Node* currentNode = generatorPair.second;
+        m_currentNode = currentNode;
+        pcToCodeOriginMapBuilder.appendItem(m_jit.label(), currentNode->origin.semantic);
         generatorPair.first();
     }
 }
