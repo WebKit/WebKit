@@ -1,3 +1,11 @@
+2016-06-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land test expectations for rdar://problem/26952627.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-06-23  Alexey Proskuryakov  <ap@apple.com>
 
         Handle (0, 0) ranges from Lookup
