@@ -1088,7 +1088,7 @@ media/track/track-mode.html [ Skip ] # Timeout
 media/track/track-mode-disabled-crash.html [ Skip ] # Timeout
 media/track/track-mode-not-changed-by-new-track.html [ Skip ] # Timeout
 media/track/track-remove-by-setting-innerHTML.html [ Skip ] # Timeout
-media/track/w3c/track/webvtt/basic.html	[ Skip ] # Timeout
+media/track/w3c/track/webvtt/basic.html [ Skip ] # Timeout
 media/video-canvas-drawing.html [ Skip ] # Timeout
 media/video-currentTime-delay.html [ Skip ] # Timeout
 media/video-currentTime-set.html [ Skip ] # Timeout
@@ -1343,13 +1343,9 @@ webkit.org/b/140798 [ Release ] accessibility/aria-hidden-negates-no-visibility.
 webkit.org/b/140798 [ Debug ] accessibility/aria-hidden-negates-no-visibility.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/aria-hidden-with-elements.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-hidden-with-elements.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/aria-labeled-with-hidden-node.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-labeled-with-hidden-node.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/aria-labelledby-overrides-aria-labeledby.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-labelledby-overrides-aria-labeledby.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/aria-labelledby-with-descendants.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-labelledby-with-descendants.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/aria-namefrom-author.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-namefrom-author.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/aria-sort.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-sort.html [ Skip ] # Debug assertion
@@ -1357,7 +1353,6 @@ webkit.org/b/140798 [ Release ] accessibility/aria-tables.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-tables.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/aria-text-role.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-text-role.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/aria-used-on-image-maps.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-used-on-image-maps.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/auto-filled-value.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/auto-filled-value.html [ Skip ] # Debug assertion
@@ -1368,21 +1363,16 @@ webkit.org/b/140798 [ Release ] accessibility/empty-image-with-title.html [ Fail
 webkit.org/b/140798 [ Debug ] accessibility/empty-image-with-title.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140798 [ Release ] accessibility/fieldset-element.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/fieldset-element.html [ Skip ] # Crash (Debug Assertion)
-webkit.org/b/140798 [ Release ] accessibility/global-aria-attributes-invalidate-presentational.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/global-aria-attributes-invalidate-presentational.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140798 [ Release ] accessibility/heading-crash-after-hidden.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/heading-crash-after-hidden.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/html-html-element-is-ignored.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/html-html-element-is-ignored.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/inline-block-assertion.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/inline-block-assertion.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/input-type-hidden-in-aria-hidden-false.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/input-type-hidden-in-aria-hidden-false.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/legend-children-are-visible.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/legend-children-are-visible.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/link-inside-button-accessible-text.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/link-inside-button-accessible-text.html [ Skip ] # Debug assertion
-webkit.org/b/145271 [ Release ] accessibility/list-detection.html [ Failure ]
 webkit.org/b/145271 [ Debug ] accessibility/list-detection.html [ Skip ] # Debug assertion
 webkit.org/b/145271 [ Release ] accessibility/list-detection2.html [ Failure ]
 webkit.org/b/145271 [ Debug ] accessibility/list-detection2.html [ Failure ]
@@ -1392,13 +1382,9 @@ webkit.org/b/140798 [ Release ] accessibility/math-multiscript-attributes.html [
 webkit.org/b/140798 [ Debug ] accessibility/math-multiscript-attributes.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/math-text.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/math-text.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/negative-tabindex-does-not-expose-label.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/negative-tabindex-does-not-expose-label.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/non-data-table-cell-title-ui-element.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/non-data-table-cell-title-ui-element.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/noscript-ignored.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/noscript-ignored.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/password-field-value.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/password-field-value.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/poorly-formed-aria-table.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/poorly-formed-aria-table.html [ Skip ] # Debug assertion
@@ -1408,19 +1394,16 @@ webkit.org/b/140798 [ Release ] accessibility/radio-button-title-label.html [ Fa
 webkit.org/b/140798 [ Debug ] accessibility/radio-button-title-label.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/range-alter-by-percent.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/range-alter-by-percent.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/render-counter-text.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/render-counter-text.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/secure-textfield-title-ui.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/secure-textfield-title-ui.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/select-element-at-index.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/select-element-at-index.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/self-referencing-aria-labelledby.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/self-referencing-aria-labelledby.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/svg-bounds.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/svg-bounds.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/svg-group-element-with-title.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/svg-group-element-with-title.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/svg-labelledby.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/svg-labelledby.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/tabindex-elements-are-accessible.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/tabindex-elements-are-accessible.html [ Skip ] # Debug assertion
@@ -1440,11 +1423,8 @@ webkit.org/b/140798 [ Release ] accessibility/table-headers.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/table-headers.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/table-incorrect-colspan-cell.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/table-incorrect-colspan-cell.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/table-missing-column-header-crash.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/table-missing-column-header-crash.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/table-title.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/table-title.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/table-with-aria-role.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/table-with-aria-role.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/table-with-footer-section-above-body.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/table-with-footer-section-above-body.html [ Skip ] # Debug assertion
@@ -1454,7 +1434,6 @@ webkit.org/b/140798 [ Release ] accessibility/table-with-mismatch-column-count-i
 webkit.org/b/140798 [ Debug ] accessibility/table-with-mismatch-column-count-in-initial-section.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/table-with-missing-aria-role-rows.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/table-with-missing-aria-role-rows.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/text-role-with-aria-hidden-inside.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/textarea-insertion-point-line-number.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/textarea-insertion-point-line-number.html [ Skip ] # Debug assertion
@@ -1462,7 +1441,6 @@ webkit.org/b/140798 [ Release ] accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/th-as-title-ui.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/title-ui-element-correctness.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/title-ui-element-correctness.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/transformed-bounds.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/transformed-bounds.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/aria-switch-checked.html [ Skip ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-switch-checked.html [ Skip ]
@@ -1501,7 +1479,7 @@ accessibility/content-editable-as-textarea.html [ Skip ]
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Skip ]
 [ Release ] accessibility/loading-iframe-sends-notification.html [ Failure ]
 [ Debug ] accessibility/loading-iframe-sends-notification.html [ Skip ] # Debug assertion
-accessibility/win/single-select-children-changed.html	[ Skip ]
+accessibility/win/single-select-children-changed.html [ Skip ]
 webkit.org/b/142016 accessibility/aria-switch-sends-notification.html [ Skip ]
 
 webkit.org/b/130011 accessibility/aria-setsize-posinset.html [ Skip ]
@@ -1553,7 +1531,6 @@ webkit.org/b/140867 [ Debug ] accessibility/canvas-fallback-content-2.html [ Ski
 [ Debug ] accessibility/crash-with-noelement-selectbox.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/crashing-a-tag-in-map.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/css-content-attribute.html [ Skip ] # Crash (Debug Assertion)
-[ Release ] accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
 [ Debug ] accessibility/deleting-iframe-destroys-axcache.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/dimensions-include-descendants.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/disabled-controls-not-focusable.html [ Skip ] # Crash (Debug Assertion)
@@ -1620,7 +1597,6 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/placeholder.html [ Skip ] # Debug assertion
 [ Release ] accessibility/plugin.html [ Failure ]
 [ Debug ] accessibility/plugin.html [ Skip ] # Debug assertion
-[ Release ] accessibility/press-target-uses-text-descendant-node.html [ Failure ]
 [ Debug ] accessibility/press-target-uses-text-descendant-node.html [ Skip ] # Debug assertion
 [ Release ] accessibility/roles-computedRoleString.html [ Failure ]
 [ Debug ] accessibility/roles-computedRoleString.html [ Skip ] # Debug assertion
@@ -1889,14 +1865,14 @@ webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure ]
 webkit.org/b/140257 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
 
 svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
-svg/dynamic-updates/SVGSVGElement-dom-requiredFeatures.html	[ ImageOnlyFailure ]
+svg/dynamic-updates/SVGSVGElement-dom-requiredFeatures.html [ ImageOnlyFailure ]
 webkit.org/b/97026 svg/custom/glyph-selection-bidi-mirror.svg [ Failure ]
 webkit.org/b/97206 svg/custom/relative-sized-use-on-symbol.xhtml [ Failure ]
 webkit.org/b/97026 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml [ Failure ]
 webkit.org/b/97026 svg/text/bidi-text-query.svg [ Failure ]
 webkit.org/b/97026 svg/text/bidi-tspans.svg [ Failure ]
 webkit.org/b/97026 svg/text/non-bmp-positioning-lists.svg [ Failure ]
-webkit.org/b/97026 svg/W3C-SVG-1.1/paths-data-03-f.svg	[ Failure ]
+webkit.org/b/97026 svg/W3C-SVG-1.1/paths-data-03-f.svg [ Failure ]
 webkit.org/b/97026 svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
 
 webkit.org/b/97026 svg/custom/remove-subtree-including-use-with-child-textpath-that-references-earlier-path.html [ Failure ]
@@ -2280,7 +2256,7 @@ http/tests/security/cross-frame-access-protocol-explicit-domain.html [ Skip ] # 
 http/tests/history/back-during-onload-triggered-by-back.html [ Skip ] # Timeout
 
 # Clear Key not implemented
-http/tests/media/clearkey/clear-key-hls-aes128.html	[ Skip ] # Timeout
+http/tests/media/clearkey/clear-key-hls-aes128.html [ Skip ] # Timeout
 
 # SSL Configuration on Windows <rdar://problem/5345985>
 http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html [ Skip ] # Timeout
@@ -2734,11 +2710,11 @@ fast/dom/MutationObserver/inline-event-listener.html [ Skip ] #  [ Timeout ]
 webkit.org/b/121509 fast/dom/MutationObserver/database-callback-delivery.html [ Skip ] #  [ Timeout ]
 webkit.org/b/116564 fast/dom/Window/window-onFocus.html [ Failure ]
 webkit.org/b/116564 fast/dom/Window/window-postmessage-clone.html [ Pass Failure ]
-[ Release ] fast/dom/attribute-empty-value-no-children.html	[ Pass Timeout ]
+[ Release ] fast/dom/attribute-empty-value-no-children.html [ Pass Timeout ]
 [ Debug ] fast/dom/attribute-empty-value-no-children.html [ Skip ] # Debug Assertion
 fast/dom/DOMImplementation/implementation-identity.html [ Pass Timeout ]
 fast/dom/getElementsByClassName/004.html [ Pass Timeout ]
-[ Release ] fast/dom/HTMLDocument/hasFocus.html	[ Pass Failure ]
+[ Release ] fast/dom/HTMLDocument/hasFocus.html [ Pass Failure ]
 [ Debug ] fast/dom/HTMLDocument/hasFocus.html [ Skip ] # Debug Assertion
 fast/dom/MutationObserver/clear-transient-without-delivery.html [ Pass Timeout ]
 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
@@ -2747,7 +2723,7 @@ webkit.org/b/140772 fast/dom/Window/window-resize-contents.html [ Skip ]
 fast/dom/navigation-with-sideeffects.html [ Failure ]
 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Skip ]    # Timeout
 fast/dom/SelectorAPI/dumpNodeList-almost-strict.html [ Crash Pass ]
-fast/dom/HTMLTableElement/colSpan.html	[ ImageOnlyFailure ]
+fast/dom/HTMLTableElement/colSpan.html [ ImageOnlyFailure ]
 
 fast/dynamic/window-resize-scrollbars-test.html [ Failure Timeout ]
 
@@ -2758,11 +2734,11 @@ webkit.org/b/103043 fast/events/frame-scroll-fake-mouse-move.html [ Skip ]
 webkit.org/b/97026 [ Release ] fast/events/keydown-leftright-keys.html [ Failure ]
 webkit.org/b/97026 [ Debug ] fast/events/keydown-leftright-keys.html [ Skip ] # Debug Assertion
 # fast/events/page-visibility tests timeout.
-webkit.org/b/121509 fast/events/page-visibility-iframe-delete-test.html	[ Skip ] #  [ Timeout ]
-webkit.org/b/121509 fast/events/wheelevent-mousewheel-interaction.html	[ Skip ] #  [ Timeout ]
-webkit.org/b/121509 fast/events/page-visibility-iframe-propagation-test.html	[ Skip ] #  [ Timeout ]
-webkit.org/b/121509 fast/events/page-visibility-transition-test.html	[ Skip ] #  [ Timeout ]
-webkit.org/b/121509 fast/events/page-visibility-iframe-move-test.html	[ Skip ] #  [ Timeout ]
+webkit.org/b/121509 fast/events/page-visibility-iframe-delete-test.html [ Skip ] #  [ Timeout ]
+webkit.org/b/121509 fast/events/wheelevent-mousewheel-interaction.html [ Skip ] #  [ Timeout ]
+webkit.org/b/121509 fast/events/page-visibility-iframe-propagation-test.html [ Skip ] #  [ Timeout ]
+webkit.org/b/121509 fast/events/page-visibility-transition-test.html [ Skip ] #  [ Timeout ]
+webkit.org/b/121509 fast/events/page-visibility-iframe-move-test.html [ Skip ] #  [ Timeout ]
 fast/events/special-key-events-in-input-text.html [ Failure ]
 fast/events/attribute-listener-cloned-from-frameless-doc-context.html [ Pass Failure ]
 [ Release ] fast/events/drag-outside-window.html [ Pass Timeout ]
@@ -2796,7 +2772,7 @@ webkit.org/b/112764 fast/frames/xss-auditor-handles-file-urls.html [ Failure ]
 
 fast/harness/results.html [ Failure ]
 
-webkit.org/b/121509 fast/history/go-back-to-iframe-with-plugin.html	[ Skip ] #  [ Timeout ]
+webkit.org/b/121509 fast/history/go-back-to-iframe-with-plugin.html [ Skip ] #  [ Timeout ]
 fast/history/history-back-initial-vs-final-url.html [ Skip ]
 fast/history/history-length.html [ Skip ]
 fast/history/history-subframe-with-name.html [ Skip ]
@@ -2815,7 +2791,7 @@ fast/images/exif-orientation.html [ Failure ]
 fast/inline/positionedLifetime.html [ Failure ]
 
 fast/lists/inlineBoxWrapperNullCheck.html [ Failure ]
-fast/lists/li-style-alpha-huge-value-crash.html	 [ Pass Timeout ]
+fast/lists/li-style-alpha-huge-value-crash.html  [ Pass Timeout ]
 
 [ Release ] fast/loader/file-protocol-fragment.html [ Failure ]
 [ Debug ] fast/loader/file-protocol-fragment.html [ Skip ] # Crashing

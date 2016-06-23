@@ -1,3 +1,12 @@
+2016-06-23  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed test gardening.
+        
+        Update test expectations for passing accessibility tests after r202149,
+        and fix style issues in test expectations file.
+
+        * platform/win/TestExpectations:
+
 2016-06-22  Alexey Proskuryakov  <ap@apple.com>
 
         Test expectations gardening for rdar://problem/26960385
