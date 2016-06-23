@@ -42,6 +42,10 @@
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/MainThread.h>
 
+#if ENABLE(INDEXED_DATABASE)
+#include "WebDatabaseProvider.h"
+#endif
+
 using namespace WebCore;
 
 static CFStringRef WebDatabaseDirectoryDefaultsKey = CFSTR("WebDatabaseDirectory");
@@ -173,6 +177,8 @@ HRESULT WebDatabaseManager::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void**
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<WebDatabaseManager*>(this);
     else if (IsEqualGUID(riid, IID_IWebDatabaseManager))
+        *ppvObject = static_cast<WebDatabaseManager*>(this);
+    else if (IsEqualGUID(riid, IID_IWebDatabaseManager2))
         *ppvObject = static_cast<WebDatabaseManager*>(this);
     else
         return E_NOINTERFACE;
@@ -324,6 +330,14 @@ HRESULT WebDatabaseManager::deleteDatabase(_In_ BSTR databaseName, _In_opt_ IWeb
 
     DatabaseManager::singleton().deleteDatabase(webSecurityOrigin->securityOrigin(), String(databaseName, SysStringLen(databaseName)));
 
+    return S_OK;
+}
+
+HRESULT WebDatabaseManager::deleteAllIndexedDatabases()
+{
+#if ENABLE(INDEXED_DATABASE)
+    WebDatabaseProvider::singleton().deleteAllDatabases();
+#endif
     return S_OK;
 }
 

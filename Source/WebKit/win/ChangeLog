@@ -1,3 +1,18 @@
+2016-06-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] The test storage/indexeddb/modern/handle-user-delete.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=158934
+
+        Reviewed by Brent Fulgham.
+
+        Add a method to delete all indexed databases.
+
+        * Interfaces/IWebDatabaseManager.idl:
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::QueryInterface):
+        (WebDatabaseManager::deleteAllIndexedDatabases):
+        * WebDatabaseManager.h:
+
 2016-06-17  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Rendering is not scaled correctly if process is DPI aware.

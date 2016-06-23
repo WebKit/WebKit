@@ -159,6 +159,12 @@ void TestRunner::clearAllDatabases()
         return;
 
     databaseManager->deleteAllDatabases();
+
+    COMPtr<IWebDatabaseManager2> databaseManager2;
+    if (FAILED(databaseManager->QueryInterface(&databaseManager2)))
+        return;
+
+    databaseManager2->deleteAllIndexedDatabases();
 }
 
 void TestRunner::setStorageDatabaseIdleInterval(double)

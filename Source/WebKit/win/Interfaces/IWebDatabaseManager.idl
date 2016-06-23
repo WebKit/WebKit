@@ -62,3 +62,11 @@ interface IWebDatabaseManager : IUnknown
 
     HRESULT setQuota([in] BSTR originName, [in] unsigned long long quota);
 }
+
+[
+    uuid(759C2356-181C-4CCF-9E11-6F6242FB8C78)
+]
+interface IWebDatabaseManager2 : IWebDatabaseManager
+{
+    HRESULT deleteAllIndexedDatabases();
+}

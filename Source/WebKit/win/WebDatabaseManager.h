@@ -32,7 +32,7 @@
 #include "WebKit.h"
 #include <WebCore/DatabaseManagerClient.h>
 
-class WebDatabaseManager : public IWebDatabaseManager, private WebCore::DatabaseManagerClient {
+class WebDatabaseManager : public IWebDatabaseManager2, private WebCore::DatabaseManagerClient {
 public:
     static WebDatabaseManager* createInstance();
 
@@ -50,6 +50,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE deleteOrigin(_In_opt_ IWebSecurityOrigin*);       
     virtual HRESULT STDMETHODCALLTYPE deleteDatabase(_In_ BSTR databaseName, _In_opt_ IWebSecurityOrigin*);
     virtual HRESULT STDMETHODCALLTYPE setQuota(_In_ BSTR origin, unsigned long long quota);
+
+    // IWebDatabaseManager2
+    virtual HRESULT STDMETHODCALLTYPE deleteAllIndexedDatabases();
 
     // DatabaseManagerClient
     virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
