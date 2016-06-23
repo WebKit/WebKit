@@ -1,5 +1,21 @@
 2016-06-22  Per Arne Vollan  <pvollan@apple.com>
 
+        [Win] Use Windows api function to find top level parent.
+        https://bugs.webkit.org/show_bug.cgi?id=159021
+
+        Reviewed by Brent Fulgham.
+
+        Delete findTopLevelParent function, and use Win32 function GetAncestor instead.
+ 
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::runModal):
+        (findTopLevelParent): Deleted.
+        * MiniBrowser/win/PrintWebUIDelegate.cpp:
+        (PrintWebUIDelegate::runModal):
+        (findTopLevelParent): Deleted.
+
+2016-06-22  Per Arne Vollan  <pvollan@apple.com>
+
         [Win] The test storage/indexeddb/modern/handle-user-delete.html is timing out.
         https://bugs.webkit.org/show_bug.cgi?id=158934
 

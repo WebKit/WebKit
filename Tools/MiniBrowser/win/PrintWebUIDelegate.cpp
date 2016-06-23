@@ -297,25 +297,12 @@ HRESULT PrintWebUIDelegate::canRunModal(_In_opt_ IWebView*, _Out_ BOOL* canRunBo
     return S_OK;
 }
 
-static HWND findTopLevelParent(HWND window)
-{
-    if (!window)
-        return nullptr;
-
-    HWND current = window;
-    for (HWND parent = GetParent(current); current; current = parent, parent = GetParent(parent)) {
-        if (!parent)
-            return current;
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 HRESULT PrintWebUIDelegate::runModal(_In_opt_ IWebView* webView)
 {
     COMPtr<IWebView> protector(webView);
 
-    auto topLevelParent = findTopLevelParent(::GetWindow(m_modalDialogParent, GW_OWNER));
+    auto modalDialogOwner = ::GetWindow(m_modalDialogParent, GW_OWNER);
+    auto topLevelParent = ::GetAncestor(modalDialogOwner, GA_ROOT);
 
     ::EnableWindow(topLevelParent, FALSE);
 
