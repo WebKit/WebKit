@@ -457,8 +457,10 @@ void RTCPeerConnection::setSignalingState(SignalingState newState)
 void RTCPeerConnection::updateIceGatheringState(IceGatheringState newState)
 {
     scriptExecutionContext()->postTask([=](ScriptExecutionContext&) {
-        m_iceGatheringState = newState;
+        if (m_signalingState == SignalingState::Closed || m_iceGatheringState == newState)
+            return;
 
+        m_iceGatheringState = newState;
         dispatchEvent(Event::create(eventNames().icegatheringstatechangeEvent, false, false));
     });
 }
@@ -466,8 +468,10 @@ void RTCPeerConnection::updateIceGatheringState(IceGatheringState newState)
 void RTCPeerConnection::updateIceConnectionState(IceConnectionState newState)
 {
     scriptExecutionContext()->postTask([=](ScriptExecutionContext&) {
-        m_iceConnectionState = newState;
+        if (m_signalingState == SignalingState::Closed || m_iceConnectionState == newState)
+            return;
 
+        m_iceConnectionState = newState;
         dispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, false, false));
     });
 }
