@@ -219,11 +219,6 @@ void JITWorklist::compileLater(CodeBlock* codeBlock)
 
 void JITWorklist::compileNow(CodeBlock* codeBlock)
 {
-    // If this ever happens, we'll have a bad time because the baseline JIT does not clean up its
-    // changes to the CodeBlock after a failed compilation.
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=158806
-    RELEASE_ASSERT(!codeBlock->m_didFailJITCompilation);
-    
     DeferGC deferGC(codeBlock->vm()->heap);
     if (codeBlock->jitType() != JITCode::InterpreterThunk)
         return;
@@ -243,6 +238,10 @@ void JITWorklist::compileNow(CodeBlock* codeBlock)
     // Now it might be compiled!
     if (codeBlock->jitType() != JITCode::InterpreterThunk)
         return;
+    
+    // We do this in case we had previously attempted, and then failed, to compile with the
+    // baseline JIT.
+    codeBlock->resetJITData();
     
     // OK, just compile it.
     JIT::compile(codeBlock->vm(), codeBlock, JITCompilationMustSucceed);

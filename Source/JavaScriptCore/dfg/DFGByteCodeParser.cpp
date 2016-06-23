@@ -908,34 +908,37 @@ private:
         if (!isX86() && node->op() == ArithMod)
             return node;
 
-        ResultProfile* resultProfile = m_inlineStackTop->m_profiledBlock->resultProfileForBytecodeOffset(m_currentIndex);
-        if (resultProfile) {
-            switch (node->op()) {
-            case ArithAdd:
-            case ArithSub:
-            case ValueAdd:
-                if (resultProfile->didObserveDouble())
-                    node->mergeFlags(NodeMayHaveDoubleResult);
-                if (resultProfile->didObserveNonNumber())
-                    node->mergeFlags(NodeMayHaveNonNumberResult);
-                break;
+        {
+            ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+            ResultProfile* resultProfile = m_inlineStackTop->m_profiledBlock->resultProfileForBytecodeOffset(locker, m_currentIndex);
+            if (resultProfile) {
+                switch (node->op()) {
+                case ArithAdd:
+                case ArithSub:
+                case ValueAdd:
+                    if (resultProfile->didObserveDouble())
+                        node->mergeFlags(NodeMayHaveDoubleResult);
+                    if (resultProfile->didObserveNonNumber())
+                        node->mergeFlags(NodeMayHaveNonNumberResult);
+                    break;
                 
-            case ArithMul: {
-                if (resultProfile->didObserveInt52Overflow())
-                    node->mergeFlags(NodeMayOverflowInt52);
-                if (resultProfile->didObserveInt32Overflow() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
-                    node->mergeFlags(NodeMayOverflowInt32InBaseline);
-                if (resultProfile->didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
-                    node->mergeFlags(NodeMayNegZeroInBaseline);
-                if (resultProfile->didObserveDouble())
-                    node->mergeFlags(NodeMayHaveDoubleResult);
-                if (resultProfile->didObserveNonNumber())
-                    node->mergeFlags(NodeMayHaveNonNumberResult);
-                break;
-            }
+                case ArithMul: {
+                    if (resultProfile->didObserveInt52Overflow())
+                        node->mergeFlags(NodeMayOverflowInt52);
+                    if (resultProfile->didObserveInt32Overflow() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
+                        node->mergeFlags(NodeMayOverflowInt32InBaseline);
+                    if (resultProfile->didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
+                        node->mergeFlags(NodeMayNegZeroInBaseline);
+                    if (resultProfile->didObserveDouble())
+                        node->mergeFlags(NodeMayHaveDoubleResult);
+                    if (resultProfile->didObserveNonNumber())
+                        node->mergeFlags(NodeMayHaveNonNumberResult);
+                    break;
+                }
                 
-            default:
-                break;
+                default:
+                    break;
+                }
             }
         }
         

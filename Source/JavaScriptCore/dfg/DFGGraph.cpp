@@ -1544,8 +1544,13 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* node)
         if (node->hasHeapPrediction())
             return profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
         
-        if (ResultProfile* result = profiledBlock->resultProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex))
-            return result;
+        {
+            ConcurrentJITLocker locker(profiledBlock->m_lock);
+            if (profiledBlock->hasBaselineJITProfiling()) {
+                if (ResultProfile* result = profiledBlock->resultProfileForBytecodeOffset(locker, node->origin.semantic.bytecodeIndex))
+                    return result;
+            }
+        }
         
         switch (node->op()) {
         case Identity:

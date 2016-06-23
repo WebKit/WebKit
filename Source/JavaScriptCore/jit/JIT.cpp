@@ -681,8 +681,6 @@ CompilationResult JIT::link()
     if (patchBuffer.didFailToAllocate())
         return CompilationFailed;
 
-    m_codeBlock->setCalleeSaveRegisters(RegisterSet::llintBaselineCalleeSaveRegisters()); // Might be able to remove as this is probably already set to this value.
-
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
         SwitchRecord record = m_switches[i];

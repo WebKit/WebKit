@@ -1,3 +1,50 @@
+2016-06-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Failing baseline JIT compilation of a code block and then trying to compile it from OSR from DFG/FTL will corrupt the CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=158806
+
+        Reviewed by Saam Barati.
+        
+        If we try to compile a CodeBlock that we already tried compiling in the past then we need
+        to clean up the data structures that were partly filled in by the failed compile. That
+        causes some races, since the DFG may be trying to parse those data structures while we are
+        clearing them. This patch introduces such a clean-up (CodeBlock::resetJITData()) and fixes
+        the races.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::getStubInfoMap):
+        (JSC::CodeBlock::getCallLinkInfoMap):
+        (JSC::CodeBlock::getByValInfoMap):
+        (JSC::CodeBlock::getCallLinkInfoForBytecodeIndex):
+        (JSC::CodeBlock::resetJITData):
+        (JSC::CodeBlock::visitOSRExitTargets):
+        (JSC::CodeBlock::setSteppingMode):
+        (JSC::CodeBlock::addRareCaseProfile):
+        (JSC::CodeBlock::rareCaseProfileForBytecodeOffset):
+        (JSC::CodeBlock::rareCaseProfileCountForBytecodeOffset):
+        (JSC::CodeBlock::resultProfileForBytecodeOffset):
+        (JSC::CodeBlock::specialFastCaseProfileCountForBytecodeOffset):
+        (JSC::CodeBlock::couldTakeSpecialFastCase):
+        (JSC::CodeBlock::ensureResultProfile):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getFromAllValueProfiles):
+        (JSC::CodeBlock::numberOfRareCaseProfiles):
+        (JSC::CodeBlock::numberOfResultProfiles):
+        (JSC::CodeBlock::numberOfArrayProfiles):
+        (JSC::CodeBlock::arrayProfiles):
+        (JSC::CodeBlock::addRareCaseProfile): Deleted.
+        (JSC::CodeBlock::specialFastCaseProfileCountForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::couldTakeSpecialFastCase): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::compileNow):
+
 2016-06-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Memory Timeline sometimes shows impossible value for bmalloc size (underflowed)
