@@ -1,3 +1,9 @@
+2016-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.2 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2016-06-15  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         Enabling Shadow DOM for all platforms

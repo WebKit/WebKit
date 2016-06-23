@@ -1,4 +1,15 @@
 =================
+WebKitGTK+ 2.13.2
+=================
+
+What's new in WebKitGTK+ 2.13.2?
+
+  - Properly redraw the web view when reparented in force compositing mode.
+  - Flip the volume control layout in media controls on RTL.
+  - Add support for video orientation to the GStreamer media backend.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.13.1
 =================
 
