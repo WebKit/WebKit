@@ -1,3 +1,9 @@
+2016-06-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Test expectations gardening for rdar://problem/26960385
+
+        * platform/mac/TestExpectations:
+
 2016-06-22  Benjamin Poulain  <bpoulain@apple.com>
 
         AX: Add support for CSS4 :focus-within pseudo
