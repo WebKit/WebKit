@@ -234,6 +234,7 @@ void InspectorTimelineAgent::internalStop()
 
     m_enabled = false;
     m_startedComposite = false;
+    m_autoCapturePhase = AutoCapturePhase::None;
 
     m_frontendDispatcher->recordingStopped(timestamp());
 }
@@ -439,6 +440,8 @@ void InspectorTimelineAgent::mainFrameStartedLoading()
     if (m_instruments.isEmpty())
         return;
 
+    m_autoCapturePhase = AutoCapturePhase::BeforeLoad;
+
     // Pre-emptively disable breakpoints. The frontend must re-enable them.
     if (InspectorDebuggerAgent* debuggerAgent = m_instrumentingAgents.inspectorDebuggerAgent()) {
         ErrorString unused;
@@ -449,6 +452,15 @@ void InspectorTimelineAgent::mainFrameStartedLoading()
     m_frontendDispatcher->autoCaptureStarted();
 
     toggleInstruments(InstrumentState::Start);
+}
+
+void InspectorTimelineAgent::mainFrameNavigated()
+{
+    if (m_autoCapturePhase == AutoCapturePhase::BeforeLoad) {
+        m_autoCapturePhase = AutoCapturePhase::FirstNavigation;
+        toggleInstruments(InstrumentState::Start);
+        m_autoCapturePhase = AutoCapturePhase::AfterFirstNavigation;
+    }
 }
 
 void InspectorTimelineAgent::startProgrammaticCapture()
@@ -531,9 +543,10 @@ void InspectorTimelineAgent::toggleHeapInstrument(InstrumentState state)
 {
     if (m_heapAgent) {
         ErrorString unused;
-        if (state == InstrumentState::Start)
-            m_heapAgent->startTracking(unused);
-        else
+        if (state == InstrumentState::Start) {
+            if (m_autoCapturePhase == AutoCapturePhase::None || m_autoCapturePhase == AutoCapturePhase::FirstNavigation)
+                m_heapAgent->startTracking(unused);
+        } else
             m_heapAgent->stopTracking(unused);
     }
 }

@@ -49,21 +49,23 @@ WebInspector.HeapAllocationsInstrument = class HeapAllocationsInstrument extends
         return WebInspector.TimelineRecord.Type.HeapAllocations;
     }
 
-    startInstrumentation()
+    startInstrumentation(initiatedByBackend)
     {
         // FIXME: Include a "track allocations" option for this instrument.
         // FIXME: Include a periodic snapshot interval option for this instrument.
 
-        HeapAgent.startTracking();
+        if (!initiatedByBackend)
+            HeapAgent.startTracking();
 
         // Periodic snapshots.
         const snapshotInterval = 10000;
         this._snapshotIntervalIdentifier = setInterval(this._takeHeapSnapshot.bind(this), snapshotInterval);
     }
 
-    stopInstrumentation()
+    stopInstrumentation(initiatedByBackend)
     {
-        HeapAgent.stopTracking();
+        if (!initiatedByBackend)
+            HeapAgent.stopTracking();
 
         window.clearInterval(this._snapshotIntervalIdentifier);
         this._snapshotIntervalIdentifier = undefined;

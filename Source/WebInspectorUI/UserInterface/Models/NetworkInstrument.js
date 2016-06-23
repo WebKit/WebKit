@@ -32,12 +32,12 @@ WebInspector.NetworkInstrument = class NetworkInstrument extends WebInspector.In
         return WebInspector.TimelineRecord.Type.Network;
     }
 
-    startInstrumentation()
+    startInstrumentation(initiatedByBackend)
     {
         // Nothing to do, network instrumentation is always happening.
     }
 
-    stopInstrumentation()
+    stopInstrumentation(initiatedByBackend)
     {
         // Nothing to do, network instrumentation is always happening.
     }

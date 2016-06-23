@@ -42,6 +42,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         this._persistentNetworkTimeline = new WebInspector.NetworkTimeline;
 
         this._isCapturing = false;
+        this._initiatedByBackendStart = false;
+        this._initiatedByBackendStop = false;
         this._waitingForCapturingStartedEvent = false;
         this._isCapturingPageReload = false;
         this._autoCaptureOnPageLoad = false;
@@ -180,14 +182,14 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.CapturingWillStart);
 
-        this._activeRecording.start();
+        this._activeRecording.start(this._initiatedByBackendStart);
     }
 
     stopCapturing()
     {
         console.assert(this._isCapturing, "TimelineManager is not capturing.");
 
-        this._activeRecording.stop();
+        this._activeRecording.stop(this._initiatedByBackendStop);
 
         // NOTE: Always stop immediately instead of waiting for a Timeline.recordingStopped event.
         // This way the UI feels as responsive to a stop as possible.
@@ -263,6 +265,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         this._isCapturingPageReload = false;
         this._shouldSetAutoCapturingMainResource = false;
         this._mainResourceForAutoCapturing = null;
+        this._initiatedByBackendStart = false;
+        this._initiatedByBackendStop = false;
 
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.CapturingStopped, {endTime});
     }
@@ -273,6 +277,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
         if (this._isCapturing)
             this.stopCapturing();
+
+        this._initiatedByBackendStart = true;
 
         // We may already have an fresh TimelineRecording created if autoCaptureStarted is received
         // between sending the Timeline.start command and receiving Timeline.capturingStarted event.
@@ -289,6 +295,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
     {
         // Called from WebInspector.TimelineObserver.
 
+        this._initiatedByBackendStart = true;
+
         this._activeRecording.addScriptInstrumentForProgrammaticCapture();
 
         const createNewRecording = false;
@@ -298,6 +306,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
     programmaticCaptureStopped()
     {
         // Called from WebInspector.TimelineObserver.
+
+        this._initiatedByBackendStop = true;
 
         // FIXME: This is purely to avoid a noisy assert. Previously
         // it was impossible to stop without stopping from the UI.

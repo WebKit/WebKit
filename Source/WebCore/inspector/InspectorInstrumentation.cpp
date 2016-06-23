@@ -754,6 +754,11 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
     if (InspectorPageAgent* pageAgent = instrumentingAgents.inspectorPageAgent())
         pageAgent->frameNavigated(loader);
 
+    if (loader->frame()->isMainFrame()) {
+        if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
+            timelineAgent->mainFrameNavigated();
+    }
+
 #if ENABLE(WEB_REPLAY)
     if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
         replayAgent->frameNavigated(loader);

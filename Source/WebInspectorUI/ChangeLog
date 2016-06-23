@@ -1,5 +1,58 @@
 2016-06-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: first heap snapshot taken when a page is reloaded happens before the reload navigation
+        https://bugs.webkit.org/show_bug.cgi?id=158995
+        <rdar://problem/26923778>
+
+        Reviewed by Brian Burg.
+
+        Let instruments decide to do work or not based on programmatic
+        (backend initiated) starts and stop.
+
+        Programmatic start can happen due to Auto Capture or console.profile.
+        Programmatic stop can happen due to console.profileEnd.
+
+        For example, this allows the frontend to avoid sending agents start/stop
+        messages when the backend would have already started/stopped the agents.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.prototype.startCapturing):
+        (WebInspector.TimelineManager.prototype.capturingStopped):
+        (WebInspector.TimelineManager.prototype.autoCaptureStarted):
+        (WebInspector.TimelineManager.prototype.programmaticCaptureStarted):
+        Call Recording.start/stop with a programmatic flag so the frontend
+        instruments can perform a more informed start/stop.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.start):
+        (WebInspector.TimelineRecording.prototype.stop):
+        Let the instruments decide to do work based on the start/stop
+        being initiated by the backend or not.
+
+        * UserInterface/Models/HeapAllocationsInstrument.js:
+        (WebInspector.HeapAllocationsInstrument.prototype.startInstrumentation):
+        (WebInspector.HeapAllocationsInstrument.prototype.stopInstrumentation):
+        * UserInterface/Models/Instrument.js:
+        (WebInspector.Instrument.startLegacyTimelineAgent):
+        (WebInspector.Instrument.prototype.startInstrumentation):
+        (WebInspector.Instrument.prototype.stopInstrumentation):
+        (WebInspector.Instrument):
+        * UserInterface/Models/MemoryInstrument.js:
+        (WebInspector.MemoryInstrument.prototype.startInstrumentation):
+        (WebInspector.MemoryInstrument.prototype.stopInstrumentation):
+        (WebInspector.MemoryInstrument):
+        * UserInterface/Models/NetworkInstrument.js:
+        * UserInterface/Models/ScriptInstrument.js:
+        (WebInspector.ScriptInstrument.prototype.startInstrumentation):
+        (WebInspector.ScriptInstrument.prototype.stopInstrumentation):
+        (WebInspector.ScriptInstrument):
+        Avoid sending start/stop tracking messages when programmatic.
+        This still allows the instruments to do their own frontend tracking,
+        such as the Heap agent triggering periodic snapshots.
+
+2016-06-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Snapshots should be cleared at some point
         https://bugs.webkit.org/show_bug.cgi?id=157907
         <rdar://problem/26373610>

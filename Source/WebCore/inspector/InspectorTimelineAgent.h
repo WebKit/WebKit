@@ -141,6 +141,7 @@ public:
     void time(Frame&, const String&);
     void timeEnd(Frame&, const String&);
     void mainFrameStartedLoading();
+    void mainFrameNavigated();
 
 private:
     // ScriptDebugListener
@@ -222,6 +223,8 @@ private:
     bool m_programmaticCaptureRestoreBreakpointActiveValue { false };
 
     bool m_autoCaptureEnabled { false };
+    enum class AutoCapturePhase { None, BeforeLoad, FirstNavigation, AfterFirstNavigation };
+    AutoCapturePhase m_autoCapturePhase { AutoCapturePhase::None };
     Vector<Inspector::Protocol::Timeline::Instrument> m_instruments;
 
 #if PLATFORM(COCOA)

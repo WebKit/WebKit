@@ -116,7 +116,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         return this._topFunctionsBottomUpCallingContextTree;
     }
 
-    start()
+    start(initiatedByBackend)
     {
         console.assert(!this._capturing, "Attempted to start an already started session.");
         console.assert(!this._readonly, "Attempted to start a readonly session.");
@@ -124,20 +124,18 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         this._capturing = true;
 
         for (let instrument of this._instruments)
-            instrument.startInstrumentation();
+            instrument.startInstrumentation(initiatedByBackend);
     }
 
-    stop(programmatic)
+    stop(initiatedByBackend)
     {
         console.assert(this._capturing, "Attempted to stop an already stopped session.");
         console.assert(!this._readonly, "Attempted to stop a readonly session.");
 
         this._capturing = false;
 
-        if (!programmatic) {
-            for (let instrument of this._instruments)
-                instrument.stopInstrumentation();
-        }
+        for (let instrument of this._instruments)
+            instrument.stopInstrumentation(initiatedByBackend);
     }
 
     saveIdentityToCookie()

@@ -47,13 +47,15 @@ WebInspector.MemoryInstrument = class MemoryInstrument extends WebInspector.Inst
         return WebInspector.TimelineRecord.Type.Memory;
     }
 
-    startInstrumentation()
+    startInstrumentation(initiatedByBackend)
     {
-        MemoryAgent.startTracking();
+        if (!initiatedByBackend)
+            MemoryAgent.startTracking();
     }
 
-    stopInstrumentation()
+    stopInstrumentation(initiatedByBackend)
     {
-        MemoryAgent.stopTracking();
+        if (!initiatedByBackend)
+            MemoryAgent.stopTracking();
     }
 };
