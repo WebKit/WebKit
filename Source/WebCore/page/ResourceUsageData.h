@@ -52,8 +52,11 @@ struct MemoryCategoryInfo {
     {
     }
 
+    size_t totalSize() const { return dirtySize + externalSize; }
+
     size_t dirtySize { 0 };
     size_t reclaimableSize { 0 };
+    size_t externalSize { 0 };
     bool isSubcategory { false };
     unsigned type { MemoryCategory::NumberOfCategories };
 };
@@ -64,6 +67,7 @@ struct ResourceUsageData {
 
     float cpu { 0 };
     size_t totalDirtySize { 0 };
+    size_t totalExternalSize { 0 };
     std::array<MemoryCategoryInfo, MemoryCategory::NumberOfCategories> categories;
     double timeOfNextEdenCollection { 0 };
     double timeOfNextFullCollection { 0 };

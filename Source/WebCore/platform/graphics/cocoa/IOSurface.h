@@ -30,7 +30,6 @@
 
 #include "GraphicsContext.h"
 #include "IntSize.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

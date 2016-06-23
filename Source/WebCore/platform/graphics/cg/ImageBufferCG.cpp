@@ -160,6 +160,22 @@ FloatSize ImageBuffer::sizeForDestinationSize(FloatSize destinationSize) const
     return scaleSizeToUserSpace(destinationSize, m_data.backingStoreSize, internalSize());
 }
 
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+size_t ImageBuffer::memoryCost() const
+{
+    if (m_data.surface)
+        return m_data.surface->totalBytes();
+    return 4 * internalSize().width() * internalSize().height();
+}
+
+size_t ImageBuffer::externalMemoryCost() const
+{
+    if (m_data.surface)
+        return m_data.surface->totalBytes();
+    return 0;
+}
+#endif
+
 GraphicsContext& ImageBuffer::context() const
 {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)

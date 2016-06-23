@@ -114,6 +114,7 @@ RaisesExceptionWithMessage
 Reflect=*
 Replaceable
 ReportExtraMemoryCost
+ReportExternalMemoryCost
 RequiresExistingAtomicString
 SetterRaisesException
 SetterRaisesExceptionWithMessage

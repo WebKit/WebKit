@@ -109,6 +109,13 @@ inline void SlotVisitor::reportExtraMemoryVisited(size_t size)
     heap()->reportExtraMemoryVisited(m_currentObjectCellStateBeforeVisiting, size);
 }
 
+#if ENABLE(RESOURCE_USAGE)
+inline void SlotVisitor::reportExternalMemoryVisited(size_t size)
+{
+    heap()->reportExternalMemoryVisited(m_currentObjectCellStateBeforeVisiting, size);
+}
+#endif
+
 inline Heap* SlotVisitor::heap() const
 {
     return &m_heap;

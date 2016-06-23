@@ -107,32 +107,32 @@ void InspectorMemoryAgent::collectSample(const ResourceUsageData& data)
 {
     auto javascriptCategory = Protocol::Memory::CategoryData::create()
         .setType(Protocol::Memory::CategoryData::Type::Javascript)
-        .setSize(data.categories[MemoryCategory::GCHeap].dirtySize + data.categories[MemoryCategory::GCOwned].dirtySize)
+        .setSize(data.categories[MemoryCategory::GCHeap].totalSize() + data.categories[MemoryCategory::GCOwned].totalSize())
         .release();
 
     auto jitCategory = Protocol::Memory::CategoryData::create()
         .setType(Protocol::Memory::CategoryData::Type::JIT)
-        .setSize(data.categories[MemoryCategory::JSJIT].dirtySize)
+        .setSize(data.categories[MemoryCategory::JSJIT].totalSize())
         .release();
 
     auto imagesCategory = Protocol::Memory::CategoryData::create()
         .setType(Protocol::Memory::CategoryData::Type::Images)
-        .setSize(data.categories[MemoryCategory::Images].dirtySize)
+        .setSize(data.categories[MemoryCategory::Images].totalSize())
         .release();
 
     auto layersCategory = Protocol::Memory::CategoryData::create()
         .setType(Protocol::Memory::CategoryData::Type::Layers)
-        .setSize(data.categories[MemoryCategory::Layers].dirtySize)
+        .setSize(data.categories[MemoryCategory::Layers].totalSize())
         .release();
 
     auto pageCategory = Protocol::Memory::CategoryData::create()
         .setType(Protocol::Memory::CategoryData::Type::Page)
-        .setSize(data.categories[MemoryCategory::bmalloc].dirtySize + data.categories[MemoryCategory::LibcMalloc].dirtySize)
+        .setSize(data.categories[MemoryCategory::bmalloc].totalSize() + data.categories[MemoryCategory::LibcMalloc].totalSize())
         .release();
 
     auto otherCategory = Protocol::Memory::CategoryData::create()
         .setType(Protocol::Memory::CategoryData::Type::Other)
-        .setSize(data.categories[MemoryCategory::Other].dirtySize)
+        .setSize(data.categories[MemoryCategory::Other].totalSize())
         .release();
 
     auto categories = Protocol::Array<Protocol::Memory::CategoryData>::create();

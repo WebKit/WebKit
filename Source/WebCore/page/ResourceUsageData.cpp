@@ -48,6 +48,7 @@ ResourceUsageData::ResourceUsageData()
 ResourceUsageData::ResourceUsageData(const ResourceUsageData& other)
     : cpu(other.cpu)
     , totalDirtySize(other.totalDirtySize)
+    , totalExternalSize(other.totalExternalSize)
     , timeOfNextEdenCollection(other.timeOfNextEdenCollection)
     , timeOfNextFullCollection(other.timeOfNextFullCollection)
 {

@@ -127,6 +127,9 @@ public:
     NativeImagePtr nativeImage() const;
 #endif
 
+    size_t memoryCost() const;
+    size_t externalMemoryCost() const;
+
     // FIXME: current implementations of this method have the restriction that they only work
     // with textures that are RGB or RGBA format, and UNSIGNED_BYTE type.
     bool copyToPlatformTexture(GraphicsContext3D&, GC3Denum, Platform3DObject, GC3Denum, bool, bool);

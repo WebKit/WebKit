@@ -26,7 +26,8 @@
 
 [
     JSGenerateToNativeObject,
-    ReportExtraMemoryCost
+    ReportExtraMemoryCost,
+    ReportExternalMemoryCost,
 ] interface HTMLCanvasElement : HTMLElement {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     attribute long width;

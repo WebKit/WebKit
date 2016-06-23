@@ -197,4 +197,16 @@ bool ImageBuffer::isCompatibleWithContext(const GraphicsContext& context) const
     return areEssentiallyEqual(context.scaleFactor(), this->context().scaleFactor());
 }
 
+#if !USE(IOSURFACE_CANVAS_BACKING_STORE)
+size_t ImageBuffer::memoryCost() const
+{
+    return 4 * internalSize().width() * internalSize().height();
+}
+
+size_t ImageBuffer::externalMemoryCost() const
+{
+    return 0;
+}
+#endif
+
 }

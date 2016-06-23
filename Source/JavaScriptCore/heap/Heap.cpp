@@ -1240,6 +1240,9 @@ void Heap::willStartCollection(HeapOperation collectionType)
         m_sizeBeforeLastFullCollect = m_sizeAfterLastCollect + m_bytesAllocatedThisCycle;
         m_extraMemorySize = 0;
         m_deprecatedExtraMemorySize = 0;
+#if ENABLE(RESOURCE_USAGE)
+        m_externalMemorySize = 0;
+#endif
 
         if (m_fullActivityCallback)
             m_fullActivityCallback->willCollect();
@@ -1451,6 +1454,10 @@ void Heap::didFinishCollection(double gcStartTime)
         m_lastFullGCLength = gcEndTime - gcStartTime;
     else
         m_lastEdenGCLength = gcEndTime - gcStartTime;
+
+#if ENABLE(RESOURCE_USAGE)
+    ASSERT(externalMemorySize() <= extraMemorySize());
+#endif
 
     if (Options::recordGCPauseTimes())
         HeapStatistics::recordGCPauseTime(gcStartTime, gcEndTime);

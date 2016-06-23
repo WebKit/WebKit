@@ -1,5 +1,28 @@
 2016-06-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Memory Timeline sometimes shows impossible value for bmalloc size (underflowed)
+        https://bugs.webkit.org/show_bug.cgi?id=158110
+        <rdar://problem/26498584>
+
+        Reviewed by Andreas Kling.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::didFinishCollection):
+        * heap/Heap.h:
+        (JSC::Heap::externalMemorySize):
+        * heap/HeapInlines.h:
+        (JSC::Heap::reportExternalMemoryVisited):
+        Keep count of external memory we visit.
+
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::reportExternalMemoryVisited):
+        Report external memory visited like we do extra memory, since
+        it will be some subset of extra memory that is external.
+
+2016-06-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Snapshots should be cleared at some point
         https://bugs.webkit.org/show_bug.cgi?id=157907
         <rdar://problem/26373610>

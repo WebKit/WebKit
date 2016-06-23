@@ -141,6 +141,23 @@ inline void Heap::reportExtraMemoryVisited(CellState dataBeforeVisiting, size_t 
     }
 }
 
+#if ENABLE(RESOURCE_USAGE)
+inline void Heap::reportExternalMemoryVisited(CellState dataBeforeVisiting, size_t size)
+{
+    // We don't want to double-count the external memory that was reported in previous collections.
+    if (operationInProgress() == EdenCollection && dataBeforeVisiting == CellState::OldGrey)
+        return;
+
+    size_t* counter = &m_externalMemorySize;
+
+    for (;;) {
+        size_t oldSize = *counter;
+        if (WTF::weakCompareAndSwap(counter, oldSize, oldSize + size))
+            return;
+    }
+}
+#endif
+
 inline void Heap::deprecatedReportExtraMemory(size_t size)
 {
     if (size > minExtraMemory) 

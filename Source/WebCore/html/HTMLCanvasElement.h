@@ -136,6 +136,7 @@ public:
     WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const;
 
     size_t memoryCost() const;
+    size_t externalMemoryCost() const;
 
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);

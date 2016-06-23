@@ -589,6 +589,13 @@ size_t HTMLCanvasElement::memoryCost() const
     return 4 * m_imageBuffer->internalSize().width() * m_imageBuffer->internalSize().height();
 }
 
+size_t HTMLCanvasElement::externalMemoryCost() const
+{
+    if (!m_imageBuffer)
+        return 0;
+    return 4 * m_imageBuffer->internalSize().width() * m_imageBuffer->internalSize().height();
+}
+
 void HTMLCanvasElement::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
 {
     if (usesDisplayListDrawing == m_usesDisplayListDrawing)
