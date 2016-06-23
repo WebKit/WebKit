@@ -37,44 +37,48 @@
 
 #if USE(SOUP)
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
 
-    class NetworkingContext;
-    class SocketStreamHandleClient;
+class NetworkingContext;
+class SocketStreamError;
+class SocketStreamHandleClient;
 
-    class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
-    public:
-        static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client, NetworkingContext&, bool) { return adoptRef(*new SocketStreamHandle(url, client)); }
-        static Ref<SocketStreamHandle> create(GSocketConnection* socketConnection, SocketStreamHandleClient* client) { return adoptRef(*new SocketStreamHandle(socketConnection, client)); }
+class SocketStreamHandle final : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
+public:
+    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client, NetworkingContext&, bool) { return adoptRef(*new SocketStreamHandle(url, client)); }
+    static Ref<SocketStreamHandle> create(GSocketConnection* socketConnection, SocketStreamHandleClient* client) { return adoptRef(*new SocketStreamHandle(socketConnection, client)); }
 
-        virtual ~SocketStreamHandle();
-        void connected(GSocketConnection*, GError*);
-        void readBytes(signed long, GError*);
-        void writeReady();
-        void* id() { return m_id; }
+    virtual ~SocketStreamHandle();
 
-    protected:
-        virtual int platformSend(const char* data, int length);
-        virtual void platformClose();
+private:
+    SocketStreamHandle(const URL&, SocketStreamHandleClient*);
+    SocketStreamHandle(GSocketConnection*, SocketStreamHandleClient*);
 
-    private:
-        GRefPtr<GSocketConnection> m_socketConnection;
-        GRefPtr<GInputStream> m_inputStream;
-        GRefPtr<GPollableOutputStream> m_outputStream;
-        GRefPtr<GSource> m_writeReadySource;
-        std::unique_ptr<char[]> m_readBuffer;
-        void* m_id;
+    int platformSend(const char* data, int length) override;
+    void platformClose() override;
 
-        SocketStreamHandle(const URL&, SocketStreamHandleClient*);
-        SocketStreamHandle(GSocketConnection*, SocketStreamHandleClient*);
+    void beginWaitingForSocketWritability();
+    void stopWaitingForSocketWritability();
 
-        void beginWaitingForSocketWritability();
-        void stopWaitingForSocketWritability();
-    };
+    static void connectedCallback(GSocketClient*, GAsyncResult*, SocketStreamHandle*);
+    static void readReadyCallback(GInputStream*, GAsyncResult*, SocketStreamHandle*);
+    static gboolean writeReadyCallback(GPollableOutputStream*, SocketStreamHandle*);
+
+    void connected(GRefPtr<GSocketConnection>&&);
+    void readBytes(gssize);
+    void didFail(SocketStreamError&&);
+    void writeReady();
+
+    GRefPtr<GSocketConnection> m_socketConnection;
+    GRefPtr<GInputStream> m_inputStream;
+    GRefPtr<GPollableOutputStream> m_outputStream;
+    GRefPtr<GSource> m_writeReadySource;
+    GRefPtr<GCancellable> m_cancellable;
+    std::unique_ptr<char[]> m_readBuffer;
+};
 
 }  // namespace WebCore
 
