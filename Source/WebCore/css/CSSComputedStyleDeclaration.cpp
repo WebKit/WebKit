@@ -3948,6 +3948,8 @@ unsigned CSSComputedStyleDeclaration::length() const
     if (!node)
         return 0;
 
+    updateStyleIfNeededForNode(*node);
+
     auto* style = node->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return 0;
