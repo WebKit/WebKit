@@ -31,6 +31,7 @@ import unittest
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.config.committers import CommitterList, Committer, Reviewer
 
+
 class CommitInfoTest(unittest.TestCase):
 
     def test_commit_info_creation(self):

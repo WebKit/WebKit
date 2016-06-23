@@ -213,6 +213,7 @@ class MainTest(unittest.TestCase):
 
         class TestDriverWithStopCount(TestDriver):
             stop_count = 0
+
             def stop(self):
                 TestDriverWithStopCount.stop_count += 1
 

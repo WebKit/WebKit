@@ -45,6 +45,7 @@ from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
 
 _log = logging.getLogger(__name__)
 
+
 class GtkPort(Port):
     port_name = "gtk"
 

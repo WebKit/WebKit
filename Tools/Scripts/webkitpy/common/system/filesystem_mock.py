@@ -137,7 +137,6 @@ class MockFileSystem(object):
                 dirs.append(dirpath)
         return sorted(dirs)
 
-
     def files_under(self, path, dirs_to_skip=[], file_filter=None):
         def filter_all(fs, dirpath, basename):
             return True

@@ -2,6 +2,7 @@
 
 from abc import ABCMeta, abstractmethod
 
+
 class BrowserDriver(object):
     platform = None
     browser_name = None

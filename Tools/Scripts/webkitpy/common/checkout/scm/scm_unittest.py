@@ -47,7 +47,7 @@ import unittest
 from datetime import date
 from webkitpy.common.checkout.checkout import Checkout
 from webkitpy.common.config.committers import Committer  # FIXME: This should not be needed
-from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
+from webkitpy.common.net.bugzilla import Attachment  # FIXME: This should not be needed
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -79,6 +79,7 @@ def delete_cached_mock_repo_at_exit():
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
 
+
 def run_command(*args, **kwargs):
     # FIXME: This should not be a global static.
     # New code should use Executive.run_command directly instead
@@ -90,7 +91,7 @@ def run_command(*args, **kwargs):
 def run_silent(args, cwd=None):
     # Note: Not thread safe: http://bugs.python.org/issue2320
     process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
-    process.communicate() # ignore output
+    process.communicate()  # ignore output
     exit_code = process.wait()
     if exit_code:
         raise ScriptError('Failed to run "%s"  exit_code: %d  cwd: %s' % (args, exit_code, cwd))
@@ -234,7 +235,7 @@ class SVNTestRepository(object):
 # For testing the SCM baseclass directly.
 class SCMClassTests(unittest.TestCase):
     def setUp(self):
-        self.dev_null = open(os.devnull, "w") # Used to make our Popen calls quiet.
+        self.dev_null = open(os.devnull, "w")  # Used to make our Popen calls quiet.
 
     def tearDown(self):
         self.dev_null.close()
@@ -253,12 +254,12 @@ class SCMClassTests(unittest.TestCase):
         self.assertRaises(ScriptError, run_command, ['grep', 'bar'], input=input_process.stdout)
 
         # Test when the run_command process fails.
-        input_process = subprocess.Popen(['echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null) # grep shows usage and calls exit(2) when called w/o arguments.
+        input_process = subprocess.Popen(['echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null)  # grep shows usage and calls exit(2) when called w/o arguments.
         self.assertRaises(ScriptError, run_command, command_returns_non_zero, input=input_process.stdout)
 
     def test_error_handlers(self):
-        git_failure_message="Merge conflict during commit: Your file or directory 'WebCore/ChangeLog' is probably out-of-date: resource out of date; try updating at /usr/local/libexec/git-core//git-svn line 469"
-        svn_failure_message="""svn: Commit failed (details follow):
+        git_failure_message = "Merge conflict during commit: Your file or directory 'WebCore/ChangeLog' is probably out-of-date: resource out of date; try updating at /usr/local/libexec/git-core//git-svn line 469"
+        svn_failure_message = """svn: Commit failed (details follow):
 svn: File or directory 'ChangeLog' is out of date; try updating
 svn: resource out of date; try updating
 """
@@ -696,7 +697,7 @@ class SVNTest(SCMTest):
         scripts_path = os.path.join(self.svn_checkout_path, 'Tools', 'Scripts')
         os.makedirs(scripts_path)
         create_patch_path = os.path.join(scripts_path, 'svn-create-patch')
-        write_into_file_at_path(create_patch_path, '#!/bin/sh\necho $PWD') # We could pass -n to prevent the \n, but not all echo accept -n.
+        write_into_file_at_path(create_patch_path, '#!/bin/sh\necho $PWD')  # We could pass -n to prevent the \n, but not all echo accept -n.
         os.chmod(create_patch_path, stat.S_IXUSR | stat.S_IRUSR)
 
         # Change into our test directory and run the create_patch command.
@@ -705,7 +706,7 @@ class SVNTest(SCMTest):
         self.assertEqual(scm.checkout_root, self.svn_checkout_path) # Sanity check that detection worked right.
         patch_contents = scm.create_patch()
         # Our fake 'svn-create-patch' returns $PWD instead of a patch, check that it was executed from the root of the repo.
-        self.assertEqual("%s\n" % os.path.realpath(scm.checkout_root), patch_contents) # Add a \n because echo adds a \n.
+        self.assertEqual("%s\n" % os.path.realpath(scm.checkout_root), patch_contents)  # Add a \n because echo adds a \n.
 
     def test_detection(self):
         self.assertEqual(self.scm.display_name(), "svn")
@@ -957,6 +958,7 @@ END
     def test_exists(self):
         self._shared_test_exists(self.scm, self.scm.commit_with_message)
 
+
 class GitTest(SCMTest):
 
     def setUp(self):
@@ -1173,7 +1175,7 @@ class GitSVNTest(SCMTest):
         run_command(['git', 'commit', '-a', '-m', 'commit to be thrown away by rebase abort'])
 
         # --quiet doesn't make git svn silent, so use run_silent to redirect output
-        self.assertRaises(ScriptError, run_silent, ['git', 'svn', '--quiet', 'rebase']) # Will fail due to a conflict leaving us mid-rebase.
+        self.assertRaises(ScriptError, run_silent, ['git', 'svn', '--quiet', 'rebase'])  # Will fail due to a conflict leaving us mid-rebase.
 
         self.assertTrue(self.scm.rebase_in_progress())
 

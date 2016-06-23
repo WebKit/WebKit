@@ -104,7 +104,7 @@ password: "SECRETSAUCE"
         # FIXME: This test won't work if the user has a credential for foo.example.com!
         credentials = Credentials("foo.example.com")
         if not credentials._is_mac_os_x():
-            return # This test does not run on a non-Mac.
+            return  # This test does not run on a non-Mac.
 
         # Note, we ignore the captured output because it is already covered
         # by the test case CredentialsTest._assert_security_call (below).
@@ -157,7 +157,6 @@ password: "SECRETSAUCE"
             # FIXME: Using read_credentials here seems too broad as higher-priority
             # credential source could be affected by the user's environment.
             self.assertEqual(credentials.read_credentials(), ("test@webkit.org", "SECRETSAUCE"))
-
 
     def test_keyring_without_git_repo(self):
         # FIXME: This should share more code with test_read_credentials_without_git_repo

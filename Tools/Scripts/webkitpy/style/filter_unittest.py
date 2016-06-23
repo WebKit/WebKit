@@ -49,6 +49,7 @@ from filter import FilterConfiguration
 #
 #   (from http://docs.python.org/reference/datamodel.html#object.__ne__ )
 
+
 class ValidateFilterRulesTest(unittest.TestCase):
 
     """Tests validate_filter_rules() function."""
@@ -253,4 +254,3 @@ class FilterConfigurationTest(unittest.TestCase):
 
         self.assertFalse(config.should_check("a", "path"))
         self.assertTrue(config.should_check("b", "path"))
-

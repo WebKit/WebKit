@@ -33,6 +33,7 @@ This checker is only used to check WebInspector JavaScript files.
 from common import TabChecker
 import re
 
+
 class JSChecker(object):
     """Processes JavaScript lines for checking style."""
 

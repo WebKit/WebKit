@@ -63,6 +63,7 @@ class ScriptErrorTest(unittest.TestCase):
         error = ScriptError('', ('my', 'command'), -1, 'My output.', '/Users/username/blah')
         self.assertEqual(error.message_with_output(), 'Failed to run "(\'my\', \'command\')" exit_code: -1 cwd: /Users/username/blah\n\nMy output.')
 
+
 def never_ending_command():
     """Arguments for a command that will never end (useful for testing process
     killing). It should be a process that is unlikely to already be running

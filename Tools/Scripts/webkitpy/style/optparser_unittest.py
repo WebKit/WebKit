@@ -86,7 +86,7 @@ class ArgumentParserTest(LoggingTestCase):
         """Return an ArgumentParser instance for testing."""
         default_options = self._create_defaults()
 
-        all_categories = ["build" ,"whitespace"]
+        all_categories = ["build", "whitespace"]
 
         mock_stderr = self._MockStdErr()
 
@@ -123,19 +123,19 @@ class ArgumentParserTest(LoggingTestCase):
         self.assertRaises(SystemExit, parse, ['--min-confidence=6'])
         self.assertLog(['ERROR: option --min-confidence: invalid integer: 6: '
                         'value must be between 1 and 5\n'])
-        parse(['--min-confidence=1']) # works
-        parse(['--min-confidence=5']) # works
+        parse(['--min-confidence=1'])  # works
+        parse(['--min-confidence=5'])  # works
 
         self.assertRaises(SystemExit, parse, ['--output=bad'])
         self.assertLog(['ERROR: option --output-format: invalid choice: '
                         "'bad' (choose from 'emacs', 'vs7')\n"])
-        parse(['--output=vs7']) # works
+        parse(['--output=vs7'])  # works
 
         # Pass a filter rule not beginning with + or -.
         self.assertRaises(SystemExit, parse, ['--filter=build'])
         self.assertLog(['ERROR: Invalid filter rule "build": '
                         'every rule must start with + or -.\n'])
-        parse(['--filter=+build']) # works
+        parse(['--filter=+build'])  # works
 
     def test_parse_default_arguments(self):
         parse = self._parse
@@ -208,12 +208,12 @@ class CommandOptionValuesTest(unittest.TestCase):
 
         # Check argument validation.
         self.assertRaises(ValueError, ProcessorOptions, output_format="bad")
-        ProcessorOptions(output_format="emacs") # No ValueError: works
-        ProcessorOptions(output_format="vs7") # works
+        ProcessorOptions(output_format="emacs")  # No ValueError: works
+        ProcessorOptions(output_format="vs7")  # works
         self.assertRaises(ValueError, ProcessorOptions, min_confidence=0)
         self.assertRaises(ValueError, ProcessorOptions, min_confidence=6)
-        ProcessorOptions(min_confidence=1) # works
-        ProcessorOptions(min_confidence=5) # works
+        ProcessorOptions(min_confidence=1)  # works
+        ProcessorOptions(min_confidence=5)  # works
 
         # Check attributes.
         options = ProcessorOptions(filter_rules=["+"],
@@ -260,4 +260,3 @@ class CommandOptionValuesTest(unittest.TestCase):
         # Thus, just check the distinguishing case to verify that the
         # code defines __ne__.
         self.assertFalse(ProcessorOptions().__ne__(ProcessorOptions()))
-

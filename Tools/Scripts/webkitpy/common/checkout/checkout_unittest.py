@@ -330,6 +330,7 @@ Patch by Daniel Bates <dabates@apple.com> on 2014-06-23
         commit_message.message_lines = commit_message.message_lines[1:]
         self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
 
+
 class CheckoutTest(unittest.TestCase):
     def _make_checkout(self):
         return Checkout(scm=MockSCM(), filesystem=MockFileSystem(), executive=MockExecutive())

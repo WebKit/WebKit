@@ -107,6 +107,7 @@ class RegularTest(unittest.TestCase):
         self.logger.info('foo %s %d', 'bar', 2)
         self.assertEqual(self.buflist, ['foo bar 2\n'])
 
+
 class TtyTest(RegularTest):
     verbose = False
     isatty = True

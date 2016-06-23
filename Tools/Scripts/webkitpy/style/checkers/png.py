@@ -32,6 +32,7 @@ from webkitpy.common import read_checksum_from_png
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.checkout.scm.detection import SCMDetector
 
+
 class PNGChecker(object):
     """Check svn:mime-type for checking style"""
 
@@ -72,4 +73,3 @@ class PNGChecker(object):
             if prop_get != "image/png":
                 errorstr = "Set the svn:mime-type property (svn propset svn:mime-type image/png %s)." % self._file_path
                 self._handle_style_error(0, 'image/png', 5, errorstr)
-

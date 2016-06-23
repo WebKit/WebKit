@@ -32,6 +32,7 @@ from webkitpy.thirdparty.mock import Mock
 # Needed to support Windows port tests
 from webkitpy.port.win import WinPort
 
+
 def make_mock_crash_report_darwin(process_name, pid):
     return """Process:         {process_name} [{pid}]
 Path:            /Volumes/Data/slave/snowleopard-intel-release-tests/build/WebKitBuild/Release/{process_name}
@@ -231,6 +232,7 @@ Followup: MachineOwner
 0:000> q
 quit:
 """.format(process_name=process_name, pid=pid)
+
 
 class CrashLogsTest(unittest.TestCase):
     def create_crash_logs_darwin(self):

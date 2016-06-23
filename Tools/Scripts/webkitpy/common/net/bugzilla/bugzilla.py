@@ -38,7 +38,7 @@ import StringIO
 import socket
 import urllib
 
-from datetime import datetime # used in timestamp()
+from datetime import datetime  # used in timestamp()
 
 from .attachment import Attachment
 from .bug import Bug
@@ -291,6 +291,7 @@ class BugzillaQueries(object):
         results_page = self._load_query(review_queue_url)
         return bool(re.search("did not match anything", results_page.read()))
 
+
 class CommitQueueFlag(object):
     mark_for_nothing = 0
     mark_for_commit_queue = 1
@@ -515,7 +516,7 @@ class Bugzilla(object):
         for attachment in attachments:
             if attachment.id() == int(attachment_id):
                 return attachment
-        return None # This should never be hit.
+        return None  # This should never be hit.
 
     def authenticate(self):
         if self.authenticated:

@@ -37,7 +37,6 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.system.outputcapture import OutputCapture
 
 
-
 class TrivialMockPort(object):
     def __init__(self):
         self.host = MockSystemHost()

@@ -60,7 +60,7 @@ class ScriptError(Exception):
                 message += " cwd: %s" % cwd
 
         Exception.__init__(self, message)
-        self.script_args = script_args # 'args' is already used by Exception
+        self.script_args = script_args  # 'args' is already used by Exception
         self.exit_code = exit_code
         self.output = output
         self.cwd = cwd

@@ -27,6 +27,7 @@ import unittest
 from common import CarriageReturnChecker
 from common import TabChecker
 
+
 # FIXME: The unit tests for the cpp, text, and common checkers should
 #        share supporting test code. This can include, for example, the
 #        mock style error handling code and the code to check that all
@@ -43,7 +44,7 @@ class CarriageReturnCheckerTest(unittest.TestCase):
                          "better to use only a \\n")
 
     def setUp(self):
-        self._style_errors = [] # The list of accumulated style errors.
+        self._style_errors = []  # The list of accumulated style errors.
 
     def _mock_style_error_handler(self, line_number, category, confidence,
                                   message):

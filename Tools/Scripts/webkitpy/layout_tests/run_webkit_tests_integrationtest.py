@@ -219,7 +219,6 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         self.assertEqual(host.user.opened_urls, [path.abspath_to_uri(MockHost().platform, '/tmp/layout-test-results/results.html')])
 
-
     def test_batch_size(self):
         batch_tests_run = get_test_batches(['--batch-size', '2'])
         for batch in batch_tests_run:

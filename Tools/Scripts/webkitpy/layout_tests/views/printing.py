@@ -345,7 +345,6 @@ class Printer(object):
         else:
             return ' failed%s (%s)' % (exp_string, ', '.join(failure.message() for failure in failures))
 
-
     def _print_test_trace(self, result, exp_str, got_str):
         test_name = result.test_name
         self._print_default(self._test_status_line(test_name, ''))

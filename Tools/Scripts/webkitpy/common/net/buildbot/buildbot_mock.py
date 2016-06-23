@@ -37,6 +37,7 @@ class MockBuild(object):
         self._revision = revision
         self._is_green = is_green
 
+
 class MockBuilder(object):
     def __init__(self, name):
         self._name = name

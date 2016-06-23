@@ -60,7 +60,6 @@ _log = logging.getLogger(__name__)
 TestExpectations = test_expectations.TestExpectations
 
 
-
 class Manager(object):
     """A class for managing running a series of tests on a series of layout
     test files."""

@@ -38,6 +38,7 @@ import urllib
 
 _log = logging.getLogger(__name__)
 
+
 def abspath_to_uri(platform, path):
     """Converts a platform-specific absolute path to a file: URL."""
     return "file:" + _escape(_convert_path(platform, path))

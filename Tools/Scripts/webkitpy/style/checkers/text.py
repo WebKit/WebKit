@@ -31,6 +31,7 @@
 
 from common import TabChecker
 
+
 class TextChecker(object):
 
     """Processes text lines for checking style."""

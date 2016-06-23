@@ -1,3 +1,102 @@
+2016-06-22  Aakash Jain  <aakash_jain@apple.com>
+
+        Fix style issues in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=159019
+
+        Reviewed by Daniel Bates.
+
+        Fixed the formatting issues as reported by check-webkit-style in webkitpy.
+        There is no functionality change.
+        Only affected file names retained below for brevity.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver_factory.py:
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        * Scripts/webkitpy/benchmark_runner/utils.py:
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        * Scripts/webkitpy/common/checkout/checkout_mock.py:
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/common/checkout/commitinfo.py:
+        * Scripts/webkitpy/common/checkout/commitinfo_unittest.py:
+        * Scripts/webkitpy/common/checkout/diff_parser_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        * Scripts/webkitpy/common/config/irc.py:
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        * Scripts/webkitpy/common/config/urls.py:
+        * Scripts/webkitpy/common/host_mock.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_mock.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        * Scripts/webkitpy/common/net/irc/ircproxy_unittest.py:
+        * Scripts/webkitpy/common/net/networktransaction_unittest.py:
+        * Scripts/webkitpy/common/net/statusserver.py:
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        * Scripts/webkitpy/common/system/logutils_unittest.py:
+        * Scripts/webkitpy/common/system/path.py:
+        * Scripts/webkitpy/common/system/path_unittest.py:
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        * Scripts/webkitpy/common/system/user.py:
+        * Scripts/webkitpy/common/system/user_unittest.py:
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+        * Scripts/webkitpy/common/thread/threadedmessagequeue.py:
+        * Scripts/webkitpy/common/thread/threadedmessagequeue_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/lint_test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        * Scripts/webkitpy/port/base_unittest.py:
+        * Scripts/webkitpy/port/driver.py:
+        * Scripts/webkitpy/port/driver_unittest.py:
+        * Scripts/webkitpy/port/factory.py:
+        * Scripts/webkitpy/port/gtk.py:
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        * Scripts/webkitpy/port/test.py:
+        * Scripts/webkitpy/port/win.py:
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checkers/common_unittest.py:
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        * Scripts/webkitpy/style/checkers/js.py:
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        * Scripts/webkitpy/style/checkers/png.py:
+        * Scripts/webkitpy/style/checkers/text.py:
+        * Scripts/webkitpy/style/checkers/text_unittest.py:
+        * Scripts/webkitpy/style/error_handlers.py:
+        * Scripts/webkitpy/style/filter.py:
+        * Scripts/webkitpy/style/filter_unittest.py:
+        * Scripts/webkitpy/style/optparser.py:
+        * Scripts/webkitpy/style/optparser_unittest.py:
+        * Scripts/webkitpy/test/main.py:
+        * Scripts/webkitpy/w3c/test_converter.py:
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        * Scripts/webkitpy/xcode/simulator.py:
+
 2016-06-22  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess doesn't handle WebProcesses going away uncleanly.

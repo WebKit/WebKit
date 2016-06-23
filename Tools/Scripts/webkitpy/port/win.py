@@ -50,6 +50,7 @@ try:
 except ImportError:
     _log.warn("Not running on native Windows.")
 
+
 class WinPort(ApplePort):
     port_name = "win"
 

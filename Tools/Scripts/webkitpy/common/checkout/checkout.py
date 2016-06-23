@@ -150,7 +150,7 @@ class Checkout(object):
         try:
             return parse_bug_id_from_changelog(self.commit_message_for_this_commit(git_commit, changed_files).message())
         except ScriptError, e:
-            pass # We might not have ChangeLogs.
+            pass  # We might not have ChangeLogs.
 
     def apply_patch(self, patch):
         # It's possible that the patch was not made from the root directory.

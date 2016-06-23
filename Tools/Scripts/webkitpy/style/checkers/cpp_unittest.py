@@ -44,6 +44,7 @@ import cpp as cpp_style
 from cpp import CppChecker
 from ..filter import FilterConfiguration
 
+
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
 # is in CppChecker.categories, to help keep that list up to date.
@@ -231,6 +232,7 @@ class CppFunctionsTest(unittest.TestCase):
         self.assertEqual(error_collector.results(),
                           'The parameter name "ooF" adds no information, so it should be removed.  [readability/parameter_name] [5]')
 
+
 class CppStyleTestBase(unittest.TestCase):
     """Provides some useful helper functions for cpp_style tests.
 
@@ -242,7 +244,7 @@ class CppStyleTestBase(unittest.TestCase):
 
     # FIXME: Refactor the unit tests so the confidence level is passed
     #        explicitly, just like it is in the real code.
-    min_confidence = 1;
+    min_confidence = 1
 
     # Helper function to avoid needing to explicitly pass confidence
     # in all the unit test calls to cpp_style.process_file_data().
@@ -757,6 +759,7 @@ class Cpp11StyleTest(CppStyleTestBase):
 
     def test_rvaule_reference_in_parameter_pack(self):
         self.assert_lint('void requestCompleted(Arguments&&... arguments)', '')
+
 
 class CppStyleTest(CppStyleTestBase):
 
@@ -2077,7 +2080,7 @@ class CppStyleTest(CppStyleTestBase):
                          '  [whitespace/comments] [5]')
         self.assert_lint('printf("foo"); // Outside quotes.',
                          '')
-        self.assert_lint('int i = 0; // Having one space is fine.','')
+        self.assert_lint('int i = 0; // Having one space is fine.', '')
         self.assert_lint('int i = 0;  // Having two spaces is bad.',
                          'One space before end of line comments'
                          '  [whitespace/comments] [5]')
@@ -2713,6 +2716,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('long int a : 30;', errmsg)
         self.assert_lint('int a = 1 ? 0 : 30;', '')
         self.assert_lint('bool a : 1;', '')
+
 
 class CleansedLinesTest(unittest.TestCase):
     def test_init(self):
@@ -5221,7 +5225,6 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('Ref<Node> protectedNode =*node;', '')
         self.assert_lint('Ref<Node> protector = node;', '')
         self.assert_lint('Ref<Node> protector = *node;', '')
-
 
         # Invalid protector RefPtr/Ref variable names.
         self.assert_lint('RefPtr<Node> protector(this);', "'protector' is incorrectly named. It should be named 'protectedThis'.  [readability/naming/protected] [4]")

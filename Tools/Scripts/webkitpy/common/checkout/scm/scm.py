@@ -57,7 +57,6 @@ class AuthenticationError(Exception):
         self.prompt_for_password = prompt_for_password
 
 
-
 # SCM methods are expected to return paths relative to self.checkout_root.
 class SCM:
     def __init__(self, cwd, executive=None, filesystem=None):

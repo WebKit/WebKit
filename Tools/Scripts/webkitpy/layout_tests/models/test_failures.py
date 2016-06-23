@@ -33,9 +33,11 @@ from webkitpy.layout_tests.models import test_expectations
 
 _log = logging.getLogger(__name__)
 
+
 def is_reftest_failure(failure_list):
     failure_types = [type(f) for f in failure_list]
     return set((FailureReftestMismatch, FailureReftestMismatchDidNotOccur, FailureReftestNoImagesGenerated)).intersection(failure_types)
+
 
 # FIXME: This is backwards.  Each TestFailure subclass should know what
 # test_expectation type it corresponds too.  Then this method just
@@ -235,6 +237,7 @@ class FailureReftestMismatchDidNotOccur(TestFailure):
     def write_failure(self, writer, driver_output, expected_driver_output, port):
         writer.write_image_files(driver_output.image, expected_image=None)
         writer.write_reftest(self.reference_filename)
+
 
 class FailureReftestNoImagesGenerated(TestFailure):
     def __init__(self, reference_filename=None):

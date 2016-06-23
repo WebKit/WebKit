@@ -48,6 +48,7 @@ def write_test_result(filesystem, port, results_directory, test_name, driver_out
     for failure in failures:
         failure.write_failure(writer, driver_output, expected_driver_output, port)
 
+
 class TestResultWriter(object):
     """A class which handles all writing operations to the result directory."""
 
@@ -174,7 +175,7 @@ class TestResultWriter(object):
         self._write_binary_file(diff_filename, image_diff)
 
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
-        
+
         image_diff_template = self._filesystem.join(base_dir, 'image-diff-template.html');
         image_diff_file = ""
         if self._filesystem.exists(image_diff_template):

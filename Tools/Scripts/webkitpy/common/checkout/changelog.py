@@ -294,6 +294,7 @@ class ChangeLogEntry(object):
             return False
         return True
 
+
 # FIXME: Various methods on ChangeLog should move into ChangeLogEntry instead.
 class ChangeLog(object):
 

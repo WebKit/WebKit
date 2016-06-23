@@ -75,7 +75,6 @@ class LayoutTestFinder(object):
         tests_to_skip = self.skip_tests(potential_test_paths, tests, expectations, None)
         return [test for test in tests if test not in tests_to_skip]
 
-
     def _strip_test_dir_prefixes(self, paths):
         return [self._strip_test_dir_prefix(path) for path in paths if path]
 

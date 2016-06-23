@@ -49,6 +49,7 @@ class BuilderTest(unittest.TestCase):
             )
             results = [self._mock_test_result(testname) for testname in failure(build_number)]
             layout_test_results = LayoutTestResults(test_results=results, did_exceed_test_failure_limit=False)
+
             def mock_layout_test_results():
                 return layout_test_results
             build.layout_test_results = mock_layout_test_results
@@ -118,8 +119,8 @@ class BuilderTest(unittest.TestCase):
 
     def test_build_and_revision_for_filename(self):
         expectations = {
-            "r47483 (1)/" : (47483, 1),
-            "r47483 (1).zip" : (47483, 1),
+            "r47483 (1)/": (47483, 1),
+            "r47483 (1).zip": (47483, 1),
             "random junk": None,
         }
         for filename, revision_and_build in expectations.items():
@@ -186,7 +187,7 @@ class BuildBotTest(unittest.TestCase):
     _expected_example_one_box_parsings = [
         {
             'is_green': True,
-            'build_number' : 3693,
+            'build_number': 3693,
             'name': u'Windows Debug (Tests)',
             'built_revision': 47380,
             'activity': 'building',
@@ -194,7 +195,7 @@ class BuildBotTest(unittest.TestCase):
         },
         {
             'is_green': False,
-            'build_number' : None,
+            'build_number': None,
             'name': u'SnowLeopard Intel Release',
             'built_revision': None,
             'activity': 'building',
@@ -202,7 +203,7 @@ class BuildBotTest(unittest.TestCase):
         },
         {
             'is_green': False,
-            'build_number' : 654,
+            'build_number': 654,
             'name': u'Qt Linux Release',
             'built_revision': 47383,
             'activity': 'idle',
@@ -210,7 +211,7 @@ class BuildBotTest(unittest.TestCase):
         },
         {
             'is_green': True,
-            'build_number' : 2090,
+            'build_number': 2090,
             'name': u'Qt Windows 32-bit Debug',
             'built_revision': 60563,
             'activity': 'building',
@@ -250,10 +251,10 @@ class BuildBotTest(unittest.TestCase):
         def mock_fetch_build_dictionary(self, build_number):
             build_dictionary = {
                 "sourceStamp": {
-                    "revision" : 2 * build_number,
+                    "revision": 2 * build_number,
                     },
-                "number" : int(build_number),
-                "results" : build_number % 2, # 0 means pass
+                "number": int(build_number),
+                "results": build_number % 2,  # 0 means pass
             }
             return build_dictionary
         buildbot._fetch_build_dictionary = mock_fetch_build_dictionary
@@ -299,16 +300,16 @@ class BuildBotTest(unittest.TestCase):
 '''
     _expected_files = [
         {
-            "filename" : "r47483 (1)/",
-            "size" : "",
-            "type" : "[Directory]",
-            "encoding" : "",
+            "filename": "r47483 (1)/",
+            "size": "",
+            "type": "[Directory]",
+            "encoding": "",
         },
         {
-            "filename" : "r47484 (2).zip",
-            "size" : "89K",
-            "type" : "[application/zip]",
-            "encoding" : "",
+            "filename": "r47484 (2).zip",
+            "size": "89K",
+            "type": "[application/zip]",
+            "encoding": "",
         },
     ]
 

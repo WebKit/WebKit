@@ -30,6 +30,7 @@ import unittest
 
 from webkitpy.common.thread.threadedmessagequeue import ThreadedMessageQueue
 
+
 class ThreadedMessageQueueTest(unittest.TestCase):
 
     def test_basic(self):

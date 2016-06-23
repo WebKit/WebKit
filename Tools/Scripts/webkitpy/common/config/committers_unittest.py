@@ -28,6 +28,7 @@
 import unittest
 from webkitpy.common.config.committers import CommitterList, Contributor, Committer, Reviewer
 
+
 class CommittersTest(unittest.TestCase):
     def test_committer_lookup(self):
         committer = Committer('Test One', 'one@test.com', 'one')

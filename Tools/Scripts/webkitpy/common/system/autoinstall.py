@@ -53,6 +53,7 @@ _PYPI_ENV_VAR = 'PYPI_MIRRORS'
 _SOURCEFORGE_ENV_VAR = 'SOURCEFORGE_MIRRORS'
 _CACHE_ENV_VAR = 'LOCAL_AUTOINSTALL_CACHE'
 
+
 class AutoInstaller(object):
 
     """Supports automatically installing Python packages from an URL.
@@ -382,7 +383,7 @@ class AutoInstaller(object):
         if not 200 <= code < 300:
             raise ValueError("HTTP Error code %s" % code)
 
-        BUFSIZE = 2**13  # 8KB
+        BUFSIZE = 2 ** 13  # 8KB
         while True:
             data = netstream.read(BUFSIZE)
             if not data:

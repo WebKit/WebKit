@@ -146,6 +146,7 @@ class IOSSimulatorWK2Port(DeprecatedPort):
         command.append("--ios-simulator")
         return command
 
+
 class MacPort(DeprecatedPort):
     port_flag_name = "mac"
 
@@ -153,6 +154,7 @@ class MacPort(DeprecatedPort):
         command = super(MacPort, self).run_webkit_tests_command(build_style)
         command.append("--dump-render-tree")
         return command
+
 
 class MacWK2Port(DeprecatedPort):
     port_flag_name = "mac-wk2"

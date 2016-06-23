@@ -3,7 +3,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -82,7 +82,7 @@ class NetworkTransactionTest(LoggingTestCase):
 
     def test_timeout(self):
         self._run_count = 0
-        transaction = NetworkTransaction(initial_backoff_seconds=60*60, timeout_seconds=60)
+        transaction = NetworkTransaction(initial_backoff_seconds=60 * 60, timeout_seconds=60)
         did_process_exception = False
         did_throw_exception = True
         try:

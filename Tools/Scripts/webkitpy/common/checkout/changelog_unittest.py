@@ -681,7 +681,6 @@ class ChangeLogTest(unittest.TestCase):
         expected_contents = "== Rolled over to ChangeLog-2009-06-16 ==\n"
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
-
     def test_prepend_text(self):
         fs = MockFileSystem()
         fs.write_text_file(self._changelog_path, self._example_changelog)

@@ -11,7 +11,6 @@ class BrowserDriverFactory(object):
     platforms = set()
     browsers = set()
 
-
     @classmethod
     def available_platforms(cls):
         return list(cls.platforms)

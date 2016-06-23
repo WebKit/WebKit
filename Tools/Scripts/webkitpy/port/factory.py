@@ -70,7 +70,6 @@ def configuration_options():
         ]
 
 
-
 def _builder_options(builder_name):
     configuration = "Debug" if re.search(r"[d|D](ebu|b)g", builder_name) else "Release"
     is_webkit2 = builder_name.find("WK2") != -1

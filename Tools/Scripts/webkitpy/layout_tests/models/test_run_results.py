@@ -39,6 +39,7 @@ _log = logging.getLogger(__name__)
 
 INTERRUPTED_EXIT_STATUS = signal.SIGINT + 128
 
+
 class TestRunResults(object):
     def __init__(self, expectations, num_tests):
         self.total = num_tests
@@ -122,6 +123,7 @@ def _interpret_test_failures(failures):
                 test_dict['image_diff_percent'] = failure.diff_percent
 
     return test_dict
+
 
 # These results must match ones in print_unexpected_results() in views/buildbot_results.py.
 def summarize_results(port_obj, expectations, initial_results, retry_results, enabled_pixel_tests_in_retry, include_passes=False, include_time_and_modifiers=False):

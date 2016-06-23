@@ -97,6 +97,7 @@ def add_path_to_trie(path, value, trie):
         trie[directory] = {}
     add_path_to_trie(rest, value, trie[directory])
 
+
 def test_timings_trie(port, individual_test_timings):
     """Breaks a test name into chunks by directory and puts the test time as a value in the lowest part, e.g.
     foo/bar/baz.html: 1ms
@@ -117,6 +118,7 @@ def test_timings_trie(port, individual_test_timings):
         add_path_to_trie(test, int(1000 * test_result.test_run_time), trie)
 
     return trie
+
 
 # FIXME: We already have a TestResult class in test_results.py
 class TestResult(object):
@@ -328,7 +330,6 @@ class JSONResultsGenerator(object):
         except Exception, err:
             _log.error("Upload failed: %s" % err)
             return
-
 
     def _get_test_timing(self, test_name):
         """Returns test timing data (elapsed time) in second

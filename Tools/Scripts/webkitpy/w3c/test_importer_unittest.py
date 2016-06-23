@@ -64,6 +64,7 @@ FAKE_REPOSITORY = {
 ]
 ''' }
 
+
 class TestImporterTest(unittest.TestCase):
 
     def _parse_options(self, args):

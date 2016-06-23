@@ -38,6 +38,7 @@ from webkitpy.w3c.test_converter import _W3CTestConverter
 DUMMY_FILENAME = 'dummy.html'
 DUMMY_PATH = 'dummy/testharness/path'
 
+
 class W3CTestConverterTest(unittest.TestCase):
 
     # FIXME: When we move to using a MockHost, this method should be removed, since

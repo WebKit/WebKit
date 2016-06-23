@@ -76,7 +76,6 @@ class PerfTestsRunner(object):
         self._timestamp = time.time()
         self._utc_timestamp = datetime.datetime.utcnow()
 
-
     @staticmethod
     def _parse_args(args=None):
         def _expand_path(option, opt_str, value, parser):

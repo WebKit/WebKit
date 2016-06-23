@@ -62,6 +62,7 @@ class FakePort(object):
     def path_to_generic_test_expectations_file(self):
         return ''
 
+
 class FakeFactory(object):
     def __init__(self, host, ports):
         self.host = host

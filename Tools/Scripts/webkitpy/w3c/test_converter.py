@@ -223,4 +223,3 @@ class _W3CTestConverter(HTMLParser):
 
     def handle_pi(self, data):
         self.converted_data.extend(['<?', data, '>'])
-

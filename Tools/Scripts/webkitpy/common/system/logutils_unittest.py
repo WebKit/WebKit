@@ -140,6 +140,7 @@ class ConfigureLoggingVerboseTest(ConfigureLoggingTestBase):
         self._log.debug("test message")
         self._assert_log_messages(["unittest: [DEBUG] test message\n"])
 
+
 class ConfigureLoggingCustomLevelTest(ConfigureLoggingTestBase):
 
     """Tests configure_logging() with a custom logging level."""

@@ -49,6 +49,7 @@ class MockProcess(object):
     def communicate(self, input=None):
         return (self.stdout, self.stderr)
 
+
 # FIXME: This should be unified with MockExecutive2
 class MockExecutive(object):
     PIPE = "MOCK PIPE"

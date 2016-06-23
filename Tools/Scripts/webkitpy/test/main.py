@@ -86,6 +86,7 @@ def _print_results_as_json(stream, all_test_names, failures, errors):
 
     json.dump(results, stream, separators=(',', ':'))
 
+
 class Tester(object):
     def __init__(self, filesystem=None):
         self.finder = Finder(filesystem or FileSystem())

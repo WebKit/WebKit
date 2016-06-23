@@ -74,6 +74,7 @@ class GenericFileSystemTests(object):
         self.fs.chdir(self.generic_test_dir)
         self.assertEqual(set(self.fs.glob('foo.*')), set(['foo.txt']))
 
+
 class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
     def setUp(self):
         self.fs = FileSystem()

@@ -44,6 +44,7 @@ def force_remove(path):
         _log.info("Error removing %s: %s" % (path, error))
         pass
 
+
 # Borrow this code from
 # 'http://stackoverflow.com/questions/2281850/timeout-function-if-it-takes-too-long-to-finish'
 class TimeoutError(Exception):

@@ -49,4 +49,3 @@ class ThreadedMessageQueue(object):
             is_running = self._is_running
             self._messages = []
         return (messages, is_running)
-

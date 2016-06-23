@@ -28,6 +28,7 @@
 
 import itertools
 
+
 class TestConfiguration(object):
     def __init__(self, version, architecture, build_type):
         self.version = version
@@ -256,7 +257,6 @@ class TestConfigurationConverter(object):
         #   (xp, release), (win7, release) --> (xp, win7, release)
         while try_abbreviating(self._collapsing_sets_by_size.values()):
             pass
-
 
         # 4) Substitute specifier subsets that match macros witin each set:
         #   (xp, vista, win7, release) -> (win, release)

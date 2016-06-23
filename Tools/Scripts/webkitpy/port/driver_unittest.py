@@ -41,6 +41,7 @@ from webkitpy.tool.mocktool import MockOptions
 import os
 import sys
 
+
 class DriverOutputTest(unittest.TestCase):
     def test_strip_metrics(self):
         patterns = [

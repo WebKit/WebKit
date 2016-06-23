@@ -45,6 +45,7 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port import Port, Driver, DriverOutput
 from webkitpy.port.test import add_unit_tests_to_mock_filesystem, TestPort
 
+
 class PortTest(unittest.TestCase):
     def make_port(self, executive=None, with_tests=False, port_name=None, **kwargs):
         host = MockSystemHost()
@@ -87,7 +88,6 @@ class PortTest(unittest.TestCase):
         # This tests repeated calls to make sure we cache the result.
         self.assertEqual(port.pretty_patch.pretty_patch_text("patch.txt"),
                          port.pretty_patch.pretty_patch_error_html)
-
 
     def test_diff_text(self):
         port = self.make_port()

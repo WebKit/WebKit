@@ -32,6 +32,7 @@ import sys
 
 from webkitpy.common.system.executive import Executive
 
+
 class PlatformInfo(object):
     """This class provides a consistent (and mockable) interpretation of
     system-specific values (like sys.platform and platform.mac_ver())

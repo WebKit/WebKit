@@ -96,6 +96,7 @@ mock_revisions = {
     })
 }
 
+
 class MockCheckout(object):
     def __init__(self):
         # FIXME: It's unclear if a MockCheckout is very useful.  A normal Checkout

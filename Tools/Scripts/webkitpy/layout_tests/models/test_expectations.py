@@ -579,7 +579,6 @@ class TestExpectationsModel(object):
                 return item[0].upper()
         raise ValueError(expectation)
 
-
     def add_expectation_line(self, expectation_line, in_skipped=False):
         """Returns a list of warnings encountered while matching modifiers."""
 

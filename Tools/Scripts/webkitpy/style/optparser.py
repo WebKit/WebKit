@@ -204,7 +204,7 @@ class ArgumentPrinter(object):
     """Supports the printing of check-webkit-style command arguments."""
 
     def _flag_pair_to_string(self, flag_key, flag_value):
-        return '--%(key)s=%(val)s' % {'key': flag_key, 'val': flag_value }
+        return '--%(key)s=%(val)s' % {'key': flag_key, 'val': flag_value}
 
     def to_flag_string(self, options):
         """Return a flag string of the given CommandOptionValues instance.
@@ -468,4 +468,3 @@ class ArgumentParser(object):
                                       git_index=git_index)
 
         return (paths, options)
-

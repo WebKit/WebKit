@@ -74,4 +74,3 @@ class MockHost(MockSystemHost):
 
     def watch_list(self):
         return self._watch_list
-

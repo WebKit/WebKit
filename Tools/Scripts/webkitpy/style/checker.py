@@ -134,7 +134,7 @@ _PATH_RULES_SPECIFIER = [
     # API and therefore do not follow the same header including
     # discipline as WebCore.
 
-    ([# TestNetscapePlugIn has no config.h and uses funny names like
+    ([  # TestNetscapePlugIn has no config.h and uses funny names like
       # NPP_SetWindow.
       os.path.join('Tools', 'DumpRenderTree', 'TestNetscapePlugIn')],
      ["-build/include",
@@ -511,6 +511,7 @@ class FileType:
     XCODEPROJ = 10
     CMAKE = 11
     FEATUREDEFINES = 12
+
 
 class CheckerDispatcher(object):
 

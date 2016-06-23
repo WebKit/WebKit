@@ -40,6 +40,7 @@ If possible, use real CoreSimulator.framework functionality by linking to the fr
 Do not use PyObjC to dlopen the framework.
 """
 
+
 class DeviceType(object):
     """
     Represents a CoreSimulator device type.

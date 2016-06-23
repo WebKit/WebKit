@@ -58,7 +58,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
                         _log.info('HTTP Server is serving at port: %d', self._server_port)
                         break
                 except Exception as error:
-                     _log.info('Error: %s' % error)
+                    _log.info('Error: %s' % error)
                 _log.info('Server port is not found this time, retry after %f seconds' % interval)
                 time.sleep(interval)
                 interval *= 2

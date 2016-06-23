@@ -34,6 +34,7 @@ from webkitpy.common.system.platforminfo import PlatformInfo
 from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
 from webkitpy.common.system import path
 
+
 class AbspathTest(unittest.TestCase):
     def platforminfo(self):
         return SystemHost().platform

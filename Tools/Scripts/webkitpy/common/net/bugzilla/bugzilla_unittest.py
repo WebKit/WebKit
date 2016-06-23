@@ -68,18 +68,18 @@ class BugzillaTest(unittest.TestCase):
 '''
     _expected_example_attachment_parsing = {
         'attach_date': datetime.datetime(2009, 07, 29, 10, 23),
-        'bug_id' : 100,
-        'is_obsolete' : True,
-        'is_patch' : True,
-        'id' : 33721,
-        'url' : "https://bugs.webkit.org/attachment.cgi?id=33721",
-        'name' : "Fixed whitespace issue",
-        'type' : "text/plain",
-        'review' : '+',
-        'reviewer_email' : 'one@test.com',
-        'commit-queue' : '+',
-        'committer_email' : 'two@test.com',
-        'attacher_email' : 'christian.plesner.hansen@gmail.com',
+        'bug_id': 100,
+        'is_obsolete': True,
+        'is_patch': True,
+        'id': 33721,
+        'url': "https://bugs.webkit.org/attachment.cgi?id=33721",
+        'name': "Fixed whitespace issue",
+        'type': "text/plain",
+        'review': '+',
+        'reviewer_email': 'one@test.com',
+        'commit-queue': '+',
+        'committer_email': 'two@test.com',
+        'attacher_email': 'christian.plesner.hansen@gmail.com',
     }
 
     def test_url_creation(self):

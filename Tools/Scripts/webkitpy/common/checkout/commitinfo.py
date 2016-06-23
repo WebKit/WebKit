@@ -90,7 +90,7 @@ class CommitInfo(object):
             self.author(),
             self.reviewer(),
         ]
-        return set([party for party in responsible_parties if party]) # Filter out None
+        return set([party for party in responsible_parties if party])  # Filter out None
 
     # FIXME: It is slightly lame that this "view" method is on this "model" class (in MVC terms)
     def blame_string(self, bugs):
