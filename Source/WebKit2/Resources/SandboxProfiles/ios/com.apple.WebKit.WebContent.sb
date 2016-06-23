@@ -38,7 +38,8 @@
 (mobile-preferences-read
     "com.apple.LaunchServices"
     "com.apple.WebFoundation"
-    "com.apple.mobileipod")
+    "com.apple.mobileipod"
+    "com.apple.voiceservices.logging")
 
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
