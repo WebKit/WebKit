@@ -1,3 +1,16 @@
+2016-06-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Bump gstreamer version from 1.6.3 to 1.8.0
+        https://bugs.webkit.org/show_bug.cgi?id=159050
+
+        Reviewed by Antonio Gomes.
+
+        To be sync with GTK port, this patch bumps gstreamer version for EFL port.
+
+        * efl/jhbuild.modules:
+        * efl/patches/gst-plugins-good-Revert-qtdemux-expose-streams-with-first-moof-for-fr.patch: Added.
+        * efl/patches/gst-plugins-good-use-the-tfdt-decode-time.patch: Added.
+
 2016-06-23  Konstantin Tokarev  <annulen@yandex.ru>
 
         [jhbuild] Added libxslt module.
