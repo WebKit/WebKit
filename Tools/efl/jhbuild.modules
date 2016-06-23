@@ -16,6 +16,7 @@
       <dep package="libsoup"/>
       <dep package="elementary"/>
       <dep package="libxml2"/>
+      <dep package="libxslt"/>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
       <dep package="gst-plugins-good"/>
@@ -199,6 +200,15 @@
             repo="xmlsoft.org"
             hash="sha256:fd3c64cb66f2c4ea27e934d275904d92cec494a8e8405613780cbc8a71680fdb"
             md5sum="9c0cfef285d5c4a5c80d00904ddab380"/>
+  </autotools>
+
+  <autotools id="libxslt">
+    <branch module="/sources/libxslt-${version}.tar.gz" version="1.1.29"
+            repo="xmlsoft.org"
+            hash="sha256:b5976e3857837e7617b29f2249ebb5eeac34e249208d31f1fbf7a6ba7a4090ce"/>
+    <dependencies>
+      <dep package="libxml2"/>
+    </dependencies>
   </autotools>
 
   <autotools id="orc" autogenargs="--disable-gtk-doc" autogen-sh="configure">
