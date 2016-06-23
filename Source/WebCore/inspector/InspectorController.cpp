@@ -341,6 +341,17 @@ void InspectorController::setProcessId(long processId)
     IdentifiersFactory::setProcessId(processId);
 }
 
+void InspectorController::setIsUnderTest(bool value)
+{
+    if (value == m_isUnderTest)
+        return;
+
+    m_isUnderTest = value;
+
+    // <rdar://problem/26768628> Try to catch suspicious scenarios where we may have a dangling frontend while running tests.
+    RELEASE_ASSERT(!m_isUnderTest || !m_frontendRouter->hasFrontends());
+}
+
 void InspectorController::evaluateForTestInFrontend(const String& script)
 {
     m_inspectorAgent->evaluateForTestInFrontend(script);
