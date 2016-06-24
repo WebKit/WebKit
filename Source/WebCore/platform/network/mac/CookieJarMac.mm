@@ -47,10 +47,8 @@ namespace WebCore {
 
 static NSArray *httpCookiesForURL(CFHTTPCookieStorageRef cookieStorage, NSURL *firstParty, NSURL *url)
 {
-    if (!cookieStorage) {
-        // FIXME: The fallback to NSHTTPCookieStorage should not be present when USE(CFNETWORK) is defined.
-        return [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:url];
-    }
+    if (!cookieStorage)
+        cookieStorage = _CFHTTPCookieStorageGetDefault(kCFAllocatorDefault);
 
     bool secure = ![[url scheme] caseInsensitiveCompare:@"https"];
     
