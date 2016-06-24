@@ -203,7 +203,7 @@
   </autotools>
 
   <autotools id="libxslt">
-    <branch module="/sources/libxslt-${version}.tar.gz" version="1.1.29"
+    <branch module="/libxslt/libxslt-1.1.29.tar.gz" version="1.1.29"
             repo="xmlsoft.org"
             hash="sha256:b5976e3857837e7617b29f2249ebb5eeac34e249208d31f1fbf7a6ba7a4090ce"/>
     <dependencies>

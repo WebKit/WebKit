@@ -1,3 +1,13 @@
+2016-06-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Change download path of libxslt
+
+        Unreviewed EFL build fix.
+
+        In Korea current download path can't be accessed. Change it.
+
+        * efl/jhbuild.modules:
+
 2016-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=159077
