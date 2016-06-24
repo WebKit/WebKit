@@ -94,12 +94,9 @@ extern CFStringRef const DDBinderGenericURLKey;
 extern CFStringRef const DDBinderEmailKey;
 extern CFStringRef const DDBinderTrackingNumberKey;
 extern CFStringRef const DDBinderFlightInformationKey;
+extern CFStringRef const DDBinderParsecSourceKey;
 extern CFStringRef const DDBinderSignatureBlockKey;
 extern NSString * const DDURLScheme;
-
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000
-extern CFStringRef const DDBinderParsecSourceKey;
-#endif
 
 @interface DDScannerResult : NSObject <NSCoding, NSSecureCoding>
 + (NSArray *)resultsFromCoreResults:(CFArrayRef)coreResults;
