@@ -1,3 +1,27 @@
+2016-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Move WebKit2 Apple Pay code to the open source repository
+        https://bugs.webkit.org/show_bug.cgi?id=159041
+
+        Reviewed by Sam Weinig.
+
+        * DerivedSources.make:
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.h: Added.
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm: Added.
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp: Added.
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h: Added.
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.messages.in: Added.
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h: Added.
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm: Added.
+        * UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm: Added.
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm: Added.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp: Added.
+        * WebProcess/ApplePay/WebPaymentCoordinator.h: Added.
+        * WebProcess/ApplePay/WebPaymentCoordinator.messages.in: Added.
+
 2016-06-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] PageConfiguration.m_relatedPage keeps WebPageProxy alive after its WebView has been destroyed

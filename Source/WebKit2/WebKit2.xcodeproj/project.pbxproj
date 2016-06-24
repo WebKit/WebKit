@@ -296,7 +296,6 @@
 		1A6FBD2811E69BC200DB1371 /* NetscapePlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FBD2611E69BC200DB1371 /* NetscapePlugin.h */; };
 		1A6FBD2911E69BC200DB1371 /* NetscapePlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FBD2711E69BC200DB1371 /* NetscapePlugin.cpp */; };
 		1A7284481959F8040007BCE5 /* SessionStateConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7284441959ED100007BCE5 /* SessionStateConversion.cpp */; };
-		1A781AE71C5714DA00FB96DD /* WebKitAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A781AE51C5714DA00FB96DD /* WebKitAdditions.mm */; };
 		1A7865B916CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7865B716CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp */; };
 		1A7865BA16CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7865B816CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h */; };
 		1A7C0DF61B7D1F1000A9B848 /* WKWindowFeaturesRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C0DF41B7D1F1000A9B848 /* WKWindowFeaturesRef.cpp */; };
@@ -383,6 +382,19 @@
 		1AB16AE21648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16AE01648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h */; };
 		1AB16AE9164B3A8800290D62 /* RemoteLayerTreeContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB16AE7164B3A8800290D62 /* RemoteLayerTreeContext.mm */; };
 		1AB16AEA164B3A8800290D62 /* RemoteLayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16AE8164B3A8800290D62 /* RemoteLayerTreeContext.h */; };
+		1AB1F7741D1B2F8A007C9BD1 /* WebPaymentCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F7711D1B2F7E007C9BD1 /* WebPaymentCoordinator.cpp */; };
+		1AB1F77E1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB1F7781D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h */; };
+		1AB1F77F1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F7791D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.mm */; };
+		1AB1F7801D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F77B1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyIOS.mm */; };
+		1AB1F7811D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F77D1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyMac.mm */; };
+		1AB1F78B1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F7881D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.cpp */; };
+		1AB1F78C1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB1F7891D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h */; };
+		1AB1F7901D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F78E1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm */; };
+		1AB1F7911D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB1F78F1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.h */; };
+		1AB1F7961D1B3613007C9BD1 /* WebPaymentCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F7921D1B3613007C9BD1 /* WebPaymentCoordinatorMessageReceiver.cpp */; };
+		1AB1F7971D1B3613007C9BD1 /* WebPaymentCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB1F7931D1B3613007C9BD1 /* WebPaymentCoordinatorMessages.h */; };
+		1AB1F7981D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F7941D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessageReceiver.cpp */; };
+		1AB1F7991D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB1F7951D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h */; };
 		1AB31A9616BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB31A9416BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp */; };
 		1AB31A9716BC688100F6DBC9 /* StorageManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB31A9516BC688100F6DBC9 /* StorageManagerMessages.h */; };
 		1AB40EE51BF677E300BA81BE /* WKMenuItemIdentifiers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB40EE31BF677E300BA81BE /* WKMenuItemIdentifiers.mm */; };
@@ -2256,7 +2268,6 @@
 		1A6FBD2711E69BC200DB1371 /* NetscapePlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePlugin.cpp; sourceTree = "<group>"; };
 		1A7284441959ED100007BCE5 /* SessionStateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionStateConversion.cpp; sourceTree = "<group>"; };
 		1A7284451959ED100007BCE5 /* SessionStateConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionStateConversion.h; sourceTree = "<group>"; };
-		1A781AE51C5714DA00FB96DD /* WebKitAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitAdditions.mm; sourceTree = "<group>"; };
 		1A7865B616CAC6FD00ACE83A /* PluginProcessConnectionManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PluginProcessConnectionManager.messages.in; sourceTree = "<group>"; };
 		1A7865B716CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessConnectionManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A7865B816CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessConnectionManagerMessages.h; sourceTree = "<group>"; };
@@ -2357,6 +2368,22 @@
 		1AB16AE01648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxy.h; sourceTree = "<group>"; };
 		1AB16AE7164B3A8800290D62 /* RemoteLayerTreeContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeContext.mm; sourceTree = "<group>"; };
 		1AB16AE8164B3A8800290D62 /* RemoteLayerTreeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeContext.h; sourceTree = "<group>"; };
+		1AB1F7711D1B2F7E007C9BD1 /* WebPaymentCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPaymentCoordinator.cpp; sourceTree = "<group>"; };
+		1AB1F7721D1B2F7E007C9BD1 /* WebPaymentCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPaymentCoordinator.h; sourceTree = "<group>"; };
+		1AB1F7731D1B2F7E007C9BD1 /* WebPaymentCoordinator.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPaymentCoordinator.messages.in; sourceTree = "<group>"; };
+		1AB1F7781D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPaymentCoordinatorProxyCocoa.h; sourceTree = "<group>"; };
+		1AB1F7791D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorProxyCocoa.mm; sourceTree = "<group>"; };
+		1AB1F77B1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorProxyIOS.mm; sourceTree = "<group>"; };
+		1AB1F77D1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorProxyMac.mm; sourceTree = "<group>"; };
+		1AB1F7881D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPaymentCoordinatorProxy.cpp; sourceTree = "<group>"; };
+		1AB1F7891D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPaymentCoordinatorProxy.h; sourceTree = "<group>"; };
+		1AB1F78A1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPaymentCoordinatorProxy.messages.in; sourceTree = "<group>"; };
+		1AB1F78E1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreArgumentCodersCocoa.mm; sourceTree = "<group>"; };
+		1AB1F78F1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreArgumentCodersCocoa.h; sourceTree = "<group>"; };
+		1AB1F7921D1B3613007C9BD1 /* WebPaymentCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPaymentCoordinatorMessageReceiver.cpp; path = WebPaymentCoordinatorMessageReceiver.cpp; sourceTree = "<group>"; };
+		1AB1F7931D1B3613007C9BD1 /* WebPaymentCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPaymentCoordinatorMessages.h; path = WebPaymentCoordinatorMessages.h; sourceTree = "<group>"; };
+		1AB1F7941D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPaymentCoordinatorProxyMessageReceiver.cpp; path = WebPaymentCoordinatorProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		1AB1F7951D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPaymentCoordinatorProxyMessages.h; path = WebPaymentCoordinatorProxyMessages.h; sourceTree = "<group>"; };
 		1AB31A9316BC65AB00F6DBC9 /* StorageManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageManager.messages.in; sourceTree = "<group>"; };
 		1AB31A9416BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		1AB31A9516BC688100F6DBC9 /* StorageManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageManagerMessages.h; sourceTree = "<group>"; };
@@ -4420,7 +4447,7 @@
 				518E8EF116B208F000E91429 /* Authentication */,
 				1AAF0C4712B16328008E49E2 /* cf */,
 				C01A25FF12662F2100C9ED55 /* cg */,
-				37C4C0901814B37B003688B9 /* Cocoa */,
+				37C4C0901814B37B003688B9 /* cocoa */,
 				51E351C2180F2C8500E53BE9 /* Databases */,
 				BC82836816B3587900A278FE /* EntryPointUtilities */,
 				E170877216D6CFEC00F99226 /* FileAPI */,
@@ -4619,6 +4646,54 @@
 				1AAF0C4812B16334008E49E2 /* ArgumentCodersCF.h */,
 			);
 			path = cf;
+			sourceTree = "<group>";
+		};
+		1AB1F7701D1B2F5D007C9BD1 /* ApplePay */ = {
+			isa = PBXGroup;
+			children = (
+				1AB1F7711D1B2F7E007C9BD1 /* WebPaymentCoordinator.cpp */,
+				1AB1F7721D1B2F7E007C9BD1 /* WebPaymentCoordinator.h */,
+				1AB1F7731D1B2F7E007C9BD1 /* WebPaymentCoordinator.messages.in */,
+			);
+			path = ApplePay;
+			sourceTree = "<group>";
+		};
+		1AB1F7761D1B30A9007C9BD1 /* ApplePay */ = {
+			isa = PBXGroup;
+			children = (
+				1AB1F7771D1B30A9007C9BD1 /* cocoa */,
+				1AB1F77A1D1B30A9007C9BD1 /* ios */,
+				1AB1F77C1D1B30A9007C9BD1 /* mac */,
+				1AB1F7881D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.cpp */,
+				1AB1F7891D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h */,
+				1AB1F78A1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.messages.in */,
+			);
+			path = ApplePay;
+			sourceTree = "<group>";
+		};
+		1AB1F7771D1B30A9007C9BD1 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				1AB1F7781D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h */,
+				1AB1F7791D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.mm */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
+		1AB1F77A1D1B30A9007C9BD1 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				1AB1F77B1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyIOS.mm */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
+		1AB1F77C1D1B30A9007C9BD1 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				1AB1F77D1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyMac.mm */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		1AB7D4C71288AA9A00CFD08C /* Downloads */ = {
@@ -5163,16 +5238,17 @@
 			path = Cocoa;
 			sourceTree = "<group>";
 		};
-		37C4C0901814B37B003688B9 /* Cocoa */ = {
+		37C4C0901814B37B003688B9 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				1AB1F78E1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm */,
+				1AB1F78F1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.h */,
 				1A1EF1971A1D5B420023200A /* APIDataCocoa.mm */,
 				378E1A3B181ED6FF0031007A /* APIObject.mm */,
 				37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */,
 				37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */,
 				C55F916C1C595E440029E92D /* DataDetectionResult.h */,
 				C55F916D1C595E440029E92D /* DataDetectionResult.mm */,
-				1A781AE51C5714DA00FB96DD /* WebKitAdditions.mm */,
 				37C4C0921814B3AF003688B9 /* WKNSArray.h */,
 				37C4C0911814B3AF003688B9 /* WKNSArray.mm */,
 				373CEAD4185417AE008C363D /* WKNSData.h */,
@@ -5192,6 +5268,7 @@
 				378E1A3F181EDA010031007A /* WKObject.h */,
 				374436871820E7240049579F /* WKObject.mm */,
 			);
+			name = cocoa;
 			path = Cocoa;
 			sourceTree = "<group>";
 		};
@@ -5718,6 +5795,7 @@
 		BC032D5C10F436D50058C15A /* WebProcess */ = {
 			isa = PBXGroup;
 			children = (
+				1AB1F7701D1B2F5D007C9BD1 /* ApplePay */,
 				1C0A19431C8FF1A800FE0EBB /* Automation */,
 				7C6E70F818B2D47E00F24E2E /* cocoa */,
 				3309344B1315B93A0097A7BC /* Cookies */,
@@ -5857,6 +5935,7 @@
 			isa = PBXGroup;
 			children = (
 				BC032DC410F4387C0058C15A /* API */,
+				1AB1F7761D1B30A9007C9BD1 /* ApplePay */,
 				512F588D12A8836F00629530 /* Authentication */,
 				9955A6E81C79809000EB6A93 /* Automation */,
 				1ABC3DF21899E415004F0626 /* Cocoa */,
@@ -6866,6 +6945,10 @@
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				1AB1F7921D1B3613007C9BD1 /* WebPaymentCoordinatorMessageReceiver.cpp */,
+				1AB1F7931D1B3613007C9BD1 /* WebPaymentCoordinatorMessages.h */,
+				1AB1F7941D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessageReceiver.cpp */,
+				1AB1F7951D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h */,
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
 				9955A6F01C79866400EB6A93 /* AutomationBackendDispatchers.cpp */,
@@ -7705,6 +7788,7 @@
 				9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */,
 				BCB9F6A01123A84B00A137E0 /* WebFramePolicyListenerProxy.h in Headers */,
 				BC9B38A110F538BE00443A15 /* WebFrameProxy.h in Headers */,
+				1AB1F7991D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h in Headers */,
 				BC1BE1E012D54A410004A228 /* WebGeolocationClient.h in Headers */,
 				BC0E5FE512D697160012A72A /* WebGeolocationManager.h in Headers */,
 				BC0E606212D6BA910012A72A /* WebGeolocationManagerMessages.h in Headers */,
@@ -7786,6 +7870,7 @@
 				BC306824125A6B9400E71278 /* WebProcessCreationParameters.h in Headers */,
 				1AFA4B901A65A9E2006C4AB4 /* WebProcessLifetimeObserver.h in Headers */,
 				1AFA4B8C1A65A1D0006C4AB4 /* WebProcessLifetimeTracker.h in Headers */,
+				1AB1F78C1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h in Headers */,
 				BC3066BF125A442100E71278 /* WebProcessMessages.h in Headers */,
 				7CE4D21B1A4914A300C7F152 /* WebProcessPool.h in Headers */,
 				7CE4D2281A4916C200C7F152 /* WebProcessPoolMessages.h in Headers */,
@@ -7906,6 +7991,7 @@
 				3309345B1315B9980097A7BC /* WKCookieManager.h in Headers */,
 				512F58FA12A88A5400629530 /* WKCredential.h in Headers */,
 				518ACF1112B015F800B04B83 /* WKCredentialTypes.h in Headers */,
+				1AB1F7971D1B3613007C9BD1 /* WebPaymentCoordinatorMessages.h in Headers */,
 				BC4075F8124FF0270068F20A /* WKData.h in Headers */,
 				377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */,
 				8372DB2F1A677D4A00C697C5 /* WKDiagnosticLoggingResultType.h in Headers */,
@@ -8053,10 +8139,12 @@
 				1AD01BCD1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h in Headers */,
 				1A9E329B1822E1CC00F5D04C /* WKRemoteObject.h in Headers */,
 				1A9E329F1822FEDD00F5D04C /* WKRemoteObjectCoder.h in Headers */,
+				1AB1F7911D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.h in Headers */,
 				37948409150C4B9700E52CE9 /* WKRenderLayer.h in Headers */,
 				37608823150414F700FC82C7 /* WKRenderObject.h in Headers */,
 				3336763B130C99DC006C9DE2 /* WKResourceCacheManager.h in Headers */,
 				A19DD3C01D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h in Headers */,
+				1AB1F77E1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h in Headers */,
 				BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */,
 				1A7E377918E4A4FE003D0FFF /* WKScriptMessage.h in Headers */,
 				1A7E377518E4A33A003D0FFF /* WKScriptMessageHandler.h in Headers */,
@@ -9009,6 +9097,7 @@
 				BCC43ABA127B95DC00317F16 /* PlatformPopupMenuData.cpp in Sources */,
 				1A6FB7D211E651E200DB1371 /* Plugin.cpp in Sources */,
 				31A67E0C165B2A99006CBA66 /* PlugInAutoStartProvider.cpp in Sources */,
+				1AB1F7961D1B3613007C9BD1 /* WebPaymentCoordinatorMessageReceiver.cpp in Sources */,
 				1A8EF4CC1252403700F7067F /* PluginControllerProxy.cpp in Sources */,
 				1A2D91A61281D739001EB962 /* PluginControllerProxyMac.mm in Sources */,
 				1A8EF96E1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp in Sources */,
@@ -9030,6 +9119,7 @@
 				1A0EC75F124BC7B2007EF4A5 /* PluginProcessProxy.cpp in Sources */,
 				1A2D90BB1281C931001EB962 /* PluginProcessProxyMac.mm in Sources */,
 				1A043B5D124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp in Sources */,
+				1AB1F7741D1B2F8A007C9BD1 /* WebPaymentCoordinator.cpp in Sources */,
 				1A043DC2124FF87500FFBFB5 /* PluginProxy.cpp in Sources */,
 				1A2D92211281DC1B001EB962 /* PluginProxyMac.mm in Sources */,
 				1A8EFA701252B84100F7067F /* PluginProxyMessageReceiver.cpp in Sources */,
@@ -9209,6 +9299,7 @@
 				51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */,
 				51D02F64132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp in Sources */,
 				511B24A6132E095700065A0C /* WebIconDatabaseProxy.cpp in Sources */,
+				1AB1F77F1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.mm in Sources */,
 				51D02F6B132EC73700BEAA96 /* WebIconDatabaseProxyMessageReceiver.cpp in Sources */,
 				5105236F1C739D42007993CB /* WebIDBConnectionToClient.cpp in Sources */,
 				510523791C73DA77007993CB /* WebIDBConnectionToClientMessageReceiver.cpp in Sources */,
@@ -9229,7 +9320,6 @@
 				C0337DD3127A2A0E008FF4F4 /* WebKeyboardEvent.cpp in Sources */,
 				1A6280F31919982A006AD9F9 /* WebKit.m in Sources */,
 				BC9BA5041697C45300E44616 /* WebKit2Initialize.cpp in Sources */,
-				1A781AE71C5714DA00FB96DD /* WebKitAdditions.mm in Sources */,
 				51FB08FF1639DE1A00EC324A /* WebLoaderStrategy.cpp in Sources */,
 				CD003A5219D49B5D005ABCE0 /* WebMediaKeyStorageManager.cpp in Sources */,
 				C98C48A51B6FD4C300145103 /* WebMediaSessionFocusManager.cpp in Sources */,
@@ -9249,8 +9339,10 @@
 				BC857F8612B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp in Sources */,
 				BC857F7E12B82CEE00EDEB2E /* WebOpenPanelResultListenerProxy.cpp in Sources */,
 				BC963D6B113DD19200574BE2 /* WebPage.cpp in Sources */,
+				1AB1F78B1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.cpp in Sources */,
 				C06C6095124C144B0001682F /* WebPageCreationParameters.cpp in Sources */,
 				8372DB281A67562800C697C5 /* WebPageDiagnosticLoggingClient.cpp in Sources */,
+				1AB1F7981D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessageReceiver.cpp in Sources */,
 				BC7B6207129A0A6700D174A4 /* WebPageGroup.cpp in Sources */,
 				BC7B625312A43C9600D174A4 /* WebPageGroupData.cpp in Sources */,
 				BC7B621612A4219A00D174A4 /* WebPageGroupProxy.cpp in Sources */,
@@ -9371,6 +9463,7 @@
 				EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */,
 				BC60C57A1240A546008C5E29 /* WKBundleRangeHandle.cpp in Sources */,
 				BC14DF9E120B635F00826C0C /* WKBundleScriptWorld.cpp in Sources */,
+				1AB1F7801D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyIOS.mm in Sources */,
 				BC4075F5124FF0270068F20A /* WKCertificateInfo.cpp in Sources */,
 				BC407628124FF0400068F20A /* WKCertificateInfoMac.mm in Sources */,
 				BCA284D61492F2C7001F9042 /* WKConnection.mm in Sources */,
@@ -9384,6 +9477,7 @@
 				3309345A1315B9980097A7BC /* WKCookieManager.cpp in Sources */,
 				512F58F912A88A5400629530 /* WKCredential.cpp in Sources */,
 				BC4075F7124FF0270068F20A /* WKData.cpp in Sources */,
+				1AB1F7901D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm in Sources */,
 				1AFF49001833DE78009AB15A /* WKDeprecatedFunctions.cpp in Sources */,
 				BC4075F9124FF0270068F20A /* WKDictionary.cpp in Sources */,
 				BC017D0816260FF4007054F5 /* WKDOMDocument.mm in Sources */,
@@ -9497,6 +9591,7 @@
 				0FCB4E6918BBE3D9000FCFC9 /* WKTextInputWindowController.mm in Sources */,
 				BC407607124FF0270068F20A /* WKType.cpp in Sources */,
 				7CD5EBBE1746B04C000C1C45 /* WKTypeRefWrapper.mm in Sources */,
+				1AB1F7811D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyMac.mm in Sources */,
 				BC407609124FF0270068F20A /* WKURL.cpp in Sources */,
 				BC40761B124FF0370068F20A /* WKURLCF.mm in Sources */,
 				BC40760B124FF0270068F20A /* WKURLRequest.cpp in Sources */,

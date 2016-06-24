@@ -97,6 +97,7 @@
 #include "WebPageGroupData.h"
 #include "WebPageMessages.h"
 #include "WebPageProxyMessages.h"
+#include "WebPaymentCoordinatorProxy.h"
 #include "WebPopupItem.h"
 #include "WebPopupMenuProxy.h"
 #include "WebPreferences.h"
@@ -165,10 +166,6 @@
 #include "WebMediaSessionFocusManager.h"
 #include "WebMediaSessionMetadata.h"
 #include <WebCore/MediaSessionMetadata.h>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageProxyIncludes.h>
 #endif
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

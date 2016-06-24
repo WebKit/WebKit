@@ -55,6 +55,7 @@
 #include "WebPageCreationParameters.h"
 #include "WebPageDiagnosticLoggingClient.h"
 #include "WebPageInjectedBundleClient.h"
+#include "WebPaymentCoordinatorProxy.h"
 #include "WebPreferences.h"
 #include <WebCore/AlternativeTextClient.h> // FIXME: Needed by WebPageProxyMessages.h for DICTATION_ALTERNATIVES.
 #include "WebPageProxyMessages.h"
@@ -114,10 +115,6 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 #include <WebCore/MediaPlaybackTargetPicker.h>
 #include <WebCore/WebMediaSessionManagerClient.h>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageProxyIncludes.h>
 #endif
 
 #if ENABLE(MEDIA_SESSION)
