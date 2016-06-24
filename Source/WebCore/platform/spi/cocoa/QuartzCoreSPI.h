@@ -170,9 +170,12 @@ typedef enum {
 
 // FIXME: Declare these functions even when USE(APPLE_INTERNAL_SDK) is true once we can fix <rdar://problem/26584828> in a better way.
 #if !USE(APPLE_INTERNAL_SDK)
-EXTERN_C void CARenderServerCaptureLayerWithTransform(mach_port_t serverPort, uint32_t clientId, uint64_t layerId,
-                                                      uint32_t slotId, int32_t ox, int32_t oy, const CATransform3D *);
+EXTERN_C void CARenderServerCaptureLayerWithTransform(mach_port_t, uint32_t clientId, uint64_t layerId, uint32_t slotId, int32_t ox, int32_t oy, const CATransform3D*);
 
+#if USE(IOSURFACE)
+EXTERN_C void CARenderServerRenderLayerWithTransform(mach_port_t server_port, uint32_t client_id, uint64_t layer_id, IOSurfaceRef, int32_t ox, int32_t oy, const CATransform3D*);
+EXTERN_C void CARenderServerRenderDisplayLayerWithTransformAndTimeOffset(mach_port_t, CFStringRef display_name, uint32_t client_id, uint64_t layer_id, IOSurfaceRef, int32_t ox, int32_t oy, const CATransform3D*, CFTimeInterval);
+#else
 typedef struct CARenderServerBuffer* CARenderServerBufferRef;
 EXTERN_C CARenderServerBufferRef CARenderServerCreateBuffer(size_t, size_t);
 EXTERN_C void CARenderServerDestroyBuffer(CARenderServerBufferRef);
@@ -182,9 +185,7 @@ EXTERN_C size_t CARenderServerGetBufferRowBytes(CARenderServerBufferRef);
 EXTERN_C uint8_t* CARenderServerGetBufferData(CARenderServerBufferRef);
 EXTERN_C size_t CARenderServerGetBufferDataSize(CARenderServerBufferRef);
 
-#if USE(IOSURFACE)
-EXTERN_C void CARenderServerRenderLayerWithTransform(mach_port_t server_port, uint32_t client_id, uint64_t layer_id, IOSurfaceRef iosurface, int32_t ox, int32_t oy, const CATransform3D *matrix);
-EXTERN_C void CARenderServerRenderDisplayLayerWithTransformAndTimeOffset(mach_port_t server_port, CFStringRef display_name, uint32_t client_id, uint64_t layer_id, IOSurfaceRef iosurface, int32_t ox, int32_t oy, const CATransform3D *matrix, CFTimeInterval offset);
+EXTERN_C bool CARenderServerRenderLayerWithTransform(mach_port_t, uint32_t client_id, uint64_t layer_id, CARenderServerBufferRef, int32_t ox, int32_t oy, const CATransform3D*);
 #endif
 #endif
 
