@@ -5219,6 +5219,8 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPl
     configureMediaControls();
     scheduleEvent(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
     m_mediaSession->isPlayingToWirelessPlaybackTargetChanged(m_isPlayingToWirelessTarget);
+    if (m_isPlayingToWirelessTarget)
+        m_mediaSession->setCanProduceAudio(true);
     updateMediaState(UpdateMediaState::Asynchronously);
 }
 
