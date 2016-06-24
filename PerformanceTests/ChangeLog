@@ -1,3 +1,135 @@
+2016-06-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Add a ES6 generator benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=159101
+
+        Rubber stamped by Keith Miller.
+        
+        This adds a Basic interpreter loosely based on ECMA-55:
+        
+        http://www.ecma-international.org/publications/files/ECMA-ST-WITHDRAWN/ECMA-55,%201st%20Edition,%20January%201978.pdf
+        
+        It includes a lexer that is a generator, a parser that uses regular expressions, and an AST
+        walk interpreter where the walking functions for statements are generators that call each
+        other with yield*. This enables the interpreter to look like an AST walk even though it can
+        yield at INPUT and PRINT statements.
+        
+        This also uses for-of, classes, Map, and WeakMap. It also uses deprecated-but-awesome RegExp
+        features like RegExp.lastMatch and RegExp.rightContext. I did it that way because this is
+        how I've always written lexers in dynamic languages; see offlineasm's lex() method in
+        parser.rb for example.
+        
+        The benchmark runs a handful of simple Basic programs. The longest-running one computes
+        prime numbers.
+        
+        Includes a command-line and web harness. On my machine it runs in 2-3 seconds.
+
+        * Basic: Added.
+        * Basic/ast.js: Added.
+        (Basic.NumberApply):
+        (Basic.Variable):
+        (Basic.Const):
+        (Basic.NumberPow):
+        (Basic.NumberMul):
+        (Basic.NumberDiv):
+        (Basic.NumberNeg):
+        (Basic.NumberAdd):
+        (Basic.NumberSub):
+        (Basic.StringVar):
+        (Basic.Equals):
+        (Basic.NotEquals):
+        (Basic.LessThan):
+        (Basic.GreaterThan):
+        (Basic.LessEqual):
+        (Basic.GreaterEqual):
+        (Basic.GoTo):
+        (Basic.GoSub):
+        (Basic.Def):
+        (Basic.Let):
+        (Basic.If):
+        (Basic.Return):
+        (Basic.Stop):
+        (Basic.On):
+        (sideState.shouldStop):
+        (Basic.For):
+        (Basic.Next):
+        (Basic.Print):
+        (Basic.Input):
+        (Basic.Read):
+        (Basic.Restore):
+        (Basic.Dim):
+        (Basic.Randomize):
+        (Basic.End):
+        (Basic.Program):
+        * Basic/basic.js: Added.
+        (prepare):
+        (simulate):
+        * Basic/benchmark.js: Added.
+        (Benchmark):
+        (Benchmark.prototype.runIteration.expect):
+        (Benchmark.prototype.runIteration):
+        (runBenchmark):
+        * Basic/caseless_map.js: Added.
+        (CaselessMap):
+        * Basic/lexer.js: Added.
+        (lex.consumeWhitespace):
+        (lex.consume):
+        (lex):
+        * Basic/lexer_test.js: Added.
+        * Basic/number.js: Added.
+        (NumberValue):
+        (NumberValue.prototype.get value):
+        (NumberValue.prototype.apply):
+        (NumberValue.prototype.leftApply):
+        (NumberValue.prototype.assign):
+        (NumberArray.):
+        (NumberArray):
+        (NumberArray.prototype.apply):
+        (NumberArray.prototype.leftApply):
+        (NumberFunction):
+        (NumberFunction.prototype.apply):
+        (NumberFunction.prototype.leftApply):
+        (NativeFunction):
+        (NativeFunction.prototype.apply):
+        (NativeFunction.prototype.leftApply):
+        * Basic/parser.js: Added.
+        (parse):
+        (parse.pushToken):
+        (parse.peekToken):
+        (parse.consumeKind):
+        (parse.consumeToken):
+        (parse.parseVariable):
+        (parse.parseNumericExpression.parsePrimary):
+        (parse.parseNumericExpression.parseFactor):
+        (parse.parseNumericExpression.parseTerm):
+        (parse.parseNumericExpression):
+        (parse.parseConstant):
+        (parse.parseStringExpression):
+        (parse.isStringExpression):
+        (parse.parseRelationalExpression):
+        (parse.parseNonNegativeInteger):
+        (parse.parseGoToStatement):
+        (parse.parseGoSubStatement):
+        (parse.parseStatement):
+        (parse.parseStatements):
+        * Basic/random.js: Added.
+        (createRNG):
+        (createRNGWithFixedSeed):
+        (createRNGWithRandomSeed):
+        * Basic/state.js: Added.
+        (State):
+        (State.prototype.getValue):
+        (State.prototype.getSideState):
+        (State.prototype.abort):
+        (State.prototype.validate):
+        * Basic/test.html: Added.
+        * Basic/test.js: Added.
+        * Basic/util.js: Added.
+        (this.performance.performance.now.currentTime):
+        (else.this.preciseTime.currentTime):
+        (else.currentTime):
+        * Skipped: Make sure that we don't run Basic yet.
+
 2016-06-21  Jon Lee  <jonlee@apple.com>
 
         Update canvas size when benchmark begins
