@@ -30,5 +30,5 @@ SKIP_INSTALL = YES;
 
 OTHER_LDFLAGS = ;
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = AccessibilityControllerMac.mm AccessibilityUIElementMac.mm DumpRenderTreeFileDraggingSource.m PixelDumpSupportMac.mm PixelDumpSupportCG.cpp;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = AccessibilityControllerMac.mm AccessibilityUIElementMac.mm DumpRenderTreeFileDraggingSource.m PixelDumpSupportMac.mm;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = AccessibilityUIElementIOS.mm AccessibilityControllerIOS.mm PixelDumpSupportIOS.mm DumpRenderTreeBrowserView.mm;

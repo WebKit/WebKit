@@ -115,3 +115,27 @@ void dumpBitmap(BitmapContext* context, const char* checksum)
     RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(context->cgContext()));
     printPNG(image.get(), checksum);
 }
+
+PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, size_t& rowBytes, void*& buffer)
+{
+    rowBytes = (4 * pixelsWide + 63) & ~63; // Use a multiple of 64 bytes to improve CG performance
+
+    buffer = calloc(pixelsHigh, rowBytes);
+    if (!buffer) {
+        WTFLogAlways("DumpRenderTree: calloc(%zu, %zu) failed\n", pixelsHigh, rowBytes);
+        return nullptr;
+    }
+    
+    // Creating this bitmap in the device color space prevents any color conversion when the image of the web view is drawn into it.
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+    if (!context) {
+        WTFLogAlways("DumpRenderTree: CGBitmapContextCreate(%p, %zu, %zu, 8, %zu, %p, 0x%x) failed\n", buffer, pixelsHigh, pixelsWide, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+        free(buffer);
+        buffer = nullptr;
+        return nullptr;
+    }
+
+    return BitmapContext::createByAdoptingBitmapAndContext(buffer, context);
+}
+

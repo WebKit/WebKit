@@ -28,10 +28,12 @@
 
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebKit/WKImageCG.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
 
 @interface WKWebView (Details)
@@ -91,12 +93,6 @@
 {
     return 1;
 }
-
-@end
-
-@interface UIWindow ()
-
-- (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
 
 @end
 
@@ -206,8 +202,36 @@ void PlatformWebView::changeWindowScaleIfNeeded(float)
 
 WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
-    // FIXME: Need an implementation of this, or we're depending on software paints!
-    return nullptr;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    CGFloat deviceScaleFactor = 2; // FIXME: hardcode 2x for now. In future we could respect 1x and 3x as we do on Mac.
+    CATransform3D transform = CATransform3DMakeScale(deviceScaleFactor, deviceScaleFactor, 1);
+    
+    CGSize viewSize = m_view.bounds.size;
+    int bufferWidth = ceil(viewSize.width * deviceScaleFactor);
+    int bufferHeight = ceil(viewSize.height * deviceScaleFactor);
+
+    CARenderServerBufferRef buffer = CARenderServerCreateBuffer(bufferWidth, bufferHeight);
+    if (!buffer) {
+        WTFLogAlways("CARenderServerCreateBuffer failed for buffer with width %d height %d\n", bufferWidth, bufferHeight);
+        return nullptr;
+    }
+
+    CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, m_view.layer.context.contextId, reinterpret_cast<uint64_t>(m_view.layer), buffer, 0, 0, &transform);
+
+    uint8_t* data = CARenderServerGetBufferData(buffer);
+    size_t rowBytes = CARenderServerGetBufferRowBytes(buffer);
+
+    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(0, data, CARenderServerGetBufferDataSize(buffer), nullptr));
+    
+    RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(bufferWidth, bufferHeight, 8, 32, rowBytes, sRGBSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider.get(), 0, false, kCGRenderingIntentDefault));
+    WKRetainPtr<WKImageRef> result = adoptWK(WKImageCreateFromCGImage(cgImage.get(), 0));
+
+    CARenderServerDestroyBuffer(buffer);
+
+    return result;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const

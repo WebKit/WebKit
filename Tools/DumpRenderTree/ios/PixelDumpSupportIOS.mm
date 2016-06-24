@@ -31,13 +31,16 @@
 
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeWindow.h"
+#import "PixelDumpSupportCG.h"
 #import "UIKitSPI.h"
 
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebKit/WebCoreThread.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -45,49 +48,49 @@
 extern DumpRenderTreeWindow *gDrtWindow;
 extern UIWebBrowserView *gWebBrowserView;
 
-class BitmapContext : public RefCounted<BitmapContext> {
-public:
-    static PassRefPtr<BitmapContext> createFromUIImage(UIImage *image)
-    {
-        return adoptRef(new BitmapContext(image));
-    }
-
-    NSData *pixelData() const { return m_pixelData.get(); }
-
-private:
-    BitmapContext(UIImage *image)
-        : m_pixelData(UIImagePNGRepresentation(image))
-    {
-    }
-
-    RetainPtr<NSData> m_pixelData;
-};
-
-void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashString[33])
-{
-    unsigned char result[CC_MD5_DIGEST_LENGTH];
-    CC_MD5([context->pixelData() bytes], [context->pixelData() length], result);
-    hashString[0] = '\0';
-    for (int i = 0; i < 16; ++i)
-        snprintf(hashString, 33, "%s%02x", hashString, result[i]);
-}
-
-void dumpBitmap(BitmapContext* context, const char* checksum)
-{
-    printPNG(static_cast<const unsigned char*>([context->pixelData() bytes]), [context->pixelData() length], checksum);
-}
-
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
     // TODO: <rdar://problem/6558366> DumpRenderTree: Investigate testRepaintSweepHorizontally and dumpSelectionRect
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     WebThreadLock();
     [CATransaction flush];
 
-    UIGraphicsBeginImageContextWithOptions([[mainFrame webView] frame].size, YES /* opaque */, [gDrtWindow screenScale]);
-    [[gWebBrowserView layer] renderInContext:UIGraphicsGetCurrentContext()];
-    RefPtr<BitmapContext> context = BitmapContext::createFromUIImage(UIGraphicsGetImageFromCurrentImageContext());
-    UIGraphicsEndImageContext();
+    CGFloat deviceScaleFactor = 2; // FIXME: hardcode 2x for now. In future we could respect 1x and 3x as we do on Mac.
+    CATransform3D transform = CATransform3DMakeScale(deviceScaleFactor, deviceScaleFactor, 1);
+    
+    CGSize viewSize = [[mainFrame webView] frame].size;
+    int bufferWidth = ceil(viewSize.width * deviceScaleFactor);
+    int bufferHeight = ceil(viewSize.height * deviceScaleFactor);
 
-    return context.release();
+    CARenderServerBufferRef buffer = CARenderServerCreateBuffer(bufferWidth, bufferHeight);
+    if (!buffer) {
+        WTFLogAlways("CARenderServerCreateBuffer failed for buffer with width %d height %d\n", bufferWidth, bufferHeight);
+        return nullptr;
+    }
+
+    CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, [gWebBrowserView layer].context.contextId, reinterpret_cast<uint64_t>([gWebBrowserView layer]), buffer, 0, 0, &transform);
+
+    uint8_t* data = CARenderServerGetBufferData(buffer);
+    size_t rowBytes = CARenderServerGetBufferRowBytes(buffer);
+
+    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(0, data, CARenderServerGetBufferDataSize(buffer), nullptr));
+    
+    RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(bufferWidth, bufferHeight, 8, 32, rowBytes, sRGBSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider.get(), 0, false, kCGRenderingIntentDefault));
+
+    void* bitmapBuffer = nullptr;
+    size_t bitmapRowBytes = 0;
+    auto bitmapContext = createBitmapContext(bufferWidth, bufferHeight, bitmapRowBytes, bitmapBuffer);
+    if (!bitmapContext) {
+        CARenderServerDestroyBuffer(buffer);
+        return nullptr;
+    }
+
+    CGContextDrawImage(bitmapContext->cgContext(), CGRectMake(0, 0, bufferWidth, bufferHeight), cgImage.get());
+    CARenderServerDestroyBuffer(buffer);
+
+    return bitmapContext;
+
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
