@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript(x, y)
+        {
+            return `
+            (function() {
+                uiController.singleTapAtPoint(${x}, ${y}, function() {
+                    uiController.uiScriptComplete("Done");
+                });
+            })();`
+        }
+
+        function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            function fail(event) {
+                output += 'FAILED!: No mouse event should be receive, we got a ' + event.type;
+            }
+            window.addEventListener('mouseover', fail);
+            window.addEventListener('mouseout', fail);
+            window.addEventListener('mouseenter', fail);
+            window.addEventListener('mouseleave', fail);
+            window.addEventListener('mousedown', fail);
+            window.addEventListener('mousemove', fail);
+            window.addEventListener('mouseup', fail);
+            window.addEventListener('click', fail);
+
+            let output = '';
+            function getLogEvent(listener) {
+                return function logEvent(event) {
+                    output += 'Listener ' + listener + ' received' + (event.cancelable ? ' cancelable' : '') + ' event ' + event.type + ' targetting ' + event.target.id;
+                    if (event.touches[0] && event.touches[0].clientX) {
+                        output += ' at ' + event.touches[0].clientX + ', ' + event.touches[0].clientY;
+                    }
+                    output += '<br>';
+                    output += 'defaultPrevented before preventDefault(): ' + event.defaultPrevented + '<br>';
+                    event.preventDefault();
+                    output += 'defaultPrevented after preventDefault(): ' + event.defaultPrevented + '<br>';
+                }
+            }
+
+            let target1 = document.getElementById('eventTarget1');
+            target1.addEventListener('touchstart', getLogEvent("target1"));
+            target1.addEventListener('touchmove', getLogEvent("target1"));
+            target1.addEventListener('touchend', getLogEvent("target1"));
+            target1.addEventListener('touchcancel', getLogEvent("target1"));
+            let target3 = document.getElementById('eventTarget3');
+            target3.addEventListener('touchstart', getLogEvent("target3"), { 'passive': true });
+            target3.addEventListener('touchmove', getLogEvent("target3"), { 'passive': true });
+            target3.addEventListener('touchend', getLogEvent("target3"), { 'passive': true });
+            target3.addEventListener('touchcancel', getLogEvent("target3"), { 'passive': true });
+
+            output += "<h1>Tap on Target1 (green)</h1>";
+            testRunner.runUIScript(getUIScript(50, 50), function(result) {
+                output += result;
+                output += "<h1>Tap on Target2 (red)</h1>";
+                testRunner.runUIScript(getUIScript(150, 50), function(result) {
+                    output += result;
+                    output += "<h1>Tap on Target3 (blue)</h1>";
+                    testRunner.runUIScript(getUIScript(250, 50), function(result) {
+                        document.getElementById('output').innerHTML = output;
+                        testRunner.notifyDone();
+                    });
+                });
+            });
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        * { touch-action: manipulation; }
+        body {
+            margin: 0;
+        }
+        #eventTarget1, #eventTarget2, #eventTarget3 {
+            width: 100px;
+            height: 100px;
+        }
+        #eventTarget1 {
+            background-color: green;
+        }
+        #eventTarget2 {
+            background-color: red;
+            position: absolute;
+            left: 100px;
+        }
+        #eventTarget3 {
+            background-color: blue;
+            position: absolute;
+            left: 100px;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+    <div id=eventTarget1>
+        <div id=eventTarget2>
+            <div id=eventTarget3>
+            </div>
+        </div>
+    </div>
+    <div id=output>
+    This test requires UIScriptController to run.
+    </div>
+</body>
+</html>

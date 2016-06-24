@@ -111,7 +111,7 @@ bool ArgumentCoder<AffineTransform>::decode(ArgumentDecoder& decoder, AffineTran
 void ArgumentCoder<EventTrackingRegions>::encode(ArgumentEncoder& encoder, const EventTrackingRegions& eventTrackingRegions)
 {
     encoder << eventTrackingRegions.asynchronousDispatchRegion;
-    encoder << eventTrackingRegions.synchronousDispatchRegion;
+    encoder << eventTrackingRegions.eventSpecificSynchronousDispatchRegions;
 }
 
 bool ArgumentCoder<EventTrackingRegions>::decode(ArgumentDecoder& decoder, EventTrackingRegions& eventTrackingRegions)
@@ -119,11 +119,11 @@ bool ArgumentCoder<EventTrackingRegions>::decode(ArgumentDecoder& decoder, Event
     Region asynchronousDispatchRegion;
     if (!decoder.decode(asynchronousDispatchRegion))
         return false;
-    Region synchronousDispatchRegion;
-    if (!decoder.decode(synchronousDispatchRegion))
+    HashMap<String, Region> eventSpecificSynchronousDispatchRegions;
+    if (!decoder.decode(eventSpecificSynchronousDispatchRegions))
         return false;
     eventTrackingRegions.asynchronousDispatchRegion = WTFMove(asynchronousDispatchRegion);
-    eventTrackingRegions.synchronousDispatchRegion = WTFMove(synchronousDispatchRegion);
+    eventTrackingRegions.eventSpecificSynchronousDispatchRegions = WTFMove(eventSpecificSynchronousDispatchRegions);
     return true;
 }
 

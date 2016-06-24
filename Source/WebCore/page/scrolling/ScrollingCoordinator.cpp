@@ -28,6 +28,7 @@
 #include "ScrollingCoordinator.h"
 
 #include "Document.h"
+#include "EventNames.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
 #include "IntRect.h"
@@ -144,18 +145,19 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     }
     
     // FIXME: if we've already accounted for this subframe as a scrollable area, we can avoid recursing into it here.
+    EventTrackingRegions eventTrackingRegions;
     for (Frame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
         FrameView* subframeView = subframe->view();
         if (!subframeView)
             continue;
 
-        Region subframeRegion = absoluteEventTrackingRegionsForFrame(*subframe).synchronousDispatchRegion;
+        EventTrackingRegions subframeRegion = absoluteEventTrackingRegionsForFrame(*subframe);
         // Map from the frame document to our document.
         IntPoint offset = subframeView->contentsToContainingViewContents(IntPoint());
 
         // FIXME: this translation ignores non-trival transforms on the frame.
         subframeRegion.translate(toIntSize(offset));
-        nonFastScrollableRegion.unite(subframeRegion);
+        eventTrackingRegions.unite(subframeRegion);
     }
 
     Document::RegionFixedPair wheelHandlerRegion = frame.document()->absoluteRegionForEventTargets(frame.document()->wheelEventTargets());
@@ -169,7 +171,8 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     nonFastScrollableRegion.unite(wheelHandlerRegion.first);
 
     // FIXME: If this is not the main frame, we could clip the region to the frame's bounds.
-    return EventTrackingRegions { Region(), nonFastScrollableRegion };
+    eventTrackingRegions.uniteSynchronousRegion(eventNames().wheelEvent, nonFastScrollableRegion);
+    return eventTrackingRegions;
 #endif
 }
 

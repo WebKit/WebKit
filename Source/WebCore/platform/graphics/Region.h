@@ -198,6 +198,10 @@ inline bool operator==(const Region& a, const Region& b)
 {
     return a.m_bounds == b.m_bounds && a.m_shape == b.m_shape;
 }
+inline bool operator!=(const Region& a, const Region& b)
+{
+    return !(a == b);
+}
 
 inline bool operator==(const Region::Shape& a, const Region::Shape& b)
 {
@@ -207,6 +211,10 @@ inline bool operator==(const Region::Shape& a, const Region::Shape& b)
 inline bool operator==(const Region::Span& a, const Region::Span& b)
 {
     return a.y == b.y && a.segmentIndex == b.segmentIndex;
+}
+inline bool operator!=(const Region::Span& a, const Region::Span& b)
+{
+    return !(a == b);
 }
 
 } // namespace WebCore

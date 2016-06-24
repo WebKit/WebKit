@@ -149,9 +149,9 @@ bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent&
     return result == ScrollingTree::DidHandleEvent; // FIXME: handle other values.
 }
 
-TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(IntPoint p) const
+TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(const AtomicString& eventName, IntPoint p) const
 {
-    return m_scrollingTree->eventTrackingTypeForPoint(p);
+    return m_scrollingTree->eventTrackingTypeForPoint(eventName, p);
 }
 
 void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const FloatRect& fixedPositionRect, double scale)

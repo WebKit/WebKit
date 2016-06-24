@@ -245,18 +245,20 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, int indent
         ts << ")\n";
         indent -= 2;
     }
-    if (!m_eventTrackingRegions.synchronousDispatchRegion.isEmpty()) {
-        ++indent;
-        writeIndent(ts, indent);
-        ts << "(synchronous event dispatch region";
-        ++indent;
-        for (auto rect : m_eventTrackingRegions.synchronousDispatchRegion.rects()) {
-            ts << "\n";
+    if (!m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions.isEmpty()) {
+        for (const auto& synchronousEventRegion : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions) {
+            ++indent;
             writeIndent(ts, indent);
-            ts << rect;
+            ts << "(synchronous event dispatch region for event " << synchronousEventRegion.key;
+            ++indent;
+            for (auto rect : synchronousEventRegion.value.rects()) {
+                ts << "\n";
+                writeIndent(ts, indent);
+                ts << rect;
+            }
+            ts << ")\n";
+            indent -= 2;
         }
-        ts << ")\n";
-        indent -= 2;
     }
 
     if (m_synchronousScrollingReasons) {

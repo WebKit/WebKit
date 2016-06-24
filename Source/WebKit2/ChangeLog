@@ -1,3 +1,28 @@
+2016-06-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        Specialize synchronous event tracking per event type
+        https://bugs.webkit.org/show_bug.cgi?id=158826
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<EventTrackingRegions>::encode):
+        (IPC::ArgumentCoder<EventTrackingRegions>::decode):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::mergeTrackingTypes):
+        (WebKit::WebPageProxy::updateTouchEventTracking):
+        (WebKit::WebPageProxy::touchEventTrackingType):
+        (WebKit::WebPageProxy::handleTouchEventSynchronously):
+        (WebKit::WebPageProxy::handleTouchEventAsynchronously):
+        (WebKit::WebPageProxy::handleTouchEvent):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::TouchEventTracking::isTrackingAnything):
+        (WebKit::WebPageProxy::TouchEventTracking::reset):
+
 2016-06-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         requestFrameAnimation() callback timestamp should be very close to Performance.now() 

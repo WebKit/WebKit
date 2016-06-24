@@ -1468,6 +1468,7 @@ private:
     void sendWheelEvent(const WebWheelEvent&);
 
 #if ENABLE(TOUCH_EVENTS)
+    void updateTouchEventTracking(const WebTouchEvent&);
     WebCore::TrackingType touchEventTrackingType(const WebTouchEvent&) const;
 #endif
 
@@ -1695,7 +1696,29 @@ private:
     std::unique_ptr<NativeWebMouseEvent> m_currentlyProcessedMouseDownEvent;
 
 #if ENABLE(TOUCH_EVENTS)
-    WebCore::TrackingType m_touchEventsTrackingType { WebCore::TrackingType::NotTracking };
+    struct TouchEventTracking {
+        WebCore::TrackingType touchForceChangedTracking { WebCore::TrackingType::NotTracking };
+        WebCore::TrackingType touchStartTracking { WebCore::TrackingType::NotTracking };
+        WebCore::TrackingType touchMoveTracking { WebCore::TrackingType::NotTracking };
+        WebCore::TrackingType touchEndTracking { WebCore::TrackingType::NotTracking };
+
+        bool isTrackingAnything() const
+        {
+            return touchForceChangedTracking != WebCore::TrackingType::NotTracking
+                || touchStartTracking != WebCore::TrackingType::NotTracking
+                || touchMoveTracking != WebCore::TrackingType::NotTracking
+                || touchEndTracking != WebCore::TrackingType::NotTracking;
+        }
+
+        void reset()
+        {
+            touchForceChangedTracking = WebCore::TrackingType::NotTracking;
+            touchStartTracking = WebCore::TrackingType::NotTracking;
+            touchMoveTracking = WebCore::TrackingType::NotTracking;
+            touchEndTracking = WebCore::TrackingType::NotTracking;
+        }
+    };
+    TouchEventTracking m_touchEventTracking;
 #endif
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     Deque<QueuedTouchEvents> m_touchEventQueue;

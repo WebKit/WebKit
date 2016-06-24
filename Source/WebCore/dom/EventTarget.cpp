@@ -243,16 +243,6 @@ bool EventTarget::fireEventListeners(Event& event)
     return !event.defaultPrevented();
 }
 
-bool EventTarget::hasActiveTouchEventListeners() const
-{
-    const EventNames& names = eventNames();
-    return hasActiveEventListeners(names.touchstartEvent)
-        || hasActiveEventListeners(names.touchmoveEvent)
-        || hasActiveEventListeners(names.touchendEvent)
-        || hasActiveEventListeners(names.touchcancelEvent)
-        || hasActiveEventListeners(names.touchforcechangeEvent);
-}
-
 void EventTarget::fireEventListeners(Event& event, EventTargetData* d, EventListenerVector& entry)
 {
     Ref<EventTarget> protectedThis(*this);

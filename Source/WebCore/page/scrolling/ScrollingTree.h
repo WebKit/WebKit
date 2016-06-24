@@ -101,7 +101,7 @@ public:
     virtual void scrollingTreeNodeDidEndScroll() { }
 #endif
 
-    WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(IntPoint);
+    WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(const AtomicString& eventName, IntPoint);
     
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) = 0;

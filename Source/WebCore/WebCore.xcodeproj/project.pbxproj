@@ -1075,6 +1075,7 @@
 		26255F0318878E110006E1FD /* UserAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 26255F0118878E110006E1FD /* UserAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26255F0418878E110006E1FD /* UserAgentMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26255F0218878E110006E1FD /* UserAgentMac.mm */; };
 		262EC41A1D078FB900BA78FC /* EventTrackingRegions.h in Headers */ = {isa = PBXBuildFile; fileRef = 262EC4191D078F3D00BA78FC /* EventTrackingRegions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		262EC41D1D110B9000BA78FC /* EventTrackingRegions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 262EC41C1D110B1F00BA78FC /* EventTrackingRegions.cpp */; };
 		265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 265541371489811C000DFC5D /* KeyEventCodesIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2655413A1489811C000DFC5D /* KeyEventIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 265541381489811C000DFC5D /* KeyEventIOS.mm */; };
 		265541521489B233000DFC5D /* CursorIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2655414B1489AA2B000DFC5D /* CursorIOS.cpp */; };
@@ -8610,6 +8611,7 @@
 		26255F0118878E110006E1FD /* UserAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAgent.h; sourceTree = "<group>"; };
 		26255F0218878E110006E1FD /* UserAgentMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgentMac.mm; sourceTree = "<group>"; };
 		262EC4191D078F3D00BA78FC /* EventTrackingRegions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTrackingRegions.h; sourceTree = "<group>"; };
+		262EC41C1D110B1F00BA78FC /* EventTrackingRegions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTrackingRegions.cpp; sourceTree = "<group>"; };
 		265541371489811C000DFC5D /* KeyEventCodesIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyEventCodesIOS.h; sourceTree = "<group>"; };
 		265541381489811C000DFC5D /* KeyEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KeyEventIOS.mm; sourceTree = "<group>"; };
 		2655414B1489AA2B000DFC5D /* CursorIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CursorIOS.cpp; sourceTree = "<group>"; };
@@ -23134,6 +23136,7 @@
 				A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */,
 				A7CFB3D00B7ED10A0070C32D /* DragImage.h */,
 				1CA19E150DC255CA0065A994 /* EventLoop.h */,
+				262EC41C1D110B1F00BA78FC /* EventTrackingRegions.cpp */,
 				262EC4191D078F3D00BA78FC /* EventTrackingRegions.h */,
 				934FE9E40B5CA539003E4A73 /* FileChooser.cpp */,
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
@@ -30675,6 +30678,7 @@
 				A7BBE26611AFB3F20005EA03 /* JSHTMLMeterElement.cpp in Sources */,
 				1AE2AB290A1CE63B00B42B25 /* JSHTMLModElement.cpp in Sources */,
 				BC305C790C076BB300CD20F0 /* JSHTMLObjectElement.cpp in Sources */,
+				262EC41D1D110B9000BA78FC /* EventTrackingRegions.cpp in Sources */,
 				BC305CA40C0781BB00CD20F0 /* JSHTMLObjectElementCustom.cpp in Sources */,
 				1A85B1EA0A1B240500D8C87C /* JSHTMLOListElement.cpp in Sources */,
 				A80E7E9C0A1A83E3007FB8C5 /* JSHTMLOptGroupElement.cpp in Sources */,

@@ -1,3 +1,24 @@
+2016-06-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        Specialize synchronous event tracking per event type
+        https://bugs.webkit.org/show_bug.cgi?id=158826
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/tap-with-active-listener-inside-document-with-passive-listener-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-active-listener-inside-document-with-passive-listener.html: Added.
+        * fast/events/touch/ios/tap-with-active-listener-inside-window-with-passive-listener-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-active-listener-inside-window-with-passive-listener.html: Added.
+        * fast/events/touch/ios/tap-with-active-touch-end-listener-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-active-touch-end-listener.html: Added.
+        * fast/events/touch/ios/tap-with-passive-listener-inside-active-listener.html: Added.
+        * fast/events/touch/ios/tap-with-passive-touch-end-listener-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-passive-touch-end-listener.html: Added.
+        * fast/events/touch/ios/tap-with-passive-touch-start-active-touch-end-listeners-on-elements-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-passive-touch-start-active-touch-end-listeners-on-elements.html: Added.
+        * fast/events/touch/ios/tap-with-passive-touch-start-active-touch-move-listeners-on-elements-expected.txt: Added.
+        * fast/events/touch/ios/tap-with-passive-touch-start-active-touch-move-listeners-on-elements.html: Added.
+
 2016-06-23  Alexey Proskuryakov  <ap@apple.com>
 
         Update TestExpectations for a couple video track tests.

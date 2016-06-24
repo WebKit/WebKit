@@ -1,0 +1,30 @@
+Tap on Target1 (green)
+
+(Frame scrolling node
+  (scrollable area size 800 600)
+  (contents size 800 600)
+  (synchronous event dispatch region for event touchend
+    at (0,0) size 300x100)
+)
+Listener target1 received cancelable event touchend targetting eventTarget1
+Done
+Tap on Target2 (red)
+
+(Frame scrolling node
+  (scrollable area size 800 600)
+  (contents size 800 600)
+  (synchronous event dispatch region for event touchend
+    at (0,0) size 300x100)
+)
+Listener target1 received cancelable event touchend targetting eventTarget2
+Done
+Tap on Target3 (blue)
+
+(Frame scrolling node
+  (scrollable area size 800 600)
+  (contents size 800 600)
+  (synchronous event dispatch region for event touchend
+    at (0,0) size 300x100)
+)
+Listener target1 received cancelable event touchend targetting eventTarget3
+

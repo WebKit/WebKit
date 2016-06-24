@@ -133,7 +133,8 @@ bool NonFastScrollableRegionOverlay::updateRegion()
     if (Page* page = m_frame.page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
             EventTrackingRegions eventTrackingRegions = scrollingCoordinator->absoluteEventTrackingRegions();
-            *region = eventTrackingRegions.synchronousDispatchRegion;
+            for (const auto& synchronousEventRegion : eventTrackingRegions.eventSpecificSynchronousDispatchRegions)
+                region->unite(synchronousEventRegion.value);
         }
     }
 

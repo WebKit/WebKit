@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "EventNames.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollingStateTree.h"
@@ -66,7 +67,10 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
         FloatPoint position = wheelEvent.position();
         position.move(frameScrollingNode.viewToContentsOffset(m_mainFrameScrollPosition));
 
-        bool isSynchronousDispatchRegion = m_eventTrackingRegions.trackingTypeForPoint(roundedIntPoint(position)) == TrackingType::Synchronous;
+        const EventNames& names = eventNames();
+        IntPoint roundedPosition = roundedIntPoint(position);
+        bool isSynchronousDispatchRegion = m_eventTrackingRegions.trackingTypeForPoint(names.wheelEvent, roundedPosition) == TrackingType::Synchronous
+            || m_eventTrackingRegions.trackingTypeForPoint(names.mousewheelEvent, roundedPosition) == TrackingType::Synchronous;
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::shouldHandleWheelEventSynchronously: wheelEvent at " << wheelEvent.position() << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
 
         if (isSynchronousDispatchRegion)
@@ -233,11 +237,11 @@ void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
     m_mainFrameScrollPosition = position;
 }
 
-TrackingType ScrollingTree::eventTrackingTypeForPoint(IntPoint p)
+TrackingType ScrollingTree::eventTrackingTypeForPoint(const AtomicString& eventName, IntPoint p)
 {
     LockHolder lock(m_mutex);
     
-    return m_eventTrackingRegions.trackingTypeForPoint(p);
+    return m_eventTrackingRegions.trackingTypeForPoint(eventName, p);
 }
 
 bool ScrollingTree::isRubberBandInProgress()

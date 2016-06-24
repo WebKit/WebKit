@@ -2114,6 +2114,7 @@ set(WebCore_SOURCES
     platform/DisplaySleepDisabler.cpp
     platform/DragData.cpp
     platform/DragImage.cpp
+    platform/EventTrackingRegions.cpp
     platform/FileChooser.cpp
     platform/FileStream.cpp
     platform/FileSystem.cpp

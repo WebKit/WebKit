@@ -26,6 +26,9 @@
 #pragma once
 
 #include "Region.h"
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -39,32 +42,20 @@ struct EventTrackingRegions {
     // Region for which events can be dispatched without blocking scrolling.
     Region asynchronousDispatchRegion;
 
-    // Region for which events must be sent before performing the default behavior.
-    Region synchronousDispatchRegion;
+    // Regions for which events must be sent before performing the default behavior.
+    // The key is the Event Name with an active handler.
+    HashMap<String, Region> eventSpecificSynchronousDispatchRegions;
 
     bool isEmpty() const;
 
-    TrackingType trackingTypeForPoint(const IntPoint&);
+    void translate(IntSize);
+    void uniteSynchronousRegion(const String& eventName, const Region&);
+    void unite(const EventTrackingRegions&);
+
+    TrackingType trackingTypeForPoint(const String& eventName, const IntPoint&);
 };
 
-inline bool EventTrackingRegions::isEmpty() const
-{
-    return asynchronousDispatchRegion.isEmpty() && synchronousDispatchRegion.isEmpty();
-}
-
-inline TrackingType EventTrackingRegions::trackingTypeForPoint(const IntPoint& point)
-{
-    if (synchronousDispatchRegion.contains(point))
-        return TrackingType::Synchronous;
-    if (asynchronousDispatchRegion.contains(point))
-        return TrackingType::Asynchronous;
-    return TrackingType::NotTracking;
-}
-
-inline bool operator==(const EventTrackingRegions& a, const EventTrackingRegions& b)
-{
-    return a.asynchronousDispatchRegion == b.asynchronousDispatchRegion
-        && a.synchronousDispatchRegion == b.synchronousDispatchRegion;
-}
+bool operator==(const EventTrackingRegions&, const EventTrackingRegions&);
+inline bool operator!=(const EventTrackingRegions& a, const EventTrackingRegions& b) { return !(a == b); }
 
 } // namespace WebCore
