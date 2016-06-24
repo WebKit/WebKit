@@ -939,9 +939,9 @@ void WebChromeClient::setUpPlaybackControlsManager(HTMLMediaElement& element)
     [m_webView _setUpPlaybackControlsManagerForMediaElement:element];
 }
 
-void WebChromeClient::clearPlaybackControlsManager(HTMLMediaElement& element)
+void WebChromeClient::clearPlaybackControlsManager()
 {
-    [m_webView _clearPlaybackControlsManagerForMediaElement:element];
+    [m_webView _clearPlaybackControlsManager];
 }
 #endif // PLATFORM(MAC)
 #endif // ENABLE(VIDEO)

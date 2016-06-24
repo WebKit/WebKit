@@ -1,3 +1,20 @@
+2016-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Playback controls refer to wrong element when playing multiple items in a page.
+        https://bugs.webkit.org/show_bug.cgi?id=159076
+        <rdar://problem/26953532>
+
+        Reviewed by Beth Dakin.
+
+        clearPlaybackControlsManager() no longer takes a parameter.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::clearPlaybackControlsManager):
+        * WebView/WebView.mm:
+        (-[WebView _clearPlaybackControlsManager]): Renamed from _clearPlaybackControlsManagerForMediaElement:.
+        * WebView/WebViewInternal.h:
+
 2016-06-23  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused didCancelAuthenticationChallenge

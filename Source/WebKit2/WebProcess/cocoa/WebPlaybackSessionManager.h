@@ -94,7 +94,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) final;
 
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&);
-    void clearPlaybackControlsManager(WebCore::HTMLMediaElement&);
+    void clearPlaybackControlsManager();
     uint64_t contextIdForMediaElement(WebCore::HTMLMediaElement&);
 
 protected:

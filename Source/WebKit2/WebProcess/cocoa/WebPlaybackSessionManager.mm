@@ -246,6 +246,8 @@ void WebPlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaE
     } else {
         auto addResult = m_mediaElements.ensure(&mediaElement, [&] { return nextContextId(); });
         auto contextId = addResult.iterator->value;
+        if (m_controlsManagerContextId)
+            removeClientForContext(m_controlsManagerContextId);
         m_controlsManagerContextId = contextId;
         ensureModel(contextId).setMediaElement(&mediaElement);
     }
@@ -255,14 +257,10 @@ void WebPlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaE
 #endif
 }
 
-void WebPlaybackSessionManager::clearPlaybackControlsManager(WebCore::HTMLMediaElement& mediaElement)
+void WebPlaybackSessionManager::clearPlaybackControlsManager()
 {
 #if PLATFORM(MAC)
-    auto foundIterator = m_mediaElements.find(&mediaElement);
-    if (foundIterator == m_mediaElements.end())
-        return;
-
-    if (!m_controlsManagerContextId || m_controlsManagerContextId != foundIterator->value)
+    if (!m_controlsManagerContextId)
         return;
 
     removeClientForContext(m_controlsManagerContextId);

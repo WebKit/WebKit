@@ -92,6 +92,8 @@ public:
     void setCurrentSession(PlatformMediaSession&);
     PlatformMediaSession* currentSession();
 
+    PlatformMediaSession* currentSessionMatching(std::function<bool(const PlatformMediaSession&)>);
+
     void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession&);
     void sessionCanProduceAudioChanged(PlatformMediaSession&);
 

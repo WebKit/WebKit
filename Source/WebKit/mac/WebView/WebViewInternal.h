@@ -255,7 +255,7 @@ OBJC_CLASS NSTextAlternatives;
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 - (BOOL)_hasActiveVideoForControlsInterface;
 - (void)_setUpPlaybackControlsManagerForMediaElement:(WebCore::HTMLMediaElement&)mediaElement;
-- (void)_clearPlaybackControlsManagerForMediaElement:(WebCore::HTMLMediaElement&)mediaElement;
+- (void)_clearPlaybackControlsManager;
 #endif
 #endif
 

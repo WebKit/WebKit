@@ -1,3 +1,22 @@
+2016-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Playback controls refer to wrong element when playing multiple items in a page.
+        https://bugs.webkit.org/show_bug.cgi?id=159076
+        <rdar://problem/26953532>
+
+        Reviewed by Beth Dakin.
+
+        clearPlaybackControlsManager() no longer takes a parameter.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::clearPlaybackControlsManager):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionManager::setUpPlaybackControlsManager): Make sure to removeClientForContext()
+            if the old context refers to a live media element.
+        (WebKit::WebPlaybackSessionManager::clearPlaybackControlsManager):
+
 2016-06-24  Brady Eidson  <beidson@apple.com>
 
         IDB tests crashing attempting to register sandbox extensions for blob files.

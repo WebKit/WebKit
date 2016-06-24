@@ -8612,9 +8612,9 @@ bool LayerFlushController::flushLayers()
     [self updateWebViewAdditions];
 }
 
-- (void)_clearPlaybackControlsManagerForMediaElement:(WebCore::HTMLMediaElement&)mediaElement
+- (void)_clearPlaybackControlsManager
 {
-    if (!_private->playbackSessionModel || _private->playbackSessionModel->mediaElement() != &mediaElement)
+    if (!_private->playbackSessionModel || !_private->playbackSessionModel->mediaElement())
         return;
 
     _private->playbackSessionModel->setMediaElement(nullptr);

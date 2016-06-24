@@ -7090,10 +7090,14 @@ void HTMLMediaElement::updatePlaybackControlsManager()
     if (!page)
         return;
 
-    if (m_mediaSession->canControlControlsManager(*this))
-        page->chrome().client().setUpPlaybackControlsManager(*this);
+    PlatformMediaSession* session = PlatformMediaSessionManager::sharedManager().currentSessionMatching([] (const PlatformMediaSession& session) {
+        return session.canControlControlsManager();
+    });
+
+    if (!is<MediaElementSession>(session))
+        page->chrome().client().clearPlaybackControlsManager();
     else
-        page->chrome().client().clearPlaybackControlsManager(*this);
+        page->chrome().client().setUpPlaybackControlsManager(downcast<MediaElementSession>(session)->element());
 }
 
 bool HTMLMediaElement::shouldOverrideBackgroundLoadingRestriction() const

@@ -856,9 +856,9 @@ void WebChromeClient::setUpPlaybackControlsManager(WebCore::HTMLMediaElement& me
     m_page->playbackSessionManager().setUpPlaybackControlsManager(mediaElement);
 }
 
-void WebChromeClient::clearPlaybackControlsManager(WebCore::HTMLMediaElement& mediaElement)
+void WebChromeClient::clearPlaybackControlsManager()
 {
-    m_page->playbackSessionManager().clearPlaybackControlsManager(mediaElement);
+    m_page->playbackSessionManager().clearPlaybackControlsManager();
 }
 
 void WebChromeClient::enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)

@@ -31,6 +31,7 @@
 #include "MediaPlayer.h"
 #include "PlatformMediaSession.h"
 #include "Timer.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -53,7 +54,7 @@ public:
     bool pageAllowsDataLoading(const HTMLMediaElement&) const;
     bool pageAllowsPlaybackAfterResuming(const HTMLMediaElement&) const;
 
-    bool canControlControlsManager(const HTMLMediaElement&) const;
+    bool canControlControlsManager() const override;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void showPlaybackTargetPicker(const HTMLMediaElement&);
@@ -107,6 +108,8 @@ public:
     size_t maximumMediaSourceBufferSize(const SourceBuffer&) const;
 #endif
 
+    HTMLMediaElement& element() const { return m_element; }
+
 private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -142,6 +145,10 @@ private:
 
 }
 
-#endif // MediaElementSession_h
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaElementSession)
+static bool isType(const WebCore::PlatformMediaSession& session) { return session.mediaType() == WebCore::PlatformMediaSession::Video || session.mediaType() == WebCore::PlatformMediaSession::Audio; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO)
+
+#endif // MediaElementSession_h
