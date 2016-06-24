@@ -283,9 +283,6 @@ fast/workers/worker-storagequota-query-usage.html
 # HTTP 204 (No Content) should be ignored
 webkit.org/b/60206 http/tests/navigation/response204.html
 
-# Styled scope element is not yet enabled.
-webkit.org/b/49142 fast/css/style-scoped
-
 # JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html
 

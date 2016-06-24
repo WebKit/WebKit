@@ -1513,8 +1513,6 @@ webkit.org/b/73544 fast/history/page-cache-notification-suspendable.html [ Skip 
 # The test is too slow on Debug bot and randomly fails
 webkit.org/b/61932 [ Debug ] jquery/manipulation.html [ Failure Pass Timeout ]
 
-webkit.org/b/49142 fast/css/style-scoped [ Skip ]
-
 # Tracking corner not being painted for TextArea.
 webkit.org/b/85484 fast/css/resize-corner-tracking-transformed.html [ Failure ]
 webkit.org/b/85484 fast/css/resize-corner-tracking.html [ Failure ]

@@ -423,9 +423,6 @@ webkit.org/b/133320 crypto/subtle/hmac-sign-verify.html [ Pass ]
 # QuickTime plug-in not relevant to this port
 Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]
 
-# Style scoped support unimplemented
-Bug(GTK) fast/css/style-scoped [ Skip ]
-
 # ENABLE(CSS_SCROLL_SNAP) is disabled.
 css3/scroll-snap [ Skip ]
 

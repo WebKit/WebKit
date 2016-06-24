@@ -460,9 +460,6 @@ webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Skip ]
 # TODO CSS Grid Layout is not yet enabled.
 webkit.org/b/60731 fast/css-grid-layout/ [ Skip ]
 
-# <style scoped> is not yet enabled.
-webkit.org/b/49142 fast/css/style-scoped/ [ Skip ]
-
 # TODO ENABLE(CSS_SCROLL_SNAP) is disabled.
 css3/scroll-snap/ [ Skip ]
 
