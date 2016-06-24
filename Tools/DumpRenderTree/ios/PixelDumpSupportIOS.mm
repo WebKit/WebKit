@@ -56,6 +56,9 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     WebThreadLock();
     [CATransaction flush];
 
+#if USE(IOSURFACE)
+    return nullptr;
+#else
     CGFloat deviceScaleFactor = 2; // FIXME: hardcode 2x for now. In future we could respect 1x and 3x as we do on Mac.
     CATransform3D transform = CATransform3DMakeScale(deviceScaleFactor, deviceScaleFactor, 1);
     
@@ -91,6 +94,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     CARenderServerDestroyBuffer(buffer);
 
     return bitmapContext;
+#endif
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

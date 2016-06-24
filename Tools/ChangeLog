@@ -1,5 +1,14 @@
 2016-06-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix hardware builds, where USE(IOSURFACE) is true by #ifdeffing.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (createBitmapContextFromWebView):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::windowSnapshotImage):
+
+2016-06-23  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS] Make DumpRenderTree and WebKitTestRunner in the simulator use render server snapshotting
         https://bugs.webkit.org/show_bug.cgi?id=159077
 
