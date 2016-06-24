@@ -1584,8 +1584,8 @@ private:
     RefPtr<WebVibrationProxy> m_vibration;
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageProxyMembers.h>
+#if ENABLE(APPLE_PAY)
+    std::unique_ptr<WebPaymentCoordinatorProxy> m_paymentCoordinator;
 #endif
 
     CallbackMap m_callbacks;

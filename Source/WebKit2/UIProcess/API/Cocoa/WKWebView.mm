@@ -480,8 +480,8 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::allowsAirPlayForMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration allowsAirPlayForMediaPlayback]));
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewInitialization.mm>
+#if ENABLE(APPLE_PAY)
+    pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::applePayEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _applePayEnabled]));
 #endif
 
 #if PLATFORM(IOS)

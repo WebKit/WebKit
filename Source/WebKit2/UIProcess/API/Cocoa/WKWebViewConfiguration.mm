@@ -124,8 +124,8 @@ private:
 #endif
     BOOL _initialCapitalizationEnabled;
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewConfigurationIvars.mm>
+#if ENABLE(APPLE_PAY)
+    BOOL _applePayEnabled;
 #endif
 }
 
@@ -303,9 +303,8 @@ private:
 #if ENABLE(WIRELESS_TARGET_PLAYBACK)
     configuration->_allowsAirPlayForMediaPlayback = self->_allowsAirPlayForMediaPlayback;
 #endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewConfigurationCopy.mm>
+#if ENABLE(APPLE_PAY)
+    configuration->_applePayEnabled = self->_applePayEnabled;
 #endif
 
     return configuration;
@@ -705,9 +704,31 @@ static NSString *defaultApplicationNameForUserAgent()
 
 #endif // PLATFORM(MAC)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewConfigurationPrivateMethods.mm>
+- (BOOL)_applePayEnabled
+{
+#if ENABLE(APPLE_PAY)
+    return _applePayEnabled;
+#else
+    return NO;
 #endif
+}
+
+- (void)_setApplePayEnabled:(BOOL)applePayEnabled
+{
+#if ENABLE(APPLE_PAY)
+    _applePayEnabled = applePayEnabled;
+#endif
+}
+
+- (BOOL)_paymentsEnabled
+{
+    return self._applePayEnabled;
+}
+
+- (void)_setPaymentsEnabled:(BOOL)paymentsEnabled
+{
+    [self _setApplePayEnabled:paymentsEnabled];
+}
 
 @end
 

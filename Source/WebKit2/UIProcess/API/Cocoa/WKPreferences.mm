@@ -449,9 +449,21 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setEnabledForFeature(value, *feature->_experimentalFeature);
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKPreferencesPrivateMethods.mm>
+- (BOOL)_applePayCapabilityDisclosureAllowed
+{
+#if ENABLE(APPLE_PAY)
+    return _preferences->applePayCapabilityDisclosureAllowed();
+#else
+    return NO;
 #endif
+}
+
+- (void)_setApplePayCapabilityDisclosureAllowed:(BOOL)applePayCapabilityDisclosureAllowed
+{
+#if ENABLE(APPLE_PAY)
+    _preferences->setApplePayCapabilityDisclosureAllowed(applePayCapabilityDisclosureAllowed);
+#endif
+}
 
 @end
 

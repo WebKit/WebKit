@@ -27,6 +27,7 @@
 #define WebCoreArgumentCoders_h
 
 #include "ArgumentCoders.h"
+#include <WebCore/PaymentHeaders.h>
 
 namespace WebCore {
 class AffineTransform;
@@ -473,10 +474,65 @@ template<> struct ArgumentCoder<WebCore::ResourceLoadStatistics> {
     static bool decode(ArgumentDecoder&, WebCore::ResourceLoadStatistics&);
 };
 
-} // namespace IPC
+#if ENABLE(APPLE_PAY)
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebCoreArgumentCodersAdditions.h>
+template<> struct ArgumentCoder<WebCore::Payment> {
+    static void encode(ArgumentEncoder&, const WebCore::Payment&);
+    static bool decode(ArgumentDecoder&, WebCore::Payment&);
+};
+
+template<> struct ArgumentCoder<WebCore::PaymentContact> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentContact&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentContact&);
+};
+
+template<> struct ArgumentCoder<WebCore::PaymentMerchantSession> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentMerchantSession&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentMerchantSession&);
+};
+
+template<> struct ArgumentCoder<WebCore::PaymentMethod> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentMethod&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentMethod&);
+};
+
+template<> struct ArgumentCoder<WebCore::PaymentRequest> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentRequest&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentRequest&);
+};
+
+template<> struct ArgumentCoder<WebCore::PaymentRequest::AddressFields> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentRequest::AddressFields&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::AddressFields&);
+};
+
+template<> struct ArgumentCoder<WebCore::PaymentRequest::LineItem> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentRequest::LineItem&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::LineItem&);
+};
+
+template<> struct ArgumentCoder<WebCore::PaymentRequest::MerchantCapabilities> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentRequest::MerchantCapabilities&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::MerchantCapabilities&);
+};
+
+template<> struct ArgumentCoder<WebCore::PaymentRequest::ShippingMethod> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentRequest::ShippingMethod&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::ShippingMethod&);
+};
+
+template<> struct ArgumentCoder<WebCore::PaymentRequest::SupportedNetworks> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentRequest::SupportedNetworks&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::SupportedNetworks&);
+};
+
+template<> struct ArgumentCoder<WebCore::PaymentRequest::TotalAndLineItems> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentRequest::TotalAndLineItems&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::TotalAndLineItems&);
+};
+
 #endif
+
+} // namespace IPC
 
 #endif // WebCoreArgumentCoders_h

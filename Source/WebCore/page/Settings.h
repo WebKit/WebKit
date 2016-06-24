@@ -289,15 +289,19 @@ public:
     WEBCORE_EXPORT static void setMockCaptureDevicesEnabled(bool);
 #endif
 
+#if ENABLE(APPLE_PAY)
+    bool applePayEnabled() const { return m_applePayEnabled; }
+    void setApplePayEnabled(bool applePayEnabled) { m_applePayEnabled = applePayEnabled; }
+
+    bool applePayCapabilityDisclosureAllowed() const { return m_applePayCapabilityDisclosureAllowed; }
+    void setApplePayCapabilityDisclosureAllowed(bool applePayCapabilityDisclosureAllowed) { m_applePayCapabilityDisclosureAllowed = applePayCapabilityDisclosureAllowed; }
+#endif
+
     WEBCORE_EXPORT void setForcePendingWebGLPolicy(bool);
     bool isForcePendingWebGLPolicy() const { return m_forcePendingWebGLPolicy; }
 
     WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
     static bool allowsAnySSLCertificate();
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/SettingsGettersAndSetters.h>
-#endif
 
 private:
     explicit Settings(Page*);
@@ -390,13 +394,14 @@ private:
     static bool gMockCaptureDevicesEnabled;
 #endif
 
+#if ENABLE(APPLE_PAY)
+    bool m_applePayEnabled { false };
+    bool m_applePayCapabilityDisclosureAllowed { true };
+#endif
+
     static bool gLowPowerVideoAudioBufferSizeEnabled;
     static bool gResourceLoadStatisticsEnabledEnabled;
     static bool gAllowsAnySSLCertificate;
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/SettingsMembers.h>
-#endif
 };
 
 } // namespace WebCore

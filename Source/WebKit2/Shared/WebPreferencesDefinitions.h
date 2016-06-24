@@ -26,14 +26,6 @@
 #ifndef WebPreferencesDefinitions_h
 #define WebPreferencesDefinitions_h
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebPreferencesDefinitionsAdditions.h>
-#endif
-
-#if !defined(FOR_EACH_ADDITIONAL_WEBKIT_BOOL_PREFERENCE)
-#define FOR_EACH_ADDITIONAL_WEBKIT_BOOL_PREFERENCE(macro)
-#endif
-
 #if PLATFORM(GTK)
 #define DEFAULT_WEBKIT_TABSTOLINKS_ENABLED true
 #else
@@ -236,7 +228,8 @@
     macro(FetchAPIEnabled, fetchAPIEnabled, Bool, bool, false, "", "") \
     macro(DownloadAttributeEnabled, downloadAttributeEnabled, Bool, bool, false, "", "") \
     macro(SelectionPaintingWithoutSelectionGapsEnabled, selectionPaintingWithoutSelectionGapsEnabled, Bool, bool, DEFAULT_SELECTION_PAINTING_WITHOUT_SELECTION_GAPS_ENABLED, "", "") \
-    FOR_EACH_ADDITIONAL_WEBKIT_BOOL_PREFERENCE(macro) \
+    macro(ApplePayEnabled, applePayEnabled, Bool, bool, false, "", "") \
+    macro(ApplePayCapabilityDisclosureAllowed, applePayCapabilityDisclosureAllowed, Bool, bool, true, "", "") \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

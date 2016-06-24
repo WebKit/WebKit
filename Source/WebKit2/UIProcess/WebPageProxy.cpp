@@ -480,8 +480,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_vibration = WebVibrationProxy::create(this);
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageProxyInitialization.cpp>
+#if ENABLE(APPLE_PAY)
+    m_paymentCoordinator = std::make_unique<WebPaymentCoordinatorProxy>(*this);
 #endif
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
@@ -715,8 +715,8 @@ void WebPageProxy::reattachToWebProcess()
     m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this, *m_playbackSessionManager);
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageProxyInitialization.cpp>
+#if ENABLE(APPLE_PAY)
+    m_paymentCoordinator = std::make_unique<WebPaymentCoordinatorProxy>(*this);
 #endif
 
     initializeWebPage();
@@ -5202,8 +5202,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_pageClient.mediaSessionManager().removeAllPlaybackTargetPickerClients(*this);
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageProxyInvalidation.cpp>
+#if ENABLE(APPLE_PAY)
+    m_paymentCoordinator = nullptr;
 #endif
 
     CallbackBase::Error error;
