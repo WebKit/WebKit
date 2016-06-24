@@ -1,3 +1,10 @@
+2016-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Windows build.
+
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        * DumpRenderTree/cg/PixelDumpSupportCG.h:
+
 2016-06-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Change download path of libxslt
