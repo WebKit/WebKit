@@ -132,8 +132,7 @@ public:
     static JSString* create(VM& vm, PassRefPtr<StringImpl> value)
     {
         ASSERT(value);
-        int32_t length = value->length();
-        RELEASE_ASSERT(length >= 0);
+        unsigned length = value->length();
         size_t cost = value->cost();
         JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, value);
         newString->finishCreation(vm, length, cost);

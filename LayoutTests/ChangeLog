@@ -1,3 +1,25 @@
+2016-06-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        OOM Assertion failure in Array.prototype.toString
+        https://bugs.webkit.org/show_bug.cgi?id=158793
+
+        Reviewed by Saam Barati.
+
+        * js/script-tests/stringimpl-to-jsstring-on-large-strings-1.js: Added.
+        (string_appeared_here.createStrings):
+        * js/script-tests/stringimpl-to-jsstring-on-large-strings-2.js: Added.
+        (string_appeared_here.createRegexp):
+        (catch):
+        * js/script-tests/stringimpl-to-jsstring-on-large-strings-3.js: Added.
+        (string_appeared_here.createStrings):
+        (catch):
+        * js/stringimpl-to-jsstring-on-large-strings-1-expected.txt: Added.
+        * js/stringimpl-to-jsstring-on-large-strings-1.html: Added.
+        * js/stringimpl-to-jsstring-on-large-strings-2-expected.txt: Added.
+        * js/stringimpl-to-jsstring-on-large-strings-2.html: Added.
+        * js/stringimpl-to-jsstring-on-large-strings-3-expected.txt: Added.
+        * js/stringimpl-to-jsstring-on-large-strings-3.html: Added.
+
 2016-06-23  Brady Eidson  <beidson@apple.com>
 
         Retrieving Blobs from IndexedDB using cursors fails in WK2 (Sandboxing)
