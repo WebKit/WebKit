@@ -249,6 +249,12 @@ void WebIDBConnectionToServer::didPutOrAdd(const IDBResultData& result)
 
 static void preregisterSandboxExtensionsIfNecessary(const WebIDBResult& result)
 {
+    auto resultType = result.resultData().type();
+    if (resultType != IDBResultType::GetRecordSuccess && resultType != IDBResultType::OpenCursorSuccess && resultType != IDBResultType::IterateCursorSuccess) {
+        ASSERT(resultType == IDBResultType::Error);
+        return;
+    }
+
     const auto& filePaths = result.resultData().getResult().value().blobFilePaths();
 
     ASSERT(filePaths.size() == result.handles().size());

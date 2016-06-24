@@ -1,3 +1,16 @@
+2016-06-24  Brady Eidson  <beidson@apple.com>
+
+        IDB tests crashing attempting to register sandbox extensions for blob files.
+        https://bugs.webkit.org/show_bug.cgi?id=159094.
+
+        Reviewed by Sam Weinig.
+        
+        Already tested by storage/indexeddb/modern/handle-user-delete.html
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::preregisterSandboxExtensionsIfNecessary): Check whether the IDBResultData actually contains
+          a getResult before trying to access it.
+
 2016-06-23  Brady Eidson  <beidson@apple.com>
 
         Retrieving Blobs from IndexedDB using cursors fails in WK2 (Sandboxing)
