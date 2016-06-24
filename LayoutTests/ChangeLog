@@ -1,3 +1,13 @@
+2016-06-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][EFL] ImageBufferCairo should accept resolution factor
+        https://bugs.webkit.org/show_bug.cgi?id=157848
+
+        Reviewed by Martin Robinson.
+
+        * fast/hidpi/filters-and-image-buffer-resolution-expected.html: Added.
+        * fast/hidpi/filters-and-image-buffer-resolution.html: Added.
+
 2016-06-24  Frederic Wang  <fwang@igalia.com>
 
         Refactor RenderMathMLOperator and RenderMathMLToken to avoid using anonymous renderers.

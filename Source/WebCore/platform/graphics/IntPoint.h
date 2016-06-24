@@ -82,6 +82,11 @@ public:
         m_x = lroundf(static_cast<float>(m_x * sx));
         m_y = lroundf(static_cast<float>(m_y * sy));
     }
+
+    void scale(float scale)
+    {
+        this->scale(scale, scale);
+    }
     
     IntPoint expandedTo(const IntPoint& other) const
     {
