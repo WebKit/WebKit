@@ -1,3 +1,21 @@
+2016-06-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] PageConfiguration.m_relatedPage keeps WebPageProxy alive after its WebView has been destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=159080
+        <rdar://problem/26982642>
+
+        Reviewed by Anders Carlsson.
+
+        PageConfiguration.m_relatedPage keeps WebPageProxy alive after its WebView has been destroyed.
+        This leads to WebPageProxy object leaks when the client keeps chaining related views.
+
+        In this patch, we null our the PageConfiguration's relatedPage in WebPageProxy::close()
+        to break the chain and make sure we only keep alive 1 relatedPage rather than a chain of
+        them.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+
 2016-06-24  Jer Noble  <jer.noble@apple.com>
 
         Playback controls refer to wrong element when playing multiple items in a page.
