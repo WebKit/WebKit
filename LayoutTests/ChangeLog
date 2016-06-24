@@ -1,3 +1,21 @@
+2016-06-24  John Wilander  <wilander@apple.com>
+
+        Make window.open layout tests for about: URLs work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=159072
+
+        Reviewed by Alex Christensen.
+
+        Fix two window.open layout tests for iOS. They previously used click events.
+        Now they instead turn off the popup blocker and just call window.open() on
+        the load event.
+
+        * http/tests/dom/window-open-about-blank-and-access-document-expected.txt:
+        * http/tests/dom/window-open-about-blank-and-access-document.html:
+        * http/tests/dom/window-open-about-webkit-org-and-access-document-expected.txt:
+        * http/tests/dom/window-open-about-webkit-org-and-access-document.html:
+        * platform/ios-simulator/TestExpectations:
+            Removed the skipping of these two test cases.
+
 2016-06-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK][EFL] ImageBufferCairo should accept resolution factor
