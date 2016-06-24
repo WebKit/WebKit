@@ -53,6 +53,12 @@ enum TextAlignment {
     JustifiedAlignment = 4,
 };
 
+enum ListType {
+    NoList = 0,
+    OrderedList,
+    UnorderedList
+};
+
 struct EditorState {
     bool shouldIgnoreCompositionSelectionChange { false };
 
@@ -82,6 +88,7 @@ struct EditorState {
         uint64_t selectedTextLength { 0 };
         uint32_t textAlignment { NoAlignment };
         WebCore::Color textColor { WebCore::Color::black };
+        uint32_t enclosingListType { NoList };
 #endif
 #if PLATFORM(IOS)
         WebCore::IntRect caretRectAtEnd;

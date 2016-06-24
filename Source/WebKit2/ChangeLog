@@ -1,3 +1,19 @@
+2016-06-24  Beth Dakin  <bdakin@apple.com>
+
+        Include enclosingListType in EditorState
+        https://bugs.webkit.org/show_bug.cgi?id=159102
+        -and corresponding-
+        rdar://problem/26932490
+
+        Reviewed by Enrica Casucci.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+
 2016-06-24  Anders Carlsson  <andersca@apple.com>
 
         Inline more of the Apple Pay source code

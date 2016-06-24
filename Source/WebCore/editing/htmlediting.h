@@ -158,7 +158,7 @@ WEBCORE_EXPORT Ref<HTMLElement> createDefaultParagraphElement(Document&);
 Ref<HTMLElement> createHTMLElement(Document&, const QualifiedName&);
 Ref<HTMLElement> createHTMLElement(Document&, const AtomicString&);
 
-HTMLElement* enclosingList(Node*);
+WEBCORE_EXPORT HTMLElement* enclosingList(Node*);
 HTMLElement* outermostEnclosingList(Node*, Node* rootList = nullptr);
 Node* enclosingListChild(Node*);
 
