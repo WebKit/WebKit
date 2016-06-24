@@ -39,17 +39,61 @@ using namespace JSC;
 
 namespace Inspector {
 
+class SendGarbageCollectionEventsTask {
+public:
+    SendGarbageCollectionEventsTask(HeapFrontendDispatcher&);
+    void addGarbageCollection(RefPtr<Inspector::Protocol::Heap::GarbageCollection>&&);
+    void reset();
+private:
+    void timerFired();
+
+    HeapFrontendDispatcher& m_frontendDispatcher;
+    Vector<RefPtr<Inspector::Protocol::Heap::GarbageCollection>> m_garbageCollections;
+    RunLoop::Timer<SendGarbageCollectionEventsTask> m_timer;
+};
+
+SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask(HeapFrontendDispatcher& frontendDispatcher)
+    : m_frontendDispatcher(frontendDispatcher)
+    , m_timer(RunLoop::current(), this, &SendGarbageCollectionEventsTask::timerFired)
+{
+}
+
+void SendGarbageCollectionEventsTask::addGarbageCollection(RefPtr<Inspector::Protocol::Heap::GarbageCollection>&& garbageCollection)
+{
+    m_garbageCollections.append(WTFMove(garbageCollection));
+
+    if (!m_timer.isActive())
+        m_timer.startOneShot(0);
+}
+
+void SendGarbageCollectionEventsTask::reset()
+{
+    m_timer.stop();
+    m_garbageCollections.clear();
+}
+
+void SendGarbageCollectionEventsTask::timerFired()
+{
+    // The timer is stopped on agent destruction, so this method will never be called after agent has been destroyed.
+    for (auto& event : m_garbageCollections)
+        m_frontendDispatcher.garbageCollected(event);
+
+    m_garbageCollections.clear();
+}
+
 InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
     : InspectorAgentBase(ASCIILiteral("Heap"))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_frontendDispatcher(std::make_unique<HeapFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(HeapBackendDispatcher::create(context.backendDispatcher, this))
     , m_environment(context.environment)
+    , m_sendGarbageCollectionEventsTask(std::make_unique<SendGarbageCollectionEventsTask>(*m_frontendDispatcher))
 {
 }
 
 InspectorHeapAgent::~InspectorHeapAgent()
 {
+    m_sendGarbageCollectionEventsTask->reset();
 }
 
 void InspectorHeapAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
@@ -81,6 +125,7 @@ void InspectorHeapAgent::disable(ErrorString&)
     m_enabled = false;
 
     m_environment.vm().heap.removeObserver(this);
+    m_sendGarbageCollectionEventsTask->reset();
 
     clearHeapSnapshots();
 }
@@ -276,9 +321,6 @@ void InspectorHeapAgent::didGarbageCollect(HeapOperation operation)
 
     // FIXME: Include number of bytes freed by collection.
 
-    double startTime = m_gcStartTime;
-    double endTime = m_environment.executionStopwatch()->elapsedTime();
-
     // Dispatch the event asynchronously because this method may be
     // called between collection and sweeping and we don't want to
     // create unexpected JavaScript allocations that the Sweeper does
@@ -286,15 +328,11 @@ void InspectorHeapAgent::didGarbageCollect(HeapOperation operation)
     // with WebKitLegacy's in process inspector which shares the same
     // VM as the inspected page.
 
-    RunLoop::current().dispatch([this, startTime, endTime, operation]() {
-        auto collection = Inspector::Protocol::Heap::GarbageCollection::create()
-            .setType(protocolTypeForHeapOperation(operation))
-            .setStartTime(startTime)
-            .setEndTime(endTime)
-            .release();
-
-        m_frontendDispatcher->garbageCollected(WTFMove(collection));
-    });
+    m_sendGarbageCollectionEventsTask->addGarbageCollection(Inspector::Protocol::Heap::GarbageCollection::create()
+        .setType(protocolTypeForHeapOperation(operation))
+        .setStartTime(m_gcStartTime)
+        .setEndTime(m_environment.executionStopwatch()->elapsedTime())
+        .release());
 
     m_gcStartTime = NAN;
 }
