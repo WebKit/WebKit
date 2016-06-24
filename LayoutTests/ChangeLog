@@ -1,3 +1,11 @@
+2016-06-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update to test gardening in r202300
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
 2016-06-24  Konstantin Tokarev  <annulen@yandex.ru>
 
         Removed tests of STYLE_SCOPED which was removed in r156683.
