@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#import "AVFoundationSPI.h"
 #import "CDMSessionAVContentKeySession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "ExceptionCodePlaceholder.h"
@@ -93,21 +94,6 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 @interface AVStreamSession : NSObject
 - (void)addStreamDataParser:(AVStreamDataParser *)streamDataParser;
 - (void)removeStreamDataParser:(AVStreamDataParser *)streamDataParser;
-@end
-
-#pragma mark -
-#pragma mark AVStreamDataParser
-
-@interface AVStreamDataParser : NSObject
-- (void)setDelegate:(id)delegate;
-- (void)appendStreamData:(NSData *)data;
-- (void)setShouldProvideMediaData:(BOOL)shouldProvideMediaData forTrackID:(CMPersistentTrackID)trackID;
-- (BOOL)shouldProvideMediaDataForTrackID:(CMPersistentTrackID)trackID;
-- (void)providePendingMediaData;
-- (void)processContentKeyResponseData:(NSData *)contentKeyResponseData forTrackID:(CMPersistentTrackID)trackID;
-- (void)processContentKeyResponseError:(NSError *)error forTrackID:(CMPersistentTrackID)trackID;
-- (void)renewExpiringContentKeyResponseDataForTrackID:(CMPersistentTrackID)trackID;
-- (NSData *)streamingContentKeyRequestDataForApp:(NSData *)appIdentifier contentIdentifier:(NSData *)contentIdentifier trackID:(CMPersistentTrackID)trackID options:(NSDictionary *)options error:(NSError **)outError;
 @end
 
 #pragma mark -
@@ -219,7 +205,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     });
 }
 
-- (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideMediaData:(CMSampleBufferRef)sample forTrackID:(CMPersistentTrackID)trackID mediaType:(NSString *)nsMediaType flags:(NSUInteger)flags
+- (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideMediaData:(CMSampleBufferRef)sample forTrackID:(CMPersistentTrackID)trackID mediaType:(NSString *)nsMediaType flags:(AVStreamDataParserOutputMediaDataFlags)flags
 {
 #if ASSERT_DISABLED
     UNUSED_PARAM(streamDataParser);

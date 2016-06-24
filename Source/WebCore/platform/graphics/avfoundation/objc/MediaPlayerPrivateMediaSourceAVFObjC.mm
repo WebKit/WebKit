@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #import "AVFoundationMIMETypeCache.h"
+#import "AVFoundationSPI.h"
 #import "CDMSessionAVStreamSession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "FileSystem.h"
@@ -244,7 +245,11 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
     if (parameters.codecs.isEmpty())
         return MediaPlayer::MayBeSupported;
 
-    NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)parameters.type, (NSString *)parameters.codecs];
+    NSString *outputCodecs = parameters.codecs;
+    if ([getAVStreamDataParserClass() respondsToSelector:@selector(outputMIMECodecParameterForInputMIMECodecParameter:)])
+        outputCodecs = [getAVStreamDataParserClass() outputMIMECodecParameterForInputMIMECodecParameter:outputCodecs];
+
+    NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)parameters.type, (NSString *)outputCodecs];
     return [getAVURLAssetClass() isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;;
 }
 
