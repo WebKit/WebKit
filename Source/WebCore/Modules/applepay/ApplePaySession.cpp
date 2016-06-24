@@ -466,6 +466,7 @@ static bool isValidPaymentRequestPropertyName(const String& propertyName)
         "billingContact",
         "requiredShippingAddressFields",
         "shippingContact",
+        "shippingType",
         "shippingMethods",
         "total",
         "lineItems",
