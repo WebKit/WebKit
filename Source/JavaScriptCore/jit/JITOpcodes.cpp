@@ -516,12 +516,15 @@ void JIT::emit_op_nstricteq(Instruction* currentInstruction)
 
 void JIT::emit_op_to_number(Instruction* currentInstruction)
 {
+    int dstVReg = currentInstruction[1].u.operand;
     int srcVReg = currentInstruction[2].u.operand;
     emitGetVirtualRegister(srcVReg, regT0);
     
     addSlowCase(emitJumpIfNotNumber(regT0));
 
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
+    emitValueProfilingSite();
+    if (srcVReg != dstVReg)
+        emitPutVirtualRegister(dstVReg);
 }
 
 void JIT::emit_op_to_string(Instruction* currentInstruction)

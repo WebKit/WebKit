@@ -989,6 +989,11 @@ private:
             fixupToPrimitive(node);
             break;
         }
+
+        case ToNumber: {
+            fixupToNumber(node);
+            break;
+        }
             
         case ToString:
         case CallStringConstructor: {
@@ -1797,6 +1802,32 @@ private:
             node->convertToToString();
             return;
         }
+    }
+
+    void fixupToNumber(Node* node)
+    {
+        if (node->child1()->shouldSpeculateInt32()) {
+            fixEdge<Int32Use>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        if (enableInt52() && node->child1()->shouldSpeculateAnyInt()) {
+            fixEdge<Int52RepUse>(node->child1());
+            node->convertToIdentity();
+            node->setResult(NodeResultInt52);
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateNumber()) {
+            fixEdge<DoubleRepUse>(node->child1());
+            node->convertToIdentity();
+            node->setResult(NodeResultDouble);
+            return;
+        }
+
+        fixEdge<UntypedUse>(node->child1());
+        node->setResult(NodeResultJS);
     }
     
     void fixupToStringOrCallStringConstructor(Node* node)

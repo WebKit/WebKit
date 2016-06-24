@@ -828,6 +828,7 @@ void JIT::emit_op_to_number(Instruction* currentInstruction)
     addSlowCase(branch32(AboveOrEqual, regT1, TrustedImm32(JSValue::LowestTag)));
     isInt32.link(this);
 
+    emitValueProfilingSite();
     if (src != dst)
         emitStore(dst, regT1, regT0);
 }
