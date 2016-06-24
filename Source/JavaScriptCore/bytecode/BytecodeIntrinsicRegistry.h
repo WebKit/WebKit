@@ -47,7 +47,6 @@ class Identifier;
     macro(tailCallForwardArguments) \
     macro(tryGetById) \
     macro(putByValDirect) \
-    macro(toNumber) \
     macro(toString)
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \

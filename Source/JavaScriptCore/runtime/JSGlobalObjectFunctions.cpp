@@ -706,6 +706,17 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
     return JSValue::encode(jsNumber(parseFloat(exec->argument(0).toString(exec)->view(exec).get())));
 }
 
+EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState* exec)
+{
+    return JSValue::encode(jsBoolean(std::isnan(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL globalFuncIsFinite(ExecState* exec)
+{
+    double n = exec->argument(0).toNumber(exec);
+    return JSValue::encode(jsBoolean(std::isfinite(n)));
+}
+
 EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState* exec)
 {
     static Bitmap<256> doNotUnescapeWhenDecodingURI = makeCharacterBitmap(

@@ -1439,7 +1439,6 @@ struct Node {
         case GetGlobalLexicalVariable:
         case StringReplace:
         case StringReplaceRegExp:
-        case ToNumber:
             return true;
         default:
             return false;

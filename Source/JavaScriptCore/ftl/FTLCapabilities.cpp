@@ -161,9 +161,8 @@ inline CapabilityLevel canCompile(Node* node)
     case GetScope:
     case GetCallee:
     case GetArgumentCountIncludingThis:
-    case ToNumber:
-    case ToString:
     case CallObjectConstructor:
+    case ToString:
     case CallStringConstructor:
     case MakeRope:
     case NewArrayWithSize:
@@ -404,8 +403,6 @@ inline CapabilityLevel canCompile(Node* node)
         if (node->isBinaryUseKind(ObjectUse))
             break;
         if (node->isBinaryUseKind(BooleanUse))
-            break;
-        if (node->isBinaryUseKind(UntypedUse))
             break;
         if (node->isBinaryUseKind(SymbolUse))
             break;

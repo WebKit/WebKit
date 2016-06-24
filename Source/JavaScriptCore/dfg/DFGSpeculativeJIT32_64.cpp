@@ -3567,71 +3567,30 @@ void SpeculativeJIT::compile(Node* node)
         
     case ToPrimitive: {
         RELEASE_ASSERT(node->child1().useKind() == UntypedUse);
-        JSValueOperand argument(this, node->child1());
-        GPRTemporary resultTag(this, Reuse, argument, TagWord);
-        GPRTemporary resultPayload(this, Reuse, argument, PayloadWord);
+        JSValueOperand op1(this, node->child1());
+        GPRTemporary resultTag(this, Reuse, op1, TagWord);
+        GPRTemporary resultPayload(this, Reuse, op1, PayloadWord);
         
-        GPRReg argumentTagGPR = argument.tagGPR();
-        GPRReg argumentPayloadGPR = argument.payloadGPR();
+        GPRReg op1TagGPR = op1.tagGPR();
+        GPRReg op1PayloadGPR = op1.payloadGPR();
         GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
         
-        argument.use();
+        op1.use();
         
-        MacroAssembler::Jump alreadyPrimitive = m_jit.branchIfNotCell(argument.jsValueRegs());
-        MacroAssembler::Jump notPrimitive = m_jit.branchIfObject(argumentPayloadGPR);
+        MacroAssembler::Jump alreadyPrimitive = m_jit.branchIfNotCell(op1.jsValueRegs());
+        MacroAssembler::Jump notPrimitive = m_jit.branchIfObject(op1PayloadGPR);
         
         alreadyPrimitive.link(&m_jit);
-        m_jit.move(argumentTagGPR, resultTagGPR);
-        m_jit.move(argumentPayloadGPR, resultPayloadGPR);
+        m_jit.move(op1TagGPR, resultTagGPR);
+        m_jit.move(op1PayloadGPR, resultPayloadGPR);
         
         addSlowPathGenerator(
             slowPathCall(
                 notPrimitive, this, operationToPrimitive,
-                JSValueRegs(resultTagGPR, resultPayloadGPR), argumentTagGPR, argumentPayloadGPR));
+                JSValueRegs(resultTagGPR, resultPayloadGPR), op1TagGPR, op1PayloadGPR));
         
         jsValueResult(resultTagGPR, resultPayloadGPR, node, UseChildrenCalledExplicitly);
-        break;
-    }
-
-    case ToNumber: {
-        JSValueOperand argument(this, node->child1());
-        GPRTemporary resultTag(this, Reuse, argument, TagWord);
-        GPRTemporary resultPayload(this, Reuse, argument, PayloadWord);
-
-        GPRReg argumentPayloadGPR = argument.payloadGPR();
-        GPRReg argumentTagGPR = argument.tagGPR();
-        JSValueRegs resultRegs(resultTag.gpr(), resultPayload.gpr());
-
-        argument.use();
-
-        // We have several attempts to remove ToNumber. But ToNumber still exists.
-        // It means that converting non-numbers to numbers by this ToNumber is not rare.
-        // Instead of the slow path generator, we emit callOperation here.
-        if (!(m_state.forNode(node->child1()).m_type & SpecBytecodeNumber)) {
-            flushRegisters();
-            callOperation(operationToNumber, resultRegs, argumentTagGPR, argumentPayloadGPR);
-            m_jit.exceptionCheck();
-        } else {
-            MacroAssembler::Jump notNumber;
-            {
-                GPRTemporary scratch(this);
-                notNumber = m_jit.branchIfNotNumber(argument.jsValueRegs(), scratch.gpr());
-            }
-            m_jit.move(argumentTagGPR, resultRegs.tagGPR());
-            m_jit.move(argumentPayloadGPR, resultRegs.payloadGPR());
-            MacroAssembler::Jump done = m_jit.jump();
-
-            notNumber.link(&m_jit);
-            silentSpillAllRegisters(resultRegs);
-            callOperation(operationToNumber, resultRegs, argumentTagGPR, argumentPayloadGPR);
-            silentFillAllRegisters(resultRegs);
-            m_jit.exceptionCheck();
-
-            done.link(&m_jit);
-        }
-
-        jsValueResult(resultRegs.tagGPR(), resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
         break;
     }
         

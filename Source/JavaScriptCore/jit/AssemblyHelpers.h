@@ -755,44 +755,30 @@ public:
     {
 #if USE(JSVALUE64)
         UNUSED_PARAM(tempGPR);
-        return branchIfNumber(regs.gpr(), mode);
+        if (mode == HaveTagRegisters)
+            return branchTest64(NonZero, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+        return branchTest64(NonZero, regs.gpr(), TrustedImm64(TagTypeNumber));
 #else
         UNUSED_PARAM(mode);
         add32(TrustedImm32(1), regs.tagGPR(), tempGPR);
         return branch32(Below, tempGPR, TrustedImm32(JSValue::LowestTag + 1));
 #endif
     }
-
-#if USE(JSVALUE64)
-    Jump branchIfNumber(GPRReg reg, TagRegistersMode mode = HaveTagRegisters)
-    {
-        if (mode == HaveTagRegisters)
-            return branchTest64(NonZero, reg, GPRInfo::tagTypeNumberRegister);
-        return branchTest64(NonZero, reg, TrustedImm64(TagTypeNumber));
-    }
-#endif
     
     // Note that the tempGPR is not used in 64-bit mode.
     Jump branchIfNotNumber(JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
         UNUSED_PARAM(tempGPR);
-        return branchIfNotNumber(regs.gpr(), mode);
+        if (mode == HaveTagRegisters)
+            return branchTest64(Zero, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+        return branchTest64(Zero, regs.gpr(), TrustedImm64(TagTypeNumber));
 #else
         UNUSED_PARAM(mode);
         add32(TrustedImm32(1), regs.tagGPR(), tempGPR);
         return branch32(AboveOrEqual, tempGPR, TrustedImm32(JSValue::LowestTag + 1));
 #endif
     }
-
-#if USE(JSVALUE64)
-    Jump branchIfNotNumber(GPRReg reg, TagRegistersMode mode = HaveTagRegisters)
-    {
-        if (mode == HaveTagRegisters)
-            return branchTest64(Zero, reg, GPRInfo::tagTypeNumberRegister);
-        return branchTest64(Zero, reg, TrustedImm64(TagTypeNumber));
-    }
-#endif
 
     Jump branchIfNotDoubleKnownNotInt32(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {

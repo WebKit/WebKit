@@ -1827,6 +1827,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         ASSERT(node->child1().useKind() == UntypedUse);
         
+        if (!forNode(node->child1()).m_type) {
+            m_state.setIsValid(false);
+            break;
+        }
+        
         if (!(forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString | SpecSymbol))) {
             m_state.setFoundConstants(true);
             forNode(node) = forNode(node->child1());
@@ -1836,26 +1841,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld(node->origin.semantic, clobberLimit);
         
         forNode(node).setType(m_graph, SpecHeapTop & ~SpecObject);
-        break;
-    }
-
-    case ToNumber: {
-        JSValue childConst = forNode(node->child1()).value();
-        if (childConst && childConst.isNumber()) {
-            setConstant(node, childConst);
-            break;
-        }
-
-        ASSERT(node->child1().useKind() == UntypedUse);
-
-        if (!(forNode(node->child1()).m_type & ~SpecBytecodeNumber)) {
-            m_state.setFoundConstants(true);
-            forNode(node) = forNode(node->child1());
-            break;
-        }
-
-        clobberWorld(node->origin.semantic, clobberLimit);
-        forNode(node).setType(m_graph, SpecBytecodeNumber);
         break;
     }
         

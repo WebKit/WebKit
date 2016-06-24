@@ -1525,19 +1525,9 @@ RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, RegisterID* src)
 
 RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src)
 {
-    ASSERT_WITH_MESSAGE(op_to_number != opcodeID, "op_to_number is profiled.");
     emitOpcode(opcodeID);
     instructions().append(dst->index());
     instructions().append(src->index());
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitUnaryOpProfiled(OpcodeID opcodeID, RegisterID* dst, RegisterID* src)
-{
-    UnlinkedValueProfile profile = emitProfiledOpcode(opcodeID);
-    instructions().append(dst->index());
-    instructions().append(src->index());
-    instructions().append(profile);
     return dst;
 }
 

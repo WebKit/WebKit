@@ -40,6 +40,8 @@ class JSObject;
 EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncIsFinite(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncDecodeURIComponent(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState*);

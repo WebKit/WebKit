@@ -1173,12 +1173,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(World);
         write(Heap);
         return;
-
-    case ToNumber: {
-        read(World);
-        write(Heap);
-        return;
-    }
         
     case ToString:
     case CallStringConstructor:

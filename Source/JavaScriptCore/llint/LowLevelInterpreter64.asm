@@ -834,12 +834,11 @@ _llint_op_to_number:
     btqz t2, tagTypeNumber, .opToNumberSlow
 .opToNumberIsImmediate:
     storeq t2, [cfr, t1, 8]
-    valueProfile(t2, 3, t0)
-    dispatch(4)
+    dispatch(3)
 
 .opToNumberSlow:
     callOpcodeSlowPath(_slow_path_to_number)
-    dispatch(4)
+    dispatch(3)
 
 
 _llint_op_to_string:

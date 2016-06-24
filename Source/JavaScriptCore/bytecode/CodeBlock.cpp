@@ -992,7 +992,6 @@ void CodeBlock::dumpBytecode(
         }
         case op_to_number: {
             printUnaryOp(out, exec, location, it, "to_number");
-            dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
         case op_to_string: {
@@ -2094,8 +2093,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
         case op_get_direct_pname:
         case op_get_by_id:
-        case op_get_from_arguments:
-        case op_to_number: {
+        case op_get_from_arguments: {
             ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;

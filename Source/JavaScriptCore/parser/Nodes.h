@@ -967,10 +967,11 @@ namespace JSC {
     protected:
         ExpressionNode* expr() { return m_expr; }
         const ExpressionNode* expr() const { return m_expr; }
-        OpcodeID opcodeID() const { return m_opcodeID; }
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        OpcodeID opcodeID() const { return m_opcodeID; }
 
         ExpressionNode* m_expr;
         OpcodeID m_opcodeID;
@@ -981,8 +982,6 @@ namespace JSC {
         UnaryPlusNode(const JSTokenLocation&, ExpressionNode*);
 
     private:
-        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
-
         ExpressionNode* stripUnaryPlus() override { return expr(); }
     };
 

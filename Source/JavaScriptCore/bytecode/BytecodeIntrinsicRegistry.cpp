@@ -54,7 +54,7 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_arrayIterationKindValue.set(m_vm, jsNumber(ArrayIterateValue));
     m_arrayIterationKindKeyValue.set(m_vm, jsNumber(ArrayIterateKeyValue));
     m_MAX_STRING_LENGTH.set(m_vm, jsNumber(JSString::MaxLength));
-    m_MAX_SAFE_INTEGER.set(m_vm, jsDoubleNumber(maxSafeInteger()));
+    m_MAX_SAFE_INTEGER.set(m_vm, jsDoubleNumber(9007199254740991.0)); // 2 ^ 53 - 1
     m_ModuleFetch.set(m_vm, jsNumber(static_cast<unsigned>(ModuleLoaderObject::Status::Fetch)));
     m_ModuleTranslate.set(m_vm, jsNumber(static_cast<unsigned>(ModuleLoaderObject::Status::Translate)));
     m_ModuleInstantiate.set(m_vm, jsNumber(static_cast<unsigned>(ModuleLoaderObject::Status::Instantiate)));
