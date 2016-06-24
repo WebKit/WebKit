@@ -38,7 +38,6 @@
 @class WebView;
 
 struct WebResourceDelegateImplementationCache {
-    IMP didCancelAuthenticationChallengeFunc;
     IMP didReceiveAuthenticationChallengeFunc;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     IMP canAuthenticateAgainstProtectionSpaceFunc;

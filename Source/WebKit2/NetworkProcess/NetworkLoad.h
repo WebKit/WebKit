@@ -88,7 +88,6 @@ public:
     void cannotShowURL(WebCore::ResourceHandle*) override;
     bool shouldUseCredentialStorage(WebCore::ResourceHandle*) override;
     void didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
-    void didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
     void receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
     bool usesAsyncCallbacks() override { return true; }
     bool loadingSynchronousXHR() override { return m_client.isSynchronous(); }

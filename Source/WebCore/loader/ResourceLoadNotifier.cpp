@@ -62,16 +62,6 @@ void ResourceLoadNotifier::didReceiveAuthenticationChallenge(unsigned long ident
     m_frame.loader().client().dispatchDidReceiveAuthenticationChallenge(loader, identifier, currentWebChallenge);
 }
 
-void ResourceLoadNotifier::didCancelAuthenticationChallenge(ResourceLoader* loader, const AuthenticationChallenge& currentWebChallenge)
-{
-    didCancelAuthenticationChallenge(loader->identifier(), loader->documentLoader(), currentWebChallenge);
-}
-
-void ResourceLoadNotifier::didCancelAuthenticationChallenge(unsigned long identifier, DocumentLoader* loader, const AuthenticationChallenge& currentWebChallenge)
-{
-    m_frame.loader().client().dispatchDidCancelAuthenticationChallenge(loader, identifier, currentWebChallenge);
-}
-
 void ResourceLoadNotifier::willSendRequest(ResourceLoader* loader, ResourceRequest& clientRequest, const ResourceResponse& redirectResponse)
 {
     m_frame.loader().applyUserAgent(clientRequest);

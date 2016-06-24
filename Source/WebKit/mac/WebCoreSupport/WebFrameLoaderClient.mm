@@ -457,24 +457,6 @@ bool WebFrameLoaderClient::shouldPaintBrokenImage(const URL& imageURL) const
     return true;
 }
 
-void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader* loader, unsigned long identifier, const AuthenticationChallenge&challenge)
-{
-    WebView *webView = getWebView(m_webFrame.get());
-    WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
-    NSURLAuthenticationChallenge *webChallenge = mac(challenge);
-
-    if (implementations->didCancelAuthenticationChallengeFunc) {
-        if (id resource = [webView _objectForIdentifier:identifier]) {
-            CallResourceLoadDelegate(implementations->didCancelAuthenticationChallengeFunc, webView, @selector(webView:resource:didCancelAuthenticationChallenge:fromDataSource:), resource, webChallenge, dataSource(loader));
-            return;
-        }
-    }
-
-#if !PLATFORM(IOS)
-    [(WebPanelAuthenticationHandler *)[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:webChallenge];
-#endif
-}
-
 void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response)
 {
     WebView *webView = getWebView(m_webFrame.get());

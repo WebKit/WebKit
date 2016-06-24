@@ -189,12 +189,6 @@ static void dispatchOnMainThread(void (^block)())
     });
 }
 
-- (void)download:(NSURLDownload *)download didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    // FIXME: Implement.
-    notImplemented();
-}
-
 - (BOOL)downloadShouldUseCredentialStorage:(NSURLDownload *)download
 {
     return NO;

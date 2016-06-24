@@ -126,7 +126,6 @@ public:
 #endif
 
 #if PLATFORM(COCOA) && !USE(CFNETWORK)
-    void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
     WEBCORE_EXPORT NSURLConnection *connection() const;
     id makeDelegate(bool);
     id delegate();

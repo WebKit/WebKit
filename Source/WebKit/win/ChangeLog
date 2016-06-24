@@ -1,3 +1,14 @@
+2016-06-23  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused didCancelAuthenticationChallenge
+        https://bugs.webkit.org/show_bug.cgi?id=158819
+
+        Reviewed by David Kilzer.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge): Deleted.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2016-06-22  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] The test storage/indexeddb/modern/handle-user-delete.html is timing out.

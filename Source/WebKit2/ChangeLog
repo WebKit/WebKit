@@ -1,3 +1,19 @@
+2016-06-23  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused didCancelAuthenticationChallenge
+        https://bugs.webkit.org/show_bug.cgi?id=158819
+
+        Reviewed by David Kilzer.
+
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        (-[WKDownloadAsDelegate download:didCancelAuthenticationChallenge:]): Deleted.
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didCancelAuthenticationChallenge): Deleted.
+        * NetworkProcess/NetworkLoad.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2016-06-23  Benjamin Poulain  <benjamin@webkit.org>
 
         Specialize synchronous event tracking per event type

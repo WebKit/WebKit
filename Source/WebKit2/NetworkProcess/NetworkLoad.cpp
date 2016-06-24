@@ -451,14 +451,6 @@ void NetworkLoad::didReceiveAuthenticationChallenge(ResourceHandle* handle, cons
     NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, challenge);
 }
 
-void NetworkLoad::didCancelAuthenticationChallenge(ResourceHandle* handle, const AuthenticationChallenge&)
-{
-    ASSERT_UNUSED(handle, handle == m_handle);
-
-    // This function is probably not needed (see <rdar://problem/8960124>).
-    notImplemented();
-}
-
 void NetworkLoad::receivedCancellation(ResourceHandle* handle, const AuthenticationChallenge&)
 {
     ASSERT_UNUSED(handle, handle == m_handle);

@@ -222,17 +222,6 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoa
     challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
 }
 
-void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader* loader, unsigned long identifier, const AuthenticationChallenge& challenge)
-{
-    WebView* webView = m_webFrame->webView();
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
-        return;
-
-    COMPtr<WebURLAuthenticationChallenge> webChallenge(AdoptCOM, WebURLAuthenticationChallenge::createInstance(challenge));
-    resourceLoadDelegate->didCancelAuthenticationChallenge(webView, identifier, webChallenge.get(), getWebDataSource(loader));
-}
-
 void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     WebView* webView = m_webFrame->webView();

@@ -714,14 +714,6 @@ void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChall
 #endif
 }
 
-void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
-{
-    // Protect this in this delegate method since the additional processing can do
-    // anything including possibly derefing this; one example of this is Radar 3266216.
-    Ref<ResourceLoader> protectedThis(*this);
-    frameLoader()->notifier().didCancelAuthenticationChallenge(this, challenge);
-}
-
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 
 bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)

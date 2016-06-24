@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFrameLoaderClient_h
-#define WebFrameLoaderClient_h
+#pragma once
 
 #include <WebCore/COMPtr.h>
 #include <WebCore/FrameLoaderClient.h>
@@ -69,7 +68,6 @@ public:
     void dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) override;
     bool shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned long identifier) override;
     void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&) override;
-    void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&) override;
     void dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&) override;
     void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int dataLength) override;
     void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long identifier) override;
@@ -219,5 +217,3 @@ private:
 
     bool m_hasSentResponseToPlugin;
 };
-
-#endif // WebFrameLoaderClient_h

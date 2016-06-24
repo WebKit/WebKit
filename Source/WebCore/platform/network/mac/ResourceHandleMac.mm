@@ -623,16 +623,6 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
     return false;
 }
 
-void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
-{
-    ASSERT(d->m_currentMacChallenge);
-    ASSERT(d->m_currentMacChallenge == challenge.nsURLAuthenticationChallenge());
-    ASSERT(!d->m_currentWebChallenge.isNull());
-
-    if (client())
-        client()->didCancelAuthenticationChallenge(this, challenge);
-}
-
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {

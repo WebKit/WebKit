@@ -109,19 +109,6 @@ using namespace WebCore;
     m_handle->didReceiveAuthenticationChallenge(core(challenge));
 }
 
-- (void)connection:(NSURLConnection *)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    // FIXME: We probably don't need to implement this (see <rdar://problem/8960124>).
-
-    UNUSED_PARAM(connection);
-
-    LOG(Network, "Handle %p delegate connection:%p didCancelAuthenticationChallenge:%p", m_handle, connection, challenge);
-
-    if (!m_handle)
-        return;
-    m_handle->didCancelAuthenticationChallenge(core(challenge));
-}
-
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
 {

@@ -1,3 +1,19 @@
+2016-06-23  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused didCancelAuthenticationChallenge
+        https://bugs.webkit.org/show_bug.cgi?id=158819
+
+        Reviewed by David Kilzer.
+
+        * Misc/WebDownload.mm:
+        (-[WebDownloadInternal download:didCancelAuthenticationChallenge:]): Deleted.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge): Deleted.
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebView.mm:
+        (-[WebView _cacheResourceLoadDelegateImplementations]):
+
 2016-06-23  John Wilander  <wilander@apple.com>
 
         Enable window.open() for existing versions of Secret Society app

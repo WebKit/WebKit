@@ -50,8 +50,6 @@ public:
 
     void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
     void didReceiveAuthenticationChallenge(unsigned long identifier, DocumentLoader*, const AuthenticationChallenge&);
-    void didCancelAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
-    void didCancelAuthenticationChallenge(unsigned long identifier, DocumentLoader*, const AuthenticationChallenge&);
 
     void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
