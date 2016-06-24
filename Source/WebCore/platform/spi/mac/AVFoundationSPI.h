@@ -106,6 +106,9 @@ NS_ASSUME_NONNULL_END
 #import <AVFoundation/AVStreamDataParser.h>
 #else
 
+@protocol AVStreamDataParserOutputHandling <NSObject>
+@end
+
 typedef int32_t CMPersistentTrackID;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -114,7 +117,7 @@ typedef NS_ENUM(NSUInteger, AVStreamDataParserOutputMediaDataFlags) {
 };
 
 @interface AVStreamDataParser : NSObject
-- (void)setDelegate:(nullable id)delegate;
+- (void)setDelegate:(nullable id<AVStreamDataParserOutputHandling>)delegate;
 - (void)appendStreamData:(NSData *)data;
 - (void)setShouldProvideMediaData:(BOOL)shouldProvideMediaData forTrackID:(CMPersistentTrackID)trackID;
 - (BOOL)shouldProvideMediaDataForTrackID:(CMPersistentTrackID)trackID;

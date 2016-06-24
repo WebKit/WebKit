@@ -126,7 +126,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 #pragma mark -
 #pragma mark WebAVStreamDataParserListener
 
-@interface WebAVStreamDataParserListener : NSObject {
+@interface WebAVStreamDataParserListener : NSObject<AVStreamDataParserOutputHandling> {
     WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
     AVStreamDataParser* _parser;
 }
