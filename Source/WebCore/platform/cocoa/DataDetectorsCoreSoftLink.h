@@ -53,6 +53,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDURLTapAndHoldSchemes
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDShouldImmediatelyShowActionSheetForURL, BOOL, (NSURL *url), (url))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDShouldImmediatelyShowActionSheetForResult, BOOL, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDShouldUseLightLinksForResult, BOOL, (DDResultRef result, BOOL extractedFromSignature), (result, extractedFromSignature))
+SOFT_LINK_POINTER_FOR_HEADER(WebCore, DataDetectorsCore, DDBinderParsecSourceKey, CFStringRef)
 #endif
 SOFT_LINK_POINTER_FOR_HEADER(WebCore, DataDetectorsCore, DDBinderHttpURLKey, CFStringRef)
 SOFT_LINK_POINTER_FOR_HEADER(WebCore, DataDetectorsCore, DDBinderWebURLKey, CFStringRef)

@@ -51,10 +51,6 @@
 
 #import "DataDetectorsCoreSoftLink.h"
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/DataDetectorsAdditions.h>
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -235,8 +231,8 @@ static NSString *constructURLStringForResult(DDResultRef currentResult, NSString
     if (((detectionTypes & DataDetectorTypeAddress) && (DDResultCategoryAddress == category))
         || ((detectionTypes & DataDetectorTypeTrackingNumber) && (CFStringCompare(get_DataDetectorsCore_DDBinderTrackingNumberKey(), type, 0) == kCFCompareEqualTo))
         || ((detectionTypes & DataDetectorTypeFlightNumber) && (CFStringCompare(get_DataDetectorsCore_DDBinderFlightInformationKey(), type, 0) == kCFCompareEqualTo))
-#if USE(APPLE_INTERNAL_SDK)
-        || ((detectionTypes & DataDetectorTypeLookupSuggestion) && (CFStringCompare(DDBinderSpotlightSourceKey, type, 0) == kCFCompareEqualTo))
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+        || ((detectionTypes & DataDetectorTypeLookupSuggestion) && (CFStringCompare(get_DataDetectorsCore_DDBinderParsecSourceKey(), type, 0) == kCFCompareEqualTo))
 #endif
         || ((detectionTypes & DataDetectorTypePhoneNumber) && (DDResultCategoryPhoneNumber == category))
         || ((detectionTypes & DataDetectorTypeLink) && resultIsURL(currentResult))) {
