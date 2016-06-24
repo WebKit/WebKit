@@ -18,6 +18,11 @@
       display: block;
   }
 
+  section.shoes > img {
+      width: 600px;
+      height: 400px;
+  }
+
   section.flowers > img {
       width: 600px;
       height: 398px;
@@ -35,6 +40,11 @@
   section > div > div > img {
       margin: 0 auto 10px auto;
       display: block;
+  }
+
+  section.shoes > div > div > img {
+      width: 200px;
+      height: 133px;
   }
 
   section.flowers > div > div > img {
@@ -66,6 +76,9 @@
                   case "AdobeRGB":
                       imageType = "Adobe RGB";
                       break;
+                  case "P3":
+                      imageType = "Display P3";
+                      break;
                   case "oog":
                       imageType = "Out of sRGB Gamut";
                       break
@@ -83,6 +96,27 @@
   </script>
 </head>
 <body>
+
+    <section class="shoes">
+        <h2>Shoes</h2>
+        <img src="Shoes-sRGB.jpg" alt="Bright orange shoes">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="Shoes-sRGB.jpg" alt="Bright orange shoes in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="Shoes-AdobeRGB.jpg" alt="Bright orange shoes in the Adobe RGB color space">
+                <span>Adobe RGB</span>
+            </div>
+            <div>
+                <img src="Shoes-oog.jpg" alt="Bright orange shoes showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
 
     <section class="flowers">
         <h2>Flowers</h2>
