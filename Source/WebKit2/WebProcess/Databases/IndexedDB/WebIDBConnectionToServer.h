@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+class WebIDBResult;
+
 class WebIDBConnectionToServer final : public WebCore::IDBClient::IDBConnectionToServerDelegate, public IPC::MessageSender, public RefCounted<WebIDBConnectionToServer> {
 public:
     static Ref<WebIDBConnectionToServer> create();
@@ -83,12 +85,11 @@ public:
     void didCreateIndex(const WebCore::IDBResultData&);
     void didDeleteIndex(const WebCore::IDBResultData&);
     void didPutOrAdd(const WebCore::IDBResultData&);
-    void didGetRecord(const WebCore::IDBResultData&);
-    void didGetRecordWithSandboxExtensions(const WebCore::IDBResultData&, const SandboxExtension::HandleArray&);
+    void didGetRecord(const WebIDBResult&);
     void didGetCount(const WebCore::IDBResultData&);
     void didDeleteRecord(const WebCore::IDBResultData&);
-    void didOpenCursor(const WebCore::IDBResultData&);
-    void didIterateCursor(const WebCore::IDBResultData&);
+    void didOpenCursor(const WebIDBResult&);
+    void didIterateCursor(const WebIDBResult&);
     void fireVersionChangeEvent(uint64_t uniqueDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
     void didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&);
     void didCloseFromServer(uint64_t databaseConnectionIdentifier, const WebCore::IDBError&);

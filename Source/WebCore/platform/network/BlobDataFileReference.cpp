@@ -90,8 +90,6 @@ void BlobDataFileReference::startTrackingModifications()
     // also used to pass paths around before registration. Only registered blobs need to pay
     // the cost of tracking file modifications.
 
-    ASSERT(!isValidFileTime(m_expectedModificationTime));
-
 #if ENABLE(FILE_REPLACEMENT)
     m_replacementShouldBeGenerated = File::shouldReplaceFile(m_path);
 #endif

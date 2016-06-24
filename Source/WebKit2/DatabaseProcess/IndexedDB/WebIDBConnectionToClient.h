@@ -119,6 +119,8 @@ private:
 
     IPC::Connection* messageSenderConnection() final;
 
+    template<class MessageType> void handleGetResult(const WebCore::IDBResultData&);
+
     Ref<DatabaseToWebProcessConnection> m_connection;
 
     uint64_t m_identifier;

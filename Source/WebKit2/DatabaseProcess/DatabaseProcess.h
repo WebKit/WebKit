@@ -76,7 +76,7 @@ public:
     void accessToTemporaryFileComplete(const String& path) final;
 #endif
 
-    void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, std::function<void (const SandboxExtension::HandleArray&)> completionHandler);
+    void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, std::function<void (SandboxExtension::HandleArray&&)> completionHandler);
 
 private:
     DatabaseProcess();
@@ -105,7 +105,7 @@ private:
     void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& origins, uint64_t callbackID);
     void grantSandboxExtensionsForBlobs(const Vector<String>& paths, const SandboxExtension::HandleArray&);
 
-    void didGetSandboxExtensionsForBlobFiles(uint64_t requestID, const SandboxExtension::HandleArray&);
+    void didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&&);
 
 #if ENABLE(INDEXED_DATABASE)
     Vector<RefPtr<WebCore::SecurityOrigin>> indexedDatabaseOrigins();
@@ -124,7 +124,7 @@ private:
     RefPtr<WebCore::IDBServer::IDBServer> m_idbServer;
 #endif
     HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
-    HashMap<uint64_t, std::function<void (const SandboxExtension::HandleArray&)>> m_sandboxExtensionForBlobsCompletionHandlers;
+    HashMap<uint64_t, std::function<void (SandboxExtension::HandleArray&&)>> m_sandboxExtensionForBlobsCompletionHandlers;
 
     Deque<CrossThreadTask> m_databaseTasks;
     Lock m_databaseTaskMutex;

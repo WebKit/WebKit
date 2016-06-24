@@ -323,6 +323,7 @@ set(WebKit2_SOURCES
     Shared/Databases/DatabaseProcessCreationParameters.cpp
 
     Shared/Databases/IndexedDB/IDBUtilities.cpp
+    Shared/Databases/IndexedDB/WebIDBResult.cpp
 
     Shared/Plugins/NPIdentifierData.cpp
     Shared/Plugins/NPObjectMessageReceiver.cpp

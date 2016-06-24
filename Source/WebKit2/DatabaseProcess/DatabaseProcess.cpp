@@ -284,7 +284,7 @@ Vector<RefPtr<WebCore::SecurityOrigin>> DatabaseProcess::indexedDatabaseOrigins(
 
 #endif
 
-void DatabaseProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, std::function<void (const SandboxExtension::HandleArray&)> completionHandler)
+void DatabaseProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, std::function<void (SandboxExtension::HandleArray&&)> completionHandler)
 {
     static uint64_t lastRequestID;
 
@@ -293,10 +293,10 @@ void DatabaseProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& fil
     parentProcessConnection()->send(Messages::DatabaseProcessProxy::GetSandboxExtensionsForBlobFiles(requestID, filenames), 0);
 }
 
-void DatabaseProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, const SandboxExtension::HandleArray& handles)
+void DatabaseProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&& handles)
 {
     if (auto handler = m_sandboxExtensionForBlobsCompletionHandlers.take(requestID))
-        handler(handles);
+        handler(WTFMove(handles));
 }
 
 #if !PLATFORM(COCOA)

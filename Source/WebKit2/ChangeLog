@@ -1,3 +1,46 @@
+2016-06-23  Brady Eidson  <beidson@apple.com>
+
+        Retrieving Blobs from IndexedDB using cursors fails in WK2 (Sandboxing)
+        https://bugs.webkit.org/show_bug.cgi?id=158991
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::getSandboxExtensionsForBlobFiles):
+        (WebKit::DatabaseProcess::didGetSandboxExtensionsForBlobFiles):
+        * DatabaseProcess/DatabaseProcess.h:
+        
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::handleGetResult): Handle creation of sandbox extensions
+          for any result that might contain blob values.
+        (WebKit::WebIDBConnectionToClient::didGetRecord):
+        (WebKit::WebIDBConnectionToClient::didOpenCursor):
+        (WebKit::WebIDBConnectionToClient::didIterateCursor):
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.h:
+        
+        * Shared/Databases/IndexedDB/WebIDBResult.cpp: Added.
+        (WebKit::WebIDBResult::encode):
+        (WebKit::WebIDBResult::decode):
+        * Shared/Databases/IndexedDB/WebIDBResult.h: Added.
+        (WebKit::WebIDBResult::WebIDBResult):
+        (WebKit::WebIDBResult::resultData):
+        (WebKit::WebIDBResult::handles):
+        
+        * Shared/SandboxExtension.h: Make SandboxExtension handles moveable.
+                
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::preregisterSandboxExtensionsIfNecessary): Register sandbox extensions with the
+          Networking process for any result that might contain blob values.
+        (WebKit::WebIDBConnectionToServer::didGetRecord):
+        (WebKit::WebIDBConnectionToServer::didOpenCursor):
+        (WebKit::WebIDBConnectionToServer::didIterateCursor):
+        (WebKit::WebIDBConnectionToServer::didGetRecordWithSandboxExtensions): Deleted.
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in:
+
 2016-06-23  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused didCancelAuthenticationChallenge

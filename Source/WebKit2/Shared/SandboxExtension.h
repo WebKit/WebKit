@@ -52,9 +52,9 @@ public:
 
     class Handle {
         WTF_MAKE_NONCOPYABLE(Handle);
-    
     public:
         Handle();
+        Handle(Handle&&) = default;
         ~Handle();
 
         void encode(IPC::ArgumentEncoder&) const;
@@ -69,9 +69,9 @@ public:
 
     class HandleArray {
         WTF_MAKE_NONCOPYABLE(HandleArray);
-        
     public:
         HandleArray();
+        HandleArray(HandleArray&&) = default;
         ~HandleArray();
         void allocate(size_t);
         Handle& operator[](size_t i);
