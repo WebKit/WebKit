@@ -1,3 +1,11 @@
+2016-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=159077
+
+        Mark fast/harness/snapshot-captures-compositing.html as an image failure.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-06-23  Benjamin Poulain  <benjamin@webkit.org>
 
         Specialize synchronous event tracking per event type

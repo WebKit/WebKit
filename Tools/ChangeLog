@@ -1,5 +1,15 @@
 2016-06-23  Simon Fraser  <simon.fraser@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=159077
+
+        Turn off CARenderServer snapshotting in WTR for now, because it doesn't reliably
+        snapshot the final state of the test in release builds. 
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump):
+
+2016-06-23  Simon Fraser  <simon.fraser@apple.com>
+
         Fix hardware builds, where USE(IOSURFACE) is true by #ifdeffing.
 
         * DumpRenderTree/ios/PixelDumpSupportIOS.mm:

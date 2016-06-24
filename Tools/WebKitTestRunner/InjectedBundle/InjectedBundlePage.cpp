@@ -895,7 +895,12 @@ void InjectedBundlePage::dump()
         injectedBundle.dumpBackForwardListsForAllPages(stringBuilder);
 
     if (injectedBundle.shouldDumpPixels() && injectedBundle.testRunner()->shouldDumpPixels()) {
+#if PLATFORM(IOS)
+        // PlatformWebView::windowSnapshotImage() has timing problems, so use WebProcess snapshots for now.
+        bool shouldCreateSnapshot = true;
+#else
         bool shouldCreateSnapshot = injectedBundle.testRunner()->isPrinting();
+#endif
         if (shouldCreateSnapshot) {
             WKSnapshotOptions options = kWKSnapshotOptionsShareable;
             WKRect snapshotRect = WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page));
