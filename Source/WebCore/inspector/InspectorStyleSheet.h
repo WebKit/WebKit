@@ -140,7 +140,7 @@ public:
 private:
     InspectorStyle(const InspectorCSSId& styleId, RefPtr<CSSStyleDeclaration>&&, InspectorStyleSheet* parentStyleSheet);
 
-    bool populateAllProperties(Vector<InspectorStyleProperty>* result) const;
+    void populateAllProperties(Vector<InspectorStyleProperty>* result) const;
     Ref<Inspector::Protocol::CSS::CSSStyle> styleWithProperties() const;
     RefPtr<CSSRuleSourceData> extractSourceData() const;
     String shorthandValue(const String& shorthandProperty) const;
