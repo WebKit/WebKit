@@ -173,6 +173,7 @@ typedef enum {
 EXTERN_C void CARenderServerCaptureLayerWithTransform(mach_port_t serverPort, uint32_t clientId, uint64_t layerId,
                                                       uint32_t slotId, int32_t ox, int32_t oy, const CATransform3D *);
 
+typedef struct CARenderServerBuffer* CARenderServerBufferRef;
 EXTERN_C CARenderServerBufferRef CARenderServerCreateBuffer(size_t, size_t);
 EXTERN_C void CARenderServerDestroyBuffer(CARenderServerBufferRef);
 EXTERN_C size_t CARenderServerGetBufferWidth(CARenderServerBufferRef);
