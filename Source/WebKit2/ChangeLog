@@ -1,3 +1,21 @@
+2016-06-24  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r202389.
+
+    2016-06-23  Brent Fulgham  <bfulgham@apple.com>
+
+            [OS X][WK2] Expand sandbox for new mach endpoints
+            https://bugs.webkit.org/show_bug.cgi?id=159040
+            <rdar://problem/25238336>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Grant the WebContent and Networking processes the mach lookup capability for
+            various Security-related mach endpoints..
+
+            * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
 2016-06-23  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r202393.
