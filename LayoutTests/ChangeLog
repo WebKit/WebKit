@@ -1,3 +1,9 @@
+2016-06-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Update TestExpectations for a couple video track tests.
+
+        * platform/mac/TestExpectations:
+
 2016-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Make DumpRenderTree and WebKitTestRunner in the simulator use render server snapshotting
