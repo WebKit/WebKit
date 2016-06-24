@@ -1,3 +1,15 @@
+2016-06-24  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: Weak symbol warning when linking TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=159104
+
+        Reviewed by Mark Lam.
+        
+        The problem is that the tests were not compiled with -fvisibility=hidden like the rest of
+        WK.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2016-06-24  David Kilzer  <ddkilzer@apple.com>
 
         parser_unittests.pl should not hardcode list of tests

@@ -2332,6 +2332,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7C83E0271D0A5B8D00FEBCF3 /* TestWTFLibrary.xcconfig */;
 			buildSettings = {
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
+					"-ftemplate-depth=256",
+					"-fvisibility=hidden",
+				);
 			};
 			name = Debug;
 		};
@@ -2339,6 +2344,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7C83E0271D0A5B8D00FEBCF3 /* TestWTFLibrary.xcconfig */;
 			buildSettings = {
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
+					"-ftemplate-depth=256",
+					"-fvisibility=hidden",
+				);
 			};
 			name = Release;
 		};
