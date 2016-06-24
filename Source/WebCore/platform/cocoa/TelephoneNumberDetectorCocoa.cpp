@@ -47,6 +47,7 @@ namespace TelephoneNumberDetector {
 
 static DDDFAScannerRef phoneNumbersScanner()
 {
+#if PLATFORM(IOS)
     if (!DataDetectorsCoreLibrary())
         return nullptr;
 
@@ -56,6 +57,9 @@ static DDDFAScannerRef phoneNumbersScanner()
 
     static DDDFAScannerRef scanner = DDDFAScannerCreateFromCache(cache);
     return scanner;
+#else
+    return nullptr;
+#endif
 }
 
 bool isSupported()
