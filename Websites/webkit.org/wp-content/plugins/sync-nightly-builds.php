@@ -79,7 +79,11 @@ class SyncWebKitNightlyBuilds {
             $line = trim($line);
             if ( empty($line) ) break;
             list($build, $timestamp, $download) = explode(',', $line);
-            $records[$i] = array($build, date("F j, Y g:i A", $timestamp) . " GMT", $download);
+            $records[$i] = array(
+                $build, 
+                date("F j, Y g:i A", $timestamp) . " GMT", 
+                str_replace("http://builds.nightly.webkit.org/", "https://builds-nightly.webkit.org/", $download)
+            );
         }
         fclose($resource);
         return (array)$records;
