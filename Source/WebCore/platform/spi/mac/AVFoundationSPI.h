@@ -101,7 +101,7 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 #pragma mark AVStreamDataParser
-
+#if !PLATFORM(IOS)
 #if USE(APPLE_INTERNAL_SDK)
 #import <AVFoundation/AVStreamDataParser.h>
 #else
@@ -128,7 +128,15 @@ typedef NS_ENUM(NSUInteger, AVStreamDataParserOutputMediaDataFlags) {
 - (NSData *)streamingContentKeyRequestDataForApp:(NSData *)appIdentifier contentIdentifier:(NSData *)contentIdentifier trackID:(CMPersistentTrackID)trackID options:(NSDictionary *)options error:(NSError **)outError;
 @end
 NS_ASSUME_NONNULL_END
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
+
+NS_ASSUME_NONNULL_BEGIN
+@interface AVStreamDataParser (AVStreamDataParserPrivate)
++ (NSString *)outputMIMECodecParameterForInputMIMECodecParameter:(NSString *)inputMIMECodecParameter;
+@end
+NS_ASSUME_NONNULL_END
+
+#endif // !PLATFORM(IOS)
 
 // FIXME: Wrap in a #if USE(APPLE_INTERNAL_SDK) once these SPI land
 #import <AVFoundation/AVAssetResourceLoader.h>
@@ -139,10 +147,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) id<NSURLSessionDataDelegate> URLSessionDataDelegate;
 @property (nonatomic, readonly) NSOperationQueue *URLSessionDataDelegateQueue;
 @property (nonatomic, nullable, retain) NSURLSession *URLSession;
-@end
-
-@interface AVStreamDataParser (AVStreamDataParserPrivate)
-+ (NSString *)outputMIMECodecParameterForInputMIMECodecParameter:(NSString *)inputMIMECodecParameter;
 @end
 
 NS_ASSUME_NONNULL_END
