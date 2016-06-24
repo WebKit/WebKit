@@ -1,3 +1,71 @@
+2016-06-24  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLOperator and RenderMathMLToken to avoid using anonymous renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=155018
+
+        Reviewed by Martin Robinson.
+
+        We update the test expectations. Most of the adjustments are irrelevant visual
+        modifications (small shift and size differences) or due to changes in the renderer tree
+        structure (removal of anonymous, operator text appearing in the dumped text).
+        We disable the accessibility for mfenced for now, but this will be enabled again and improved
+        in follow-up accessibility patches.
+
+        * platform/ios-simulator/TestExpectations: We disable two reftests that use a character from
+        the Mathematical Alphanumeric Symbols block as a reference, since iOS does not have
+        appropriate fonts pre-installed.
+        * accessibility/mac/mathml-elements.html: Disable the mfenced test for now.
+        * accessibility/mac/mathml-elements-expected.txt: Ditto.
+        * accessibility/ios-simulator/math-expected.txt: Update the reference now that the text of
+        the operator appears in the render tree.
+        * accessibility/mac/math-alttext-expected.txt: Ditto.
+        * mathml/opentype/large-operators-italic-correction-expected.txt: Ditto.
+        * mathml/opentype/large-operators-munderover-expected.txt: Ditto.
+        * mathml/presentation/inferred-mrow-stretchy-expected.txt: Ditto.
+        * mathml/presentation/mfrac-nested-expected.txt: Ditto.
+        * mathml/presentation/stretchy-depth-height-expected.txt: Ditto.
+        * mathml/presentation/stretchy-depth-height-symmetric-expected.txt: Ditto.
+        * mathml/presentation/sup-nested-expected.txt: Ditto.
+        * mathml/very-large-stretchy-operators-expected.txt: Ditto.
+        * platform/mac/accessibility/math-text-expected.txt: Ditto.
+        * platform/gtk/accessibility/math-text-expected.txt: Ditto.
+        * fast/css/readonly-pseudoclass-common-element-expected.txt: Ditto.
+        * fast/css/readwrite-pseudoclass-editable-expected.txt: Ditto.
+        * imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-namespace-expected.txt: Ditto.
+        * imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-namespace-xhtml-expected.txt: Ditto.
+        * mathml/presentation/attributes-background-color.html: Add some padding to workaround some
+        small rendering failures.
+        * mathml/presentation/attributes-background-color-expected.html: Ditto.
+        * mathml/presentation/attributes-display.html: Ditto.
+        * mathml/presentation/attributes-display-expected.html: Ditto.
+        * mathml/presentation/bug97990-expected.html: Ditto.
+        * mathml/presentation/bug97990.html: Ditto.
+        * mathml/presentation/attributes-mathvariant-expected.html: Update the reftest to use italic
+        characters from the Mathematical Alphanumeric Symbols.
+        * mathml/presentation/tokenElements-mathvariant-expected.html: Ditto.
+        * mathml/presentation/mo-whitespaces-expected.html: Adjust one edge case since we now only
+        collapse whitespace for operators that use MathOperator.
+        * accessibility/math-multiscript-attributes-expected.txt: Small size/coordinate adjustment.
+        * platform/gtk/accessibility/math-multiscript-attributes-expected.txt: Dottp.
+        * platform/gtk/mathml/presentation/roots-expected.txt: Size/coordinate adjustment, removal
+        of anonymous renderers and use italic characters from the Mathematical Alphanumeric Symbols.
+        * platform/gtk/mathml/presentation/roots-expected.png: Ditto.
+        * platform/ios-simulator/mathml/presentation/roots-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/horizontal-expected.txt: Size/coordinate adjustment and
+        removal of anonymous renderers.
+        * platform/gtk/mathml/opentype/horizontal-munderover-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/large-operators-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Ditto.
+        * platform/gtk/mathml/opentype/vertical-expected.txt: Ditto.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/opentype/horizontal-munderover-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/opentype/opentype-stretchy-expected.txt: Ditto.
+        * platform/mac/mathml/opentype/large-operators-expected.txt: Ditto.
+        * platform/mac/mathml/opentype/opentype-stretchy-expected.txt: Ditto.
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Ditto.
+        * platform/mac/mathml/opentype/vertical-expected.txt: Ditto.
+
 2016-06-23  Benjamin Poulain  <bpoulain@apple.com>
 
         OOM Assertion failure in Array.prototype.toString

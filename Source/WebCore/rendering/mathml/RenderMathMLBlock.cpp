@@ -58,13 +58,6 @@ bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const RenderSt
     return is<Element>(child.node());
 }
 
-RenderPtr<RenderMathMLBlock> RenderMathMLBlock::createAnonymousMathMLBlock()
-{
-    RenderPtr<RenderMathMLBlock> newBlock = createRenderer<RenderMathMLBlock>(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX));
-    newBlock->initializeStyle();
-    return newBlock;
-}
-
 LayoutUnit RenderMathMLBlock::mathAxisHeight() const
 {
     const auto& primaryFont = style().fontCascade().primaryFont();

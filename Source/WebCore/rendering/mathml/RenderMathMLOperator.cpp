@@ -171,11 +171,6 @@ void RenderMathMLOperator::setOperatorProperties()
     }
 }
 
-bool RenderMathMLOperator::isChildAllowed(const RenderObject&, const RenderStyle&) const
-{
-    return false;
-}
-
 void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)
 {
     ASSERT(hasOperatorFlag(MathMLOperatorDictionary::Stretchy));
@@ -243,19 +238,27 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
+    LayoutUnit preferredWidth = 0;
+
     setOperatorProperties();
     if (!useMathOperator()) {
         RenderMathMLToken::computePreferredLogicalWidths();
+        preferredWidth = m_maxPreferredLogicalWidth;
         if (isInvisibleOperator()) {
             // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
             GlyphData data = style().fontCascade().glyphDataForCharacter(m_textContent, false);
             float glyphWidth = data.isValid() ? data.font->widthForGlyph(data.glyph) : 0;
-            ASSERT(glyphWidth <= m_minPreferredLogicalWidth);
-            m_minPreferredLogicalWidth -= glyphWidth;
-            m_maxPreferredLogicalWidth -= glyphWidth;
+            ASSERT(glyphWidth <= preferredWidth);
+            preferredWidth -= glyphWidth;
         }
     } else
-        m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_leadingSpace + m_mathOperator.maxPreferredWidth() + m_trailingSpace;
+        preferredWidth = m_mathOperator.maxPreferredWidth();
+
+    // FIXME: The spacing should be added to the whole embellished operator (https://webkit.org/b/124831).
+    // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
+    preferredWidth = m_leadingSpace + preferredWidth + m_trailingSpace;
+
+    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = preferredWidth;
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -272,8 +275,19 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
             child->layoutIfNeeded();
         setLogicalWidth(m_leadingSpace + m_mathOperator.width() + m_trailingSpace);
         setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent());
-    } else
+    } else {
+        // We first do the normal layout without spacing.
+        recomputeLogicalWidth();
+        LayoutUnit width = logicalWidth();
+        setLogicalWidth(width - m_leadingSpace - m_trailingSpace);
         RenderMathMLToken::layoutBlock(relayoutChildren, pageLogicalHeight);
+        setLogicalWidth(width);
+
+        // We then move the children to take spacing into account.
+        LayoutPoint horizontalShift(style().direction() == LTR ? m_leadingSpace : -m_leadingSpace, 0);
+        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+            child->setLocation(child->location() + horizontalShift);
+    }
 
     clearNeedsLayout();
 }
@@ -282,14 +296,6 @@ void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
 {
     // We collapse the whitespace and replace the hyphens by minus signs.
     AtomicString textContent = operatorString.stripWhiteSpace().simplifyWhiteSpace().replace(hyphenMinus, minusSign).impl();
-
-    // We destroy the wrapper and rebuild it.
-    // FIXME: Using this RenderText make the text inaccessible to the dumpAsText/selection code (https://bugs.webkit.org/show_bug.cgi?id=125597).
-    if (firstChild())
-        downcast<RenderElement>(*firstChild()).destroy();
-    createWrapperIfNeeded();
-    RenderPtr<RenderText> text = createRenderer<RenderText>(document(), textContent);
-    downcast<RenderElement>(*firstChild()).addChild(text.leakPtr());
 
     // We verify whether the operator text can be represented by a single UChar.
     // FIXME: This does not handle surrogate pairs (https://bugs.webkit.org/show_bug.cgi?id=122296).
@@ -308,7 +314,6 @@ void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
         m_mathOperator.setOperator(style(), m_textContent, type);
     }
 
-    updateStyle();
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
@@ -332,8 +337,6 @@ void RenderMathMLOperator::updateFromElement()
 void RenderMathMLOperator::updateOperatorProperties()
 {
     setOperatorProperties();
-    if (!isEmpty())
-        updateStyle();
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
@@ -356,23 +359,6 @@ void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyl
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     m_mathOperator.reset(style());
     updateOperatorProperties();
-}
-
-void RenderMathMLOperator::updateStyle()
-{
-    ASSERT(firstChild());
-    if (!firstChild())
-        return;
-
-    // We add spacing around the operator.
-    // FIXME: The spacing should be added to the whole embellished operator (https://bugs.webkit.org/show_bug.cgi?id=124831).
-    // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
-    const auto& wrapper = downcast<RenderElement>(firstChild());
-    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
-    newStyle.setMarginStart(Length(m_leadingSpace, Fixed));
-    newStyle.setMarginEnd(Length(m_trailingSpace, Fixed));
-    wrapper->setStyle(WTFMove(newStyle));
-    wrapper->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 Optional<int> RenderMathMLOperator::firstLineBaseline() const

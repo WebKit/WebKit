@@ -1,11 +1,17 @@
 This test passes if all the vertical bars stretch.
 
+|
+ 
+|
+ 
+|
+ 
+|
  
  
+|
  
- 
- 
- 
+|
 
 
 PASS operator stretching inside Mrow 

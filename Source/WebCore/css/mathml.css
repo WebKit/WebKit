@@ -116,10 +116,6 @@ ms, mtext, mi, mn, mo, annotation, mtd {
     white-space: nowrap !important;
 }
 
-mo {
-    flex-direction: column;
-}
-
 msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
     font-size: 0.75em; /* FIXME: MathML standard is 0.71em */
 }

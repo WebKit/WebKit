@@ -8,565 +8,508 @@ layer at (0,0) size 800x166
           RenderMathMLUnderOver {mover} at (1,0) size 22x10
             RenderMathMLSpace {mspace} at (0,8) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{2190}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{2190}"
         RenderText {#text} at (24,0) size 4x17
           text run at (24,0) width 4: " "
         RenderMathMLMath {math} at (28,4) size 24x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x10
             RenderMathMLSpace {mspace} at (0,8) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{2192}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{2192}"
         RenderText {#text} at (52,0) size 4x17
           text run at (52,0) width 4: " "
         RenderMathMLMath {math} at (56,4) size 24x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x10
             RenderMathMLSpace {mspace} at (0,8) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{2194}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{2194}"
         RenderText {#text} at (80,0) size 4x17
           text run at (80,0) width 4: " "
         RenderMathMLMath {math} at (84,4) size 24x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x10
             RenderMathMLSpace {mspace} at (0,8) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21A4}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21A4}"
         RenderText {#text} at (108,0) size 4x17
           text run at (108,0) width 4: " "
         RenderMathMLMath {math} at (112,4) size 24x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x10
             RenderMathMLSpace {mspace} at (0,8) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21A6}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21A6}"
         RenderText {#text} at (136,0) size 4x17
           text run at (136,0) width 4: " "
         RenderMathMLMath {math} at (140,5) size 24x9 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x9
             RenderMathMLSpace {mspace} at (0,7) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x7
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21BC}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21BC}"
         RenderText {#text} at (164,0) size 4x17
           text run at (164,0) width 4: " "
         RenderMathMLMath {math} at (168,7) size 24x7 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x7
             RenderMathMLSpace {mspace} at (0,5) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x5
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x5
-                RenderBlock (anonymous) at (0,0) size 0x5
-                  RenderText at (0,-39) size 12x80
-                    text run at (0,-39) width 12: "\x{21BD}"
+              RenderBlock (anonymous) at (0,0) size 12x5
+                RenderText {#text} at (0,-39) size 12x80
+                  text run at (0,-39) width 12: "\x{21BD}"
         RenderText {#text} at (192,0) size 4x17
           text run at (192,0) width 4: " "
         RenderMathMLMath {math} at (196,5) size 24x9 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x9
             RenderMathMLSpace {mspace} at (0,7) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x7
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21C0}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21C0}"
         RenderText {#text} at (220,0) size 4x17
           text run at (220,0) width 4: " "
         RenderMathMLMath {math} at (224,4) size 24x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x10
             RenderMathMLSpace {mspace} at (0,8) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21D0}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21D0}"
         RenderText {#text} at (248,0) size 4x17
           text run at (248,0) width 4: " "
         RenderMathMLMath {math} at (252,4) size 24x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x10
             RenderMathMLSpace {mspace} at (0,8) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21D2}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21D2}"
         RenderText {#text} at (276,0) size 4x17
           text run at (276,0) width 4: " "
         RenderMathMLMath {math} at (280,4) size 24x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x10
             RenderMathMLSpace {mspace} at (0,8) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21D4}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21D4}"
         RenderText {#text} at (304,0) size 4x17
           text run at (304,0) width 4: " "
         RenderMathMLMath {math} at (308,2) size 24x12 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x12
             RenderMathMLSpace {mspace} at (0,10) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x10
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-35) size 12x80
-                    text run at (0,-35) width 12: "\x{21DA}"
+              RenderBlock (anonymous) at (0,0) size 12x10
+                RenderText {#text} at (0,-35) size 12x80
+                  text run at (0,-35) width 12: "\x{21DA}"
         RenderText {#text} at (332,0) size 4x17
           text run at (332,0) width 4: " "
         RenderMathMLMath {math} at (336,2) size 24x12 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x12
             RenderMathMLSpace {mspace} at (0,10) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (1,0) size 20x10
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-35) size 12x80
-                    text run at (0,-35) width 12: "\x{21DB}"
+              RenderBlock (anonymous) at (0,0) size 12x10
+                RenderText {#text} at (0,-35) size 12x80
+                  text run at (0,-35) width 12: "\x{21DB}"
         RenderText {#text} at (360,0) size 4x17
           text run at (360,0) width 4: " "
         RenderMathMLMath {math} at (364,9) size 24x5 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x5
             RenderMathMLSpace {mspace} at (0,3) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (9,0) size 4x3
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-34) size 4x80
-                    text run at (0,-34) width 4: "\x{23B4}"
+              RenderBlock (anonymous) at (0,0) size 4x10
+                RenderText {#text} at (0,-34) size 4x80
+                  text run at (0,-34) width 4: "\x{23B4}"
         RenderText {#text} at (388,0) size 4x17
           text run at (388,0) width 4: " "
         RenderMathMLMath {math} at (392,9) size 24x5 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x5
             RenderMathMLSpace {mspace} at (0,3) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (9,0) size 4x3
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x4
-                RenderBlock (anonymous) at (0,0) size 0x4
-                  RenderText at (0,-43) size 4x80
-                    text run at (0,-43) width 4: "\x{23B5}"
+              RenderBlock (anonymous) at (0,0) size 4x4
+                RenderText {#text} at (0,-43) size 4x80
+                  text run at (0,-43) width 4: "\x{23B5}"
         RenderText {#text} at (416,0) size 4x17
           text run at (416,0) width 4: " "
         RenderMathMLMath {math} at (420,8) size 24x6 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x6
             RenderMathMLSpace {mspace} at (0,4) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (8,0) size 6x4
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-34) size 6x80
-                    text run at (0,-34) width 6: "\x{23DC}"
+              RenderBlock (anonymous) at (0,0) size 6x10
+                RenderText {#text} at (0,-34) size 6x80
+                  text run at (0,-34) width 6: "\x{23DC}"
         RenderText {#text} at (444,0) size 4x17
           text run at (444,0) width 4: " "
         RenderMathMLMath {math} at (448,7) size 24x7 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x7
             RenderMathMLSpace {mspace} at (0,5) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (8,0) size 6x5
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x4
-                RenderBlock (anonymous) at (0,0) size 0x4
-                  RenderText at (0,-43) size 6x80
-                    text run at (0,-43) width 6: "\x{23DD}"
+              RenderBlock (anonymous) at (0,0) size 6x4
+                RenderText {#text} at (0,-43) size 6x80
+                  text run at (0,-43) width 6: "\x{23DD}"
         RenderText {#text} at (472,0) size 4x17
           text run at (472,0) width 4: " "
         RenderMathMLMath {math} at (476,8) size 24x6 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x6
             RenderMathMLSpace {mspace} at (0,4) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (8,0) size 6x4
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x11
-                RenderBlock (anonymous) at (0,0) size 0x11
-                  RenderText at (0,-33) size 6x80
-                    text run at (0,-33) width 6: "\x{23DE}"
+              RenderBlock (anonymous) at (0,0) size 6x11
+                RenderText {#text} at (0,-33) size 6x80
+                  text run at (0,-33) width 6: "\x{23DE}"
         RenderText {#text} at (500,0) size 4x17
           text run at (500,0) width 4: " "
         RenderMathMLMath {math} at (504,7) size 24x7 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 22x7
             RenderMathMLSpace {mspace} at (0,5) size 22x2 [bgcolor=#0000FF]
             RenderMathMLOperator {mo} at (8,0) size 6x5
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x5
-                RenderBlock (anonymous) at (0,0) size 0x5
-                  RenderText at (0,-43) size 6x80
-                    text run at (0,-43) width 6: "\x{23DF}"
+              RenderBlock (anonymous) at (0,0) size 6x5
+                RenderText {#text} at (0,-43) size 6x80
+                  text run at (0,-43) width 6: "\x{23DF}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,33) size 784x34
         RenderMathMLMath {math} at (0,4) size 52x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x10
             RenderMathMLSpace {mspace} at (0,8) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{2190}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{2190}"
         RenderText {#text} at (52,0) size 4x17
           text run at (52,0) width 4: " "
         RenderMathMLMath {math} at (56,4) size 52x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x10
             RenderMathMLSpace {mspace} at (0,8) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{2192}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{2192}"
         RenderText {#text} at (108,0) size 4x17
           text run at (108,0) width 4: " "
         RenderMathMLMath {math} at (112,4) size 52x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x10
             RenderMathMLSpace {mspace} at (0,8) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{2194}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{2194}"
         RenderText {#text} at (164,0) size 4x17
           text run at (164,0) width 4: " "
         RenderMathMLMath {math} at (168,4) size 52x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x10
             RenderMathMLSpace {mspace} at (0,8) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21A4}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21A4}"
         RenderText {#text} at (220,0) size 4x17
           text run at (220,0) width 4: " "
         RenderMathMLMath {math} at (224,4) size 52x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x10
             RenderMathMLSpace {mspace} at (0,8) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21A6}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21A6}"
         RenderText {#text} at (276,0) size 4x17
           text run at (276,0) width 4: " "
         RenderMathMLMath {math} at (280,5) size 52x9 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x9
             RenderMathMLSpace {mspace} at (0,7) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x7
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21BC}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21BC}"
         RenderText {#text} at (332,0) size 4x17
           text run at (332,0) width 4: " "
         RenderMathMLMath {math} at (336,7) size 52x7 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x7
             RenderMathMLSpace {mspace} at (0,5) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x5
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x5
-                RenderBlock (anonymous) at (0,0) size 0x5
-                  RenderText at (0,-39) size 12x80
-                    text run at (0,-39) width 12: "\x{21BD}"
+              RenderBlock (anonymous) at (0,0) size 12x5
+                RenderText {#text} at (0,-39) size 12x80
+                  text run at (0,-39) width 12: "\x{21BD}"
         RenderText {#text} at (388,0) size 4x17
           text run at (388,0) width 4: " "
         RenderMathMLMath {math} at (392,5) size 52x9 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x9
             RenderMathMLSpace {mspace} at (0,7) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x7
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21C0}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21C0}"
         RenderText {#text} at (444,0) size 4x17
           text run at (444,0) width 4: " "
         RenderMathMLMath {math} at (448,4) size 52x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x10
             RenderMathMLSpace {mspace} at (0,8) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21D0}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21D0}"
         RenderText {#text} at (500,0) size 4x17
           text run at (500,0) width 4: " "
         RenderMathMLMath {math} at (504,4) size 52x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x10
             RenderMathMLSpace {mspace} at (0,8) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21D2}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21D2}"
         RenderText {#text} at (556,0) size 4x17
           text run at (556,0) width 4: " "
         RenderMathMLMath {math} at (560,4) size 52x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x10
             RenderMathMLSpace {mspace} at (0,8) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21D4}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21D4}"
         RenderText {#text} at (612,0) size 4x17
           text run at (612,0) width 4: " "
         RenderMathMLMath {math} at (616,2) size 52x12 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x12
             RenderMathMLSpace {mspace} at (0,10) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x10
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-35) size 12x80
-                    text run at (0,-35) width 12: "\x{21DA}"
+              RenderBlock (anonymous) at (0,0) size 12x10
+                RenderText {#text} at (0,-35) size 12x80
+                  text run at (0,-35) width 12: "\x{21DA}"
         RenderText {#text} at (668,0) size 4x17
           text run at (668,0) width 4: " "
         RenderMathMLMath {math} at (672,2) size 52x12 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x12
             RenderMathMLSpace {mspace} at (0,10) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (15,0) size 20x10
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-35) size 12x80
-                    text run at (0,-35) width 12: "\x{21DB}"
+              RenderBlock (anonymous) at (0,0) size 12x10
+                RenderText {#text} at (0,-35) size 12x80
+                  text run at (0,-35) width 12: "\x{21DB}"
         RenderText {#text} at (724,0) size 4x17
           text run at (724,0) width 4: " "
         RenderMathMLMath {math} at (728,2) size 52x12 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x12
             RenderMathMLSpace {mspace} at (0,10) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (23,0) size 4x10
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-34) size 4x80
-                    text run at (0,-34) width 4: "\x{23B4}"
+              RenderBlock (anonymous) at (0,0) size 4x10
+                RenderText {#text} at (0,-34) size 4x80
+                  text run at (0,-34) width 4: "\x{23B4}"
         RenderText {#text} at (0,0) size 0x0
         RenderMathMLMath {math} at (0,24) size 52x7 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x7
             RenderMathMLSpace {mspace} at (0,5) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (23,0) size 4x5
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x4
-                RenderBlock (anonymous) at (0,0) size 0x4
-                  RenderText at (0,-43) size 4x80
-                    text run at (0,-43) width 4: "\x{23B5}"
+              RenderBlock (anonymous) at (0,0) size 4x4
+                RenderText {#text} at (0,-43) size 4x80
+                  text run at (0,-43) width 4: "\x{23B5}"
         RenderText {#text} at (52,17) size 4x17
           text run at (52,17) width 4: " "
         RenderMathMLMath {math} at (56,19) size 52x12 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x12
             RenderMathMLSpace {mspace} at (0,10) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (22,0) size 6x10
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-34) size 6x80
-                    text run at (0,-34) width 6: "\x{23DC}"
+              RenderBlock (anonymous) at (0,0) size 6x10
+                RenderText {#text} at (0,-34) size 6x80
+                  text run at (0,-34) width 6: "\x{23DC}"
         RenderText {#text} at (108,17) size 4x17
           text run at (108,17) width 4: " "
         RenderMathMLMath {math} at (112,24) size 52x7 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x7
             RenderMathMLSpace {mspace} at (0,5) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (22,0) size 6x5
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x4
-                RenderBlock (anonymous) at (0,0) size 0x4
-                  RenderText at (0,-43) size 6x80
-                    text run at (0,-43) width 6: "\x{23DD}"
+              RenderBlock (anonymous) at (0,0) size 6x4
+                RenderText {#text} at (0,-43) size 6x80
+                  text run at (0,-43) width 6: "\x{23DD}"
         RenderText {#text} at (164,17) size 4x17
           text run at (164,17) width 4: " "
         RenderMathMLMath {math} at (168,18) size 52x13 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x13
             RenderMathMLSpace {mspace} at (0,11) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (22,0) size 6x11
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x11
-                RenderBlock (anonymous) at (0,0) size 0x11
-                  RenderText at (0,-33) size 6x80
-                    text run at (0,-33) width 6: "\x{23DE}"
+              RenderBlock (anonymous) at (0,0) size 6x11
+                RenderText {#text} at (0,-33) size 6x80
+                  text run at (0,-33) width 6: "\x{23DE}"
         RenderText {#text} at (220,17) size 4x17
           text run at (220,17) width 4: " "
         RenderMathMLMath {math} at (224,23) size 52x8 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 50x8
             RenderMathMLSpace {mspace} at (0,6) size 50x2 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (22,0) size 6x6
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x5
-                RenderBlock (anonymous) at (0,0) size 0x5
-                  RenderText at (0,-43) size 6x80
-                    text run at (0,-43) width 6: "\x{23DF}"
+              RenderBlock (anonymous) at (0,0) size 6x5
+                RenderText {#text} at (0,-43) size 6x80
+                  text run at (0,-43) width 6: "\x{23DF}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,83) size 784x51
         RenderMathMLMath {math} at (0,4) size 102x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x10
             RenderMathMLSpace {mspace} at (0,8) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{2190}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{2190}"
         RenderText {#text} at (102,0) size 4x17
           text run at (102,0) width 4: " "
         RenderMathMLMath {math} at (106,4) size 102x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x10
             RenderMathMLSpace {mspace} at (0,8) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{2192}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{2192}"
         RenderText {#text} at (208,0) size 4x17
           text run at (208,0) width 4: " "
         RenderMathMLMath {math} at (212,4) size 102x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x10
             RenderMathMLSpace {mspace} at (0,8) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{2194}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{2194}"
         RenderText {#text} at (314,0) size 4x17
           text run at (314,0) width 4: " "
         RenderMathMLMath {math} at (318,4) size 102x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x10
             RenderMathMLSpace {mspace} at (0,8) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21A4}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21A4}"
         RenderText {#text} at (420,0) size 4x17
           text run at (420,0) width 4: " "
         RenderMathMLMath {math} at (424,4) size 102x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x10
             RenderMathMLSpace {mspace} at (0,8) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21A6}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21A6}"
         RenderText {#text} at (526,0) size 4x17
           text run at (526,0) width 4: " "
         RenderMathMLMath {math} at (530,5) size 102x9 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x9
             RenderMathMLSpace {mspace} at (0,7) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x7
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21BC}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21BC}"
         RenderText {#text} at (632,0) size 4x17
           text run at (632,0) width 4: " "
         RenderMathMLMath {math} at (636,7) size 102x7 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x7
             RenderMathMLSpace {mspace} at (0,5) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x5
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x5
-                RenderBlock (anonymous) at (0,0) size 0x5
-                  RenderText at (0,-39) size 12x80
-                    text run at (0,-39) width 12: "\x{21BD}"
+              RenderBlock (anonymous) at (0,0) size 12x5
+                RenderText {#text} at (0,-39) size 12x80
+                  text run at (0,-39) width 12: "\x{21BD}"
         RenderText {#text} at (0,0) size 0x0
         RenderMathMLMath {math} at (0,22) size 102x9 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x9
             RenderMathMLSpace {mspace} at (0,7) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x7
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21C0}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21C0}"
         RenderText {#text} at (102,17) size 4x17
           text run at (102,17) width 4: " "
         RenderMathMLMath {math} at (106,21) size 102x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x10
             RenderMathMLSpace {mspace} at (0,8) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21D0}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21D0}"
         RenderText {#text} at (208,17) size 4x17
           text run at (208,17) width 4: " "
         RenderMathMLMath {math} at (212,21) size 102x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x10
             RenderMathMLSpace {mspace} at (0,8) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21D2}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21D2}"
         RenderText {#text} at (314,17) size 4x17
           text run at (314,17) width 4: " "
         RenderMathMLMath {math} at (318,21) size 102x10 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x10
             RenderMathMLSpace {mspace} at (0,8) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x8
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x8
-                RenderBlock (anonymous) at (0,0) size 0x8
-                  RenderText at (0,-36) size 12x80
-                    text run at (0,-36) width 12: "\x{21D4}"
+              RenderBlock (anonymous) at (0,0) size 12x8
+                RenderText {#text} at (0,-36) size 12x80
+                  text run at (0,-36) width 12: "\x{21D4}"
         RenderText {#text} at (420,17) size 4x17
           text run at (420,17) width 4: " "
         RenderMathMLMath {math} at (424,19) size 102x12 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x12
             RenderMathMLSpace {mspace} at (0,10) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x10
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-35) size 12x80
-                    text run at (0,-35) width 12: "\x{21DA}"
+              RenderBlock (anonymous) at (0,0) size 12x10
+                RenderText {#text} at (0,-35) size 12x80
+                  text run at (0,-35) width 12: "\x{21DA}"
         RenderText {#text} at (526,17) size 4x17
           text run at (526,17) width 4: " "
         RenderMathMLMath {math} at (530,19) size 102x12 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x12
             RenderMathMLSpace {mspace} at (0,10) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (40,0) size 20x10
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-35) size 12x80
-                    text run at (0,-35) width 12: "\x{21DB}"
+              RenderBlock (anonymous) at (0,0) size 12x10
+                RenderText {#text} at (0,-35) size 12x80
+                  text run at (0,-35) width 12: "\x{21DB}"
         RenderText {#text} at (632,17) size 4x17
           text run at (632,17) width 4: " "
         RenderMathMLMath {math} at (636,19) size 102x12 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x12
             RenderMathMLSpace {mspace} at (0,10) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (48,0) size 4x10
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-34) size 4x80
-                    text run at (0,-34) width 4: "\x{23B4}"
+              RenderBlock (anonymous) at (0,0) size 4x10
+                RenderText {#text} at (0,-34) size 4x80
+                  text run at (0,-34) width 4: "\x{23B4}"
         RenderText {#text} at (0,0) size 0x0
         RenderMathMLMath {math} at (0,41) size 102x7 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x7
             RenderMathMLSpace {mspace} at (0,5) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (48,0) size 4x5
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x4
-                RenderBlock (anonymous) at (0,0) size 0x4
-                  RenderText at (0,-43) size 4x80
-                    text run at (0,-43) width 4: "\x{23B5}"
+              RenderBlock (anonymous) at (0,0) size 4x4
+                RenderText {#text} at (0,-43) size 4x80
+                  text run at (0,-43) width 4: "\x{23B5}"
         RenderText {#text} at (102,34) size 4x17
           text run at (102,34) width 4: " "
         RenderMathMLMath {math} at (106,36) size 102x12 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x12
             RenderMathMLSpace {mspace} at (0,10) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (47,0) size 6x10
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x10
-                RenderBlock (anonymous) at (0,0) size 0x10
-                  RenderText at (0,-34) size 6x80
-                    text run at (0,-34) width 6: "\x{23DC}"
+              RenderBlock (anonymous) at (0,0) size 6x10
+                RenderText {#text} at (0,-34) size 6x80
+                  text run at (0,-34) width 6: "\x{23DC}"
         RenderText {#text} at (208,34) size 4x17
           text run at (208,34) width 4: " "
         RenderMathMLMath {math} at (212,41) size 102x7 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x7
             RenderMathMLSpace {mspace} at (0,5) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (47,0) size 6x5
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x4
-                RenderBlock (anonymous) at (0,0) size 0x4
-                  RenderText at (0,-43) size 6x80
-                    text run at (0,-43) width 6: "\x{23DD}"
+              RenderBlock (anonymous) at (0,0) size 6x4
+                RenderText {#text} at (0,-43) size 6x80
+                  text run at (0,-43) width 6: "\x{23DD}"
         RenderText {#text} at (314,34) size 4x17
           text run at (314,34) width 4: " "
         RenderMathMLMath {math} at (318,35) size 102x13 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x13
             RenderMathMLSpace {mspace} at (0,11) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (47,0) size 6x11
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x11
-                RenderBlock (anonymous) at (0,0) size 0x11
-                  RenderText at (0,-33) size 6x80
-                    text run at (0,-33) width 6: "\x{23DE}"
+              RenderBlock (anonymous) at (0,0) size 6x11
+                RenderText {#text} at (0,-33) size 6x80
+                  text run at (0,-33) width 6: "\x{23DE}"
         RenderText {#text} at (420,34) size 4x17
           text run at (420,34) width 4: " "
         RenderMathMLMath {math} at (424,40) size 102x8 [padding: 0 1 0 1]
           RenderMathMLUnderOver {mover} at (1,0) size 100x8
             RenderMathMLSpace {mspace} at (0,6) size 100x2 [bgcolor=#FF0000]
             RenderMathMLOperator {mo} at (47,0) size 6x6
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 0x5
-                RenderBlock (anonymous) at (0,0) size 0x5
-                  RenderText at (0,-43) size 6x80
-                    text run at (0,-43) width 6: "\x{23DF}"
+              RenderBlock (anonymous) at (0,0) size 6x5
+                RenderText {#text} at (0,-43) size 6x80
+                  text run at (0,-43) width 6: "\x{23DF}"
         RenderText {#text} at (0,0) size 0x0

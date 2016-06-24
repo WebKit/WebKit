@@ -656,6 +656,10 @@ mathml/opentype/large-operators-italic-correction.html [ Pass Failure ]
 mathml/presentation/multiscripts-positions.html [ Pass ImageOnlyFailure ]
 mathml/presentation/scripts-subsup.html [ Pass ImageOnlyFailure ]
 
+# These reftests require a font with Mathematical Alphanumeric Symbols.
+mathml/presentation/attributes-mathvariant.html [ ImageOnlyFailure ]
+mathml/presentation/tokenElements-mathvariant.html [ ImageOnlyFailure ]
+
 # MathML tests that fail:
 mathml/opentype/horizontal.html [ Failure ]
 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]

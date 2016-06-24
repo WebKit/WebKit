@@ -12,7 +12,8 @@
          Unicode block ("U+1D400 MATHEMATICAL BOLD CAPITAL",
          "U+1D434 MATHEMATICAL ITALIC CAPITAL A" and
          "U+1D468 MATHEMATICAL BOLD ITALIC CAPITAL A") but the WebKit
-         implementation relies on CSS style instead. See also bug 108778.
+         implementation relies on CSS style instead, except for implicit
+         mathvariant italic on single-char mi. See also bug 108778.
       -->
     <div>
       <!-- FIXME: we add new lines to workaround a width/spacing bug. -->
@@ -20,7 +21,7 @@
         <mtext style="font-style: normal;">A</mtext>
       </math><br/>
       <math>
-        <mtext style="font-style: italic;">A</mtext>
+        <mtext style="font-style: normal;">𝐴</mtext>
       </math><br/>
       <math>
         <mtext style="font-style: italic;">A</mtext>

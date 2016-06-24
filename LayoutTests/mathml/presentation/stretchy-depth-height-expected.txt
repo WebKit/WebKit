@@ -1,20 +1,27 @@
 This test passes if the depth and height of braces match the maximum depth and height of its siblings.
 
+{
  
+{
  
+{
  
+{
 x	y	z
 x	y	z
 x	y	z
 x	y	z
 x	y	z
  
+{
 1
 2
 3
 4
+-
 5
 6
+*
 1
 2
 3
@@ -26,10 +33,12 @@ x	y	z
 9
 10
 11
++
 7
 8
 9
 10
+/
 1
 2
 1
@@ -40,7 +49,14 @@ x	y	z
 5
 6
  
+{
+|
+}
  
+{
+p
+{
+|
 
 
 PASS symmetric stretching 

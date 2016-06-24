@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Frédéric Wang (fred.wang@free.fr). All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,7 @@
 #if ENABLE(MATHML)
 
 #include "MathMLNames.h"
+#include "PaintInfo.h"
 #include "RenderElement.h"
 #include "RenderIterator.h"
 
@@ -38,79 +40,158 @@ using namespace MathMLNames;
 
 RenderMathMLToken::RenderMathMLToken(Element& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))
-    , m_containsElement(false)
+    , m_mathVariantGlyph()
+    , m_mathVariantGlyphDirty(false)
 {
 }
 
 RenderMathMLToken::RenderMathMLToken(Document& document, RenderStyle&& style)
     : RenderMathMLBlock(document, WTFMove(style))
-    , m_containsElement(false)
+    , m_mathVariantGlyph()
+    , m_mathVariantGlyphDirty(false)
 {
-}
-
-void RenderMathMLToken::addChild(RenderObject* newChild, RenderObject* beforeChild)
-{
-    createWrapperIfNeeded();
-    downcast<RenderElement>(*firstChild()).addChild(newChild, beforeChild);
-}
-
-void RenderMathMLToken::createWrapperIfNeeded()
-{
-    if (!firstChild()) {
-        RenderPtr<RenderMathMLBlock> wrapper = createAnonymousMathMLBlock();
-        RenderMathMLBlock::addChild(wrapper.leakPtr());
-    }
 }
 
 void RenderMathMLToken::updateTokenContent()
 {
-    m_containsElement = false;
-    if (!isEmpty()) {
-        // The renderers corresponding to the children of the token element are wrapped inside an anonymous RenderMathMLBlock.
-        // When one of these renderers is a RenderElement, we handle the RenderMathMLToken differently.
-        // For some reason, an additional anonymous RenderBlock is created as a child of the RenderMathMLToken and the renderers are actually inserted into that RenderBlock so we need to dig down one additional level here.
-        const auto& wrapper = downcast<RenderElement>(firstChild());
-        if (const auto& block = downcast<RenderElement>(wrapper->firstChild()))
-            m_containsElement = childrenOfType<RenderElement>(*block).first();
-        updateStyle();
-    }
-    setNeedsLayoutAndPrefWidthsRecalc();
+    RenderMathMLBlock::updateFromElement();
+    setMathVariantGlyphDirty();
 }
 
-void RenderMathMLToken::updateStyle()
+static bool transformToItalic(UChar32& codePoint)
 {
-    const auto& tokenElement = element();
+    const UChar32 lowerAlpha = 0x3B1;
+    const UChar32 lowerOmega = 0x3C9;
+    const UChar32 mathItalicLowerA = 0x1D44E;
+    const UChar32 mathItalicLowerAlpha = 0x1D6FC;
+    const UChar32 mathItalicLowerH = 0x210E;
+    const UChar32 mathItalicUpperA = 0x1D434;
 
-    const auto& wrapper = downcast<RenderElement>(firstChild());
-    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
-
-    if (tokenElement.hasTagName(MathMLNames::miTag)) {
-        // This tries to emulate the default mathvariant value on <mi> using the CSS font-style property.
-        // FIXME: This should be revised when mathvariant is implemented (http://wkbug/85735) and when fonts with Mathematical Alphanumeric Symbols characters are more popular.
-        auto fontDescription = newStyle.fontDescription();
-        FontSelector* fontSelector = newStyle.fontCascade().fontSelector();
-        if (!m_containsElement && element().textContent().stripWhiteSpace().simplifyWhiteSpace().length() == 1 && !tokenElement.hasAttribute(mathvariantAttr))
-            fontDescription.setItalic(FontItalicOn);
-        if (newStyle.setFontDescription(fontDescription))
-            newStyle.fontCascade().update(fontSelector);
+    // FIXME: We should also transform dotless i, dotless j and more greek letters.
+    if ('a' <= codePoint && codePoint <= 'z') {
+        if (codePoint == 'h')
+            codePoint = mathItalicLowerH;
+        else
+            codePoint += mathItalicLowerA - 'a';
+        return true;
+    }
+    if ('A' <= codePoint && codePoint <= 'Z') {
+        codePoint += mathItalicUpperA - 'A';
+        return true;
+    }
+    if (lowerAlpha <= codePoint && codePoint <= lowerOmega) {
+        codePoint += mathItalicLowerAlpha - lowerAlpha;
+        return true;
     }
 
-    wrapper->setStyle(WTFMove(newStyle));
-    wrapper->setNeedsLayoutAndPrefWidthsRecalc();
+    return false;
+}
+
+void RenderMathMLToken::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+
+    if (m_mathVariantGlyphDirty)
+        updateMathVariantGlyph();
+
+    if (m_mathVariantGlyph.isValid()) {
+        m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_mathVariantGlyph.font->widthForGlyph(m_mathVariantGlyph.glyph);
+        setPreferredLogicalWidthsDirty(false);
+        return;
+    }
+
+    RenderMathMLBlock::computePreferredLogicalWidths();
+}
+
+void RenderMathMLToken::updateMathVariantGlyph()
+{
+    ASSERT(m_mathVariantGlyphDirty);
+
+    // This implements implicit italic mathvariant for single-char <mi>.
+    // FIXME: Add full support for the mathvariant attribute (https://webkit.org/b/85735)
+    m_mathVariantGlyph = GlyphData();
+    m_mathVariantGlyphDirty = false;
+
+    // Early return if the token element contains RenderElements.
+    // Note that the renderers corresponding to the children of the token element are wrapped inside an anonymous RenderBlock.
+    if (const auto& block = downcast<RenderElement>(firstChild())) {
+        if (childrenOfType<RenderElement>(*block).first())
+            return;
+    }
+
+    const auto& tokenElement = element();
+    if (tokenElement.hasTagName(MathMLNames::miTag) && !tokenElement.hasAttribute(mathvariantAttr)) {
+        AtomicString textContent = element().textContent().stripWhiteSpace().simplifyWhiteSpace();
+        if (textContent.length() == 1) {
+            UChar32 codePoint = textContent[0];
+            if (transformToItalic(codePoint))
+                m_mathVariantGlyph = style().fontCascade().glyphDataForCharacter(codePoint, !style().isLeftToRightDirection());
+        }
+    }
 }
 
 void RenderMathMLToken::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
-    if (!isEmpty())
-        updateStyle();
+    setMathVariantGlyphDirty();
 }
 
 void RenderMathMLToken::updateFromElement()
 {
     RenderMathMLBlock::updateFromElement();
-    if (!isEmpty())
-        updateStyle();
+    setMathVariantGlyphDirty();
+}
+
+Optional<int> RenderMathMLToken::firstLineBaseline() const
+{
+    if (m_mathVariantGlyph.isValid())
+        return Optional<int>(static_cast<int>(lroundf(-m_mathVariantGlyph.font->boundsForGlyph(m_mathVariantGlyph.glyph).y())));
+    return RenderMathMLBlock::firstLineBaseline();
+}
+
+void RenderMathMLToken::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
+{
+    ASSERT(needsLayout());
+
+    if (!relayoutChildren && simplifiedLayout())
+        return;
+
+    if (!m_mathVariantGlyph.isValid()) {
+        RenderMathMLBlock::layoutBlock(relayoutChildren, pageLogicalHeight);
+        return;
+    }
+
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+        child->layoutIfNeeded();
+
+    setLogicalWidth(m_mathVariantGlyph.font->widthForGlyph(m_mathVariantGlyph.glyph));
+    setLogicalHeight(m_mathVariantGlyph.font->boundsForGlyph(m_mathVariantGlyph.glyph).height());
+
+    clearNeedsLayout();
+}
+
+void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
+{
+    RenderMathMLBlock::paint(info, paintOffset);
+
+    // FIXME: Instead of using DrawGlyph, we may consider using the more general TextPainter so that we can apply mathvariant to strings with an arbitrary number of characters and preserve advanced CSS effects (text-shadow, etc).
+    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || !m_mathVariantGlyph.isValid())
+        return;
+
+    GraphicsContextStateSaver stateSaver(info.context());
+    info.context().setFillColor(style().visitedDependentColor(CSSPropertyColor));
+
+    GlyphBuffer buffer;
+    buffer.add(m_mathVariantGlyph.glyph, m_mathVariantGlyph.font, m_mathVariantGlyph.font->widthForGlyph(m_mathVariantGlyph.glyph));
+    LayoutUnit glyphAscent = static_cast<int>(lroundf(-m_mathVariantGlyph.font->boundsForGlyph(m_mathVariantGlyph.glyph).y()));
+    info.context().drawGlyphs(style().fontCascade(), *m_mathVariantGlyph.font, buffer, 0, 1, paintOffset + location() + LayoutPoint(0, glyphAscent));
+}
+
+void RenderMathMLToken::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
+{
+    if (m_mathVariantGlyph.isValid())
+        return;
+    RenderMathMLBlock::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
 }
 
 }
