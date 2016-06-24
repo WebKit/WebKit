@@ -1,3 +1,25 @@
+2016-06-24  Mark Lam  <mark.lam@apple.com>
+
+        [JSC] Error prototypes are called on remote scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=52192
+
+        Reviewed by Keith Miller.
+
+        The added test will test the following combinations of factors:
+
+        1. Explicitly throwing an error of each of the types of JS errors i.e.
+           Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError.
+        2. Validating that the error received in window.onerror does not leak any info.
+        3. Validating that the 'name' and 'toString' getters set on the error prototype
+           object does not get invoked for creating the error message to be passed to
+           window.error.
+
+        * http/tests/security/regress-52192-expected.txt: Added.
+        * http/tests/security/regress-52192.html: Added.
+        * http/tests/security/resources/regress-52192-syntax-error.js: Added.
+        * http/tests/security/resources/regress-52192-throw-error.js: Added.
+        (catch):
+
 2016-06-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update to test gardening in r202300

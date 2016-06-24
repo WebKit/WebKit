@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2008, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -151,5 +151,70 @@ void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& messag
             appendSourceToError(callFrame, this, bytecodeOffset);
     }
 }
-    
+
+// Based on ErrorPrototype's errorProtoFuncToString(), but is modified to
+// have no observable side effects to the user (i.e. does not call proxies,
+// and getters).
+String ErrorInstance::sanitizedToString(ExecState* exec)
+{
+    VM& vm = exec->vm();
+
+    JSValue nameValue;
+    auto namePropertName = vm.propertyNames->name;
+    PropertySlot nameSlot(this, PropertySlot::InternalMethodType::VMInquiry);
+
+    JSValue currentObj = this;
+    unsigned prototypeDepth = 0;
+
+    // We only check the current object and its prototype (2 levels) because normal
+    // Error objects may have a name property, and if not, its prototype should have
+    // a name property for the type of error e.g. "SyntaxError".
+    while (currentObj.isCell() && prototypeDepth++ < 2) {
+        JSObject* obj = jsCast<JSObject*>(currentObj);
+        if (JSObject::getOwnPropertySlot(obj, exec, namePropertName, nameSlot) && nameSlot.isValue()) {
+            nameValue = nameSlot.getValue(exec, namePropertName);
+            break;
+        }
+        currentObj = obj->getPrototypeDirect();
+    }
+    ASSERT(!vm.exception());
+
+    String nameString;
+    if (!nameValue)
+        nameString = ASCIILiteral("Error");
+    else {
+        nameString = nameValue.toString(exec)->value(exec);
+        if (vm.exception())
+            return String();
+    }
+
+    JSValue messageValue;
+    auto messagePropertName = vm.propertyNames->message;
+    PropertySlot messageSlot(this, PropertySlot::InternalMethodType::VMInquiry);
+    if (JSObject::getOwnPropertySlot(this, exec, messagePropertName, messageSlot) && messageSlot.isValue())
+        messageValue = messageSlot.getValue(exec, messagePropertName);
+    ASSERT(!vm.exception());
+
+    String messageString;
+    if (!messageValue)
+        messageString = String();
+    else {
+        messageString = messageValue.toString(exec)->value(exec);
+        if (vm.exception())
+            return String();
+    }
+
+    if (!nameString.length())
+        return messageString;
+
+    if (!messageString.length())
+        return nameString;
+
+    StringBuilder builder;
+    builder.append(nameString);
+    builder.append(": ");
+    builder.append(messageString);
+    return builder.toString();
+}
+
 } // namespace JSC

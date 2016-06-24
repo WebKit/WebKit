@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2011, 2013, 2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2013 Michael Pruett <michael@68k.org>
  *
@@ -43,6 +43,7 @@
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/ErrorHandlingScope.h>
+#include <runtime/ErrorInstance.h>
 #include <runtime/Exception.h>
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSFunction.h>
@@ -197,12 +198,16 @@ void reportException(ExecState* exec, Exception* exception, CachedScript* cached
     }
 
     String errorMessage;
-    if (ExceptionBase* exceptionBase = toExceptionBase(exception->value()))
+    JSValue exceptionValue = exception->value();
+    if (ExceptionBase* exceptionBase = toExceptionBase(exceptionValue))
         errorMessage = exceptionBase->message() + ": "  + exceptionBase->description();
     else {
         // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
         // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
-        errorMessage = exception->value().toString(exec)->value(exec);
+        if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(exceptionValue))
+            errorMessage = error->sanitizedToString(exec);
+        else
+            errorMessage = exceptionValue.toString(exec)->value(exec);
 
         // We need to clear any new exception that may be thrown in the toString() call above.
         // reportException() is not supposed to be making new exceptions.
