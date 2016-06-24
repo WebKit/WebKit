@@ -879,6 +879,7 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::HeadingRole:
         case WebCore::ListMarkerRole:
         case WebCore::StaticTextRole:
+        case WebCore::LabelRole:
             return ROLE_SYSTEM_STATICTEXT;
         case WebCore::OutlineRole:
             return ROLE_SYSTEM_OUTLINE;
@@ -917,7 +918,6 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::DivRole:
         case WebCore::FooterRole:
         case WebCore::FormRole:
-        case WebCore::LabelRole:
         case WebCore::ParagraphRole:
             return ROLE_SYSTEM_GROUPING;
         case WebCore::HorizontalRuleRole:

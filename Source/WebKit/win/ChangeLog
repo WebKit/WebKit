@@ -1,3 +1,16 @@
+2016-06-23  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] The test accessibility/aria-labelledby-overrides-label.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=159057
+
+        Reviewed by Brent Fulgham.
+
+        The test expects the label to have a static text role, but currently it has a
+        group role.
+ 
+        * AccessibleBase.cpp:
+        (MSAARole): Change the role of labels to static text.
+
 2016-06-23  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused didCancelAuthenticationChallenge
