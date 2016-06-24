@@ -1,3 +1,17 @@
+2016-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Vimeo.com videos do not get playback controls
+        https://bugs.webkit.org/show_bug.cgi?id=159082
+        <rdar://problem/26586630>
+
+        Reviewed by Eric Carlson.
+
+        When the HasAudioOrVideo media state changes, let the video controls recalculate
+        by calling videoControlsManagerDidChange().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+
 2016-06-24  Beth Dakin  <bdakin@apple.com>
 
         Include enclosingListType in EditorState
