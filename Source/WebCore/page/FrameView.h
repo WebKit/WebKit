@@ -111,7 +111,7 @@ public:
     void scheduleRelayout();
     void scheduleRelayoutOfSubtree(RenderElement&);
     void unscheduleRelayout();
-    void queuePostLayoutCallback(Function<void()>&&);
+    void queuePostLayoutCallback(WTF::Function<void ()>&&);
     bool layoutPending() const;
     bool isInLayout() const { return m_layoutPhase != OutsideLayout; }
     bool isInRenderTreeLayout() const { return m_layoutPhase == InRenderTreeLayout; }
@@ -828,7 +828,7 @@ private:
     ScrollPinningBehavior m_scrollPinningBehavior;
 
     IntRect* m_cachedWindowClipRect { nullptr };
-    Vector<Function<void()>> m_postLayoutCallbackQueue;
+    Vector<WTF::Function<void ()>> m_postLayoutCallbackQueue;
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)
