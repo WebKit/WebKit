@@ -616,6 +616,11 @@ void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
     segment.duration = toMediaTime([m_asset duration]);
 
     for (AVAssetTrack* track in [m_asset tracks]) {
+        if ([track hasMediaCharacteristic:AVMediaCharacteristicLegible]) {
+            // FIXME(125161): Handle in-band text tracks.
+            continue;
+        }
+
         if ([track hasMediaCharacteristic:AVMediaCharacteristicVisual]) {
             SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
             RefPtr<VideoTrackPrivateMediaSourceAVFObjC> videoTrack = VideoTrackPrivateMediaSourceAVFObjC::create(track, this);
@@ -676,6 +681,10 @@ bool SourceBufferPrivateAVFObjC::processCodedFrame(int trackID, CMSampleBufferRe
             if (m_mediaSource)
                 m_mediaSource->player()->sizeChanged();
         }
+    } else if (!m_audioRenderers.contains(trackID)) {
+        // FIXME(125161): We don't handle text tracks, and passing this sample up to SourceBuffer
+        // will just confuse its state. Drop this sample until we can handle text tracks properly.
+        return false;
     }
 
 
