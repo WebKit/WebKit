@@ -28,7 +28,7 @@
 
 #include <functional>
 #include <wtf/Forward.h>
-#include <wtf/NoncopyableFunction.h>
+#include <wtf/Function.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -43,7 +43,7 @@ public:
     static Ref<StorageSyncManager> create(const String& path);
     ~StorageSyncManager();
 
-    void dispatch(NoncopyableFunction<void ()>&&);
+    void dispatch(Function<void ()>&&);
     void close();
 
 private:

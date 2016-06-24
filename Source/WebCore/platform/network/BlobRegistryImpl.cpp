@@ -252,7 +252,7 @@ struct BlobForFileWriting {
     Vector<std::pair<String, ThreadSafeDataBuffer>> filePathsOrDataBuffers;
 };
 
-void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, NoncopyableFunction<void (const Vector<String>& filePaths)>&& completionHandler)
+void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void (const Vector<String>& filePaths)>&& completionHandler)
 {
     Vector<BlobForFileWriting> blobsForWriting;
     for (auto& url : blobURLs) {

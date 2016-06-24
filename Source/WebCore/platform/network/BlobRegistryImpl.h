@@ -67,7 +67,7 @@ private:
 
     unsigned long long blobSize(const URL&) override;
 
-    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, NoncopyableFunction<void (const Vector<String>& filePaths)>&& completionHandler) override;
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void (const Vector<String>& filePaths)>&& completionHandler) override;
 
     HashMap<String, RefPtr<BlobData>> m_blobs;
 };

@@ -33,7 +33,7 @@
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Timer.h>
-#include <wtf/NoncopyableFunction.h>
+#include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -63,9 +63,9 @@ enum class AuthenticationChallengeDisposition {
     RejectProtectionSpace
 };
     
-typedef NoncopyableFunction<void(const WebCore::ResourceRequest&)> RedirectCompletionHandler;
-typedef NoncopyableFunction<void(AuthenticationChallengeDisposition, const WebCore::Credential&)> ChallengeCompletionHandler;
-typedef NoncopyableFunction<void(WebCore::PolicyAction)> ResponseCompletionHandler;
+typedef Function<void(const WebCore::ResourceRequest&)> RedirectCompletionHandler;
+typedef Function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)> ChallengeCompletionHandler;
+typedef Function<void(WebCore::PolicyAction)> ResponseCompletionHandler;
 
 class NetworkDataTaskClient {
 public:

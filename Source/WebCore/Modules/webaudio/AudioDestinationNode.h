@@ -30,7 +30,7 @@
 #include "AudioIOCallback.h"
 #include "AudioNode.h"
 #include "AudioSourceProvider.h"
-#include <wtf/NoncopyableFunction.h>
+#include <wtf/Function.h>
 
 namespace WebCore {
 
@@ -59,9 +59,9 @@ public:
     virtual void enableInput(const String& inputDeviceId) = 0;
 
     virtual void startRendering() = 0;
-    virtual void resume(NoncopyableFunction<void ()>&&) { }
-    virtual void suspend(NoncopyableFunction<void ()>&&) { }
-    virtual void close(NoncopyableFunction<void ()>&&) { }
+    virtual void resume(Function<void ()>&&) { }
+    virtual void suspend(Function<void ()>&&) { }
+    virtual void close(Function<void ()>&&) { }
 
     virtual bool isPlaying() { return false; }
     void isPlayingDidChange() override;

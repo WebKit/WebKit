@@ -30,8 +30,8 @@
 
 #include "MediaPlayerPrivate.h"
 #include "MediaStreamPrivate.h"
+#include <wtf/Function.h>
 #include <wtf/MediaTime.h>
-#include <wtf/NoncopyableFunction.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -143,7 +143,7 @@ private:
     void updateTracks();
     void renderingModeChanged();
 
-    void scheduleDeferredTask(NoncopyableFunction<void ()>&&);
+    void scheduleDeferredTask(Function<void ()>&&);
 
     enum DisplayMode {
         None,

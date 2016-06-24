@@ -32,9 +32,8 @@
 #include "StyleChange.h"
 #include "StyleSharingResolver.h"
 #include "StyleUpdate.h"
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
-#include <wtf/NoncopyableFunction.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -110,7 +109,7 @@ private:
     std::unique_ptr<Update> m_update;
 };
 
-void queuePostResolutionCallback(NoncopyableFunction<void ()>&&);
+void queuePostResolutionCallback(Function<void ()>&&);
 bool postResolutionCallbacksAreSuspended();
 
 bool isPlaceholderStyle(const RenderStyle&);

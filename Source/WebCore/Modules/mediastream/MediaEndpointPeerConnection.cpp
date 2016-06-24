@@ -108,7 +108,7 @@ static bool hasUnassociatedTransceivers(const RtpTransceiverVector& transceivers
     });
 }
 
-void MediaEndpointPeerConnection::runTask(NoncopyableFunction<void ()>&& task)
+void MediaEndpointPeerConnection::runTask(Function<void ()>&& task)
 {
     if (m_dtlsFingerprint.isNull()) {
         // Only one task needs to be deferred since it will hold off any others until completed.

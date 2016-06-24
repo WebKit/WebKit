@@ -36,7 +36,7 @@ TaskDispatcher<Timer>::TaskDispatcher()
 {
 }
 
-void TaskDispatcher<Timer>::postTask(NoncopyableFunction<void()>&& function)
+void TaskDispatcher<Timer>::postTask(Function<void()>&& function)
 {
     m_pendingTasks.append(WTFMove(function));
     pendingDispatchers().append(m_weakPtrFactory.createWeakPtr());

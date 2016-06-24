@@ -27,7 +27,7 @@
 #define FunctionDispatcher_h
 
 #include <functional>
-#include <wtf/NoncopyableFunction.h>
+#include <wtf/Function.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {
@@ -39,7 +39,7 @@ class FunctionDispatcher : public ThreadSafeRefCounted<FunctionDispatcher> {
 public:
     WTF_EXPORT_PRIVATE virtual ~FunctionDispatcher();
 
-    virtual void dispatch(NoncopyableFunction<void ()>&&) = 0;
+    virtual void dispatch(Function<void ()>&&) = 0;
 
 protected:
     WTF_EXPORT_PRIVATE FunctionDispatcher();

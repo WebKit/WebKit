@@ -32,7 +32,7 @@
 
 #include <functional>
 #include <wtf/Forward.h>
-#include <wtf/NoncopyableFunction.h>
+#include <wtf/Function.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -67,7 +67,7 @@ public:
 
     virtual unsigned long long blobSize(const URL&) = 0;
 
-    virtual void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, NoncopyableFunction<void (const Vector<String>& filePaths)>&& completionHandler) = 0;
+    virtual void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void (const Vector<String>& filePaths)>&& completionHandler) = 0;
 
     virtual bool isBlobRegistryImpl() const { return false; }
 

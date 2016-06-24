@@ -81,7 +81,7 @@ unsigned long long BlobRegistryProxy::blobSize(const URL& url)
     return resultSize;
 }
 
-void BlobRegistryProxy::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, NoncopyableFunction<void (const Vector<String>& filePaths)>&& completionHandler)
+void BlobRegistryProxy::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void (const Vector<String>& filePaths)>&& completionHandler)
 {
     WebProcess::singleton().networkConnection()->writeBlobsToTemporaryFiles(blobURLs, WTFMove(completionHandler));
 }

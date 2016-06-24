@@ -50,9 +50,9 @@ public:
     // AudioDestinationNode
     void enableInput(const String& inputDeviceId) override;
     void startRendering() override;
-    void resume(NoncopyableFunction<void ()>&&) override;
-    void suspend(NoncopyableFunction<void ()>&&) override;
-    void close(NoncopyableFunction<void ()>&&) override;
+    void resume(Function<void ()>&&) override;
+    void suspend(Function<void ()>&&) override;
+    void close(Function<void ()>&&) override;
     unsigned long maxChannelCount() const override;
     bool isPlaying() override;
 

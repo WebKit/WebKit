@@ -70,8 +70,8 @@ public:
     WTF_EXPORT_PRIVATE static Ref<WorkQueue> create(const char* name, Type = Type::Serial, QOS = QOS::Default);
     virtual ~WorkQueue();
 
-    WTF_EXPORT_PRIVATE void dispatch(NoncopyableFunction<void ()>&&) override;
-    WTF_EXPORT_PRIVATE void dispatchAfter(std::chrono::nanoseconds, NoncopyableFunction<void ()>&&);
+    WTF_EXPORT_PRIVATE void dispatch(Function<void ()>&&) override;
+    WTF_EXPORT_PRIVATE void dispatchAfter(std::chrono::nanoseconds, Function<void ()>&&);
 
     WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, const std::function<void (size_t index)>&);
 
@@ -108,7 +108,7 @@ private:
     volatile LONG m_isWorkThreadRegistered;
 
     Mutex m_functionQueueLock;
-    Vector<NoncopyableFunction<void ()>> m_functionQueue;
+    Vector<Function<void ()>> m_functionQueue;
 
     HANDLE m_timerQueue;
 #elif USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)

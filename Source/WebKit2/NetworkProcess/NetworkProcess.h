@@ -35,8 +35,8 @@
 #include <WebCore/SessionID.h>
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/NoncopyableFunction.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -113,7 +113,7 @@ public:
 
     void ensurePrivateBrowsingSession(WebCore::SessionID);
 
-    void grantSandboxExtensionsToDatabaseProcessForBlobs(const Vector<String>& filenames, NoncopyableFunction<void ()>&& completionHandler);
+    void grantSandboxExtensionsToDatabaseProcessForBlobs(const Vector<String>& filenames, Function<void ()>&& completionHandler);
 
 private:
     NetworkProcess();
@@ -205,7 +205,7 @@ private:
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
 
-    HashMap<uint64_t, NoncopyableFunction<void ()>> m_sandboxExtensionForBlobsCompletionHandlers;
+    HashMap<uint64_t, Function<void ()>> m_sandboxExtensionForBlobsCompletionHandlers;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

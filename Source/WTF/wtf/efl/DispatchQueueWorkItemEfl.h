@@ -34,7 +34,7 @@
 
 class WorkItem {
 public:
-    WorkItem(Ref<WorkQueue>&& workQueue, NoncopyableFunction<void ()>&& function)
+    WorkItem(Ref<WorkQueue>&& workQueue, Function<void ()>&& function)
         : m_workQueue(WTFMove(workQueue))
         , m_function(WTFMove(function))
     {
@@ -44,12 +44,12 @@ public:
 
 private:
     Ref<WorkQueue> m_workQueue;
-    NoncopyableFunction<void ()> m_function;
+    Function<void ()> m_function;
 };
 
 class TimerWorkItem : public WorkItem {
 public:
-    static std::unique_ptr<TimerWorkItem> create(Ref<WorkQueue>&& workQueue, NoncopyableFunction<void ()>&& function, std::chrono::nanoseconds delayNanoSeconds)
+    static std::unique_ptr<TimerWorkItem> create(Ref<WorkQueue>&& workQueue, Function<void ()>&& function, std::chrono::nanoseconds delayNanoSeconds)
     {
         ASSERT(delayNanoSeconds.count() >= 0);
         return std::unique_ptr<TimerWorkItem>(new TimerWorkItem(WTFMove(workQueue), WTFMove(function), monotonicallyIncreasingTime() * 1000000000.0 + delayNanoSeconds.count()));
@@ -58,7 +58,7 @@ public:
     bool hasExpired(double currentTimeNanoSeconds) const { return currentTimeNanoSeconds >= m_expirationTimeNanoSeconds; }
 
 protected:
-    TimerWorkItem(Ref<WorkQueue>&& workQueue, NoncopyableFunction<void ()>&& function, double expirationTimeNanoSeconds)
+    TimerWorkItem(Ref<WorkQueue>&& workQueue, Function<void ()>&& function, double expirationTimeNanoSeconds)
         : WorkItem(WTFMove(workQueue), WTFMove(function))
         , m_expirationTimeNanoSeconds(expirationTimeNanoSeconds)
     {
