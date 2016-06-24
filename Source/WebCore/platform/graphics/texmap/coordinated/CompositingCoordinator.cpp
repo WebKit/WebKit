@@ -30,6 +30,8 @@
 
 #include "CompositingCoordinator.h"
 
+#include "DOMWindow.h"
+#include "Document.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "InspectorController.h"
