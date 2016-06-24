@@ -178,7 +178,7 @@ void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
     m_ascent = topSpace + contentAscent;
     LayoutUnit descent = contentDescent + bottomSpace;
     LayoutPoint contentLocation(leftSpace, m_ascent - contentAscent);
-    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox())
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
         child->setLocation(child->location() + contentLocation);
 
     setLogicalHeight(m_ascent + descent);

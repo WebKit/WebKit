@@ -298,7 +298,7 @@ bool MathMLElement::childShouldCreateRenderer(const Node& child) const
 void MathMLElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
 {
     if (isSemanticAnnotation() && (name == MathMLNames::srcAttr || name == MathMLNames::encodingAttr)) {
-        Element* parent = parentElement();
+        auto* parent = parentElement();
         if (is<MathMLElement>(parent) && parent->hasTagName(semanticsTag))
             downcast<MathMLElement>(*parent).updateSelectedChild();
     }

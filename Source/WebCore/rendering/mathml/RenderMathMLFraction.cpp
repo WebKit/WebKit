@@ -71,7 +71,7 @@ bool RenderMathMLFraction::isValid() const
 {
     // Verify whether the list of children is valid:
     // <mfrac> numerator denominator </mfrac>
-    RenderBox* child = firstChildBox();
+    auto* child = firstChildBox();
     if (!child)
         return false;
     child = child->nextSiblingBox();

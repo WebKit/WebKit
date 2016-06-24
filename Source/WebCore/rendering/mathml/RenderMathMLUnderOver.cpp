@@ -63,7 +63,7 @@ RenderMathMLOperator* RenderMathMLUnderOver::unembellishedOperator()
 
 Optional<int> RenderMathMLUnderOver::firstLineBaseline() const
 {
-    RenderBox* base = firstChildBox();
+    auto* base = firstChildBox();
     if (!base)
         return Optional<int>();
 
@@ -105,7 +105,7 @@ bool RenderMathMLUnderOver::isValid() const
     // <munder> base under </munder>
     // <mover> base over </mover>
     // <munderover> base under over </munderover>
-    RenderBox* child = firstChildBox();
+    auto* child = firstChildBox();
     if (!child)
         return false;
     child = child->nextSiblingBox();
@@ -141,7 +141,7 @@ RenderBox& RenderMathMLUnderOver::over() const
 {
     ASSERT(isValid());
     ASSERT(m_scriptType == Over || m_scriptType == UnderOver);
-    RenderBox* secondChild = firstChildBox()->nextSiblingBox();
+    auto* secondChild = firstChildBox()->nextSiblingBox();
     return m_scriptType == Over ? *secondChild : *secondChild->nextSiblingBox();
 }
 

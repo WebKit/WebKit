@@ -64,7 +64,7 @@ bool RenderMathMLRoot::isValid() const
         return true;
 
     ASSERT(m_kind == RootWithIndex);
-    RenderBox* child = firstChildBox();
+    auto* child = firstChildBox();
     if (!child)
         return false;
     child = child->nextSiblingBox();
