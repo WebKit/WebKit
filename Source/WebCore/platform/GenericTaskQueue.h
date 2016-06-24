@@ -40,7 +40,7 @@ public:
     {
     }
 
-    void postTask(Function<void()>&& f)
+    void postTask(WTF::Function<void()>&& f)
     {
         m_context.postTask(WTFMove(f));
     }
@@ -53,7 +53,7 @@ template<>
 class TaskDispatcher<Timer> {
 public:
     TaskDispatcher();
-    void postTask(Function<void()>&&);
+    void postTask(WTF::Function<void()>&&);
 
 private:
     static Timer& sharedTimer();
@@ -63,7 +63,7 @@ private:
     void dispatchOneTask();
 
     WeakPtrFactory<TaskDispatcher> m_weakPtrFactory;
-    Deque<Function<void()>> m_pendingTasks;
+    Deque<WTF::Function<void()>> m_pendingTasks;
 };
 
 template <typename T>
@@ -81,7 +81,7 @@ public:
     {
     }
 
-    typedef Function<void()> TaskFunction;
+    typedef WTF::Function<void ()> TaskFunction;
 
     void enqueueTask(TaskFunction&& task)
     {
