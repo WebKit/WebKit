@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 #
 # Copyright (C) 2011 Google Inc.  All rights reserved.
+# Copyright (C) 2015-2016 Apple Inc.  All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -18,7 +19,7 @@
 # Boston, MA 02110-1301, USA.
 
 # This script tests the parser of prepare-ChangeLog (i.e. get_function_line_ranges_for_XXXX()).
-# This script runs the unittests specified in @testFiles.
+# This script runs the unittests in the 'resources' subdirectory.
 
 use strict;
 use warnings;
@@ -35,27 +36,34 @@ use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
 
 sub captureOutput($);
 sub convertAbsolutepathToWebKitPath($);
+sub readTestFiles($);
 
-my %testFiles = ("perl_unittests.pl" => "get_function_line_ranges_for_perl",
-                 "python_unittests.py" => "get_function_line_ranges_for_python",
-                 "java_unittests.java" => "get_function_line_ranges_for_java",
-                 "cpp_unittests.cpp" => "get_function_line_ranges_for_cpp",
-                 "javascript_unittests.js" => "get_function_line_ranges_for_javascript",
-                 "css_unittests.css" => "get_selector_line_ranges_for_css",
-                 "css_unittests_warning.css" => "get_selector_line_ranges_for_css",
-                 "swift_unittests.swift" => "get_function_line_ranges_for_swift",
-                );
+use constant EXPECTED_RESULTS_SUFFIX => "-expected.txt";
+
+my %methodForFileExtension = (
+    ".cpp" => "get_function_line_ranges_for_cpp",
+    ".css" => "get_selector_line_ranges_for_css",
+    ".java" => "get_function_line_ranges_for_java",
+    ".js" => "get_function_line_ranges_for_javascript",
+    ".pl" => "get_function_line_ranges_for_perl",
+    ".py" => "get_function_line_ranges_for_python",
+    ".swift" => "get_function_line_ranges_for_swift",
+);
 
 my $resetResults;
 GetOptions('reset-results' => \$resetResults);
 
+my $resourcesDirectory = File::Spec->catdir($FindBin::Bin, "resources");
+my @suffixList = keys %methodForFileExtension;
+my @testFiles = readTestFiles($resourcesDirectory);
 my @testSet;
-foreach my $testFile (sort keys %testFiles) {
-    my $basename = $testFile;
-    $basename = $1 if $basename =~ /^(.*)\.[^\.]*$/;
-    push @testSet, {method => $testFiles{$testFile},
-                    inputFile => File::Spec->catdir($FindBin::Bin, "resources", $testFile),
-                    expectedFile => File::Spec->catdir($FindBin::Bin, "resources", $basename . "-expected.txt")};
+foreach my $testFile (sort @testFiles) {
+    my ($basename, undef, $extension) = fileparse($testFile, @suffixList);
+    push @testSet, {
+        method => $methodForFileExtension{$extension},
+        inputFile => File::Spec->catfile($resourcesDirectory, $testFile),
+        expectedFile => File::Spec->catfile($resourcesDirectory, $basename . EXPECTED_RESULTS_SUFFIX),
+    };
 }
 
 plan(tests => scalar @testSet);
@@ -129,4 +137,19 @@ sub convertAbsolutepathToWebKitPath($)
     $sourceDir .= "/" unless $sourceDir =~ m-/$-;
     $string =~ s/$sourceDir//g;
     return $string;
+}
+
+sub readTestFiles($)
+{
+    my ($directory) = @_;
+    my @files;
+    opendir(DIR, $directory) || die "Could not open $directory: $!";
+    while (readdir(DIR)) {
+        next if /^\./;
+        next if ! -f File::Spec->catfile($directory, $_);
+        next if /\Q@{[EXPECTED_RESULTS_SUFFIX]}\E$/;
+        push @files, $_;
+    }
+    closedir(DIR);
+    return @files;
 }

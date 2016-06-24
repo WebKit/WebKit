@@ -1,3 +1,19 @@
+2016-06-24  David Kilzer  <ddkilzer@apple.com>
+
+        parser_unittests.pl should not hardcode list of tests
+        <https://webkit.org/b/159074>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl:
+        Update to read the list of tests from the 'resources' directory,
+        and instead map file extensions to subroutine names.  Switch to
+        use File::Basename::fileparse() to get basename and file
+        extension for each test.
+        (readTestFiles): Added.  Reads files from the directory passed
+        in and ignores: hidden files, anything that isn't a plain file,
+        and expected test results files.
+
 2016-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build.
