@@ -218,11 +218,6 @@ bool MediaElementSession::canControlControlsManager() const
         return false;
     }
 
-    if (m_element.muted()) {
-        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: Muted");
-        return false;
-    }
-
     if (m_element.ended()) {
         LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: Ended");
         return false;
@@ -235,6 +230,16 @@ bool MediaElementSession::canControlControlsManager() const
 
     if (!playbackPermitted(m_element)) {
         LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: Playback not permitted");
+        return false;
+    }
+
+    if (!hasBehaviorRestriction(RequireUserGestureToControlControlsManager) || ScriptController::processingUserGestureForMedia()) {
+        LOG(Media, "MediaElementSession::canControlControlsManager - returning TRUE: No user gesture required");
+        return true;
+    }
+
+    if (m_element.muted()) {
+        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: Muted");
         return false;
     }
 
@@ -255,13 +260,8 @@ bool MediaElementSession::canControlControlsManager() const
         }
     }
 
-    if (m_restrictions & RequireUserGestureToControlControlsManager && !ScriptController::processingUserGestureForMedia()) {
-        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: No user gesture");
-        return false;
-    }
-
-    LOG(Media, "MediaElementSession::canControlControlsManager - returning TRUE: All criteria met");
-    return true;
+    LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: No user gesture");
+    return false;
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
