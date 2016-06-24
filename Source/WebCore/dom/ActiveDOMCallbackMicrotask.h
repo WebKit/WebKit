@@ -34,7 +34,7 @@ namespace WebCore {
 class ActiveDOMCallbackMicrotask final : public Microtask, public ActiveDOMCallback {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT ActiveDOMCallbackMicrotask(MicrotaskQueue&, ScriptExecutionContext&, Function<void()>&&);
+    WEBCORE_EXPORT ActiveDOMCallbackMicrotask(MicrotaskQueue&, ScriptExecutionContext&, WTF::Function<void ()>&&);
     WEBCORE_EXPORT virtual ~ActiveDOMCallbackMicrotask();
 
     Result run() override;
@@ -46,7 +46,7 @@ private:
     // be accessed via the ScriptExecutionContext, which should hold a reference to the relevent
     // queue.
     MicrotaskQueue& m_queue;
-    Function<void()> m_task;
+    WTF::Function<void ()> m_task;
 };
 
 } // namespace WebCore
