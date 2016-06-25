@@ -1,5 +1,25 @@
 2016-06-24  Dean Jackson  <dino@apple.com>
 
+        More examples for the wide-gamut demo.
+
+        * blog-files/color-gamut/Iceland-P3.jpg: Added.
+        * blog-files/color-gamut/Iceland-oog.jpg: Added.
+        * blog-files/color-gamut/Iceland-sRGB.jpg: Added.
+        * blog-files/color-gamut/Italy-P3.jpg: Added.
+        * blog-files/color-gamut/Italy-oog.jpg: Added.
+        * blog-files/color-gamut/Italy-sRGB.jpg: Added.
+        * blog-files/color-gamut/Sunset-AdobeRGB.jpg: Added.
+        * blog-files/color-gamut/Sunset-P3.jpg: Added.
+        * blog-files/color-gamut/Sunset-oog.jpg: Added.
+        * blog-files/color-gamut/Sunset-sRGB.jpg: Added.
+        * blog-files/color-gamut/Webkit-logo-sRGB.png:
+        * blog-files/color-gamut/YellowFlower-P3.jpg: Added.
+        * blog-files/color-gamut/YellowFlower-oog.jpg: Added.
+        * blog-files/color-gamut/YellowFlower-sRGB.jpg: Added.
+        * blog-files/color-gamut/index.html:
+
+2016-06-24  Dean Jackson  <dino@apple.com>
+
         Change something in the webkit.org directory in the hope
         it will kick off a website update.
 
