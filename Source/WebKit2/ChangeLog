@@ -1,3 +1,32 @@
+2016-06-24  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r201171): CRASH at WebKit::WebInspectorProxy::open() + 31 when running inspector layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=159070
+        <rdar://problem/26768628>
+
+        Reviewed by Joseph Pecoraro.
+
+        We have been seeing a few crashes underneath WebInspectorProxy::bringToFront() on the bots.
+        Previously, this code didn't use m_inspectorPage so there was nothing to null-dereference.
+
+        However, it doesn't make sense that we would hit the null dereference here:
+
+         - The only caller of bringToFront() on the WebProcess side is InspectorController::show().
+           It only tries to bring to front if there is already a local frontend connection, which
+           shouldn't be the case if m_inspectorPage is null.
+
+         - It's guarded by m_underTest, which should have been set to true in createInspectorPage().
+
+        These clues lead me to believe that we may be improperly tearing down the inspector between tests.
+        For example, it seems possible that a local frontend connection is not being torn down, so
+        InspectorController never asks to create a inspector page when the next test calls showWebInspector.
+
+        Since this crash is not easy to reproduce, we don't have much to go on. For now, this patch
+        adds an early return in the case where m_inspectorPage is null when calling open().
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::open):
+
 2016-06-24  Jer Noble  <jer.noble@apple.com>
 
         Vimeo.com videos do not get playback controls

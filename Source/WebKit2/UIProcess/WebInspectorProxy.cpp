@@ -580,6 +580,9 @@ void WebInspectorProxy::open()
     if (m_underTest)
         return;
 
+    if (!m_inspectorPage)
+        return;
+
     m_isVisible = true;
     m_inspectorPage->process().send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->pageID());
 
