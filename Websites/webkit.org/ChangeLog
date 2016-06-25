@@ -1,3 +1,8 @@
+2016-06-24  Dean Jackson  <dino@apple.com>
+
+        Change something in the webkit.org directory in the hope
+        it will kick off a website update.
+
 2016-06-24  Jon Davis  <jond@apple.com>
 
         Rewrite the WebKit Nightly build download URLs to use the correct secure URL.
