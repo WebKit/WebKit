@@ -1,3 +1,16 @@
+2016-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Consider exposing or hiding knowledge of a redirect from clients of WebCoreNSURLSession
+        https://bugs.webkit.org/show_bug.cgi?id=156722
+        <rdar://problem/25780035>
+
+        Reviewed by Alex Christensen.
+
+        Un-skip http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html & 
+        http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html.
+
+        * platform/mac/TestExpectations:
+
 2016-06-24  Mark Lam  <mark.lam@apple.com>
 
         [JSC] Error prototypes are called on remote scripts.

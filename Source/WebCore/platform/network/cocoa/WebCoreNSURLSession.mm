@@ -527,6 +527,18 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     self.countOfBytesExpectedToReceive = response.expectedContentLength();
     [self _setDefersLoading:YES];
     RetainPtr<NSURLResponse> strongResponse { response.nsURLResponse() };
+
+    if (response.url() != URL(self.currentRequest.URL)) {
+        // FIXME(<rdar://problem/27000361>):
+        // Work around a bug in CoreMedia: CM will pull the URL out of the ResourceResponse
+        // and use that URL for all future requests for the same piece of media. This breaks
+        // certain features of CORS, as well as being against the HTTP spec in the case of
+        // non-permanent redirects.
+        auto responseData = response.crossThreadData();
+        responseData.url = URL(self.currentRequest.URL);
+        strongResponse = ResourceResponseBase::fromCrossThreadData(WTFMove(responseData)).nsURLResponse();
+    }
+
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     [self.session addDelegateOperation:[strongSelf, strongResponse] {
         strongSelf->_response = strongResponse.get();
@@ -590,6 +602,12 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     // delegate handles the callback and responds via a completion handler. If, in
     // the future, the ResourceLoader exposes a callback-based willSendResponse
     // API, this can be implemented.
+
+    // FIXME(<rdar://problem/27000361>):
+    // Do not update the current request if the redirect is temporary; use this
+    // current request during responseReceieved: to work around a CoreMedia bug.
+    if (response.httpStatusCode() != 302 && response.httpStatusCode() != 307)
+        self.currentRequest = [NSURLRequest requestWithURL:request.url()];
 }
 
 - (void)_resource:(PlatformMediaResource&)resource loadFinishedWithError:(NSError *)error
