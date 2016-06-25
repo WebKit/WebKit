@@ -1,3 +1,29 @@
+2016-06-24  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should die sooner if a Value has the wrong number of children
+        https://bugs.webkit.org/show_bug.cgi?id=159108
+
+        Reviewed by Mark Lam.
+        
+        I've been looking at a bug (rdar://problem/26500743) that's about a Vector OOB crash in
+        ReduceStrength::rangeFor(). The only Vector accesses are to Value::m_children, and all of
+        the accesses in rangeFor() are for child(0) or child(1) of binary arithmetic opcodes.
+        Clearly those should never go out-of-bounds.
+        
+        Maybe we have horrible memory corruption. Or maybe some path creates a Value with the
+        wrong number of children, and that path is not tested by any of our tests. This patch adds
+        release assertions that will catch the latter.
+        
+        I've tested this a lot. It's not a regression on our benchmarks.
+
+        * b3/B3Opcode.h:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::dumpMeta):
+        (JSC::B3::Value::typeFor):
+        (JSC::B3::Value::badOpcode):
+        (JSC::B3::Value::checkOpcode): Deleted.
+        * b3/B3Value.h:
+
 2016-06-24  Mark Lam  <mark.lam@apple.com>
 
         [JSC] Error prototypes are called on remote scripts.

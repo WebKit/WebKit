@@ -265,7 +265,7 @@ namespace WTF {
 
 class PrintStream;
 
-void printInternal(PrintStream&, JSC::B3::Opcode);
+JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Opcode);
 
 } // namespace WTF
 

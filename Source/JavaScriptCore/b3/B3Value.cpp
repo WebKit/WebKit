@@ -633,25 +633,6 @@ void Value::dumpMeta(CommaPrinter&, PrintStream&) const
 {
 }
 
-#if !ASSERT_DISABLED
-void Value::checkOpcode(Opcode opcode)
-{
-    ASSERT(!ArgumentRegValue::accepts(opcode));
-    ASSERT(!CCallValue::accepts(opcode));
-    ASSERT(!CheckValue::accepts(opcode));
-    ASSERT(!Const32Value::accepts(opcode));
-    ASSERT(!Const64Value::accepts(opcode));
-    ASSERT(!ConstDoubleValue::accepts(opcode));
-    ASSERT(!ConstFloatValue::accepts(opcode));
-    ASSERT(!ControlValue::accepts(opcode));
-    ASSERT(!MemoryValue::accepts(opcode));
-    ASSERT(!PatchpointValue::accepts(opcode));
-    ASSERT(!SlotBaseValue::accepts(opcode));
-    ASSERT(!UpsilonValue::accepts(opcode));
-    ASSERT(!VariableValue::accepts(opcode));
-}
-#endif // !ASSERT_DISABLED
-
 Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
 {
     switch (opcode) {
@@ -727,6 +708,12 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
+}
+
+void Value::badOpcode(Opcode opcode, unsigned numArgs)
+{
+    dataLog("Bad opcode ", opcode, " with ", numArgs, " args.\n");
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } } // namespace JSC::B3

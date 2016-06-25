@@ -235,11 +235,71 @@ private:
     friend class SparseCollection<Value>;
 
     // Checks that this opcode is valid for use with B3::Value.
-#if ASSERT_DISABLED
-    static void checkOpcode(Opcode) { }
-#else
-    static void checkOpcode(Opcode);
-#endif
+    ALWAYS_INLINE static void checkOpcode(Opcode opcode, unsigned numArgs)
+    {
+        switch (opcode) {
+        case FramePointer:
+        case Nop:
+        case Phi:
+            if (UNLIKELY(numArgs))
+                badOpcode(opcode, numArgs);
+            break;
+        case Identity:
+        case Neg:
+        case Clz:
+        case Abs:
+        case Ceil:
+        case Floor:
+        case Sqrt:
+        case SExt8:
+        case SExt16:
+        case Trunc:
+        case SExt32:
+        case ZExt32:
+        case FloatToDouble:
+        case IToD:
+        case DoubleToFloat:
+        case IToF:
+        case BitwiseCast:
+            if (UNLIKELY(numArgs != 1))
+                badOpcode(opcode, numArgs);
+            break;
+        case Add:
+        case Sub:
+        case Mul:
+        case Div:
+        case Mod:
+        case ChillDiv:
+        case ChillMod:
+        case BitAnd:
+        case BitOr:
+        case BitXor:
+        case Shl:
+        case SShr:
+        case ZShr:
+        case Equal:
+        case NotEqual:
+        case LessThan:
+        case GreaterThan:
+        case LessEqual:
+        case GreaterEqual:
+        case Above:
+        case Below:
+        case AboveEqual:
+        case BelowEqual:
+        case EqualOrUnordered:
+            if (UNLIKELY(numArgs != 2))
+                badOpcode(opcode, numArgs);
+            break;
+        case Select:
+            if (UNLIKELY(numArgs != 3))
+                badOpcode(opcode, numArgs);
+            break;
+        default:
+            badOpcode(opcode, numArgs);
+            break;
+        }
+    }
 
 protected:
     enum CheckedOpcodeTag { CheckedOpcode };
@@ -309,10 +369,34 @@ protected:
     // This is the constructor you end up actually calling, if you're instantiating Value
     // directly.
     template<typename... Arguments>
-    explicit Value(Opcode opcode, Arguments&&... arguments)
-        : Value(CheckedOpcode, opcode, std::forward<Arguments>(arguments)...)
+        explicit Value(Opcode opcode, Type type, Origin origin)
+        : Value(CheckedOpcode, opcode, type, origin)
     {
-        checkOpcode(opcode);
+        checkOpcode(opcode, 0);
+    }
+    template<typename... Arguments>
+        explicit Value(Opcode opcode, Type type, Origin origin, Value* firstChild, Arguments&&... arguments)
+        : Value(CheckedOpcode, opcode, type, origin, firstChild, std::forward<Arguments>(arguments)...)
+    {
+        checkOpcode(opcode, 1 + sizeof...(arguments));
+    }
+    template<typename... Arguments>
+        explicit Value(Opcode opcode, Type type, Origin origin, const AdjacencyList& children)
+        : Value(CheckedOpcode, opcode, type, origin, children)
+    {
+        checkOpcode(opcode, children.size());
+    }
+    template<typename... Arguments>
+        explicit Value(Opcode opcode, Type type, Origin origin, AdjacencyList&& children)
+        : Value(CheckedOpcode, opcode, type, origin, WTFMove(children))
+    {
+        checkOpcode(opcode, m_children.size());
+    }
+    template<typename... Arguments>
+        explicit Value(Opcode opcode, Origin origin, Arguments&&... arguments)
+        : Value(CheckedOpcode, opcode, origin, std::forward<Arguments>(arguments)...)
+    {
+        checkOpcode(opcode, sizeof...(arguments));
     }
 
 private:
@@ -329,6 +413,8 @@ private:
     
     Origin m_origin;
     AdjacencyList m_children;
+
+    JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void badOpcode(Opcode, unsigned);
 
 public:
     BasicBlock* owner { nullptr }; // computed by Procedure::resetValueOwners().
