@@ -80,8 +80,8 @@ Test that viewer has the basic capability to handle different font families </de
 	<g id="test-body-content">
 		<g font-weight="normal" font-size="24" stroke="none">
 			<text font-family="Georgia, 'Minion Web', 'Times New Roman', Times, 'MS PMincho', Heisei-Mincho, serif " x="20" y="80">A serifed face 画像</text>
-			<text font-family="Arial, 'Arial Unicode', 'Myriad Web', Geneva, 'Lucida Sans Unicode', 'MS PGothic', Osaka, sans-serif " x="20" y="160">A sans-serif face 画像</text>
-			<text font-family="'Lucida Console', 'Courier New', Courier, Monaco, 'MS Gothic', Osaka-Mono, monospace" x="20" y="240">A mono (iW) face 画像</text>
+			<text font-family="Arial, 'Arial Unicode', 'Myriad Web', Geneva, 'Lucida Sans Unicode', 'MS PGothic', sans-serif " x="20" y="160">A sans-serif face 画像</text>
+			<text font-family="'Lucida Console', 'Courier New', Courier, Monaco, 'MS Gothic', monospace" x="20" y="240">A mono (iW) face 画像</text>
 			<g id="generic" fill="maroon">
 				<text font-family="serif" x="40" y="50">A serifed face 画像</text>
 				<text font-family="sans-serif " x="40" y="130">A sans-serif face 画像</text>

@@ -1,3 +1,17 @@
+2016-06-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] Font-related test gardening for macOS Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=159106
+        <rdar://problem/25807529>
+
+        Unreviewed.
+
+        * fast/ruby/bopomofo-letter-spacing.html:
+        * fast/ruby/bopomofo-rl.html:
+        * fast/ruby/bopomofo.html:
+        * svg/W3C-SVG-1.1/text-fonts-01-t.svg:
+        * svg/text/text-fonts-01-t.svg:
+
 2016-06-26  Youenn Fablet  <youennf@gmail.com>
 
         Refreshing WPT tests up to 12b7800
