@@ -1,3 +1,424 @@
+2016-06-26  Youenn Fablet  <youennf@gmail.com>
+
+        Refreshing WPT tests up to 12b7800
+        https://bugs.webkit.org/show_bug.cgi?id=158872
+
+        Reviewed by Chris Dumez.
+
+        * resources/ImportExpectations:
+        * resources/TestRepositories:
+        * resources/web-platform-tests-modules.json:
+        * web-platform-tests/XMLHttpRequest/open-url-bogus-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-url-bogus.htm:
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-4-expected.txt:
+        * web-platform-tests/XMLHttpRequest/resources/init.htm:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-usp-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-usp.js:
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/common/form-submission.py: Added.
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/dom/events/Event-defaultPrevented-expected.txt:
+        * web-platform-tests/dom/events/Event-defaultPrevented.html:
+        * web-platform-tests/dom/events/w3c-import.log:
+        * web-platform-tests/dom/historical-expected.txt:
+        * web-platform-tests/dom/historical.html:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces.html:
+        * web-platform-tests/dom/lists/w3c-import.log:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument.html:
+        * web-platform-tests/dom/nodes/Document-characterSet-normalization-expected.txt:
+        * web-platform-tests/dom/nodes/Document-characterSet-normalization.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_bmp-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_bmp.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_css-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_css.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_gif-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_gif.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_html-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_html.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_javascripturi-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_javascripturi.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_jpg-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_jpg.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_mimeheader_01-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_mimeheader_01.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_mimeheader_02-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_mimeheader_02.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_png-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_png.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_txt-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_txt.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_xml-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_xml.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/createDocument-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/createDocument.html:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace.html:
+        * web-platform-tests/dom/nodes/Element-classlist-expected.txt:
+        * web-platform-tests/dom/nodes/Element-classlist.html:
+        * web-platform-tests/dom/nodes/Node-cloneNode.html:
+        * web-platform-tests/dom/nodes/remove-unscopable-expected.txt:
+        * web-platform-tests/dom/nodes/remove-unscopable.html:
+        * web-platform-tests/dom/nodes/w3c-import.log:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html-expected.txt:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html.html:
+        * web-platform-tests/domparsing/OWNERS:
+        * web-platform-tests/domparsing/w3c-import.log:
+        * web-platform-tests/fetch/api/redirect/redirect-method.js:
+        * web-platform-tests/fetch/api/redirect/w3c-import.log:
+        * web-platform-tests/fetch/api/request/request-cache-expected.txt:
+        * web-platform-tests/fetch/api/request/request-cache.html:
+        * web-platform-tests/fetch/api/request/request-error-expected.txt:
+        * web-platform-tests/fetch/api/request/request-error.html:
+        * web-platform-tests/fetch/api/request/request-init-001.sub-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-001.sub.html:
+        * web-platform-tests/fetch/api/request/request-init-003.sub-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-003.sub.html:
+        * web-platform-tests/fetch/api/request/resources/cache.py:
+        * web-platform-tests/fetch/api/request/resources/get-host-info.sub.js: Added.
+        * web-platform-tests/fetch/api/request/resources/w3c-import.log:
+        * web-platform-tests/fetch/api/resources/utils.js:
+        * web-platform-tests/fetch/api/resources/w3c-import.log:
+        * web-platform-tests/fetch/api/response/response-cancel-stream-expected.txt:
+        * web-platform-tests/fetch/api/response/response-cancel-stream.html:
+        * web-platform-tests/fetch/api/response/response-consume-stream.html:
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-4.html:
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-5.html:
+        * web-platform-tests/fetch/api/response/w3c-import.log:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/w3c-import.log:
+        * web-platform-tests/html/dom/elements-embedded.js:
+        * web-platform-tests/html/dom/elements-metadata.js:
+        * web-platform-tests/html/dom/elements-tabular.js:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * web-platform-tests/html/dom/reflection-embedded.html:
+        * web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * web-platform-tests/html/dom/reflection-forms.html:
+        * web-platform-tests/html/dom/reflection-grouping-expected.txt:
+        * web-platform-tests/html/dom/reflection-grouping.html:
+        * web-platform-tests/html/dom/reflection-metadata-expected.txt:
+        * web-platform-tests/html/dom/reflection-metadata.html:
+        * web-platform-tests/html/dom/reflection-misc-expected.txt:
+        * web-platform-tests/html/dom/reflection-misc.html:
+        * web-platform-tests/html/dom/reflection-obsolete-expected.txt:
+        * web-platform-tests/html/dom/reflection-obsolete.html:
+        * web-platform-tests/html/dom/reflection-sections-expected.txt:
+        * web-platform-tests/html/dom/reflection-sections.html:
+        * web-platform-tests/html/dom/reflection-tabular-expected.txt:
+        * web-platform-tests/html/dom/reflection-tabular.html:
+        * web-platform-tests/html/dom/reflection-text-expected.txt:
+        * web-platform-tests/html/dom/reflection-text.html:
+        * web-platform-tests/html/dom/w3c-import.log:
+        * web-platform-tests/html/resources/common.js:
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/w3c-import.log:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/link-rellist-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/link-rellist.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/kind-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/kind.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/kind-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/kind.html:
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-iframed.sub.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validate.html:
+        * web-platform-tests/html/semantics/forms/form-control-infrastructure/form-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-control-infrastructure/form.html:
+        * web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/checkbox.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/radio.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/selection.html:
+        * web-platform-tests/html/semantics/forms/the-label-element/label-attributes-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-label-element/label-attributes.html:
+        * web-platform-tests/html/semantics/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/interfaces.html:
+        * web-platform-tests/html/semantics/interfaces.js:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/w3c-import.log:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/checked.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/default.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/dir-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/dir.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/dir01.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/disabled.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/enabled.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/focus.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/link.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/required-optional.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/utils.js:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/valid-invalid.html:
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/table-rows.html:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-storage-match.js:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/close.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/registration-attribute.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/close-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/registration-attribute-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/unregister-controlling-worker.html: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/unregister-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/update-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/update-worker.py: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/w3c-import.log: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/unregister.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/w3c-import.log: Added.
+        * web-platform-tests/service-workers/service-worker/activate-event-after-install-state-change.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/activation-after-registration.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/active.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/appcache-ordering-main.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/claim-not-using-registration.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/claim-using-registration.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/clients-get-cross-origin.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/clients-get.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/clients-matchall.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/controller-on-load.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/controller-on-reload.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/extendable-event-async-waituntil.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-csp.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event-after-navigation-within-page.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event-async-respond-with.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event-network-error.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event-redirect.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-stops-propagation.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-header-visibility.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-base-url.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-images.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-request-fallback.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-request-resources.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-request-xhr.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-response-xhr.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/getregistration.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/getregistrations.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/indexeddb.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/install-event-type.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/installing.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/interfaces.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/invalid-blobtype.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/invalid-header.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/multiple-register.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/multiple-update.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/navigate-window.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/onactivate-script-error.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/oninstall-script-error.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/performance-timeline.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/postmessage-msgport-to-client.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/postmessage-to-client.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/postmessage.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/ready.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/referer.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/register-closed-window.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/register-default-scope.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/register-wait-forever-in-install-worker.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/registration-end-to-end.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/registration-events.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/registration-iframe.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/registration.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/rejections.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/request-end-to-end.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resource-timing.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/404.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/appcache-ordering.install.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/appcache-ordering.is-appcached.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/appcache-ordering.is-appcached.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/appcache-ordering.manifest: Added.
+        * web-platform-tests/service-workers/service-worker/resources/blank.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/claim-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/clients-get-frame.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/clients-get-other-origin.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/clients-get-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/clients-matchall-client-types-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/clients-matchall-client-types-shared-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/clients-matchall-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/dummy-shared-worker-interceptor.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/dummy-worker-interceptor.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/dummy-worker-script.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/dummy.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/dummy.txt: Added.
+        * web-platform-tests/service-workers/service-worker/resources/empty-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/empty.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/end-to-end-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/events-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/extendable-event-async-waituntil.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/extendable-event-waituntil.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fail-on-fetch-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-access-control-login.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-access-control.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-canvas-tainting-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-cors-xhr-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-csp-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-csp-iframe.html.sub.headers: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-after-navigation-within-page-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-async-respond-with-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-network-error-controllee-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-network-error-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-redirect-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-stops-propagation-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-test-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-header-visibility-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-mixed-content-iframe-inscope-to-inscope.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-mixed-content-iframe-inscope-to-outscope.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-mixed-content-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-css-base-url-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-css-base-url-style.css: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-css-base-url-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-fallback-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-fallback-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-no-freshness-headers-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-no-freshness-headers-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-redirect-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-resources-iframe.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-resources-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-xhr-iframe.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-xhr-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-response-xhr-iframe.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-response-xhr-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-rewrite-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-waits-for-activate-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/frame-for-getregistrations.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/get-host-info.sub.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/indexeddb-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/install-event-type-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/interfaces-worker.sub.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/interfaces.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/invalid-blobtype-iframe.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/invalid-blobtype-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/invalid-chunked-encoding-with-flush.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/invalid-chunked-encoding.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/invalid-header-iframe.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/invalid-header-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/load_worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/loaded.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/malformed-worker.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/mime-type-worker.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/navigate-window-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-other-origin.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-out-scope.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-scope1.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-scope2.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/onactivate-throw-error-from-nested-event-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/onactivate-throw-error-then-cancel-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/onactivate-throw-error-then-prevent-default-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/onactivate-throw-error-with-empty-onerror-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/onactivate-throw-error-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/oninstall-throw-error-from-nested-event-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/oninstall-throw-error-then-cancel-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/oninstall-throw-error-then-prevent-default-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/oninstall-throw-error-with-empty-onerror-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/oninstall-throw-error-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/other.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/override_assert_object_equals.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/performance-timeline-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/postmessage-msgport-to-client-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/postmessage-to-client-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/postmessage-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/redirect.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/referer-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/register-closed-window-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/registration-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/reject-install-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/request-end-to-end-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/request-headers.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/resource-timing-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/resource-timing-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/service-worker-csp-worker.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/shared-worker-controlled.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/shared-worker-import.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/silence.oga: Added.
+        * web-platform-tests/service-workers/service-worker/resources/simple-intercept-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/simple.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/simple.txt: Added.
+        * web-platform-tests/service-workers/service-worker/resources/skip-waiting-installed-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/skip-waiting-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/square.png: Added.
+        * web-platform-tests/service-workers/service-worker/resources/success.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/test-helpers.sub.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/testharness-helpers.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/unregister-controller-page.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/update-nocookie-worker.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/update-recovery-worker.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/update-worker.py: Added.
+        * web-platform-tests/service-workers/service-worker/resources/update/update-after-oneday.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/update/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/resources/w3c-import.log.
+        * web-platform-tests/service-workers/service-worker/resources/w3c-import.log: Added.
+        * web-platform-tests/service-workers/service-worker/resources/wait-forever-in-install-worker.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/websocket.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/worker-interception-iframe.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/worker-load-interceptor.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/worker-testharness.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/xhr.js: Added.
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-connect.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-default.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-script.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/serviceworkerobject-scripturl.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/shared-worker-controlled.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/skip-waiting-installed.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/skip-waiting.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/state.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/synced-state.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/uncontrolled-page.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/unregister-controller.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/unregister-then-register.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/unregister.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/update-after-oneday.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/update-recovery.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/update.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/w3c-import.log: Added.
+        * web-platform-tests/service-workers/service-worker/waiting.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/websocket.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/worker-interception.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/xhr.https.html: Added.
+        * web-platform-tests/streams/OWNERS: Added.
+        * web-platform-tests/streams/byte-length-queuing-strategy.https.html:
+        * web-platform-tests/streams/count-queuing-strategy.https.html:
+        * web-platform-tests/streams/readable-streams/bad-strategies.https.html:
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.https.html:
+        * web-platform-tests/streams/readable-streams/brand-checks.https.html:
+        * web-platform-tests/streams/readable-streams/cancel.https.html:
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.https.html:
+        * web-platform-tests/streams/readable-streams/garbage-collection.https.html:
+        * web-platform-tests/streams/readable-streams/general.https.html:
+        * web-platform-tests/streams/readable-streams/general.js:
+        * web-platform-tests/streams/readable-streams/pipe-through.https.html:
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.https.html:
+        * web-platform-tests/streams/readable-streams/tee.https.html:
+        * web-platform-tests/streams/readable-streams/templated.https.html:
+        * web-platform-tests/streams/w3c-import.log:
+
 2016-06-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should generate files to ignore by WebKit SCM

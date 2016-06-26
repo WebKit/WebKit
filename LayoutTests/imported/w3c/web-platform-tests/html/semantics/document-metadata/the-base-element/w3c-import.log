@@ -15,9 +15,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_about_blank.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_empty.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_unspecified.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_srcdoc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/example.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/example2.html

@@ -29,14 +29,12 @@ promise_test(function(test) {
     return createResponseWithCancelledReadableStream(function(response) {
         return promise_rejects(test, new TypeError(), response.text());
     });
-    return promise_rejects(test, new TypeError(), createResponseWithCancelledReadableStream().text());
 }, "Getting text after cancelling the Response body");
 
 promise_test(function(test) {
     return createResponseWithCancelledReadableStream(function(response) {
         return promise_rejects(test, new TypeError(), response.json());
     });
-    return promise_rejects(test, new TypeError(), createResponseWithCancelledReadableStream().json());
 }, "Getting json after cancelling the Response body");
 
 promise_test(function(test) {

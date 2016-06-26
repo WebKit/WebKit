@@ -15,8 +15,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-cancel-stream.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-clone.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-consume-empty.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-consume-stream.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-consume.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-error.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-idl.html
@@ -24,3 +26,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-init-002.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-static-error.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-static-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-1.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-2.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-3.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-4.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-5.html

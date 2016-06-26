@@ -1,3 +1,4 @@
 
+
 PASS BMP document.contentType === 'image/bmp' 
 

@@ -3,8 +3,8 @@
         "path": [
             "resources"
         ], 
-        "url": "https://github.com/w3c/testharness.js/archive/f8de1efce69fe125846c2ae621e557947899413e.tar.gz", 
-        "url_subpath": "testharness.js-f8de1efce69fe125846c2ae621e557947899413e"
+        "url": "https://github.com/w3c/testharness.js/archive/dee0f92b957973785097af3e1b1a5ded9b1e7a94.tar.gz", 
+        "url_subpath": "testharness.js-dee0f92b957973785097af3e1b1a5ded9b1e7a94"
     }, 
     {
         "path": [
@@ -28,8 +28,8 @@
         "path": [
             "tools"
         ], 
-        "url": "https://github.com/w3c/wpt-tools/archive/7c265b92cd701122d28a8fb15478a383045eea70.tar.gz", 
-        "url_subpath": "wpt-tools-7c265b92cd701122d28a8fb15478a383045eea70"
+        "url": "https://github.com/w3c/wpt-tools/archive/2f2503955023732d6432cd9c9a7fe03fbdfc6d38.tar.gz", 
+        "url_subpath": "wpt-tools-2f2503955023732d6432cd9c9a7fe03fbdfc6d38"
     }, 
     {
         "path": [
@@ -87,7 +87,7 @@
             "tools", 
             "wptserve"
         ], 
-        "url": "https://github.com/youennf/wptserve/archive/fc902e97a21b8470dcdaab8c70691aea1fecbc12.tar.gz",
-        "url_subpath": "wptserve-fc902e97a21b8470dcdaab8c70691aea1fecbc12"
+        "url": "https://github.com/w3c/wptserve/archive/0d7fa61011154d2f16c3e06ef33279cbed1622ad.tar.gz", 
+        "url_subpath": "wptserve-0d7fa61011154d2f16c3e06ef33279cbed1622ad"
     }
 ]

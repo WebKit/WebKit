@@ -90,6 +90,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-url-multi-window-3.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-url-multi-window-4.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-url-multi-window-5.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-url-multi-window-6.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-url-multi-window.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-url-worker-simple.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-user-password-non-same-origin.htm
@@ -191,6 +192,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-eventtarget.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-sync.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-subframe.html
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts.html
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-scripts.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-aborted.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-abortedonmain.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overrides.html

@@ -16,3 +16,4 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/resources/cache.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/resources/get-host-info.sub.js

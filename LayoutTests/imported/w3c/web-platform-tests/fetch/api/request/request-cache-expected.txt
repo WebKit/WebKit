@@ -25,6 +25,20 @@ TIMEOUT RequestCache "force-cache" stores the response in the cache if it goes t
 TIMEOUT RequestCache "force-cache" stores the response in the cache if it goes to the network with date and stale response Test timed out
 TIMEOUT RequestCache "force-cache" stores the response in the cache if it goes to the network with Etag and fresh response Test timed out
 TIMEOUT RequestCache "force-cache" stores the response in the cache if it goes to the network with date and fresh response Test timed out
+TIMEOUT RequestCache "only-if-cached" mode checks the cache for previously cached content and avoids revalidation for stale responses with Etag and stale response Test timed out
+TIMEOUT RequestCache "only-if-cached" mode checks the cache for previously cached content and avoids revalidation for stale responses with date and stale response Test timed out
+TIMEOUT RequestCache "only-if-cached" mode checks the cache for previously cached content and avoids revalidation for fresh responses with Etag and fresh response Test timed out
+TIMEOUT RequestCache "only-if-cached" mode checks the cache for previously cached content and avoids revalidation for fresh responses with date and fresh response Test timed out
+TIMEOUT RequestCache "only-if-cached" mode checks the cache for previously cached content and does not go to the network if a cached response is not found with Etag and fresh response Test timed out
+TIMEOUT RequestCache "only-if-cached" mode checks the cache for previously cached content and does not go to the network if a cached response is not found with date and fresh response Test timed out
+TIMEOUT RequestCache "only-if-cached" (with "same-origin") uses cached same-origin redirects to same-origin content with Etag and fresh response Test timed out
+TIMEOUT RequestCache "only-if-cached" (with "same-origin") uses cached same-origin redirects to same-origin content with date and fresh response Test timed out
+TIMEOUT RequestCache "only-if-cached" (with "same-origin") uses cached same-origin redirects to same-origin content with Etag and stale response Test timed out
+TIMEOUT RequestCache "only-if-cached" (with "same-origin") uses cached same-origin redirects to same-origin content with date and stale response Test timed out
+TIMEOUT RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with Etag and fresh response Test timed out
+TIMEOUT RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with date and fresh response Test timed out
+TIMEOUT RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with Etag and stale response Test timed out
+TIMEOUT RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with date and stale response Test timed out
 TIMEOUT RequestCache "no-store" mode does not check the cache for previously cached content and goes to the network regardless with Etag and stale response Test timed out
 TIMEOUT RequestCache "no-store" mode does not check the cache for previously cached content and goes to the network regardless with date and stale response Test timed out
 TIMEOUT RequestCache "no-store" mode does not check the cache for previously cached content and goes to the network regardless with Etag and fresh response Test timed out

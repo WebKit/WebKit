@@ -56,5 +56,6 @@ PASS Node member must be nuked: isSupported
 PASS Node member must be nuked: getFeature 
 PASS Node member must be nuked: getUserData 
 PASS Node member must be nuked: setUserData 
+PASS Node member must be nuked: rootNode 
 PASS Window member must be nuked: attachEvent 
 

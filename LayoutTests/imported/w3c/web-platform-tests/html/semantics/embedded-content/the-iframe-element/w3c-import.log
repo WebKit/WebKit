@@ -15,11 +15,27 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/change_child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/change_grandchild.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/change_parentage.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_grandchild.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-allowfullscreen.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-with-base-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-with-base.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_harness.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_javascript_url_01.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_helper.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_03.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_04.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_grandchild.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_parentage.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/stash.py

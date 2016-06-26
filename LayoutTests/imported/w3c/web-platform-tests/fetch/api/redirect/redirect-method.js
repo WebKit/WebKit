@@ -26,11 +26,11 @@ function redirectMethod(desc, redirectUrl, redirectLocation, redirectStatus, met
 }
 
 promise_test(function(test) {
-    assert_false(new Response().redirected);
-    return fetch(RESOURCES_DIR + "method.py").then(function(resp) {
-      assert_equals(resp.status, 200, "Response's status is 200");
-      assert_false(resp.redirected);
-    });
+  assert_false(new Response().redirected);
+  return fetch(RESOURCES_DIR + "method.py").then(function(resp) {
+    assert_equals(resp.status, 200, "Response's status is 200");
+    assert_false(resp.redirected);
+  });
 }, "Response.redirected should be false on not-redirected responses");
 
 var redirUrl = RESOURCES_DIR + "redirect.py";

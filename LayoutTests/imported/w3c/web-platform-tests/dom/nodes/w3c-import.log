@@ -120,6 +120,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-contains-xml.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-contains.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-insertBefore.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isConnected.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode-iframe1.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode-iframe2.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode-xhtml.xhtml
@@ -145,6 +146,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht.xht
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-escapes-1.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-literal-1.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-literal-2.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Text-constructor.html
@@ -193,5 +195,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/prepend-on-Document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/productions.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-unscopable.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/rootNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/selectors.js

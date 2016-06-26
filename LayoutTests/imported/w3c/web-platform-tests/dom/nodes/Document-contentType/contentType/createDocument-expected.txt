@@ -1,3 +1,3 @@
 
-FAIL document.implementation.createDocument: document.contentType === 'application/xml' assert_equals: expected "application/xml" but got "application/xhtml+xml"
+PASS document.implementation.createDocument: document.contentType === 'application/xhtml+xml' 
 

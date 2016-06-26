@@ -9,7 +9,9 @@ PASS A form control has multiple labels.
 PASS A form control has an implicit label. 
 PASS A form control has no label 1. 
 PASS A form control has no label 2. 
-PASS A label's form attribute should return its form owner. 
-PASS Check that the labels property of a form control with no label returns a zero-length NodeList. 
+FAIL A label in a form without a control assert_equals: The 'form' property for a label should return null if label.control is null. expected null but got Element node <form id="fm" style="display:none">
+  <label id="lbl0" fo...
+FAIL A label outside a form with a control inside the form assert_equals: The 'form' property for a label should return label.control.form. expected Element node <form id="fm" style="display:none">
+  <label id="lbl0" fo... but got null
 PASS A label's htmlFor attribute must reflect the for content attribute 
 

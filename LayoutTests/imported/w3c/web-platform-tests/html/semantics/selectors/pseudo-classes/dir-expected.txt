@@ -1,6 +1,6 @@
-WERBEH HEBREW HEBREW WERBEH HEBREW WERBEH WERBEH HEBREW ‮WERBEH‬ HEBREW إيان עברית
+WERBEH HEBREW HEBREW WERBEH HEBREW إيان WERBEH WERBEH HEBREW ‮WERBEH‬ HEBREW إيان עברית
 
-FAIL ':dir(rtl)' matches all elements whose directionality is 'rtl'. assert_array_equals: lengths differ, expected 7 got 0
-FAIL ':dir(ltr)' matches all elements whose directionality is 'ltr'. assert_array_equals: lengths differ, expected 18 got 0
-FAIL ':dir(ltr)' doesn't match elements not in the document. assert_array_equals: lengths differ, expected 14 got 0
+FAIL ':dir(rtl)' matches all elements whose directionality is 'rtl'. assert_array_equals: lengths differ, expected 6 got 0
+FAIL ':dir(ltr)' matches all elements whose directionality is 'ltr'. assert_array_equals: lengths differ, expected 22 got 0
+FAIL ':dir(ltr)' doesn't match elements not in the document. assert_array_equals: lengths differ, expected 22 got 0
 

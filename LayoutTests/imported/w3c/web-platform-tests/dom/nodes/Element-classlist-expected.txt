@@ -75,4 +75,6 @@ PASS classList.add should treat \n as a space
 PASS classList.add should treat \f as a space 
 PASS classList.length must be read-only 
 PASS classList must have [PutForwards=value] 
+FAIL classList.replace should work foo.classList.replace is not a function. (In 'foo.classList.replace('token1', 'token2')', 'foo.classList.replace' is undefined)
+PASS classList.supports should throw 
 

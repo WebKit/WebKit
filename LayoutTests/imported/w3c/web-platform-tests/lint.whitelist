@@ -14,7 +14,6 @@ INDENT TABS: app-uri/*
 INDENT TABS: conformance-checkers/*
 INDENT TABS: content-security-policy/*
 INDENT TABS: custom-elements/*
-INDENT TABS: DOMEvents/*
 INDENT TABS: html/editing/dnd/*
 INDENT TABS: old-tests/*
 INDENT TABS: pointerlock/*
@@ -26,13 +25,13 @@ INDENT TABS: web-animations/*
 INDENT TABS: webaudio/*
 INDENT TABS: webvtt/*
 INDENT TABS: XMLHttpRequest/*
+INDENT TABS: encoding/legacy*/*
 
 TRAILING WHITESPACE: app-uri/*
 TRAILING WHITESPACE: battery-status/*
 TRAILING WHITESPACE: conformance-checkers/*
 TRAILING WHITESPACE: content-security-policy/*
 TRAILING WHITESPACE: custom-elements/*
-TRAILING WHITESPACE: DOMEvents/*
 TRAILING WHITESPACE: html-longdesc/*
 TRAILING WHITESPACE: microdata/*
 TRAILING WHITESPACE: old-tests/*
@@ -45,6 +44,7 @@ TRAILING WHITESPACE: webaudio/*
 TRAILING WHITESPACE: WebIDL/*
 TRAILING WHITESPACE: webvtt/*
 TRAILING WHITESPACE: XMLHttpRequest/*
+TRAILING WHITESPACE: encoding/legacy*/*
 
 ## File types that should never be checked ##
 

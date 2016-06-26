@@ -1,5 +1,5 @@
 
 PASS TextTrack.kind, addTextTrack 
 PASS TextTrack.kind, track element 
-PASS TextTrack.kind, \u0000 
+FAIL TextTrack.kind, \u0000 assert_equals: expected "metadata" but got "subtitles"
 

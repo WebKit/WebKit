@@ -338,7 +338,7 @@ PASS createDocument test 178: "foo","bar",DocumentType node,null
 PASS createDocument test 178: metadata for "foo","bar",DocumentType node 
 PASS createDocument test 178: characterSet aliases for "foo","bar",DocumentType node 
 PASS createDocument test 179: "http://www.w3.org/1999/xhtml","",null,null 
-FAIL createDocument test 179: metadata for "http://www.w3.org/1999/xhtml","",null assert_equals: expected "text/html" but got "application/xhtml+xml"
+PASS createDocument test 179: metadata for "http://www.w3.org/1999/xhtml","",null 
 PASS createDocument test 179: characterSet aliases for "http://www.w3.org/1999/xhtml","",null 
 FAIL createDocument test 180: "http://www.w3.org/2000/svg","",null,null assert_equals: expected object "[object XMLDocumentPrototype]" but got object "[object SVGDocumentPrototype]"
 PASS createDocument test 180: metadata for "http://www.w3.org/2000/svg","",null 
