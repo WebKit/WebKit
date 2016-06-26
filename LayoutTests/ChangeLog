@@ -1,3 +1,9 @@
+2016-06-26  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Unreviewed test gardening.
+
+        Several hidpi tests pass now thanks to r202421.
+
 2016-06-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] Font-related test gardening for macOS Sierra
