@@ -3777,9 +3777,6 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
 
     // Remove focus from the existing focus node (if any)
     if (oldFocusedElement) {
-        if (oldFocusedElement->active())
-            oldFocusedElement->setActive(false);
-
         oldFocusedElement->setFocus(false);
         setFocusNavigationStartingNode(nullptr);
 

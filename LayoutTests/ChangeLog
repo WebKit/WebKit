@@ -1,3 +1,15 @@
+2016-06-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        The active state of elements can break when focus changes
+        https://bugs.webkit.org/show_bug.cgi?id=159112
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/pseudo-active-on-labeled-element-not-canceled-by-focus-expected.txt: Added.
+        * fast/css/pseudo-active-on-labeled-element-not-canceled-by-focus.html: Added.
+        * fast/css/pseudo-active-with-programmatic-focus-expected.txt: Added.
+        * fast/css/pseudo-active-with-programmatic-focus.html: Added.
+
 2016-06-24  Jer Noble  <jer.noble@apple.com>
 
         Consider exposing or hiding knowledge of a redirect from clients of WebCoreNSURLSession
