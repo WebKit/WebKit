@@ -273,7 +273,7 @@ static void removeResultLinksFromAnchor(Element& element)
 static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode, bool& didModifyDOM)
 {
     didModifyDOM = false;
-    for (Node* node = &startNode; node; NodeTraversal::next(*node)) {
+    for (Node* node = &startNode; node; node = NodeTraversal::next(*node, &startNode)) {
         if (is<HTMLAnchorElement>(*node)) {
             auto& anchor = downcast<HTMLAnchorElement>(*node);
             if (!equalIgnoringASCIICase(anchor.fastGetAttribute(x_apple_data_detectorsAttr), "true"))
