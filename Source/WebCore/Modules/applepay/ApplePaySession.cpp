@@ -649,7 +649,8 @@ RefPtr<ApplePaySession> ApplePaySession::create(Document& document, unsigned ver
 
     auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
 
-    if (!paymentCoordinator.supportsVersion(version)) {
+    if (!version || !paymentCoordinator.supportsVersion(version)) {
+        window.printErrorMessage(makeString("\"" + String::number(version), "\" is not a supported version."));
         ec = INVALID_ACCESS_ERR;
         return nullptr;
     }
