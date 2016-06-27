@@ -60,6 +60,7 @@ enum AbortReason {
     DFGUnreachableNode                                = 225,
     DFGUnreasonableOSREntryJumpDestination            = 230,
     DFGVarargsThrowingPathDidNotThrow                 = 235,
+    FTLCrash                                          = 236,
     JITDidReturnFromTailCall                          = 237,
     JITDivOperandsAreNotNumbers                       = 240,
     JITGetByValResultIsNotEmpty                       = 250,

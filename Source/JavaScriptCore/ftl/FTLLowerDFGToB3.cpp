@@ -90,12 +90,7 @@ namespace {
 
 std::atomic<int> compileCounter;
 
-#if ASSERT_DISABLED
-NO_RETURN_DUE_TO_CRASH static void ftlUnreachable()
-{
-    CRASH();
-}
-#else
+#if !ASSERT_DISABLED
 NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
     CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex)
 {
@@ -393,7 +388,7 @@ private:
         if (!m_highBlock->cfaHasVisited) {
             if (verboseCompilationEnabled())
                 dataLog("Bailing because CFA didn't reach.\n");
-            crash(m_highBlock->index, UINT_MAX);
+            crash(m_highBlock, nullptr);
             return;
         }
         
@@ -11241,14 +11236,23 @@ private:
 
     void crash()
     {
-        crash(m_highBlock->index, m_node->index());
+        crash(m_highBlock, m_node);
     }
-    void crash(BlockIndex blockIndex, unsigned nodeIndex)
+    void crash(DFG::BasicBlock* block, Node* node)
     {
+        BlockIndex blockIndex = block->index;
+        unsigned nodeIndex = node ? node->index() : UINT_MAX;
 #if ASSERT_DISABLED
-        m_out.call(m_out.voidType, m_out.operation(ftlUnreachable));
-        UNUSED_PARAM(blockIndex);
-        UNUSED_PARAM(nodeIndex);
+        m_out.patchpoint(Void)->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                
+                jit.move(CCallHelpers::TrustedImm32(blockIndex), GPRInfo::regT0);
+                jit.move(CCallHelpers::TrustedImm32(nodeIndex), GPRInfo::regT1);
+                if (node)
+                    jit.move(CCallHelpers::TrustedImm32(node->op()), GPRInfo::regT2);
+                jit.abortWithReason(FTLCrash);
+            });
 #else
         m_out.call(
             m_out.voidType,

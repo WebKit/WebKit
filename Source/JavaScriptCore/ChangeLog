@@ -1,5 +1,21 @@
 2016-06-27  Filip Pizlo  <fpizlo@apple.com>
 
+        Crashing at an unreachable code trap in FTL should give more information
+        https://bugs.webkit.org/show_bug.cgi?id=159177
+
+        Reviewed by Saam Barati.
+        
+        This stuffs information into registers so that we have some chance of seeing what happened
+        by looking at the register dumps.
+
+        * assembler/AbortReason.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::ftlUnreachable):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBlock):
+        (JSC::FTL::DFG::LowerDFGToB3::crash):
+
+2016-06-27  Filip Pizlo  <fpizlo@apple.com>
+
         Clean up resetting reachability in B3/Air
         https://bugs.webkit.org/show_bug.cgi?id=159170
 
