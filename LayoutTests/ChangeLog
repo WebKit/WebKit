@@ -1,3 +1,40 @@
+2016-06-27  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Anonymous RenderMathMLOperators are not exposed to the accessibility tree
+        https://bugs.webkit.org/show_bug.cgi?id=139582
+        <rdar://problem/26938849>
+
+        Reviewed by Chris Fleizach.
+
+        This is based on a patch by Frederic Wang <fwang@igalia.com>.
+
+        One of the things making it difficult to tell that the operators were not
+        exposed on the Mac is the fact that the operator text is present. But the
+        operator text is simply a StaticTextRole object corresponding to the
+        RenderText descendant of the operator. Furthermore, on the Mac, accessible
+        math operators have subroles which are missing from the StaticTextRole
+        object which is exposed. In order to make issues like this more obvious,
+        add an option to include the subrole to dumpAccessibilityTree() and use it
+        in the new math-fenced.html.
+
+        This change also fixes the mfenced in mac/mathml-elements.html that was
+        broken after r202420. We enable it again and update the expectations of
+        that test because the operators are now in the accessibility tree.
+
+        We also add a new test to verify the render tree of foreign content in
+        MathML formulas.
+
+        * accessibility/mac/mathml-elements-expected.txt: Updated.
+        * accessibility/mac/mathml-elements.html: Re-enable the mfenced test.
+        * accessibility/math-fenced.html: Added.
+        * accessibility/math-foreign-content.html: Added.
+        * platform/gtk/accessibility/math-fenced-expected.txt: Added.
+        * platform/gtk/accessibility/math-foreign-content-expected.txt: Added.
+        * platform/mac/accessibility/math-fenced-expected.txt: Added.
+        * platform/mac/accessibility/math-foreign-content-expected.txt: Added.
+        * resources/accessibility-helper.js: Add option to include subrole in tree.
+        (dumpAccessibilityTree):
+
 2016-06-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove flaky expectation for imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata.html

@@ -62,6 +62,7 @@ public:
     void updateTokenContent() final;
     void updateOperatorProperties();
     void updateFromElement() final;
+    UChar textContent() const { return m_textContent; }
 
 protected:
     virtual void setOperatorProperties();
@@ -69,7 +70,6 @@ protected:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
     void setLeadingSpace(LayoutUnit leadingSpace) { m_leadingSpace = leadingSpace; }
     void setTrailingSpace(LayoutUnit trailingSpace) { m_trailingSpace = trailingSpace; }
-    UChar textContent() const { return m_textContent; }
 
 private:
     const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }

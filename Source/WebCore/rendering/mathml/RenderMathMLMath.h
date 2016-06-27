@@ -43,5 +43,7 @@ private:
     
 }
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLMath, isRenderMathMLMath())
+
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLMath_h

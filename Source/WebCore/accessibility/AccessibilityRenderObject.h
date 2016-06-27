@@ -327,6 +327,7 @@ private:
     String mathFencedOpenString() const override;
     String mathFencedCloseString() const override;
     int mathLineThickness() const override;
+    bool isAnonymousMathOperator() const override;
 
     // Multiscripts components.
     void mathPrescripts(AccessibilityMathMultiscriptPairs&) override;

@@ -1,10 +1,12 @@
-function dumpAccessibilityTree(accessibilityObject, stopElement, indent, allAttributesIfNeeded, getValueFromTitle) {
+function dumpAccessibilityTree(accessibilityObject, stopElement, indent, allAttributesIfNeeded, getValueFromTitle, includeSubrole) {
     var str = "";
     var i = 0;
 
     for (i = 0; i < indent; i++)
         str += "    ";
     str += accessibilityObject.role;
+    if (includeSubrole === true && accessibilityObject.subrole)
+        str += " " + accessibilityObject.subrole;
     str += " " + (getValueFromTitle === true ? accessibilityObject.title : accessibilityObject.stringValue);
     str += allAttributesIfNeeded && accessibilityObject.role == '' ? accessibilityObject.allAttributes() : '';
     str += "\n";
@@ -16,7 +18,7 @@ function dumpAccessibilityTree(accessibilityObject, stopElement, indent, allAttr
 
     var count = accessibilityObject.childrenCount;
     for (i = 0; i < count; ++i) {
-        if (!dumpAccessibilityTree(accessibilityObject.childAtIndex(i), stopElement, indent + 1, allAttributesIfNeeded, getValueFromTitle))
+        if (!dumpAccessibilityTree(accessibilityObject.childAtIndex(i), stopElement, indent + 1, allAttributesIfNeeded, getValueFromTitle, includeSubrole))
             return false;
     }
 

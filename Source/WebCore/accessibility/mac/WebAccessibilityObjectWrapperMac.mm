@@ -2237,6 +2237,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (role == LabelRole && is<AccessibilityLabel>(*m_object) && downcast<AccessibilityLabel>(*m_object).containsOnlyStaticText())
         role = StaticTextRole;
 
+    // The mfenced element creates anonymous RenderMathMLOperators with no RenderText
+    // descendants. Because these anonymous renderers are the only accessible objects
+    // containing the operator, assign StaticTextRole.
+    if (m_object->isAnonymousMathOperator())
+        role = StaticTextRole;
+
     if (role == CanvasRole && m_object->canvasHasFallbackContent())
         role = GroupRole;
     NSString* string = roleValueToNSString(role);

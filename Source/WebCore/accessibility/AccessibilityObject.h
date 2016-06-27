@@ -995,6 +995,7 @@ public:
     virtual String mathFencedOpenString() const { return String(); }
     virtual String mathFencedCloseString() const { return String(); }
     virtual int mathLineThickness() const { return 0; }
+    virtual bool isAnonymousMathOperator() const { return false; }
     
     // Multiscripts components.
     typedef Vector<std::pair<AccessibilityObject*, AccessibilityObject*>> AccessibilityMathMultiscriptPairs;
