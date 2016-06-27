@@ -1,3 +1,19 @@
+2016-06-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove now unused WTF::findNextLineStart
+        https://bugs.webkit.org/show_bug.cgi?id=159157
+
+        Reviewed by Mark Lam.
+
+        Unused after r202498.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::findNextLineStart): Deleted.
+        * wtf/text/StringImpl.h:
+        (WTF::findNextLineStart): Deleted.
+        * wtf/text/WTFString.h:
+        (WTF::String::findNextLineStart): Deleted.
+
 2016-06-21  Anders Carlsson  <andersca@apple.com>
 
         Rename NoncopyableFunction to Function

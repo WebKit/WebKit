@@ -1264,13 +1264,6 @@ size_t StringImpl::findIgnoringASCIICase(const StringImpl* matchString, unsigned
     return ::WTF::findIgnoringASCIICase(*this, *matchString, startOffset);
 }
 
-size_t StringImpl::findNextLineStart(unsigned index)
-{
-    if (is8Bit())
-        return WTF::findNextLineStart(characters8(), m_length, index);
-    return WTF::findNextLineStart(characters16(), m_length, index);
-}
-
 size_t StringImpl::reverseFind(UChar c, unsigned index)
 {
     if (is8Bit())
