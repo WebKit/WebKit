@@ -65,23 +65,11 @@ void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (hasTagName(annotation_xmlTag))
+    if (hasTagName(annotation_xmlTag) || hasTagName(merrorTag) || hasTagName(mphantomTag) || hasTagName(mrowTag) || hasTagName(mstyleTag))
         return createRenderer<RenderMathMLRow>(*this, WTFMove(style));
-    if (hasTagName(merrorTag) || hasTagName(mphantomTag) || hasTagName(mrowTag) || hasTagName(mstyleTag))
-        return createRenderer<RenderMathMLRow>(*this, WTFMove(style));
-    if (hasTagName(msubTag))
+    if (hasTagName(msubTag) || hasTagName(msupTag) || hasTagName(msubsupTag) || hasTagName(mmultiscriptsTag))
         return createRenderer<RenderMathMLScripts>(*this, WTFMove(style));
-    if (hasTagName(msupTag))
-        return createRenderer<RenderMathMLScripts>(*this, WTFMove(style));
-    if (hasTagName(msubsupTag))
-        return createRenderer<RenderMathMLScripts>(*this, WTFMove(style));
-    if (hasTagName(mmultiscriptsTag))
-        return createRenderer<RenderMathMLScripts>(*this, WTFMove(style));
-    if (hasTagName(moverTag))
-        return createRenderer<RenderMathMLUnderOver>(*this, WTFMove(style));
-    if (hasTagName(munderTag))
-        return createRenderer<RenderMathMLUnderOver>(*this, WTFMove(style));
-    if (hasTagName(munderoverTag))
+    if (hasTagName(moverTag) || hasTagName(munderTag) || hasTagName(munderoverTag))
         return createRenderer<RenderMathMLUnderOver>(*this, WTFMove(style));
     if (hasTagName(mfracTag))
         return createRenderer<RenderMathMLFraction>(*this, WTFMove(style));
