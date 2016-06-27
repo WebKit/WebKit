@@ -4,11 +4,20 @@
         "name": "ES6",
         "url": "http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts",
         "keywords": ["es6", "es2015", "ecmascript"],
-        "contact": {
-            "name": "Saam Barati",
-            "email": "sbarati@apple.com",
-            "twitter": "@saambarati"
-        }
+        "status": {
+            "status": "Done"
+        },
+        "contact": [
+            {
+                "name": "Saam Barati",
+                "email": "sbarati@apple.com",
+                "twitter": "@saambarati"
+            },
+            {
+                "name": "Keith Miller",
+                "email": "keith_miller@apple.com"
+            }
+        ]
     },
     {
         "name": "ES7",
@@ -18,7 +27,7 @@
     {
         "name": "Internationalization API",
         "status": {
-            "status": "In Development"
+            "status": "Done"
         },
         "url": "http://ecma-international.org/publications/standards/Ecma-402.htm",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl",
@@ -113,7 +122,7 @@
     {
         "name": "Arrow Functions",
         "status": {
-            "status": "In Development",
+            "status": "Done",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-arrow-function-definitions",
@@ -124,7 +133,7 @@
     {
         "name": "Block Scoping",
         "status": {
-            "status": "In Development",
+            "status": "Done",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-let-and-const-declarations",
@@ -243,7 +252,7 @@
     {
         "name": "Proxy Objects",
         "status": {
-            "status": "In Development"
+            "status": "Done"
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-proxy-objects",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=35731",
@@ -258,7 +267,7 @@
     {
         "name": "Reflect API",
         "status": {
-            "status": "In Development",
+            "status": "Done",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-reflect-object",
