@@ -1,3 +1,17 @@
+2016-06-27  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][EFL] Build with threaded compositor enabled is broken
+        https://bugs.webkit.org/show_bug.cgi?id=159138
+
+        Reviewed by Carlos Garcia Campos.
+
+        Replace the usage of NoncopyableFunction with Function, to follow the changes in r202439.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::performTask):
+        (WebKit::CompositingRunLoop::performTaskSync):
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+
 2016-06-24  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r201171): CRASH at WebKit::WebInspectorProxy::open() + 31 when running inspector layout tests

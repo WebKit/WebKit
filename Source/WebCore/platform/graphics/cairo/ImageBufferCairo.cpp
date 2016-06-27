@@ -121,7 +121,6 @@ void ImageBufferData::createCompositorBuffer()
 
     cairo_device_t* device = GLContext::sharingContext()->cairoDevice();
     m_compositorSurface = adoptRef(cairo_gl_surface_create_for_texture(device, CAIRO_CONTENT_COLOR_ALPHA, m_compositorTexture, m_size.width(), m_size.height()));
-    cairoSurfaceSetDeviceScale(m_compositorSurface.get(), m_resolutionScale, m_resolutionScale);
     m_compositorCr = adoptRef(cairo_create(m_compositorSurface.get()));
     cairo_set_antialias(m_compositorCr.get(), CAIRO_ANTIALIAS_NONE);
 }
