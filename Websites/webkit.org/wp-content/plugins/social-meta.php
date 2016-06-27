@@ -15,7 +15,7 @@ add_action('wp_head', function() {
     
     $categories = array();
     $tags = array();
-    $image_url = '';
+    $image_url = get_stylesheet_directory_uri() . '/images/webkit.svg';
     $twitter_handle = '';
     
     if (is_front_page() || is_home()) {

@@ -1,3 +1,12 @@
+2016-06-27  Jon Davis  <jond@apple.com>
+
+        Set a default image for sharing webkit.org links via social.
+        https://bugs.webkit.org/show_bug.cgi?id=159167
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/plugins/social-meta.php:
+
 2016-06-24  Dean Jackson  <dino@apple.com>
 
         More examples for the wide-gamut demo.
