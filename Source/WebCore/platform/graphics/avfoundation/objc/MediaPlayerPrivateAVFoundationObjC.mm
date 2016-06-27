@@ -2241,7 +2241,18 @@ bool MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin() const
     
     Ref<SecurityOrigin> resolvedOrigin(SecurityOrigin::create(resolvedURL()));
     Ref<SecurityOrigin> requestedOrigin(SecurityOrigin::createFromString(assetURL()));
-    return resolvedOrigin.get().isSameSchemeHostPort(&requestedOrigin.get());
+    if (!resolvedOrigin.get().isSameSchemeHostPort(&requestedOrigin.get()))
+        return false;
+
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
+    AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
+    if (Settings::isAVFoundationNSURLSessionEnabled() && [resourceLoader respondsToSelector:@selector(URLSession)]) {
+        WebCoreNSURLSession *session = (WebCoreNSURLSession *)resourceLoader.URLSession;
+        if ([session respondsToSelector:@selector(hasSingleSecurityOrigin)])
+            return session.hasSingleSecurityOrigin;
+    }
+#endif
+    return true;
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck() const
