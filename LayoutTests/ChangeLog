@@ -1,3 +1,15 @@
+2016-06-27  Michael Saboff  <msaboff@apple.com>
+
+        ES6 Change: Unify handling of RegExp CharacterClassEscapes \w and \W and Word Asserts \b and \B
+        https://bugs.webkit.org/show_bug.cgi?id=158505
+
+        Reviewed by Geoffrey Garen.
+
+        Updated and added test cases.
+
+        * js/regexp-unicode-expected.txt:
+        * js/script-tests/regexp-unicode.js:
+
 2016-06-27  Frederic Wang  <fwang@igalia.com>
 
         Set an upper limit for the size or number of pieces of stretchy operators

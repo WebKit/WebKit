@@ -1,3 +1,36 @@
+2016-06-27  Michael Saboff  <msaboff@apple.com>
+
+        ES6 Change: Unify handling of RegExp CharacterClassEscapes \w and \W and Word Asserts \b and \B
+        https://bugs.webkit.org/show_bug.cgi?id=158505
+
+        Reviewed by Geoffrey Garen.
+
+        This change makes it so that the CharacterClassEscape \w matches the inverse of
+        \W and vice versa for unicode, ignore case RegExp's.
+
+        Before this change, both /\w/ui and /\W/ui RegExp's would match the characters
+        k, K, s, S, \u017f (Latin Small Letter Long S) and \u212a (Kelvin Sign).
+        This was due to how the ES6 standard defined matching of character classes
+        specifically that the abstract operation "Canonicalize()" is called for the
+        character to be matched AND for the characters in the character class we are
+        matching against.  This change is to make \W always be the inverse of \w.
+        It is still the case that the characters that match against \w changes
+        depending on a regular expression's flags.
+
+        The only real changes occur for regular expressions with both the unicode and
+        ignore case flags set.  Updated the character class generator to make 
+        nonwordUnicodeIgnoreCaseChar not include k, K, s, S, \u017f and \u212a.
+        Changed BytecodePattern.wordcharCharacterClass to use the correct
+        word character class for the flags.  Simplfied character class set up in
+        in the pattern to use m_pattern.wordUnicodeIgnoreCaseCharCharacterClass and
+        invert as appropriate when unicode and ignore case are both set.
+
+        * create_regex_tables:
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::atomBuiltInCharacterClass):
+
 2016-06-25  Keith Miller  <keith_miller@apple.com>
 
         DFGByteCodeParsing does not handle calling the Object constructor with no arguments correctly

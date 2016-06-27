@@ -347,7 +347,10 @@ public:
         m_body->terms.shrinkToFit();
 
         newlineCharacterClass = pattern.newlineCharacterClass();
-        wordcharCharacterClass = pattern.wordcharCharacterClass();
+        if (unicode() && ignoreCase())
+            wordcharCharacterClass = pattern.wordUnicodeIgnoreCaseCharCharacterClass();
+        else
+            wordcharCharacterClass = pattern.wordcharCharacterClass();
 
         m_allParenthesesInfo.swap(parenthesesInfoToAdopt);
         m_allParenthesesInfo.shrinkToFit();
