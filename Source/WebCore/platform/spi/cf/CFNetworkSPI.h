@@ -201,7 +201,6 @@ enum : NSUInteger {
 #endif
 
 #if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
-EXTERN_C const CFStringRef _kCFURLConnectionPropertyATSContext;
 EXTERN_C CFDataRef _CFNetworkCopyATSContext(void);
 EXTERN_C Boolean _CFNetworkSetATSContext(CFDataRef);
 #endif

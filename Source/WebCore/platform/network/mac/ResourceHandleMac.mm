@@ -226,12 +226,11 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 #if HAVE(TIMINGDATAOPTIONS)
     [propertyDictionary setObject:@{@"_kCFURLConnectionPropertyTimingDataOptions": @(_TimingDataOptionsEnableW3CNavigationTiming)} forKey:@"kCFURLConnectionURLConnectionProperties"];
 #endif
-    
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+
     // This is used to signal that to CFNetwork that this connection should be considered
     // web content for purposes of App Transport Security.
-    [propertyDictionary setObject:@{@"NSAllowsArbitraryLoadsInWebContent": @""} forKey:(NSString *)_kCFURLConnectionPropertyATSContext];
-#endif
+    [propertyDictionary setObject:@{@"NSAllowsArbitraryLoadsInWebContent": @YES} forKey:@"_kCFURLConnectionPropertyATSFrameworkOverrides"];
+
     d->m_connection = adoptNS([[NSURLConnection alloc] _initWithRequest:nsRequest delegate:delegate usesCache:usesCache maxContentLength:0 startImmediately:NO connectionProperties:propertyDictionary]);
 }
 
