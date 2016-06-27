@@ -1,3 +1,19 @@
+2016-06-27  Anders Carlsson  <andersca@apple.com>
+
+        Discounted items are displayed with positive values
+        https://bugs.webkit.org/show_bug.cgi?id=159160
+        rdar://problem/26980772
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toDecimalNumber):
+        Add new helper function. Correctly compute the mantissa.
+
+        (WebKit::toPKPaymentSummaryItem):
+        (WebKit::toPKShippingMethod):
+        Use toDecimalNumber.
+
 2016-06-27  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][EFL] Build with threaded compositor enabled is broken

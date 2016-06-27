@@ -257,11 +257,14 @@ static PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::PaymentReque
     }
 }
 
+static RetainPtr<NSDecimalNumber> toDecimalNumber(int64_t value)
+{
+    return adoptNS([[NSDecimalNumber alloc] initWithMantissa:llabs(value) exponent:-2 isNegative:value < 0]);
+}
+
 static RetainPtr<PKPaymentSummaryItem> toPKPaymentSummaryItem(const WebCore::PaymentRequest::LineItem& lineItem)
 {
-    auto amount = adoptNS([[NSDecimalNumber alloc] initWithMantissa:lineItem.amount.valueOr(0) exponent:-2 isNegative:*lineItem.amount < 0]);
-
-    return [getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:amount.get() type:toPKPaymentSummaryItemType(lineItem.type)];
+    return [getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount.valueOr(0)).get() type:toPKPaymentSummaryItemType(lineItem.type)];
 }
 
 static PKMerchantCapability toPKMerchantCapabilities(const WebCore::PaymentRequest::MerchantCapabilities& merchantCapabilities)
@@ -320,9 +323,7 @@ static PKShippingType toPKShippingType(WebCore::PaymentRequest::ShippingType shi
 
 static RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::PaymentRequest::ShippingMethod& shippingMethod)
 {
-    auto amount = adoptNS([[NSDecimalNumber alloc] initWithMantissa:shippingMethod.amount exponent:-2 isNegative:NO]);
-
-    RetainPtr<PKShippingMethod> result = [getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:amount.get()];
+    RetainPtr<PKShippingMethod> result = [getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount).get()];
     [result setIdentifier:shippingMethod.identifier];
     [result setDetail:shippingMethod.detail];
 
