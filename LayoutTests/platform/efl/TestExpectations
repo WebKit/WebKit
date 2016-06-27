@@ -1094,7 +1094,6 @@ webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ Pass ]
 
 # This tests are passing on EFL but they do not in the Apple ports
-mathml/presentation/style-changed.html [ Pass ]
 transitions/svg-text-shadow-transition.html [ Pass ]
 
 # Need to check why these tests are passed on EFL port.
@@ -1291,7 +1290,6 @@ fast/borders/border-painting-dashed.html [ Pass ]
 fast/borders/border-painting-dotted.html [ Pass ]
 fast/borders/border-painting-double.html [ Pass ]
 fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ Pass ]
-mathml/roots-removeChild.html [ Pass ]
 
 # css variables tests are passed since r191128. However these passes aren't verified yet.
 webkit.org/b/150183 fast/css/variables/test-suite/failures/024.html [ Pass ]

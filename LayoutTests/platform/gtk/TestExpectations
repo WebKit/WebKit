@@ -2619,8 +2619,6 @@ ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ]
 
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
-mathml/presentation/style-changed.html [ Pass ]
-
 transitions/svg-text-shadow-transition.html [ Pass ]
 
 imported/w3c/css/css-color-3/t422-rgba-onscreen-b.xht [ Pass ]

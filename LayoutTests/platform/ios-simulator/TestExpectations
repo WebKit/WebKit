@@ -666,9 +666,6 @@ mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
 mathml/mathml-in-dashboard.html [ Failure ]
 mathml/presentation/scripts-height.html [ ImageOnlyFailure ]
 
-# <rdar://problem/19221067> ASSERT(m_stretchyData.top().glyph) fails in RenderMathMLOperator.cpp
-mathml/presentation/style-changed.html
-
 # <rdar://problem/19215305> ASSERT(m_cgFont.get()) fails in FontPlatformData::ctFont()
 svg/text/svg-fallback-font-crash.html
 svg/css/font-face-variant-crash.html

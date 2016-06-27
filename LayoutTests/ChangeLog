@@ -1,3 +1,15 @@
+2016-06-27  Frederic Wang  <fwang@igalia.com>
+
+        Update TestExpectations for some dynamic MathML tests
+        https://bugs.webkit.org/show_bug.cgi?id=159142
+
+        Reviewed by Brent Fulgham.
+
+        * TestExpectations: Enable this test again after r199980.
+        * platform/efl/TestExpectations: This is already claimed to pass in the  platform independent TestExpectations.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/ios-simulator/TestExpectations: This test passes after the refactoring of RenderMathMLOperator.
+
 2016-06-27  Michael Saboff  <msaboff@apple.com>
 
         ES6 Change: Unify handling of RegExp CharacterClassEscapes \w and \W and Word Asserts \b and \B
