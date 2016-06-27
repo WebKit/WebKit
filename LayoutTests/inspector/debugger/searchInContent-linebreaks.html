@@ -48,7 +48,7 @@ function test()
         for (var testResult of sortedTestResults) {
             var fileName = /([\w-]+\.js)$/.exec(testResult.url)[1];
             ProtocolTest.log("Script: " + fileName);
-            ProtocolTest.log("Results found: " + testResult.count);
+            ProtocolTest.log("Lines with matches: " + testResult.count);
     
             for (var match of testResult.matches)
                 ProtocolTest.log("Line " + match.lineNumber + ": " + JSON.stringify(match.lineContent));    

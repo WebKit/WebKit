@@ -1,3 +1,16 @@
+2016-06-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: Text search broken in resources with <CR>
+        https://bugs.webkit.org/show_bug.cgi?id=159110
+        <rdar://problem/27008485>
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/searchInContent-linebreaks-expected.txt:
+        * inspector/debugger/searchInContent-linebreaks.html:
+        Now that the backend responds with lines that end in \n, this test changes
+        the number of line results. The frontend interprets this correctly.
+
 2016-06-27  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Anonymous RenderMathMLOperators are not exposed to the accessibility tree

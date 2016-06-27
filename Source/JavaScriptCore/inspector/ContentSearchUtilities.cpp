@@ -104,12 +104,13 @@ std::unique_ptr<Vector<size_t>> lineEndings(const String& text)
 
     size_t start = 0;
     while (start < text.length()) {
-        size_t nextStart = text.findNextLineStart(start);
-        if (nextStart == notFound) {
+        size_t nextStart = text.find('\n', start);
+        if (nextStart == notFound || nextStart == (text.length() - 1)) {
             result->append(text.length());
             break;
         }
 
+        nextStart += 1;
         result->append(nextStart);
         start = nextStart;
     }

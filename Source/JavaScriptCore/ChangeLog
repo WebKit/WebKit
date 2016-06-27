@@ -1,3 +1,21 @@
+2016-06-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: Text search broken in resources with <CR>
+        https://bugs.webkit.org/show_bug.cgi?id=159110
+        <rdar://problem/27008485>
+
+        Reviewed by Brian Burg.
+
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::lineEndings):
+        The frontend moved to only treated newlines as line endings in
+        the TextEditor. The backend however was looking for many
+        different types of line endings (\r\n, \r, \n). This caused
+        the line endings to ultimately differ between the frontend
+        and the backend, so the frontend couldn't find the lines that
+        the backend was claiming search results were on. Change the
+        backend to only look for \n line endings.
+
 2016-06-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: CRASH in backend at Inspector::HeapFrontendDispatcher::garbageCollected + 552 when closing frontend/inspected page
