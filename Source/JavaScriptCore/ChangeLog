@@ -1,3 +1,18 @@
+2016-06-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: CRASH in backend at Inspector::HeapFrontendDispatcher::garbageCollected + 552 when closing frontend/inspected page
+        https://bugs.webkit.org/show_bug.cgi?id=159075
+        <rdar://problem/26094341>
+
+        Reviewed by Filip Pizlo.
+
+        This change caused JSC stress tests to all hit an assertion in RunLoop.
+        We should use RunLoop::current() to create the RunLoop::Timer since JSC-only
+        clients like testapi and jsc don't ever call initializeMainRunLoop().
+
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask):
+
 2016-06-27  Filip Pizlo  <fpizlo@apple.com>
 
         B3::Procedure::resetReachability() can create dangling references from Upsilons to Phis
