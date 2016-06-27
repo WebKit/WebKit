@@ -84,6 +84,13 @@
                 getUserMedia({audio:true, video:true}, gotStream2);
             }
 
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
             getUserMedia({audio:true, video:true}, gotStream1);
 
             window.jsTestIsAsync = true;

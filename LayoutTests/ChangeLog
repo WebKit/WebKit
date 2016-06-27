@@ -1,3 +1,17 @@
+2016-06-27  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Unskip RTCPeerConnection-AddRemoveStream test
+        https://bugs.webkit.org/show_bug.cgi?id=159133
+
+        Reviewed by Eric Carlson.
+
+        Unskip RTCPeerConnection-AddRemoveStream test (on GTK+ port). RTCPeerConnection implements
+        the legacy MediaStream-based API as JS built-ins so we can run this test again.
+
+        * fast/mediastream/RTCPeerConnection-AddRemoveStream-expected.txt:
+        * fast/mediastream/RTCPeerConnection-AddRemoveStream.html:
+        * platform/gtk/TestExpectations:
+
 2016-06-27  Frederic Wang  <fwang@igalia.com>
 
         Update TestExpectations for some dynamic MathML tests
