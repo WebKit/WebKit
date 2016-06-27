@@ -52,6 +52,7 @@ std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, cons
         switch (relation.type) {
         case Relation::AffectedByActive:
             style.setAffectedByActive();
+            appendStyleRelation(relation);
             break;
         case Relation::AffectedByDrag:
             style.setAffectedByDrag();

@@ -1,3 +1,29 @@
+2016-06-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix style invalidation for :active when the activated node has no renderer
+        https://bugs.webkit.org/show_bug.cgi?id=159125
+
+        Reviewed by Antti Koivisto.
+
+        There was no bug with style sharing but I wanted that covered anyway.
+        Style sharing depends on 2 flags which is uncommon.
+        There was no test coverage whatsoever, breaking it did not fail any test.
+
+        * fast/css/pseudo-active-on-labeled-control-without-renderer-expected.txt: Added.
+        * fast/css/pseudo-active-on-labeled-control-without-renderer.html: Added.
+        * fast/css/pseudo-active-style-sharing-1-expected.txt: Added.
+        * fast/css/pseudo-active-style-sharing-1.html: Added.
+        * fast/css/pseudo-active-style-sharing-2-expected.txt: Added.
+        * fast/css/pseudo-active-style-sharing-2.html: Added.
+        * fast/css/pseudo-active-style-sharing-3-expected.txt: Added.
+        * fast/css/pseudo-active-style-sharing-3.html: Added.
+        * fast/css/pseudo-active-style-sharing-4-expected.txt: Added.
+        * fast/css/pseudo-active-style-sharing-4.html: Added.
+        * fast/css/pseudo-active-style-sharing-5-expected.txt: Added.
+        * fast/css/pseudo-active-style-sharing-5.html: Added.
+        * fast/css/pseudo-active-style-sharing-6-expected.txt: Added.
+        * fast/css/pseudo-active-style-sharing-6.html: Added.
+
 2016-06-27  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: REGRESSION (r202063): ARIA role attribute is being ignored for label element
