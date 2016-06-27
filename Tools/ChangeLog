@@ -1,3 +1,16 @@
+2016-06-27  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] The test fast/events/wheel-event-outside-body.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=159129
+
+        Reviewed by Alex Christensen.
+
+        Implement the function mouseScrollBy in the Windows event sender.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (mouseScrollBy):
+        (mouseScrollByWithWheelAndMomentumPhasesCallback):
+
 2016-06-25  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION: Weak symbol warning when linking TestWebKitAPI
