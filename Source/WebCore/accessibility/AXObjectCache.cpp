@@ -429,7 +429,7 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
     if (nodeHasRole(node, "treeitem"))
         return AccessibilityTreeItem::create(renderer);
 
-    if (node && is<HTMLLabelElement>(node))
+    if (node && is<HTMLLabelElement>(node) && nodeHasRole(node, nullAtom))
         return AccessibilityLabel::create(renderer);
 
 #if ENABLE(VIDEO)
