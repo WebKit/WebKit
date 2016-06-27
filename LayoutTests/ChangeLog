@@ -1,3 +1,11 @@
+2016-06-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove OS X Mavericks test results
+
+        Rubber-stamped by Lucas Forschler.
+
+        * platform/mac-mavericks: Removed.
+
 2016-06-27  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] PiP placeholder should remain visible when 'controls' attribute is removed
