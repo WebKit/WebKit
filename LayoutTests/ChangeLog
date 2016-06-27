@@ -1,3 +1,11 @@
+2016-06-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip two LayoutTests that rely on mouse events on ios-simulator
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-06-27  Javier Fernandez  <jfernandez@igalia.com>
 
         [GTK] Unreviewed test gardening. Added Failure Test Expectations because of r194502 and r194513.
