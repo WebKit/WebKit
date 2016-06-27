@@ -723,11 +723,3 @@ video::-webkit-media-controls-panel-container.picture-in-picture {
     pointer-events: none;
 }
 
-/* Time display clones that we use in updateLayoutForDisplayedWidth(). */
-::-webkit-media-controls-current-time-display.clone,
-::-webkit-media-controls-time-remaining-display.clone {
-    position: absolute;
-    display: inline;
-    top: 100%;
-    mix-blend-mode: normal;
-}

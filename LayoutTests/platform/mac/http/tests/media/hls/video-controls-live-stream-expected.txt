@@ -4,8 +4,6 @@ EVENT(play)
 EXPECTED (video.duration == 'Infinity') OK
 -webkit-media-text-track-container: classes: [hidden]
 -webkit-media-show-controls: classes: []
--webkit-media-controls-current-time-display: classes: [clone six-digit-time]
--webkit-media-controls-time-remaining-display: classes: [clone six-digit-time]
 -webkit-media-controls-wireless-playback-status: classes: [hidden]
 -webkit-media-controls-wireless-playback-text: classes: []
 -webkit-media-controls-wireless-playback-text-top: classes: []
