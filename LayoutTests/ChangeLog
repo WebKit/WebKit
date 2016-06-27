@@ -1,3 +1,16 @@
+2016-06-26  Chris Dumez  <cdumez@apple.com>
+
+        Regression: HTMLOptionsCollection's named properties have precedence over indexed properties
+        https://bugs.webkit.org/show_bug.cgi?id=159058
+        <rdar://problem/26988542>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLSelectElement/options-indexed-getter-precedence-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/options-indexed-getter-precedence.html: Added.
+
 2016-06-26  Javier Fernandez  <jfernandez@igalia.com>
 
         [GTK] Unreviewed test gardening.

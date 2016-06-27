@@ -29,6 +29,8 @@
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     getter Node namedItem(optional DOMString name);
 #else
+    getter HTMLOptionElement? item(unsigned long index);
+
     // FIXME: Using "undefined" as default parameter value is wrong.
     getter HTMLOptionElement namedItem(optional DOMString name = "undefined");
 #endif
