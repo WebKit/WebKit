@@ -2690,7 +2690,11 @@ bool ByteCodeParser::handleConstantInternalFunction(
     if (function->classInfo() == ObjectConstructor::info() && kind == CodeForCall) {
         insertChecks();
 
-        Node* result = addToGraph(CallObjectConstructor, get(virtualRegisterForArgument(1, registerOffset)));
+        Node* result;
+        if (argumentCountIncludingThis <= 1)
+            result = addToGraph(NewObject, OpInfo(function->globalObject()->objectStructureForObjectConstructor()));
+        else
+            result = addToGraph(CallObjectConstructor, get(virtualRegisterForArgument(1, registerOffset)));
         set(VirtualRegister(resultOperand), result);
         return true;
     }

@@ -1,3 +1,19 @@
+2016-06-25  Keith Miller  <keith_miller@apple.com>
+
+        DFGByteCodeParsing does not handle calling the Object constructor with no arguments correctly
+        https://bugs.webkit.org/show_bug.cgi?id=159117
+        <rdar://problem/26996781>
+
+        Reviewed by Saam Barati.
+
+        DFGByteCodeParsing always assumed there would be an argument to the Object constructor.
+        This is clearly not always the case and we should be able to handle it.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * tests/stress/indirect-call-object-constructor-with-no-arguments.js: Added.
+        (let.foo.Object.test):
+
 2016-06-24  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should die sooner if a Value has the wrong number of children
