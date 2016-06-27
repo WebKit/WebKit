@@ -125,7 +125,7 @@ private:
                 if (valueForConstant.get(key) == value)
                     value = m_proc.add<Value>(Nop, value->origin());
                 else
-                    value->replaceWithNop();
+                    value->replaceWithNopIgnoringType();
             }
         }
 

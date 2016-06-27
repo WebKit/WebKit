@@ -1716,7 +1716,7 @@ private:
 
                 // Replace the rest of the block with an Oops.
                 for (unsigned i = m_index + 1; i < m_block->size() - 1; ++i)
-                    m_block->at(i)->replaceWithNop();
+                    m_block->at(i)->replaceWithBottom(m_insertionSet, m_index);
                 m_block->last()->as<ControlValue>()->convertToOops();
                 m_block->last()->setOrigin(checkValue->origin());
 

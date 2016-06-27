@@ -113,7 +113,7 @@ public:
     Value* addBoolConstant(Origin, TriState);
 
     void resetValueOwners();
-    void resetReachability();
+    JS_EXPORT_PRIVATE void resetReachability();
 
     // This destroys CFG analyses. If we ask for them again, we will recompute them. Usually you
     // should call this anytime you call resetReachability().

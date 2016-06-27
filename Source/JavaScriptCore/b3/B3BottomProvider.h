@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3ReduceStrength_h
-#define B3ReduceStrength_h
+#ifndef B3BottomProvider_h
+#define B3BottomProvider_h
 
 #if ENABLE(B3_JIT)
 
+#include "B3InsertionSet.h"
+
 namespace JSC { namespace B3 {
 
-class Procedure;
+// This exists because we cannot convert values to constants in-place.
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=159119
 
-// Does strength reduction, constant folding, canonicalization, CFG simplification, DCE, and very
-// simple CSE. This phase runs those optimizations to fixpoint. The goal of the phase is to
-// dramatically reduce the complexity of the code. In the future, it's preferable to add optimizations
-// to this phase rather than creating new optimizations because then the optimizations can participate
-// in the fixpoint. However, because of the many interlocking optimizations, it can be difficult to
-// add sophisticated optimizations to it. For that reason we have full CSE in a different phase, for
-// example.
-
-JS_EXPORT_PRIVATE bool reduceStrength(Procedure&);
+class BottomProvider {
+public:
+    BottomProvider(InsertionSet& insertionSet, size_t index)
+        : m_insertionSet(&insertionSet)
+        , m_index(index)
+    {
+    }
+    
+    Value* operator()(Origin origin, Type type) const
+    {
+        return m_insertionSet->insertBottom(m_index, origin, type);
+    }
+    
+private:
+    InsertionSet* m_insertionSet;
+    size_t m_index;
+};
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3ReduceStrength_h
+#endif // B3BottomProvider_h
 

@@ -2004,6 +2004,8 @@
 		DCF3D56B1CD29472003D5C65 /* LazyClassStructureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */; };
 		DCF3D56C1CD29475003D5C65 /* LazyProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5671CD29468003D5C65 /* LazyProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DCF3D56D1CD29476003D5C65 /* LazyPropertyInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */; };
+		DCFDFBD91D1F5D9B00FE3D72 /* B3BottomProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = DCFDFBD71D1F5D9800FE3D72 /* B3BottomProvider.h */; };
+		DCFDFBDA1D1F5D9E00FE3D72 /* B3TypeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = DCFDFBD81D1F5D9800FE3D72 /* B3TypeMap.h */; };
 		DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */; };
 		DE26E9071CB5DEFB00D2BE82 /* BuiltinExecutableCreator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE26E9061CB5DD9600D2BE82 /* BuiltinExecutableCreator.cpp */; };
 		DE5A0A001BA3AC3E003D4424 /* IntrinsicEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5A09FF1BA3AC3E003D4424 /* IntrinsicEmitter.cpp */; };
@@ -4223,6 +4225,8 @@
 		DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyClassStructureInlines.h; sourceTree = "<group>"; };
 		DCF3D5671CD29468003D5C65 /* LazyProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyProperty.h; sourceTree = "<group>"; };
 		DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyPropertyInlines.h; sourceTree = "<group>"; };
+		DCFDFBD71D1F5D9800FE3D72 /* B3BottomProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3BottomProvider.h; path = b3/B3BottomProvider.h; sourceTree = "<group>"; };
+		DCFDFBD81D1F5D9800FE3D72 /* B3TypeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3TypeMap.h; path = b3/B3TypeMap.h; sourceTree = "<group>"; };
 		DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinExecutableCreator.h; sourceTree = "<group>"; };
 		DE26E9061CB5DD9600D2BE82 /* BuiltinExecutableCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinExecutableCreator.cpp; sourceTree = "<group>"; };
 		DE5A09FF1BA3AC3E003D4424 /* IntrinsicEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntrinsicEmitter.cpp; sourceTree = "<group>"; };
@@ -4671,6 +4675,7 @@
 				0F338E171BF286EA0013C88F /* B3BlockInsertionSet.cpp */,
 				0F338E181BF286EA0013C88F /* B3BlockInsertionSet.h */,
 				0FEC84BA1BDACDAC0080FF74 /* B3BlockWorklist.h */,
+				DCFDFBD71D1F5D9800FE3D72 /* B3BottomProvider.h */,
 				0F6B8ADE1C4EFE1700969052 /* B3BreakCriticalEdges.cpp */,
 				0F6B8ADF1C4EFE1700969052 /* B3BreakCriticalEdges.h */,
 				0F338DF71BE96AA80013C88F /* B3CCallValue.cpp */,
@@ -4789,6 +4794,7 @@
 				0F45703F1BE584CA0062A629 /* B3TimingScope.h */,
 				0FEC84F11BDACDAC0080FF74 /* B3Type.cpp */,
 				0FEC84F21BDACDAC0080FF74 /* B3Type.h */,
+				DCFDFBD81D1F5D9800FE3D72 /* B3TypeMap.h */,
 				0FEC84F31BDACDAC0080FF74 /* B3UpsilonValue.cpp */,
 				0FEC84F41BDACDAC0080FF74 /* B3UpsilonValue.h */,
 				0FEC84F51BDACDAC0080FF74 /* B3UseCounts.cpp */,
@@ -7104,6 +7110,7 @@
 				99DA00A51BD5993100F4575C /* builtins_templates.py in Headers */,
 				41DEA1321B9F3163006D65DD /* BuiltinUtils.h in Headers */,
 				9E72940B190F0514001A91B5 /* BundlePath.h in Headers */,
+				DCFDFBD91D1F5D9B00FE3D72 /* B3BottomProvider.h in Headers */,
 				0FB7F39715ED8E4600F167B2 /* Butterfly.h in Headers */,
 				0FB7F39815ED8E4600F167B2 /* ButterflyInlines.h in Headers */,
 				C2FCAE1117A9C24E0034C735 /* BytecodeBasicBlock.h in Headers */,
@@ -7390,6 +7397,7 @@
 				0F63943F15C75F19006A597C /* DFGTypeCheckHoistingPhase.h in Headers */,
 				0FBE0F7716C1DB120082C5E8 /* DFGUnificationPhase.h in Headers */,
 				0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */,
+				DCFDFBDA1D1F5D9E00FE3D72 /* B3TypeMap.h in Headers */,
 				0F3B3A2C15475002003ED0FF /* DFGValidate.h in Headers */,
 				0F2BDC481522802900CD8910 /* DFGValueSource.h in Headers */,
 				0F0123331944EA1B00843A0C /* DFGValueStrength.h in Headers */,

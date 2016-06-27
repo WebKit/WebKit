@@ -30,6 +30,7 @@
 
 #include "B3Origin.h"
 #include "B3Type.h"
+#include "B3TypeMap.h"
 #include <wtf/Insertion.h>
 #include <wtf/Vector.h>
 
@@ -77,6 +78,8 @@ public:
 private:
     Procedure& m_procedure;
     Vector<Insertion, 8> m_insertions;
+
+    TypeMap<Value*> m_bottomForType;
 };
 
 } } // namespace JSC::B3

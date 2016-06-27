@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3ArgumentRegValue.h"
+#include "B3BottomProvider.h"
 #include "B3CCallValue.h"
 #include "B3ControlValue.h"
 #include "B3MemoryValue.h"
@@ -60,7 +61,7 @@ void Value::replaceWithIdentity(Value* value)
     ASSERT(m_type == value->m_type);
 
     if (m_type == Void) {
-        replaceWithNop();
+        replaceWithNopIgnoringType();
         return;
     }
 
@@ -79,7 +80,18 @@ void Value::replaceWithIdentity(Value* value)
     this->m_index = index;
 }
 
+void Value::replaceWithBottom(InsertionSet& insertionSet, size_t index)
+{
+    replaceWithBottom(BottomProvider(insertionSet, index));
+}
+
 void Value::replaceWithNop()
+{
+    RELEASE_ASSERT(m_type == Void);
+    replaceWithNopIgnoringType();
+}
+
+void Value::replaceWithNopIgnoringType()
 {
     unsigned index = m_index;
     Origin origin = m_origin;

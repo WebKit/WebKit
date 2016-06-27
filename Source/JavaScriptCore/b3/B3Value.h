@@ -43,6 +43,7 @@ namespace JSC { namespace B3 {
 
 class BasicBlock;
 class CheckValue;
+class InsertionSet;
 class PhiChildren;
 class Procedure;
 
@@ -83,8 +84,30 @@ public:
     AdjacencyList& children() { return m_children; } 
     const AdjacencyList& children() const { return m_children; }
 
+    // If you want to replace all uses of this value with a different value, then replace this
+    // value with Identity. Then do a pass of performSubstitution() on all of the values that use
+    // this one. Usually we do all of this in one pass in pre-order, which ensures that the
+    // X->replaceWithIdentity() calls happen before the performSubstitution() calls on X's users.
     void replaceWithIdentity(Value*);
+    
+    // It's often necessary to kill a value. It's tempting to replace the value with Nop or to
+    // just remove it. But unless you are sure that the value is Void, you will probably still
+    // have other values that use this one. Sure, you may kill those later, or you might not. This
+    // method lets you kill a value safely. It will replace Void values with Nop and non-Void
+    // values with Identities on bottom constants. For this reason, this takes a callback that is
+    // responsible for creating bottoms. There's a utility for this, see B3BottomProvider.h. You
+    // can also access that utility using replaceWithBottom(InsertionSet&, size_t).
+    template<typename BottomProvider>
+    void replaceWithBottom(const BottomProvider&);
+    
+    void replaceWithBottom(InsertionSet&, size_t index);
+
+    // Use this if you want to kill a value and you are sure that the value is Void.
     void replaceWithNop();
+    
+    // Use this if you want to kill a value and you are sure that nobody is using it anymore.
+    void replaceWithNopIgnoringType();
+    
     void replaceWithPhi();
 
     void dump(PrintStream&) const;

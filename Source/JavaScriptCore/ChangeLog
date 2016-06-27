@@ -1,3 +1,104 @@
+2016-06-25  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should not use Nops when deleting unreachable code
+        https://bugs.webkit.org/show_bug.cgi?id=159120
+        rdar://problem/26500743
+
+        Reviewed by Michael Saboff.
+        
+        Prior to this change, transformations that obviated the need for some value could choose
+        from these ways to kill it:
+        
+        - replaceWithIdentity() if we're replacing with another value.
+        - replaceWithNop() if the type is Void or if we know that we'll fix any users of this
+          value.
+        - deleteValue() if the code is unreachable.
+        
+        The bug here is that reduceStrength() was being clever about how to get rid of a value.
+        reduceStrength() may find a Check that must always exit. The goal is to remove any code
+        dominated by the Check. But it would be awkward to eagerly delete all of the blocks
+        dominated by this one. So this code took a much simpler approach: it would
+        replaceWithNop() for all of the values in this block after the Check and it would replace
+        the terminal with Oops.
+        
+        But this corrupts the IR in a subtle way: some of those values may have been non-Void but
+        now they are Nops so they are Void. reduceStrength() will not yet realize that the blocks
+        dominated by the one with the Check are unreachable, so it will run all sorts of
+        optimizations on those blocks. This could have probably manifested as many different kinds
+        of badness, but the way I found out about this issue was through a crash in
+        IntRange::top(Type) when inlined into ReduceStrength::rangeFor(). We'd die in a switch
+        statement over a child's type.
+        
+        We could fix this by making rangeFor() tolerate Void. But I think that this would be
+        dangerous. There could easily be other places in reduceStrength() that assume that value's
+        children are non-Void. So, this change fixes the Check optimization and adds mechanisms to
+        prevent other optimizations from breaking the children-are-not-Void rule.
+        
+        This introduces two high-level changes:
+        
+        - It's no longer legal to replaceWithNop() if the value is not Void. This change alone
+          would cause reduceStrength() to instacrash in its Check optimization. Almost all other
+          uses of replaceWithNop() were already following this rule, so they were fine. One other
+          place was using replaceWithNop() on non-Void values after arranging for them to no
+          longer have any parents. That was changed to call replaceWithNopIgnoringType(), which
+          doesn't have any type assertions.
+        
+        - For reduceStrength() there is a new Value::replaceWithBottom() method that works with
+          Void or non-Void and behaves like you would want replaceWithNop() to behave: if you know
+          that the code is unreachable then it produces something that is guaranteed to be deleted
+          by later optimizations, and if it's not unreachable, then it's guaranteed to be compiled
+          to something harmless and cheap. This means replacing the value with an identity that
+          points to a bottom constant (the 0 for whatever type we have), or just replacing it with
+          Nop if it's Void.
+        
+        This also adds a test case for the reason why we do this: we may have two blocks, where
+        the first block unconditionally exits while dominating the second block. The second block
+        references values in the part of the first block that is unreachable. In trunk, this test
+        would assert in ReduceStrength::rangeFor() because the CheckAdd in the second block would
+        reference a Nop in the first block.
+        
+        This fixes a high volume crash in ReduceStrength::rangeFor(). This crash was very
+        confusing. Even though we were crashing at a RELEASE_ASSERT_NOT_REACHED() in a switch
+        statement in IntRange::top(Type), clang was merging that trap with the trap it used for
+        Vector OOB. The top of the stack in crash dumps looked like:
+        
+            JSC::B3::(anonymous namespace)::ReduceStrength::rangeFor(JSC::B3::Value*, unsigned int) + 4477 (Vector.h:655)
+        
+        Where Vector.h:655 is:
+        
+            OverflowHandler::overflowed();
+
+        But this crash was not at Vector.h:655. It was at B3ReduceStrength.cpp:121. The two lines
+        are both traps, so they got merged despite differences in debug info. This bug would have
+        been so much easier to fix if I had the right line number.
+
+        * b3/B3BottomProvider.h: Added. This is a utility for creating bottom values.
+        (JSC::B3::BottomProvider::BottomProvider):
+        (JSC::B3::BottomProvider::operator()):
+        * b3/B3InsertionSet.cpp: Optimized adding bottom values a bit. We will no longer create pointless duplicates.
+        (JSC::B3::InsertionSet::insertBottom):
+        (JSC::B3::InsertionSet::execute):
+        (JSC::B3::InsertionSet::bottomForType):
+        * b3/B3InsertionSet.h:
+        * b3/B3MoveConstants.cpp: Use replaceWithNopIgnoringType() because we *know* that we can replaceWithNop even for non-Void.
+        * b3/B3Procedure.h:
+        * b3/B3ReduceStrength.cpp: Use replaceWithBottom().
+        * b3/B3ReduceStrength.h:
+        * b3/B3TypeMap.h: I figured if I wrote type-casing code like this once then I'd never want to write it again.
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::replaceWithIdentity):
+        (JSC::B3::Value::replaceWithNop):
+        (JSC::B3::Value::replaceWithNopIgnoringType):
+        * b3/B3Value.h:
+        * b3/B3ValueInlines.h:
+        (JSC::B3::Value::replaceWithBottom): This is the new method of killing unreachable code.
+        (JSC::B3::Value::as):
+        * b3/testb3.cpp: Add new tests!
+        (JSC::B3::testLateRegister):
+        (JSC::B3::testReduceStrengthCheckBottomUseInAnotherBlock):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+
 2016-06-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: Web Inspector: Text search broken in resources with <CR>
