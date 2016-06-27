@@ -325,6 +325,22 @@
         "description": "The selector :lang() is extended in level 4 to support a list of language range, each range can contain a wildcard. For example: p:lang(\"*-be\", \"en\")."
     },
     {
+        "name": "CSS Selector :focus-within",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://drafts.csswg.org/selectors-4/#the-focus-within-pseudo",
+        "webkit-url": "https://trac.webkit.org/changeset/202358",
+        "specification": "CSS Selectors Level 4",
+        "description": "The selector :focus-within matches an element if the element or a descendant has the focus.",
+        "contact": {
+            "name": "Benjamin Poulain",
+            "twitter": "@awfulben",
+            "email": "benjamin@webkit.org"
+        }
+    },
+    {
         "name": "CSS Selector :matches()",
         "status": {
             "status": "Done",
