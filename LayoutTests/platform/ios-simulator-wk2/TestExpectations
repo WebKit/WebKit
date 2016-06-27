@@ -1836,6 +1836,9 @@ http/tests/navigation/ping-attribute/anchor-cookie.html [ Skip ]
 webkit.org/b/148709 fast/events/wheelevent-basic.html [ Skip ]
 webkit.org/b/148709 fast/events/wheelevent-mousewheel-interaction.html [ Skip ]
 
+# NSURLConnection doesn't allow us to clear the TLS session cache.  This is flaky on iOS9.
+http/tests/xmlhttprequest/sync-delegate-callbacks.html [ Pass Failure ]
+
 # Flaky tests that need bugs
 fast/dom/Window/post-message-crash.html [ Pass Failure ]
 

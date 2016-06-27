@@ -606,6 +606,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetShouldLogCanAuthenticateAgainstProtectionSpace")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setShouldLogCanAuthenticateAgainstProtectionSpace(WKBooleanGetValue(value));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetAuthenticationUsername")) {
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef username = static_cast<WKStringRef>(messageBody);

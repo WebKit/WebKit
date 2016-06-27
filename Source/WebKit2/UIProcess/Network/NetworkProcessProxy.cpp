@@ -350,6 +350,17 @@ void NetworkProcessProxy::logSampledDiagnosticMessageWithValue(uint64_t pageID, 
     page->logSampledDiagnosticMessageWithValue(message, description, value);
 }
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+void NetworkProcessProxy::canAuthenticateAgainstProtectionSpace(uint64_t loaderID, uint64_t pageID, uint64_t frameID, const WebCore::ProtectionSpace& protectionSpace)
+{
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return;
+    
+    page->canAuthenticateAgainstProtectionSpace(loaderID, frameID, protectionSpace);
+}
+#endif
+
 void NetworkProcessProxy::sendProcessWillSuspendImminently()
 {
     if (!canSendMessage())

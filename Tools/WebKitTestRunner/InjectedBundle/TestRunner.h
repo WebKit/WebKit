@@ -164,6 +164,7 @@ public:
 
     // Authentication
     void setHandlesAuthenticationChallenges(bool);
+    void setShouldLogCanAuthenticateAgainstProtectionSpace(bool);
     void setAuthenticationUsername(JSStringRef);
     void setAuthenticationPassword(JSStringRef);
 

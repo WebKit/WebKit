@@ -1,3 +1,73 @@
+2016-06-27  Alex Christensen  <achristensen@webkit.org>
+
+        Send canAuthenticateAgainstProtectionSpace calls from NetworkProcess directly to UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=159071
+
+        Reviewed by Brady Eidson.
+
+        When CFNetwork asks the NetworkProcess if we can authenticate against this protection space, we used to ask
+        the WebProcess, which would call ResourceLoader::canAuthenticateAgainstProtectionSpace which would ask the FrameLoaderClient,
+        which would synchronously ask the UIProcess.  Going directly from the NetworkProcess to the UIProcess gives us many advantages:
+        1. It reduces IPC because we ask fewer loads.
+        2. It reduces synchronous IPC because we are not using the same code path as WebKit1 any more.
+        3. It allows us to check if the NetworkProcess is still valid in sendToNetworkingProcess, possibly fixing rdar://problem/26825408
+        4. It allows us to ask the UIProcess when we get authentication challenges for synchronous xhr.
+
+        I added a new test http/tests/xmlhttprequest/sync-delegate-callbacks.html to verify the change in behavior of synchronous xhr.
+        In order to make this test not flaky on platforms using NSURLSession, we clear the NSURLSessions used by WebKitTestRunner
+        to make sure that the TLS session cache is cleared so we get NSURLAuthenticationChallenges corresponding to the NSURLConnection
+        canAuthenticateAgainstProtectionSpace callback when we initiate the first HTTPS connection to 127.0.0.1 with this session. 
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        (WebKit::NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::clearCachedCredentials):
+        (WebKit::NetworkProcess::ensurePrivateBrowsingSession):
+        (WebKit::NetworkProcess::cancelDownload):
+        (WebKit::NetworkProcess::canAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkProcess::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkProcess::continueCanAuthenticateAgainstProtectionSpaceDownload):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkResourceLoader.messages.in:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::networkStorageSession):
+        (WebKit::NetworkSession::clearCredentials):
+        (WebKit::NetworkSession::dataTaskForIdentifier):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::canAuthenticateAgainstProtectionSpace):
+        (WebKit::DownloadProxy::willSendRequest):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::logSampledDiagnosticMessageWithValue):
+        (WebKit::NetworkProcessProxy::canAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkProcessProxy::sendProcessWillSuspendImminently):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::backForwardClear):
+        (WebKit::WebPageProxy::canAuthenticateAgainstProtectionSpace):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallenge):
+        (WebKit::WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResource):
+        (WebKit::WebResourceLoader::isAlwaysOnLoggingAllowed):
+        (WebKit::WebResourceLoader::canAuthenticateAgainstProtectionSpace): Deleted.
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::clearCachedCredentials):
+        (WebKit::WebProcess::focusedWebPage):
+
 2016-06-27  Anders Carlsson  <andersca@apple.com>
 
         Discounted items are displayed with positive values

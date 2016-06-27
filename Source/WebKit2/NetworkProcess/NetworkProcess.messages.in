@@ -44,8 +44,12 @@ messages -> NetworkProcess LegacyReceiver {
     DownloadRequest(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
     ResumeDownload(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     CancelDownload(WebKit::DownloadID downloadID)
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    ContinueCanAuthenticateAgainstProtectionSpace(uint64_t loaderID, bool canAuthenticate)
+#endif
 #if USE(NETWORK_SESSION)
-    ContinueCanAuthenticateAgainstProtectionSpace(WebKit::DownloadID downloadID, bool canAuthenticate)
+    ContinueCanAuthenticateAgainstProtectionSpaceDownload(WebKit::DownloadID downloadID, bool canAuthenticate)
     ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
     ContinueDecidePendingDownloadDestination(WebKit::DownloadID downloadID, String destination, WebKit::SandboxExtension::Handle sandboxExtensionHandle, bool allowOverwrite)
 #endif

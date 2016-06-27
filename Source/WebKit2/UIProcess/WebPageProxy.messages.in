@@ -253,7 +253,6 @@ messages -> WebPageProxy {
 #endif
 
     # Authentication messages
-    CanAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, WebCore::ProtectionSpace protectionSpace) -> (bool canAuthenticate)
     DidReceiveAuthenticationChallenge(uint64_t frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
 
     # Database messages

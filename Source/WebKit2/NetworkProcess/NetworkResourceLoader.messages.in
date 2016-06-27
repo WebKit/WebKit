@@ -24,7 +24,4 @@ messages -> NetworkResourceLoader LegacyReceiver {
 
     ContinueWillSendRequest(WebCore::ResourceRequest request)
     ContinueDidReceiveResponse()
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    ContinueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate)
-#endif
 }

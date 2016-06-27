@@ -119,29 +119,6 @@ TestController& TestController::singleton()
 }
 
 TestController::TestController(int argc, const char* argv[])
-    : m_verbose(false)
-    , m_printSeparators(false)
-    , m_usingServerMode(false)
-    , m_gcBetweenTests(false)
-    , m_shouldDumpPixelsForAllTests(false)
-    , m_state(Initial)
-    , m_doneResetting(false)
-    , m_useWaitToDumpWatchdogTimer(true)
-    , m_forceNoTimeout(false)
-    , m_didPrintWebProcessCrashedMessage(false)
-    , m_shouldExitWhenWebProcessCrashes(true)
-    , m_beforeUnloadReturnValue(true)
-    , m_isGeolocationPermissionSet(false)
-    , m_isGeolocationPermissionAllowed(false)
-    , m_policyDelegateEnabled(false)
-    , m_policyDelegatePermissive(false)
-    , m_handlesAuthenticationChallenges(false)
-    , m_shouldBlockAllPlugins(false)
-    , m_forceComplexText(false)
-    , m_shouldUseAcceleratedDrawing(false)
-    , m_shouldUseRemoteLayerTree(false)
-    , m_shouldLogHistoryClientCallbacks(false)
-    , m_shouldShowWebView(false)
 {
     initialize(argc, argv);
     controller = this;
@@ -795,6 +772,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     m_shouldBlockAllPlugins = false;
 
     m_shouldLogHistoryClientCallbacks = false;
+    m_shouldLogCanAuthenticateAgainstProtectionSpace = false;
 
     setHidden(false);
 
@@ -1521,16 +1499,9 @@ void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigat
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didFinishNavigation(page, navigation);
 }
 
-bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef, WKProtectionSpaceRef protectionSpace, const void*)
+bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef page, WKProtectionSpaceRef protectionSpace, const void* clientInfo)
 {
-    WKProtectionSpaceAuthenticationScheme authenticationScheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
-
-    if (authenticationScheme == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-        std::string host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
-        return host == "localhost" || host == "127.0.0.1";
-    }
-
-    return authenticationScheme <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest;
+    return static_cast<TestController*>(const_cast<void*>(clientInfo))->canAuthenticateAgainstProtectionSpace(page, protectionSpace);
 }
 
 void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
@@ -1593,6 +1564,20 @@ WKPluginLoadPolicy TestController::decidePolicyForPluginLoad(WKPageRef, WKPlugin
 void TestController::didCommitNavigation(WKPageRef page, WKNavigationRef navigation)
 {
     mainWebView()->focus();
+}
+
+bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef page, WKProtectionSpaceRef protectionSpace)
+{
+    if (m_shouldLogCanAuthenticateAgainstProtectionSpace)
+        m_currentInvocation->outputText("canAuthenticateAgainstProtectionSpace\n");
+    WKProtectionSpaceAuthenticationScheme authenticationScheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
+    
+    if (authenticationScheme == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+        std::string host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
+        return host == "localhost" || host == "127.0.0.1";
+    }
+    
+    return authenticationScheme <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest;
 }
 
 void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigation)

@@ -124,7 +124,7 @@ void DownloadProxy::canAuthenticateAgainstProtectionSpace(const ProtectionSpace&
 
     bool result = m_processPool->downloadClient().canAuthenticateAgainstProtectionSpace(getPtr(WebProtectionSpace::create(protectionSpace)));
     
-    networkProcessProxy->connection()->send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpace(m_downloadID, result), 0);
+    networkProcessProxy->connection()->send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpaceDownload(m_downloadID, result), 0);
 }
 
 void DownloadProxy::willSendRequest(const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse)

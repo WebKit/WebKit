@@ -37,6 +37,7 @@
 
 namespace WebCore {
 class AuthenticationChallenge;
+class ProtectionSpace;
 class ResourceRequest;
 class SecurityOrigin;
 class SessionID;
@@ -110,6 +111,9 @@ private:
     void logSampledDiagnosticMessage(uint64_t pageID, const String& message, const String& description);
     void logSampledDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result);
     void logSampledDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, const String& value);
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    void canAuthenticateAgainstProtectionSpace(uint64_t loaderID, uint64_t pageID, uint64_t frameID, const WebCore::ProtectionSpace&);
+#endif
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;

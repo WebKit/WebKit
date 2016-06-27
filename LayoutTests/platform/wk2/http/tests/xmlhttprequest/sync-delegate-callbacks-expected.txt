@@ -1,0 +1,6 @@
+ALERT: sending synchronous xhr
+canAuthenticateAgainstProtectionSpace
+ALERT: hello
+ALERT: sending synchronous xhr
+ALERT: hello
+

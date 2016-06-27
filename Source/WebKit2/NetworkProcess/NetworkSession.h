@@ -69,9 +69,7 @@ public:
     static void setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&&);
 #endif
 
-#if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
     void clearCredentials();
-#endif
 
     NetworkDataTask* dataTaskForIdentifier(NetworkDataTask::TaskIdentifier, WebCore::StoredCredentials);
 

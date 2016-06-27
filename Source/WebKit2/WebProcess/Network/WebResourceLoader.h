@@ -85,10 +85,6 @@ private:
     void didReceiveResource(const ShareableResource::Handle&, double finishTime);
 #endif
 
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&);
-#endif
-
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
 };
 

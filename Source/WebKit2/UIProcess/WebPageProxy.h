@@ -1116,6 +1116,8 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
+    void canAuthenticateAgainstProtectionSpace(uint64_t loaderID, uint64_t frameID, const WebCore::ProtectionSpace&);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1392,7 +1394,6 @@ private:
     void focusedFrameChanged(uint64_t frameID);
     void frameSetLargestFrameChanged(uint64_t frameID);
 
-    void canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, const WebCore::ProtectionSpace&, bool& canAuthenticate);
     void didReceiveAuthenticationChallenge(uint64_t frameID, const WebCore::AuthenticationChallenge&, uint64_t challengeID);
 
     void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&);

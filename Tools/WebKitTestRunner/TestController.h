@@ -132,6 +132,7 @@ public:
     void setBlockAllPlugins(bool shouldBlock) { m_shouldBlockAllPlugins = shouldBlock; }
 
     void setShouldLogHistoryClientCallbacks(bool shouldLog) { m_shouldLogHistoryClientCallbacks = shouldLog; }
+    void setShouldLogCanAuthenticateAgainstProtectionSpace(bool shouldLog) { m_shouldLogCanAuthenticateAgainstProtectionSpace = shouldLog; }
 
     bool isCurrentInvocation(TestInvocation* invocation) const { return invocation == m_currentInvocation.get(); }
 
@@ -239,9 +240,10 @@ private:
 
     static void unavailablePluginButtonClicked(WKPageRef, WKPluginUnavailabilityReason, WKDictionaryRef, const void*);
 
-    static bool canAuthenticateAgainstProtectionSpace(WKPageRef, WKProtectionSpaceRef, const void *clientInfo);
+    static bool canAuthenticateAgainstProtectionSpace(WKPageRef, WKProtectionSpaceRef, const void*);
+    bool canAuthenticateAgainstProtectionSpace(WKPageRef, WKProtectionSpaceRef);
 
-    static void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef, const void *clientInfo);
+    static void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef, const void*);
     void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef);
 
     static void decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
@@ -273,11 +275,11 @@ private:
 
     std::unique_ptr<TestInvocation> m_currentInvocation;
 
-    bool m_verbose;
-    bool m_printSeparators;
-    bool m_usingServerMode;
-    bool m_gcBetweenTests;
-    bool m_shouldDumpPixelsForAllTests;
+    bool m_verbose { false };
+    bool m_printSeparators { false };
+    bool m_usingServerMode { false };
+    bool m_gcBetweenTests { false };
+    bool m_shouldDumpPixelsForAllTests { false };
     std::vector<std::string> m_paths;
     std::vector<std::string> m_allowedHosts;
     WKRetainPtr<WKStringRef> m_injectedBundlePath;
@@ -294,46 +296,47 @@ private:
         Resetting,
         RunningTest
     };
-    State m_state;
-    bool m_doneResetting;
+    State m_state { Initial };
+    bool m_doneResetting { false };
 
-    bool m_useWaitToDumpWatchdogTimer;
-    bool m_forceNoTimeout;
+    bool m_useWaitToDumpWatchdogTimer { true };
+    bool m_forceNoTimeout { false };
 
-    bool m_didPrintWebProcessCrashedMessage;
-    bool m_shouldExitWhenWebProcessCrashes;
+    bool m_didPrintWebProcessCrashedMessage { false };
+    bool m_shouldExitWhenWebProcessCrashes { true };
     
-    bool m_beforeUnloadReturnValue;
+    bool m_beforeUnloadReturnValue { true };
 
     std::unique_ptr<GeolocationProviderMock> m_geolocationProvider;
     Vector<WKRetainPtr<WKGeolocationPermissionRequestRef> > m_geolocationPermissionRequests;
-    bool m_isGeolocationPermissionSet;
-    bool m_isGeolocationPermissionAllowed;
+    bool m_isGeolocationPermissionSet { false };
+    bool m_isGeolocationPermissionAllowed { false };
 
     HashMap<String, RefPtr<OriginSettings>> m_cahcedUserMediaPermissions;
 
     typedef Vector<std::pair<String, WKRetainPtr<WKUserMediaPermissionRequestRef>>> PermissionRequestList;
     PermissionRequestList m_userMediaPermissionRequests;
 
-    bool m_isUserMediaPermissionSet;
-    bool m_isUserMediaPermissionAllowed;
+    bool m_isUserMediaPermissionSet { false };
+    bool m_isUserMediaPermissionAllowed { false };
 
-    bool m_policyDelegateEnabled;
-    bool m_policyDelegatePermissive;
+    bool m_policyDelegateEnabled { false };
+    bool m_policyDelegatePermissive { false };
 
-    bool m_handlesAuthenticationChallenges;
+    bool m_handlesAuthenticationChallenges { false };
     String m_authenticationUsername;
     String m_authenticationPassword;
 
-    bool m_shouldBlockAllPlugins;
+    bool m_shouldBlockAllPlugins { false };
 
-    bool m_forceComplexText;
-    bool m_shouldUseAcceleratedDrawing;
-    bool m_shouldUseRemoteLayerTree;
+    bool m_forceComplexText { false };
+    bool m_shouldUseAcceleratedDrawing { false };
+    bool m_shouldUseRemoteLayerTree { false };
 
-    bool m_shouldLogHistoryClientCallbacks;
-    bool m_shouldShowWebView;
-
+    bool m_shouldLogCanAuthenticateAgainstProtectionSpace { false };
+    bool m_shouldLogHistoryClientCallbacks { false };
+    bool m_shouldShowWebView { false };
+    
     bool m_shouldDecideNavigationPolicyAfterDelay { false };
 
     std::unique_ptr<EventSenderProxy> m_eventSenderProxy;

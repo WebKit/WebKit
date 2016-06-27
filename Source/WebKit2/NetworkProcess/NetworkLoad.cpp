@@ -230,14 +230,7 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
     m_challengeCompletionHandler = WTFMove(completionHandler);
     m_challenge = challenge;
 
-    if (m_client.isSynchronous()) {
-        // FIXME: We should ask the WebProcess like the asynchronous case below does.
-        // This is currently impossible as the WebProcess is blocked waiting on this synchronous load.
-        // It's possible that we can jump straight to the UI process to resolve this.
-        continueCanAuthenticateAgainstProtectionSpace(true);
-        return;
-    } else
-        m_client.canAuthenticateAgainstProtectionSpaceAsync(challenge.protectionSpace());
+    m_client.canAuthenticateAgainstProtectionSpaceAsync(challenge.protectionSpace());
 }
 
 void NetworkLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
@@ -338,14 +331,6 @@ void NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* han
     if (protectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
         && !NetworkProcess::singleton().canHandleHTTPSServerTrustEvaluation()) {
         continueCanAuthenticateAgainstProtectionSpace(false);
-        return;
-    }
-
-    if (m_client.isSynchronous()) {
-        // FIXME: We should ask the WebProcess like the asynchronous case below does.
-        // This is currently impossible as the WebProcess is blocked waiting on this synchronous load.
-        // It's possible that we can jump straight to the UI process to resolve this.
-        continueCanAuthenticateAgainstProtectionSpace(true);
         return;
     }
 

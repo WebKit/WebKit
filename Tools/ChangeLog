@@ -1,3 +1,32 @@
+2016-06-27  Alex Christensen  <achristensen@webkit.org>
+
+        Send canAuthenticateAgainstProtectionSpace calls from NetworkProcess directly to UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=159071
+
+        Reviewed by Brady Eidson.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setHandlesAuthenticationChallenges):
+        (WTR::TestRunner::setShouldLogCanAuthenticateAgainstProtectionSpace):
+        (WTR::TestRunner::setAuthenticationUsername):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::didFinishNavigation):
+        (WTR::TestController::canAuthenticateAgainstProtectionSpace):
+        (WTR::TestController::didReceiveAuthenticationChallenge):
+        (WTR::TestController::didCommitNavigation):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::setBlockAllPlugins):
+        (WTR::TestController::setShouldLogHistoryClientCallbacks):
+        (WTR::TestController::setShouldLogCanAuthenticateAgainstProtectionSpace):
+        (WTR::TestController::isCurrentInvocation):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        Added output so we can see when canAuthenticateAgainstProtectionSpace is called from the test expectations.
+
 2016-06-27  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] The test fast/events/wheel-event-outside-body.html is timing out.

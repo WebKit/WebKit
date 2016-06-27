@@ -413,15 +413,14 @@ WebCore::NetworkStorageSession& NetworkSession::networkStorageSession()
     return *m_networkStorageSession;
 }
 
-#if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
 void NetworkSession::clearCredentials()
 {
     ASSERT(m_dataTaskMapWithCredentials.isEmpty());
     ASSERT(m_dataTaskMapWithoutCredentials.isEmpty());
     ASSERT(m_downloadMap.isEmpty());
     m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:m_sessionWithCredentialStorage.get().configuration delegate:static_cast<id>(m_sessionWithCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
+    m_sessionWithoutCredentialStorage = [NSURLSession sessionWithConfiguration:m_sessionWithoutCredentialStorage.get().configuration delegate:static_cast<id>(m_sessionWithoutCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 }
-#endif
 
 NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIdentifier taskIdentifier, WebCore::StoredCredentials storedCredentials)
 {

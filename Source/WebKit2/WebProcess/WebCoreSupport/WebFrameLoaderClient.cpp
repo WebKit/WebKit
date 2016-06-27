@@ -199,18 +199,9 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoa
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace& protectionSpace)
 {
-    // FIXME: Authentication is a per-resource concept, but we don't do per-resource handling in the UIProcess at the API level quite yet.
-    // Once we do, we might need to make sure authentication fits with our solution.
-    
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return false;
-        
-    bool canAuthenticate;
-    if (!webPage->sendSync(Messages::WebPageProxy::CanAuthenticateAgainstProtectionSpaceInFrame(m_frame->frameID(), protectionSpace), Messages::WebPageProxy::CanAuthenticateAgainstProtectionSpaceInFrame::Reply(canAuthenticate)))
-        return false;
-    
-    return canAuthenticate;
+    // The WebKit 2 Networking process asks the UIProcess directly, so the WebContent process should never receive this callback.
+    ASSERT_NOT_REACHED();
+    return false;
 }
 #endif
 

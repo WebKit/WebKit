@@ -703,6 +703,9 @@ webkit.org/b/112176 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pa
 # Always very slow, frequently timing out (only on bots, not locally).
 webkit.org/b/121331 [ Yosemite ElCapitan ] http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout ]
 
+# NSURLConnection doesn't allow us to clear the TLS session cache.
+[ Yosemite ElCapitan ] http/tests/xmlhttprequest/sync-delegate-callbacks.html [ Pass Failure ]
+
 # <rdar://problem/26701829> com.apple.WebKit.WebContent.Development crashed in com.apple.security: Security::Mutex::unlock + 9
 [ Sierra+ ] http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout Crash ]
 

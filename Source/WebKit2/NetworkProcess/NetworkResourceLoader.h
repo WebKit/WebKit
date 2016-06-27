@@ -80,6 +80,8 @@ public:
     NetworkConnectionToWebProcess& connectionToWebProcess() { return m_connection; }
     WebCore::SessionID sessionID() const { return m_parameters.sessionID; }
     ResourceLoadIdentifier identifier() const { return m_parameters.identifier; }
+    uint64_t frameID() const { return m_parameters.webFrameID; }
+    uint64_t pageID() const { return m_parameters.webPageID; }
 
     struct SynchronousLoadData;
 

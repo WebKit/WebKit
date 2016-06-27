@@ -1,0 +1,19 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    // FIXME: http://webkit.org/b/65196
+    if (testRunner.setShouldLogCanAuthenticateAgainstProtectionSpace)
+        testRunner.setShouldLogCanAuthenticateAgainstProtectionSpace(true);
+}
+for (var i = 0; i < 2; i++) {
+    alert("sending synchronous xhr");
+	try {
+		var req = new XMLHttpRequest();
+		req.open("GET", "https://127.0.0.1:8443/xmlhttprequest/resources/allow-any-origin.php", false);
+		req.send(null);
+	} catch (ex) {
+		alert(ex);
+	}
+	alert(req.responseText);
+}
+</script>

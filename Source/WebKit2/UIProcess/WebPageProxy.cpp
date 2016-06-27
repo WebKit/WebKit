@@ -5376,17 +5376,22 @@ void WebPageProxy::backForwardClear()
     m_backForwardList->clear();
 }
 
-void WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, const ProtectionSpace& coreProtectionSpace, bool& canAuthenticate)
+void WebPageProxy::canAuthenticateAgainstProtectionSpace(uint64_t loaderID, uint64_t frameID, const ProtectionSpace& coreProtectionSpace)
 {
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
     RefPtr<WebProtectionSpace> protectionSpace = WebProtectionSpace::create(coreProtectionSpace);
 
+    bool canAuthenticate;
     if (m_navigationClient)
         canAuthenticate = m_navigationClient->canAuthenticateAgainstProtectionSpace(*this, protectionSpace.get());
     else
         canAuthenticate = m_loaderClient->canAuthenticateAgainstProtectionSpaceInFrame(*this, *frame, protectionSpace.get());
+
+    m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpace(loaderID, canAuthenticate));
+#endif
 }
 
 void WebPageProxy::didReceiveAuthenticationChallenge(uint64_t frameID, const AuthenticationChallenge& coreChallenge, uint64_t challengeID)

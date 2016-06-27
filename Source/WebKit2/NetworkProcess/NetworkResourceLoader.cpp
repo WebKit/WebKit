@@ -32,6 +32,7 @@
 #include "NetworkCache.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkLoad.h"
+#include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebResourceLoaderMessages.h"
@@ -632,7 +633,7 @@ bool NetworkResourceLoader::sendAbortingOnFailure(T&& message, unsigned messageS
 void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(const ProtectionSpace& protectionSpace)
 {
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    sendAbortingOnFailure(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace));
+    NetworkProcess::singleton().canAuthenticateAgainstProtectionSpace(*this, protectionSpace);
 #else
     UNUSED_PARAM(protectionSpace);
 #endif
