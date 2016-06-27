@@ -1,3 +1,27 @@
+2016-06-27  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::Procedure::resetReachability() can create dangling references from Upsilons to Phis
+        https://bugs.webkit.org/show_bug.cgi?id=159165
+
+        Reviewed by Mark Lam.
+        
+        You can delete an unreachable block that has a Phi but some prior block may still have an
+        Upsilon pointing to that Phi. This can happen if the Upsilon precedes a Check that always
+        exits or it can happen if we remove some successor of a block and this block had an Upsilon
+        for one of the removed successors. These things are valid IR even if they are not canonical.
+        Our policy for not-canonical-but-valid IR is that the compiler should still emit valid code
+        in the end.
+        
+        The solution is to have Procedure::resetReachability() turn those Upsilons into Nops.
+
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::resetReachability): Fix the bug.
+        * b3/B3Validate.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testResetReachabilityDanglingReference): Add a test. This always crashes prior to this change.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::killUnreachableBlocks): Add a FIXME about a possible similar bug.
+
 2016-06-27  Keith Miller  <keith_miller@apple.com>
 
         Add comment to Module feature in features.json

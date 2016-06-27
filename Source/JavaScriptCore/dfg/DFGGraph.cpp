@@ -754,6 +754,9 @@ void Graph::killBlockAndItsContents(BasicBlock* block)
 
 void Graph::killUnreachableBlocks()
 {
+    // FIXME: This probably creates dangling references from Upsilons to Phis in SSA.
+    // https://bugs.webkit.org/show_bug.cgi?id=159164
+    
     for (BlockIndex blockIndex = 0; blockIndex < numBlocks(); ++blockIndex) {
         BasicBlock* block = this->block(blockIndex);
         if (!block)

@@ -32,7 +32,7 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
-void validate(Procedure&, const char* dumpBefore = nullptr);
+JS_EXPORT_PRIVATE void validate(Procedure&, const char* dumpBefore = nullptr);
 
 } } // namespace JSC::B3
 

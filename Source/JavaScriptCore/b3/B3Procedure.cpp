@@ -36,6 +36,7 @@
 #include "B3DataSection.h"
 #include "B3Dominators.h"
 #include "B3OpaqueByproducts.h"
+#include "B3PhiChildren.h"
 #include "B3StackSlot.h"
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
@@ -172,13 +173,31 @@ void Procedure::resetReachability()
         }
     }
     
+    IndexSet<Value> valuesToDelete;
+    
     B3::resetReachability(
         m_blocks,
         [&] (BasicBlock* deleted) {
             // Gotta delete the values in this block.
             for (Value* value : *deleted)
-                deleteValue(value);
+                valuesToDelete.add(value);
         });
+    
+    if (valuesToDelete.isEmpty())
+        return;
+    
+    for (BasicBlock* block : *this) {
+        for (Value* value : *block) {
+            ASSERT(!valuesToDelete.contains(value)); // The block should have been deleted already.
+            if (UpsilonValue* upsilon = value->as<UpsilonValue>()) {
+                if (valuesToDelete.contains(upsilon->phi()))
+                    upsilon->replaceWithNop();
+            }
+        }
+    }
+    
+    for (Value* value : valuesToDelete.values(values()))
+        deleteValue(value);
 }
 
 void Procedure::invalidateCFG()

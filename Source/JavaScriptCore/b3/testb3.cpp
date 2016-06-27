@@ -44,6 +44,7 @@
 #include "B3StackmapGenerationParams.h"
 #include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"
+#include "B3Validate.h"
 #include "B3ValueInlines.h"
 #include "CCallHelpers.h"
 #include "InitializeThreading.h"
@@ -12084,6 +12085,25 @@ void testReduceStrengthCheckBottomUseInAnotherBlock()
     reduceStrength(proc);
 }
 
+void testResetReachabilityDanglingReference()
+{
+    Procedure proc;
+    
+    BasicBlock* one = proc.addBlock();
+    BasicBlock* two = proc.addBlock();
+    
+    UpsilonValue* upsilon = one->appendNew<UpsilonValue>(
+        proc, Origin(), one->appendNew<Const32Value>(proc, Origin(), 42));
+    one->appendNew<ControlValue>(proc, Oops, Origin());
+    
+    Value* phi = two->appendNew<Value>(proc, Phi, Int32, Origin());
+    upsilon->setPhi(phi);
+    two->appendNew<ControlValue>(proc, Oops, Origin());
+    
+    proc.resetReachability();
+    validate(proc);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -13487,6 +13507,7 @@ void run(const char* filter)
     RUN(testSpillUseLargerThanDef());
     RUN(testLateRegister());
     RUN(testReduceStrengthCheckBottomUseInAnotherBlock());
+    RUN(testResetReachabilityDanglingReference());
 
     if (tasks.isEmpty())
         usage();
