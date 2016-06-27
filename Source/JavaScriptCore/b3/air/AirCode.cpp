@@ -80,11 +80,12 @@ CCallSpecial* Code::cCallSpecial()
 
 void Code::resetReachability()
 {
-    B3::resetReachability(
-        m_blocks,
-        [&] (BasicBlock*) {
-            // We don't have to do anything special for deleted blocks.
-        });
+    recomputePredecessors(m_blocks);
+    
+    for (auto& block : m_blocks) {
+        if (isBlockDead(block.get()))
+            block = nullptr;
+    }
 }
 
 void Code::dump(PrintStream& out) const

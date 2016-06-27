@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,10 +85,8 @@ void updatePredecessorsAfter(BasicBlock* root)
     }
 }
 
-// This recomputes predecessors and removes blocks that aren't reachable.
-template<typename BasicBlock, typename DeleteFunctor>
-void resetReachability(
-    Vector<std::unique_ptr<BasicBlock>>& blocks, const DeleteFunctor& deleteFunctor)
+template<typename BasicBlock>
+void recomputePredecessors(Vector<std::unique_ptr<BasicBlock>>& blocks)
 {
     // Clear all predecessor lists first.
     for (auto& block : blocks) {
@@ -97,15 +95,16 @@ void resetReachability(
     }
 
     updatePredecessorsAfter(blocks[0].get());
+}
 
-    for (unsigned i = 1; i < blocks.size(); ++i) {
-        if (!blocks[i])
-            continue;
-        if (blocks[i]->predecessors().isEmpty()) {
-            deleteFunctor(blocks[i].get());
-            blocks[i] = nullptr;
-        }
-    }
+template<typename BasicBlock>
+bool isBlockDead(BasicBlock* block)
+{
+    if (!block)
+        return false;
+    if (!block->index())
+        return false;
+    return block->predecessors().isEmpty();
 }
 
 template<typename BasicBlock>

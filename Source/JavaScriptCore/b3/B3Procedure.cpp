@@ -173,31 +173,35 @@ void Procedure::resetReachability()
         }
     }
     
-    IndexSet<Value> valuesToDelete;
+    recomputePredecessors(m_blocks);
     
-    B3::resetReachability(
-        m_blocks,
-        [&] (BasicBlock* deleted) {
-            // Gotta delete the values in this block.
-            for (Value* value : *deleted)
-                valuesToDelete.add(value);
-        });
-    
-    if (valuesToDelete.isEmpty())
+    // The common case is that this does not find any dead blocks.
+    bool foundDead = false;
+    for (auto& block : m_blocks) {
+        if (isBlockDead(block.get())) {
+            foundDead = true;
+            break;
+        }
+    }
+    if (!foundDead)
         return;
     
-    for (BasicBlock* block : *this) {
-        for (Value* value : *block) {
-            ASSERT(!valuesToDelete.contains(value)); // The block should have been deleted already.
-            if (UpsilonValue* upsilon = value->as<UpsilonValue>()) {
-                if (valuesToDelete.contains(upsilon->phi()))
-                    upsilon->replaceWithNop();
-            }
+    resetValueOwners();
+
+    for (Value* value : values()) {
+        if (UpsilonValue* upsilon = value->as<UpsilonValue>()) {
+            if (isBlockDead(upsilon->phi()->owner))
+                upsilon->replaceWithNop();
         }
     }
     
-    for (Value* value : valuesToDelete.values(values()))
-        deleteValue(value);
+    for (auto& block : m_blocks) {
+        if (isBlockDead(block.get())) {
+            for (Value* value : *block)
+                deleteValue(value);
+            block = nullptr;
+        }
+    }
 }
 
 void Procedure::invalidateCFG()

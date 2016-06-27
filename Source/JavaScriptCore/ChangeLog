@@ -1,3 +1,37 @@
+2016-06-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Clean up resetting reachability in B3/Air
+        https://bugs.webkit.org/show_bug.cgi?id=159170
+
+        Reviewed by Geoffrey Garen.
+        
+        When I fixed bug 159165, I took the brute force approach. I still used the
+        B3::resetReachability() method, and changed the callback to record the set of deleted values
+        instead of deleting them eagerly. But this means tracking the set of deleted values, even
+        though resetReachability() already internally tracks the set of deleted blocks. You can find
+        out if a value is deleted by asking if its owning block was deleted.
+        
+        So, this change refactors B3::resetReachability() into a new helper called
+        B3::recomputePredecessors(). This new helper skips the block deletion step, and lets the
+        client delete blocks. This lets Air delete blocks the same way that it did before, and it
+        lets B3 use the isBlockDead() method (which is a glorified proxy for
+        block->predecessors().isEmpty()) to track which values are deleted. This allows B3 to turn
+        Upsilons that point to dead Phis into Nops before deleting the blocks.
+        
+        This shouldn't affect performance or anything real. It just makes the code cleaner.
+
+        * b3/B3BasicBlockUtils.h:
+        (JSC::B3::updatePredecessorsAfter):
+        (JSC::B3::recomputePredecessors):
+        (JSC::B3::isBlockDead):
+        (JSC::B3::resetReachability): Deleted.
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::resetReachability):
+        (JSC::B3::Procedure::invalidateCFG):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::resetReachability):
+        (JSC::B3::Air::Code::dump):
+
 2016-06-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: CRASH in backend at Inspector::HeapFrontendDispatcher::garbageCollected + 552 when closing frontend/inspected page
