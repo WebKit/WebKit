@@ -306,7 +306,10 @@ Controller.prototype = {
         if (!this.isAudio() && !this.host.allowsInlineMediaPlayback)
             return true;
 
-        return this.video.controls || this.isFullScreen();
+        if (this.isFullScreen() || this.presentationMode() === 'picture-in-picture' || this.currentPlaybackTargetIsWireless())
+            return true;
+
+        return this.video.controls;
     },
 
     setNeedsTimelineMetricsUpdate: function()

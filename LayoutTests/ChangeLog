@@ -1,3 +1,14 @@
+2016-06-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] PiP placeholder should remain visible when 'controls' attribute is removed
+        https://bugs.webkit.org/show_bug.cgi?id=159158
+        <rdar://problem/26727435>
+
+        Reviewed by Jer Noble.
+
+        * media/controls/picture-in-picture-expected.txt: Updated.
+        * media/controls/picture-in-picture.html: Ditto.
+
 2016-06-27  Antoine Quint  <graouts@apple.com>
 
         [iOS] Media controls are too cramped with small video

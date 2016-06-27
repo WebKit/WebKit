@@ -23,5 +23,11 @@ Test for the pip placeholder visibility in pip mode
 PASS: Should be in pip mode
 PASS: Inline placeholder should be visible at this point
 
+Test for the pip placeholder visibility in pip mode without a 'controls' attribute
+
+PASS: Should still be in pip mode
+PASS: No controls attribute
+PASS: Inline placeholder should still be visible
+
 Testing finished.
 

@@ -7,20 +7,20 @@
             if (window.internals)
                 window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
 
-            var tester = new ControlsTest("non-existent-media-file", "error")
+            const tester = new ControlsTest("non-existent-media-file", "error")
                 .whenReady(runTestsWithoutVideo)
                 .start();
 
             function runTestsWithoutVideo()
             {
-                var currentState = tester.currentState;
+                const currentState = tester.currentState;
                 tester.test("We are using the apple idiom")
                     .value(currentState.idiom)
                     .isEqualTo("apple");
 
                 tester.startNewSection("Test the picture-in-picture button without video", true);
 
-                var stateForPictureInPictureButton = tester.stateForControlsElement("Picture-in-picture Button");
+                const stateForPictureInPictureButton = tester.stateForControlsElement("Picture-in-picture Button");
                 tester.test("Picture-in-picture button should not be visible if there's no video")
                     .value(stateForPictureInPictureButton.className)
                     .contains("hidden");
@@ -34,7 +34,7 @@
             {
                 tester.startNewSection("Test the picture-in-picture button with valid video");
 
-                var stateForPictureInPictureButton = tester.stateForControlsElement("Picture-in-picture Button", true);
+                const stateForPictureInPictureButton = tester.stateForControlsElement("Picture-in-picture Button", true);
                 tester.test("Picture-in-picture button should be visible if there's video")
                     .value(stateForPictureInPictureButton.className)
                     .doesNotContain("hidden");
@@ -43,7 +43,7 @@
                     .value(stateForPictureInPictureButton.parentElement)
                     .isNotEqualTo(undefined);
 
-                var stateForPlaceholder = tester.stateForControlsElement("Inline playback placeholder", true);
+                const stateForPlaceholder = tester.stateForControlsElement("Inline playback placeholder", true);
                 tester.test("Inline placeholder should not be visible at this point")
                     .value(stateForPlaceholder.className)
                     .contains("hidden");
@@ -62,12 +62,36 @@
                     .value(tester.media.webkitPresentationMode)
                     .isEqualTo("picture-in-picture");
 
-                var stateForPlaceholder = tester.stateForControlsElement("Inline playback placeholder", true);
+                const stateForPlaceholder = tester.stateForControlsElement("Inline playback placeholder", true);
                 tester.test("Inline placeholder should be visible at this point")
                     .value(stateForPlaceholder.className)
                     .doesNotContain("hidden");
 
+                const controlsObserver = new MutationObserver(controlsDidChange);
+                controlsObserver.observe(tester.media, { attributes: true, attributeFilter: ['controls'] });
+
+                tester.media.removeAttribute('controls');
+            }
+
+            function controlsDidChange()
+            {
+                tester.startNewSection("Test for the pip placeholder visibility in pip mode without a 'controls' attribute");
+
+                tester.test("Should still be in pip mode")
+                    .value(tester.media.webkitPresentationMode)
+                    .isEqualTo("picture-in-picture");
+
+                tester.test("No controls attribute")
+                    .value(tester.media.hasAttribute('controls'))
+                    .isFalse();
+
+                const stateForPlaceholder = tester.stateForControlsElement("Inline playback placeholder", true);
+                tester.test("Inline placeholder should still be visible")
+                    .value(stateForPlaceholder.className)
+                    .doesNotContain("hidden");
+
                 tester.media.webkitSetPresentationMode("inline");
+
                 tester.end();
             }
         </script>
