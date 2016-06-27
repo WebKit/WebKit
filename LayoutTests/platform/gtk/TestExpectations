@@ -2368,6 +2368,9 @@ webkit.org/b/138077 fast/layers/parent-clipping-overflow-is-overwritten-by-child
 webkit.org/b/138078 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/138078 fast/repaint/fixed-move-after-keyboard-scroll.html [ Failure ]
 
+# Scrolling cleanup causing some test to fail
+webkit.org/b/159143 fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
+
 # Incomplete implementation of eventSender causes this test to fail
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 

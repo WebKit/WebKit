@@ -1,3 +1,10 @@
+2016-06-27  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Unreviewed test gardening. Added Failure Test Expectations because of r194502 and r194513.
+        https://bugs.webkit.org/show_bug.cgi?id=159147
+
+        * platform/gtk/TestExpectations:
+
 2016-06-27  Youenn Fablet  <youennf@gmail.com>
 
         LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/ is failing on ios-simulator
