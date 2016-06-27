@@ -1,5 +1,14 @@
 2016-06-27  Keith Miller  <keith_miller@apple.com>
 
+        Add comment to Module feature in features.json
+        https://bugs.webkit.org/show_bug.cgi?id=159159
+
+        Reviewed by Saam Barati.
+
+        * features.json:
+
+2016-06-27  Keith Miller  <keith_miller@apple.com>
+
         Update features.json for ES6 completed features.
         https://bugs.webkit.org/show_bug.cgi?id=159152
 
