@@ -62,7 +62,6 @@ private:
     void didReceiveData(const char*, int) final;
     void didFinishLoading(unsigned long, double) final;
     void didFail(const ResourceError&) final;
-    void didFailRedirectCheck() final;
 
     Type type() const { return m_type; }
 

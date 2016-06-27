@@ -144,11 +144,6 @@ void FetchLoader::didFail(const ResourceError&)
     m_client.didFail();
 }
 
-void FetchLoader::didFailRedirectCheck()
-{
-    m_client.didFail();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(FETCH_API)

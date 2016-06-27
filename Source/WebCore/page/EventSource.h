@@ -82,7 +82,6 @@ private:
     void didFinishLoading(unsigned long, double) final;
     void didFail(const ResourceError&) final;
     void didFailAccessControlCheck(const ResourceError&) final;
-    void didFailRedirectCheck() final;
 
     void stop() final;
     const char* activeDOMObjectName() const final;

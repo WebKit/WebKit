@@ -206,14 +206,4 @@ void WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck(const R
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck()
-{
-    m_loadingFinished = true;
-    Ref<ThreadableLoaderClientWrapper> protectedWorkerClientWrapper = *m_workerClientWrapper;
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = WTFMove(protectedWorkerClientWrapper)] (ScriptExecutionContext& context) mutable {
-        ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        protectedWorkerClientWrapper->didFailRedirectCheck();
-    }, m_taskMode);
-}
-
 } // namespace WebCore

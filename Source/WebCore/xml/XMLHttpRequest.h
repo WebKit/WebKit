@@ -151,7 +151,6 @@ private:
     void didReceiveData(const char* data, int dataLength) override;
     void didFinishLoading(unsigned long identifier, double finishTime) override;
     void didFail(const ResourceError&) override;
-    void didFailRedirectCheck() override;
 
     bool responseIsXML() const;
 

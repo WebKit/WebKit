@@ -69,7 +69,6 @@ namespace WebCore {
         void didReceiveData(const char* data, int dataLength) override;
         void didFinishLoading(unsigned long identifier, double) override;
         void didFail(const ResourceError&) override;
-        void didFailRedirectCheck() override;
 
     private:
         friend class WTF::RefCounted<WorkerScriptLoader>;

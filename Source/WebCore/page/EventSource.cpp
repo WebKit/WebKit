@@ -261,11 +261,6 @@ void EventSource::didFailAccessControlCheck(const ResourceError& error)
     abortConnectionAttempt();
 }
 
-void EventSource::didFailRedirectCheck()
-{
-    abortConnectionAttempt();
-}
-
 void EventSource::abortConnectionAttempt()
 {
     ASSERT(m_state == CONNECTING);

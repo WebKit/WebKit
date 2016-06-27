@@ -105,7 +105,6 @@ namespace WebCore {
             void didFinishLoading(unsigned long identifier, double finishTime) override;
             void didFail(const ResourceError&) override;
             void didFailAccessControlCheck(const ResourceError&) override;
-            void didFailRedirectCheck() override;
 
             // Only to be used on the main thread.
             RefPtr<ThreadableLoader> m_mainThreadLoader;

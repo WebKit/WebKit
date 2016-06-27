@@ -1,3 +1,16 @@
+2016-06-27  Youenn Fablet  <youenn@apple.com>
+
+        Remove didFailRedirectCheck ThreadableLoaderClient callback
+        https://bugs.webkit.org/show_bug.cgi?id=159085
+
+        Reviewed by Daniel Bates.
+
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+
 2016-06-26  Chris Dumez  <cdumez@apple.com>
 
         Regression: HTMLOptionsCollection's named properties have precedence over indexed properties

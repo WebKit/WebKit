@@ -128,9 +128,9 @@ public:
         dispose();
     }
 
-    void didFailRedirectCheck() override
+    void didFailAccessControlCheck(const ResourceError&) final
     {
-        m_callback->sendFailure(ASCIILiteral("Loading resource for inspector failed redirect check"));
+        m_callback->sendFailure(ASCIILiteral("Loading resource for inspector failed access control check"));
         dispose();
     }
 

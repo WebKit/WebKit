@@ -1038,11 +1038,6 @@ void XMLHttpRequest::didFail(const ResourceError& error)
     networkError();
 }
 
-void XMLHttpRequest::didFailRedirectCheck()
-{
-    networkError();
-}
-
 void XMLHttpRequest::didFinishLoading(unsigned long identifier, double)
 {
     if (m_error)

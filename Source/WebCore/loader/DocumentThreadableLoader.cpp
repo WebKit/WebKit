@@ -192,6 +192,16 @@ void DocumentThreadableLoader::clearResource()
         m_preflightChecker = Nullopt;
 }
 
+static inline void reportContentSecurityPolicyError(ThreadableLoaderClient& client, const URL& url)
+{
+    client.didFailAccessControlCheck(ResourceError(errorDomainWebKitInternal, 0, url, "Cross-origin redirection denied by Content Security Policy."));
+}
+
+static inline void reportCrossOriginResourceSharingError(ThreadableLoaderClient& client, const URL& url)
+{
+    client.didFailAccessControlCheck(ResourceError(errorDomainWebKitInternal, 0, url, "Cross-origin redirection denied by Cross-Origin Resource Sharing policy."));
+}
+
 void DocumentThreadableLoader::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     ASSERT(m_client);
@@ -199,7 +209,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
 
     Ref<DocumentThreadableLoader> protectedThis(*this);
     if (!isAllowedByContentSecurityPolicy(request.url(), !redirectResponse.isNull())) {
-        m_client->didFailRedirectCheck();
+        reportContentSecurityPolicyError(*m_client, redirectResponse.url());
         request = ResourceRequest();
         return;
     }
@@ -245,7 +255,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
         }
     }
 
-    m_client->didFailRedirectCheck();
+    reportCrossOriginResourceSharingError(*m_client, redirectResponse.url());
     request = ResourceRequest();
 }
 
@@ -381,9 +391,15 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     // request and response URLs. This isn't a perfect test though, since a server can serve a redirect to the same URL that was
     // requested. Also comparing the request and response URLs as strings will fail if the requestURL still has its credentials.
     bool didRedirect = requestURL != response.url();
-    if (didRedirect && (!isAllowedByContentSecurityPolicy(response.url(), didRedirect) || !isAllowedRedirect(response.url()))) {
-        m_client->didFailRedirectCheck();
-        return;
+    if (didRedirect) {
+        if (!isAllowedByContentSecurityPolicy(response.url(), didRedirect)) {
+            reportContentSecurityPolicyError(*m_client, requestURL);
+            return;
+        }
+        if (!isAllowedRedirect(response.url())) {
+            reportCrossOriginResourceSharingError(*m_client, requestURL);
+            return;
+        }
     }
 
     didReceiveResponse(identifier, response);

@@ -161,11 +161,6 @@ void WorkerScriptLoader::didFail(const ResourceError&)
     notifyError();
 }
 
-void WorkerScriptLoader::didFailRedirectCheck()
-{
-    notifyError();
-}
-
 void WorkerScriptLoader::notifyError()
 {
     m_failed = true;
