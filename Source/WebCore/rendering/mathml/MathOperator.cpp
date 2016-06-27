@@ -32,6 +32,7 @@
 #include "StyleInheritedData.h"
 
 static const unsigned kRadicalOperator = 0x221A;
+static const unsigned kMaximumExtensionCount = 128;
 
 namespace WebCore {
 
@@ -490,9 +491,8 @@ void MathOperator::fillWithVerticalExtensionGlyph(const RenderStyle& style, Pain
     LayoutPoint glyphOrigin = LayoutPoint(from.x(), from.y() - offsetToGlyphTop);
     FloatRect lastPaintedGlyphRect(from, FloatSize());
 
-    // FIXME: In practice, only small stretch sizes are requested but we may need to limit the number
-    // of pieces that can be repeated to avoid hangs. See http://webkit.org/b/155434
-    while (lastPaintedGlyphRect.maxY() < to.y()) {
+    // In practice, only small stretch sizes are requested but we limit the number of glyphs to avoid hangs.
+    for (unsigned extensionCount = 0; lastPaintedGlyphRect.maxY() < to.y() && extensionCount < kMaximumExtensionCount; extensionCount++) {
         lastPaintedGlyphRect = paintGlyph(style, info, m_assembly.extension, glyphOrigin, TrimTopAndBottom);
         glyphOrigin.setY(glyphOrigin.y() + lastPaintedGlyphRect.height());
 
@@ -529,9 +529,8 @@ void MathOperator::fillWithHorizontalExtensionGlyph(const RenderStyle& style, Pa
     LayoutPoint glyphOrigin = LayoutPoint(from.x() + offsetToGlyphLeft, from.y());
     FloatRect lastPaintedGlyphRect(from, FloatSize());
 
-    // FIXME: In practice, only small stretch sizes are requested but we may need to limit the number
-    // of pieces that can be repeated to avoid hangs. See http://webkit.org/b/155434
-    while (lastPaintedGlyphRect.maxX() < to.x()) {
+    // In practice, only small stretch sizes are requested but we limit the number of glyphs to avoid hangs.
+    for (unsigned extensionCount = 0; lastPaintedGlyphRect.maxX() < to.x() && extensionCount < kMaximumExtensionCount; extensionCount++) {
         lastPaintedGlyphRect = paintGlyph(style, info, m_assembly.extension, glyphOrigin, TrimLeftAndRight);
         glyphOrigin.setX(glyphOrigin.x() + lastPaintedGlyphRect.width());
 

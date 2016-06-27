@@ -2950,8 +2950,6 @@ webkit.org/b/155372 [ Debug ] css3/masking/mask-svg-script-none-to-png.html [ Pa
 webkit.org/b/155339 [ Debug ] imported/blink/fast/multicol/dynamic/multicol-with-abspos-svg-with-foreignobject-with-multicol-crash.html [ Pass Crash ]
 webkit.org/b/155339 [ Debug ] imported/blink/fast/multicol/dynamic/relayout-abspos-in-relpos-spanner.html [ Pass Crash ]
 
-webkit.org/b/155565 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
-
 # RTL Scrollbars are not implemented on iOS.
 fast/scrolling/rtl-scrollbars-sticky-document-2.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-sticky-document.html [ ImageOnlyFailure ]

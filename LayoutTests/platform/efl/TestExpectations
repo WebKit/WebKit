@@ -762,8 +762,6 @@ webkit.org/b/136099 fast/events/show-modal-dialog-onblur-onfocus.html [ Crash Ti
 webkit.org/b/136099 fast/events/scroll-event-during-modal-dialog.html [ Crash Timeout ]
 webkit.org/b/136099 fast/harness/show-modal-dialog.html [ Crash Timeout ]
 
-webkit.org/b/136227 mathml/very-large-stretchy-operators.html [ Crash Timeout Pass ]
-
 #webkit.org/b/142158 inspector/dom/remove-multiple-nodes.html [ Crash Pass ]
 #webkit.org/b/147018 inspector/css/get-system-fonts.html [ Skip ]
 

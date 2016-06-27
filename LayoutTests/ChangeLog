@@ -1,3 +1,18 @@
+2016-06-27  Frederic Wang  <fwang@igalia.com>
+
+        Set an upper limit for the size or number of pieces of stretchy operators
+        https://bugs.webkit.org/show_bug.cgi?id=155434
+
+        Update test expectations for very-large-stretchy-operators.
+
+        Reviewed by Brent Fulgham.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-06-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip two LayoutTests that rely on mouse events on ios-simulator

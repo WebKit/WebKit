@@ -729,11 +729,6 @@ webkit.org/b/122031 fast/animation/request-animation-frame-time-unit.html [ Pass
 
 webkit.org/b/122038 animations/transform-non-accelerated.html [ Pass Failure ]
 
-webkit.org/b/122490 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
-
-# rdar://problem/21443002
-[ Release ElCapitan+ ] mathml/very-large-stretchy-operators.html [ Slow ]
-
 webkit.org/b/123220 compositing/regions/floated-region-with-transformed-child.html [ Pass ImageOnlyFailure ]
 webkit.org/b/138179 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ Skip ]
 

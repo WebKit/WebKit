@@ -1607,7 +1607,6 @@ webkit.org/b/144690 editing/spelling/delete-into-misspelled-word.html [ Timeout 
 webkit.org/b/141835 media/video-controls-no-scripting.html [ Failure ]
 
 # May take too long on the bots.
-Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
 
 Bug(GTK) fast/history/go-back-to-iframe-with-plugin.html [ Timeout Pass ]
 
