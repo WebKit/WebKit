@@ -57,15 +57,19 @@ static CGContextRef createCGContextFromImage(WKImageRef wkImage)
     // Creating this bitmap in the device color space should prevent any color conversion when the image of the web view is drawn into it.
     RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
     CGContextRef context = CGBitmapContextCreate(0, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+    if (!context)
+        return nullptr;
 
-    
     CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.get());
-
     return context;
 }
 
 void computeMD5HashStringForContext(CGContextRef bitmapContext, char hashString[33])
 {
+    if (!bitmapContext) {
+        WTFLogAlways("computeMD5HashStringForContext: context is null\n");
+        return;
+    }
     ASSERT(CGBitmapContextGetBitsPerPixel(bitmapContext) == 32); // ImageDiff assumes 32 bit RGBA, we must as well.
     size_t pixelsHigh = CGBitmapContextGetHeight(bitmapContext);
     size_t pixelsWide = CGBitmapContextGetWidth(bitmapContext);
@@ -144,7 +148,16 @@ static void paintRepaintRectOverlay(CGContextRef context, WKImageRef image, WKAr
 
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayRef repaintRects, SnapshotResultType snapshotType)
 {
+    if (!image) {
+        WTFLogAlways("dumpPixelsAndCompareWithExpected: image is null\n");
+        return;
+    }
+
     RetainPtr<CGContextRef> context = adoptCF(createCGContextFromImage(image));
+    if (!context) {
+        WTFLogAlways("dumpPixelsAndCompareWithExpected: context is null\n");
+        return;
+    }
 
     // A non-null repaintRects array means we're doing a repaint test.
     if (repaintRects)

@@ -1899,5 +1899,3 @@ fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html [ Pass Failure
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
 
 webkit.org/b/157990 [ Release ] mathml/wbr-in-mroot-crash.html [ Pass Timeout ]
-
-webkit.org/b/159077 fast/harness/snapshot-captures-compositing.html [ ImageOnlyFailure ]

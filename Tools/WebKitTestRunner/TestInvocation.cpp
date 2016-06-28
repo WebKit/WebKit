@@ -248,8 +248,8 @@ void TestInvocation::dumpResults()
                 m_webProcessIsUnresponsive = true;
                 return;
             }
+
             WKRetainPtr<WKImageRef> windowSnapshot = TestController::singleton().mainWebView()->windowSnapshotImage();
-            ASSERT(windowSnapshot);
             dumpPixelsAndCompareWithExpected(windowSnapshot.get(), m_repaintRects.get(), TestInvocation::SnapshotResultType::WebView);
         }
     }

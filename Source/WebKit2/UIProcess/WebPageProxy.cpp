@@ -2888,8 +2888,18 @@ void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
         return;
     }
 
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    std::function<void (CallbackBase::Error)> didForceRepaintCallback = [this, callback](CallbackBase::Error error) {
+        callAfterNextPresentationUpdate([callback](CallbackBase::Error error) {
+            if (error != CallbackBase::Error::None) {
+                callback->invalidate(error);
+                return;
+            }
+
+            callback->performCallback();
+        });
+    };
+
+    uint64_t callbackID = m_callbacks.put(didForceRepaintCallback, m_process->throttler().backgroundActivityToken());
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
     m_process->send(Messages::WebPage::ForceRepaint(callbackID), m_pageID); 
 }

@@ -212,6 +212,10 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     CGSize viewSize = m_view.bounds.size;
     int bufferWidth = ceil(viewSize.width * deviceScaleFactor);
     int bufferHeight = ceil(viewSize.height * deviceScaleFactor);
+    if (!bufferWidth || !bufferHeight) {
+        WTFLogAlways("Being asked for snapshot of view with width %d height %d\n", bufferWidth, bufferHeight);
+        return nullptr;
+    }
 
     CARenderServerBufferRef buffer = CARenderServerCreateBuffer(bufferWidth, bufferHeight);
     if (!buffer) {
