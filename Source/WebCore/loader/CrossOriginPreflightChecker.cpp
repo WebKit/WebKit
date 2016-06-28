@@ -64,13 +64,13 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, frame->loader().documentLoader(), response, 0);
 
     if (!response.isSuccessful()) {
-        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), ASCIILiteral("Preflight response is not successful")));
+        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl));
         return;
     }
 
     String description;
     if (!passesAccessControlCheck(response, loader.options().allowCredentials(), loader.securityOrigin(), description)) {
-        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), description));
+        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), description, ResourceError::Type::AccessControl));
         return;
     }
 
@@ -78,7 +78,7 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     if (!result->parse(response, description)
         || !result->allowsCrossOriginMethod(request.httpMethod(), description)
         || !result->allowsCrossOriginHeaders(request.httpHeaderFields(), description)) {
-        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), description));
+        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), description, ResourceError::Type::AccessControl));
         return;
     }
 
@@ -90,7 +90,9 @@ void CrossOriginPreflightChecker::notifyFinished(CachedResource* resource)
 {
     ASSERT_UNUSED(resource, resource == m_resource);
     if (m_resource->loadFailedOrCanceled()) {
-        m_loader.preflightFailure(m_resource->identifier(), m_resource->resourceError());
+        ResourceError preflightError = m_resource->resourceError();
+        preflightError.setType(ResourceError::Type::AccessControl);
+        m_loader.preflightFailure(m_resource->identifier(), preflightError);
         return;
     }
     validatePreflightResponse(m_loader, WTFMove(m_request), m_resource->identifier(), m_resource->response());
@@ -131,6 +133,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     unsigned identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, loader.options().allowCredentials(), loader.options().clientCredentialPolicy(), error, response, data);
 
     if (!error.isNull() && response.httpStatusCode() <= 0) {
+        error.setType(ResourceError::Type::AccessControl);
         loader.preflightFailure(identifier, error);
         return;
     }

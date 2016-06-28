@@ -122,15 +122,9 @@ public:
         dispose();
     }
 
-    void didFail(const ResourceError&) override
+    void didFail(const ResourceError& error) override
     {
-        m_callback->sendFailure(ASCIILiteral("Loading resource for inspector failed"));
-        dispose();
-    }
-
-    void didFailAccessControlCheck(const ResourceError&) final
-    {
-        m_callback->sendFailure(ASCIILiteral("Loading resource for inspector failed access control check"));
+        m_callback->sendFailure(error.isAccessControl() ? ASCIILiteral("Loading resource for inspector failed access control check") : ASCIILiteral("Loading resource for inspector failed"));
         dispose();
     }
 

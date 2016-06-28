@@ -1,3 +1,12 @@
+2016-06-27  Youenn Fablet  <youenn@apple.com>
+
+        Remove didFailAccessControlCheck ThreadableLoaderClient callback
+        https://bugs.webkit.org/show_bug.cgi?id=159149
+
+        Reviewed by Daniel Bates.
+
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-setrequestheader-no-cred-expected.txt:
+
 2016-06-27  Chris Dumez  <cdumez@apple.com>
 
         HTMLElement / SVGElement should implement GlobalEventHandlers, not Element

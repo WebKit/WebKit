@@ -243,6 +243,15 @@ void EventSource::didFinishLoading(unsigned long, double)
 void EventSource::didFail(const ResourceError& error)
 {
     ASSERT(m_state != CLOSED);
+
+    if (error.isAccessControl()) {
+        String message = makeString("EventSource cannot load ", error.failingURL().string(), ". ", error.localizedDescription());
+        scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
+
+        abortConnectionAttempt();
+        return;
+    }
+
     ASSERT(m_requestInFlight);
 
     if (error.isCancellation())
@@ -251,14 +260,6 @@ void EventSource::didFail(const ResourceError& error)
     // FIXME: Why don't we need to clear data members here as in didFinishLoading?
 
     networkRequestEnded();
-}
-
-void EventSource::didFailAccessControlCheck(const ResourceError& error)
-{
-    String message = makeString("EventSource cannot load ", error.failingURL().string(), ". ", error.localizedDescription());
-    scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
-
-    abortConnectionAttempt();
 }
 
 void EventSource::abortConnectionAttempt()

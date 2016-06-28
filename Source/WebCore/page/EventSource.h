@@ -81,7 +81,6 @@ private:
     void didReceiveData(const char*, int) final;
     void didFinishLoading(unsigned long, double) final;
     void didFail(const ResourceError&) final;
-    void didFailAccessControlCheck(const ResourceError&) final;
 
     void stop() final;
     const char* activeDOMObjectName() const final;

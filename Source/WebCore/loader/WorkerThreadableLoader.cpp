@@ -197,13 +197,4 @@ void WorkerThreadableLoader::MainThreadBridge::didFail(const ResourceError& erro
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck(const ResourceError& error)
-{
-    m_loadingFinished = true;
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper = Ref<ThreadableLoaderClientWrapper>(*m_workerClientWrapper), error = error.isolatedCopy()] (ScriptExecutionContext& context) mutable {
-        ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        workerClientWrapper->didFailAccessControlCheck(error);
-    }, m_taskMode);
-}
-
 } // namespace WebCore

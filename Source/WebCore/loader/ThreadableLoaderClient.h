@@ -46,7 +46,6 @@ namespace WebCore {
         virtual void didReceiveData(const char*, int /*dataLength*/) { }
         virtual void didFinishLoading(unsigned long /*identifier*/, double /*finishTime*/) { }
         virtual void didFail(const ResourceError&) { }
-        virtual void didFailAccessControlCheck(const ResourceError& error) { didFail(error); }
 
     protected:
         ThreadableLoaderClient() { }

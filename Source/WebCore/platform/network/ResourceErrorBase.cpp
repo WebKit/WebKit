@@ -59,7 +59,8 @@ void ResourceErrorBase::lazyInit() const
 
 void ResourceErrorBase::setType(Type type)
 {
-    ASSERT(m_type == Type::General || m_type == Type::Null);
+    // setType should only be used to specialize the error type.
+    ASSERT(m_type == Type::General || m_type == Type::Null || (m_type == Type::Cancellation && type == Type::AccessControl));
     m_type = type;
 }
 

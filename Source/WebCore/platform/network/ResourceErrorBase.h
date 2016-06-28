@@ -47,11 +47,13 @@ public:
     enum class Type {
         Null,
         General,
+        AccessControl,
         Cancellation,
         Timeout
     };
 
     bool isNull() const { return m_type == Type::Null; }
+    bool isAccessControl() const { return m_type == Type::AccessControl; }
     bool isCancellation() const { return m_type == Type::Cancellation; }
     bool isTimeout() const { return m_type == Type::Timeout; }
 
