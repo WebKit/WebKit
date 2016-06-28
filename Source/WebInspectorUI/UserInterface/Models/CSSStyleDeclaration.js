@@ -186,11 +186,11 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         if (this._text === text)
             return;
 
-        let trimmedText = text.trim();
+        let trimmedText = WebInspector.CSSStyleDeclarationTextEditor.PrefixWhitespace + text.trim();
         if (this._text === trimmedText)
             return;
 
-        if (!trimmedText.length || this._type === WebInspector.CSSStyleDeclaration.Type.Inline)
+        if (trimmedText === WebInspector.CSSStyleDeclarationTextEditor.PrefixWhitespace || this._type === WebInspector.CSSStyleDeclaration.Type.Inline)
             text = trimmedText;
 
         let modified = text !== this._initialText;

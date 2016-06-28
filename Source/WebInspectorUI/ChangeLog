@@ -1,3 +1,24 @@
+2016-06-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r188730): Web Inspector: Warning icons incorrectly positioned in CSS Rules sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=157869
+        <rdar://problem/26356520>
+
+        Reviewed by Timothy Hatcher.
+
+        Before r188730, CSS text always had a line break as a prefix. r188730 started trimming text.
+        This patch keeps trimming unnecessary whitespace but brings back required line break prefix.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WebInspector.CSSStyleDeclaration.prototype.set text):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        Make PrefixWhitespace and SuffixWhitespace public.
+
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._formattedContent):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateTextMarkers.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateTextMarkers):
+        Remove an if conditional as it's always true.
+
 2016-06-28  Brian Burg  <bburg@apple.com>
 
         Web Inspector: QuickConsole should update its selection when RuntimeManager.defaultExecutionContextIdentifier changes
