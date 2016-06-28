@@ -157,10 +157,6 @@ enum class DynamicViewportUpdateMode {
 
 #endif // PLATFORM(IOS)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewAdditions.mm>
-#endif
-
 #if PLATFORM(IOS)
 static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 #endif
@@ -4635,5 +4631,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 }
 
 @end
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewAdditions.mm>
+#endif
 
 #endif // WK_API_ENABLED
