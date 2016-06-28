@@ -96,8 +96,7 @@ Dromaeo/jslib-modify-prototype.html
 # Still under development so skip it for now.
 Animometer
 JSBench
-Air.js
-Basic
+ES6SampleBench
 
 # Used for iOS testing
 Animation/css-animation.html

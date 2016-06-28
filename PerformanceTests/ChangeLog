@@ -1,3 +1,60 @@
+2016-06-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Move Air.js and Basic into ES6SampleBench
+
+        Rubber stamped by Geoffrey Garen.
+        
+        We want to group our ES6 benchmarks together, and eventually, we want to give them a
+        common harness.
+
+        * Air.js: Removed.
+        * Air.js/README.md: Removed.
+        * Air.js/airjs-tests.yaml: Removed.
+        * Air.js/all.js: Removed.
+        * Air.js/allocate_stack.js: Removed.
+        * Air.js/arg.js: Removed.
+        * Air.js/basic_block.js: Removed.
+        * Air.js/benchmark.js: Removed.
+        * Air.js/code.js: Removed.
+        * Air.js/custom.js: Removed.
+        * Air.js/frequented_block.js: Removed.
+        * Air.js/insertion_set.js: Removed.
+        * Air.js/inst.js: Removed.
+        * Air.js/liveness.js: Removed.
+        * Air.js/make_dist.sh: Removed.
+        * Air.js/opcode.js: Removed.
+        * Air.js/payload-airjs-ACLj8C.js: Removed.
+        * Air.js/payload-gbemu-executeIteration.js: Removed.
+        * Air.js/payload-imaging-gaussian-blur-gaussianBlur.js: Removed.
+        * Air.js/payload-typescript-scanIdentifier.js: Removed.
+        * Air.js/reg.js: Removed.
+        * Air.js/stack_slot.js: Removed.
+        * Air.js/stress-test.js: Removed.
+        * Air.js/strip-hash.rb: Removed.
+        * Air.js/symbols.js: Removed.
+        * Air.js/test.html: Removed.
+        * Air.js/test.js: Removed.
+        * Air.js/tmp.js: Removed.
+        * Air.js/tmp_base.js: Removed.
+        * Air.js/util.js: Removed.
+        * Basic: Removed.
+        * Basic/ast.js: Removed.
+        * Basic/basic.js: Removed.
+        * Basic/benchmark.js: Removed.
+        * Basic/caseless_map.js: Removed.
+        * Basic/lexer.js: Removed.
+        * Basic/number.js: Removed.
+        * Basic/parser.js: Removed.
+        * Basic/random.js: Removed.
+        * Basic/state.js: Removed.
+        * Basic/test.html: Removed.
+        * Basic/test.js: Removed.
+        * Basic/util.js: Removed.
+        * ES6SampleBench: Added.
+        * ES6SampleBench/Air: Copied from PerformanceTests/Air.js.
+        * ES6SampleBench/Basic: Copied from PerformanceTests/Basic.
+        * Skipped:
+
 2016-06-24  Filip Pizlo  <fpizlo@apple.com>
 
         Add a ES6 generator benchmark
