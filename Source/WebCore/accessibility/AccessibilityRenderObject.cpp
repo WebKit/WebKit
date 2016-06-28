@@ -632,16 +632,10 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     bool isRenderText = is<RenderText>(*m_renderer);
 
 #if ENABLE(MATHML)
-    // Math operators create RenderText nodes on the fly that are not tied into the DOM in a reasonable way,
-    // so rangeOfContents does not work for them (nor does regular text selection).
-    if (isRenderText && m_renderer->isAnonymous() && ancestorsOfType<RenderMathMLOperator>(*m_renderer).first())
-        return downcast<RenderText>(*m_renderer).text();
     if (isAnonymousMathOperator()) {
         UChar operatorChar = downcast<RenderMathMLOperator>(*m_renderer).textContent();
         return operatorChar ? String(&operatorChar, 1) : String();
     }
-    if (is<RenderMathMLOperator>(*m_renderer) && !m_renderer->isAnonymous())
-        return downcast<RenderMathMLOperator>(*m_renderer).element().textContent();
 #endif
 
     if (shouldGetTextFromNode(mode))
