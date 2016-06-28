@@ -1,3 +1,16 @@
+2016-06-28  Joonghun Park  <jh718.park@samsung.com>
+
+        [JSC] Fix build break since r202502
+        https://bugs.webkit.org/show_bug.cgi?id=159194
+
+        Reviewed by Alex Christensen.
+
+        Fix about the error message below.
+        error: control reaches end of non-void function [-Werror=return-type]
+
+        * b3/B3TypeMap.h:
+        (JSC::B3::TypeMap::at): add missing ASSERT_NOT_REACHED().
+
 2016-06-27  Keith Miller  <keith_miller@apple.com>
 
         Fix bad assert in StructureRareData::setObjectToStringValue

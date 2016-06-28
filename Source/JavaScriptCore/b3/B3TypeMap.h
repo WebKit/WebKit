@@ -59,6 +59,7 @@ public:
         case Double:
             return m_double;
         }
+        ASSERT_NOT_REACHED();
     }
     
     const T& at(Type type) const
