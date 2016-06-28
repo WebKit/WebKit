@@ -2317,9 +2317,11 @@ RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessi
 
         process().send(Messages::WebPage::RestoreSession(m_backForwardList->itemStates()), m_pageID);
 
-        // The back / forward list was restored from a sessionState so we don't want to snapshot the current
-        // page when navigating away. Suppress navigation snapshotting until the next load has committed.
-        m_suppressNavigationSnapshotting = true;
+        if (navigate) {
+            // The back / forward list was restored from a sessionState so we don't want to snapshot the current
+            // page when navigating away. Suppress navigation snapshotting until the next load has committed
+            m_suppressNavigationSnapshotting = true;
+        }
     }
 
     // FIXME: Navigating should be separate from state restoration.

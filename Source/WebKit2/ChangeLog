@@ -1,3 +1,19 @@
+2016-06-28  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Do not suppress navigation snapshotting on session restore if we are not navigating right away
+        https://bugs.webkit.org/show_bug.cgi?id=159216
+        <rdar://problem/27058360>
+
+        Reviewed by Andreas Kling.
+
+        Do not suppress navigation snapshotting on session restore if we are not navigating
+        right away. The snapshot we already have may be outdated by the time we actually
+        navigate (e.g. Because the user scrolled) so we don't want to suppress snapshotting
+        in this case.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionState):
+
 2016-06-27  Anders Carlsson  <andersca@apple.com>
 
         WebKit::WebPaymentCoordinator leak
