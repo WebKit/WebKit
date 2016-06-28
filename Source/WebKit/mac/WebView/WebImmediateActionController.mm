@@ -502,12 +502,14 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
 #pragma mark Text action
 
-static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
++ (DictionaryPopupInfo)_dictionaryPopupInfoForRange:(Range&)range inFrame:(Frame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(TextIndicatorOptions)indicatorOptions transition:(TextIndicatorPresentationTransition)presentationTransition
 {
+    // Dictionary API will accept a whitespace-only string and display UI as if it were real text,
+    // so bail out early to avoid that.
     DictionaryPopupInfo popupInfo;
     if (range.text().stripWhiteSpace().isEmpty())
         return popupInfo;
-    
+
     RenderObject* renderer = range.startContainer().renderer();
     const RenderStyle& style = renderer->style();
 
@@ -519,13 +521,13 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
     IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     popupInfo.origin = NSMakePoint(rangeRect.x(), rangeRect.y() + (style.fontMetrics().descent() * frame->page()->pageScaleFactor()));
-    popupInfo.options = options;
+    popupInfo.options = lookupOptions;
 
     NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
     RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
-    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
+    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
         RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
 
         NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
@@ -534,12 +536,12 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
             [scaledAttributes setObject:font forKey:NSFontAttributeName];
         }
 
-        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
+        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:attributeRange];
     }];
 
     popupInfo.attributedString = scaledNSAttributedString.get();
 
-    if (auto textIndicator = TextIndicator::createWithRange(range, TextIndicatorOptionDefault, presentationTransition))
+    if (auto textIndicator = TextIndicator::createWithRange(range, indicatorOptions, presentationTransition))
         popupInfo.textIndicator = textIndicator->data();
     return popupInfo;
 }
@@ -562,8 +564,7 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
     if (!dictionaryRange)
         return nil;
 
-    RefPtr<Range> selectionRange = frame->page()->focusController().focusedOrMainFrame().selection().selection().firstRange();
-    DictionaryPopupInfo dictionaryPopupInfo = dictionaryPopupInfoForRange(frame, *dictionaryRange, options, TextIndicatorPresentationTransition::FadeIn);
+    DictionaryPopupInfo dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:*dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions:TextIndicatorOptionDefault transition: TextIndicatorPresentationTransition::FadeIn];
     if (!dictionaryPopupInfo.attributedString)
         return nil;
 

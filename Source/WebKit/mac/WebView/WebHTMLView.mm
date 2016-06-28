@@ -6360,30 +6360,15 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 - (void)_lookUpInDictionaryFromMenu:(id)sender
 {
-    // Dictionary API will accept a whitespace-only string and display UI as if it were real text,
-    // so bail out early to avoid that.
-    if ([[[self selectedString] _webkit_stringByTrimmingWhitespace] length] == 0)
-        return;
-
-    NSAttributedString *attrString = [self selectedAttributedString];
-
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return;
 
-    NSRect rect = coreFrame->selection().selectionBounds();
+    RefPtr<Range> selectionRange = coreFrame->selection().selection().firstRange();
+    if (!selectionRange)
+        return;
 
-    NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0, 1)];
-    NSFont *font = [attributes objectForKey:NSFontAttributeName];
-    if (font)
-        rect.origin.y += [font descender];
-
-    DictionaryPopupInfo info;
-    info.attributedString = attrString;
-    info.origin = coreFrame->view()->contentsToWindow(enclosingIntRect(rect)).location();
-    if (auto textIndicator = TextIndicator::createWithSelectionInFrame(*coreFrame, TextIndicatorOptionIncludeSnapshotWithSelectionHighlight, TextIndicatorPresentationTransition::BounceAndCrossfade))
-        info.textIndicator = textIndicator->data();
-    [[self _webView] _showDictionaryLookupPopup:info];
+    [[self _webView] _showDictionaryLookupPopup:[WebImmediateActionController _dictionaryPopupInfoForRange:*selectionRange inFrame:coreFrame withLookupOptions:nil indicatorOptions:TextIndicatorOptionIncludeSnapshotWithSelectionHighlight transition:TextIndicatorPresentationTransition::BounceAndCrossfade]];
 }
 
 - (void)quickLookWithEvent:(NSEvent *)event
