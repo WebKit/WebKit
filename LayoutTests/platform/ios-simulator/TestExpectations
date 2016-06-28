@@ -2987,3 +2987,5 @@ webkit.org/b/158618 fast/hidpi/hidpi-3x-device-pixel-ratio.html [ Failure ]
 
 # These tests hardcode platform-specific font aliases.
 webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/159214 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]

@@ -1,3 +1,12 @@
+2016-06-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking fast/multicol/fixed-stack.html as failing on ios-simulator
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-06-28  Frederic Wang  <fwang@igalia.com>
 
         Phrasing content should be accepted in <mo> elements
