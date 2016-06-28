@@ -1,3 +1,19 @@
+2016-06-27  Dean Jackson  <dino@apple.com>
+
+        Updated content for the color blog post.
+
+        * blog-files/color-gamut/Iceland-P3.jpg:
+        * blog-files/color-gamut/Iceland-oog.jpg:
+        * blog-files/color-gamut/Iceland-sRGB.jpg:
+        * blog-files/color-gamut/Italy-P3.jpg:
+        * blog-files/color-gamut/Italy-sRGB.jpg:
+        * blog-files/color-gamut/Sunset-P3.jpg:
+        * blog-files/color-gamut/Sunset-sRGB.jpg:
+        * blog-files/color-gamut/YellowFlower-P3.jpg:
+        * blog-files/color-gamut/YellowFlower-oog.jpg:
+        * blog-files/color-gamut/YellowFlower-sRGB.jpg:
+        * blog-files/color-gamut/index.html:
+
 2016-06-27  Jon Davis  <jond@apple.com>
 
         Set a default image for sharing webkit.org links via social.
