@@ -31,7 +31,7 @@
                 video = document.getElementById("source_without_start_date");
                 testExpected("isNaN(video.getStartDate())", true );
                 video = document.getElementById('source_with_start_date');
-                testExpected("video.getStartDate()", "Wed Nov 03 2010 01:00:00 GMT-0700 (PDT)");
+                testExpected("video.getStartDate().toUTCString()", "Wed, 03 Nov 2010 08:00:00 GMT");
 
                 endTest();
             }
