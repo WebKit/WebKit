@@ -317,6 +317,7 @@ void Node::willBeDeletedFrom(Document& document)
         document.didRemoveWheelEventHandler(*this, EventHandlerRemoval::All);
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
         document.removeTouchEventListener(this, true);
+        document.removeTouchEventHandler(this, true);
 #else
         // FIXME: This should call didRemoveTouchEventHandler().
 #endif
@@ -1933,7 +1934,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
     if (eventType == eventNames().gesturestartEvent || eventType == eventNames().gesturechangeEvent || eventType == eventNames().gestureendEvent)
-        targetNode->document().addTouchEventListener(targetNode);
+        targetNode->document().addTouchEventHandler(targetNode);
 #endif
 
     return true;
@@ -1974,7 +1975,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
     if (eventType == eventNames().gesturestartEvent || eventType == eventNames().gesturechangeEvent || eventType == eventNames().gestureendEvent)
-        targetNode->document().removeTouchEventListener(targetNode);
+        targetNode->document().removeTouchEventHandler(targetNode);
 #endif
 
     return true;

@@ -1,0 +1,24 @@
+Test scrolling on a block without -webkit-overflow-scrolling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+    PASS window.scrollX is 0
+PASS window.scrollY is 0
+PASS document.documentElement.scrollTop is 0
+PASS document.documentElement.scrollLeft is 0
+PASS document.getElementById('eventTarget').scrollTop is 0
+PASS document.getElementById('eventTarget').scrollLeft is 0
+Received cancelable event touchstart at 50, 150
+Received cancelable event touchmove at 50, 50
+PASS window.scrollX is 0
+PASS window.scrollY is 0
+PASS document.documentElement.scrollTop is 0
+PASS document.documentElement.scrollLeft is 0
+PASS document.getElementById('eventTarget').scrollTop > 0 is true
+PASS document.getElementById('eventTarget').scrollLeft is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

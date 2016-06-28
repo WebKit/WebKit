@@ -1,0 +1,17 @@
+Verify that the block scrolling on overflow has touch event region with synchronous dispatch associated with it even within a asynchronous dispatch region.
+
+(Frame scrolling node
+  (scrollable area size 800 600)
+  (contents size 800 600)
+  (asynchronous event dispatch region
+    at (0,0) size 800x600)
+  (synchronous event dispatch region for event touchend
+    at (8,8) size 784x200)
+  (synchronous event dispatch region for event touchstart
+    at (8,8) size 784x200)
+  (synchronous event dispatch region for event touchforcechange
+    at (8,8) size 784x200)
+  (synchronous event dispatch region for event touchmove
+    at (8,8) size 784x200)
+)
+

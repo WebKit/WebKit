@@ -2332,7 +2332,7 @@ void Document::prepareForDestruction()
         return;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    clearTouchEventListeners();
+    clearTouchEventHandlersAndListeners();
 #endif
 
 #if HAVE(ACCESSIBILITY)
@@ -2401,7 +2401,7 @@ void Document::removeAllEventListeners()
     if (m_domWindow)
         m_domWindow->removeAllEventListeners();
 #if ENABLE(IOS_TOUCH_EVENTS)
-    clearTouchEventListeners();
+    clearTouchEventHandlersAndListeners();
 #endif
     for (Node* node = firstChild(); node; node = NodeTraversal::next(*node))
         node->removeAllEventListeners();

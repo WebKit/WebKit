@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+    <div id="eventTarget" style="overflow: scroll; height: 200px">
+        <div style="height: 3000px"></div>
+    </div>
+    <p id="description"></p>
+    <div id="console">
+    </div>
+    <script>
+        description("Test scrolling on a block without -webkit-overflow-scrolling.");
+        window.jsTestIsAsync = true;
+
+        function getDragUIScript(startX, startY, endX, endY)
+        {
+            return `
+            (function() {
+                uiController.dragFromPointToPoint(${startX}, ${startY}, ${endX}, ${endY}, 0.15, function() {
+                    uiController.uiScriptComplete("Dispatched Drag");
+                });
+            })();`
+        }
+
+        function runTest()
+        {
+            function scrollEventHandler(event) {
+                debug("scrollEventHandler called.");
+                shouldBe("window.scrollX", "0");
+                shouldBe("window.scrollY", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBeTrue("document.getElementById('eventTarget').scrollTop > 0");
+                shouldBe("document.getElementById('eventTarget').scrollLeft", "0");
+                finishJSTest();
+            }
+            let eventTarget = document.getElementById("eventTarget");
+            eventTarget.addEventListener("scroll", scrollEventHandler);
+
+            if (window.testRunner) {
+                testRunner.runUIScript(getDragUIScript(50, 150, 50, 50), function(result) { });
+            }
+
+            shouldBe("window.scrollX", "0");
+            shouldBe("window.scrollY", "0");
+            shouldBe("document.documentElement.scrollTop", "0");
+            shouldBe("document.documentElement.scrollLeft", "0");
+            shouldBe("document.getElementById('eventTarget').scrollTop", "0");
+            shouldBe("document.getElementById('eventTarget').scrollLeft", "0");
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

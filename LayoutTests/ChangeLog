@@ -1,3 +1,27 @@
+2016-06-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Adopt the iOS TouchEventHandler API for cases that must have synchronous dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=159179
+        rdar://problem/27006387
+
+        Reviewed by Simon Fraser.
+
+        Several of those tests expose existing bugs with overflow scrolling.
+        They are not using PASS/FAIL at the moment, just dump the called listeners.
+
+        * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-block-scrolling-state-expected.txt: Added.
+        * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-block-scrolling-state.html: Added.
+        * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-document-scrolling-state-expected.txt: Added.
+        * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-document-scrolling-state.html: Added.
+        * fast/events/touch/ios/block-without-overflow-scroll-scrolling-state-expected.txt: Added.
+        * fast/events/touch/ios/block-without-overflow-scroll-scrolling-state.html: Added.
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-block-expected.txt: Added.
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-block.html: Added.
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-document-expected.txt: Added.
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-document.html: Added.
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-expected.txt: Added.
+        * fast/events/touch/ios/drag-block-without-overflow-scroll.html: Added.
+
 2016-06-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: When modifying sessionStorage, localStorage gets updated
