@@ -7,7 +7,7 @@
   <body>
 
     <!-- Test some stretchy operators requiring stacked glyphs at large sizes. -->
-    <div style="position: absolute; top: 25px; left: 0; opacity: 0.5;">
+    <div style="position: absolute; top: 25px; left: 0; opacity: 0.75;">
       <math>
         <mrow>
           <mo>(</mo>
@@ -24,7 +24,7 @@
     </div>
 
     <!-- Same operators, but shifted vertically by one pixel. -->
-    <div style="position: absolute; top: 26px; left: 0; opacity: 0.5;">
+    <div style="position: absolute; top: 26px; left: 0; opacity: 0.75;">
       <math>
         <mrow>
           <mo>(</mo>
@@ -42,7 +42,7 @@
     
     <!-- Some horizontal bands to hide the top/middle/bottom parts of the
          operators and only show the straight lines. Note that the two previous
-         <div> elements have opacity=0.5 and are only shifted vertically by
+         <div> elements have opacity>0.5 and are only shifted vertically by
          one pixel. Hence the overlapped <div>'s should look like one <div> of
          opacity=1, provided there are no gaps between the stacked glyphs and
          that these glyphs are perfectly aligned. -->

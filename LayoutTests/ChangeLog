@@ -1,3 +1,18 @@
+2016-06-28  Frederic Wang  <fwang@igalia.com>
+
+        Increase opacity of stretched operators in mo-stacked-glyphs.html
+        https://bugs.webkit.org/show_bug.cgi?id=159201
+
+        Reviewed by Martin Robinson.
+
+        The reftest mo-stacked-glyphs.html fails with small pixel differences invisible at the naked
+        eyes. We increase opacity of stretched operators in that test to reduce these differences and
+        make the test pass.
+
+        * mathml/presentation/mo-stacked-glyphs-expected.html: Increase opacity of stretched operators.
+        * mathml/presentation/mo-stacked-glyphs.html: Ditto.
+        * platform/gtk/TestExpectations: Remove failure expectation.
+
 2016-06-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Update expectations for subtle crypto layout tests
