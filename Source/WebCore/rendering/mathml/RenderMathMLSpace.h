@@ -39,7 +39,7 @@ public:
     MathMLTextElement& element() { return static_cast<MathMLTextElement&>(nodeForNonAnonymous()); }
 
 private:
-    const char* renderName() const final { return isAnonymous() ? "RenderMathMLSpace (anonymous)" : "RenderMathMLSpace"; }
+    const char* renderName() const final { return "RenderMathMLSpace"; }
     bool isRenderMathMLSpace() const final { return true; }
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return false; }

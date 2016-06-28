@@ -54,7 +54,7 @@ public:
 
 private:
     bool isRenderMathMLToken() const final { return true; }
-    const char* renderName() const override { return isAnonymous() ? "RenderMathMLToken (anonymous)" : "RenderMathMLToken"; }
+    const char* renderName() const override { return "RenderMathMLToken"; }
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     void updateMathVariantGlyph();
     void setMathVariantGlyphDirty()
