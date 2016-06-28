@@ -39,7 +39,7 @@
 namespace WebCore {
 
 WheelEventTestTrigger::WheelEventTestTrigger()
-    : m_testTriggerTimer(RunLoop::current(), this, &WheelEventTestTrigger::triggerTestTimerFired)
+    : m_testTriggerTimer(RunLoop::current(), *this, &WheelEventTestTrigger::triggerTestTimerFired)
 {
 }
 

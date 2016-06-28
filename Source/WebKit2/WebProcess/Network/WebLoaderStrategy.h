@@ -69,7 +69,7 @@ private:
     void startLocalLoad(WebCore::ResourceLoader&);
 
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
-    RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;
+    RunLoop::Timer m_internallyFailedLoadTimer;
     
     HashMap<unsigned long, RefPtr<WebResourceLoader>> m_webResourceLoaders;
 };

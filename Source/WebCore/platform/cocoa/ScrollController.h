@@ -177,7 +177,7 @@ private:
     CFTimeInterval m_startTime { 0 };
     FloatSize m_startStretch;
     FloatSize m_origVelocity;
-    RunLoop::Timer<ScrollController> m_snapRubberbandTimer;
+    RunLoop::Timer m_snapRubberbandTimer;
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -187,7 +187,7 @@ private:
     std::unique_ptr<ScrollSnapAnimatorState> m_verticalScrollSnapState;
     std::unique_ptr<ScrollSnapAnimationCurveState> m_scrollSnapCurveState;
 #if PLATFORM(MAC)
-    RunLoop::Timer<ScrollController> m_scrollSnapTimer;
+    RunLoop::Timer m_scrollSnapTimer;
 #endif
 #endif
 

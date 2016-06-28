@@ -301,7 +301,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_readyToFindPrimarySnapshottedPlugin(false)
     , m_didFindPrimarySnapshottedPlugin(false)
     , m_numberOfPrimarySnapshotDetectionAttempts(0)
-    , m_determinePrimarySnapshottedPlugInTimer(RunLoop::main(), this, &WebPage::determinePrimarySnapshottedPlugInTimerFired)
+    , m_determinePrimarySnapshottedPlugInTimer(RunLoop::main(), *this, &WebPage::determinePrimarySnapshottedPlugInTimerFired)
 #endif
     , m_layerHostingMode(parameters.layerHostingMode)
 #if PLATFORM(COCOA)
@@ -311,7 +311,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #elif HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
     , m_accessibilityObject(nullptr)
 #endif
-    , m_setCanStartMediaTimer(RunLoop::main(), this, &WebPage::setCanStartMediaTimerFired)
+    , m_setCanStartMediaTimer(RunLoop::main(), *this, &WebPage::setCanStartMediaTimerFired)
 #if ENABLE(CONTEXT_MENUS)
     , m_contextMenuClient(std::make_unique<API::InjectedBundle::PageContextMenuClient>())
 #endif

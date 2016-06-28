@@ -338,7 +338,7 @@ private:
         bool m_repeat;
         TimerFunc m_timerFunc;
 
-        RunLoop::Timer<Timer> m_timer;
+        RunLoop::Timer m_timer;
     };
     typedef HashMap<unsigned, std::unique_ptr<Timer>> TimerMap;
     TimerMap m_timers;
@@ -383,7 +383,7 @@ private:
 
     // FIXME: It's a bit wasteful to have one null event timer per plug-in.
     // We should investigate having one per window.
-    RunLoop::Timer<NetscapePlugin> m_nullEventTimer;
+    RunLoop::Timer m_nullEventTimer;
     NP_CGContext m_npCGContext;
 #endif
 #elif PLUGIN_ARCHITECTURE(X11)

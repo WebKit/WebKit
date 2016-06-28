@@ -150,9 +150,9 @@ typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
 
 struct _WebKitWebViewBasePrivate {
     _WebKitWebViewBasePrivate()
-        : updateViewStateTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::updateViewStateTimerFired)
+        : updateViewStateTimer(RunLoop::main(), *this, &_WebKitWebViewBasePrivate::updateViewStateTimerFired)
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-        , clearRedirectedWindowSoonTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::clearRedirectedWindowSoonTimerFired)
+        , clearRedirectedWindowSoonTimer(RunLoop::main(), *this, &_WebKitWebViewBasePrivate::clearRedirectedWindowSoonTimerFired)
 #endif
     {
     }
@@ -202,7 +202,7 @@ struct _WebKitWebViewBasePrivate {
     // View State.
     ViewState::Flags viewState;
     ViewState::Flags viewStateFlagsToUpdate;
-    RunLoop::Timer<WebKitWebViewBasePrivate> updateViewStateTimer;
+    RunLoop::Timer updateViewStateTimer;
 
     WebKitWebViewBaseDownloadRequestHandler downloadHandler;
 
@@ -216,7 +216,7 @@ struct _WebKitWebViewBasePrivate {
 
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     std::unique_ptr<RedirectedXCompositeWindow> redirectedWindow;
-    RunLoop::Timer<WebKitWebViewBasePrivate> clearRedirectedWindowSoonTimer;
+    RunLoop::Timer clearRedirectedWindowSoonTimer;
 #endif
 
 #if ENABLE(DRAG_SUPPORT)

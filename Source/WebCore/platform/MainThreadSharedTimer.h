@@ -55,7 +55,7 @@ private:
 
     std::function<void()> m_firedFunction;
 #if PLATFORM(GTK)
-    RunLoop::Timer<MainThreadSharedTimer> m_timer;
+    RunLoop::Timer m_timer;
 #endif
 };
 

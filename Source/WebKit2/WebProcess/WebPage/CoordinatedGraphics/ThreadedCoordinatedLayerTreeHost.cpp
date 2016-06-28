@@ -63,7 +63,7 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webP
     , m_notifyAfterScheduledLayerFlush(false)
     , m_isSuspended(false)
     , m_isWaitingForRenderer(false)
-    , m_layerFlushTimer(RunLoop::main(), this, &ThreadedCoordinatedLayerTreeHost::performScheduledLayerFlush)
+    , m_layerFlushTimer(RunLoop::main(), *this, &ThreadedCoordinatedLayerTreeHost::performScheduledLayerFlush)
     , m_layerFlushSchedulingEnabled(true)
 {
     m_coordinator = std::make_unique<CompositingCoordinator>(m_webPage.corePage(), this);

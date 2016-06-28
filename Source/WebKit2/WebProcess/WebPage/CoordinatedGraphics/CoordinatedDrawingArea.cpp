@@ -64,7 +64,7 @@ CoordinatedDrawingArea::CoordinatedDrawingArea(WebPage& webPage, const WebPageCr
     , m_layerTreeStateIsFrozen(false)
     , m_wantsToExitAcceleratedCompositingMode(false)
     , m_isPaintingSuspended(false)
-    , m_exitCompositingTimer(RunLoop::main(), this, &CoordinatedDrawingArea::exitAcceleratedCompositingMode)
+    , m_exitCompositingTimer(RunLoop::main(), *this, &CoordinatedDrawingArea::exitAcceleratedCompositingMode)
 {
     // Always use compositing in CoordinatedGraphics
     enterAcceleratedCompositingMode(0);

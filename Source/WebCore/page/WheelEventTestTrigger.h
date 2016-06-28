@@ -59,7 +59,7 @@ public:
 
 private:
     std::function<void()> m_testNotificationCallback;
-    RunLoop::Timer<WheelEventTestTrigger> m_testTriggerTimer;
+    RunLoop::Timer m_testTriggerTimer;
     mutable Lock m_testTriggerMutex;
     WTF::HashMap<ScrollableAreaIdentifier, std::set<DeferTestTriggerReason>> m_deferTestTriggerReasons;
 };

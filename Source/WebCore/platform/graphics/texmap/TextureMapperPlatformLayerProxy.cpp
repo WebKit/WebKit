@@ -41,7 +41,7 @@ namespace WebCore {
 TextureMapperPlatformLayerProxy::TextureMapperPlatformLayerProxy()
     : m_compositor(nullptr)
     , m_targetLayer(nullptr)
-    , m_releaseUnusedBuffersTimer(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired)
+    , m_releaseUnusedBuffersTimer(RunLoop::current(), *this, &TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired)
 {
 }
 
@@ -66,7 +66,7 @@ void TextureMapperPlatformLayerProxy::activateOnCompositingThread(Compositor* co
     if (m_targetLayer && m_currentBuffer)
         m_targetLayer->setContentsLayer(m_currentBuffer.get());
 
-    m_compositorThreadUpdateTimer = std::make_unique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired);
+    m_compositorThreadUpdateTimer = std::make_unique<RunLoop::Timer>(RunLoop::current(), *this, &TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired);
 }
 
 void TextureMapperPlatformLayerProxy::invalidate()

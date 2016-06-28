@@ -64,7 +64,7 @@ Ref<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const String& 
 
 MockRealtimeVideoSource::MockRealtimeVideoSource(const String& name)
     : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Video, name)
-    , m_timer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
+    , m_timer(RunLoop::current(), *this, &MockRealtimeVideoSource::generateFrame)
 {
     m_dashWidths.reserveInitialCapacity(2);
     m_dashWidths.uncheckedAppend(6);

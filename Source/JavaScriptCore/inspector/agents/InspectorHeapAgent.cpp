@@ -55,13 +55,13 @@ private:
 
     HeapFrontendDispatcher& m_frontendDispatcher;
     Vector<GarbageCollectionData> m_collections;
-    RunLoop::Timer<SendGarbageCollectionEventsTask> m_timer;
+    RunLoop::Timer m_timer;
     Lock m_mutex;
 };
 
 SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask(HeapFrontendDispatcher& frontendDispatcher)
     : m_frontendDispatcher(frontendDispatcher)
-    , m_timer(RunLoop::current(), this, &SendGarbageCollectionEventsTask::timerFired)
+    , m_timer(RunLoop::current(), *this, &SendGarbageCollectionEventsTask::timerFired)
 {
 }
 

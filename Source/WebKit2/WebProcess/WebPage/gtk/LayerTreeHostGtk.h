@@ -75,7 +75,7 @@ private:
         void nextFrame();
 
         std::function<bool()> m_renderer;
-        RunLoop::Timer<RenderFrameScheduler> m_timer;
+        RunLoop::Timer m_timer;
         double m_fireTime { 0 };
         double m_lastImmediateFlushTime { 0 };
     };

@@ -77,7 +77,7 @@ private:
 
         WebCore::FloatPoint m_start;
         WebCore::FloatPoint m_offset;
-        RunLoop::Timer<DragGesture> m_longPressTimeout;
+        RunLoop::Timer m_longPressTimeout;
         GRefPtr<GtkGesture> m_longPress;
         bool m_inDrag;
     };
@@ -97,7 +97,7 @@ private:
         gdouble m_scale;
         WebCore::IntPoint m_initialPoint;
         WebCore::IntPoint m_viewPoint;
-        RunLoop::Timer<ZoomGesture> m_idle;
+        RunLoop::Timer m_idle;
     };
 
     DragGesture m_dragGesture;

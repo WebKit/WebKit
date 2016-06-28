@@ -64,7 +64,7 @@ VisitedLinkStore::VisitedLinkStore()
     : m_identifier(generateIdentifier())
     , m_keyCount(0)
     , m_tableSize(0)
-    , m_pendingVisitedLinksTimer(RunLoop::main(), this, &VisitedLinkStore::pendingVisitedLinksTimerFired)
+    , m_pendingVisitedLinksTimer(RunLoop::main(), *this, &VisitedLinkStore::pendingVisitedLinksTimerFired)
 {
 }
 

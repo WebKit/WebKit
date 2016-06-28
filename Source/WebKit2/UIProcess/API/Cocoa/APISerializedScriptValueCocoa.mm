@@ -38,7 +38,7 @@ namespace API {
 class SharedJSContext {
 public:
     SharedJSContext()
-        : m_timer(RunLoop::main(), this, &SharedJSContext::releaseContext)
+        : m_timer(RunLoop::main(), *this, &SharedJSContext::releaseContext)
     {
     }
 
@@ -58,7 +58,7 @@ public:
 
 private:
     RetainPtr<JSContext> m_context;
-    RunLoop::Timer<SharedJSContext> m_timer;
+    RunLoop::Timer m_timer;
 };
 
 id SerializedScriptValue::deserialize(WebCore::SerializedScriptValue& serializedScriptValue, JSValueRef* exception)

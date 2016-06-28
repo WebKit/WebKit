@@ -255,7 +255,7 @@ private:
     RetainPtr<NSWindow> m_inspectorWindow;
     RetainPtr<WKWebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
-    RunLoop::Timer<WebInspectorProxy> m_closeTimer;
+    RunLoop::Timer m_closeTimer;
     String m_urlString;
 #elif PLATFORM(GTK)
     WebInspectorClientGtk m_client;

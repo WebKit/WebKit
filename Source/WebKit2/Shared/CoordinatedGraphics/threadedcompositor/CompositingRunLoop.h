@@ -59,7 +59,7 @@ private:
     void updateTimerFired();
 
     RunLoop& m_runLoop;
-    RunLoop::Timer<CompositingRunLoop> m_updateTimer;
+    RunLoop::Timer m_updateTimer;
     std::function<void ()> m_updateFunction;
     Lock m_dispatchSyncConditionMutex;
     Condition m_dispatchSyncCondition;

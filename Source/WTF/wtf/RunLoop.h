@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
@@ -128,23 +128,25 @@ public:
 #endif
     };
 
-    template <typename TimerFiredClass>
     class Timer : public TimerBase {
     public:
-        typedef void (TimerFiredClass::*TimerFiredFunction)();
-
-        Timer(RunLoop& runLoop, TimerFiredClass* o, TimerFiredFunction f)
+        template <typename TimerFiredClass, typename TimerFiredBaseClass>
+        Timer(RunLoop& runLoop, TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
             : TimerBase(runLoop)
-            , m_object(o)
-            , m_function(f)
+            , m_function(std::bind(function, &object))
+        {
+        }
+
+        Timer(RunLoop& runLoop, std::function<void ()> function)
+            : TimerBase(runLoop)
+            , m_function(WTFMove(function))
         {
         }
 
     private:
-        virtual void fired() { (m_object->*m_function)(); }
+        virtual void fired() { m_function(); }
 
-        TimerFiredClass* m_object;
-        TimerFiredFunction m_function;
+        std::function<void ()> m_function;
     };
 
     class Holder;

@@ -121,10 +121,10 @@ static float scrollWheelMultiplier()
 ScrollController::ScrollController(ScrollControllerClient& client)
     : m_client(client)
 #if ENABLE(RUBBER_BANDING)
-    , m_snapRubberbandTimer(RunLoop::current(), this, &ScrollController::snapRubberBandTimerFired)
+    , m_snapRubberbandTimer(RunLoop::current(), *this, &ScrollController::snapRubberBandTimerFired)
 #endif
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    , m_scrollSnapTimer(RunLoop::current(), this, &ScrollController::scrollSnapTimerFired)
+    , m_scrollSnapTimer(RunLoop::current(), *this, &ScrollController::scrollSnapTimerFired)
 #endif
 {
 }

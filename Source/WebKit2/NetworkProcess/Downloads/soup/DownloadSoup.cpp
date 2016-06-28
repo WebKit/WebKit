@@ -50,7 +50,7 @@ class DownloadClient final : public ResourceHandleClient {
 public:
     DownloadClient(Download& download)
         : m_download(download)
-        , m_handleResponseLater(RunLoop::main(), this, &DownloadClient::handleResponse)
+        , m_handleResponseLater(RunLoop::main(), *this, &DownloadClient::handleResponse)
         , m_allowOverwrite(false)
     {
     }
@@ -203,7 +203,7 @@ public:
     GRefPtr<GFile> m_destinationFile;
     GRefPtr<GFile> m_intermediateFile;
     ResourceResponse m_delayedResponse;
-    RunLoop::Timer<DownloadClient> m_handleResponseLater;
+    RunLoop::Timer m_handleResponseLater;
     bool m_allowOverwrite;
 };
 

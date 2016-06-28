@@ -93,13 +93,13 @@ private:
 
     Vector<std::unique_ptr<TextureMapperPlatformLayerBuffer>> m_usedBuffers;
 
-    RunLoop::Timer<TextureMapperPlatformLayerProxy> m_releaseUnusedBuffersTimer;
+    RunLoop::Timer m_releaseUnusedBuffersTimer;
 #ifndef NDEBUG
     ThreadIdentifier m_compositorThreadID { 0 };
 #endif
 
     void compositorThreadUpdateTimerFired();
-    std::unique_ptr<RunLoop::Timer<TextureMapperPlatformLayerProxy>> m_compositorThreadUpdateTimer;
+    std::unique_ptr<RunLoop::Timer> m_compositorThreadUpdateTimer;
     std::function<void()> m_compositorThreadUpdateFunction;
 };
 

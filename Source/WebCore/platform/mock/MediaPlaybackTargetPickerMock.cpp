@@ -41,7 +41,7 @@ static const double timerInterval = 1.0 / 10.0;
 
 MediaPlaybackTargetPickerMock::MediaPlaybackTargetPickerMock(MediaPlaybackTargetPicker::Client& client)
     : MediaPlaybackTargetPicker(client)
-    , m_timer(RunLoop::main(), this, &MediaPlaybackTargetPickerMock::timerFired)
+    , m_timer(RunLoop::main(), *this, &MediaPlaybackTargetPickerMock::timerFired)
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::MediaPlaybackTargetPickerMock");
 }

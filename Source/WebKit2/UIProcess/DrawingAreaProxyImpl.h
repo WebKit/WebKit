@@ -108,7 +108,7 @@ private:
     bool m_isBackingStoreDiscardable;
     std::unique_ptr<BackingStore> m_backingStore;
 
-    RunLoop::Timer<DrawingAreaProxyImpl> m_discardBackingStoreTimer;
+    RunLoop::Timer m_discardBackingStoreTimer;
 };
 
 } // namespace WebKit

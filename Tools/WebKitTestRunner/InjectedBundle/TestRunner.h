@@ -43,7 +43,7 @@ typedef RetainPtr<CFRunLoopTimerRef> PlatformTimerRef;
 #include <wtf/RunLoop.h>
 namespace WTR {
 class TestRunner;
-typedef RunLoop::Timer<TestRunner> PlatformTimerRef;
+typedef RunLoop::Timer PlatformTimerRef;
 }
 #elif PLATFORM(EFL)
 typedef Ecore_Timer* PlatformTimerRef;

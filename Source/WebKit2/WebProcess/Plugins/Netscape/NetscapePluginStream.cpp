@@ -50,7 +50,7 @@ NetscapePluginStream::NetscapePluginStream(PassRefPtr<NetscapePlugin> plugin, ui
 #if !ASSERT_DISABLED
     , m_urlNotifyHasBeenCalled(false)
 #endif    
-    , m_deliveryDataTimer(RunLoop::main(), this, &NetscapePluginStream::deliverDataToPlugin)
+    , m_deliveryDataTimer(RunLoop::main(), *this, &NetscapePluginStream::deliverDataToPlugin)
     , m_stopStreamWhenDoneDelivering(false)
 {
 }

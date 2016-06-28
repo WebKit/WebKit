@@ -52,7 +52,7 @@ private:
 
     GUniquePtr<GKeyFile> m_cacheFile;
     GUniquePtr<char> m_cachePath;
-    RunLoop::Timer<PluginInfoCache> m_saveToFileIdle;
+    RunLoop::Timer m_saveToFileIdle;
     bool m_readOnlyMode;
 };
 

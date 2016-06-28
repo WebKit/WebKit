@@ -56,7 +56,7 @@ PluginProcess& PluginProcess::singleton()
 
 PluginProcess::PluginProcess()
     : m_supportsAsynchronousPluginInitialization(false)
-    , m_minimumLifetimeTimer(RunLoop::main(), this, &PluginProcess::minimumLifetimeTimerFired)
+    , m_minimumLifetimeTimer(RunLoop::main(), *this, &PluginProcess::minimumLifetimeTimerFired)
     , m_connectionActivity("PluginProcess connection activity.")
 {
     NetscapePlugin::setSetExceptionFunction(WebProcessConnection::setGlobalException);

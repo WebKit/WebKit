@@ -47,7 +47,7 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy& webPageProxy)
     , m_isWaitingForDidUpdateBackingStoreState(false)
     , m_hasReceivedFirstUpdate(false)
     , m_isBackingStoreDiscardable(true)
-    , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyImpl::discardBackingStore)
+    , m_discardBackingStoreTimer(RunLoop::current(), *this, &DrawingAreaProxyImpl::discardBackingStore)
 {
 }
 

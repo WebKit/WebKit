@@ -1,3 +1,18 @@
+2016-06-28  Brian Burg  <bburg@apple.com>
+
+        RunLoop::Timer should use constructor templates instead of class templates
+        https://bugs.webkit.org/show_bug.cgi?id=159153
+
+        Reviewed by Alex Christensen.
+
+        Refactor RunLoop::Timer to align with WebCore::Timer. Use a constructor
+        template instead of a class template. Store a bound std::function rather than
+        a templated member and function. Add a constructor that takes a std::function.
+
+        * wtf/RunLoop.h:
+        (WTF::RunLoop::Timer::Timer):
+        (WTF::RunLoop::Timer::fired):
+
 2016-06-28  Tomas Popela  <tpopela@redhat.com>
 
         THUMB2 support not correctly detected on Fedora with GCC 6.1.

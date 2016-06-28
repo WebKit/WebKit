@@ -56,7 +56,7 @@ static HashMap<uint64_t, ViewGestureController*>& viewGestureControllersForAllPa
 
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
-    , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), this, &ViewGestureController::checkForActiveLoads)
+    , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), *this, &ViewGestureController::checkForActiveLoads)
 #if PLATFORM(MAC)
     , m_pendingSwipeTracker(webPageProxy, std::bind(&ViewGestureController::trackSwipeGesture, this, std::placeholders::_1, std::placeholders::_2))
 #endif
@@ -162,7 +162,7 @@ void ViewGestureController::checkForActiveLoads()
 }
 
 ViewGestureController::SnapshotRemovalTracker::SnapshotRemovalTracker()
-    : m_watchdogTimer(RunLoop::main(), this, &SnapshotRemovalTracker::watchdogTimerFired)
+    : m_watchdogTimer(RunLoop::main(), *this, &SnapshotRemovalTracker::watchdogTimerFired)
 {
 }
 

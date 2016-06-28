@@ -74,7 +74,7 @@ class VideoRenderRequestScheduler {
 public:
     VideoRenderRequestScheduler()
 #if !USE(COORDINATED_GRAPHICS_THREADED)
-        : m_timer(RunLoop::main(), this, &VideoRenderRequestScheduler::render)
+        : m_timer(RunLoop::main(), *this, &VideoRenderRequestScheduler::render)
 #endif
     {
 #if PLATFORM(GTK) && !USE(COORDINATED_GRAPHICS_THREADED)
@@ -140,7 +140,7 @@ private:
     GRefPtr<GstSample> m_sample;
 
 #if !USE(COORDINATED_GRAPHICS_THREADED)
-    RunLoop::Timer<VideoRenderRequestScheduler> m_timer;
+    RunLoop::Timer m_timer;
     Condition m_dataCondition;
     GRefPtr<WebKitVideoSink> m_sink;
 #endif

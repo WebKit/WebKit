@@ -71,7 +71,7 @@ static PageLevelMap& pageLevelMap()
 WebInspectorProxy::WebInspectorProxy(WebPageProxy* inspectedPage)
     : m_inspectedPage(inspectedPage)
 #if PLATFORM(MAC) && WK_API_ENABLED
-    , m_closeTimer(RunLoop::main(), this, &WebInspectorProxy::closeTimerFired)
+    , m_closeTimer(RunLoop::main(), *this, &WebInspectorProxy::closeTimerFired)
 #endif
 {
     m_inspectedPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);

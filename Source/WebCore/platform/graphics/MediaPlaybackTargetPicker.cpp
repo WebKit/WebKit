@@ -37,7 +37,7 @@ static const double pendingActionInterval = 1.0 / 10.0;
 
 MediaPlaybackTargetPicker::MediaPlaybackTargetPicker(Client& client)
     : m_client(&client)
-    , m_pendingActionTimer(RunLoop::main(), this, &MediaPlaybackTargetPicker::pendingActionTimerFired)
+    , m_pendingActionTimer(RunLoop::main(), *this, &MediaPlaybackTargetPicker::pendingActionTimerFired)
 {
 }
 
