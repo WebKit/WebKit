@@ -1,3 +1,16 @@
+2016-06-28  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Web audio tests failing since GStreamer 1.6 upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=158927
+
+        Unreviewed GTK rebaseline of webaudio tests.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav:
+        * platform/gtk/webaudio/codec-tests/vorbis/vbr-128kbps-44khz-expected.wav:
+        * platform/gtk/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav:
+        * platform/gtk/webaudio/codec-tests/vorbis/vbr-96kbps-44khz-expected.wav:
+
 2016-06-28  Youenn Fablet  <youenn@apple.com>
 
         http/tests/media/hls/video-controller-getStartDate.html is failing on non-PDT time-based computers
