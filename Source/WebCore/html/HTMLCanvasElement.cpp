@@ -206,14 +206,6 @@ static inline size_t maxActivePixelMemory()
 
 CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, CanvasContextAttributes* attrs)
 {
-    // A Canvas can either be "2D" or "webgl" but never both. If you request a 2D canvas and the existing
-    // context is already 2D, just return that. If the existing context is WebGL, then destroy it
-    // before creating a new 2D context. Vice versa when requesting a WebGL canvas. Requesting a
-    // context with any other type string will destroy any existing context.
-    
-    // FIXME: The code depends on the context not going away once created, to prevent JS from
-    // seeing a dangling pointer. So for now we will disallow the context from being changed
-    // once it is created. https://bugs.webkit.org/show_bug.cgi?id=117095
     if (is2dType(type)) {
         if (m_context && !m_context->is2d())
             return nullptr;
@@ -271,11 +263,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
     
 bool HTMLCanvasElement::probablySupportsContext(const String& type, CanvasContextAttributes*)
 {
-    // FIXME: Provide implementation that accounts for attributes. Bugzilla bug 117093
+    // FIXME: Provide implementation that accounts for attributes.
     // https://bugs.webkit.org/show_bug.cgi?id=117093
-
-    // FIXME: The code depends on the context not going away once created (as getContext
-    // is implemented under this assumption) https://bugs.webkit.org/show_bug.cgi?id=117095
     if (is2dType(type))
         return !m_context || m_context->is2d();
 
