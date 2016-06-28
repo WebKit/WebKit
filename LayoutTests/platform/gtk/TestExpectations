@@ -1095,7 +1095,6 @@ webkit.org/b/132254 fast/sub-pixel/simple-clipping.html [ ImageOnlyFailure Crash
 webkit.org/b/132257 fast/history/form-submit-in-frame-via-onclick.html [ Timeout Pass ]
 webkit.org/b/132260 fast/workers/worker-close.html [ Timeout Pass ]
 webkit.org/b/132261 html5lib/generated/run-tests16-data.html [ Timeout Pass ]
-webkit.org/b/132267 mathml/wbr-in-mroot-crash.html [ Timeout Pass ]
 webkit.org/b/132272 fast/dom/gc-10.html [ Failure Pass ]
 webkit.org/b/132279 perf/mouse-event.html [ Failure Pass ]
 webkit.org/b/132281 fast/workers/worker-constructor.html [ Timeout Pass ]

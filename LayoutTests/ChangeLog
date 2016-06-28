@@ -1,5 +1,19 @@
 2016-06-28  Frederic Wang  <fwang@igalia.com>
 
+        Remove flakiness expectations for mathml/wbr-in-mroot-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=130353
+
+        Unreviewed gardening.
+
+        The flakiness seemed to be due to the timeout of mathml/very-large-stretchy-operators.html.
+        The latter was fixed in r202489, so we update the test expectations.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2016-06-28  Frederic Wang  <fwang@igalia.com>
+
         Increase opacity of stretched operators in mo-stacked-glyphs.html
         https://bugs.webkit.org/show_bug.cgi?id=159201
 
