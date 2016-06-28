@@ -1,3 +1,16 @@
+2016-06-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: When modifying sessionStorage, localStorage gets updated
+        https://bugs.webkit.org/show_bug.cgi?id=159181
+        <rdar://problem/27043447>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/storage/domStorage-events-expected.txt: Added.
+        * inspector/storage/domStorage-events.html: Added.
+        Add a new test for DOMStorage domain events. Ensures that sessionStorage
+        and localStorage events are dispatched for the appropriate DOMStorageObject.
+
 2016-06-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Test gardening for the system font in macOS Sierra and iOS 10

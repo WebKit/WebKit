@@ -1,0 +1,36 @@
+Test for the DOMStorage events.
+
+
+== Running test suite: DOMStorage.Events
+-- Running test case: TestSessionStorage
+PASS: Should have a DOMStorageObject for sessionStorage.
+PASS: WebInspector.DOMStorageObject.Event.ItemAdded
+PASS: Should add key 'foo'.
+PASS: Should have value 'value1'.
+PASS: WebInspector.DOMStorageObject.Event.ItemAdded
+PASS: Should add key 'x'.
+PASS: Should have value 'xvalue'.
+PASS: WebInspector.DOMStorageObject.Event.ItemUpdated
+PASS: Should update key 'x'.
+PASS: Should have oldValue 'value1'.
+PASS: Should have new value 'value2'.
+PASS: WebInspector.DOMStorageObject.Event.ItemRemoved
+PASS: Should remove key 'x'.
+PASS: WebInspector.DOMStorageObject.Event.ItemsCleared
+
+-- Running test case: TestLocalStorage
+PASS: Should have a DOMStorageObject for localStorage.
+PASS: WebInspector.DOMStorageObject.Event.ItemAdded
+PASS: Should add key 'foo'.
+PASS: Should have value 'value1'.
+PASS: WebInspector.DOMStorageObject.Event.ItemAdded
+PASS: Should add key 'x'.
+PASS: Should have value 'xvalue'.
+PASS: WebInspector.DOMStorageObject.Event.ItemUpdated
+PASS: Should update key 'x'.
+PASS: Should have oldValue 'value1'.
+PASS: Should have new value 'value2'.
+PASS: WebInspector.DOMStorageObject.Event.ItemRemoved
+PASS: Should remove key 'x'.
+PASS: WebInspector.DOMStorageObject.Event.ItemsCleared
+

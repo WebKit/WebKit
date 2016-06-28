@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function clearStorages() {
+    sessionStorage.clear();
+    localStorage.clear();
+}
+
+function triggerActions(storage) {
+    storage.setItem("foo", "value1");
+    storage.setItem("x", "xvalue");
+    storage.setItem("foo", "value2");
+    storage.removeItem("foo");
+    storage.clear();
+}
+
+function test()
+{
+    function testStorageEvents(storageObject, callback) {
+        let count = 0;
+        storageObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemAdded, (event) => {
+            count++;
+
+            if (count === 1) {
+                InspectorTest.pass("WebInspector.DOMStorageObject.Event.ItemAdded");
+                InspectorTest.expectThat(event.data.key === "foo", "Should add key 'foo'.");
+                InspectorTest.expectThat(event.data.value === "value1", "Should have value 'value1'.");
+                return;
+            }
+
+            if (count === 2) {
+                InspectorTest.pass("WebInspector.DOMStorageObject.Event.ItemAdded");
+                InspectorTest.expectThat(event.data.key === "x", "Should add key 'x'.");
+                InspectorTest.expectThat(event.data.value === "xvalue", "Should have value 'xvalue'.");
+                return;
+            }
+
+            InspectorTest.fail("Unexpected WebInspector.DOMStorageObject.Event.ItemAdded");
+        });
+
+        storageObject.singleFireEventListener(WebInspector.DOMStorageObject.Event.ItemRemoved, (event) => {
+            InspectorTest.pass("WebInspector.DOMStorageObject.Event.ItemRemoved");
+            InspectorTest.expectThat(event.data.key === "foo", "Should remove key 'x'.");
+        });
+
+        storageObject.singleFireEventListener(WebInspector.DOMStorageObject.Event.ItemUpdated, (event) => {
+            InspectorTest.pass("WebInspector.DOMStorageObject.Event.ItemUpdated");
+            InspectorTest.expectThat(event.data.key === "foo", "Should update key 'x'.");
+            InspectorTest.expectThat(event.data.oldValue === "value1", "Should have oldValue 'value1'.");
+            InspectorTest.expectThat(event.data.value === "value2", "Should have new value 'value2'.");
+        });
+
+        storageObject.singleFireEventListener(WebInspector.DOMStorageObject.Event.ItemsCleared, (event) => {
+            InspectorTest.pass("WebInspector.DOMStorageObject.Event.ItemsCleared");
+            storageObject.removeEventListener(WebInspector.DOMStorageObject.Event.ItemAdded, null, null);
+            callback();
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("DOMStorage.Events");
+
+    suite.addTestCase({
+        name: "TestSessionStorage",
+        description: "Test backend generated DOMStorage added, removed, updated, and cleared events for sessionStorage.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("triggerActions(sessionStorage)");
+            let sessionStorage = WebInspector.storageManager.domStorageObjects.find((x) => !x.isLocalStorage());
+            InspectorTest.expectThat(sessionStorage, "Should have a DOMStorageObject for sessionStorage.");
+            testStorageEvents(sessionStorage, resolve);
+        }
+    });
+
+    suite.addTestCase({
+        name: "TestLocalStorage",
+        description: "Test backend generated DOMStorage added, removed, updated, and cleared events for localStorage.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("triggerActions(localStorage)");
+            let localStorage = WebInspector.storageManager.domStorageObjects.find((x) => x.isLocalStorage());
+            InspectorTest.expectThat(localStorage, "Should have a DOMStorageObject for localStorage.");
+            testStorageEvents(localStorage, resolve);
+        }
+    });
+
+    InspectorTest.evaluateInPage("clearStorages()", () => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for the DOMStorage events.</p>
+</body>
+</html>

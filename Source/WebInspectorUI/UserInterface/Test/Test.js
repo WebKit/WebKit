@@ -42,6 +42,7 @@ WebInspector.loaded = function()
     InspectorBackend.registerNetworkDispatcher(new WebInspector.NetworkObserver);
     InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerObserver);
     InspectorBackend.registerHeapDispatcher(new WebInspector.HeapObserver);
+    InspectorBackend.registerDOMStorageDispatcher(new WebInspector.DOMStorageObserver);
     InspectorBackend.registerTimelineDispatcher(new WebInspector.TimelineObserver);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
     InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
@@ -50,6 +51,7 @@ WebInspector.loaded = function()
 
     // Instantiate controllers used by tests.
     this.frameResourceManager = new WebInspector.FrameResourceManager;
+    this.storageManager = new WebInspector.StorageManager;
     this.domTreeManager = new WebInspector.DOMTreeManager;
     this.cssStyleManager = new WebInspector.CSSStyleManager;
     this.logManager = new WebInspector.LogManager;
