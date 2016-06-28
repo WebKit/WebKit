@@ -79,7 +79,7 @@ bool PaymentRequestValidator::validateTotal(const PaymentRequest::LineItem& tota
         return false;
     }
 
-    if (*total.amount > 1000000) {
+    if (*total.amount > 10000000000) {
         m_window.printErrorMessage("Total amount is too big.");
         return false;
     }
