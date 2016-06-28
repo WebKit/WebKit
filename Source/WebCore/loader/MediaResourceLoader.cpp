@@ -78,7 +78,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(const Resourc
 
     // FIXME: Skip Content Security Policy check if the element that inititated this request
     // is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505>.
-    CachedResourceRequest cacheRequest(updatedRequest, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, allowCredentials, DoNotAskClientForCrossOriginCredentials, ClientDidNotRequestCredentials, DoSecurityCheck, corsPolicy, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, cachingPolicy));
+    CachedResourceRequest cacheRequest(updatedRequest, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, allowCredentials, AskClientForAllCredentials, ClientDidNotRequestCredentials, DoSecurityCheck, corsPolicy, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, cachingPolicy));
 
     if (!m_crossOriginMode.isNull())
         updateRequestForAccessControl(cacheRequest.mutableResourceRequest(), m_document->securityOrigin(), allowCredentials);

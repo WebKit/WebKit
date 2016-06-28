@@ -1,3 +1,16 @@
+2016-06-28  Jer Noble  <jer.noble@apple.com>
+
+        Cross-domain video loads do not prompt for authorization.
+        https://bugs.webkit.org/show_bug.cgi?id=159195
+        <rdar://problem/26234612>
+
+        Reviewed by Brent Fulgham.
+
+        Add a cross-origin authorization sub-test.
+
+        * http/tests/media/video-auth.html:
+        * http/tests/media/video-auth-expected.txt:
+
 2016-06-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/multicol/fixed-stack.html as failing on ios-simulator

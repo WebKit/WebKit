@@ -10,35 +10,51 @@
                 testRunner.setAuthenticationPassword("password");
             }
 
-            function loadMediaFrame() 
+            var tests;
+            var media = findMediaFile('video', 'test');
+            var type = mimeTypeForExtension(media.split('.').pop());
+
+            function startTests()
             {
                 findMediaElement();
+                waitForEventAndFail('error');
+                waitForEvent('canplay', runNextTest);
 
-                var movie = findMediaFile('video', 'test');
-                var type = mimeTypeForExtension(movie.split('.').pop());
-                var frame = document.createElement('iframe');
-                frame.width = 0;
-                frame.height = 0;
-                frame.addEventListener('load', function () {
-                        source = document.getElementById('source');
-                        source.src = 'http://127.0.0.1:8000/media/resources/video-auth.php?name=' + movie + '&type=' + type;
-                        source.type = type;
-        
-                        waitForEventAndFail('error');
-                        waitForEventAndEnd('canplay');
-                        video.load();
-                });
-        
-                frame.src = "data:text/html,<b>test</b>";
-                document.body.appendChild(frame);
+                tests = [
+                    testSameDomain,
+                    testCrossDomain,
+                ];
+
+                runNextTest();
+            }
+
+            function runNextTest()
+            {
+                var test = tests.shift();
+                if (test)
+                    test();
+                else
+                    endTest();
+            }
+
+            function testSameDomain()
+            {
+                consoleWrite('Testing same domain (127.0.0.1)');
+                video.src = 'http://127.0.0.1:8000/media/resources/video-auth.php?name=' + media + '&type=' + type;
+                video.load();
+            }
+
+            function testCrossDomain()
+            {
+                consoleWrite('Testing cross domain (localhost)');
+                video.src = 'http://localhost:8000/media/resources/video-auth.php?name=' + media + '&type=' + type;
+                video.load();
             }
         </script>
     </head>
 
-    <body onload="loadMediaFrame()">
-        <video id="video">
-            <source id="source">
-        </video>
+    <body onload="startTests()">
+        <video></video>
         <br>
         Tests that the media player sends authorization credentials when requesting a media file.
     </body>
