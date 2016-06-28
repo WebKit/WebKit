@@ -31,7 +31,9 @@
     Conditional=STREAMS_API,
     Constructor,
     Exposed=(Window,Worker),
-    JSBuiltin
+    JSBuiltin,
+    PrivateIdentifier,
+    PublicIdentifier
 ] interface ReadableStream {
     Promise cancel(optional any reason);
     Object getReader();

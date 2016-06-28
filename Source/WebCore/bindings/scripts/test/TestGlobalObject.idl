@@ -26,6 +26,8 @@
 // This interface is recognized as a global object by the bindings generator.
 interface TestGlobalObject {
     attribute DOMString regularAttribute;
+    [PrivateIdentifier, PublicIdentifier] attribute DOMString publicAndPrivateAttribute;
+    [Conditional=TEST_FEATURE, PrivateIdentifier, PublicIdentifier] attribute DOMString publicAndPrivateConditionalAttribute;
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] attribute DOMString enabledAtRuntimeAttribute;
     void regularOperation(DOMString testParam);
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);

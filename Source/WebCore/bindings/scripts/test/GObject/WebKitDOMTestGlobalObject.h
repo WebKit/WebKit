@@ -99,6 +99,48 @@ WEBKIT_API void
 webkit_dom_test_global_object_set_regular_attribute(WebKitDOMTestGlobalObject* self, const gchar* value);
 
 /**
+ * webkit_dom_test_global_object_get_public_and_private_attribute:
+ * @self: A #WebKitDOMTestGlobalObject
+ *
+ * Returns: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gchar*
+webkit_dom_test_global_object_get_public_and_private_attribute(WebKitDOMTestGlobalObject* self);
+
+/**
+ * webkit_dom_test_global_object_set_public_and_private_attribute:
+ * @self: A #WebKitDOMTestGlobalObject
+ * @value: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_global_object_set_public_and_private_attribute(WebKitDOMTestGlobalObject* self, const gchar* value);
+
+/**
+ * webkit_dom_test_global_object_get_public_and_private_conditional_attribute:
+ * @self: A #WebKitDOMTestGlobalObject
+ *
+ * Returns: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gchar*
+webkit_dom_test_global_object_get_public_and_private_conditional_attribute(WebKitDOMTestGlobalObject* self);
+
+/**
+ * webkit_dom_test_global_object_set_public_and_private_conditional_attribute:
+ * @self: A #WebKitDOMTestGlobalObject
+ * @value: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_global_object_set_public_and_private_conditional_attribute(WebKitDOMTestGlobalObject* self, const gchar* value);
+
+/**
  * webkit_dom_test_global_object_get_enabled_at_runtime_attribute:
  * @self: A #WebKitDOMTestGlobalObject
  *

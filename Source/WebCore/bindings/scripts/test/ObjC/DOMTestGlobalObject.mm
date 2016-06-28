@@ -66,6 +66,32 @@
     IMPL->setRegularAttribute(newRegularAttribute);
 }
 
+- (NSString *)publicAndPrivateAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->publicAndPrivateAttribute();
+}
+
+- (void)setPublicAndPrivateAttribute:(NSString *)newPublicAndPrivateAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setPublicAndPrivateAttribute(newPublicAndPrivateAttribute);
+}
+
+#if ENABLE(TEST_FEATURE)
+- (NSString *)publicAndPrivateConditionalAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->publicAndPrivateConditionalAttribute();
+}
+
+- (void)setPublicAndPrivateConditionalAttribute:(NSString *)newPublicAndPrivateConditionalAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setPublicAndPrivateConditionalAttribute(newPublicAndPrivateConditionalAttribute);
+}
+#endif
+
 #if ENABLE(TEST_FEATURE)
 - (NSString *)enabledAtRuntimeAttribute
 {

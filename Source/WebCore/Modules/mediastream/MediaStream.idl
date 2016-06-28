@@ -28,6 +28,8 @@
     Constructor(MediaStream stream),
     Constructor(MediaStreamTrack[] tracks),
     ConstructorCallWith=ScriptExecutionContext,
+    PrivateIdentifier,
+    PublicIdentifier
 ] interface MediaStream : EventTarget {
 
     readonly attribute DOMString id;

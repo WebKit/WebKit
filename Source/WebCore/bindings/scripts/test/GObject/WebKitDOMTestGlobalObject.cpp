@@ -70,6 +70,8 @@ G_DEFINE_TYPE(WebKitDOMTestGlobalObject, webkit_dom_test_global_object, WEBKIT_D
 enum {
     PROP_0,
     PROP_REGULAR_ATTRIBUTE,
+    PROP_PUBLIC_AND_PRIVATE_ATTRIBUTE,
+    PROP_PUBLIC_AND_PRIVATE_CONDITIONAL_ATTRIBUTE,
     PROP_ENABLED_AT_RUNTIME_ATTRIBUTE,
 };
 
@@ -91,6 +93,12 @@ static void webkit_dom_test_global_object_set_property(GObject* object, guint pr
     case PROP_REGULAR_ATTRIBUTE:
         webkit_dom_test_global_object_set_regular_attribute(self, g_value_get_string(value));
         break;
+    case PROP_PUBLIC_AND_PRIVATE_ATTRIBUTE:
+        webkit_dom_test_global_object_set_public_and_private_attribute(self, g_value_get_string(value));
+        break;
+    case PROP_PUBLIC_AND_PRIVATE_CONDITIONAL_ATTRIBUTE:
+        webkit_dom_test_global_object_set_public_and_private_conditional_attribute(self, g_value_get_string(value));
+        break;
     case PROP_ENABLED_AT_RUNTIME_ATTRIBUTE:
         webkit_dom_test_global_object_set_enabled_at_runtime_attribute(self, g_value_get_string(value));
         break;
@@ -107,6 +115,12 @@ static void webkit_dom_test_global_object_get_property(GObject* object, guint pr
     switch (propertyId) {
     case PROP_REGULAR_ATTRIBUTE:
         g_value_take_string(value, webkit_dom_test_global_object_get_regular_attribute(self));
+        break;
+    case PROP_PUBLIC_AND_PRIVATE_ATTRIBUTE:
+        g_value_take_string(value, webkit_dom_test_global_object_get_public_and_private_attribute(self));
+        break;
+    case PROP_PUBLIC_AND_PRIVATE_CONDITIONAL_ATTRIBUTE:
+        g_value_take_string(value, webkit_dom_test_global_object_get_public_and_private_conditional_attribute(self));
         break;
     case PROP_ENABLED_AT_RUNTIME_ATTRIBUTE:
         g_value_take_string(value, webkit_dom_test_global_object_get_enabled_at_runtime_attribute(self));
@@ -144,6 +158,26 @@ static void webkit_dom_test_global_object_class_init(WebKitDOMTestGlobalObjectCl
             "regular-attribute",
             "TestGlobalObject:regular-attribute",
             "read-write gchar* TestGlobalObject:regular-attribute",
+            "",
+            WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_PUBLIC_AND_PRIVATE_ATTRIBUTE,
+        g_param_spec_string(
+            "public-and-private-attribute",
+            "TestGlobalObject:public-and-private-attribute",
+            "read-write gchar* TestGlobalObject:public-and-private-attribute",
+            "",
+            WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_PUBLIC_AND_PRIVATE_CONDITIONAL_ATTRIBUTE,
+        g_param_spec_string(
+            "public-and-private-conditional-attribute",
+            "TestGlobalObject:public-and-private-conditional-attribute",
+            "read-write gchar* TestGlobalObject:public-and-private-conditional-attribute",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -222,6 +256,56 @@ void webkit_dom_test_global_object_set_regular_attribute(WebKitDOMTestGlobalObje
     WebCore::TestGlobalObject* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setRegularAttribute(convertedValue);
+}
+
+gchar* webkit_dom_test_global_object_get_public_and_private_attribute(WebKitDOMTestGlobalObject* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_GLOBAL_OBJECT(self), 0);
+    WebCore::TestGlobalObject* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->publicAndPrivateAttribute());
+    return result;
+}
+
+void webkit_dom_test_global_object_set_public_and_private_attribute(WebKitDOMTestGlobalObject* self, const gchar* value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_GLOBAL_OBJECT(self));
+    g_return_if_fail(value);
+    WebCore::TestGlobalObject* item = WebKit::core(self);
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setPublicAndPrivateAttribute(convertedValue);
+}
+
+gchar* webkit_dom_test_global_object_get_public_and_private_conditional_attribute(WebKitDOMTestGlobalObject* self)
+{
+#if ENABLE(TEST_FEATURE)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_GLOBAL_OBJECT(self), 0);
+    WebCore::TestGlobalObject* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->publicAndPrivateConditionalAttribute());
+    return result;
+#else
+    UNUSED_PARAM(self);
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Test Feature")
+    return 0;
+#endif /* ENABLE(TEST_FEATURE) */
+}
+
+void webkit_dom_test_global_object_set_public_and_private_conditional_attribute(WebKitDOMTestGlobalObject* self, const gchar* value)
+{
+#if ENABLE(TEST_FEATURE)
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_GLOBAL_OBJECT(self));
+    g_return_if_fail(value);
+    WebCore::TestGlobalObject* item = WebKit::core(self);
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setPublicAndPrivateConditionalAttribute(convertedValue);
+#else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(value);
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Test Feature")
+#endif /* ENABLE(TEST_FEATURE) */
 }
 
 gchar* webkit_dom_test_global_object_get_enabled_at_runtime_attribute(WebKitDOMTestGlobalObject* self)

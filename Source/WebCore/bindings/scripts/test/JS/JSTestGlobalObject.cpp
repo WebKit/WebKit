@@ -27,6 +27,7 @@
 #include "JSDOMConvert.h"
 #include "RuntimeEnabledFeatures.h"
 #include "URL.h"
+#include "WebCoreJSClientData.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSString.h>
@@ -47,6 +48,12 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRun
 
 JSC::EncodedJSValue jsTestGlobalObjectRegularAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectRegularAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestGlobalObjectPublicAndPrivateAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestGlobalObjectPublicAndPrivateAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+#if ENABLE(TEST_FEATURE)
+JSC::EncodedJSValue jsTestGlobalObjectPublicAndPrivateConditionalAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestGlobalObjectPublicAndPrivateConditionalAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+#endif
 #if ENABLE(TEST_FEATURE)
 JSC::EncodedJSValue jsTestGlobalObjectEnabledAtRuntimeAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectEnabledAtRuntimeAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
@@ -58,14 +65,22 @@ typedef JSDOMConstructorNotConstructable<JSTestGlobalObject> JSTestGlobalObjectC
 
 /* Hash table */
 
-static const struct CompactHashIndex JSTestGlobalObjectTableIndex[8] = {
+static const struct CompactHashIndex JSTestGlobalObjectTableIndex[16] = {
     { -1, -1 },
-    { 1, -1 },
     { -1, -1 },
+    { 2, -1 },
     { 0, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
     { -1, -1 },
 };
 
@@ -73,10 +88,16 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[8] = {
 static const HashTableValue JSTestGlobalObjectTableValues[] =
 {
     { "regularAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectRegularAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectRegularAttribute) } },
+    { "publicAndPrivateAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectPublicAndPrivateAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectPublicAndPrivateAttribute) } },
+#if ENABLE(TEST_FEATURE)
+    { "publicAndPrivateConditionalAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectPublicAndPrivateConditionalAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectPublicAndPrivateConditionalAttribute) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
     { "regularOperation", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestGlobalObjectInstanceFunctionRegularOperation), (intptr_t) (1) } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 2, 7, true, JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 4, 15, true, JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
 template<> JSValue JSTestGlobalObjectConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -125,6 +146,10 @@ void JSTestGlobalObject::finishCreation(VM& vm, JSProxy* proxy)
         putDirectCustomAccessor(vm, vm.propertyNames->enabledAtRuntimeAttribute, customGetterSetter, attributesForStructure(CustomAccessor));
     }
 #endif
+    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().publicAndPrivateAttributePrivateName(), CustomGetterSetter::create(vm, jsTestGlobalObjectPublicAndPrivateAttribute, nullptr), attributesForStructure(DontDelete | ReadOnly));
+#if ENABLE(TEST_FEATURE)
+    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().publicAndPrivateConditionalAttributePrivateName(), CustomGetterSetter::create(vm, jsTestGlobalObjectPublicAndPrivateConditionalAttribute, nullptr), attributesForStructure(DontDelete | ReadOnly));
+#endif
 #if ENABLE(TEST_FEATURE)
     if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
         putDirectNativeFunction(vm, this, vm.propertyNames->enabledAtRuntimeOperation, 1, jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation, NoIntrinsic, attributesForStructure(JSC::Function));
@@ -151,6 +176,38 @@ EncodedJSValue jsTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSVal
     return JSValue::encode(result);
 }
 
+
+EncodedJSValue jsTestGlobalObjectPublicAndPrivateAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(thisValue);
+    JSValue decodedThisValue = JSValue::decode(thisValue);
+    auto* castedThis = jsDynamicCast<JSTestGlobalObject*>(decodedThisValue);
+    if (UNLIKELY(!castedThis)) {
+        return throwGetterTypeError(*state, "TestGlobalObject", "publicAndPrivateAttribute");
+    }
+    auto& impl = castedThis->wrapped();
+    JSValue result = jsStringWithCache(state, impl.publicAndPrivateAttribute());
+    return JSValue::encode(result);
+}
+
+
+#if ENABLE(TEST_FEATURE)
+EncodedJSValue jsTestGlobalObjectPublicAndPrivateConditionalAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(thisValue);
+    JSValue decodedThisValue = JSValue::decode(thisValue);
+    auto* castedThis = jsDynamicCast<JSTestGlobalObject*>(decodedThisValue);
+    if (UNLIKELY(!castedThis)) {
+        return throwGetterTypeError(*state, "TestGlobalObject", "publicAndPrivateConditionalAttribute");
+    }
+    auto& impl = castedThis->wrapped();
+    JSValue result = jsStringWithCache(state, impl.publicAndPrivateConditionalAttribute());
+    return JSValue::encode(result);
+}
+
+#endif
 
 #if ENABLE(TEST_FEATURE)
 EncodedJSValue jsTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
@@ -205,6 +262,42 @@ bool setJSTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSValue this
     return true;
 }
 
+
+bool setJSTestGlobalObjectPublicAndPrivateAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestGlobalObject* castedThis = jsDynamicCast<JSTestGlobalObject*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        return throwSetterTypeError(*state, "TestGlobalObject", "publicAndPrivateAttribute");
+    }
+    auto& impl = castedThis->wrapped();
+    auto nativeValue = value.toWTFString(state);
+    if (UNLIKELY(state->hadException()))
+        return false;
+    impl.setPublicAndPrivateAttribute(WTFMove(nativeValue));
+    return true;
+}
+
+
+#if ENABLE(TEST_FEATURE)
+bool setJSTestGlobalObjectPublicAndPrivateConditionalAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestGlobalObject* castedThis = jsDynamicCast<JSTestGlobalObject*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        return throwSetterTypeError(*state, "TestGlobalObject", "publicAndPrivateConditionalAttribute");
+    }
+    auto& impl = castedThis->wrapped();
+    auto nativeValue = value.toWTFString(state);
+    if (UNLIKELY(state->hadException()))
+        return false;
+    impl.setPublicAndPrivateConditionalAttribute(WTFMove(nativeValue));
+    return true;
+}
+
+#endif
 
 #if ENABLE(TEST_FEATURE)
 bool setJSTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)

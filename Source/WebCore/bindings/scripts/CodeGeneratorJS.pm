@@ -2393,6 +2393,21 @@ sub GenerateImplementation
             push(@implContent, "    }\n");
             push(@implContent, "#endif\n") if $conditionalString;
         }
+
+        # Support PrivateIdentifier attributes on global objects
+        foreach my $attribute (@{$interface->attributes}) {
+            next unless $attribute->signature->extendedAttributes->{"PrivateIdentifier"};
+
+            AddToImplIncludes("WebCoreJSClientData.h");
+            my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
+            my $attributeName = $attribute->signature->name;
+            my $getter = GetAttributeGetterName($interface, $className, $attribute);
+
+            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+            push(@implContent, "    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PrivateName(), CustomGetterSetter::create(vm, $getter, nullptr), attributesForStructure(DontDelete | ReadOnly));\n");
+            push(@implContent, "#endif\n") if $conditionalString;
+        }
+
         # Support for RuntimeEnabled operations on global objects.
         foreach my $function (@{$interface->functions}) {
             next unless $function->signature->extendedAttributes->{"EnabledAtRuntime"};

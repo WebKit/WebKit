@@ -31,6 +31,8 @@
 WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
 WEBCORE_EXPORT @interface DOMTestGlobalObject : DOMObject
 @property (copy) NSString *regularAttribute;
+@property (copy) NSString *publicAndPrivateAttribute;
+@property (copy) NSString *publicAndPrivateConditionalAttribute;
 @property (copy) NSString *enabledAtRuntimeAttribute;
 
 - (void)regularOperation:(NSString *)testParam;
