@@ -51,6 +51,18 @@ static inline const char* sansSerifSimplifiedHanFontFamily()
 
 #if PLATFORM(MAC)
 
+static bool osakaMonoIsInstalled()
+{
+    int one = 1;
+    RetainPtr<CFNumberRef> yes = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &one));
+    CFTypeRef keys[] = { kCTFontEnabledAttribute, kCTFontNameAttribute };
+    CFTypeRef values[] = { yes.get(), CFSTR("Osaka-Mono") };
+    RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(values), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    RetainPtr<CTFontDescriptorRef> descriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
+    RetainPtr<CFSetRef> mandatoryAttributes = adoptCF(CFSetCreate(kCFAllocatorDefault, keys, WTF_ARRAY_LENGTH(keys), &kCFTypeSetCallBacks));
+    return adoptCF(CTFontDescriptorCreateMatchingFontDescriptor(descriptor.get(), mandatoryAttributes.get()));
+}
+
 void Settings::initializeDefaultFontFamilies()
 {
     setStandardFontFamily("Songti TC", USCRIPT_TRADITIONAL_HAN);
@@ -64,7 +76,7 @@ void Settings::initializeDefaultFontFamilies()
     setSansSerifFontFamily(sansSerifSimplifiedHanFontFamily(), USCRIPT_SIMPLIFIED_HAN);
 
     setStandardFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
-    setFixedFontFamily("Osaka-Mono", USCRIPT_KATAKANA_OR_HIRAGANA);
+    setFixedFontFamily(osakaMonoIsInstalled() ? "Osaka-Mono" : "Hiragino Sans", USCRIPT_KATAKANA_OR_HIRAGANA);
     setSerifFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
     setSansSerifFontFamily("Hiragino Kaku Gothic ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
 
