@@ -1,3 +1,13 @@
+2016-06-28  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Robustify 'this' type check in RTCPeerConnection JS built-ins
+        https://bugs.webkit.org/show_bug.cgi?id=158831
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/RTCPeerConnection-js-built-ins-check-this-expected.txt:
+        Flip some result lines from FAIL to PASS. Clean out unnecessary tests (third set).
+
 2016-06-28  Frederic Wang  <fwang@igalia.com>
 
         Remove flakiness expectations for mathml/wbr-in-mroot-crash.html

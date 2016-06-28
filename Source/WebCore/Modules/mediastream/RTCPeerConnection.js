@@ -49,6 +49,7 @@ function initializeRTCPeerConnection(configuration)
         throw new @TypeError(message);
     }
 
+    this.@operations = [];
     this.@localStreams = [];
 
     return this;
