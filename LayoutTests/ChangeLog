@@ -1,3 +1,9 @@
+2016-06-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline test on iOS after r202539.
+
+        * platform/ios-simulator/fast/dom/event-handler-attributes-expected.txt:
+
 2016-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         Mark some tests as image failures.
