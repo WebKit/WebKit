@@ -1,3 +1,11 @@
+2016-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark some tests as image failures.
+        
+        These tests started to fail with the render server snapshotting enabled in r202532.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-06-27  Chris Dumez  <cdumez@apple.com>
 
         HTMLElement / SVGElement should implement GlobalEventHandlers, not Element
