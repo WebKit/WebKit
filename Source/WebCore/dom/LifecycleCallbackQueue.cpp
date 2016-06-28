@@ -45,16 +45,16 @@ public:
         AttributeChanged,
     };
 
-    LifecycleQueueItem(Type type, Element& element, JSCustomElementInterface& interface)
+    LifecycleQueueItem(Type type, Element& element, JSCustomElementInterface& elementInterface)
         : m_type(type)
         , m_element(element)
-        , m_interface(interface)
+        , m_interface(elementInterface)
     { }
 
-    LifecycleQueueItem(Element& element, JSCustomElementInterface& interface, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
+    LifecycleQueueItem(Element& element, JSCustomElementInterface& elementInterface, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
         : m_type(Type::AttributeChanged)
         , m_element(element)
-        , m_interface(interface)
+        , m_interface(elementInterface)
         , m_attributeName(attributeName)
         , m_oldValue(oldValue)
         , m_newValue(newValue)
@@ -90,17 +90,17 @@ LifecycleCallbackQueue::~LifecycleCallbackQueue()
     ASSERT(m_items.isEmpty());
 }
 
-void LifecycleCallbackQueue::enqueueElementUpgrade(Element& element, JSCustomElementInterface& interface)
+void LifecycleCallbackQueue::enqueueElementUpgrade(Element& element, JSCustomElementInterface& elementInterface)
 {
     if (auto* queue = CustomElementLifecycleProcessingStack::ensureCurrentQueue())
-        queue->m_items.append(LifecycleQueueItem(LifecycleQueueItem::Type::ElementUpgrade, element, interface));
+        queue->m_items.append(LifecycleQueueItem(LifecycleQueueItem::Type::ElementUpgrade, element, elementInterface));
 }
 
-void LifecycleCallbackQueue::enqueueAttributeChangedCallback(Element& element, JSCustomElementInterface& interface,
+void LifecycleCallbackQueue::enqueueAttributeChangedCallback(Element& element, JSCustomElementInterface& elementInterface,
     const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
 {
     if (auto* queue = CustomElementLifecycleProcessingStack::ensureCurrentQueue())
-        queue->m_items.append(LifecycleQueueItem(element, interface, attributeName, oldValue, newValue));
+        queue->m_items.append(LifecycleQueueItem(element, elementInterface, attributeName, oldValue, newValue));
 }
 
 void LifecycleCallbackQueue::invokeAll()

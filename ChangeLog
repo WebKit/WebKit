@@ -1,3 +1,14 @@
+2016-06-28  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Custom elements tests are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=159139
+
+        Reviewed by Alex Christensen.
+
+        Enable custom element API on Windows. 
+ 
+        * Source/cmake/OptionsWin.cmake:
+
 2016-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.2 release.

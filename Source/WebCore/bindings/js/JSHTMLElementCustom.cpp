@@ -54,25 +54,25 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState* state)
     VM& vm = state->vm();
     JSValue newTargetValue = state->thisValue();
     JSObject* newTarget = newTargetValue.getObject();
-    auto* interface = definitions->findInterface(newTarget);
-    if (!interface)
+    auto* elementInterface = definitions->findInterface(newTarget);
+    if (!elementInterface)
         return throwVMTypeError(state, "new.target does not define a custom element");
 
-    if (!interface->isUpgradingElement()) {
+    if (!elementInterface->isUpgradingElement()) {
         auto* globalObject = jsConstructor->globalObject();
         Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *globalObject);
         auto* newElementStructure = InternalFunction::createSubclassStructure(state, newTargetValue, baseStructure);
         if (UNLIKELY(state->hadException()))
             return JSValue::encode(jsUndefined());
 
-        Ref<HTMLElement> element = HTMLElement::create(interface->name(), document);
+        Ref<HTMLElement> element = HTMLElement::create(elementInterface->name(), document);
         element->setIsUnresolvedCustomElement();
         auto* jsElement = JSHTMLElement::create(newElementStructure, globalObject, element.get());
         cacheWrapper(globalObject->world(), element.ptr(), jsElement);
         return JSValue::encode(jsElement);
     }
 
-    Element* elementToUpgrade = interface->lastElementInConstructionStack();
+    Element* elementToUpgrade = elementInterface->lastElementInConstructionStack();
     if (!elementToUpgrade) {
         throwInvalidStateError(*state, "Cannot instantiate a custom element inside its own constrcutor during upgrades");
         return JSValue::encode(jsUndefined());
@@ -90,7 +90,7 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState* state)
     if (state->hadException())
         return JSValue::encode(jsUndefined());
 
-    interface->didUpgradeLastElementInConstructionStack();
+    elementInterface->didUpgradeLastElementInConstructionStack();
 
     return JSValue::encode(elementWrapperValue);
 }

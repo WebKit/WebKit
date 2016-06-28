@@ -851,6 +851,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     ASSERT(prefsPrivate3);
     prefsPrivate3->setFetchAPIEnabled(TRUE);
     prefsPrivate3->setShadowDOMEnabled(TRUE);
+    prefsPrivate3->setCustomElementsEnabled(TRUE);
 
     setAlwaysAcceptCookies(false);
 }

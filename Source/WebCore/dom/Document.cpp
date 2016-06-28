@@ -883,8 +883,8 @@ static RefPtr<Element> createHTMLElementWithNameValidation(Document& document, c
 #if ENABLE(CUSTOM_ELEMENTS)
     auto* definitions = document.customElementDefinitions();
     if (UNLIKELY(definitions)) {
-        if (auto* interface = definitions->findInterface(localName))
-            return interface->constructElement(localName, JSCustomElementInterface::ShouldClearException::DoNotClear);
+        if (auto* elementInterface = definitions->findInterface(localName))
+            return elementInterface->constructElement(localName, JSCustomElementInterface::ShouldClearException::DoNotClear);
     }
 #endif
 
@@ -1074,10 +1074,10 @@ static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const Qual
 #if ENABLE(CUSTOM_ELEMENTS)
     auto* definitions = document.customElementDefinitions();
     if (UNLIKELY(definitions)) {
-        if (auto* interface = definitions->findInterface(name)) {
+        if (auto* elementInterface = definitions->findInterface(name)) {
             Ref<HTMLElement> element = HTMLElement::create(name, document);
             element->setIsUnresolvedCustomElement();
-            LifecycleCallbackQueue::enqueueElementUpgrade(element.get(), *interface);
+            LifecycleCallbackQueue::enqueueElementUpgrade(element.get(), *elementInterface);
             return element;
         }
     }

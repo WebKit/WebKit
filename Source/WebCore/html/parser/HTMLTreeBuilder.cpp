@@ -55,8 +55,8 @@ using namespace HTMLNames;
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
-CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElementInterface>&& interface, const AtomicString& name, const Vector<Attribute>& attributes)
-    : interface(WTFMove(interface))
+CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElementInterface>&& customElementInterface, const AtomicString& name, const Vector<Attribute>& attributes)
+    : elementInterface(WTFMove(customElementInterface))
     , name(name)
     , attributes(attributes) // FIXME: Avoid copying attributes.
 { }
@@ -909,9 +909,9 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
 inline void HTMLTreeBuilder::insertGenericHTMLElement(AtomicHTMLToken& token)
 {
 #if ENABLE(CUSTOM_ELEMENTS)
-    auto* interface = m_tree.insertHTMLElementOrFindCustomElementInterface(token);
-    if (UNLIKELY(interface))
-        m_customElementToConstruct = std::make_unique<CustomElementConstructionData>(*interface, token.name(), token.attributes());
+    auto* elementInterface = m_tree.insertHTMLElementOrFindCustomElementInterface(token);
+    if (UNLIKELY(elementInterface))
+        m_customElementToConstruct = std::make_unique<CustomElementConstructionData>(*elementInterface, token.name(), token.attributes());
 #else
     m_tree.insertHTMLElement(token);
 #endif

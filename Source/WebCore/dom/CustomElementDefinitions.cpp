@@ -39,12 +39,12 @@
 
 namespace WebCore {
 
-void CustomElementDefinitions::addElementDefinition(Ref<JSCustomElementInterface>&& interface)
+void CustomElementDefinitions::addElementDefinition(Ref<JSCustomElementInterface>&& elementInterface)
 {
-    AtomicString localName = interface->name().localName();
+    AtomicString localName = elementInterface->name().localName();
     ASSERT(!m_nameMap.contains(localName));
-    m_constructorMap.add(interface->constructor(), interface.ptr());
-    m_nameMap.add(localName, interface.copyRef());
+    m_constructorMap.add(elementInterface->constructor(), elementInterface.ptr());
+    m_nameMap.add(localName, elementInterface.copyRef());
 
     auto candidateList = m_upgradeCandidatesMap.find(localName);
     if (candidateList == m_upgradeCandidatesMap.end())
@@ -56,7 +56,7 @@ void CustomElementDefinitions::addElementDefinition(Ref<JSCustomElementInterface
 
     for (auto& candidate : list) {
         ASSERT(candidate);
-        interface->upgradeElement(*candidate);
+        elementInterface->upgradeElement(*candidate);
     }
 
     // We should not be adding more upgrade candidate for this local name.

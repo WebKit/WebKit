@@ -179,5 +179,7 @@ interface IWebPreferencesPrivate3 : IWebPreferencesPrivate2
     HRESULT setFetchAPIEnabled([in] BOOL enabled);
     HRESULT shadowDOMEnabled([out, retval] BOOL* enabled);
     HRESULT setShadowDOMEnabled([in] BOOL enabled);
+    HRESULT customElementsEnabled([out, retval] BOOL* enabled);
+    HRESULT setCustomElementsEnabled([in] BOOL enabled);
 }
 

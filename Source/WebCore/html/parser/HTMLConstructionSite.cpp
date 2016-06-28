@@ -482,10 +482,10 @@ void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken& token)
 
 JSCustomElementInterface* HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface(AtomicHTMLToken& token)
 {
-    JSCustomElementInterface* interface = nullptr;
-    RefPtr<Element> element = createHTMLElementOrFindCustomElementInterface(token, &interface);
-    if (UNLIKELY(interface))
-        return interface;
+    JSCustomElementInterface* elementInterface = nullptr;
+    RefPtr<Element> element = createHTMLElementOrFindCustomElementInterface(token, &elementInterface);
+    if (UNLIKELY(elementInterface))
+        return elementInterface;
     attachLater(currentNode(), *element);
     m_openElements.push(HTMLStackItem::create(element.releaseNonNull(), token));
     return nullptr;
@@ -661,8 +661,8 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
         if (customElementInterface) {
             auto* definitions = ownerDocument.customElementDefinitions();
             if (UNLIKELY(definitions)) {
-                if (auto* interface = definitions->findInterface(localName)) {
-                    *customElementInterface = interface;
+                if (auto* elementInterface = definitions->findInterface(localName)) {
+                    *customElementInterface = elementInterface;
                     return nullptr;
                 }
             }

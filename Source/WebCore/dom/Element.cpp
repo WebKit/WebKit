@@ -1280,9 +1280,9 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
 #if ENABLE(CUSTOM_ELEMENTS)
     if (UNLIKELY(isCustomElement())) {
         auto* definitions = document().customElementDefinitions();
-        auto* interface = definitions->findInterface(tagQName());
-        RELEASE_ASSERT(interface);
-        LifecycleCallbackQueue::enqueueAttributeChangedCallback(*this, *interface, name, oldValue, newValue);
+        auto* elementInterface = definitions->findInterface(tagQName());
+        RELEASE_ASSERT(elementInterface);
+        LifecycleCallbackQueue::enqueueAttributeChangedCallback(*this, *elementInterface, name, oldValue, newValue);
     }
 #endif
 

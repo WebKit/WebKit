@@ -42,7 +42,7 @@ struct CustomElementConstructionData {
     CustomElementConstructionData(Ref<JSCustomElementInterface>&&, const AtomicString& name, const Vector<Attribute>&);
     ~CustomElementConstructionData();
 
-    Ref<JSCustomElementInterface> interface;
+    Ref<JSCustomElementInterface> elementInterface;
     AtomicString name;
     Vector<Attribute> attributes;
 };
