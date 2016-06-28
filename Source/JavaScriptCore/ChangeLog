@@ -1,3 +1,20 @@
+2016-06-27  Keith Miller  <keith_miller@apple.com>
+
+        Fix bad assert in StructureRareData::setObjectToStringValue
+        https://bugs.webkit.org/show_bug.cgi?id=159171
+        <rdar://problem/26987355>
+
+        Reviewed by Mark Lam.
+
+        We should not have expected the generateConditionsForPrototypePropertyHit would succeed.
+        There are many reasons it might fail including that there is a proxy somewhere on the
+        prototype chain of the object.
+
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::setObjectToStringValue):
+        * tests/stress/object-toString-with-proxy.js: Added.
+        (get target):
+
 2016-06-27  Filip Pizlo  <fpizlo@apple.com>
 
         Crashing at an unreachable code trap in FTL should give more information

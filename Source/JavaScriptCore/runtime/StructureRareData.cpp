@@ -126,7 +126,7 @@ void StructureRareData::setObjectToStringValue(ExecState* exec, VM& vm, Structur
         // This will not create a condition for the current structure but that is good because we know the Symbol.toStringTag
         // is not on the ownStructure so we will transisition if one is added and this cache will no longer be used.
         conditionSet = generateConditionsForPrototypePropertyHit(vm, this, exec, ownStructure, toStringTagSymbolSlot.slotBase(), vm.propertyNames->toStringTagSymbol.impl());
-        ASSERT(conditionSet.hasOneSlotBaseCondition());
+        ASSERT(!conditionSet.isValid() || conditionSet.hasOneSlotBaseCondition());
     } else if (toStringTagSymbolSlot.isUnset())
         conditionSet = generateConditionsForPropertyMiss(vm, this, exec, ownStructure, vm.propertyNames->toStringTagSymbol.impl());
     else
