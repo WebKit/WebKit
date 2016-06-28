@@ -1,3 +1,16 @@
+2016-06-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Sierra test expectation gardening.
+
+        * platform/mac-elcapitan/fast/canvas: Added.
+        * platform/mac-elcapitan/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Copied from platform/mac/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt.
+        * platform/mac-elcapitan/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Copied from platform/mac/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt.
+        * platform/mac/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Removed.
+        * platform/mac/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Removed.
+        Sierra matches cross-platform expectations.
+
+        * platform/mac/TestExpectations: Removed expectations for fast/canvas/canvas-strokeRect-alpha-shadow.html
+
 2016-06-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: selectElement.options shows unexpected entries in console (named indexes beyond collection length)
