@@ -647,6 +647,12 @@ RefPtr<ApplePaySession> ApplePaySession::create(Document& document, unsigned ver
         return nullptr;
     }
 
+    if (!ScriptController::processingUserGesture()) {
+        window.printErrorMessage("Must create a new ApplePaySession from a user gesture handler.");
+        ec = INVALID_ACCESS_ERR;
+        return nullptr;
+    }
+
     auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
 
     if (!version || !paymentCoordinator.supportsVersion(version)) {
@@ -761,13 +767,6 @@ void ApplePaySession::begin(ExceptionCode& ec)
 {
     auto& document = *downcast<Document>(scriptExecutionContext());
     auto& window = *document.domWindow();
-
-    if (!ScriptController::processingUserGesture()) {
-        window.printErrorMessage("Must call ApplePaySession.begin from a user gesture handler.");
-
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
 
     if (!canBegin()) {
         window.printErrorMessage("Payment session is already active.");
