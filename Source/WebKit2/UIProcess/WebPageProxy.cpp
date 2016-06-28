@@ -2889,6 +2889,16 @@ void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
     }
 
     std::function<void (CallbackBase::Error)> didForceRepaintCallback = [this, callback](CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None) {
+            callback->invalidate(error);
+            return;
+        }
+
+        if (!isValid()) {
+            callback->invalidate(CallbackBase::Error::OwnerWasInvalidated);
+            return;
+        }
+    
         callAfterNextPresentationUpdate([callback](CallbackBase::Error error) {
             if (error != CallbackBase::Error::None) {
                 callback->invalidate(error);
