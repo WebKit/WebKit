@@ -88,10 +88,10 @@ public:
         notifyWriteSlow(vm, value, reason);
     }
     
-    void invalidate(const FireDetail& detail)
+    void invalidate(VM& vm, const FireDetail& detail)
     {
         m_value.clear();
-        m_set.invalidate(detail);
+        m_set.invalidate(vm, detail);
     }
     
     static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;

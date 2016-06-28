@@ -1445,7 +1445,7 @@ void JIT_OPERATION operationNotifyWrite(ExecState* exec, WatchpointSet* set)
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    set->touch("Executed NotifyWrite");
+    set->touch(vm, "Executed NotifyWrite");
 }
 
 void JIT_OPERATION operationThrowStackOverflowForVarargs(ExecState* exec)

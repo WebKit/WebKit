@@ -62,7 +62,7 @@ Structure* ArrayBufferNeuteringWatchpoint::createStructure(VM& vm)
 
 void ArrayBufferNeuteringWatchpoint::fireAll()
 {
-    set()->fireAll("Array buffer was neutered");
+    set()->fireAll(*vm(), "Array buffer was neutered");
 }
 
 } // namespace JSC

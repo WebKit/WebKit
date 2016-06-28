@@ -209,7 +209,7 @@ public:
 
     static Masquerader* create(VM& vm, JSGlobalObject* globalObject)
     {
-        globalObject->masqueradesAsUndefinedWatchpoint()->fireAll("Masquerading object allocated");
+        globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(vm, "Masquerading object allocated");
         Structure* structure = createStructure(vm, globalObject, jsNull());
         Masquerader* result = new (NotNull, allocateCell<Masquerader>(vm.heap, sizeof(Masquerader))) Masquerader(vm, structure);
         result->finishCreation(vm);

@@ -27,6 +27,7 @@
 #define CopyBarrier_h
 
 #include "Heap.h"
+#include "VM.h"
 
 namespace JSC {
 

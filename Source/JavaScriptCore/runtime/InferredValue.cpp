@@ -92,7 +92,7 @@ void InferredValue::notifyWriteSlow(VM& vm, JSValue value, const FireDetail& det
         ASSERT(!!m_value);
         if (m_value.get() == value)
             return;
-        invalidate(detail);
+        invalidate(vm, detail);
         return;
         
     case IsInvalidated:
@@ -125,7 +125,7 @@ void InferredValue::ValueCleanup::finalizeUnconditionally()
     if (Heap::isMarked(m_owner->m_value.get().asCell()))
         return;
     
-    m_owner->invalidate(StringFireDetail("InferredValue clean-up during GC"));
+    m_owner->invalidate(*m_owner->vm(), StringFireDetail("InferredValue clean-up during GC"));
 }
 
 } // namespace JSC

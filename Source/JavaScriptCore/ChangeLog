@@ -1,3 +1,99 @@
+2016-06-28  Saam Barati  <sbarati@apple.com>
+
+        some Watchpoints' ::fireInternal method will call operations that might GC where the GC will cause the watchpoint itself to destruct
+        https://bugs.webkit.org/show_bug.cgi?id=159198
+        <rdar://problem/26302360>
+
+        Reviewed by Filip Pizlo.
+
+        Firing a watchpoint may cause a GC to happen. This GC could destroy various
+        Watchpoints themselves while they're in the process of firing. It's not safe
+        for most Watchpoints to be destructed while they're in the middle of firing.
+        This GC could also destroy the WatchpointSet itself, and it's not in a safe
+        state to be destroyed. WatchpointSet::fireAllWatchpoints now defers gc for a
+        while. This prevents a GC from destructing any Watchpoints while they're
+        in the process of firing. This bug was being hit by the stress GC bots
+        because we would destruct a particular Watchpoint while it was firing,
+        and then we would access its field after it had already been destroyed.
+        This was causing all kinds of weird symptoms. Also, this was easier to
+        catch when running with guard malloc because the first access after
+        destruction would lead to a crash.
+
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp:
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::fire):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/VariableWriteFireDetail.cpp:
+        (JSC::VariableWriteFireDetail::dump):
+        (JSC::VariableWriteFireDetail::touch):
+        * bytecode/VariableWriteFireDetail.h:
+        * bytecode/Watchpoint.cpp:
+        (JSC::WatchpointSet::add):
+        (JSC::WatchpointSet::fireAllSlow):
+        (JSC::WatchpointSet::fireAllWatchpoints):
+        (JSC::InlineWatchpointSet::add):
+        (JSC::InlineWatchpointSet::fireAll):
+        (JSC::InlineWatchpointSet::inflateSlow):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::startWatching):
+        (JSC::WatchpointSet::fireAll):
+        (JSC::WatchpointSet::touch):
+        (JSC::WatchpointSet::invalidate):
+        (JSC::WatchpointSet::isBeingWatched):
+        (JSC::WatchpointSet::offsetOfState):
+        (JSC::WatchpointSet::addressOfSetIsNotEmpty):
+        (JSC::InlineWatchpointSet::startWatching):
+        (JSC::InlineWatchpointSet::fireAll):
+        (JSC::InlineWatchpointSet::invalidate):
+        (JSC::InlineWatchpointSet::touch):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JITOperations.cpp:
+        * jsc.cpp:
+        (WTF::Masquerader::create):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ArrayBufferNeuteringWatchpoint.cpp:
+        (JSC::ArrayBufferNeuteringWatchpoint::fireAll):
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::clear):
+        * runtime/InferredType.cpp:
+        (JSC::InferredType::willStoreValueSlow):
+        (JSC::InferredType::makeTopSlow):
+        (JSC::InferredType::set):
+        (JSC::InferredType::removeStructure):
+        (JSC::InferredType::InferredStructureWatchpoint::fireInternal):
+        * runtime/InferredValue.cpp:
+        (JSC::InferredValue::notifyWriteSlow):
+        (JSC::InferredValue::ValueCleanup::finalizeUnconditionally):
+        * runtime/InferredValue.h:
+        (JSC::InferredValue::notifyWrite):
+        (JSC::InferredValue::invalidate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::haveABadTime):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTablePutTouchWatchpointSet):
+        (JSC::symbolTablePutInvalidateWatchpointSet):
+        * runtime/Structure.cpp:
+        (JSC::Structure::didCachePropertyReplacement):
+        (JSC::Structure::startWatchingInternalProperties):
+        (JSC::DeferredStructureTransitionWatchpointFire::~DeferredStructureTransitionWatchpointFire):
+        (JSC::DeferredStructureTransitionWatchpointFire::add):
+        (JSC::Structure::didTransitionFromThisStructure):
+        (JSC::Structure::prototypeForLookup):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::didReplaceProperty):
+        (JSC::Structure::propertyReplacementWatchpointSet):
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::isDontEnum):
+        (JSC::SymbolTableEntry::disableWatching):
+        * runtime/VM.cpp:
+        (JSC::VM::addImpureProperty):
+        (JSC::enableProfilerWithRespectToCount):
+
 2016-06-28  Filip Pizlo  <fpizlo@apple.com>
 
         JSRopeString should use release asserts, not debug asserts, about substring bounds

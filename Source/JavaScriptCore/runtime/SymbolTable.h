@@ -280,10 +280,10 @@ public:
         return bits() & DontEnumFlag;
     }
     
-    void disableWatching()
+    void disableWatching(VM& vm)
     {
         if (WatchpointSet* set = watchpointSet())
-            set->invalidate("Disabling watching in symbol table");
+            set->invalidate(vm, "Disabling watching in symbol table");
         if (varOffset().isScope())
             pack(varOffset(), false, isReadOnly(), isDontEnum());
     }

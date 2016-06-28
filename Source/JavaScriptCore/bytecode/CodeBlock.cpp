@@ -2240,7 +2240,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 instructions[i + 5].u.watchpointSet = op.watchpointSet;
             else if (op.type == ClosureVar || op.type == ClosureVarWithVarInjectionChecks) {
                 if (op.watchpointSet)
-                    op.watchpointSet->invalidate(PutToScopeFireDetail(this, ident));
+                    op.watchpointSet->invalidate(vm, PutToScopeFireDetail(this, ident));
             } else if (op.structure)
                 instructions[i + 5].u.structure.set(vm, this, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);

@@ -35,9 +35,9 @@ void VariableWriteFireDetail::dump(PrintStream& out) const
     out.print("Write to ", m_name, " in ", JSValue(m_object));
 }
 
-void VariableWriteFireDetail::touch(WatchpointSet* set, JSObject* object, const PropertyName& name)
+void VariableWriteFireDetail::touch(VM& vm, WatchpointSet* set, JSObject* object, const PropertyName& name)
 {
-    set->touch(VariableWriteFireDetail(object, name));
+    set->touch(vm, VariableWriteFireDetail(object, name));
 }
 
 } // namespace JSC

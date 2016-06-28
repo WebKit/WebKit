@@ -90,6 +90,7 @@ enum WatchpointState {
 };
 
 class InlineWatchpointSet;
+class VM;
 
 class WatchpointSet : public ThreadSafeRefCounted<WatchpointSet> {
     friend class LLIntOffsetsExtractor;
@@ -152,43 +153,43 @@ public:
         WTF::storeStoreFence();
     }
     
-    void fireAll(const FireDetail& detail)
+    void fireAll(VM& vm, const FireDetail& detail)
     {
         if (LIKELY(m_state != IsWatched))
             return;
-        fireAllSlow(detail);
+        fireAllSlow(vm, detail);
     }
     
-    void fireAll(const char* reason)
+    void fireAll(VM& vm, const char* reason)
     {
         if (LIKELY(m_state != IsWatched))
             return;
-        fireAllSlow(reason);
+        fireAllSlow(vm, reason);
     }
     
-    void touch(const FireDetail& detail)
+    void touch(VM& vm, const FireDetail& detail)
     {
         if (state() == ClearWatchpoint)
             startWatching();
         else
-            fireAll(detail);
+            fireAll(vm, detail);
     }
     
-    void touch(const char* reason)
+    void touch(VM& vm, const char* reason)
     {
-        touch(StringFireDetail(reason));
+        touch(vm, StringFireDetail(reason));
     }
     
-    void invalidate(const FireDetail& detail)
+    void invalidate(VM& vm, const FireDetail& detail)
     {
         if (state() == IsWatched)
-            fireAll(detail);
+            fireAll(vm, detail);
         m_state = IsInvalidated;
     }
     
-    void invalidate(const char* reason)
+    void invalidate(VM& vm, const char* reason)
     {
-        invalidate(StringFireDetail(reason));
+        invalidate(vm, StringFireDetail(reason));
     }
     
     bool isBeingWatched() const
@@ -200,11 +201,11 @@ public:
     static ptrdiff_t offsetOfState() { return OBJECT_OFFSETOF(WatchpointSet, m_state); }
     int8_t* addressOfSetIsNotEmpty() { return &m_setIsNotEmpty; }
     
-    JS_EXPORT_PRIVATE void fireAllSlow(const FireDetail&); // Call only if you've checked isWatched.
-    JS_EXPORT_PRIVATE void fireAllSlow(const char* reason); // Ditto.
+    JS_EXPORT_PRIVATE void fireAllSlow(VM&, const FireDetail&); // Call only if you've checked isWatched.
+    JS_EXPORT_PRIVATE void fireAllSlow(VM&, const char* reason); // Ditto.
     
 private:
-    void fireAllWatchpoints(const FireDetail&);
+    void fireAllWatchpoints(VM&, const FireDetail&);
     
     friend class InlineWatchpointSet;
 
@@ -296,10 +297,10 @@ public:
         m_data = encodeState(IsWatched);
     }
     
-    void fireAll(const FireDetail& detail)
+    void fireAll(VM& vm, const FireDetail& detail)
     {
         if (isFat()) {
-            fat()->fireAll(detail);
+            fat()->fireAll(vm, detail);
             return;
         }
         if (decodeState(m_data) == ClearWatchpoint)
@@ -308,20 +309,20 @@ public:
         WTF::storeStoreFence();
     }
     
-    void invalidate(const FireDetail& detail)
+    void invalidate(VM& vm, const FireDetail& detail)
     {
         if (isFat())
-            fat()->invalidate(detail);
+            fat()->invalidate(vm, detail);
         else
             m_data = encodeState(IsInvalidated);
     }
     
-    JS_EXPORT_PRIVATE void fireAll(const char* reason);
+    JS_EXPORT_PRIVATE void fireAll(VM&, const char* reason);
     
-    void touch(const FireDetail& detail)
+    void touch(VM& vm, const FireDetail& detail)
     {
         if (isFat()) {
-            fat()->touch(detail);
+            fat()->touch(vm, detail);
             return;
         }
         uintptr_t data = m_data;
@@ -335,9 +336,9 @@ public:
         WTF::storeStoreFence();
     }
     
-    void touch(const char* reason)
+    void touch(VM& vm, const char* reason)
     {
-        touch(StringFireDetail(reason));
+        touch(vm, StringFireDetail(reason));
     }
 
     // Note that for any watchpoint that is visible from the DFG, it would be incorrect to write code like:

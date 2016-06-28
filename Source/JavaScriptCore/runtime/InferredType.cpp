@@ -419,7 +419,7 @@ bool InferredType::willStoreValueSlow(VM& vm, PropertyName propertyName, JSValue
     }
     
     InferredTypeFireDetail detail(this, propertyName.uid(), oldType, myType, value);
-    m_watchpointSet.fireAll(detail);
+    m_watchpointSet.fireAll(vm, detail);
     return result;
 }
 
@@ -434,7 +434,7 @@ void InferredType::makeTopSlow(VM& vm, PropertyName propertyName)
     }
 
     InferredTypeFireDetail detail(this, propertyName.uid(), oldType, Top, JSValue());
-    m_watchpointSet.fireAll(detail);
+    m_watchpointSet.fireAll(vm, detail);
 }
 
 bool InferredType::set(const ConcurrentJITLocker& locker, VM& vm, Descriptor newDescriptor)
@@ -516,7 +516,7 @@ void InferredType::removeStructure()
     }
 
     InferredTypeFireDetail detail(this, nullptr, oldDescriptor, newDescriptor, JSValue());
-    m_watchpointSet.fireAll(detail);
+    m_watchpointSet.fireAll(vm, detail);
 }
 
 void InferredType::InferredStructureWatchpoint::fireInternal(const FireDetail&)

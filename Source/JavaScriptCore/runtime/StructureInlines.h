@@ -256,7 +256,7 @@ inline void Structure::didReplaceProperty(PropertyOffset offset)
     WatchpointSet* set = map->get(offset);
     if (LIKELY(!set))
         return;
-    set->fireAll("Property did get replaced");
+    set->fireAll(*vm(), "Property did get replaced");
 }
 
 inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset offset)

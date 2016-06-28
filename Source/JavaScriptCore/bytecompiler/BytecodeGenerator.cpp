@@ -385,7 +385,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     // notifyWrite(), since that would be cumbersome. Also, watching formal
                     // parameters when "arguments" is in play is unlikely to be super profitable.
                     // So, we just disable it.
-                    entry.disableWatching();
+                    entry.disableWatching(*m_vm);
                     functionSymbolTable->set(NoLockingNecessary, name, entry);
                 }
                 emitOpcode(op_put_to_scope);

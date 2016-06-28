@@ -748,7 +748,7 @@ void VM::registerWatchpointForImpureProperty(const Identifier& propertyName, Wat
 void VM::addImpureProperty(const String& propertyName)
 {
     if (RefPtr<WatchpointSet> watchpointSet = m_impurePropertyWatchpointSets.take(propertyName))
-        watchpointSet->fireAll("Impure property added");
+        watchpointSet->fireAll(*this, "Impure property added");
 }
 
 static bool enableProfilerWithRespectToCount(unsigned& counter, std::function<void()> doEnableWork)

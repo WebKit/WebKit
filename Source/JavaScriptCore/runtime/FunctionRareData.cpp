@@ -88,7 +88,7 @@ void FunctionRareData::clear(const char* reason)
 {
     m_objectAllocationProfile.clear();
     m_internalFunctionAllocationProfile.clear();
-    m_objectAllocationProfileWatchpoint.fireAll(reason);
+    m_objectAllocationProfileWatchpoint.fireAll(*vm(), reason);
 }
 
 }
