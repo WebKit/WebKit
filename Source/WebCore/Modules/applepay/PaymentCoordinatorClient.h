@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
+class PaymentMerchantSession;
 class URL;
 enum class PaymentAuthorizationStatus;
-struct PaymentMerchantSession;
 
 class PaymentCoordinatorClient {
 public:

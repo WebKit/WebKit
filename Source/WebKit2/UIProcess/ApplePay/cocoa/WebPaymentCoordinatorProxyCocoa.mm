@@ -330,20 +330,6 @@ static RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::PaymentRequ
     return result;
 }
 
-static RetainPtr<PKPaymentMerchantSession> toPKPaymentMerchantSession(const WebCore::PaymentMerchantSession& paymentMerchantSession)
-{
-    NSDictionary *dictionary = @{
-        @"merchantSessionIdentifier" : paymentMerchantSession.sessionIdentifier,
-        @"merchantIdentifier" : paymentMerchantSession.merchantIdentifier,
-        @"nOnce" : paymentMerchantSession.nonce,
-        @"epochTimestamp" : @(static_cast<NSUInteger>(paymentMerchantSession.epochTimestamp)),
-        @"FQDN" : paymentMerchantSession.domainName,
-        @"signature" : paymentMerchantSession.signature,
-    };
-
-    return adoptNS([allocPKPaymentMerchantSessionInstance() initWithDictionary:dictionary]);
-}
-
 RetainPtr<PKPaymentRequest> toPKPaymentRequest(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::PaymentRequest& paymentRequest)
 {
     auto result = adoptNS([allocPKPaymentRequestInstance() init]);
@@ -434,7 +420,7 @@ void WebPaymentCoordinatorProxy::platformCompleteMerchantValidation(const WebCor
     ASSERT(m_paymentAuthorizationViewController);
     ASSERT(m_paymentAuthorizationViewControllerDelegate);
 
-    m_paymentAuthorizationViewControllerDelegate->_sessionBlock(toPKPaymentMerchantSession(paymentMerchantSession).get(), nullptr);
+    m_paymentAuthorizationViewControllerDelegate->_sessionBlock(paymentMerchantSession.pkPaymentMerchantSession(), nullptr);
     m_paymentAuthorizationViewControllerDelegate->_sessionBlock = nullptr;
 }
 

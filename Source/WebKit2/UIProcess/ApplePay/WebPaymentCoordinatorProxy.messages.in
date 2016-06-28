@@ -30,7 +30,7 @@ messages -> WebPaymentCoordinatorProxy {
     CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName, uint64_t requestID)
 
     ShowPaymentUI(String originatingURLString, Vector<String> linkIconURLStrings, WebCore::PaymentRequest paymentRequest)
-    CompleteMerchantValidation(struct WebCore::PaymentMerchantSession paymentMerchantSession);
+    CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession);
     CompleteShippingMethodSelection(uint32_t opaqueStatus, Optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
     CompleteShippingContactSelection(uint32_t opaqueStatus, Vector<WebCore::PaymentRequest::ShippingMethod> newShippingMethods, Optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
     CompletePaymentMethodSelection(Optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)

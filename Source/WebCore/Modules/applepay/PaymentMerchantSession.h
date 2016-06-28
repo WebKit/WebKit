@@ -27,18 +27,39 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
+
+namespace JSC {
+class ExecState;
+class JSValue;
+}
+
+OBJC_CLASS PKPaymentMerchantSession;
 
 namespace WebCore {
 
-// FIXME: This should be a wrapper class around a PKPaymentMerchantSession.
-struct PaymentMerchantSession {
-    String merchantIdentifier;
-    String sessionIdentifier;
-    String nonce;
-    String domainName;
-    uint64_t epochTimestamp;
-    String signature;
+class PaymentMerchantSession {
+public:
+    PaymentMerchantSession()
+    {
+    }
+
+    explicit PaymentMerchantSession(PKPaymentMerchantSession *pkPaymentMerchantSession)
+        : m_pkPaymentMerchantSession(pkPaymentMerchantSession)
+    {
+    }
+
+    ~PaymentMerchantSession()
+    {
+    }
+
+    static Optional<PaymentMerchantSession> fromJS(JSC::ExecState&, JSC::JSValue, String& errorMessage);
+
+    PKPaymentMerchantSession *pkPaymentMerchantSession() const { return m_pkPaymentMerchantSession.get(); }
+
+private:
+    RetainPtr<PKPaymentMerchantSession> m_pkPaymentMerchantSession;
 };
 
 }

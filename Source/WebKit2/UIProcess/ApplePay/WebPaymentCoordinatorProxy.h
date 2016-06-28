@@ -41,9 +41,9 @@ namespace WebCore {
 enum class PaymentAuthorizationStatus;
 class Payment;
 class PaymentContact;
+class PaymentMerchantSession;
 class PaymentMethod;
 class URL;
-struct PaymentMerchantSession;
 }
 
 OBJC_CLASS NSWindow;

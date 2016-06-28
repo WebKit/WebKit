@@ -61,6 +61,7 @@ public:
     bool getWithUndefinedOrNullCheck(const char* propertyName, String& value) const;
 
     JSC::ExecState* execState() const { return m_dictionary.execState(); }
+    JSC::JSObject* initializerObject() const { return m_dictionary.initializerObject(); }
 
 private:
     template<typename T> JSC::JSObject* asJSObject(T*) const;

@@ -808,47 +808,6 @@ void ApplePaySession::abort(ExceptionCode& ec)
     didReachFinalState();
 }
 
-static Optional<PaymentMerchantSession> createMerchantSession(DOMWindow& window, const Dictionary& merchantSessionDictionary)
-{
-    auto merchantIdentifier = merchantSessionDictionary.get<String>("merchantIdentifier");
-    if (!merchantIdentifier) {
-        window.printErrorMessage("Missing merchant identifier.");
-        return Nullopt;
-    }
-
-    auto sessionIdentifier = merchantSessionDictionary.get<String>("merchantSessionIdentifier");
-    if (!sessionIdentifier) {
-        window.printErrorMessage("Missing merchant session identifier.");
-        return Nullopt;
-    }
-
-    auto nonce = merchantSessionDictionary.get<String>("nonce");
-    if (!nonce) {
-        window.printErrorMessage("Missing nonce.");
-        return Nullopt;
-    }
-
-    auto domainName = merchantSessionDictionary.get<String>("domainName");
-    if (!domainName) {
-        window.printErrorMessage("Missing domain name.");
-        return Nullopt;
-    }
-
-    auto epochTimestamp = merchantSessionDictionary.get<uint64_t>("epochTimestamp");
-    if (!epochTimestamp) {
-        window.printErrorMessage("Missing epoch time stamp.");
-        return Nullopt;
-    }
-
-    auto signature = merchantSessionDictionary.get<String>("signature");
-    if (!signature) {
-        window.printErrorMessage("Missing signature.");
-        return Nullopt;
-    }
-
-    return PaymentMerchantSession { *merchantIdentifier, *sessionIdentifier, *nonce, *domainName, *epochTimestamp, *signature };
-}
-
 void ApplePaySession::completeMerchantValidation(const Dictionary& merchantSessionDictionary, ExceptionCode& ec)
 {
     if (!canCompleteMerchantValidation()) {
@@ -859,8 +818,10 @@ void ApplePaySession::completeMerchantValidation(const Dictionary& merchantSessi
     auto& document = *downcast<Document>(scriptExecutionContext());
     auto& window = *document.domWindow();
 
-    auto merchantSession = createMerchantSession(window, merchantSessionDictionary);
+    String errorMessage;
+    auto merchantSession = PaymentMerchantSession::fromJS(*merchantSessionDictionary.execState(), merchantSessionDictionary.initializerObject(), errorMessage);
     if (!merchantSession) {
+        window.printErrorMessage(errorMessage);
         ec = INVALID_ACCESS_ERR;
         return;
     }

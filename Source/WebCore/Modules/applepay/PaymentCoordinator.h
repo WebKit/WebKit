@@ -36,10 +36,10 @@ class ApplePaySession;
 class Payment;
 class PaymentCoordinatorClient;
 class PaymentContact;
+class PaymentMerchantSession;
 class PaymentMethod;
 class URL;
 enum class PaymentAuthorizationStatus;
-struct PaymentMerchantSession;
 
 class PaymentCoordinator {
 public:
