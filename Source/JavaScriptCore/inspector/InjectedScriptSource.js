@@ -666,7 +666,7 @@ InjectedScript.prototype = {
 
         function arrayIndexPropertyNames(o, length)
         {
-            var array = new Array(length);
+            var array = [];
             for (var i = 0; i < length; ++i) {
                 if (i in o)
                     array.push("" + i);
@@ -676,16 +676,16 @@ InjectedScript.prototype = {
 
         // FIXME: <https://webkit.org/b/143589> Web Inspector: Better handling for large collections in Object Trees
         // For array types with a large length we attempt to skip getOwnPropertyNames and instead just sublist of indexes.
-        var isArrayTypeWithLargeLength = false;
+        var isArrayLike = false;
         try {
-            isArrayTypeWithLargeLength = injectedScript._subtype(object) === "array" && isFinite(object.length) && object.length > 100;
+            isArrayLike = injectedScript._subtype(object) === "array" && isFinite(object.length);
         } catch(e) {}
 
         for (var o = object; this._isDefined(o); o = o.__proto__) {
             var isOwnProperty = o === object;
 
-            if (isArrayTypeWithLargeLength && isOwnProperty)
-                processProperties(o, arrayIndexPropertyNames(o, 100), isOwnProperty);
+            if (isArrayLike && isOwnProperty)
+                processProperties(o, arrayIndexPropertyNames(o, Math.min(object.length, 100)), isOwnProperty);
             else {
                 processProperties(o, Object.getOwnPropertyNames(o), isOwnProperty);
                 if (Object.getOwnPropertySymbols)

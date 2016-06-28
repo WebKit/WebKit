@@ -45,7 +45,6 @@ var unboundFunction = function() { console.log(arguments); }
 var boundFunction = unboundFunction.bind(document.body, 1, 2, 3);
 var objectWithSymbolProperties = {prop:1, [Symbol()]:2, [Symbol('sym')]:3, [Symbol('sym')]:4, [Symbol()]: Symbol(), prop2: 5};
 
-
 // --------
 //   test
 // --------
@@ -61,6 +60,7 @@ function test()
         {expression: "window.unboundFunction"},
         {expression: "window.boundFunction"},
         {expression: "window.objectWithSymbolProperties"},
+        {expression: "document.getElementById('my-select').options"},
     ]
 
     function runNextStep() {
@@ -115,5 +115,8 @@ function test()
 </script>
 </head>
 <body onload="window.loadEvent = event; runTest()">
+    <select id="my-select" style="display: none">
+        <option name="1" id="attr_1" value="1"></option>
+    </select>
 </body>
 </html>

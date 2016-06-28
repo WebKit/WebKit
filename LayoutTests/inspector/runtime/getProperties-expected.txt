@@ -13,7 +13,6 @@ Properties:
   0 string red
   1 string green
   2 string blue
-  length number 3
 
 -- Running test case: CheckPropertiesOfBoundConstructor
 Evaluating expression: Number.bind({}, 5)

@@ -1,3 +1,20 @@
+2016-06-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: selectElement.options shows unexpected entries in console (named indexes beyond collection length)
+        https://bugs.webkit.org/show_bug.cgi?id=159192
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype.arrayIndexPropertyNames):
+        Start with an empty array because we just push valid indexes.
+
+        (InjectedScript.prototype._propertyDescriptors):
+        Avoid the >100 length requirement, and always treat the
+        array-like objects the same. The frontend currently
+        doesn't show named indexes for arrays anyways, so they
+        would have been unused.
+
 2016-06-28  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Skip failing INTL test.
