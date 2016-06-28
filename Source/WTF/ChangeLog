@@ -1,3 +1,17 @@
+2016-06-28  Tomas Popela  <tpopela@redhat.com>
+
+        THUMB2 support not correctly detected on Fedora with GCC 6.1.
+        https://bugs.webkit.org/show_bug.cgi?id=159083
+
+        Reviewed by Carlos Garcia Campos.
+
+        On Fedora 24 with GCC 6.1. the __thumb2__ and __thumb__ are not
+        defined so the detection of THUMB2 support will fail. Look also
+        whether the __ARM_ARCH_ISA_THUMB is defined to fix the THUMB2
+        detection.
+
+        * wtf/Platform.h:
+
 2016-06-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove now unused WTF::findNextLineStart
