@@ -1,5 +1,17 @@
 2016-06-28  Joonghun Park  <jh718.park@samsung.com>
 
+        [JSC] Fix build break since r202502 - 2
+        https://bugs.webkit.org/show_bug.cgi?id=159194
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix about the error message below.
+        error: control reaches end of non-void function [-Werror=return-type]
+
+        * b3/B3TypeMap.h: add #pragma GCC diagnostic ignored "-Wreturn-type".
+
+2016-06-28  Joonghun Park  <jh718.park@samsung.com>
+
         [JSC] Fix build break since r202502
         https://bugs.webkit.org/show_bug.cgi?id=159194
 
