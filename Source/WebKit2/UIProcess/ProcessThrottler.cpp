@@ -56,6 +56,8 @@ void ProcessThrottler::updateAssertionNow()
 {
     m_suspendTimer.stop();
     if (m_assertion) {
+        if (m_assertion->state() != assertionState())
+            LOG_ALWAYS(true, "%p - ProcessThrottler::updateAssertionNow() updating process assertion state to %u (foregroundActivities: %lu, backgroundActivities: %lu)", this, assertionState(), m_foregroundCounter.value(), m_backgroundCounter.value());
         m_assertion->setState(assertionState());
         m_process.didSetAssertionState(assertionState());
     }
@@ -68,13 +70,14 @@ void ProcessThrottler::updateAssertion()
     // in the background for too long.
     if (m_assertion && m_assertion->state() != AssertionState::Suspended && !m_foregroundCounter.value() && !m_backgroundCounter.value()) {
         ++m_suspendMessageCount;
+        LOG_ALWAYS(true, "%p - ProcessThrottler::updateAssertion() sending PrepareToSuspend IPC", this);
         m_process.sendPrepareToSuspend();
         m_suspendTimer.startOneShot(processSuspensionTimeout);
         m_assertion->setState(AssertionState::Background);
         m_process.didSetAssertionState(AssertionState::Background);
         return;
     }
-    
+
     bool shouldBeRunnable = m_foregroundCounter.value() || m_backgroundCounter.value();
 
     // If we're currently waiting for the Web process to do suspension cleanup, but no longer need to be suspended, tell the Web process to cancel the cleanup.

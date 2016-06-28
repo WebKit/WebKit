@@ -1,5 +1,30 @@
 2016-06-28  Chris Dumez  <cdumez@apple.com>
 
+        Add some more UIProcess-side logging related to process assertions
+        https://bugs.webkit.org/show_bug.cgi?id=159188
+
+        Reviewed by Andreas Kling.
+
+        Add some more UIProcess-side logging related to process assertions
+        to help debug process suspension issues.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::updateAssertionNow):
+        (WebKit::ProcessThrottler::updateAssertion):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateActivityToken):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::WebProcessProxy::didSetAssertionState):
+
+2016-06-28  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Do not suppress navigation snapshotting on session restore if we are not navigating right away
         https://bugs.webkit.org/show_bug.cgi?id=159216
         <rdar://problem/27058360>

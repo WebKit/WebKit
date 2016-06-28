@@ -1507,13 +1507,15 @@ void WebPageProxy::updateActivityToken()
 
 #if PLATFORM(IOS)
     if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority) {
-        WEBPAGEPROXY_LOG_ALWAYS("UIProcess is releasing a foreground assertion because the view is no longer visible");
-        m_activityToken = nullptr;
+        if (m_activityToken) {
+            WEBPAGEPROXY_LOG_ALWAYS("%p - UIProcess is releasing a foreground assertion because the view is no longer visible", this);
+            m_activityToken = nullptr;
+        }
     } else if (!m_activityToken) {
         if (isViewVisible())
-            WEBPAGEPROXY_LOG_ALWAYS("UIProcess is taking a foreground assertion because the view is visible");
+            WEBPAGEPROXY_LOG_ALWAYS("%p - UIProcess is taking a foreground assertion because the view is visible", this);
         else
-            WEBPAGEPROXY_LOG_ALWAYS("UIProcess is taking a foreground assertion even though the view is not visible because m_alwaysRunsAtForegroundPriority is true");
+            WEBPAGEPROXY_LOG_ALWAYS("%p - UIProcess is taking a foreground assertion even though the view is not visible because m_alwaysRunsAtForegroundPriority is true", this);
         m_activityToken = m_process->throttler().foregroundActivityToken();
     }
 #endif
