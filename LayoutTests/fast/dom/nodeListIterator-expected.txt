@@ -38,6 +38,15 @@ PASS end.done is true
 PASS end.value is undefined
 PASS end.done is true
 PASS end.value is undefined
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is false
+PASS NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator]; did not throw exception.
+PASS a instanceof Node is true
+PASS a instanceof Node is true
+PASS a instanceof Node is true
+PASS a instanceof Node is true
+PASS counter is 4
 PASS successfullyParsed is true
 
 TEST COMPLETE

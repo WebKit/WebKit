@@ -87,6 +87,18 @@
             testingGround.appendChild(document.createElement('p'));
             checkEndIterator(iterator.next());
 
+            var descriptor = Object.getOwnPropertyDescriptor(NodeList.prototype, Symbol.iterator);
+            shouldBeTrue('descriptor.configurable');
+            shouldBeTrue('descriptor.writable');
+            shouldBeFalse('descriptor.enumerable');
+
+            shouldNotThrow('NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];');
+            var counter = 0;
+            for (var a of nodeList) {
+                shouldBeTrue('a instanceof Node');
+                counter++;
+            }
+            shouldBe('counter', '4');
         </script>
         <script src="../../resources/js-test-post.js"></script>
     </body>

@@ -2310,7 +2310,7 @@ sub GenerateImplementation
 
         if ($interface->iterable) {
             my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
-            push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), ReadOnly | DontEnum);\n");
+            push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), DontEnum);\n");
         }
 
         push(@implContent, "}\n\n");
