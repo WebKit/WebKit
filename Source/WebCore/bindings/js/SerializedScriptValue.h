@@ -87,7 +87,7 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     Vector<String> blobURLsIsolatedCopy() const;
-    void writeBlobsToDiskForIndexedDB(Function<void (const IDBValue&)>&& completionHandler);
+    void writeBlobsToDiskForIndexedDB(WTF::Function<void (const IDBValue&)>&& completionHandler);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously();
 #endif // ENABLE(INDEXED_DATABASE)
 
