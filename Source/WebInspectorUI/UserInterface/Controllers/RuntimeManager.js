@@ -82,7 +82,7 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
         }
 
         // COMPATIBILITY (iOS 8): "saveResult" did not exist.
-        var contextId = WebInspector.quickConsole.executionContextIdentifier;
+        let contextId = this.defaultExecutionContextIdentifier;
         RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, contextId, returnByValue, generatePreview, saveResult}, evalCallback.bind(this));
     }
 
@@ -104,7 +104,7 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
         if (remoteObject.objectId)
             RuntimeAgent.saveResult(remoteObject.asCallArgument(), mycallback);
         else
-            RuntimeAgent.saveResult(remoteObject.asCallArgument(), WebInspector.quickConsole.executionContextIdentifier, mycallback);
+            RuntimeAgent.saveResult(remoteObject.asCallArgument(), this.defaultExecutionContextIdentifier, mycallback);
     }
 
     getPropertiesForRemoteObject(objectId, callback)
@@ -122,7 +122,12 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
             callback(null, properties);
         });
     }
+
+    get defaultExecutionContextIdentifier() { return this._defaultExecutionContextIdentifier; }
+    set defaultExecutionContextIdentifier(value) { this._defaultExecutionContextIdentifier = value; }
 };
+
+WebInspector.RuntimeManager.TopLevelExecutionContextIdentifier = undefined;
 
 WebInspector.RuntimeManager.Event = {
     DidEvaluate: "runtime-manager-did-evaluate"

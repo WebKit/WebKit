@@ -1,0 +1,21 @@
+
+Test that RuntimeManager.evaluateInInspectedWindow respects the selected execution context.
+
+
+== Running test suite: RuntimeManager.defaultExecutionContextIdentifier
+-- Running test case: InitialScriptExecutionContext
+PASS: The default execution context should be the top level execution context initially.
+
+-- Running test case: ScriptExecutionContextMainFrame
+Passphrase in selected frame: coldwater
+PASS: The passphrase should match the phrase defined in the main frame.
+
+-- Running test case: ScriptExecutionContextSubFrame
+PASS: The test page should only have one sub-frame.
+Passphrase in selected frame: rosewater
+PASS: The passphrase should match the phrase defined in the subframe.
+
+-- Running test case: ScriptExecutionContextMainFrameAgain
+Passphrase in selected frame: coldwater
+PASS: The passphrase should match the phrase defined in the main frame.
+

@@ -1,3 +1,18 @@
+2016-06-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RuntimeManager should not use view object WebInspector.quickConsole
+        https://bugs.webkit.org/show_bug.cgi?id=128092
+        <rdar://problem/15966526>
+
+        Reviewed by Timothy Hatcher.
+
+        Add some really basic coverage for RuntimeManager.defaultExecutionContextIdentifier
+        and using it in RuntimeManager.evaluateInInspectedWindow.
+
+        * inspector/runtime/change-execution-context-identifier-expected.txt: Added.
+        * inspector/runtime/change-execution-context-identifier.html: Added.
+        * inspector/runtime/resources/change-execution-context-identifier-subframe.html: Added.
+
 2016-06-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix style invalidation for :active when the activated node has no renderer

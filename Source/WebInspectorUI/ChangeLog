@@ -1,3 +1,43 @@
+2016-06-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RuntimeManager should not use view object WebInspector.quickConsole
+        https://bugs.webkit.org/show_bug.cgi?id=128092
+        <rdar://problem/15966526>
+
+        Reviewed by Timothy Hatcher.
+
+        This is a layering violation which makes it harder to use RuntimeManager.evaluateInInspectedWindow
+        from a testing context where the QuickConsole view does not exist.
+
+        Store the selected execution context identifier on RuntimeManager and use it
+        when doing subsequent evaluations that act on the currently selected frame.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        (WebInspector.RuntimeManager.prototype.saveResult):
+        Use local state.
+
+        (WebInspector.RuntimeManager.prototype.get defaultExecutionContextIdentifier):
+        (WebInspector.RuntimeManager.prototype.set defaultExecutionContextIdentifier):
+        Added.
+
+        (WebInspector.RuntimeManager):
+        * UserInterface/Models/ExecutionContext.js:
+        (WebInspector.ExecutionContext):
+        Move the symbolic name for the top level execution context to RuntimeManager.
+
+        * UserInterface/Test/Test.js:
+        (WebInspector.loaded): No need to stub out WebInspector.QuickConsole any more.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole.prototype._framePageExecutionContextsChanged):
+        (WebInspector.QuickConsole.prototype._removeExecutionContextPathComponentForFrame):
+        (WebInspector.QuickConsole.prototype._updateExecutionContextPathComponentForFrame):
+        (WebInspector.QuickConsole.prototype._pathComponentSelected):
+        For now, set RuntimeManager's selected execution context whenever we set the
+        selected path component. In a future patch, we should invert the dependency and have
+        the selected component change whenever RuntimeManager.defaultExecutionContext changes.
+
 2016-06-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: first heap snapshot taken when a page is reloaded happens before the reload navigation

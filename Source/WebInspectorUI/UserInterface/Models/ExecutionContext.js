@@ -29,7 +29,7 @@ WebInspector.ExecutionContext = class ExecutionContext extends WebInspector.Obje
     {
         super();
 
-        console.assert(typeof id === "number" || id === WebInspector.QuickConsole.MainFrameContextExecutionIdentifier);
+        console.assert(typeof id === "number" || id === WebInspector.RuntimeManager.TopLevelExecutionContextIdentifier);
         console.assert(typeof name === "string");
 
         this._id = id;

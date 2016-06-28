@@ -149,6 +149,7 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
         if (shouldAutomaticallySelect) {
             delete this._restoreSelectedExecutionContextForFrame;
             this._selectedExecutionContextPathComponent = newExecutionContextPathComponent;
+            WebInspector.runtimeManager.defaultExecutionContextIdentifier = this.executionContextIdentifier;
             this._rebuildExecutionContextPathComponents();
         }
     }
@@ -260,8 +261,10 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
         if (next)
             next.previousSibling = prev;
 
-        if (this._selectedExecutionContextPathComponent === executionContextPathComponent)
+        if (this._selectedExecutionContextPathComponent === executionContextPathComponent) {
             this._selectedExecutionContextPathComponent = this._mainFrameExecutionContextPathComponent;
+            WebInspector.runtimeManager.defaultExecutionContextIdentifier = this.executionContextIdentifier;
+        }
 
         this._otherExecutionContextPathComponents.remove(executionContextPathComponent, true);
         delete this._frameIdentifierToExecutionContextPathComponentMap[frame.id];
@@ -284,8 +287,10 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
         this._removeExecutionContextPathComponentForFrame(frame, true);
         var newExecutionContextPathComponent = this._insertExecutionContextPathComponentForFrame(frame, true);
 
-        if (wasSelected)
+        if (wasSelected) {
             this._selectedExecutionContextPathComponent = newExecutionContextPathComponent;
+            WebInspector.runtimeManager.defaultExecutionContextIdentifier = this.executionContextIdentifier;
+        }
 
         this._rebuildExecutionContextPathComponents();
     }
@@ -296,6 +301,7 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
             return;
 
         this._selectedExecutionContextPathComponent = event.data.pathComponent;
+        WebInspector.runtimeManager.defaultExecutionContextIdentifier = this.executionContextIdentifier;
 
         this._rebuildExecutionContextPathComponents();
     }
@@ -324,8 +330,6 @@ WebInspector.QuickConsole.ShowingLogClassName = "showing-log";
 WebInspector.QuickConsole.ToolbarSingleLineHeight = 21;
 WebInspector.QuickConsole.ToolbarPromptPadding = 4;
 WebInspector.QuickConsole.ToolbarTopBorder = 1;
-
-WebInspector.QuickConsole.MainFrameContextExecutionIdentifier = undefined;
 
 WebInspector.QuickConsole.Event = {
     DidResize: "quick-console-did-resize"
