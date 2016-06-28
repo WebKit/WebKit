@@ -1,3 +1,17 @@
+2016-06-27  Chris Dumez  <cdumez@apple.com>
+
+        HTMLElement / SVGElement should implement GlobalEventHandlers, not Element
+        https://bugs.webkit.org/show_bug.cgi?id=159191
+        <rdar://problem/27019299>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/event-handler-attributes-expected.txt:
+        Rebaseline tests now that more checks are passing.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        Rebaseline test now that enumeration order is different.
+
 2016-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] -webkit-overflow-scrolling: touch prevents repaint with RTL

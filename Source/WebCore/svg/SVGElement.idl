@@ -47,3 +47,4 @@
 #endif
 };
 
+SVGElement implements GlobalEventHandlers;

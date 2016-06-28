@@ -45,32 +45,6 @@ PASS a["outerText"] is nerget
 PASS a["contentEditable"] is inherit
 PASS a["isContentEditable"] is false
 PASS a["spellcheck"] is true
-PASS a["tagName"] is A
-PASS a["attributes"] is [object NamedNodeMap]
-PASS a["style"] is [object CSSStyleDeclaration]
-PASS a["id"] is foo
-PASS a["offsetLeft"] is 8
-PASS a["offsetTop"] is 789
-PASS a["offsetWidth"] is 40
-PASS a["offsetHeight"] is 18
-PASS a["clientLeft"] is 0
-PASS a["clientTop"] is 0
-PASS a["clientWidth"] is 0
-PASS a["clientHeight"] is 0
-PASS a["scrollLeft"] is 0
-PASS a["scrollTop"] is 0
-PASS a["scrollWidth"] is 0
-PASS a["scrollHeight"] is 0
-PASS a["offsetParent"] is [object HTMLBodyElement]
-PASS a["innerHTML"] is nerget
-PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
-PASS a["className"] is 
-PASS a["classList"] is 
-PASS a["dataset"] is [object DOMStringMap]
-PASS a["uiactions"] is 
-PASS a["webkitRegionOverset"] is undefined
-PASS a["shadowRoot"] is null
-PASS a["slot"] is 
 PASS a["onabort"] is null
 PASS a["onblur"] is null
 PASS a["oncanplay"] is null
@@ -125,6 +99,32 @@ PASS a["onsuspend"] is null
 PASS a["ontimeupdate"] is null
 PASS a["onvolumechange"] is null
 PASS a["onwaiting"] is null
+PASS a["tagName"] is A
+PASS a["attributes"] is [object NamedNodeMap]
+PASS a["style"] is [object CSSStyleDeclaration]
+PASS a["id"] is foo
+PASS a["offsetLeft"] is 8
+PASS a["offsetTop"] is 1599
+PASS a["offsetWidth"] is 40
+PASS a["offsetHeight"] is 18
+PASS a["clientLeft"] is 0
+PASS a["clientTop"] is 0
+PASS a["clientWidth"] is 0
+PASS a["clientHeight"] is 0
+PASS a["scrollLeft"] is 0
+PASS a["scrollTop"] is 0
+PASS a["scrollWidth"] is 0
+PASS a["scrollHeight"] is 0
+PASS a["offsetParent"] is [object HTMLBodyElement]
+PASS a["innerHTML"] is nerget
+PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
+PASS a["className"] is 
+PASS a["classList"] is 
+PASS a["dataset"] is [object DOMStringMap]
+PASS a["uiactions"] is 
+PASS a["webkitRegionOverset"] is undefined
+PASS a["shadowRoot"] is null
+PASS a["slot"] is 
 PASS a["previousElementSibling"] is [object HTMLDivElement]
 PASS a["nextElementSibling"] is [object HTMLScriptElement]
 PASS a["assignedSlot"] is null

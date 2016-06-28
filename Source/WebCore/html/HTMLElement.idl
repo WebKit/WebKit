@@ -68,3 +68,5 @@
     readonly attribute DOMString titleDisplayString;
 #endif
 };
+
+HTMLElement implements GlobalEventHandlers;

@@ -1149,69 +1149,69 @@ FAIL HTMLElement interface: attribute commandIcon assert_true: The prototype obj
 FAIL HTMLElement interface: attribute commandHidden assert_true: The prototype object must have a property "commandHidden" expected true got false
 FAIL HTMLElement interface: attribute commandDisabled assert_true: The prototype object must have a property "commandDisabled" expected true got false
 FAIL HTMLElement interface: attribute commandChecked assert_true: The prototype object must have a property "commandChecked" expected true got false
-FAIL HTMLElement interface: attribute onabort assert_own_property: expected property "onabort" missing
+PASS HTMLElement interface: attribute onabort 
 FAIL HTMLElement interface: attribute onautocomplete assert_true: The prototype object must have a property "onautocomplete" expected true got false
 FAIL HTMLElement interface: attribute onautocompleteerror assert_true: The prototype object must have a property "onautocompleteerror" expected true got false
-FAIL HTMLElement interface: attribute onblur assert_own_property: expected property "onblur" missing
+PASS HTMLElement interface: attribute onblur 
 FAIL HTMLElement interface: attribute oncancel assert_true: The prototype object must have a property "oncancel" expected true got false
-FAIL HTMLElement interface: attribute oncanplay assert_own_property: expected property "oncanplay" missing
-FAIL HTMLElement interface: attribute oncanplaythrough assert_own_property: expected property "oncanplaythrough" missing
-FAIL HTMLElement interface: attribute onchange assert_own_property: expected property "onchange" missing
-FAIL HTMLElement interface: attribute onclick assert_own_property: expected property "onclick" missing
+PASS HTMLElement interface: attribute oncanplay 
+PASS HTMLElement interface: attribute oncanplaythrough 
+PASS HTMLElement interface: attribute onchange 
+PASS HTMLElement interface: attribute onclick 
 FAIL HTMLElement interface: attribute onclose assert_true: The prototype object must have a property "onclose" expected true got false
-FAIL HTMLElement interface: attribute oncontextmenu assert_own_property: expected property "oncontextmenu" missing
+PASS HTMLElement interface: attribute oncontextmenu 
 FAIL HTMLElement interface: attribute oncuechange assert_true: The prototype object must have a property "oncuechange" expected true got false
-FAIL HTMLElement interface: attribute ondblclick assert_own_property: expected property "ondblclick" missing
-FAIL HTMLElement interface: attribute ondrag assert_own_property: expected property "ondrag" missing
-FAIL HTMLElement interface: attribute ondragend assert_own_property: expected property "ondragend" missing
-FAIL HTMLElement interface: attribute ondragenter assert_own_property: expected property "ondragenter" missing
+PASS HTMLElement interface: attribute ondblclick 
+PASS HTMLElement interface: attribute ondrag 
+PASS HTMLElement interface: attribute ondragend 
+PASS HTMLElement interface: attribute ondragenter 
 FAIL HTMLElement interface: attribute ondragexit assert_true: The prototype object must have a property "ondragexit" expected true got false
-FAIL HTMLElement interface: attribute ondragleave assert_own_property: expected property "ondragleave" missing
-FAIL HTMLElement interface: attribute ondragover assert_own_property: expected property "ondragover" missing
-FAIL HTMLElement interface: attribute ondragstart assert_own_property: expected property "ondragstart" missing
-FAIL HTMLElement interface: attribute ondrop assert_own_property: expected property "ondrop" missing
-FAIL HTMLElement interface: attribute ondurationchange assert_own_property: expected property "ondurationchange" missing
-FAIL HTMLElement interface: attribute onemptied assert_own_property: expected property "onemptied" missing
-FAIL HTMLElement interface: attribute onended assert_own_property: expected property "onended" missing
-FAIL HTMLElement interface: attribute onerror assert_own_property: expected property "onerror" missing
-FAIL HTMLElement interface: attribute onfocus assert_own_property: expected property "onfocus" missing
-FAIL HTMLElement interface: attribute oninput assert_own_property: expected property "oninput" missing
-FAIL HTMLElement interface: attribute oninvalid assert_own_property: expected property "oninvalid" missing
-FAIL HTMLElement interface: attribute onkeydown assert_own_property: expected property "onkeydown" missing
-FAIL HTMLElement interface: attribute onkeypress assert_own_property: expected property "onkeypress" missing
-FAIL HTMLElement interface: attribute onkeyup assert_own_property: expected property "onkeyup" missing
-FAIL HTMLElement interface: attribute onload assert_own_property: expected property "onload" missing
-FAIL HTMLElement interface: attribute onloadeddata assert_own_property: expected property "onloadeddata" missing
-FAIL HTMLElement interface: attribute onloadedmetadata assert_own_property: expected property "onloadedmetadata" missing
-FAIL HTMLElement interface: attribute onloadstart assert_own_property: expected property "onloadstart" missing
-FAIL HTMLElement interface: attribute onmousedown assert_own_property: expected property "onmousedown" missing
-FAIL HTMLElement interface: attribute onmouseenter assert_own_property: expected property "onmouseenter" missing
-FAIL HTMLElement interface: attribute onmouseleave assert_own_property: expected property "onmouseleave" missing
-FAIL HTMLElement interface: attribute onmousemove assert_own_property: expected property "onmousemove" missing
-FAIL HTMLElement interface: attribute onmouseout assert_own_property: expected property "onmouseout" missing
-FAIL HTMLElement interface: attribute onmouseover assert_own_property: expected property "onmouseover" missing
-FAIL HTMLElement interface: attribute onmouseup assert_own_property: expected property "onmouseup" missing
-FAIL HTMLElement interface: attribute onmousewheel assert_own_property: expected property "onmousewheel" missing
-FAIL HTMLElement interface: attribute onpause assert_own_property: expected property "onpause" missing
-FAIL HTMLElement interface: attribute onplay assert_own_property: expected property "onplay" missing
-FAIL HTMLElement interface: attribute onplaying assert_own_property: expected property "onplaying" missing
-FAIL HTMLElement interface: attribute onprogress assert_own_property: expected property "onprogress" missing
-FAIL HTMLElement interface: attribute onratechange assert_own_property: expected property "onratechange" missing
-FAIL HTMLElement interface: attribute onreset assert_own_property: expected property "onreset" missing
-FAIL HTMLElement interface: attribute onresize assert_own_property: expected property "onresize" missing
-FAIL HTMLElement interface: attribute onscroll assert_own_property: expected property "onscroll" missing
-FAIL HTMLElement interface: attribute onseeked assert_own_property: expected property "onseeked" missing
-FAIL HTMLElement interface: attribute onseeking assert_own_property: expected property "onseeking" missing
-FAIL HTMLElement interface: attribute onselect assert_own_property: expected property "onselect" missing
+PASS HTMLElement interface: attribute ondragleave 
+PASS HTMLElement interface: attribute ondragover 
+PASS HTMLElement interface: attribute ondragstart 
+PASS HTMLElement interface: attribute ondrop 
+PASS HTMLElement interface: attribute ondurationchange 
+PASS HTMLElement interface: attribute onemptied 
+PASS HTMLElement interface: attribute onended 
+PASS HTMLElement interface: attribute onerror 
+PASS HTMLElement interface: attribute onfocus 
+PASS HTMLElement interface: attribute oninput 
+PASS HTMLElement interface: attribute oninvalid 
+PASS HTMLElement interface: attribute onkeydown 
+PASS HTMLElement interface: attribute onkeypress 
+PASS HTMLElement interface: attribute onkeyup 
+PASS HTMLElement interface: attribute onload 
+PASS HTMLElement interface: attribute onloadeddata 
+PASS HTMLElement interface: attribute onloadedmetadata 
+PASS HTMLElement interface: attribute onloadstart 
+PASS HTMLElement interface: attribute onmousedown 
+PASS HTMLElement interface: attribute onmouseenter 
+PASS HTMLElement interface: attribute onmouseleave 
+PASS HTMLElement interface: attribute onmousemove 
+PASS HTMLElement interface: attribute onmouseout 
+PASS HTMLElement interface: attribute onmouseover 
+PASS HTMLElement interface: attribute onmouseup 
+PASS HTMLElement interface: attribute onmousewheel 
+PASS HTMLElement interface: attribute onpause 
+PASS HTMLElement interface: attribute onplay 
+PASS HTMLElement interface: attribute onplaying 
+PASS HTMLElement interface: attribute onprogress 
+PASS HTMLElement interface: attribute onratechange 
+PASS HTMLElement interface: attribute onreset 
+PASS HTMLElement interface: attribute onresize 
+PASS HTMLElement interface: attribute onscroll 
+PASS HTMLElement interface: attribute onseeked 
+PASS HTMLElement interface: attribute onseeking 
+PASS HTMLElement interface: attribute onselect 
 FAIL HTMLElement interface: attribute onshow assert_true: The prototype object must have a property "onshow" expected true got false
 FAIL HTMLElement interface: attribute onsort assert_true: The prototype object must have a property "onsort" expected true got false
-FAIL HTMLElement interface: attribute onstalled assert_own_property: expected property "onstalled" missing
-FAIL HTMLElement interface: attribute onsubmit assert_own_property: expected property "onsubmit" missing
-FAIL HTMLElement interface: attribute onsuspend assert_own_property: expected property "onsuspend" missing
-FAIL HTMLElement interface: attribute ontimeupdate assert_own_property: expected property "ontimeupdate" missing
+PASS HTMLElement interface: attribute onstalled 
+PASS HTMLElement interface: attribute onsubmit 
+PASS HTMLElement interface: attribute onsuspend 
+PASS HTMLElement interface: attribute ontimeupdate 
 FAIL HTMLElement interface: attribute ontoggle assert_true: The prototype object must have a property "ontoggle" expected true got false
-FAIL HTMLElement interface: attribute onvolumechange assert_own_property: expected property "onvolumechange" missing
-FAIL HTMLElement interface: attribute onwaiting assert_own_property: expected property "onwaiting" missing
+PASS HTMLElement interface: attribute onvolumechange 
+PASS HTMLElement interface: attribute onwaiting 
 PASS HTMLElement must be primary interface of document.createElement("noscript") 
 PASS Stringification of document.createElement("noscript") 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "title" with the proper type (0) 

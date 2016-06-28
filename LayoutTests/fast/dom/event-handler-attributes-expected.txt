@@ -854,7 +854,7 @@ PASS testElementAttribute(rectElement, "unload") is "none"
 
 Event names on a non-HTML element
 
-FAIL testElementAttribute(nonHTMLElement, "abort") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "abort") is "none"
 FAIL testElementAttribute(nonHTMLElement, "animationend") should be none. Was script: target; content: none.
 FAIL testElementAttribute(nonHTMLElement, "animationiteration") should be none. Was script: target; content: none.
 FAIL testElementAttribute(nonHTMLElement, "animationstart") should be none. Was script: target; content: none.
@@ -863,84 +863,84 @@ FAIL testElementAttribute(nonHTMLElement, "beforecut") should be none. Was scrip
 FAIL testElementAttribute(nonHTMLElement, "beforeload") should be none. Was script: target; content: none.
 FAIL testElementAttribute(nonHTMLElement, "beforepaste") should be none. Was script: target; content: none.
 PASS testElementAttribute(nonHTMLElement, "beforeunload") is "none"
-FAIL testElementAttribute(nonHTMLElement, "blur") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "canplay") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "canplaythrough") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "change") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "click") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "contextmenu") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "blur") is "none"
+PASS testElementAttribute(nonHTMLElement, "canplay") is "none"
+PASS testElementAttribute(nonHTMLElement, "canplaythrough") is "none"
+PASS testElementAttribute(nonHTMLElement, "change") is "none"
+PASS testElementAttribute(nonHTMLElement, "click") is "none"
+PASS testElementAttribute(nonHTMLElement, "contextmenu") is "none"
 FAIL testElementAttribute(nonHTMLElement, "copy") should be none. Was script: target; content: none.
 FAIL testElementAttribute(nonHTMLElement, "cut") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "dblclick") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "drag") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "dragend") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "dragenter") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "dragleave") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "dragover") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "dragstart") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "drop") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "durationchange") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "emptied") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "ended") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "error") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "focus") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "dblclick") is "none"
+PASS testElementAttribute(nonHTMLElement, "drag") is "none"
+PASS testElementAttribute(nonHTMLElement, "dragend") is "none"
+PASS testElementAttribute(nonHTMLElement, "dragenter") is "none"
+PASS testElementAttribute(nonHTMLElement, "dragleave") is "none"
+PASS testElementAttribute(nonHTMLElement, "dragover") is "none"
+PASS testElementAttribute(nonHTMLElement, "dragstart") is "none"
+PASS testElementAttribute(nonHTMLElement, "drop") is "none"
+PASS testElementAttribute(nonHTMLElement, "durationchange") is "none"
+PASS testElementAttribute(nonHTMLElement, "emptied") is "none"
+PASS testElementAttribute(nonHTMLElement, "ended") is "none"
+PASS testElementAttribute(nonHTMLElement, "error") is "none"
+PASS testElementAttribute(nonHTMLElement, "focus") is "none"
 FAIL testElementAttribute(nonHTMLElement, "focusin") should be none. Was script: target; content: none.
 FAIL testElementAttribute(nonHTMLElement, "focusout") should be none. Was script: target; content: none.
 PASS testElementAttribute(nonHTMLElement, "hashchange") is "none"
-FAIL testElementAttribute(nonHTMLElement, "input") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "invalid") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "keydown") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "keypress") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "keyup") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "load") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "loadeddata") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "loadedmetadata") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "loadstart") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "input") is "none"
+PASS testElementAttribute(nonHTMLElement, "invalid") is "none"
+PASS testElementAttribute(nonHTMLElement, "keydown") is "none"
+PASS testElementAttribute(nonHTMLElement, "keypress") is "none"
+PASS testElementAttribute(nonHTMLElement, "keyup") is "none"
+PASS testElementAttribute(nonHTMLElement, "load") is "none"
+PASS testElementAttribute(nonHTMLElement, "loadeddata") is "none"
+PASS testElementAttribute(nonHTMLElement, "loadedmetadata") is "none"
+PASS testElementAttribute(nonHTMLElement, "loadstart") is "none"
 PASS testElementAttribute(nonHTMLElement, "message") is "none"
-FAIL testElementAttribute(nonHTMLElement, "mousedown") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "mouseenter") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "mouseleave") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "mousemove") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "mouseout") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "mouseover") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "mouseup") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "mousewheel") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "mousedown") is "none"
+PASS testElementAttribute(nonHTMLElement, "mouseenter") is "none"
+PASS testElementAttribute(nonHTMLElement, "mouseleave") is "none"
+PASS testElementAttribute(nonHTMLElement, "mousemove") is "none"
+PASS testElementAttribute(nonHTMLElement, "mouseout") is "none"
+PASS testElementAttribute(nonHTMLElement, "mouseover") is "none"
+PASS testElementAttribute(nonHTMLElement, "mouseup") is "none"
+PASS testElementAttribute(nonHTMLElement, "mousewheel") is "none"
 PASS testElementAttribute(nonHTMLElement, "noneventname") is "none"
 PASS testElementAttribute(nonHTMLElement, "offline") is "none"
 PASS testElementAttribute(nonHTMLElement, "online") is "none"
 PASS testElementAttribute(nonHTMLElement, "pagehide") is "none"
 PASS testElementAttribute(nonHTMLElement, "pageshow") is "none"
 FAIL testElementAttribute(nonHTMLElement, "paste") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "pause") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "play") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "playing") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "pause") is "none"
+PASS testElementAttribute(nonHTMLElement, "play") is "none"
+PASS testElementAttribute(nonHTMLElement, "playing") is "none"
 PASS testElementAttribute(nonHTMLElement, "popstate") is "none"
-FAIL testElementAttribute(nonHTMLElement, "progress") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "ratechange") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "progress") is "none"
+PASS testElementAttribute(nonHTMLElement, "ratechange") is "none"
 PASS testElementAttribute(nonHTMLElement, "readystatechange") is "none"
-FAIL testElementAttribute(nonHTMLElement, "reset") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "resize") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "scroll") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "search") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "seeked") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "seeking") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "select") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "reset") is "none"
+PASS testElementAttribute(nonHTMLElement, "resize") is "none"
+PASS testElementAttribute(nonHTMLElement, "scroll") is "none"
+PASS testElementAttribute(nonHTMLElement, "search") is "none"
+PASS testElementAttribute(nonHTMLElement, "seeked") is "none"
+PASS testElementAttribute(nonHTMLElement, "seeking") is "none"
+PASS testElementAttribute(nonHTMLElement, "select") is "none"
 PASS testElementAttribute(nonHTMLElement, "selectionchange") is "none"
 FAIL testElementAttribute(nonHTMLElement, "selectstart") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "stalled") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "stalled") is "none"
 PASS testElementAttribute(nonHTMLElement, "storage") is "none"
-FAIL testElementAttribute(nonHTMLElement, "submit") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "suspend") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "timeupdate") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "submit") is "none"
+PASS testElementAttribute(nonHTMLElement, "suspend") is "none"
+PASS testElementAttribute(nonHTMLElement, "timeupdate") is "none"
 FAIL testElementAttribute(nonHTMLElement, "transitionend") should be none. Was script: target; content: none.
 PASS testElementAttribute(nonHTMLElement, "unload") is "none"
-FAIL testElementAttribute(nonHTMLElement, "volumechange") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "waiting") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "volumechange") is "none"
+PASS testElementAttribute(nonHTMLElement, "waiting") is "none"
 FAIL testElementAttribute(nonHTMLElement, "webkitanimationend") should be none. Was script: target; content: none.
 FAIL testElementAttribute(nonHTMLElement, "webkitanimationiteration") should be none. Was script: target; content: none.
 FAIL testElementAttribute(nonHTMLElement, "webkitanimationstart") should be none. Was script: target; content: none.
 FAIL testElementAttribute(nonHTMLElement, "webkittransitionend") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "wheel") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "wheel") is "none"
 
 PASS successfullyParsed is true
 
