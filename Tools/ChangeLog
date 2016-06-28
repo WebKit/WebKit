@@ -1,3 +1,10 @@
+2016-06-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix JSC tests. Air.js moved, and the harness needs to know.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+
 2016-06-28  Brian Burg  <bburg@apple.com>
 
         RunLoop::Timer should use constructor templates instead of class templates
