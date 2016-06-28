@@ -1,3 +1,11 @@
+2016-06-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Update expectations for subtle crypto layout tests
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations:
+
 2016-06-28  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Custom elements tests are failing.

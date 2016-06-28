@@ -715,6 +715,8 @@ webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_use
 webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure.html [ Failure ]
 webkit.org/b/158617 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_method_exist.html [ Failure ]
 
+# Subtle crypto
+webkit.org/b/133344 crypto/subtle/ [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
