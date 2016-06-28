@@ -82,6 +82,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNameCollection.h"
@@ -3808,8 +3809,11 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
                 focusChangeBlocked = true;
                 newFocusedElement = nullptr;
             }
-        } else
+        } else {
+            if (is<HTMLInputElement>(*oldFocusedElement))
+                downcast<HTMLInputElement>(*oldFocusedElement).endEditing();
             ASSERT(!m_focusedElement);
+        }
 
         if (oldFocusedElement->isRootEditableElement())
             frame()->editor().didEndEditing();

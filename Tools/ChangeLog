@@ -1,3 +1,17 @@
+2016-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r201471): FormClient.textFieldDidEndEditing is no longer called when a text field is removed
+        https://bugs.webkit.org/show_bug.cgi?id=159199
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added a test case for removing a text field. Also fixed the flakiness and re-enabled it on Mac.
+
+        * TestWebKitAPI/Tests/WebKit2/TextFieldDidBeginAndEndEditing.cpp:
+        * TestWebKitAPI/Tests/WebKit2/TextFieldDidBeginAndEndEditing_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/input-focus-blur.html: Focus a div upfront to avoid the flakiness from
+        an input element getting automatically focused on Mac.
+
 2016-06-28  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Custom elements tests are failing.

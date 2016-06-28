@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_HAVE_C_SPI && !PLATFORM(MAC)
+#if WK_HAVE_C_SPI
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
@@ -124,6 +124,12 @@ TEST_F(WebKit2TextFieldBeginAndEditEditingTest, TextFieldDidBeginShouldNotBeDisp
 {
     executeJavaScriptAndCheckDidReceiveMessage("focusTextField('input'); focusTextField('input')", "DidReceiveTextFieldDidBeginEditing");
     executeJavaScriptAndCheckDidReceiveMessage("blurTextField('input')", "DidReceiveTextFieldDidEndEditing");
+}
+
+TEST_F(WebKit2TextFieldBeginAndEditEditingTest, TextFieldDidEndShouldBeDispatchedForRemovedFocusField)
+{
+    executeJavaScriptAndCheckDidReceiveMessage("focusTextField('input')", "DidReceiveTextFieldDidBeginEditing");
+    executeJavaScriptAndCheckDidReceiveMessage("removeTextField('input')", "DidReceiveTextFieldDidEndEditing");
 }
 
 } // namespace TestWebKitAPI

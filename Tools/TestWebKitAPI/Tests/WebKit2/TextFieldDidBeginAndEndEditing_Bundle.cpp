@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_HAVE_C_SPI && !PLATFORM(MAC)
+#if WK_HAVE_C_SPI
 
 #include "InjectedBundleTest.h"
 
