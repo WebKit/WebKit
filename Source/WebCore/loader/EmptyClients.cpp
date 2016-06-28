@@ -63,7 +63,7 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     void completePaymentMethodSelection(Optional<WebCore::PaymentRequest::TotalAndLineItems>) override { }
     void completePaymentSession(PaymentAuthorizationStatus) override { }
     void abortPaymentSession() override { }
-    void mainFrameDestroyed() override { }
+    void paymentCoordinatorDestroyed() override { }
 };
 #endif
 

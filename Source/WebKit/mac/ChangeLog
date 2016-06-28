@@ -1,3 +1,18 @@
+2016-06-27  Anders Carlsson  <andersca@apple.com>
+
+        WebKit::WebPaymentCoordinator leak
+        https://bugs.webkit.org/show_bug.cgi?id=159168
+        rdar://problem/26929772
+
+        Reviewed by Beth Dakin.
+
+        Update for WebCore changes.
+
+        * WebCoreSupport/WebPaymentCoordinatorClient.h:
+        * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+        (WebPaymentCoordinatorClient::paymentCoordinatorDestroyed):
+        (WebPaymentCoordinatorClient::mainFrameDestroyed): Deleted.
+
 2016-06-27  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r189052): Clipping occurs when using context menu to Look Up words within the Dictionary app

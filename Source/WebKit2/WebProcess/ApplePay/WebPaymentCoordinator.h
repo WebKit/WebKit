@@ -64,7 +64,7 @@ private:
     void completePaymentSession(WebCore::PaymentAuthorizationStatus) override;
     void abortPaymentSession() override;
 
-    void mainFrameDestroyed() override;
+    void paymentCoordinatorDestroyed() override;
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;

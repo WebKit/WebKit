@@ -1,3 +1,18 @@
+2016-06-27  Anders Carlsson  <andersca@apple.com>
+
+        WebKit::WebPaymentCoordinator leak
+        https://bugs.webkit.org/show_bug.cgi?id=159168
+        rdar://problem/26929772
+
+        Reviewed by Beth Dakin.
+
+        Update for WebCore changes.
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::paymentCoordinatorDestroyed):
+        (WebKit::WebPaymentCoordinator::mainFrameDestroyed): Deleted.
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+
 2016-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         Fix TestWebKitAPI crash introduced in r202532.

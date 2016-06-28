@@ -83,7 +83,7 @@ void WebPaymentCoordinatorClient::abortPaymentSession()
 {
 }
 
-void WebPaymentCoordinatorClient::mainFrameDestroyed()
+void WebPaymentCoordinatorClient::paymentCoordinatorDestroyed()
 {
     delete this;
 }

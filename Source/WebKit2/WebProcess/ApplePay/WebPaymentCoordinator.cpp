@@ -123,7 +123,7 @@ void WebPaymentCoordinator::abortPaymentSession()
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::AbortPaymentSession());
 }
 
-void WebPaymentCoordinator::mainFrameDestroyed()
+void WebPaymentCoordinator::paymentCoordinatorDestroyed()
 {
     delete this;
 }

@@ -46,7 +46,7 @@ private:
     void completePaymentMethodSelection(Optional<WebCore::PaymentRequest::TotalAndLineItems>) override;
     void completePaymentSession(WebCore::PaymentAuthorizationStatus) override;
     void abortPaymentSession() override;
-    void mainFrameDestroyed() override;
+    void paymentCoordinatorDestroyed() override;
 };
 
 #endif
