@@ -94,8 +94,7 @@ bool MathMLTextElement::childShouldCreateRenderer(const Node& child) const
     if (hasTagName(MathMLNames::mspaceTag))
         return false;
 
-    // FIXME: phrasing content should be accepted in <mo> elements too (https://bugs.webkit.org/show_bug.cgi?id=130245).
-    if (hasTagName(MathMLNames::annotationTag) || hasTagName(MathMLNames::moTag))
+    if (hasTagName(MathMLNames::annotationTag))
         return child.isTextNode();
 
     // The HTML specification defines <mi>, <mo>, <mn>, <ms> and <mtext> as insertion points.

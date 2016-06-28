@@ -1,3 +1,15 @@
+2016-06-28  Frederic Wang  <fwang@igalia.com>
+
+        Phrasing content should be accepted in <mo> elements
+        https://bugs.webkit.org/show_bug.cgi?id=130245
+
+        Reviewed by Brent Fulgham.
+
+        * mathml/presentation/foreign-element-in-token.html: Copy test cases to
+        check <mo> elements too.
+        * mathml/presentation/foreign-element-in-token-expected.txt: Add the
+        expectations for <mo>.
+
 2016-06-28  Alexey Proskuryakov  <ap@apple.com>
 
         Sierra test expectation gardening.
