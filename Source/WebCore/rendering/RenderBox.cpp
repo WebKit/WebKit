@@ -1012,7 +1012,7 @@ LayoutSize RenderBox::cachedSizeForOverflowClip() const
     return layer()->size();
 }
 
-void RenderBox::applyCachedClipAndScrollOffsetForRepaint(LayoutRect& paintRect) const
+void RenderBox::applyCachedClipAndScrollPositionForRepaint(LayoutRect& paintRect) const
 {
     flipForWritingMode(paintRect);
     paintRect.moveBy(-scrollPosition()); // For overflow:auto/scroll/hidden.
@@ -2194,16 +2194,15 @@ LayoutRect RenderBox::clippedOverflowRectForRepaint(const RenderLayerModelObject
     return computeRectForRepaint(r, repaintContainer);
 }
 
-static inline bool shouldApplyContainersClipAndOffset(const RenderLayerModelObject* repaintContainer, RenderBox* containerBox)
+bool RenderBox::shouldApplyClipAndScrollPositionForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
 #if PLATFORM(IOS)
-    if (!repaintContainer || repaintContainer != containerBox)
+    if (!repaintContainer || repaintContainer != this)
         return true;
 
-    return !containerBox->hasLayer() || !containerBox->layer()->usesCompositedScrolling();
+    return !hasLayer() || !layer()->usesCompositedScrolling();
 #else
     UNUSED_PARAM(repaintContainer);
-    UNUSED_PARAM(containerBox);
     return true;
 #endif
 }
@@ -2309,8 +2308,8 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     adjustedRect.setLocation(topLeft);
     if (container->hasOverflowClip()) {
         RenderBox& containerBox = downcast<RenderBox>(*container);
-        if (shouldApplyContainersClipAndOffset(repaintContainer, &containerBox)) {
-            containerBox.applyCachedClipAndScrollOffsetForRepaint(adjustedRect);
+        if (containerBox.shouldApplyClipAndScrollPositionForRepaint(repaintContainer)) {
+            containerBox.applyCachedClipAndScrollPositionForRepaint(adjustedRect);
             if (adjustedRect.isEmpty())
                 return adjustedRect;
         }

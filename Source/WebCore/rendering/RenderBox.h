@@ -577,7 +577,9 @@ public:
 
     ScrollPosition scrollPosition() const;
     LayoutSize cachedSizeForOverflowClip() const;
-    void applyCachedClipAndScrollOffsetForRepaint(LayoutRect& paintRect) const;
+
+    bool shouldApplyClipAndScrollPositionForRepaint(const RenderLayerModelObject* repaintContainer) const;
+    void applyCachedClipAndScrollPositionForRepaint(LayoutRect& paintRect) const;
 
     virtual bool hasRelativeDimensions() const;
     virtual bool hasRelativeLogicalHeight() const;

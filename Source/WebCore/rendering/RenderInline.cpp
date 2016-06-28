@@ -1234,8 +1234,8 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObj
     if (hitRepaintContainer || !containingBlock)
         return repaintRect;
 
-    if (containingBlock->hasOverflowClip())
-        containingBlock->applyCachedClipAndScrollOffsetForRepaint(repaintRect);
+    if (containingBlock->hasOverflowClip() && containingBlock->shouldApplyClipAndScrollPositionForRepaint(repaintContainer))
+        containingBlock->applyCachedClipAndScrollPositionForRepaint(repaintRect);
 
     repaintRect = containingBlock->computeRectForRepaint(repaintRect, repaintContainer);
 
@@ -1296,7 +1296,7 @@ LayoutRect RenderInline::computeRectForRepaint(const LayoutRect& rect, const Ren
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
     adjustedRect.setLocation(topLeft);
     if (container->hasOverflowClip()) {
-        downcast<RenderBox>(*container).applyCachedClipAndScrollOffsetForRepaint(adjustedRect);
+        downcast<RenderBox>(*container).applyCachedClipAndScrollPositionForRepaint(adjustedRect);
         if (adjustedRect.isEmpty())
             return adjustedRect;
     }

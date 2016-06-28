@@ -2284,8 +2284,9 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
         FloatRect layerDirtyRect = pixelSnappedRectForPainting;
         layerDirtyRect.move(-m_scrollingContentsLayer->offsetFromRenderer() + m_devicePixelFractionFromRenderer);
 #if PLATFORM(IOS)
-        // Account for the fact that RenderLayerBacking::updateGeometry() bakes scrollOffset into offsetFromRenderer on iOS.
-        layerDirtyRect.moveBy(-m_owningLayer.scrollOffset() + m_devicePixelFractionFromRenderer);
+        // Account for the fact that RenderLayerBacking::updateGeometry() bakes scrollOffset into offsetFromRenderer on iOS,
+        // but the repaint rect is computed without taking the scroll position into account (see shouldApplyClipAndScrollPositionForRepaint()).
+        layerDirtyRect.moveBy(-m_owningLayer.scrollPosition());
 #endif
         m_scrollingContentsLayer->setNeedsDisplayInRect(layerDirtyRect, shouldClip);
     }

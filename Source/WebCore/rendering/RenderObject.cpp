@@ -978,7 +978,7 @@ LayoutRect RenderObject::computeRectForRepaint(const LayoutRect& rect, const Ren
 
     LayoutRect adjustedRect = rect;
     if (parent->hasOverflowClip()) {
-        downcast<RenderBox>(*parent).applyCachedClipAndScrollOffsetForRepaint(adjustedRect);
+        downcast<RenderBox>(*parent).applyCachedClipAndScrollPositionForRepaint(adjustedRect);
         if (adjustedRect.isEmpty())
             return adjustedRect;
     }

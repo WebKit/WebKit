@@ -1,5 +1,18 @@
 2016-06-27  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS] -webkit-overflow-scrolling: touch prevents repaint with RTL
+        https://bugs.webkit.org/show_bug.cgi?id=159186
+        rdar://problem/26659341
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/scrolling/touch-scrolling-repaint-expected.html: Added.
+        * compositing/scrolling/touch-scrolling-repaint-spans-expected.html: Added.
+        * compositing/scrolling/touch-scrolling-repaint-spans.html: Added.
+        * compositing/scrolling/touch-scrolling-repaint.html: Added.
+
+2016-06-27  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS] Make DumpRenderTree and WebKitTestRunner in the simulator use render server snapshotting
         https://bugs.webkit.org/show_bug.cgi?id=159077
 

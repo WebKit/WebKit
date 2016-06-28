@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            .scroller {
+                margin: 10px;
+                width: 300px;
+                padding: 10px;
+                overflow-y: hidden;
+                overflow-x: scroll;
+                border: 8px solid black;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .contents {
+                height: 100px;
+                width: 480px;
+                background-color: red;
+                letter-spacing: 12px;
+                color: white;
+                font-size: 28pt;
+            }
+            
+            body.changed .contents {
+                background-color: green;
+            }
+        </style>
+        <script>
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            function doTest()
+            {
+                document.getElementById('scroller2').scrollLeft = 120;
+                document.getElementById('scroller4').scrollLeft = -120;
+                
+                window.setTimeout(function() {
+                    document.body.classList.add('changed');
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 0);
+            }
+            window.addEventListener('load', doTest, false);
+        </script>
+    </head>
+    <body>
+        <div class="scroller" id="scroller1">
+            <span class='contents'>ABCDEFGHIJKLM</span>
+        </div>
+
+        <div class="scroller" id="scroller2">
+            <span class='contents'>ABCDEFGHIJKLM</span>
+        </div>
+
+        <div class="scroller" id="scroller3" dir="rtl">
+            <span class='contents'>ABCDEFGHIJKLM</span>
+        </div>
+
+        <div class="scroller" id="scroller4" dir="rtl">
+            <span class='contents'>ABCDEFGHIJKLM</span>
+        </div>
+    </body>
+</html>
