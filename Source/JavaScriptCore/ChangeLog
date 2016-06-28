@@ -1,3 +1,16 @@
+2016-06-28  Filip Pizlo  <fpizlo@apple.com>
+
+        JSRopeString should use release asserts, not debug asserts, about substring bounds
+        https://bugs.webkit.org/show_bug.cgi?id=159227
+
+        Reviewed by Saam Barati.
+        
+        According to my experiments this change costs nothing.  That's not surprising since the
+        most common way to construct a rope these days is inlined into the JIT, which does its own
+        safety checks.  This makes us crash sooner rather than corrupting memory.
+
+        * runtime/JSString.h:
+
 2016-06-28  Brian Burg  <bburg@apple.com>
 
         RunLoop::Timer should use constructor templates instead of class templates

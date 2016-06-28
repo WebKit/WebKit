@@ -297,8 +297,8 @@ private:
     void finishCreation(VM& vm, ExecState* exec, JSString* base, unsigned offset, unsigned length)
     {
         Base::finishCreation(vm);
-        ASSERT(!sumOverflows<int32_t>(offset, length));
-        ASSERT(offset + length <= base->length());
+        RELEASE_ASSERT(!sumOverflows<int32_t>(offset, length));
+        RELEASE_ASSERT(offset + length <= base->length());
         m_length = length;
         setIs8Bit(base->is8Bit());
         setIsSubstring(true);
@@ -321,8 +321,8 @@ private:
     ALWAYS_INLINE void finishCreationSubstringOfResolved(VM& vm, JSString* base, unsigned offset, unsigned length)
     {
         Base::finishCreation(vm);
-        ASSERT(!sumOverflows<int32_t>(offset, length));
-        ASSERT(offset + length <= base->length());
+        RELEASE_ASSERT(!sumOverflows<int32_t>(offset, length));
+        RELEASE_ASSERT(offset + length <= base->length());
         m_length = length;
         setIs8Bit(base->is8Bit());
         setIsSubstring(true);
