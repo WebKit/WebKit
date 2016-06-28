@@ -593,6 +593,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     style
     svg
 
+    Modules/applepay
     Modules/geolocation
     Modules/indexeddb
     Modules/notifications
