@@ -309,16 +309,17 @@ float MediaPlayerPrivateGStreamer::playbackPosition() const
     GstQuery* query= gst_query_new_position(GST_FORMAT_TIME);
     if (gst_element_query(m_pipeline.get(), query))
         gst_query_parse_position(query, 0, &position);
-
-    float result = 0.0f;
-    if (static_cast<GstClockTime>(position) != GST_CLOCK_TIME_NONE)
-        result = static_cast<double>(position) / GST_SECOND;
-    else if (m_canFallBackToLastFinishedSeekPosition)
-        result = m_seekTime;
+    gst_query_unref(query);
 
     LOG_MEDIA_MESSAGE("Position %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
 
-    gst_query_unref(query);
+    float result = 0.0f;
+    if (static_cast<GstClockTime>(position) != GST_CLOCK_TIME_NONE) {
+        GTimeVal timeValue;
+        GST_TIME_TO_TIMEVAL(position, timeValue);
+        result = static_cast<float>(timeValue.tv_sec + (timeValue.tv_usec / 1000000.0));
+    } else if (m_canFallBackToLastFinishedSeekPosition)
+        result = m_seekTime;
 
     return result;
 }

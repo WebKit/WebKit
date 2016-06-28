@@ -182,7 +182,7 @@ GstClockTime toGstClockTime(float time)
     float microSeconds = modff(time, &seconds) * 1000000;
     GTimeVal timeValue;
     timeValue.tv_sec = static_cast<glong>(seconds);
-    timeValue.tv_usec = static_cast<glong>(roundf(microSeconds / 10000) * 10000);
+    timeValue.tv_usec = static_cast<glong>(floor(microSeconds + 0.5));
     return GST_TIMEVAL_TO_TIME(timeValue);
 }
 
