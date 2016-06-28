@@ -99,8 +99,14 @@ void WebCoreAVCFResourceLoader::stopLoading()
 
 void WebCoreAVCFResourceLoader::invalidate()
 {
+    if (!m_parent)
+        return;
+
     m_parent = nullptr;
-    stopLoading();
+
+    callOnMainThread([protectedThis = Ref<WebCoreAVCFResourceLoader>(*this)] () mutable {
+        protectedThis->stopLoading();
+    });
 }
 
 void WebCoreAVCFResourceLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)

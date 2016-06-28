@@ -23,13 +23,12 @@
 #ifndef HTMLDocument_h
 #define HTMLDocument_h
 
-#include "CachedResourceClient.h"
 #include "Document.h"
 #include <wtf/HashCountedSet.h>
 
 namespace WebCore {
 
-class HTMLDocument : public Document, public CachedResourceClient {
+class HTMLDocument : public Document {
 public:
     static Ref<HTMLDocument> create(Frame* frame, const URL& url)
     {
