@@ -1,3 +1,60 @@
+2016-06-28  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: QuickConsole should update its selection when RuntimeManager.defaultExecutionContextIdentifier changes
+        https://bugs.webkit.org/show_bug.cgi?id=159183
+
+        Reviewed by Timothy Hatcher.
+
+        Currently, the UI listens for state changes in the Frame tree to decide when to reset
+        the selected execution context back to its default value. This is no good, because this
+        should happen even if we have no UI (i.e., testing models only). The UI should simply
+        display changes to the model rather than driving them based on other model changes.
+
+        Move the logic to reset the execution context into RuntimeManager. When the selected
+        context changes, an event is fired which causes the QuickConsole to rebuild its path components.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WebInspector.RuntimeManager):
+        (WebInspector.RuntimeManager.prototype.set defaultExecutionContextIdentifier):
+        Fire an event when the execution context actually changes.
+
+        (WebInspector.RuntimeManager.prototype._frameExecutionContextsCleared):
+        Added. If the selected context was cleared, reset back to default.
+
+        * UserInterface/Models/Frame.js:
+        (WebInspector.Frame.prototype.clearExecutionContexts):
+        Include the contexts that were cleared so clients can match against them.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole):
+        Use the proper constant name. Both the old and new names evaluated to `undefined`.
+        No need to keep track of the selected path component, it will always match the
+        defaultExecutionContextIdentifier in RuntimeManager.
+
+        (WebInspector.QuickConsole.prototype.get selectedExecutionContextIdentifier):
+        (WebInspector.QuickConsole.prototype.set selectedExecutionContextIdentifier):
+        Forward to RuntimeManager. This name is less awkward for the UI code that manages selections.
+
+        (WebInspector.QuickConsole.prototype._executionContextPathComponentsToDisplay):
+        Special-case for the main frame execution context.
+
+        (WebInspector.QuickConsole.prototype._framePageExecutionContextsChanged):
+        Remove indirection.
+
+        (WebInspector.QuickConsole.prototype._frameExecutionContextsCleared):
+        Fix the guard to handle undefined execution contexts in the case where it represents the main frame (undefined).
+
+        (WebInspector.QuickConsole.prototype._defaultExecutionContextChanged):
+        Rebuild when the model changes.
+
+        (WebInspector.QuickConsole.prototype._pathComponentSelected): Simplify.
+        (WebInspector.QuickConsole.prototype.get executionContextIdentifier):
+        (WebInspector.QuickConsole.prototype._removeExecutionContextPathComponentForFrame):
+        Move the fallback selection behavior into RuntimeManager.
+
+        (WebInspector.QuickConsole.prototype._updateExecutionContextPathComponentForFrame): Deleted.
+        This has been dead code ever since we removed iOS 6 legacy support.
+
 2016-06-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: When modifying sessionStorage, localStorage gets updated

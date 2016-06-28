@@ -36,7 +36,7 @@ function test()
         description: "Test that evaluateInInspectedWindow works when defaultExecutionContextIdentifier is a subframe context.",
         test: (resolve, reject) => {
             let mainFrame = WebInspector.frameResourceManager.mainFrame;
-            let subframes = WebInspector.frameResourceManager.frames.filter((frame) => frame != mainFrame);
+            let subframes = WebInspector.frameResourceManager.frames.filter((frame) => frame !== mainFrame);
             InspectorTest.expectThat(subframes.length === 1, "The test page should only have one sub-frame.");
 
             WebInspector.runtimeManager.defaultExecutionContextIdentifier = subframes[0].pageExecutionContext.id;
@@ -63,12 +63,35 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "ScriptExecutionContextRemoveSubframe",
+        description: "Test that evaluateInInspectedWindow works when the defaultExecutionContextIdentifier is destroyed and reverts to the top-level context.",
+        test: (resolve, reject) => {
+            let mainFrame = WebInspector.frameResourceManager.mainFrame;
+            let subframes = WebInspector.frameResourceManager.frames.filter((frame) => frame !== mainFrame);
+            InspectorTest.expectThat(subframes.length === 1, "The test page should only have one sub-frame.");
+
+            // Set the execution context to the subframe so we can switch away from it when the frame is detached.
+            WebInspector.runtimeManager.defaultExecutionContextIdentifier = subframes[0].pageExecutionContext.id;
+
+            // Force-override the contextId, otherwise we won't be able to access the iframe's DOM element when evaluating in the iframe execution context.
+            let expression = `document.getElementById("subframe").remove();`;
+            let objectGroup = "test";
+            let contextId = WebInspector.RuntimeManager.TopLevelExecutionContextIdentifier;
+            RuntimeAgent.evaluate.invoke({expression, objectGroup, contextId}, () => {
+                InspectorTest.expectThat(WebInspector.frameResourceManager.frames.length === 1, "The test page should now have no sub-frames.");
+                InspectorTest.expectThat(WebInspector.runtimeManager.defaultExecutionContextIdentifier === WebInspector.RuntimeManager.TopLevelExecutionContextIdentifier, "When a selected non-top-level execution context is removed, the default execution context should revert to the top-level context.");
+                resolve();
+            });
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body>
-<iframe src="resources/change-execution-context-identifier-subframe.html" onload="runTest()"></iframe>
+<iframe id="subframe" src="resources/change-execution-context-identifier-subframe.html" onload="runTest()"></iframe>
 <p>Test that RuntimeManager.evaluateInInspectedWindow respects the selected execution context.</p>
 </body>
 </html>

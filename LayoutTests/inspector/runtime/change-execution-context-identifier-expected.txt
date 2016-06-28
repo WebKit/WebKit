@@ -1,4 +1,3 @@
-
 Test that RuntimeManager.evaluateInInspectedWindow respects the selected execution context.
 
 
@@ -18,4 +17,9 @@ PASS: The passphrase should match the phrase defined in the subframe.
 -- Running test case: ScriptExecutionContextMainFrameAgain
 Passphrase in selected frame: coldwater
 PASS: The passphrase should match the phrase defined in the main frame.
+
+-- Running test case: ScriptExecutionContextRemoveSubframe
+PASS: The test page should only have one sub-frame.
+PASS: The test page should now have no sub-frames.
+PASS: When a selected non-top-level execution context is removed, the default execution context should revert to the top-level context.
 

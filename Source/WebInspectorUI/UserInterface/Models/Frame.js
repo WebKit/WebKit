@@ -206,8 +206,9 @@ WebInspector.Frame = class Frame extends WebInspector.Object
     clearExecutionContexts(committingProvisionalLoad)
     {
         if (this._executionContextList.contexts.length) {
+            let contexts = this._executionContextList.contexts.slice();
             this._executionContextList.clear();
-            this.dispatchEventToListeners(WebInspector.Frame.Event.ExecutionContextsCleared, {committingProvisionalLoad:!!committingProvisionalLoad});
+            this.dispatchEventToListeners(WebInspector.Frame.Event.ExecutionContextsCleared, {committingProvisionalLoad:!!committingProvisionalLoad, contexts});
         }
     }
 

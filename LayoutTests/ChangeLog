@@ -1,3 +1,15 @@
+2016-06-28  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: QuickConsole should update its selection when RuntimeManager.defaultExecutionContextIdentifier changes
+        https://bugs.webkit.org/show_bug.cgi?id=159183
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new test case for reverting to the top-level execution context when the selected context is destroyed.
+
+        * inspector/runtime/change-execution-context-identifier-expected.txt:
+        * inspector/runtime/change-execution-context-identifier.html:
+
 2016-06-28  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Robustify 'this' type check in RTCPeerConnection JS built-ins
