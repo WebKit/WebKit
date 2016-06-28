@@ -70,7 +70,7 @@ function installDependenciesWithApt {
         libgeoclue-dev \
         libgif-dev \
         libgl1-mesa-dev \
-        libgnutls-dev \
+        libgnutls28-dev \
         libgpg-error-dev \
         libhyphen-dev \
         libicu-dev \

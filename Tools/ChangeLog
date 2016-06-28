@@ -1,3 +1,12 @@
+2016-06-27  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Support to build on Debian linux
+        https://bugs.webkit.org/show_bug.cgi?id=159123
+
+        Reviewed by Antonio Gomes.
+
+        * efl/install-dependencies: Install libgnutls28-dev.
+
 2016-06-27  Alex Christensen  <achristensen@webkit.org>
 
         Send canAuthenticateAgainstProtectionSpace calls from NetworkProcess directly to UIProcess
