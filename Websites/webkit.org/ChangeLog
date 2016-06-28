@@ -1,5 +1,18 @@
 2016-06-28  Jon Davis  <jond@apple.com>
 
+        Fixed tile height for mobile phone-sized viewports.
+        https://bugs.webkit.org/show_bug.cgi?id=159228
+
+        Reviewed by Timothy Hatcher.
+
+        Prevents cutoff text for featured tiles and prevents overlapping text and controls on the Twitter tile for phone-sized viewports.
+
+        * wp-content/themes/webkit/style.css:
+        (.twitter-tile.text-only .tile-content):
+        (.tile):
+
+2016-06-28  Jon Davis  <jond@apple.com>
+
         Fixed Open Graph meta data and image entries.
         https://bugs.webkit.org/show_bug.cgi?id=159167.
 

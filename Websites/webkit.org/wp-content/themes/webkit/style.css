@@ -666,6 +666,7 @@ footer .menu {
     font-weight: 400;
     line-height: 3rem;
     align-self: center;
+    padding-bottom: 6rem;
 }
 
 .twitter-tile img {
@@ -1932,7 +1933,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     }
 
     .tile {
-        min-height: auto;
+        min-height: 320px;
     }
 
     .third-tile,
