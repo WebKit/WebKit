@@ -702,6 +702,7 @@ void PageClientImpl::didRemoveNavigationGestureSnapshot()
 
 void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
+    [m_webView _didFirstVisuallyNonEmptyLayoutForMainFrame];
 }
 
 void PageClientImpl::didFinishLoadForMainFrame()

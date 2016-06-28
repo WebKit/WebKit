@@ -157,6 +157,10 @@ enum class DynamicViewportUpdateMode {
 
 #endif // PLATFORM(IOS)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewAdditions.mm>
+#endif
+
 #if PLATFORM(IOS)
 static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 #endif
@@ -489,6 +493,8 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
+
+    [self _setIsBlankBeforeFirstNonEmptyLayout:YES];
 
     [self addSubview:_scrollView.get()];
 
@@ -1750,6 +1756,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return !areEssentiallyEqualAsFloat(contentZoomScale(self), 1);
 }
 
+#if !USE(APPLE_INTERNAL_SDK)
+- (void)_setIsBlankBeforeFirstNonEmptyLayout:(BOOL)isBlank
+{
+}
+#endif
+
 #pragma mark - UIScrollViewDelegate
 
 - (BOOL)usesStandardContentView
@@ -2074,6 +2086,11 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         inStableState:inStableState
         isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively
         enclosedInScrollableAncestorView:scrollViewCanScroll([self _scroller])];
+}
+
+- (void)_didFirstVisuallyNonEmptyLayoutForMainFrame
+{
+    [self _setIsBlankBeforeFirstNonEmptyLayout:NO];
 }
 
 - (void)_didFinishLoadForMainFrame
@@ -4618,13 +4635,5 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 }
 
 @end
-
-#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewAdditions.mm>
-#endif
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewAdditionsMac.mm>
-#endif
 
 #endif // WK_API_ENABLED
