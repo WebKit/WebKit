@@ -1,3 +1,30 @@
+2016-06-28  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed EFL Gardening on 28th Jun.
+
+        * platform/efl/accessibility/aria-hidden-negates-no-visibility-expected.txt: Added.
+        * platform/efl/accessibility/aria-labelledby-overrides-aria-label-expected.txt: Added.
+        * platform/efl/accessibility/aria-labelledby-overrides-label-expected.txt: Added.
+        * platform/efl/accessibility/aria-option-role-expected.txt: Added.
+        * platform/efl/accessibility/aria-role-on-label-expected.txt: Added.
+        * platform/efl/accessibility/aria-switch-text-expected.txt:
+        * platform/efl/accessibility/auto-fill-crash-expected.txt: Added.
+        * platform/efl/accessibility/empty-image-with-title-expected.txt: Added.
+        * platform/efl/accessibility/form-control-value-settable-expected.txt: Added.
+        * platform/efl/accessibility/image-link-expected.txt:
+        * platform/efl/accessibility/image-map1-expected.txt:
+        * platform/efl/accessibility/image-map2-expected.txt:
+        * platform/efl/accessibility/image-with-alt-and-map-expected.txt:
+        * platform/efl/accessibility/img-fallsback-to-title-expected.txt:
+        * platform/efl/accessibility/math-fenced-expected.txt: Added.
+        * platform/efl/accessibility/math-foreign-content-expected.txt: Added.
+        * platform/efl/accessibility/math-multiscript-attributes-expected.txt:
+        * platform/efl/accessibility/math-text-expected.txt:
+        * platform/efl/accessibility/media-element-expected.txt:
+        * platform/efl/accessibility/meter-element-expected.txt:
+        * platform/efl/accessibility/radio-button-title-label-expected.txt:
+        * platform/efl/accessibility/table-detection-expected.txt:
+
 2016-06-27  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline test on iOS after r202539.

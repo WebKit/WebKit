@@ -12,7 +12,7 @@ AXRole: AXStatic
 AXParent: AXSection
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 15.000000, 106.000000 }
+AXSize: { 14.000000, 106.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: X
@@ -50,7 +50,7 @@ AXRole: AXStatic
 AXParent: AXSection
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 11.000000, 80.000000 }
+AXSize: { 10.000000, 80.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: C

@@ -230,7 +230,7 @@ AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 770.000000, 27.000000 }
+AXSize: { 769.000000, 27.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Contributions
@@ -285,6 +285,7 @@ AXPosition: { 0.000000, 0.000000 }
 AXSize: { 64.000000, 27.000000 }
 AXTitle: 
 AXDescription: 
+AXValue: asdf	asdf<\n>
 AXFocusable: 1
 AXFocused: 0
 AXSelectable: 0

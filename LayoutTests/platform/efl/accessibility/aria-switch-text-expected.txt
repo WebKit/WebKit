@@ -12,8 +12,8 @@ widget.childrenCount is 0
 widget.title is AXTitle: Two
 widget.description is AXDescription: 
 widget.childrenCount is 0
-widget.title is AXTitle: Three
-widget.description is AXDescription: foo
+widget.title is AXTitle: foo
+widget.description is AXDescription: 
 widget.childrenCount is 0
 PASS successfullyParsed is true
 
