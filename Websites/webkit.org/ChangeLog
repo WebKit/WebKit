@@ -1,3 +1,20 @@
+2016-06-28  Jon Davis  <jond@apple.com>
+
+        Fixed Open Graph meta data and image entries.
+        https://bugs.webkit.org/show_bug.cgi?id=159167.
+
+        Reviewed by Timothy Hatcher.
+
+        This patch addresses Open Graph meta data issues:
+
+        - Added a high-resolution PNG of the WebKit logo because Facebook doesn't support SVG images
+        - Uses the first image of a page or post if not featured image is set
+        - Article date/time information should not be given for the homepage
+        - Added Facebook admins as per the Facebook Open Graph debugger
+
+        * wp-content/plugins/social-meta.php:
+        * wp-content/themes/webkit/images/ogimage.png: Added.
+
 2016-06-27  Dean Jackson  <dino@apple.com>
 
         Updated content for the color blog post.
