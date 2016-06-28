@@ -1,5 +1,0 @@
-ALERT: sending synchronous xhr
-ALERT: hello
-ALERT: sending synchronous xhr
-ALERT: hello
-

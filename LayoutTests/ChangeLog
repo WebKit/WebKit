@@ -1,3 +1,14 @@
+2016-06-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix flakiness on Sierra after r202511
+        https://bugs.webkit.org/show_bug.cgi?id=159071
+
+        * http/tests/xmlhttprequest/sync-delegate-callbacks-expected.txt: Removed.
+        * http/tests/xmlhttprequest/sync-delegate-callbacks.html: Removed.
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wk2/http/tests/xmlhttprequest/sync-delegate-callbacks-expected.txt: Removed.
+
 2016-06-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RuntimeManager should not use view object WebInspector.quickConsole
