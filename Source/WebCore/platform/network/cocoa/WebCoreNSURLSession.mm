@@ -30,6 +30,7 @@
 
 #import "CachedResourceRequest.h"
 #import "PlatformMediaResourceLoader.h"
+#import "SecurityOrigin.h"
 #import "SubresourceLoader.h"
 
 using namespace WebCore;
@@ -44,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)taskCompleted:(WebCoreNSURLSessionDataTask *)task;
 - (void)addDelegateOperation:(void (^)(void))operation;
 - (void)task:(WebCoreNSURLSessionDataTask *)task didReceiveCORSAccessCheckResult:(BOOL)result;
+- (void)updateHasSingleSecurityOrigin:(SecurityOrigin&)origin;
 @end
 
 @interface WebCoreNSURLSessionDataTask ()
@@ -83,6 +85,7 @@ NS_ASSUME_NONNULL_END
     self.delegate = inDelegate;
     _queue = inQueue ? inQueue : [NSOperationQueue mainQueue];
     _internalQueue = adoptOSObject(dispatch_queue_create("WebCoreNSURLSession _internalQueue", DISPATCH_QUEUE_SERIAL));
+    _hasSingleSecurityOrigin = YES;
 
     return self;
 }
@@ -139,8 +142,21 @@ NS_ASSUME_NONNULL_END
         _corsResults = WebCoreNSURLSessionCORSAccessCheckResults::Pass;
 }
 
+- (void)updateHasSingleSecurityOrigin:(SecurityOrigin&)origin
+{
+    if (!_requestedOrigin) {
+        _requestedOrigin = &origin;
+        return;
+    }
+
+    if (!origin.isSameSchemeHostPort(_requestedOrigin.get()))
+        _hasSingleSecurityOrigin = false;
+}
+
 #pragma mark - NSURLSession API
 @synthesize sessionDescription=_sessionDescription;
+@synthesize hasSingleSecurityOrigin=_hasSingleSecurityOrigin;
+
 @dynamic delegate;
 - (__nullable id<NSURLSessionDelegate>)delegate
 {
@@ -234,6 +250,8 @@ NS_ASSUME_NONNULL_END
     if (_invalidated)
         return nil;
 
+    [self updateHasSingleSecurityOrigin:SecurityOrigin::create([request URL])];
+
     WebCoreNSURLSessionDataTask *task = [[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:_nextTaskIdentifier++ request:request];
     _dataTasks.add(task);
     return (NSURLSessionDataTask *)[task autorelease];
@@ -243,6 +261,8 @@ NS_ASSUME_NONNULL_END
 {
     if (_invalidated)
         return nil;
+
+    [self updateHasSingleSecurityOrigin:SecurityOrigin::create(url)];
 
     WebCoreNSURLSessionDataTask *task = [[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:_nextTaskIdentifier++ URL:url];
     _dataTasks.add(task);
@@ -524,6 +544,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     ASSERT_UNUSED(resource, &resource == _resource);
     ASSERT(isMainThread());
     [self.session task:self didReceiveCORSAccessCheckResult:resource.didPassAccessControlCheck()];
+    [self.session updateHasSingleSecurityOrigin:SecurityOrigin::create(response.url())];
     self.countOfBytesExpectedToReceive = response.expectedContentLength();
     [self _setDefersLoading:YES];
     RetainPtr<NSURLResponse> strongResponse { response.nsURLResponse() };
@@ -608,6 +629,8 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     // current request during responseReceieved: to work around a CoreMedia bug.
     if (response.httpStatusCode() != 302 && response.httpStatusCode() != 307)
         self.currentRequest = [NSURLRequest requestWithURL:request.url()];
+
+    [self.session updateHasSingleSecurityOrigin:SecurityOrigin::create(request.url())];
 }
 
 - (void)_resource:(PlatformMediaResource&)resource loadFinishedWithError:(NSError *)error
