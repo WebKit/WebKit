@@ -1,3 +1,15 @@
+2016-06-29  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebView should ask WKNavigationDelegate about bad ssl certificates
+        https://bugs.webkit.org/show_bug.cgi?id=159176
+
+        Reviewed by Sam Weinig.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController webView:didFinishLoadingNavigation:]):
+        (-[WK2BrowserWindowController webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[WK2BrowserWindowController webView:didFailNavigation:withError:]):
+
 2016-06-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Add missing install dependency after r202619

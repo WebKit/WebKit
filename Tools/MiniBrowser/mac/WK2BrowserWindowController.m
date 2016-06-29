@@ -567,6 +567,12 @@ static NSSet *dataTypes()
     LOG(@"didFinishLoadingNavigation: %@", navigation);
 }
 
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *__nullable credential))completionHandler
+{
+    LOG(@"didReceiveAuthenticationChallenge: %@", challenge);
+    completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
+}
+
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     LOG(@"didFailNavigation: %@, error %@", navigation, error);

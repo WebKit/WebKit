@@ -1,3 +1,25 @@
+2016-06-29  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebView should ask WKNavigationDelegate about bad ssl certificates
+        https://bugs.webkit.org/show_bug.cgi?id=159176
+        rdar://problem/26864882
+
+        Reviewed by Sam Weinig.
+
+        This can be tested manually by visiting a site in MiniBrowser that has invalid ssl certificates, but we don't have proper ssl testing yet.
+        Before this change, we would just open the site as if nothing were invalid, now we call the WKNavigationDelegate's didReceiveAuthenticationChallenge
+        like we did before using NSURLSession, and we do not open the page, also like we did before using NSURLSession.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        When using NSURLConnection and responding to canAuthenticateAgainstProtectionSpace with YES,
+        we get an NSURLAuthenticationChallenge when a bad ssl certificate is encountered in the handshake.
+        When using NSURLSession, we want to call webView:didReceiveAuthenticationChallenge:completionHandler: in this case.
+        The default implementation of NavigationState::NavigationClient::canAuthenticateAgainstProtectionSpace returns true
+        if there is an implementation of webView:didReceiveAuthenticationChallenge:completionHandler: in its WKNavigationDelegate.
+        Internal clients can implement _webView:canAuthenticateAgainstProtectionSpace: 
+        and Safari uses canHandleHTTPSServerTrustEvaluation, so it will be unaffected.
+
 2016-06-29  Beth Dakin  <bdakin@apple.com>
 
         Delete WKElementInfo since it's not used

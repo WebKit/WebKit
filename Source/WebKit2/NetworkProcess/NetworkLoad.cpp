@@ -352,12 +352,7 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
             completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
         return;
     }
-    
-    if (m_challenge->protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-        completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(*m_challenge));
-        return;
-    }
-    
+
     if (m_parameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials) {
         completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
         return;
