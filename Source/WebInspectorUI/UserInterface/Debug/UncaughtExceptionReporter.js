@@ -57,6 +57,7 @@ function handleError(error) {
         lineNumber: error.line,
         columnNumber: error.column,
         stack: error.stack,
+        details: error.details,
     });
 }
 
@@ -150,22 +151,29 @@ function createErrorSheet() {
     }
 
     function formattedEntry(entry) {
-        let message = `${entry.message} (at ${entry.url}:${entry.lineNumber}:${entry.columnNumber})`;
-        if (!entry.stack)
-            return message;
-
         const indent = "    ";
-        let results = [];
-        let lines = entry.stack.split(/\n/g);
-        for (let line of lines) {
-            let atIndex = line.indexOf("@");
-            let slashIndex = Math.max(line.lastIndexOf("/"), atIndex);
-            let functionName = line.substring(0, atIndex) || "?";
-            let location = line.substring(slashIndex + 1, line.length);
-            results.push(`${indent}${functionName} @ ${location}`);
+        let lines = [`${entry.message} (at ${entry.url}:${entry.lineNumber}:${entry.columnNumber})`];
+        if (entry.stack) {
+            let stackLines = entry.stack.split(/\n/g);
+            for (let stackLine of stackLines) {
+                let atIndex = stackLine.indexOf("@");
+                let slashIndex = Math.max(stackLine.lastIndexOf("/"), atIndex);
+                let functionName = stackLine.substring(0, atIndex) || "?";
+                let location = stackLine.substring(slashIndex + 1, stackLine.length);
+                lines.push(`${indent}${functionName} @ ${location}`);
+            }
         }
 
-        return message + "\n" + results.join("\n");
+        if (entry.details) {
+            lines.push("");
+            lines.push("Additional Details:")
+            for (let key in entry.details) {
+                let value = entry.details[key];
+                lines.push(`${indent}${key} --> ${value}`);
+            }
+        }
+
+        return lines.join("\n");
     }
 
     let inspectedPageURL = null;
@@ -232,6 +240,6 @@ Document any additional information that might be useful in resolving the proble
 }
 
 window.addEventListener("error", handleUncaughtException);
-window.handlePromiseException = handleError;
+window.handlePromiseException = window.handleInternalException = handleError;
 
 })();

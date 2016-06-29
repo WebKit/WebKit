@@ -31,13 +31,13 @@
     bottom: 0;
     z-index: var(--z-index-uncaught-exception-sheet);
     background-color: hsl(0, 0%, 96%);
+    overflow: scroll;
 }
 
 .uncaught-exception-sheet {
     padding: 50px 55px 50px 65px;
     font-family: '-webkit-system-font';
     font-size: 11pt;
-    overflow-y: auto;
     min-width: 400px;
     color: hsl(0, 0%, 40%);
 }

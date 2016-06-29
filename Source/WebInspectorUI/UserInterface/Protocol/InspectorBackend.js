@@ -255,7 +255,7 @@ InspectorBackendClass = class InspectorBackendClass
 
         if (messageObject["error"]) {
             if (messageObject["error"].code !== -32000)
-                this._reportProtocolError(messageObject);
+                console.error("Request with id = " + messageObject["id"] + " failed. " + JSON.stringify(messageObject["error"]));
         }
 
         let sequenceId = messageObject["id"];
@@ -298,7 +298,10 @@ InspectorBackendClass = class InspectorBackendClass
         try {
             callback.apply(null, callbackArguments);
         } catch (e) {
-            console.error("Uncaught exception in inspector page while dispatching callback for command " + command.qualifiedName, e);
+            WebInspector.reportInternalError(e, {
+                "cause": `An uncaught exception was thrown while dispatching response callback for command ${command.qualifiedName}.`,
+                "protocol-message": JSON.stringify(messageObject),
+            });
         }
     }
 
@@ -343,19 +346,18 @@ InspectorBackendClass = class InspectorBackendClass
         try {
             agent.dispatchEvent(eventName, eventArguments);
         } catch (e) {
-            console.error("Uncaught exception in inspector page while handling event " + qualifiedName, e);
             for (let tracer of this.activeTracers)
                 tracer.logFrontendException(messageObject, e);
+
+            WebInspector.reportInternalError(e, {
+                "cause": `An uncaught exception was thrown while handling event: ${qualifiedName}`,
+                "protocol-message": JSON.stringify(messageObject),
+            });
         }
 
         let processingDuration = (timestamp() - processingStartTimestamp).toFixed(3);
         for (let tracer of this.activeTracers)
             tracer.logDidHandleEvent(messageObject, {dispatch: processingDuration});
-    }
-
-    _reportProtocolError(messageObject)
-    {
-        console.error("Request with id = " + messageObject["id"] + " failed. " + JSON.stringify(messageObject["error"]));
     }
 
     _flushPendingScripts()

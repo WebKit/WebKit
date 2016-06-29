@@ -1,3 +1,43 @@
+2016-06-29  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Uncaught Exception page never shows if exception is thrown while processing a protocol event
+        https://bugs.webkit.org/show_bug.cgi?id=159182
+
+        Reviewed by Joseph Pecoraro.
+
+        Since we catch exceptions raised during the handling of protocol responses and events, there
+        is no way for these exceptions to trigger the global exception handler that shows the Uncaught
+        Exception Reporter sheet. We should show these in the sheet because it makes them get fixed faster.
+
+        Add a new entry point, WebInspector.reportInternalError, that takes an error or string and
+        a free-form map of strings to strings for storing additional information such as message data.
+        Pass the error and any other relevant details to this entry point, which decides whether to
+        show the uncaught exception reporter or quietly log the error to Inspector^2 console.
+
+        In future patches, I would like to do the following once the common errors are fixed:
+         - enable reporting via Uncaught Exception Reporter for all engineering builds
+         - move internal console.error call sites to use WebInspector.reportInternalError
+
+        * UserInterface/Base/Main.js: Add reportInternalError, which redirects to the uncaught
+        exception reporter sheet or does console.error. It also adds a console.assert that could
+        cause the debugger to pause if desired.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.css:
+        (.sheet-container): Make the report scrollable now that we could potentially show a lot of text.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (handleError): Also pass along the 'details' poperty.
+        (formattedEntry): Refactor the code so it additionally prints out the keys and values of
+        the 'details' property. It does not do any coercions, so callers must convert values to strings.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype._dispatchResponse): Inlined a function.
+        (InspectorBackendClass.prototype._dispatchResponseToCallback):
+        (InspectorBackendClass.prototype._dispatchEvent):
+        Report uncaught exceptions via WebInspector.reportInternalError.
+
+        (InspectorBackendClass.prototype._reportProtocolError): Deleted, inlined into the single use site.
+
 2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Shadow Root type in DOM Tree
