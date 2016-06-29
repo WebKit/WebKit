@@ -82,6 +82,7 @@ PASS cursor instanceof IDBCursorWithValue is false
 PASS cursor.primaryKey is 0
 PASS 'value' in cursor is false
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

@@ -23,6 +23,7 @@ FAIL pixel at (20,15) is (0,255,0,255), should be (255,0,0,255)
 PASS getError was expected value: NO_ERROR : 
 
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

@@ -115,6 +115,7 @@ Testing how probablySupportsContext handles no parameters
 PASS document.createElement('canvas').probablySupportsContext() is false
 
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

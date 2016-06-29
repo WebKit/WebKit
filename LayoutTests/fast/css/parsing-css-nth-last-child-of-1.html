@@ -11,7 +11,7 @@
 description('Test the parsing of :nth-last-child(of) for querySelector and style.');
 
 function testValidSelector(selectorString, expectedSerializedSelector) {
-    shouldNotThrow('document.querySelector(":nth-last-child(' + selectorString.replace(/\\/g, '\\\\') + ')")', '"Error: SyntaxError: DOM Exception 12"');
+    shouldNotThrow('document.querySelector(":nth-last-child(' + selectorString.replace(/\\/g, '\\\\') + ')")');
 
     var styleContainer = document.getElementById('style-container');
     styleContainer.innerHTML = ':nth-last-child(' + selectorString + ') { }';

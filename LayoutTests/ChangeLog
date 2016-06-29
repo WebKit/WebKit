@@ -1,3 +1,87 @@
+2016-06-28  David Kilzer  <ddkilzer@apple.com>
+
+        Enhance shouldNotThrow()/shouldThrow() to accept functions and a descriptive message
+        <https://webkit.org/b/159232>
+
+        Reviewed by Brent Fulgham.
+
+        Based on a Blink change (patch by <hongchan@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?view=revision&revision=192204>
+
+        Currently, shouldNotThrow() and shouldThrow() take the following
+        arguments:
+
+            shouldNotThrow(evalString)
+            shouldThrow(evalString, expectedExceptionString)
+
+        The challenges with this design are:
+
+            1) The 'evalString' must capture every variable that it
+               needs, which means the code can be long, and concatenated
+               into a single line.  It would be really nice to be able
+               to use an (anonymous) function to capture variables
+               instead.
+            2) The 'evalString' is literally printed out in the test
+               results, which isn't always the most descriptive.  A
+               descriptive message would make it clearer what failed.
+            3) When changing a shouldThrow() into a shouldNotThrow()
+               or copying/pasting code, it's possible to forget to
+               remove 'expectedExceptionString' from the function call.
+
+        This patch changes the methods to take the following arguments:
+
+            shouldNotThrow(evalString|function [, message])
+            shouldThrow(evalString|function, expectedExceptionString [, message])
+
+        If 'function' is passed in, then it is invoked instead of
+        evaluated, and 'message' replaces the literal code in the
+        pass/fail output.
+
+        This patch also adds the global 'didFailSomeTests' variable to
+        js-test.js, which already exists in js-test-pre.js.  This was
+        added to js-test-pre.js in r153203 by Oliver Hunt to
+        LayoutTests/fast/js/resources/js-test-pre.js.
+
+        * fast/canvas/webgl/canvas-supports-context-expected.txt:
+        * fast/canvas/webgl/gl-bind-attrib-location-before-compile-test-expected.txt:
+        * fast/css-grid-layout/grid-element-auto-repeat-get-set-expected.txt:
+        * fast/dom/getElementsByClassName/ASCII-case-insensitive-expected.txt:
+        * storage/indexeddb/cursor-basics-expected.txt:
+        * storage/indexeddb/cursor-basics-private-expected.txt:
+        - Update expected results to include "Some tests fail." since
+          some subtests actually do fail during these tests.
+
+        * fast/css/parsing-css-lang.html:
+        * fast/css/parsing-css-matches-1.html:
+        * fast/css/parsing-css-matches-2.html:
+        * fast/css/parsing-css-matches-3.html:
+        * fast/css/parsing-css-matches-4.html:
+        * fast/css/parsing-css-not-1.html:
+        * fast/css/parsing-css-not-2.html:
+        * fast/css/parsing-css-not-3.html:
+        * fast/css/parsing-css-not-4.html:
+        * fast/css/parsing-css-nth-child-of-1.html:
+        * fast/css/parsing-css-nth-child-of-2.html:
+        * fast/css/parsing-css-nth-last-child-of-1.html:
+        * fast/css/parsing-css-nth-last-child-of-2.html:
+        * js/script-tests/arrowfunction-supercall.js:
+        - Remove expectedExceptionString from shouldNotThrow() calls
+          after they were changed from shouldThrow() calls.
+
+        * resources/js-test-pre.js:
+        (shouldNotThrow): Change to invoke first argument if it is a
+        function, else use eval() as before.  Use second argurment in
+        place of first argument (if set) when printing results.  NOTE:
+        Care was taken not to add any lines of code to prevent changes
+        to test results.
+        (shouldThrow): Ditto.  Reformat code.
+        * resources/js-test.js: Declare 'didFailSomeTests'.
+        (testFailed): Set 'didFailSomeTests' to true when a test fails.
+        (shouldNotThrow): Same changes as js-test-pre.js.
+        (shouldThrow): Ditto.
+        (isSuccessfullyParsed): Output a message if 'didFailSomeTests'
+        is true.
+
 2016-06-28  Jiewen Tan  <jiewen_tan@apple.com>
 
         Implement "replacement" codec

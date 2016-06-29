@@ -11,7 +11,7 @@
 description('Test the parsing of :lang(stringList) for querySelector and style.');
 
 function testValidLanguageRange(languageRangeString, expectedSerializedLanguageRange) {
-    shouldNotThrow('document.querySelector(\':lang(' + languageRangeString.replace(/\\/g, '\\\\') + ')\')', '"Error: SyntaxError: DOM Exception 12"');
+    shouldNotThrow('document.querySelector(\':lang(' + languageRangeString.replace(/\\/g, '\\\\') + ')\')');
 
     var styleContainer = document.getElementById('style-container');
     styleContainer.innerHTML = ':lang(' + languageRangeString + ') { }';

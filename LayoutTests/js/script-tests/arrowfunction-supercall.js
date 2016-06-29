@@ -151,7 +151,7 @@ shouldBeTrue("indexOfChildClassInStackError > -1 && errorStack.indexOf('ChildCla
 shouldBe("(new class extends A { constructor() { ((a = super())=>{})() } }).id", "value");
 shouldThrow('(new class extends A { constructor() { ((a = this)=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
 shouldThrow('(new class extends A { constructor() { ((a = this, b=super())=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldNotThrow('(new class extends A { constructor() { ((a = new.target)=>{ return a; })(); super(); } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldNotThrow('(new class extends A { constructor() { ((a = new.target, b=super())=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldNotThrow('(new class extends A { constructor() { ((a = new.target)=>{ return a; })(); super(); } })');
+shouldNotThrow('(new class extends A { constructor() { ((a = new.target, b=super())=>{ return a; })() } })');
 
 var successfullyParsed = true;
