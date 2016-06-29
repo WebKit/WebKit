@@ -127,7 +127,7 @@ private:
     
     bool m_supportsAsynchronousPluginInitialization;
 
-    RunLoop::Timer m_minimumLifetimeTimer;
+    RunLoop::Timer<PluginProcess> m_minimumLifetimeTimer;
 
 #if PLATFORM(COCOA)
     // The Mach port used for accelerated compositing.

@@ -67,7 +67,7 @@ private:
     GtkWidget* m_webView { nullptr };
     GtkWidget* m_popup { nullptr };
 
-    RunLoop::Timer m_dismissMenuTimer;
+    RunLoop::Timer<WebPopupMenuProxyGtk> m_dismissMenuTimer;
 
     // Typeahead find.
     unsigned m_previousKeyEventCharacter { 0 };

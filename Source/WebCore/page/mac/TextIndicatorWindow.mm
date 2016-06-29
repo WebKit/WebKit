@@ -404,7 +404,7 @@ namespace WebCore {
 
 TextIndicatorWindow::TextIndicatorWindow(NSView *targetView)
     : m_targetView(targetView)
-    , m_temporaryTextIndicatorTimer(RunLoop::main(), *this, &TextIndicatorWindow::startFadeOut)
+    , m_temporaryTextIndicatorTimer(RunLoop::main(), this, &TextIndicatorWindow::startFadeOut)
 {
 }
 

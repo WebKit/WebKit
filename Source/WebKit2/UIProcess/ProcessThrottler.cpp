@@ -34,7 +34,7 @@ static const unsigned processSuspensionTimeout = 30;
     
 ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process)
     : m_process(process)
-    , m_suspendTimer(RunLoop::main(), *this, &ProcessThrottler::suspendTimerFired)
+    , m_suspendTimer(RunLoop::main(), this, &ProcessThrottler::suspendTimerFired)
     , m_foregroundCounter([this](RefCounterEvent) { updateAssertion(); })
     , m_backgroundCounter([this](RefCounterEvent) { updateAssertion(); })
     , m_suspendMessageCount(0)

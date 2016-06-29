@@ -97,7 +97,7 @@ TestRunner::TestRunner()
     , m_userStyleSheetEnabled(false)
     , m_userStyleSheetLocation(adoptWK(WKStringCreateWithUTF8CString("")))
 #if PLATFORM(GTK)
-    , m_waitToDumpWatchdogTimer(RunLoop::main(), *this, &TestRunner::waitToDumpWatchdogTimerFired)
+    , m_waitToDumpWatchdogTimer(RunLoop::main(), this, &TestRunner::waitToDumpWatchdogTimerFired)
 #endif
 {
     platformInitialize();

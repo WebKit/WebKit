@@ -103,7 +103,7 @@ private:
     unsigned m_frameRate { 30 };
     unsigned m_frameNumber { 0 };
 
-    RunLoop::Timer m_timer;
+    RunLoop::Timer<MockRealtimeVideoSource> m_timer;
 };
 
 } // namespace WebCore

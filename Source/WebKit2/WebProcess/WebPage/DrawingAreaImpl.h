@@ -131,8 +131,8 @@ private:
 
     bool m_forceRepaintAfterBackingStoreStateUpdate { false };
 
-    RunLoop::Timer m_displayTimer;
-    RunLoop::Timer m_exitCompositingTimer;
+    RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
+    RunLoop::Timer<DrawingAreaImpl> m_exitCompositingTimer;
 
     // The layer tree host that handles accelerated compositing.
     RefPtr<LayerTreeHost> m_layerTreeHost;

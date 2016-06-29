@@ -150,7 +150,7 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
 #if USE(GSTREAMER_GL)
-    , m_drawTimer(RunLoop::main(), *this, &MediaPlayerPrivateGStreamerBase::repaint)
+    , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamerBase::repaint)
 #endif
     , m_usingFallbackVideoSink(false)
     , m_videoSourceRotation(NoVideoSourceRotation)

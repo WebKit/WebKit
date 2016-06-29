@@ -75,10 +75,10 @@ TEST(WTF_RunLoop, OneShotTimer)
 
     bool testFinished = false;
 
-    class DerivedTimer : public RunLoop::Timer {
+    class DerivedTimer : public RunLoop::Timer<DerivedTimer> {
     public:
         DerivedTimer(bool& testFinished)
-            : RunLoop::Timer(RunLoop::current(), *this, &DerivedTimer::fired)
+            : RunLoop::Timer<DerivedTimer>(RunLoop::current(), this, &DerivedTimer::fired)
             , m_testFinished(testFinished)
         {
         }
@@ -106,10 +106,10 @@ TEST(WTF_RunLoop, RepeatingTimer)
 
     bool testFinished = false;
 
-    class DerivedTimer : public RunLoop::Timer {
+    class DerivedTimer : public RunLoop::Timer<DerivedTimer> {
     public:
         DerivedTimer(bool& testFinished)
-            : RunLoop::Timer(RunLoop::current(), *this, &DerivedTimer::fired)
+            : RunLoop::Timer<DerivedTimer>(RunLoop::current(), this, &DerivedTimer::fired)
             , m_testFinished(testFinished)
         {
         }

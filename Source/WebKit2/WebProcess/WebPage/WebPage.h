@@ -1250,7 +1250,7 @@ private:
     String m_primaryPlugInPageOrigin;
     String m_primaryPlugInOrigin;
     String m_primaryPlugInMimeType;
-    RunLoop::Timer m_determinePrimarySnapshottedPlugInTimer;
+    RunLoop::Timer<WebPage> m_determinePrimarySnapshottedPlugInTimer;
 #endif
 
     // The layer hosting mode.
@@ -1291,7 +1291,7 @@ private:
     RefPtr<PageBanner> m_footerBanner;
 #endif // !PLATFORM(IOS)
 
-    RunLoop::Timer m_setCanStartMediaTimer;
+    RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
     bool m_mayStartMediaWhenInWindow;
 
     HashMap<uint64_t, RefPtr<WebUndoStep>> m_undoStepMap;

@@ -42,7 +42,7 @@ WebPopupMenuProxyGtk::WebPopupMenuProxyGtk(GtkWidget* webView, WebPopupMenuProxy
     : WebPopupMenuProxy(client)
     , m_webView(webView)
     , m_popup(gtk_menu_new())
-    , m_dismissMenuTimer(RunLoop::main(), *this, &WebPopupMenuProxyGtk::dismissMenuTimerFired)
+    , m_dismissMenuTimer(RunLoop::main(), this, &WebPopupMenuProxyGtk::dismissMenuTimerFired)
 {
     g_signal_connect(m_popup, "key-press-event", G_CALLBACK(keyPressEventCallback), this);
     g_signal_connect(m_popup, "unmap", G_CALLBACK(menuUnmappedCallback), this);

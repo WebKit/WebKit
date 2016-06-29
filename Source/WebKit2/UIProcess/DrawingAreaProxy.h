@@ -136,7 +136,7 @@ private:
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize&) { }
 
 #if PLATFORM(MAC)
-    RunLoop::Timer m_viewExposedRectChangedTimer;
+    RunLoop::Timer<DrawingAreaProxy> m_viewExposedRectChangedTimer;
     Optional<WebCore::FloatRect> m_viewExposedRect;
     Optional<WebCore::FloatRect> m_lastSentViewExposedRect;
 #endif // PLATFORM(MAC)

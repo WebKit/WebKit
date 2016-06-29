@@ -80,7 +80,7 @@ private:
     VisitedLinkTable m_table;
 
     HashSet<WebCore::LinkHash, WebCore::LinkHashHash> m_pendingVisitedLinks;
-    RunLoop::Timer m_pendingVisitedLinksTimer;
+    RunLoop::Timer<VisitedLinkStore> m_pendingVisitedLinksTimer;
 };
 
 } // namespace WebKit

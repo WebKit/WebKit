@@ -63,7 +63,7 @@ using namespace WebCore;
 namespace WebKit {
 
 WebLoaderStrategy::WebLoaderStrategy()
-    : m_internallyFailedLoadTimer(RunLoop::main(), *this, &WebLoaderStrategy::internallyFailedLoadTimerFired)
+    : m_internallyFailedLoadTimer(RunLoop::main(), this, &WebLoaderStrategy::internallyFailedLoadTimerFired)
 {
 }
 

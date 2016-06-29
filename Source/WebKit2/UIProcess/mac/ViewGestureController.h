@@ -178,7 +178,7 @@ private:
         std::function<void()> m_removalCallback;
         std::chrono::steady_clock::time_point m_startTime;
 
-        RunLoop::Timer m_watchdogTimer;
+        RunLoop::Timer<SnapshotRemovalTracker> m_watchdogTimer;
     };
 
 #if PLATFORM(MAC)
@@ -239,7 +239,7 @@ private:
     WebPageProxy& m_webPageProxy;
     ViewGestureType m_activeGestureType { ViewGestureType::None };
 
-    RunLoop::Timer m_swipeActiveLoadMonitoringTimer;
+    RunLoop::Timer<ViewGestureController> m_swipeActiveLoadMonitoringTimer;
 
     WebCore::Color m_backgroundColorForCurrentSnapshot;
 

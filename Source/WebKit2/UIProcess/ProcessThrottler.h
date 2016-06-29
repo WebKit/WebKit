@@ -71,7 +71,7 @@ private:
 
     ProcessThrottlerClient& m_process;
     std::unique_ptr<ProcessAndUIAssertion> m_assertion;
-    RunLoop::Timer m_suspendTimer;
+    RunLoop::Timer<ProcessThrottler> m_suspendTimer;
     ForegroundActivityCounter m_foregroundCounter;
     BackgroundActivityCounter m_backgroundCounter;
     int m_suspendMessageCount;

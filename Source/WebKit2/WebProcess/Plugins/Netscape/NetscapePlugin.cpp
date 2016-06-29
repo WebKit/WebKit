@@ -91,7 +91,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     , m_hasHandledAKeyDownEvent(false)
     , m_ignoreNextKeyUpEventCounter(0)
 #ifndef NP_NO_CARBON
-    , m_nullEventTimer(RunLoop::main(), *this, &NetscapePlugin::nullEventTimerFired)
+    , m_nullEventTimer(RunLoop::main(), this, &NetscapePlugin::nullEventTimerFired)
     , m_npCGContext()
 #endif
 #endif
@@ -316,7 +316,7 @@ NetscapePlugin::Timer::Timer(NetscapePlugin* netscapePlugin, unsigned timerID, u
     , m_interval(interval)
     , m_repeat(repeat)
     , m_timerFunc(timerFunc)
-    , m_timer(RunLoop::main(), *this, &Timer::timerFired)
+    , m_timer(RunLoop::main(), this, &Timer::timerFired)
 {
 }
 

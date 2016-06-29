@@ -60,7 +60,7 @@ private:
     ResponsivenessTimer::Client& m_client;
     bool m_isResponsive;
 
-    RunLoop::Timer m_timer;
+    RunLoop::Timer<ResponsivenessTimer> m_timer;
 };
 
 } // namespace WebKit

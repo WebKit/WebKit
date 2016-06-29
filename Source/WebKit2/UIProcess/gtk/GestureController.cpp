@@ -163,7 +163,7 @@ void GestureController::DragGesture::longPressFired()
 
 GestureController::DragGesture::DragGesture(WebPageProxy& page)
     : Gesture(gtk_gesture_drag_new(page.viewWidget()), page)
-    , m_longPressTimeout(RunLoop::main(), *this, &GestureController::DragGesture::longPressFired)
+    , m_longPressTimeout(RunLoop::main(), this, &GestureController::DragGesture::longPressFired)
     , m_inDrag(false)
 {
     gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(m_gesture.get()), TRUE);
@@ -213,7 +213,7 @@ GestureController::ZoomGesture::ZoomGesture(WebPageProxy& page)
     : Gesture(gtk_gesture_zoom_new(page.viewWidget()), page)
     , m_initialScale(0)
     , m_scale(0)
-    , m_idle(RunLoop::main(), *this, &GestureController::ZoomGesture::handleZoom)
+    , m_idle(RunLoop::main(), this, &GestureController::ZoomGesture::handleZoom)
 {
     g_signal_connect_swapped(m_gesture.get(), "begin", G_CALLBACK(begin), this);
     g_signal_connect_swapped(m_gesture.get(), "scale-changed", G_CALLBACK(scaleChanged), this);

@@ -79,7 +79,7 @@ private:
 
     PendingActionFlags m_pendingActionFlags { 0 };
     Client* m_client;
-    RunLoop::Timer m_pendingActionTimer;
+    RunLoop::Timer<MediaPlaybackTargetPicker> m_pendingActionTimer;
 };
 
 } // namespace WebCore

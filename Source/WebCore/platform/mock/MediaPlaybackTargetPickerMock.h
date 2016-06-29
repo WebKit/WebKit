@@ -55,7 +55,7 @@ private:
     void timerFired();
 
     String m_deviceName;
-    RunLoop::Timer m_timer;
+    RunLoop::Timer<MediaPlaybackTargetPickerMock> m_timer;
     MediaPlaybackTargetContext::State m_state { MediaPlaybackTargetContext::Unknown };
     bool m_showingMenu { false };
 };

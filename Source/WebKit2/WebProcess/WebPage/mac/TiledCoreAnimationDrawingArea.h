@@ -144,7 +144,7 @@ private:
 
     WebCore::TransformationMatrix m_transform;
 
-    RunLoop::Timer m_sendDidUpdateViewStateTimer;
+    RunLoop::Timer<TiledCoreAnimationDrawingArea> m_sendDidUpdateViewStateTimer;
     Vector<uint64_t> m_nextViewStateChangeCallbackIDs;
     bool m_wantsDidUpdateViewState;
 

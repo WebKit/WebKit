@@ -33,7 +33,7 @@
 namespace WebCore {
 
 MainThreadSharedTimer::MainThreadSharedTimer()
-    : m_timer(RunLoop::main(), *this, &MainThreadSharedTimer::fired)
+    : m_timer(RunLoop::main(), this, &MainThreadSharedTimer::fired)
 {
     // This is GDK_PRIORITY_REDRAW, but we don't want to depend on GDK here just to use a constant.
     m_timer.setPriority(G_PRIORITY_HIGH_IDLE + 20);

@@ -44,7 +44,7 @@ PluginInfoCache& PluginInfoCache::singleton()
 
 PluginInfoCache::PluginInfoCache()
     : m_cacheFile(g_key_file_new())
-    , m_saveToFileIdle(RunLoop::main(), *this, &PluginInfoCache::saveToFile)
+    , m_saveToFileIdle(RunLoop::main(), this, &PluginInfoCache::saveToFile)
     , m_readOnlyMode(false)
 {
     m_saveToFileIdle.setPriority(G_PRIORITY_DEFAULT_IDLE);

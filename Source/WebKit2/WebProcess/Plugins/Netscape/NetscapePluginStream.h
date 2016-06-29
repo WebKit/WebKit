@@ -108,7 +108,7 @@ private:
     CString m_mimeType;
     CString m_headers;
 
-    RunLoop::Timer m_deliveryDataTimer;
+    RunLoop::Timer<NetscapePluginStream> m_deliveryDataTimer;
     std::unique_ptr<Vector<uint8_t>> m_deliveryData;
     bool m_stopStreamWhenDoneDelivering;
 };

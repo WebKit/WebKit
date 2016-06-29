@@ -140,7 +140,7 @@ private:
     float m_lastScaleFactor;
     WebCore::IntPoint m_lastScrollPosition;
 
-    RunLoop::Timer m_layerFlushTimer;
+    RunLoop::Timer<ThreadedCoordinatedLayerTreeHost> m_layerFlushTimer;
     bool m_layerFlushSchedulingEnabled;
 };
 

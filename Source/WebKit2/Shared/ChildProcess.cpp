@@ -36,7 +36,7 @@ namespace WebKit {
 ChildProcess::ChildProcess()
     : m_terminationTimeout(0)
     , m_terminationCounter(0)
-    , m_terminationTimer(RunLoop::main(), *this, &ChildProcess::terminationTimerFired)
+    , m_terminationTimer(RunLoop::main(), this, &ChildProcess::terminationTimerFired)
     , m_processSuppressionDisabled("Process Suppression Disabled by UIProcess")
 {
 }

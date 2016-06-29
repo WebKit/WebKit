@@ -119,7 +119,7 @@ private:
     // after a given period of time.
     unsigned m_terminationCounter;
 
-    RunLoop::Timer m_terminationTimer;
+    RunLoop::Timer<ChildProcess> m_terminationTimer;
 
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;

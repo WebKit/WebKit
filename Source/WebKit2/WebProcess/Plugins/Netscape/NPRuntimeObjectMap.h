@@ -98,7 +98,7 @@ private:
     HashMap<JSC::JSObject*, NPJSObject*> m_npJSObjects;
     HashMap<NPObject*, JSC::Weak<JSNPObject>> m_jsNPObjects;
     Vector<NPObject*> m_npObjectsToFinalize;
-    RunLoop::Timer m_finalizationTimer;
+    RunLoop::Timer<NPRuntimeObjectMap> m_finalizationTimer;
 };
 
 } // namespace WebKit

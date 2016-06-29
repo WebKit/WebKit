@@ -74,7 +74,7 @@ private:
     RetainPtr<NSWindow> m_textIndicatorWindow;
     RetainPtr<WebTextIndicatorView> m_textIndicatorView;
 
-    RunLoop::Timer m_temporaryTextIndicatorTimer;
+    RunLoop::Timer<TextIndicatorWindow> m_temporaryTextIndicatorTimer;
 };
 
 #endif // PLATFORM(MAC)

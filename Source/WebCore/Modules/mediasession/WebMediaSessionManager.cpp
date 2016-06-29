@@ -127,8 +127,8 @@ WebCore::MediaPlaybackTargetPicker& WebMediaSessionManager::targetPicker()
 }
 
 WebMediaSessionManager::WebMediaSessionManager()
-    : m_taskTimer(RunLoop::current(), *this, &WebMediaSessionManager::taskTimerFired)
-    , m_watchdogTimer(RunLoop::current(), *this, &WebMediaSessionManager::watchdogTimerFired)
+    : m_taskTimer(RunLoop::current(), this, &WebMediaSessionManager::taskTimerFired)
+    , m_watchdogTimer(RunLoop::current(), this, &WebMediaSessionManager::watchdogTimerFired)
 {
 }
 

@@ -79,7 +79,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     , m_layerFlushScheduler(this)
     , m_isPaintingSuspended(!(parameters.viewState & ViewState::IsVisible))
     , m_transientZoomScale(1)
-    , m_sendDidUpdateViewStateTimer(RunLoop::main(), *this, &TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired)
+    , m_sendDidUpdateViewStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired)
     , m_wantsDidUpdateViewState(false)
     , m_viewOverlayRootLayer(nullptr)
 {

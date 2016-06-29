@@ -44,7 +44,7 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPagePr
     , m_webPageProxy(webPageProxy)
     , m_size(webPageProxy.viewSize())
 #if PLATFORM(MAC)
-    , m_viewExposedRectChangedTimer(RunLoop::main(), *this, &DrawingAreaProxy::viewExposedRectChangedTimerFired)
+    , m_viewExposedRectChangedTimer(RunLoop::main(), this, &DrawingAreaProxy::viewExposedRectChangedTimerFired)
 #endif
 {
     m_webPageProxy.process().addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID(), *this);

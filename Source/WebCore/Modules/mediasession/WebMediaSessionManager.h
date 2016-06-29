@@ -96,8 +96,8 @@ private:
 
     void watchdogTimerFired();
 
-    RunLoop::Timer m_taskTimer;
-    RunLoop::Timer m_watchdogTimer;
+    RunLoop::Timer<WebMediaSessionManager> m_taskTimer;
+    RunLoop::Timer<WebMediaSessionManager> m_watchdogTimer;
 
     Vector<std::unique_ptr<ClientState>> m_clientState;
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
