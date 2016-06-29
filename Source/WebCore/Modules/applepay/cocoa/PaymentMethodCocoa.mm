@@ -33,6 +33,56 @@
 
 namespace WebCore {
 
+static NSString *toString(PKPaymentPassActivationState paymentPassActivationState)
+{
+    switch (paymentPassActivationState) {
+    case PKPaymentPassActivationStateActivated:
+        return @"activated";
+    case PKPaymentPassActivationStateRequiresActivation:
+        return @"requiresActivation";
+    case PKPaymentPassActivationStateActivating:
+        return @"activating";
+    case PKPaymentPassActivationStateSuspended:
+        return @"suspended";
+    case PKPaymentPassActivationStateDeactivated:
+        return @"deactivated";
+    default:
+        return nil;
+    }
+}
+
+static RetainPtr<NSDictionary> toDictionary(PKPaymentPass *paymentPass)
+{
+    auto result = adoptNS([[NSMutableDictionary alloc] init]);
+
+    [result setObject:paymentPass.primaryAccountIdentifier forKey:@"primaryAccountIdentifier"];
+    [result setObject:paymentPass.primaryAccountNumberSuffix forKey:@"primaryAccountNumberSuffix"];
+    if (NSString *deviceAccountIdentifier = paymentPass.deviceAccountIdentifier)
+        [result setObject:deviceAccountIdentifier forKey:@"deviceAccountIdentifier"];
+    if (NSString *deviceAccountNumberSuffix = paymentPass.deviceAccountNumberSuffix)
+        [result setObject:deviceAccountNumberSuffix forKey:@"deviceAccountNumberSuffix"];
+    if (NSString *activationState = toString(paymentPass.activationState))
+        [result setObject:activationState forKey:@"activationState"];
+
+    return result;
+}
+
+static NSString *toString(PKPaymentMethodType paymentMethodType)
+{
+    switch (paymentMethodType) {
+    case PKPaymentMethodTypeDebit:
+        return @"debit";
+    case PKPaymentMethodTypeCredit:
+        return @"credit";
+    case PKPaymentMethodTypePrepaid:
+        return @"prepaid";
+    case PKPaymentMethodTypeStore:
+        return @"store";
+    default:
+        return nil;
+    }
+}
+
 RetainPtr<NSDictionary> toDictionary(PKPaymentMethod *paymentMethod)
 {
     auto result = adoptNS([[NSMutableDictionary alloc] init]);
@@ -42,6 +92,12 @@ RetainPtr<NSDictionary> toDictionary(PKPaymentMethod *paymentMethod)
 
     if (NSString *network = paymentMethod.network)
         [result setObject:network forKey:@"network"];
+
+    if (NSString *paymentMethodType = toString(paymentMethod.type))
+        [result setObject:paymentMethodType forKey:@"type"];
+
+    if (PKPaymentPass *paymentPass = paymentMethod.paymentPass)
+        [result setObject:toDictionary(paymentPass).get() forKey:@"paymentPass"];
 
     return result;
 }
