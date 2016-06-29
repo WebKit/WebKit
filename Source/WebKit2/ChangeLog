@@ -1,3 +1,18 @@
+2016-06-29  Jeremy Jones  <jeremyj@apple.com>
+
+        Replace MPAudioVideoRoutingActionSheet with MPAVRoutingSheet.
+        https://bugs.webkit.org/show_bug.cgi?id=159161
+        <rdar://problem/26017691>
+
+        Reviewed by Sam Weinig.
+
+        MPAudioVideoRoutingActionSheet is being replaced by MPAVRoutingSheet,
+        with only minor changes to the interface.
+
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        (-[WKAirPlayRoutePicker dealloc]):
+        (-[WKAirPlayRoutePicker showAirPlayPickerIPhone:]):
+
 2016-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Too much duplicated code in LayerTreeHosts implementations

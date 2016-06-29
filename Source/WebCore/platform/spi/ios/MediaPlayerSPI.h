@@ -33,7 +33,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <MediaPlayer/MPAVRoutingController.h>
-#import <MediaPlayer/MPAudioVideoRoutingActionSheet.h>
+#import <MediaPlayer/MPAVRoutingSheet.h>
 #import <MediaPlayer/MPAudioVideoRoutingPopoverController.h>
 
 #else
@@ -72,13 +72,20 @@ typedef NSInteger MPRouteDiscoveryMode;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-@interface MPAudioVideoRoutingActionSheet : UIActionSheet
+@interface MPAVRoutingSheet : UIView
 @end
 #pragma clang diagnostic pop
 
-@interface MPAudioVideoRoutingActionSheet ()
-- (id)initWithType:(MPAVItemType)avItemType;
-- (void)showWithValidInterfaceOrientationMaskBlock:(UIInterfaceOrientationMask (^)(void))block completionHandler:(void (^)())completionHandler;
+@interface MPAVRoutingSheet ()
+@property (nonatomic, assign, setter=setAVItemType:) MPAVItemType avItemType;
+
+@property (nonatomic, assign) BOOL mirroringOnly;
+
+- (id)initWithAVItemType:(MPAVItemType)avItemType;
+
+- (void)showInView:(UIView *)view withCompletionHandler:(void (^)(void))completionHandler;
+
+- (void)dismiss;
 @end
 
 #endif

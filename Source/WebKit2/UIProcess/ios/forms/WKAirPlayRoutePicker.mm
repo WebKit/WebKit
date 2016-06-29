@@ -42,14 +42,14 @@
 SOFT_LINK_FRAMEWORK(MediaPlayer)
 SOFT_LINK_CLASS(MediaPlayer, MPAVRoutingController)
 SOFT_LINK_CLASS(MediaPlayer, MPAudioVideoRoutingPopoverController)
-SOFT_LINK_CLASS(MediaPlayer, MPAudioVideoRoutingActionSheet)
+SOFT_LINK_CLASS(MediaPlayer, MPAVRoutingSheet)
 
 using namespace WebKit;
 
 @implementation WKAirPlayRoutePicker {
     RetainPtr<MPAVRoutingController> _routingController;
     RetainPtr<MPAudioVideoRoutingPopoverController> _popoverController;  // iPad
-    RetainPtr<MPAudioVideoRoutingActionSheet> _actionSheet;              // iPhone
+    RetainPtr<MPAVRoutingSheet> _actionSheet; // iPhone
     WKContentView* _view; // Weak reference.
 }
 
@@ -65,7 +65,7 @@ using namespace WebKit;
 - (void)dealloc
 {
     // The ActionSheet's completion handler will release and clear the ActionSheet.
-    [_actionSheet dismissWithClickedButtonIndex:[_actionSheet cancelButtonIndex] animated:YES];
+    [_actionSheet dismiss];
     [self _dismissAirPlayRoutePickerIPad];
 
     [super dealloc];
@@ -134,18 +134,13 @@ using namespace WebKit;
     if (_actionSheet)
         return;
 
-    _actionSheet = adoptNS([allocMPAudioVideoRoutingActionSheetInstance() initWithType:itemType]);
+    _actionSheet = adoptNS([allocMPAVRoutingSheetInstance() initWithAVItemType:itemType]);
 
-    [_actionSheet
-        showWithValidInterfaceOrientationMaskBlock:^UIInterfaceOrientationMask {
-            return UIInterfaceOrientationMaskPortrait;
-        }
-        completionHandler:^{
-            [_routingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
-            _routingController = nil;
-            _actionSheet = nil;
-        }
-     ];
+    [_actionSheet showInView:_view withCompletionHandler:^{
+        [_routingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
+        _routingController = nil;
+        _actionSheet = nil;
+    }];
 }
 
 - (void)show:(BOOL)hasVideo fromRect:(CGRect)elementRect
