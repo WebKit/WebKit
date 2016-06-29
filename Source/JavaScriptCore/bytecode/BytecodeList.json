@@ -64,6 +64,8 @@
             { "name" : "op_get_by_id", "length" : 9  },
             { "name" : "op_get_by_id_proto_load", "length" : 9 },
             { "name" : "op_get_by_id_unset", "length" : 9 },
+            { "name" : "op_get_by_id_proto_accessor", "length" : 9 },
+            { "name" : "op_get_by_id_proto_custom", "length" : 9 },
             { "name" : "op_get_by_id_with_this", "length" : 5 },
             { "name" : "op_get_by_val_with_this", "length" : 5 },
             { "name" : "op_try_get_by_id", "length" : 4 },

@@ -1,3 +1,44 @@
+2016-06-29  Caio Lima  <ticaiolima@gmail.com>
+
+        LLInt should support other types of prototype GetById caching.
+        https://bugs.webkit.org/show_bug.cgi?id=158083
+
+        Recently, we started supporting prototype load caching for get_by_id
+        in the LLInt. This patch is expading the caching strategy to enable
+        cache the prototype accessor and custom acessors.
+
+        Similarly to the get_by_id_proto_load bytecode, we are adding new
+        bytecodes called get_by_id_proto_accessor that uses the calculated
+        offset of a object to call a getter function and get_by_id_proto_custom
+        that stores the pointer to the custom function and call them directly
+        from LowLevelInterpreter.
+
+        Reviewed by Keith Miller
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2016-06-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202580.

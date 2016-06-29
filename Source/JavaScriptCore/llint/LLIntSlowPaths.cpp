@@ -598,6 +598,8 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc,
     ObjectPropertyConditionSet conditions;
     if (slot.isUnset())
         conditions = generateConditionsForPropertyMiss(vm, codeBlock, exec, structure, ident.impl());
+    else if (slot.isCustom())
+        conditions = generateConditionsForPrototypePropertyHitCustom(vm, codeBlock, exec, structure, slot.slotBase(), ident.impl());
     else
         conditions = generateConditionsForPrototypePropertyHit(vm, codeBlock, exec, structure, slot.slotBase(), ident.impl());
 
@@ -614,7 +616,7 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc,
             offset = condition.condition().offset();
         result.iterator->value.add(condition, pc)->install();
     }
-    ASSERT((offset == invalidOffset) == slot.isUnset());
+    ASSERT((offset == invalidOffset) == (slot.isUnset() || slot.isCustom()));
 
     ConcurrentJITLocker locker(codeBlock->m_lock);
 
@@ -622,10 +624,20 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc,
         pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_unset);
         pc[4].u.structureID = structure->id();
         return;
+    } else if (slot.isCustom()) {
+        pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_proto_custom);
+        pc[4].u.structureID = structure->id();
+        pc[5].u.getterFunc = slot.customGetter();
+        pc[6].u.pointer = slot.attributes() & CustomAccessor ? 0 : slot.slotBase();
+        return;
     }
-    ASSERT(slot.isValue());
+    ASSERT(slot.isValue() || slot.isAccessor());
 
-    pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_proto_load);
+    if (slot.isAccessor())
+        pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_proto_accessor);
+    else
+        pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_proto_load);
+
     pc[4].u.structureID = structure->id();
     pc[5].u.operand = offset;
     // We know that this pointer will remain valid because it will be cleared by either a watchpoint fire or
@@ -666,10 +678,12 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
                 
                 ConcurrentJITLocker locker(codeBlock->m_lock);
 
-                pc[4].u.structureID = structure->id();
-                pc[5].u.operand = slot.cachedOffset();
+                if (slot.isValue()) {
+                    pc[4].u.structureID = structure->id();
+                    pc[5].u.operand = slot.cachedOffset();
+                }
             }
-        } else if (UNLIKELY(pc[7].u.operand && (slot.isValue() || slot.isUnset()))) {
+        } else if (UNLIKELY(pc[7].u.operand && (slot.isValue() || slot.isUnset() || ((slot.isAccessor() || slot.isCustom()) && (slot.slotBase() != baseValue))))) {
             ASSERT(slot.slotBase() != baseValue);
 
             if (!(--pc[7].u.operand))
@@ -689,6 +703,19 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
 
     pc[OPCODE_LENGTH(op_get_by_id) - 1].u.profile->m_buckets[0] = JSValue::encode(result);
     LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_get_proto_accessor)
+{
+    LLINT_BEGIN();
+    JSValue baseValue = LLINT_OP_C(2).jsValue();
+    PropertyOffset offset = pc[5].u.operand;
+    JSObject* slotBase = jsCast<JSObject*>(pc[6].u.jsCell.get());
+    JSValue getterSetter = slotBase->getDirect(offset);
+
+    JSValue result = callGetter(exec, baseValue, getterSetter);
+
+    LLINT_RETURN_PROFILED(op_get_by_id, result);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_get_arguments_length)

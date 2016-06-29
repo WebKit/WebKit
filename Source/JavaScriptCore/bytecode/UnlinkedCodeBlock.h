@@ -107,6 +107,7 @@ struct UnlinkedInstruction {
 };
 
 class UnlinkedCodeBlock : public JSCell {
+    friend class LLIntOffsetsExtractor;
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags;
