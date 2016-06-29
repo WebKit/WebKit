@@ -1896,6 +1896,7 @@ fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html [ Pass Failure
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
 
 # started to fail after new snapshotting in r202532
+webkit.org/b/150942 animations/multiple-backgrounds.html [ Pass ImageOnlyFailure ]
 compositing/contents-scale/rasterization-scale.html [ ImageOnlyFailure ]
 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
 compositing/regions/propagate-region-box-shadow-border-padding.html [ ImageOnlyFailure ]
