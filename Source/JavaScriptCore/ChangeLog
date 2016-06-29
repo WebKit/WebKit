@@ -1,3 +1,29 @@
+2016-06-28  Keith Miller  <keith_miller@apple.com>
+
+        We should not crash there is a finally inside a for-in loop
+        https://bugs.webkit.org/show_bug.cgi?id=159243
+        <rdar://problem/27018910>
+
+        Reviewed by Benjamin Poulain.
+
+        Previously we would swap the m_forInContext with an empty vector
+        then attempt to shrink the size of m_forInContext by the amount
+        we expected. This meant that if there was more than one ForInContext
+        on the stack and we wanted to pop exactly one off we would crash.
+        This patch makes ForInContexts RefCounted so they can be duplicated
+        into other vectors. It also has ForInContexts copy the entire stack
+        rather than do the swap that we did before. This makes ForInContexts
+        work the same as the other contexts.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        (JSC::BytecodeGenerator::pushIndexedForInScope):
+        (JSC::BytecodeGenerator::pushStructureForInScope):
+        * bytecompiler/BytecodeGenerator.h:
+        * tests/stress/finally-for-in.js: Added.
+        (repeat):
+        (createSimple):
+
 2016-06-28  Saam Barati  <sbarati@apple.com>
 
         Assertion failure or crash when accessing let-variable in TDZ with eval with a function in it that returns let variable
