@@ -1,3 +1,17 @@
+2016-06-28  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Use a regex to check if a test step is for JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=159224
+
+        Reviewed by Geoffrey Garen.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotCombinedQueueView.js:
+        (BuildbotCombinedQueueView.prototype.update): Replace array membership test with regex test.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype._parseData): Replace array membership test with regex test.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.appendBuilderQueueStatus): Replace array membership test with regex test.
+
 2016-06-28  Michael Saboff  <msaboff@apple.com>
 
         btjs no longer accepts optional frame count argument

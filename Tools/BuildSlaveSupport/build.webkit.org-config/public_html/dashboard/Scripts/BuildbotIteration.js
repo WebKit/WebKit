@@ -251,7 +251,7 @@ BuildbotIteration.prototype = {
             var results = new BuildbotTestResults(step);
             if (step.name === "layout-test")
                 this.layoutTestResults = results;
-            else if (["jscore-test", "webkit-32bit-jsc-test", "webkit-jsc-cloop-test"].indexOf(step.name) >= 0)
+            else if (/(?=.*test)(?=.*jsc)/.test(step.name))
                 this.javaScriptCoreTestResults = results;
             if (results.allPassed)
                 return;

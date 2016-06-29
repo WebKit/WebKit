@@ -109,7 +109,7 @@ BuildbotCombinedQueueView.prototype = {
                     var message = this.revisionContentForIteration(mostRecentFinishedIteration, mostRecentFinishedIteration.productive ? mostRecentSuccessfulIteration : null);
                     if (!mostRecentFinishedIteration.productive) {
                         var status = StatusLineView.Status.Danger;
-                    } else if (mostRecentFinishedIteration.failedTestSteps.length === 1 && ["jscore-test", "webkit-32bit-jsc-test", "webkit-jsc-cloop-test"].indexOf(mostRecentFinishedIteration.failedTestSteps[0].name) >= 0) {
+                    } else if (mostRecentFinishedIteration.failedTestSteps.length === 1 && /(?=.*test)(?=.*jsc)/.test(mostRecentFinishedIteration.failedTestSteps[0].name)) {
                         var failedStep = mostRecentFinishedIteration.failedTestSteps[0];
                         var URL = mostRecentFinishedIteration.queue.buildbot.javaScriptCoreTestStdioUrlForIteration(mostRecentFinishedIteration, failedStep.name);
                         var statusView = new StatusLineView(message, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), failedStep.failureCount, URL);
