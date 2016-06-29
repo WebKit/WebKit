@@ -619,6 +619,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 
     m_codeBlock->setNumParameters(1);
 
+    pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize);
+
     emitEnter();
 
     allocateAndEmitScope();
@@ -641,8 +643,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     if (evalNode->usesSuperCall() || evalNode->usesNewTarget())
         m_newTargetRegister = addVar();
 
-    pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize);
-    
     if (codeBlock->isArrowFunctionContext() && (evalNode->usesThis() || evalNode->usesSuperProperty()))
         emitLoadThisFromArrowFunctionLexicalEnvironment();
 

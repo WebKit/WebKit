@@ -1,3 +1,28 @@
+2016-06-28  Saam Barati  <sbarati@apple.com>
+
+        Assertion failure or crash when accessing let-variable in TDZ with eval with a function in it that returns let variable
+        https://bugs.webkit.org/show_bug.cgi?id=158796
+        <rdar://problem/26984659>
+
+        Reviewed by Michael Saboff.
+
+        There was a bug where some functions inside of an eval were
+        omitting a necessary TDZ check. This obviously leads to bad
+        things because a variable under TDZ is the null pointer.
+        The eval's bytecode was generated with the correct TDZ set, but 
+        it created all its functions before pushing that TDZ set onto
+        the stack. That's a mistake. Those functions need to be created with
+        that TDZ set. The solution is simple, the TDZ set that the eval
+        is created with needs to be pushed onto the TDZ stack before
+        the eval creates any functions.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * tests/stress/variable-under-tdz-eval-tricky.js: Added.
+        (assert):
+        (throw.new.Error):
+        (assert.try.underTDZ):
+
 2016-06-28  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r200946): Improper backtracking from last alternative in sticky patterns
