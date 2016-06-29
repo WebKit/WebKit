@@ -32,22 +32,22 @@
 #define DocumentThreadableLoader_h
 
 #include "CrossOriginPreflightChecker.h"
+#include "SecurityOrigin.h"
 #include "ThreadableLoader.h"
 
 namespace WebCore {
     class CachedRawResource;
     class ContentSecurityPolicy;
     class Document;
-    class SecurityOrigin;
     class ThreadableLoaderClient;
 
     class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, private CachedRawResourceClient  {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static void loadResourceSynchronously(Document&, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&, std::unique_ptr<ContentSecurityPolicy>&&);
+        static void loadResourceSynchronously(Document&, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&);
         static void loadResourceSynchronously(Document&, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
 
-        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, const ResourceRequest&, const ThreadableLoaderOptions&, std::unique_ptr<ContentSecurityPolicy>&&);
+        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, const ResourceRequest&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&);
         static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, const ResourceRequest&, const ThreadableLoaderOptions&);
 
         virtual ~DocumentThreadableLoader();
@@ -70,7 +70,7 @@ namespace WebCore {
             LoadAsynchronously
         };
 
-        DocumentThreadableLoader(Document&, ThreadableLoaderClient&, BlockingBehavior, const ResourceRequest&, const ThreadableLoaderOptions&, std::unique_ptr<ContentSecurityPolicy>&&);
+        DocumentThreadableLoader(Document&, ThreadableLoaderClient&, BlockingBehavior, const ResourceRequest&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&);
 
         void clearResource();
 
@@ -108,6 +108,7 @@ namespace WebCore {
         ThreadableLoaderClient* m_client;
         Document& m_document;
         ThreadableLoaderOptions m_options;
+        RefPtr<SecurityOrigin> m_origin;
         bool m_sameOriginRequest;
         bool m_simpleRequest;
         bool m_async;

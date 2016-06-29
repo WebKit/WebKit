@@ -83,6 +83,20 @@ void WorkerThreadableLoader::cancel()
     m_bridge.cancel();
 }
 
+struct LoaderTaskOptions {
+    LoaderTaskOptions(const ThreadableLoaderOptions&, const String&, const SecurityOrigin&);
+    ThreadableLoaderOptions options;
+    String referrer;
+    RefPtr<SecurityOrigin> origin;
+};
+
+LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, const String& referrer, const SecurityOrigin& origin)
+    : options(options, options.preflightPolicy, options.crossOriginRequestPolicy, options.contentSecurityPolicyEnforcement, options.initiator.isolatedCopy())
+    , referrer(referrer.isolatedCopy())
+    , origin(origin.isolatedCopy())
+{
+}
+
 WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClientWrapper& workerClientWrapper, WorkerLoaderProxy& loaderProxy, const String& taskMode,
     const ResourceRequest& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer,
     const SecurityOrigin* securityOrigin, const ContentSecurityPolicy* contentSecurityPolicy)
@@ -96,16 +110,17 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(*securityOrigin);
     contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
 
-    m_loaderProxy.postTaskToLoader([this, request = request.isolatedCopy(), options = options.isolatedCopy(), contentSecurityPolicyCopy = WTFMove(contentSecurityPolicyCopy), outgoingReferrer = outgoingReferrer.isolatedCopy()](ScriptExecutionContext& context) mutable {
+    auto optionsCopy = std::make_unique<LoaderTaskOptions>(options, outgoingReferrer, *securityOrigin);
+
+    m_loaderProxy.postTaskToLoader([this, request = request.isolatedCopy(), options = WTFMove(optionsCopy), contentSecurityPolicyCopy = WTFMove(contentSecurityPolicyCopy)](ScriptExecutionContext& context) mutable {
         ASSERT(isMainThread());
         Document& document = downcast<Document>(context);
 
-        request.setHTTPReferrer(outgoingReferrer);
+        request.setHTTPReferrer(options->referrer);
 
-        // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
-        // will return a 0 value. Either this should return 0 or the other code path should do a callback with
-        // a failure.
-        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, request, *options, WTFMove(contentSecurityPolicyCopy));
+        // FIXME: If the site requests a local resource, then this will return a non-zero value but the sync path will return a 0 value.
+        // Either this should return 0 or the other code path should call a failure callback.
+        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, request, options->options, WTFMove(options->origin), WTFMove(contentSecurityPolicyCopy));
         ASSERT(m_mainThreadLoader || m_loadingFinished);
     });
 }

@@ -49,22 +49,13 @@ ThreadableLoaderOptions::~ThreadableLoaderOptions()
 {
 }
 
-ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, PreflightPolicy preflightPolicy, CrossOriginRequestPolicy crossOriginRequestPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, RefPtr<SecurityOrigin>&& securityOrigin, String&& initiator)
+ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, PreflightPolicy preflightPolicy, CrossOriginRequestPolicy crossOriginRequestPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiator)
     : ResourceLoaderOptions(baseOptions)
     , preflightPolicy(preflightPolicy)
     , crossOriginRequestPolicy(crossOriginRequestPolicy)
     , contentSecurityPolicyEnforcement(contentSecurityPolicyEnforcement)
-    , securityOrigin(WTFMove(securityOrigin))
     , initiator(WTFMove(initiator))
 {
-}
-
-std::unique_ptr<ThreadableLoaderOptions> ThreadableLoaderOptions::isolatedCopy() const
-{
-    RefPtr<SecurityOrigin> securityOriginCopy;
-    if (securityOrigin)
-        securityOriginCopy = securityOrigin->isolatedCopy();
-    return std::make_unique<ThreadableLoaderOptions>(*this, preflightPolicy, crossOriginRequestPolicy, contentSecurityPolicyEnforcement, WTFMove(securityOriginCopy), initiator.isolatedCopy());
 }
 
 RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, const ThreadableLoaderOptions& options)

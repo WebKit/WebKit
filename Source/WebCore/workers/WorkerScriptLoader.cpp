@@ -68,12 +68,11 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     options.setAllowCredentials(AllowStoredCredentials);
     options.crossOriginRequestPolicy = crossOriginRequestPolicy;
     options.setSendLoadCallbacks(SendCallbacks);
-    options.securityOrigin = scriptExecutionContext->securityOrigin();
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 
     WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(scriptExecutionContext), *request, *this, options);
 }
-    
+
 void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, CrossOriginRequestPolicy crossOriginRequestPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, WorkerScriptLoaderClient* client)
 {
     ASSERT(client);
@@ -88,7 +87,6 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     options.setAllowCredentials(AllowStoredCredentials);
     options.crossOriginRequestPolicy = crossOriginRequestPolicy;
     options.setSendLoadCallbacks(SendCallbacks);
-    options.securityOrigin = scriptExecutionContext->securityOrigin();
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 
     // During create, callbacks may happen which remove the last reference to this object.
