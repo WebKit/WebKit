@@ -1,3 +1,16 @@
+2016-06-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r202617.
+
+        The LayoutTest from this change crashes under GuardMalloc
+
+        Reverted changeset:
+
+        "Throw exceptions for invalid number of channels for
+        ConvolverNode"
+        https://bugs.webkit.org/show_bug.cgi?id=159238
+        http://trac.webkit.org/changeset/202617
+
 2016-06-29  Jer Noble  <jer.noble@apple.com>
 
         Cannot clear a MediaSource SourceBuffer in Safari 9 and WebKit nightly
