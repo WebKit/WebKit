@@ -170,6 +170,10 @@ Suites.push(new Suite("HTML suite",
             name: "Leaves 2.0"
         },
         {
+            url: "dom/focus.html",
+            name: "Focus 2.0"
+        },
+        {
             url: "dom/particles.html",
             name: "DOM particles, SVG masks"
         },

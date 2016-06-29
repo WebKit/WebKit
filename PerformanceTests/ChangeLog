@@ -1,3 +1,22 @@
+2016-06-28  Jon Lee  <jonlee@apple.com>
+
+        Update focus test
+        https://bugs.webkit.org/show_bug.cgi?id=159242
+        rdar://problem/27070007
+
+        Reviewed by Dean Jackson.
+        Provisionally reviewed by Said Abou-Hallawa.
+
+        Move previous test to dom suite, and update the test for better reporting of frame rate, although
+        it uses a different rendering path.
+
+        * Animometer/resources/debug-runner/tests.js: Add to dom suite.
+        * Animometer/tests/dom/focus.html: Copied from PerformanceTests/Animometer/tests/master/focus.html.
+        * Animometer/tests/dom/resources/focus.js: Copied from PerformanceTests/Animometer/tests/master/resources/focus.js.
+        * Animometer/tests/master/focus.html: Remove center element.
+        * Animometer/tests/master/resources/focus.js: Use narrower size range with smaller particles. Remove the
+        container elements. Inline getBlurValue and getOpacityValue since they are only called once.
+
 2016-06-28  Filip Pizlo  <fpizlo@apple.com>
 
         Move Air.js and Basic into ES6SampleBench
