@@ -48,6 +48,22 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         node.addEventListener(WebInspector.DOMNode.Event.EnabledPseudoClassesChanged, this._nodePseudoClassesDidChange, this);
     }
 
+    // Static
+
+    static shadowRootTypeDisplayName(type)
+    {
+        switch (type) {
+        case WebInspector.DOMNode.ShadowRootType.UserAgent:
+            return WebInspector.UIString("User Agent");
+        case WebInspector.DOMNode.ShadowRootType.Open:
+            return WebInspector.UIString("Open");
+        case WebInspector.DOMNode.ShadowRootType.Closed:
+            return WebInspector.UIString("Closed");
+        }
+    }
+
+    // Public
+
     isCloseTag()
     {
         return this._elementCloseTag;
@@ -1195,8 +1211,8 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         switch (node.nodeType()) {
             case Node.DOCUMENT_FRAGMENT_NODE:
                 var fragmentElement = info.titleDOM.createChild("span", "html-fragment");
-                if (node.isInShadowTree()) {
-                    fragmentElement.textContent = WebInspector.UIString("Shadow Content");
+                if (node.shadowRootType()) {
+                    fragmentElement.textContent = WebInspector.UIString("Shadow Content (%s)").format(WebInspector.DOMTreeElement.shadowRootTypeDisplayName(node.shadowRootType()));
                     fragmentElement.classList.add("shadow");
                 } else if (node.parentNode && node.parentNode.templateContent() === node)
                     fragmentElement.textContent = WebInspector.UIString("Template Content");

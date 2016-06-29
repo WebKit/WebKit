@@ -20,6 +20,12 @@
             "description": "Pseudo element type."
         },
         {
+            "id": "ShadowRootType",
+            "type": "string",
+            "enum": ["user-agent", "open", "closed"],
+            "description": "Shadow root type."
+        },
+        {
             "id": "LiveRegionRelevant",
             "type": "string",
             "enum": ["additions", "removals", "text"],
@@ -46,6 +52,7 @@
                 { "name": "name", "type": "string", "optional": true, "description": "<code>Attr</code>'s name." },
                 { "name": "value", "type": "string", "optional": true, "description": "<code>Attr</code>'s value." },
                 { "name": "pseudoType", "$ref": "PseudoType", "optional": true, "description": "Pseudo element type for this node." },
+                { "name": "shadowRootType", "$ref": "ShadowRootType", "optional": true, "description": "Shadow root type." },
                 { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Frame ID for frame owner elements." },
                 { "name": "contentDocument", "$ref": "Node", "optional": true, "description": "Content document for frame owner elements." },
                 { "name": "shadowRoots", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Shadow root list for given element host." },

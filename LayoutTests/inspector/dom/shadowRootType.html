@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("DOMNode.shadowRootType");
+
+    suite.addTestCase({
+        name: "ShadowRootType.UserAgent",
+        test: (resolve, reject) => {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "#host-user-agent", (nodeId) => {
+                let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, "Got DOMNode for #host-user-agent");
+                InspectorTest.expectThat(domNode.shadowRoots().length === 1, "DOMNode has a single shadow root.");
+                InspectorTest.expectThat(domNode.shadowRoots()[0].shadowRootType() === WebInspector.DOMNode.ShadowRootType.UserAgent, "DOMNode has UserAgent shadow root type.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ShadowRootType.Closed",
+        test: (resolve, reject) => {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "#host-closed", (nodeId) => {
+                let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, "Got DOMNode for #host-closed");
+                InspectorTest.expectThat(domNode.shadowRoots().length === 1, "DOMNode has a single shadow root.");
+                InspectorTest.expectThat(domNode.shadowRoots()[0].shadowRootType() === WebInspector.DOMNode.ShadowRootType.Closed, "DOMNode has Closed shadow root type.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ShadowRootType.Open",
+        test: (resolve, reject) => {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "#host-open", (nodeId) => {
+                let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, "Got DOMNode for #host-open");
+                InspectorTest.expectThat(domNode.shadowRoots().length === 1, "DOMNode has a single shadow root.");
+                InspectorTest.expectThat(domNode.shadowRoots()[0].shadowRootType() === WebInspector.DOMNode.ShadowRootType.Open, "DOMNode has Open shadow root type.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "NoShadowRootType",
+        test: (resolve, reject) => {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "#no-host", (nodeId) => {
+                let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, "Got DOMNode for #no-host");
+                InspectorTest.expectThat(domNode.shadowRoots().length === 0, "DOMNode has no shadow roots.");
+                InspectorTest.expectThat(domNode.shadowRootType() === undefined, "DOMNode has no shadow root type.");
+                resolve();
+            });
+        }
+    });
+
+    WebInspector.domTreeManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for DOMNode.shadowRootType.</p>
+<div style="display: none">
+    <input id="host-user-agent" controls>
+    <div id="host-closed"></div>
+    <div id="host-open"></div>
+    <div id="no-host"></div>
+</div>
+<script>
+(function() {
+    var shadowRootClosed = document.getElementById("host-closed").attachShadow({mode: "closed"});
+    shadowRootClosed.appendChild(document.createTextNode("closed"));
+
+    var shadowRootOpen = document.getElementById("host-open").attachShadow({mode: "open"});
+    shadowRootOpen.appendChild(document.createTextNode("open"));
+})();
+</script>
+</body>
+</html>

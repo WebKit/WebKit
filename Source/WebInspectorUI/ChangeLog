@@ -1,3 +1,33 @@
+2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show Shadow Root type in DOM Tree
+        https://bugs.webkit.org/show_bug.cgi?id=159236
+        <rdar://problem/27068521>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        "Shadow Content (type)" string.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype.shadowRoots):
+        (WebInspector.DOMNode.prototype.shadowRootType):
+        Initialize state and add accessors.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.shadowRootTypeDisplayName):
+        (WebInspector.DOMTreeElement.prototype._nodeTitleInfo):
+        Better string when an element is a Shadow Root.
+
+        * UserInterface/Views/DOMTreeElementPathComponent.js:
+        (WebInspector.DOMTreeElementPathComponent):
+        Better to check the Shadow Root type.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom .html-fragment.shadow):
+        Opacity looks poor when there is a selection. Switch to gray.
+
 2016-06-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r188730): Web Inspector: Warning icons incorrectly positioned in CSS Rules sidebar

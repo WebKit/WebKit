@@ -47,6 +47,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         this._localName = payload.localName;
         this._nodeValue = payload.nodeValue;
         this._pseudoType = payload.pseudoType;
+        this._shadowRootType = payload.shadowRootType;
         this._computedRole = payload.role;
         this._contentSecurityPolicyHash = payload.contentSecurityPolicyHash;
 
@@ -316,6 +317,16 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
     afterPseudoElement()
     {
         return this._pseudoElements.get(WebInspector.DOMNode.PseudoElementType.After) || null;
+    }
+
+    shadowRoots()
+    {
+        return this._shadowRoots;
+    }
+
+    shadowRootType()
+    {
+        return this._shadowRootType;
     }
 
     nodeValue()
@@ -677,4 +688,10 @@ WebInspector.DOMNode.Event = {
 WebInspector.DOMNode.PseudoElementType = {
     Before: "before",
     After: "after",
+};
+
+WebInspector.DOMNode.ShadowRootType = {
+    UserAgent: "user-agent",
+    Closed: "closed",
+    Open: "open",
 };

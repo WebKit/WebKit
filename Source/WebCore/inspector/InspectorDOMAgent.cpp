@@ -1280,6 +1280,21 @@ static bool pseudoElementType(PseudoId pseudoId, Inspector::Protocol::DOM::Pseud
     }
 }
 
+static Inspector::Protocol::DOM::ShadowRootType shadowRootType(ShadowRoot::Type type)
+{
+    switch (type) {
+    case ShadowRoot::Type::UserAgent:
+        return Inspector::Protocol::DOM::ShadowRootType::UserAgent;
+    case ShadowRoot::Type::Closed:
+        return Inspector::Protocol::DOM::ShadowRootType::Closed;
+    case ShadowRoot::Type::Open:
+        return Inspector::Protocol::DOM::ShadowRootType::Open;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::DOM::ShadowRootType::UserAgent;
+}
+
 static String computeContentSecurityPolicySHA256Hash(const Element& element)
 {
     // FIXME: Compute the digest with respect to the raw bytes received from the page.
@@ -1391,6 +1406,9 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
         Attr& attribute = downcast<Attr>(*node);
         value->setName(attribute.name());
         value->setValue(attribute.value());
+    } else if (is<ShadowRoot>(*node)) {
+        ShadowRoot& shadowRoot = downcast<ShadowRoot>(*node);
+        value->setShadowRootType(shadowRootType(shadowRoot.type()));
     }
 
     // Need to enable AX to get the computed role.
