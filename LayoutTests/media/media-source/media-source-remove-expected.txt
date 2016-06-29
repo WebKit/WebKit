@@ -9,6 +9,6 @@ RUN(sourceBuffer.appendBuffer(samples))
 EVENT(updateend)
 RUN(sourceBuffer.remove(0, 2))
 EVENT(updateend)
-EXPECTED (sourceBuffer.buffered.start(0).toFixed(1) == '4') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '4') OK
 END OF TEST
 

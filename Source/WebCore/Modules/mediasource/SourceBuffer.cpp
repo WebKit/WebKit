@@ -655,8 +655,8 @@ static bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::valu
 static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSampleMap::MapType& samples, SourceBuffer::TrackBuffer& trackBuffer, const SourceBuffer* buffer, const char* logPrefix)
 {
 #if !LOG_DISABLED
-    double earliestSample = std::numeric_limits<double>::infinity();
-    double latestSample = 0;
+    MediaTime earliestSample = MediaTime::positiveInfiniteTime();
+    MediaTime latestSample = MediaTime::zeroTime();
     size_t bytesRemoved = 0;
 #else
     UNUSED_PARAM(logPrefix);
@@ -664,7 +664,6 @@ static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSamp
 #endif
 
     auto erasedRanges = TimeRanges::create();
-    MediaTime microsecond(1, 1000000);
     for (auto sampleIt : samples) {
         const DecodeOrderSampleMap::KeyType& decodeKey = sampleIt.first;
 #if !LOG_DISABLED
@@ -680,9 +679,9 @@ static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSamp
         // Also remove the erased samples from the TrackBuffer decodeQueue.
         trackBuffer.decodeQueue.erase(decodeKey);
 
-        double startTime = sample->presentationTime().toDouble();
-        double endTime = startTime + (sample->duration() + microsecond).toDouble();
-        erasedRanges->add(startTime, endTime);
+        auto startTime = sample->presentationTime();
+        auto endTime = startTime + sample->duration();
+        erasedRanges->ranges().add(startTime, endTime);
 
 #if !LOG_DISABLED
         bytesRemoved += startBufferSize - trackBuffer.samples.sizeInBytes();
@@ -695,7 +694,7 @@ static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSamp
 
 #if !LOG_DISABLED
     if (bytesRemoved)
-        LOG(MediaSource, "SourceBuffer::%s(%p) removed %zu bytes, start(%lf), end(%lf)", logPrefix, buffer, bytesRemoved, earliestSample, latestSample);
+        LOG(MediaSource, "SourceBuffer::%s(%p) removed %zu bytes, start(%lf), end(%lf)", logPrefix, buffer, bytesRemoved, earliestSample.toDouble(), latestSample.toDouble());
 #endif
 
     return WTFMove(erasedRanges);
@@ -1586,7 +1585,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         if (m_shouldGenerateTimestamps)
             m_timestampOffset = frameEndTimestamp;
 
-        m_buffered->add(presentationTimestamp.toDouble(), (presentationTimestamp + frameDuration + microsecond).toDouble());
+        m_buffered->ranges().add(presentationTimestamp, presentationTimestamp + frameDuration);
         m_bufferedSinceLastMonitor += frameDuration.toDouble();
         setBufferedDirty(true);
 

@@ -1,3 +1,13 @@
+2016-06-29  Jer Noble  <jer.noble@apple.com>
+
+        Cannot clear a MediaSource SourceBuffer in Safari 9 and WebKit nightly
+        https://bugs.webkit.org/show_bug.cgi?id=159230
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-remove.html:
+        * media/media-source/media-source-remove-expected.txt:
+
 2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Shadow Root type in DOM Tree
