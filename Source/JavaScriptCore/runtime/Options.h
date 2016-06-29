@@ -375,7 +375,8 @@ typedef const char* optionString;
     \
     v(bool, useSuperSampler, false, Normal, nullptr) \
     \
-    v(bool, reportLLIntStats, false, Configurable, "Reports LLInt statistics")
+    v(bool, reportLLIntStats, false, Configurable, "Reports LLInt statistics") \
+    v(optionString, llintStatsFile, nullptr, Configurable, "File to collect LLInt statistics in") \
 
 enum OptionEquivalence {
     SameOption,

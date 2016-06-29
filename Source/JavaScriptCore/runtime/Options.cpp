@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2012, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2012, 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "Options.h"
 
 #include "LLIntCommon.h"
+#include "LLIntData.h"
 #include <algorithm>
 #include <limits>
 #include <math.h>
@@ -132,7 +133,7 @@ bool Options::isAvailable(Options::ID id, Options::Availability availability)
     
     UNUSED_PARAM(id);
 #if ENABLE(LLINT_STATS)
-    if (id == reportLLIntStatsID)
+    if (id == reportLLIntStatsID || id == llintStatsFileID)
         return true;
 #endif
     return false;
@@ -389,6 +390,10 @@ static void recomputeDependentOptions()
     ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) > 0);
     ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()));
     ASSERT(Options::deferGCProbability() >= 0.0 && Options::deferGCProbability() <= 1.0);
+
+#if ENABLE(LLINT_STATS)
+    LLInt::Data::loadStats();
+#endif
 }
 
 void Options::initialize()
@@ -437,8 +442,6 @@ void Options::initialize()
                 ; // Deconfuse editors that do auto indentation
 #endif
     
-            recomputeDependentOptions();
-
 #if USE(OPTIONS_FILE)
             {
                 const char* filename = OPTIONS_FILENAME;
@@ -463,6 +466,8 @@ void Options::initialize()
                     dataLogF("Failed to close file %s: %s\n", filename, strerror(errno));
             }
 #endif
+
+            recomputeDependentOptions();
 
             // Do range checks where needed and make corrections to the options:
             ASSERT(Options::thresholdForOptimizeAfterLongWarmUp() >= Options::thresholdForOptimizeAfterWarmUp());

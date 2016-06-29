@@ -1,3 +1,29 @@
+2016-06-29  Mark Lam  <mark.lam@apple.com>
+
+        Add support for collecting cumulative LLINT stats via a JSC_llintStatsFile option.
+        https://bugs.webkit.org/show_bug.cgi?id=159274
+
+        Reviewed by Keith Miller.
+
+        * jsc.cpp:
+        (main):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        (JSC::LLInt::Data::finalizeStats):
+        (JSC::LLInt::compareStats):
+        (JSC::LLInt::Data::dumpStats):
+        (JSC::LLInt::Data::ensureStats):
+        (JSC::LLInt::Data::loadStats):
+        (JSC::LLInt::Data::resetStats):
+        (JSC::LLInt::Data::saveStats):
+        * llint/LLIntData.h:
+        (JSC::LLInt::Data::opcodeStats):
+        * runtime/Options.cpp:
+        (JSC::Options::isAvailable):
+        (JSC::recomputeDependentOptions):
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+
 2016-06-29  Saam barati  <sbarati@apple.com>
 
         Destructuring variable declaration is missing a validation of the syntax of a sub production when there is a rhs

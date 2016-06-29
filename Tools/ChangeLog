@@ -1,3 +1,13 @@
+2016-06-29  Mark Lam  <mark.lam@apple.com>
+
+        Add support for collecting cumulative LLINT stats via a JSC_llintStatsFile option.
+        https://bugs.webkit.org/show_bug.cgi?id=159274
+
+        Reviewed by Keith Miller.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (DumpRenderTreeMain):
+
 2016-06-29  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView should ask WKNavigationDelegate about bad ssl certificates

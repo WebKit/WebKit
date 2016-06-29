@@ -1444,7 +1444,7 @@ int DumpRenderTreeMain(int argc, const char *argv[])
     if (JSC::Options::logHeapStatisticsAtExit())
         JSC::HeapStatistics::reportSuccess();
     if (JSC::Options::reportLLIntStats())
-        JSC::LLInt::Data::dumpStats();
+        JSC::LLInt::Data::finalizeStats();
     [pool release];
     returningFromMain = true;
     return 0;
