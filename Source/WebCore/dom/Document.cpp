@@ -3940,6 +3940,8 @@ Element* Document::focusNavigationStartingNode(FocusDirection direction) const
     // the previous sibling of the removed node.
     if (m_focusNavigationStartingNodeIsRemoved) {
         Node* nextNode = NodeTraversal::next(*node);
+        if (!nextNode)
+            nextNode = node;
         if (direction == FocusDirectionForward)
             return ElementTraversal::previous(*nextNode);
         if (is<Element>(*nextNode))

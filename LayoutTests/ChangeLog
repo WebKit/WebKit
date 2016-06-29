@@ -1,3 +1,14 @@
+2016-06-29  Nan Wang  <n_wang@apple.com>
+
+        AX: Crash in WebCore::Document::focusNavigationStartingNode(WebCore::FocusDirection) const + 128
+        https://bugs.webkit.org/show_bug.cgi?id=159240
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/events/remove-focus-navigation-starting-point-crash-expected.txt: Added.
+        * fast/events/remove-focus-navigation-starting-point-crash.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-06-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking animations/multiple-backgrounds.html as flaky on ios-simulator.

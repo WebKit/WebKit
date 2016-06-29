@@ -275,6 +275,7 @@ fast/shadow-dom/focus-navigation-across-slots.html [ Failure ]
 fast/shadow-dom/focus-on-iframe.html [ Failure ]
 fast/shadow-dom/negative-tabindex-on-shadow-host.html [ Failure ]
 webkit.org/b/116046 fast/events/sequential-focus-navigation-starting-point.html [ Skip ]
+webkit.org/b/159240 fast/events/remove-focus-navigation-starting-point-crash.html [ Skip ]
 
 webkit.org/b/150225 fast/custom-elements [ Pass ]
 

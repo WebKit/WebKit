@@ -1,0 +1,4 @@
+After removing a focused element at the end of tree, accessing focus navigation starting point shouldn't lead to crash.
+PASS insertEnd(); focusEnd(); removeEnd(); moveFocus('forward'); document.activeElement.id is 'next'
+PASS insertEnd(); focusEnd(); removeEnd(); moveFocus('backward'); document.activeElement.id is 'prev'
+
