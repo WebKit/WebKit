@@ -1,3 +1,9 @@
+2016-06-28  Dean Jackson  <dino@apple.com>
+
+        Add a more interactive version of the demo.
+
+        * blog-files/color-gamut/comparison.html: Added.
+
 2016-06-28  Jon Davis  <jond@apple.com>
 
         Fixed tile height for mobile phone-sized viewports.
