@@ -1423,66 +1423,6 @@ _llint_op_get_by_id_unset:
     dispatch(9)
 
 
-_llint_op_get_by_id_proto_accessor:
-    traceExecution()
-    loadi 8[PC], t0
-    loadi 16[PC], t1
-    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetByIdProtoAcessorSlow)
-    bineq JSCell::m_structureID[t3], t1, .opGetByIdProtoAcessorSlow
-    callSlowPath(_llint_slow_path_get_proto_accessor)
-    dispatch(9)
-
-.opGetByIdProtoAcessorSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
-    dispatch(9)
-
-macro loadEncodedThisValue(baseValue, dest)
-   loadp 24[PC], dest
-   bineq 0, dest, .loadEncodedThisValueDone
-   move baseValue, dest
-   .loadEncodedThisValueDone:
-end
-
-_llint_op_get_by_id_proto_custom:
-    traceExecution()
-    loadi 8[PC], t0
-    loadi 16[PC], t1
-    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetByIdProtoCustomSlow)
-    bineq JSCell::m_structureID[t3], t1, .opGetByIdProtoCustomSlow
-    # Setting the topCallFrame
-    loadp Callee[cfr], t0
-    andp MarkedBlockMask, t0, t1
-    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
-    storep cfr, VM::topCallFrame[t1]
-    loadi 12[PC], t0
-    loadIdentifier(t0, t2)
-    loadEncodedThisValue(t3, t1)
-    loadp 20[PC], t0
-    # Inlining the GetValueFunc call
-    push t1 # Load arg3 JSObject *
-    push t2 # Load arg2 PropertyName
-    move CellTag, t3
-    if BIG_ENDIAN
-        push t1 # Load arg1 Payload of EncodedJSValue
-        push t3 # Load arg1 Tag of EncodedJSValue
-    else
-        push t3 # Load arg1 Tag of EncodedJSValue
-        push t1 # Load arg1 Payload of EncodedJSValue
-    end
-    push cfr # Loading exec
-    call t0
-    addp 20, sp
-    loadi 4[PC], t2
-    storei r1, TagOffset[cfr, t2, 8]
-    storei r0, PayloadOffset[cfr, t2, 8]
-    valueProfile(r0, r1, 32, t2)
-    dispatch(9)
-
-.opGetByIdProtoCustomSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
-    dispatch(9)
-
-
 _llint_op_get_array_length:
     traceExecution()
     loadi 8[PC], t0

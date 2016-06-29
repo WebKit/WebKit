@@ -87,7 +87,6 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(StringImpl& impl)
 
 class Identifier {
     friend class Structure;
-    friend class LLIntOffsetsExtractor;
 public:
     Identifier() { }
     enum EmptyIdentifierFlag { EmptyIdentifier };

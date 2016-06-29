@@ -1294,63 +1294,6 @@ _llint_op_get_by_id_unset:
     dispatch(9)
 
 
-_llint_op_get_by_id_proto_accessor:
-    traceExecution()
-    loadisFromInstruction(2, t0)
-    loadConstantOrVariableCell(t0, t3, .opGetByIdProtoAcessorSlow)
-    loadi JSCell::m_structureID[t3], t1
-    loadisFromInstruction(4, t2)
-    bineq t2, t1, .opGetByIdProtoAcessorSlow
-    callSlowPath(_llint_slow_path_get_proto_accessor)
-    dispatch(9)
-
-.opGetByIdProtoAcessorSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
-    dispatch(9)
-
-
-macro loadEncodedThisValue(baseValue, dest)
-   loadpFromInstruction(6, dest)
-   bineq 0, dest, .loadEncodedThisValueDone
-   move baseValue, dest
-   .loadEncodedThisValueDone:
-end
-
-_llint_op_get_by_id_proto_custom:
-    traceExecution()
-    loadisFromInstruction(2, t0)
-    loadConstantOrVariableCell(t0, t3, .opGetByIdProtoCustomSlow)
-    loadi JSCell::m_structureID[t3], t1
-    loadisFromInstruction(4, t2)
-    bineq t2, t1, .opGetByIdProtoCustomSlow
-    # Setting the topCallFrame
-    loadp Callee[cfr], t0
-    andp MarkedBlockMask, t0, t1
-    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
-    storep cfr, VM::topCallFrame[t1]
-    push PC
-    push PB
-    loadpFromInstruction(3, t0)
-    loadIdentifier(t0, a2)
-    loadEncodedThisValue(t3, a1)
-    loadpFromInstruction(5, t0)
-    prepareStateForCCall()
-    move cfr, a0
-    move a1, a3
-    cCall4(t0)
-    restoreStateAfterCCall()
-    pop PB
-    pop PC
-    loadisFromInstruction(1, t2)
-    storeq r0, [cfr, t2, 8]
-    valueProfile(r0, 8, t1)
-    dispatch(9)
-
-.opGetByIdProtoCustomSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
-    dispatch(9)
-
-
 _llint_op_get_array_length:
     traceExecution()
     loadisFromInstruction(2, t0)

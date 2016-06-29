@@ -250,8 +250,6 @@ void JIT::privateCompileMainPass()
         case op_get_array_length:
         case op_get_by_id_proto_load:
         case op_get_by_id_unset:
-        case op_get_by_id_proto_accessor:
-        case op_get_by_id_proto_custom:
         DEFINE_OP(op_get_by_id)
         DEFINE_OP(op_get_by_id_with_this)
         DEFINE_OP(op_get_by_val)
@@ -437,8 +435,6 @@ void JIT::privateCompileSlowCases()
         case op_get_array_length:
         case op_get_by_id_proto_load:
         case op_get_by_id_unset:
-        case op_get_by_id_proto_accessor:
-        case op_get_by_id_proto_custom:
         DEFINE_SLOWCASE_OP(op_get_by_id)
         DEFINE_SLOWCASE_OP(op_get_by_val)
         DEFINE_SLOWCASE_OP(op_instanceof)

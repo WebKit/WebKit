@@ -423,16 +423,6 @@ macro assert(assertion)
     end
 end
 
-macro loadIdentifier(index, dest)
-    loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_unlinkedCode[t1], t2
-    loadp UnlinkedCodeBlock::m_identifiers[t2], t1
-    move index, t2
-    mulp sizeof Identifier, t2
-    addp t2, t1
-    loadp Identifier::m_string[t1], dest
-end
-
 macro checkStackPointerAlignment(tempReg, location)
     if ARM64 or C_LOOP or SH4
         # ARM64 will check for us!

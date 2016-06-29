@@ -4145,8 +4145,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_get_by_id:
         case op_get_by_id_proto_load:
         case op_get_by_id_unset:
-        case op_get_by_id_proto_accessor:
-        case op_get_by_id_proto_custom:
         case op_get_array_length: {
             SpeculatedType prediction = getPrediction();
             

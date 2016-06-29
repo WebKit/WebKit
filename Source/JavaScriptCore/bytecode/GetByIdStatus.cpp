@@ -78,7 +78,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 
     Opcode opcode = instruction[0].u.opcode;
 
-    ASSERT(opcode == LLInt::getOpcode(op_get_array_length) || opcode == LLInt::getOpcode(op_try_get_by_id) || opcode == LLInt::getOpcode(op_get_by_id_proto_load) || opcode == LLInt::getOpcode(op_get_by_id) || opcode == LLInt::getOpcode(op_get_by_id_unset) || opcode == LLInt::getOpcode(op_get_by_id_proto_accessor) || opcode == LLInt::getOpcode(op_get_by_id_proto_custom));
+    ASSERT(opcode == LLInt::getOpcode(op_get_array_length) || opcode == LLInt::getOpcode(op_try_get_by_id) || opcode == LLInt::getOpcode(op_get_by_id_proto_load) || opcode == LLInt::getOpcode(op_get_by_id) || opcode == LLInt::getOpcode(op_get_by_id_unset));
 
     // FIXME: We should not just bail if we see a try_get_by_id or a get_by_id_proto_load.
     // https://bugs.webkit.org/show_bug.cgi?id=158039
