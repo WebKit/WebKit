@@ -312,13 +312,11 @@ float ImageDecoder::frameDurationAtIndex(size_t index)
 
 NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel)
 {
-    // Zero-height images can cause problems for some ports. If we have an
-    // empty image dimension, just bail.
-    if (size().isEmpty())
-        return nullptr;
-
     ImageFrame* buffer = frameBufferAtIndex(index);
-    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
+    // Zero-height images can cause problems for some ports. If we have an empty image dimension, just bail.
+    // It's important to check the size after calling frameBufferAtIndex() to ensure the decoder has updated the size.
+    // See https://bugs.webkit.org/show_bug.cgi?id=159089.
+    if (!buffer || buffer->status() == ImageFrame::FrameEmpty || size().isEmpty())
         return nullptr;
 
     // Return the buffer contents as a native image. For some ports, the data
