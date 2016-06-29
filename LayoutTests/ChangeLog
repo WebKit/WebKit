@@ -1,3 +1,18 @@
+2016-06-28  Frederic Wang  <fwang@igalia.com>
+
+        AX: Add accessibility tests for MathML operators
+        https://bugs.webkit.org/show_bug.cgi?id=124836
+
+        Reviewed by Joanmarie Diggs.
+
+        We add one test to verify the (sub)roles of MathML operators with various fence and separator
+        properties. These properties can be set via an explicit attribute or read from the operator
+        dictionary.
+
+        * accessibility/math-mo-fences-and-separators.html: Added.
+        * platform/gtk/accessibility/math-mo-fences-and-separators-expected.txt: Added.
+        * platform/mac/accessibility/math-mo-fences-and-separators-expected.txt: Added.
+
 2016-06-28  David Kilzer  <ddkilzer@apple.com>
 
         Enhance shouldNotThrow()/shouldThrow() to accept functions and a descriptive message
