@@ -133,10 +133,6 @@ Ref<LayerTreeHostGtk> LayerTreeHostGtk::create(WebPage& webPage)
 
 LayerTreeHostGtk::LayerTreeHostGtk(WebPage& webPage)
     : LayerTreeHost(webPage)
-    , m_isValid(true)
-    , m_notifyAfterScheduledLayerFlush(false)
-    , m_layerFlushSchedulingEnabled(true)
-    , m_viewOverlayRootLayer(nullptr)
     , m_renderFrameScheduler(std::bind(&LayerTreeHostGtk::renderFrame, this))
 {
     m_rootLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
@@ -183,19 +179,8 @@ bool LayerTreeHostGtk::makeContextCurrent()
 
 LayerTreeHostGtk::~LayerTreeHostGtk()
 {
-    ASSERT(!m_isValid);
     ASSERT(!m_rootLayer);
     cancelPendingLayerFlush();
-}
-
-const LayerTreeContext& LayerTreeHostGtk::layerTreeContext()
-{
-    return m_layerTreeContext;
-}
-
-void LayerTreeHostGtk::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
-{
-    m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush;
 }
 
 void LayerTreeHostGtk::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
@@ -211,8 +196,6 @@ void LayerTreeHostGtk::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 
 void LayerTreeHostGtk::invalidate()
 {
-    ASSERT(m_isValid);
-
     // This can trigger destruction of GL objects so let's make sure that
     // we have the right active context
     if (m_context)
@@ -224,7 +207,7 @@ void LayerTreeHostGtk::invalidate()
     m_textureMapper = nullptr;
 
     m_context = nullptr;
-    m_isValid = false;
+    LayerTreeHost::invalidate();
 }
 
 void LayerTreeHostGtk::setNonCompositedContentsNeedDisplay()
@@ -365,7 +348,7 @@ void LayerTreeHostGtk::flushAndRenderLayers()
 
     if (m_notifyAfterScheduledLayerFlush) {
         // Let the drawing area know that we've done a flush of the layer changes.
-        static_cast<DrawingAreaImpl*>(m_webPage.drawingArea())->layerHostDidFlushLayers();
+        m_webPage.drawingArea()->layerHostDidFlushLayers();
         m_notifyAfterScheduledLayerFlush = false;
     }
 }
@@ -378,21 +361,6 @@ void LayerTreeHostGtk::scheduleLayerFlush()
     m_renderFrameScheduler.start();
 }
 
-void LayerTreeHostGtk::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
-{
-    if (m_layerFlushSchedulingEnabled == layerFlushingEnabled)
-        return;
-
-    m_layerFlushSchedulingEnabled = layerFlushingEnabled;
-
-    if (m_layerFlushSchedulingEnabled) {
-        scheduleLayerFlush();
-        return;
-    }
-
-    cancelPendingLayerFlush();
-}
-
 void LayerTreeHostGtk::pageBackgroundTransparencyChanged()
 {
     m_nonCompositedContentLayer->setContentsOpaque(m_webPage.drawsBackground());
@@ -403,9 +371,9 @@ void LayerTreeHostGtk::cancelPendingLayerFlush()
     m_renderFrameScheduler.stop();
 }
 
-void LayerTreeHostGtk::setViewOverlayRootLayer(WebCore::GraphicsLayer* viewOverlayRootLayer)
+void LayerTreeHostGtk::setViewOverlayRootLayer(GraphicsLayer* viewOverlayRootLayer)
 {
-    m_viewOverlayRootLayer = viewOverlayRootLayer;
+    LayerTreeHost::setViewOverlayRootLayer(viewOverlayRootLayer);
     if (m_viewOverlayRootLayer)
         m_rootLayer->addChild(m_viewOverlayRootLayer);
 }

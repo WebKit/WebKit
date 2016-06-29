@@ -30,19 +30,9 @@
 #include "ThreadedCoordinatedLayerTreeHost.h"
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-
-#include "DrawingAreaImpl.h"
-#include "NotImplemented.h"
-#include "ThreadSafeCoordinatedSurface.h"
 #include "WebPage.h"
-#include <WebCore/CoordinatedGraphicsLayer.h>
-#include <WebCore/CoordinatedGraphicsState.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/GraphicsContext.h>
 #include <WebCore/MainFrame.h>
-#include <WebCore/Page.h>
-#include <wtf/CurrentTime.h>
 
 using namespace WebCore;
 
@@ -58,86 +48,16 @@ ThreadedCoordinatedLayerTreeHost::~ThreadedCoordinatedLayerTreeHost()
 }
 
 ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webPage)
-    : LayerTreeHost(webPage)
-    , m_forceRepaintAsyncCallbackID(0)
-    , m_notifyAfterScheduledLayerFlush(false)
-    , m_isSuspended(false)
-    , m_isWaitingForRenderer(false)
-    , m_layerFlushTimer(RunLoop::main(), this, &ThreadedCoordinatedLayerTreeHost::performScheduledLayerFlush)
-    , m_layerFlushSchedulingEnabled(true)
+    : CoordinatedLayerTreeHost(webPage)
+    , m_compositorClient(*this)
+    , m_compositor(ThreadedCompositor::create(&m_compositorClient))
 {
-    m_coordinator = std::make_unique<CompositingCoordinator>(m_webPage.corePage(), this);
-
-    m_coordinator->createRootLayer(m_webPage.size());
-
-    CoordinatedSurface::setFactory(createCoordinatedSurface);
-
-    m_compositor = ThreadedCompositor::create(this);
-    scheduleLayerFlush();
-}
-
-RefPtr<CoordinatedSurface> ThreadedCoordinatedLayerTreeHost::createCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags)
-{
-    return ThreadSafeCoordinatedSurface::create(size, flags);
-}
-
-void ThreadedCoordinatedLayerTreeHost::scheduleLayerFlush()
-{
-    if (!m_layerFlushSchedulingEnabled)
-        return;
-
-    if (!m_layerFlushTimer.isActive())
-        m_layerFlushTimer.startOneShot(0);
-}
-
-void ThreadedCoordinatedLayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
-{
-    if (m_layerFlushSchedulingEnabled == layerFlushingEnabled)
-        return;
-
-    m_layerFlushSchedulingEnabled = layerFlushingEnabled;
-
-    if (m_layerFlushSchedulingEnabled) {
-        scheduleLayerFlush();
-        return;
-    }
-
-    cancelPendingLayerFlush();
-}
-
-void ThreadedCoordinatedLayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
-{
-    m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush;
-}
-
-void ThreadedCoordinatedLayerTreeHost::setRootCompositingLayer(WebCore::GraphicsLayer* graphicsLayer)
-{
-    m_coordinator->setRootCompositingLayer(graphicsLayer);
-}
-
-void ThreadedCoordinatedLayerTreeHost::invalidate()
-{
-    notImplemented();
 }
 
 void ThreadedCoordinatedLayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect& rect)
 {
     m_compositor->scrollTo(rect.location());
     scheduleLayerFlush();
-}
-
-void ThreadedCoordinatedLayerTreeHost::forceRepaint()
-{
-    notImplemented();
-}
-
-bool ThreadedCoordinatedLayerTreeHost::forceRepaintAsync(uint64_t callbackID)
-{
-    // We expect the UI process to not require a new repaint until the previous one has finished.
-    ASSERT(!m_forceRepaintAsyncCallbackID);
-    m_forceRepaintAsyncCallbackID = callbackID;
-    scheduleLayerFlush();
-    return true;
 }
 
 void ThreadedCoordinatedLayerTreeHost::contentsSizeChanged(const WebCore::IntSize& newSize)
@@ -147,29 +67,13 @@ void ThreadedCoordinatedLayerTreeHost::contentsSizeChanged(const WebCore::IntSiz
 
 void ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
 {
-    m_coordinator->deviceOrPageScaleFactorChanged();
+    CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged();
     m_compositor->setDeviceScaleFactor(m_webPage.deviceScaleFactor());
 }
 
-void ThreadedCoordinatedLayerTreeHost::pauseRendering()
+void ThreadedCoordinatedLayerTreeHost::sizeDidChange(const IntSize& size)
 {
-    m_isSuspended = true;
-}
-
-void ThreadedCoordinatedLayerTreeHost::resumeRendering()
-{
-    m_isSuspended = false;
-    scheduleLayerFlush();
-}
-
-GraphicsLayerFactory* ThreadedCoordinatedLayerTreeHost::graphicsLayerFactory()
-{
-    return m_coordinator.get();
-}
-
-void ThreadedCoordinatedLayerTreeHost::sizeDidChange(const WebCore::IntSize& size)
-{
-    m_coordinator->sizeDidChange(size);
+    CoordinatedLayerTreeHost::sizeDidChange(size);
     m_compositor->didChangeViewportSize(size);
 }
 
@@ -178,19 +82,9 @@ void ThreadedCoordinatedLayerTreeHost::didChangeViewportProperties(const WebCore
     m_compositor->didChangeViewportAttribute(attr);
 }
 
-void ThreadedCoordinatedLayerTreeHost::compositorDidFlushLayers()
-{
-    static_cast<DrawingAreaImpl*>(m_webPage.drawingArea())->layerHostDidFlushLayers();
-}
-
 void ThreadedCoordinatedLayerTreeHost::didScaleFactorChanged(float scale, const IntPoint& origin)
 {
     m_webPage.scalePage(scale, origin);
-}
-
-void ThreadedCoordinatedLayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* graphicsLayer)
-{
-    m_coordinator->setViewOverlayRootLayer(graphicsLayer);
 }
 
 #if PLATFORM(GTK)
@@ -202,23 +96,9 @@ void ThreadedCoordinatedLayerTreeHost::setNativeSurfaceHandleForCompositing(uint
 }
 #endif
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-void ThreadedCoordinatedLayerTreeHost::scheduleAnimation()
-{
-    if (m_isWaitingForRenderer)
-        return;
-
-    if (m_layerFlushTimer.isActive())
-        return;
-
-    m_layerFlushTimer.startOneShot(m_coordinator->nextAnimationServiceTime());
-    scheduleLayerFlush();
-}
-#endif
-
 void ThreadedCoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector, float scale)
 {
-    m_coordinator->setVisibleContentsRect(rect, trajectoryVector);
+    CoordinatedLayerTreeHost::setVisibleContentsRect(rect, trajectoryVector);
     if (m_lastScrollPosition != roundedIntPoint(rect.location())) {
         m_lastScrollPosition = roundedIntPoint(rect.location());
 
@@ -230,59 +110,12 @@ void ThreadedCoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& r
         m_lastScaleFactor = scale;
         didScaleFactorChanged(m_lastScaleFactor, m_lastScrollPosition);
     }
-
-    scheduleLayerFlush();
-}
-
-void ThreadedCoordinatedLayerTreeHost::cancelPendingLayerFlush()
-{
-    m_layerFlushTimer.stop();
-}
-
-void ThreadedCoordinatedLayerTreeHost::performScheduledLayerFlush()
-{
-    if (m_isSuspended || m_isWaitingForRenderer)
-        return;
-
-    m_coordinator->syncDisplayState();
-    bool didSync = m_coordinator->flushPendingLayerChanges();
-
-    if (m_notifyAfterScheduledLayerFlush && didSync) {
-        compositorDidFlushLayers();
-        m_notifyAfterScheduledLayerFlush = false;
-    }
-}
-
-void ThreadedCoordinatedLayerTreeHost::purgeBackingStores()
-{
-    m_coordinator->purgeBackingStores();
-}
-
-void ThreadedCoordinatedLayerTreeHost::renderNextFrame()
-{
-    m_isWaitingForRenderer = false;
-    m_coordinator->renderNextFrame();
-    scheduleLayerFlush();
-}
-
-void ThreadedCoordinatedLayerTreeHost::commitScrollOffset(uint32_t layerID, const IntSize& offset)
-{
-    m_coordinator->commitScrollOffset(layerID, offset);
-}
-
-void ThreadedCoordinatedLayerTreeHost::notifyFlushRequired()
-{
-    scheduleLayerFlush();
 }
 
 void ThreadedCoordinatedLayerTreeHost::commitSceneState(const CoordinatedGraphicsState& state)
 {
-    m_isWaitingForRenderer = true;
+    CoordinatedLayerTreeHost::commitSceneState(state);
     m_compositor->updateSceneState(state);
-}
-
-void ThreadedCoordinatedLayerTreeHost::paintLayerContents(const GraphicsLayer*, GraphicsContext&, const IntRect&)
-{
 }
 
 } // namespace WebKit

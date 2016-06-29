@@ -30,20 +30,21 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerTreeHost.h"
 
-#include "CoordinatedDrawingArea.h"
-#include "CoordinatedGraphicsArgumentCoders.h"
-#include "CoordinatedLayerTreeHostProxyMessages.h"
-#include "GraphicsContext.h"
+#include "DrawingArea.h"
 #include "WebCoordinatedSurface.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/PageOverlayController.h>
-#include <WebCore/Settings.h>
-#include <wtf/CurrentTime.h>
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+#include "ThreadSafeCoordinatedSurface.h"
+#elif USE(COORDINATED_GRAPHICS_MULTIPROCESS)
+#include "CoordinatedGraphicsArgumentCoders.h"
+#include "CoordinatedLayerTreeHostProxyMessages.h"
+#include "WebCoreArgumentCoders.h"
+#endif
 
 using namespace WebCore;
 
@@ -60,38 +61,16 @@ CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost()
 
 CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage& webPage)
     : LayerTreeHost(webPage)
-    , m_notifyAfterScheduledLayerFlush(false)
-    , m_isValid(true)
-    , m_isSuspended(false)
-    , m_isWaitingForRenderer(true)
-    , m_layerFlushTimer(*this, &CoordinatedLayerTreeHost::layerFlushTimerFired)
-    , m_layerFlushSchedulingEnabled(true)
-    , m_forceRepaintAsyncCallbackID(0)
-    , m_viewOverlayRootLayer(nullptr)
+    , m_coordinator(std::make_unique<CompositingCoordinator>(webPage.corePage(), this))
+    , m_layerFlushTimer(RunLoop::main(), this, &CoordinatedLayerTreeHost::layerFlushTimerFired)
 {
-    m_coordinator = std::make_unique<CompositingCoordinator>(m_webPage.corePage(), this);
-
     m_coordinator->createRootLayer(m_webPage.size());
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     m_layerTreeContext.contextID = toCoordinatedGraphicsLayer(m_coordinator->rootLayer())->id();
+#endif
 
     CoordinatedSurface::setFactory(createCoordinatedSurface);
-
     scheduleLayerFlush();
-}
-
-void CoordinatedLayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
-{
-    if (m_layerFlushSchedulingEnabled == layerFlushingEnabled)
-        return;
-
-    m_layerFlushSchedulingEnabled = layerFlushingEnabled;
-
-    if (m_layerFlushSchedulingEnabled) {
-        scheduleLayerFlush();
-        return;
-    }
-
-    cancelPendingLayerFlush();
 }
 
 void CoordinatedLayerTreeHost::scheduleLayerFlush()
@@ -99,7 +78,7 @@ void CoordinatedLayerTreeHost::scheduleLayerFlush()
     if (!m_layerFlushSchedulingEnabled)
         return;
 
-    if (!m_layerFlushTimer.isActive() || m_layerFlushTimer.nextFireInterval() > 0)
+    if (!m_layerFlushTimer.isActive())
         m_layerFlushTimer.startOneShot(0);
 }
 
@@ -108,18 +87,13 @@ void CoordinatedLayerTreeHost::cancelPendingLayerFlush()
     m_layerFlushTimer.stop();
 }
 
-void CoordinatedLayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
+void CoordinatedLayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* viewOverlayRootLayer)
 {
-    m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush;
-}
-
-void CoordinatedLayerTreeHost::setViewOverlayRootLayer(WebCore::GraphicsLayer* viewOverlayRootLayer)
-{
-    m_viewOverlayRootLayer = viewOverlayRootLayer;
+    LayerTreeHost::setViewOverlayRootLayer(viewOverlayRootLayer);
     m_coordinator->setViewOverlayRootLayer(viewOverlayRootLayer);
 }
 
-void CoordinatedLayerTreeHost::setRootCompositingLayer(WebCore::GraphicsLayer* graphicsLayer)
+void CoordinatedLayerTreeHost::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
     m_coordinator->setRootCompositingLayer(graphicsLayer);
 }
@@ -128,9 +102,8 @@ void CoordinatedLayerTreeHost::invalidate()
 {
     cancelPendingLayerFlush();
 
-    ASSERT(m_isValid);
     m_coordinator->clearRootLayer();
-    m_isValid = false;
+    LayerTreeHost::invalidate();
 }
 
 void CoordinatedLayerTreeHost::forceRepaint()
@@ -158,7 +131,7 @@ bool CoordinatedLayerTreeHost::forceRepaintAsync(uint64_t callbackID)
     return true;
 }
 
-void CoordinatedLayerTreeHost::sizeDidChange(const WebCore::IntSize& newSize)
+void CoordinatedLayerTreeHost::sizeDidChange(const IntSize& newSize)
 {
     m_coordinator->sizeDidChange(newSize);
     scheduleLayerFlush();
@@ -189,7 +162,7 @@ void CoordinatedLayerTreeHost::didFlushRootLayer(const FloatRect& visibleContent
         m_viewOverlayRootLayer->flushCompositingState(visibleContentRect,  m_webPage.mainFrame()->view()->viewportIsStable());
 }
 
-void CoordinatedLayerTreeHost::performScheduledLayerFlush()
+void CoordinatedLayerTreeHost::layerFlushTimerFired()
 {
     if (m_isSuspended || m_isWaitingForRenderer)
         return;
@@ -207,29 +180,34 @@ void CoordinatedLayerTreeHost::performScheduledLayerFlush()
     }
 
     if (m_notifyAfterScheduledLayerFlush && didSync) {
-        static_cast<CoordinatedDrawingArea*>(m_webPage.drawingArea())->layerHostDidFlushLayers();
+        m_webPage.drawingArea()->layerHostDidFlushLayers();
         m_notifyAfterScheduledLayerFlush = false;
     }
-}
-
-void CoordinatedLayerTreeHost::layerFlushTimerFired()
-{
-    performScheduledLayerFlush();
 }
 
 void CoordinatedLayerTreeHost::paintLayerContents(const GraphicsLayer*, GraphicsContext&, const IntRect&)
 {
 }
 
-void CoordinatedLayerTreeHost::commitSceneState(const WebCore::CoordinatedGraphicsState& state)
+void CoordinatedLayerTreeHost::commitSceneState(const CoordinatedGraphicsState& state)
 {
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     m_webPage.send(Messages::CoordinatedLayerTreeHostProxy::CommitCoordinatedGraphicsState(state));
+#endif
     m_isWaitingForRenderer = true;
 }
 
 RefPtr<CoordinatedSurface> CoordinatedLayerTreeHost::createCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags)
 {
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    return ThreadSafeCoordinatedSurface::create(size, flags);
+#elif USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     return WebCoordinatedSurface::create(size, flags);
+#else
+    UNUSED_PARAM(size);
+    UNUSED_PARAM(flags);
+    return nullptr;
+#endif
 }
 
 void CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()

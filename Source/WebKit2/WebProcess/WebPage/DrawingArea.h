@@ -138,6 +138,8 @@ public:
     virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition, bool flushSynchronously, const WebCore::MachSendRight& fencePort) { }
 #endif
 
+    virtual void layerHostDidFlushLayers() { };
+
 protected:
     DrawingArea(DrawingAreaType, WebPage&);
 

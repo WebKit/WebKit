@@ -30,27 +30,12 @@
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
-#include "LayerTreeContext.h"
-#include "LayerTreeHost.h"
+#include "CoordinatedLayerTreeHost.h"
 #include "ThreadedCompositor.h"
-#include <WebCore/CompositingCoordinator.h>
-#include <WebCore/FloatPoint.h>
-#include <WebCore/FloatRect.h>
-#include <WebCore/IntPoint.h>
-#include <WebCore/IntRect.h>
-#include <WebCore/IntSize.h>
-#include <WebCore/PageOverlay.h>
-#include <WebCore/Timer.h>
-#include <wtf/RunLoop.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
-class CoordinatedSurface;
 class GraphicsContext;
 class GraphicsLayer;
-class GraphicsLayerFactory;
-class GraphicsLayerFactory;
-struct CoordinatedGraphicsLayerState;
 struct CoordinatedGraphicsState;
 }
 
@@ -58,33 +43,17 @@ namespace WebKit {
 
 class WebPage;
 
-class ThreadedCoordinatedLayerTreeHost : public LayerTreeHost, public WebCore::CompositingCoordinator::Client, public ThreadedCompositor::Client {
-    WTF_MAKE_NONCOPYABLE(ThreadedCoordinatedLayerTreeHost); WTF_MAKE_FAST_ALLOCATED;
+class ThreadedCoordinatedLayerTreeHost final : public CoordinatedLayerTreeHost {
 public:
     static Ref<ThreadedCoordinatedLayerTreeHost> create(WebPage&);
     virtual ~ThreadedCoordinatedLayerTreeHost();
 
-    const LayerTreeContext& layerTreeContext() override { return m_layerTreeContext; };
+private:
+    explicit ThreadedCoordinatedLayerTreeHost(WebPage&);
 
-    void scheduleLayerFlush() override;
-    void setLayerFlushSchedulingEnabled(bool) override;
-    void setShouldNotifyAfterNextScheduledLayerFlush(bool) override;
-    void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
-    void invalidate() override;
-
-    void setNonCompositedContentsNeedDisplay() override { };
-    void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) override { };
     void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
-    void forceRepaint() override;
-    bool forceRepaintAsync(uint64_t /*callbackID*/) override;
     void sizeDidChange(const WebCore::IntSize&) override;
     void deviceOrPageScaleFactorChanged() override;
-
-    void pauseRendering() override;
-    void resumeRendering() override;
-
-    WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
-    void pageBackgroundTransparencyChanged() override { };
 
     void contentsSizeChanged(const WebCore::IntSize&) override;
     void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
@@ -93,55 +62,51 @@ public:
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
 #endif
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    void scheduleAnimation() override;
-#endif
+    class CompositorClient final : public ThreadedCompositor::Client {
+        WTF_MAKE_NONCOPYABLE(CompositorClient);
+    public:
+        CompositorClient(ThreadedCoordinatedLayerTreeHost& layerTreeHost)
+            : m_layerTreeHost(layerTreeHost)
+        {
+        }
 
-    void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
-    static RefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
+    private:
+        void setVisibleContentsRect(const WebCore::FloatRect& rect, const WebCore::FloatPoint& trajectoryVector, float scale) override
+        {
+            m_layerTreeHost.setVisibleContentsRect(rect, trajectoryVector, scale);
+        }
 
-protected:
-    explicit ThreadedCoordinatedLayerTreeHost(WebPage&);
+        void purgeBackingStores() override
+        {
+            m_layerTreeHost.purgeBackingStores();
+        }
 
-private:
+        void renderNextFrame() override
+        {
+            m_layerTreeHost.renderNextFrame();
+        }
 
-    void compositorDidFlushLayers();
+        void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override
+        {
+            m_layerTreeHost.commitScrollOffset(layerID, offset);
+        }
+
+        ThreadedCoordinatedLayerTreeHost& m_layerTreeHost;
+    };
+
     void didScaleFactorChanged(float scale, const WebCore::IntPoint& origin);
 
-    void cancelPendingLayerFlush();
-    void performScheduledLayerFlush();
-
-    WebCore::GraphicsLayer* rootLayer() { return m_coordinator->rootLayer(); }
-
-    // ThreadedCompositor::Client
-    void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&, float) override;
-    void purgeBackingStores() override;
-    void renderNextFrame() override;
-    void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override;
+    void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&, float);
 
     // CompositingCoordinator::Client
     void didFlushRootLayer(const WebCore::FloatRect&) override { }
-    void notifyFlushRequired() override;
     void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
-    void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) override;
-
-    LayerTreeContext m_layerTreeContext;
-    uint64_t m_forceRepaintAsyncCallbackID;
 
     WebCore::IntPoint m_prevScrollPosition;
-
-    std::unique_ptr<WebCore::CompositingCoordinator> m_coordinator;
+    CompositorClient m_compositorClient;
     RefPtr<ThreadedCompositor> m_compositor;
-
-    bool m_notifyAfterScheduledLayerFlush;
-    bool m_isSuspended;
-    bool m_isWaitingForRenderer;
-
-    float m_lastScaleFactor;
+    float m_lastScaleFactor { 1 };
     WebCore::IntPoint m_lastScrollPosition;
-
-    RunLoop::Timer<ThreadedCoordinatedLayerTreeHost> m_layerFlushTimer;
-    bool m_layerFlushSchedulingEnabled;
 };
 
 } // namespace WebKit

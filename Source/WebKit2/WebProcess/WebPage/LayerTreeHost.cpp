@@ -62,6 +62,39 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
 
 LayerTreeHost::~LayerTreeHost()
 {
+    ASSERT(!m_isValid);
+}
+
+void LayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
+{
+    if (m_layerFlushSchedulingEnabled == layerFlushingEnabled)
+        return;
+
+    m_layerFlushSchedulingEnabled = layerFlushingEnabled;
+
+    if (m_layerFlushSchedulingEnabled) {
+        scheduleLayerFlush();
+        return;
+    }
+
+    cancelPendingLayerFlush();
+}
+
+void LayerTreeHost::pauseRendering()
+{
+    m_isSuspended = true;
+}
+
+void LayerTreeHost::resumeRendering()
+{
+    m_isSuspended = false;
+    scheduleLayerFlush();
+}
+
+void LayerTreeHost::invalidate()
+{
+    ASSERT(m_isValid);
+    m_isValid = false;
 }
 
 } // namespace WebKit

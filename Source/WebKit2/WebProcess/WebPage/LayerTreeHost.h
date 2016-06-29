@@ -29,8 +29,7 @@
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
 
 #include "LayerTreeContext.h"
-#include <WebCore/Color.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace IPC {
@@ -39,8 +38,6 @@ class MessageDecoder;
 }
 
 namespace WebCore {
-class FloatPoint;
-class FloatRect;
 class IntRect;
 class IntSize;
 class GraphicsLayer;
@@ -52,7 +49,6 @@ struct ViewportAttributes;
 
 namespace WebKit {
 
-class UpdateInfo;
 class WebPage;
 
 class LayerTreeHost : public RefCounted<LayerTreeHost> {
@@ -60,34 +56,36 @@ public:
     static RefPtr<LayerTreeHost> create(WebPage&);
     virtual ~LayerTreeHost();
 
-    virtual const LayerTreeContext& layerTreeContext() = 0;
-    virtual void scheduleLayerFlush() = 0;
-    virtual void setLayerFlushSchedulingEnabled(bool) = 0;
-    virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool) = 0;
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
-    virtual void invalidate() = 0;
+    const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
+    void setLayerFlushSchedulingEnabled(bool);
+    void setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush) { m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush; }
 
-    virtual void setNonCompositedContentsNeedDisplay() = 0;
-    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) = 0;
-    virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) = 0;
+    virtual void scheduleLayerFlush() = 0;
+    virtual void cancelPendingLayerFlush() = 0;
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
+    virtual void invalidate();
+
+    virtual void setNonCompositedContentsNeedDisplay() { };
+    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) { };
+    virtual void scrollNonCompositedContents(const WebCore::IntRect&) { };
     virtual void forceRepaint() = 0;
     virtual bool forceRepaintAsync(uint64_t /*callbackID*/) { return false; }
     virtual void sizeDidChange(const WebCore::IntSize& newSize) = 0;
     virtual void deviceOrPageScaleFactorChanged() = 0;
     virtual void pageBackgroundTransparencyChanged() = 0;
 
-    virtual void pauseRendering() { }
-    virtual void resumeRendering() { }
+    virtual void pauseRendering();
+    virtual void resumeRendering();
 
-    virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }
+    virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&) = 0;
 #endif
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    virtual void contentsSizeChanged(const WebCore::IntSize&) = 0;
-    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) = 0;
+    virtual void contentsSizeChanged(const WebCore::IntSize&) { };
+    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) { };
 #endif
 
 #if USE(COORDINATED_GRAPHICS) && ENABLE(REQUEST_ANIMATION_FRAME)
@@ -95,15 +93,21 @@ public:
 #endif
 
 #if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
-    virtual void setNativeSurfaceHandleForCompositing(uint64_t) = 0;
+    virtual void setNativeSurfaceHandleForCompositing(uint64_t) { };
 #endif
 
-    virtual void setViewOverlayRootLayer(WebCore::GraphicsLayer*) = 0;
+    virtual void setViewOverlayRootLayer(WebCore::GraphicsLayer* viewOverlayRootLayer) { m_viewOverlayRootLayer = viewOverlayRootLayer; }
 
 protected:
     explicit LayerTreeHost(WebPage&);
 
     WebPage& m_webPage;
+    LayerTreeContext m_layerTreeContext;
+    bool m_layerFlushSchedulingEnabled { true };
+    bool m_notifyAfterScheduledLayerFlush { false };
+    bool m_isSuspended { false };
+    bool m_isValid { true };
+    WebCore::GraphicsLayer* m_viewOverlayRootLayer { nullptr };
 };
 
 } // namespace WebKit

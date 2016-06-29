@@ -348,8 +348,7 @@ void CoordinatedDrawingArea::attachViewOverlayGraphicsLayer(WebCore::Frame* fram
     if (!frame->isMainFrame())
         return;
 
-    CoordinatedLayerTreeHost* coordinatedLayerTreeHost = static_cast<CoordinatedLayerTreeHost*>(m_layerTreeHost.get());
-    coordinatedLayerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
+    m_layerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
 }
 
 } // namespace WebKit

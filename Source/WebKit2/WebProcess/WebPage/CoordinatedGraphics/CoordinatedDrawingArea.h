@@ -41,8 +41,6 @@ public:
     CoordinatedDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~CoordinatedDrawingArea();
 
-    void layerHostDidFlushLayers();
-
 private:
     // DrawingArea
     void setNeedsDisplay() override;
@@ -68,6 +66,8 @@ private:
 
     void viewStateDidChange(WebCore::ViewState::Flags, bool /* wantsDidUpdateViewState */, const Vector<uint64_t>& /* callbackIDs */) override;
     void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
+
+    void layerHostDidFlushLayers() override;
 
     // IPC message handlers.
     void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset) override;

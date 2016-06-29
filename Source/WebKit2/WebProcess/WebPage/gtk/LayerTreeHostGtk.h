@@ -51,7 +51,7 @@ private:
 
     // LayerTreeHost
     void scheduleLayerFlush() override;
-    void setLayerFlushSchedulingEnabled(bool layerFlushingEnabled) override;
+    void cancelPendingLayerFlush() override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     void invalidate() override;
 
@@ -59,6 +59,11 @@ private:
     void sizeDidChange(const WebCore::IntSize& newSize) override;
     void deviceOrPageScaleFactorChanged() override;
     void pageBackgroundTransparencyChanged() override;
+
+    void setNonCompositedContentsNeedDisplay() override;
+    void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) override;
+    void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
+    void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
 
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
 
@@ -80,15 +85,6 @@ private:
         double m_lastImmediateFlushTime { 0 };
     };
 
-    // LayerTreeHost
-    const LayerTreeContext& layerTreeContext() override;
-    void setShouldNotifyAfterNextScheduledLayerFlush(bool) override;
-
-    void setNonCompositedContentsNeedDisplay() override;
-    void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) override;
-    void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
-    void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
-
     // GraphicsLayerClient
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect) override;
     float deviceScaleFactor() const override;
@@ -100,21 +96,13 @@ private:
     void compositeLayersToContext(CompositePurpose = NotForResize);
 
     void flushAndRenderLayers();
-    void cancelPendingLayerFlush();
-
     bool renderFrame();
-
     bool makeContextCurrent();
 
-    LayerTreeContext m_layerTreeContext;
-    bool m_isValid;
-    bool m_notifyAfterScheduledLayerFlush;
     std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
     std::unique_ptr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
     std::unique_ptr<WebCore::GLContext> m_context;
-    bool m_layerFlushSchedulingEnabled;
-    WebCore::GraphicsLayer* m_viewOverlayRootLayer;
     WebCore::TransformationMatrix m_scaleMatrix;
     RenderFrameScheduler m_renderFrameScheduler;
 };

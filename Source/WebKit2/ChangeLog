@@ -1,3 +1,82 @@
+2016-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Too much duplicated code in LayerTreeHosts implementations
+        https://bugs.webkit.org/show_bug.cgi?id=159144
+
+        Reviewed by Žan Doberšek.
+
+        There's some code common and duplicated in all current LayerTreeHosts implementations (Gtk, Coordinated, and
+        ThreadedCoordinated). The thing is even worse in the case of ThreadedCoordinated and Coordinated, where the
+        former is actually a special case of the later, and it seems like code was copy pasted and then modified to add
+        ThreadedCoordinated specific code. The problem of that approach, apart from the code duplication, is that common
+        parts end up diverging too. This patch moves the common parts to the base class LayerTreeHost and makes
+        ThreadedCoordinatedLayerTreeHost inherit from CoordinatedLayerTreeHost, to share the common code and simply add
+        the specific one.
+
+        * PlatformGTK.cmake:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::scheduleLayerFlush):
+        (WebKit::CoordinatedLayerTreeHost::setViewOverlayRootLayer):
+        (WebKit::CoordinatedLayerTreeHost::setRootCompositingLayer):
+        (WebKit::CoordinatedLayerTreeHost::invalidate):
+        (WebKit::CoordinatedLayerTreeHost::sizeDidChange):
+        (WebKit::CoordinatedLayerTreeHost::layerFlushTimerFired):
+        (WebKit::CoordinatedLayerTreeHost::commitSceneState):
+        (WebKit::CoordinatedLayerTreeHost::createCoordinatedSurface):
+        (WebKit::CoordinatedLayerTreeHost::cancelPendingLayerFlush): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::forceRepaint): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::forceRepaintAsync): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::didFlushRootLayer): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::pageBackgroundTransparencyChanged): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::graphicsLayerFactory): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::sizeDidChange):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::setVisibleContentsRect):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::commitSceneState):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::create): Deleted.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::scrollNonCompositedContents): Deleted.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::contentsSizeChanged): Deleted.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didChangeViewportProperties): Deleted.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didScaleFactorChanged): Deleted.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::setNativeSurfaceHandleForCompositing): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::layerHostDidFlushLayers):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::~LayerTreeHost):
+        (WebKit::LayerTreeHost::setLayerFlushSchedulingEnabled):
+        (WebKit::LayerTreeHost::pauseRendering):
+        (WebKit::LayerTreeHost::resumeRendering):
+        (WebKit::LayerTreeHost::invalidate):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::layerTreeContext):
+        (WebKit::LayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush):
+        (WebKit::LayerTreeHost::setNonCompositedContentsNeedDisplay):
+        (WebKit::LayerTreeHost::setNonCompositedContentsNeedDisplayInRect):
+        (WebKit::LayerTreeHost::scrollNonCompositedContents):
+        (WebKit::LayerTreeHost::graphicsLayerFactory):
+        (WebKit::LayerTreeHost::contentsSizeChanged):
+        (WebKit::LayerTreeHost::didChangeViewportProperties):
+        (WebKit::LayerTreeHost::setNativeSurfaceHandleForCompositing):
+        (WebKit::LayerTreeHost::setViewOverlayRootLayer):
+        (WebKit::LayerTreeHost::forceRepaintAsync): Deleted.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::invalidate):
+        (WebKit::LayerTreeHostGtk::setViewOverlayRootLayer):
+        (WebKit::LayerTreeHostGtk::LayerTreeHostGtk): Deleted.
+        (WebKit::LayerTreeHostGtk::setRootCompositingLayer): Deleted.
+        (WebKit::LayerTreeHostGtk::setNonCompositedContentsNeedDisplay): Deleted.
+        (WebKit::LayerTreeHostGtk::scrollNonCompositedContents): Deleted.
+        (WebKit::LayerTreeHostGtk::setNativeSurfaceHandleForCompositing): Deleted.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+
 2016-06-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202586 and r202595.

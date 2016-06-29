@@ -45,8 +45,6 @@ public:
     DrawingAreaImpl(WebPage&, const WebPageCreationParameters&);
     virtual ~DrawingAreaImpl();
 
-    void layerHostDidFlushLayers();
-
 private:
     // DrawingArea
     void setNeedsDisplay() override;
@@ -74,6 +72,8 @@ private:
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
     void destroyNativeSurfaceHandleForCompositing(bool&) override;
 #endif
+
+    void layerHostDidFlushLayers() override;
 
     // IPC message handlers.
     void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset) override;
