@@ -26,9 +26,9 @@
 #include "config.h"
 #include "TextCodecReplacement.h"
 
-namespace WebCore {
+#include <wtf/unicode/CharacterNames.h>
 
-static const UChar ReplacementCharacter[2] = { 0xFFFD, 0 };
+namespace WebCore {
 
 std::unique_ptr<TextCodec> TextCodecReplacement::create(const TextEncoding&, const void*)
 {
@@ -65,7 +65,7 @@ String TextCodecReplacement::decode(const char*, size_t, bool, bool, bool& sawEr
         return emptyString();
 
     m_sentEOF = true;
-    return ReplacementCharacter;
+    return String(&replacementCharacter, 1);
 }
 
 } // namespace WebCore
