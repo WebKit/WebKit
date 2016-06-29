@@ -1,3 +1,21 @@
+2016-06-29  David Kilzer  <ddkilzer@apple.com>
+
+        Throw exceptions for invalid number of channels for ConvolverNode
+        <https://webkit.org/b/159238>
+        <rdar://problem/27020410>
+
+        Reviewed by Brent Fulgham.
+
+        Test based on a Blink change (patch by <rtoy@chromium.org>):
+        <https://chromium.googlesource.com/chromium/src.git/+/0cc26bbb7175aec77910d0b47faf9f8c8a640fe5>
+
+        compatibility.js based on a Blink change (patch by <rtoy@google.com>):
+        <https://chromium.googlesource.com/chromium/src.git/+/f846f5a461d1fcdbe5152898576c125058079ed1>
+
+        * webaudio/convolver-channels-expected.txt: Added.
+        * webaudio/convolver-channels.html: Added.
+        * webaudio/resources/compatibility.js: Added.
+
 2016-06-28  Frederic Wang  <fwang@igalia.com>
 
         AX: Add accessibility tests for MathML operators
