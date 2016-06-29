@@ -1,3 +1,22 @@
+2016-06-29  Saam barati  <sbarati@apple.com>
+
+        We don't emit TDZ checks for call_eval
+        https://bugs.webkit.org/show_bug.cgi?id=159277
+        <rdar://problem/27018801>
+
+        Reviewed by Benjamin Poulain.
+
+        This is a problem if you're trying to call a TDZ variable
+        that is named 'eval'.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        * tests/stress/variable-named-eval-under-tdz.js: Added.
+        (shouldThrowTDZ):
+        (test):
+        (test.foo):
+        (throw.new.Error):
+
 2016-06-29  Mark Lam  <mark.lam@apple.com>
 
         Add support for collecting cumulative LLINT stats via a JSC_llintStatsFile option.

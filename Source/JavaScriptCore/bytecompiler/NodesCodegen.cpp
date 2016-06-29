@@ -756,6 +756,7 @@ RegisterID* EvalFunctionCallNode::emitBytecode(BytecodeGenerator& generator, Reg
 
     Variable var = generator.variable(generator.propertyNames().eval);
     if (RegisterID* local = var.local()) {
+        generator.emitTDZCheckIfNecessary(var, local, nullptr);
         RefPtr<RegisterID> func = generator.emitMove(generator.tempDestination(dst), local);
         CallArguments callArguments(generator, m_args);
         generator.emitLoad(callArguments.thisRegister(), jsUndefined());
@@ -770,6 +771,7 @@ RegisterID* EvalFunctionCallNode::emitBytecode(BytecodeGenerator& generator, Reg
         callArguments.thisRegister(),
         generator.emitResolveScope(callArguments.thisRegister(), var));
     generator.emitGetFromScope(func.get(), callArguments.thisRegister(), var, ThrowIfNotFound);
+    generator.emitTDZCheckIfNecessary(var, func.get(), nullptr);
     return generator.emitCallEval(generator.finalDestination(dst, func.get()), func.get(), callArguments, divot(), divotStart(), divotEnd());
 }
 
