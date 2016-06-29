@@ -1228,6 +1228,7 @@
 		93A253EF1C922E8E00F9F68D /* WKPreviewActionItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A253EE1C922E8E00F9F68D /* WKPreviewActionItem.mm */; };
 		93A253F31C92411200F9F68D /* WKPreviewActionItemIdentifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A253F21C92411200F9F68D /* WKPreviewActionItemIdentifiers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93A253F51C92413200F9F68D /* WKPreviewActionItemIdentifiers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A253F41C92413200F9F68D /* WKPreviewActionItemIdentifiers.mm */; };
+		93A2A3461D246125002B59D3 /* mediaIcon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 93A2A3451D246125002B59D3 /* mediaIcon.pdf */; };
 		93A88B301BC6E99700ABA5C2 /* WebHitTestResultData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A88B2E1BC6E98F00ABA5C2 /* WebHitTestResultData.mm */; };
 		93A88B331BC6E9CD00ABA5C2 /* WebHitTestResultData.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A88B311BC6E9C000ABA5C2 /* WebHitTestResultData.h */; };
 		93A88B361BC6EAD500ABA5C2 /* WebHitTestResultData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A88B341BC6EABA00ABA5C2 /* WebHitTestResultData.cpp */; };
@@ -3290,6 +3291,7 @@
 		93A253EE1C922E8E00F9F68D /* WKPreviewActionItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPreviewActionItem.mm; sourceTree = "<group>"; };
 		93A253F21C92411200F9F68D /* WKPreviewActionItemIdentifiers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreviewActionItemIdentifiers.h; sourceTree = "<group>"; };
 		93A253F41C92413200F9F68D /* WKPreviewActionItemIdentifiers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPreviewActionItemIdentifiers.mm; sourceTree = "<group>"; };
+		93A2A3451D246125002B59D3 /* mediaIcon.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = mediaIcon.pdf; path = Resources/mediaIcon.pdf; sourceTree = SOURCE_ROOT; };
 		93A88B2E1BC6E98F00ABA5C2 /* WebHitTestResultData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHitTestResultData.mm; sourceTree = "<group>"; };
 		93A88B311BC6E9C000ABA5C2 /* WebHitTestResultData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHitTestResultData.h; sourceTree = "<group>"; };
 		93A88B341BC6EABA00ABA5C2 /* WebHitTestResultData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebHitTestResultData.cpp; sourceTree = "<group>"; };
@@ -5305,6 +5307,7 @@
 		37F8C94F1AE22BD8007DAB9E /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				93A2A3451D246125002B59D3 /* mediaIcon.pdf */,
 			);
 			name = mac;
 			path = Resources/mac;
@@ -8468,6 +8471,7 @@
 				E115C716190F8A2500ECC516 /* com.apple.WebKit.Databases.sb in Resources */,
 				E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */,
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
+				93A2A3461D246125002B59D3 /* mediaIcon.pdf in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

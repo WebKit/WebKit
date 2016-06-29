@@ -1,3 +1,15 @@
+2016-06-29  Beth Dakin  <bdakin@apple.com>
+
+        Add media_icon to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=159273
+        -and corresponding-
+        rdar://problem/27087714
+
+        Reviewed by Dean Jackson.
+
+        * Resources/mediaIcon.pdf: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-06-29  Anders Carlsson  <andersca@apple.com>
 
         Rename addressFields to contactFields
