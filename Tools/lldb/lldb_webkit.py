@@ -121,7 +121,7 @@ def btjs(debugger, command, result, internal_dict):
 
     backtraceDepth = thread.GetNumFrames()
 
-    if len(command) == 1:
+    if len(command) > 0:
         try:
             backtraceDepth = int(command)
         except ValueError:
