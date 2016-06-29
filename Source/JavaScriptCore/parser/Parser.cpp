@@ -733,6 +733,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
             if (hasInitializer) {
                 next(TreeBuilder::DontBuildStrings); // consume '='
                 TreeExpression rhs = parseAssignmentExpression(context);
+                propagateError();
+                ASSERT(rhs);
                 node = context.createDestructuringAssignment(location, pattern, rhs);
                 lastInitializer = rhs;
             }

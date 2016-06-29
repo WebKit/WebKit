@@ -1,3 +1,13 @@
+2016-06-29  Saam barati  <sbarati@apple.com>
+
+        Destructuring variable declaration is missing a validation of the syntax of a sub production when there is a rhs
+        https://bugs.webkit.org/show_bug.cgi?id=159267
+
+        Reviewed by Mark Lam.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2016-06-29  Nan Wang  <n_wang@apple.com>
 
         AX: Crash in WebCore::Document::focusNavigationStartingNode(WebCore::FocusDirection) const + 128

@@ -1,3 +1,17 @@
+2016-06-29  Saam barati  <sbarati@apple.com>
+
+        Destructuring variable declaration is missing a validation of the syntax of a sub production when there is a rhs
+        https://bugs.webkit.org/show_bug.cgi?id=159267
+
+        Reviewed by Mark Lam.
+
+        We were parsing something without checking if it had a syntax error.
+        This is wrong for many reasons, but it could actually cause a crash
+        in a debug build if you parsed particular programs.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+
 2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Shadow Root type in DOM Tree

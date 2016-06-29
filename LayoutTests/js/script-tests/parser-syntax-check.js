@@ -657,6 +657,13 @@ invalid("1 % ++");
 invalid("1 % --");
 invalid("1 % \n++");
 invalid("1 % \n--");
+invalid('let {w} = (foo-=()), {} = ("a" ^= "b");');
+invalid('const {w} = (foo-=()), {} = ("a" ^= "b");');
+invalid('var {w} = (foo-=()), {} = ("a" ^= "b");');
+invalid('let {w} = ();');
+invalid('let {w} = 1234abc;');
+invalid('const {w} = 1234abc;');
+invalid('var {w} = 1234abc;');
 
 debug("Rest parameter");
 valid("function foo(...a) { }");
