@@ -1212,4 +1212,8 @@
 #endif
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#define USE_MEDIAREMOTE 1
+#endif
+
 #endif /* WTF_Platform_h */

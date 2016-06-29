@@ -325,6 +325,22 @@
     } \
     }
 
+#define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
+    namespace functionNamespace { \
+    void* framework##Library(bool isOptional = false); \
+    void* framework##Library(bool isOptional) \
+    { \
+        static void* frameworkLibrary; \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            frameworkLibrary = dlopen("/System/Library/PrivateFrameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+            if (!isOptional) \
+                RELEASE_ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
+        }); \
+        return frameworkLibrary; \
+    } \
+    }
+
 #define SOFT_LINK_CLASS_FOR_HEADER(functionNamespace, framework, className) \
     @class className; \
     namespace functionNamespace { \

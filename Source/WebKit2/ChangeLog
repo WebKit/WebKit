@@ -1,3 +1,14 @@
+2016-06-29  Jer Noble  <jer.noble@apple.com>
+
+        Adopt MediaRemote.
+        https://bugs.webkit.org/show_bug.cgi?id=159250
+
+        Reviewed by Eric Carlson.
+
+        Add a sandbox exception allowing access to the mediaremoted XPC service.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2016-06-29  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView should ask WKNavigationDelegate about bad ssl certificates

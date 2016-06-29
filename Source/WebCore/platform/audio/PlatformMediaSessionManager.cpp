@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS) && !PLATFORM(MAC)
 static PlatformMediaSessionManager* platformMediaSessionManager = nullptr;
 
 PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
