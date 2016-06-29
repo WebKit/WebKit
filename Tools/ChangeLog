@@ -1,3 +1,11 @@
+2016-06-28  Jon Lee  <jonlee@apple.com>
+
+        Update animometer.plan
+
+        Rubber-stamped by Said Abou-Hallawa.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/animometer.plan: Update to r202601.
+
 2016-06-28  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix JSC tests. Air.js moved, and the harness needs to know.
