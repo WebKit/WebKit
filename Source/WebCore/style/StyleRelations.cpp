@@ -96,7 +96,7 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
         auto& element = const_cast<Element&>(*relation.element);
         switch (relation.type) {
         case Relation::AffectedByActive:
-            element.setChildrenAffectedByActive();
+            element.setStyleAffectedByActive();
             break;
         case Relation::AffectedByDrag:
             element.setChildrenAffectedByDrag();

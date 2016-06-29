@@ -297,10 +297,10 @@ public:
     bool needsStyleInvalidation() const;
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
+    bool styleAffectedByActive() const { return hasRareData() && rareDataStyleAffectedByActive(); }
     bool styleAffectedByEmpty() const { return hasRareData() && rareDataStyleAffectedByEmpty(); }
     bool styleAffectedByFocusWithin() const { return hasRareData() && rareDataStyleAffectedByFocusWithin(); }
     bool childrenAffectedByHover() const { return getFlag(ChildrenAffectedByHoverRulesFlag); }
-    bool childrenAffectedByActive() const { return hasRareData() && rareDataChildrenAffectedByActive(); }
     bool childrenAffectedByDrag() const { return hasRareData() && rareDataChildrenAffectedByDrag(); }
     bool childrenAffectedByFirstChildRules() const { return getFlag(ChildrenAffectedByFirstChildRulesFlag); }
     bool childrenAffectedByLastChildRules() const { return getFlag(ChildrenAffectedByLastChildRulesFlag); }
@@ -314,7 +314,7 @@ public:
     void setStyleAffectedByEmpty();
     void setStyleAffectedByFocusWithin();
     void setChildrenAffectedByHover() { setFlag(ChildrenAffectedByHoverRulesFlag); }
-    void setChildrenAffectedByActive();
+    void setStyleAffectedByActive();
     void setChildrenAffectedByDrag();
     void setChildrenAffectedByFirstChildRules() { setFlag(ChildrenAffectedByFirstChildRulesFlag); }
     void setChildrenAffectedByLastChildRules() { setFlag(ChildrenAffectedByLastChildRulesFlag); }
@@ -618,7 +618,7 @@ private:
     bool rareDataStyleAffectedByFocusWithin() const;
     bool rareDataIsNamedFlowContentElement() const;
     bool rareDataChildrenAffectedByHover() const;
-    bool rareDataChildrenAffectedByActive() const;
+    bool rareDataStyleAffectedByActive() const;
     bool rareDataChildrenAffectedByDrag() const;
     bool rareDataChildrenAffectedByLastChildRules() const;
     bool rareDataChildrenAffectedByBackwardPositionalRules() const;

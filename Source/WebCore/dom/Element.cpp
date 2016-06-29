@@ -554,7 +554,7 @@ void Element::setActive(bool flag, bool pause)
     document().userActionElements().setActive(this, flag);
 
     const RenderStyle* renderStyle = this->renderStyle();
-    bool reactsToPress = (renderStyle && renderStyle->affectedByActive()) || childrenAffectedByActive();
+    bool reactsToPress = (renderStyle && renderStyle->affectedByActive()) || styleAffectedByActive();
     if (reactsToPress)
         setNeedsStyleRecalc();
 
@@ -2581,9 +2581,9 @@ void Element::setStyleAffectedByFocusWithin()
     ensureElementRareData().setStyleAffectedByFocusWithin(true);
 }
 
-void Element::setChildrenAffectedByActive()
+void Element::setStyleAffectedByActive()
 {
-    ensureElementRareData().setChildrenAffectedByActive(true);
+    ensureElementRareData().setStyleAffectedByActive(true);
 }
 
 void Element::setChildrenAffectedByDrag()
@@ -2614,7 +2614,7 @@ bool Element::hasFlagsSetDuringStylingOfChildren() const
 
     if (!hasRareData())
         return false;
-    return rareDataChildrenAffectedByActive()
+    return rareDataStyleAffectedByActive()
         || rareDataChildrenAffectedByDrag()
         || rareDataChildrenAffectedByBackwardPositionalRules()
         || rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules();
@@ -2638,10 +2638,10 @@ bool Element::rareDataIsNamedFlowContentElement() const
     return elementRareData()->isNamedFlowContentElement();
 }
 
-bool Element::rareDataChildrenAffectedByActive() const
+bool Element::rareDataStyleAffectedByActive() const
 {
     ASSERT(hasRareData());
-    return elementRareData()->childrenAffectedByActive();
+    return elementRareData()->styleAffectedByActive();
 }
 
 bool Element::rareDataChildrenAffectedByDrag() const

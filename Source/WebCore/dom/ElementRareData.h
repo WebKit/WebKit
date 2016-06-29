@@ -55,6 +55,9 @@ public:
     bool needsFocusAppearanceUpdateSoonAfterAttach() const { return m_needsFocusAppearanceUpdateSoonAfterAttach; }
     void setNeedsFocusAppearanceUpdateSoonAfterAttach(bool needs) { m_needsFocusAppearanceUpdateSoonAfterAttach = needs; }
 
+    bool styleAffectedByActive() const { return m_styleAffectedByActive; }
+    void setStyleAffectedByActive(bool value) { m_styleAffectedByActive = value; }
+
     bool styleAffectedByEmpty() const { return m_styleAffectedByEmpty; }
     void setStyleAffectedByEmpty(bool value) { m_styleAffectedByEmpty = value; }
 
@@ -72,8 +75,6 @@ public:
     void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
 #endif
 
-    bool childrenAffectedByActive() const { return m_childrenAffectedByActive; }
-    void setChildrenAffectedByActive(bool value) { m_childrenAffectedByActive = value; }
     bool childrenAffectedByDrag() const { return m_childrenAffectedByDrag; }
     void setChildrenAffectedByDrag(bool value) { m_childrenAffectedByDrag = value; }
 
@@ -121,6 +122,7 @@ private:
     unsigned short m_childIndex;
     unsigned m_tabIndexWasSetExplicitly : 1;
     unsigned m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
+    unsigned m_styleAffectedByActive : 1;
     unsigned m_styleAffectedByEmpty : 1;
     unsigned m_styleAffectedByFocusWithin : 1;
 #if ENABLE(FULLSCREEN_API)
@@ -128,7 +130,6 @@ private:
 #endif
     unsigned m_hasPendingResources : 1;
     unsigned m_childrenAffectedByHover : 1;
-    unsigned m_childrenAffectedByActive : 1;
     unsigned m_childrenAffectedByDrag : 1;
     // Bits for dynamic child matching.
     // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
@@ -167,6 +168,7 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_childIndex(0)
     , m_tabIndexWasSetExplicitly(false)
     , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
+    , m_styleAffectedByActive(false)
     , m_styleAffectedByEmpty(false)
     , m_styleAffectedByFocusWithin(false)
 #if ENABLE(FULLSCREEN_API)
@@ -174,7 +176,6 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
 #endif
     , m_hasPendingResources(false)
     , m_childrenAffectedByHover(false)
-    , m_childrenAffectedByActive(false)
     , m_childrenAffectedByDrag(false)
     , m_childrenAffectedByLastChildRules(false)
     , m_childrenAffectedByBackwardPositionalRules(false)
@@ -216,7 +217,7 @@ inline void ElementRareData::resetComputedStyle()
 
 inline void ElementRareData::resetDynamicRestyleObservations()
 {
-    setChildrenAffectedByActive(false);
+    setStyleAffectedByActive(false);
     setChildrenAffectedByDrag(false);
     setChildrenAffectedByLastChildRules(false);
     setChildrenAffectedByBackwardPositionalRules(false);
