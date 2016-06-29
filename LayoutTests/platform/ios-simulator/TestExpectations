@@ -2995,3 +2995,5 @@ webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailur
 webkit.org/b/159214 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 
 webkit.org/b/157592 fast/images/composited-animated-gif-outside-viewport.html [ Pass Timeout ]
+
+webkit.org/b/156561 perf/rel-list-remove.html [ Pass Timeout Failure ]
