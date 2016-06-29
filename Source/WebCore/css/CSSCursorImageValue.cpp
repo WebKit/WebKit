@@ -150,7 +150,7 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader, const
     return nullptr;
 }
 
-StyleImage* CSSCursorImageValue::cachedOrPendingImage(Document& document)
+StyleImage* CSSCursorImageValue::cachedOrPendingImage(const Document& document)
 {
 #if ENABLE(CSS_IMAGE_SET)
     // Need to delegate completely so that changes in device scale factor can be handled appropriately.

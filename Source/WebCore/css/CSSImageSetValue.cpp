@@ -130,7 +130,7 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader& load
     return is<StyleCachedImageSet>(m_imageSet.get()) ? downcast<StyleCachedImageSet>(m_imageSet.get()) : nullptr;
 }
 
-StyleImage* CSSImageSetValue::cachedOrPendingImageSet(Document& document)
+StyleImage* CSSImageSetValue::cachedOrPendingImageSet(const Document& document)
 {
     if (!m_imageSet)
         m_imageSet = StylePendingImage::create(this);

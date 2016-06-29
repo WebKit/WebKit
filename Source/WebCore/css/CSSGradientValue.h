@@ -85,7 +85,7 @@ public:
     bool knownToBeOpaque(const RenderElement*) const;
 
     void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&) { }
-    RefPtr<CSSGradientValue> gradientWithStylesResolved(StyleResolver*);
+    RefPtr<CSSGradientValue> gradientWithStylesResolved(const StyleResolver*);
 
 protected:
     CSSGradientValue(ClassType classType, CSSGradientRepeat repeat, CSSGradientType gradientType)

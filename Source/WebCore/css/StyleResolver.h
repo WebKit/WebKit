@@ -30,6 +30,7 @@
 #include "RuleFeature.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
+#include "StylePendingResources.h"
 #include <bitset>
 #include <memory>
 #include <wtf/HashMap.h>
@@ -148,6 +149,7 @@ public:
     const RenderStyle* rootElementStyle() const { return m_state.rootElementStyle(); }
     const Element* element() { return m_state.element(); }
     Document& document() { return m_document; }
+    const Document& document() const { return m_document; }
     Settings* documentSettings() { return m_document.settings(); }
 
     void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
@@ -381,9 +383,6 @@ public:
         void setApplyPropertyToVisitedLinkStyle(bool isApply) { m_applyPropertyToVisitedLinkStyle = isApply; }
         bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
         bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
-        PendingImagePropertyMap& pendingImageProperties() { return m_pendingImageProperties; }
-        
-        Vector<RefPtr<ReferenceFilterOperation>>& filtersWithPendingSVGDocuments() { return m_filtersWithPendingSVGDocuments; }
 
         void setFontDirty(bool isDirty) { m_fontDirty = isDirty; }
         bool fontDirty() const { return m_fontDirty; }
@@ -406,7 +405,10 @@ public:
 
         bool useSVGZoomRules() const { return m_element && m_element->isSVGElement(); }
 
-        CSSToLengthConversionData cssToLengthConversionData() const { return m_cssToLengthConversionData; }
+        Style::PendingResources& ensurePendingResources();
+        std::unique_ptr<Style::PendingResources> takePendingResources() { return WTFMove(m_pendingResources); }
+
+        const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
 
         CascadeLevel cascadeLevel() const { return m_cascadeLevel; }
         void setCascadeLevel(CascadeLevel level) { m_cascadeLevel = level; }
@@ -442,8 +444,7 @@ public:
         FillLayer m_backgroundData { BackgroundFillLayer };
         Color m_backgroundColor;
 
-        PendingImagePropertyMap m_pendingImageProperties;
-        Vector<RefPtr<ReferenceFilterOperation>> m_filtersWithPendingSVGDocuments;
+        std::unique_ptr<Style::PendingResources> m_pendingResources;
         CSSToLengthConversionData m_cssToLengthConversionData;
         
         CascadeLevel m_cascadeLevel { UserAgentLevel };
@@ -454,6 +455,7 @@ public:
     };
 
     State& state() { return m_state; }
+    const State& state() const { return m_state; }
 
     RefPtr<StyleImage> styleImage(CSSPropertyID, CSSValue&);
     Ref<StyleImage> cachedOrPendingFromValue(CSSPropertyID, CSSImageValue&);
@@ -489,12 +491,7 @@ private:
 
     void applySVGProperty(CSSPropertyID, CSSValue*);
 
-    RefPtr<StyleImage> loadPendingImage(const StylePendingImage&, const ResourceLoaderOptions&);
-    RefPtr<StyleImage> loadPendingImage(const StylePendingImage&);
     void loadPendingImages();
-#if ENABLE(CSS_SHAPES)
-    void loadPendingShapeImage(ShapeValue*);
-#endif
 
     static unsigned computeMatchedPropertiesHash(const MatchedProperties*, unsigned size);
     struct MatchedPropertiesCacheItem {

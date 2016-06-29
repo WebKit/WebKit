@@ -6781,6 +6781,8 @@
 		E4D58EBB17B8F12800CBDCA8 /* ElementTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D58EBA17B8F12800CBDCA8 /* ElementTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4D988B417BFD1F60084FB88 /* TextNodeTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D988B317BFD1F60084FB88 /* TextNodeTraversal.h */; };
 		E4D988B617BFEB210084FB88 /* TextNodeTraversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4D988B517BFEB210084FB88 /* TextNodeTraversal.cpp */; };
+		E4DACE6A1D12E10B0075980F /* StylePendingResources.h in Headers */ = {isa = PBXBuildFile; fileRef = E4DACE691D12E10B0075980F /* StylePendingResources.h */; };
+		E4DACE6C1D12E1160075980F /* StylePendingResources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4DACE6B1D12E1160075980F /* StylePendingResources.cpp */; };
 		E4DEAA1717A93DC3000E0430 /* StyleTreeResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4DEAA1517A93DC3000E0430 /* StyleTreeResolver.cpp */; };
 		E4DEAA1817A93DC3000E0430 /* StyleTreeResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E4DEAA1617A93DC3000E0430 /* StyleTreeResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4E39AFB1330EFA8003AB274 /* LegacyTileLayerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */; };
@@ -14931,6 +14933,8 @@
 		E4D58EBA17B8F12800CBDCA8 /* ElementTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementTraversal.h; sourceTree = "<group>"; };
 		E4D988B317BFD1F60084FB88 /* TextNodeTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextNodeTraversal.h; sourceTree = "<group>"; };
 		E4D988B517BFEB210084FB88 /* TextNodeTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextNodeTraversal.cpp; sourceTree = "<group>"; };
+		E4DACE691D12E10B0075980F /* StylePendingResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StylePendingResources.h; sourceTree = "<group>"; };
+		E4DACE6B1D12E1160075980F /* StylePendingResources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StylePendingResources.cpp; sourceTree = "<group>"; };
 		E4DEAA1517A93DC3000E0430 /* StyleTreeResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleTreeResolver.cpp; sourceTree = "<group>"; };
 		E4DEAA1617A93DC3000E0430 /* StyleTreeResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleTreeResolver.h; sourceTree = "<group>"; };
 		E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyTileLayerPool.h; sourceTree = "<group>"; };
@@ -23845,6 +23849,8 @@
 				E401E0A31C3C0B8300F34D10 /* StyleChange.h */,
 				E4D58EB617B4ED8900CBDCA8 /* StyleFontSizeFunctions.cpp */,
 				E4D58EB717B4ED8900CBDCA8 /* StyleFontSizeFunctions.h */,
+				E4DACE6B1D12E1160075980F /* StylePendingResources.cpp */,
+				E4DACE691D12E10B0075980F /* StylePendingResources.h */,
 				E461802E1C8DD4D20026C02C /* StyleRelations.cpp */,
 				E461802C1C8DD2900026C02C /* StyleRelations.h */,
 				E4D58EB217B4DBDC00CBDCA8 /* StyleResolveForDocument.cpp */,
@@ -25641,6 +25647,7 @@
 				E1C416120F6562FD0092D2FB /* CrossOriginAccessControl.h in Headers */,
 				41ABE67B1D0580DB006D862D /* CrossOriginPreflightChecker.h in Headers */,
 				E1C415DA0F655D6F0092D2FB /* CrossOriginPreflightResultCache.h in Headers */,
+				E4DACE6A1D12E10B0075980F /* StylePendingResources.h in Headers */,
 				E169803D1133542D00894115 /* CRuntimeObject.h in Headers */,
 				975CA28B130365F800E99AD9 /* Crypto.h in Headers */,
 				E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */,
@@ -30862,6 +30869,7 @@
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
 				FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */,
 				FD8AA63E169514A700D2EA68 /* JSPannerNodeCustom.cpp in Sources */,
+				E4DACE6C1D12E1160075980F /* StylePendingResources.cpp in Sources */,
 				E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */,
 				CB38FD511CCF938900592A3F /* JSPerformanceEntry.cpp in Sources */,
 				CB38FD571CD21E2A00592A3F /* JSPerformanceEntryCustom.cpp in Sources */,

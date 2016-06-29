@@ -104,7 +104,7 @@ struct GradientStop {
     { }
 };
 
-RefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleResolver* styleResolver)
+RefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(const StyleResolver* styleResolver)
 {
     bool derived = false;
     for (auto& stop : m_stops) {

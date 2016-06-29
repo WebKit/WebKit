@@ -54,7 +54,7 @@ public:
 
     SVGCursorElement* updateCursorElement(const Document&);
     StyleImage* cachedImage(CachedResourceLoader&, const ResourceLoaderOptions&);
-    StyleImage* cachedOrPendingImage(Document&);
+    StyleImage* cachedOrPendingImage(const Document&);
 
     void removeReferencedElement(SVGElement*);
 

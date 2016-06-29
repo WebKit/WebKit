@@ -2649,6 +2649,7 @@ set(WebCore_SOURCES
     style/RenderTreeUpdater.cpp
     style/StyleChange.cpp
     style/StyleFontSizeFunctions.cpp
+    style/StylePendingResources.cpp
     style/StyleRelations.cpp
     style/StyleResolveForDocument.cpp
     style/StyleSharingResolver.cpp
