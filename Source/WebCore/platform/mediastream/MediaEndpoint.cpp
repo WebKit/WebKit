@@ -33,11 +33,51 @@
 #if ENABLE(WEB_RTC)
 #include "MediaEndpoint.h"
 
+#include "MediaPayload.h"
+#include "RealtimeMediaSource.h"
+
 namespace WebCore {
 
-static std::unique_ptr<MediaEndpoint> createMediaEndpoint(MediaEndpointClient&)
+class EmptyRealtimeMediaSource : public RealtimeMediaSource {
+public:
+    static Ref<EmptyRealtimeMediaSource> create() { return adoptRef(*new EmptyRealtimeMediaSource()); }
+
+    RefPtr<RealtimeMediaSourceCapabilities> capabilities() override { return nullptr; }
+    const RealtimeMediaSourceSettings& settings() override { return m_sourceSettings; }
+
+private:
+    EmptyRealtimeMediaSource()
+        : RealtimeMediaSource(emptyString(), RealtimeMediaSource::None, emptyString())
+        { }
+
+    RealtimeMediaSourceSettings m_sourceSettings;
+};
+
+class EmptyMediaEndpoint : public MediaEndpoint {
+public:
+    EmptyMediaEndpoint(MediaEndpointClient&) { }
+
+    void setConfiguration(RefPtr<MediaEndpointConfiguration>&&) override { }
+
+    void generateDtlsInfo() override { }
+    MediaPayloadVector getDefaultAudioPayloads() override { return MediaPayloadVector(); }
+    MediaPayloadVector getDefaultVideoPayloads() override { return MediaPayloadVector(); }
+    MediaPayloadVector filterPayloads(const MediaPayloadVector&, const MediaPayloadVector&) override { return MediaPayloadVector(); }
+
+    UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool) override { return UpdateResult::Failed; }
+    UpdateResult updateSendConfiguration(MediaEndpointSessionConfiguration*, const RealtimeMediaSourceMap&, bool) override { return UpdateResult::Failed; }
+
+    void addRemoteCandidate(IceCandidate&, const String&, const String&, const String&) override { }
+
+    Ref<RealtimeMediaSource> createMutedRemoteSource(const String&, RealtimeMediaSource::Type) override { return EmptyRealtimeMediaSource::create(); }
+    void replaceSendSource(RealtimeMediaSource&, const String&) override { }
+
+    void stop() override { }
+};
+
+static std::unique_ptr<MediaEndpoint> createMediaEndpoint(MediaEndpointClient& client)
 {
-    return nullptr;
+    return std::make_unique<EmptyMediaEndpoint>(client);
 }
 
 CreateMediaEndpoint MediaEndpoint::create = createMediaEndpoint;

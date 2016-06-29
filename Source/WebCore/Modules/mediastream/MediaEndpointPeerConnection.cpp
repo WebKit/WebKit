@@ -70,12 +70,12 @@ static String randomString(size_t length)
 
 MediaEndpointPeerConnection::MediaEndpointPeerConnection(PeerConnectionBackendClient* client)
     : m_client(client)
+    , m_mediaEndpoint(MediaEndpoint::create(*this))
     , m_sdpProcessor(std::unique_ptr<SDPProcessor>(new SDPProcessor(m_client->scriptExecutionContext())))
     , m_cname(randomString(16))
     , m_iceUfrag(randomString(4))
     , m_icePassword(randomString(22))
 {
-    m_mediaEndpoint = MediaEndpoint::create(*this);
     ASSERT(m_mediaEndpoint);
 
     m_defaultAudioPayloads = m_mediaEndpoint->getDefaultAudioPayloads();
