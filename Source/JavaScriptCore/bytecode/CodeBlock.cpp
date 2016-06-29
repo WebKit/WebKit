@@ -2477,7 +2477,12 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
                     ConcurrentJITLocker locker(symbolTable->m_lock);
                     symbolTable->prepareForTypeProfiling(locker);
                 }
-                constant = symbolTable->cloneScopePart(*m_vm);
+
+                SymbolTable* clone = symbolTable->cloneScopePart(*m_vm);
+                if (wasCompiledWithDebuggingOpcodes())
+                    clone->setRareDataCodeBlock(this);
+
+                constant = clone;
             }
         }
 

@@ -1,3 +1,65 @@
+2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Wrong function name next to scope
+        https://bugs.webkit.org/show_bug.cgi?id=158210
+        <rdar://problem/26543093>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._scopeChainNodeFromPayload):
+        Include new payload data in the construction call.
+        All the new data is optional, so we gracefully handle
+        legacy backends.
+
+        * UserInterface/Models/ScopeChainNode.js:
+        (WebInspector.ScopeChainNode):
+        (WebInspector.ScopeChainNode.prototype.get type):
+        (WebInspector.ScopeChainNode.prototype.get objects):
+        (WebInspector.ScopeChainNode.prototype.get name):
+        (WebInspector.ScopeChainNode.prototype.get location):
+        (WebInspector.ScopeChainNode.prototype.get hash):
+        Hash is a rough (name:sourceId:line:column) string for quick comparisons.
+
+        (WebInspector.ScopeChainNode.prototype.makeLocalScope):
+        Make this an action you take on a scope, to avoid having to
+        do it at construction time, or making it a generic setting.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._generateCallFramesSection):
+        This was wrong before. Move the work to CallFrame
+        and change it to be correct.
+
+        * UserInterface/CallFrame.js:
+        (WebInspector.CallFrame.prototype.mergedScopeChain):
+
+        This transforms the scope chain for a call frame from:
+        
+             scope1  scope2  scope3  scope4  scope5  scope6  scope7
+              foo     foo     foo     bar     bar      -       -
+             Block  Closure Closure Closure Closure   GLE     GBL
+
+        To:
+             scope1  scope2&3   scope4&5  scope6  scope7
+              foo      foo*       bar*      -       -
+             Block    Local     Closure    GLE     GBL
+
+        Doing a few things:
+
+            - Merge the first two Closure scopes sharing a location.
+              These are the "var" and "let" Closure scopes in a function,
+              and it is better to present these together in the UI.
+
+            - Mark the first Closure scope within a function (*). When
+              this is displayed in the UI, we can provide the name of
+              the function: "Closure Scope (name)", and we even have
+              location information that we can use to display a goto
+              arrow if needed.
+
+            - Make the first Closure scope the Local scope if it
+              matches the Call Frame's function name. This lets us
+              display the section as "Local Variables".
+
 2016-06-29  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Uncaught Exception page never shows if exception is thrown while processing a protocol event

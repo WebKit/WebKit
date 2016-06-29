@@ -340,4 +340,12 @@ JSScope* JSScope::constantScopeForCodeBlock(ResolveType type, CodeBlock* codeBlo
     return nullptr;
 }
 
+SymbolTable* JSScope::symbolTable()
+{
+    if (JSSymbolTableObject* symbolTableObject = jsDynamicCast<JSSymbolTableObject*>(this))
+        return symbolTableObject->symbolTable();
+
+    return nullptr;
+}
+
 } // namespace JSC

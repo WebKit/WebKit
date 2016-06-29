@@ -1,3 +1,71 @@
+2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Wrong function name next to scope
+        https://bugs.webkit.org/show_bug.cgi?id=158210
+        <rdar://problem/26543093>
+
+        Reviewed by Brian Burg.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add DebuggerLocation. A helper for describing a unique location.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setConstantRegisters):
+        When compiled with debug info, add a SymbolTable rare data pointer
+        back to the CodeBlock. This will be used later to get JSScope debug
+        info if Web Inspector pauses.
+
+        * runtime/SymbolTable.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::cloneScopePart):
+        (JSC::SymbolTable::prepareForTypeProfiling):
+        (JSC::SymbolTable::uniqueIDForVariable):
+        (JSC::SymbolTable::uniqueIDForOffset):
+        (JSC::SymbolTable::globalTypeSetForOffset):
+        (JSC::SymbolTable::globalTypeSetForVariable):
+        Rename rareData and include a CodeBlock pointer.
+
+        (JSC::SymbolTable::rareDataCodeBlock):
+        (JSC::SymbolTable::setRareDataCodeBlock):
+        Setter and getter for the rare data. It should only be set once.
+
+        (JSC::SymbolTable::visitChildren):
+        Visit the rare data code block if we have one.
+
+        * debugger/DebuggerLocation.cpp: Added.
+        (JSC::DebuggerLocation::DebuggerLocation):
+        * debugger/DebuggerLocation.h: Added.
+        (JSC::DebuggerLocation::DebuggerLocation):
+        Construction from a ScriptExecutable.
+
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::symbolTable):
+        * runtime/JSScope.h:
+        * debugger/DebuggerScope.h:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::name):
+        (JSC::DebuggerScope::location):
+        Name and location for a scope. This uses:
+        JSScope -> SymbolTable -> CodeBlock -> Executable
+
+        * inspector/protocol/Debugger.json:
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.CallFrameProxy.prototype._wrapScopeChain):
+        (InjectedScript.CallFrameProxy._createScopeJson):
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::valueForScopeType):
+        (Inspector::valueForScopeLocation):
+        (Inspector::JSJavaScriptCallFrame::scopeDescriptions):
+        (Inspector::JSJavaScriptCallFrame::scopeType): Deleted.
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation):
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionScopeDescriptions):
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionScopeType): Deleted.
+        Simplify this code to build the objects we will send across the protocol
+        to descript a Scope.
+
 2016-06-29  Saam barati  <sbarati@apple.com>
 
         We don't emit TDZ checks for call_eval

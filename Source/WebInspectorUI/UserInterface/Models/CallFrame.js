@@ -45,45 +45,14 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 
     // Public
 
-    get id()
-    {
-        return this._id;
-    }
-
-    get sourceCodeLocation()
-    {
-        return this._sourceCodeLocation;
-    }
-
-    get functionName()
-    {
-        return this._functionName;
-    }
-
-    get nativeCode()
-    {
-        return this._nativeCode;
-    }
-
-    get programCode()
-    {
-        return this._programCode;
-    }
-
-    get thisObject()
-    {
-        return this._thisObject;
-    }
-
-    get scopeChain()
-    {
-        return this._scopeChain;
-    }
-
-    get isTailDeleted()
-    {
-        return this._isTailDeleted;
-    }
+    get id() { return this._id; }
+    get sourceCodeLocation() { return this._sourceCodeLocation; }
+    get functionName() { return this._functionName; }
+    get nativeCode() { return this._nativeCode; }
+    get programCode() { return this._programCode; }
+    get thisObject() { return this._thisObject; }
+    get scopeChain() { return this._scopeChain; }
+    get isTailDeleted() { return this._isTailDeleted; }
 
     saveIdentityToCookie()
     {
@@ -110,6 +79,99 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 
         for (var i = 0; i < this._scopeChain.length; ++i)
             this._scopeChain[i].objects[0].deprecatedGetAllProperties(propertiesCollected);
+    }
+
+    mergedScopeChain()
+    {
+        let mergedScopes = [];
+
+        // Scopes list goes from top/local (1) to bottom/global (5)
+        //   [scope1, scope2, scope3, scope4, scope5]
+        let scopes = this._scopeChain.slice();
+
+        // Merge similiar scopes. Some function call frames may have multiple
+        // top level closure scopes (one for `var`s one for `let`s) that can be
+        // combined to a single scope of variables. Go in reverse order so we
+        // merge the first two closure scopes with the same name. Also mark
+        // the first time we see a new name, so we know the base for the name.
+        //   [scope1&2, scope3, scope4, scope5]
+        //      foo      bar     GLE    global
+        let lastMarkedHash = null;
+        function markAsBaseIfNeeded(scope) {
+            if (!scope.hash)
+                return false;
+            if (scope.type !== WebInspector.ScopeChainNode.Type.Closure)
+                return false;
+            if (scope.hash === lastMarkedHash)
+                return false;
+            lastMarkedHash = scope.hash;
+            scope.__baseClosureScope = true;
+            return true;
+        }
+
+        function shouldMergeClosureScopes(youngScope, oldScope, lastMerge) {
+            if (!youngScope || !oldScope)
+                return false;
+
+            // Don't merge unknown locations.
+            if (!youngScope.hash || !oldScope.hash)
+                return false;
+
+            // Only merge closure scopes.
+            if (youngScope.type !== WebInspector.ScopeChainNode.Type.Closure)
+                return false;
+            if (oldScope.type !== WebInspector.ScopeChainNode.Type.Closure)
+                return false;
+
+            // Don't merge if they are not the same.
+            if (youngScope.hash !== oldScope.hash)
+                return false;
+
+            // Don't merge if there was already a merge.
+            if (lastMerge && youngScope.hash === lastMerge.hash)
+                return false;
+
+            return true;
+        }
+
+        let lastScope = null;
+        let lastMerge = null;
+        for (let i = scopes.length - 1; i >= 0; --i) {
+            let scope = scopes[i];
+            markAsBaseIfNeeded(scope);
+            if (shouldMergeClosureScopes(scope, lastScope, lastMerge)) {
+                console.assert(lastScope.__baseClosureScope);
+                let type = WebInspector.ScopeChainNode.Type.Closure;
+                let objects = lastScope.objects.concat(scope.objects);
+                let merged = new WebInspector.ScopeChainNode(type, objects, scope.name, scope.location);
+                merged.__baseClosureScope = true;
+                console.assert(objects.length === 2);
+
+                mergedScopes.pop(); // Remove the last.
+                mergedScopes.push(merged); // Add the merged scope.
+
+                lastMerge = merged;
+                lastScope = null;
+            } else {
+                mergedScopes.push(scope);
+
+                lastMerge = null;
+                lastScope = scope;
+            }
+        }
+
+        mergedScopes = mergedScopes.reverse();
+
+        // Mark the first Closure as Local if the name matches this call frame.
+        for (let scope of mergedScopes) {
+            if (scope.type === WebInspector.ScopeChainNode.Type.Closure) {
+                if (scope.name === this._functionName)
+                    scope.convertToLocalScope();
+                break;
+            }
+        }
+
+        return mergedScopes;
     }
 
     // Static
