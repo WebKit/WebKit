@@ -1,3 +1,46 @@
+2016-06-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][Wayland] Implement support for running the layout tests under a (virtualized) Wayland environment.
+        https://bugs.webkit.org/show_bug.cgi?id=156716
+
+        Reviewed by Carlos Garcia Campos and Michael Catanzaro.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: Allow to run the layout tests on Wayland by passing --wayland
+        (parse_args):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.__init__):
+        (GtkPort._driver_class):
+        (GtkPort.setup_environ_for_server): Set the softgl renderer (now with EGL support) for the wayland tests.
+        (GtkPort._search_paths): When running inside the wayland environment, use ${port}-wayland as an additional
+        platform directory for storing the wayland specific layout test results and expectations for ${port}.
+        For example, the file LayoutTests/platform/gtk-wayland/TestExpectations will be used as the most specific
+        test expectations file on the GTK port when running the tests with the --wayland command line switch.
+        Baseline search path: gtk-wayland -> gtk -> wk2 -> generic.
+        * Scripts/webkitpy/port/westondriver.py: Run the weston display server inside Xvfb.
+        (WestonDriver.check_driver):
+        (WestonDriver.__init__):
+        (WestonDriver._start):
+        * Scripts/webkitpy/port/westondriver_unittest.py: Fix unittests for the new Weston inside Xvfb driver.
+        (WestonXvfbDriverDisplayTest):
+        (WestonXvfbDriverDisplayTest.__init__):
+        (WestonXvfbDriverDisplayTest._xvfb_run):
+        (WestonDriverTest.make_driver):
+        (WestonDriverTest.test_start):
+        * gtk/install-dependencies: Add the new dependencies that are required for either building weston,
+        or to satisfy the pkg-config check of the new added modules in JHBuild.
+        * gtk/jhbuild.modules: For building weston new enough on Debian Jessie we also need to build wayland
+        and libinput. Declare a pkg-config entry on all this modules to avoid building them if the ones
+        provided by the system are already new enough.
+        Switch the Mesa software rasterizer from a Xlib based GLX renderer to a DRI based EGL/GLX one.
+        It was the only way to get the software EGL rasterizer working without depending on user drivers.
+        Due to this the Mesa build now depends on a modern enough libdrm, so we also use JHBuild pkg-config
+        feature to avoid building libdrm when the one provided by the system is new enough.
+        * gtk/jhbuildrc:
+        * gtk/patches/xserver-search-for-DRI-drivers-at-LIBGL_DRIVERS_PATH-environ.patch: Added.
+        Xorg had no support for searching the DRI drivers on a custom path at runtime.
+        This patch implements support for that reusing the same variable that we use with Mesa to set the
+        custom path for the DRI drivers path.
+
 2016-06-29  Alejandro G. Castro  <alex@igalia.com>
 
         [WebRTC][OWR] Bump gst-plugins-openwebrtc jhbuild version to get scream fixes

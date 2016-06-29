@@ -41,6 +41,14 @@ from webkitpy.tool.mocktool import MockOptions
 _log = logging.getLogger(__name__)
 
 
+class WestonXvfbDriverDisplayTest():
+    def __init__(self, expected_xvfbdisplay):
+        self._expected_xvfbdisplay = expected_xvfbdisplay
+
+    def _xvfb_run(self, environment):
+        return self._expected_xvfbdisplay
+
+
 class WestonDriverTest(unittest.TestCase):
     def make_driver(self, filesystem=None):
         port = Port(MockSystemHost(log_executive=True, filesystem=filesystem), 'westondrivertestport', options=MockOptions(configuration='Release'))
@@ -49,6 +57,9 @@ class WestonDriverTest(unittest.TestCase):
 
         driver = WestonDriver(port, worker_number=0, pixel_tests=True)
         driver._startup_delay_secs = 0
+        driver._expected_xvfbdisplay = 23
+        driver._xvfbdriver = WestonXvfbDriverDisplayTest(driver._expected_xvfbdisplay)
+        driver._environment = port.setup_environ_for_server(port.driver_name())
         return driver
 
     def test_start(self):
@@ -59,8 +70,10 @@ class WestonDriverTest(unittest.TestCase):
         driver.start(pixel_tests=True, per_test_args=[])
         _, _, logs = output_capture.restore_output()
 
-        self.assertTrue(re.match(r"MOCK popen: \['weston', '--socket=WKTesting-weston-[0-9a-f]{32}', '--width=800', '--height=600'\]\n", logs), None)
+        self.assertTrue(re.match(r"MOCK popen: \['weston', '--socket=WKTesting-weston-[0-9a-f]{32}', '--width=1024', '--height=768', '--use-pixman'\], env=.*\n", logs), None)
         self.assertTrue(re.match(r"WKTesting-weston-[0-9a-f]{32}", driver._server_process.env['WAYLAND_DISPLAY']))
+        self.assertFalse('DISPLAY' in driver._server_process.env)
+        self.assertTrue("'DISPLAY': ':%s'" % driver._expected_xvfbdisplay in logs)
         self.assertEqual(driver._server_process.env['GDK_BACKEND'], 'wayland')
         self.assertTrue(driver._server_process.started)
 

@@ -282,6 +282,8 @@ def parse_args(args):
         optparse.make_option("--profiler", action="store",
             help="Output per-test profile information, using the specified profiler."),
         optparse.make_option("--no-timeout", action="store_true", default=False, help="Disable test timeouts"),
+        optparse.make_option("--wayland",  action="store_true", default=False,
+            help="Run the layout tests inside a (virtualized) weston compositor (GTK only)."),
     ]))
 
     option_group_definitions.append(("iOS Simulator Options", [

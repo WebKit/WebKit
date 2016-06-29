@@ -143,6 +143,7 @@ function installDependenciesWithApt {
         ruby \
         ruby-json \
         ruby-highline \
+        weston \
         xvfb"
 
     # These are dependencies necessary for building the jhbuild.
@@ -151,21 +152,29 @@ function installDependenciesWithApt {
         gobject-introspection \
         icon-naming-utils \
         libcroco3-dev \
+        libdrm-dev \
         libegl1-mesa-dev \
         libepoxy-dev \
+        libevdev-dev \
+        libexpat1-dev \
+        libgbm-dev \
         libgcrypt11-dev \
         libgpg-error-dev \
         libjson-glib-dev \
+        libinput-dev \
+        libmtdev-dev \
         liborc-0.4-dev \
         libp11-kit-dev \
         libpciaccess-dev \
         libssl-dev \
         libtiff5-dev \
         libv4l-dev \
+        libxcb-composite0-dev \
         libxcb-xfixes0-dev \
         libxfont-dev \
         libxkbfile-dev \
         libtool-bin \
+        libudev-dev \
         llvm \
         llvm-dev \
         python-dev \
@@ -278,25 +287,32 @@ function installDependenciesWithPacman {
         python-gobject \
         ruby \
         ruby-highline \
+        weston \
         xorg-server-xvfb"
 
     # These are dependencies necessary for building the jhbuild.
     # Note: Could not find libegl-mesa
     packages="$packages \
+        expat \
         git \
         gobject-introspection \
         icon-naming-utils \
         libcroco \
+        libdrm \
         libepoxy \
+        libevdev \
         libgcrypt \
         libgpg-error \
+        libinput \
         p11-kit \
         libpciaccess \
         libtiff \
         libxfixes \
         libxfont \
+        libxcb \
         libxkbfile \
         llvm \
+        mtdev \
         python2 \
         python2-lxml \
         ragel \
@@ -396,10 +412,12 @@ function installDependenciesWithDnf {
         ruby \
         rubygem-json \
         rubygem-highline \
+        weston-devel \
         xorg-x11-server-Xvfb"
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
+        expat-devel \
         docbook-utils \
         docbook-utils-pdf \
         git \
@@ -408,15 +426,21 @@ function installDependenciesWithDnf {
         itstool \
         libXfont-devel \
         libcroco-devel \
+        libdrm-devel \
         libepoxy-devel \
+        libevdev-devel
         libgcrypt-devel \
         libgpg-error-devel \
+        libinput-devel \
         libp11-devel \
         libpciaccess-devel \
         libtiff-devel \
+        libxcb-devel \
         libxkbfile-devel \
         mesa-libEGL-devel \
+        mtdev-devel \
         ragel \
+        systemd-devel \
         xorg-x11-font-utils \
         xorg-x11-proto-devel \
         xorg-x11-util-macros \

@@ -34,7 +34,8 @@ autogenargs='--enable-introspection'
 # for a module, so we do it here globally since it's a good idea for all other modules as well.
 buildroot = os.path.join(os.path.dirname(checkoutroot), "Build")
 
-os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(buildroot, 'Mesa', 'lib', 'gallium'))
+# For the layout tests: path where llvmpipe/software-only mesa libraries are installed.
+os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(prefix, 'softGL', 'lib'))
 
 os.environ['CFLAGS'] = '-Wno-error'
 os.environ['CXXFLAGS'] = '-Wno-error'

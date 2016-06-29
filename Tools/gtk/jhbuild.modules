@@ -37,6 +37,7 @@
           <dep package="mesa"/>
           <dep package="at-spi2-core"/>
           <dep package="at-spi2-atk"/>
+          <dep package="weston"/>
       </if>
       <if condition-set="macos">
           <dep package="gsettings-desktop-schemas"/>
@@ -67,8 +68,12 @@
       href="http://download.savannah.gnu.org/releases/"/>
   <repository type="git" name="freedesktop-git"
       href="http://anongit.freedesktop.org/git"/>
+ <repository type="tarball" name="dri.freedesktop.org"
+      href="http://dri.freedesktop.org"/>
   <repository type="tarball" name="people.freedesktop.org"
       href="http://people.freedesktop.org"/>
+  <repository type="tarball" name="wayland.freedesktop.org"
+      href="http://wayland.freedesktop.org"/>
   <repository type="tarball" name="llvm.org"
       href="http://llvm.org"/>
   <repository type="tarball" name="webkitgtk-jhbuild-mirror"
@@ -182,6 +187,7 @@
       <dep package="atk"/>
       <if condition-set="linux">
         <dep package="at-spi2-atk"/>
+        <dep package="wayland"/>
       </if>
       <dep package="gdk-pixbuf"/>
       <dep package="pango"/>
@@ -414,6 +420,37 @@
             hash="sha256:abb6e1cc9213a9915a121f48576ff6739a0b8cdb3d32796f9a7743c9a6efc871"
             md5sum="80d140f631d862b76dc67ae983151c77">
       <patch file="xserver-remove-bogus-dependencies.patch" strip="1"/>
+      <patch file="xserver-search-for-DRI-drivers-at-LIBGL_DRIVERS_PATH-environ.patch" strip="1"/>
+    </branch>
+  </autotools>
+
+  <autotools id="wayland" autogenargs="--disable-documentation">
+    <pkg-config>wayland-server.pc</pkg-config>
+    <dependencies>
+      <dep package="libffi"/>
+    </dependencies>
+    <branch module="releases/wayland-1.8.1.tar.xz"
+            version="1.8.1"
+            repo="wayland.freedesktop.org"
+            hash="sha256:f17c938d1c24fd0a10f650a623a2775d329db3168b5732e498b08388ec776fc8"
+            md5sum="6e877877c3e04cfb865cfcd0733c9ab1">
+    </branch>
+  </autotools>
+
+  <autotools id="weston" autogenargs="--enable-x11-compositor --disable-rpi-compositor --disable-fbdev-compositor --disable-setuid-install --disable-ivi-shell --disable-weston-launch --with-cairo=gl">
+    <pkg-config>weston.pc</pkg-config>
+    <dependencies>
+      <dep package="wayland"/>
+      <dep package="libdrm"/>
+      <dep package="xserver"/>
+      <dep package="cairo"/>
+      <dep package="libinput"/>
+    </dependencies>
+    <branch module="releases/weston-1.8.0.tar.xz"
+            version="1.8.0"
+            repo="wayland.freedesktop.org"
+            hash="sha256:8963e69f328e815cec42c58046c4af721476c7541bb7d9edc71740fada5ad312"
+            md5sum="24cb8a7ed0535b4fc3642643988dab36">
     </branch>
   </autotools>
 
@@ -429,7 +466,16 @@
             hash="sha256:3e6ecf134dbf92a74c24d79848fea3a48e59ab95408a38c6405905d95a293011"/>
   </autotools>
 
-  <autotools id="mesa" autogenargs="--enable-xlib-glx --disable-dri --disable-egl --with-gallium-drivers=swrast" skip-install="true">
+  <autotools id="libdrm" autogen-sh="configure">
+    <pkg-config>libdrm.pc</pkg-config>
+    <branch module="/libdrm/libdrm-2.4.65.tar.bz2" version="2.4.65"
+            repo="dri.freedesktop.org"
+            hash="sha256:71960ac8bde7d710992b1bc8879935e8300a870c36bd06f22412d0447e3d96c4"/>
+  </autotools>
+
+  <autotools id="mesa"
+    autogen-template="%(srcdir)s/%(autogen-sh)s --prefix %(prefix)s/softGL %(autogenargs)s"
+    autogenargs="--disable-dri3 --enable-dri --enable-glx --enable-egl --with-egl-platforms=x11,wayland --with-dri-drivers=swrast --with-gallium-drivers=swrast">
     <!--- WARNING: At jhbuildrc, when we define the path to the Gallium llvmpipe software rasterizer (needed by XvfbDriver),
           we assume that the directory is named "Mesa". So, don't change the checkoutdir name even if you update the version.  -->
     <branch module="/~brianp/mesa/11.0.6/mesa-11.0.6.tar.xz" version="11.0.6"
@@ -439,6 +485,8 @@
     </branch>
     <dependencies>
       <dep package="llvm"/>
+      <dep package="libdrm"/>
+      <dep package="wayland"/>
     </dependencies>
   </autotools>
 
@@ -522,6 +570,18 @@
     <branch module="/pub/GNOME/sources/pango/1.36/pango-1.36.8.tar.xz" version="1.36.8"
             repo="ftp.gnome.org"
             hash="sha256:18dbb51b8ae12bae0ab7a958e7cf3317c9acfc8a1e1103ec2f147164a0fc2d07">
+    </branch>
+  </autotools>
+
+  <!-- libinput is only included because the version of libinput shipped with Debian Jessie
+    os too old for building Weston 1.8. This may be removed after Debian Strech is released -->
+  <autotools id="libinput" autogen-sh="configure"  autogenargs="--disable-libwacom --disable-tests --disable-documentation">
+    <pkg-config>libinput.pc</pkg-config>
+    <branch module="software/libinput/libinput-1.2.4.tar.xz"
+            version="1.2.4"
+            repo="freedesktop.org"
+            hash="sha256:aee3650ad2a864ab9a10e7e63df543cc2b475f6bf3974751037a2df325dabbb1"
+            md5sum="1cbaa34f04a336f2703906d564e0a37a">
     </branch>
   </autotools>
 

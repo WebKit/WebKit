@@ -1,0 +1,81 @@
+#////////////////////////////////////////////////////////////////////////////////////////
+# This file contains the specific expectations that only fail or only pass on Wayland.
+#
+# This file overrides the generic GTK+ one when running the layout tests with --wayland
+# Default baseline search path with --wayland: gtk-wayland -> gtk -> wk2 -> generic.
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# Expected failures
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html [ Failure ]
+webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ Failure ]
+webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-origins.html [ Failure ]
+webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping.html [ Failure ]
+webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Failure ]
+webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-coplanar.html [ Failure ]
+webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-3.html [ Failure ]
+webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-2.html [ Failure ]
+webkit.org/b/156717 transforms/3d/hit-testing/rotated-hit-test.html [ Failure ]
+webkit.org/b/156717 transforms/3d/hit-testing/rotated-hit-test2.html [ Failure ]
+webkit.org/b/156717 transforms/3d/hit-testing/perspective-clipped.html [ Failure ]
+webkit.org/b/156717 transforms/3d/hit-testing/overlapping-layers-hit-test.html [ Failure ]
+webkit.org/b/156717 transforms/3d/hit-testing/backface-no-transform-hit-test.html [ Failure ]
+webkit.org/b/156717 transforms/3d/hit-testing/backface-hit-test.html [ Failure ]
+webkit.org/b/156717 imported/blink/css3/blending/mix-blend-mode-multiply.html [ ImageOnlyFailure ]
+webkit.org/b/156717 imported/blink/css3/blending/mix-blend-mode-has-ancestor-clipping-layer.html [ ImageOnlyFailure ]
+webkit.org/b/156717 fast/repaint/animation-after-layer-scroll.html [ Failure ]
+webkit.org/b/156717 fast/regions/overflow/overflow-3dtransformed-region.html [ Failure ]
+webkit.org/b/156717 editing/pasteboard/paste-global-selection.html [ Failure ]
+webkit.org/b/156717 editing/pasteboard/gtk/middle-click-onpaste.html [ Failure ]
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Expected failures
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# Crashing tests
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/156717 media/crash-closing-page-with-media-as-plugin-fallback.html [ Crash ]
+webkit.org/b/156717 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html [ Crash ]
+webkit.org/b/156717 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html [ Crash ]
+webkit.org/b/156717 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html [ Crash ]
+webkit.org/b/156717 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe.html [ Crash ]
+webkit.org/b/156717 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html [ Crash ]
+webkit.org/b/156717 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html [ Crash ]
+webkit.org/b/156717 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html [ Crash ]
+webkit.org/b/156717 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html [ Crash ]
+webkit.org/b/156717 http/tests/security/referrer-policy-redirect-link.html [ Crash ]
+webkit.org/b/156717 http/tests/security/isolatedWorld/userGestureEvents.html [ Crash ]
+webkit.org/b/156717 http/tests/navigation/no-referrer-target-blank.html [ Crash ]
+webkit.org/b/156717 http/tests/navigation/no-referrer-reset.html [ Crash ]
+webkit.org/b/156717 fast/history/window-open.html [ Crash ]
+webkit.org/b/156717 fast/history/history_reload.html [ Crash ]
+webkit.org/b/156717 fast/forms/select-type-ahead-non-latin.html [ Crash ]
+webkit.org/b/156717 fast/forms/listbox-typeahead-greek.html [ Crash ]
+webkit.org/b/156717 fast/forms/listbox-typeahead-cyrillic.html [ Crash ]
+webkit.org/b/156717 fast/events/popup-blocking-timers1.html [ Crash ]
+webkit.org/b/156717 fast/events/popup-blocked-from-fake-user-gesture.html [ Crash ]
+webkit.org/b/156717 fast/events/popup-allowed-from-gesture-initiated-event.html [ Crash ]
+webkit.org/b/156717 fast/events/open-window-from-another-frame.html [ Crash ]
+webkit.org/b/156717 fast/events/keydown-numpad-keys.html [ Crash ]
+webkit.org/b/156717 editing/spelling/spelling-changed-text.html [ Crash ]
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Crashing tests
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# Tests timing out
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/156717 fast/images/animated-gif-iframe-webkit-transform.html [ Timeout ]
+webkit.org/b/156717 plugins/mouse-events.html [ Timeout ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Tests timing out
+#////////////////////////////////////////////////////////////////////////////////////////
