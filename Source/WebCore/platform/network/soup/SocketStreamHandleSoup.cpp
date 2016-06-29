@@ -58,6 +58,7 @@ SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient*
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
     if (url.protocolIs("wss"))
         g_socket_client_set_tls(socketClient.get(), TRUE);
+    relaxAdoptionRequirement();
     RefPtr<SocketStreamHandle> protectedThis(this);
     g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), protectedThis.leakRef());
