@@ -26,9 +26,6 @@
 #import "config.h"
 #import "WKPreviewElementInfoInternal.h"
 
-#import "WKElementInfoInternal.h"
-#import <wtf/RetainPtr.h>
-
 #if WK_API_ENABLED && PLATFORM(IOS)
 
 @implementation WKPreviewElementInfo
@@ -41,6 +38,16 @@
     _linkURL = adoptNS([url copy]);
 
     return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+- (NSURL *)linkURL
+{
+    return _linkURL.get();
 }
 
 @end

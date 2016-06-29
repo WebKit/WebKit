@@ -1,3 +1,25 @@
+2016-06-29  Beth Dakin  <bdakin@apple.com>
+
+        Delete WKElementInfo since it's not used
+        https://bugs.webkit.org/show_bug.cgi?id=159265
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/Cocoa/WebKit.h:
+        * UIProcess/API/Cocoa/WKElementInfo.h: Removed.
+        * UIProcess/API/Cocoa/WKElementInfo.mm: Removed.
+        * UIProcess/API/Cocoa/WKElementInfoInternal.h: Removed.
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.h:
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.mm:
+        (-[WKPreviewElementInfo _initWithLinkURL:]):
+        (-[WKPreviewElementInfo copyWithZone:]):
+        (-[WKPreviewElementInfo linkURL]):
+        * UIProcess/API/Cocoa/WKPreviewElementInfoInternal.h:
+        * UIProcess/API/Cocoa/_WKContextMenuElementInfo.h:
+        * UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm:
+        (-[_WKContextMenuElementInfo copyWithZone:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-06-29  Jeremy Jones  <jeremyj@apple.com>
 
         Replace MPAudioVideoRoutingActionSheet with MPAVRoutingSheet.

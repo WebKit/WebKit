@@ -27,12 +27,12 @@
 
 #if WK_API_ENABLED && TARGET_OS_IPHONE
 
-#import <WebKit/WKElementInfo.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(NA, WK_IOS_TBA)
-@interface WKPreviewElementInfo : WKElementInfo
+@interface WKPreviewElementInfo : NSObject <NSCopying>
+
+@property (nonatomic, readonly, nullable) NSURL *linkURL;
 
 @end
 

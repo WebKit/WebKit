@@ -25,9 +25,14 @@
 
 #import "WKPreviewElementInfo.h"
 
+#import <wtf/RetainPtr.h>
+
 #if WK_API_ENABLED && TARGET_OS_IPHONE
 
-@interface WKPreviewElementInfo ()
+@interface WKPreviewElementInfo () {
+@package
+    RetainPtr<NSURL> _linkURL;
+}
 
 - (instancetype)_initWithLinkURL:(NSURL *)url;
 
