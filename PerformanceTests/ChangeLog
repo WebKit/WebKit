@@ -1,3 +1,106 @@
+2016-06-28  Filip Pizlo  <fpizlo@apple.com>
+
+        ES6SampleBench should have a harness
+        https://bugs.webkit.org/show_bug.cgi?id=159246
+
+        Reviewed by Saam Barati.
+        
+        This adds a simple web harness for ES6SampleBench. It runs Air and Basic 10 times for 200
+        iterations each and reports three metrics:
+        
+        First iteration: the time it takes for the first iteration to run. This is the first
+        iteration after the benchmark is loaded into the iframe, so it's representative of what
+        would happen if one of these workloads only ran for a short time.
+        
+        Worst 2%: of the last 199 iterations, the average of the worst 2% iterations. If code like
+        any of these workloads was used in an important event handler, you'd want that code to run
+        well in the worst case in addition to having great throughput.
+        
+        Steady state: the total of the last 199 iterations. This is representative of what would
+        happen if you ran code like this for a long time.
+        
+        The total score is the geomean of the firstIteration/worstCase/steadyState numbers of the
+        two benchmarks.
+        
+        The harness does statistics using Student's T-distribution confidence intervals.
+
+        * ES6SampleBench/Basic/benchmark.js:
+        (Benchmark):
+        * ES6SampleBench/air_benchmark.js: Added.
+        * ES6SampleBench/basic_benchmark.js: Added.
+        * ES6SampleBench/driver.js: Added.
+        (Driver):
+        (Driver.prototype.addBenchmark):
+        (Driver.prototype.start):
+        (Driver.prototype.reportResult):
+        (Driver.prototype.reportError):
+        (Driver.prototype._recomputeSummary.Geomean):
+        (Driver.prototype._recomputeSummary.Geomean.prototype.add):
+        (Driver.prototype._recomputeSummary.Geomean.prototype.get result):
+        (Driver.prototype._recomputeSummary):
+        (Driver.prototype._iterate):
+        (Driver.prototype._updateIterations):
+        * ES6SampleBench/glue.js: Added.
+        * ES6SampleBench/index.html: Added.
+        * ES6SampleBench/results.js: Added.
+        (Results):
+        (Results.prototype.get benchmark):
+        (Results.prototype.reset):
+        (Results.prototype.reportRunning):
+        (Results.prototype.reportDone):
+        (Results.prototype.reportResult.averageAbovePercentile):
+        (Results.prototype.reportResult):
+        (Results.prototype.reportError):
+        * ES6SampleBench/stats.js: Added.
+        (Stats):
+        (Stats.prototype.reset):
+        (Stats.prototype.add):
+        (Stats.prototype.get numIterations):
+        (Stats.prototype.valueForIteration):
+        (Stats.get result.tDist):
+        (Stats.prototype.get result):
+        (Stats.prototype.toString):
+        (Stats.prototype._update):
+        * ES6SampleBench/style.css: Added.
+        (body):
+        (body, th, tr):
+        (h1, h2, h3, h4):
+        (h1):
+        (h2):
+        (h3):
+        (hr):
+        (address):
+        (img):
+        (.underline):
+        (ol.loweralpha):
+        (ol.upperalpha):
+        (ol.lowerroman):
+        (ol.upperroman):
+        (ol.arabic):
+        (.banner-link:link, .banner-link:visited):
+        (:link, :visited):
+        (h4 :link, h4 :visited, h5 :link, h5 :visited, h6 :link, h6 :visited):
+        (.anchor:link, .anchor:visited):
+        (* > .anchor:link, * > .anchor:visited):
+        (span:hover .anchor):
+        (a.forbidden, span.forbidden):
+        (a.missing:hover):
+        (a.closed:link, a.closed:visited, span.closed):
+        (pre):
+        (div.code):
+        (div.code pre):
+        (dt):
+        (dd):
+        (dd:last-child):
+        (.site-logo):
+        (.site-logo .tagline):
+        (table):
+        (#contents):
+        (p):
+        (p:last-child):
+        (th):
+        (td):
+
 2016-06-28  Jon Lee  <jonlee@apple.com>
 
         Update focus test

@@ -25,7 +25,7 @@
 "use strict";
 
 class Benchmark {
-    constructor(verbose)
+    constructor(verbose = 0)
     {
         this._verbose = verbose;
     }
