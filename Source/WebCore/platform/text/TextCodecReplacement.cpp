@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-static const UChar ReplacementCharacter[1] = { 0xFFFD };
+static const UChar ReplacementCharacter[1] = { 0xFFFD, 0 };
 
 std::unique_ptr<TextCodec> TextCodecReplacement::create(const TextEncoding&, const void*)
 {
