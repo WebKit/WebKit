@@ -161,6 +161,8 @@ enum class DynamicViewportUpdateMode {
 static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 #endif
 
+#import <WebKitAdditions/WKWebViewAdditionsBefore.mm>
+
 #if PLATFORM(MAC)
 #import "WKTextFinderClient.h"
 #import "WKViewInternal.h"
@@ -382,6 +384,12 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
         return static_cast<uint32_t>(WebCore::UserInterfaceLayoutDirection::RTL);
     }
     return static_cast<uint32_t>(WebCore::UserInterfaceLayoutDirection::LTR);
+}
+#endif
+
+#if !USE(APPLE_INTERNAL_SDK)
+- (void)_setIsBlankBeforeFirstNonEmptyLayout:(BOOL)isBlank
+{
 }
 #endif
 
@@ -1751,12 +1759,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     // initial scale, this simply becomes a test of the current scale against 1.
     return !areEssentiallyEqualAsFloat(contentZoomScale(self), 1);
 }
-
-#if !USE(APPLE_INTERNAL_SDK)
-- (void)_setIsBlankBeforeFirstNonEmptyLayout:(BOOL)isBlank
-{
-}
-#endif
 
 #pragma mark - UIScrollViewDelegate
 
@@ -4633,7 +4635,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 @end
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewAdditions.mm>
+#import <WebKitAdditions/WKWebViewAdditionsAfter.mm>
 #endif
 
 #endif // WK_API_ENABLED

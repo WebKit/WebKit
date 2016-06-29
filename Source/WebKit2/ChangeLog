@@ -3,6 +3,16 @@
         Try to fix the build.
 
         * UIProcess/API/Cocoa/WKWebView.mm:
+        (convertSystemLayoutDirection):
+        (-[WKWebView _setIsBlankBeforeFirstNonEmptyLayout:]):
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+
+2016-06-28  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the build.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
         * UIProcess/API/Cocoa/WKWebViewInternal.h:
 
 2016-06-28  Tim Horton  <timothy_horton@apple.com>

@@ -118,8 +118,6 @@ struct PrintInfo;
 
 - (void)_updateForceAlwaysUserScalable;
 
-- (void)_setIsBlankBeforeFirstNonEmptyLayout:(BOOL)isBlank;
-
 @property (nonatomic, readonly) BOOL _isBackground;
 
 @property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;
