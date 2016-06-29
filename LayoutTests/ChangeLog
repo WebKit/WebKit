@@ -1,3 +1,18 @@
+2016-06-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Implement "replacement" codec
+        https://bugs.webkit.org/show_bug.cgi?id=159180
+        <rdar://problem/26015178>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+        * fast/encoding/char-encoding-expected.txt:
+        * fast/encoding/char-encoding.html:
+        * fast/encoding/charset-replacement-expected.txt: Added.
+        * fast/encoding/charset-replacement.html: Added.
+
 2016-06-28  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r200946): Improper backtracking from last alternative in sticky patterns

@@ -190,6 +190,11 @@ PASS decode('Unicode', '%69%D8%D6%DE') is 'U+D869/U+DED6'
 PASS decode('csUnicode', '%69%D8%D6%DE') is 'U+D869/U+DED6'
 PASS decode('UTF-16BE', '%D8%69%DE%D6') is 'U+D869/U+DED6'
 PASS decode('unicodeFFFE', '%D8%69%DE%D6') is 'U+D869/U+DED6'
+PASS decode('csiso2022kr', '%41%42%43%61%62%63%31%32%33%A0') is 'U+FFFD'
+PASS decode('hz-gb-2312', '%41%42%43%61%62%63%31%32%33%A0') is 'U+FFFD'
+PASS decode('iso-2022-cn', '%41%42%43%61%62%63%31%32%33%A0') is 'U+FFFD'
+PASS decode('iso-2022-cn-ext', '%41%42%43%61%62%63%31%32%33%A0') is 'U+FFFD'
+PASS decode('iso-2022-kr', '%41%42%43%61%62%63%31%32%33%A0') is 'U+FFFD'
 PASS successfullyParsed is true
 
 TEST COMPLETE

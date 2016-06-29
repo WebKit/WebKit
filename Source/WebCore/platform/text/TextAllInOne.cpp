@@ -30,6 +30,7 @@
 #include "TextCodec.cpp"
 #include "TextCodecICU.cpp"
 #include "TextCodecLatin1.cpp"
+#include "TextCodecReplacement.cpp"
 #include "TextCodecUTF16.cpp"
 #include "TextCodecUTF8.cpp"
 #include "TextCodecUserDefined.cpp"

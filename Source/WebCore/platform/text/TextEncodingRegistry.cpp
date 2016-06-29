@@ -29,6 +29,7 @@
 
 #include "TextCodecICU.h"
 #include "TextCodecLatin1.h"
+#include "TextCodecReplacement.h"
 #include "TextCodecUserDefined.h"
 #include "TextCodecUTF16.h"
 #include "TextCodecUTF8.h"
@@ -267,6 +268,22 @@ bool isJapaneseEncoding(const char* canonicalEncodingName)
     return canonicalEncodingName && japaneseEncodings && japaneseEncodings->contains(canonicalEncodingName);
 }
 
+bool isReplacementEncoding(const char* alias)
+{
+    if (!alias)
+        return false;
+
+    if (strlen(alias) != 11)
+        return false;
+
+    return !strcasecmp(alias, "replacement");
+}
+
+bool isReplacementEncoding(const String& alias)
+{
+    return equalLettersIgnoringASCIICase(alias, "replacement");
+}
+
 bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName)
 {
     return canonicalEncodingName && nonBackslashEncodings && nonBackslashEncodings->contains(canonicalEncodingName);
@@ -274,6 +291,9 @@ bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName)
 
 static void extendTextCodecMaps()
 {
+    TextCodecReplacement::registerEncodingNames(addToTextEncodingNameMap);
+    TextCodecReplacement::registerCodecs(addToTextCodecMap);
+
     TextCodecICU::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecICU::registerCodecs(addToTextCodecMap);
 

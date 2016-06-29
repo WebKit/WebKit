@@ -2378,6 +2378,7 @@ set(WebCore_SOURCES
     platform/text/TextCodec.cpp
     platform/text/TextCodecICU.cpp
     platform/text/TextCodecLatin1.cpp
+    platform/text/TextCodecReplacement.cpp
     platform/text/TextCodecUTF16.cpp
     platform/text/TextCodecUTF8.cpp
     platform/text/TextCodecUserDefined.cpp

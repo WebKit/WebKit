@@ -638,19 +638,19 @@ PASS Name "EUC-KR" has label "ksc_5601" (charset)
 PASS Name "EUC-KR" has label "windows-949" (characterSet) 
 PASS Name "EUC-KR" has label "windows-949" (inputEncoding) 
 PASS Name "EUC-KR" has label "windows-949" (charset) 
-FAIL Name "replacement" has label "csiso2022kr" (characterSet) assert_equals: expected "replacement" but got "ISO-2022-KR"
-FAIL Name "replacement" has label "csiso2022kr" (inputEncoding) assert_equals: expected "replacement" but got "ISO-2022-KR"
-FAIL Name "replacement" has label "csiso2022kr" (charset) assert_equals: expected "replacement" but got "ISO-2022-KR"
-FAIL Name "replacement" has label "hz-gb-2312" (characterSet) assert_equals: expected "replacement" but got "HZ-GB-2312"
-FAIL Name "replacement" has label "hz-gb-2312" (inputEncoding) assert_equals: expected "replacement" but got "HZ-GB-2312"
-FAIL Name "replacement" has label "hz-gb-2312" (charset) assert_equals: expected "replacement" but got "HZ-GB-2312"
-FAIL Name "replacement" has label "iso-2022-cn" (characterSet) assert_equals: expected "replacement" but got "ISO-2022-CN"
-FAIL Name "replacement" has label "iso-2022-cn" (inputEncoding) assert_equals: expected "replacement" but got "ISO-2022-CN"
-FAIL Name "replacement" has label "iso-2022-cn" (charset) assert_equals: expected "replacement" but got "ISO-2022-CN"
-FAIL Name "replacement" has label "iso-2022-cn-ext" (characterSet) assert_equals: expected "replacement" but got "ISO-2022-CN-EXT"
-FAIL Name "replacement" has label "iso-2022-cn-ext" (inputEncoding) assert_equals: expected "replacement" but got "ISO-2022-CN-EXT"
-FAIL Name "replacement" has label "iso-2022-cn-ext" (charset) assert_equals: expected "replacement" but got "ISO-2022-CN-EXT"
-FAIL Name "replacement" has label "iso-2022-kr" (characterSet) assert_equals: expected "replacement" but got "ISO-2022-KR"
-FAIL Name "replacement" has label "iso-2022-kr" (inputEncoding) assert_equals: expected "replacement" but got "ISO-2022-KR"
-FAIL Name "replacement" has label "iso-2022-kr" (charset) assert_equals: expected "replacement" but got "ISO-2022-KR"
+PASS Name "replacement" has label "csiso2022kr" (characterSet) 
+PASS Name "replacement" has label "csiso2022kr" (inputEncoding) 
+PASS Name "replacement" has label "csiso2022kr" (charset) 
+PASS Name "replacement" has label "hz-gb-2312" (characterSet) 
+PASS Name "replacement" has label "hz-gb-2312" (inputEncoding) 
+PASS Name "replacement" has label "hz-gb-2312" (charset) 
+PASS Name "replacement" has label "iso-2022-cn" (characterSet) 
+PASS Name "replacement" has label "iso-2022-cn" (inputEncoding) 
+PASS Name "replacement" has label "iso-2022-cn" (charset) 
+PASS Name "replacement" has label "iso-2022-cn-ext" (characterSet) 
+PASS Name "replacement" has label "iso-2022-cn-ext" (inputEncoding) 
+PASS Name "replacement" has label "iso-2022-cn-ext" (charset) 
+PASS Name "replacement" has label "iso-2022-kr" (characterSet) 
+PASS Name "replacement" has label "iso-2022-kr" (inputEncoding) 
+PASS Name "replacement" has label "iso-2022-kr" (charset) 
 

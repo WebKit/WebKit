@@ -105,6 +105,13 @@ testDecode('csUnicode', '%69%D8%D6%DE', 'U+D869/U+DED6');
 testDecode('UTF-16BE', '%D8%69%DE%D6', 'U+D869/U+DED6');
 testDecode('unicodeFFFE', '%D8%69%DE%D6', 'U+D869/U+DED6');
 
+// Replacement encodings should decode as replacement (U+FFFD) then EOF
+testDecode("csiso2022kr", "%41%42%43%61%62%63%31%32%33%A0", "U+FFFD");
+testDecode("hz-gb-2312", "%41%42%43%61%62%63%31%32%33%A0", "U+FFFD");
+testDecode("iso-2022-cn", "%41%42%43%61%62%63%31%32%33%A0", "U+FFFD");
+testDecode("iso-2022-cn-ext", "%41%42%43%61%62%63%31%32%33%A0", "U+FFFD");
+testDecode("iso-2022-kr", "%41%42%43%61%62%63%31%32%33%A0", "U+FFFD");
+
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

@@ -46,6 +46,8 @@ namespace WebCore {
     bool noExtendedTextEncodingNameUsed();
     bool isJapaneseEncoding(const char* canonicalEncodingName);
     bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName);
+    bool isReplacementEncoding(const char* alias);
+    bool isReplacementEncoding(const String& alias);
 
     WEBCORE_EXPORT String defaultTextEncodingNameForSystemLanguage();
 

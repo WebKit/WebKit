@@ -47,12 +47,18 @@ TextEncoding::TextEncoding(const char* name)
     : m_name(atomicCanonicalTextEncodingName(name))
     , m_backslashAsCurrencySymbol(backslashAsCurrencySymbol())
 {
+    // Aliases are valid, but not "replacement" itself.
+    if (m_name && isReplacementEncoding(name))
+        m_name = nullptr;
 }
 
 TextEncoding::TextEncoding(const String& name)
     : m_name(atomicCanonicalTextEncodingName(name))
     , m_backslashAsCurrencySymbol(backslashAsCurrencySymbol())
 {
+    // Aliases are valid, but not "replacement" itself.
+    if (m_name && isReplacementEncoding(name))
+        m_name = nullptr;
 }
 
 String TextEncoding::decode(const char* data, size_t length, bool stopOnError, bool& sawError) const
