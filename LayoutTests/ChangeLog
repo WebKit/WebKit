@@ -1,3 +1,14 @@
+2016-06-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Fix small issues of TypedArray prototype
+        https://bugs.webkit.org/show_bug.cgi?id=159248
+
+        Reviewed by Saam Barati.
+
+        * js/script-tests/typedarray-prototype.js: Added.
+        * js/typedarray-prototype-expected.txt: Added.
+        * js/typedarray-prototype.html: Added.
+
 2016-06-29  Alejandro G. Castro  <alex@igalia.com>
 
         WebRTC: ice-char can not contain '=' characters for credentials

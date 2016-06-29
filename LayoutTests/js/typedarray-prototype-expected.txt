@@ -1,0 +1,60 @@
+This tests basic properties of the TypedArray prototype
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.getPrototypeOf(Int8Array) === Object.getPrototypeOf(Int8Array) is true
+PASS Object.getPrototypeOf(Int8Array) === Object.getPrototypeOf(Int16Array) is true
+PASS Object.getPrototypeOf(Int8Array) === Object.getPrototypeOf(Int32Array) is true
+PASS Object.getPrototypeOf(Int8Array) === Object.getPrototypeOf(Uint8Array) is true
+PASS Object.getPrototypeOf(Int8Array) === Object.getPrototypeOf(Uint16Array) is true
+PASS Object.getPrototypeOf(Int8Array) === Object.getPrototypeOf(Uint32Array) is true
+PASS Object.getPrototypeOf(Int8Array) === Object.getPrototypeOf(Float32Array) is true
+PASS Object.getPrototypeOf(Int8Array) === Object.getPrototypeOf(Float64Array) is true
+PASS Object.getPrototypeOf(Int16Array) === Object.getPrototypeOf(Int16Array) is true
+PASS Object.getPrototypeOf(Int16Array) === Object.getPrototypeOf(Int32Array) is true
+PASS Object.getPrototypeOf(Int16Array) === Object.getPrototypeOf(Uint8Array) is true
+PASS Object.getPrototypeOf(Int16Array) === Object.getPrototypeOf(Uint16Array) is true
+PASS Object.getPrototypeOf(Int16Array) === Object.getPrototypeOf(Uint32Array) is true
+PASS Object.getPrototypeOf(Int16Array) === Object.getPrototypeOf(Float32Array) is true
+PASS Object.getPrototypeOf(Int16Array) === Object.getPrototypeOf(Float64Array) is true
+PASS Object.getPrototypeOf(Int32Array) === Object.getPrototypeOf(Int32Array) is true
+PASS Object.getPrototypeOf(Int32Array) === Object.getPrototypeOf(Uint8Array) is true
+PASS Object.getPrototypeOf(Int32Array) === Object.getPrototypeOf(Uint16Array) is true
+PASS Object.getPrototypeOf(Int32Array) === Object.getPrototypeOf(Uint32Array) is true
+PASS Object.getPrototypeOf(Int32Array) === Object.getPrototypeOf(Float32Array) is true
+PASS Object.getPrototypeOf(Int32Array) === Object.getPrototypeOf(Float64Array) is true
+PASS Object.getPrototypeOf(Uint8Array) === Object.getPrototypeOf(Uint8Array) is true
+PASS Object.getPrototypeOf(Uint8Array) === Object.getPrototypeOf(Uint16Array) is true
+PASS Object.getPrototypeOf(Uint8Array) === Object.getPrototypeOf(Uint32Array) is true
+PASS Object.getPrototypeOf(Uint8Array) === Object.getPrototypeOf(Float32Array) is true
+PASS Object.getPrototypeOf(Uint8Array) === Object.getPrototypeOf(Float64Array) is true
+PASS Object.getPrototypeOf(Uint16Array) === Object.getPrototypeOf(Uint16Array) is true
+PASS Object.getPrototypeOf(Uint16Array) === Object.getPrototypeOf(Uint32Array) is true
+PASS Object.getPrototypeOf(Uint16Array) === Object.getPrototypeOf(Float32Array) is true
+PASS Object.getPrototypeOf(Uint16Array) === Object.getPrototypeOf(Float64Array) is true
+PASS Object.getPrototypeOf(Uint32Array) === Object.getPrototypeOf(Uint32Array) is true
+PASS Object.getPrototypeOf(Uint32Array) === Object.getPrototypeOf(Float32Array) is true
+PASS Object.getPrototypeOf(Uint32Array) === Object.getPrototypeOf(Float64Array) is true
+PASS Object.getPrototypeOf(Float32Array) === Object.getPrototypeOf(Float32Array) is true
+PASS Object.getPrototypeOf(Float32Array) === Object.getPrototypeOf(Float64Array) is true
+PASS Object.getPrototypeOf(Float64Array) === Object.getPrototypeOf(Float64Array) is true
+PASS "writable" in Object.getOwnPropertyDescriptor(TypedArray.prototype, "length") is false
+PASS Object.getOwnPropertyDescriptor(TypedArray.prototype, "length").enumerable is false
+PASS Object.getOwnPropertyDescriptor(TypedArray.prototype, "length").configurable is true
+PASS Object.getOwnPropertyDescriptor(TypedArray.prototype, "length").get.length is 0
+PASS typeof Object.getOwnPropertyDescriptor(TypedArray.prototype, "length").get is "function"
+PASS Object.getOwnPropertyDescriptor(TypedArray.prototype, "length").set is undefined
+PASS TypedArray.prototype.toString is Array.prototype.toString
+PASS Object.getOwnPropertyDescriptor(TypedArray.prototype, "toString").writable is true
+PASS Object.getOwnPropertyDescriptor(TypedArray.prototype, "toString").enumerable is false
+PASS Object.getOwnPropertyDescriptor(TypedArray.prototype, "toString").configurable is true
+PASS typeof Object.getOwnPropertyDescriptor(TypedArray.prototype, "toString").value is "function"
+PASS Object.getOwnPropertyDescriptor(TypedArray.prototype, "toLocaleString").writable is true
+PASS Object.getOwnPropertyDescriptor(TypedArray.prototype, "toLocaleString").enumerable is false
+PASS Object.getOwnPropertyDescriptor(TypedArray.prototype, "toLocaleString").configurable is true
+PASS typeof Object.getOwnPropertyDescriptor(TypedArray.prototype, "toString").value is "function"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

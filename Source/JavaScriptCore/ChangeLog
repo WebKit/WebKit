@@ -1,3 +1,28 @@
+2016-06-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Fix small issues of TypedArray prototype
+        https://bugs.webkit.org/show_bug.cgi?id=159248
+
+        Reviewed by Saam Barati.
+
+        First, TypedArray's toString and Array's toString
+        should be the same function.
+        I moved the function to GlobalObject and each array type
+        gets it as needed.
+
+        Then TypedArray length was supposed to be configurable.
+        I removed the "DontDelete" flag accordingly.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayProtoToStringFunction):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+
 2016-06-29  Caio Lima  <ticaiolima@gmail.com>
 
         LLInt should support other types of prototype GetById caching.

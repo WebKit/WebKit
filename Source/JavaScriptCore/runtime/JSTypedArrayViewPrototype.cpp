@@ -246,6 +246,8 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
 
     ASSERT(inherits(info()));
 
+    putDirectWithoutTransition(vm, vm.propertyNames->toString, globalObject->arrayProtoToStringFunction(), DontEnum);
+
     JSC_NATIVE_GETTER(vm.propertyNames->buffer, typedArrayViewProtoGetterFuncBuffer, DontEnum | ReadOnly | DontDelete);
     JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->byteLength, typedArrayViewProtoGetterFuncByteLength, DontEnum | ReadOnly | DontDelete, TypedArrayByteLengthIntrinsic);
     JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->byteOffset, typedArrayViewProtoGetterFuncByteOffset, DontEnum | ReadOnly | DontDelete, TypedArrayByteOffsetIntrinsic);
@@ -262,7 +264,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->join, typedArrayViewProtoFuncJoin, DontEnum, 1);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().keysPublicName(), typedArrayPrototypeKeysCodeGenerator, DontEnum);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf", typedArrayViewProtoFuncLastIndexOf, DontEnum, 1);
-    JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->length, typedArrayViewProtoGetterFuncLength, DontEnum | ReadOnly | DontDelete, TypedArrayLengthIntrinsic);
+    JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->length, typedArrayViewProtoGetterFuncLength, DontEnum | ReadOnly, TypedArrayLengthIntrinsic);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("map", typedArrayPrototypeMapCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("reduce", typedArrayPrototypeReduceCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("reduceRight", typedArrayPrototypeReduceRightCodeGenerator, DontEnum);
@@ -272,7 +274,6 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("some", typedArrayPrototypeSomeCodeGenerator, DontEnum);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->subarray, typedArrayViewProtoFuncSubarray, DontEnum, 2);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, typedArrayPrototypeToLocaleStringCodeGenerator, DontEnum);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, arrayProtoFuncToString, DontEnum, 0);
     JSC_NATIVE_GETTER(vm.propertyNames->toStringTagSymbol, typedArrayViewProtoGetterFuncToStringTag, DontEnum | ReadOnly);
 
     JSFunction* valuesFunction = JSFunction::createBuiltinFunction(vm, typedArrayPrototypeValuesCodeGenerator(vm), globalObject);
