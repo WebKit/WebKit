@@ -1,3 +1,15 @@
+2016-06-28  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r200946): Improper backtracking from last alternative in sticky patterns
+        https://bugs.webkit.org/show_bug.cgi?id=159233
+
+        Reviewed by Mark Lam.
+
+        Jump to fail exit code when the last alternative of a sticky pattern fails.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::backtrack):
+
 2016-06-28  Saam Barati  <sbarati@apple.com>
 
         some Watchpoints' ::fireInternal method will call operations that might GC where the GC will cause the watchpoint itself to destruct

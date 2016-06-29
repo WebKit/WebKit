@@ -1828,6 +1828,8 @@ class YarrGenerator : private MacroAssembler {
                 }
 
                 bool onceThrough = endOp.m_nextOp == notFound;
+                
+                JumpList lastStickyAlternativeFailures;
 
                 // First, generate code to handle cases where we backtrack out of an attempted match
                 // of the last alternative. If this is a 'once through' set of alternatives then we
@@ -1843,12 +1845,15 @@ class YarrGenerator : private MacroAssembler {
                         && (alternative->m_minimumSize > beginOp->m_alternative->m_minimumSize)
                         && (alternative->m_minimumSize - beginOp->m_alternative->m_minimumSize == 1))
                         m_backtrackingState.linkTo(beginOp->m_reentry, this);
-                    else {
+                    else if (m_pattern.sticky() && m_ops[op.m_nextOp].m_op == OpBodyAlternativeEnd) {
+                        // It is a sticky pattern and the last alternative failed, jump to the end.
+                        m_backtrackingState.takeBacktracksToJumpList(lastStickyAlternativeFailures, this);
+                    } else {
                         // We need to generate a trampoline of code to execute before looping back
                         // around to the first alternative.
                         m_backtrackingState.link(this);
 
-                        // No need to advance and retry for a stick pattern.
+                        // No need to advance and retry for a sticky pattern.
                         if (!m_pattern.sticky()) {
                             // If the pattern size is not fixed, then store the start index for use if we match.
                             if (!m_pattern.m_body->m_hasFixedSize) {
@@ -1998,6 +2003,8 @@ class YarrGenerator : private MacroAssembler {
                     // run any matches, and need to return a failure state from JIT code.
                     matchFailed.link(this);
                 }
+
+                lastStickyAlternativeFailures.link(this);
                 removeCallFrame();
                 generateFailReturn();
                 break;

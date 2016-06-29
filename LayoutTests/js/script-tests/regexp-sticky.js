@@ -92,10 +92,12 @@ testStickyMatch("Character Classes", /[0-9A-F]/iy, "fEEd123X", 0, [["f"], ["E"],
 testStickyExec("Unmatched Greedy", /^\s*|\s*$/y, "ab", 1, [null]);
 testStickyExec("Global Flag - exec", /\s*(\+|[0-9]+)\s*/gy, "3 + 4", 0, ["3 ,3", "+ ,+", "4,4", null]);
 testStickyMatch("Global Flag - match", /\s*(\+|[0-9]+)\s*/gy, "3 + 4", 0, [["3 ", "+ ", "4"], ["3 ", "+ ", "4"]]);
+testStickyMatch("Global Flag - Alternates, long to short", /x.|[\d]/gy, ".a", 0, [null]);
 testStickyExec("Unicode Flag - Any Character", /./uy, "a@\u{10402}1\u202a\u{12345}", 0, ["a", "@", "\u{10402}", "1", "\u202a", "\u{12345}", null]);
 testStickyMatch("Unicode & Ignore Case Flags", /(?:\u{118c0}|\u{10cb0}|\w):/iuy, "a:\u{118a0}:x:\u{10cb0}", 0, [["a:"], ["\u{118a0}:"], ["x:"], null]);
 testStickyExec("Multiline", /(?:\w+ *)+(?:\n|$)/my, "Line One\nLine Two", 0, ["Line One\n", "Line Two", null]);
 testStickyMatch("Multiline with BOL Anchor", /^\d*\s?/my, "13574\n295\n99", 0, [["13574\n"], ["295\n"], ["99"], null]);
+testStickyExec("Multiline with EOL Anchor at start of Alternative", /.{2}|(?=$)./my, "\n", 0, [null]);
 
 // Verify that String.search starts at 0 even with the sticky flag.
 var re = new RegExp("\\d+\\s", "y");

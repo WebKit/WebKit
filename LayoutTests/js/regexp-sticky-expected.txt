@@ -26,10 +26,12 @@ PASS Character Classes
 PASS Unmatched Greedy
 PASS Global Flag - exec
 PASS Global Flag - match
+PASS Global Flag - Alternates, long to short
 PASS Unicode Flag - Any Character
 PASS Unicode & Ignore Case Flags
 PASS Multiline
 PASS Multiline with BOL Anchor
+PASS Multiline with EOL Anchor at start of Alternative
 PASS "123 1234 ".search(re) is 0
 PASS "123 1234 ".search(re) is 0
 PASS " 123 1234 ".search(re) is -1
