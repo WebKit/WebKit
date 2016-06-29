@@ -1,3 +1,17 @@
+2016-06-29  David Kilzer  <ddkilzer@apple.com>
+
+        Crash when 'input' event handler for input[type=color] changes the input type
+        <https://webkit.org/b/159262>
+        <rdar://problem/27020404>
+
+        Reviewed by Daniel Bates.
+
+        Test based on a Blink change (patch by <tkent@chromium.org>):
+        <https://chromium.googlesource.com/chromium/src.git/+/a17cb3ecef49a078657524cdeaba33ad2083646c>
+
+        * fast/forms/color/color-type-change-on-input-crash-expected.txt: Added.
+        * fast/forms/color/color-type-change-on-input-crash.html: Added.
+
 2016-06-29  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Misc MediaStreamEvent fixes: Update build flag and remove PassRefPtr usage
