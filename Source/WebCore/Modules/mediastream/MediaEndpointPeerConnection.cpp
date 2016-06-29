@@ -53,6 +53,13 @@ namespace WebCore {
 using namespace PeerConnection;
 using namespace PeerConnectionStates;
 
+// We use base64 to generate the random strings so we need a size that avoids padding to get ice-chars.
+static const size_t cnameSize = 18;
+// Size range from 4 to 256 ice-chars defined in RFC 5245.
+static const size_t iceUfragSize = 6;
+// Size range from 22 to 256 ice-chars defined in RFC 5245.
+static const size_t icePasswordSize = 24;
+
 static std::unique_ptr<PeerConnectionBackend> createMediaEndpointPeerConnection(PeerConnectionBackendClient* client)
 {
     return std::unique_ptr<PeerConnectionBackend>(new MediaEndpointPeerConnection(client));
@@ -60,9 +67,8 @@ static std::unique_ptr<PeerConnectionBackend> createMediaEndpointPeerConnection(
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createMediaEndpointPeerConnection;
 
-static String randomString(size_t length)
+static String randomString(size_t size)
 {
-    const size_t size = ceil(length * 3 / 4);
     unsigned char randomValues[size];
     cryptographicallyRandomValues(randomValues, size);
     return base64Encode(randomValues, size);
@@ -72,9 +78,9 @@ MediaEndpointPeerConnection::MediaEndpointPeerConnection(PeerConnectionBackendCl
     : m_client(client)
     , m_mediaEndpoint(MediaEndpoint::create(*this))
     , m_sdpProcessor(std::unique_ptr<SDPProcessor>(new SDPProcessor(m_client->scriptExecutionContext())))
-    , m_cname(randomString(16))
-    , m_iceUfrag(randomString(4))
-    , m_icePassword(randomString(22))
+    , m_cname(randomString(cnameSize))
+    , m_iceUfrag(randomString(iceUfragSize))
+    , m_icePassword(randomString(icePasswordSize))
 {
     ASSERT(m_mediaEndpoint);
 

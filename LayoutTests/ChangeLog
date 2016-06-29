@@ -1,3 +1,16 @@
+2016-06-29  Alejandro G. Castro  <alex@igalia.com>
+
+        WebRTC: ice-char can not contain '=' characters for credentials
+        https://bugs.webkit.org/show_bug.cgi?id=159207
+
+        Reviewed by Eric Carlson.
+
+        Modified the parser to make the regexp similar to the one we have
+        in WebCore.
+
+        * fast/mediastream/resources/sdp-utils.js:
+        (printComparableSessionDescription):
+
 2016-06-29  David Kilzer  <ddkilzer@apple.com>
 
         Crash when 'input' event handler for input[type=color] changes the input type

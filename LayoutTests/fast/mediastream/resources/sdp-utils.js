@@ -15,7 +15,7 @@
             "mid": "^a=mid:([!#$%&'*+-.\\w]*).*$",
             "msid": "^a=(ssrc:\\d+ )?msid:([\\w+/\\-=]+) +([\\w+/\\-=]+).*$",
             "iceufrag": "^a=ice-ufrag:([\\w+/]*).*$",
-            "icepwd": "^a=ice-pwd:([\\w+/]*=*).*$",
+            "icepwd": "^a=ice-pwd:([\\w+/]*).*$",
         };
 
         var mdescIndex = -1;
