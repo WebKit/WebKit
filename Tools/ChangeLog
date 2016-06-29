@@ -1,3 +1,15 @@
+2016-06-29  Alejandro G. Castro  <alex@igalia.com>
+
+        [WebRTC][OWR] Bump gst-plugins-openwebrtc jhbuild version to get scream fixes
+        https://bugs.webkit.org/show_bug.cgi?id=159256
+
+        Reviewed by Philippe Normand.
+
+        We need the last fixes in the repository to make the scream queue
+        work with apprtc.
+
+        * gtk/jhbuild.modules:
+
 2016-06-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202580.
