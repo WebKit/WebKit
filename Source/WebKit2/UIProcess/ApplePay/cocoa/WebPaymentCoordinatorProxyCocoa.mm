@@ -230,17 +230,17 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
     });
 }
 
-static PKAddressField toPKAddressField(const WebCore::PaymentRequest::AddressFields& addressFields)
+static PKAddressField toPKAddressField(const WebCore::PaymentRequest::ContactFields& contactFields)
 {
     PKAddressField result = 0;
 
-    if (addressFields.postalAddress)
+    if (contactFields.postalAddress)
         result |= PKAddressFieldPostalAddress;
-    if (addressFields.phone)
+    if (contactFields.phone)
         result |= PKAddressFieldPhone;
-    if (addressFields.email)
+    if (contactFields.email)
         result |= PKAddressFieldEmail;
-    if (addressFields.name)
+    if (contactFields.name)
         result |= PKAddressFieldName;
 
     return result;
@@ -347,9 +347,9 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(const WebCore::URL& originatingUR
 
     [result setCountryCode:paymentRequest.countryCode()];
     [result setCurrencyCode:paymentRequest.currencyCode()];
-    [result setRequiredBillingAddressFields:toPKAddressField(paymentRequest.requiredBillingAddressFields())];
+    [result setRequiredBillingAddressFields:toPKAddressField(paymentRequest.requiredBillingContactFields())];
     [result setBillingContact:paymentRequest.billingContact().pkContact()];
-    [result setRequiredShippingAddressFields:toPKAddressField(paymentRequest.requiredShippingAddressFields())];
+    [result setRequiredShippingAddressFields:toPKAddressField(paymentRequest.requiredShippingContactFields())];
     [result setShippingContact:paymentRequest.shippingContact().pkContact()];
 
     [result setSupportedNetworks:toSupportedNetworks(paymentRequest.supportedNetworks()).get()];

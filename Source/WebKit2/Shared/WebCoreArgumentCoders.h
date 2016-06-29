@@ -501,9 +501,9 @@ template<> struct ArgumentCoder<WebCore::PaymentRequest> {
     static bool decode(ArgumentDecoder&, WebCore::PaymentRequest&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentRequest::AddressFields> {
-    static void encode(ArgumentEncoder&, const WebCore::PaymentRequest::AddressFields&);
-    static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::AddressFields&);
+template<> struct ArgumentCoder<WebCore::PaymentRequest::ContactFields> {
+    static void encode(ArgumentEncoder&, const WebCore::PaymentRequest::ContactFields&);
+    static bool decode(ArgumentDecoder&, WebCore::PaymentRequest::ContactFields&);
 };
 
 template<> struct ArgumentCoder<WebCore::PaymentRequest::LineItem> {

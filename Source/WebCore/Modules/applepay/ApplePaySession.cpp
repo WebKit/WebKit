@@ -45,6 +45,7 @@
 #include "LinkIconType.h"
 #include "MainFrame.h"
 #include "Page.h"
+#include "PageConsoleClient.h"
 #include "PaymentAuthorizationStatus.h"
 #include "PaymentContact.h"
 #include "PaymentCoordinator.h"
@@ -162,29 +163,29 @@ static Optional<int64_t> parseAmount(const String& amountString)
     return amount;
 }
 
-static Optional<PaymentRequest::AddressFields> createAddressFields(DOMWindow& window, const ArrayValue& addressFieldsArray)
+static Optional<PaymentRequest::ContactFields> createContactFields(DOMWindow& window, const ArrayValue& contactFieldsArray)
 {
-    PaymentRequest::AddressFields result;
+    PaymentRequest::ContactFields result;
 
-    size_t addressFieldsCount;
-    if (!addressFieldsArray.length(addressFieldsCount))
+    size_t contactFieldsCount;
+    if (!contactFieldsArray.length(contactFieldsCount))
         return Nullopt;
 
-    for (size_t i = 0; i < addressFieldsCount; ++i) {
-        String addressField;
-        if (!addressFieldsArray.get(i, addressField))
+    for (size_t i = 0; i < contactFieldsCount; ++i) {
+        String contactField;
+        if (!contactFieldsArray.get(i, contactField))
             return Nullopt;
 
-        if (addressField == "postalAddress")
+        if (contactField == "postalAddress")
             result.postalAddress = true;
-        else if (addressField == "phone")
+        else if (contactField == "phone")
             result.phone = true;
-        else if (addressField == "email")
+        else if (contactField == "email")
             result.email = true;
-        else if (addressField == "name")
+        else if (contactField == "name")
             result.name = true;
         else {
-            auto message = makeString("\"" + addressField, "\" is not a valid address field.");
+            auto message = makeString("\"" + contactField, "\" is not a valid contact field.");
             window.printErrorMessage(message);
             return Nullopt;
         }
@@ -462,15 +463,19 @@ static bool isValidPaymentRequestPropertyName(const String& propertyName)
         "supportedNetworks",
         "countryCode",
         "currencyCode",
-        "requiredBillingAddressFields",
+        "requiredBillingContactFields",
         "billingContact",
-        "requiredShippingAddressFields",
+        "requiredShippingContactFields",
         "shippingContact",
         "shippingType",
         "shippingMethods",
         "total",
         "lineItems",
         "applicationData",
+
+        // FIXME: Get rid of these.
+        "requiredBillingAddressFields",
+        "requiredShippingAddressFields",
     };
 
     for (auto& validPropertyName : validPropertyNames) {
@@ -517,13 +522,23 @@ static Optional<PaymentRequest> createPaymentRequest(DOMWindow& window, const Di
     if (auto currencyCode = dictionary.get<String>("currencyCode"))
         paymentRequest.setCurrencyCode(*currencyCode);
 
-    if (auto requiredBillingAddressFieldsArray = dictionary.get<ArrayValue>("requiredBillingAddressFields")) {
-        auto requiredBillingAddressFields = createAddressFields(window, *requiredBillingAddressFieldsArray);
+    if (auto requiredBillingContactFieldsArray = dictionary.get<ArrayValue>("requiredBillingContactFields")) {
+        auto requiredBillingContactFields = createContactFields(window, *requiredBillingContactFieldsArray);
+        if (!requiredBillingContactFields)
+            return Nullopt;
+
+        paymentRequest.setRequiredBillingContactFields(*requiredBillingContactFields);
+    } else if (auto requiredBillingAddressFieldsArray = dictionary.get<ArrayValue>("requiredBillingAddressFields")) {
+        if (PageConsoleClient* pageConsole = window.console())
+            pageConsole->addMessage(MessageSource::JS, MessageLevel::Warning, "\"requiredShippingAddressFields\" has been deprecated and will stop working shortly. Please switch to \"requiredShippingContactFields\" instead.");
+
+        auto requiredBillingAddressFields = createContactFields(window, *requiredBillingAddressFieldsArray);
         if (!requiredBillingAddressFields)
             return Nullopt;
 
-        paymentRequest.setRequiredBillingAddressFields(*requiredBillingAddressFields);
+        paymentRequest.setRequiredBillingContactFields(*requiredBillingAddressFields);
     }
+
 
     if (auto billingContactValue = dictionary.get<JSC::JSValue>("billingContact")) {
         String errorMessage;
@@ -536,13 +551,23 @@ static Optional<PaymentRequest> createPaymentRequest(DOMWindow& window, const Di
         paymentRequest.setBillingContact(*billingContact);
     }
 
-    if (auto requiredShippingAddressFieldsArray = dictionary.get<ArrayValue>("requiredShippingAddressFields")) {
-        auto requiredShippingAddressFields = createAddressFields(window, *requiredShippingAddressFieldsArray);
+    if (auto requiredShippingContactFieldsArray = dictionary.get<ArrayValue>("requiredShippingContactFields")) {
+        auto requiredShippingContactFields = createContactFields(window, *requiredShippingContactFieldsArray);
+        if (!requiredShippingContactFields)
+            return Nullopt;
+
+        paymentRequest.setRequiredShippingContactFields(*requiredShippingContactFields);
+    } else if (auto requiredShippingAddressFieldsArray = dictionary.get<ArrayValue>("requiredShippingAddressFields")) {
+        if (PageConsoleClient* pageConsole = window.console())
+            pageConsole->addMessage(MessageSource::JS, MessageLevel::Warning, "\"requiredShippingAddressFields\" has been deprecated and will stop working shortly. Please switch to \"requiredShippingContactFields\" instead.");
+
+        auto requiredShippingAddressFields = createContactFields(window, *requiredShippingAddressFieldsArray);
         if (!requiredShippingAddressFields)
             return Nullopt;
 
-        paymentRequest.setRequiredShippingAddressFields(*requiredShippingAddressFields);
+        paymentRequest.setRequiredShippingContactFields(*requiredShippingAddressFields);
     }
+
 
     if (auto shippingContactValue = dictionary.get<JSC::JSValue>("shippingContact")) {
         String errorMessage;

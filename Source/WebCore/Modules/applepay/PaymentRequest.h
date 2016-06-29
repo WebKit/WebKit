@@ -45,21 +45,21 @@ public:
     const String& currencyCode() const { return m_currencyCode; }
     void setCurrencyCode(const String& currencyCode) { m_currencyCode = currencyCode; }
 
-    struct AddressFields {
+    struct ContactFields {
         bool postalAddress { false };
         bool phone { false };
         bool email { false };
         bool name { false };
     };
 
-    const AddressFields& requiredBillingAddressFields() const { return m_requiredBillingAddressFields; }
-    void setRequiredBillingAddressFields(const AddressFields& requiredBillingAddressFields) { m_requiredBillingAddressFields = requiredBillingAddressFields; }
+    const ContactFields& requiredBillingContactFields() const { return m_requiredBillingContactFields; }
+    void setRequiredBillingContactFields(const ContactFields& requiredBillingContactFields) { m_requiredBillingContactFields = requiredBillingContactFields; }
 
     const PaymentContact& billingContact() const { return m_billingContact; }
     void setBillingContact(const PaymentContact& billingContact) { m_billingContact = billingContact; }
 
-    const AddressFields& requiredShippingAddressFields() const { return m_requiredShippingAddressFields; }
-    void setRequiredShippingAddressFields(const AddressFields& requiredShippingAddressFields) { m_requiredShippingAddressFields = requiredShippingAddressFields; }
+    const ContactFields& requiredShippingContactFields() const { return m_requiredShippingContactFields; }
+    void setRequiredShippingContactFields(const ContactFields& requiredShippingContactFields) { m_requiredShippingContactFields = requiredShippingContactFields; }
 
     const PaymentContact& shippingContact() const { return m_shippingContact; }
     void setShippingContact(const PaymentContact& shippingContact) { m_shippingContact = shippingContact; }
@@ -137,10 +137,10 @@ private:
     String m_countryCode;
     String m_currencyCode;
 
-    AddressFields m_requiredBillingAddressFields;
+    ContactFields m_requiredBillingContactFields;
     PaymentContact m_billingContact;
 
-    AddressFields m_requiredShippingAddressFields;
+    ContactFields m_requiredShippingContactFields;
     PaymentContact m_shippingContact;
 
     SupportedNetworks m_supportedNetworks;

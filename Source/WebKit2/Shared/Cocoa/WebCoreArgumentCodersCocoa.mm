@@ -188,9 +188,9 @@ void ArgumentCoder<PaymentRequest>::encode(ArgumentEncoder& encoder, const Payme
 {
     encoder << request.countryCode();
     encoder << request.currencyCode();
-    encoder << request.requiredBillingAddressFields();
+    encoder << request.requiredBillingContactFields();
     encoder << request.billingContact();
-    encoder << request.requiredShippingAddressFields();
+    encoder << request.requiredShippingContactFields();
     encoder << request.shippingContact();
     encoder << request.merchantCapabilities();
     encoder << request.supportedNetworks();
@@ -213,20 +213,20 @@ bool ArgumentCoder<PaymentRequest>::decode(ArgumentDecoder& decoder, PaymentRequ
         return false;
     request.setCurrencyCode(currencyCode);
 
-    PaymentRequest::AddressFields requiredBillingAddressFields;
-    if (!decoder.decode((requiredBillingAddressFields)))
+    PaymentRequest::ContactFields requiredBillingContactFields;
+    if (!decoder.decode((requiredBillingContactFields)))
         return false;
-    request.setRequiredBillingAddressFields(requiredBillingAddressFields);
+    request.setRequiredBillingContactFields(requiredBillingContactFields);
 
     PaymentContact billingContact;
     if (!decoder.decode(billingContact))
         return false;
     request.setBillingContact(billingContact);
 
-    PaymentRequest::AddressFields requiredShippingAddressFields;
-    if (!decoder.decode((requiredShippingAddressFields)))
+    PaymentRequest::ContactFields requiredShippingContactFields;
+    if (!decoder.decode((requiredShippingContactFields)))
         return false;
-    request.setRequiredShippingAddressFields(requiredShippingAddressFields);
+    request.setRequiredShippingContactFields(requiredShippingContactFields);
 
     PaymentContact shippingContact;
     if (!decoder.decode(shippingContact))
@@ -271,23 +271,23 @@ bool ArgumentCoder<PaymentRequest>::decode(ArgumentDecoder& decoder, PaymentRequ
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::AddressFields>::encode(ArgumentEncoder& encoder, const PaymentRequest::AddressFields& addressFields)
+void ArgumentCoder<PaymentRequest::ContactFields>::encode(ArgumentEncoder& encoder, const PaymentRequest::ContactFields& contactFields)
 {
-    encoder << addressFields.postalAddress;
-    encoder << addressFields.phone;
-    encoder << addressFields.email;
-    encoder << addressFields.name;
+    encoder << contactFields.postalAddress;
+    encoder << contactFields.phone;
+    encoder << contactFields.email;
+    encoder << contactFields.name;
 }
 
-bool ArgumentCoder<PaymentRequest::AddressFields>::decode(ArgumentDecoder& decoder, PaymentRequest::AddressFields& addressFields)
+bool ArgumentCoder<PaymentRequest::ContactFields>::decode(ArgumentDecoder& decoder, PaymentRequest::ContactFields& contactFields)
 {
-    if (!decoder.decode(addressFields.postalAddress))
+    if (!decoder.decode(contactFields.postalAddress))
         return false;
-    if (!decoder.decode(addressFields.phone))
+    if (!decoder.decode(contactFields.phone))
         return false;
-    if (!decoder.decode(addressFields.email))
+    if (!decoder.decode(contactFields.email))
         return false;
-    if (!decoder.decode(addressFields.name))
+    if (!decoder.decode(contactFields.name))
         return false;
 
     return true;

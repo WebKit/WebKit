@@ -1,3 +1,23 @@
+2016-06-29  Anders Carlsson  <andersca@apple.com>
+
+        Rename addressFields to contactFields
+        https://bugs.webkit.org/show_bug.cgi?id=159271
+        rdar://problem/27086955
+
+        Reviewed by Beth Dakin.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<PaymentRequest>::encode):
+        (IPC::ArgumentCoder<PaymentRequest>::decode):
+        (IPC::ArgumentCoder<PaymentRequest::ContactFields>::encode):
+        (IPC::ArgumentCoder<PaymentRequest::ContactFields>::decode):
+        (IPC::ArgumentCoder<PaymentRequest::AddressFields>::encode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::AddressFields>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKAddressField):
+        (WebKit::toPKPaymentRequest):
+
 2016-06-29  Jer Noble  <jer.noble@apple.com>
 
         Adopt MediaRemote.
