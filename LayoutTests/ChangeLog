@@ -1,3 +1,20 @@
+2016-06-29  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Misc MediaStreamEvent fixes: Update build flag and remove PassRefPtr usage
+        https://bugs.webkit.org/show_bug.cgi?id=159132
+
+        Reviewed by Eric Carlson.
+
+        Update skip lists and expected results to not expect the MediaStreamEvent constructor in
+        the global scope (it's under the WEB_RTC build flag).
+
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        (all above) Remove expected results associated with MediaStreamEvent constructor.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+        Skip MediaStreamEvent constructor test on ports that dont't build with WEB_RTC yet.
+
 2016-06-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Fix the expectations for crypto/subtle tests after r202535.

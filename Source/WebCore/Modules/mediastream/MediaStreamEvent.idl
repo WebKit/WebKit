@@ -23,7 +23,7 @@
  */
 
 [
-    Conditional=MEDIA_STREAM,
+    Conditional=WEB_RTC,
     ConstructorTemplate=Event
 ] interface MediaStreamEvent : Event {
    [InitializedByEventConstructor] readonly attribute MediaStream stream;

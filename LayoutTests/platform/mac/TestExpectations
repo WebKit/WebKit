@@ -164,6 +164,7 @@ fast/mediastream/MediaStreamTrack-onended.html
 fast/mediastream/MediaStreamTrack.html
 
 # WebRTC is not supported yet.
+fast/events/constructors/media-stream-event-constructor.html
 fast/mediastream/RTCIceCandidate.html
 fast/mediastream/RTCPeerConnection-AddRemoveStream.html
 fast/mediastream/RTCPeerConnection-createAnswer.html

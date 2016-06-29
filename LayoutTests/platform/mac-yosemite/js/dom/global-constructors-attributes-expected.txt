@@ -958,11 +958,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamAudioSourceNode').hasOw
 PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamAudioSourceNode').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamAudioSourceNode').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamAudioSourceNode').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamEvent').value is MediaStreamEvent
-PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamEvent').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamEvent').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamEvent').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamTrack').value is MediaStreamTrack
 PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamTrack').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaStreamTrack').hasOwnProperty('set') is false
