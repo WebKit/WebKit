@@ -103,7 +103,6 @@ struct PrintInfo;
 - (void)_updateVisibleContentRectAfterScrollInView:(UIScrollView *)scrollView;
 - (void)_updateContentRectsWithState:(BOOL)inStableState;
 
-- (void)_didFirstVisuallyNonEmptyLayoutForMainFrame;
 - (void)_didFinishLoadForMainFrame;
 - (void)_didFailLoadForMainFrame;
 - (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)navigationType;
@@ -117,8 +116,6 @@ struct PrintInfo;
 - (void)_navigationGestureDidEnd;
 
 - (void)_updateForceAlwaysUserScalable;
-
-- (void)_setIsBlankBeforeFirstNonEmptyLayout:(BOOL)isBlank;
 
 @property (nonatomic, readonly) BOOL _isBackground;
 

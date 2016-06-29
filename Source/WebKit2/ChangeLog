@@ -1,5 +1,23 @@
 2016-06-28  Commit Queue  <commit-queue@webkit.org>
 
+        Unreviewed, rolling out r202586 and r202595.
+        https://bugs.webkit.org/show_bug.cgi?id=159247
+
+        These changes broke the iOS build (Requested by ryanhaddad on
+        #webkit).
+
+        Reverted changesets:
+
+        "Keep track of when a WKWebView is blank before the initial
+        non-empty layout"
+        https://bugs.webkit.org/show_bug.cgi?id=159217
+        http://trac.webkit.org/changeset/202586
+
+        "Try to fix the build."
+        http://trac.webkit.org/changeset/202595
+
+2016-06-28  Commit Queue  <commit-queue@webkit.org>
+
         Unreviewed, rolling out r202580.
         https://bugs.webkit.org/show_bug.cgi?id=159245
 

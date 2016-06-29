@@ -490,8 +490,6 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
-    [self _setIsBlankBeforeFirstNonEmptyLayout:YES];
-
     [self addSubview:_scrollView.get()];
 
     static uint32_t programSDKVersion = dyld_get_program_sdk_version();
@@ -1752,12 +1750,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return !areEssentiallyEqualAsFloat(contentZoomScale(self), 1);
 }
 
-#if !USE(APPLE_INTERNAL_SDK)
-- (void)_setIsBlankBeforeFirstNonEmptyLayout:(BOOL)isBlank
-{
-}
-#endif
-
 #pragma mark - UIScrollViewDelegate
 
 - (BOOL)usesStandardContentView
@@ -2082,11 +2074,6 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         inStableState:inStableState
         isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively
         enclosedInScrollableAncestorView:scrollViewCanScroll([self _scroller])];
-}
-
-- (void)_didFirstVisuallyNonEmptyLayoutForMainFrame
-{
-    [self _setIsBlankBeforeFirstNonEmptyLayout:NO];
 }
 
 - (void)_didFinishLoadForMainFrame
@@ -4632,8 +4619,12 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 @end
 
-#if USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKWebViewAdditions.mm>
+#endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewAdditionsMac.mm>
 #endif
 
 #endif // WK_API_ENABLED
