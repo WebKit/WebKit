@@ -1,5 +1,14 @@
 2016-06-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Add missing install dependency after r202619
+        https://bugs.webkit.org/show_bug.cgi?id=156716
+
+        Unreviewed.
+
+        * gtk/install-dependencies: Missed to add the GLES headers that are needed for building mesa on Debian.
+
+2016-06-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK][Wayland] Implement support for running the layout tests under a (virtualized) Wayland environment.
         https://bugs.webkit.org/show_bug.cgi?id=156716
 

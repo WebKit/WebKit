@@ -159,6 +159,7 @@ function installDependenciesWithApt {
         libexpat1-dev \
         libgbm-dev \
         libgcrypt11-dev \
+        libgles2-mesa-dev \
         libgpg-error-dev \
         libjson-glib-dev \
         libinput-dev \
