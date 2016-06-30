@@ -72,8 +72,12 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncIsTypedArrayView(ExecState
 
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState* exec)
 {
-    JSArrayBufferView* thisObject = jsDynamicCast<JSArrayBufferView*>(exec->argument(0));
-    if (!thisObject)
+    JSValue argument = exec->argument(0);
+    if (!argument.isCell() || !isTypedView(argument.asCell()->classInfo()->typedArrayStorageType))
+        return throwVMTypeError(exec, "Receiver should be a typed array view");
+
+    JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(argument);
+    if (!thisObject || thisObject->mode() == DataViewMode)
         return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view"));
     if (thisObject->isNeutered())
         return throwVMTypeError(exec, "Underlying ArrayBuffer has been detached from the view");
@@ -203,7 +207,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncToStringTag(Exe
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return JSValue::encode(jsUndefined());
 
     VM& vm = exec->vm();
     switch (thisValue.getObject()->classInfo()->typedArrayStorageType) {
@@ -227,7 +231,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncToStringTag(Exe
         return JSValue::encode(jsString(&vm, "Uint16Array"));
     case NotTypedArray:
     case TypeDataView:
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view"));
+        return JSValue::encode(jsUndefined());
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -248,9 +252,9 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
 
     putDirectWithoutTransition(vm, vm.propertyNames->toString, globalObject->arrayProtoToStringFunction(), DontEnum);
 
-    JSC_NATIVE_GETTER(vm.propertyNames->buffer, typedArrayViewProtoGetterFuncBuffer, DontEnum | ReadOnly | DontDelete);
-    JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->byteLength, typedArrayViewProtoGetterFuncByteLength, DontEnum | ReadOnly | DontDelete, TypedArrayByteLengthIntrinsic);
-    JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->byteOffset, typedArrayViewProtoGetterFuncByteOffset, DontEnum | ReadOnly | DontDelete, TypedArrayByteOffsetIntrinsic);
+    JSC_NATIVE_GETTER(vm.propertyNames->buffer, typedArrayViewProtoGetterFuncBuffer, DontEnum | ReadOnly);
+    JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->byteLength, typedArrayViewProtoGetterFuncByteLength, DontEnum | ReadOnly, TypedArrayByteLengthIntrinsic);
+    JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->byteOffset, typedArrayViewProtoGetterFuncByteOffset, DontEnum | ReadOnly, TypedArrayByteOffsetIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("copyWithin", typedArrayViewProtoFuncCopyWithin, DontEnum, 2);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("every", typedArrayPrototypeEveryCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("filter", typedArrayPrototypeFilterCodeGenerator, DontEnum);
@@ -274,7 +278,11 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("some", typedArrayPrototypeSomeCodeGenerator, DontEnum);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->subarray, typedArrayViewProtoFuncSubarray, DontEnum, 2);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, typedArrayPrototypeToLocaleStringCodeGenerator, DontEnum);
-    JSC_NATIVE_GETTER(vm.propertyNames->toStringTagSymbol, typedArrayViewProtoGetterFuncToStringTag, DontEnum | ReadOnly);
+
+    JSFunction* toStringTagFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("get [Symbol.toStringTag]"), typedArrayViewProtoGetterFuncToStringTag, NoIntrinsic);
+    GetterSetter* toStringTagAccessor = GetterSetter::create(vm, globalObject);
+    toStringTagAccessor->setGetter(vm, globalObject, toStringTagFunction);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->toStringTagSymbol, toStringTagAccessor, DontEnum | ReadOnly);
 
     JSFunction* valuesFunction = JSFunction::createBuiltinFunction(vm, typedArrayPrototypeValuesCodeGenerator(vm), globalObject);
 

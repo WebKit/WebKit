@@ -1,3 +1,15 @@
+2016-06-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Minor TypedArray fixes
+        https://bugs.webkit.org/show_bug.cgi?id=159286
+
+        Reviewed by Keith Miller.
+
+        * js/script-tests/typedarray-constructors.js:
+        * js/script-tests/typedarray-prototype.js:
+        * js/typedarray-constructors-expected.txt:
+        * js/typedarray-prototype-expected.txt:
+
 2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: API View of Native DOM APIs looks poor (TypeErrors for native getters)
