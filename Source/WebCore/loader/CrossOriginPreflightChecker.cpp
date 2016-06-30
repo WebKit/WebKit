@@ -82,7 +82,7 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
         return;
     }
 
-    CrossOriginPreflightResultCache::singleton().appendEntry(loader.securityOrigin()->toString(), request.url(), WTFMove(result));
+    CrossOriginPreflightResultCache::singleton().appendEntry(loader.securityOrigin().toString(), request.url(), WTFMove(result));
     loader.preflightSuccess(WTFMove(request));
 }
 

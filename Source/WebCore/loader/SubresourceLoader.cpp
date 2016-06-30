@@ -403,7 +403,7 @@ bool SubresourceLoader::checkCrossOriginAccessControl(const ResourceRequest& pre
 
     String errorDescription;
     bool responsePassesCORS = m_origin->canRequest(previousRequest.url())
-        || passesAccessControlCheck(redirectResponse, options().allowCredentials(), m_origin.get(), errorDescription);
+        || passesAccessControlCheck(redirectResponse, options().allowCredentials(), *m_origin, errorDescription);
     if (!responsePassesCORS || !isValidCrossOriginRedirectionURL(newRequest.url())) {
         if (m_frame && m_frame->document()) {
             String errorMessage = "Cross-origin redirection denied by Cross-Origin Resource Sharing policy: " +
@@ -416,7 +416,7 @@ bool SubresourceLoader::checkCrossOriginAccessControl(const ResourceRequest& pre
     // If the request URL origin is not the same as the original origin, the request origin should be set to a globally unique identifier.
     m_origin = SecurityOrigin::createUnique();
     cleanRedirectedRequestForAccessControl(newRequest);
-    updateRequestForAccessControl(newRequest, m_origin.get(), options().allowCredentials());
+    updateRequestForAccessControl(newRequest, *m_origin, options().allowCredentials());
 
     return true;
 }

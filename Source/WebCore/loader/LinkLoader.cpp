@@ -128,8 +128,9 @@ static void preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& hre
     linkRequest.setInitiator("link");
 
     if (!crossOriginMode.isNull()) {
+        ASSERT(document.securityOrigin());
         StoredCredentials allowCredentials = equalLettersIgnoringASCIICase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-        updateRequestForAccessControl(linkRequest.mutableResourceRequest(), document.securityOrigin(), allowCredentials);
+        updateRequestForAccessControl(linkRequest.mutableResourceRequest(), *document.securityOrigin(), allowCredentials);
     }
     linkRequest.setForPreload(true);
     document.cachedResourceLoader().preload(type.value(), linkRequest, emptyString());

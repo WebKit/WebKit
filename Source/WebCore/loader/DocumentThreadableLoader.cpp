@@ -86,7 +86,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     , m_document(document)
     , m_options(options)
     , m_origin(WTFMove(origin))
-    , m_sameOriginRequest(securityOrigin()->canRequest(request.url()))
+    , m_sameOriginRequest(securityOrigin().canRequest(request.url()))
     , m_simpleRequest(true)
     , m_async(blockingBehavior == LoadAsynchronously)
     , m_contentSecurityPolicy(WTFMove(contentSecurityPolicy))
@@ -120,7 +120,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(const ResourceReques
         makeSimpleCrossOriginAccessRequest(crossOriginRequest);
     else {
         m_simpleRequest = false;
-        if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(securityOrigin()->toString(), crossOriginRequest.url(), m_options.allowCredentials(), crossOriginRequest.httpMethod(), crossOriginRequest.httpHeaderFields()))
+        if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(securityOrigin().toString(), crossOriginRequest.url(), m_options.allowCredentials(), crossOriginRequest.httpMethod(), crossOriginRequest.httpHeaderFields()))
             preflightSuccess(WTFMove(crossOriginRequest));
         else
             makeCrossOriginAccessRequestWithPreflight(WTFMove(crossOriginRequest));
@@ -327,7 +327,7 @@ void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error
 void DocumentThreadableLoader::preflightSuccess(ResourceRequest&& request)
 {
     ResourceRequest actualRequest(WTFMove(request));
-    actualRequest.setHTTPOrigin(securityOrigin()->toString());
+    actualRequest.setHTTPOrigin(securityOrigin().toString());
 
     m_preflightChecker = Nullopt;
 
@@ -435,7 +435,7 @@ bool DocumentThreadableLoader::isAllowedRedirect(const URL& url)
     if (m_options.crossOriginRequestPolicy == AllowCrossOriginRequests)
         return true;
 
-    return m_sameOriginRequest && securityOrigin()->canRequest(url);
+    return m_sameOriginRequest && securityOrigin().canRequest(url);
 }
 
 bool DocumentThreadableLoader::isXMLHttpRequest() const
@@ -443,9 +443,10 @@ bool DocumentThreadableLoader::isXMLHttpRequest() const
     return m_options.initiator == cachedResourceRequestInitiators().xmlhttprequest;
 }
 
-SecurityOrigin* DocumentThreadableLoader::securityOrigin() const
+SecurityOrigin& DocumentThreadableLoader::securityOrigin() const
 {
-    return m_origin ? m_origin.get() : m_document.securityOrigin();
+    ASSERT(m_document.securityOrigin());
+    return m_origin ? *m_origin : *m_document.securityOrigin();
 }
 
 const ContentSecurityPolicy& DocumentThreadableLoader::contentSecurityPolicy() const

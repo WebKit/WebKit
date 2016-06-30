@@ -160,7 +160,7 @@ bool TextTrackLoader::load(const URL& url, const String& crossOriginMode, bool i
     if (!crossOriginMode.isNull()) {
         m_crossOriginMode = crossOriginMode;
         StoredCredentials allowCredentials = equalLettersIgnoringASCIICase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-        updateRequestForAccessControl(cueRequest.mutableResourceRequest(), document->securityOrigin(), allowCredentials);
+        updateRequestForAccessControl(cueRequest.mutableResourceRequest(), *document->securityOrigin(), allowCredentials);
     } else {
         // Cross-origin resources that are not suitably CORS-enabled may not load.
         if (!document->securityOrigin()->canRequest(url)) {

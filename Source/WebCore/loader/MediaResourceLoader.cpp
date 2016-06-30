@@ -80,9 +80,10 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(const Resourc
     // is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505>.
     CachedResourceRequest cacheRequest(updatedRequest, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, allowCredentials, AskClientForAllCredentials, ClientDidNotRequestCredentials, DoSecurityCheck, corsPolicy, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, cachingPolicy));
 
-    if (!m_crossOriginMode.isNull())
-        updateRequestForAccessControl(cacheRequest.mutableResourceRequest(), m_document->securityOrigin(), allowCredentials);
-
+    if (!m_crossOriginMode.isNull()) {
+        ASSERT(m_document->securityOrigin());
+        updateRequestForAccessControl(cacheRequest.mutableResourceRequest(), *m_document->securityOrigin(), allowCredentials);
+    }
     CachedResourceHandle<CachedRawResource> resource = m_document->cachedResourceLoader().requestMedia(cacheRequest);
     if (!resource)
         return nullptr;

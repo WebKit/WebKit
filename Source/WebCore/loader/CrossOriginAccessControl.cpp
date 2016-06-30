@@ -98,14 +98,14 @@ bool isOnAccessControlResponseHeaderWhitelist(const String& name)
     return allowedCrossOriginResponseHeaders.get().contains(name);
 }
 
-void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin* securityOrigin, StoredCredentials allowCredentials)
+void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin& securityOrigin, StoredCredentials allowCredentials)
 {
     request.removeCredentials();
     request.setAllowCookies(allowCredentials == AllowStoredCredentials);
-    request.setHTTPOrigin(securityOrigin->toString());
+    request.setHTTPOrigin(securityOrigin.toString());
 }
 
-ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin* securityOrigin)
+ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin& securityOrigin)
 {
     ResourceRequest preflightRequest(request.url());
     updateRequestForAccessControl(preflightRequest, securityOrigin, DoNotAllowStoredCredentials);
@@ -152,7 +152,7 @@ void cleanRedirectedRequestForAccessControl(ResourceRequest& request)
     request.clearHTTPAcceptEncoding();
 }
 
-bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentials includeCredentials, SecurityOrigin* securityOrigin, String& errorDescription)
+bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentials includeCredentials, SecurityOrigin& securityOrigin, String& errorDescription)
 {
     // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
     // even with Access-Control-Allow-Credentials set to true.
@@ -161,11 +161,11 @@ bool passesAccessControlCheck(const ResourceResponse& response, StoredCredential
         return true;
 
     // FIXME: Access-Control-Allow-Origin can contain a list of origins.
-    if (accessControlOriginString != securityOrigin->toString()) {
+    if (accessControlOriginString != securityOrigin.toString()) {
         if (accessControlOriginString == "*")
             errorDescription = "Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.";
         else
-            errorDescription =  "Origin " + securityOrigin->toString() + " is not allowed by Access-Control-Allow-Origin.";
+            errorDescription =  "Origin " + securityOrigin.toString() + " is not allowed by Access-Control-Allow-Origin.";
         return false;
     }
 

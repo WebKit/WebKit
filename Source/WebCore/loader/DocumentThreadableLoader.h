@@ -97,7 +97,7 @@ namespace WebCore {
 
         bool isXMLHttpRequest() const final;
 
-        SecurityOrigin* securityOrigin() const;
+        SecurityOrigin& securityOrigin() const;
         const ContentSecurityPolicy& contentSecurityPolicy() const;
 
         Document& document() { return m_document; }
