@@ -1,3 +1,22 @@
+2016-06-30  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r202329): WebInspectorProxy's WKPagePolicyClient callbacks are not being called
+        https://bugs.webkit.org/show_bug.cgi?id=159308
+        <rdar://problem/27111764>
+
+        Reviewed by Tim Horton.
+
+        Adopt WKPageNavigationClient and ditch WKPolicyClient and WKPageLoaderClient.
+        After r202329, it's not possible to set a WKPolicyClient for a WKPage/WebPageProxy that backs a WKWebView.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::isMainOrTestInspectorPage): Take a WebCore::ResourceRequest.
+        (WebKit::processDidCrash): Deleted.
+        (WebKit::webProcessDidCrash): Rename to match new client callback name.
+        (WebKit::decidePolicyForNavigationAction): Rework this to take new argument types.
+        (WebKit::WebInspectorProxy::eagerlyCreateInspectorPage):
+        Install a WKPageNavigationClient. 
+
 2016-06-30  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Process suspension is prevented for 30 seconds after closing a tab

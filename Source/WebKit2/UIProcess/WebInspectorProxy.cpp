@@ -27,8 +27,8 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
+#include "APINavigationAction.h"
 #include "APIProcessPoolConfiguration.h"
-#include "APIURLRequest.h"
 #include "WKArray.h"
 #include "WKContextMenuItem.h"
 #include "WKMutableArray.h"
@@ -354,10 +354,10 @@ bool WebInspectorProxy::isInspectorPage(WebPageProxy& webPage)
     return pageLevelMap().contains(&webPage);
 }
 
-static bool isMainOrTestInspectorPage(WKURLRequestRef requestRef)
+static bool isMainOrTestInspectorPage(WebCore::ResourceRequest& request)
 {
     // Use URL so we can compare the paths and protocols.
-    const URL& requestURL = toImpl(requestRef)->resourceRequest().url();
+    const URL& requestURL = request.url();
     URL mainPageURL(URL(), WebInspectorProxy::inspectorPageURL());
     if (requestURL.protocol() == mainPageURL.protocol() && decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(mainPageURL.path()))
         return true;
@@ -371,17 +371,18 @@ static bool isMainOrTestInspectorPage(WKURLRequestRef requestRef)
     return requestURL.protocol() == testPageURL.protocol() && decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(testPageURL.path());
 }
 
-static void processDidCrash(WKPageRef, const void* clientInfo)
+static void webProcessDidCrash(WKPageRef, const void* clientInfo)
 {
     WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
     ASSERT(webInspectorProxy);
     webInspectorProxy->close();
 }
 
-static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKFrameRef, WKURLRequestRef requestRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)
+static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActionRef navigationActionRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)
 {
     // Allow non-main frames to navigate anywhere.
-    if (!toImpl(frameRef)->isMainFrame()) {
+    API::FrameInfo* sourceFrame = toImpl(navigationActionRef)->sourceFrame();
+    if (sourceFrame && !sourceFrame->isMainFrame()) {
         toImpl(listenerRef)->use();
         return;
     }
@@ -389,8 +390,10 @@ static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFr
     const WebInspectorProxy* webInspectorProxy = static_cast<const WebInspectorProxy*>(clientInfo);
     ASSERT(webInspectorProxy);
 
+    WebCore::ResourceRequest request = toImpl(navigationActionRef)->request();
+
     // Allow loading of the main inspector file.
-    if (isMainOrTestInspectorPage(requestRef)) {
+    if (isMainOrTestInspectorPage(request)) {
         toImpl(listenerRef)->use();
         return;
     }
@@ -399,7 +402,7 @@ static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFr
     toImpl(listenerRef)->ignore();
 
     // And instead load it in the inspected page.
-    webInspectorProxy->inspectedPage()->loadRequest(toImpl(requestRef)->resourceRequest());
+    webInspectorProxy->inspectedPage()->loadRequest(request);
 }
 
 static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef proposedMenuRef, WKArrayRef* newMenuRef, WKHitTestResultRef, WKTypeRef, const void*)
@@ -461,71 +464,43 @@ void WebInspectorProxy::eagerlyCreateInspectorPage()
 
     pageLevelMap().set(m_inspectorPage, inspectionLevel());
 
-    WKPagePolicyClientV1 policyClient = {
-        { 1, this },
-        nullptr, // decidePolicyForNavigationAction_deprecatedForUseWithV0
-        nullptr, // decidePolicyForNewWindowAction
-        nullptr, // decidePolicyForResponse_deprecatedForUseWithV0
-        nullptr, // unableToImplementPolicy
+    WKPageNavigationClientV0 navigationClient = {
+        { 0, this },
         decidePolicyForNavigationAction,
-        nullptr, // decidePolicyForResponse
-    };
+        nullptr, // decidePolicyForNavigationResponse
+        nullptr, // decidePolicyForPluginLoad
+        nullptr, // didStartProvisionalNavigation
+        nullptr, // didReceiveServerRedirectForProvisionalNavigation
+        nullptr, // didFailProvisionalNavigation
+        nullptr, // didCommitNavigation
+        nullptr, // didFinishNavigation
+        nullptr, // didFailNavigation
+        nullptr, // didFailProvisionalLoadInSubframe
+        nullptr, // didFinishDocumentLoad
+        nullptr, // didSameDocumentNavigation
+        nullptr, // renderingProgressDidChange
+        nullptr, // canAuthenticateAgainstProtectionSpace
+        nullptr, // didReceiveAuthenticationChallenge
+        webProcessDidCrash,
+        nullptr, // copyWebCryptoMasterKey
 
-    WKPageLoaderClientV5 loaderClient = {
-        { 5, this },
-        nullptr, // didStartProvisionalLoadForFrame
-        nullptr, // didReceiveServerRedirectForProvisionalLoadForFrame
-        nullptr, // didFailProvisionalLoadWithErrorForFrame
-        nullptr, // didCommitLoadForFrame
-        nullptr, // didFinishDocumentLoadForFrame
-        nullptr, // didFinishLoadForFrame
-        nullptr, // didFailLoadWithErrorForFrame
-        nullptr, // didSameDocumentNavigationForFrame
-        nullptr, // didReceiveTitleForFrame
-        nullptr, // didFirstLayoutForFrame
-        nullptr, // didFirstVisuallyNonEmptyLayoutForFrame
-        nullptr, // didRemoveFrameFromHierarchy
-        nullptr, // didDisplayInsecureContentForFrame
-        nullptr, // didRunInsecureContentForFrame
-        nullptr, // canAuthenticateAgainstProtectionSpaceInFrame
-        nullptr, // didReceiveAuthenticationChallengeInFrame
-        nullptr, // didStartProgress
-        nullptr, // didChangeProgress
-        nullptr, // didFinishProgress
-        nullptr, // didBecomeUnresponsive
-        nullptr, // didBecomeResponsive
-        processDidCrash,
-        nullptr, // didChangeBackForwardList
-        nullptr, // shouldGoToBackForwardListItem
-        nullptr, // didFailToInitializePlugin_deprecatedForUseWithV0
-        nullptr, // didDetectXSSForFrame
-        nullptr, // didNewFirstVisuallyNonEmptyLayout_unavailable
-        nullptr, // willGoToBackForwardListItem
-        nullptr, // interactionOccurredWhileProcessUnresponsive
-        nullptr, // pluginDidFail_deprecatedForUseWithV1
-        nullptr, // didReceiveIntentForFrame_unavailable
-        nullptr, // registerIntentServiceForFrame_unavailable
-        nullptr, // didLayout
-        nullptr, // pluginLoadPolicy_deprecatedForUseWithV2
-        nullptr, // pluginDidFail
-        nullptr, // pluginLoadPolicy
-        nullptr, // webGLLoadPolicy
-        nullptr, // resolveWebGLLoadPolicy
-        nullptr, // shouldKeepCurrentBackForwardListItemInList
+        nullptr, // didBeginNavigationGesture
+        nullptr, // willEndNavigationGesture
+        nullptr, // didEndNavigationGesture
+        nullptr, // didRemoveNavigationGestureSnapshot
     };
 
     WKPageContextMenuClientV3 contextMenuClient = {
         { 3, this },
-        0, // getContextMenuFromProposedMenu_deprecatedForUseWithV0
-        0, // customContextMenuItemSelected
-        0, // contextMenuDismissed
+        nullptr, // getContextMenuFromProposedMenu_deprecatedForUseWithV0
+        nullptr, // customContextMenuItemSelected
+        nullptr, // contextMenuDismissed
         getContextMenuFromProposedMenu,
-        0, // showContextMenu
-        0, // hideContextMenu
+        nullptr, // showContextMenu
+        nullptr, // hideContextMenu
     };
 
-    WKPageSetPagePolicyClient(toAPI(m_inspectorPage), &policyClient.base);
-    WKPageSetPageLoaderClient(toAPI(m_inspectorPage), &loaderClient.base);
+    WKPageSetPageNavigationClient(toAPI(m_inspectorPage), &navigationClient.base);
     WKPageSetPageContextMenuClient(toAPI(m_inspectorPage), &contextMenuClient.base);
 
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
