@@ -256,7 +256,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    bool m_isMediaStreamEnabled;
+    bool m_isMediaStreamEnabled { true };
 #endif
 #if ENABLE(WEB_RTC)
     bool m_isPeerConnectionEnabled;
