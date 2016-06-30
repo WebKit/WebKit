@@ -26,6 +26,8 @@
 #ifndef ProcessAssertion_h
 #define ProcessAssertion_h
 
+#include <functional>
+
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS BKSProcessAssertion;
@@ -47,7 +49,7 @@ public:
 
 class ProcessAssertion {
 public:
-    ProcessAssertion(pid_t, AssertionState);
+    ProcessAssertion(pid_t, AssertionState, std::function<void()> invalidationCallback = { });
     ~ProcessAssertion();
 
     void setClient(ProcessAssertionClient& client) { m_client = &client; }
@@ -56,9 +58,16 @@ public:
     AssertionState state() const { return m_assertionState; }
     void setState(AssertionState);
 
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+protected:
+    enum class Validity { No, Yes, Unset };
+    Validity validity() const { return m_validity; }
+#endif
+
 private:
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
     RetainPtr<BKSProcessAssertion> m_assertion;
+    Validity m_validity { Validity::Unset };
 #endif
     AssertionState m_assertionState;
     ProcessAssertionClient* m_client { nullptr };

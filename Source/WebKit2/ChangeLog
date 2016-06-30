@@ -1,3 +1,36 @@
+2016-06-30  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Process suspension is prevented for 30 seconds after closing a tab
+        https://bugs.webkit.org/show_bug.cgi?id=159280
+        <rdar://problem/27014867>
+
+        Reviewed by Gavin Barraclough.
+
+        When closing a tab, ConnectionTerminationWatchdog takes a background
+        assertion on behalf of the WebContent process and only releases it
+        after 30 seconds, allowing for the WebContent process to exit cleanly
+        without worrying about getting suspended too early.
+
+        However, the child process normally exits much sooner than this and
+        we end up holding a process assertion for no reason for a full 30
+        seconds anyway. This patch addresses the issue by registering an
+        invalidation handler with the BKSProcessAssertion and releasing our
+        our assertion in such case. The invalidation handler gets called
+        as soon as the child process exits.
+
+        * Platform/spi/ios/AssertionServicesSPI.h:
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::validity):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::~ProcessAssertion):
+        (WebKit::ProcessAndUIAssertion::updateRunInBackgroundCount):
+        (WebKit::ProcessAndUIAssertion::ProcessAndUIAssertion):
+        (WebKit::ProcessAssertion::setState): Deleted.
+
 2016-06-30  Tim Horton  <timothy_horton@apple.com>
 
         Keep track of when a WKWebView is blank before the initial non-empty layout

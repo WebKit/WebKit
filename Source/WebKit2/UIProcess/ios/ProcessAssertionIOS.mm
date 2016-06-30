@@ -143,21 +143,28 @@ static BKSProcessAssertionFlags flagsForState(AssertionState assertionState)
     }
 }
 
-ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState)
+ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState, std::function<void()> invalidationCallback)
+    : m_assertionState(assertionState)
 {
-    m_assertionState = assertionState;
-    
     BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
         if (!acquired) {
-            LOG_ERROR("Unable to acquire assertion for process %d", pid);
+            LOG_ALWAYS_ERROR(true, "Unable to acquire assertion for process %d", pid);
             ASSERT_NOT_REACHED();
+            m_validity = Validity::No;
+            invalidationCallback();
         }
     };
     m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
+    m_assertion.get().invalidationHandler = ^() {
+        m_validity = Validity::No;
+        invalidationCallback();
+    };
 }
 
 ProcessAssertion::~ProcessAssertion()
 {
+    m_assertion.get().invalidationHandler = nil;
+
     if (ProcessAssertionClient* client = this->client())
         [[WKProcessAssertionBackgroundTaskManager shared] removeClient:*client];
     [m_assertion invalidate];
@@ -174,7 +181,7 @@ void ProcessAssertion::setState(AssertionState assertionState)
 
 void ProcessAndUIAssertion::updateRunInBackgroundCount()
 {
-    bool shouldHoldBackgroundAssertion = state() != AssertionState::Suspended;
+    bool shouldHoldBackgroundAssertion = validity() != Validity::No && state() != AssertionState::Suspended;
 
     if (shouldHoldBackgroundAssertion) {
         if (!m_isHoldingBackgroundAssertion)
@@ -188,7 +195,7 @@ void ProcessAndUIAssertion::updateRunInBackgroundCount()
 }
 
 ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, AssertionState assertionState)
-    : ProcessAssertion(pid, assertionState)
+    : ProcessAssertion(pid, assertionState, [this] { updateRunInBackgroundCount(); })
 {
     updateRunInBackgroundCount();
 }
@@ -219,7 +226,7 @@ void ProcessAndUIAssertion::setClient(ProcessAssertionClient& newClient)
 
 namespace WebKit {
 
-ProcessAssertion::ProcessAssertion(pid_t, AssertionState assertionState)
+ProcessAssertion::ProcessAssertion(pid_t, AssertionState assertionState, std::function<void()>)
     : m_assertionState(assertionState)
 {
 }
