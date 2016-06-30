@@ -28,11 +28,9 @@
 
 #include "DebuggerScope.h"
 #include "Error.h"
-#include "IdentifierInlines.h"
 #include "JSCJSValue.h"
 #include "JSCellInlines.h"
 #include "JSJavaScriptCallFramePrototype.h"
-#include "ObjectConstructor.h"
 #include "StructureInlines.h"
 
 using namespace JSC;
@@ -94,58 +92,45 @@ JSValue JSJavaScriptCallFrame::evaluateWithScopeExtension(ExecState* exec)
     return result;
 }
 
-static JSValue valueForScopeType(DebuggerScope* scope)
+JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
 {
-    if (scope->isCatchScope())
-        return jsNumber(JSJavaScriptCallFrame::CATCH_SCOPE);
-    if (scope->isFunctionNameScope())
-        return jsNumber(JSJavaScriptCallFrame::FUNCTION_NAME_SCOPE);
-    if (scope->isWithScope())
-        return jsNumber(JSJavaScriptCallFrame::WITH_SCOPE);
-    if (scope->isNestedLexicalScope())
-        return jsNumber(JSJavaScriptCallFrame::NESTED_LEXICAL_SCOPE);
-    if (scope->isGlobalLexicalEnvironment())
-        return jsNumber(JSJavaScriptCallFrame::GLOBAL_LEXICAL_ENVIRONMENT_SCOPE);
-    if (scope->isGlobalScope())
-        return jsNumber(JSJavaScriptCallFrame::GLOBAL_SCOPE);
-
-    ASSERT(scope->isClosureScope());
-    return jsNumber(JSJavaScriptCallFrame::CLOSURE_SCOPE);
-}
-
-static JSValue valueForScopeLocation(ExecState* exec, const DebuggerLocation& location)
-{
-    if (location.sourceID == noSourceID)
-        return jsNull();
-
-    // Debugger.Location protocol object.
-    JSObject* result = constructEmptyObject(exec);
-    result->putDirect(exec->vm(), Identifier::fromString(exec, "scriptId"), jsString(exec, String::number(location.sourceID)));
-    result->putDirect(exec->vm(), Identifier::fromString(exec, "lineNumber"), jsNumber(location.line));
-    result->putDirect(exec->vm(), Identifier::fromString(exec, "columnNumber"), jsNumber(location.column));
-    return result;
-}
-
-JSValue JSJavaScriptCallFrame::scopeDescriptions(ExecState* exec)
-{
-    DebuggerScope* scopeChain = impl().scopeChain();
-    if (!scopeChain)
+    if (!impl().scopeChain())
         return jsUndefined();
 
-    int index = 0;
-    JSArray* array = constructEmptyArray(exec, nullptr);
+    if (!exec->argument(0).isInt32())
+        return jsUndefined();
+    int index = exec->argument(0).asInt32();
 
+    DebuggerScope* scopeChain = impl().scopeChain();
     DebuggerScope::iterator end = scopeChain->end();
+
     for (DebuggerScope::iterator iter = scopeChain->begin(); iter != end; ++iter) {
         DebuggerScope* scope = iter.get();
-        JSObject* description = constructEmptyObject(exec);
-        description->putDirect(exec->vm(), Identifier::fromString(exec, "type"), valueForScopeType(scope));
-        description->putDirect(exec->vm(), Identifier::fromString(exec, "name"), jsString(exec, scope->name()));
-        description->putDirect(exec->vm(), Identifier::fromString(exec, "location"), valueForScopeLocation(exec, scope->location()));
-        array->putDirectIndex(exec, index++, description);
+
+        if (!index) {
+            if (scope->isCatchScope())
+                return jsNumber(JSJavaScriptCallFrame::CATCH_SCOPE);
+            if (scope->isFunctionNameScope())
+                return jsNumber(JSJavaScriptCallFrame::FUNCTION_NAME_SCOPE);
+            if (scope->isWithScope())
+                return jsNumber(JSJavaScriptCallFrame::WITH_SCOPE);
+            if (scope->isNestedLexicalScope())
+                return jsNumber(JSJavaScriptCallFrame::NESTED_LEXICAL_SCOPE);
+            if (scope->isGlobalLexicalEnvironment())
+                return jsNumber(JSJavaScriptCallFrame::GLOBAL_LEXICAL_ENVIRONMENT_SCOPE);
+            if (scope->isGlobalScope()) {
+                ASSERT(++iter == end);
+                return jsNumber(JSJavaScriptCallFrame::GLOBAL_SCOPE);
+            }
+            ASSERT(scope->isClosureScope());
+            return jsNumber(JSJavaScriptCallFrame::CLOSURE_SCOPE);
+        }
+
+        --index;
     }
 
-    return array;
+    ASSERT_NOT_REACHED();
+    return jsUndefined();
 }
 
 JSValue JSJavaScriptCallFrame::caller(ExecState* exec) const

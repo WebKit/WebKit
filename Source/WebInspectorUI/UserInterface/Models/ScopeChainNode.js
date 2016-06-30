@@ -25,7 +25,7 @@
 
 WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
 {
-    constructor(type, objects, name, location)
+    constructor(type, objects)
     {
         super();
 
@@ -37,31 +37,18 @@ WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
 
         this._type = type || null;
         this._objects = objects || [];
-        this._name = name || "";
-        this._location = location || null;
     }
 
     // Public
 
-    get type() { return this._type; }
-    get objects() { return this._objects; }
-    get name() { return this._name; }
-    get location() { return this._location; }
-
-    get hash()
+    get type()
     {
-        if (this._hash)
-            return this._hash;
-
-        this._hash = this._name;
-        if (this._location)
-            this._hash += `:${this._location.scriptId}:${this._location.lineNumber}:${this._location.columnNumber}`;
-        return this._hash;
+        return this._type;
     }
 
-    convertToLocalScope()
+    get objects()
     {
-        this._type = WebInspector.ScopeChainNode.Type.Local;
+        return this._objects;
     }
 };
 

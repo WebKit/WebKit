@@ -1304,11 +1304,9 @@ InjectedScript.CallFrameProxy.prototype = {
     _wrapScopeChain: function(callFrame)
     {
         var scopeChain = callFrame.scopeChain;
-        var scopeDescriptions = callFrame.scopeDescriptions();
-
         var scopeChainProxy = [];
         for (var i = 0; i < scopeChain.length; i++)
-            scopeChainProxy[i] = InjectedScript.CallFrameProxy._createScopeJson(scopeChain[i], scopeDescriptions[i], "backtrace");
+            scopeChainProxy[i] = InjectedScript.CallFrameProxy._createScopeJson(callFrame.scopeType(i), scopeChain[i], "backtrace");
         return scopeChainProxy;
     }
 }
@@ -1321,21 +1319,14 @@ InjectedScript.CallFrameProxy._scopeTypeNames = {
     4: "functionName", // FUNCTION_NAME_SCOPE
     5: "globalLexicalEnvironment", // GLOBAL_LEXICAL_ENVIRONMENT_SCOPE
     6: "nestedLexical", // NESTED_LEXICAL_SCOPE
-};
+}
 
-InjectedScript.CallFrameProxy._createScopeJson = function(object, {name, type, location}, groupId)
+InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeObject, groupId)
 {
-    var scope = {
-        object: injectedScript._wrapObject(object, groupId),
-        type: InjectedScript.CallFrameProxy._scopeTypeNames[type],
+    return {
+        object: injectedScript._wrapObject(scopeObject, groupId),
+        type: InjectedScript.CallFrameProxy._scopeTypeNames[scopeTypeCode]
     };
-
-    if (name)
-        scope.name = name;
-    if (location)
-        scope.location = location;
-
-    return scope;
 }
 
 

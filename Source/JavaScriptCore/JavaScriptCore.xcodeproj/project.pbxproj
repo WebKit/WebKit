@@ -1645,8 +1645,6 @@
 		A5EF9B171A1D440300702E90 /* generate_cpp_frontend_dispatcher_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D41A05C76F005CAB76 /* generate_cpp_frontend_dispatcher_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EF9B181A1D440600702E90 /* generate_cpp_protocol_types_header.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D51A05C76F005CAB76 /* generate_cpp_protocol_types_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EF9B191A1D440700702E90 /* generate_cpp_protocol_types_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D61A05C76F005CAB76 /* generate_cpp_protocol_types_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		A5FC84B21D1DDAD6006B5C46 /* DebuggerLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FC84B11D1DDAC8006B5C46 /* DebuggerLocation.h */; };
-		A5FC84B31D1DDAD9006B5C46 /* DebuggerLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FC84B01D1DDAC8006B5C46 /* DebuggerLocation.cpp */; };
 		A5FD0067189AFE9C00633231 /* ScriptArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */; };
 		A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0066189AFE9C00633231 /* ScriptArguments.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5FD006D189B00AA00633231 /* ScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */; };
@@ -3869,8 +3867,6 @@
 		A5EA70F619F6DE5A0098F5EC /* generate_objc_internal_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_internal_header.py; sourceTree = "<group>"; };
 		A5EA70F819F6DE5A0098F5EC /* objc_generator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = objc_generator.py; sourceTree = "<group>"; };
 		A5EA710D19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAlternateBackendDispatchers.h; sourceTree = "<group>"; };
-		A5FC84B01D1DDAC8006B5C46 /* DebuggerLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerLocation.cpp; sourceTree = "<group>"; };
-		A5FC84B11D1DDAC8006B5C46 /* DebuggerLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerLocation.h; sourceTree = "<group>"; };
 		A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArguments.cpp; sourceTree = "<group>"; };
 		A5FD0066189AFE9C00633231 /* ScriptArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptArguments.h; sourceTree = "<group>"; };
 		A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallFrame.cpp; sourceTree = "<group>"; };
@@ -5348,8 +5344,6 @@
 				149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */,
 				1480DB9B0DDC227F003CFDF2 /* DebuggerCallFrame.h */,
 				6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */,
-				A5FC84B01D1DDAC8006B5C46 /* DebuggerLocation.cpp */,
-				A5FC84B11D1DDAC8006B5C46 /* DebuggerLocation.h */,
 				FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */,
 				0F2D4DDB19832D34007D4B19 /* DebuggerScope.cpp */,
 				0F2D4DDC19832D34007D4B19 /* DebuggerScope.h */,
@@ -7701,7 +7695,6 @@
 				996B731C1BDA08DD00331B84 /* JSDataViewPrototype.lut.h in Headers */,
 				978801411471AD920041B016 /* JSDateMath.h in Headers */,
 				C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */,
-				A5FC84B21D1DDAD6006B5C46 /* DebuggerLocation.h in Headers */,
 				FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */,
 				FE384EE81ADDB7AD0055DE2C /* JSDollarVMPrototype.h in Headers */,
 				BC18C42D0E16F5CD00B34460 /* JSEnvironmentRecord.h in Headers */,
@@ -8781,7 +8774,6 @@
 				A57D23F11891B5B40031C7FA /* ContentSearchUtilities.cpp in Sources */,
 				52B717B51A0597E1007AF4F3 /* ControlFlowProfiler.cpp in Sources */,
 				0FBADF541BD1F4B800E073C1 /* CopiedBlock.cpp in Sources */,
-				A5FC84B31D1DDAD9006B5C46 /* DebuggerLocation.cpp in Sources */,
 				C240305514B404E60079EB64 /* CopiedSpace.cpp in Sources */,
 				0F6183301C45BF070072450B /* AirLowerMacros.cpp in Sources */,
 				C2239D1716262BDD005AC5FD /* CopyVisitor.cpp in Sources */,

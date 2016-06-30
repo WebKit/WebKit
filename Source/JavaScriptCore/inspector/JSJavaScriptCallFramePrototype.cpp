@@ -39,7 +39,7 @@ namespace Inspector {
 
 // Functions.
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension(ExecState*);
-static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionScopeDescriptions(ExecState*);
+static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionScopeType(ExecState*);
 
 // Attributes.
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeCaller(ExecState*);
@@ -61,7 +61,7 @@ void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* glob
     vm.prototypeMap.addPrototype(this);
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluateWithScopeExtension", jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("scopeDescriptions", jsJavaScriptCallFramePrototypeFunctionScopeDescriptions, DontEnum, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("scopeType", jsJavaScriptCallFramePrototypeFunctionScopeType, DontEnum, 1);
 
     JSC_NATIVE_GETTER("caller", jsJavaScriptCallFrameAttributeCaller, DontEnum | Accessor);
     JSC_NATIVE_GETTER("sourceID", jsJavaScriptCallFrameAttributeSourceID, DontEnum | Accessor);
@@ -84,14 +84,14 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionEvaluateWithS
     return JSValue::encode(castedThis->evaluateWithScopeExtension(exec));
 }
 
-EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionScopeDescriptions(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionScopeType(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(thisValue);
     if (!castedThis)
         return throwVMTypeError(exec);
 
-    return JSValue::encode(castedThis->scopeDescriptions(exec));
+    return JSValue::encode(castedThis->scopeType(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeCaller(ExecState* exec)

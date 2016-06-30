@@ -679,9 +679,6 @@ public:
     SymbolTable* cloneScopePart(VM&);
 
     void prepareForTypeProfiling(const ConcurrentJITLocker&);
-
-    CodeBlock* rareDataCodeBlock();
-    void setRareDataCodeBlock(CodeBlock*);
     
     InferredValue* singletonScope() { return m_singletonScope.get(); }
 
@@ -698,13 +695,12 @@ private:
     Map m_map;
     ScopeOffset m_maxScopeOffset;
     
-    struct SymbolTableRareData {
+    struct TypeProfilingRareData {
         UniqueIDMap m_uniqueIDMap;
         OffsetToVariableMap m_offsetToVariableMap;
         UniqueTypeSetMap m_uniqueTypeSetMap;
-        WriteBarrier<CodeBlock> m_codeBlock;
     };
-    std::unique_ptr<SymbolTableRareData> m_rareData;
+    std::unique_ptr<TypeProfilingRareData> m_typeProfilingRareData;
 
     bool m_usesNonStrictEval : 1;
     bool m_nestedLexicalScope : 1; // Non-function LexicalScope.

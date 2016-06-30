@@ -239,7 +239,6 @@ set(JavaScriptCore_SOURCES
 
     debugger/Debugger.cpp
     debugger/DebuggerCallFrame.cpp
-    debugger/DebuggerLocation.cpp
     debugger/DebuggerScope.cpp
 
     dfg/DFGAbstractHeap.cpp

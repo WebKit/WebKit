@@ -81,10 +81,8 @@
             "id": "Scope",
             "type": "object",
             "properties": [
-                { "name": "object", "$ref": "Runtime.RemoteObject", "description": "Object representing the scope. For <code>global</code> and <code>with</code> scopes it represents the actual object; for the rest of the scopes, it is artificial transient object enumerating scope variables as its properties." },
                 { "name": "type", "type": "string", "enum": ["global", "with", "closure", "catch", "functionName", "globalLexicalEnvironment", "nestedLexical"], "description": "Scope type." },
-                { "name": "name", "type": "string", "optional": true, "description": "Name associated with the scope." },
-                { "name": "location", "$ref": "Location", "optional": true, "description": "Location if available of the scope definition." }
+                { "name": "object", "$ref": "Runtime.RemoteObject", "description": "Object representing the scope. For <code>global</code> and <code>with</code> scopes it represents the actual object; for the rest of the scopes, it is artificial transient object enumerating scope variables as its properties." }
             ],
             "description": "Scope description."
         },

@@ -26,7 +26,6 @@
 #ifndef DebuggerScope_h
 #define DebuggerScope_h
 
-#include "DebuggerLocation.h"
 #include "JSObject.h"
 
 namespace JSC {
@@ -88,9 +87,6 @@ public:
     bool isClosureScope() const;
     bool isGlobalLexicalEnvironment() const;
     bool isNestedLexicalScope() const;
-
-    String name() const;
-    DebuggerLocation location() const;
 
     JSValue caughtValue(ExecState*) const;
 
