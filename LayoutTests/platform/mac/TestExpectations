@@ -190,7 +190,6 @@ fast/mediastream/RTCPeerConnection-js-built-ins-check-this.html
 fast/mediastream/RTCPeerConnection-inspect-offer.html
 fast/mediastream/RTCPeerConnection-add-removeTrack.html
 fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html
-fast/mediastream/RTCPeerConnection-onnegotiationneeded.html
 fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html
 fast/mediastream/RTCPeerConnection-closed-state.html
 fast/mediastream/RTCPeerConnection-overloaded-operations-params.html

@@ -1,5 +1,13 @@
 2016-06-30  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Removing duplicated line from Mac TestExpectations file.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-06-30  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking fast/shrink-wrap/rect-shrink-wrap.html as flaky on ios-simulator
         https://bugs.webkit.org/show_bug.cgi?id=159275
 
