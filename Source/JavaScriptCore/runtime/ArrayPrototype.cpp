@@ -344,6 +344,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     
     // 2. Let func be the result of calling the [[Get]] internal method of array with argument "join".
     JSValue function = JSValue(thisObject).get(exec, exec->propertyNames().join);
+    if (UNLIKELY(vm.exception()))
+        return JSValue::encode(jsUndefined());
 
     // 3. If IsCallable(func) is false, then let func be the standard built-in method Object.prototype.toString (15.2.4.2).
     bool customJoinCase = false;
@@ -716,15 +718,21 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         if (vm.exception())
             return JSValue::encode(jsUndefined());
         JSValue lowerValue;
-        if (lowerExists)
+        if (lowerExists) {
             lowerValue = thisObject->get(exec, lower);
+            if (UNLIKELY(vm.exception()))
+                return JSValue::encode(jsUndefined());
+        }
 
         bool upperExists = thisObject->hasProperty(exec, upper);
-        if (vm.exception())
+        if (UNLIKELY(vm.exception()))
             return JSValue::encode(jsUndefined());
         JSValue upperValue;
-        if (upperExists)
+        if (upperExists) {
             upperValue = thisObject->get(exec, upper);
+            if (UNLIKELY(vm.exception()))
+                return JSValue::encode(jsUndefined());
+        }
 
         if (upperExists) {
             thisObject->putByIndexInline(exec, lower, upperValue, true);
