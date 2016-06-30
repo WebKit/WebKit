@@ -450,7 +450,7 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElem
     if (!settings || !settings->allowsInlineMediaPlayback())
         return true;
 
-    return settings->inlineMediaPlaybackRequiresPlaysInlineAttribute() && !element.fastHasAttribute(HTMLNames::webkit_playsinlineAttr);
+    return settings->inlineMediaPlaybackRequiresPlaysInlineAttribute() && !(element.fastHasAttribute(HTMLNames::webkit_playsinlineAttr) || element.fastHasAttribute(HTMLNames::playsinlineAttr));
 }
 
 bool MediaElementSession::allowsAutomaticMediaDataLoading(const HTMLMediaElement& element) const
