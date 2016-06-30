@@ -360,7 +360,8 @@ private:
             break;
         }
             
-        case ToPrimitive: {
+        case ToPrimitive:
+        case ToNumber: {
             node->child1()->mergeFlags(flags);
             break;
         }

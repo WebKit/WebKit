@@ -346,12 +346,6 @@ SLOW_PATH_DECL(slow_path_dec)
     RETURN(jsNumber(OP(1).jsValue().toNumber(exec) - 1));
 }
 
-SLOW_PATH_DECL(slow_path_to_number)
-{
-    BEGIN();
-    RETURN(jsNumber(OP_C(2).jsValue().toNumber(exec)));
-}
-
 SLOW_PATH_DECL(slow_path_to_string)
 {
     BEGIN();
@@ -397,6 +391,14 @@ static void updateResultProfileForBinaryArithOp(ExecState* exec, Instruction* pc
 #else
 static void updateResultProfileForBinaryArithOp(ExecState*, Instruction*, JSValue, JSValue, JSValue) { }
 #endif
+
+SLOW_PATH_DECL(slow_path_to_number)
+{
+    BEGIN();
+    JSValue argument = OP_C(2).jsValue();
+    JSValue result = jsNumber(argument.toNumber(exec));
+    RETURN_PROFILED(op_to_number, result);
+}
 
 SLOW_PATH_DECL(slow_path_add)
 {

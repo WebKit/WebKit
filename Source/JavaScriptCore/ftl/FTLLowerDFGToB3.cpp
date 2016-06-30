@@ -723,6 +723,9 @@ private:
         case ReallocatePropertyStorage:
             compileReallocatePropertyStorage();
             break;
+        case ToNumber:
+            compileToNumber();
+            break;
         case ToString:
         case CallStringConstructor:
             compileToStringOrCallStringConstructor();
@@ -4094,6 +4097,33 @@ private:
             reallocatePropertyStorage(
                 object, oldStorage, transition->previous, transition->next));
     }
+
+    void compileToNumber()
+    {
+        LValue value = lowJSValue(m_node->child1());
+
+        if (!(abstractValue(m_node->child1()).m_type & SpecBytecodeNumber))
+            setJSValue(vmCall(m_out.int64, m_out.operation(operationToNumber), m_callFrame, value));
+        else {
+            LBasicBlock notNumber = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            ValueFromBlock fastResult = m_out.anchor(value);
+            m_out.branch(isNumber(value, provenType(m_node->child1())), unsure(continuation), unsure(notNumber));
+
+            // notNumber case.
+            LBasicBlock lastNext = m_out.appendTo(notNumber, continuation);
+            // We have several attempts to remove ToNumber. But ToNumber still exists.
+            // It means that converting non-numbers to numbers by this ToNumber is not rare.
+            // Instead of the lazy slow path generator, we call the operation here.
+            ValueFromBlock slowResult = m_out.anchor(vmCall(m_out.int64, m_out.operation(operationToNumber), m_callFrame, value));
+            m_out.jump(continuation);
+
+            // continuation case.
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(m_out.int64, fastResult, slowResult));
+        }
+    }
     
     void compileToStringOrCallStringConstructor()
     {
@@ -4881,6 +4911,15 @@ private:
         if (m_node->isBinaryUseKind(BooleanUse)) {
             setBoolean(
                 m_out.equal(lowBoolean(m_node->child1()), lowBoolean(m_node->child2())));
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(UntypedUse)) {
+            nonSpeculativeCompare(
+                [&] (LValue left, LValue right) {
+                    return m_out.equal(left, right);
+                },
+                operationCompareStrictEq);
             return;
         }
 

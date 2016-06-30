@@ -35,6 +35,18 @@ const int32_t maxExponentForIntegerMathPow = 1000;
 double JIT_OPERATION operationMathPow(double x, double y) WTF_INTERNAL;
 int32_t JIT_OPERATION operationToInt32(double) WTF_INTERNAL;
 
+inline constexpr double maxSafeInteger()
+{
+    // 2 ^ 53 - 1
+    return 9007199254740991.0;
+}
+
+inline constexpr double minSafeInteger()
+{
+    // -(2 ^ 53 - 1)
+    return -9007199254740991.0;
+}
+
 inline int clz32(uint32_t number)
 {
 #if COMPILER(GCC_OR_CLANG)

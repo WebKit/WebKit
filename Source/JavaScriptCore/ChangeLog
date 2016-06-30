@@ -1,3 +1,244 @@
+2016-06-30  Joseph Pecoraro  <pecoraro@apple.com> and Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement isFinite / isNaN in JS and make DFG ToNumber accept non number values
+        https://bugs.webkit.org/show_bug.cgi?id=154022
+
+        Reviewed by Filip Pizlo.
+
+        We aim at optimizing @toInteger operation.
+        While it still has an unoptimized part[1], this patch should be a first step.
+
+        We introduce the @toNumber builtin intrinsic operation.
+        This converts the given value to the JS number by emitting op_to_number bytecode.
+        Previously @toInteger called C++ @Number constructor for that purpose.
+
+        And in DFG, op_to_number is converted to DFG ToNumber node.
+        During DFG, we attempt to convert this to edge filtering and Identity, but if we fail,
+        we just fall back to calling the C++ function.
+
+        To utilize ToNumber in user-land side, we add a path attempting to convert Number constructor calls
+        to ToNumber DFG nodes. This conversion is useful because `Number(value)` is used to convert a value to a number in JS.
+
+        Before this patch, we emit simple edge filtering (NumberUse) instead of emitting DFG node like ToNumber for op_to_number.
+        But emitting ToNumber is useful, because in the case of `Number(value)`, considering `value` may not be a number is reasonable.
+
+        By leveraging @toNumber operation, we rewrite Number.{isFinite, isNaN}, global.{isFinite, isNaN} and @toInteger.
+
+        ToNumber DFG node has a value profiling. This profiling is leveraged to determine the result number type of the ToNumber operation.
+        This value profiling is provided from either NumberConstructor's call operation or op_to_number.
+
+        The results (with the added performance tests) show that, while existing cases are performance neutral, the newly added cases gain the performance benefit.
+        And ASMBench/n-body.c also shows stable ~2% progression.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=153738
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinNames.h:
+        * builtins/GlobalObject.js:
+        (globalPrivate.isFinite):
+        (globalPrivate.isNaN):
+        (globalPrivate.toInteger): Deleted.
+        (globalPrivate.toLength): Deleted.
+        (globalPrivate.isDictionary): Deleted.
+        (globalPrivate.speciesGetter): Deleted.
+        (globalPrivate.speciesConstructor): Deleted.
+        * builtins/GlobalOperations.js: Copied from Source/JavaScriptCore/builtins/GlobalObject.js.
+        (globalPrivate.toInteger):
+        (globalPrivate.toLength):
+        (globalPrivate.isDictionary):
+        (globalPrivate.speciesGetter):
+        (globalPrivate.speciesConstructor):
+        * builtins/NumberConstructor.js: Added.
+        (isFinite):
+        (isNaN):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finishCreation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitUnaryOp):
+        (JSC::BytecodeGenerator::emitUnaryOpProfiled):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitToNumber):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_toNumber):
+        (JSC::UnaryPlusNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        We use `getPrediction()` to retrieve the heap prediction from the to_number bytecode.
+        According to the benchmark results, choosing `getPredictionWithoutOSRExit()` causes performance regression (1.5%) in kraken stanford-crypto-aes.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToNumber):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        Always on the heap prediction.
+
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        As of 64bit version, we carefully manage the register reuse. The largest difference between 32bit and 64bit is
+        `branchIfNotNumber()` requires the temporary register. We should not use the result registers for that since
+        it may be reuse the argument registers and it can break the argument registers before using them to call the operation.
+        Currently, we allocate the additional temporary register for that scratch register.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        Reuse the argument register for the result if possible. And manually decrement the use count in the middle of the node.
+        This is similar technique used in ToPrimitive. Typically, the child of ToNumber is only used by this ToNumber node since
+        we would like to perform the type conversion onto this child node here. So this careful register reuse effectively removes
+        the spills to call the operation. The example of the actually emitted code is the following.
+
+        76:<!2:loc11>     ToNumber(Untyped:@68, JS|MustGen|UseAsOther, DoubleimpurenanTopEmpty, R:World, W:Heap, Exits, ClobbersExit, bc#48)  predicting DoubleimpurenanTopEmpty
+            0x7f986d5fe693: test %rax, %r14
+            0x7f986d5fe696: jz 0x7f986d5fe6a1
+            0x7f986d5fe69c: jmp 0x7f986d5fe6d1
+            0x7f986d5fe6a1: mov %rax, %rsi
+            0x7f986d5fe6a4: mov %rbp, %rdi
+            0x7f986d5fe6a7: mov $0x2, 0x24(%rbp)
+            0x7f986d5fe6ae: mov $0x7f98711ea5f0, %r11
+            0x7f986d5fe6b8: call *%r11
+            0x7f986d5fe6bb: mov $0x7f982d3f72d0, %r11
+            0x7f986d5fe6c5: mov (%r11), %r11
+            0x7f986d5fe6c8: test %r11, %r11
+            0x7f986d5fe6cb: jnz 0x7f986d5fe88c
+
+        It effectively removes the unnecessary spill to call the operation!
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToNumber):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfNumber):
+        (JSC::AssemblyHelpers::branchIfNotNumber):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_number):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_to_number):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/Nodes.h:
+        (JSC::UnaryOpNode::opcodeID):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncIsNaN): Deleted.
+        (JSC::globalFuncIsFinite): Deleted.
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/MathCommon.h:
+        (JSC::maxSafeInteger):
+        (JSC::minSafeInteger):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        (JSC::numberConstructorFuncIsFinite): Deleted.
+        (JSC::numberConstructorFuncIsNaN): Deleted.
+        * runtime/NumberConstructor.h:
+        * tests/stress/Number-isNaN-basics.js: Added.
+        (numberIsNaNOnInteger):
+        (testNumberIsNaNOnIntegers):
+        (verifyNumberIsNaNOnIntegerWithOtherTypes):
+        (numberIsNaNOnDouble):
+        (testNumberIsNaNOnDoubles):
+        (verifyNumberIsNaNOnDoublesWithOtherTypes):
+        (numberIsNaNNoArguments):
+        (numberIsNaNTooManyArguments):
+        (testNumberIsNaNOnConstants):
+        (numberIsNaNStructTransition):
+        (Number.isNaN):
+        * tests/stress/global-is-finite.js: Added.
+        (shouldBe):
+        * tests/stress/global-is-nan.js: Added.
+        (shouldBe):
+        * tests/stress/global-isNaN-basics.js: Added.
+        (isNaNOnInteger):
+        (testIsNaNOnIntegers):
+        (verifyIsNaNOnIntegerWithOtherTypes):
+        (isNaNOnDouble):
+        (testIsNaNOnDoubles):
+        (verifyIsNaNOnDoublesWithOtherTypes):
+        (verifyIsNaNOnCoercedTypes):
+        (isNaNNoArguments):
+        (isNaNTooManyArguments):
+        (testIsNaNOnConstants):
+        (isNaNTypeCoercionSideEffects):
+        (i.value.isNaNTypeCoercionSideEffects.valueOf):
+        (isNaNStructTransition):
+        (isNaN):
+        * tests/stress/number-is-finite.js: Added.
+        (shouldBe):
+        (test2):
+        (test3):
+        * tests/stress/number-is-nan.js: Added.
+        (shouldBe):
+        (test2):
+        (test3):
+        * tests/stress/to-number-basics.js: Added.
+        (shouldBe):
+        * tests/stress/to-number-convert-identity-without-execution.js: Added.
+        (shouldBe):
+        (object.valueOf):
+        (valueOf):
+        * tests/stress/to-number-int52.js: Added.
+        (shouldBe):
+        (object.valueOf):
+        * tests/stress/to-number-intrinsic-convert-to-identity-without-execution.js: Added.
+        (shouldBe):
+        (object.valueOf):
+        (valueOf):
+        * tests/stress/to-number-intrinsic-int52.js: Added.
+        (shouldBe):
+        (object.valueOf):
+        * tests/stress/to-number-intrinsic-object-without-execution.js: Added.
+        (shouldBe):
+        (object.valueOf):
+        * tests/stress/to-number-intrinsic-value-profiling.js: Added.
+        (shouldBe):
+        (object.valueOf):
+        * tests/stress/to-number-object-without-execution.js: Added.
+        (shouldBe):
+        (object.valueOf):
+        * tests/stress/to-number-object.js: Added.
+        (shouldBe):
+        (test12):
+        (object1.valueOf):
+        (test2):
+        (test22):
+        (object2.valueOf):
+        (test3):
+        (test32):
+        (object3.valueOf):
+        * tests/stress/to-number-value-profiling.js: Added.
+        (shouldBe):
+        (object.valueOf):
+
 2016-06-29  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the debug build after r202667
@@ -1107,6 +1348,10 @@
         * dfg/DFGFixupPhase.cpp:
         (JSC::DFG::FixupPhase::fixupNode):
         (JSC::DFG::FixupPhase::fixupToNumber):
+        ToNumber tells its predicted type by its heap prediction. So the fixup phase need to consider about it.
+        If the heap prediction is Int32, we should attempt to convert the child value to Int32.
+        Without this, misc-bugs-847389-jpeg2000 in assorted tests poses 53% regression.
+
         * dfg/DFGNode.h:
         (JSC::DFG::Node::hasHeapPrediction):
         * dfg/DFGNodeType.h:

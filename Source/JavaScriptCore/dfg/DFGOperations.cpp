@@ -731,6 +731,14 @@ EncodedJSValue JIT_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValu
     return JSValue::encode(JSValue::decode(value).toPrimitive(exec));
 }
 
+EncodedJSValue JIT_OPERATION operationToNumber(ExecState* exec, EncodedJSValue value)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    return JSValue::encode(jsNumber(JSValue::decode(value).toNumber(exec)));
+}
+
 EncodedJSValue JIT_OPERATION operationGetByIdWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, UniquedStringImpl* impl)
 {
     VM& vm = exec->vm();

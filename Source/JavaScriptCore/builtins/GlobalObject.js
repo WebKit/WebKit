@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2015-2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,60 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// @internal
-
 @globalPrivate
-function toInteger(target)
+function isFinite(value)
 {
     "use strict";
 
-    var numberValue = @Number(target);
-
-    // isNaN(numberValue)
+    var numberValue = @toNumber(value);
+    // Return false if numberValue is |NaN|.
     if (numberValue !== numberValue)
-        return 0;
-    return @trunc(numberValue);
+        return false;
+    return numberValue !== @Infinity && numberValue !== -@Infinity;
 }
 
 @globalPrivate
-function toLength(target)
+function isNaN(value)
 {
     "use strict";
 
-    var maxSafeInteger = 0x1FFFFFFFFFFFFF;
-    var length = @toInteger(target);
-    // originally Math.min(Math.max(length, 0), maxSafeInteger));
-    return length > 0 ? (length < maxSafeInteger ? length : maxSafeInteger) : 0;
-}
-
-@globalPrivate
-function isDictionary(object)
-{
-    "use strict";
-
-    return object === @undefined || object == null || typeof object === "object";
-}
-
-// FIXME: this needs to have it's name changed to "get [Symbol.species]".
-// see: https://bugs.webkit.org/show_bug.cgi?id=151363
-@globalPrivate
-function speciesGetter()
-{
-    return this;
-}
-
-@globalPrivate
-function speciesConstructor(obj, defaultConstructor)
-{
-    var constructor = obj.constructor;
-    if (constructor === @undefined)
-        return defaultConstructor;
-    if (!@isObject(constructor))
-        throw new @TypeError("|this|.constructor is not an Object or undefined");
-    constructor = constructor.@speciesSymbol;
-    if (constructor == null)
-        return defaultConstructor;
-    if (@isConstructor(constructor))
-        return constructor;
-    throw new @TypeError("|this|.constructor[Symbol.species] is not a constructor");
+    var numberValue = @toNumber(value);
+    return numberValue !== numberValue;
 }

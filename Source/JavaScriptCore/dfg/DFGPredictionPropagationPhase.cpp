@@ -712,7 +712,8 @@ private:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case GetClosureVar:
-        case GetFromArguments: {
+        case GetFromArguments:
+        case ToNumber: {
             setPrediction(m_currentNode->getHeapPrediction());
             break;
         }

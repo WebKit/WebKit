@@ -31,7 +31,7 @@
             { "name" : "op_greatereq", "length" : 4 },
             { "name" : "op_inc", "length" : 2 },
             { "name" : "op_dec", "length" : 2 },
-            { "name" : "op_to_number", "length" : 3 },
+            { "name" : "op_to_number", "length" : 4 },
             { "name" : "op_to_string", "length" : 3 },
             { "name" : "op_negate", "length" : 3 },
             { "name" : "op_add", "length" : 5 },

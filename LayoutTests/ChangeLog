@@ -1,3 +1,52 @@
+2016-06-30  Joseph Pecoraro  <pecoraro@apple.com> and Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement isFinite / isNaN in JS and make DFG ToNumber accept non number values
+        https://bugs.webkit.org/show_bug.cgi?id=154022
+
+        Reviewed by Filip Pizlo.
+
+        * js/regress/Number-isNaN-expected.txt: Added.
+        * js/regress/Number-isNaN.html: Added.
+        * js/regress/global-isNaN-expected.txt: Added.
+        * js/regress/global-isNaN.html: Added.
+        * js/regress/script-tests/Number-isNaN.js: Added.
+        * js/regress/script-tests/global-isNaN.js: Added.
+        * js/regress/script-tests/many-foreach-calls.js:
+        (i.4.forEach):
+        (i.array.forEach): Deleted.
+        * js/regress/script-tests/to-number-constructor-number-string-number-string.js: Added.
+        (test):
+        * js/regress/script-tests/to-number-constructor-only-number.js: Added.
+        (test):
+        * js/regress/script-tests/to-number-constructor-only-string.js: Added.
+        (test):
+        * js/regress/script-tests/to-number-constructor-string-number-string-number.js: Added.
+        (test):
+        * js/regress/script-tests/to-number-number-string-number-string.js: Added.
+        (test):
+        * js/regress/script-tests/to-number-only-number.js: Added.
+        (test):
+        * js/regress/script-tests/to-number-only-string.js: Added.
+        (test):
+        * js/regress/script-tests/to-number-string-number-string-number.js: Added.
+        (test):
+        * js/regress/to-number-constructor-number-string-number-string-expected.txt: Added.
+        * js/regress/to-number-constructor-number-string-number-string.html: Added.
+        * js/regress/to-number-constructor-only-number-expected.txt: Added.
+        * js/regress/to-number-constructor-only-number.html: Added.
+        * js/regress/to-number-constructor-only-string-expected.txt: Added.
+        * js/regress/to-number-constructor-only-string.html: Added.
+        * js/regress/to-number-constructor-string-number-string-number-expected.txt: Added.
+        * js/regress/to-number-constructor-string-number-string-number.html: Added.
+        * js/regress/to-number-number-string-number-string-expected.txt: Added.
+        * js/regress/to-number-number-string-number-string.html: Added.
+        * js/regress/to-number-only-number-expected.txt: Added.
+        * js/regress/to-number-only-number.html: Added.
+        * js/regress/to-number-only-string-expected.txt: Added.
+        * js/regress/to-number-only-string.html: Added.
+        * js/regress/to-number-string-number-string-number-expected.txt: Added.
+        * js/regress/to-number-string-number-string-number.html: Added.
+
 2016-06-30  Antoine Quint  <graouts@apple.com>
 
         [iOS] Media controls are too cramped with small video
