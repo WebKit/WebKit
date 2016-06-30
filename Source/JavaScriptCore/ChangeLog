@@ -1,3 +1,23 @@
+2016-06-29  Saam barati  <sbarati@apple.com>
+
+        JSGlobalLexicalEnvironment needs a toThis implementation
+        https://bugs.webkit.org/show_bug.cgi?id=159285
+
+        Reviewed by Mark Lam.
+
+        This was a huge oversight of my original implementation. It gave users
+        of the language direct access to the JSGlobalLexicalEnvironment object.
+
+        * runtime/JSGlobalLexicalEnvironment.cpp:
+        (JSC::JSGlobalLexicalEnvironment::isConstVariable):
+        (JSC::JSGlobalLexicalEnvironment::toThis):
+        * runtime/JSGlobalLexicalEnvironment.h:
+        (JSC::JSGlobalLexicalEnvironment::isEmpty):
+        * tests/stress/global-lexical-environment-to-this.js: Added.
+        (assert):
+        (let.f):
+        (let.fStrict):
+
 2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Wrong function name next to scope

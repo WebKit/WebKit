@@ -61,4 +61,11 @@ bool JSGlobalLexicalEnvironment::isConstVariable(UniquedStringImpl* impl)
     return entry.isReadOnly();
 }
 
+JSValue JSGlobalLexicalEnvironment::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
+{
+    if (ecmaMode == StrictMode)
+        return jsUndefined();
+    return exec->globalThisValue();
+}
+
 } // namespace JSC
