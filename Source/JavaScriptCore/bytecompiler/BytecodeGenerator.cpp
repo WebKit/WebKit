@@ -549,14 +549,34 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     emitMoveEmptyValue(&m_thisRegister);
                 else
                     emitCreateThis(&m_thisRegister);
-            } else if (constructorKind() != ConstructorKind::None) {
+            } else if (constructorKind() != ConstructorKind::None)
                 emitThrowTypeError("Cannot call a class constructor");
-            } else if (functionNode->usesThis() || codeBlock->usesEval() || isThisUsedInInnerArrowFunction()) {
-                m_codeBlock->addPropertyAccessInstruction(instructions().size());
-                emitOpcode(op_to_this);
-                instructions().append(kill(&m_thisRegister));
-                instructions().append(0);
-                instructions().append(0);
+            else {
+                bool shouldEmitToThis = false;
+                if (functionNode->usesThis() || codeBlock->usesEval() || m_scopeNode->doAnyInnerArrowFunctionsUseThis() || m_scopeNode->doAnyInnerArrowFunctionsUseEval())
+                    shouldEmitToThis = true;
+                else if ((functionNode->usesSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty()) && !codeBlock->isStrictMode()) {
+                    // We must emit to_this when we're not in strict mode because we
+                    // will convert |this| to an object, and that object may be passed
+                    // to a strict function as |this|. This is observable because that
+                    // strict function's to_this will just return the object.
+                    //
+                    // We don't need to emit this for strict-mode code because
+                    // strict-mode code may call another strict function, which will
+                    // to_this if it directly uses this; this is OK, because we defer
+                    // to_this until |this| is used directly. Strict-mode code might
+                    // also call a sloppy mode function, and that will to_this, which
+                    // will defer the conversion, again, until necessary.
+                    shouldEmitToThis = true;
+                }
+
+                if (shouldEmitToThis) {
+                    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+                    emitOpcode(op_to_this);
+                    instructions().append(kill(&m_thisRegister));
+                    instructions().append(0);
+                    instructions().append(0);
+                }
             }
         }
         break;

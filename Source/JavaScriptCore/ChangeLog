@@ -1,5 +1,42 @@
 2016-06-30  Saam Barati  <sbarati@apple.com>
 
+        get_by_id_with_this does not trigger a to_this in caller.
+        https://bugs.webkit.org/show_bug.cgi?id=159226
+
+        Reviewed by Keith Miller.
+
+        This is a bug if the caller is in sloppy mode and the callee is in strict
+        mode. This can't happen with ES6 classes because they're all in strict mode,
+        but it can happen with method syntax on an object literal. The caller must
+        to_this on |this| when it knows that it performs super property accesses.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * tests/stress/super-property-access-object-literal-to-this-2.js: Added.
+        (assert):
+        (test):
+        (let.o1.get foo):
+        (let.o2.a):
+        (let.o2.aa):
+        * tests/stress/super-property-access-object-literal-to-this.js: Added.
+        (assert):
+        (test):
+        (let.o1.get foo):
+        (let.o2.a):
+        (let.o2.aa):
+        (let.o2.b):
+        (let.o2.bb):
+        * tests/stress/super-property-access-to-this.js: Added.
+        (assert):
+        (test):
+        (Base.prototype.get foo):
+        (Base):
+        (Child.prototype.a):
+        (Child.prototype.b):
+        (Child):
+
+2016-06-30  Saam Barati  <sbarati@apple.com>
+
         We need to to_this when an inner arrow function uses 'this'
         https://bugs.webkit.org/show_bug.cgi?id=159290
         <rdar://problem/27058322>
