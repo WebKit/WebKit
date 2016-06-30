@@ -40,6 +40,7 @@
 #include "MediaStreamEvent.h"
 #include "MediaStreamTrack.h"
 #include "PeerMediaDescription.h"
+#include "RTCConfiguration.h"
 #include "RTCIceCandidate.h"
 #include "RTCOfferAnswerOptions.h"
 #include "RTCRtpTransceiver.h"
@@ -609,9 +610,11 @@ RefPtr<RTCSessionDescription> MediaEndpointPeerConnection::pendingRemoteDescript
 
 void MediaEndpointPeerConnection::setConfiguration(RTCConfiguration& configuration)
 {
-    UNUSED_PARAM(configuration);
+    Vector<RefPtr<IceServerInfo>> iceServers;
+    for (auto& server : configuration.iceServers())
+        iceServers.append(IceServerInfo::create(server->urls(), server->credential(), server->username()));
 
-    notImplemented();
+    m_mediaEndpoint->setConfiguration(MediaEndpointConfiguration::create(iceServers, configuration.iceTransportPolicy(), configuration.bundlePolicy()));
 }
 
 void MediaEndpointPeerConnection::addIceCandidate(RTCIceCandidate& rtcCandidate, PeerConnection::VoidPromise&& promise)

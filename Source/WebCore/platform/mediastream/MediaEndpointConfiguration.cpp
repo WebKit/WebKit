@@ -44,26 +44,11 @@ IceServerInfo::IceServerInfo(const Vector<String>& urls, const String& credentia
         m_urls.append(URL(URL(), url));
 }
 
-MediaEndpointConfiguration::MediaEndpointConfiguration(Vector<RefPtr<IceServerInfo>>& iceServers, const String& iceTransportPolicy, const String& bundlePolicy)
+MediaEndpointConfiguration::MediaEndpointConfiguration(Vector<RefPtr<IceServerInfo>>& iceServers, IceTransportPolicy iceTransportPolicy, BundlePolicy bundlePolicy)
     : m_iceServers(iceServers)
+    , m_iceTransportPolicy(iceTransportPolicy)
+    , m_bundlePolicy(bundlePolicy)
 {
-    if (iceTransportPolicy == "none")
-        m_iceTransportPolicy = IceTransportPolicy::None;
-    else if (iceTransportPolicy == "relay")
-        m_iceTransportPolicy = IceTransportPolicy::Relay;
-    else if (iceTransportPolicy == "all")
-        m_iceTransportPolicy = IceTransportPolicy::All;
-    else
-        ASSERT_NOT_REACHED();
-
-    if (bundlePolicy == "balanced")
-        m_bundlePolicy = BundlePolicy::Balanced;
-    else if (bundlePolicy == "max-compat")
-        m_bundlePolicy = BundlePolicy::MaxCompat;
-    else if (bundlePolicy == "max-bundle")
-        m_bundlePolicy = BundlePolicy::MaxBundle;
-    else
-        ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

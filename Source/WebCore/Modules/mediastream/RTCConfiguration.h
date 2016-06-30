@@ -33,6 +33,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "PeerConnectionStates.h"
 #include "RTCIceServer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -50,10 +51,10 @@ public:
     static RefPtr<RTCConfiguration> create(const Dictionary& configuration, ExceptionCode&);
     virtual ~RTCConfiguration() { }
 
-    enum class IceTransportPolicy { Public, Relay, All };
+    using IceTransportPolicy = PeerConnectionStates::IceTransportPolicy;
     IceTransportPolicy iceTransportPolicy() const { return m_iceTransportPolicy; }
 
-    enum class BundlePolicy { Balanced, MaxCompat, MaxBundle };
+    using BundlePolicy = PeerConnectionStates::BundlePolicy;
     BundlePolicy bundlePolicy() const { return m_bundlePolicy; }
 
     Vector<RefPtr<RTCIceServer>> iceServers() const { return m_iceServers; }

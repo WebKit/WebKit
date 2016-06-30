@@ -1,3 +1,20 @@
+2016-06-29  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Implement MediaEndpointPeerConnection::setConfiguration()
+        https://bugs.webkit.org/show_bug.cgi?id=159254
+
+        Reviewed by Eric Carlson.
+
+        Test configuring an RTCPeerConnection object via the constructor and setConfiguration() and
+        check the resulting configuration with getConfiguration().
+
+        * fast/mediastream/RTCPeerConnection-getConfiguration-expected.txt:
+        * fast/mediastream/RTCPeerConnection-getConfiguration.html:
+        Remove 'requestIdentity' tests (dictionary member removed from WebRTC 1.0). Add tests for
+        'bundlePolicy'.
+        * platform/gtk/TestExpectations:
+        Unskip above test.
+
 2016-06-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Minor TypedArray fixes

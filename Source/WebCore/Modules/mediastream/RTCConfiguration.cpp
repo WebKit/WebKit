@@ -141,9 +141,7 @@ void RTCConfiguration::initialize(const Dictionary& configuration, ExceptionCode
 
     String iceTransportPolicy;
     if (configuration.get("iceTransportPolicy", iceTransportPolicy)) {
-        if (iceTransportPolicy == "public")
-            m_iceTransportPolicy = IceTransportPolicy::Public;
-        else if (iceTransportPolicy == "relay")
+        if (iceTransportPolicy == "relay")
             m_iceTransportPolicy = IceTransportPolicy::Relay;
         else if (iceTransportPolicy == "all")
             m_iceTransportPolicy = IceTransportPolicy::All;

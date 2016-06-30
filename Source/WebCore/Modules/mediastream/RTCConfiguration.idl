@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum RTCIceTransportPolicy { "public", "relay", "all" };
+enum RTCIceTransportPolicy { "relay", "all" };
 enum RTCBundlePolicy { "balanced", "max-compat", "max-bundle" };
 
 [

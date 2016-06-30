@@ -5,19 +5,19 @@
     </head>
     <body>
         <script>
-            description("Tests RTCPeerConnection getConfiguration.");
+            description("Tests RTCPeerConnection get/setConfiguration.");
 
             var pc = null;
             var configuration = null;
             var iceServers = null;
             var urls = null;
 
-            function checkConfiguration(serversList, iceTransports, requestIdentity)
+            function checkConfiguration(serversList, iceTransportPolicy, bundlePolicy)
             {
                 iceServers = configuration.iceServers
                 shouldBe('iceServers.length', serversList.length.toString());
-                shouldBeEqualToString('configuration.iceTransports', iceTransports);
-                shouldBeEqualToString('configuration.requestIdentity', requestIdentity);
+                shouldBeEqualToString('configuration.iceTransportPolicy', iceTransportPolicy);
+                shouldBeEqualToString('configuration.bundlePolicy', bundlePolicy);
                 for (i = 0; i < iceServers.length; ++i) {
                     shouldBeEqualToString('iceServers[i].username', serversList[i].username);
                     shouldBeEqualToString('iceServers[i].credential', serversList[i].credential);
@@ -31,32 +31,62 @@
             pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
             var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
             configuration = pc.getConfiguration();
-            checkConfiguration(servers, 'all', 'ifconfigured');
+            checkConfiguration(servers, 'all', 'balanced');
 
             pc = new webkitRTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:'stun:bar.com', username:'user2', credential:'x'}]});
             servers = [{urls:['turn:foo.com'], username:'user', credential:'x'}, {urls:['stun:bar.com'], username:'user2', credential:'x'}];
             configuration = pc.getConfiguration();
-            checkConfiguration(servers, 'all', 'ifconfigured');
+            checkConfiguration(servers, 'all', 'balanced');
 
             pc = new webkitRTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}]});
             servers = [{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}];
             configuration = pc.getConfiguration();
-            checkConfiguration(servers, 'all', 'ifconfigured');
+            checkConfiguration(servers, 'all', 'balanced');
 
-            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}], iceTransports:'relay', requestIdentity:'no'});
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}], iceTransportPolicy:'relay', bundlePolicy:'balanced'});
             var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
             configuration = pc.getConfiguration();
-            checkConfiguration(servers, 'relay', 'no');
+            checkConfiguration(servers, 'relay', 'balanced');
 
-            pc = new webkitRTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}], iceTransports:'none', requestIdentity:'yes'});
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}], iceTransportPolicy:'relay', bundlePolicy:'max-compat'});
+            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'relay', 'max-compat');
+
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}], iceTransportPolicy:'relay', bundlePolicy:'max-bundle'});
             servers = [{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}];
             configuration = pc.getConfiguration();
-            checkConfiguration(servers, 'none', 'yes');
+            checkConfiguration(servers, 'relay', 'max-bundle');
 
-            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}], iceTransports:'foo', requestIdentity:'bar'});
+            pc.setConfiguration({iceServers:[{urls:'stun:foo.com'}]});
             var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
             configuration = pc.getConfiguration();
-            checkConfiguration(servers, 'all', 'ifconfigured');
+            checkConfiguration(servers, 'all', 'balanced');
+
+            pc.setConfiguration({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:'stun:bar.com', username:'user2', credential:'x'}]});
+            servers = [{urls:['turn:foo.com'], username:'user', credential:'x'}, {urls:['stun:bar.com'], username:'user2', credential:'x'}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'all', 'balanced');
+
+            pc.setConfiguration({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}]});
+            servers = [{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'all', 'balanced');
+
+            pc.setConfiguration({iceServers:[{urls:'stun:foo.com'}], iceTransportPolicy:'relay', bundlePolicy:'balanced'});
+            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'relay', 'balanced');
+
+            pc.setConfiguration({iceServers:[{urls:'stun:foo.com'}], iceTransportPolicy:'relay', bundlePolicy:'max-compat'});
+            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'relay', 'max-compat');
+
+            pc.setConfiguration({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}], iceTransportPolicy:'relay', bundlePolicy:'max-bundle'});
+            servers = [{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'relay', 'max-bundle');
 
             finishJSTest();
 
