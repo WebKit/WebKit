@@ -125,7 +125,7 @@ public:
     void performClose();
 
 private:
-    Database(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
+    Database(RefPtr<DatabaseContext>&&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
 
     void closeDatabase();
 

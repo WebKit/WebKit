@@ -58,7 +58,7 @@ public:
 
 class SQLTransactionBackend : public ThreadSafeRefCounted<SQLTransactionBackend>, public SQLTransactionStateMachine<SQLTransactionBackend> {
 public:
-    static Ref<SQLTransactionBackend> create(Database*, PassRefPtr<SQLTransaction>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
+    static Ref<SQLTransactionBackend> create(Database*, RefPtr<SQLTransaction>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
 
     virtual ~SQLTransactionBackend();
 
@@ -71,13 +71,13 @@ public:
 
     // APIs called from the frontend published via SQLTransactionBackend:
     void requestTransitToState(SQLTransactionState);
-    PassRefPtr<SQLError> transactionError();
+    SQLError* transactionError();
     SQLStatement* currentStatement();
     void setShouldRetryCurrentStatement(bool);
     void executeSQL(std::unique_ptr<SQLStatement>);
-    
+
 private:
-    SQLTransactionBackend(Database*, PassRefPtr<SQLTransaction>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
+    SQLTransactionBackend(Database*, RefPtr<SQLTransaction>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
 
     void doCleanup();
 
