@@ -551,7 +551,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     emitCreateThis(&m_thisRegister);
             } else if (constructorKind() != ConstructorKind::None) {
                 emitThrowTypeError("Cannot call a class constructor");
-            } else if (functionNode->usesThis() || codeBlock->usesEval()) {
+            } else if (functionNode->usesThis() || codeBlock->usesEval() || isThisUsedInInnerArrowFunction()) {
                 m_codeBlock->addPropertyAccessInstruction(instructions().size());
                 emitOpcode(op_to_this);
                 instructions().append(kill(&m_thisRegister));

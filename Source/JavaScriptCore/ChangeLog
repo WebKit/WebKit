@@ -1,3 +1,32 @@
+2016-06-30  Saam Barati  <sbarati@apple.com>
+
+        We need to to_this when an inner arrow function uses 'this'
+        https://bugs.webkit.org/show_bug.cgi?id=159290
+        <rdar://problem/27058322>
+
+        Reviewed by Geoffrey Garen.
+
+        We put the |this| value into the closure object when there
+        is an arrow function that uses |this|. However, an arrow function
+        using |this| wasn't causing the creator of the closure that
+        holds |this| to to_this its value before putting it in the
+        closure. That's a huge bug because it means some arrow functions
+        can capture the raw |this| value, which might be a JSLexicalEnvironment.
+        This patch fixes this by adding an easy to check to see if any
+        inner arrow functions use |this|, and if any do, it will to_this
+        the |this| value.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * tests/stress/to-this-before-arrow-function-closes-over-this-that-starts-as-lexical-environment.js: Added.
+        (assert):
+        (obj):
+        (foo.capture):
+        (foo.wrapper.let.x.):
+        (foo2.capture):
+        (foo2.wrapper.let.x.):
+        (foo2.wrapper.bar):
+
 2016-06-29  Filip Pizlo  <fpizlo@apple.com>
 
         Generators violate bytecode liveness validation
