@@ -178,7 +178,17 @@ struct MediaPlayerFactory {
 
 static void addMediaEngine(CreateMediaEnginePlayer, MediaEngineSupportedTypes, MediaEngineSupportsType, MediaEngineOriginsInMediaCache, MediaEngineClearMediaCache, MediaEngineClearMediaCacheForOrigins, MediaEngineSupportsKeySystem);
 
-static bool haveMediaEnginesVector;
+static Lock& mediaEngineVectorLock()
+{
+    static NeverDestroyed<Lock> lock;
+    return lock;
+}
+
+static bool& haveMediaEnginesVector()
+{
+    static bool haveVector;
+    return haveVector;
+}
 
 static Vector<MediaPlayerFactory>& mutableInstalledMediaEnginesVector()
 {
@@ -188,6 +198,8 @@ static Vector<MediaPlayerFactory>& mutableInstalledMediaEnginesVector()
 
 static void buildMediaEnginesVector()
 {
+    ASSERT(mediaEngineVectorLock().isLocked());
+
 #if USE(AVFOUNDATION)
     if (Settings::isAVFoundationEnabled()) {
 
@@ -223,13 +235,17 @@ static void buildMediaEnginesVector()
     PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
 #endif
 
-    haveMediaEnginesVector = true;
+    haveMediaEnginesVector() = true;
 }
 
 static const Vector<MediaPlayerFactory>& installedMediaEngines()
 {
-    if (!haveMediaEnginesVector)
-        buildMediaEnginesVector();
+    {
+        LockHolder lock(mediaEngineVectorLock());
+        if (!haveMediaEnginesVector())
+            buildMediaEnginesVector();
+    }
+
     return mutableInstalledMediaEnginesVector();
 }
 
@@ -1327,8 +1343,10 @@ Vector<RefPtr<PlatformTextTrack>> MediaPlayer::outOfBandTrackSources()
 
 void MediaPlayer::resetMediaEngines()
 {
+    LockHolder lock(mediaEngineVectorLock());
+
     mutableInstalledMediaEnginesVector().clear();
-    haveMediaEnginesVector = false;
+    haveMediaEnginesVector() = false;
 }
 
 #if USE(GSTREAMER)

@@ -142,6 +142,7 @@ typedef AVPlayerItemVideoOutput AVPlayerItemVideoOutputType;
 typedef AVMetadataItem AVMetadataItemType;
 typedef AVMediaSelectionGroup AVMediaSelectionGroupType;
 typedef AVMediaSelectionOption AVMediaSelectionOptionType;
+typedef AVAssetCache AVAssetCacheType;
 
 #pragma mark - Soft Linking
 
@@ -152,14 +153,14 @@ SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreImage)
 
-SOFT_LINK_CLASS(AVFoundation, AVPlayer)
-SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
-SOFT_LINK_CLASS(AVFoundation, AVPlayerItemVideoOutput)
-SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
-SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
-SOFT_LINK_CLASS(AVFoundation, AVAssetImageGenerator)
-SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
-SOFT_LINK_CLASS(AVFoundation, AVAssetCache)
+SOFT_LINK_CLASS_FOR_SOURCE(WebCore, AVFoundation, AVPlayer)
+SOFT_LINK_CLASS_FOR_SOURCE(WebCore, AVFoundation, AVPlayerItem)
+SOFT_LINK_CLASS_FOR_SOURCE(WebCore, AVFoundation, AVPlayerItemVideoOutput)
+SOFT_LINK_CLASS_FOR_SOURCE(WebCore, AVFoundation, AVPlayerLayer)
+SOFT_LINK_CLASS_FOR_SOURCE(WebCore, AVFoundation, AVURLAsset)
+SOFT_LINK_CLASS_FOR_SOURCE(WebCore, AVFoundation, AVAssetImageGenerator)
+SOFT_LINK_CLASS_FOR_SOURCE(WebCore, AVFoundation, AVMetadataItem)
+SOFT_LINK_CLASS_FOR_SOURCE(WebCore, AVFoundation, AVAssetCache)
 
 SOFT_LINK_CLASS(CoreImage, CIContext)
 SOFT_LINK_CLASS(CoreImage, CIImage)
@@ -182,12 +183,14 @@ SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResize, NSString *)
 
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetClientBundleIdentifierKey, NSString *)
 
-#define AVPlayer getAVPlayerClass()
-#define AVPlayerItem getAVPlayerItemClass()
-#define AVPlayerLayer getAVPlayerLayerClass()
-#define AVURLAsset getAVURLAssetClass()
-#define AVAssetImageGenerator getAVAssetImageGeneratorClass()
-#define AVMetadataItem getAVMetadataItemClass()
+#define AVPlayer initAVPlayer()
+#define AVPlayerItem initAVPlayerItem()
+#define AVPlayerLayer initAVPlayerLayer()
+#define AVURLAsset initAVURLAsset()
+#define AVAssetImageGenerator initAVAssetImageGenerator()
+#define AVPlayerItemVideoOutput initAVPlayerItemVideoOutput()
+#define AVMetadataItem initAVMetadataItem()
+#define AVAssetCache initAVAssetCache()
 
 #define AVAudioTimePitchAlgorithmSpectral getAVAudioTimePitchAlgorithmSpectral()
 #define AVAudioTimePitchAlgorithmVarispeed getAVAudioTimePitchAlgorithmVarispeed()
@@ -432,7 +435,7 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
     AVFoundationMIMETypeCache::singleton().loadTypes();
 }
 
-static AVAssetCache *assetCacheForPath(const String& path)
+static AVAssetCacheType *assetCacheForPath(const String& path)
 {
     NSURL *assetCacheURL;
     
@@ -441,7 +444,7 @@ static AVAssetCache *assetCacheForPath(const String& path)
     else
         assetCacheURL = [NSURL fileURLWithPath:path isDirectory:YES];
 
-    return [getAVAssetCacheClass() assetCacheWithURL:assetCacheURL];
+    return [initAVAssetCache() assetCacheWithURL:assetCacheURL];
 }
 
 HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateAVFoundationObjC::originsInMediaCache(const String& path)
@@ -467,7 +470,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, std
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::clearMediaCache()");
     
-    AVAssetCache* assetCache = assetCacheForPath(path);
+    AVAssetCacheType* assetCache = assetCacheForPath(path);
     
     for (NSString *key in [assetCache allKeys]) {
         if (toSystemClockTime([assetCache lastModifiedDateOfEntryForKey:key]) > modifiedSince)
@@ -510,7 +513,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, std
 void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins()");
-    AVAssetCache* assetCache = assetCacheForPath(path);
+    AVAssetCacheType* assetCache = assetCacheForPath(path);
     for (NSString *key in [assetCache allKeys]) {
         URL keyAsURL = URL(URL(), key);
         if (keyAsURL.isValid()) {
@@ -730,7 +733,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     if (!m_avPlayer)
         return;
 
-    m_videoLayer = adoptNS([allocAVPlayerLayerInstance() init]);
+    m_videoLayer = adoptNS([[AVPlayerLayer alloc] init]);
     [m_videoLayer setPlayer:m_avPlayer.get()];
     [m_videoLayer setBackgroundColor:cachedCGColor(Color::black)];
 
@@ -976,7 +979,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
         [options setObject:assetCacheForPath(player()->client().mediaPlayerMediaCacheDirectory()) forKey:AVURLAssetCacheKey];
 
     NSURL *cocoaURL = canonicalURL(url);
-    m_avAsset = adoptNS([allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
+    m_avAsset = adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options.get()]);
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
@@ -1026,7 +1029,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 
     setDelayCallbacks(true);
 
-    m_avPlayer = adoptNS([allocAVPlayerInstance() init]);
+    m_avPlayer = adoptNS([[AVPlayer alloc] init]);
     for (NSString *keyName in playerKVOProperties())
         [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
 
@@ -1072,7 +1075,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     setDelayCallbacks(true);
 
     // Create the player item so we can load media data. 
-    m_avPlayerItem = adoptNS([allocAVPlayerItemInstance() initWithAsset:m_avAsset.get()]);
+    m_avPlayerItem = adoptNS([[AVPlayerItem alloc] initWithAsset:m_avAsset.get()]);
 
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(didEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:m_avPlayerItem.get()];
 
@@ -1089,7 +1092,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     const NSTimeInterval legibleOutputAdvanceInterval = 2;
 
     RetainPtr<NSArray> subtypes = adoptNS([[NSArray alloc] initWithObjects:[NSNumber numberWithUnsignedInt:kCMSubtitleFormatType_WebVTT], nil]);
-    m_legibleOutput = adoptNS([allocAVPlayerItemLegibleOutputInstance() initWithMediaSubtypesForNativeRepresentation:subtypes.get()]);
+    m_legibleOutput = adoptNS([[AVPlayerItemLegibleOutput alloc] initWithMediaSubtypesForNativeRepresentation:subtypes.get()]);
     [m_legibleOutput.get() setSuppressesPlayerRendering:YES];
 
     [m_legibleOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
@@ -2284,7 +2287,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
     NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey,
                                 nil];
 #endif
-    m_videoOutput = adoptNS([allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:attributes]);
+    m_videoOutput = adoptNS([[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes]);
     ASSERT(m_videoOutput);
 
     [m_videoOutput setDelegate:m_videoOutputDelegate.get() queue:globalPullDelegateQueue()];
@@ -2408,7 +2411,7 @@ void MediaPlayerPrivateAVFoundationObjC::createOpenGLVideoOutput()
 #else
     NSDictionary* attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLFBOCompatibilityKey: @YES};
 #endif
-    m_openGLVideoOutput = adoptNS([allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:attributes]);
+    m_openGLVideoOutput = adoptNS([[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes]);
     ASSERT(m_openGLVideoOutput);
 
     [m_avPlayerItem.get() addOutput:m_openGLVideoOutput.get()];
@@ -2492,7 +2495,7 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange(%p) timed out", this);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange(AVPlayerItemVideoOutput*)
+void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange(AVPlayerItemVideoOutputType *)
 {
     dispatch_semaphore_signal(m_videoOutputSemaphore);
 }
@@ -3600,13 +3603,13 @@ NSArray* playerKVOProperties()
     m_callback = callback;
 }
 
-- (void)outputMediaDataWillChange:(AVPlayerItemVideoOutput *)output
+- (void)outputMediaDataWillChange:(AVPlayerItemVideoOutputType *)output
 {
     if (m_callback)
         m_callback->outputMediaDataWillChange(output);
 }
 
-- (void)outputSequenceWasFlushed:(AVPlayerItemVideoOutput *)output
+- (void)outputSequenceWasFlushed:(AVPlayerItemVideoOutputType *)output
 {
     UNUSED_PARAM(output);
     // No-op.
