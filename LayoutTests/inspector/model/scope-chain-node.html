@@ -66,7 +66,9 @@ function test()
                 InspectorTest.expectThat(scopeChain.length === 13, "ScopeChain should have 13 scopes.");
                 logScopeChain(scopeChain).then((result) => {
                     WebInspector.debuggerManager.resume();
-                    resolve();
+                    WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, (event) => {
+                        resolve();
+                    });
                 });
             });
         }
@@ -81,7 +83,9 @@ function test()
                 let scopeChain = WebInspector.debuggerManager.activeCallFrame.scopeChain;
                 logScopeChain(scopeChain).then((result) => {
                     WebInspector.debuggerManager.resume();
-                    resolve();
+                    WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, (event) => {
+                        resolve();
+                    });
                 });
             });
         }
@@ -96,7 +100,9 @@ function test()
                 let scopeChain = WebInspector.debuggerManager.activeCallFrame.scopeChain;
                 logScopeChain(scopeChain).then((result) => {
                     WebInspector.debuggerManager.resume();
-                    resolve();
+                    WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, (event) => {
+                        resolve();
+                    });
                 });
             });
         }
@@ -112,7 +118,10 @@ function test()
             let pauseCount = 0;
             let pauseEventsExpected = 19;
             function callFramesDidChangeListener(event) {
-                pauseCount++;
+                if (!WebInspector.debuggerManager.activeCallFrame)
+                    return;
+
+                pauseCount++;                
                 let scopeChain = WebInspector.debuggerManager.activeCallFrame.scopeChain;
 
                 // First, normal function scope.

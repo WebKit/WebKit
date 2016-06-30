@@ -104,6 +104,9 @@ void SymbolTable::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
     visitor.append(&thisSymbolTable->m_arguments);
     visitor.append(&thisSymbolTable->m_singletonScope);
     
+    if (thisSymbolTable->m_rareData)
+        visitor.append(&thisSymbolTable->m_rareData->m_codeBlock);
+    
     // Save some memory. This is O(n) to rebuild and we do so on the fly.
     ConcurrentJITLocker locker(thisSymbolTable->m_lock);
     thisSymbolTable->m_localToEntry = nullptr;
@@ -159,28 +162,28 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
     if (ScopedArgumentsTable* arguments = this->arguments())
         result->m_arguments.set(vm, result, arguments);
     
-    if (m_typeProfilingRareData) {
-        result->m_typeProfilingRareData = std::make_unique<TypeProfilingRareData>();
+    if (m_rareData) {
+        result->m_rareData = std::make_unique<SymbolTableRareData>();
 
         {
-            auto iter = m_typeProfilingRareData->m_uniqueIDMap.begin();
-            auto end = m_typeProfilingRareData->m_uniqueIDMap.end();
+            auto iter = m_rareData->m_uniqueIDMap.begin();
+            auto end = m_rareData->m_uniqueIDMap.end();
             for (; iter != end; ++iter)
-                result->m_typeProfilingRareData->m_uniqueIDMap.set(iter->key, iter->value);
+                result->m_rareData->m_uniqueIDMap.set(iter->key, iter->value);
         }
 
         {
-            auto iter = m_typeProfilingRareData->m_offsetToVariableMap.begin();
-            auto end = m_typeProfilingRareData->m_offsetToVariableMap.end();
+            auto iter = m_rareData->m_offsetToVariableMap.begin();
+            auto end = m_rareData->m_offsetToVariableMap.end();
             for (; iter != end; ++iter)
-                result->m_typeProfilingRareData->m_offsetToVariableMap.set(iter->key, iter->value);
+                result->m_rareData->m_offsetToVariableMap.set(iter->key, iter->value);
         }
 
         {
-            auto iter = m_typeProfilingRareData->m_uniqueTypeSetMap.begin();
-            auto end = m_typeProfilingRareData->m_uniqueTypeSetMap.end();
+            auto iter = m_rareData->m_uniqueTypeSetMap.begin();
+            auto end = m_rareData->m_uniqueTypeSetMap.end();
             for (; iter != end; ++iter)
-                result->m_typeProfilingRareData->m_uniqueTypeSetMap.set(iter->key, iter->value);
+                result->m_rareData->m_uniqueTypeSetMap.set(iter->key, iter->value);
         }
     }
     
@@ -189,31 +192,48 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
 
 void SymbolTable::prepareForTypeProfiling(const ConcurrentJITLocker&)
 {
-    if (m_typeProfilingRareData)
+    if (m_rareData)
         return;
 
-    m_typeProfilingRareData = std::make_unique<TypeProfilingRareData>();
+    m_rareData = std::make_unique<SymbolTableRareData>();
 
     for (auto iter = m_map.begin(), end = m_map.end(); iter != end; ++iter) {
-        m_typeProfilingRareData->m_uniqueIDMap.set(iter->key, TypeProfilerNeedsUniqueIDGeneration);
-        m_typeProfilingRareData->m_offsetToVariableMap.set(iter->value.varOffset(), iter->key);
+        m_rareData->m_uniqueIDMap.set(iter->key, TypeProfilerNeedsUniqueIDGeneration);
+        m_rareData->m_offsetToVariableMap.set(iter->value.varOffset(), iter->key);
     }
+}
+
+CodeBlock* SymbolTable::rareDataCodeBlock()
+{
+    if (!m_rareData)
+        return nullptr;
+
+    return m_rareData->m_codeBlock.get();
+}
+
+void SymbolTable::setRareDataCodeBlock(CodeBlock* codeBlock)
+{
+    if (!m_rareData)
+        m_rareData = std::make_unique<SymbolTableRareData>();
+
+    ASSERT(!m_rareData->m_codeBlock);
+    m_rareData->m_codeBlock.set(*codeBlock->vm(), this, codeBlock);
 }
 
 GlobalVariableID SymbolTable::uniqueIDForVariable(const ConcurrentJITLocker&, UniquedStringImpl* key, VM& vm)
 {
-    RELEASE_ASSERT(m_typeProfilingRareData);
+    RELEASE_ASSERT(m_rareData);
 
-    auto iter = m_typeProfilingRareData->m_uniqueIDMap.find(key);
-    auto end = m_typeProfilingRareData->m_uniqueIDMap.end();
+    auto iter = m_rareData->m_uniqueIDMap.find(key);
+    auto end = m_rareData->m_uniqueIDMap.end();
     if (iter == end)
         return TypeProfilerNoGlobalIDExists;
 
     GlobalVariableID id = iter->value;
     if (id == TypeProfilerNeedsUniqueIDGeneration) {
         id = vm.typeProfiler()->getNextUniqueVariableID();
-        m_typeProfilingRareData->m_uniqueIDMap.set(key, id);
-        m_typeProfilingRareData->m_uniqueTypeSetMap.set(key, TypeSet::create()); // Make a new global typeset for this corresponding ID.
+        m_rareData->m_uniqueIDMap.set(key, id);
+        m_rareData->m_uniqueTypeSetMap.set(key, TypeSet::create()); // Make a new global typeset for this corresponding ID.
     }
 
     return id;
@@ -221,10 +241,10 @@ GlobalVariableID SymbolTable::uniqueIDForVariable(const ConcurrentJITLocker&, Un
 
 GlobalVariableID SymbolTable::uniqueIDForOffset(const ConcurrentJITLocker& locker, VarOffset offset, VM& vm)
 {
-    RELEASE_ASSERT(m_typeProfilingRareData);
+    RELEASE_ASSERT(m_rareData);
 
-    auto iter = m_typeProfilingRareData->m_offsetToVariableMap.find(offset);
-    auto end = m_typeProfilingRareData->m_offsetToVariableMap.end();
+    auto iter = m_rareData->m_offsetToVariableMap.find(offset);
+    auto end = m_rareData->m_offsetToVariableMap.end();
     if (iter == end)
         return TypeProfilerNoGlobalIDExists;
 
@@ -233,12 +253,12 @@ GlobalVariableID SymbolTable::uniqueIDForOffset(const ConcurrentJITLocker& locke
 
 RefPtr<TypeSet> SymbolTable::globalTypeSetForOffset(const ConcurrentJITLocker& locker, VarOffset offset, VM& vm)
 {
-    RELEASE_ASSERT(m_typeProfilingRareData);
+    RELEASE_ASSERT(m_rareData);
 
     uniqueIDForOffset(locker, offset, vm); // Lazily create the TypeSet if necessary.
 
-    auto iter = m_typeProfilingRareData->m_offsetToVariableMap.find(offset);
-    auto end = m_typeProfilingRareData->m_offsetToVariableMap.end();
+    auto iter = m_rareData->m_offsetToVariableMap.find(offset);
+    auto end = m_rareData->m_offsetToVariableMap.end();
     if (iter == end)
         return nullptr;
 
@@ -247,12 +267,12 @@ RefPtr<TypeSet> SymbolTable::globalTypeSetForOffset(const ConcurrentJITLocker& l
 
 RefPtr<TypeSet> SymbolTable::globalTypeSetForVariable(const ConcurrentJITLocker& locker, UniquedStringImpl* key, VM& vm)
 {
-    RELEASE_ASSERT(m_typeProfilingRareData);
+    RELEASE_ASSERT(m_rareData);
 
     uniqueIDForVariable(locker, key, vm); // Lazily create the TypeSet if necessary.
 
-    auto iter = m_typeProfilingRareData->m_uniqueTypeSetMap.find(key);
-    auto end = m_typeProfilingRareData->m_uniqueTypeSetMap.end();
+    auto iter = m_rareData->m_uniqueTypeSetMap.find(key);
+    auto end = m_rareData->m_uniqueTypeSetMap.end();
     if (iter == end)
         return nullptr;
 

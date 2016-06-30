@@ -662,7 +662,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         }
 
         var object = WebInspector.RemoteObject.fromPayload(payload.object);
-        return new WebInspector.ScopeChainNode(type, [object]);
+        return new WebInspector.ScopeChainNode(type, [object], payload.name, payload.location);
     }
 
     _pauseReasonFromPayload(payload)

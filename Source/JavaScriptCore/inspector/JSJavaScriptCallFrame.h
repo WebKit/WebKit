@@ -58,7 +58,7 @@ public:
 
     // Functions.
     JSC::JSValue evaluateWithScopeExtension(JSC::ExecState*);
-    JSC::JSValue scopeType(JSC::ExecState*);
+    JSC::JSValue scopeDescriptions(JSC::ExecState*);
 
     // Attributes.
     JSC::JSValue caller(JSC::ExecState*) const;

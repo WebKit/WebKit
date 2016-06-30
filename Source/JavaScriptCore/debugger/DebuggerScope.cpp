@@ -210,6 +210,33 @@ bool DebuggerScope::isNestedLexicalScope() const
     return m_scope->isNestedLexicalScope();
 }
 
+String DebuggerScope::name() const
+{
+    SymbolTable* symbolTable = m_scope->symbolTable();
+    if (!symbolTable)
+        return String();
+
+    CodeBlock* codeBlock = symbolTable->rareDataCodeBlock();
+    if (!codeBlock)
+        return String();
+
+    return String::fromUTF8(codeBlock->inferredName());
+}
+
+DebuggerLocation DebuggerScope::location() const
+{
+    SymbolTable* symbolTable = m_scope->symbolTable();
+    if (!symbolTable)
+        return DebuggerLocation();
+
+    CodeBlock* codeBlock = symbolTable->rareDataCodeBlock();
+    if (!codeBlock)
+        return DebuggerLocation();
+
+    ScriptExecutable* executable = codeBlock->ownerScriptExecutable();
+    return DebuggerLocation(executable);
+}
+
 JSValue DebuggerScope::caughtValue(ExecState* exec) const
 {
     ASSERT(isCatchScope());

@@ -36,8 +36,6 @@
 
 namespace JSC {
 
-class JSSymbolTableObject;
-
 class JSSymbolTableObject : public JSScope {
 public:
     typedef JSScope Base;
@@ -49,7 +47,9 @@ public:
     JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     
     static ptrdiff_t offsetOfSymbolTable() { return OBJECT_OFFSETOF(JSSymbolTableObject, m_symbolTable); }
-    
+
+    DECLARE_EXPORT_INFO;
+
 protected:
     JSSymbolTableObject(VM& vm, Structure* structure, JSScope* scope)
         : Base(vm, structure, scope)

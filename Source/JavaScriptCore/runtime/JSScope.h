@@ -32,8 +32,9 @@
 namespace JSC {
 
 class ScopeChainIterator;
-class WatchpointSet;
+class SymbolTable;
 class VariableEnvironment;
+class WatchpointSet;
 
 class JSScope : public JSNonFinalObject {
 public:
@@ -70,6 +71,8 @@ public:
     JSGlobalObject* globalObject();
     VM* vm();
     JSObject* globalThis();
+
+    SymbolTable* symbolTable();
 
 protected:
     JSScope(VM&, Structure*, JSScope* next);
