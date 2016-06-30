@@ -1142,3 +1142,12 @@ video:-webkit-full-screen::-webkit-media-controls-panel .picture-in-picture-butt
     margin-right: 24px;
     margin-left: 0px;
 }
+
+/* Time display clones that we use in updateLayoutForDisplayedWidth(). */
+::-webkit-media-controls-current-time-display.clone,
+::-webkit-media-controls-time-remaining-display.clone {
+    position: absolute;
+    display: inline;
+    top: 100%;
+    mix-blend-mode: normal;
+}
