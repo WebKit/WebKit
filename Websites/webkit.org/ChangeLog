@@ -1,5 +1,15 @@
 2016-06-29  Dean Jackson  <dino@apple.com>
 
+        Demo and JS implementation of our spring() animation
+        timing function.
+
+        * demos/spring/index.html: Added.
+        * demos/spring/spring.js: Added.
+        (SpringSolver):
+        (SpringSolver.prototype.solve):
+
+2016-06-29  Dean Jackson  <dino@apple.com>
+
         Small change to wording, and link to the interactive version.
 
         * blog-files/color-gamut/index.html:
