@@ -48,7 +48,7 @@ SpringSolver.prototype.solve = function (t)
         t = Math.exp(-t * this.m_zeta * this.m_w0) * (this.m_A * Math.cos(this.m_wd * t) + this.m_B * Math.sin(this.m_wd * t));
     } else {
         // Critically damped (ignoring over-damped case for now).
-        t = (this.m_A + thism_B * t) * Math.exp(-t * this.m_w0);
+        t = (this.m_A + this.m_B * t) * Math.exp(-t * this.m_w0);
     }
 
     // Map range from [1..0] to [0..1].

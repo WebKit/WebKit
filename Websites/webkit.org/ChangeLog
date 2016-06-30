@@ -1,5 +1,12 @@
 2016-06-30  Dean Jackson  <dino@apple.com>
 
+        Tab pointed out a typo that made the overdamped case fail.
+
+        * demos/spring/spring.js:
+        (SpringSolver.prototype.solve):
+
+2016-06-30  Dean Jackson  <dino@apple.com>
+
         Fixed a typo in the link to the other version.
 
         * blog-files/color-gamut/index.html:
