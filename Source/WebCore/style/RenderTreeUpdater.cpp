@@ -93,6 +93,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<Style::Update> styleUpdate)
     if (!m_document.shouldCreateRenderers() || !m_document.renderView())
         return;
 
+    Style::PostResolutionCallbackDisabler callbackDisabler(m_document);
+
     m_styleUpdate = WTFMove(styleUpdate);
 
     for (auto* root : findRenderingRoots(*m_styleUpdate))
