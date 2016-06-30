@@ -54,6 +54,13 @@ shouldBe("new Date(0).setMonth(-1.79769e+308).valueOf()", "NaN");
 shouldBe("new Date(8.64e15).setMonth(new Date(8.64e15).getMonth()).valueOf()", "8.64e15");
 shouldBe("new Date(8.64e15).setMonth(new Date(8.64e15).getMonth() + 1).valueOf()", "NaN");
 
+debug("Testing setYear()");
+shouldBe("new Date(0).setYear(Infinity).valueOf()", "NaN");
+shouldBe("new Date(0).setYear(1.79769e+308).valueOf()", "NaN");
+shouldBe("new Date(0).setYear(-1.79769e+308).valueOf()", "NaN");
+shouldBe("new Date(8.64e15).setYear(new Date(8.64e15).getFullYear()).valueOf()", "8.64e15");
+shouldBe("new Date(8.64e15).setYear(new Date(8.64e15).getFullYear() + 1).valueOf()", "NaN");
+
 debug("Testing setFullYear()");
 shouldBe("new Date(0).setFullYear(Infinity).valueOf()", "NaN");
 shouldBe("new Date(0).setFullYear(1.79769e+308).valueOf()", "NaN");

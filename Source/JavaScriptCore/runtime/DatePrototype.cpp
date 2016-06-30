@@ -1074,7 +1074,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     }
 
     gregorianDateTime.setYear(toInt32((year >= 0 && year <= 99) ? (year + 1900) : year));
-    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, WTF::LocalTime));
+    double timeInMilliseconds = gregorianDateTimeToMS(vm, gregorianDateTime, ms, WTF::LocalTime);
+    JSValue result = jsNumber(timeClip(timeInMilliseconds));
     thisDateObj->setInternalValue(vm, result);
     return JSValue::encode(result);
 }

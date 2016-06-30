@@ -50,6 +50,12 @@ FAIL new Date(0).setMonth(1.79769e+308).valueOf() should be NaN. Was -2885760000
 FAIL new Date(0).setMonth(-1.79769e+308).valueOf() should be NaN. Was -28857600000.
 PASS new Date(8.64e15).setMonth(new Date(8.64e15).getMonth()).valueOf() is 8.64e15
 PASS new Date(8.64e15).setMonth(new Date(8.64e15).getMonth() + 1).valueOf() is NaN
+Testing setYear()
+PASS new Date(0).setYear(Infinity).valueOf() is NaN
+FAIL new Date(0).setYear(1.79769e+308).valueOf() should be NaN. Was -62135596800000.
+FAIL new Date(0).setYear(-1.79769e+308).valueOf() should be NaN. Was -62135596800000.
+PASS new Date(8.64e15).setYear(new Date(8.64e15).getFullYear()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setYear(new Date(8.64e15).getFullYear() + 1).valueOf() is NaN
 Testing setFullYear()
 PASS new Date(0).setFullYear(Infinity).valueOf() is NaN
 FAIL new Date(0).setFullYear(1.79769e+308).valueOf() should be NaN. Was -62135596800000.
