@@ -40,7 +40,7 @@
 #include <wtf/text/CString.h>
 
 
-// The Life-Cycle of a SQLStatement i.e. Who's keeping the SQLStatement alive?
+// The Life-Cycle of a SQLStatement i.e. Who's keeping the SQLStatement alive? 
 // ==========================================================================
 // The RefPtr chain goes something like this:
 //
@@ -74,11 +74,11 @@
 
 namespace WebCore {
 
-SQLStatement::SQLStatement(Database& database, const String& statement, const Vector<SQLValue>& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& errorCallback, int permissions)
+SQLStatement::SQLStatement(Database& database, const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
     : m_statement(statement.isolatedCopy())
     , m_arguments(arguments)
-    , m_statementCallbackWrapper(WTFMove(callback), database.scriptExecutionContext())
-    , m_statementErrorCallbackWrapper(WTFMove(errorCallback), database.scriptExecutionContext())
+    , m_statementCallbackWrapper(callback, database.scriptExecutionContext())
+    , m_statementErrorCallbackWrapper(errorCallback, database.scriptExecutionContext())
     , m_permissions(permissions)
 {
 }
@@ -87,14 +87,14 @@ SQLStatement::~SQLStatement()
 {
 }
 
-SQLError* SQLStatement::sqlError() const
+PassRefPtr<SQLError> SQLStatement::sqlError() const
 {
-    return m_error.get();
+    return m_error;
 }
 
-SQLResultSet* SQLStatement::sqlResultSet() const
+PassRefPtr<SQLResultSet> SQLStatement::sqlResultSet() const
 {
-    return m_resultSet.get();
+    return m_resultSet;
 }
 
 bool SQLStatement::execute(Database& db)

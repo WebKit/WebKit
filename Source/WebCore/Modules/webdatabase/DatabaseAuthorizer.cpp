@@ -29,6 +29,7 @@
 #include "config.h"
 #include "DatabaseAuthorizer.h"
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -343,7 +344,7 @@ int DatabaseAuthorizer::allowRead(const String& tableName, const String&)
 {
     if (m_permissions & NoAccessMask && m_securityEnabled)
         return SQLAuthDeny;
-
+    
     return denyBasedOnTableName(tableName);
 }
 

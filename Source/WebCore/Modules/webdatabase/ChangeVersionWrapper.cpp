@@ -30,6 +30,7 @@
 
 #include "Database.h"
 #include "SQLError.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

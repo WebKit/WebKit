@@ -45,7 +45,7 @@ class SQLTransactionBackend;
 
 class SQLStatement {
 public:
-    SQLStatement(Database&, const String&, const Vector<SQLValue>&, RefPtr<SQLStatementCallback>&&, RefPtr<SQLStatementErrorCallback>&&, int permissions);
+    SQLStatement(Database&, const String&, const Vector<SQLValue>&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
     ~SQLStatement();
 
     bool execute(Database&);
@@ -58,8 +58,8 @@ public:
     void setDatabaseDeletedError();
     void setVersionMismatchedError();
 
-    SQLError* sqlError() const;
-    SQLResultSet* sqlResultSet() const;
+    PassRefPtr<SQLError> sqlError() const;
+    PassRefPtr<SQLResultSet> sqlResultSet() const;
 
 private:
     void setFailureDueToQuota();

@@ -54,6 +54,7 @@
 #include "SecurityOrigin.h"
 #include "VoidCallback.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -202,9 +203,9 @@ static DatabaseGuid guidForOriginAndName(const String& origin, const String& nam
     return guid;
 }
 
-Database::Database(RefPtr<DatabaseContext>&& databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
+Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : m_scriptExecutionContext(databaseContext->scriptExecutionContext())
-    , m_databaseContext(WTFMove(databaseContext))
+    , m_databaseContext(databaseContext)
     , m_deleted(false)
     , m_name(name.isolatedCopy())
     , m_expectedVersion(expectedVersion.isolatedCopy())
@@ -241,13 +242,12 @@ Database::Database(RefPtr<DatabaseContext>&& databaseContext, const String& name
 
 Database::~Database()
 {
-    // The reference to the ScriptExecutionContext needs to be cleared on the JavaScript thread.
-    // If we're on that thread already, we can just let the RefPtr's destruction do the dereffing.
+    // The reference to the ScriptExecutionContext needs to be cleared on the JavaScript thread.  If we're on that thread already, we can just let the RefPtr's destruction do the dereffing.
     if (!m_scriptExecutionContext->isContextThread()) {
         // Grab a pointer to the script execution here because we're releasing it when we pass it to
         // DerefContextTask::create.
-        RefPtr<ScriptExecutionContext> passedContext;
-        passedContext->postTask({ScriptExecutionContext::Task::CleanupTask, [passedContext = WTFMove(m_scriptExecutionContext)] (ScriptExecutionContext& context) {
+        PassRefPtr<ScriptExecutionContext> passedContext = m_scriptExecutionContext.release();
+        passedContext->postTask({ScriptExecutionContext::Task::CleanupTask, [passedContext] (ScriptExecutionContext& context) {
             ASSERT_UNUSED(context, &context == passedContext);
             RefPtr<ScriptExecutionContext> scriptExecutionContext(passedContext);
         }});
@@ -571,7 +571,7 @@ void Database::scheduleTransaction()
         transaction = m_transactionQueue.takeFirst();
 
     if (transaction && databaseContext()->databaseThread()) {
-        auto task = std::make_unique<DatabaseTransactionTask>(WTFMove(transaction));
+        auto task = std::make_unique<DatabaseTransactionTask>(transaction);
         LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
         m_transactionInProgress = true;
         databaseContext()->databaseThread()->scheduleTask(WTFMove(task));
@@ -589,7 +589,7 @@ RefPtr<SQLTransactionBackend> Database::runTransaction(Ref<SQLTransaction>&& tra
     if (data)
         wrapper = ChangeVersionWrapper::create(data->oldVersion(), data->newVersion());
 
-    RefPtr<SQLTransactionBackend> transactionBackend = SQLTransactionBackend::create(this, WTFMove(transaction), WTFMove(wrapper), readOnly);
+    RefPtr<SQLTransactionBackend> transactionBackend = SQLTransactionBackend::create(this, WTFMove(transaction), wrapper, readOnly);
     m_transactionQueue.append(transactionBackend);
     if (!m_transactionInProgress)
         scheduleTransaction();
