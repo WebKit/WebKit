@@ -1,3 +1,36 @@
+2016-06-29  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(200114): Netflix app does not see ChromeCast
+        https://bugs.webkit.org/show_bug.cgi?id=159287
+
+        Reviewed by Benjamin Poulain.
+
+        Change set 200114 changed the behavior of how we check for whether or not we
+        wrap Objective C init methods in JavaScript constructors.  The prior method
+        checked the version of JavaScriptCore that was linked with the application.
+        If the application was not directly linked with JavaScriptCore the prior
+        method indicated that we shouldn't create constructors.  The new method uses
+        the SDK the application was compiled with.  Using the new method, an
+        application compiled with iOS SDK 8.0 or greater would create constructors
+        and not export init methods to JavaScript.  The problem is that an existing
+        application that hasn't been recompiled will get a different answer using
+        the new method.  We need to come up with a method that works in a compatible
+        way with existing programs, but provides a newly compiled program with the
+        "is built with SDK N or greater" check.
+        
+        Added back the prior check of the version of JavaScriptCore the program was
+        directly linked against.  However we only use this check if we directly linked
+        with JavaScriptCore.  Otherwise we fall through to check against the SDK the
+        program was built with.  Changed the iOS SDK version we check
+        against to be the new version of iOS, iOS 10.
+
+        This provides compatible behavior for existing programs.  It may be the case
+        that some of those programs may require changes when they are rebuilt with the
+        iOS 10 SDK or later.
+
+        * API/JSWrapperMap.mm:
+        (supportsInitMethodConstructors):
+
 2016-06-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Minor TypedArray fixes
