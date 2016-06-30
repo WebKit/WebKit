@@ -79,7 +79,6 @@ TEST(WTF, UniqueRef)
     C h(makeUniqueRef<A>());
     C i(makeUniqueRef<D>());
     
-    UNUSED_PARAM(a);
     UNUSED_PARAM(b);
     UNUSED_PARAM(c);
     UNUSED_PARAM(d);

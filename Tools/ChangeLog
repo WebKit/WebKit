@@ -1,3 +1,18 @@
+2016-06-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win][Debug] Assertion fails in TestWTF.
+        https://bugs.webkit.org/show_bug.cgi?id=159299
+
+        Reviewed by Alex Christensen.
+
+        The assert in the & operator in the UniqueRef class fails, because the instance has been moved.
+        The Windows version of the UNUSED_PARAM macro is getting the address of the parameter, causing
+        the assertion failure. Since the variable is actually used, there is no need to use the
+        UNUSED_PARAM macro.
+
+        * TestWebKitAPI/Tests/WTF/UniqueRef.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-06-30  Youenn Fablet  <youennf@gmail.com>
 
         LayoutTests intermittently failing to run due to issues starting Web Platform Test server
