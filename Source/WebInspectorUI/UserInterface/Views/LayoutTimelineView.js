@@ -31,7 +31,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         console.assert(timeline.type === WebInspector.TimelineRecord.Type.Layout, timeline);
 
-        let columns = {type: {}, name: {}, location: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
+        let columns = {type: {}, name: {}, location: {}, area: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
 
         columns.name.title = WebInspector.UIString("Type");
         columns.name.width = "15%";
@@ -54,6 +54,9 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         columns.location.title = WebInspector.UIString("Initiator");
         columns.location.width = "25%";
+
+        columns.area.title = WebInspector.UIString("Area");
+        columns.area.width = "8%";
 
         columns.width.title = WebInspector.UIString("Width");
         columns.width.width = "8%";

@@ -1,3 +1,17 @@
+2016-06-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: add pixel area column to layout timeline view
+        https://bugs.webkit.org/show_bug.cgi?id=148677
+        <rdar://problem/22518762>
+
+        Reviewed by Timothy Hatcher.
+
+        The view can simply add the column. LayoutTimelineDataGridNode
+        already includes area data and cell formatting.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+
 2016-06-30  Brian Burg  <bburg@apple.com>
 
         Web Inspector: the last normal tab cannot be closed with "Close Tab" context menu item
