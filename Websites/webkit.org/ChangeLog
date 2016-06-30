@@ -1,3 +1,9 @@
+2016-06-29  Dean Jackson  <dino@apple.com>
+
+        Small change to wording, and link to the interactive version.
+
+        * blog-files/color-gamut/index.html:
+
 2016-06-28  Dean Jackson  <dino@apple.com>
 
         Add a more interactive version of the demo.
