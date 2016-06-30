@@ -38,25 +38,25 @@ namespace WebCore {
     class PNGImageDecoder;
 
     // This class decodes the ICO and CUR image formats.
-    class ICOImageDecoder : public ImageDecoder {
+    class ICOImageDecoder final : public ImageDecoder {
     public:
         ICOImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
         virtual ~ICOImageDecoder();
 
         // ImageDecoder
-        virtual String filenameExtension() const { return "ico"; }
-        virtual void setData(SharedBuffer&, bool allDataReceived);
-        virtual bool isSizeAvailable();
-        virtual IntSize size() const;
-        virtual IntSize frameSizeAtIndex(size_t) const;
-        virtual bool setSize(unsigned width, unsigned height);
-        virtual size_t frameCount();
-        virtual ImageFrame* frameBufferAtIndex(size_t);
+        String filenameExtension() const override { return "ico"; }
+        void setData(SharedBuffer&, bool allDataReceived) override;
+        bool isSizeAvailable() override;
+        IntSize size() const override;
+        IntSize frameSizeAtIndex(size_t, SubsamplingLevel) const override;
+        bool setSize(unsigned width, unsigned height) override;
+        size_t frameCount() override;
+        ImageFrame* frameBufferAtIndex(size_t) override;
         // CAUTION: setFailed() deletes all readers and decoders.  Be careful to
         // avoid accessing deleted memory, especially when calling this from
         // inside BMPImageReader!
-        virtual bool setFailed();
-        virtual Optional<IntPoint> hotSpot() const;
+        bool setFailed() override;
+        Optional<IntPoint> hotSpot() const override;
 
     private:
         enum ImageType {

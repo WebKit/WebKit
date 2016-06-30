@@ -37,14 +37,14 @@
 
 namespace WebCore {
 
-class WEBPImageDecoder : public ImageDecoder {
+class WEBPImageDecoder final : public ImageDecoder {
 public:
     WEBPImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
     virtual ~WEBPImageDecoder();
 
-    virtual String filenameExtension() const { return "webp"; }
-    virtual bool isSizeAvailable();
-    virtual ImageFrame* frameBufferAtIndex(size_t index);
+    String filenameExtension() const override { return "webp"; }
+    bool isSizeAvailable() override;
+    ImageFrame* frameBufferAtIndex(size_t index) override;
 
 private:
     bool decode(bool onlySize);

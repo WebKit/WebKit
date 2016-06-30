@@ -42,20 +42,20 @@ namespace WebCore {
     class JPEGImageReader;
 
     // This class decodes the JPEG image format.
-    class JPEGImageDecoder : public ImageDecoder {
+    class JPEGImageDecoder final : public ImageDecoder {
     public:
         JPEGImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
         virtual ~JPEGImageDecoder();
 
         // ImageDecoder
-        virtual String filenameExtension() const { return "jpg"; }
-        virtual bool isSizeAvailable();
-        virtual bool setSize(unsigned width, unsigned height);
-        virtual ImageFrame* frameBufferAtIndex(size_t index);
+        String filenameExtension() const override { return "jpg"; }
+        bool isSizeAvailable() override;
+        bool setSize(unsigned width, unsigned height) override;
+        ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
         // JPEGImageReader!
-        virtual bool setFailed();
+        bool setFailed() override;
 
         bool willDownSample()
         {
