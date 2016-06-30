@@ -1,3 +1,9 @@
+2016-06-30  Dean Jackson  <dino@apple.com>
+
+        Fixed a typo in the link to the other version.
+
+        * blog-files/color-gamut/index.html:
+
 2016-06-29  Dean Jackson  <dino@apple.com>
 
         Add the UI JavaScript library to make
