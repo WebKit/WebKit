@@ -478,6 +478,8 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     }
     case op_resume: {
         RELEASE_ASSERT(block->successors().size() == 1);
+        // FIXME: This is really dirty.
+        // https://bugs.webkit.org/show_bug.cgi?id=159281
         block->successors()[0]->in().forEachSetBit([&](unsigned local) {
             functor(codeBlock, instruction, opcodeID, virtualRegisterForLocal(local).offset());
         });

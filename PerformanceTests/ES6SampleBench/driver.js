@@ -25,18 +25,15 @@
 "use strict";
 
 class Driver {
-    constructor(triggerCell, magicCell, summaryCell, key)
+    constructor(triggerCell, triggerLink, magicCell, summaryCell, key)
     {
-        if (!magicCell)
-            throw new Error("Need magic cell");
-        if (!summaryCell)
-            throw new Error("Need summary cell");
-        
         this._benchmarks = new Map();
         this._triggerCell = triggerCell;
+        this._triggerLink = triggerLink;
         this._magicCell = magicCell;
         this._summary = new Stats(summaryCell);
         this._key = key;
+        this._hadErrors = false;
         window[key] = this;
     }
     
@@ -47,7 +44,6 @@ class Driver {
     
     start(numIterations)
     {
-        this._triggerCellSaved = this._triggerCell.innerHTML;
         this._updateIterations();
         
         this._summary.reset();
@@ -70,6 +66,7 @@ class Driver {
     {
         this._benchmarks.get(this._benchmark).reportError(...args);
         this._recomputeSummary();
+        this._hadErrors = true;
         this._iterate();
     }
     
@@ -120,7 +117,9 @@ class Driver {
         this._benchmark = this._iterator ? this._iterator.next().value : null;
         if (!this._benchmark) {
             if (!this._numIterations) {
-                this._triggerCell.innerHTML = this._triggerCellSaved;
+                this._triggerCell.innerHTML =
+                    (this._hadErrors ? "Failures encountered!" : "Success!") +
+                    ` <a href="${this._triggerLink}">Restart Benchmark</a>`;
                 return;
             }
             this._numIterations--;

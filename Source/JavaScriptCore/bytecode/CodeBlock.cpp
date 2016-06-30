@@ -1666,7 +1666,9 @@ void CodeBlock::dumpBytecode(
             int generator = (++it)->u.operand;
             unsigned liveCalleeLocalsIndex = (++it)->u.unsignedValue;
             int offset = (++it)->u.operand;
-            const FastBitVector& liveness = m_rareData->m_liveCalleeLocalsAtYield[liveCalleeLocalsIndex];
+            FastBitVector liveness;
+            if (liveCalleeLocalsIndex < m_rareData->m_liveCalleeLocalsAtYield.size())
+                liveness = m_rareData->m_liveCalleeLocalsAtYield[liveCalleeLocalsIndex];
             printLocationAndOp(out, exec, location, it, "save");
             out.printf("%s, ", registerName(generator).data());
             liveness.dump(out);
@@ -1676,7 +1678,9 @@ void CodeBlock::dumpBytecode(
         case op_resume: {
             int generator = (++it)->u.operand;
             unsigned liveCalleeLocalsIndex = (++it)->u.unsignedValue;
-            const FastBitVector& liveness = m_rareData->m_liveCalleeLocalsAtYield[liveCalleeLocalsIndex];
+            FastBitVector liveness;
+            if (liveCalleeLocalsIndex < m_rareData->m_liveCalleeLocalsAtYield.size())
+                liveness = m_rareData->m_liveCalleeLocalsAtYield[liveCalleeLocalsIndex];
             printLocationAndOp(out, exec, location, it, "resume");
             out.printf("%s, ", registerName(generator).data());
             liveness.dump(out);

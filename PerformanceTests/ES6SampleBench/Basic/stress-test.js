@@ -24,12 +24,31 @@
  */
 "use strict";
 
-const driver = new Driver(
-    document.getElementById("trigger"),
-    "driver.start(10)",
-    document.getElementById("magic"),
-    document.getElementById("Geomean"),
-    "sampleBench");
+load("ast.js");
+load("basic.js");
+load("caseless_map.js");
+load("lexer.js");
+load("number.js");
+load("parser.js");
+load("random.js");
+load("state.js");
+load("util.js");
+load("benchmark.js");
 
-driver.addBenchmark(AirBenchmark);
-driver.addBenchmark(BasicBenchmark);
+let benchmark = new Benchmark();
+let before = preciseTime();
+
+// Run for at least 10 iterations.
+for (let i = 0; i < 10; ++i) {
+    print("Running mandatory iteration #" + (i + 1) + ":");
+    benchmark.runIteration();
+}
+
+// Run until we have been running for two seconds.
+while (preciseTime() < before + 2) {
+    print("Running bonus iteration:");
+    benchmark.runIteration();
+}
+
+print("Success!");
+

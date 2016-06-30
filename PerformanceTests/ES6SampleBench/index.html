@@ -3,6 +3,12 @@
 <title>ES6 Sample Bench</title>
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
+<script>
+window.onerror = function(message, url, lineNumber)
+{
+    document.getElementById("trigger").innerHTML = "ERROR: " + url + ":" + lineNumber + ": " + message;
+}
+</script>
 <script src="driver.js"></script>
 <script src="results.js"></script>
 <script src="stats.js"></script>

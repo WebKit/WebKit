@@ -1,3 +1,24 @@
+2016-06-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Generators violate bytecode liveness validation
+        https://bugs.webkit.org/show_bug.cgi?id=159279
+
+        Reviewed by Yusuke Suzuki.
+
+        Add Basic to our test harness.
+
+        Also made some cosmetic changes to the benchmark harness.
+
+        * ES6SampleBench/Basic/basic-tests.yaml: Added.
+        * ES6SampleBench/Basic/stress-test.js: Added.
+        (preciseTime):
+        * ES6SampleBench/driver.js:
+        (Driver):
+        (Driver.prototype.start):
+        (Driver.prototype.reportError):
+        * ES6SampleBench/glue.js:
+        * ES6SampleBench/index.html:
+
 2016-06-28  Filip Pizlo  <fpizlo@apple.com>
 
         ES6SampleBench should have a harness

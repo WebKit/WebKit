@@ -1,3 +1,31 @@
+2016-06-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Generators violate bytecode liveness validation
+        https://bugs.webkit.org/show_bug.cgi?id=159279
+
+        Reviewed by Yusuke Suzuki.
+        
+        Fix a liveness bug found by Basic. The problem is that resume's intended liveness rule is:
+        "live-in is just the token argument", but the liveness analysis thought that the rule was
+        "live-in is live-out minus defs plus live-at-catch". Clearly these two rules are quite
+        different. The way this sort of worked before is that we would define the defs of resume
+        as being equal to our prediction of what the live-outs would be. We did this in the hope
+        that we would subtract all live-outs. But, this misses the live-at-catch part. So, this
+        change adds another hack to neutralize live-at-catch.
+        
+        This would make a lot more sense if we wrote a new liveness analysis that was just for
+        generator conversion. It could reuse BytecodeUseDef but otherwise it would be a new thing.
+        It would be easy to write crazy rules for save/resume in such an analysis, especially if
+        that analysis rewrote the bytecode. We could then just have an op_yield that is a no-op.
+        We would just record the live-outs of op_yield and use that for rewriting the code in terms
+        of a switch statement.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::stepOverInstruction):
+        (JSC::BytecodeLivenessAnalysis::dumpResults):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+
 2016-06-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202659.

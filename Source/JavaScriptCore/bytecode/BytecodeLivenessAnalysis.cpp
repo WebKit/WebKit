@@ -132,9 +132,17 @@ static void stepOverInstruction(CodeBlock* codeBlock, BytecodeBasicBlock* block,
     // If we have an exception handler, we want the live-in variables of the 
     // exception handler block to be included in the live-in of this particular bytecode.
     if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset)) {
-        BytecodeBasicBlock* handlerBlock = findBasicBlockWithLeaderOffset(basicBlocks, handler->target);
-        ASSERT(handlerBlock);
-        handlerBlock->in().forEachSetBit(use);
+        // FIXME: This resume check should not be needed.
+        // https://bugs.webkit.org/show_bug.cgi?id=159281
+        Interpreter* interpreter = codeBlock->vm()->interpreter;
+        Instruction* instructionsBegin = codeBlock->instructions().begin();
+        Instruction* instruction = &instructionsBegin[bytecodeOffset];
+        OpcodeID opcodeID = interpreter->getOpcodeID(instruction->u.opcode);
+        if (opcodeID != op_resume) {
+            BytecodeBasicBlock* handlerBlock = findBasicBlockWithLeaderOffset(basicBlocks, handler->target);
+            ASSERT(handlerBlock);
+            handlerBlock->in().forEachSetBit(use);
+        }
     }
 }
 
@@ -289,6 +297,7 @@ void BytecodeLivenessAnalysis::computeKills(BytecodeKills& result)
 
 void BytecodeLivenessAnalysis::dumpResults()
 {
+    dataLog("\nDumping bytecode liveness for ", *m_codeBlock, ":\n");
     Interpreter* interpreter = m_codeBlock->vm()->interpreter;
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
     for (unsigned i = 0; i < m_basicBlocks.size(); i++) {
