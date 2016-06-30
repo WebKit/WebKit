@@ -1909,6 +1909,7 @@ css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ I
 css3/filters/backdrop/backdrop-filter-with-clip-path.html [ ImageOnlyFailure ]
 css3/filters/null-effect-check.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autosize-region-window-resize.html [ ImageOnlyFailure ]
+webkit.org/b/159275 fast/shrink-wrap/rect-shrink-wrap.html [ Pass ImageOnlyFailure  ]
 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure ]
 svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure ]
 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
