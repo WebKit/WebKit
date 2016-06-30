@@ -1,5 +1,19 @@
 2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: API View of Native DOM APIs looks poor (TypeErrors for native getters)
+        https://bugs.webkit.org/show_bug.cgi?id=158334
+        <rdar://problem/26615366>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/runtime/getProperties-expected.txt:
+        * inspector/runtime/getProperties.html:
+        Improve output for accessors now that getProperties
+        returns real accessor descriptors for native accessors
+        instead of fake value descriptors.
+
+2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Wrong function name next to scope
         https://bugs.webkit.org/show_bug.cgi?id=158210
         <rdar://problem/26543093>

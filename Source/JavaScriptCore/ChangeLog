@@ -1,3 +1,26 @@
+2016-06-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: API View of Native DOM APIs looks poor (TypeErrors for native getters)
+        https://bugs.webkit.org/show_bug.cgi?id=158334
+        <rdar://problem/26615366>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._getProperties):
+        (InjectedScript.prototype._propertyDescriptors):
+        Do not create fake value property descriptors for native accessors
+        unless requested. This means, getProperties for a native prototype
+        should return  accessors for native accessors just like it does
+        for normal non-native accessors (getters/setters).
+
+        (InjectedScript.prototype.getProperties):
+        Do not produce fake value accessors for native accessors.
+
+        (InjectedScript.prototype.getDisplayableProperties):
+        (InjectedScript.RemoteObject.prototype._generatePreview):
+        Do produce fake value accessors for native accessors.
+
 2016-06-29  Saam barati  <sbarati@apple.com>
 
         JSGlobalLexicalEnvironment needs a toThis implementation

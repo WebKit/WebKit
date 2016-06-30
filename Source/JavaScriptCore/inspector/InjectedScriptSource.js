@@ -251,7 +251,7 @@ InjectedScript.prototype = {
         return result;
     },
 
-    _getProperties: function(objectId, collectionMode, generatePreview)
+    _getProperties: function(objectId, collectionMode, generatePreview, nativeGettersAsValues)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
@@ -263,7 +263,7 @@ InjectedScript.prototype = {
         if (isSymbol(object))
             return false;
 
-        var descriptors = this._propertyDescriptors(object, collectionMode);
+        var descriptors = this._propertyDescriptors(object, collectionMode, nativeGettersAsValues);
 
         // Go over properties, wrap object values.
         for (var i = 0; i < descriptors.length; ++i) {
@@ -287,14 +287,16 @@ InjectedScript.prototype = {
 
     getProperties: function(objectId, ownProperties, generatePreview)
     {
+        var nativeGettersAsValues = false;
         var collectionMode = ownProperties ? InjectedScript.CollectionMode.OwnProperties : InjectedScript.CollectionMode.AllProperties;
-        return this._getProperties(objectId, collectionMode, generatePreview);
+        return this._getProperties(objectId, collectionMode, generatePreview, nativeGettersAsValues);
     },
 
     getDisplayableProperties: function(objectId, generatePreview)
     {
+        var nativeGettersAsValues = true;
         var collectionMode = InjectedScript.CollectionMode.OwnProperties | InjectedScript.CollectionMode.NativeGetterProperties;
-        return this._getProperties(objectId, collectionMode, generatePreview);
+        return this._getProperties(objectId, collectionMode, generatePreview, nativeGettersAsValues);
     },
 
     getInternalProperties: function(objectId, generatePreview)
@@ -570,7 +572,7 @@ InjectedScript.prototype = {
         return descriptors;
     },
 
-    _propertyDescriptors: function(object, collectionMode)
+    _propertyDescriptors: function(object, collectionMode, nativeGettersAsValues)
     {
         var descriptors = [];
         var nameProcessed = new Set;
@@ -612,11 +614,7 @@ InjectedScript.prototype = {
 
             // Native Getter properties.
             if (collectionMode & InjectedScript.CollectionMode.NativeGetterProperties) {
-                // FIXME: <https://webkit.org/b/140575> Web Inspector: Native Bindings Descriptors are Incomplete
-                // if (descriptor.hasOwnProperty("get") && descriptor.get && isNativeFunction(descriptor.get)) { ... }
-
                 if (possibleNativeBindingGetter) {
-                    // Possible getter property in the prototype chain.
                     descriptors.push(descriptor);
                     return;
                 }
@@ -644,15 +642,14 @@ InjectedScript.prototype = {
                     continue;
                 }
 
-                if (endsWith(String(descriptor.get), "[native code]\n}") ||
-                     (!descriptor.get && descriptor.hasOwnProperty("get") && !descriptor.set && descriptor.hasOwnProperty("set"))) {
-                    // FIXME: Some Native Bindings Descriptors are Incomplete
-                    // <https://webkit.org/b/141585> Some IDL attributes appear on the instances instead of on prototypes
-                    // Developers may create such a descriptors, so we should be resilient:
-                    // var x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
-                    var fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, true);
-                    processDescriptor(fakeDescriptor, isOwnProperty, true);
-                    continue;
+                if (nativeGettersAsValues) {
+                    if (endsWith(String(descriptor.get), "[native code]\n}") || (!descriptor.get && descriptor.hasOwnProperty("get") && !descriptor.set && descriptor.hasOwnProperty("set"))) {
+                        // Developers may create such a descriptor, so we should be resilient:
+                        // var x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
+                        var fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, true);
+                        processDescriptor(fakeDescriptor, isOwnProperty, true);
+                        continue;
+                    }
                 }
 
                 descriptor.name = name;
@@ -1043,7 +1040,8 @@ InjectedScript.RemoteObject.prototype = {
                 return preview;
 
             // Properties.
-            var descriptors = injectedScript._propertyDescriptors(object, InjectedScript.CollectionMode.AllProperties);
+            var nativeGettersAsValues = true;
+            var descriptors = injectedScript._propertyDescriptors(object, InjectedScript.CollectionMode.AllProperties, nativeGettersAsValues);
             this._appendPropertyPreviews(object, preview, descriptors, false, propertiesThreshold, firstLevelKeys, secondLevelKeys);
             if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
                 return preview;

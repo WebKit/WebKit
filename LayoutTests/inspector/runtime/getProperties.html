@@ -80,11 +80,13 @@ function test()
         }
 
         function dumpSingleProperty(property) {
-            var {name, value} = property;
+            var {name, value, get, set} = property;
             if (value)
-                ProtocolTest.log("  " + name + " " + value.type + " " + (value.value || value.description));
+                ProtocolTest.log(`  ${name} ${value.type} ${value.value || value.description}`);
+            else if (get || set)
+                ProtocolTest.log(`  ${name} ${get ? "getter" : "-"} ${set ? "setter" : ""}`);
             else
-                ProtocolTest.log("  " + name);
+                ProtocolTest.log(`  ${name}`);
         }
 
         function NamedThingComparator(o1, o2) {
