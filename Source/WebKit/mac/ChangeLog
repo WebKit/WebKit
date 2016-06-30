@@ -1,3 +1,18 @@
+2016-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Mail crashes on launch at WebCore::PaymentCoordinator::~PaymentCoordinator() + 20
+        https://bugs.webkit.org/show_bug.cgi?id=159306
+        rdar://problem/27092107
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        Create a WebPaymentCoordinatorClient. Remove an unneeded #import.
+
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        Remove an unneeded #import.
+
 2016-06-27  Anders Carlsson  <andersca@apple.com>
 
         WebKit::WebPaymentCoordinator leak
