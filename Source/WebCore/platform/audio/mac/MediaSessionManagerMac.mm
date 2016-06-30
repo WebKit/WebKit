@@ -127,7 +127,11 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
             MRMediaRemoteSetNowPlayingInfo(nullptr);
             m_nowPlayingActive = false;
             MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MRMediaRemoteGetLocalOrigin(), kMRPlaybackStateStopped, dispatch_get_main_queue(), ^(MRMediaRemoteError error) {
+#if LOG_DISABLED
+                UNUSED_PARAM(error);
+#else
                 LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error %ud", error);
+#endif
             });
         }
 
@@ -170,7 +174,11 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
 
     m_nowPlayingActive = true;
     MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MRMediaRemoteGetLocalOrigin(), kMRPlaybackStatePlaying, dispatch_get_main_queue(), ^(MRMediaRemoteError error) {
+#if LOG_DISABLED
+        UNUSED_PARAM(error);
+#else
         LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error %ud", error);
+#endif
     });
     MRMediaRemoteSetNowPlayingInfo(info.get());
 #endif
