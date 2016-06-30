@@ -1,3 +1,17 @@
+2016-06-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r202679.
+        https://bugs.webkit.org/show_bug.cgi?id=159302
+
+        Still causing timeouts on media/controls-drag-timebar.html
+        (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "[iOS] Media controls are too cramped with small video"
+        https://bugs.webkit.org/show_bug.cgi?id=158815
+        http://trac.webkit.org/changeset/202679
+
 2016-06-30  Joseph Pecoraro  <pecoraro@apple.com> and Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Implement isFinite / isNaN in JS and make DFG ToNumber accept non number values

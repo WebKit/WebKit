@@ -27,7 +27,7 @@ ControllerIOS.StartPlaybackControls = 2;
 
 ControllerIOS.prototype = {
     /* Constants */
-    MinimumTimelineWidth: 150,
+    MinimumTimelineWidth: 200,
     ButtonWidth: 42,
 
     get idiom()
