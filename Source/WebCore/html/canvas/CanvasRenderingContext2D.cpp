@@ -1398,7 +1398,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement& imageElement, const F
 
     if (image->isSVGImage()) {
         image->setImageObserver(nullptr);
-        image->setContainerSize(normalizedSrcRect.size());
+        image->setContainerSize(imageRect.size());
     }
 
     if (rectContainsCanvas(normalizedDstRect)) {

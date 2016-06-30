@@ -1,5 +1,25 @@
 2016-06-30  Antoine Quint  <graouts@apple.com>
 
+        Drawing an SVG image into a <canvas> that is not in the DOM draws the wrong region
+        https://bugs.webkit.org/show_bug.cgi?id=159276
+
+        Reviewed by Dean Jackson.
+
+        Adding a series of new tests to check we correctly respect mismatching source and
+        destination rectangles with SVG images as sources, both with the source <img> element
+        being present and absent from the DOM, and explicit sizes being set or not set.
+
+        * svg/as-image/img-with-svg-resource-in-dom-and-drawImage-expected.html: Added.
+        * svg/as-image/img-with-svg-resource-in-dom-and-drawImage.html: Added.
+        * svg/as-image/img-with-svg-resource-in-dom-no-size-and-drawImage-expected.html: Added.
+        * svg/as-image/img-with-svg-resource-in-dom-no-size-and-drawImage.html: Added.
+        * svg/as-image/img-with-svg-resource-not-in-dom-and-drawImage-expected.html: Added.
+        * svg/as-image/img-with-svg-resource-not-in-dom-and-drawImage.html: Added.
+        * svg/as-image/img-with-svg-resource-not-in-dom-no-size-and-drawImage-expected.html: Added.
+        * svg/as-image/img-with-svg-resource-not-in-dom-no-size-and-drawImage.html: Added.
+
+2016-06-30  Antoine Quint  <graouts@apple.com>
+
         [iOS] Media controls are too cramped with small video
         https://bugs.webkit.org/show_bug.cgi?id=158815
         <rdar://problem/26824238>
