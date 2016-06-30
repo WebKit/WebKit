@@ -709,10 +709,10 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "normal", "break-word"
     ],
     "transition": [
-        "none", "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "all", WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder
+        "none", "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "spring()", "all", WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder
     ],
     "transition-timing-function": [
-        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()"
+        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "spring()"
     ],
     "transition-property": [
         "all", "none", WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder
@@ -867,7 +867,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "paused", "running"
     ],
     "-webkit-animation-timing-function": [
-        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()"
+        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "spring()"
     ],
     "-webkit-column-span": [
         "all", "none", "calc()", "-webkit-calc()"
