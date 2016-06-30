@@ -1,3 +1,9 @@
+2016-06-29  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed, CMake build fix.
+
+        * PlatformMac.cmake:
+
 2016-06-29  Beth Dakin  <bdakin@apple.com>
 
         Add media_icon to WebKit2

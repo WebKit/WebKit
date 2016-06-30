@@ -173,7 +173,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/WKBrowsingContextController.mm
     UIProcess/API/Cocoa/WKBrowsingContextGroup.mm
     UIProcess/API/Cocoa/WKConnection.mm
-    UIProcess/API/Cocoa/WKElementInfo.mm
     UIProcess/API/Cocoa/WKError.mm
     UIProcess/API/Cocoa/WKFrameInfo.mm
     UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm

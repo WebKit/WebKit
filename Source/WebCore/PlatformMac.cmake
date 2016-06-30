@@ -307,6 +307,8 @@ list(APPEND WebCore_SOURCES
 
     platform/audio/AudioSession.cpp
 
+    platform/audio/cocoa/MediaSessionManagerCocoa.cpp
+
     platform/audio/mac/AudioBusMac.mm
     platform/audio/mac/AudioDestinationMac.cpp
     platform/audio/mac/AudioFileReaderMac.cpp
@@ -314,7 +316,6 @@ list(APPEND WebCore_SOURCES
     platform/audio/mac/AudioSessionMac.cpp
     platform/audio/mac/CARingBuffer.cpp
     platform/audio/mac/FFTFrameMac.cpp
-    platform/audio/mac/MediaSessionManagerMac.cpp
 
     platform/cf/CFURLExtras.cpp
     platform/cf/CoreMediaSoftLink.cpp
@@ -641,6 +642,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform/network
     platform/sql
     platform/text
+
+    platform/audio/cocoa
 
     platform/graphics/ca
     platform/graphics/cocoa
