@@ -1,3 +1,17 @@
+2016-06-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        Attempt to fix constructor-length.html
+
+        I did a rebaseline of constructor-length.html.
+        I should have updated the test instead.
+
+        * js/dom/constructor-length.html:
+        * platform/efl/js/dom/constructor-length-expected.txt:
+        * platform/gtk/js/dom/constructor-length-expected.txt:
+        * platform/ios-simulator/js/dom/constructor-length-expected.txt:
+        * platform/mac/js/dom/constructor-length-expected.txt:
+        * platform/win/js/dom/constructor-length-expected.txt:
+
 2016-06-29  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Implement MediaEndpointPeerConnection::setConfiguration()
