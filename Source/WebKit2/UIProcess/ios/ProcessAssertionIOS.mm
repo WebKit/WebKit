@@ -172,27 +172,37 @@ void ProcessAssertion::setState(AssertionState assertionState)
     [m_assertion setFlags:flagsForState(assertionState)];
 }
 
+void ProcessAndUIAssertion::updateRunInBackgroundCount()
+{
+    bool shouldHoldBackgroundAssertion = state() != AssertionState::Suspended;
+
+    if (shouldHoldBackgroundAssertion) {
+        if (!m_isHoldingBackgroundAssertion)
+            [[WKProcessAssertionBackgroundTaskManager shared] incrementNeedsToRunInBackgroundCount];
+    } else {
+        if (m_isHoldingBackgroundAssertion)
+            [[WKProcessAssertionBackgroundTaskManager shared] decrementNeedsToRunInBackgroundCount];
+    }
+
+    m_isHoldingBackgroundAssertion = shouldHoldBackgroundAssertion;
+}
+
 ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, AssertionState assertionState)
     : ProcessAssertion(pid, assertionState)
 {
-    if (assertionState != AssertionState::Suspended)
-        [[WKProcessAssertionBackgroundTaskManager shared] incrementNeedsToRunInBackgroundCount];
+    updateRunInBackgroundCount();
 }
 
 ProcessAndUIAssertion::~ProcessAndUIAssertion()
 {
-    if (state() != AssertionState::Suspended)
+    if (m_isHoldingBackgroundAssertion)
         [[WKProcessAssertionBackgroundTaskManager shared] decrementNeedsToRunInBackgroundCount];
 }
 
 void ProcessAndUIAssertion::setState(AssertionState assertionState)
 {
-    if ((state() == AssertionState::Suspended) && (assertionState != AssertionState::Suspended))
-        [[WKProcessAssertionBackgroundTaskManager shared] incrementNeedsToRunInBackgroundCount];
-    if ((state() != AssertionState::Suspended) && (assertionState == AssertionState::Suspended))
-        [[WKProcessAssertionBackgroundTaskManager shared] decrementNeedsToRunInBackgroundCount];
-
     ProcessAssertion::setState(assertionState);
+    updateRunInBackgroundCount();
 }
 
 void ProcessAndUIAssertion::setClient(ProcessAssertionClient& newClient)

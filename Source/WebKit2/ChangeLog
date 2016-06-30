@@ -1,3 +1,29 @@
+2016-06-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Cleanup ProcessAssertion RunInBackground management
+        https://bugs.webkit.org/show_bug.cgi?id=159284
+
+        Reviewed by Chris Dumez.
+
+        Factor out code that handles taking a background assertion on the UI app into
+        ProcessAndUIAssertion::updateRunInBackgroundCount helper.
+
+        This patch just cleanup to enable a futher fix.
+
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::state):
+            - Added ProcessAndUIAssertion::updateRunInBackgroundCount
+            - Added ProcessAndUIAssertion::m_isHoldingBackgroundAssertionOnApp
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAndUIAssertion::updateRunInBackgroundCount):
+            - helper to manage calls to incrementNeedsToRunInBackgroundCount/decrementNeedsToRunInBackgroundCount
+        (WebKit::ProcessAndUIAssertion::ProcessAndUIAssertion):
+            - call updateRunInBackgroundCount
+        (WebKit::ProcessAndUIAssertion::~ProcessAndUIAssertion):
+            changed to use m_isHoldingBackgroundAssertionOnApp
+        (WebKit::ProcessAndUIAssertion::setState):
+            - call updateRunInBackgroundCount
+
 2016-06-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Coordinated Graphics] Move CompositingCoordinator from platform to WebKit2 layer

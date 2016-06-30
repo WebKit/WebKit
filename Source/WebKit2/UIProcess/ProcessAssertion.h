@@ -72,6 +72,13 @@ public:
     void setClient(ProcessAssertionClient&);
 
     void setState(AssertionState);
+
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+private:
+    void updateRunInBackgroundCount();
+
+    bool m_isHoldingBackgroundAssertion { false };
+#endif
 };
     
 }
