@@ -1,5 +1,13 @@
 2016-06-29  Dean Jackson  <dino@apple.com>
 
+        Add the UI JavaScript library to make
+        other browsers happy.
+
+        * demos/spring/dat.gui.min.js: Added.
+        * demos/spring/index.html:
+
+2016-06-29  Dean Jackson  <dino@apple.com>
+
         Demo and JS implementation of our spring() animation
         timing function.
 
