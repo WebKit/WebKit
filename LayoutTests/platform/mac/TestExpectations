@@ -1210,6 +1210,7 @@ webkit.org/b/148636 inspector/css/pseudo-element-matches-for-pseudo-element-node
 webkit.org/b/148636 inspector/css/pseudo-element-matches.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/css/selector-dynamic-specificity.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/css/selector-specificity.html [ Pass Timeout ]
+webkit.org/b/153460 [ Debug ] inspector/codemirror/prettyprinting-css-rules.html [ Pass Timeout ]
 webkit.org/b/158742 [ Debug ] inspector/debugger/break-in-constructor-before-super.html [ Pass Timeout ]
 webkit.org/b/152029 inspector/debugger/command-line-api-exception.html [ Pass Timeout ]
 webkit.org/b/152487 inspector/debugger/command-line-api-exception-nested-catch.html [ Pass Timeout ]
