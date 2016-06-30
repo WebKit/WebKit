@@ -1,3 +1,11 @@
+2016-06-29  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the debug build after r202667
+
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        The putDirect was missing the Accessor flag for the GetterSetter.
+
 2016-06-29  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(200114): Netflix app does not see ChromeCast

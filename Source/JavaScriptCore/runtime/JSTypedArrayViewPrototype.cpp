@@ -282,7 +282,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSFunction* toStringTagFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("get [Symbol.toStringTag]"), typedArrayViewProtoGetterFuncToStringTag, NoIntrinsic);
     GetterSetter* toStringTagAccessor = GetterSetter::create(vm, globalObject);
     toStringTagAccessor->setGetter(vm, globalObject, toStringTagFunction);
-    putDirectNonIndexAccessor(vm, vm.propertyNames->toStringTagSymbol, toStringTagAccessor, DontEnum | ReadOnly);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->toStringTagSymbol, toStringTagAccessor, DontEnum | ReadOnly | Accessor);
 
     JSFunction* valuesFunction = JSFunction::createBuiltinFunction(vm, typedArrayPrototypeValuesCodeGenerator(vm), globalObject);
 
