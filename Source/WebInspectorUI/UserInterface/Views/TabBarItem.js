@@ -196,7 +196,7 @@ WebInspector.TabBarItem = class TabBarItem extends WebInspector.Object
 
         let hasOtherNonPinnedTabs = this._parentTabBar.tabBarItems.some((item) => item !== this && !item.pinned);
         let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-        contextMenu.appendItem(WebInspector.UIString("Close Tab"), closeTab, !hasOtherNonPinnedTabs);
+        contextMenu.appendItem(WebInspector.UIString("Close Tab"), closeTab, this.isDefaultTab);
         contextMenu.appendItem(WebInspector.UIString("Close Other Tabs"), closeOtherTabs, !hasOtherNonPinnedTabs);
     }
 };
