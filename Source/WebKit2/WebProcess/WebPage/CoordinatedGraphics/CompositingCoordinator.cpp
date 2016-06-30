@@ -25,25 +25,24 @@
  */
 
 #include "config.h"
+#include "CompositingCoordinator.h"
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "CompositingCoordinator.h"
-
-#include "DOMWindow.h"
-#include "Document.h"
-#include "FrameView.h"
-#include "GraphicsContext.h"
-#include "InspectorController.h"
-#include "MainFrame.h"
-#include "Page.h"
-#include "Settings.h"
+#include <WebCore/DOMWindow.h>
+#include <WebCore/Document.h>
+#include <WebCore/FrameView.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/InspectorController.h>
+#include <WebCore/MainFrame.h>
+#include <WebCore/Page.h>
+#include <WebCore/Settings.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
 
-// FIXME: Having this in the platform directory is a layering violation. This does not belong here.
+using namespace WebCore;
 
-namespace WebCore {
+namespace WebKit {
 
 CompositingCoordinator::CompositingCoordinator(Page* page, CompositingCoordinator::Client* client)
     : m_page(page)
@@ -448,6 +447,6 @@ void CompositingCoordinator::releaseInactiveAtlasesTimerFired()
         m_releaseInactiveAtlasesTimer.stop();
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS)

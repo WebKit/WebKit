@@ -33,14 +33,11 @@ if (USE_COORDINATED_GRAPHICS)
         page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
         page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
 
-        platform/graphics/texmap/coordinated/AreaAllocator.cpp
-        platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
         platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp
         platform/graphics/texmap/coordinated/CoordinatedSurface.cpp
         platform/graphics/texmap/coordinated/Tile.cpp
         platform/graphics/texmap/coordinated/TiledBackingStore.cpp
-        platform/graphics/texmap/coordinated/UpdateAtlas.cpp
     )
 endif ()
 

@@ -22,8 +22,8 @@
 #define UpdateAtlas_h
 
 #include "AreaAllocator.h"
-#include "CoordinatedSurface.h"
-#include "IntSize.h"
+#include <WebCore/CoordinatedSurface.h>
+#include <WebCore/IntSize.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -32,23 +32,26 @@
 namespace WebCore {
 class GraphicsContext;
 class IntPoint;
+}
+
+namespace WebKit {
 
 class UpdateAtlas {
     WTF_MAKE_NONCOPYABLE(UpdateAtlas);
 public:
     class Client {
     public:
-        virtual void createUpdateAtlas(uint32_t /* id */, PassRefPtr<CoordinatedSurface>) = 0;
+        virtual void createUpdateAtlas(uint32_t /* id */, PassRefPtr<WebCore::CoordinatedSurface>) = 0;
         virtual void removeUpdateAtlas(uint32_t /* id */) = 0;
     };
 
-    UpdateAtlas(Client*, int dimension, CoordinatedSurface::Flags);
+    UpdateAtlas(Client*, int dimension, WebCore::CoordinatedSurface::Flags);
     ~UpdateAtlas();
 
-    inline IntSize size() const { return m_surface->size(); }
+    inline WebCore::IntSize size() const { return m_surface->size(); }
 
     // Returns false if there is no available buffer.
-    bool paintOnAvailableBuffer(const IntSize&, uint32_t& atlasID, IntPoint& offset, CoordinatedSurface::Client*);
+    bool paintOnAvailableBuffer(const WebCore::IntSize&, uint32_t& atlasID, WebCore::IntPoint& offset, WebCore::CoordinatedSurface::Client*);
     void didSwapBuffers();
     bool supportsAlpha() const { return m_surface->supportsAlpha(); }
 
@@ -70,11 +73,12 @@ private:
 private:
     Client* m_client;
     std::unique_ptr<GeneralAreaAllocator> m_areaAllocator;
-    RefPtr<CoordinatedSurface> m_surface;
+    RefPtr<WebCore::CoordinatedSurface> m_surface;
     double m_inactivityInSeconds;
     uint32_t m_ID;
 };
 
-} // namespace WebCore
+} // namespace WebKit
+
 #endif // USE(COORDINATED_GRAPHICS)
 #endif // UpdateAtlas_h

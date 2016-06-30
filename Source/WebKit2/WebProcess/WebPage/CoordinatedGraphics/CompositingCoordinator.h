@@ -29,58 +29,60 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "CoordinatedGraphicsLayer.h"
-#include "CoordinatedGraphicsState.h"
-#include "CoordinatedImageBacking.h"
-#include "FloatPoint.h"
-#include "GraphicsLayerClient.h"
-#include "GraphicsLayerFactory.h"
-#include "IntRect.h"
-#include "Timer.h"
 #include "UpdateAtlas.h"
+#include <WebCore/CoordinatedGraphicsLayer.h>
+#include <WebCore/CoordinatedGraphicsState.h>
+#include <WebCore/CoordinatedImageBacking.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/GraphicsLayerClient.h>
+#include <WebCore/GraphicsLayerFactory.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/Timer.h>
 
 namespace WebCore {
-
 class Page;
 class GraphicsContext;
 class GraphicsLayer;
 class CoordinatedSurface;
+}
 
-class CompositingCoordinator : public GraphicsLayerClient
-    , public CoordinatedGraphicsLayerClient
-    , public CoordinatedImageBacking::Client
+namespace WebKit {
+
+class CompositingCoordinator : public WebCore::GraphicsLayerClient
+    , public WebCore::CoordinatedGraphicsLayerClient
+    , public WebCore::CoordinatedImageBacking::Client
     , public UpdateAtlas::Client
-    , public GraphicsLayerFactory {
+    , public WebCore::GraphicsLayerFactory {
     WTF_MAKE_NONCOPYABLE(CompositingCoordinator); WTF_MAKE_FAST_ALLOCATED;
 public:
     class Client {
     public:
-        virtual void didFlushRootLayer(const FloatRect& visibleContentRect) = 0;
+        virtual void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) = 0;
         virtual void notifyFlushRequired() = 0;
-        virtual void commitSceneState(const CoordinatedGraphicsState&) = 0;
-        virtual void paintLayerContents(const GraphicsLayer*, GraphicsContext&, const IntRect& clipRect) = 0;
+        virtual void commitSceneState(const WebCore::CoordinatedGraphicsState&) = 0;
+        virtual void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) = 0;
     };
 
-    CompositingCoordinator(Page*, CompositingCoordinator::Client*);
+    CompositingCoordinator(WebCore::Page*, CompositingCoordinator::Client*);
     virtual ~CompositingCoordinator();
 
-    void setRootCompositingLayer(GraphicsLayer*);
-    void setViewOverlayRootLayer(GraphicsLayer*);
-    void sizeDidChange(const IntSize& newSize);
+    void setRootCompositingLayer(WebCore::GraphicsLayer*);
+    void setViewOverlayRootLayer(WebCore::GraphicsLayer*);
+    void sizeDidChange(const WebCore::IntSize&);
     void deviceOrPageScaleFactorChanged();
 
-    void setVisibleContentsRect(const FloatRect&, const FloatPoint&);
+    void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
     void renderNextFrame();
     void purgeBackingStores();
-    void commitScrollOffset(uint32_t layerID, const IntSize& offset);
+    void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
-    void createRootLayer(const IntSize&);
+    void createRootLayer(const WebCore::IntSize&);
     void clearRootLayer() { m_rootLayer = nullptr; }
-    GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
-    CoordinatedGraphicsLayer* mainContentsLayer();
+    WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
+    WebCore::CoordinatedGraphicsLayer* mainContentsLayer();
 
     bool flushPendingLayerChanges();
-    CoordinatedGraphicsState& state() { return m_state; }
+    WebCore::CoordinatedGraphicsState& state() { return m_state; }
 
     void syncDisplayState();
 
@@ -90,32 +92,32 @@ public:
 
 private:
     // GraphicsLayerClient
-    void notifyAnimationStarted(const GraphicsLayer*, const String&, double time) override;
-    void notifyFlushRequired(const GraphicsLayer*) override;
-    void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clipRect) override;
+    void notifyAnimationStarted(const WebCore::GraphicsLayer*, const String&, double time) override;
+    void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
+    void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect) override;
     float deviceScaleFactor() const override;
     float pageScaleFactor() const override;
 
     // CoordinatedImageBacking::Client
-    void createImageBacking(CoordinatedImageBackingID) override;
-    void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>) override;
-    void clearImageBackingContents(CoordinatedImageBackingID) override;
-    void removeImageBacking(CoordinatedImageBackingID) override;
+    void createImageBacking(WebCore::CoordinatedImageBackingID) override;
+    void updateImageBacking(WebCore::CoordinatedImageBackingID, PassRefPtr<WebCore::CoordinatedSurface>) override;
+    void clearImageBackingContents(WebCore::CoordinatedImageBackingID) override;
+    void removeImageBacking(WebCore::CoordinatedImageBackingID) override;
 
     // CoordinatedGraphicsLayerClient
     bool isFlushingLayerChanges() const override { return m_isFlushingLayerChanges; }
-    FloatRect visibleContentsRect() const override;
-    PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(Image*) override;
-    void detachLayer(CoordinatedGraphicsLayer*) override;
+    WebCore::FloatRect visibleContentsRect() const override;
+    PassRefPtr<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) override;
+    void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     bool paintToSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& /* atlasID */, WebCore::IntPoint&, WebCore::CoordinatedSurface::Client*) override;
-    void syncLayerState(CoordinatedLayerID, CoordinatedGraphicsLayerState&) override;
+    void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;
 
     // UpdateAtlas::Client
-    void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>) override;
+    void createUpdateAtlas(uint32_t atlasID, PassRefPtr<WebCore::CoordinatedSurface>) override;
     void removeUpdateAtlas(uint32_t atlasID) override;
 
     // GraphicsLayerFactory
-    std::unique_ptr<GraphicsLayer> createGraphicsLayer(GraphicsLayer::Type, GraphicsLayerClient&) override;
+    std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
 
     void initializeRootCompositingLayerIfNeeded();
     void flushPendingImageBackingChanges();
@@ -127,18 +129,18 @@ private:
 
     double timestamp() const;
 
-    Page* m_page;
+    WebCore::Page* m_page;
     CompositingCoordinator::Client* m_client;
 
-    std::unique_ptr<GraphicsLayer> m_rootLayer;
-    GraphicsLayer* m_rootCompositingLayer;
-    GraphicsLayer* m_overlayCompositingLayer;
+    std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
+    WebCore::GraphicsLayer* m_rootCompositingLayer;
+    WebCore::GraphicsLayer* m_overlayCompositingLayer;
 
-    CoordinatedGraphicsState m_state;
+    WebCore::CoordinatedGraphicsState m_state;
 
-    typedef HashMap<CoordinatedLayerID, CoordinatedGraphicsLayer*> LayerMap;
+    typedef HashMap<WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayer*> LayerMap;
     LayerMap m_registeredLayers;
-    typedef HashMap<CoordinatedImageBackingID, RefPtr<CoordinatedImageBacking> > ImageBackingMap;
+    typedef HashMap<WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedImageBacking> > ImageBackingMap;
     ImageBackingMap m_imageBackings;
     Vector<std::unique_ptr<UpdateAtlas>> m_updateAtlases;
 
@@ -147,11 +149,11 @@ private:
     bool m_isPurging;
     bool m_isFlushingLayerChanges;
 
-    FloatRect m_visibleContentsRect;
+    WebCore::FloatRect m_visibleContentsRect;
 
     bool m_shouldSyncFrame;
     bool m_didInitializeRootCompositingLayer;
-    Timer m_releaseInactiveAtlasesTimer;
+    WebCore::Timer m_releaseInactiveAtlasesTimer;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     double m_lastAnimationServiceTime;
@@ -160,6 +162,6 @@ private:
 
 }
 
-#endif
+#endif // namespace WebKit
 
 #endif // CompositingCoordinator_h

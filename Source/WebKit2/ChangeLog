@@ -1,3 +1,98 @@
+2016-06-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Coordinated Graphics] Move CompositingCoordinator from platform to WebKit2 layer
+        https://bugs.webkit.org/show_bug.cgi?id=159209
+
+        Reviewed by Žan Doberšek.
+
+        Move CompositingCoordinator and its helper classes to the WebKit2 layer.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp: Renamed from Source/WebCore/platform/graphics/texmap/coordinated/AreaAllocator.cpp.
+        (WebKit::AreaAllocator::AreaAllocator):
+        (WebKit::AreaAllocator::~AreaAllocator):
+        (WebKit::AreaAllocator::expand):
+        (WebKit::AreaAllocator::expandBy):
+        (WebKit::AreaAllocator::release):
+        (WebKit::AreaAllocator::overhead):
+        (WebKit::AreaAllocator::roundAllocation):
+        (WebKit::GeneralAreaAllocator::GeneralAreaAllocator):
+        (WebKit::GeneralAreaAllocator::~GeneralAreaAllocator):
+        (WebKit::GeneralAreaAllocator::freeNode):
+        (WebKit::GeneralAreaAllocator::expand):
+        (WebKit::fitsWithin):
+        (WebKit::GeneralAreaAllocator::allocate):
+        (WebKit::GeneralAreaAllocator::allocateFromNode):
+        (WebKit::GeneralAreaAllocator::splitNode):
+        (WebKit::GeneralAreaAllocator::updateLargestFree):
+        (WebKit::GeneralAreaAllocator::release):
+        (WebKit::GeneralAreaAllocator::overhead):
+        * WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.h: Renamed from Source/WebCore/platform/graphics/texmap/coordinated/AreaAllocator.h.
+        (WebKit::nextPowerOfTwo):
+        (WebKit::AreaAllocator::size):
+        (WebKit::AreaAllocator::minimumAllocation):
+        (WebKit::AreaAllocator::setMinimumAllocation):
+        (WebKit::AreaAllocator::margin):
+        (WebKit::AreaAllocator::setMargin):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp: Renamed from Source/WebCore/platform/graphics/texmap/coordinated/CompositingCoordinator.cpp.
+        (WebKit::CompositingCoordinator::CompositingCoordinator):
+        (WebKit::CompositingCoordinator::~CompositingCoordinator):
+        (WebKit::CompositingCoordinator::setRootCompositingLayer):
+        (WebKit::CompositingCoordinator::setViewOverlayRootLayer):
+        (WebKit::CompositingCoordinator::sizeDidChange):
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        (WebKit::CompositingCoordinator::timestamp):
+        (WebKit::CompositingCoordinator::syncDisplayState):
+        (WebKit::CompositingCoordinator::nextAnimationServiceTime):
+        (WebKit::CompositingCoordinator::clearPendingStateChanges):
+        (WebKit::CompositingCoordinator::initializeRootCompositingLayerIfNeeded):
+        (WebKit::CompositingCoordinator::createRootLayer):
+        (WebKit::CompositingCoordinator::syncLayerState):
+        (WebKit::CompositingCoordinator::createImageBackingIfNeeded):
+        (WebKit::CompositingCoordinator::createImageBacking):
+        (WebKit::CompositingCoordinator::updateImageBacking):
+        (WebKit::CompositingCoordinator::clearImageBackingContents):
+        (WebKit::CompositingCoordinator::removeImageBacking):
+        (WebKit::CompositingCoordinator::flushPendingImageBackingChanges):
+        (WebKit::CompositingCoordinator::notifyAnimationStarted):
+        (WebKit::CompositingCoordinator::notifyFlushRequired):
+        (WebKit::CompositingCoordinator::paintContents):
+        (WebKit::CompositingCoordinator::createGraphicsLayer):
+        (WebKit::CompositingCoordinator::deviceScaleFactor):
+        (WebKit::CompositingCoordinator::pageScaleFactor):
+        (WebKit::CompositingCoordinator::createUpdateAtlas):
+        (WebKit::CompositingCoordinator::removeUpdateAtlas):
+        (WebKit::CompositingCoordinator::visibleContentsRect):
+        (WebKit::CompositingCoordinator::mainContentsLayer):
+        (WebKit::CompositingCoordinator::setVisibleContentsRect):
+        (WebKit::CompositingCoordinator::deviceOrPageScaleFactorChanged):
+        (WebKit::CompositingCoordinator::detachLayer):
+        (WebKit::CompositingCoordinator::commitScrollOffset):
+        (WebKit::CompositingCoordinator::renderNextFrame):
+        (WebKit::CompositingCoordinator::purgeBackingStores):
+        (WebKit::CompositingCoordinator::paintToSurface):
+        (WebKit::CompositingCoordinator::scheduleReleaseInactiveAtlases):
+        (WebKit::CompositingCoordinator::releaseInactiveAtlasesTimerFired):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h: Renamed from Source/WebCore/platform/graphics/texmap/coordinated/CompositingCoordinator.h.
+        (WebKit::CompositingCoordinator::clearRootLayer):
+        (WebKit::CompositingCoordinator::rootLayer):
+        (WebKit::CompositingCoordinator::state):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp: Renamed from Source/WebCore/platform/graphics/texmap/coordinated/UpdateAtlas.cpp.
+        (WebKit::UpdateAtlasSurfaceClient::UpdateAtlasSurfaceClient):
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit::UpdateAtlas::~UpdateAtlas):
+        (WebKit::UpdateAtlas::buildLayoutIfNeeded):
+        (WebKit::UpdateAtlas::didSwapBuffers):
+        (WebKit::UpdateAtlas::paintOnAvailableBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h: Renamed from Source/WebCore/platform/graphics/texmap/coordinated/UpdateAtlas.h.
+        (WebKit::UpdateAtlas::size):
+        (WebKit::UpdateAtlas::supportsAlpha):
+        (WebKit::UpdateAtlas::addTimeInactive):
+        (WebKit::UpdateAtlas::isInactive):
+        (WebKit::UpdateAtlas::isInUse):
+
 2016-06-29  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed, CMake build fix.

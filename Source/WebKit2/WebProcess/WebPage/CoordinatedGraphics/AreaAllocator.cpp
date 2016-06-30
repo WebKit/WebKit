@@ -18,12 +18,13 @@
  */
 
 #include "config.h"
+#include "AreaAllocator.h"
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "AreaAllocator.h"
+using namespace WebCore;
 
-namespace WebCore {
+namespace WebKit {
 
 AreaAllocator::AreaAllocator(const IntSize& size)
     : m_size(size)
@@ -330,6 +331,6 @@ int GeneralAreaAllocator::overhead() const
     return m_nodeCount * sizeof(Node);
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS)

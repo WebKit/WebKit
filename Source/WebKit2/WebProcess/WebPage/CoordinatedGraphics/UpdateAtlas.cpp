@@ -23,12 +23,14 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "CoordinatedGraphicsState.h"
-#include "GraphicsContext.h"
-#include "IntRect.h"
+#include <WebCore/CoordinatedGraphicsState.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/IntRect.h>
 #include <wtf/MathExtras.h>
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace WebKit {
 
 class UpdateAtlasSurfaceClient : public CoordinatedSurface::Client {
 public:

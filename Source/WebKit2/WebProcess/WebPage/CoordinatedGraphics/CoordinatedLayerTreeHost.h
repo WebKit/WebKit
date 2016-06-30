@@ -23,8 +23,8 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "CompositingCoordinator.h"
 #include "LayerTreeHost.h"
-#include <WebCore/CompositingCoordinator.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -36,7 +36,7 @@ namespace WebKit {
 
 class WebPage;
 
-class CoordinatedLayerTreeHost : public LayerTreeHost, public WebCore::CompositingCoordinator::Client
+class CoordinatedLayerTreeHost : public LayerTreeHost, public CompositingCoordinator::Client
 {
 public:
     static Ref<CoordinatedLayerTreeHost> create(WebPage&);
@@ -85,7 +85,7 @@ private:
 
     static RefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
-    std::unique_ptr<WebCore::CompositingCoordinator> m_coordinator;
+    std::unique_ptr<CompositingCoordinator> m_coordinator;
     bool m_isWaitingForRenderer { true };
     uint64_t m_forceRepaintAsyncCallbackID { 0 };
     RunLoop::Timer<CoordinatedLayerTreeHost> m_layerFlushTimer;
