@@ -936,6 +936,15 @@ void WebView::scrollBackingStore(FrameView* frameView, int logicalDx, int logica
     HWndDC windowDC(m_viewWindow);
     auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(windowDC));
     HGDIOBJ oldBitmap = ::SelectObject(bitmapDC.get(), m_backingStoreBitmap->get());
+    if (!oldBitmap) {
+        // The ::SelectObject call will fail if m_backingStoreBitmap is already selected into a device context.
+        // This happens when this method is called indirectly from WebView::updateBackingStore during normal WM_PAINT handling.
+        // There is no point continuing, since we would just be scrolling a 1x1 bitmap which is selected into the device context by default.
+        // We can just scroll by repainting the scroll rectangle.
+        RECT scrollRect(scrollViewRect);
+        ::InvalidateRect(m_viewWindow, &scrollRect, FALSE);
+        return;
+    }
 
     // Scroll the bitmap.
     RECT scrollRectWin(scrollViewRect);
@@ -7593,4 +7602,3 @@ HRESULT WebView::findString(_In_ BSTR string, WebFindOptions options, _Deref_opt
     *found = m_page->findString(toString(string), options);
     return S_OK;
 }
-

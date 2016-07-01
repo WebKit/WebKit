@@ -1,3 +1,18 @@
+2016-07-01  Per Arne Vollan  <pvollan@apple.com>
+
+        ASSERTION FAILED: info.bmBitsPixel == 32
+        https://bugs.webkit.org/show_bug.cgi?id=17737
+
+        Reviewed by Brent Fulgham.
+
+        The ::SelectObject call will fail if m_backingStoreBitmap is already selected into a device context.
+        This happens when this method is called indirectly from WebView::updateBackingStore during normal
+        painting. There is no point continuing, since we would just be scrolling a 1x1 bitmap which is
+        selected into the device context by default. We can just scroll by repainting the scroll rectangle.
+
+        * WebView.cpp:
+        (WebView::scrollBackingStore): Invalidate the scroll rectangle if the ::SelectObject call fails.
+
 2016-07-01  Youenn Fablet  <youennf@gmail.com>
 
         Add a runtime flag for DOM iterators
