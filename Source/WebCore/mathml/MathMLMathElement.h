@@ -41,7 +41,7 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 };
-    
+
 }
 
 #endif // ENABLE(MATHML)

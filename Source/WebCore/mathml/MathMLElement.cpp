@@ -46,14 +46,14 @@
 #include "SVGSVGElement.h"
 
 namespace WebCore {
-    
+
 using namespace MathMLNames;
-    
+
 MathMLElement::MathMLElement(const QualifiedName& tagName, Document& document)
     : StyledElement(tagName, document, CreateMathMLElement)
 {
 }
-    
+
 Ref<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new MathMLElement(tagName, document));

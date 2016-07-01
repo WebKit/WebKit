@@ -36,7 +36,7 @@
 #include "PaintInfo.h"
 
 namespace WebCore {
-    
+
 using namespace MathMLNames;
 
 // FIXME: The "MathML in HTML5" implementation note suggests the values 50% for "thin" and 200% for "thick" (http://webkit.org/b/155639).
@@ -123,7 +123,7 @@ void RenderMathMLFraction::updateFromElement()
 void RenderMathMLFraction::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
-    
+
     updateFromElement();
 }
 
@@ -209,9 +209,9 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
         return;
 
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + LayoutPoint(0, numerator().logicalHeight() + gNumeratorGap * style().fontSize() + m_lineThickness / 2));
-    
+
     GraphicsContextStateSaver stateSaver(info.context());
-    
+
     info.context().setStrokeThickness(m_lineThickness);
     info.context().setStrokeStyle(SolidStroke);
     info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor));

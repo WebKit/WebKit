@@ -38,7 +38,7 @@
 namespace WebCore {
 
 using namespace MathMLNames;
-    
+
 RenderMathMLUnderOver::RenderMathMLUnderOver(Element& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))
 {

@@ -32,7 +32,7 @@
 #include "RenderMathMLRow.h"
 
 namespace WebCore {
-    
+
 class RenderMathMLMenclose final: public RenderMathMLRow {
 public:
     RenderMathMLMenclose(Element&, RenderStyle&&);
@@ -52,7 +52,7 @@ private:
     LayoutUnit m_ascent;
     LayoutRect m_contentRect;
 };
-    
+
 }
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLMenclose, isRenderMathMLMenclose())

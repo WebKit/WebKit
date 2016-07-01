@@ -36,7 +36,7 @@
 #include "RenderMathMLToken.h"
 
 namespace WebCore {
-    
+
 using namespace MathMLNames;
 
 inline MathMLTextElement::MathMLTextElement(const QualifiedName& tagName, Document& document)

@@ -40,9 +40,9 @@
 #endif
 
 namespace WebCore {
-    
+
 using namespace MathMLNames;
-    
+
 RenderMathMLBlock::RenderMathMLBlock(Element& container, RenderStyle&& style)
     : RenderFlexibleBox(container, WTFMove(style))
 {
@@ -81,7 +81,7 @@ int RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLin
     // return 0 here to match our line-height. This matters when RootInlineBox::ascentAndDescentForBox is called on a RootInlineBox for an inline-block.
     if (linePositionMode == PositionOfInteriorLineBoxes)
         return 0;
-    
+
     // FIXME: This may be unnecessary after flex baselines are implemented (https://bugs.webkit.org/show_bug.cgi?id=96188).
     return firstLineBaseline().valueOrCompute([&] {
         return RenderFlexibleBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
@@ -104,33 +104,33 @@ const char* RenderMathMLBlock::renderName() const
 void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderFlexibleBox::paint(info, paintOffset);
-    
+
     if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground)
         return;
 
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());
 
     GraphicsContextStateSaver stateSaver(info.context());
-    
+
     info.context().setStrokeThickness(1.0f);
     info.context().setStrokeStyle(SolidStroke);
     info.context().setStrokeColor(Color(0, 0, 255));
-    
+
     info.context().drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()));
     info.context().drawLine(IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()));
     info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()));
     info.context().drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()));
-    
+
     int topStart = paddingTop();
-    
+
     info.context().setStrokeColor(Color(0, 255, 0));
-    
+
     info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + topStart), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + topStart));
-    
+
     int baseline = roundToInt(baselinePosition(AlphabeticBaseline, true, HorizontalLine));
-    
+
     info.context().setStrokeColor(Color(255, 0, 0));
-    
+
     info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + baseline), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + baseline));
 }
 #endif // ENABLE(DEBUG_MATH_LAYOUT)
@@ -146,14 +146,14 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 // number | number unit | namedspace
 //
 // There should be no space between the number and the unit of a length."
-// 
+//
 // "A trailing '%' represents a percent of the default value. The default
 // value, or how it is obtained, is listed in the table of attributes for each
 // element. [...] A number without a unit is intepreted as a multiple of the
 // default value."
 //
 // "The possible units in MathML are:
-//  
+//
 // Unit Description
 // em   an em (font-relative unit traditionally used for horizontal lengths)
 // ex   an ex (font-relative unit traditionally used for vertical lengths)
@@ -299,7 +299,7 @@ bool parseMathMLNamedSpace(const String& string, LayoutUnit& lengthValue, const 
         else if (string == "negativeverythickmathspace")
             length = -6;
         else if (string == "negativeveryverythickmathspace")
-            length = -7;        
+            length = -7;
     }
     if (length) {
         lengthValue = length * style->fontCascade().size() / 18;
@@ -316,6 +316,6 @@ Optional<int> RenderMathMLTable::firstLineBaseline() const
     return (logicalHeight() + style().fontMetrics().xHeight()) / 2;
 }
 
-}    
+}
 
 #endif

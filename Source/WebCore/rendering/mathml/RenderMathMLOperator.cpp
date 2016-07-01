@@ -43,7 +43,7 @@
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
-    
+
 using namespace MathMLNames;
 
 RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, RenderStyle&& style)

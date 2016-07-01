@@ -31,7 +31,7 @@
 #include "RenderMathMLRow.h"
 
 namespace WebCore {
-    
+
 class RenderMathMLMath final : public RenderMathMLRow {
 public:
     RenderMathMLMath(Element&, RenderStyle&&);
@@ -40,7 +40,7 @@ private:
     bool isRenderMathMLMath() const override { return true; }
     const char* renderName() const override { return "RenderMathMLMath"; }
 };
-    
+
 }
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLMath, isRenderMathMLMath())

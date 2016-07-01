@@ -31,7 +31,7 @@
 #include "MathMLElement.h"
 
 namespace WebCore {
-    
+
 class MathMLTextElement final : public MathMLElement {
 public:
     static Ref<MathMLTextElement> create(const QualifiedName& tagName, Document&);
@@ -48,7 +48,7 @@ private:
     void childrenChanged(const ChildChange&) override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 };
-    
+
 }
 
 #endif // ENABLE(MATHML)

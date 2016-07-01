@@ -36,7 +36,7 @@
 #define ENABLE_DEBUG_MATH_LAYOUT 0
 
 namespace WebCore {
-    
+
 class RenderMathMLOperator;
 
 class RenderMathMLBlock : public RenderFlexibleBox {
@@ -45,7 +45,7 @@ public:
     RenderMathMLBlock(Document&, RenderStyle&&);
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
-    
+
     // MathML defines an "embellished operator" as roughly an <mo> that may have subscripts,
     // superscripts, underscripts, overscripts, or a denominator (as in d/dx, where "d" is some
     // differential operator). The padding, precedence, and stretchiness of the base <mo> should
@@ -54,17 +54,17 @@ public:
     // FIXME: We don't yet handle all the cases in the MathML spec. See
     // https://bugs.webkit.org/show_bug.cgi?id=78617.
     virtual RenderMathMLOperator* unembellishedOperator() { return 0; }
-    
+
     int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
-    
+
 #if ENABLE(DEBUG_MATH_LAYOUT)
     virtual void paint(PaintInfo&, const LayoutPoint&);
 #endif
-    
+
     LayoutUnit mathAxisHeight() const;
     LayoutUnit mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth = 0) const;
     LayoutUnit mirrorIfNeeded(LayoutUnit horizontalOffset, const RenderBox& child) const { return mirrorIfNeeded(horizontalOffset, child.logicalWidth()); }
-    
+
 protected:
     static LayoutUnit ascentForChild(const RenderBox& child)
     {
@@ -83,9 +83,9 @@ public:
         : RenderTable(element, WTFMove(style))
     {
     }
-    
+
     Optional<int> firstLineBaseline() const override;
-    
+
 private:
     bool isRenderMathMLTable() const override { return true; }
     const char* renderName() const override { return "RenderMathMLTable"; }

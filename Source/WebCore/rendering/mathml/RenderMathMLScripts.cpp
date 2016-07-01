@@ -35,7 +35,7 @@
 #include "RenderMathMLOperator.h"
 
 namespace WebCore {
-    
+
 using namespace MathMLNames;
 
 static bool isPrescriptDelimiter(const RenderObject& renderObject)
@@ -434,6 +434,6 @@ void RenderMathMLScripts::paintChildren(PaintInfo& paintInfo, const LayoutPoint&
     }
 }
 
-}    
+}
 
 #endif // ENABLE(MATHML)

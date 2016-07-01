@@ -33,7 +33,7 @@
 #include "PaintInfo.h"
 
 namespace WebCore {
-    
+
 using namespace MathMLNames;
 
 RenderMathMLSpace::RenderMathMLSpace(MathMLTextElement& element, RenderStyle&& style)

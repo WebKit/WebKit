@@ -249,7 +249,7 @@ void RenderMathMLRoot::paintChildren(PaintInfo& paintInfo, const LayoutPoint& pa
 void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLRow::paint(info, paintOffset);
-    
+
     if (isEmpty() || info.context().paintingDisabled() || style().visibility() != VISIBLE || !isValid())
         return;
 

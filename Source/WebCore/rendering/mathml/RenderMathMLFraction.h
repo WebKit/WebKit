@@ -57,7 +57,7 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final;
     RenderMathMLOperator* unembellishedOperator() final;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
-    
+
     bool isValid() const;
     RenderBox& numerator() const;
     RenderBox& denominator() const;

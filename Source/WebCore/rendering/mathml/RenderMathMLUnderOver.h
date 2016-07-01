@@ -32,11 +32,11 @@
 #include "RenderMathMLBlock.h"
 
 namespace WebCore {
-    
+
 class RenderMathMLUnderOver final : public RenderMathMLBlock {
 public:
     RenderMathMLUnderOver(Element&, RenderStyle&&);
-    
+
     RenderMathMLOperator* unembellishedOperator() override;
 
     Optional<int> firstLineBaseline() const override;
@@ -59,7 +59,7 @@ private:
     enum UnderOverType { Under, Over, UnderOver };
     UnderOverType m_scriptType;
 };
-    
+
 }
 
 #endif // ENABLE(MATHML)

@@ -32,7 +32,7 @@
 #include "RenderMathMLBlock.h"
 
 namespace WebCore {
-    
+
 class RenderMathMLSpace final : public RenderMathMLBlock {
 public:
     RenderMathMLSpace(MathMLTextElement&, RenderStyle&&);

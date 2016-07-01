@@ -41,7 +41,7 @@
 #include "RenderMathMLUnderOver.h"
 
 namespace WebCore {
-    
+
 using namespace MathMLNames;
 
 MathMLInlineContainerElement::MathMLInlineContainerElement(const QualifiedName& tagName, Document& document)
