@@ -34,6 +34,8 @@ namespace WebKit {
 
 static void XPCServiceEventHandler(xpc_connection_t peer)
 {
+    static xpc_object_t priorityBoostMessage = nullptr;
+
     xpc_connection_set_target_queue(peer, dispatch_get_main_queue());
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
         xpc_type_t type = xpc_get_type(event);
@@ -49,7 +51,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
                 CFStringRef entryPointFunctionName = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
 
-                typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t);
+                typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t, xpc_object_t);
                 InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKitBundle, entryPointFunctionName));
                 if (!initializerFunctionPtr) {
                     NSLog(@"Unable to find entry point in WebKit.framework with name: %@", (NSString *)entryPointFunctionName);
@@ -68,12 +70,16 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 if (fd != -1)
                     dup2(fd, STDERR_FILENO);
 
-                initializerFunctionPtr(peer, event);
+                initializerFunctionPtr(peer, event, priorityBoostMessage);
+                if (priorityBoostMessage)
+                    xpc_release(priorityBoostMessage);
             }
 
             // Leak a boost onto the NetworkProcess.
-            if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "pre-bootstrap"))
-                xpc_retain(event);
+            if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "pre-bootstrap")) {
+                assert(!priorityBoostMessage);
+                priorityBoostMessage = xpc_retain(event);
+            }
         }
     });
 

@@ -31,6 +31,7 @@
 
 #import "SandboxInitializationParameters.h"
 #import "WebKitSystemInterface.h"
+#import "XPCServiceEntryPoint.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/FloatingPointEnvironment.h>
 #import <WebCore/SystemVersion.h>
@@ -112,6 +113,11 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
 void ChildProcess::setQOS(int, int)
 {
 
+}
+
+void ChildProcess::platformStopRunLoop()
+{
+    XPCServiceExit(WTFMove(m_priorityBoostMessage));
 }
 
 } // namespace WebKit

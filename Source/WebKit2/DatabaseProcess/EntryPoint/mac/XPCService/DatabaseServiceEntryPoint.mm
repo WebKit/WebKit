@@ -36,9 +36,9 @@
 
 using namespace WebKit;
 
-extern "C" WK_EXPORT void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
+extern "C" WK_EXPORT void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage);
 
-void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
+void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
 #if HAVE(OS_ACTIVITY)
 #pragma clang diagnostic push
@@ -47,7 +47,7 @@ void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initia
 #pragma clang diagnostic pop
 #endif
 
-    XPCServiceInitializer<DatabaseProcess, XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage);
+    XPCServiceInitializer<DatabaseProcess, XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
 
 #if HAVE(OS_ACTIVITY)
 #pragma clang diagnostic push

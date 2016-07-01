@@ -48,9 +48,9 @@ public:
 
 using namespace WebKit;
 
-extern "C" WK_EXPORT void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
+extern "C" WK_EXPORT void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage);
 
-void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
+void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
     // Remove the SecItemShim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the this process don't try to insert the shim and crash.
@@ -63,7 +63,7 @@ void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initial
 #pragma clang diagnostic pop
 #endif
 
-    XPCServiceInitializer<NetworkProcess, NetworkServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage);
+    XPCServiceInitializer<NetworkProcess, NetworkServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
 
 #if HAVE(OS_ACTIVITY)
 #pragma clang diagnostic push

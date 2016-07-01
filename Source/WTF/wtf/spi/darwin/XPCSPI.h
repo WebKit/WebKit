@@ -123,6 +123,8 @@ EXTERN_C xpc_type_t xpc_get_type(xpc_object_t);
 EXTERN_C void xpc_main(xpc_connection_handler_t);
 EXTERN_C const char* xpc_string_get_string_ptr(xpc_object_t);
 EXTERN_C void xpc_transaction_begin(void);
+EXTERN_C void xpc_transaction_end(void);
+EXTERN_C void xpc_transaction_exit_clean(void);
 EXTERN_C void xpc_track_activity(void);
 
 EXTERN_C xpc_object_t xpc_connection_copy_entitlement_value(xpc_connection_t, const char* entitlement);

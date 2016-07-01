@@ -69,9 +69,9 @@ using namespace WebKit;
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-extern "C" WK_EXPORT void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
+extern "C" WK_EXPORT void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage);
 
-void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
+void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     // FIXME: Add support for teardown from PluginProcessMain.mm
@@ -87,7 +87,7 @@ void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initiali
 #pragma clang diagnostic pop
 #endif
 
-    XPCServiceInitializer<PluginProcess, PluginServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage);
+    XPCServiceInitializer<PluginProcess, PluginServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
 
 #if HAVE(OS_ACTIVITY)
 #pragma clang diagnostic push

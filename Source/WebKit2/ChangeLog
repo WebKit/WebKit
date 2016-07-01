@@ -1,3 +1,62 @@
+2016-06-30  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] WebContent processes do not exit promptly
+        https://bugs.webkit.org/show_bug.cgi?id=159301
+        <rdar://problem/26965488>
+
+        Reviewed by Anders Carlsson.
+
+        WebContent processes do not exit promptly, they hang around for 10 seconds
+        until the watchdog forcefully calls exit().
+
+        This patch addresses the issue by asking XPC to exit when clean. It also
+        fixes 2 XPC transactions that were leaking so that XPC can become clean.
+
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm:
+        (DatabaseServiceInitializer):
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (NetworkServiceInitializer):
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+        (PluginServiceInitializer):
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+        Add extra priorityBoostMessage parameter which is then passed along to
+        ChildProcess via initialization parameters. ChildProcess is now in
+        charge of retaining the message for as long as it needs the priority
+        boost. In particular, ChildProcess now takes care of releasing the
+        boost message before existing to avoid leaking an XPC transaction.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::initialize):
+        Retain priorityBoostMessage as a data member.
+
+        (WebKit::ChildProcess::stopRunLoop):
+        (WebKit::ChildProcess::platformStopRunLoop):
+        * Shared/ios/ChildProcessIOS.mm:
+        (WebKit::ChildProcess::platformStopRunLoop):
+        On iOS, call XPCServiceExit() to exit instead of RunLoop::main().stop()
+        which did not work.
+
+        * Shared/ChildProcess.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        Set priorityBoostMessage on ChildProcessInitializationParameters.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceExit):
+        Add XPCServiceExit() function which destroys the priority boost
+        message, calls xpc_transaction_end() to balance the
+        xpc_transaction_begin() in XPCServiceInitializer() and then call
+        xpc_transaction_exit_clean() to ask XPC to exit when clean.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        Leaking the "pre-bootstrap" event for priority boosting would cause us to
+        leak an XPC transaction, which would prevent XPC from becoming clean and
+        exiting. Instead, we now pass it along to the initialization function.
+        We then pass it to ChildProcess which manages the lifetime of this message
+        instead of leaking it.
+
 2016-06-30  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r202329): WebInspectorProxy's WKPagePolicyClient callbacks are not being called

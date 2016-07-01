@@ -120,4 +120,13 @@ bool XPCServiceInitializerDelegate::isClientSandboxed()
     return processIsSandboxed(xpc_connection_get_pid(m_connection.get()));
 }
 
+void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage)
+{
+    // Make sure to destroy the priority boost message to avoid leaking a transaction.
+    priorityBoostMessage = nullptr;
+    // Balances the xpc_transaction_begin() in XPCServiceInitializer.
+    xpc_transaction_end();
+    xpc_transaction_exit_clean();
+}
+
 } // namespace WebKit

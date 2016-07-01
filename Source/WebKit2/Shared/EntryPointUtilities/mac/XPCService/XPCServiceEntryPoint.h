@@ -67,7 +67,7 @@ protected:
 };
 
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
-void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);
 
@@ -81,6 +81,9 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
         exit(EXIT_FAILURE);
 
     ChildProcessInitializationParameters parameters;
+    if (priorityBoostMessage)
+        parameters.priorityBoostMessage = adoptOSObject(xpc_retain(priorityBoostMessage));
+
     if (!delegate.getConnectionIdentifier(parameters.connectionIdentifier))
         exit(EXIT_FAILURE);
 
@@ -100,6 +103,8 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 
     XPCServiceType::singleton().initialize(parameters);
 }
+
+void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage);
 
 } // namespace WebKit
 
