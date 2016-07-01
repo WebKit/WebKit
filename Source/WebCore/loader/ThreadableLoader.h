@@ -73,7 +73,6 @@ namespace WebCore {
         PreflightPolicy preflightPolicy { ConsiderPreflight };
         CrossOriginRequestPolicy crossOriginRequestPolicy { DenyCrossOriginRequests };
         ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement { ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective };
-        RefPtr<SecurityOrigin> securityOrigin;
         String initiator; // This cannot be an AtomicString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
     };
 

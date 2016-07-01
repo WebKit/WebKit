@@ -109,7 +109,7 @@ void CrossOriginPreflightChecker::startPreflight()
     // Keep buffering the data for the preflight request.
     options.setDataBufferingPolicy(BufferData);
 
-    options.fetchOptions().redirect = FetchOptions::Redirect::Manual;
+    options.redirect = FetchOptions::Redirect::Manual;
 
     CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, m_loader.securityOrigin()), options);
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())

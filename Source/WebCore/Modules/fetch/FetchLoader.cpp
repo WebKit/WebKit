@@ -73,7 +73,6 @@ void FetchLoader::start(ScriptExecutionContext& context, Blob& blob)
 
 void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
 {
-    // FIXME: Compute loading options according fetch options.
     ThreadableLoaderOptions options;
     options.setSendLoadCallbacks(SendCallbacks);
     options.setSniffContent(DoNotSniffContent);
@@ -82,7 +81,9 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     options.setAllowCredentials(AllowStoredCredentials);
     options.crossOriginRequestPolicy = DenyCrossOriginRequests;
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
-    options.setFetchOptions(request.fetchOptions());
+
+    // FIXME: Pass directly all fetch options to loader options.
+    options.redirect = request.fetchOptions().redirect;
 
     m_loader = ThreadableLoader::create(&context, this, request.internalRequest(), options);
     m_isStarted = m_loader;

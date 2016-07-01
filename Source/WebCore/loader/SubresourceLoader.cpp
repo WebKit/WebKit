@@ -175,8 +175,8 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
 
     ASSERT(!newRequest.isNull());
     if (!redirectResponse.isNull()) {
-        if (options().fetchOptions().redirect != FetchOptions::Redirect::Follow) {
-            if (options().fetchOptions().redirect == FetchOptions::Redirect::Error) {
+        if (options().redirect != FetchOptions::Redirect::Follow) {
+            if (options().redirect == FetchOptions::Redirect::Error) {
                 cancel();
                 return;
             }

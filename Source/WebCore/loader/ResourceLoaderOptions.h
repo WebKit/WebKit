@@ -28,14 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceLoaderOptions_h
-#define ResourceLoaderOptions_h
+#pragma once
 
 #include "FetchOptions.h"
 #include "ResourceHandleTypes.h"
 
 namespace WebCore {
-    
+
 enum SendCallbackPolicy {
     SendCallbacks,
     DoNotSendCallbacks
@@ -82,7 +81,7 @@ enum class CachingPolicy : uint8_t {
     DisallowCaching
 };
 
-struct ResourceLoaderOptions {
+struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions()
         : m_sendLoadCallbacks(DoNotSendCallbacks)
         , m_sniffContent(DoNotSniffContent)
@@ -136,9 +135,6 @@ struct ResourceLoaderOptions {
     void setDefersLoadingPolicy(DefersLoadingPolicy defersLoadingPolicy) { m_defersLoadingPolicy = defersLoadingPolicy; }
     CachingPolicy cachingPolicy() const { return m_cachingPolicy; }
     void setCachingPolicy(CachingPolicy cachingPolicy) { m_cachingPolicy = cachingPolicy; }
-    const FetchOptions& fetchOptions() const { return m_fetchOptions; }
-    FetchOptions& fetchOptions() { return m_fetchOptions; }
-    void setFetchOptions(const FetchOptions& fetchOptions) { m_fetchOptions = fetchOptions; }
 
     unsigned m_sendLoadCallbacks : 1;
     unsigned m_sniffContent : 1;
@@ -152,9 +148,6 @@ struct ResourceLoaderOptions {
     ContentSecurityPolicyImposition m_contentSecurityPolicyImposition { ContentSecurityPolicyImposition::DoPolicyCheck };
     DefersLoadingPolicy m_defersLoadingPolicy { DefersLoadingPolicy::AllowDefersLoading };
     CachingPolicy m_cachingPolicy { CachingPolicy::AllowCaching };
-    FetchOptions m_fetchOptions;
 };
 
-} // namespace WebCore    
-
-#endif // ResourceLoaderOptions_h
+} // namespace WebCore
