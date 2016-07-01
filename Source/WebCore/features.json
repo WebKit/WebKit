@@ -195,6 +195,22 @@
         }
     },
     {
+        "name": "Resource Timing",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "http://www.w3.org/TR/resource-timing/",
+        "webkit-url": "https://webkit.org/b/61138",
+        "keywords": ["resourcetiming","resource timing","rsrc"], 
+        "description": "Provides detailed timing information to JavaScript for sub-resources loaded by the page.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
         "name": "Service Workers",
         "status": {
             "status": "Under Consideration"
@@ -218,12 +234,26 @@
     {
         "name": "WOFF File Format 2.0",
         "status": {
-            "status": "Under Consideration"
+            "status": "Done"
         },
         "url": "https://www.w3.org/TR/WOFF2/",
         "keywords": ["woff"],
         "category": "css",
         "description": "Improves compression to reduce bandwidth with content-aware preprocessing.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
+        "name": "Web Animations",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://www.w3.org/TR/web-animations-1/",
+        "keywords": ["web animations"],
+        "description": "An API to synchronize with the timing for presentation changes of a web page.",
         "contact": {
             "name": "Jonathan Davis",
             "email": "web-evangelist@apple.com",
@@ -315,16 +345,6 @@
         }
     },
     {
-        "name": "CSS Selector :lang() level 4",
-        "status": {
-            "status": "Done",
-            "enabled-by-default": true
-        },
-        "url": "http://dev.w3.org/csswg/selectors-4/#the-lang-pseudo",
-        "specification": "CSS Selectors Level 4",
-        "description": "The selector :lang() is extended in level 4 to support a list of language range, each range can contain a wildcard. For example: p:lang(\"*-be\", \"en\")."
-    },
-    {
         "name": "CSS Selector :focus-within",
         "status": {
             "status": "Done",
@@ -339,6 +359,16 @@
             "twitter": "@awfulben",
             "email": "benjamin@webkit.org"
         }
+    },
+    {
+        "name": "CSS Selector :lang() level 4",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/selectors-4/#the-lang-pseudo",
+        "specification": "CSS Selectors Level 4",
+        "description": "The selector :lang() is extended in level 4 to support a list of language range, each range can contain a wildcard. For example: p:lang(\"*-be\", \"en\")."
     },
     {
         "name": "CSS Selector :matches()",
@@ -582,7 +612,7 @@
     {
         "name": "Picture element",
         "status": {
-            "status": "In Development",
+            "status": "Done",
             "enabled-by-default": false
         },
         "url": "https://html.spec.whatwg.org/multipage/embedded-content.html#the-picture-element",
