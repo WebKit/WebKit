@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013, 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -64,7 +65,7 @@ static ThreadSpecific<BlobUrlOriginMap>& originMap()
     return *map;
 }
 
-static CrossThreadQueue<CrossThreadTask>& threadableQueue()
+static void postToMainThread(CrossThreadTask&& task)
 {
     static std::once_flag onceFlag;
     static CrossThreadQueue<CrossThreadTask>* queue;
@@ -72,7 +73,13 @@ static CrossThreadQueue<CrossThreadTask>& threadableQueue()
         queue = new CrossThreadQueue<CrossThreadTask>;
     });
 
-    return *queue;
+    queue->append(WTFMove(task));
+
+    callOnMainThread([] {
+        auto task = queue->tryGetMessage();
+        ASSERT(task);
+        task->performTask();
+    });
 }
 
 void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& path, const String& contentType)
@@ -114,19 +121,12 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const URL& 
     }
 }
 
-void ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath)
+void ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
 {
     if (isMainThread())
-        blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReference::create(fileBackedPath));
-    else {
-        threadableQueue().append(createCrossThreadTask(ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked, url, srcURL, fileBackedPath));
-
-        callOnMainThread([] {
-            auto task = threadableQueue().tryGetMessage();
-            ASSERT(task);
-            task->performTask();
-        });
-    }
+        blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReference::create(fileBackedPath), contentType);
+    else
+        postToMainThread(createCrossThreadTask(ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked, url, srcURL, fileBackedPath, contentType));
 }
 
 void ThreadableBlobRegistry::registerBlobURLForSlice(const URL& newURL, const URL& srcURL, long long start, long long end)

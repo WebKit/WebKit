@@ -1,3 +1,16 @@
+2016-07-01  Brady Eidson  <beidson@apple.com>
+
+        Blob content type not preserved when retrieving blobs from IndexedDB.
+        <rdar://problem/27057357> and https://bugs.webkit.org/show_bug.cgi?id=159360
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/blob-svg-image-expected.txt: Added.
+        * storage/indexeddb/modern/blob-svg-image.html: Added.
+        * storage/indexeddb/modern/resources/blob-svg-image.js: Added.
+        * storage/indexeddb/modern/resources/blob-svg-image1.html: Added.
+        * storage/indexeddb/modern/resources/blob-svg-image2.html: Added.
+
 2016-07-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cleanup inspector/console/console-message.html

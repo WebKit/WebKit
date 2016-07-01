@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013, 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -60,7 +61,7 @@ private:
     void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType) override;
     void registerBlobURL(const URL&, Vector<BlobPart>, const String& contentType) override;
     void registerBlobURL(const URL&, const URL& srcURL) override;
-    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&) override;
+    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) override;
     void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end) override;
     void unregisterBlobURL(const URL&) override;
     bool isBlobRegistryImpl() const override { return true; }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,10 +57,10 @@ void BlobRegistryProxy::registerBlobURL(const URL& url, const URL& srcURL)
     WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLFromURL(url, srcURL), 0);
 }
 
-void BlobRegistryProxy::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&& file)
+void BlobRegistryProxy::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&& file, const String& contentType)
 {
     ASSERT(file);
-    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLOptionallyFileBacked(url, srcURL, file->path()), 0);
+    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLOptionallyFileBacked(url, srcURL, file->path(), contentType), 0);
 }
 
 void BlobRegistryProxy::unregisterBlobURL(const URL& url)

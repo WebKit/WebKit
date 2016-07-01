@@ -1,3 +1,23 @@
+2016-07-01  Brady Eidson  <beidson@apple.com>
+
+        Blob content type not preserved when retrieving blobs from IndexedDB.
+        <rdar://problem/27057357> and https://bugs.webkit.org/show_bug.cgi?id=159360
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::registerBlobURLOptionallyFileBacked):
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerBlobURLOptionallyFileBacked):
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+
 2016-07-01  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Get rid of WK_NULLABLE_SPECIFIER now that all supported compilers understand _Nullable

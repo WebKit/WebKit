@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BlobRegistryProxy_h
-#define BlobRegistryProxy_h
+#pragma once
 
 #include <WebCore/BlobRegistry.h>
 
@@ -35,7 +34,7 @@ public:
     void registerFileBlobURL(const WebCore::URL&, Ref<WebCore::BlobDataFileReference>&&, const String& contentType) override;
     void registerBlobURL(const WebCore::URL&, Vector<WebCore::BlobPart>, const String& contentType) override;
     void registerBlobURL(const WebCore::URL&, const WebCore::URL& srcURL) override;
-    void registerBlobURLOptionallyFileBacked(const WebCore::URL&, const WebCore::URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&) override;
+    void registerBlobURLOptionallyFileBacked(const WebCore::URL&, const WebCore::URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&, const String& contentType) override;
     void unregisterBlobURL(const WebCore::URL&) override;
     void registerBlobURLForSlice(const WebCore::URL&, const WebCore::URL& srcURL, long long start, long long end) override;
     unsigned long long blobSize(const WebCore::URL&) override;
@@ -43,5 +42,3 @@ public:
 };
 
 }
-
-#endif // BlobRegistryProxy_h

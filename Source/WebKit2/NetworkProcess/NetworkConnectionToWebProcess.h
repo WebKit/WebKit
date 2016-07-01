@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkConnectionToWebProcess_h
-#define NetworkConnectionToWebProcess_h
+#pragma once
 
 #include "BlockingResponseMap.h"
 #include "Connection.h"
@@ -95,7 +94,7 @@ private:
     void registerBlobURL(const WebCore::URL&, Vector<WebCore::BlobPart>, const String& contentType);
     void registerBlobURLFromURL(const WebCore::URL&, const WebCore::URL& srcURL);
     void preregisterSandboxExtensionsForOptionallyFileBackedBlob(const Vector<String>& fileBackedPath, const SandboxExtension::HandleArray&);
-    void registerBlobURLOptionallyFileBacked(const WebCore::URL&, const WebCore::URL& srcURL, const String& fileBackedPath);
+    void registerBlobURLOptionallyFileBacked(const WebCore::URL&, const WebCore::URL& srcURL, const String& fileBackedPath, const String& contentType);
     void registerBlobURLForSlice(const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end);
     void blobSize(const WebCore::URL&, uint64_t& resultSize);
     void unregisterBlobURL(const WebCore::URL&);
@@ -110,5 +109,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // NetworkConnectionToWebProcess_h

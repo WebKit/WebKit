@@ -103,7 +103,7 @@ Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, lon
     if (fileBackedPath.isEmpty())
         ThreadableBlobRegistry::registerBlobURL(nullptr, m_internalURL, srcURL);
     else
-        ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath);
+        ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
 }
 
 Blob::Blob(const URL& srcURL, long long start, long long end, const String& type)
