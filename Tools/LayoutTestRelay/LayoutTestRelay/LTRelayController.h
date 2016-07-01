@@ -32,7 +32,7 @@
 @class SimDevice;
 
 @interface LTRelayController : NSObject <LTRelayDelegate>
-- (id)initWithDevice:(SimDevice *)device productDir:(NSString *)productDir appPath:(NSString *)appPath identifierSuffix:(NSString *)suffix dumpToolArguments:(NSArray *)arguments;
+- (id)initWithDevice:(SimDevice *)device productDir:(NSString *)productDir appPath:(NSString *)appPath deviceUDID:(NSUUID *)udid dumpToolArguments:(NSArray *)arguments;
 - (void)start;
 - (void)finish;
 @end

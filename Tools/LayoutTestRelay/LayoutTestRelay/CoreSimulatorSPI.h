@@ -35,32 +35,14 @@
 #define kSimDeviceLaunchApplicationArguments @"arguments"
 #define kSimDeviceLaunchApplicationEnvironment @"environment"
 
-typedef NS_ENUM(NSUInteger, SimDeviceState) {
-    SimDeviceStateCreating = 0,
-};
-
-@interface SimDeviceType : NSObject
-+ (NSDictionary *)supportedDeviceTypesByIdentifier;
-@property (readonly, copy) NSString *identifier;
-@end
-
-@interface SimRuntime : NSObject
-+ (NSDictionary *)supportedRuntimesByIdentifier;
-@end
-
 @interface SimDevice : NSObject
 - (BOOL)installApplication:(NSURL *)installURL withOptions:(NSDictionary *)options error:(NSError **)error;
 - (pid_t)launchApplicationWithID:(NSString *)bundleID options:(NSDictionary *)options error:(NSError **)error;
-@property (readonly, retain) SimDeviceType *deviceType;
-@property (readonly, retain) SimRuntime *runtime;
-@property (readonly, assign) SimDeviceState state;
-@property (readonly, copy) NSString *name;
 @end
 
 @interface SimDeviceSet : NSObject
 + (SimDeviceSet *)defaultSet;
-- (SimDevice *)createDeviceWithType:(SimDeviceType *)deviceType runtime:(SimRuntime *)runtime name:(NSString *)name error:(NSError **)error;
-@property (readonly, copy) NSArray *devices;
+@property (readonly, copy) NSDictionary *devicesByUDID;
 
 @end
 

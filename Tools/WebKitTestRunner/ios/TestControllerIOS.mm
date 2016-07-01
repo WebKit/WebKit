@@ -46,10 +46,10 @@ void TestController::notifyDone()
 
 void TestController::platformInitialize()
 {
-    NSString *identifier = [[NSBundle mainBundle] bundleIdentifier];
-    const char *stdinPath = [[NSString stringWithFormat:@"/tmp/%@_IN", identifier] UTF8String];
-    const char *stdoutPath = [[NSString stringWithFormat:@"/tmp/%@_OUT", identifier] UTF8String];
-    const char *stderrPath = [[NSString stringWithFormat:@"/tmp/%@_ERROR", identifier] UTF8String];
+    const char* identifier = getenv("IPC_IDENTIFIER");
+    const char *stdinPath = [[NSString stringWithFormat:@"/tmp/%s_IN", identifier] UTF8String];
+    const char *stdoutPath = [[NSString stringWithFormat:@"/tmp/%s_OUT", identifier] UTF8String];
+    const char *stderrPath = [[NSString stringWithFormat:@"/tmp/%s_ERROR", identifier] UTF8String];
 
     int infd = open(stdinPath, O_RDWR);
     dup2(infd, STDIN_FILENO);

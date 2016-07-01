@@ -1259,10 +1259,10 @@ void writeCrashedMessageOnFatalError(int signalCode)
 void dumpRenderTree(int argc, const char *argv[])
 {
 #if PLATFORM(IOS)
-    NSString *identifier = [[NSBundle mainBundle] bundleIdentifier];
-    const char *stdinPath = [[NSString stringWithFormat:@"/tmp/%@_IN", identifier] UTF8String];
-    const char *stdoutPath = [[NSString stringWithFormat:@"/tmp/%@_OUT", identifier] UTF8String];
-    const char *stderrPath = [[NSString stringWithFormat:@"/tmp/%@_ERROR", identifier] UTF8String];
+    const char* identifier = getenv("IPC_IDENTIFIER");
+    const char *stdinPath = [[NSString stringWithFormat:@"/tmp/%s_IN", identifier] UTF8String];
+    const char *stdoutPath = [[NSString stringWithFormat:@"/tmp/%s_OUT", identifier] UTF8String];
+    const char *stderrPath = [[NSString stringWithFormat:@"/tmp/%s_ERROR", identifier] UTF8String];
 
     int infd = open(stdinPath, O_RDWR);
     dup2(infd, STDIN_FILENO);
@@ -1354,25 +1354,7 @@ static const char **_argv;
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    /* Apps will get suspended or killed some time after entering the background state but we want to be able to run multiple copies of DumpRenderTree. Periodically check to see if our remaining background time dips below a threshold and create a new background task.
-    */
-    void (^expirationHandler)() = ^ {
-        [application endBackgroundTask:backgroundTaskIdentifier];
-        backgroundTaskIdentifier = UIBackgroundTaskInvalid;
-    };
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
-        NSTimeInterval timeRemaining;
-        while (true) {
-            timeRemaining = [application backgroundTimeRemaining];
-            if (timeRemaining <= 10.0 || backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-                [application endBackgroundTask:backgroundTaskIdentifier];
-                backgroundTaskIdentifier = [application beginBackgroundTaskWithExpirationHandler:expirationHandler];
-            }
-            sleep(5);
-        }
-    });
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 - (void)_webThreadEventLoopHasRun

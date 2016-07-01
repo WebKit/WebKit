@@ -1,3 +1,53 @@
+2016-07-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Simplify LayoutTestRelay
+        https://bugs.webkit.org/show_bug.cgi?id=159353
+
+        Reviewed by Daniel Bates.
+
+        1. Use UDID to pass the device from webkitpy to LayoutTestRelay, searching for it
+        by name and runtime makes no sense.
+        2. Removed code to create devices, webkitpy always does this in advance.
+        3. Don't create copies of testing apps - we can install the same one into
+        each simulator, now that we don't run multiple tester processes in a single simulator.
+        4. Pass information on how to find I/O pipes via environment, not via Info.plist.
+        5. Removed code that kept testing apps alive in the background.
+        6. Slightly updated coding style in functions that I touched.
+
+        * LayoutTestRelay/LayoutTestRelay/CoreSimulatorSPI.h:
+        Updated for what we acually use at this point.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.h:
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController initWithDevice:productDir:appPath:deviceUDID:dumpToolArguments:]):
+        (-[LTRelayController ipcIdentifier]):
+        (-[LTRelayController processName]):
+        (-[LTRelayController didReceiveStdoutData:]):
+        (-[LTRelayController didCrashWithMessage:]):
+        (-[LTRelayController installApp]):
+        (-[LTRelayController _environmentVariables]):
+        (-[LTRelayController launchApp]):
+        (-[LTRelayController start]):
+        (-[LTRelayController initWithDevice:productDir:appPath:identifierSuffix:dumpToolArguments:]): Deleted.
+        (-[LTRelayController uniqueAppPath]): Deleted.
+        (-[LTRelayController uniqueAppURL]): Deleted.
+        (-[LTRelayController uniqueAppIdentifier]): Deleted.
+        (-[LTRelayController createUniqueApp]): Deleted.
+        * LayoutTestRelay/LayoutTestRelay/main.m:
+        (usage):
+        (getRequiredStringArgument):
+        (main):
+        (getTestingSimDevice): Deleted.
+        * Scripts/webkitpy/port/driver.py:
+        (IOSSimulatorDriver.cmd_line):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformInitialize):
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (-[WebKitTestRunnerApp applicationDidEnterBackground:]):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        (-[DumpRenderTree applicationDidEnterBackground:]):
+
 2016-07-01  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Build TestNetscapePlugin only if NPAPI is enabled.

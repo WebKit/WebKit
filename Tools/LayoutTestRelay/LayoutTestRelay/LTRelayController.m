@@ -33,12 +33,10 @@
 @property (readonly, strong) dispatch_source_t standardInputDispatchSource;
 @property (readonly, strong) NSFileHandle *standardOutput;
 @property (readonly, strong) NSFileHandle *standardError;
-@property (readonly, strong) NSString *uniqueAppPath;
-@property (readonly, strong) NSString *uniqueAppIdentifier;
-@property (readonly, strong) NSURL *uniqueAppURL;
-@property (readonly, strong) NSString *originalAppIdentifier;
-@property (readonly, strong) NSString *originalAppPath;
-@property (readonly, strong) NSString *identifierSuffix;
+@property (readonly, strong) NSString *ipcIdentifier;
+@property (readonly, strong) NSString *appBundleIdentifier;
+@property (readonly, strong) NSString *appPath;
+@property (readonly, strong) NSUUID *deviceUDID;
 @property (readonly, strong) NSArray *dumpToolArguments;
 @property (readonly, strong) NSString *productDir;
 @property (strong) SimDevice *device;
@@ -49,14 +47,14 @@
 
 @implementation LTRelayController
 
-- (id)initWithDevice:(SimDevice *)device productDir:(NSString *)productDir appPath:(NSString *)appPath identifierSuffix:(NSString *)suffix dumpToolArguments:(NSArray *)arguments
+- (id)initWithDevice:(SimDevice *)device productDir:(NSString *)productDir appPath:(NSString *)appPath deviceUDID:(NSUUID *)udid dumpToolArguments:(NSArray *)arguments
 {
     if ((self = [super init])) {
         _device = device;
         _productDir = productDir;
-        _originalAppPath = appPath;
-        _originalAppIdentifier = [NSDictionary dictionaryWithContentsOfFile:[_originalAppPath stringByAppendingPathComponent:@"Info.plist"]][(NSString *)kCFBundleIdentifierKey];
-        _identifierSuffix = suffix;
+        _appPath = appPath;
+        _appBundleIdentifier = [[NSBundle bundleWithPath:appPath] bundleIdentifier];
+        _deviceUDID = udid;
         _dumpToolArguments = arguments;
         _standardInputDispatchSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, STDIN_FILENO, 0, dispatch_get_main_queue());
         _standardOutput = [NSFileHandle fileHandleWithStandardOutput];
@@ -78,29 +76,20 @@
             }
         });
 
-        _relay = [[LTPipeRelay alloc] initWithPrefix:[@"/tmp" stringByAppendingPathComponent:[self uniqueAppIdentifier]]];
+        _relay = [[LTPipeRelay alloc] initWithPrefix:[@"/tmp" stringByAppendingPathComponent:self.ipcIdentifier]];
         [_relay setRelayDelegate:self];
     }
     return self;
 }
 
-- (NSString *)uniqueAppPath
+- (NSString *)ipcIdentifier
 {
-    return [[self originalAppPath] stringByReplacingOccurrencesOfString:@".app" withString:[NSString stringWithFormat:@"%@.app", [self identifierSuffix]]];
+    return [NSString stringWithFormat:@"%@-%@", self.appBundleIdentifier, self.deviceUDID.UUIDString];
 }
 
-- (NSURL *)uniqueAppURL
-{
-    return [NSURL fileURLWithPath:[self uniqueAppPath]];
-}
-
-- (NSString *)uniqueAppIdentifier
-{
-    return [[self originalAppIdentifier] stringByAppendingString:[self identifierSuffix]];
-}
 - (NSString *)processName
 {
-    return [[[self originalAppIdentifier] componentsSeparatedByString:@"."] lastObject];
+    return [self.appBundleIdentifier componentsSeparatedByString:@"."].lastObject;
 }
 
 - (void)didReceiveStdoutData:(NSData *)data
@@ -151,35 +140,16 @@
     exit(EXIT_FAILURE);
 }
 
-- (void)createUniqueApp
+- (void)installApp
 {
-    NSError *error;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager removeItemAtPath:[self uniqueAppPath] error:&error];
-    error = nil;
-
-    [fileManager copyItemAtPath:[self originalAppPath] toPath:[self uniqueAppPath] error:&error];
-    if (error) {
-        NSLog(@"Couldn't copy %@ to %@: %@", [self originalAppPath], [self uniqueAppPath], [error description]);
-        exit(EXIT_FAILURE);
-    }
-
-    NSString *infoPlistPath = [[self uniqueAppPath] stringByAppendingPathComponent:@"Info.plist"];
-    NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:infoPlistPath];
-    [plist setValue:[self uniqueAppIdentifier] forKey:(NSString *)kCFBundleIdentifierKey];
-    BOOL written = [plist writeToFile:infoPlistPath atomically:YES];
-    if (!written) {
-        NSLog(@"Couldn't write unique app plist at %@", infoPlistPath);
-        exit(EXIT_FAILURE);
-    }
-
     NSDictionary *installOptions = @{
-        (NSString *)kCFBundleIdentifierKey: [self uniqueAppIdentifier],
+        (NSString *)kCFBundleIdentifierKey: self.appBundleIdentifier,
     };
 
-    [[self device] installApplication:[self uniqueAppURL] withOptions:installOptions error:&error];
+    NSError *error = nil;
+    [self.device installApplication:[NSURL fileURLWithPath:self.appPath] withOptions:installOptions error:&error];
     if (error) {
-        NSLog(@"Couldn't install %@: %@", [[self uniqueAppURL] path], [error description]);
+        NSLog(@"Couldn't install %@: %@", self.appPath, error.description);
         exit(EXIT_FAILURE);
     }
 }
@@ -207,6 +177,7 @@
         NSString *productDirectory = [self productDir];
 
         NSMutableDictionary *dictionary = [@{
+            @"IPC_IDENTIFIER": self.ipcIdentifier,
             @"DYLD_FRAMEWORK_PATH": productDirectory,
             @"__XPC_DYLD_FRAMEWORK_PATH": productDirectory,
             @"DYLD_LIBRARY_PATH": productDirectory,
@@ -236,10 +207,10 @@
     };
 
     NSError *error;
-    pid_t pid = [[self device] launchApplicationWithID:[self uniqueAppIdentifier] options:launchOptions error:&error];
+    pid_t pid = [self.device launchApplicationWithID:self.appBundleIdentifier options:launchOptions error:&error];
 
     if (pid < 0) {
-        NSLog(@"Couldn't launch unique app instance %@: %@", [self uniqueAppIdentifier], [error description]);
+        NSLog(@"Couldn't launch %@: %@", self.appBundleIdentifier, error.description);
         exit(EXIT_FAILURE);
     }
 
@@ -257,7 +228,7 @@
 
 - (void)start
 {
-    [self createUniqueApp];
+    [self installApp];
     [[self relay] setup];
     [self launchApp];
     [[self relay] connect];

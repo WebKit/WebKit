@@ -32,41 +32,14 @@ static LTRelayController *relayController;
 void usage()
 {
     NSString *helpText = @"LayoutTestRelay: run a dump tool in the simulator. Not for direct consumption.\n"
-    "Usage: LayoutTestRelay [-h] [options] -- [dump tool arguments]\n"
-    "Required options:\n"
-    "    -app <app_path>          Path to the built iOS .app bundle directory.\n"
-    "    -runtime <identifier>    iOS Simulator Runtime identifier (see `xcrun -sdk iphonesimulator simctl`)\n"
-    "    -deviceType <identifier> iOS Simulator device identifier (see simctl).\n"
-    "    -suffix <text>           Used to create multiple unique instances when installing to the simulator.\n"
-    "    -productDir <dir>        /path/to/WebKitBuild/{configuration}-{short platform}.\n";
+        "Usage: LayoutTestRelay [-h] [options] -- [dump tool arguments]\n"
+        "Required options:\n"
+        "    -udid <identifier>       Simulator device identifier\n"
+        "    -app <app_path>          Path to the built iOS .app bundle directory.\n"
+        "    -productDir <dir>        /path/to/WebKitBuild/{configuration}-{short platform}.\n";
 
     fprintf(stderr, "%s\n", [helpText UTF8String]);
 }
-
-SimDevice *getTestingSimDevice(SimDeviceType *deviceType, SimRuntime *runtime, NSString *suffix)
-{
-    NSString *deviceName = [[[[deviceType identifier] componentsSeparatedByString:@"."] lastObject] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
-    deviceName = [NSString stringWithFormat:@"%@%@%@", deviceName, @" WebKit Tester", suffix];
-
-    for (SimDevice *device in [[SimDeviceSet defaultSet] devices]) {
-        if ([[device name] isEqualToString:deviceName] && [[device deviceType] isEqualTo:deviceType] && [[device runtime] isEqualTo:runtime])
-            return device;
-    }
-
-    NSError *error;
-    SimDevice *device = [[SimDeviceSet defaultSet] createDeviceWithType:deviceType runtime:runtime name:deviceName error:&error];
-
-    if (error) {
-        NSLog(@"Couldn't create device: %@", [error description]);
-        return nil;
-    }
-
-    while ([device state] == SimDeviceStateCreating)
-        sleep(1);
-
-    return device;
-}
-
 
 NSString *getRequiredStringArgument(NSString *parameter)
 {
@@ -117,28 +90,19 @@ int main(int argc, const char * argv[])
                 exit(EXIT_FAILURE);
             }
         }
+
+        NSUUID *udid = [[NSUUID alloc] initWithUUIDString:getRequiredStringArgument(@"udid")];
         NSString *appPath = getRequiredStringArgument(@"app");
-        NSString *runtimeIdentifier = getRequiredStringArgument(@"runtime");
-        SimRuntime *runtime = [SimRuntime supportedRuntimesByIdentifier][runtimeIdentifier];
-        if (!runtime) {
-            NSLog(@"There is no supported runtime \"%@\"", runtimeIdentifier);
-            exit(EXIT_FAILURE);
-        }
-
-        NSString *deviceTypeIdentifier = getRequiredStringArgument(@"deviceType");
-        SimDeviceType *deviceType = [SimDeviceType supportedDeviceTypesByIdentifier][deviceTypeIdentifier];
-        if (!deviceType) {
-            NSLog(@"There is no supported device type \"%@\"", deviceTypeIdentifier);
-            exit(EXIT_FAILURE);
-        }
-
-        NSString *suffix = getRequiredStringArgument(@"suffix");
-        NSString *productDir = getRequiredStringArgument(@"productDir");
+        NSString *productDirectory = getRequiredStringArgument(@"productDir");
         NSArray *dumpToolArguments = getDumpToolArguments();
 
-        SimDevice *device = getTestingSimDevice(deviceType, runtime, suffix);
+        SimDevice *device = [SimDeviceSet.defaultSet.devicesByUDID objectForKey:udid];
+        if (!device) {
+            NSLog(@"Device %@ couldn't be found", udid);
+            exit(EXIT_FAILURE);
+        }
 
-        relayController = [[LTRelayController alloc] initWithDevice:device productDir:productDir appPath:appPath identifierSuffix:suffix dumpToolArguments:dumpToolArguments];
+        relayController = [[LTRelayController alloc] initWithDevice:device productDir:productDirectory appPath:appPath deviceUDID:udid dumpToolArguments:dumpToolArguments];
         [relayController start];
 
         atexit(finish);
