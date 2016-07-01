@@ -343,11 +343,9 @@ public:
     virtual bool isRenderMathMLFenced() const { return false; }
     virtual bool isRenderMathMLFraction() const { return false; }
     virtual bool isRenderMathMLRoot() const { return false; }
-    virtual bool isRenderMathMLRootWrapper() const { return false; }
     virtual bool isRenderMathMLSpace() const { return false; }
     virtual bool isRenderMathMLSquareRoot() const { return false; }
     virtual bool isRenderMathMLScripts() const { return false; }
-    virtual bool isRenderMathMLScriptsWrapper() const { return false; }
     virtual bool isRenderMathMLToken() const { return false; }
     virtual bool isRenderMathMLUnderOver() const { return false; }
 #endif // ENABLE(MATHML)
