@@ -145,7 +145,7 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& o
 
     if (UNLIKELY(Options::functionOverrides())) {
         hasFunctionOverride = FunctionOverrides::initializeOverrideFor(code, overrideInfo);
-        if (hasFunctionOverride) {
+        if (UNLIKELY(hasFunctionOverride)) {
             firstLine = overrideInfo.firstLine;
             lineCount = overrideInfo.lineCount;
             startColumn = overrideInfo.startColumn;

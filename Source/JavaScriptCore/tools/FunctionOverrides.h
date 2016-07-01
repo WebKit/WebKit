@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,8 +53,11 @@ public:
 
     static bool initializeOverrideFor(const SourceCode& origCode, OverrideInfo& result);
 
+    JS_EXPORT_PRIVATE static void reinstallOverrides();
+
 private:
     void parseOverridesInFile(const char* fileName);
+    void clear() { m_entries.clear(); }
 
     HashMap<String, String> m_entries;
 };

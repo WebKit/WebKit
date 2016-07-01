@@ -29,6 +29,7 @@ add_library(testapiLib SHARED
     ../API/tests/CompareAndSwapTest.cpp
     ../API/tests/CustomGlobalObjectClassTest.c
     ../API/tests/ExecutionTimeLimitTest.cpp
+    ../API/tests/FunctionOverridesTest.cpp
     ../API/tests/GlobalContextWithFinalizerTest.cpp
     ../API/tests/PingPongStackOverflowTest.cpp
     ../API/tests/testapi.c
@@ -44,6 +45,11 @@ target_link_libraries(testapiLib JavaScriptCore)
 
 file(COPY
     "${JAVASCRIPTCORE_DIR}/API/tests/testapi.js"
+    DESTINATION
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)
+file(COPY
+    "${JAVASCRIPTCORE_DIR}/API/tests/testapi-function-overrides.js"
     DESTINATION
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )

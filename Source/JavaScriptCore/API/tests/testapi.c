@@ -42,6 +42,7 @@
 #include "CompareAndSwapTest.h"
 #include "CustomGlobalObjectClassTest.h"
 #include "ExecutionTimeLimitTest.h"
+#include "FunctionOverridesTest.h"
 #include "GlobalContextWithFinalizerTest.h"
 #include "PingPongStackOverflowTest.h"
 #include "TypedArrayCTest.h"
@@ -1885,6 +1886,7 @@ int main(int argc, char* argv[])
 
     failed = testTypedArrayCAPI() || failed;
     failed = testExecutionTimeLimit() || failed;
+    failed = testFunctionOverrides() || failed;
     failed = testGlobalContextWithFinalizer() || failed;
     failed = testPingPongStackOverflow() || failed;
 

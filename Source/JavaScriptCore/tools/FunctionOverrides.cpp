@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,11 +104,20 @@ FunctionOverrides::FunctionOverrides(const char* overridesFileName)
     parseOverridesInFile(overridesFileName);
 }
 
+void FunctionOverrides::reinstallOverrides()
+{
+    FunctionOverrides& overrides = FunctionOverrides::overrides();
+    const char* overridesFileName = Options::functionOverrides();
+    overrides.clear();
+    overrides.parseOverridesInFile(overridesFileName);
+}
+
 static void initializeOverrideInfo(const SourceCode& origCode, const String& newBody, FunctionOverrides::OverrideInfo& info)
 {
     String origProviderStr = origCode.provider()->source().toString();
-    unsigned origBraceStart = origCode.startOffset();
-    unsigned origFunctionStart = origProviderStr.reverseFind("function", origBraceStart);
+    unsigned origStart = origCode.startOffset();
+    unsigned origFunctionStart = origProviderStr.reverseFind("function", origStart);
+    unsigned origBraceStart = origProviderStr.find("{", origStart);
     unsigned headerLength = origBraceStart - origFunctionStart;
     String origHeader = origProviderStr.substring(origFunctionStart, headerLength);
 
@@ -127,7 +136,7 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     info.typeProfilingEndOffset = newProviderStr.length() - 1;
 
     info.sourceCode =
-        SourceCode(WTFMove(newProvider), info.typeProfilingStartOffset, info.typeProfilingEndOffset + 1, 1, 1);
+        SourceCode(WTFMove(newProvider), info.parametersStartOffset, info.typeProfilingEndOffset + 1, 1, 1);
 }
     
 bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, FunctionOverrides::OverrideInfo& result)
@@ -135,7 +144,13 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
     ASSERT(Options::functionOverrides());
     FunctionOverrides& overrides = FunctionOverrides::overrides();
 
-    auto it = overrides.m_entries.find(origCode.view().toString());
+    String sourceString = origCode.view().toString();
+    size_t sourceBodyStart = sourceString.find('{');
+    if (sourceBodyStart == notFound)
+        return false;
+    String sourceBodyString = sourceString.substring(sourceBodyStart);
+
+    auto it = overrides.m_entries.find(sourceBodyString);
     if (it == overrides.m_entries.end())
         return false;
 
