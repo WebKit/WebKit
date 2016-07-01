@@ -2322,9 +2322,6 @@ fast/text/fallback-language-han-2.html [ Skip ]
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
 
-# This operating system does not have language-sensitive font fallback.
-css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
-
 # [EFL] REGRESSION: fullscreen tests fail with timeout
 webkit.org/b/148518 fullscreen [ Skip ]
 

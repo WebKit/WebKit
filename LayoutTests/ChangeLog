@@ -1,5 +1,15 @@
 2016-07-01  Frederic Wang  <fwang@igalia.com>
 
+        Fix warnings about non existent paths in TestExpectations
+
+        Unreviewed test gardening.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
+2016-07-01  Frederic Wang  <fwang@igalia.com>
+
         Fix error in r202729
 
         Unreviewed test gardening.
