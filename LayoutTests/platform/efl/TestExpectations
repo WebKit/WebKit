@@ -961,8 +961,6 @@ webkit.org/b/84589 http/tests/security/cross-frame-access-get.html [ Crash Pass 
 
 webkit.org/b/127723 accessibility/menu-list-sends-change-notification.html [ Crash Pass ]
 
-webkit.org/b/135561 mathml/opentype/opentype-stretchy-horizontal.html [ Failure Pass ]
-
 # Fails on the bots.
 webkit.org/b/97968 media/unsupported-rtsp.html [ Failure Pass Timeout ]
 
