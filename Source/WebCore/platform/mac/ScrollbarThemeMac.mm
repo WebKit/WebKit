@@ -47,10 +47,6 @@
 
 using namespace WebCore;
 
-@interface NSColor (WebNSColorDetails)
-+ (NSImage *)_linenPatternImage;
-@end
-
 namespace WebCore {
 
 typedef HashMap<Scrollbar*, RetainPtr<NSScrollerImp>> ScrollerImpMap;
@@ -564,38 +560,6 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
 }
 
 #if ENABLE(RUBBER_BANDING)
-static RetainPtr<CGColorRef> linenBackgroundColor()
-{
-    NSImage *image = nil;
-    CGImageRef cgImage = nullptr;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    image = [NSColor _linenPatternImage];
-    cgImage = [image CGImageForProposedRect:NULL context:NULL hints:nil];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    
-    if (!cgImage)
-        return nullptr;
-
-    RetainPtr<CGPatternRef> pattern = adoptCF(wkCGPatternCreateWithImageAndTransform(cgImage, CGAffineTransformIdentity, wkPatternTilingNoDistortion));
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreatePattern(0));
-
-    const CGFloat alpha = 1.0;
-    return adoptCF(CGColorCreateWithPattern(colorSpace.get(), pattern.get(), &alpha));
-}
-
-void ScrollbarThemeMac::setUpOverhangAreaBackground(CALayer *layer, const Color& customBackgroundColor)
-{
-    static CGColorRef cachedLinenBackgroundColor = linenBackgroundColor().leakRef();
-    // We operate on the CALayer directly here, since GraphicsLayer doesn't have the concept
-    // of pattern images, and we know that WebCore won't touch this layer.
-    layer.backgroundColor = customBackgroundColor.isValid() ? cachedCGColor(customBackgroundColor) : cachedLinenBackgroundColor;
-}
-
-void ScrollbarThemeMac::removeOverhangAreaBackground(CALayer *layer)
-{
-    layer.backgroundColor = nil;
-}
-
 void ScrollbarThemeMac::setUpOverhangAreaShadow(CALayer *layer)
 {
     static const CGFloat shadowOpacity = 0.66;
@@ -617,11 +581,6 @@ void ScrollbarThemeMac::removeOverhangAreaShadow(CALayer *layer)
 {
     layer.shadowPath = nil;
     layer.shadowOpacity = 0;
-}
-
-void ScrollbarThemeMac::setUpOverhangAreasLayerContents(GraphicsLayer* graphicsLayer, const Color& customBackgroundColor)
-{
-    ScrollbarThemeMac::setUpOverhangAreaBackground(graphicsLayer->platformLayer(), customBackgroundColor);
 }
 
 void ScrollbarThemeMac::setUpContentShadowLayer(GraphicsLayer* graphicsLayer)

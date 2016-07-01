@@ -1,3 +1,13 @@
+2016-07-01  Andreas Kling  <akling@apple.com>
+
+        [Mac] Get rid of the old timey rubber-banding linen pattern.
+        <https://webkit.org/b/159329>
+
+        Reviewed by Benjamin Poulain.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::updateCustomAppearance):
+
 2016-06-30  Tina Liu  <iting_liu@apple.com>
 
         Add SPI to allow restoring session state without navigation in WKPage

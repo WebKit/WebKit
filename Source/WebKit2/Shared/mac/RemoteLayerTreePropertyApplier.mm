@@ -111,11 +111,7 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
     case GraphicsLayer::NoCustomAppearance:
     case GraphicsLayer::DarkBackdropAppearance:
     case GraphicsLayer::LightBackdropAppearance:
-        ScrollbarThemeMac::removeOverhangAreaBackground(layer);
         ScrollbarThemeMac::removeOverhangAreaShadow(layer);
-        break;
-    case GraphicsLayer::ScrollingOverhang:
-        ScrollbarThemeMac::setUpOverhangAreaBackground(layer);
         break;
     case GraphicsLayer::ScrollingShadow:
         ScrollbarThemeMac::setUpOverhangAreaShadow(layer);

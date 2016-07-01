@@ -68,9 +68,6 @@ public:
     bool isLayoutDirectionRTL(Scrollbar&);
 
 #if ENABLE(RUBBER_BANDING)
-    WEBCORE_EXPORT static void setUpOverhangAreaBackground(CALayer *, const Color& customBackgroundColor = Color());
-    WEBCORE_EXPORT static void removeOverhangAreaBackground(CALayer *);
-
     WEBCORE_EXPORT static void setUpOverhangAreaShadow(CALayer *);
     WEBCORE_EXPORT static void removeOverhangAreaShadow(CALayer *);
 #endif
@@ -92,7 +89,6 @@ protected:
     int scrollbarPartToHIPressedState(ScrollbarPart);
 
 #if ENABLE(RUBBER_BANDING)
-    void setUpOverhangAreasLayerContents(GraphicsLayer*, const Color&) override;
     void setUpContentShadowLayer(GraphicsLayer*) override;
 #endif
 };
