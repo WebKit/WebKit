@@ -69,4 +69,10 @@ ProtocolTestHarness = class ProtocolTestHarness extends TestHarness
         else
             return InspectorProtocol.awaitCommand(args);
     }
+
+    debug()
+    {
+        this.dumpActivityToSystemConsole = true;
+        this.dumpInspectorProtocolMessages = true;
+    }
 }

@@ -86,6 +86,12 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: false}, callback);
     }
 
+    debug()
+    {
+        this.dumpActivityToSystemConsole = true;
+        InspectorBackend.dumpInspectorProtocolMessages = true;
+    }
+
     // Frontend test-specific methods.
 
     expectNoError(error)

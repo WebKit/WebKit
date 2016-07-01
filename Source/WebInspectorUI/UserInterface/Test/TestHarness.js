@@ -52,6 +52,11 @@ TestHarness = class TestHarness extends WebInspector.Object
         throw new Error("Must be implemented by subclasses.");
     }
 
+    debug()
+    {
+        throw new Error("Must be implemented by subclasses.");
+    }
+
     createAsyncSuite(name)
     {
         return new AsyncTestSuite(this, name);

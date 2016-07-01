@@ -1,3 +1,21 @@
+2016-07-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Make enabling protocol logging in inspector tests easy to remember
+        https://bugs.webkit.org/show_bug.cgi?id=159323
+
+        Reviewed by Brian Burg.
+
+        Now you just need to type InspectorTest.debug() or
+        ProtocolTest.debug() and it will include stderr logging.
+
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness.prototype.debug):
+        * UserInterface/Test/ProtocolTestHarness.js:
+        (ProtocolTestHarness.prototype.debug):
+        (ProtocolTestHarness):
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.debug):
+
 2016-06-30  Matt Baker  <mattbaker@apple.com>
 
         Unreviewed build fix.
