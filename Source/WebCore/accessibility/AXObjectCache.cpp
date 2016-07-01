@@ -1958,8 +1958,8 @@ VisiblePosition AXObjectCache::visiblePositionFromCharacterOffset(const Characte
     
     // Create a collapsed range and use that to form a VisiblePosition, so that the case with
     // composed characters will be covered.
-    RefPtr<Range> range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
-    return VisiblePosition(range->startPosition());
+    auto range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
+    return range ? VisiblePosition(range->startPosition()) : VisiblePosition();
 }
 
 CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisiblePosition& visiblePos)
