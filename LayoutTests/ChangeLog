@@ -1,3 +1,9 @@
+2016-07-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land test expectations for rdar://problem/27141291.
+
+        * platform/mac/TestExpectations:
+
 2016-07-01  Chris Dumez  <cdumez@apple.com>
 
         Regression(r199087): window.focus() / window.close() can no longer be called by a Window's opener
