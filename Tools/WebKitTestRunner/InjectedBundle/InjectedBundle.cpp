@@ -314,6 +314,8 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_testRunner->setShadowDOMEnabled(true);
     m_testRunner->setCustomElementsEnabled(true);
 
+    m_testRunner->setDOMIteratorEnabled(true);
+
     m_testRunner->setWebGL2Enabled(true);
 
     m_testRunner->setFetchAPIEnabled(true);

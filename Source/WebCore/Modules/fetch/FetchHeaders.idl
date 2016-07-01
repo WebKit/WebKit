@@ -41,7 +41,7 @@ interface FetchHeaders {
     [RaisesException] boolean has(DOMString name);
     [RaisesException] void set(DOMString name, DOMString value);
 
-    iterable<DOMString, DOMString>;
+    [EnabledAtRuntime=DOMIterator] iterable<DOMString, DOMString>;
 
     [PrivateIdentifier, RaisesException, ImplementedAs=append] void appendFromJS(DOMString name, DOMString value);
     [PrivateIdentifier, ImplementedAs=fill] void fillFromJS(FetchHeaders? headers);

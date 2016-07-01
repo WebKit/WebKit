@@ -80,6 +80,7 @@ my (
     $deviceOrientationSupport,
     $directoryUploadSupport,
     $dom4EventsConstructor,
+    $domIterator,
     $downloadAttributeSupport,
     $fetchAPISupport,
     $fontLoadEventsSupport,

@@ -1956,12 +1956,13 @@ sub ToMethodName
 {
     my $param = shift;
     my $ret = lcfirst($param);
+    $ret =~ s/cSS/css/ if $ret =~ /^cSS/;
+    $ret =~ s/dOM/dom/ if $ret =~ /^dOM/;
     $ret =~ s/hTML/html/ if $ret =~ /^hTML/;
-    $ret =~ s/uRL/url/ if $ret =~ /^uRL/;
     $ret =~ s/jS/js/ if $ret =~ /^jS/;
+    $ret =~ s/uRL/url/ if $ret =~ /^uRL/;
     $ret =~ s/xML/xml/ if $ret =~ /^xML/;
     $ret =~ s/xSLT/xslt/ if $ret =~ /^xSLT/;
-    $ret =~ s/cSS/css/ if $ret =~ /^cSS/;
 
     # For HTML5 FileSystem API Flags attributes.
     # (create is widely used to instantiate an object and must be avoided.)
@@ -2309,8 +2310,7 @@ sub GenerateImplementation
         }
 
         if ($interface->iterable) {
-            my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
-            push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), DontEnum);\n");
+            addIterableProperties($interface, $className);
         }
 
         push(@implContent, "}\n\n");
@@ -4245,6 +4245,26 @@ JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState* state)
 END
         }
     }
+}
+
+sub addIterableProperties()
+{
+    my $interface = shift;
+    my $className = shift;
+
+    if ($interface->iterable->extendedAttributes->{"EnabledAtRuntime"}) {
+        AddToImplIncludes("RuntimeEnabledFeatures.h");
+        my $enable_function = GetRuntimeEnableFunctionName($interface->iterable);
+        push(@implContent, "    if (${enable_function}()) {\n    ");
+    }
+
+    my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
+    push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), DontEnum);\n");
+
+    if ($interface->iterable->extendedAttributes->{"EnabledAtRuntime"}) {
+        push(@implContent, "    }\n");
+    }
+
 }
 
 sub GetNativeTypeFromSignature

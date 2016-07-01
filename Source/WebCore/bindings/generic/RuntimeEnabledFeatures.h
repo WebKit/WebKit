@@ -58,6 +58,9 @@ public:
     void setDataTransferItemsEnabled(bool isEnabled) { m_isDataTransferItemsEnabled = isEnabled; }
     bool dataTransferItemsEnabled() const { return m_isDataTransferItemsEnabled; }
 
+    void setDOMIteratorEnabled(bool isEnabled) { m_isDOMIteratorEnabled = isEnabled; }
+    bool domIteratorEnabled() const { return m_isDOMIteratorEnabled; }
+
     void setGeolocationEnabled(bool isEnabled) { m_isGeolocationEnabled = isEnabled; }
     bool geolocationEnabled() const { return m_isGeolocationEnabled; }
 
@@ -234,6 +237,7 @@ private:
     bool m_isWebkitNotificationsEnabled;
     bool m_isApplicationCacheEnabled;
     bool m_isDataTransferItemsEnabled;
+    bool m_isDOMIteratorEnabled { true };
     bool m_isGeolocationEnabled;
     bool m_isTouchEnabled;
     bool m_isDeviceMotionEnabled;

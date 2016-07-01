@@ -93,6 +93,7 @@ struct( domIterable => {
     keyType => '$',   # Key type for map iterables
     valueType => '$', # Value type for map or set iterables
     functions => '@', # Iterable functions (entries, keys, values, [Symbol.Iterator], forEach)
+    extendedAttributes => '$', # Extended attributes
 });
 
 
@@ -1408,6 +1409,7 @@ sub parseOptionalIterableInterface
     push(@{$forEachFunction->parameters}, ($forEachArgument));
 
     my $newDataNode = domIterable->new();
+    $newDataNode->extendedAttributes($extendedAttributeList);
     push(@{$newDataNode->functions}, $symbolIteratorFunction);
     push(@{$newDataNode->functions}, $entriesFunction);
     push(@{$newDataNode->functions}, $keysFunction);

@@ -481,6 +481,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setCustomElementsEnabled:(BOOL)flag;
 - (BOOL)customElementsEnabled;
 
+- (void)setDOMIteratorEnabled:(BOOL)flag;
+- (BOOL)DOMIteratorEnabled;
+
 - (void)setFetchAPIEnabled:(BOOL)flag;
 - (BOOL)fetchAPIEnabled;
 
