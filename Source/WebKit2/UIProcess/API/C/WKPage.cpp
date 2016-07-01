@@ -444,7 +444,7 @@ WKTypeRef WKPageCopySessionState(WKPageRef pageRef, void* context, WKPageSession
     return toAPI(&API::SessionState::create(WTFMove(sessionState)).leakRef());
 }
 
-void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
+static void restoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef, bool navigate)
 {
     SessionState sessionState;
 
@@ -458,7 +458,17 @@ void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
         sessionState = toImpl(static_cast<WKSessionStateRef>(sessionStateRef))->sessionState();
     }
 
-    toImpl(pageRef)->restoreFromSessionState(WTFMove(sessionState), true);
+    toImpl(pageRef)->restoreFromSessionState(WTFMove(sessionState), navigate);
+}
+
+void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
+{
+    restoreFromSessionState(pageRef, sessionStateRef, true);
+}
+
+void WKPageRestoreFromSessionStateWithoutNavigation(WKPageRef pageRef, WKTypeRef sessionStateRef)
+{
+    restoreFromSessionState(pageRef, sessionStateRef, false);
 }
 
 double WKPageGetTextZoomFactor(WKPageRef pageRef)
