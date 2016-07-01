@@ -534,7 +534,7 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
     auto* keyframes = &keyframesRule->keyframes();
     Vector<Ref<StyleKeyframe>> newKeyframesIfNecessary;
 
-    bool hasDuplicateKeys;
+    bool hasDuplicateKeys = false;
     HashSet<double> keyframeKeys;
     for (auto& keyframe : *keyframes) {
         for (auto key : keyframe->keys()) {
