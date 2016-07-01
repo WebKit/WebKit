@@ -43,6 +43,21 @@ PASS o12.__lookupGetter__('b') is void 0
 When undefined, accessing __lookupGetter__ and __lookupSetter__ should not crash
 PASS o13.__lookupGetter__('b') is void 0
 PASS o13.__lookupSetter__('b') is void 0
+__defineGetter__ and __defineSetter__ should throw exceptions when acting on sealed objects
+PASS o14.__defineGetter__('a', function(){}) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS o14.__defineGetter__('b', function(){}) threw exception TypeError: Attempting to define property on object that is not extensible..
+PASS o14.__defineSetter__('a', function(){}) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS o14.__defineSetter__('b', function(){}) threw exception TypeError: Attempting to define property on object that is not extensible..
+__defineGetter__ and __defineSetter__ should throw exceptions when acting on frozen objects
+PASS o15.__defineGetter__('a', function(){}) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS o15.__defineGetter__('b', function(){}) threw exception TypeError: Attempting to define property on object that is not extensible..
+PASS o15.__defineSetter__('a', function(){}) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS o15.__defineSetter__('b', function(){}) threw exception TypeError: Attempting to define property on object that is not extensible..
+__defineGetter__ and __defineSetter__ should throw exceptions when acting on unconfigurable properties
+PASS o16.__defineGetter__('a', function(){}) did not throw exception.
+PASS o16.__defineSetter__('a', function(){}) did not throw exception.
+PASS o16.__defineSetter__('b', function(){}) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS o16.__defineSetter__('b', function(){}) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
 PASS successfullyParsed is true
 
 TEST COMPLETE

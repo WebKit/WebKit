@@ -121,8 +121,7 @@ runTest("o = {foo:1, foo:3}; Object.seal(o);", "'value:3 keys:1 [EW][Sealed]'");
 runTest("o = {foo:1, foo:3}; Object.seal(o); o.foo = 5", "'value:5 keys:1 [EW][Sealed]'");
 runTest("o = {foo:1, foo:3}; Object.seal(o); Object.defineProperty(o, 'foo', {value:5})", "'value:5 keys:1 [EW][Sealed]'");
 runTest("o = {foo:1, foo:3}; Object.seal(o); Object.defineProperty(o, 'foo', {get(){return 5}})", null);
-// FIXME: <https://webkit.org/b/142934> __defineGetter__/__defineSetter__ should throw exceptions
-runTest("o = {foo:1, foo:3}; Object.seal(o); o.__defineGetter__('foo', function(){return 5})", "'value:3 keys:1 [EW][Sealed]'");
+runTest("o = {foo:1, foo:3}; Object.seal(o); o.__defineGetter__('foo', function(){return 5})");
 
 // Basic properties with Computed properties.
 debug(""); debug("Basic + Computed");
@@ -158,8 +157,7 @@ runTest("o = {foo:1, get foo(){return 3}, set foo(x){}}; Object.seal(o); o.foo =
 runTest("o = {foo:1, get foo(){return 3}}; Object.seal(o);", "'getter:function value:(3) keys:1 [E][Sealed][Frozen]'");
 runTest("o = {foo:1, get foo(){return 3}}; Object.seal(o); Object.defineProperty(o, 'foo', {get(){return 5}})", null);
 runTest("o = {foo:1, get foo(){return 3}}; Object.seal(o); Object.defineProperty(o, 'foo', {value:5})", null);
-// FIXME: <https://webkit.org/b/142934> __defineGetter__/__defineSetter__ should throw exceptions
-runTest("o = {foo:1, get foo(){return 3}}; Object.seal(o); o.__defineGetter__('foo', function(){return 5})", "'getter:function value:(3) keys:1 [E][Sealed][Frozen]'");
+runTest("o = {foo:1, get foo(){return 3}}; Object.seal(o); o.__defineGetter__('foo', function(){return 5})");
 
 // Computed properties with Accessor properties.
 debug(""); debug("Computed + Accessor");

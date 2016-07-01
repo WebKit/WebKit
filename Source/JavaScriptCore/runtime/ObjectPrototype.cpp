@@ -145,7 +145,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
     descriptor.setEnumerable(true);
     descriptor.setConfigurable(true);
 
-    bool shouldThrow = false;
+    bool shouldThrow = true;
     thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
@@ -171,7 +171,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     descriptor.setEnumerable(true);
     descriptor.setConfigurable(true);
 
-    bool shouldThrow = false;
+    bool shouldThrow = true;
     thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
