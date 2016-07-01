@@ -1,3 +1,25 @@
+2016-07-01  Jer Noble  <jer.noble@apple.com>
+
+        Deadlock inside -[WebCoreNSURLSession dealloc]
+        https://bugs.webkit.org/show_bug.cgi?id=159331
+        <rdar://problem/27122716>
+
+        Reviewed by Alex Christensen.
+
+        A Function<> object can wrap any callable type, including a C++ lambda.
+
+        dispatchFunctionsFromMainThread() holds a lock while iterating over the functions in
+        functionQueue(), and during ths iteration, the previous callable object is destroyed by
+        assigning the result of functionQueue().takeFirst(). Because lambdas (and other callables,
+        like functors) can own objects, destroying this callable can have side effects, and if one
+        of those side effects is to call callOnMainThread(), this can deadlock.
+
+        Move this side-effect-having call outside the locked block by clearing the function object
+        immediately after calling it.
+
+        * wtf/MainThread.cpp:
+        (WTF::dispatchFunctionsFromMainThread):
+
 2016-06-29  Jer Noble  <jer.noble@apple.com>
 
         Adopt MediaRemote.

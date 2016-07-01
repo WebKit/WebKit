@@ -133,6 +133,9 @@ void dispatchFunctionsFromMainThread()
 
         function();
 
+        // Clearing the function can have side effects, so do so outside of the lock above.
+        function = nullptr;
+
         // If we are running accumulated functions for too long so UI may become unresponsive, we need to
         // yield so the user input can be processed. Otherwise user may not be able to even close the window.
         // This code has effect only in case the scheduleDispatchFunctionsOnMainThread() is implemented in a way that
