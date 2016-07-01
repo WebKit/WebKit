@@ -1236,6 +1236,13 @@ webkit.org/b/158006 inspector/console/console-time.html [ Pass Timeout ]
 webkit.org/b/156634 inspector/formatting/formatting-javascript.html [ Pass Timeout ]
 webkit.org/b/158948 inspector/timeline [ Pass Timeout ]
 
+webkit.org/b/159272 inspector/debugger/break-on-exception-finally.html
+webkit.org/b/159272 inspector/debugger/break-on-exception-native.html
+webkit.org/b/159272 inspector/debugger/break-on-exception.html
+webkit.org/b/159272 inspector/debugger/break-on-uncaught-exception-finally.html
+webkit.org/b/159272 inspector/debugger/break-on-uncaught-exception-native.html
+webkit.org/b/159272 inspector/debugger/break-on-uncaught-exception.html
+
 # Colorspaces on CA OpenGL layers not available in Yosemite
 [ Yosemite ] fast/canvas/webgl/match-page-color-space.html [ Skip ]
 
