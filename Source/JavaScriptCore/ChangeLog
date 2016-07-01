@@ -1,3 +1,16 @@
+2016-07-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Date.toGMTString should be the Date.toUTCString function
+        https://bugs.webkit.org/show_bug.cgi?id=159318
+
+        Reviewed by Mark Lam.
+
+        See https://tc39.github.io/ecma262/#sec-date.prototype.togmtstring
+
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+        (JSC::dateProtoFuncToGMTString): Deleted.
+
 2016-07-01  Mark Lam  <mark.lam@apple.com>
 
         Update JSC_functionOverrides to handle the new SourceCode strings that have params.

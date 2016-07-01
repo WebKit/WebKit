@@ -107,7 +107,6 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMonth(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCSeconds(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToDateString(ExecState*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToGMTString(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToLocaleDateString(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToLocaleString(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToLocaleTimeString(ExecState*);
@@ -433,7 +432,6 @@ const ClassInfo DatePrototype::s_info = {"Object", &JSNonFinalObject::s_info, &d
 @begin dateTable
   toString              dateProtoFuncToString                DontEnum|Function       0
   toISOString           dateProtoFuncToISOString             DontEnum|Function       0
-  toUTCString           dateProtoFuncToUTCString             DontEnum|Function       0
   toDateString          dateProtoFuncToDateString            DontEnum|Function       0
   toTimeString          dateProtoFuncToTimeString            DontEnum|Function       0
   toLocaleString        dateProtoFuncToLocaleString          DontEnum|Function       0
@@ -443,7 +441,6 @@ const ClassInfo DatePrototype::s_info = {"Object", &JSNonFinalObject::s_info, &d
   getTime               dateProtoFuncGetTime                 DontEnum|Function       0
   getFullYear           dateProtoFuncGetFullYear             DontEnum|Function       0
   getUTCFullYear        dateProtoFuncGetUTCFullYear          DontEnum|Function       0
-  toGMTString           dateProtoFuncToGMTString             DontEnum|Function       0
   getMonth              dateProtoFuncGetMonth                DontEnum|Function       0
   getUTCMonth           dateProtoFuncGetUTCMonth             DontEnum|Function       0
   getDate               dateProtoFuncGetDate                 DontEnum|Function       0
@@ -491,6 +488,11 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+
+    Identifier toUTCStringName = Identifier::fromString(&vm, ASCIILiteral("toUTCString"));
+    JSFunction* toUTCStringFunction = JSFunction::create(vm, globalObject, 0, toUTCStringName.string(), dateProtoFuncToUTCString);
+    putDirectWithoutTransition(vm, toUTCStringName, toUTCStringFunction, DontEnum);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, ASCIILiteral("toGMTString")), toUTCStringFunction, DontEnum);
 
 #if ENABLE(INTL)
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleString", datePrototypeToLocaleStringCodeGenerator, DontEnum);
@@ -650,12 +652,6 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCFullYear(ExecState* exec)
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
     return JSValue::encode(jsNumber(gregorianDateTime->year()));
-}
-
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToGMTString(ExecState* exec)
-{
-    const bool asUTCVariant = true;
-    return formateDateInstance(exec, DateTimeFormatDateAndTime, asUTCVariant);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMonth(ExecState* exec)

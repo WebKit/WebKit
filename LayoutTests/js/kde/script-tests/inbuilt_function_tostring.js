@@ -129,7 +129,7 @@ shouldBe("StripSpaces(Date.prototype.valueOf.toString())","\"functionvalueOf(){[
 shouldBe("StripSpaces(Date.prototype.getTime.toString())","\"functiongetTime(){[nativecode]}\"");
 shouldBe("StripSpaces(Date.prototype.getFullYear.toString())","\"functiongetFullYear(){[nativecode]}\"");
 shouldBe("StripSpaces(Date.prototype.getUTCFullYear.toString())","\"functiongetUTCFullYear(){[nativecode]}\"");
-shouldBe("StripSpaces(Date.prototype.toGMTString.toString())","\"functiontoGMTString(){[nativecode]}\"");
+shouldBe("StripSpaces(Date.prototype.toGMTString.toString())","\"functiontoUTCString(){[nativecode]}\"");
 shouldBe("StripSpaces(Date.prototype.getMonth.toString())","\"functiongetMonth(){[nativecode]}\"");
 shouldBe("StripSpaces(Date.prototype.getUTCMonth.toString())","\"functiongetUTCMonth(){[nativecode]}\"");
 shouldBe("StripSpaces(Date.prototype.getDate.toString())","\"functiongetDate(){[nativecode]}\"");
@@ -162,7 +162,7 @@ shouldBe("StripSpaces(Date.prototype.setFullYear.toString())","\"functionsetFull
 shouldBe("StripSpaces(Date.prototype.setUTCFullYear.toString())","\"functionsetUTCFullYear(){[nativecode]}\"");
 shouldBe("StripSpaces(Date.prototype.setYear.toString())","\"functionsetYear(){[nativecode]}\"");
 shouldBe("StripSpaces(Date.prototype.getYear.toString())","\"functiongetYear(){[nativecode]}\"");
-shouldBe("StripSpaces(Date.prototype.toGMTString.toString())","\"functiontoGMTString(){[nativecode]}\"");
+shouldBe("StripSpaces(Date.prototype.toGMTString.toString())","\"functiontoUTCString(){[nativecode]}\"");
 
 shouldBe("StripSpaces(RegExp.prototype.exec.toString())","\"functionexec(){[nativecode]}\"");
 shouldBe("StripSpaces(RegExp.prototype.test.toString())","\"functiontest(){[nativecode]}\"");
