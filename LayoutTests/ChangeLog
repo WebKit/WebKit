@@ -1,3 +1,11 @@
+2016-07-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Test gardening for Sierra WK1
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-07-01  Frederic Wang  <fwang@igalia.com>
 
         Remove failure expectation for mathml/presentation/bug97990.html on ios-simulator
