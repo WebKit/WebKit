@@ -1053,6 +1053,9 @@ private:
 
     void setDrawsBackground(bool);
 
+#if PLATFORM(COCOA)
+    void setTopContentInsetFenced(float, IPC::Attachment);
+#endif
     void setTopContentInset(float);
 
     void viewWillStartLiveResize();

@@ -220,6 +220,8 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
     NSResponder *webWindowFirstResponder = [[_webView window] firstResponder];
     [self _manager]->saveScrollPosition();
+    _savedTopContentInset = _page->topContentInset();
+    _page->setTopContentInset(0);
     [[self window] setFrame:screenFrame display:NO];
 
     // Painting is normally suspended when the WKView is removed from the window, but this is
@@ -240,9 +242,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     // Then insert the WebView into the full screen window
     NSView *contentView = [[self window] contentView];
     [_clipView addSubview:_webView positioned:NSWindowBelow relativeTo:nil];
-    NSRect contentViewBounds = contentView.bounds;
-    contentViewBounds.size.height += _page->topContentInset();
-    _webView.frame = contentViewBounds;
+    _webView.frame = NSInsetRect(contentView.bounds, 0, -_page->topContentInset());
 
     makeResponderFirstResponderIfDescendantOfView(self.window, webWindowFirstResponder, _webView);
 
@@ -304,6 +304,7 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 
         _page->scalePage(_savedScale, IntPoint());
         [self _manager]->restoreScrollPosition();
+        _page->setTopContentInset(_savedTopContentInset);
         [self _manager]->didExitFullScreen();
         [self _manager]->setAnimatingFullScreen(false);
     }

@@ -58,6 +58,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 
     double _savedScale;
     RefPtr<WebKit::VoidCallback> _repaintCallback;
+    float _savedTopContentInset;
 }
 
 @property (readonly) NSRect initialFrame;

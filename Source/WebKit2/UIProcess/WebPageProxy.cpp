@@ -1315,8 +1315,16 @@ void WebPageProxy::setTopContentInset(float contentInset)
 
     m_topContentInset = contentInset;
 
-    if (isValid())
-        m_process->send(Messages::WebPage::SetTopContentInset(contentInset), m_pageID);
+    if (!isValid())
+        return;
+#if PLATFORM(COCOA)
+    MachSendRight fence = m_drawingArea->createFence();
+
+    auto fenceAttachment = IPC::Attachment(fence.leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);
+    m_process->send(Messages::WebPage::SetTopContentInsetFenced(contentInset, fenceAttachment), m_pageID);
+#else
+    m_process->send(Messages::WebPage::SetTopContentInset(contentInset), m_pageID);
+#endif
 }
 
 void WebPageProxy::setUnderlayColor(const Color& color)

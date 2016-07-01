@@ -1,3 +1,31 @@
+2016-07-01  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r201405): Fullscreen video no longer enters low-power mode
+        https://bugs.webkit.org/show_bug.cgi?id=159220
+        <rdar://problem/26701056>
+
+        Reviewed by Beth Dakin.
+
+        In r201405, we removed the call to setTopContentInset(0) to avoid a flash
+        during repainting where the WebProcess still thought it had an inset and
+        the UIProcess did not, but the >0 inset breaks low power video playback 
+        in fullscreen. So, instead, fix the repaint issue by setting a CALayer
+        fence which makes sure both the UIProcess and WebProcess paint simultaneously
+        after resizing and changing the top content inset.
+
+        This requires a new message from WebPageProxy -> WebPage: setTopContentInsetFenced().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setTopContentInset):
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setTopContentInsetFenced):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-07-01  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Get rid of support for old SDKs
