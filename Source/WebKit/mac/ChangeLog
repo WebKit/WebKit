@@ -1,3 +1,14 @@
+2016-06-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Create a generic "linked-on-or-after" check for new CSP Rules
+        https://bugs.webkit.org/show_bug.cgi?id=159322
+        <rdar://problem/27117220>
+
+        Reviewed by Brent Fulgham.
+
+        * WebView/WebView.mm:
+        (shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol):
+
 2016-06-30  Anders Carlsson  <andersca@apple.com>
 
         Mail crashes on launch at WebCore::PaymentCoordinator::~PaymentCoordinator() + 20
