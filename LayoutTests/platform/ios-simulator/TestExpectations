@@ -664,18 +664,23 @@ webkit.org/b/153337 pageoverlay/overlay-installation.html [ Pass Failure ]
 mathml/opentype/fraction-line.html [ Pass ImageOnlyFailure ]
 mathml/presentation/fractions-linethickness.html [ Pass ImageOnlyFailure ]
 mathml/opentype/large-operators-italic-correction.html [ Pass Failure ]
-mathml/presentation/multiscripts-positions.html [ Pass ImageOnlyFailure ]
-mathml/presentation/scripts-subsup.html [ Pass ImageOnlyFailure ]
+
+# These tests require an OpenType MATH font on the Apple bots.
+webkit.org/b/72828 mathml/opentype/horizontal.html [ Failure ]
+webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
 
 # These reftests require a font with Mathematical Alphanumeric Symbols.
 mathml/presentation/attributes-mathvariant.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-mathvariant.html [ ImageOnlyFailure ]
 
 # MathML tests that fail:
-mathml/opentype/horizontal.html [ Failure ]
-mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
 mathml/mathml-in-dashboard.html [ Failure ]
 mathml/presentation/scripts-height.html [ ImageOnlyFailure ]
+mathml/presentation/multiscripts-positions.html [ Pass ImageOnlyFailure ]
+mathml/presentation/scripts-subsup.html [ Pass ImageOnlyFailure ]
+
+# This test must be rebaselined after bug 153991.
+webkit.org/b/159339 mathml/presentation/mo-stretch.html [ Failure ]
 
 # <rdar://problem/19215305> ASSERT(m_cgFont.get()) fails in FontPlatformData::ctFont()
 svg/text/svg-fallback-font-crash.html
@@ -2459,7 +2464,6 @@ http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
 http/tests/misc/slow-loading-mask.html [ Failure ]
 http/tests/uri/css-href.php [ Failure ]
 ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Failure ]
-mathml/presentation/mo-stretch.html [ Failure ]
 svg/W3C-SVG-1.1/animate-elem-04-t.svg [ Failure ]
 svg/W3C-SVG-1.1/animate-elem-07-t.svg [ Failure ]
 svg/W3C-SVG-1.1/animate-elem-15-t.svg [ Failure ]
