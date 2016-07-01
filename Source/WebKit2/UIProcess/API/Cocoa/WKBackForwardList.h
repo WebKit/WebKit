@@ -65,13 +65,13 @@ if there isn't one.
  @discussion The items are in the order in which they were originally
  visited.
  */
-@property (nonatomic, readonly, copy) WK_ARRAY(WKBackForwardListItem *) *backList;
+@property (nonatomic, readonly, copy) NSArray<WKBackForwardListItem *> *backList;
 
 /*! @abstract The portion of the list following the current item.
  @discussion The items are in the order in which they were originally
  visited.
  */
-@property (nonatomic, readonly, copy) WK_ARRAY(WKBackForwardListItem *) *forwardList;
+@property (nonatomic, readonly, copy) NSArray<WKBackForwardListItem *> *forwardList;
 
 @end
 

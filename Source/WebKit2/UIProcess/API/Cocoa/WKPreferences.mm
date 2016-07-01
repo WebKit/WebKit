@@ -433,7 +433,7 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setFixedFontFamily(fixedPitchFontFamily);
 }
 
-+ (WK_ARRAY(_WKExperimentalFeature *) *)_experimentalFeatures
++ (NSArray<_WKExperimentalFeature *> *)_experimentalFeatures
 {
     auto features = WebKit::WebPreferences::experimentalFeatures();
     return [wrapper(API::Array::create(WTFMove(features)).leakRef()) autorelease];

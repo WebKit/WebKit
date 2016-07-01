@@ -1,3 +1,61 @@
+2016-07-01  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] Get rid of support for old SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=159369
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKFoundation.h: Removed the WK_ARRAY, WK_DICTIONARY, and WK_SET macros,
+          which were only needed for pre-10.11 SDKs.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::mouseButtonForEvent): Removed checking for pre-10.10.3 SDKs.
+        (WebKit::globalPointForEvent): Ditto.
+        (WebKit::pointForEvent): Ditto.
+        (WebKit::WebEventFactory::createWebMouseEvent): Ditto.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.h: Replaced WK_ARRAY(...) with NSArray<...>.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm: Ditto.
+        (-[WKPreferences _setFixedPitchFontFamily:]):
+        (+[WKPreferences _experimentalFeatures]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h: Ditto.
+
+        * UIProcess/API/Cocoa/WKUIDelegate.h: Ditto.
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Ditto.
+
+        * UIProcess/API/Cocoa/WKUserContentController.h: Ditto.
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h: Ditto.
+
+        * UIProcess/API/Cocoa/WKUserScriptPrivate.h: Ditto.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.h: Replaced WK_SET(...) with NSSet<...>.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h: Ditto.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm: Ditto.
+        (-[WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:]):
+        (-[WKWebsiteDataStore _fetchDataRecordsOfTypes:withOptions:completionHandler:]):
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h: Ditto.
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h: Replaced WK_ARRAY(...) with NSArray<...>.
+
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h: Ditto.
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm: Ditto.
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:]):
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:userContentWorld:]):
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:userContentWorld:]):
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataSize.h: Replaced WK_SET(...) with NSSet<...>.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::pressureChangeWithEvent): Removed checking for pre-10.10.3 SDKs.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h: Replaced WK_ARRAY(...) with
+          NSArray<...>.
+
+        * mac/postprocess-framework-headers.sh: Removed sed rules for WK_ARRAY, WK_DICTIONARY and
+          WK_SET.
+
 2016-07-01  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Possible null Range dereference under computeAutocorrectionContext()

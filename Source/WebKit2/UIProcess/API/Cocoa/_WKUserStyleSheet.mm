@@ -49,7 +49,7 @@
     return self;
 }
 
-- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(WK_ARRAY(NSString *) *)legacyWhitelist legacyBlacklist:(WK_ARRAY(NSString *) *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld
+- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     if (!(self = [super init]))
         return nil;
@@ -62,7 +62,7 @@
     return self;
 }
 
-- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(WK_ARRAY(NSString *) *)legacyWhitelist legacyBlacklist:(WK_ARRAY(NSString *) *)legacyBlacklist baseURL:(NSURL *)baseURL userContentWorld:(_WKUserContentWorld *)userContentWorld
+- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist baseURL:(NSURL *)baseURL userContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     if (!(self = [super init]))
         return nil;

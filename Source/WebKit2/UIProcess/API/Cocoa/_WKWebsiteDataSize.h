@@ -36,7 +36,7 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 
 @property (nonatomic, readonly) unsigned long long totalSize;
 
-- (unsigned long long)sizeOfDataTypes:(WK_SET(NSString *) *)dataTypes;
+- (unsigned long long)sizeOfDataTypes:(NSSet<NSString *> *)dataTypes;
 
 @end
 

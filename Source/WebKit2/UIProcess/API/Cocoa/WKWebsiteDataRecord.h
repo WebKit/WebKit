@@ -63,7 +63,7 @@ WK_CLASS_AVAILABLE(10_11, 9_0)
 @property (nonatomic, readonly, copy) NSString *displayName;
 
 /*! @abstract The various types of website data that exist for this data record. */
-@property (nonatomic, readonly, copy) WK_SET(NSString *) *dataTypes;
+@property (nonatomic, readonly, copy) NSSet<NSString *> *dataTypes;
 
 @end
 

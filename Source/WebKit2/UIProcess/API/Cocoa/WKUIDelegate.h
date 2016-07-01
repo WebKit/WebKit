@@ -164,7 +164,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  If you do not implement this method, the web view will behave as if the user selected the Cancel button.
  */
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(WK_ARRAY(NSURL *) * _Nullable URLs))completionHandler WK_AVAILABLE(WK_MAC_TBA, NA);
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler WK_AVAILABLE(WK_MAC_TBA, NA);
 
 #endif
 

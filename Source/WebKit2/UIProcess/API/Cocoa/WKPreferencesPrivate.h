@@ -88,7 +88,7 @@ typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
 @property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;
 @property (nonatomic, setter=_setFullScreenEnabled:) BOOL _fullScreenEnabled WK_AVAILABLE(10_11, 9_0);
 
-+ (WK_ARRAY(_WKExperimentalFeature *) *)_experimentalFeatures WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
++ (NSArray<_WKExperimentalFeature *> *)_experimentalFeatures WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 - (BOOL)_isEnabledForFeature:(_WKExperimentalFeature *)feature WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 - (void)_setEnabled:(BOOL)value forFeature:(_WKExperimentalFeature *)feature WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 

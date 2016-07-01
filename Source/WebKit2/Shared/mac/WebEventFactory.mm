@@ -78,7 +78,7 @@ static WebMouseEvent::Button mouseButtonForEvent(NSEvent *event)
         case NSOtherMouseUp:
         case NSOtherMouseDragged:
             return WebMouseEvent::MiddleButton;
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
         case NSEventTypePressure:
 #endif
         case NSMouseEntered:
@@ -140,7 +140,7 @@ static int clickCountForEvent(NSEvent *event)
 static NSPoint globalPointForEvent(NSEvent *event)
 {
     switch ([event type]) {
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
     case NSEventTypePressure:
 #endif
 #pragma clang diagnostic push
@@ -168,7 +168,7 @@ static NSPoint globalPointForEvent(NSEvent *event)
 static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
 {
     switch ([event type]) {
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
     case NSEventTypePressure:
 #endif
 #pragma clang diagnostic push
@@ -375,7 +375,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     NSPoint globalPosition = globalPointForEvent(event);
 
     WebEvent::Type type = mouseEventTypeForEvent(event);
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
     if ([event type] == NSEventTypePressure) {
         // Since AppKit doesn't send mouse events for force down or force up, we have to use the current pressure
         // event and lastPressureEvent to detect if this is MouseForceDown, MouseForceUp, or just MouseForceChanged.
@@ -399,7 +399,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     int menuTypeForEvent = typeForEvent(event);
 
     double force = 0;
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
     int stage = [event type] == NSEventTypePressure ? event.stage : lastPressureEvent.stage;
     double pressure = [event type] == NSEventTypePressure ? event.pressure : lastPressureEvent.pressure;
     force = pressure + stage;

@@ -102,7 +102,7 @@ static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
     return system_clock::time_point(duration_cast<system_clock::duration>(duration<double>(date.timeIntervalSince1970)));
 }
 
-- (void)fetchDataRecordsOfTypes:(NSSet *)dataTypes completionHandler:(void (^)(WK_ARRAY(WKWebsiteDataRecord *) *))completionHandler
+- (void)fetchDataRecordsOfTypes:(NSSet *)dataTypes completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler
 {
     [self _fetchDataRecordsOfTypes:dataTypes withOptions:0 completionHandler:completionHandler];
 }
@@ -145,7 +145,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 @implementation WKWebsiteDataStore (WKPrivate)
 
-- (void)_fetchDataRecordsOfTypes:(WK_SET(NSString *) *)dataTypes withOptions:(_WKWebsiteDataStoreFetchOptions)options completionHandler:(void (^)(WK_ARRAY(WKWebsiteDataRecord *) *))completionHandler
+- (void)_fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes withOptions:(_WKWebsiteDataStoreFetchOptions)options completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler
 {
     auto completionHandlerCopy = makeBlockPtr(completionHandler);
 

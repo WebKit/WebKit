@@ -53,27 +53,27 @@ WK_CLASS_AVAILABLE(10_11, 9_0)
 @property (nonatomic, readonly, getter=isPersistent) BOOL persistent;
 
 /*! @abstract Returns a set of all available website data types. */
-+ (WK_SET(NSString *) *)allWebsiteDataTypes;
++ (NSSet<NSString *> *)allWebsiteDataTypes;
 
 /*! @abstract Fetches data records containing the given website data types.
   @param dataTypes The website data types to fetch records for.
   @param completionHandler A block to invoke when the data records have been fetched.
 */
-- (void)fetchDataRecordsOfTypes:(WK_SET(NSString *) *)dataTypes completionHandler:(void (^)(WK_ARRAY(WKWebsiteDataRecord *) *))completionHandler;
+- (void)fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler;
 
 /*! @abstract Removes website data of the given types for the given data records.
  @param dataTypes The website data types that should be removed.
  @param dataRecords The website data records to delete website data for.
  @param completionHandler A block to invoke when the website data for the records has been removed.
 */
-- (void)removeDataOfTypes:(WK_SET(NSString *) *)dataTypes forDataRecords:(WK_ARRAY(WKWebsiteDataRecord *) *)dataRecords completionHandler:(void (^)(void))completionHandler;
+- (void)removeDataOfTypes:(NSSet<NSString *> *)dataTypes forDataRecords:(NSArray<WKWebsiteDataRecord *> *)dataRecords completionHandler:(void (^)(void))completionHandler;
 
 /*! @abstract Removes all website data of the given types that has been modified since the given date.
  @param dataTypes The website data types that should be removed.
  @param date A date. All website data modified after this date will be removed.
  @param completionHandler A block to invoke when the website data has been removed.
 */
-- (void)removeDataOfTypes:(WK_SET(NSString *) *)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler;
+- (void)removeDataOfTypes:(NSSet<NSString *> *)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler;
 
 @end
 

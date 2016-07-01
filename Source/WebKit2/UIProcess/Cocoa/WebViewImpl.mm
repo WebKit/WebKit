@@ -1579,7 +1579,7 @@ NSInteger WebViewImpl::spellCheckerDocumentTag()
 
 void WebViewImpl::pressureChangeWithEvent(NSEvent *event)
 {
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
     if (event == m_lastPressureEvent)
         return;
 
