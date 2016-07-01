@@ -1,22 +1,12 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script src="../../http/tests/inspector/resources/console-test.js"></script>
 <script>
-function generateSimpleConsoleMessages()
-{
-    console.log("log");
-    console.info("info");
-    console.warn("warn");
-    console.error("error");
-    console.debug("debug");
-}
-
 function test()
 {
-
-    var suite = ProtocolTest.createAsyncSuite("Console.MessagesFromCommandLineAPI");
+    let suite = ProtocolTest.createAsyncSuite("Console.MessagesFromCommandLineAPI");
 
     ProtocolTest.Console.addTestCase(suite, {
         name: "ConsoleLogString",
@@ -78,14 +68,9 @@ function test()
         }
     });
 
-    InspectorProtocol.awaitCommand({
-        method: "Console.enable",
-        params: {}
-    })
-    .then(function() {
-        suite.runTestCasesAndFinish();
-    })
-    .catch(fatalError);
+    InspectorProtocol.awaitCommand({method: "Console.enable", params: {}})
+        .then(() => { suite.runTestCasesAndFinish(); })
+        .catch(fatalError);
 
     function fatalError(e) {
         ProtocolTest.log("Test failed with fatal error: " + JSON.stringify(e));
@@ -95,9 +80,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>
-Tests that <code>console.log</code> and related APIs cause <code>Console.messageAdded</code> events to be generated with correct source, type, level, and parameter types.
-<br>
-</p>
+<p>Tests that <code>console.log</code> and related APIs cause <code>Console.messageAdded</code> events to be generated with correct source, type, level, and parameter types.</p>
 </body>
 </html>

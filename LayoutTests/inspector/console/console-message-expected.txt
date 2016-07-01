@@ -3,7 +3,8 @@ CONSOLE MESSAGE: line 1: info
 CONSOLE MESSAGE: line 1: warn
 CONSOLE MESSAGE: line 1: error
 CONSOLE MESSAGE: line 1: debug
-Tests that console.log and related APIs cause Console.messageAdded events to be generated with correct source, type, level, and parameter types. 
+Tests that console.log and related APIs cause Console.messageAdded events to be generated with correct source, type, level, and parameter types.
+
 
 == Running test suite: Console.MessagesFromCommandLineAPI
 -- Running test case: ConsoleLogString
