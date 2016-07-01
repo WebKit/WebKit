@@ -730,11 +730,7 @@ perf/typing-at-end-of-line.html [ Failure Pass ]
 scrollbars/scrollbar-click-does-not-blur-content.html [ Failure Pass ]
 
 # MathML tests that time out:
-mathml/opentype/horizontal-munderover.html
-mathml/opentype/horizontal.html
-mathml/opentype/large-operators.html
 mathml/opentype/munderover-layout-resize.html
-mathml/opentype/vertical.html
 mathml/presentation/mo-invisible.html
 
 # MathML tests that fail:

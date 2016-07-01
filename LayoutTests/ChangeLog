@@ -1,3 +1,55 @@
+2016-07-01  Frederic Wang  <fwang@igalia.com>
+
+        Update OS X and iOS expectations for some MathML pixel tests.
+        https://bugs.webkit.org/show_bug.cgi?id=159339
+
+        Unreviewed test gardening.
+
+        * mathml/opentype/fraction-line.html: Add a comment about font requirements.
+        * mathml/opentype/horizontal-munderover.html: Ditto.
+        * mathml/opentype/horizontal.html: Ditto.
+        * mathml/opentype/large-operators-italic-correction.html: Ditto.
+        * mathml/opentype/large-operators.html: Ditto.
+        * mathml/opentype/vertical.html: Ditto.
+        * mathml/presentation/attributes-mathvariant.html: Ditto.
+        * mathml/presentation/fractions-linethickness.html: Ditto.
+        * mathml/presentation/tokenElements-mathvariant.html: Ditto.
+        * mathml/radical-fallback.html: Ditto.
+        * platform/ios-simulator-wk1/TestExpectations: Update expectations.
+        * platform/ios-simulator-wk2/TestExpectations: Ditto.
+        * platform/ios-simulator-wk2/mathml/opentype/large-operators-expected.png: Removed.
+        * platform/ios-simulator-wk2/mathml/opentype/vertical-expected.png: Removed.
+        * platform/ios-simulator-wk2/mathml/presentation/mo-stretch-expected.png: Removed.
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/mathml/opentype/horizontal-expected.txt: Removed.
+        * platform/ios-simulator/mathml/opentype/horizontal-munderover-expected.txt: Removed.
+        * platform/ios-simulator/mathml/opentype/large-operators-expected.txt: Removed.
+        * platform/ios-simulator/mathml/opentype/opentype-stretchy-expected.png: Added.
+        * platform/ios-simulator/mathml/opentype/opentype-stretchy-horizontal-expected.png: Added.
+        * platform/ios-simulator/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+        * platform/ios-simulator/mathml/opentype/vertical-expected.txt: Removed.
+        * platform/ios-simulator/mathml/presentation/menclose-notation-default-longdiv-expected.png: Added.
+        * platform/ios-simulator/mathml/presentation/menclose-notation-values-expected.png: Added.
+        * platform/ios-simulator/mathml/presentation/mo-stretch-expected.png: Added.
+        * platform/ios-simulator/mathml/presentation/mo-stretch-expected.txt:
+        * platform/ios-simulator/mathml/presentation/mspace-children-expected.png: Added.
+        * platform/ios-simulator/mathml/radical-fallback-expected.png:
+        * platform/mac/TestExpectations: Update expectations.
+        * platform/mac/mathml/opentype/horizontal-expected.txt: Removed.
+        * platform/mac/mathml/opentype/horizontal-munderover-expected.txt: Removed.
+        * platform/mac/mathml/opentype/large-operators-expected.txt: Removed.
+        * platform/mac/mathml/opentype/opentype-stretchy-expected.png: Added.
+        * platform/mac/mathml/opentype/vertical-expected.txt: Removed.
+        * platform/mac/mathml/presentation/menclose-notation-values-expected.png:
+        * platform/mac/mathml/presentation/menclose-notation-values-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.png:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/mspace-children-expected.png: Added.
+        * platform/mac/mathml/presentation/roots-expected.png:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+        * platform/mac/mathml/radical-fallback-expected.png:
+        * platform/mac/mathml/radical-fallback-expected.txt:
+
 2016-07-01  Brady Eidson  <beidson@apple.com>
 
         Blob content type not preserved when retrieving blobs from IndexedDB.

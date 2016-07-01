@@ -796,22 +796,20 @@ webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
 
 # These tests require an OpenType MATH font on the Apple bots.
-webkit.org/b/72828 mathml/opentype/horizontal.html [ Failure ]
-webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
+mathml/opentype/vertical.html [ Skip ]
+mathml/opentype/large-operators.html [ Skip ]
+mathml/opentype/horizontal.html [ Skip ]
+mathml/opentype/horizontal-munderover.html [ Skip ]
 
 # These tests require the Latin Modern Math font.
-mathml/opentype/fraction-line.html [ Pass ImageOnlyFailure ]
-mathml/presentation/fractions-linethickness.html [ Pass ImageOnlyFailure ]
-mathml/opentype/large-operators-italic-correction.html [ Pass Failure ]
+mathml/opentype/fraction-line.html [ Skip ]
+mathml/presentation/fractions-linethickness.html [ Skip ]
+mathml/opentype/large-operators-italic-correction.html [ Skip ]
 
 # MathML tests that fail:
 mathml/presentation/multiscripts-positions.html [ Pass ImageOnlyFailure ]
 mathml/presentation/scripts-subsup.html [ Pass ImageOnlyFailure ]
 webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
-
-# These tests must be rebaselined after bug 153991.
-webkit.org/b/159339 mathml/presentation/mo-stretch.html [ Failure ]
-webkit.org/b/159339 mathml/presentation/roots.xhtml [ Failure ]
 
 webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
 webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]

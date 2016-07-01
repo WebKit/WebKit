@@ -660,27 +660,26 @@ pageoverlay/overlay-large-document-scrolled.html [ Failure ]
 pageoverlay/overlay-large-document.html [ Failure ]
 webkit.org/b/153337 pageoverlay/overlay-installation.html [ Pass Failure ]
 
-# These tests require the Latin Modern Math font.
-mathml/opentype/fraction-line.html [ Pass ImageOnlyFailure ]
-mathml/presentation/fractions-linethickness.html [ Pass ImageOnlyFailure ]
-mathml/opentype/large-operators-italic-correction.html [ Pass Failure ]
-
 # These tests require an OpenType MATH font on the Apple bots.
-webkit.org/b/72828 mathml/opentype/horizontal.html [ Failure ]
-webkit.org/b/72828 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
+mathml/opentype/vertical.html [ Skip ]
+mathml/opentype/large-operators.html [ Skip ]
+mathml/opentype/horizontal.html [ Skip ]
+mathml/opentype/horizontal-munderover.html [ Skip ]
+
+# These tests require the Latin Modern Math font.
+mathml/opentype/fraction-line.html [ Skip ]
+mathml/presentation/fractions-linethickness.html [ Skip ]
+mathml/opentype/large-operators-italic-correction.html [ Skip ]
 
 # These reftests require a font with Mathematical Alphanumeric Symbols.
-mathml/presentation/attributes-mathvariant.html [ ImageOnlyFailure ]
-mathml/presentation/tokenElements-mathvariant.html [ ImageOnlyFailure ]
+mathml/presentation/attributes-mathvariant.html [ Skip ]
+mathml/presentation/tokenElements-mathvariant.html [ Skip ]
 
 # MathML tests that fail:
 mathml/mathml-in-dashboard.html [ Failure ]
 mathml/presentation/scripts-height.html [ ImageOnlyFailure ]
 mathml/presentation/multiscripts-positions.html [ Pass ImageOnlyFailure ]
 mathml/presentation/scripts-subsup.html [ Pass ImageOnlyFailure ]
-
-# This test must be rebaselined after bug 153991.
-webkit.org/b/159339 mathml/presentation/mo-stretch.html [ Failure ]
 
 # <rdar://problem/19215305> ASSERT(m_cgFont.get()) fails in FontPlatformData::ctFont()
 svg/text/svg-fallback-font-crash.html

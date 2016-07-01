@@ -136,10 +136,6 @@ mathml/presentation/bug97990.html [ ImageOnlyFailure ]
 mathml/presentation/semantics.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
-# These tests must be rebaselined after bug 153991.
-webkit.org/b/159339 mathml/opentype/large-operators.html [ Failure ]
-webkit.org/b/159339 mathml/opentype/vertical.html [ Failure ]
-
 # SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
 svg/animations/animate-calcMode-spline-by.html
