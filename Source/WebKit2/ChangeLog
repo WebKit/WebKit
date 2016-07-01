@@ -1,3 +1,21 @@
+2016-07-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Prevent crash when attempting to copy an image
+        https://bugs.webkit.org/show_bug.cgi?id=159288
+        <rdar://problem/23507828>
+
+        Reviewed by Brady Eidson.
+        
+        WebKit could crash if the HTMLImageElement had a null cachedImage member.
+        A little investigation showed that the URL we retrieve from the cachedImage
+        is never used, so rather than adding a null check, let's just pass a
+        default argument. The actual URL gets read from elsewhere in the pasteboard
+        processing code.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performActionOnElement): Don't bother passing the
+        unused URL argument to the pasteboard method.
+
 2016-07-01  Brady Eidson  <beidson@apple.com>
 
         Blob content type not preserved when retrieving blobs from IndexedDB.

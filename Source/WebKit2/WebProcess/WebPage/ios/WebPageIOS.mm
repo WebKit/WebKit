@@ -2444,7 +2444,7 @@ void WebPage::performActionOnElement(uint32_t action)
         if (is<RenderImage>(*element.renderer())) {
             Element* linkElement = containingLinkElement(&element);
             if (!linkElement)
-                m_interactionNode->document().frame()->editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), element, downcast<RenderImage>(*element.renderer()).cachedImage()->url(), String());
+                m_interactionNode->document().frame()->editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), element, URL(), String());
             else
                 m_interactionNode->document().frame()->editor().copyURL(linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->fastGetAttribute(HTMLNames::hrefAttr))), linkElement->textContent());
         } else if (element.isLink()) {
