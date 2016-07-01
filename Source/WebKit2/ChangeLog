@@ -1,3 +1,21 @@
+2016-07-01  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Possible null Range dereference under computeAutocorrectionContext()
+        https://bugs.webkit.org/show_bug.cgi?id=159328
+        <rdar://problem/26766720>
+
+        Reviewed by Benjamin Poulain.
+
+        The code in computeAutocorrectionContext() was checking Editor::hasComposition()
+        before dereferencing Editor::compositionRange(). However, compositionRange()
+        can also return null in other cases (e.g. compositionStart == compositionEnd).
+
+        Drop the check for hasComposition() and do a null check on the value returned
+        by compositionRange() instead.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::computeAutocorrectionContext):
+
 2016-07-01  Brent Fulgham  <bfulgham@apple.com>
 
         Prevent crash when attempting to copy an image
