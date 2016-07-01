@@ -148,6 +148,9 @@ StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const 
 
 BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceRequest& request, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
 {
+    if (m_contentExtensions.isEmpty())
+        return BlockedStatus::NotBlocked;
+
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
 
