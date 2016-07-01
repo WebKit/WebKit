@@ -1,5 +1,13 @@
 2016-07-01  Frederic Wang  <fwang@igalia.com>
 
+        Fix error in r202729
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations: Revert unintentional change of horizontal-munderover.
+
+2016-07-01  Frederic Wang  <fwang@igalia.com>
+
         Reorganize and improve comments for MathML test expectations on ios and mac.
 
         Unreviewed test gardening.
