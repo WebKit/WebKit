@@ -58,9 +58,9 @@
 
     [CheckSecurityForNode] readonly attribute Element frameElement;
 
-    [DoNotCheckSecurity, CallWith=Document, ForwardDeclareInHeader] void focus();
+    [DoNotCheckSecurity, CallWith=CallerWindow, ForwardDeclareInHeader] void focus();
     [DoNotCheckSecurity, ForwardDeclareInHeader] void blur();
-    [DoNotCheckSecurity, CallWith=Document, ForwardDeclareInHeader] void close();
+    [DoNotCheckSecurity, CallWith=CallerDocument, ForwardDeclareInHeader] void close();
 
     void print();
     void stop();

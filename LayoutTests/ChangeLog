@@ -1,3 +1,16 @@
+2016-07-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r199087): window.focus() / window.close() can no longer be called by a Window's opener
+        https://bugs.webkit.org/show_bug.cgi?id=159364
+        <rdar://problem/27117169>
+
+        Reviewed by Gavin Barraclough.
+
+        Add layout test coverage.
+
+        * fast/dom/Window/child-window-focus-expected.txt: Added.
+        * fast/dom/Window/child-window-focus.html: Added.
+
 2016-07-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Test gardening for Sierra WK1

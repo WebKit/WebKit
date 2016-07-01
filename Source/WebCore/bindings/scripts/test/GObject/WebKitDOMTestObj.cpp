@@ -1600,6 +1600,22 @@ void webkit_dom_test_obj_with_document_argument(WebKitDOMTestObj* self)
     item->withDocumentArgument();
 }
 
+void webkit_dom_test_obj_with_caller_document_argument(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->withCallerDocumentArgument();
+}
+
+void webkit_dom_test_obj_with_caller_window_argument(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->withCallerWindowArgument();
+}
+
 void webkit_dom_test_obj_method_with_optional_arg(WebKitDOMTestObj* self, glong opt)
 {
     WebCore::JSMainThreadNullState state;

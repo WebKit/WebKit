@@ -972,9 +972,9 @@ Element* DOMWindow::frameElement() const
     return m_frame->ownerElement();
 }
 
-void DOMWindow::focus(Document& document)
+void DOMWindow::focus(DOMWindow& callerWindow)
 {
-    focus(opener() && opener() != this && document.domWindow() == opener());
+    focus(opener() && opener() != this && &callerWindow == opener());
 }
 
 void DOMWindow::focus(bool allowFocus)

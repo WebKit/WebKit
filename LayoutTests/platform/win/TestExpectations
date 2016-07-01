@@ -3327,6 +3327,9 @@ webkit.org/b/137204 svg/text/kerning.svg [ Failure ]
 webkit.org/b/137204 svg/text/text-hkern.svg [ Failure ]
 webkit.org/b/137204 svg/text/text-vkern.svg [ Failure ]
 
+# This test is WebKit2 only.
+fast/dom/Window/child-window-focus.html
+
 # SVG Fonts don't draw multibyte characters.
 webkit.org/b/154690 svg/W3C-SVG-1.1/text-align-08-b.svg [ Failure ]
 webkit.org/b/154690 svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]

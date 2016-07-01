@@ -169,6 +169,8 @@ enum TestConfidence { "high", "kinda-low" };
     [CallWith=  ScriptExecutionContext  &  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpaces();
     [CallWith=ScriptArguments&CallStack] void withScriptArgumentsAndCallStack();
     [CallWith=Document] void withDocumentArgument();
+    [CallWith=CallerDocument] void withCallerDocumentArgument();
+    [CallWith=CallerWindow] void withCallerWindowArgument();
 
     [CallWith=ScriptState] attribute long withScriptStateAttribute;
     [CallWith=ScriptState, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;

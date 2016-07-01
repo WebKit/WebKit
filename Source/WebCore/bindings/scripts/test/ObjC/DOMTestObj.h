@@ -176,6 +176,8 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (DOMTestObj *)withScriptExecutionContextAndScriptStateWithSpaces;
 - (void)withScriptArgumentsAndCallStack;
 - (void)withDocumentArgument;
+- (void)withCallerDocumentArgument;
+- (void)withCallerWindowArgument;
 - (void)methodWithOptionalArg:(int)opt;
 - (void)methodWithOptionalArgAndDefaultValue:(int)opt;
 - (void)methodWithNonOptionalArgAndOptionalArg:(int)nonOpt opt:(int)opt;

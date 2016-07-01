@@ -144,6 +144,7 @@ storage/indexeddb/modern/exceed-open-file-limit.html
 
 # This test is WebKit2-only
 http/tests/contentfiltering/load-substitute-data-from-appcache.html
+fast/dom/Window/child-window-focus.html
 
 # Testing the system language declaratively only makes sense in WK2, because it's implemented in WebKitTestRunner by launching a new WebContent process.
 fast/text/international/system-language [ Pass Failure ImageOnlyFailure ]

@@ -1330,6 +1330,18 @@
     IMPL->withDocumentArgument();
 }
 
+- (void)withCallerDocumentArgument
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->withCallerDocumentArgument();
+}
+
+- (void)withCallerWindowArgument
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->withCallerWindowArgument();
+}
+
 - (void)methodWithOptionalArg:(int)opt
 {
     WebCore::JSMainThreadNullState state;
