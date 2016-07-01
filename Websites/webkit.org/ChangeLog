@@ -1,3 +1,16 @@
+2016-07-01  Jon Davis  <jond@apple.com>
+
+        Added a colorful new image and fixed the Open Graph attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=159359
+
+        Reviewed by Timothy Hatcher.
+        
+        The Open Graph image tag should use the property attribute not
+        the itemprop attribute.
+
+        * wp-content/plugins/social-meta.php:
+        * wp-content/themes/webkit/images/ogimage.png:
+
 2016-06-30  Dean Jackson  <dino@apple.com>
 
         Tab pointed out a typo that made the overdamped case fail.

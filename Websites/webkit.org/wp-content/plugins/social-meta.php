@@ -82,7 +82,7 @@ add_action('wp_head', function() {
     <meta property="og:type" content="<?php echo esc_attr($type); ?>">
     <meta property="og:url" content="<?php the_permalink(); ?>">
 <?php if ($image_url): ?>
-    <meta itemprop="og:image" content="<?php echo esc_url($image_url); ?>">
+    <meta property="og:image" content="<?php echo esc_url($image_url); ?>">
 <?php endif; ?>
 <?php if ($description): ?>
     <meta property="og:description" content="<?php echo esc_attr($description); ?>">
