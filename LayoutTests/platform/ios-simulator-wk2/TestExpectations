@@ -132,7 +132,6 @@ scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spa
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 
 # MathML tests that fail due to slight pixel differences:
-mathml/presentation/bug97990.html [ ImageOnlyFailure ]
 mathml/presentation/semantics.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 

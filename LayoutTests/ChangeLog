@@ -1,3 +1,11 @@
+2016-07-01  Frederic Wang  <fwang@igalia.com>
+
+        Remove failure expectation for mathml/presentation/bug97990.html on ios-simulator
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-07-01  Benjamin Poulain  <bpoulain@apple.com>
 
         __defineGetter__/__defineSetter__ should throw exceptions
