@@ -1,3 +1,10 @@
+2016-06-30  Matt Baker  <mattbaker@apple.com>
+
+        Unreviewed build fix.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Add "Area" localized string.
+
 2016-06-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Wrong function name next to scope
