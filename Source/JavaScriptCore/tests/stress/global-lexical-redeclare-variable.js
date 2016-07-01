@@ -64,11 +64,52 @@ try {
 }
 assertExpectations();
 
+// Checking if the implementation is following
+// ES6 spec 8.1.1.4.14 http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasrestrictedglobalproperty
+
 try {
+    sentinel = "bad";
+    assert(Object.getOwnPropertyDescriptor(this, "globalProperty").configurable);
     load("./multiple-files-tests/global-lexical-redeclare-variable/sixth.js");
+} catch(e) {
+    assert(false);
+}
+assertExpectations();
+
+try {
+    sentinel = "bad";
+    assert(Object.getOwnPropertyDescriptor(this, "Array").configurable);
+    load("./multiple-files-tests/global-lexical-redeclare-variable/seventh.js");
+} catch(e) {
+    assert(false);
+}
+assertExpectations();
+
+try {
+    sentinel = "bad";
+    Object.defineProperty(this, 'foo', {value: 5, configurable: true, writable: true});
+    load("./multiple-files-tests/global-lexical-redeclare-variable/eighth.js");
+} catch(e) {
+    assert(false);
+}
+assertExpectations();
+
+try {
+    Object.defineProperty(this, 'bar', {value: 5, configurable: false, writable: true});
+    load("./multiple-files-tests/global-lexical-redeclare-variable/ninth.js");
 } catch(e) {
     assertProperError(e);
 }
 assertExpectations();
 
 assert(errorCount === 6);
+
+try {
+    sentinel = "bad";
+    Object.defineProperty(this, 'zoo', {value: undefined, configurable: false, writable: true});
+    load("./multiple-files-tests/global-lexical-redeclare-variable/tenth.js");
+} catch(e) {
+    assert(false);
+}
+assertExpectations();
+

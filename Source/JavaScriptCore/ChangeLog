@@ -1,3 +1,26 @@
+2016-07-01  Caio Lima  <ticaiolima@gmail.com>
+
+        ES6: Implement HasRestrictedGlobalProperty when checking for global lexical tier conflicts
+        https://bugs.webkit.org/show_bug.cgi?id=148763
+
+        Reviewed by Saam Barati
+
+        I've implemented the ES6 spec 8.1.1.4.14
+        (http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasrestrictedglobalproperty)
+        that defines when a global property can be shadowed.
+
+        Added some test cases into global-lexical-redeclare-variable.js
+
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * tests/stress/global-lexical-redeclare-variable.js:
+        (catch):
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/eighth.js: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/nineth.js: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/seventh.js: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/sixth.js:
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/tenth.js: Added.
+
 2016-07-01  Youenn Fablet  <youennf@gmail.com>
 
         Add a runtime flag for DOM iterators

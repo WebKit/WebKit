@@ -605,9 +605,16 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         // Check if any new "let"/"const"/"class" will shadow any pre-existing global property names, or "var"/"let"/"const" variables.
         // It's an error to introduce a shadow.
         for (auto& entry : lexicalDeclarations) {
-            if (globalObject->hasProperty(exec, entry.key.get()))
-                return createSyntaxError(exec, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
-
+            if (globalObject->hasProperty(exec, entry.key.get())) {
+                // The ES6 spec says that just RestrictedGlobalProperty can't be shadowed
+                // This carried out section 8.1.1.4.14 of the ES6 spec: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasrestrictedglobalproperty
+                PropertyDescriptor descriptor;
+                globalObject->getOwnPropertyDescriptor(exec, entry.key.get(), descriptor);
+                
+                if (descriptor.value() != jsUndefined() && !descriptor.configurable())
+                    return createSyntaxError(exec, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
+            }
+                
             if (globalLexicalEnvironment->hasProperty(exec, entry.key.get())) {
                 if (UNLIKELY(entry.value.isConst() && !vm.globalConstRedeclarationShouldThrow() && !isStrictMode())) {
                     // We only allow "const" duplicate declarations under this setting.

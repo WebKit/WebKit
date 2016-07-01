@@ -1,2 +1,2 @@
-let globalProperty = "bad";
-sentinel = "bad";
+let globalProperty = "good";
+sentinel = "__s__";
