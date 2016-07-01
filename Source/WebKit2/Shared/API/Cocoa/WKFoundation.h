@@ -64,9 +64,5 @@
 
 #endif
 
-#ifdef __OBJC__
-#define WK_NULLABLE_SPECIFIER __nullable
-#endif
-
 #endif
 

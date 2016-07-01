@@ -61,7 +61,6 @@ function rewrite_headers () {
         -e 's/WK_ARRAY\(([^\)]+)\)/NSArray<\1>/g'
         -e 's/WK_DICTIONARY\(([^\)]+)\)/NSDictionary<\1>/g'
         -e 's/WK_SET\(([^\)]+)\)/NSSet<\1>/g'
-        -e s/WK_NULLABLE_SPECIFIER/_Nullable/g
     )
 
     if [[ -n "$OSX_VERSION" && -n "$IOS_VERSION" ]]; then

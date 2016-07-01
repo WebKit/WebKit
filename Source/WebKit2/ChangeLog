@@ -1,3 +1,16 @@
+2016-07-01  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Get rid of WK_NULLABLE_SPECIFIER now that all supported compilers understand _Nullable
+        https://bugs.webkit.org/show_bug.cgi?id=159361
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * mac/postprocess-framework-headers.sh:
+
 2016-07-01  Youenn Fablet  <youennf@gmail.com>
 
         Add a runtime flag for DOM iterators
