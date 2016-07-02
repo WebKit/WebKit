@@ -130,7 +130,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     ResourceError error;
     ResourceResponse response;
     RefPtr<SharedBuffer> data;
-    unsigned identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, loader.options().allowCredentials(), loader.options().clientCredentialPolicy(), error, response, data);
+    unsigned identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, error, response, data);
 
     if (!error.isNull() && response.httpStatusCode() <= 0) {
         error.setType(ResourceError::Type::AccessControl);
