@@ -23,6 +23,9 @@ PASS re.toString() is '/(?:)/'
 PASS re.toString() is '/z/'
 PASS re.lastIndex is 0
 PASS re.lastIndex is 1
+PASS regexpWithUndefinedCompiledToValid = new RegExp(undefined), regexpWithUndefinedCompiledToValid.compile('abc') is regexpWithUndefinedCompiledToValid
+PASS regexpValidPatternCompiledToValid = new RegExp('zyx'), regexpValidPatternCompiledToValid.compile('abc') is regexpValidPatternCompiledToValid
+PASS regexpWithValidCompiledToUndefined = new RegExp('abc'), regexpWithValidCompiledToUndefined.compile(undefined) is regexpWithValidCompiledToUndefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

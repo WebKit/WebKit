@@ -166,7 +166,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
 
     asRegExpObject(thisValue)->setRegExp(exec->vm(), regExp);
     asRegExpObject(thisValue)->setLastIndex(exec, 0);
-    return JSValue::encode(jsUndefined());
+    return JSValue::encode(thisValue);
 }
 
 typedef std::array<char, 5 + 1> FlagsString; // 5 different flags and a null character terminator.

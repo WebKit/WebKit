@@ -49,3 +49,8 @@ re.compile(/a/g);
 shouldBe("re.lastIndex", "0");
 re.exec("aaa");
 shouldBe("re.lastIndex", "1");
+
+// Compile returns the regexp itself.
+shouldBe("regexpWithUndefinedCompiledToValid = new RegExp(undefined), regexpWithUndefinedCompiledToValid.compile('abc')", "regexpWithUndefinedCompiledToValid");
+shouldBe("regexpValidPatternCompiledToValid = new RegExp('zyx'), regexpValidPatternCompiledToValid.compile('abc')", "regexpValidPatternCompiledToValid");
+shouldBe("regexpWithValidCompiledToUndefined = new RegExp('abc'), regexpWithValidCompiledToUndefined.compile(undefined)", "regexpWithValidCompiledToUndefined");

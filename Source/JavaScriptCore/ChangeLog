@@ -1,3 +1,17 @@
+2016-07-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] RegExp.compile is not returning the regexp when it succeed
+        https://bugs.webkit.org/show_bug.cgi?id=159381
+
+        Reviewed by Mark Lam.
+
+        Spec:
+        -https://tc39.github.io/ecma262/#sec-regexp.prototype.compile
+        -https://tc39.github.io/ecma262/#sec-regexpinitialize
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+
 2016-07-01  Saam Barati  <sbarati@apple.com>
 
         fix "ASSERTION FAILED: currentOffset() >= currentLineStartOffset()"

@@ -1,3 +1,13 @@
+2016-07-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] RegExp.compile is not returning the regexp when it succeed
+        https://bugs.webkit.org/show_bug.cgi?id=159381
+
+        Reviewed by Mark Lam.
+
+        * js/regexp-compile-expected.txt:
+        * js/script-tests/regexp-compile.js:
+
 2016-07-01  Zalan Bujtas  <zalan@apple.com>
 
         prepareForDestruction() always needs to be called before destroying the Document object.
