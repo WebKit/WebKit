@@ -629,6 +629,8 @@ http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 mathml/presentation/fractions-box.html [ Skip ]
 
+mathml/presentation/radical-bar-visibility.html [ ImageOnlyFailure ]
+
 webkit.org/b/155875 svg/W3C-SVG-1.1/animate-elem-22-b.svg [ Crash ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/animate-elem-28-t.svg [ Crash ]
 webkit.org/b/155875 svg/W3C-SVG-1.1/interact-order-01-b.svg [ Crash ]

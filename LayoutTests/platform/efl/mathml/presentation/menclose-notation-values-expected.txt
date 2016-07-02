@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x219
-  RenderBlock {HTML} at (0,0) size 800x219
-    RenderBody {BODY} at (8,8) size 784x203
+layer at (0,0) size 800x220
+  RenderBlock {HTML} at (0,0) size 800x220
+    RenderBody {BODY} at (8,8) size 784x204
       RenderMathMLMath {math} at (0,8) size 114x58 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 112x58
           RenderMathMLMenclose {menclose} at (0,0) size 112x58
@@ -79,20 +79,20 @@ layer at (0,0) size 800x219
           RenderMathMLMenclose {menclose} at (0,0) size 100x50
             RenderMathMLSpace {mspace} at (0,0) size 100x50 [bgcolor=#FF0000]
       RenderText {#text} at (0,0) size 0x0
-      RenderMathMLMath {math} at (0,139) size 110x58 [padding: 0 1 0 1]
+      RenderMathMLMath {math} at (0,140) size 110x58 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 108x58
           RenderMathMLMenclose {menclose} at (0,0) size 108x58
             RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]
-      RenderText {#text} at (109,178) size 5x17
-        text run at (109,178) width 5: " "
+      RenderText {#text} at (109,179) size 5x17
+        text run at (109,179) width 5: " "
       RenderText {#text} at (0,0) size 0x0
-      RenderMathMLMath {math} at (113,130) size 146x74 [padding: 0 1 0 1]
+      RenderMathMLMath {math} at (113,131) size 146x74 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 144x74
           RenderMathMLMenclose {menclose} at (0,0) size 144x74
             RenderMathMLSpace {mspace} at (21,11) size 101x51 [bgcolor=#FF0000]
-      RenderText {#text} at (258,178) size 5x17
-        text run at (258,178) width 5: " "
-      RenderMathMLMath {math} at (262,138) size 111x58 [padding: 0 1 0 1]
+      RenderText {#text} at (258,179) size 5x17
+        text run at (258,179) width 5: " "
+      RenderMathMLMath {math} at (262,139) size 111x58 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 108x58
           RenderMathMLMenclose {menclose} at (0,0) size 108x58
             RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]

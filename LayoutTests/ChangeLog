@@ -1,5 +1,16 @@
 2016-07-02  Frederic Wang  <fred.wang@free.fr>
 
+        Update EFL expectations for some MathML tests.
+
+        Unreviewed test gardening.
+
+        * platform/efl/TestExpectations: Mark mathml/presentation/radical-bar-visibility.html as failing.
+        * platform/efl/mathml/opentype/horizontal-munderover-expected.txt: Update expectation using latest buildbot results.
+        * platform/efl/mathml/presentation/menclose-notation-values-expected.txt: Ditto.
+        * platform/efl/mathml/presentation/mspace-children-expected.txt: Ditto.
+
+2016-07-02  Frederic Wang  <fred.wang@free.fr>
+
         Update windows expectations for some MathML tests.
 
         Unreviewed test gardening.
