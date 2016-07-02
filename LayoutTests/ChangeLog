@@ -1,5 +1,23 @@
 2016-07-02  Frederic Wang  <fred.wang@free.fr>
 
+        Update windows expectations for some MathML tests.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+        * platform/win/mathml/opentype/large-operators-expected.txt: Added.
+        * platform/win/mathml/opentype/opentype-stretchy-expected.txt: Added.
+        * platform/win/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Removed.
+        * platform/win/mathml/opentype/vertical-expected.txt: Added.
+        * platform/win/mathml/presentation/menclose-notation-default-longdiv-expected.txt:
+        * platform/win/mathml/presentation/mo-stretch-expected.txt: Added.
+        * platform/win/mathml/presentation/roots-expected.txt: Added.
+        * platform/win/mathml/radical-fallback-expected.png: Added.
+        * platform/win/mathml/radical-fallback-expected.txt: Added.
+        * platform/efl/mathml/radical-fallback-expected.txt:
+
+2016-07-02  Frederic Wang  <fred.wang@free.fr>
+
         Update EFL expectations for some MathML tests.
 
         Unreviewed test gardening.
