@@ -141,7 +141,7 @@ public:
     CString sourceCodeForTools() const; // Not quite the actual source we parsed; this will do things like prefix the source for a function with a reified signature.
     CString sourceCodeOnOneLine() const; // As sourceCodeForTools(), but replaces all whitespace runs with a single space.
     void dumpAssumingJITType(PrintStream&, JITCode::JITType) const;
-    void dump(PrintStream&) const;
+    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
     int numParameters() const { return m_numParameters; }
     void setNumParameters(int newValue);

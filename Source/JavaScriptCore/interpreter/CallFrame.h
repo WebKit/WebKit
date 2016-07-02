@@ -149,7 +149,7 @@ namespace JSC  {
         
         // This will get you a CodeOrigin. It will always succeed. May return
         // CodeOrigin(0) if we're in native code.
-        CodeOrigin codeOrigin();
+        JS_EXPORT_PRIVATE CodeOrigin codeOrigin();
 
         Register* topOfFrame()
         {

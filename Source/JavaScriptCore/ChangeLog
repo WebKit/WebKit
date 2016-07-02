@@ -1,3 +1,50 @@
+2016-06-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Scopes that are not under TDZ should still push their variables onto the TDZ stack so that lifting TDZ doesn't bypass that scope
+        https://bugs.webkit.org/show_bug.cgi?id=159332
+        rdar://problem/27018958
+
+        Reviewed by Saam Barati.
+        
+        This fixes an instacrash in this code:
+        
+            try{}catch(e){}print(e);let e;
+        
+        We lift TDZ for "e" in "catch (e){}", but since that scope doesn't push anything onto the
+        TDZ stack, we lift TDZ from "let e".
+        
+        The problem is that we weren't tracking the set of variables that do not have TDZ. We need
+        to track them to "block" the traversal that lifts TDZ. This change fixes this issue by
+        using a map that tracks all known variables, and tells you if they are under TDZ or not.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numParameters):
+        * bytecode/CodeOrigin.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::Label::setLocation):
+        (JSC::Variable::dump):
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::popLexicalScope):
+        (JSC::BytecodeGenerator::popLexicalScopeInternal):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::variable):
+        (JSC::BytecodeGenerator::needsTDZCheck):
+        (JSC::BytecodeGenerator::liftTDZCheckIfPossible):
+        (JSC::BytecodeGenerator::pushTDZVariables):
+        (JSC::BytecodeGenerator::getVariablesUnderTDZ):
+        (JSC::BytecodeGenerator::endGenerator):
+        (WTF::printInternal):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::Variable::isConst):
+        (JSC::Variable::setIsReadOnly):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::topOfFrame):
+        * tests/stress/lift-tdz-bypass-catch.js: Added.
+        (foo):
+        (catch):
+
 2016-07-01  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] RegExp.compile is not returning the regexp when it succeed

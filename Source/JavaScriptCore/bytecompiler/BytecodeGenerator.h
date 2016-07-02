@@ -238,6 +238,8 @@ namespace JSC {
         bool isConst() const { return isReadOnly() && m_isLexicallyScoped; }
         void setIsReadOnly() { m_attributes |= ReadOnly; }
 
+        void dump(PrintStream&) const;
+
     private:
         Identifier m_ident;
         VarOffset m_offset;
@@ -728,7 +730,7 @@ namespace JSC {
         enum class ScopeRegisterType { Var, Block };
         void pushLexicalScopeInternal(VariableEnvironment&, TDZCheckOptimization, NestedScopeType, RegisterID** constantSymbolTableResult, TDZRequirement, ScopeType, ScopeRegisterType);
         void initializeBlockScopedFunctions(VariableEnvironment&, FunctionStack&, RegisterID* constantSymbolTable);
-        void popLexicalScopeInternal(VariableEnvironment&, TDZRequirement);
+        void popLexicalScopeInternal(VariableEnvironment&);
         template<typename LookUpVarKindFunctor>
         bool instantiateLexicalVariables(const VariableEnvironment&, SymbolTable*, ScopeRegisterType, LookUpVarKindFunctor);
         void emitPrefillStackTDZVariables(const VariableEnvironment&, SymbolTable*);
@@ -881,9 +883,15 @@ namespace JSC {
             int m_symbolTableConstantIndex;
         };
         Vector<SymbolTableStackEntry> m_symbolTableStack;
-        Vector<std::pair<VariableEnvironment, TDZCheckOptimization>> m_TDZStack;
+        enum class TDZNecessityLevel {
+            NotNeeded,
+            Optimize,
+            DoNotOptimize
+        };
+        typedef HashMap<RefPtr<UniquedStringImpl>, TDZNecessityLevel, IdentifierRepHash> TDZMap;
+        Vector<TDZMap> m_TDZStack;
         Optional<size_t> m_varScopeSymbolTableIndex;
-        void pushTDZVariables(VariableEnvironment, TDZCheckOptimization);
+        void pushTDZVariables(const VariableEnvironment&, TDZCheckOptimization, TDZRequirement);
 
         ScopeNode* const m_scopeNode;
         Strong<UnlinkedCodeBlock> m_codeBlock;
@@ -964,5 +972,11 @@ namespace JSC {
     };
 
 }
+
+namespace WTF {
+
+void printInternal(PrintStream&, JSC::Variable::VariableKind);
+
+} // namespace WTF
 
 #endif // BytecodeGenerator_h

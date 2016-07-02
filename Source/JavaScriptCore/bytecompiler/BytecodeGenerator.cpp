@@ -45,6 +45,7 @@
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedInstructionStream.h"
+#include <wtf/CommaPrinter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,6 +60,18 @@ void Label::setLocation(unsigned location)
     unsigned size = m_unresolvedJumps.size();
     for (unsigned i = 0; i < size; ++i)
         m_generator.instructions()[m_unresolvedJumps[i].second].u.operand = m_location - m_unresolvedJumps[i].first;
+}
+
+void Variable::dump(PrintStream& out) const
+{
+    out.print(
+        "{ident = ", m_ident,
+        ", offset = ", m_offset,
+        ", local = ", RawPointer(m_local),
+        ", attributes = ", m_attributes,
+        ", kind = ", m_kind,
+        ", symbolTableConstantIndex = ", m_symbolTableConstantIndex,
+        ", isLexicallyScoped = ", m_isLexicallyScoped, "}");
 }
 
 ParserError BytecodeGenerator::generate()
@@ -603,7 +616,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     // All "addVar()"s needs to happen before "initializeDefaultParameterValuesAndSetupFunctionScopeStack()" is called
     // because a function's default parameter ExpressionNodes will use temporary registers.
-    pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize);
+    pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize, TDZRequirement::UnderTDZ);
     initializeDefaultParameterValuesAndSetupFunctionScopeStack(parameters, isSimpleParameterList, functionNode, functionSymbolTable, symbolTableConstantIndex, captures, shouldCreateArgumentsVariableInParameterScope);
     
     // If we don't have  default parameter expression, then loading |this| inside an arrow function must be done
@@ -639,7 +652,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 
     m_codeBlock->setNumParameters(1);
 
-    pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize);
+    pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize, TDZRequirement::UnderTDZ);
 
     emitEnter();
 
@@ -756,7 +769,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     else
         constantSymbolTable = addConstantValue(moduleEnvironmentSymbolTable->cloneScopePart(*m_vm));
 
-    pushTDZVariables(lexicalVariables, TDZCheckOptimization::Optimize);
+    pushTDZVariables(lexicalVariables, TDZCheckOptimization::Optimize, TDZRequirement::UnderTDZ);
     bool isWithScope = false;
     m_symbolTableStack.append(SymbolTableStackEntry { moduleEnvironmentSymbolTable, m_topMostScope, isWithScope, constantSymbolTable->index() });
     emitPrefillStackTDZVariables(lexicalVariables, moduleEnvironmentSymbolTable);
@@ -1933,8 +1946,7 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
 
     bool isWithScope = false;
     m_symbolTableStack.append(SymbolTableStackEntry{ symbolTable, newScope, isWithScope, symbolTableConstantIndex });
-    if (tdzRequirement == TDZRequirement::UnderTDZ)
-        pushTDZVariables(environment, tdzCheckOptimization);
+    pushTDZVariables(environment, tdzCheckOptimization, tdzRequirement);
 
     if (tdzRequirement == TDZRequirement::UnderTDZ)
         emitPrefillStackTDZVariables(environment, symbolTable);
@@ -2021,10 +2033,10 @@ void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(const Identifier& fun
 void BytecodeGenerator::popLexicalScope(VariableEnvironmentNode* node)
 {
     VariableEnvironment& environment = node->lexicalVariables();
-    popLexicalScopeInternal(environment, TDZRequirement::UnderTDZ);
+    popLexicalScopeInternal(environment);
 }
 
-void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment, TDZRequirement tdzRequirement)
+void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment)
 {
     // NOTE: This function only makes sense for scopes that aren't ScopeRegisterType::Var (only function name scope right now is ScopeRegisterType::Var).
     // This doesn't make sense for ScopeRegisterType::Var because we deref RegisterIDs here.
@@ -2057,8 +2069,7 @@ void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment
         stackEntry.m_scope->deref();
     }
 
-    if (tdzRequirement == TDZRequirement::UnderTDZ)
-        m_TDZStack.removeLast();
+    m_TDZStack.removeLast();
 }
 
 void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvironmentNode* node, RegisterID* loopSymbolTable)
@@ -2182,7 +2193,7 @@ Variable BytecodeGenerator::variable(const Identifier& property, ThisResolutionT
             result.setIsReadOnly();
         return result;
     }
-
+    
     return Variable(property);
 }
 
@@ -2722,9 +2733,10 @@ void BytecodeGenerator::emitTDZCheck(RegisterID* target)
 bool BytecodeGenerator::needsTDZCheck(const Variable& variable)
 {
     for (unsigned i = m_TDZStack.size(); i--;) {
-        VariableEnvironment& identifiers = m_TDZStack[i].first;
-        if (identifiers.contains(variable.ident().impl()))
-            return true;
+        auto iter = m_TDZStack[i].find(variable.ident().impl());
+        if (iter == m_TDZStack[i].end())
+            continue;
+        return iter->value != TDZNecessityLevel::NotNeeded;
     }
 
     return false;
@@ -2747,41 +2759,54 @@ void BytecodeGenerator::liftTDZCheckIfPossible(const Variable& variable)
 {
     RefPtr<UniquedStringImpl> identifier(variable.ident().impl());
     for (unsigned i = m_TDZStack.size(); i--;) {
-        VariableEnvironment& environment = m_TDZStack[i].first;
-        if (environment.contains(identifier)) {
-            TDZCheckOptimization tdzCheckOptimizationCapability = m_TDZStack[i].second;
-            if (tdzCheckOptimizationCapability == TDZCheckOptimization::Optimize) {
-                bool wasRemoved = environment.remove(identifier);
-                RELEASE_ASSERT(wasRemoved);
-            }
+        auto iter = m_TDZStack[i].find(identifier);
+        if (iter != m_TDZStack[i].end()) {
+            if (iter->value == TDZNecessityLevel::Optimize)
+                iter->value = TDZNecessityLevel::NotNeeded;
             break;
         }
     }
 }
 
-void BytecodeGenerator::pushTDZVariables(VariableEnvironment environment, TDZCheckOptimization optimization)
+void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment, TDZCheckOptimization optimization, TDZRequirement requirement)
 {
     if (!environment.size())
         return;
+    
+    TDZNecessityLevel level;
+    if (requirement == TDZRequirement::UnderTDZ) {
+        if (optimization == TDZCheckOptimization::Optimize)
+            level = TDZNecessityLevel::Optimize;
+        else
+            level = TDZNecessityLevel::DoNotOptimize;
+    } else
+        level = TDZNecessityLevel::NotNeeded;
+    
+    TDZMap map;
+    for (const auto& entry : environment)
+        map.add(entry.key, entry.value.isFunction() ? TDZNecessityLevel::NotNeeded : level);
 
-    Vector<UniquedStringImpl*, 4> functionsToRemove;
-    for (const auto& entry : environment) {
-        if (entry.value.isFunction())
-            functionsToRemove.append(entry.key.get());
-    }
-
-    for (UniquedStringImpl* function : functionsToRemove)
-        environment.remove(function);
-
-    m_TDZStack.append(std::make_pair(WTFMove(environment), optimization));
+    m_TDZStack.append(WTFMove(map));
 }
 
 void BytecodeGenerator::getVariablesUnderTDZ(VariableEnvironment& result)
 {
-    for (auto& pair : m_TDZStack) {
-        VariableEnvironment& environment = pair.first;
-        for (auto entry : environment)
-            result.add(entry.key.get());
+    // NOTE: This is conservative. If called at "...", it will report "x" as being under TDZ:
+    //
+    //     {
+    //         {
+    //             let x;
+    //             ...
+    //         }
+    //         let x;
+    //     }
+    //
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159387
+    for (auto& map : m_TDZStack) {
+        for (auto& entry : map)  {
+            if (entry.value != TDZNecessityLevel::NotNeeded)
+                result.add(entry.key.get());
+        }
     }
 }
 
@@ -3836,7 +3861,7 @@ void BytecodeGenerator::emitPushCatchScope(VariableEnvironment& environment)
 
 void BytecodeGenerator::emitPopCatchScope(VariableEnvironment& environment) 
 {
-    popLexicalScopeInternal(environment, TDZRequirement::NotUnderTDZ);
+    popLexicalScopeInternal(environment);
 }
 
 void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::SwitchType type)
@@ -4631,3 +4656,21 @@ void BytecodeGenerator::endGenerator(Label* defaultLabel)
 }
 
 } // namespace JSC
+
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::Variable::VariableKind kind)
+{
+    switch (kind) {
+    case JSC::Variable::NormalVariable:
+        out.print("Normal");
+        return;
+    case JSC::Variable::SpecialVariable:
+        out.print("Special");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
+
