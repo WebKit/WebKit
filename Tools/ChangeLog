@@ -1,3 +1,17 @@
+2016-07-02  Youenn Fablet  <youennf@gmail.com>
+
+        Make it straightforward to start the Web Platform Tests HTTP server using run-webkit-httpd
+        https://bugs.webkit.org/show_bug.cgi?id=152486
+
+        Reviewed by Daniel Bates.
+
+        Add launch of web-platform-tests server by run-webkit-httpd.
+        Add two options to disable starting httpd and web-platform-tests servers.
+
+        * Scripts/run-webkit-httpd:
+        (parse_args):
+        (main):
+
 2016-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r189668): Notification tests are flakey
