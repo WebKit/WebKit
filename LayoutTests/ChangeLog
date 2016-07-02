@@ -1,3 +1,16 @@
+2016-07-01  Johan K. Jensen  <jj@johanjensen.dk>
+
+        Web Inspector: Sending XHR with UTF8 encoded data shows garbled data in Resource sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=159358
+
+        Reviewed by Joseph Pecoraro.
+
+        Based on Chromium patch:
+        <https://chromium.googlesource.com/chromium/src/+/bcbb663864624ab38b36731eb2edc839a90f9e65%5E%21/#F2>
+
+        * http/tests/inspector/network/xhr-request-data-encoded-correctly-expected.txt:
+        * http/tests/inspector/network/xhr-request-data-encoded-correctly.html:
+
 2016-07-01  Dean Jackson  <dino@apple.com>
 
         "image-src" support is missing. We only support "-webkit-image-src"
