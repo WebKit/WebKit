@@ -1,3 +1,18 @@
+2016-07-01  Zalan Bujtas  <zalan@apple.com>
+
+        prepareForDestruction() always needs to be called before destroying the Document object.
+        https://bugs.webkit.org/show_bug.cgi?id=159372
+        rdar://problem/26788150
+
+        Reviewed by Antti Koivisto.
+
+        We should never start destroying the Document object without calling prepareForDestruction() first.
+        It ensures that render tree gets nuked before we start tearing down the node tree.
+
+        * fast/history/page-cache-destroy-document-expected.txt: Added.
+        * fast/history/page-cache-destroy-document.html: Added.
+        * fast/history/resources/page-cache-destroy-helper.html: Added.
+
 2016-07-01  Saam Barati  <sbarati@apple.com>
 
         fix "ASSERTION FAILED: currentOffset() >= currentLineStartOffset()"

@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Tests that page can safely remove an iframe durin pagehide event.');
+if (window.testRunner) {
+    window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    window.testRunner.waitUntilDone();
+}
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - entering cache");
+    debug("remove iframe");
+    var iframe = document.getElementById("removeThis");
+    iframe.parentNode.removeChild(iframe);
+    finishJSTest();
+    window.testRunner.notifyDone();
+}, false);
+
+function runTest() {
+    // Force a back navigation back to this page.
+    setTimeout(function() {
+        window.location.href = "resources/page-cache-destroy-helper.html";
+    }, 10);
+}
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script>
+<iframe onload="runTest()" id=removeThis src="resources/dummy.html"></iframe>
+</body>
+</html>

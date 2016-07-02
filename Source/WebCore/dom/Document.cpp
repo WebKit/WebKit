@@ -539,8 +539,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_cookieCacheExpiryTimer(*this, &Document::invalidateDOMCookieCache)
     , m_disabledFieldsetElementsCount(0)
     , m_hasInjectedPlugInsScript(false)
-    , m_renderTreeBeingDestroyed(false)
-    , m_hasPreparedForDestruction(false)
     , m_hasStyleWithViewportUnits(false)
 {
     allDocuments().add(this);
@@ -675,6 +673,7 @@ void Document::removedLastRef()
         // until after removeDetachedChildren returns, so we protect ourselves.
         incrementReferencingNodeCount();
 
+        prepareForDestruction();
         // We must make sure not to be retaining any of our children through
         // these extra pointers or we will create a reference cycle.
         m_focusedElement = nullptr;
