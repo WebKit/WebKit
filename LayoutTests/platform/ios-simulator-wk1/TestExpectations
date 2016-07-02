@@ -734,7 +734,6 @@ mathml/opentype/munderover-layout-resize.html
 mathml/presentation/mo-invisible.html
 
 # MathML tests that fail:
-mathml/presentation/bug97990.html [ ImageOnlyFailure ]
 mathml/presentation/mo-stretch-update.html [ ImageOnlyFailure ]
 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 mathml/presentation/semantics.html [ ImageOnlyFailure ]

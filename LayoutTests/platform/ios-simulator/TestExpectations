@@ -676,7 +676,6 @@ mathml/presentation/attributes-mathvariant.html [ Skip ]
 mathml/presentation/tokenElements-mathvariant.html [ Skip ]
 
 # MathML tests that fail:
-mathml/mathml-in-dashboard.html [ Failure ]
 mathml/presentation/scripts-height.html [ ImageOnlyFailure ]
 mathml/presentation/multiscripts-positions.html [ Pass ImageOnlyFailure ]
 mathml/presentation/scripts-subsup.html [ Pass ImageOnlyFailure ]

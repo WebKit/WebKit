@@ -1,3 +1,14 @@
+2016-07-02  Frederic Wang  <fred.wang@free.fr>
+
+        Update iOS expectations for some MathML tests.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/mathml/mathml-in-dashboard-actual.txt: Added.
+
 2016-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r189668): Notification tests are flakey

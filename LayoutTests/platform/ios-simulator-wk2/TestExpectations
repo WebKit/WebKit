@@ -131,6 +131,9 @@ scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar
 scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Failure ]
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 
+# WebKitTestRunner needs testRunner.setUseDashboardCompatibilityMode
+mathml/mathml-in-dashboard.html [ Skip ]
+
 # MathML tests that fail due to slight pixel differences:
 mathml/presentation/semantics.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
