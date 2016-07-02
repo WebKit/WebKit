@@ -36,10 +36,10 @@ function roundtripCssRule(cssText)
 // to avoid triggering any network activity.
 
 debug('Test a bunch of cursor rules which should round-trip exactly.');
-testCursorRule('-webkit-image-set(url(file:///foo.png) 1x), auto');
-testCursorRule('-webkit-image-set(url(file:///foo.png) 1x, url(file:///foo2x.png) 2x), auto');
-testCursorRule('-webkit-image-set(url(file:///foo.png) 1x, url(file:///foo2x.png) 2x) 2 3, auto');
-testCursorRule('-webkit-image-set(url(file:///foo03.png) 0.3x, url(file:///foo5x.png) 5x) 6 5, url(file:///foo.png) 12 3, pointer');
+testCursorRule('image-set(url(file:///foo.png) 1x), auto');
+testCursorRule('image-set(url(file:///foo.png) 1x, url(file:///foo2x.png) 2x), auto');
+testCursorRule('image-set(url(file:///foo.png) 1x, url(file:///foo2x.png) 2x) 2 3, auto');
+testCursorRule('image-set(url(file:///foo03.png) 0.3x, url(file:///foo5x.png) 5x) 6 5, url(file:///foo.png) 12 3, pointer');
 
 successfullyParsed = true;
 </script>

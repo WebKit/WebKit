@@ -98,6 +98,9 @@ PASS Two CSSValues "inline-box" and "font" for property "-webkit-line-box-contai
 PASS Two CSSValues "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" are equal. 
 PASS Two CSSValues "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are equal. 
 PASS Two CSSValues "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" and "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are not equal. 
+PASS Two CSSValues "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" are equal. 
+PASS Two CSSValues "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are equal. 
+PASS Two CSSValues "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" and "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are not equal. 
 PASS Two CSSValues "grayscale(100%) sepia(100%)" for property "-webkit-filter" are equal. 
 PASS Two CSSValues "sepia(10%) grayscale(50%)" for property "-webkit-filter" are equal. 
 PASS Two CSSValues "grayscale(100%) sepia(100%)" and "sepia(10%) grayscale(50%)" for property "-webkit-filter" are not equal. 

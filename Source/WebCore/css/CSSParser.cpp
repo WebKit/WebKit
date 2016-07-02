@@ -1876,6 +1876,11 @@ RefPtr<CSSValue> CSSParser::parseVariableDependentValue(CSSPropertyID propID, co
     return nullptr;
 }
 
+static bool isImageSetFunctionValue(const CSSParserValue& value)
+{
+    return value.unit == CSSParserValue::Function && (equalLettersIgnoringASCIICase(value.function->name, "image-set(") || equalLettersIgnoringASCIICase(value.function->name, "-webkit-image-set("));
+}
+
 bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 {
     if (!m_valueList || !m_valueList->current())
@@ -2092,7 +2097,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
                 if (!uri.isNull())
                     image = CSSImageValue::create(completeURL(uri));
 #if ENABLE(CSS_IMAGE_SET) && ENABLE(MOUSE_CURSOR_SCALE)
-            } else if (value->unit == CSSParserValue::Function && equalLettersIgnoringASCIICase(value->function->name, "-webkit-image-set(")) {
+            } else if (isImageSetFunctionValue(*value)) {
                 image = parseImageSet();
                 if (!image)
                     break;
@@ -2225,7 +2230,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
                 return false;
         }
 #if ENABLE(CSS_IMAGE_SET)
-        else if (valueWithCalculation.value().unit == CSSParserValue::Function && equalLettersIgnoringASCIICase(valueWithCalculation.value().function->name, "-webkit-image-set(")) {
+        else if (isImageSetFunctionValue(valueWithCalculation.value())) {
             parsedValue = parseImageSet();
             if (!parsedValue)
                 return false;
@@ -4254,7 +4259,7 @@ bool CSSParser::parseContent(CSSPropertyID propId, bool important)
                 if (!parsedValue)
                     return false;
 #if ENABLE(CSS_IMAGE_SET)
-            } else if (equalLettersIgnoringASCIICase(value->function->name, "-webkit-image-set(")) {
+            } else if (isImageSetFunctionValue(*value)) {
                 parsedValue = parseImageSet();
                 if (!parsedValue)
                     return false;
@@ -4352,7 +4357,7 @@ bool CSSParser::parseFillImage(CSSParserValueList& valueList, RefPtr<CSSValue>& 
         return parseGeneratedImage(valueList, value);
     
 #if ENABLE(CSS_IMAGE_SET)
-    if (valueList.current()->unit == CSSParserValue::Function && equalLettersIgnoringASCIICase(valueList.current()->function->name, "-webkit-image-set(")) {
+    if (isImageSetFunctionValue(*valueList.current())) {
         value = parseImageSet();
         if (value)
             return true;
@@ -8302,7 +8307,7 @@ bool CSSParser::parseBorderImage(CSSPropertyID propId, RefPtr<CSSValue>& result,
                 else
                     return false;
 #if ENABLE(CSS_IMAGE_SET)
-            } else if (currentValue->unit == CSSParserValue::Function && equalLettersIgnoringASCIICase(currentValue->function->name, "-webkit-image-set(")) {
+            } else if (isImageSetFunctionValue(*currentValue)) {
                 RefPtr<CSSValue> value = parseImageSet();
                 if (value)
                     context.commitImage(value.releaseNonNull());

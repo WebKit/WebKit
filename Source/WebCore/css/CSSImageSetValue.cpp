@@ -154,7 +154,7 @@ StyleImage* CSSImageSetValue::cachedOrPendingImageSet(const Document& document)
 String CSSImageSetValue::customCSSText() const
 {
     StringBuilder result;
-    result.appendLiteral("-webkit-image-set(");
+    result.appendLiteral("image-set(");
 
     size_t length = this->length();
     size_t i = 0;

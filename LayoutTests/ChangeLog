@@ -1,3 +1,26 @@
+2016-07-01  Dean Jackson  <dino@apple.com>
+
+        "image-src" support is missing. We only support "-webkit-image-src"
+        https://bugs.webkit.org/show_bug.cgi?id=159373
+        <rdar://problem/27140443>
+
+        Patch by Brent Fulgham and Dean Jackson.
+        Reviewed by Dean Jackson and Brent Fulgham.
+
+        Convert some existing tests to use the unprefixed form,
+        and add a test that checks we are compatible with
+        the prefixed form.
+
+        * cssom/cssvalue-comparison-expected.txt:
+        * cssom/cssvalue-comparison.html:
+        * fast/css/cursor-parsing-image-set-expected.txt:
+        * fast/css/cursor-parsing-image-set.html:
+        * fast/css/image-set-setting-expected.txt:
+        * fast/css/image-set-unprefixed-expected.txt: Added.
+        * fast/css/image-set-unprefixed.html: Added.
+        * fast/css/script-tests/image-set-setting.js:
+        (testImageSetRule):
+
 2016-07-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Land test expectations for rdar://problem/27141291.
