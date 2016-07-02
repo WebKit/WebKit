@@ -1,5 +1,30 @@
 2016-07-02  Frederic Wang  <fred.wang@free.fr>
 
+        Update EFL expectations for some MathML tests.
+
+        Unreviewed test gardening.
+
+        * platform/efl/accessibility/math-mo-fences-and-separators-expected.txt: Added.
+        * platform/efl/mathml/opentype/horizontal-expected.txt:
+        * platform/efl/mathml/opentype/horizontal-munderover-expected.txt:
+        * platform/efl/mathml/opentype/large-operators-expected.png: Removed.
+        * platform/efl/mathml/opentype/large-operators-expected.txt:
+        * platform/efl/mathml/opentype/opentype-stretchy-expected.png: Removed.
+        * platform/efl/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/efl/mathml/opentype/vertical-expected.png: Removed.
+        * platform/efl/mathml/opentype/vertical-expected.txt:
+        * platform/efl/mathml/presentation/menclose-notation-default-longdiv-expected.png: Removed.
+        * platform/efl/mathml/presentation/menclose-notation-default-longdiv-expected.txt:
+        * platform/efl/mathml/presentation/menclose-notation-values-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.png: Removed.
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt:
+        * platform/efl/mathml/presentation/mspace-children-expected.txt:
+        * platform/efl/mathml/presentation/roots-expected.png: Removed.
+        * platform/efl/mathml/presentation/roots-expected.txt:
+        * platform/efl/mathml/radical-fallback-expected.txt: Added.
+
+2016-07-02  Frederic Wang  <fred.wang@free.fr>
+
         Update iOS expectations for some MathML tests.
 
         Unreviewed test gardening.
