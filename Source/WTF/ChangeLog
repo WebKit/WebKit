@@ -1,3 +1,9 @@
+2016-07-02  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * wtf/Assertions.cpp:
+
 2016-07-02  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll back unintentional commit in r202778.

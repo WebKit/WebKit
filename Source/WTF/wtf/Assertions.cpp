@@ -83,7 +83,10 @@ extern "C" {
 static void logToStderr(const char* buffer)
 {
 #if USE(APPLE_SYSTEM_LOG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     asl_log(0, 0, ASL_LEVEL_NOTICE, "%s", buffer);
+#pragma clang diagnostic pop
 #endif
     fputs(buffer, stderr);
 }
@@ -117,10 +120,13 @@ static void vprintf_stderr_common(const char* format, va_list args)
     }
 
 #if USE(APPLE_SYSTEM_LOG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     va_list copyOfArgs;
     va_copy(copyOfArgs, args);
     asl_vlog(0, 0, ASL_LEVEL_NOTICE, format, copyOfArgs);
     va_end(copyOfArgs);
+#pragma clang diagnostic pop
 #endif
 
     // Fall through to write to stderr in the same manner as other platforms.
