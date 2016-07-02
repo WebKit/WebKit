@@ -61,6 +61,9 @@ public:
     void updateViewport();
 
     WebPageProxy& page() { return m_webPageProxy; }
+    
+    void dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)>) override;
+
 private:
     // DrawingAreaProxy
     virtual void sizeDidChange();

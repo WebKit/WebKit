@@ -72,6 +72,18 @@ WebCore::IntRect CoordinatedDrawingAreaProxy::contentsRect() const
     return IntRect(IntPoint::zero(), m_webPageProxy.viewSize());
 }
 
+void CoordinatedDrawingAreaProxy::dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)> callbackFunction)
+{
+    if (!m_webPageProxy.isValid()) {
+        callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
+    RunLoop::main().dispatch([callbackFunction] {
+        callbackFunction(CallbackBase::Error::None);
+    });
+}
+
 void CoordinatedDrawingAreaProxy::sizeDidChange()
 {
     backingStoreStateDidChange(RespondImmediately);

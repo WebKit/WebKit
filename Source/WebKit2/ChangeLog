@@ -1,3 +1,21 @@
+2016-07-01  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Many layout tests are timeout after r202532.
+        https://bugs.webkit.org/show_bug.cgi?id=159337
+
+        Reviewed by Gyuyoung Kim.
+
+        WebPageProxy::forceRepaint() wait for the next commit from the web process
+        after r202532, but WebPageProxy::callAfterNextPresentationUpdate() is not 
+        implemented in CoordinatedDrawingAreaProxy.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::contentsRect):
+        (WebKit::CoordinatedDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        (WebKit::CoordinatedDrawingAreaProxy::sizeDidChange):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.h:
+        (WebKit::CoordinatedDrawingAreaProxy::page):
+
 2016-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r189668): Notification tests are flakey
