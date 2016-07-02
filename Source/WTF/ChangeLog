@@ -1,3 +1,10 @@
+2016-07-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll back unintentional commit in r202778.
+
+        * benchmarks/LockFairnessTest.cpp:
+        (main):
+
 2016-07-01  Jer Noble  <jer.noble@apple.com>
 
         Deadlock inside -[WebCoreNSURLSession dealloc]

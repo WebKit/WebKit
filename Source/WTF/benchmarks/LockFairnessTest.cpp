@@ -48,13 +48,12 @@ namespace {
 
 NO_RETURN void usage()
 {
-    printf("Usage: LockFairnessTest yieldspinlock|pausespinlock|wordlock|lock|barginglock|bargingwordlock|thunderlock|thunderwordlock|cascadelock|cascadewordlockhandofflock|mutex|all <num threads> <seconds per test> <microseconds in critical section>\n");
+    printf("Usage: LockFairnessTest yieldspinlock|pausespinlock|wordlock|lock|barginglock|bargingwordlock|thunderlock|thunderwordlock|cascadelock|cascadewordlockhandofflock|mutex|all <num threads> <seconds per test>\n");
     exit(1);
 }
 
 unsigned numThreads;
 double secondsPerTest;
-unsigned microsecondsInCriticalSection;
 
 struct Benchmark {
     template<typename LockType>
@@ -73,19 +72,9 @@ struct Benchmark {
             threads[threadIndex] = createThread(
                 "Benchmark Thread",
                 [&, threadIndex] () {
-                    if (!microsecondsInCriticalSection) {
-                        while (keepGoing) {
-                            lock.lock();
-                            counts[threadIndex]++;
-                            lock.unlock();
-                        }
-                        return;
-                    }
-                    
                     while (keepGoing) {
                         lock.lock();
                         counts[threadIndex]++;
-                        usleep(microsecondsInCriticalSection);
                         lock.unlock();
                     }
                 });
@@ -117,10 +106,9 @@ int main(int argc, char** argv)
 {
     WTF::initializeThreading();
     
-    if (argc != 5
+    if (argc != 4
         || sscanf(argv[2], "%u", &numThreads) != 1
-        || sscanf(argv[3], "%lf", &secondsPerTest) != 1
-        || sscanf(argv[4], "%u", &microsecondsInCriticalSection) != 1)
+        || sscanf(argv[3], "%lf", &secondsPerTest) != 1)
         usage();
     
     runEverything<Benchmark>(argv[1]);
