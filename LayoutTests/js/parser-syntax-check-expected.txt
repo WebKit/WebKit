@@ -1285,6 +1285,13 @@ PASS Valid:   "class C { constructor() { this._x = 45; } get foo() { return this
 PASS Valid:   "function f() { class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super.foo) { super(); this._x_f = x; } x() { return this._x_f(); } } }"
 PASS Valid:   "class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super()) { x(); } x() { return super.foo; } }"
 PASS Valid:   "function f() { class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super()) { x(); } x() { return super.foo; } } }"
+Weird things that used to crash.
+PASS Invalid: "or ([[{break //(elseifo (a=0;a<2;a++)n=
+        [[{aFYY sga=
+        [[{a=Yth FunctionRY&=Ylet 'a'}V a"
+PASS Invalid: "function f() { or ([[{break //(elseifo (a=0;a<2;a++)n=
+        [[{aFYY sga=
+        [[{a=Yth FunctionRY&=Ylet 'a'}V a }"
 PASS e.line is 1
 PASS foo is 'PASS'
 PASS bar is 'PASS'

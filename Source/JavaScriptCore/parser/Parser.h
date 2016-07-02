@@ -1518,6 +1518,7 @@ private:
         result.oldLineStartOffset = m_token.m_location.lineStartOffset;
         result.oldLastLineNumber = m_lexer->lastLineNumber();
         result.oldLineNumber = m_lexer->lineNumber();
+        ASSERT(static_cast<unsigned>(result.startOffset) >= result.oldLineStartOffset);
         return result;
     }
 

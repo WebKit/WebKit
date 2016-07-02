@@ -1,3 +1,16 @@
+2016-07-01  Saam Barati  <sbarati@apple.com>
+
+        fix "ASSERTION FAILED: currentOffset() >= currentLineStartOffset()"
+        https://bugs.webkit.org/show_bug.cgi?id=158572
+        <rdar://problem/26884092>
+
+        Reviewed by Mark Lam.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+        (invalid.or.break.catch):
+        (catch): Deleted.
+
 2016-07-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/history/page-cache-webdatabase-pending-transaction.html as flaky on Mac

@@ -754,6 +754,11 @@ valid("class C { constructor() { this._x = 45; } get foo() { return this._x;} } 
 valid("class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super.foo) { super(); this._x_f = x; } x() { return this._x_f(); } }");
 valid("class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super()) { x(); } x() { return super.foo; } }");
 
+debug("Weird things that used to crash.");
+invalid(`or ([[{break //(elseifo (a=0;a<2;a++)n=
+        [[{aFYY sga=
+        [[{a=Yth FunctionRY&=Ylet 'a'}V a`)
+
 try { eval("a.b.c = {};"); } catch(e1) { e=e1; shouldBe("e.line", "1") }
 foo = 'FAIL';
 bar = 'PASS';

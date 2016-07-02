@@ -1783,6 +1783,15 @@ JSTokenType Lexer<T>::lex(JSToken* tokenRecord, unsigned lexerFlags, bool strict
     JSTokenType token = ERRORTOK;
     m_terminator = false;
 
+    auto fillTokenInfo = [&] (int lineNumber, int endOffset, int lineStartOffset, JSTextPosition endPosition) {
+        tokenLocation->line = lineNumber;
+        tokenLocation->endOffset = endOffset;
+        tokenLocation->lineStartOffset = lineStartOffset;
+        ASSERT(tokenLocation->endOffset >= tokenLocation->lineStartOffset);
+        tokenRecord->m_endPosition = endPosition;
+        m_lastToken = token;
+    };
+
 start:
     skipWhitespace();
 
@@ -2257,37 +2266,36 @@ inSingleLineCommentCheckForDirectives:
     // Fall through to complete single line comment parsing.
 
 inSingleLineComment:
-    while (!isLineTerminator(m_current)) {
-        if (atEnd())
-            return EOFTOK;
-        shift();
-    }
-    shiftLineTerminator();
-    m_atLineStart = true;
-    m_terminator = true;
-    m_lineStart = m_code;
-    if (!lastTokenWasRestrKeyword())
-        goto start;
+    {
+        auto lineNumber = m_lineNumber;
+        auto endOffset = currentOffset();
+        auto lineStartOffset = currentLineStartOffset();
+        auto endPosition = currentPosition();
 
-    token = SEMICOLON;
-    // Fall through into returnToken.
+        while (!isLineTerminator(m_current)) {
+            if (atEnd())
+                return EOFTOK;
+            shift();
+        }
+        shiftLineTerminator();
+        m_atLineStart = true;
+        m_terminator = true;
+        m_lineStart = m_code;
+        if (!lastTokenWasRestrKeyword())
+            goto start;
+
+        token = SEMICOLON;
+        fillTokenInfo(lineNumber, endOffset, lineStartOffset, endPosition);
+        return token;
+    }
 
 returnToken:
-    tokenLocation->line = m_lineNumber;
-    tokenLocation->endOffset = currentOffset();
-    tokenLocation->lineStartOffset = currentLineStartOffset();
-    ASSERT(tokenLocation->endOffset >= tokenLocation->lineStartOffset);
-    tokenRecord->m_endPosition = currentPosition();
-    m_lastToken = token;
+    fillTokenInfo(m_lineNumber, currentOffset(), currentLineStartOffset(), currentPosition());
     return token;
 
 returnError:
     m_error = true;
-    tokenLocation->line = m_lineNumber;
-    tokenLocation->endOffset = currentOffset();
-    tokenLocation->lineStartOffset = currentLineStartOffset();
-    ASSERT(tokenLocation->endOffset >= tokenLocation->lineStartOffset);
-    tokenRecord->m_endPosition = currentPosition();
+    fillTokenInfo(m_lineNumber, currentOffset(), currentLineStartOffset(), currentPosition());
     RELEASE_ASSERT(token & ErrorTokenFlag);
     return token;
 }

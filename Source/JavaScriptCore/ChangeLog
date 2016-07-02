@@ -1,3 +1,32 @@
+2016-07-01  Saam Barati  <sbarati@apple.com>
+
+        fix "ASSERTION FAILED: currentOffset() >= currentLineStartOffset()"
+        https://bugs.webkit.org/show_bug.cgi?id=158572
+        <rdar://problem/26884092>
+
+        Reviewed by Mark Lam.
+
+        There is a bug in our lexer when we notice the pattern:
+        ```<return|continue|break|...etc> // some comment here```
+        Our code will say that the token for the comment is a semicolon.
+        This is the correct semantics, however, it would give the semicolon
+        a start offset of the comment, but it will give its line start offset
+        the newline after the comment.  This breaks the invariant in the lexer/parser
+        that the offset for the current line starting point must be less than or equal to
+        than the start offset of any token on that line. This invariant was broken because
+        the line start offset was greater than the token start offset. To maintain this
+        invariant, we claim that the semicolon token is located where the comment starts,
+        and that its line start offset is the line start offset for the line with the
+        comment on it.  There are other solutions that maintain this invariant, but this
+        solution provides the best error messages.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lex):
+        * parser/Parser.h:
+        (JSC::Parser::internalSaveLexerState):
+        * tests/stress/obscure-error-message-dont-crash.js: Added.
+        (try.eval.or.catch):
+
 2016-07-01  Benjamin Poulain  <bpoulain@apple.com>
 
         __defineGetter__/__defineSetter__ should throw exceptions
