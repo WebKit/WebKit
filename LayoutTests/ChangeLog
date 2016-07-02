@@ -1,3 +1,12 @@
+2016-07-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking fast/history/page-cache-webdatabase-pending-transaction.html as flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=159379
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-07-01  Johan K. Jensen  <jj@johanjensen.dk>
 
         Web Inspector: Sending XHR with UTF8 encoded data shows garbled data in Resource sidebar

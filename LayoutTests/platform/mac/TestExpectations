@@ -1442,3 +1442,5 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 
 # rdar://problem/27141291
 [ Sierra+ ] editing/selection/triple-click-in-pre.html [ Failure ]
+
+webkit.org/b/159379 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Failure ]
