@@ -1,3 +1,40 @@
+2016-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r189668): Notification tests are flakey
+        https://bugs.webkit.org/show_bug.cgi?id=159375
+        <rdar://problem/22760990>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Notifications are objects which must exist in both the UI Process and the Web Process. Each process
+        identifies a notification object by a unique ID. When the Web Process sends a message regarding a
+        notification to the UI Process, the UI Process's WebNotificationManagerProxy holds a map from
+        (Page ID, Web Process notification ID) -> UI Process notification ID. This works as intended.
+
+        Our tests, however, include an additional method, simulateWebNotificationClick(), which is implemented
+        by WebKitTestRunner in the Web Process via the Injected Bundle. This method involves sending a message
+        to the UI process, to handle the simulated click. However, that RPC didn't perform the same local ->
+        global notification ID mapping, causing the wrong notification to be investigated.
+
+        The solution is for WebNotificationProvider, implemented in WebKitTestRunner in the UI Process, to
+        manually perform this same mapping. Luckily, this object already receives callbacks every time a
+        notification is created or destroyed. However, because this object is implemented outside WebKit,
+        it isn't privy to the internal Web Process ID used inside WebNotificationmanagerProxy. Therefore,
+        this patch adds a private testing function which returns this internal ID. Once given this intenal ID,
+        WebNotificationProvider can properly map between the different IDs.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::runTestingServerLoop):
+        (WTR::TestController::simulateWebNotificationClick):
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::showWebNotification):
+        (WTR::removeGlobalIDFromIDMap):
+        (WTR::WebNotificationProvider::closeWebNotification):
+        (WTR::WebNotificationProvider::removeNotificationManager):
+        (WTR::WebNotificationProvider::simulateWebNotificationClick):
+        (WTR::WebNotificationProvider::reset):
+        * WebKitTestRunner/WebNotificationProvider.h:
+
 2016-07-01  Alexey Proskuryakov  <ap@apple.com>
 
         Simplify LayoutTestRelay

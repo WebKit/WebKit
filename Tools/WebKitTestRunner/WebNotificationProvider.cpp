@@ -28,6 +28,7 @@
 
 #include <WebKit/WKMutableArray.h>
 #include <WebKit/WKNotification.h>
+#include <WebKit/WKNotificationManager.h>
 #include <WebKit/WKNumber.h>
 #include <WebKit/WKSecurityOriginRef.h>
 #include <wtf/Assertions.h>
@@ -95,8 +96,21 @@ void WebNotificationProvider::showWebNotification(WKPageRef page, WKNotification
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     auto addResult2 = m_owningManager.set(id, notificationManager);
     ASSERT_UNUSED(addResult2, addResult2.isNewEntry);
+    auto addResult3 = m_localToGlobalNotificationIDMap.add(std::make_pair(page, WKNotificationManagerGetLocalIDForTesting(notificationManager, notification)), id);
+    ASSERT_UNUSED(addResult3, addResult3.isNewEntry);
 
     WKNotificationManagerProviderDidShowNotification(notificationManager, id);
+}
+
+static void removeGlobalIDFromIDMap(HashMap<std::pair<WKPageRef, uint64_t>, uint64_t>& map, uint64_t id)
+{
+    for (auto iter = map.begin(); iter != map.end(); ++iter) {
+        if (iter->value == id) {
+            map.remove(iter);
+            return;
+        }
+    }
+    ASSERT_NOT_REACHED();
 }
 
 void WebNotificationProvider::closeWebNotification(WKNotificationRef notification)
@@ -109,6 +123,8 @@ void WebNotificationProvider::closeWebNotification(WKNotificationRef notificatio
     bool success = m_ownedNotifications.find(notificationManager)->value.remove(id);
     ASSERT_UNUSED(success, success);
     m_owningManager.remove(id);
+
+    removeGlobalIDFromIDMap(m_localToGlobalNotificationIDMap, id);
 
     WKRetainPtr<WKUInt64Ref> wkID = WKUInt64Create(id);
     WKRetainPtr<WKMutableArrayRef> array(AdoptWK, WKMutableArrayCreate());
@@ -132,6 +148,7 @@ void WebNotificationProvider::removeNotificationManager(WKNotificationManagerRef
     for (uint64_t notificationID : toRemove) {
         bool success = m_owningManager.remove(notificationID);
         ASSERT_UNUSED(success, success);
+        removeGlobalIDFromIDMap(m_localToGlobalNotificationIDMap, notificationID);
         WKArrayAppendItem(array.get(), adoptWK(WKUInt64Create(notificationID)).get());
     }
     WKNotificationManagerProviderDidCloseNotifications(manager, array.get());
@@ -143,10 +160,12 @@ WKDictionaryRef WebNotificationProvider::notificationPermissions()
     return WKMutableDictionaryCreate();
 }
 
-void WebNotificationProvider::simulateWebNotificationClick(uint64_t notificationID)
+void WebNotificationProvider::simulateWebNotificationClick(WKPageRef page, uint64_t notificationID)
 {
-    ASSERT(m_owningManager.contains(notificationID));
-    WKNotificationManagerProviderDidClickNotification(m_owningManager.get(notificationID), notificationID);
+    ASSERT(m_localToGlobalNotificationIDMap.contains(std::make_pair(page, notificationID)));
+    auto globalID = m_localToGlobalNotificationIDMap.get(std::make_pair(page, notificationID));
+    ASSERT(m_owningManager.contains(globalID));
+    WKNotificationManagerProviderDidClickNotification(m_owningManager.get(globalID), globalID);
 }
 
 void WebNotificationProvider::reset()
@@ -162,6 +181,7 @@ void WebNotificationProvider::reset()
         WKNotificationManagerProviderDidCloseNotifications(notificationPair.key.get(), array.get());
     }
     m_owningManager.clear();
+    m_localToGlobalNotificationIDMap.clear();
 }
 
 } // namespace WTR

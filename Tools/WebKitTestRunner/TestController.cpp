@@ -1746,7 +1746,7 @@ void TestController::didRemoveNavigationGestureSnapshot(WKPageRef)
 
 void TestController::simulateWebNotificationClick(uint64_t notificationID)
 {
-    m_webNotificationProvider.simulateWebNotificationClick(notificationID);
+    m_webNotificationProvider.simulateWebNotificationClick(mainWebView()->page(), notificationID);
 }
 
 void TestController::setGeolocationPermission(bool enabled)

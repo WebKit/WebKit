@@ -27,6 +27,7 @@
 #include "WKNotificationManager.h"
 
 #include "WKAPICast.h"
+#include "WebNotification.h"
 #include "WebNotificationManagerProxy.h"
 
 using namespace WebKit;
@@ -64,4 +65,9 @@ void WKNotificationManagerProviderDidUpdateNotificationPolicy(WKNotificationMana
 void WKNotificationManagerProviderDidRemoveNotificationPolicies(WKNotificationManagerRef managerRef, WKArrayRef origins)
 {
     toImpl(managerRef)->providerDidRemoveNotificationPolicies(toImpl(origins));
+}
+
+uint64_t WKNotificationManagerGetLocalIDForTesting(WKNotificationManagerRef manager, WKNotificationRef notification)
+{
+    return toImpl(manager)->notificationLocalIDForTesting(toImpl(notification));
 }

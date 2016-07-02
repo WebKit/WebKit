@@ -1,3 +1,20 @@
+2016-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r189668): Notification tests are flakey
+        https://bugs.webkit.org/show_bug.cgi?id=159375
+        <rdar://problem/22760990>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement WKNotificationManagerGetLocalID(). For more information, see the entry in Tools/ChangeLog.
+
+        * UIProcess/API/C/WKNotificationManager.cpp:
+        (WKNotificationManagerGetLocalID):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::notificationLocalIDForTesting):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-07-01  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r201405): Fullscreen video no longer enters low-power mode

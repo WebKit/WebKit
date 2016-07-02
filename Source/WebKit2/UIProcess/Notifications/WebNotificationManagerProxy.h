@@ -67,6 +67,8 @@ public:
     void providerDidUpdateNotificationPolicy(const API::SecurityOrigin*, bool allowed);
     void providerDidRemoveNotificationPolicies(API::Array* origins);
 
+    uint64_t notificationLocalIDForTesting(WebNotification*);
+
     using API::Object::ref;
     using API::Object::deref;
 

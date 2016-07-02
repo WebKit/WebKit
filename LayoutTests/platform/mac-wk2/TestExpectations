@@ -276,8 +276,6 @@ webkit.org/b/150095 http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-in
 
 webkit.org/b/150241 webarchive/loading/object.html [ Pass Crash ] 
 
-webkit.org/b/150736 http/tests/notifications/legacy/events.html [ Pass Crash ]
-
 webkit.org/b/150942 animations/multiple-backgrounds.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/151053 http/tests/security/cross-frame-access-put.html [ Pass Failure ]

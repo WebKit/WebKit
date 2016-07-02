@@ -256,4 +256,16 @@ void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Arr
     processPool()->sendToAllProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(originStrings));
 }
 
+uint64_t WebNotificationManagerProxy::notificationLocalIDForTesting(WebNotification* notification)
+{
+    if (!notification)
+        return 0;
+
+    auto it = m_globalNotificationMap.find(notification->notificationID());
+    if (it == m_globalNotificationMap.end())
+        return 0;
+
+    return it->value.second;
+}
+
 } // namespace WebKit

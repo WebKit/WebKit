@@ -41,6 +41,7 @@ WK_EXPORT void WKNotificationManagerProviderDidClickNotification(WKNotificationM
 WK_EXPORT void WKNotificationManagerProviderDidCloseNotifications(WKNotificationManagerRef managerRef, WKArrayRef notificationIDs);
 WK_EXPORT void WKNotificationManagerProviderDidUpdateNotificationPolicy(WKNotificationManagerRef managerRef, WKSecurityOriginRef origin, bool allowed);
 WK_EXPORT void WKNotificationManagerProviderDidRemoveNotificationPolicies(WKNotificationManagerRef managerRef, WKArrayRef origins);
+WK_EXPORT uint64_t WKNotificationManagerGetLocalIDForTesting(WKNotificationManagerRef managerRef, WKNotificationRef notification);
 
 #ifdef __cplusplus
 }
