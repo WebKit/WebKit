@@ -167,9 +167,11 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKFrameInfo alloc];
         break;
 
+#if PLATFORM(MAC)
     case Type::HitTestResult:
         wrapper = [_WKHitTestResult alloc];
         break;
+#endif
 
     case Type::Navigation:
         wrapper = [WKNavigation alloc];
@@ -187,9 +189,11 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKNavigationResponse alloc];
         break;
 
+#if PLATFORM(MAC)
     case Type::OpenPanelParameters:
         wrapper = [WKOpenPanelParameters alloc];
         break;
+#endif
 
     case Type::PageGroup:
         wrapper = [WKBrowsingContextGroup alloc];

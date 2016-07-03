@@ -1,5 +1,24 @@
 2016-07-03  Dan Bernstein  <mitz@apple.com>
 
+        Follow-up to r202789.
+
+        Reviewed by Sam Weinig.
+
+        Ensure that API that isn’t available at all on a platform is declared under an appropriate
+        TARGET_OS_* conditional.
+
+        * Shared/API/Cocoa/_WKHitTestResult.h:
+        * Shared/API/Cocoa/_WKHitTestResult.mm:
+        * Shared/API/Cocoa/_WKHitTestResultInternal.h:
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.h:
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.mm:
+        * UIProcess/API/Cocoa/WKOpenPanelParametersInternal.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.mm:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+2016-07-03  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Adopt modern API availability macros
         https://bugs.webkit.org/show_bug.cgi?id=159378
 

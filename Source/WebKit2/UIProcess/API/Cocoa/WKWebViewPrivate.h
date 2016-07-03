@@ -39,6 +39,8 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeBottomToTop,
 } WK_API_AVAILABLE(macosx(10.10), ios(8.0));
 
+#if !TARGET_OS_IPHONE
+
 typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
     _WKImmediateActionNone,
     _WKImmediateActionLinkPreview,
@@ -47,6 +49,8 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
     _WKImmediateActionMailtoLink,
     _WKImmediateActionTelLink
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+
+#endif
 
 @class WKBrowsingContextHandle;
 @class _WKFrameHandle;

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKPreviewActionItemIdentifiers.h"
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && PLATFORM(IOS)
 
 NSString * const WKPreviewActionItemIdentifierOpen = @"WKPreviewActionItemIdentifierOpen";
 NSString * const WKPreviewActionItemIdentifierAddToReadingList = @"WKPreviewActionItemIdentifierAddToReadingList";

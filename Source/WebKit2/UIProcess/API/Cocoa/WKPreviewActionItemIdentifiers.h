@@ -26,7 +26,7 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && TARGET_OS_IPHONE
 
 #import <Foundation/Foundation.h>
 
