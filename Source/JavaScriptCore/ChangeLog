@@ -1,3 +1,28 @@
+2016-07-03  Saam Barati  <sbarati@apple.com>
+
+        BytecodeGenerator::getVariablesUnderTDZ is too conservative
+        https://bugs.webkit.org/show_bug.cgi?id=159387
+
+        Reviewed by Filip Pizlo.
+
+        We were too conservative in the following type of programs:
+        ```
+        {
+            {
+                let x;
+                ...
+            }
+            let x;
+        }
+        ```
+        We used to report "x" as under TDZ when calling getVariablesUnderTDZ at the
+        "...", even though "x" is not under TDZ. This patch removes this conservatism
+        and makes the algorithm precise.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::getVariablesUnderTDZ):
+        * bytecompiler/BytecodeGenerator.h:
+
 2016-07-03  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should refer to B3 types directly

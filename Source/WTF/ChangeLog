@@ -1,3 +1,19 @@
+2016-07-03  Saam Barati  <sbarati@apple.com>
+
+        BytecodeGenerator::getVariablesUnderTDZ is too conservative
+        https://bugs.webkit.org/show_bug.cgi?id=159387
+
+        Reviewed by Filip Pizlo.
+
+        I've templatized SmallPtrSet on its SmallArraySize instead
+        of it always being 8.  
+
+        * wtf/SmallPtrSet.h:
+        (WTF::SmallPtrSet::SmallPtrSet):
+        (WTF::SmallPtrSet::add):
+        (WTF::SmallPtrSet::iterator::operator!=):
+        (WTF::SmallPtrSet::bucket):
+
 2016-07-03  Filip Pizlo  <fpizlo@apple.com>
 
         Ugh. Once again, unreviewed, roll out unintentional commit in r202790.

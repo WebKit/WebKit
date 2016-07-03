@@ -33,11 +33,12 @@
 
 namespace WTF {
 
-template<typename PtrType>
+template<typename PtrType, unsigned SmallArraySize = 8>
 class SmallPtrSet {
     WTF_MAKE_NONCOPYABLE(SmallPtrSet);
     static_assert(std::is_trivially_destructible<PtrType>::value, "We currently don't support non-trivially destructible pointer types.");
     static_assert(sizeof(PtrType) == sizeof(void*), "Only support pointer sized things.");
+    static_assert(!(SmallArraySize & (SmallArraySize - 1)), "Inline size must be a power of two.");
 
 public: 
     SmallPtrSet()
@@ -90,7 +91,7 @@ public:
                 return;
             }
 
-            grow(64);
+            grow(std::max(64u, SmallArraySize * 2));
             // Fall through. We're no longer small :(
         }
 
@@ -138,7 +139,7 @@ public:
         bool operator!=(const iterator& other) const { ASSERT(m_buffer == other.m_buffer); return !(*this == other); }
 
     private:
-        template<typename U> friend class WTF::SmallPtrSet;
+        template<typename U, unsigned S> friend class WTF::SmallPtrSet;
         unsigned m_index;
         unsigned m_capacity;
         void** m_buffer;
@@ -238,8 +239,6 @@ private:
             bucket = (bucket + index) & (m_capacity - 1);
         }
     }
-
-    static const unsigned SmallArraySize = 8;
 
     unsigned m_size;
     unsigned m_capacity;

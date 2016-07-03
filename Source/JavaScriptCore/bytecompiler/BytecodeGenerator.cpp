@@ -46,6 +46,7 @@
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedInstructionStream.h"
 #include <wtf/CommaPrinter.h>
+#include <wtf/SmallPtrSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -2791,7 +2792,8 @@ void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment,
 
 void BytecodeGenerator::getVariablesUnderTDZ(VariableEnvironment& result)
 {
-    // NOTE: This is conservative. If called at "...", it will report "x" as being under TDZ:
+    // We keep track of variablesThatDontNeedTDZ in this algorithm to prevent
+    // reporting that "x" is under TDZ if this function is called at "...".
     //
     //     {
     //         {
@@ -2801,11 +2803,15 @@ void BytecodeGenerator::getVariablesUnderTDZ(VariableEnvironment& result)
     //         let x;
     //     }
     //
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159387
-    for (auto& map : m_TDZStack) {
+    SmallPtrSet<UniquedStringImpl*, 16> variablesThatDontNeedTDZ;
+    for (unsigned i = m_TDZStack.size(); i--; ) {
+        auto& map = m_TDZStack[i];
         for (auto& entry : map)  {
-            if (entry.value != TDZNecessityLevel::NotNeeded)
-                result.add(entry.key.get());
+            if (entry.value != TDZNecessityLevel::NotNeeded) {
+                if (!variablesThatDontNeedTDZ.contains(entry.key.get()))
+                    result.add(entry.key.get());
+            } else
+                variablesThatDontNeedTDZ.add(entry.key.get());
         }
     }
 }
