@@ -1951,7 +1951,8 @@ http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [
 ################################################################################
 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
-mathml/opentype/large-operators-munderover.html [ ImageOnlyFailure ]
+mathml/presentation/style-changed.html [ Crash Pass ]
+mathml/opentype/large-operators-munderover.html [ Failure ]
 mathml/presentation/attributes-mathvariant.html [ ImageOnlyFailure ]
 webkit.org/b/159202 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-mathvariant.html [ ImageOnlyFailure ]
