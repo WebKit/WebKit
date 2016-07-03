@@ -12,21 +12,53 @@ CONSOLE MESSAGE: line 55: CATCHER: thrown string
 CONSOLE MESSAGE: line 55: CATCHER: [object Object]
 Checks that $exception is available and accurate in evaluations when paused on an exception.
 
-BEFORE: $exception => undefined
-PAUSE #1: $exception => TypeError: undefined is not an object (evaluating '[].x.x')
-PAUSE #2: $exception => ReferenceError: Can't find variable: variableThatDoesNotExist
-PAUSE #3: $exception => SyntaxError: Unexpected token ')'
-PAUSE #4: $exception => Error: IndexSizeError: DOM Exception 1
-PAUSE #5: $exception => thrown string
-PAUSE #6: $exception => 123.456
-PAUSE #7: $exception => null
-PAUSE #8: $exception => Object
-PAUSE #9: $exception => <body>
-PAUSE #10: $exception => TypeError: undefined is not an object (evaluating '[].x.x')
-STEPPED OUT TO CATCH BLOCK: $exception === e ? true
-PAUSE #11: $exception => thrown string
-STEPPED OUT TO CATCH BLOCK: $exception === e ? true
-PAUSE #12: $exception => Object
-STEPPED OUT TO CATCH BLOCK: $exception === e ? true
-AFTER: $exception => undefined
+
+== Running test suite: CommandLineAPI.$exception
+-- Running test case: BeforeExceptions
+PASS: $exception should be undefined if there is no exception.
+
+-- Running test case: UncaughtTypeException
+$exception => TypeError: undefined is not an object (evaluating '[].x.x')
+
+-- Running test case: UncaughtReferenceException
+$exception => ReferenceError: Can't find variable: variableThatDoesNotExist
+
+-- Running test case: UncaughtSyntaxException
+$exception => SyntaxError: Unexpected token ')'
+
+-- Running test case: UncaughtDOMException
+$exception => Error: IndexSizeError: DOM Exception 1
+
+-- Running test case: UncaughtString
+$exception => thrown string
+
+-- Running test case: UncaughtNumber
+$exception => 123.456
+
+-- Running test case: UncaughtNull
+$exception => null
+
+-- Running test case: UncaughtObject
+$exception => Object
+
+-- Running test case: UncaughtNode
+$exception => <body>
+
+-- Running test case: CatchTypeException
+PASS: Paused, stepping out to catch block...
+PASS: `$exception` should be equal to `e`.
+$exception => TypeError: undefined is not an object (evaluating '[].x.x')
+
+-- Running test case: CatchThrownString
+PASS: Paused, stepping out to catch block...
+PASS: `$exception` should be equal to `e`.
+$exception => thrown string
+
+-- Running test case: CatchThrownObject
+PASS: Paused, stepping out to catch block...
+PASS: `$exception` should be equal to `e`.
+$exception => Object
+
+-- Running test case: AfterExceptions
+PASS: $exception should be undefined if there is no exception.
 

@@ -1,3 +1,15 @@
+2016-07-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        inspector/debugger/command-line-api-exception.html flakily times out on mac
+        https://bugs.webkit.org/show_bug.cgi?id=152029
+        <rdar://problem/23813812>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Object.js:
+        (WebInspector.Object.addEventListener):
+        Return the listener, this makes it cleaner to write tests.
+
 2016-07-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Make enabling protocol logging in inspector tests easy to remember

@@ -1,15 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector/resources/inspector-test.js"></script>
-<script type="text/javascript" src="./resources/exceptions.js"></script>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/exceptions.js"></script>
 <script>
-function triggerException()
-{
-    // We expect uncaught exceptions, so avoid logs for them.
-    window.onerror = function(){};
-    setTimeout(nestedCatchBlocks, 0);
-}
+window.onerror = function(){};
 
 function test()
 {
@@ -27,58 +22,85 @@ function test()
         });
     }
 
-    var done = false;
-    var phase = 0;
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
-        if (done)
-            return;
+    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.$exception");
 
-        phase++;
-
-        // Skip past the first pause to the second pause.
-        if (phase === 1) {
-            dumpCommandLineAPIValue("OUTER 1");
-            WebInspector.debuggerManager.resume();
-            return;
+    suite.addTestCase({
+        name: "EmptyBefore",
+        description: "Without exceptions, $exception should be undefined",
+        test: (resolve, reject) => {
+            WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
+                InspectorTest.expectThat(result.description === "undefined", "$exception should be undefined if there is no exception.");
+                resolve();
+            });
         }
+    });
 
-        // Paused on the exception in the inner try, step over to get into the inner catch.
-        if (phase === 2) {
-            dumpCommandLineAPIValue("INNER 1");
-            WebInspector.debuggerManager.stepOver();
-            return;
-        }
+    suite.addTestCase({
+        name: "CheckExceptionInsideNestedCatchBlocks",
+        description: "Check $exception is always the current exception object when stepping through catch blocks.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("setTimeout(nestedCatchBlocks, 0)");
 
-        // Paused in the inner catch, verify $exception is "inner exception".
-        if (phase === 3) {
-            dumpCommandLineAPIValue("INNER 2");
-            checkIfExceptionValueMatchesVariable("e2");
-            WebInspector.debuggerManager.stepOver();
-            return;
-        }
+            let phase = 0;
+            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (!WebInspector.debuggerManager.activeCallFrame)
+                    return;
+
+                phase++;
+
+                // Skip past the first pause to the second pause.
+                if (phase === 1) {
+                    dumpCommandLineAPIValue("OUTER 1");
+                    WebInspector.debuggerManager.resume();
+                    return;
+                }
+
+                // Paused on the exception in the inner try, step over to get into the inner catch.
+                if (phase === 2) {
+                    dumpCommandLineAPIValue("INNER 1");
+                    WebInspector.debuggerManager.stepOver();
+                    return;
+                }
+
+                // Paused in the inner catch, verify $exception is "inner exception".
+                if (phase === 3) {
+                    dumpCommandLineAPIValue("INNER 2");
+                    checkIfExceptionValueMatchesVariable("e2");
+                    WebInspector.debuggerManager.stepOver();
+                    return;
+                }
         
-        // Stepped into the outer catch, verify $exception is "outer exception".
-        if (phase === 4) {
-            dumpCommandLineAPIValue("OUTER 2");
-            checkIfExceptionValueMatchesVariable("e1");
-            WebInspector.debuggerManager.resume();
-            return;
+                // Stepped into the outer catch, verify $exception is "outer exception".
+                if (phase === 4) {
+                    dumpCommandLineAPIValue("OUTER 2");
+                    checkIfExceptionValueMatchesVariable("e1");
+                    WebInspector.debuggerManager.resume().then(() => {
+                        WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, listener);
+                        resolve();
+                    }, reject);
+                    return;
+                }
+            });
         }
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
-        done = true;
-        dumpCommandLineAPIValue("AFTER  ");
-        InspectorTest.completeTest();
+    suite.addTestCase({
+        name: "EmptyAfter",
+        description: "Without exceptions, $exception should be undefined",
+        test: (resolve, reject) => {
+            WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
+                InspectorTest.expectThat(result.description === "undefined", "$exception should be undefined if there is no exception.");
+                resolve();
+            });
+        }
     });
 
-    dumpCommandLineAPIValue("BEFORE ");
-    InspectorTest.evaluateInPage("triggerException()");
+    suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onload="runTest()">
-    <p>Checks that <code>$exception</code> is the value of the current exception, even in nested catch blocks.</p>
+<p>Checks that <code>$exception</code> is the value of the current exception, even in nested catch blocks.</p>
 </body>
 </html>

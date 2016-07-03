@@ -1,98 +1,107 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector/resources/inspector-test.js"></script>
-<script type="text/javascript" src="./resources/exceptions.js"></script>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/exceptions.js"></script>
 <script>
-var exceptionIndex = 0;
-var exceptionCausers = [
-    triggerUncaughtTypeException,
-    triggerUncaughtReferenceException,
-    triggerUncaughtSyntaxException,
-    triggerUncaughtDOMException,
-    throwString,
-    throwNumber,
-    throwNull,
-    throwObject,
-    throwNode,
-    function() { catcher(triggerUncaughtTypeException); },
-    function() { catcher(throwString); },
-    function() { catcher(throwObject); },
-];
-
-
-function triggerNextException()
-{
-    // We expect uncaught exceptions, so avoid logs for them.
-    window.onerror = function(){};
-
-    setTimeout(function() {
-        exceptionCausers[exceptionIndex++]();
-    }, 0);
-}
+// We expect uncaught exceptions, so avoid logs for them.
+window.onerror = function(){};
 
 function test()
 {
     WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
 
-    function triggerNextException() {
-        InspectorTest.evaluateInPage("triggerNextException()");
-    }
+    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.$exception");
 
-    function dumpCommandLineAPIValue(prefix) {
-        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
-            InspectorTest.log(prefix + ": $exception => " + result.description);
-        });
-    }
-
-    function checkIfExceptionValueMatchesCatchVariable() {
-        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception === e", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
-            InspectorTest.log("STEPPED OUT TO CATCH BLOCK: $exception === e ? " + result.description);
-        });
-    }
-
-    var pauses = 0;
-    var stepping = false;
-    var done = false;
-    const pointWhereExpectionsAreBeingCaught = 9;
-    const expectedPauses = 12;
-
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
-        if (done)
-            return;
-
-        if (!stepping) {
-            dumpCommandLineAPIValue("PAUSE #" + (++pauses));
-            if (pauses > pointWhereExpectionsAreBeingCaught) {
-                WebInspector.debuggerManager.stepOut();
-                stepping = true;
-                return;
+    function addNoExceptionTest(name) {
+        suite.addTestCase({
+            name, description: "Without exceptions, $exception should be undefined",
+            test: (resolve, reject) => {
+                WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
+                    InspectorTest.expectThat(result.description === "undefined", "$exception should be undefined if there is no exception.");
+                    resolve();
+                });
             }
-        } else {
-            checkIfExceptionValueMatchesCatchVariable();
-            stepping = false;
-        }
+        });
+    }
 
-        WebInspector.debuggerManager.resume();
+    function addUncaughtExceptionTest(name, testFunction) {
+        suite.addTestCase({
+            name, description: "Trigger an uncaught exception and check $exception.",
+            test: (resolve, reject) => {
+                InspectorTest.evaluateInPage(`setTimeout(${testFunction})`);
+                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                    WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
+                        InspectorTest.log("$exception => " + result.description);
+                        WebInspector.debuggerManager.resume().then(resolve, reject);
+                    });
+                });
+            }
+        });
+    }
 
-        if (pauses !== expectedPauses) {
-            triggerNextException();
-            return;
-        }
-    });
+    function addCaughtExceptionTest(name, expression) {
+        suite.addTestCase({
+            name, description: "Trigger a caught exception and check $exception.",
+            test: (resolve, reject) => {
+                InspectorTest.evaluateInPage(expression);
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
-        done = true;
-        dumpCommandLineAPIValue("AFTER");
-        InspectorTest.completeTest();
-    });
+                let didStep = false;
+                let didEvaluate = false;
 
-    dumpCommandLineAPIValue("BEFORE");
-    triggerNextException();
+                let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                    if (!WebInspector.debuggerManager.activeCallFrame)
+                        return;
+
+                    if (!didStep) {
+                        didStep = true;
+                        InspectorTest.pass("Paused, stepping out to catch block...");
+                        WebInspector.debuggerManager.stepOut();
+                        return;
+                    }
+
+                    if (!didEvaluate) {
+                        didEvaluate = true;
+                        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception === e", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
+                            InspectorTest.expectThat(result.description === "true", "`$exception` should be equal to `e`.");
+                        });
+                        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
+                            InspectorTest.log("$exception => " + result.description);
+                            WebInspector.debuggerManager.resume().then(() => {
+                                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, listener);
+                                resolve();
+                            }, reject);
+                        });
+                        return;
+                    }
+                });
+            }
+        });
+    }
+
+    addNoExceptionTest("BeforeExceptions");
+
+    addUncaughtExceptionTest("UncaughtTypeException", "triggerUncaughtTypeException");
+    addUncaughtExceptionTest("UncaughtReferenceException", "triggerUncaughtReferenceException");
+    addUncaughtExceptionTest("UncaughtSyntaxException", "triggerUncaughtSyntaxException");
+    addUncaughtExceptionTest("UncaughtDOMException", "triggerUncaughtDOMException");
+    addUncaughtExceptionTest("UncaughtString", "throwString");
+    addUncaughtExceptionTest("UncaughtNumber", "throwNumber");
+    addUncaughtExceptionTest("UncaughtNull", "throwNull");
+    addUncaughtExceptionTest("UncaughtObject", "throwObject");
+    addUncaughtExceptionTest("UncaughtNode", "throwNode");
+
+    addCaughtExceptionTest("CatchTypeException", "setTimeout(function() { catcher(triggerUncaughtTypeException); })");
+    addCaughtExceptionTest("CatchThrownString", "setTimeout(function() { catcher(throwString); })");
+    addCaughtExceptionTest("CatchThrownObject", "setTimeout(function() { catcher(throwObject); })");
+
+    addNoExceptionTest("AfterExceptions");
+
+    suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onload="runTest()">
-    <p>Checks that <code>$exception</code> is available and accurate in evaluations when paused on an exception.</p>
+<p>Checks that <code>$exception</code> is available and accurate in evaluations when paused on an exception.</p>
 </body>
 </html>

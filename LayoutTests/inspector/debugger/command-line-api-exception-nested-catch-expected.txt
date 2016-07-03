@@ -2,12 +2,19 @@ CONSOLE MESSAGE: line 67: inner exception
 CONSOLE MESSAGE: line 69: outer exception
 Checks that $exception is the value of the current exception, even in nested catch blocks.
 
-BEFORE : $exception => undefined
+
+== Running test suite: CommandLineAPI.$exception
+-- Running test case: EmptyBefore
+PASS: $exception should be undefined if there is no exception.
+
+-- Running test case: CheckExceptionInsideNestedCatchBlocks
 OUTER 1: $exception => outer exception
 INNER 1: $exception => inner exception
 INNER 2: $exception => inner exception
   CATCH: $exception === e2 ? true
 OUTER 2: $exception => outer exception
   CATCH: $exception === e1 ? true
-AFTER  : $exception => undefined
+
+-- Running test case: EmptyAfter
+PASS: $exception should be undefined if there is no exception.
 

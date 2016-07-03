@@ -54,6 +54,7 @@ WebInspector.Object = class WebInspectorObject
         }
 
         listenersTable.add(thisObject, listener);
+        return listener;
     }
 
     static singleFireEventListener(eventType, listener, thisObject)
