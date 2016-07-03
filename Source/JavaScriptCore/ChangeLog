@@ -1,3 +1,147 @@
+2016-07-03  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should refer to B3 types directly
+        https://bugs.webkit.org/show_bug.cgi?id=159389
+
+        Reviewed by Saam Barati.
+        
+        When we used LLVM, types were objects that were allocated by the LLVMContext. We had to
+        remember pointers to them or else call through the C API every time we wanted the type. We
+        stored the type pointers inside FTL::CommonValues.
+        
+        But in B3, types are just members of an enum. We don't have to remember pointers to them.
+        
+        This change replaces all prior uses of things like "m_out.int32" with just "Int32", and
+        likewise for m_out.boolean, m_out.int64, m_out.intPtr, m_out.floatType, m_out.doubleType,
+        and m_out.voidType.
+        
+        We still use FTL::CommonValues for common constants that we have pre-hoisted. Hopefully we
+        will come up with a better story for those eventually, since that's still kinda ugly.
+
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        * ftl/FTLCommonValues.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::createPhiVariables):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDoubleRep):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBooleanToNumber):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallObjectConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStrCat):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithMinOrMax):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithPow):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithRound):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayifyToStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByValWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByValWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayByteOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutAccessorById):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutGetterSetterById):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutAccessorByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPop):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateScopedArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateClonedArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCopyRest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetRestLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayBuffer):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToNumber):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToStringOrCallStringConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToPrimitive):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharCodeAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringFromCharCode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiGetByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoadVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSwitch):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsString):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsObjectOrNull):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsRegExpObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsTypedArrayView):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn):
+        (JSC::FTL::DFG::LowerDFGToB3::compileOverridesHasInstance):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckTypeInfoFlags):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOfCustom):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCountExecution):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasGenericProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasStructureProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetDirectPname):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetEnumerableLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetPropertyEnumerator):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetEnumeratorStructurePname):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetEnumeratorGenericPname):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToIndexString):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckStructureImmediate):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetFunctionName):
+        (JSC::FTL::DFG::LowerDFGToB3::numberOrNotCellToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::checkInferredType):
+        (JSC::FTL::DFG::LowerDFGToB3::initializeArrayElements):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::reallocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        (JSC::FTL::DFG::LowerDFGToB3::compare):
+        (JSC::FTL::DFG::LowerDFGToB3::compileResolveScope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetDynamicVar):
+        (JSC::FTL::DFG::LowerDFGToB3::compareEqObjectOrOtherToObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateTruthyObject):
+        (JSC::FTL::DFG::LowerDFGToB3::nonSpeculativeCompare):
+        (JSC::FTL::DFG::LowerDFGToB3::stringsEqual):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::ensureShadowChickenPacket):
+        (JSC::FTL::DFG::LowerDFGToB3::boolify):
+        (JSC::FTL::DFG::LowerDFGToB3::equalNullOrUndefined):
+        (JSC::FTL::DFG::LowerDFGToB3::contiguousPutByValOutOfBounds):
+        (JSC::FTL::DFG::LowerDFGToB3::buildSwitch):
+        (JSC::FTL::DFG::LowerDFGToB3::switchStringSlow):
+        (JSC::FTL::DFG::LowerDFGToB3::doubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::sensibleDoubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::strictInt52ToJSValue):
+        (JSC::FTL::DFG::LowerDFGToB3::strictInt52ToInt52):
+        (JSC::FTL::DFG::LowerDFGToB3::unboxInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::boxInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isCellOrMisc):
+        (JSC::FTL::DFG::LowerDFGToB3::unboxDouble):
+        (JSC::FTL::DFG::LowerDFGToB3::boxDouble):
+        (JSC::FTL::DFG::LowerDFGToB3::jsValueToStrictInt52):
+        (JSC::FTL::DFG::LowerDFGToB3::doubleToStrictInt52):
+        (JSC::FTL::DFG::LowerDFGToB3::convertDoubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::callCheck):
+        (JSC::FTL::DFG::LowerDFGToB3::crash):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::bitCast):
+
 2016-07-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFG LICM needs to go all-in on the idea that some loops can't be LICMed

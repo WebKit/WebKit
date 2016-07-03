@@ -42,13 +42,6 @@ namespace JSC { namespace FTL {
 using namespace B3;
 
 CommonValues::CommonValues()
-    : voidType(B3::Void)
-    , boolean(B3::Int32)
-    , int32(B3::Int32)
-    , int64(B3::Int64)
-    , intPtr(B3::pointerType())
-    , floatType(B3::Float)
-    , doubleType(B3::Double)
 {
 }
 

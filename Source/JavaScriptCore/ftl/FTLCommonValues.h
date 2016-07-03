@@ -46,13 +46,6 @@ public:
 
     void initializeConstants(B3::Procedure&, B3::BasicBlock*);
     
-    const LType voidType;
-    const LType boolean;
-    const LType int32;
-    const LType int64;
-    const LType intPtr;
-    const LType floatType;
-    const LType doubleType;
     LValue booleanTrue { nullptr };
     LValue booleanFalse { nullptr };
     LValue int32Zero { nullptr };

@@ -649,7 +649,7 @@ ValueFromBlock Output::anchor(LValue value)
 
 LValue Output::bitCast(LValue value, LType type)
 {
-    ASSERT_UNUSED(type, type == int64 || type == doubleType);
+    ASSERT_UNUSED(type, type == Int64 || type == Double);
     return m_block->appendNew<B3::Value>(m_proc, B3::BitwiseCast, origin(), value);
 }
 
