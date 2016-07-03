@@ -1,5 +1,16 @@
 2016-07-02  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CallFrame console.assert seen in tests (sourceCodeLocation instanceof SourceCodeLocation)
+        https://bugs.webkit.org/show_bug.cgi?id=159368
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Test.html:
+        SourceCodeLocation was already included earlier. This redefines it and
+        thereby breaks some things.
+
+2016-07-02  Joseph Pecoraro  <pecoraro@apple.com>
+
         inspector/debugger/command-line-api-exception.html flakily times out on mac
         https://bugs.webkit.org/show_bug.cgi?id=152029
         <rdar://problem/23813812>
