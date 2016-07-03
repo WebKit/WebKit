@@ -16,7 +16,7 @@ function test()
         { expression: "setTimeout(triggerDebuggerStatement, 0)" },
         { expression: "setTimeout(triggerAssert, 0)" },
         { expression: "setTimeout(triggerBreakpoint, 0)" },
-        { expression: "setTimeout(function() { 1+1 }, 0)", setup: function() { WebInspector.debuggerManager.pause(); } },
+        { expression: "setTimeout(function() { 1+1; }, 50)", setup: function() { WebInspector.debuggerManager.pause(); } },
     ];
 
     function nextTestCase()
@@ -27,10 +27,10 @@ function test()
             return;
         }
 
+        InspectorTest.evaluateInPage(test.expression);
+
         if (test.setup)
             test.setup();
-
-        InspectorTest.evaluateInPage(test.expression);
     }
 
     function sanitizePauseData(data)

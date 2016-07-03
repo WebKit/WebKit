@@ -1,3 +1,17 @@
+2016-07-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix inspector/debugger/pause-reason.html
+        https://bugs.webkit.org/show_bug.cgi?id=159325
+
+        Reviewed by Timothy Hatcher.
+
+        * platform/mac/TestExpectations:
+        * inspector/debugger/pause-reason.html:
+        This test was pausing on inspector code (evaluateInPage) and
+        auto-resuming. Instead change the test to pause on the page
+        doing the setTimeout, so we get the expected pause on next
+        statement evaluation.
+
 2016-07-02  Frederic Wang  <fred.wang@free.fr>
 
         Update EFL expectations for some MathML tests.
