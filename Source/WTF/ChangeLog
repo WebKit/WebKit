@@ -1,3 +1,10 @@
+2016-07-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Ugh. Once again, unreviewed, roll out unintentional commit in r202790.
+
+        * benchmarks/LockFairnessTest.cpp:
+        (main):
+
 2016-07-02  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
