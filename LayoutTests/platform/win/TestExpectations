@@ -1955,6 +1955,15 @@ mathml/presentation/mo-invisible.html [ Skip ]  # Crashing
 mathml/opentype/opentype-stretchy-horizontal.html [ Skip ]  # Crashing
 mathml/presentation/style-changed.html [ Crash Pass ]
 webkit.org/b/140522 mathml/opentype/munderover-layout-resize.html [ Skip ]  # Crashing
+mathml/opentype/large-operators-munderover.html [ ImageOnlyFailure ]
+mathml/presentation/attributes-mathvariant.html [ ImageOnlyFailure ]
+webkit.org/b/159202 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
+mathml/presentation/tokenElements-mathvariant.html [ ImageOnlyFailure ]
+
+# These tests require the Latin Modern Math font.
+mathml/opentype/fraction-line.html [ Skip ]
+mathml/opentype/large-operators-italic-correction.html [ Skip ]
+mathml/presentation/fractions-linethickness.html [ Skip ]
 ################################################################################
 #################          End MathML Issues                ####################
 ################################################################################

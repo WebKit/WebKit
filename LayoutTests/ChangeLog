@@ -1,3 +1,13 @@
+2016-07-03  Frederic Wang  <fred.wang@free.fr>
+
+        Update windows test expectations for some MathML tests.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+        * platform/win/mathml/opentype/horizontal-expected.txt:
+        * platform/win/mathml/opentype/horizontal-munderover-expected.txt:
+
 2016-07-03  David Kilzer  <ddkilzer@apple.com>
 
         fast/css/image-set-unprefixed.html fails on iOS Simulator
