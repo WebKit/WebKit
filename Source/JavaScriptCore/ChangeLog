@@ -1,3 +1,32 @@
+2016-07-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG LICM needs to go all-in on the idea that some loops can't be LICMed
+        https://bugs.webkit.org/show_bug.cgi?id=159388
+
+        Reviewed by Mark Lam.
+        
+        Some time ago I acknowledged that LICM required loops to meet certain requirements that
+        may get broken by the time we do LICM, like that the terminal of the pre-header is ExitOK.
+        It used to be that we just ignored that requirement and would hoist anyway, but since
+        r189126 we've stopped hoisting out of loops that don't have ExitOK.  We also added tests
+        for the case that the pre-header doesn't exist or is invalid.
+
+        It turns out that this patch didn't go far enough: even though it made LICM avoid loops
+        that had an invalid pre-header, the part that updated the AI state in nested loops still
+        assumed that these loops had valid pre-headers.  We would crash in null dereference in
+        that loop if a nested loop had an invalid pre-header.
+
+        The fix is simple: don't update the AI state of nested loops that don't have pre-headers,
+        since we won't try to hoist out of those loops anyway.
+
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * tests/stress/licm-no-pre-header-nested.js: Added. This would always crash before this fix.
+        (foo):
+        * tests/stress/licm-pre-header-cannot-exit-nested.js: Added. This was a failed attempt at a test, but I figure it's good to have weird code anyway.
+        (foo):
+        (valueOf):
+
 2016-06-30  Filip Pizlo  <fpizlo@apple.com>
 
         Scopes that are not under TDZ should still push their variables onto the TDZ stack so that lifting TDZ doesn't bypass that scope

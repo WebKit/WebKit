@@ -324,6 +324,12 @@ private:
             if (!subLoop)
                 continue;
             BasicBlock* subPreHeader = m_data[subLoop->index()].preHeader;
+            // We may not have given this loop a pre-header because either it didn't have exitOK
+            // or the header had multiple predecessors that it did not dominate. In that case the
+            // loop wouldn't be a hoisting candidate anyway, so we don't have to do anything.
+            if (!subPreHeader)
+                continue;
+            // The pre-header's tail may be unreachable, in which case we have nothing to do.
             if (!subPreHeader->cfaDidFinish)
                 continue;
             m_state.initializeTo(subPreHeader);
