@@ -28,15 +28,15 @@
 
 #if WK_API_ENABLED
 
-WK_CLASS_AVAILABLE(10_10, 8_0)
+WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface _WKProcessPoolConfiguration : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSURL *injectedBundleURL;
 @property (nonatomic) NSUInteger maximumProcessCount;
-@property (nonatomic) NSInteger diskCacheSizeOverride WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic) NSInteger diskCacheSizeOverride WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 @property (nonatomic, copy) NSArray *cachePartitionedURLSchemes;
-@property (nonatomic, copy) NSArray<NSString *> *alwaysRevalidatedURLSchemes WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-@property (nonatomic) BOOL diskCacheSpeculativeValidationEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, copy) NSArray<NSString *> *alwaysRevalidatedURLSchemes WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL diskCacheSpeculativeValidationEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

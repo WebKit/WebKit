@@ -33,7 +33,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
+WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKAutomationSession : NSObject
 
 @property (nonatomic, copy) NSString *sessionIdentifier;

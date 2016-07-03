@@ -27,27 +27,27 @@
 
 #if WK_API_ENABLED
 
-WK_EXTERN NSString * const _WKLegacyErrorDomain WK_AVAILABLE(10_11, 8_3);
+WK_EXTERN NSString * const _WKLegacyErrorDomain WK_API_AVAILABLE(macosx(10.11), ios(8.3));
 
 typedef NS_ENUM(NSInteger, _WKLegacyErrorCode) {
-    _WKErrorCodeFrameLoadInterruptedByPolicyChange WK_ENUM_AVAILABLE(10_11, 9_0) = 102,
+    _WKErrorCodeFrameLoadInterruptedByPolicyChange WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 102,
     _WKLegacyErrorPlugInWillHandleLoad = 204,
-} WK_ENUM_AVAILABLE(10_11, 8_3);
+} WK_API_AVAILABLE(macosx(10.11), ios(8.3));
 
 /*! @constant _WKJavaScriptExceptionMessageErrorKey Key in userInfo representing
  the exception message (as an NSString) for WKErrorJavaScriptExceptionOccurred errors. */
-WK_EXTERN NSString * const _WKJavaScriptExceptionMessageErrorKey WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const _WKJavaScriptExceptionMessageErrorKey WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @constant _WKJavaScriptExceptionLineNumberErrorKey Key in userInfo representing
  the exception line number (as an NSNumber) for WKErrorJavaScriptExceptionOccurred errors. */
-WK_EXTERN NSString * const _WKJavaScriptExceptionLineNumberErrorKey WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const _WKJavaScriptExceptionLineNumberErrorKey WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @constant _WKJavaScriptExceptionColumnNumberErrorKey Key in userInfo representing
  the exception column number (as an NSNumber) for WKErrorJavaScriptExceptionOccurred errors. */
-WK_EXTERN NSString * const _WKJavaScriptExceptionColumnNumberErrorKey WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const _WKJavaScriptExceptionColumnNumberErrorKey WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @constant _WKJavaScriptExceptionSourceURLErrorKey Key in userInfo representing
  the exception source URL (as an NSURL) for WKErrorJavaScriptExceptionOccurred errors. */
-WK_EXTERN NSString * const _WKJavaScriptExceptionSourceURLErrorKey WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const _WKJavaScriptExceptionSourceURLErrorKey WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #endif

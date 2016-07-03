@@ -42,12 +42,10 @@
 
 #ifndef WK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED
 
-#define WK_AVAILABLE(_mac, _ios)
-#define WK_CLASS_AVAILABLE(_mac, _ios) __attribute__((visibility ("default")))
-#define WK_DEPRECATED(_macIntro, _macDep, _iosIntro, _iosDep, ...) __attribute__((deprecated(__VA_ARGS__)))
-#define WK_CLASS_DEPRECATED(_macIntro, _macDep, _iosIntro, _iosDep, ...) __attribute__((visibility("default"))) __attribute__((deprecated(__VA_ARGS__)))
-#define WK_ENUM_AVAILABLE(_mac, _ios)
-#define WK_ENUM_AVAILABLE_IOS(_ios)
-#define WK_ENUM_DEPRECATED(_macIntro, _macDep, _iosIntro, _iosDep, ...) __attribute__((deprecated(__VA_ARGS__)))
+#define WK_API_AVAILABLE(...)
+#define WK_CLASS_AVAILABLE(...) __attribute__((visibility("default"))) WK_API_AVAILABLE(__VA_ARGS__)
+#define WK_API_DEPRECATED(_message, ...) __attribute__((deprecated(_message)))
+#define WK_API_DEPRECATED_WITH_REPLACEMENT(_replacement, ...) __attribute__((deprecated("use " #_replacement)))
+#define WK_CLASS_DEPRECATED_WITH_REPLACEMENT(_replacement, ...) __attribute__((visibility("default"))) __attribute__((deprecated("use " #_replacement)))
 
 #endif

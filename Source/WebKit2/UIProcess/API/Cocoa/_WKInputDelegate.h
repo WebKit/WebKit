@@ -46,7 +46,7 @@
 - (void)_webView:(WKWebView *)webView accessoryViewCustomButtonTappedInFormInputSession:(id <_WKFormInputSession>)inputSession;
 - (BOOL)_webView:(WKWebView *)webView hasSuggestionsForCurrentStringInInputSession:(id <_WKFormInputSession>)inputSession;
 - (NSArray *)_webView:(WKWebView *)webView suggestionsForString:(NSString *)string inInputSession:(id <_WKFormInputSession>)inputSession;
-- (void)_webView:(WKWebView *)webView insertTextSuggestion:(UITextSuggestion *)suggestion inInputSession:(id <_WKFormInputSession>)inputSession WK_AVAILABLE(NA, WK_IOS_TBA);
+- (void)_webView:(WKWebView *)webView insertTextSuggestion:(UITextSuggestion *)suggestion inInputSession:(id <_WKFormInputSession>)inputSession WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 @end

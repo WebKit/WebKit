@@ -39,11 +39,11 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, WKUserScriptInjectionTime) {
     WKUserScriptInjectionTimeAtDocumentStart,
     WKUserScriptInjectionTimeAtDocumentEnd
-} WK_ENUM_AVAILABLE(10_10, 8_0);
+} WK_API_AVAILABLE(macosx(10.10), ios(8.0));
 
 /*! A @link WKUserScript @/link object represents a script that can be injected into webpages.
  */
-WK_CLASS_AVAILABLE(10_10, 8_0)
+WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface WKUserScript : NSObject <NSCopying>
 
 /* @abstract The script source code. */

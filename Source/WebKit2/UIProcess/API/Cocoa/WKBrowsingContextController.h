@@ -36,7 +36,7 @@
 @protocol WKBrowsingContextLoadDelegate;
 @protocol WKBrowsingContextPolicyDelegate;
 
-WK_CLASS_AVAILABLE(10_10, 8_0)
+WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface WKBrowsingContextController : NSObject
 
 #pragma mark Delegates

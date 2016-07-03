@@ -50,10 +50,10 @@ function process_definitions () {
 
 function rewrite_headers () {
     if [[ "${PLATFORM_NAME}" == "macosx" ]]; then
-        [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET/\./_}
+        [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
         [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
     elif [[ "${PLATFORM_NAME}" =~ "iphone" ]]; then
-        [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET/\./_}
+        [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET}
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"
     fi
 
@@ -64,15 +64,13 @@ function rewrite_headers () {
         SED_OPTIONS+=(
             -e s/WK_MAC_TBA/${OSX_VERSION}/g
             -e s/WK_IOS_TBA/${IOS_VERSION}/g
-            -e s/WK_AVAILABLE/NS_AVAILABLE/
-            -e s/WK_DEPRECATED/NS_DEPRECATED/
-            -e s/WK_ENUM_AVAILABLE/NS_ENUM_AVAILABLE/
-            -e s/WK_ENUM_DEPRECATED/NS_ENUM_DEPRECATED/
-            -e s/^WK_CLASS_AVAILABLE/NS_CLASS_AVAILABLE/
-            -e s/^WK_CLASS_DEPRECATED/NS_CLASS_DEPRECATED/
+            -e s/WK_API_AVAILABLE/API_AVAILABLE/
+            -e s/WK_API_DEPRECATED/API_DEPRECATED/
+            -e "s/^WK_CLASS_AVAILABLE/WK_EXTERN API_AVAILABLE/"
+            -e "s/^WK_CLASS_DEPRECATED/WK_EXTERN API_DEPRECATED/"
         )
     else
-        SED_OPTIONS+=(-e 's/WK_(CLASS_|ENUM_)?AVAILABLE(_IOS|_MAC)?\([^\)]+\)//g' -e 's/WK_(CLASS_|ENUM_)?DEPRECATED\([^\)]+\)//g')
+        SED_OPTIONS+=(-e 's/WK_(API_|CLASS_)AVAILABLE\(.*\)\s*\)//g' -e 's/WK_(API_|CLASS_)DEPRECATED(_WITH_REPLACEMENT)?\(.*\)\s*\)//g')
     fi
 
     SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})
@@ -80,7 +78,7 @@ function rewrite_headers () {
     for HEADER_PATH in "${1}/"*.h; do
         if [[ "$HEADER_PATH" -nt $TIMESTAMP_PATH ]]; then
             ditto "${HEADER_PATH}" "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}"
-            sed -i .tmp -E ${SED_OPTIONS[*]} "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}" || exit $?
+            sed -i .tmp -E "${SED_OPTIONS[@]}" "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}" || exit $?
             mv "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}" "$HEADER_PATH"
         fi
     done

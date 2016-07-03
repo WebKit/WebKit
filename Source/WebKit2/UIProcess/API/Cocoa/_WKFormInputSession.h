@@ -36,14 +36,14 @@
 
 @property (nonatomic, readonly, getter=isValid) BOOL valid;
 @property (nonatomic, readonly) NSObject <NSSecureCoding> *userObject;
-@property (nonatomic, readonly) id <_WKFocusedElementInfo> focusedElementInfo WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, readonly) id <_WKFocusedElementInfo> focusedElementInfo WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, copy) NSString *accessoryViewCustomButtonTitle;
-@property (nonatomic, strong) UIView *customInputView WK_AVAILABLE(NA, WK_IOS_TBA);
-@property (nonatomic, copy) NSArray<UITextSuggestion *> *suggestions WK_AVAILABLE(NA, WK_IOS_TBA);
-@property (nonatomic) BOOL accessoryViewShouldNotShow WK_AVAILABLE(NA, WK_IOS_TBA);
-@property (nonatomic, copy) NSString *textContentType WK_AVAILABLE(NA, WK_IOS_TBA);
+@property (nonatomic, strong) UIView *customInputView WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, copy) NSArray<UITextSuggestion *> *suggestions WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic) BOOL accessoryViewShouldNotShow WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, copy) NSString *textContentType WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 @end

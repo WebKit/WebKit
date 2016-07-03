@@ -31,7 +31,7 @@
 
 @class _WKRemoteObjectInterface;
 
-WK_CLASS_AVAILABLE(10_10, 8_0)
+WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface _WKRemoteObjectRegistry : NSObject
 
 - (void)registerExportedObject:(id)object interface:(_WKRemoteObjectInterface *)interface;

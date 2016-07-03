@@ -29,12 +29,12 @@
 
 typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
     _WKRenderingProgressEventFirstLayout = 1 << 0,
-    _WKRenderingProgressEventFirstVisuallyNonEmptyLayout WK_ENUM_AVAILABLE(10_11, 9_0) = 1 << 1,
+    _WKRenderingProgressEventFirstVisuallyNonEmptyLayout WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 1 << 1,
     _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
-    _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold WK_ENUM_AVAILABLE(10_11, 9_0) = 1 << 3,
-    _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering WK_ENUM_AVAILABLE(10_11, 9_0) = 1 << 4,
-    _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering WK_ENUM_AVAILABLE(10_11, 9_0) = 1 << 5,
-    _WKRenderingProgressEventFirstPaint WK_ENUM_AVAILABLE(10_11, 9_0) = 1 << 6,
-} WK_ENUM_AVAILABLE(10_10, 8_0);
+    _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 1 << 3,
+    _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 1 << 4,
+    _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 1 << 5,
+    _WKRenderingProgressEventFirstPaint WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 1 << 6,
+} WK_API_AVAILABLE(macosx(10.10), ios(8.0));
 
 #endif

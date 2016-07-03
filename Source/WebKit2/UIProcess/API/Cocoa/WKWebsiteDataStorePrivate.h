@@ -31,13 +31,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
     _WKWebsiteDataStoreFetchOptionComputeSizes = 1 << 0,
-} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @interface WKWebsiteDataStore (WKPrivate)
 
 - (void)_fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes withOptions:(_WKWebsiteDataStoreFetchOptions)options completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler;
 
-@property (nonatomic, setter=_setResourceLoadStatisticsEnabled:) BOOL _resourceLoadStatisticsEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setResourceLoadStatisticsEnabled:) BOOL _resourceLoadStatisticsEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

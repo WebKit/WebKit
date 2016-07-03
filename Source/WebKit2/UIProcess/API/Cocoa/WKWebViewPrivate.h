@@ -37,7 +37,7 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeRightToLeft,
     _WKPaginationModeTopToBottom,
     _WKPaginationModeBottomToTop,
-} WK_ENUM_AVAILABLE(10_10, 8_0);
+} WK_API_AVAILABLE(macosx(10.10), ios(8.0));
 
 typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
     _WKImmediateActionNone,
@@ -46,7 +46,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
     _WKImmediateActionLookupText,
     _WKImmediateActionMailtoLink,
     _WKImmediateActionTelLink
-} WK_AVAILABLE(WK_MAC_TBA, NA);
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 @class WKBrowsingContextHandle;
 @class _WKFrameHandle;
@@ -74,21 +74,21 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (nonatomic, readonly) NSURL *_unreachableURL;
 
 - (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL;
-- (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-@property (nonatomic, readonly) NSArray *_certificateChain WK_DEPRECATED(10_10, 10_11, 8_0, 9_0, "use -certificateChain");
+@property (nonatomic, readonly) NSArray *_certificateChain WK_API_DEPRECATED_WITH_REPLACEMENT("certificateChain", macosx(10.10, 10.11), ios(8.0, 9.0));
 @property (nonatomic, readonly) NSURL *_committedURL;
 @property (nonatomic, readonly) NSString *_MIMEType;
-@property (nonatomic, readonly) NSString *_userAgent WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic, readonly) NSString *_userAgent WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 @property (copy, setter=_setApplicationNameForUserAgent:) NSString *_applicationNameForUserAgent;
 @property (copy, setter=_setCustomUserAgent:) NSString *_customUserAgent;
 
-@property (nonatomic, setter=_setUserContentExtensionsEnabled:) BOOL _userContentExtensionsEnabled WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic, setter=_setUserContentExtensionsEnabled:) BOOL _userContentExtensionsEnabled WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 @property (nonatomic, readonly) pid_t _webProcessIdentifier;
 
-@property (nonatomic, getter=_isEditable, setter=_setEditable:) BOOL _editable WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic, getter=_isEditable, setter=_setEditable:) BOOL _editable WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 // FIXME: Remove these once nobody is using them.
 @property (nonatomic, readonly) NSData *_sessionStateData;
@@ -98,7 +98,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (WKNavigation *)_restoreSessionState:(_WKSessionState *)sessionState andNavigate:(BOOL)navigate;
 
 @property (nonatomic, setter=_setAllowsRemoteInspection:) BOOL _allowsRemoteInspection;
-@property (nonatomic, copy, setter=_setRemoteInspectionNameOverride:) NSString *_remoteInspectionNameOverride WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, copy, setter=_setRemoteInspectionNameOverride:) NSString *_remoteInspectionNameOverride WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, setter=_setAddsVisitedLinks:) BOOL _addsVisitedLinks;
 
@@ -152,9 +152,9 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 // Deprecated: Use [_overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:] instead.
 // This function is kept for binary compatibility with iOS 8.0, it can be removed after the bincompat window.
-- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize minimumLayoutSizeForMinimalUI:(CGSize)minimumLayoutSizeForMinimalUI maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_DEPRECATED(NA, NA, 8_0, 9_0, "use -_overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:");
+- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize minimumLayoutSizeForMinimalUI:(CGSize)minimumLayoutSizeForMinimalUI maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_API_DEPRECATED_WITH_REPLACEMENT("-_overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:", ios(8.0, 9.0));
 
-- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_AVAILABLE(NA, 9_0);
+- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_API_AVAILABLE(ios(9_0));
 
 - (UIView *)_viewForFindUI;
 
@@ -165,11 +165,11 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 // Puts the view into a state where being taken out of the view hierarchy and resigning first responder
 // will not count as becoming inactive and unfocused. The returned block must be called to exit the state.
-- (void (^)(void))_retainActiveFocusedState WK_AVAILABLE(NA, 9_0);
+- (void (^)(void))_retainActiveFocusedState WK_API_AVAILABLE(ios(9_0));
 
-- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler WK_AVAILABLE(NA, 9_0);
+- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler WK_API_AVAILABLE(ios(9_0));
 
-- (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item WK_AVAILABLE(NA, 9_0);
+- (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item WK_API_AVAILABLE(ios(9_0));
 - (NSArray *)_dataDetectionResults;
 
 #else
@@ -180,7 +180,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (nonatomic, setter=_setAutomaticallyAdjustsContentInsets:) BOOL _automaticallyAdjustsContentInsets;
 
 // Default value is 0. A value of 0 means the window's backing scale factor will be used and automatically update when the window moves screens.
-@property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_AVAILABLE(10_11, NA);
+@property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_API_AVAILABLE(macosx(10.11));
 
 @property (nonatomic, setter=_setWindowOcclusionDetectionEnabled:) BOOL _windowOcclusionDetectionEnabled;
 
@@ -188,18 +188,18 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 // do something custom, return an object that conforms to the NSImmediateActionAnimationController protocol.
 - (id)_immediateActionAnimationControllerForHitTestResult:(_WKHitTestResult *)hitTestResult withType:(_WKImmediateActionType)type userData:(id<NSSecureCoding>)userData;
 
-@property (nonatomic, setter=_setMinimumLayoutWidth:) CGFloat _minimumLayoutWidth WK_AVAILABLE(WK_MAC_TBA, NA);
+@property (nonatomic, setter=_setMinimumLayoutWidth:) CGFloat _minimumLayoutWidth WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 // When using _minimumLayoutWidth, the web content will lay out to the intrinsic height
 // of the content; use this property to force it to lay out to the height of the view instead.
-@property (nonatomic, setter=_setShouldExpandContentToViewHeightForAutoLayout:) BOOL _shouldExpandContentToViewHeightForAutoLayout WK_AVAILABLE(WK_MAC_TBA, NA);
+@property (nonatomic, setter=_setShouldExpandContentToViewHeightForAutoLayout:) BOOL _shouldExpandContentToViewHeightForAutoLayout WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo;
-- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #endif
 
-- (WKNavigation *)_reloadWithoutContentBlockers WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (WKNavigation *)_reloadWithoutContentBlockers WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_killWebContentProcessAndResetState;
 
@@ -220,26 +220,26 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (nonatomic, setter=_setTextZoomFactor:) double _textZoomFactor;
 @property (nonatomic, setter=_setPageZoomFactor:) double _pageZoomFactor;
 
-@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id <_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id <_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 @property (nonatomic, weak, setter=_setFindDelegate:) id <_WKFindDelegate> _findDelegate;
 - (void)_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
 - (void)_hideFindUI;
 
-@property (nonatomic, weak, setter=_setFormDelegate:) id <_WKFormDelegate> _formDelegate WK_DEPRECATED(10_10, WK_MAC_TBA, 8_0, WK_IOS_TBA, "use _inputDelegate");
-@property (nonatomic, weak, setter=_setInputDelegate:) id <_WKInputDelegate> _inputDelegate WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, weak, setter=_setFormDelegate:) id <_WKFormDelegate> _formDelegate WK_API_DEPRECATED_WITH_REPLACEMENT("_inputDelegate", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+@property (nonatomic, weak, setter=_setInputDelegate:) id <_WKInputDelegate> _inputDelegate WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneImageDocument) BOOL _displayingStandaloneImageDocument;
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneMediaDocument) BOOL _displayingStandaloneMediaDocument;
 
-@property (nonatomic, setter=_setScrollPerformanceDataCollectionEnabled:) BOOL _scrollPerformanceDataCollectionEnabled WK_AVAILABLE(10_11, 9_0);
-@property (nonatomic, readonly) NSArray *_scrollPerformanceData WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic, setter=_setScrollPerformanceDataCollectionEnabled:) BOOL _scrollPerformanceDataCollectionEnabled WK_API_AVAILABLE(macosx(10.11), ios(9.0));
+@property (nonatomic, readonly) NSArray *_scrollPerformanceData WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
-- (void)_saveBackForwardSnapshotForItem:(WKBackForwardListItem *)item WK_AVAILABLE(10_11, 9_0);
+- (void)_saveBackForwardSnapshotForItem:(WKBackForwardListItem *)item WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 @property (nonatomic, getter=_allowsMediaDocumentInlinePlayback, setter=_setAllowsMediaDocumentInlinePlayback:) BOOL _allowsMediaDocumentInlinePlayback;
 
-@property (nonatomic, readonly) BOOL _webProcessIsResponsive WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, readonly) BOOL _webProcessIsResponsive WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 
@@ -251,21 +251,21 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @interface WKWebView (WKTesting)
 
 #if TARGET_OS_IPHONE
-@property (nonatomic, readonly) CGRect _contentVisibleRect WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-- (CGPoint)_convertPointFromContentsToView:(CGPoint)point WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-- (CGPoint)_convertPointFromViewToContents:(CGPoint)point WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, readonly) CGRect _contentVisibleRect WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (CGPoint)_convertPointFromContentsToView:(CGPoint)point WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (CGPoint)_convertPointFromViewToContents:(CGPoint)point WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-- (void)keyboardAccessoryBarNext WK_AVAILABLE(NA, WK_IOS_TBA);
-- (void)keyboardAccessoryBarPrevious WK_AVAILABLE(NA, WK_IOS_TBA);
+- (void)keyboardAccessoryBarNext WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)keyboardAccessoryBarPrevious WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
-@property (nonatomic) BOOL forceIPadStyleZoomOnInputFocus WK_AVAILABLE(NA, WK_IOS_TBA);
+@property (nonatomic) BOOL forceIPadStyleZoomOnInputFocus WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 #if !TARGET_OS_IPHONE
-@property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_AVAILABLE(WK_MAC_TBA, NA);
+@property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
-- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

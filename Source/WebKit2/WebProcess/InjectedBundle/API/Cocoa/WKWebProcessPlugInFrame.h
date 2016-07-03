@@ -36,7 +36,7 @@
 @class WKWebProcessPlugInNodeHandle;
 @class WKWebProcessPlugInScriptWorld;
 
-WK_CLASS_AVAILABLE(10_10, 8_0)
+WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface WKWebProcessPlugInFrame : NSObject
 
 @property (nonatomic, readonly) NSURL *URL;
@@ -47,8 +47,8 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 // Returns URLs ordered by resolution in descending order.
 // FIXME: These should be tagged nonnull.
-@property (nonatomic, readonly) NSArray<NSURL *> *appleTouchIconURLs WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-@property (nonatomic, readonly) NSArray<NSURL *> *faviconURLs WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, readonly) NSArray<NSURL *> *appleTouchIconURLs WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) NSArray<NSURL *> *faviconURLs WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (JSContext *)jsContextForWorld:(WKWebProcessPlugInScriptWorld *)world;
 - (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point;

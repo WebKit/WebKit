@@ -1,3 +1,139 @@
+2016-07-03  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Adopt modern API availability macros
+        https://bugs.webkit.org/show_bug.cgi?id=159378
+
+        Reviewed by Sam Weinig.
+
+        iOS 10 and macOS Sierra introduce new macros for declaring API availability, defined in
+        CFAvailability.h, including API_AVAILABLE, API_DEPRECATED, and
+        API_DEPRECATED_WITH_REPLACEMENT. Rather than having positional parameters for macOS and iOS
+        versions, the new macros take a variable number of function-like parameters, where the
+        function specifies the platform to which it applies.
+
+        To have WebKit2’s postprocessed headers use the new macros, we make the following changes:
+
+        - Replace instances of WK_AVAILABLE(_mac, _ios) with WK_API_AVAILABLE(macosx(_mac), ios(_ios)),
+          eliding a platform if its current availability is NA.
+        - Change instances of WK_CLASS_AVAILABLE(_mac, _ios) to
+          WK_CLASS_AVAILABLE(macosx(_mac), ios(_ios)), eliding a platform if its current
+          availability is NA.
+        - Replace instances of WK_DEPRECATED(_macIntro, _macDep, _iosIntro, _iosDep, ...) with
+          WK_API_DEPRECATED_WITH_REPLACEMENT(_replacement, macosx(_macIntro, _macDep), ios(_iosIntro, _iosDep))
+          when there is a one-for-one replacement, and with
+          WK_API_DEPRECATED(_message, macosx(_macIntro, _macDep), ios(_iosIntro, _iosDep)) when the
+          replacement isn’t one-for-one. Again, if the API doesn’t apply to a platform, then it’s
+          elided.
+        - Replace instances of WK_CLASS_DEPRECATED with WK_CLASS_DEPRECATED_WITH_REPLACEMENT,
+          following the same rules.
+        - Replace instances of the WK_ENUM_* macros with corresponding WK_API_* macros, now that
+          all supported compilers support availability attributes on enum values.
+
+        * Configurations/WebKit.xcconfig: Disable header postprocessing when building for iOS 9.x,
+          which doesn’t have the new macros.
+
+        * mac/postprocess-framework-headers.sh: Handle the new WK_* macros: WK_API_AVAILABLE becomes
+          API_AVAILABLE; WK_API_DEPRECATED(_WITH_REPLACEMENT) become API_DEPRECATED(_WITH_REPLACEMENT);
+          WK_CLASS_AVAILABLE and WK_CLASS_DEPRECATED(_WITH_REPLACEMENT) change to the corresponding
+          API_ macros, prefixed with WK_EXTERN.
+        * Shared/API/Cocoa/WKFoundation.h: When header postprocessing is disabled, provide
+          definitions of the new WK_* macros we use.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h: In addition to the above, changed one
+          instance of (iOS) 10_0 to WK_IOS_TBA.
+
+        Made the above changes in the following headers:
+
+        * Shared/API/Cocoa/WKBrowsingContextHandle.h:
+        * Shared/API/Cocoa/_WKFrameHandle.h:
+        * Shared/API/Cocoa/_WKHitTestResult.h:
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.h:
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.h:
+        * Shared/API/Cocoa/_WKRenderingProgressEvents.h:
+        * Shared/API/Cocoa/_WKSameDocumentNavigationType.h:
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.h:
+        * UIProcess/API/Cocoa/WKConnection.h:
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/WKErrorPrivate.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKFrameInfoPrivate.h:
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationData.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationResponse.h:
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.h:
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItem.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.h:
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.h:
+        * UIProcess/API/Cocoa/WKProcessGroup.h:
+        * UIProcess/API/Cocoa/WKProcessPool.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKScriptMessage.h:
+        * UIProcess/API/Cocoa/WKSecurityOrigin.h:
+        * UIProcess/API/Cocoa/WKTypeRefWrapper.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/API/Cocoa/WKUserScript.h:
+        * UIProcess/API/Cocoa/WKUserScriptPrivate.h:
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/WKWindowFeatures.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKContextMenuElementInfo.h:
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+        * UIProcess/API/Cocoa/_WKExperimentalFeature.h:
+        * UIProcess/API/Cocoa/_WKFindOptions.h:
+        * UIProcess/API/Cocoa/_WKFormInputSession.h:
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+        * UIProcess/API/Cocoa/_WKLayoutMode.h:
+        * UIProcess/API/Cocoa/_WKOverlayScrollbarStyle.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKSessionState.h:
+        * UIProcess/API/Cocoa/_WKThumbnailView.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilter.h:
+        * UIProcess/API/Cocoa/_WKUserContentWorld.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataSize.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMText.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h:
+
 2016-07-01  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Many layout tests are timeout after r202532.

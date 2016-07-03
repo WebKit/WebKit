@@ -49,10 +49,10 @@ NS_ASSUME_NONNULL_BEGIN
  Used to configure @link WKWebView @/link instances.
  */
 #if TARGET_OS_IPHONE
-WK_CLASS_AVAILABLE(10_10, 8_0)
+WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface WKWebView : UIView
 #else
-WK_CLASS_AVAILABLE(10_10, 8_0)
+WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface WKWebView : NSView
 #endif
 
@@ -98,7 +98,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  If readAccessURL references a directory, files inside that file may be loaded by WebKit.
  @result A new navigation for the given file URL.
  */
-- (nullable WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL WK_AVAILABLE(10_11, 9_0);
+- (nullable WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 /*! @abstract Sets the webpage contents and base URL.
  @param string The string to use as the contents of the webpage.
@@ -114,7 +114,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @param baseURL A URL that is used to resolve relative URLs within the document.
  @result A new navigation.
  */
-- (nullable WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL WK_AVAILABLE(10_11, 9_0);
+- (nullable WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 /*! @abstract Navigates to an item from the back-forward list and sets it
  as the current item.
@@ -168,7 +168,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @discussion @link WKWebView @/link is key-value observing (KVO) compliant 
  for this property.
  */
-@property (nonatomic, readonly, nullable) SecTrustRef serverTrust WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, readonly, nullable) SecTrustRef serverTrust WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract A Boolean value indicating whether there is a back item in
  the back-forward list that can be navigated to.
@@ -228,13 +228,13 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The custom user agent string or nil if no custom user agent string has been set.
 */
-@property (nullable, nonatomic, copy) NSString *customUserAgent WK_AVAILABLE(10_11, 9_0);
+@property (nullable, nonatomic, copy) NSString *customUserAgent WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 /*! @abstract A Boolean value indicating whether link preview is allowed for any
  links inside this WKWebView.
  @discussion The default value is YES on Mac and iOS.
  */
-@property (nonatomic) BOOL allowsLinkPreview WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic) BOOL allowsLinkPreview WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 #if TARGET_OS_IPHONE
 /*! @abstract The scroll view associated with the web view.
@@ -306,7 +306,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 @interface WKWebView (WKDeprecated)
 
-@property (nonatomic, readonly, copy) NSArray *certificateChain WK_DEPRECATED(10_11, WK_MAC_TBA, 9_0, WK_IOS_TBA, "Please use serverTrust");
+@property (nonatomic, readonly, copy) NSArray *certificateChain WK_API_DEPRECATED_WITH_REPLACEMENT("serverTrust", macosx(10.11, WK_MAC_TBA), ios(9.0, WK_IOS_TBA));
 
 @end
 

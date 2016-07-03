@@ -27,7 +27,7 @@
 
 #if WK_API_ENABLED
 
-WK_CLASS_DEPRECATED(10_10, WK_MAC_TBA, 8_0, WK_IOS_TBA, "Please use _WKVisitedLinkStore instead")
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("_WKVisitedLinkStore", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
 @interface _WKVisitedLinkProvider : _WKVisitedLinkStore
 @end
 

@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  make use of. This includes cookies, disk and memory caches, and persistent data such as WebSQL,
  IndexedDB databases, and local storage.
  */
-WK_CLASS_AVAILABLE(10_11, 9_0)
+WK_CLASS_AVAILABLE(macosx(10.11), ios(9.0))
 @interface WKWebsiteDataStore : NSObject <NSCoding>
 
 /* @abstract Returns the default data store. */
