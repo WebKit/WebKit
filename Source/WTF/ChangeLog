@@ -1,3 +1,15 @@
+2016-07-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] DLLs are missing version information.
+        https://bugs.webkit.org/show_bug.cgi?id=159349
+
+        Reviewed by Brent Fulgham.
+
+        Generate autoversion.h in the prebuild step.
+        Run the perl version stamp utility.
+
+        * wtf/CMakeLists.txt:
+
 2016-07-03  Saam Barati  <sbarati@apple.com>
 
         BytecodeGenerator::getVariablesUnderTDZ is too conservative

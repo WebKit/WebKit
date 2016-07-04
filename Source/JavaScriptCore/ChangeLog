@@ -1,3 +1,14 @@
+2016-07-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] DLLs are missing version information.
+        https://bugs.webkit.org/show_bug.cgi?id=159349
+
+        Reviewed by Brent Fulgham.
+
+        Run perl version stamp utility.
+        
+        * CMakeLists.txt:
+
 2016-07-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] MacroAssemblerX86::branch8 should accept unsigned 8bit value
