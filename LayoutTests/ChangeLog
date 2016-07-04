@@ -1,3 +1,18 @@
+2016-07-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] __lookupGetter__ and __lookupSetter__ should not ignore exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=159390
+
+        Reviewed by Mark Lam.
+
+        * js/property-getters-and-setters-expected.txt:
+        * js/script-tests/property-getters-and-setters.js:
+        (getter17):
+        (get getter17):
+        (getOwnPropertyDescriptor):
+        (setter18):
+        (set setter18):
+
 2016-07-03  Frederic Wang  <fred.wang@free.fr>
 
         Update windows test expectations for some MathML tests.

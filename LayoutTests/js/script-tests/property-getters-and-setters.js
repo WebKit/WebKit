@@ -123,3 +123,40 @@ shouldNotThrow("o16.__defineGetter__('a', function(){})");
 shouldNotThrow("o16.__defineSetter__('a', function(){})");
 shouldThrow("o16.__defineSetter__('b', function(){})");
 shouldThrow("o16.__defineSetter__('b', function(){})");
+
+debug("__lookupGetter__ can be interrupted by a proxy throwing an exception");
+var getter17 = () => { return "WebKit!"}
+var o17 = Object.defineProperty(new Object, 'property', { get: getter17 });
+shouldBeEqualToString("o17.property", "WebKit!");
+shouldBe("o17.__lookupGetter__('property')", "getter17");
+shouldBe("o17.__lookupSetter__('property')", "undefined");
+
+var o17Exception = { toString: () => { return "o17 Proxy raised exception"; } };
+var o17Proxy = new Proxy(o17, { getOwnPropertyDescriptor: () => { throw o17Exception; } });
+shouldThrow("o17Proxy.__lookupGetter__('property')", o17Exception);
+shouldThrow("o17Proxy.__lookupSetter__('property')", o17Exception);
+shouldBeEqualToString("o17Proxy.property", "WebKit!");
+shouldBeEqualToString("o17.property", "WebKit!");
+shouldBe("o17.__lookupGetter__('property')", "getter17");
+
+debug("__lookupSetter__ can be interrupted by a proxy throwing an exception");
+var setter18 = function (newValue) { return this.value = newValue; }
+var o18 = Object.defineProperty(new Object, 'property', { set: setter18 });
+shouldBe("o18.property = 5", "5");
+shouldBe("o18.property", "undefined");
+shouldBe("o18.value", "5");
+shouldBe("o18.__lookupGetter__('property')", "undefined");
+shouldBe("o18.__lookupSetter__('property')", "setter18");
+
+var o18Exception = { toString: () => { return "o18 Proxy raised exception"; } };
+var o18Proxy = new Proxy(o18, { getOwnPropertyDescriptor: () => { throw o18Exception; } });
+shouldThrow("o18Proxy.__lookupGetter__('property')", o18Exception);
+shouldThrow("o18Proxy.__lookupSetter__('property')", o18Exception);
+shouldThrow("o18Proxy.property = 'JavaScriptCore!'", o18Exception);
+shouldBe("o18Proxy.property", "undefined");
+shouldBe("o18Proxy.value", "5");
+shouldBeEqualToString("o18.property = 'JavaScriptCore!'", "JavaScriptCore!");
+shouldBe("o18.property", "undefined");
+shouldBeEqualToString("o18.value", "JavaScriptCore!");
+shouldBe("o18.__lookupGetter__('property')", "undefined");
+shouldBe("o18.__lookupSetter__('property')", "setter18");
