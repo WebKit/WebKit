@@ -1,3 +1,16 @@
+2016-07-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, skip misc-bugs-847389-jpeg2000.js in jsc stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=159334
+
+        In debug build, it takes too much time.
+        Since run-jsc-stress-tests can take the arbitrary JSC shell, ifJSCArgIsntProvidedAreWeReleaseBuild
+        is not good source to determine whether the test is executed with the debug built JSC shell.
+        So here, we skip this test.
+        This test is still executed under the run-webkit-tests. So the coverage is still kept.
+
+        * js/regress/script-tests/misc-bugs-847389-jpeg2000.js:
+
 2016-07-04  Per Arne Vollan  <pvollan@apple.com>
 
         Update Windows test expectations for fast/css/fontloader-download-error.html.
