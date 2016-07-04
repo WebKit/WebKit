@@ -654,13 +654,6 @@ static gboolean webKitWebSrcQueryWithParent(GstPad* pad, GstObject* parent, GstQ
         if (format == GST_FORMAT_BYTES && src->priv->size > 0) {
             gst_query_set_duration(query, format, src->priv->size);
             result = TRUE;
-        } else if (format == GST_FORMAT_TIME) {
-            gint64 duration = -1;
-            GRefPtr<GstPad> target = adoptGRef(gst_ghost_pad_get_target(GST_GHOST_PAD_CAST(pad)));
-            GRefPtr<GstPad> peer = adoptGRef(gst_pad_get_peer(target.get()));
-            result = gst_pad_query_convert(peer.get(), GST_FORMAT_BYTES, src->priv->size, format, &duration);
-            if (result)
-                gst_query_set_duration(query, format, duration);
         }
         break;
     }
