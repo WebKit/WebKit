@@ -384,7 +384,7 @@ const IDBKeyData& IndexValueStore::Iterator::primaryKey()
     return m_primaryKeyIterator.key();
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String IndexValueStore::loggingString() const
 {
     String result;

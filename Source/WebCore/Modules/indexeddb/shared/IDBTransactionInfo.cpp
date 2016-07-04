@@ -94,7 +94,7 @@ void IDBTransactionInfo::isolatedCopy(const IDBTransactionInfo& source, IDBTrans
         destination.m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(*source.m_originalDatabaseInfo, IDBDatabaseInfo::IsolatedCopy);
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String IDBTransactionInfo::loggingString() const
 {
     String modeString;

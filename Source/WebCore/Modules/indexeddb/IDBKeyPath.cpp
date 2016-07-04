@@ -202,7 +202,7 @@ IDBKeyPath::IDBKeyPath(const Vector<String>& array)
     : m_type(Type::Array)
     , m_array(array)
 {
-#ifndef NDEBUG
+#if !LOG_DISABLED
     for (auto& key : array)
         ASSERT(!key.isNull());
 #endif

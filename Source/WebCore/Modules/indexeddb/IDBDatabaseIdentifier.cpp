@@ -73,7 +73,7 @@ String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const SecurityOrig
     return pathByAppendingComponent(mainFrameDirectory, openingOrigin.securityOrigin()->databaseIdentifier());
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String IDBDatabaseIdentifier::debugString() const
 {
     return makeString(m_databaseName, "@", m_openingOrigin.debugString(), ":", m_mainFrameOrigin.debugString());

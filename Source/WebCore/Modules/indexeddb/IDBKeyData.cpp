@@ -257,7 +257,7 @@ int IDBKeyData::compare(const IDBKeyData& other) const
     return 0;
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String IDBKeyData::loggingString() const
 {
     if (m_isNull)

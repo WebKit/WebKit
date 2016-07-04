@@ -113,7 +113,7 @@ bool IDBKeyRangeData::isValid() const
     return true;
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String IDBKeyRangeData::loggingString() const
 {
     auto result = makeString(lowerOpen ? "( " : "[ ", lowerKey.loggingString(), ", ", upperKey.loggingString(), upperOpen ? " )" : " ]");

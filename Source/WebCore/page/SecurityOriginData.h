@@ -50,7 +50,7 @@ struct SecurityOriginData {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, SecurityOriginData&);
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     String debugString() const;
 #endif
 };

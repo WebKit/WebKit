@@ -50,7 +50,7 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, IDBIndexInfo&);
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     String loggingString(int indent = 0) const;
 #endif
 

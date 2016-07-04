@@ -104,7 +104,7 @@ bool IDBResourceIdentifier::isHashTableDeletedValue() const
         && m_resourceNumber == std::numeric_limits<uint64_t>::max();
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String IDBResourceIdentifier::loggingString() const
 {
     return String::format("<%" PRIu64", %" PRIu64">", m_idbConnectionIdentifier, m_resourceNumber);

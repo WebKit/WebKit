@@ -123,7 +123,7 @@ void IDBObjectStoreInfo::deleteIndex(uint64_t indexIdentifier)
     m_indexMap.remove(indexIdentifier);
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String IDBObjectStoreInfo::loggingString(int indent) const
 {
     String indentString;

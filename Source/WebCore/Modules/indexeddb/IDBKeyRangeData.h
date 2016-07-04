@@ -88,7 +88,7 @@ struct IDBKeyRangeData {
     bool lowerOpen;
     bool upperOpen;
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     String loggingString() const;
 #endif
 };

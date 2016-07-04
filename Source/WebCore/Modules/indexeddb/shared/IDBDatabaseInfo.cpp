@@ -144,7 +144,7 @@ void IDBDatabaseInfo::deleteObjectStore(uint64_t objectStoreIdentifier)
     m_objectStoreMap.remove(objectStoreIdentifier);
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String IDBDatabaseInfo::loggingString() const
 {
     String top = makeString("Database: ", m_name, " version ", String::number(m_version), "\n");

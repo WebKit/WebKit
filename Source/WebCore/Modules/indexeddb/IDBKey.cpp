@@ -93,7 +93,7 @@ bool IDBKey::isEqual(const IDBKey& other) const
     return !compare(other);
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String IDBKey::loggingString() const
 {
     return IDBKeyData(this).loggingString();

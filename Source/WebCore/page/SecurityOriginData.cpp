@@ -46,7 +46,7 @@ SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& 
     return securityOriginData;
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String SecurityOriginData::debugString() const
 {
     return makeString(protocol, "://", host, ":", String::number(port));

@@ -49,7 +49,7 @@ IDBIndexInfo IDBIndexInfo::isolatedCopy() const
     return { m_identifier, m_objectStoreIdentifier, m_name.isolatedCopy(), m_keyPath.isolatedCopy(), m_unique, m_multiEntry };
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String IDBIndexInfo::loggingString(int indent) const
 {
     String indentString;

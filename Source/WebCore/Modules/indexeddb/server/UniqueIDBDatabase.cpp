@@ -98,7 +98,7 @@ bool UniqueIDBDatabase::hasAnyPendingCallbacks() const
 
 bool UniqueIDBDatabase::isVersionChangeInProgress()
 {
-#ifndef NDEBUG
+#if !LOG_DISABLED
     if (m_versionChangeTransaction)
         ASSERT(m_versionChangeDatabaseConnection);
 #endif

@@ -138,7 +138,7 @@ public:
     using RefCounted<IDBKey>::ref;
     using RefCounted<IDBKey>::deref;
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     String loggingString() const;
 #endif
 

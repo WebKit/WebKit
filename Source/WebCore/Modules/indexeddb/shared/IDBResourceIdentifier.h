@@ -76,7 +76,7 @@ public:
 
     IDBResourceIdentifier isolatedCopy() const;
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     String loggingString() const;
 #endif
 

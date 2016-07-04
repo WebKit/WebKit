@@ -98,7 +98,7 @@ public:
     Iterator find(const IDBKeyData&, const IDBKeyData& primaryKey);
     Iterator reverseFind(const IDBKeyData&, const IDBKeyData& primaryKey, CursorDuplicity);
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     String loggingString() const;
 #endif
 

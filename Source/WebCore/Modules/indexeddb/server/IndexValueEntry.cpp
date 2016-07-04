@@ -127,7 +127,7 @@ const IDBKeyData& IndexValueEntry::Iterator::key() const
 
 bool IndexValueEntry::Iterator::isValid() const
 {
-#ifndef NDEBUG
+#if !LOG_DISABLED
     if (m_entry) {
         if (m_entry->m_unique)
             ASSERT(m_entry->m_key);
