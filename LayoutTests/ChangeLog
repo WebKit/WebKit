@@ -1,3 +1,55 @@
+2016-07-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] MacroAssemblerX86::branch8 should accept unsigned 8bit value
+        https://bugs.webkit.org/show_bug.cgi?id=159334
+
+        Reviewed by Benjamin Poulain.
+
+        * TestExpectations:
+        * js/regress/misc-bugs-847389-jpeg2000-expected.txt: Added.
+        * js/regress/misc-bugs-847389-jpeg2000.html: Added.
+        * js/regress/script-tests/misc-bugs-847389-jpeg2000.js: Added.
+        (error):
+        (warn):
+        (JpxImage.JpxImageClosure.JpxImage):
+        (JpxImage.JpxImageClosure.JpxImage.prototype.load.JpxImage_load.xhr.onload):
+        (JpxImage.JpxImageClosure.JpxImage.prototype.load):
+        (JpxImage.JpxImageClosure.JpxImage.prototype.parse.JpxImage_parse.readUint):
+        (JpxImage.JpxImageClosure.JpxImage.prototype.parse):
+        (JpxImage.JpxImageClosure.JpxImage.prototype.parseCodestream):
+        (JpxImage.JpxImageClosure.readUint32):
+        (JpxImage.JpxImageClosure.readUint16):
+        (JpxImage.JpxImageClosure.log2):
+        (JpxImage.JpxImageClosure.calculateComponentDimensions):
+        (JpxImage.JpxImageClosure.calculateTileGrids):
+        (JpxImage.JpxImageClosure.getBlocksDimensions):
+        (JpxImage.JpxImageClosure.buildPrecincts):
+        (JpxImage.JpxImageClosure.buildCodeblocks):
+        (JpxImage.JpxImageClosure.createPacket):
+        (JpxImage.JpxImageClosure.LayerResolutionComponentPositionIterator.this.nextPacket):
+        (JpxImage.JpxImageClosure.LayerResolutionComponentPositionIterator):
+        (JpxImage.JpxImageClosure.ResolutionLayerComponentPositionIterator.this.nextPacket):
+        (JpxImage.JpxImageClosure.ResolutionLayerComponentPositionIterator):
+        (JpxImage.JpxImageClosure.buildPackets):
+        (JpxImage.JpxImageClosure.readBits):
+        (JpxImage.JpxImageClosure.alignToByte):
+        (JpxImage.JpxImageClosure.readCodingpasses):
+        (JpxImage.JpxImageClosure.parseTilePackets):
+        (JpxImage.JpxImageClosure.copyCoefficients):
+        (JpxImage.JpxImageClosure.transformTile):
+        (JpxImage.JpxImageClosure.transformComponents):
+        (JpxImage.JpxImageClosure.initializeTile):
+        (JpxImage.JpxImageClosure.):
+        (JpxImage.JpxImageClosure.TagTree):
+        (JpxImage.JpxImageClosure.InclusionTree):
+        (JpxImage.JpxImageClosure.ArithmeticDecoder):
+        (JpxImage.JpxImageClosure.BitModel):
+        (JpxImage.JpxImageClosure.Transform):
+        (JpxImage.JpxImageClosure.IrreversibleTransform):
+        (JpxImage.JpxImageClosure.ReversibleTransform):
+        (JpxImage):
+        (atob):
+
 2016-07-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] __lookupGetter__ and __lookupSetter__ should not ignore exceptions

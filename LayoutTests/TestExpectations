@@ -988,3 +988,5 @@ media/pip-video-going-into-fullscreen.html [ WontFix ]
 media/video-contained-in-fullscreen-element-going-into-pip.html [ WontFix ]
 
 webkit.org/b/159370 [ Debug ] fast/history/page-cache-destroy-document.html [ Skip ]
+
+[ Debug ] js/regress/misc-bugs-847389-jpeg2000.html [ Skip ]

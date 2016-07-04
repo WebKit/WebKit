@@ -7287,6 +7287,46 @@ void testBranchLoad16Z()
     CHECK(invoke<int>(*code, &cond) == 0);
 }
 
+void testBranch8WithLoad8ZIndex()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    int logScale = 1;
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, Above, Origin(),
+            root->appendNew<MemoryValue>(
+                proc, Load8Z, Origin(),
+                root->appendNew<Value>(
+                    proc, Add, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                    root->appendNew<Value>(
+                        proc, Shl, Origin(),
+                        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+                        root->appendNew<Const32Value>(proc, Origin(), logScale)))),
+            root->appendNew<Const32Value>(proc, Origin(), 250)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    uint32_t cond;
+    cond = 0xffffffffU; // All bytes are 0xff.
+    CHECK(invoke<int>(*code, &cond - 2, (sizeof(uint32_t) * 2) >> logScale) == 1);
+    cond = 0x00000000U; // All bytes are 0.
+    CHECK(invoke<int>(*code, &cond - 2, (sizeof(uint32_t) * 2) >> logScale) == 0);
+}
+
 void testComplex(unsigned numVars, unsigned numConstructs)
 {
     double before = monotonicallyIncreasingTimeMS();
@@ -12900,6 +12940,7 @@ void run(const char* filter)
     RUN(testBranchLoad8Z());
     RUN(testBranchLoad16S());
     RUN(testBranchLoad16Z());
+    RUN(testBranch8WithLoad8ZIndex());
 
     RUN(testComplex(64, 128));
     RUN(testComplex(4, 128));

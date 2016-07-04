@@ -1,3 +1,23 @@
+2016-07-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] MacroAssemblerX86::branch8 should accept unsigned 8bit value
+        https://bugs.webkit.org/show_bug.cgi?id=159334
+
+        Reviewed by Benjamin Poulain.
+
+        As described in branchTest8 functions, byte in TrustedImm32 is not well defined.
+        So the assertion here should be a little permissive; accepting -128 to 255.
+
+        This assertion is originally fired when executing misc-bugs-847389-jpeg2000 benchmark in Debug build.
+        So this patch includes misc-bugs-847389-jpeg2000 benchmark.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTest8):
+        (JSC::MacroAssemblerX86Common::branch8):
+        * b3/testb3.cpp:
+        (JSC::B3::testBranch8WithLoad8ZIndex):
+        (JSC::B3::run):
+
 2016-07-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] __lookupGetter__ and __lookupSetter__ should not ignore exceptions

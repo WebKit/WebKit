@@ -2218,7 +2218,7 @@ public:
     
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // Byte in TrustedImm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
+        // Byte in TrustedImm32 is not well defined, so be a little permissive here, but don't accept nonsense values.
         ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
         if (mask.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base);
@@ -2229,7 +2229,7 @@ public:
     
     Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // Byte in TrustedImm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
+        // Byte in TrustedImm32 is not well defined, so be a little permissive here, but don't accept nonsense values.
         ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
         if (mask.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base, address.index, address.scale);
@@ -2240,7 +2240,8 @@ public:
 
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        ASSERT(std::numeric_limits<int8_t>::min() <= right.m_value && right.m_value <= std::numeric_limits<int8_t>::max());
+        // Byte in TrustedImm32 is not well defined, so be a little permissive here, but don't accept nonsense values.
+        ASSERT(right.m_value >= -128 && right.m_value <= 255);
 
         m_assembler.cmpb_im(right.m_value, left.offset, left.base, left.index, left.scale);
         return Jump(m_assembler.jCC(x86Condition(cond)));
