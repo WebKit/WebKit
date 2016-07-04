@@ -165,6 +165,9 @@ void WebEditorClient::updateGlobalSelection(Frame* frame)
 #if PLATFORM(X11)
     if (!frame->selection().isRange())
         return;
+    RefPtr<Range> range = frame->selection().toNormalizedRange();
+    if (!range)
+        return;
 
     frameSettingClipboard = frame;
     GRefPtr<GClosure> callback = adoptGRef(g_cclosure_new(G_CALLBACK(collapseSelection), frame, nullptr));
@@ -174,7 +177,6 @@ void WebEditorClient::updateGlobalSelection(Frame* frame)
     new EditorClientFrameDestructionObserver(frame, callback.get());
     g_closure_set_marshal(callback.get(), g_cclosure_marshal_VOID__VOID);
 
-    RefPtr<Range> range = frame->selection().toNormalizedRange();
     PasteboardWebContent pasteboardContent;
     pasteboardContent.canSmartCopyOrDelete = false;
     pasteboardContent.text = range->text();
