@@ -1,3 +1,17 @@
+2016-07-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        webkit-patch failure-reason always raises TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=159394
+
+        Reviewed by Benjamin Poulain.
+
+        In r170637 (Bug 133067), the first and second arguments of
+        pluralize were swapped.
+
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (FailureReason._builder_to_explain): Swap the first and second
+        arguments of pluralize.
+
 2016-07-02  Youenn Fablet  <youennf@gmail.com>
 
         Make it straightforward to start the Web Platform Tests HTTP server using run-webkit-httpd

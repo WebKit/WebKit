@@ -315,7 +315,7 @@ class FailureReason(Command):
     def _builder_to_explain(self):
         builder_statuses = self._tool.buildbot.builder_statuses()
         red_statuses = [status for status in builder_statuses if not status["is_green"]]
-        print "%s failing" % (pluralize("builder", len(red_statuses)))
+        print "%s failing" % (pluralize(len(red_statuses), "builder"))
         builder_choices = [status["name"] for status in red_statuses]
         # We could offer an "All" choice here.
         chosen_name = self._tool.user.prompt_with_list("Which builder to diagnose:", builder_choices)
