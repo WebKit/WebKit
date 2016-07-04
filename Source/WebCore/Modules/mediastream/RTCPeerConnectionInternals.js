@@ -46,7 +46,7 @@ function enqueueOperation(peerConnection, operation)
 
     return new @Promise(function (resolve, reject) {
         operations.@push(function() {
-            operation().then(resolve, reject).then(runNext, runNext);
+            operation().@then(resolve, reject).@then(runNext, runNext);
         });
 
         if (operations.length == 1)

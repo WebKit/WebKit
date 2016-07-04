@@ -1,3 +1,13 @@
+2016-07-04  Youenn Fablet  <youenn@apple.com>
+
+        Shield WebRTC JS built-ins from user scripts
+        https://bugs.webkit.org/show_bug.cgi?id=155964
+
+        Reviewed by Sam Weinig.
+
+        * fast/mediastream/RTCPeerConnection-createOffer.html:
+        * fast/mediastream/RTCPeerConnection-stable.html:
+
 2016-07-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, skip misc-bugs-847389-jpeg2000.js in jsc stress tests

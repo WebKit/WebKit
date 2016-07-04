@@ -7,6 +7,13 @@
         <script>
             description("Tests RTCPeerConnection createOffer.");
 
+            // Let's ensure built-ins are shielded from user scripts
+            var thenPromise = Promise.prototype.then;
+            Promise.prototype.then = function() {
+                console.log("Promise.prototype.then is called internally");
+                return thenPromise.apply(this, arguments);
+            }
+
             var pc = null;
 
             function requestSucceeded3(sd)
