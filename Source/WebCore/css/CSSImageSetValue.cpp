@@ -118,7 +118,7 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader& load
         ImageWithScale image = bestImageForScaleFactor();
         CachedResourceRequest request(ResourceRequest(document->completeURL(image.imageURL)), options);
         request.setInitiator(cachedResourceRequestInitiators().css);
-        if (options.requestOriginPolicy() == PotentiallyCrossOriginEnabled) {
+        if (options.mode == FetchOptions::Mode::Cors) {
             ASSERT(document->securityOrigin());
             updateRequestForAccessControl(request.mutableResourceRequest(), *document->securityOrigin(), options.allowCredentials());
         }

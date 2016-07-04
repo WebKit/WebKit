@@ -95,9 +95,10 @@ const AtomicString& CachedResourceRequest::initiatorName() const
 
 void CachedResourceRequest::setAsPotentiallyCrossOrigin(const String& mode, Document& document)
 {
+    ASSERT(m_options.mode == FetchOptions::Mode::NoCors);
     if (mode.isNull())
         return;
-    m_options.setRequestOriginPolicy(PotentiallyCrossOriginEnabled);
+    m_options.mode = FetchOptions::Mode::Cors;
     m_options.setAllowCredentials(equalLettersIgnoringASCIICase(mode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials);
 
     ASSERT(document.securityOrigin());

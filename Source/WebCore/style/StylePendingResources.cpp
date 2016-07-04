@@ -52,7 +52,7 @@ static RefPtr<StyleImage> loadPendingImage(Document& document, const StyleImage&
 
     // FIXME: Why does shape-outside have different policy than other properties?
     if (loadPolicy == LoadPolicy::ShapeOutside) {
-        options.setRequestOriginPolicy(PotentiallyCrossOriginEnabled);
+        options.mode = FetchOptions::Mode::Cors;
         options.setAllowCredentials(DoNotAllowStoredCredentials);
     }
 

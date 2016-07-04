@@ -150,8 +150,8 @@ bool SubresourceLoader::init(const ResourceRequest& request)
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=155633.
     // SubresourceLoader could use the document origin as a default and set PotentiallyCrossOriginEnabled requests accordingly.
-    // This would simplify resource loader users as they would only need to set the policy to PotentiallyCrossOriginEnabled.
-    if (options().requestOriginPolicy() == PotentiallyCrossOriginEnabled)
+    // This would simplify resource loader users as they would only need to set fetch mode to Cors.
+    if (options().mode == FetchOptions::Mode::Cors)
         m_origin = SecurityOrigin::createFromString(request.httpOrigin());
 
     return true;
@@ -202,7 +202,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
             return;
         }
 
-        if (options().requestOriginPolicy() == PotentiallyCrossOriginEnabled && !checkCrossOriginAccessControl(request(), redirectResponse, newRequest)) {
+        if (options().mode == FetchOptions::Mode::Cors && !checkCrossOriginAccessControl(request(), redirectResponse, newRequest)) {
             cancel();
             return;
         }

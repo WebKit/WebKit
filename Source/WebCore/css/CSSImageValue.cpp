@@ -82,7 +82,7 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader& loader, const
         else
             request.setInitiator(m_initiatorName);
 
-        if (options.requestOriginPolicy() == PotentiallyCrossOriginEnabled) {
+        if (options.mode == FetchOptions::Mode::Cors) {
             ASSERT(loader.document()->securityOrigin());
             updateRequestForAccessControl(request.mutableResourceRequest(), *loader.document()->securityOrigin(), options.allowCredentials());
         }

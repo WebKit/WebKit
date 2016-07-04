@@ -63,7 +63,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(const Resourc
         return nullptr;
 
     DataBufferingPolicy bufferingPolicy = options & LoadOption::BufferData ? WebCore::BufferData : WebCore::DoNotBufferData;
-    RequestOriginPolicy corsPolicy = !m_crossOriginMode.isNull() ? PotentiallyCrossOriginEnabled : UseDefaultOriginRestrictionsForType;
+    FetchOptions::Mode corsPolicy = !m_crossOriginMode.isNull() ? FetchOptions::Mode::Cors : FetchOptions::Mode::NoCors;
     auto cachingPolicy = options & LoadOption::DisallowCaching ? CachingPolicy::DisallowCaching : CachingPolicy::AllowCaching;
     StoredCredentials allowCredentials = m_crossOriginMode.isNull() || equalLettersIgnoringASCIICase(m_crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
 
@@ -72,7 +72,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(const Resourc
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && PLATFORM(MAC)
     // FIXME: Workaround for <rdar://problem/26071607>. We are not able to do CORS checking on 304 responses because they
     // are usually missing the headers we need.
-    if (corsPolicy == PotentiallyCrossOriginEnabled)
+    if (corsPolicy == FetchOptions::Mode::Cors)
         updatedRequest.makeUnconditional();
 #endif
 
