@@ -31,7 +31,8 @@ DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTr
 VERBOSITY ?= $(DEFAULT_VERBOSITY)
 
 ifeq ($(VERBOSITY),default)
-OUTPUT_FILTER = grep -v setenv
+OUTPUT_FILTER = cat
+XCODE_OPTIONS += -hideShellScriptEnvironment
 else
 ifeq ($(VERBOSITY),noisy)
 OUTPUT_FILTER = cat
