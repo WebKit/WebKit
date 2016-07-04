@@ -271,9 +271,9 @@ using ColorProfile = Vector<char>;
             return !m_failed && m_sizeAvailable;
         }
 
-        virtual IntSize size() const { return m_size; }
+        virtual IntSize size() { return isSizeAvailable() ? m_size : IntSize(); }
 
-        IntSize scaledSize() const
+        IntSize scaledSize()
         {
             return m_scaled ? IntSize(m_scaledColumns.size(), m_scaledRows.size()) : size();
         }
@@ -283,7 +283,7 @@ using ColorProfile = Vector<char>;
         // sizes.  This does NOT differ from size() for GIF, since decoding GIFs
         // composites any smaller frames against previous frames to create full-
         // size frames.
-        virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel) const
+        virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel)
         {
             return size();
         }

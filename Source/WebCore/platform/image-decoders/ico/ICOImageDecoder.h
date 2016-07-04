@@ -47,8 +47,8 @@ namespace WebCore {
         String filenameExtension() const override { return "ico"; }
         void setData(SharedBuffer&, bool allDataReceived) override;
         bool isSizeAvailable() override;
-        IntSize size() const override;
-        IntSize frameSizeAtIndex(size_t, SubsamplingLevel) const override;
+        IntSize size() override;
+        IntSize frameSizeAtIndex(size_t, SubsamplingLevel) override;
         bool setSize(unsigned width, unsigned height) override;
         size_t frameCount() override;
         ImageFrame* frameBufferAtIndex(size_t) override;

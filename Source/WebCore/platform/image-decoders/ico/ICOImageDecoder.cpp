@@ -78,12 +78,12 @@ bool ICOImageDecoder::isSizeAvailable()
     return ImageDecoder::isSizeAvailable();
 }
 
-IntSize ICOImageDecoder::size() const
+IntSize ICOImageDecoder::size()
 {
     return m_frameSize.isEmpty() ? ImageDecoder::size() : m_frameSize;
 }
 
-IntSize ICOImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel) const
+IntSize ICOImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel)
 {
     return (index && (index < m_dirEntries.size())) ? m_dirEntries[index].m_size : size();
 }
