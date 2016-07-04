@@ -1978,7 +1978,6 @@ webkit.org/b/117322 fast/css/text-indent-first-line-006.html [ ImageOnlyFailure 
 webkit.org/b/117322 fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
 fast/css/image-set-setting.html [ Failure ]
 fast/css/image-set-value-not-removed-crash.html [ Failure ]
-fast/css/fontloader-download-error.html [ Failure ]
 fast/css/input-search-padding.html [ Failure ]
 fast/css/getComputedStyle/getComputedStyle-outline-shorthand.html [ Pass Timeout ]
 webkit.org/b/136484 fast/css-generated-content/initial-letter-basic.html [ Failure ]

@@ -1,3 +1,12 @@
+2016-07-04  Per Arne Vollan  <pvollan@apple.com>
+
+        Update Windows test expectations for fast/css/fontloader-download-error.html.
+        It is skipped on all platforms.
+
+        Unreviewed test gardening.
+        
+        * platform/win/TestExpectations:
+
 2016-07-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] MacroAssemblerX86::branch8 should accept unsigned 8bit value
