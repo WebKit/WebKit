@@ -113,17 +113,10 @@ function installDependenciesWithApt {
         libruby \
         xvfb
 
-    installPHPWithApt
-}
-
-function installPHPWithApt {
-    if [ -f "/etc/os-release" ]; then
-        ubuntu_version=`grep VERSION_ID /etc/os-release`
-        if [[ $ubuntu_version == *VERSION_ID=\"16.04* ]]; then
-            apt-get install libapache2-mod-php7.0
-        else
-            apt-get install libapache2-mod-php5
-        fi
+    if apt-cache show libapache2-mod-php7.0 &>/dev/null; then
+        apt-get install libapache2-mod-php7.0
+    else
+        apt-get install libapache2-mod-php5
     fi
 }
 

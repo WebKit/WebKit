@@ -199,9 +199,14 @@ function installDependenciesWithApt {
         git-svn \
         subversion"
 
+    if apt-cache show libapache2-mod-php7.0 &>/dev/null; then
+        packages="$packages libapache2-mod-php7.0"
+    else
+        packages="$packages libapache2-mod-php5"
+    fi
+
     apt-get install $packages
 
-    installPHPWithApt
 }
 
 function installDependenciesWithPacman {
@@ -453,17 +458,6 @@ function installDependenciesWithDnf {
         subversion"
 
     dnf install $packages
-}
-
-function installPHPWithApt {
-    if [ -f "/etc/os-release" ]; then
-        ubuntu_version=`grep VERSION_ID /etc/os-release`
-        if [[ $ubuntu_version == *VERSION_ID=\"16.04* ]]; then
-            apt-get install libapache2-mod-php7.0
-        else
-            apt-get install libapache2-mod-php5
-        fi
-    fi
 }
 
 checkInstaller

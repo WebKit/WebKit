@@ -1,3 +1,16 @@
+2016-07-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EFL][GTK] Layout Test doesn't run on Ubuntu 16.04
+        https://bugs.webkit.org/show_bug.cgi?id=158141
+
+        Rubber-stamped by Michael Catanzaro.
+
+        Instead of checking for an specific Ubuntu version, query the apt
+        database to see which version of PHP is available.
+
+        * efl/install-dependencies:
+        * gtk/install-dependencies:
+
 2016-07-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         webkit-patch failure-reason always raises TypeError
