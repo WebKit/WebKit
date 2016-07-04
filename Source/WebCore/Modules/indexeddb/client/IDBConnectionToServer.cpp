@@ -332,6 +332,14 @@ void IDBConnectionToServer::confirmDidCloseFromServer(uint64_t databaseConnectio
     m_delegate->confirmDidCloseFromServer(databaseConnectionIdentifier);
 }
 
+void IDBConnectionToServer::connectionToServerLost(const IDBError& error)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::connectionToServerLost");
+    ASSERT(isMainThread());
+
+    m_proxy->connectionToServerLost(error);
+}
+
 void IDBConnectionToServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didStartTransaction");

@@ -257,6 +257,15 @@ void IDBDatabase::didCloseFromServer(const IDBError& error)
 {
     LOG(IndexedDB, "IDBDatabase::didCloseFromServer - %" PRIu64, m_databaseConnectionIdentifier);
 
+    connectionToServerLost(error);
+
+    m_connectionProxy->confirmDidCloseFromServer(*this);
+}
+
+void IDBDatabase::connectionToServerLost(const IDBError& error)
+{
+    LOG(IndexedDB, "IDBDatabase::connectionToServerLost - %" PRIu64, m_databaseConnectionIdentifier);
+
     ASSERT(currentThread() == originThreadID());
 
     m_closePending = true;
@@ -268,8 +277,6 @@ void IDBDatabase::didCloseFromServer(const IDBError& error)
     Ref<Event> event = Event::create(eventNames().errorEvent, true, false);
     event->setTarget(this);
     scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
-
-    m_connectionProxy->confirmDidCloseFromServer(*this);
 }
 
 void IDBDatabase::maybeCloseInServer()

@@ -98,6 +98,8 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
 
+    void connectionToServerLost();
+
 private:
     WebIDBConnectionToServer();
 

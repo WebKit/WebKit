@@ -97,6 +97,8 @@ public:
     void didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError&);
     void confirmDidCloseFromServer(IDBDatabase&);
 
+    void connectionToServerLost(const IDBError&);
+
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
 
     void completeOperation(const IDBResultData&);

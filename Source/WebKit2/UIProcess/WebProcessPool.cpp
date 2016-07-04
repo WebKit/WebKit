@@ -1100,7 +1100,6 @@ void WebProcessPool::clearCachedCredentials()
 void WebProcessPool::terminateDatabaseProcess()
 {
 #if ENABLE(DATABASE_PROCESS)
-    ASSERT(m_processes.isEmpty());
     if (!m_databaseProcess)
         return;
 

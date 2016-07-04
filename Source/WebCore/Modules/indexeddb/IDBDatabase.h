@@ -88,6 +88,7 @@ public:
 
     void fireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
     void didCloseFromServer(const IDBError&);
+    void connectionToServerLost(const IDBError&);
 
     IDBClient::IDBConnectionProxy& connectionProxy() { return m_connectionProxy.get(); }
 

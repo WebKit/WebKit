@@ -37,7 +37,7 @@ class IDBError {
 public:
     IDBError() { }
     IDBError(ExceptionCode);
-    IDBError(ExceptionCode, const String& message);
+    WEBCORE_EXPORT IDBError(ExceptionCode, const String& message);
 
     static IDBError userDeleteError()
     {
