@@ -49,7 +49,7 @@ public:
     {
 #ifndef NDEBUG
         if (g_getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
-            WTF::sleep(30);
+            g_usleep(30 * G_USEC_PER_SEC);
 #endif
 
 #if (USE(COORDINATED_GRAPHICS_THREADED) || USE(GSTREAMER_GL)) && PLATFORM(X11)

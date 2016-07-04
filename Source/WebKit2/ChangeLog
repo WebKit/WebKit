@@ -1,3 +1,15 @@
+2016-07-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] ASSERTION_FAILED: m_key != PTHREAD_KEYS_MAX when defining WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH
+        https://bugs.webkit.org/show_bug.cgi?id=158149
+
+        Reviewed by Carlos Garcia Campos.
+
+        WTF::sleep can not be used at the beginning of web process because
+        WTF is not initialized at the moment yet.
+
+        * WebProcess/gtk/WebProcessMainGtk.cpp: Use g_usleep instead of WTF::sleep.
+
 2016-07-03  Dan Bernstein  <mitz@apple.com>
 
         Follow-up to r202789.
