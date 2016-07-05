@@ -1,0 +1,14 @@
+<script>
+
+var request = window.indexedDB.deleteDatabase("IDBDeleteRecovery");
+
+request.onsuccess = function(e)
+{
+    window.webkit.messageHandlers.testHandler.postMessage('Deleted database');
+}
+request.onerror = function(e)
+{
+    // Unexpected error
+    window.webkit.messageHandlers.testHandler.postMessage('Error deleting database');
+}
+</script>

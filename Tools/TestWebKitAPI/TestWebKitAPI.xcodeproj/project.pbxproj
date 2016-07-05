@@ -64,6 +64,11 @@
 		37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */; };
 		37E1064C1697681800B78BD0 /* DOMHTMLTableCellElementCellAbove.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
+		510477721D298DDD009747EB /* IDBDeleteRecovery.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */; };
+		510477731D298DDD009747EB /* IDBDeleteRecovery.sqlite3-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */; };
+		510477741D298DDD009747EB /* IDBDeleteRecovery.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */; };
+		510477771D298E72009747EB /* IDBDeleteRecovery.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477761D298E57009747EB /* IDBDeleteRecovery.html */; };
+		510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510477751D298E03009747EB /* IDBDeleteRecovery.mm */; };
 		51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */; };
 		5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */; };
 		51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */; };
@@ -473,6 +478,10 @@
 			dstSubfolderSpec = 7;
 			files = (
 				51A587851D2739E3004BA9AF /* IndexedDBDatabaseProcessKill-1.html in Copy Resources */,
+				510477771D298E72009747EB /* IDBDeleteRecovery.html in Copy Resources */,
+				510477721D298DDD009747EB /* IDBDeleteRecovery.sqlite3 in Copy Resources */,
+				510477731D298DDD009747EB /* IDBDeleteRecovery.sqlite3-shm in Copy Resources */,
+				510477741D298DDD009747EB /* IDBDeleteRecovery.sqlite3-wal in Copy Resources */,
 				51A5877D1D1B49CD004BA9AF /* IndexedDBMultiProcess-3.html in Copy Resources */,
 				9984FACE1CFFB090008D198C /* editable-body.html in Copy Resources */,
 				51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */,
@@ -692,6 +701,11 @@
 		4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ElementAtPointInWebFrame.mm; sourceTree = "<group>"; };
 		4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle_Bundle.cpp; sourceTree = "<group>"; };
 		4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle.cpp; sourceTree = "<group>"; };
+		5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IDBDeleteRecovery.sqlite3; sourceTree = "<group>"; };
+		510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IDBDeleteRecovery.sqlite3-shm"; sourceTree = "<group>"; };
+		510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IDBDeleteRecovery.sqlite3-wal"; sourceTree = "<group>"; };
+		510477751D298E03009747EB /* IDBDeleteRecovery.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBDeleteRecovery.mm; sourceTree = "<group>"; };
+		510477761D298E57009747EB /* IDBDeleteRecovery.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBDeleteRecovery.html; sourceTree = "<group>"; };
 		51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionBasic_Bundle.cpp; sourceTree = "<group>"; };
 		51393E1E1523944A005F39C5 /* DOMWindowExtensionBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionBasic.cpp; sourceTree = "<group>"; };
 		5142B2701517C88B00C32B19 /* ContextMenuCanCopyURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuCanCopyURL.mm; sourceTree = "<group>"; };
@@ -1157,6 +1171,7 @@
 				2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */,
 				CDE195B31CFE0ADE0053D256 /* FullscreenTopContentInset.mm */,
 				51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */,
+				510477751D298E03009747EB /* IDBDeleteRecovery.mm */,
 				51BCEE491C84F4AF0042C82E /* IndexedDBMultiProcess.mm */,
 				51B1EE8D1C80F5880064FB98 /* IndexedDBPersistence.mm */,
 				37D36ED61AF42ECD00BAF5D9 /* LoadAlternateHTMLString.mm */,
@@ -1264,6 +1279,10 @@
 				5714ECBC1CA8C21800051AC8 /* DownloadRequestOriginalURL2.html */,
 				5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */,
 				51A587821D272EB5004BA9AF /* IndexedDBDatabaseProcessKill-1.html */,
+				510477761D298E57009747EB /* IDBDeleteRecovery.html */,
+				5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */,
+				510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */,
+				510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */,
 				51BCEE4C1C84F52C0042C82E /* IndexedDBMultiProcess-1.html */,
 				51BCEE4D1C84F52C0042C82E /* IndexedDBMultiProcess-2.html */,
 				51A5877C1D1B3D8D004BA9AF /* IndexedDBMultiProcess-3.html */,
@@ -2004,6 +2023,7 @@
 				7CCE7EE41A411AE600447C4C /* AboutBlankLoad.cpp in Sources */,
 				7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */,
 				7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */,
+				510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */,
 				7CCE7EB51A411A7E00447C4C /* BackForwardList.mm in Sources */,
 				7CCE7EDC1A411A9200447C4C /* CalculationValue.cpp in Sources */,
 				7C83E0BA1D0A64FB00FEBCF3 /* Coding.mm in Sources */,
