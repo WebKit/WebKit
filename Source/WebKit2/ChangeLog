@@ -1,3 +1,21 @@
+2016-07-05  Alex Christensen  <achristensen@webkit.org>
+
+        Actually persist changes to cookie accept policy.
+        https://bugs.webkit.org/show_bug.cgi?id=159377
+        <rdar://problem/22774152>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::NetworkSession):
+        Added logging.
+        * UIProcess/mac/WebCookieManagerProxyMac.mm:
+        (WebKit::WebCookieManagerProxy::persistHTTPCookieAcceptPolicy):
+        When we persist the cookie accept policy, we want to call _saveCookies to actually write the
+        change to disk so that when we create a new process which reads from disk to determine its
+        cookie accept policy, it will read the new cookie accept policy.  Before this patch it was
+        reading the old one in some cases where the changes had not yet been persisted to disk.
+
 2016-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Coordinated Graphics] Modernize and cleanup CompositingCoordinator

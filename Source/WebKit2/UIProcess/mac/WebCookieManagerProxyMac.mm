@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebCookieManagerProxy.h"
 
+#import <WebCore/CFNetworkSPI.h>
+
 namespace WebKit {
 
 void WebCookieManagerProxy::persistHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
@@ -34,6 +36,7 @@ void WebCookieManagerProxy::persistHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy
     // policy in the UI Process as well as in the Web Process (to make sure it gets set on any
     // Private Browsing Cookie Storage).
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:static_cast<NSHTTPCookieAcceptPolicy>(policy)];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies];
 }
 
 } // namespace WebKit
