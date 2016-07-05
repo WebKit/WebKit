@@ -1,3 +1,20 @@
+2016-07-05  Alexey Proskuryakov  <ap@apple.com>
+
+        run-webkit-tests should print more complete baseline search paths
+        https://bugs.webkit.org/show_bug.cgi?id=159354
+
+        Reviewed by Daniel Bates.
+
+        run-webkit-tests used to only print directory names in baseline search paths.
+        This was ok in basic usage, but quickly got confusing when using
+        --additional-platform-directory flags.
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_config):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_print_config):
+        (Testprinter.test_print_one_line_summary):
+
 2016-07-04  Brady Eidson  <beidson@apple.com>
 
         WebProcesses don't handle DatabaseProcess going away uncleanly..

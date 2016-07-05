@@ -111,7 +111,7 @@ class  Testprinter(unittest.TestCase):
         self.assertIn("Using port 'test-mac-leopard'", err.getvalue())
         self.assertIn('Test configuration: <leopard, x86, release>', err.getvalue())
         self.assertIn('Placing test results in /tmp', err.getvalue())
-        self.assertIn('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic', err.getvalue())
+        self.assertIn('Baseline search path: platform/test-mac-leopard -> platform/test-mac-snowleopard -> generic', err.getvalue())
         self.assertIn('Using Release build', err.getvalue())
         self.assertIn('Pixel tests enabled', err.getvalue())
         self.assertIn('Command line:', err.getvalue())
@@ -120,7 +120,7 @@ class  Testprinter(unittest.TestCase):
         self.reset(err)
         printer._options.quiet = True
         printer.print_config('/tmp')
-        self.assertNotIn('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic', err.getvalue())
+        self.assertNotIn('Baseline search path: platform/test-mac-leopard -> platform/test-mac-snowleopard -> generic', err.getvalue())
 
     def test_print_one_line_summary(self):
         printer, err = self.get_printer()
