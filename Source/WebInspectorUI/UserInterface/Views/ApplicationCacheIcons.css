@@ -24,9 +24,9 @@
  */
 
 .application-cache-manifest .icon {
-    content: -webkit-image-set(url(../Images/ApplicationCacheManifest.png) 1x, url(../Images/ApplicationCacheManifest@2x.png) 2x);
+    content: image-set(url(../Images/ApplicationCacheManifest.png) 1x, url(../Images/ApplicationCacheManifest@2x.png) 2x);
 }
 
 .application-cache-frame .icon {
-    content: -webkit-image-set(url(../Images/ApplicationCache.png) 1x, url(../Images/ApplicationCache@2x.png) 2x);
+    content: image-set(url(../Images/ApplicationCache.png) 1x, url(../Images/ApplicationCache@2x.png) 2x);
 }

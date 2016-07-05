@@ -1,3 +1,73 @@
+2016-07-05  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Drop the prefix from -webkit-image-set()
+        https://bugs.webkit.org/show_bug.cgi?id=159433
+        rdar://problem/27178887
+
+        Reviewed by Dean Jackson.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        * UserInterface/Views/ApplicationCacheIcons.css:
+        (.application-cache-manifest .icon):
+        (.application-cache-frame .icon):
+        * UserInterface/Views/CookieIcon.css:
+        (.cookie-icon .icon):
+        * UserInterface/Views/DOMStorageIcons.css:
+        (.local-storage-icon .icon):
+        (.session-storage-icon .icon):
+        * UserInterface/Views/DatabaseIcon.css:
+        (.database-icon .icon):
+        * UserInterface/Views/DatabaseTableIcon.css:
+        (.database-table-icon .icon):
+        * UserInterface/Views/FolderIcon.css:
+        (.folder-icon .icon):
+        * UserInterface/Views/GradientSlider.css:
+        (.gradient-slider-knob):
+        (.gradient-slider-knob.selected):
+        * UserInterface/Views/HoverMenu.css:
+        (.hover-menu > img):
+        * UserInterface/Views/ResourceIcons.css:
+        (.resource-icon .icon):
+        (.resource-icon.resource-type-document .icon):
+        (.resource-icon.resource-type-image .icon):
+        (.resource-icon.resource-type-font .icon):
+        (.resource-icon.resource-type-stylesheet .icon):
+        (.resource-icon.resource-type-script .icon):
+        (.anonymous-script-icon .icon):
+        (.source-map-resource.resource-icon .icon):
+        (.source-map-resource.resource-icon.resource-type-stylesheet .icon):
+        (.source-map-resource.resource-icon.resource-type-script .icon):
+        (.large .resource-icon .icon):
+        (.large .resource-icon.resource-type-document .icon):
+        (.large .resource-icon.resource-type-image .icon):
+        (.large .resource-icon.resource-type-font .icon):
+        (.large .resource-icon.resource-type-stylesheet .icon):
+        (.large .resource-icon.resource-type-script .icon):
+        (.large .anonymous-script-icon .icon):
+        (.large .source-map-resource.resource-icon .icon):
+        (.large .source-map-resource.resource-icon.resource-type-stylesheet .icon):
+        (.large .source-map-resource.resource-icon.resource-type-script .icon):
+        * UserInterface/Views/Slider.css:
+        (.slider > img):
+        (.slider > img.dragging):
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.hover-menu.color > img):
+        * UserInterface/Views/TextEditor.css:
+        (.text-editor > .CodeMirror .has-breakpoint .CodeMirror-linenumber::before):
+        (.text-editor > .CodeMirror .breakpoint-resolved .CodeMirror-linenumber::before):
+        (.text-editor > .CodeMirror .execution-line .CodeMirror-linenumber::after):
+        * UserInterface/Views/TimelineIcons.css:
+        (body:not(.mac-platform, .windows-platform) .network-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .network-icon.large .icon):
+        (body:not(.mac-platform, .windows-platform) .layout-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .layout-icon.large .icon):
+        (body:not(.mac-platform, .windows-platform) .script-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .script-icon.large .icon):
+        (body:not(.mac-platform, .windows-platform) .rendering-frame-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .memory-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .heap-allocations-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .stopwatch-icon .icon):
+
 2016-07-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CallFrame console.assert seen in tests (sourceCodeLocation instanceof SourceCodeLocation)

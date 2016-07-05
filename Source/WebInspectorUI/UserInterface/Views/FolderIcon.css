@@ -24,5 +24,5 @@
  */
 
 .folder-icon .icon {
-    content: -webkit-image-set(url(../Images/FolderGeneric.png) 1x, url(../Images/FolderGeneric@2x.png) 2x);
+    content: image-set(url(../Images/FolderGeneric.png) 1x, url(../Images/FolderGeneric@2x.png) 2x);
 }

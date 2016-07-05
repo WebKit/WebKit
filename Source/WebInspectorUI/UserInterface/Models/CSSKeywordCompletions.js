@@ -162,10 +162,10 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "dotted", "dashed", "solid", "double", "dot-dash", "dot-dot-dash", "wave"
     ],
     "content": [
-        "list-item", "close-quote", "no-close-quote", "no-open-quote", "open-quote", "attr()", "counter()", "counters()", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "-webkit-image-set()"
+        "list-item", "close-quote", "no-close-quote", "no-open-quote", "open-quote", "attr()", "counter()", "counters()", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "image-set()"
     ],
     "list-style-image": [
-        "none", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "-webkit-image-set()"
+        "none", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "image-set()"
     ],
     "clear": [
         "none", "left", "right", "both"
@@ -234,7 +234,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "nw-resize", "n-resize", "se-resize", "sw-resize", "s-resize", "w-resize", "ew-resize", "ns-resize",
         "nesw-resize", "nwse-resize", "col-resize", "row-resize", "text", "wait", "help", "all-scroll", "-webkit-grab",
         "-webkit-zoom-in", "-webkit-zoom-out",
-        "-webkit-grabbing", "url()", "-webkit-image-set()"
+        "-webkit-grabbing", "url()", "image-set()"
     ],
     "border-width": [
         "medium", "thick", "thin", "calc()", "-webkit-calc()"
@@ -243,7 +243,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "a3", "a4", "a5", "b4", "b5", "landscape", "ledger", "legal", "letter", "portrait"
     ],
     "background": [
-        "none", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "-webkit-image-set()",
+        "none", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "image-set()",
         "repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round",
         "scroll", "fixed", "local",
         "auto", "contain", "cover",
@@ -251,7 +251,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "border-box", "padding-box", "content-box"
     ],
     "background-image": [
-        "none", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "-webkit-image-set()"
+        "none", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "image-set()"
     ],
     "background-size": [
         "auto", "contain", "cover"
@@ -474,7 +474,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "auto", "manual"
     ],
     "border-image": [
-        "repeat", "stretch", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "-webkit-image-set()"
+        "repeat", "stretch", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "image-set()"
     ],
     "border-image-repeat": [
         "repeat", "stretch", "space", "round"

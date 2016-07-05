@@ -49,39 +49,39 @@
 
 /* FIXME: <https://webkit.org/b/153892> [GTK] Web Inspector: Add new GTK+ icons for instrument icons */
 body:not(.mac-platform, .windows-platform) .network-icon .icon {
-    content: -webkit-image-set(url(../Images/Network.png) 1x, url(../Images/Network@2x.png) 2x);
+    content: image-set(url(../Images/Network.png) 1x, url(../Images/Network@2x.png) 2x);
 }
 
 body:not(.mac-platform, .windows-platform) .network-icon.large .icon {
-    content: -webkit-image-set(url(../Images/NetworkLarge.png) 1x, url(../Images/NetworkLarge@2x.png) 2x);
+    content: image-set(url(../Images/NetworkLarge.png) 1x, url(../Images/NetworkLarge@2x.png) 2x);
 }
 
 body:not(.mac-platform, .windows-platform) .layout-icon .icon {
-    content: -webkit-image-set(url(../Images/Colors.png) 1x, url(../Images/Colors@2x.png) 2x);
+    content: image-set(url(../Images/Colors.png) 1x, url(../Images/Colors@2x.png) 2x);
 }
 
 body:not(.mac-platform, .windows-platform) .layout-icon.large .icon {
-    content: -webkit-image-set(url(../Images/ColorsLarge.png) 1x, url(../Images/ColorsLarge@2x.png) 2x);
+    content: image-set(url(../Images/ColorsLarge.png) 1x, url(../Images/ColorsLarge@2x.png) 2x);
 }
  
 body:not(.mac-platform, .windows-platform) .script-icon .icon {
-    content: -webkit-image-set(url(../Images/Script.png) 1x, url(../Images/Script@2x.png) 2x);
+    content: image-set(url(../Images/Script.png) 1x, url(../Images/Script@2x.png) 2x);
 }
  
 body:not(.mac-platform, .windows-platform) .script-icon.large .icon {
-    content: -webkit-image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
+    content: image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
 }
  
 body:not(.mac-platform, .windows-platform) .rendering-frame-icon .icon {
-    content: -webkit-image-set(url(../Images/Frames.png) 1x, url(../Images/Frames@2x.png) 2x);
+    content: image-set(url(../Images/Frames.png) 1x, url(../Images/Frames@2x.png) 2x);
 }
 
 body:not(.mac-platform, .windows-platform) .memory-icon .icon {
-    content: -webkit-image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
+    content: image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
 }
 
 body:not(.mac-platform, .windows-platform) .heap-allocations-icon .icon {
-    content: -webkit-image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
+    content: image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
 }
 
 .stopwatch-icon .icon {
@@ -90,7 +90,7 @@ body:not(.mac-platform, .windows-platform) .heap-allocations-icon .icon {
 
 /* FIXME: <https://webkit.org/b/154088> [GTK] Web Inspector: Add new GTK+ icon for timeline recording stopwatch */
 body:not(.mac-platform, .windows-platform) .stopwatch-icon .icon {
-    content: -webkit-image-set(url(../Images/Stopwatch.png) 1x, url(../Images/Stopwatch@2x.png) 2x);
+    content: image-set(url(../Images/Stopwatch.png) 1x, url(../Images/Stopwatch@2x.png) 2x);
 }
 
 .time-icon .icon {

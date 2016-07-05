@@ -57,13 +57,13 @@
 
     z-index: -2;
 
-    border-image-source: -webkit-image-set(url(../Images/BreakpointInactive.png) 1x, url(../Images/BreakpointInactive@2x.png) 2x);
+    border-image-source: image-set(url(../Images/BreakpointInactive.png) 1x, url(../Images/BreakpointInactive@2x.png) 2x);
     border-image-slice: 3 7 3 3 fill;
     border-width: 3px 7px 3px 3px;
 }
 
 .text-editor > .CodeMirror .breakpoint-resolved .CodeMirror-linenumber::before {
-    border-image-source: -webkit-image-set(url(../Images/Breakpoint.png) 1x, url(../Images/Breakpoint@2x.png) 2x);
+    border-image-source: image-set(url(../Images/Breakpoint.png) 1x, url(../Images/Breakpoint@2x.png) 2x);
 }
 
 .text-editor > .CodeMirror .breakpoint-auto-continue:not(.breakpoint-disabled) .CodeMirror-linenumber::before {
@@ -93,7 +93,7 @@
 
     z-index: -1;
 
-    background-image: -webkit-image-set(url(../Images/InstructionPointer.png) 1x, url(../Images/InstructionPointer@2x.png) 2x);
+    background-image: image-set(url(../Images/InstructionPointer.png) 1x, url(../Images/InstructionPointer@2x.png) 2x);
     background-size: 9px 100%;
     background-repeat: no-repeat;
 }

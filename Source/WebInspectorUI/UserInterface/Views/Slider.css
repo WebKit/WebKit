@@ -35,11 +35,11 @@
     top: -5px;
     width: 14px;
     height: 17px;
-    content: -webkit-image-set(url(../Images/SliderThumb.png) 1x, url(../Images/SliderThumb@2x.png) 2x);
+    content: image-set(url(../Images/SliderThumb.png) 1x, url(../Images/SliderThumb@2x.png) 2x);
 }
 
 .slider > img.dragging {
-    content: -webkit-image-set(url(../Images/SliderThumbPressed.png) 1x, url(../Images/SliderThumbPressed@2x.png) 2x);
+    content: image-set(url(../Images/SliderThumbPressed.png) 1x, url(../Images/SliderThumbPressed@2x.png) 2x);
 }
 
 @media (-webkit-min-device-pixel-ratio: 2) {
