@@ -1,72 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector/resources/inspector-test.js"></script>
-<script type="text/javascript" src="./resources/break-on-exception-tests.js"></script>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/break-on-exception-tests.js"></script>
 <script>
-function test() {
-    function doExceptionTest(testName, exceptionBreakType, resumeAction)
-    {
-        var pauses = 0;
-        var index = 0;
+TestPage.allowUncaughtExceptions = true;
 
-        function runTestCase(test) {
-            InspectorTest.evaluateInPage("setTimeout(" + test + ", 50)");
-        }
+function test()
+{
+    WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
 
-        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
-            var scriptObject = event.data.script;
-            if (!/break-on-exception-tests\.js$/.test(scriptObject.url))
-                return;
+    let suite = InspectorTest.createAsyncSuite("BreakOnAnyException");
 
-            if (exceptionBreakType == 'AllExceptions')
-                WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
-            else
-                WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint.disabled = false;
-
-            runTestCase(testName);
-        });
-
-        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
-            var callFrame = WebInspector.debuggerManager.activeCallFrame;
-            if (callFrame) {
-                // Pausing.
-                InspectorTest.assert(WebInspector.debuggerManager.pauseReason == "exception");
-
-                var funcName = callFrame.functionName || "<anonymous>";
-                var location = callFrame.sourceCodeLocation;
-                var line = location.lineNumber + 1;
-                var column = location.columnNumber + 1;
-
-                InspectorTest.log("PAUSE #" + (++pauses) + " AT: " + funcName + ":" + line + ":" + column);
-                WebInspector.debuggerManager.resume();
-
-            } else {
-                // Resuming.
-                if (resumeAction == 'FinishOnResume')
-                    InspectorTest.completeTest();
+    function addTestCase({name, description, expression}) {
+        suite.addTestCase({
+            name, description,
+            test: (resolve, reject) => {
+                InspectorTest.evaluateInPage(expression);
+                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                    InspectorTest.expectThat(WebInspector.debuggerManager.pauseReason === "exception", "Should pause for exception.");
+                    let callFrame = WebInspector.debuggerManager.activeCallFrame;
+                    let name = callFrame.functionName || "<anonymous>";
+                    let location = callFrame.sourceCodeLocation;
+                    let line = location.lineNumber + 1;
+                    let column = location.columnNumber + 1;
+                    InspectorTest.log(`PAUSE AT ${name}:${line}:${column}`);
+                    WebInspector.debuggerManager.resume().then(resolve, reject);
+                });
             }
         });
-
-        // This is a signal mechanism for the web process to tell us that the test is done.
-        // The web process fires the signal by doing console.log("DONE").
-        WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
-            var message = event.data.message;
-            if (!message.parameters || message.parameters.length !== 1)
-                return;
-            if (message.parameters[0].type !== "string" || message.parameters[0].description !== "DONE")
-                return;
-            InspectorTest.completeTest();
-        });
-
-        InspectorTest.reloadPage();
     }
 
-    doExceptionTest('doThrow', 'AllExceptions', 'IgnoreResume');
+    addTestCase({
+        name: "BreakOnAnyException.UncaughtExceptionBasic",
+        description: "Break on an uncaught exception thrown in a function.",
+        expression: "setTimeout(doThrow)",
+    });
+
+    addTestCase({
+        name: "BreakOnAnyException.UncaughtExceptionInFinally",
+        description: "Break on an uncaught exception thrown in a finally block.",
+        expression: "setTimeout(testFinally)",
+    });
+
+    addTestCase({
+        name: "BreakOnAnyException.UncaughtExceptionThruNativeCode",
+        description: "Break on an uncaught exception thrown thru native code (Map.prototype.forEach).",
+        expression: "setTimeout(testThrowingThruNativeCode)",
+    });
+
+    addTestCase({
+        name: "BreakOnAnyException.CaughtException",
+        description: "Break on a caught exception.",
+        expression: "setTimeout(testCatch)",
+    });
+
+    suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onload="runTest()">
-    <p>Checking pause locations when pausing on all exceptions.</p>
+<p>Checking pause locations when pausing on all exceptions.</p>
 </body>
 </html>

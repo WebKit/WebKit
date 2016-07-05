@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: line 22: testFinally
-CONSOLE MESSAGE: line 7: throwing TestError
-CONSOLE MESSAGE: line 26: finally
-CONSOLE MESSAGE: line 8: TestError
-Checking pause locations when pausing on uncaught exceptions.
-
-PAUSE #1 AT: doThrow:8:22
-Uncaught exception in test page: TestError [break-on-exception-tests.js:8]
-

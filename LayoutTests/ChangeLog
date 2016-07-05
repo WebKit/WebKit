@@ -1,3 +1,68 @@
+2016-07-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION (r202529?) inspector/debugger/break-on-* tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=159272
+        <rdar://problem/27087938>
+
+        Reviewed by Timothy Hatcher.
+
+        Rewrite the break on exception and uncaught exception tests
+        to be easier to read and understand, reduce duplicated code,
+        and avoid unnecessary work (such as a reload and script check).
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        Unskip the core break-on-* tests, but mark them as Slow.
+
+        * inspector/debugger/break-on-exception-throw-in-promise.html:
+        * inspector/debugger/break-on-exception-throw-in-promise-expected.txt:
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-expected.txt:
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise.html:
+        * inspector/debugger/break-on-exception-expected.txt:
+        * inspector/debugger/break-on-exception.html:
+        * inspector/debugger/break-on-uncaught-exception-expected.txt:
+        * inspector/debugger/break-on-uncaught-exception.html:
+        Converge into 4 tests, share a significant amount of code,
+        and make them easier to read and understand.
+        
+        * inspector/debugger/break-on-exception-catch-expected.txt: Removed.
+        * inspector/debugger/break-on-exception-catch.html: Removed.
+        * inspector/debugger/break-on-exception-finally-expected.txt: Removed.
+        * inspector/debugger/break-on-exception-finally.html: Removed.
+        * inspector/debugger/break-on-exception-native-expected.txt: Removed.
+        * inspector/debugger/break-on-exception-native.html: Removed.
+        * inspector/debugger/break-on-exception-throw-in-promise-rethrow-in-catch-expected.txt: Removed.
+        * inspector/debugger/break-on-exception-throw-in-promise-rethrow-in-catch.html: Removed.
+        * inspector/debugger/break-on-exception-throw-in-promise-then-expected.txt: Removed.
+        * inspector/debugger/break-on-exception-throw-in-promise-then-with-catch-expected.txt: Removed.
+        * inspector/debugger/break-on-exception-throw-in-promise-then-with-catch.html: Removed.
+        * inspector/debugger/break-on-exception-throw-in-promise-then.html: Removed.
+        * inspector/debugger/break-on-exception-throw-in-promise-with-catch-expected.txt: Removed.
+        * inspector/debugger/break-on-exception-throw-in-promise-with-catch.html: Removed.
+        * inspector/debugger/break-on-uncaught-exception-catch-expected.txt: Removed.
+        * inspector/debugger/break-on-uncaught-exception-catch.html: Removed.
+        * inspector/debugger/break-on-uncaught-exception-finally-expected.txt: Removed.
+        * inspector/debugger/break-on-uncaught-exception-finally.html: Removed.
+        * inspector/debugger/break-on-uncaught-exception-native-expected.txt: Removed.
+        * inspector/debugger/break-on-uncaught-exception-native.html: Removed.
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-rethrow-in-catch-expected.txt: Removed.
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-rethrow-in-catch.html: Removed.
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-then-expected.txt: Removed.
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-then-with-catch-expected.txt: Removed.
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-then-with-catch.html: Removed.
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-then.html: Removed.
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-with-catch-expected.txt: Removed.
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-with-catch.html: Removed.
+        Merged into the 4 tests above.
+
+        * inspector/debugger/break-on-exception-window-onerror-expected.txt: Removed.
+        * inspector/debugger/break-on-exception-window-onerror.html: Removed.
+        * inspector/debugger/break-on-uncaught-exception-window-onerror-expected.txt: Removed.
+        * inspector/debugger/break-on-uncaught-exception-window-onerror.html: Removed.
+        Eliminate these entirely. Tests already have an onerror listener,
+        so these were actually already equivalent to the basic tests.
+
 2016-07-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/restore-from-page-cache.html as a flaky failure on El Capitan

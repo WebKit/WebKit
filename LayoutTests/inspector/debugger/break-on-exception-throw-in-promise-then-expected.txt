@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 55: testThrowingInPromiseThen
-CONSOLE MESSAGE: line 57: in promise
-CONSOLE MESSAGE: line 60: in promise.then
-CONSOLE MESSAGE: line 7: throwing TestError
-Checking pause locations when pausing on all exceptions.
-
-PAUSE #1 AT: doThrow:8:22
-

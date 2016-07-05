@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: line 44: testThrowingInPromiseWithCatch
-CONSOLE MESSAGE: line 46: in promise
-CONSOLE MESSAGE: line 7: throwing TestError
-CONSOLE MESSAGE: line 49: in promise.catch
-CONSOLE MESSAGE: line 50: DONE
-Checking pause locations when pausing on uncaught exceptions.
-
-PAUSE #1 AT: doThrow:8:22
-

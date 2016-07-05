@@ -1,72 +1,80 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector/resources/inspector-test.js"></script>
-<script type="text/javascript" src="./resources/break-on-exception-tests.js"></script>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/break-on-exception-tests.js"></script>
 <script>
-function test() {
-    function doExceptionTest(testName, exceptionBreakType, resumeAction)
-    {
-        var pauses = 0;
-        var index = 0;
+TestPage.allowUncaughtExceptions = true;
 
-        function runTestCase(test) {
-            InspectorTest.evaluateInPage("setTimeout(" + test + ", 50)");
-        }
+function test()
+{
+    // Pause on uncaught exception behavior in Promises is likely to change. This tests our
+    // current behavior of not pausing for uncaught exception when the Promise swallows
+    // the exception. See these bugs:
+    // FIXME: <https://webkit.org/b/124066> Uncaught exceptions raised in promise completion functions are not printed to console
+    // FIXME: <https://webkit.org/b/147502> Uncaught Exception in promise does not trigger break on uncaught exception breakpoint
 
-        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
-            var scriptObject = event.data.script;
-            if (!/break-on-exception-tests\.js$/.test(scriptObject.url))
-                return;
+    WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint.disabled = false;
 
-            if (exceptionBreakType == 'AllExceptions')
-                WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
-            else
-                WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint.disabled = false;
+    let suite = InspectorTest.createAsyncSuite("BreakOnUncaughtException.Promise");
 
-            runTestCase(testName);
-        });
+    function addTestCase({name, description, expression}) {
+        suite.addTestCase({
+            name, description,
+            test: (resolve, reject) => {
+                InspectorTest.evaluateInPage(expression);
+                InspectorTest.evaluateInPage(`setTimeout(() => { TestPage.dispatchEventToFrontend("AfterTestFunction"); }, 50)`);
 
-        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
-            var callFrame = WebInspector.debuggerManager.activeCallFrame;
-            if (callFrame) {
-                // Pausing.
-                InspectorTest.assert(WebInspector.debuggerManager.pauseReason == "exception");
+                let listener = WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                    InspectorTest.fail("Should not have paused.");
+                    WebInspector.debuggerManager.resume();
+                    reject();
+                });
 
-                var funcName = callFrame.functionName || "<anonymous>";
-                var location = callFrame.sourceCodeLocation;
-                var line = location.lineNumber + 1;
-                var column = location.columnNumber + 1;
-
-                InspectorTest.log("PAUSE #" + (++pauses) + " AT: " + funcName + ":" + line + ":" + column);
-                WebInspector.debuggerManager.resume();
-
-            } else {
-                // Resuming.
-                if (resumeAction == 'FinishOnResume')
-                    InspectorTest.completeTest();
+                InspectorTest.singleFireEventListener("AfterTestFunction", (event) => {
+                    InspectorTest.pass("Should not pause, exception is 'caught' by Promise.");
+                    WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.Paused, listener);
+                    resolve();
+                });
             }
         });
-
-        // This is a signal mechanism for the web process to tell us that the test is done.
-        // The web process fires the signal by doing console.log("DONE").
-        WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
-            var message = event.data.message;
-            if (!message.parameters || message.parameters.length !== 1)
-                return;
-            if (message.parameters[0].type !== "string" || message.parameters[0].description !== "DONE")
-                return;
-            InspectorTest.completeTest();
-        });
-
-        InspectorTest.reloadPage();
     }
 
-    doExceptionTest('testThrowingInPromise', 'UncaughtExceptions', 'FinishOnResume');
+    addTestCase({
+        name: "BreakOnUncaughtException.Promise.ExceptionInPromiseConstructor",
+        description: "Break on an exception thrown in Promise constructor.",
+        expression: "setTimeout(testThrowingInPromise)",
+    });
+
+    addTestCase({
+        name: "BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithoutCatch",
+        description: "Break on an exception thrown in Promise then handler with no catch handler.",
+        expression: "setTimeout(testThrowingInPromiseThen)",
+    });
+
+    addTestCase({
+        name: "BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithCatch",
+        description: "Break on an exception thrown in Promise then handler with a catch handler.",
+        expression: "setTimeout(testThrowingInPromiseThenWithCatch)",
+    });
+
+    addTestCase({
+        name: "BreakOnUncaughtException.Promise.ExceptionInPromiseCatch",
+        description: "Break on an exception thrown in Promise catch with no then handler.",
+        expression: "setTimeout(testThrowingInPromiseWithCatch)",
+    });
+
+    addTestCase({
+        name: "BreakOnUncaughtException.Promise.ExceptionInPromiseThenAndRethrownInCatch",
+        description: "Break on an exception thrown in Promise then handler, and then again when rethrown in catch handler.",
+        expression: "setTimeout(testThrowingInPromiseWithRethrowInCatch)",
+    });
+
+    suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onload="runTest()">
-    <p>Checking pause locations when pausing on uncaught exceptions.</p>
+<p>Checking no pauses within Promises when pausing on uncaught exceptions.</p>
 </body>
 </html>
