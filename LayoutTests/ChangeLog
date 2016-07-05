@@ -1,3 +1,12 @@
+2016-07-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking fast/history/page-cache-webdatabase-pending-transaction.html as flaky on ios-simulator-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=159379
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-07-05  Frederic Wang  <fwang@igalia.com>
 
         Unskip mathml/presentation/fractions-box.html

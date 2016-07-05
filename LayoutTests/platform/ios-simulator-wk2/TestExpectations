@@ -1911,3 +1911,5 @@ svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure ]
 svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure ]
 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure ]
+
+webkit.org/b/159379 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Failure ]
