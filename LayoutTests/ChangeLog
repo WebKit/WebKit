@@ -1,3 +1,18 @@
+2016-07-05  Enrica Casucci  <enrica@apple.com>
+
+        HTMLAttachment elements don't receive clicks after the first on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=159310
+        rdar://problem/25776940
+
+        Reviewed by Tim Horton.
+
+        Updated existing test to correctly reflect the new behavior.
+
+        * fast/attachment/attachment-select-on-click.html:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/fast/attachment/attachment-select-on-click-expected.txt:
+        * platform/mac/fast/attachment/attachment-select-on-click-expected.txt:
+
 2016-07-05  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] The prototype cycle checks throws the wrong error type

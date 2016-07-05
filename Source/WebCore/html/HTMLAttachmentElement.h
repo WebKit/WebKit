@@ -52,7 +52,13 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
-    bool shouldSelectOnMouseDown() override { return true; }
+    bool shouldSelectOnMouseDown() override {
+#if PLATFORM(IOS)
+        return false;
+#else
+        return true;
+#endif
+    }
     bool canContainRangeEndPoint() const override { return false; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     
