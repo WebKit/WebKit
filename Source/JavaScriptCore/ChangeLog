@@ -1,3 +1,16 @@
+2016-07-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] The prototype cycle checks throws the wrong error type
+        https://bugs.webkit.org/show_bug.cgi?id=159393
+
+        Reviewed by Geoffrey Garen.
+
+        We were supposed to throw the TypeError:
+        -https://tc39.github.io/ecma262/#sec-set-object.prototype.__proto__
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+
 2016-07-05  Saam Barati  <sbarati@apple.com>
 
         our parsing for "use strict" is wrong when we first parse other directives that are not "use strict" but are located in a place where "use strict" would be valid

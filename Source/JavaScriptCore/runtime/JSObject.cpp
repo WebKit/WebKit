@@ -1366,7 +1366,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
     while (nextPrototype && nextPrototype.isObject()) {
         if (nextPrototype == this) {
             if (shouldThrowIfCantSet)
-                vm.throwException(exec, createError(exec, ASCIILiteral("cyclic __proto__ value")));
+                throwTypeError(exec, ASCIILiteral("cyclic __proto__ value"));
             return false;
         }
         if (UNLIKELY(asObject(nextPrototype)->methodTable(vm)->getPrototype != defaultGetPrototype))
