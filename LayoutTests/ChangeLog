@@ -1,3 +1,13 @@
+2016-07-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Null Node dereference in FrameSelection::notifyAccessibilityForSelectionChange of FrameSelectionAtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=159411
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations: Removed a crash expectation of
+        editing/selection/selection-in-iframe-removed-crash.html.
+
 2016-07-04  Youenn Fablet  <youenn@apple.com>
 
         Shield WebRTC JS built-ins from user scripts

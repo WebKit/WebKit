@@ -92,12 +92,15 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
     if (!m_selection.start().isNotNull() || !m_selection.end().isNotNull())
         return;
 
-    RenderObject* focusedNode = m_selection.end().containerNode()->renderer();
+    Node* focusedNode = m_selection.end().containerNode();
+    if (!focusedNode)
+        return;
+
     AXObjectCache* cache = m_frame->document()->existingAXObjectCache();
     if (!cache)
         return;
 
-    AccessibilityObject* accessibilityObject = cache->getOrCreate(focusedNode);
+    AccessibilityObject* accessibilityObject = cache->getOrCreate(focusedNode->renderer());
     if (!accessibilityObject)
         return;
 
