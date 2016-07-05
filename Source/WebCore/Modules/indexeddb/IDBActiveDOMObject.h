@@ -63,6 +63,22 @@ public:
         context->postCrossThreadTask(object, method, arguments...);
     }
 
+    void callFunctionOnOriginThread(Function<void ()>&& function)
+    {
+        if (originThreadID() == currentThread()) {
+            function();
+            return;
+        }
+
+        Locker<Lock> lock(m_scriptExecutionContextLock);
+
+        ScriptExecutionContext* context = scriptExecutionContext();
+        if (!context)
+            return;
+
+        context->postTask(WTFMove(function));
+    }
+
 protected:
     IDBActiveDOMObject(ScriptExecutionContext* context)
         : ActiveDOMObject(context)

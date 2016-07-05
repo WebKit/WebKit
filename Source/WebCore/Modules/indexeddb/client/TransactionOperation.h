@@ -62,14 +62,17 @@ public:
         m_performFunction = { };
     }
 
-    void performCompleteOnOriginThread(const IDBResultData& data)
+    void performCompleteOnOriginThread(const IDBResultData& data, RefPtr<TransactionOperation>&& lastRef)
     {
         ASSERT(isMainThread());
 
         if (m_originThreadID == currentThread())
             completed(data);
-        else
+        else {
             m_transaction->performCallbackOnOriginThread(*this, &TransactionOperation::completed, data);
+            m_transaction->callFunctionOnOriginThread([lastRef = WTFMove(lastRef)]() {
+            });
+        }
     }
 
     void completed(const IDBResultData& data)
