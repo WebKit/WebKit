@@ -88,6 +88,7 @@ public:
     } ComparisonFlags;
 
     ComparisonFlags compare(const MediaTime& rhs) const;
+    bool isBetween(const MediaTime&, const MediaTime&) const;
 
     bool isValid() const { return m_timeFlags & Valid; }
     bool isInvalid() const { return !isValid(); }

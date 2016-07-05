@@ -652,7 +652,7 @@ static bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::valu
     return a.second->decodeTime() < b.second->decodeTime();
 }
 
-static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSampleMap::MapType& samples, SourceBuffer::TrackBuffer& trackBuffer, const SourceBuffer* buffer, const char* logPrefix)
+static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMap::MapType& samples, SourceBuffer::TrackBuffer& trackBuffer, const SourceBuffer* buffer, const char* logPrefix)
 {
 #if !LOG_DISABLED
     MediaTime earliestSample = MediaTime::positiveInfiniteTime();
@@ -663,7 +663,7 @@ static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSamp
     UNUSED_PARAM(buffer);
 #endif
 
-    auto erasedRanges = TimeRanges::create();
+    PlatformTimeRanges erasedRanges;
     for (auto sampleIt : samples) {
         const DecodeOrderSampleMap::KeyType& decodeKey = sampleIt.first;
 #if !LOG_DISABLED
@@ -681,7 +681,7 @@ static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSamp
 
         auto startTime = sample->presentationTime();
         auto endTime = startTime + sample->duration();
-        erasedRanges->ranges().add(startTime, endTime);
+        erasedRanges.add(startTime, endTime);
 
 #if !LOG_DISABLED
         bytesRemoved += startBufferSize - trackBuffer.samples.sizeInBytes();
@@ -692,12 +692,40 @@ static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSamp
 #endif
     }
 
+    // Because we may have added artificial padding in the buffered ranges when adding samples, we may
+    // need to remove that padding when removing those same samples. Walk over the erased ranges looking
+    // for unbuffered areas and expand erasedRanges to encompass those areas.
+    PlatformTimeRanges additionalErasedRanges;
+    for (unsigned i = 0; i < erasedRanges.length(); ++i) {
+        auto erasedStart = erasedRanges.start(i);
+        auto erasedEnd = erasedRanges.end(i);
+        auto startIterator = trackBuffer.samples.presentationOrder().reverseFindSampleBeforePresentationTime(erasedStart);
+        if (startIterator == trackBuffer.samples.presentationOrder().rend())
+            additionalErasedRanges.add(MediaTime::zeroTime(), erasedStart);
+        else {
+            auto& previousSample = *startIterator->second;
+            if (previousSample.presentationTime() + previousSample.duration() < erasedStart)
+                additionalErasedRanges.add(previousSample.presentationTime() + previousSample.duration(), erasedStart);
+        }
+
+        auto endIterator = trackBuffer.samples.presentationOrder().findSampleOnOrAfterPresentationTime(erasedEnd);
+        if (endIterator == trackBuffer.samples.presentationOrder().end())
+            additionalErasedRanges.add(erasedEnd, MediaTime::positiveInfiniteTime());
+        else {
+            auto& nextSample = *endIterator->second;
+            if (nextSample.presentationTime() > erasedEnd)
+                additionalErasedRanges.add(erasedEnd, nextSample.presentationTime());
+        }
+    }
+    if (additionalErasedRanges.length())
+        erasedRanges.unionWith(additionalErasedRanges);
+
 #if !LOG_DISABLED
     if (bytesRemoved)
         LOG(MediaSource, "SourceBuffer::%s(%p) removed %zu bytes, start(%lf), end(%lf)", logPrefix, buffer, bytesRemoved, earliestSample.toDouble(), latestSample.toDouble());
 #endif
 
-    return WTFMove(erasedRanges);
+    return erasedRanges;
 }
 
 void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end)
@@ -742,19 +770,19 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         DecodeOrderSampleMap::iterator removeDecodeStart = trackBuffer.samples.decodeOrder().findSampleWithDecodeKey(decodeKey);
 
         DecodeOrderSampleMap::MapType erasedSamples(removeDecodeStart, removeDecodeEnd);
-        RefPtr<TimeRanges> erasedRanges = removeSamplesFromTrackBuffer(erasedSamples, trackBuffer, this, "removeCodedFrames");
+        PlatformTimeRanges erasedRanges = removeSamplesFromTrackBuffer(erasedSamples, trackBuffer, this, "removeCodedFrames");
 
         // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
         // not yet displayed samples.
         if (currentMediaTime < trackBuffer.lastEnqueuedPresentationTime) {
             PlatformTimeRanges possiblyEnqueuedRanges(currentMediaTime, trackBuffer.lastEnqueuedPresentationTime);
-            possiblyEnqueuedRanges.intersectWith(erasedRanges->ranges());
+            possiblyEnqueuedRanges.intersectWith(erasedRanges);
             if (possiblyEnqueuedRanges.length())
                 trackBuffer.needsReenqueueing = true;
         }
 
-        erasedRanges->invert();
-        m_buffered->intersectWith(*erasedRanges);
+        erasedRanges.invert();
+        m_buffered->ranges().intersectWith(erasedRanges);
         setBufferedDirty(true);
 
         // 3.4 If this object is in activeSourceBuffers, the current playback position is greater than or equal to start
@@ -1532,20 +1560,20 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             auto nextSyncIter = trackBuffer.samples.decodeOrder().findSyncSampleAfterDecodeIterator(lastDecodeIter);
             dependentSamples.insert(firstDecodeIter, nextSyncIter);
 
-            RefPtr<TimeRanges> erasedRanges = removeSamplesFromTrackBuffer(dependentSamples, trackBuffer, this, "sourceBufferPrivateDidReceiveSample");
+            PlatformTimeRanges erasedRanges = removeSamplesFromTrackBuffer(dependentSamples, trackBuffer, this, "sourceBufferPrivateDidReceiveSample");
 
             // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
             // not yet displayed samples.
             MediaTime currentMediaTime = m_source->currentTime();
             if (currentMediaTime < trackBuffer.lastEnqueuedPresentationTime) {
                 PlatformTimeRanges possiblyEnqueuedRanges(currentMediaTime, trackBuffer.lastEnqueuedPresentationTime);
-                possiblyEnqueuedRanges.intersectWith(erasedRanges->ranges());
+                possiblyEnqueuedRanges.intersectWith(erasedRanges);
                 if (possiblyEnqueuedRanges.length())
                     trackBuffer.needsReenqueueing = true;
             }
 
-            erasedRanges->invert();
-            m_buffered->intersectWith(*erasedRanges);
+            erasedRanges.invert();
+            m_buffered->ranges().intersectWith(erasedRanges);
             setBufferedDirty(true);
         }
 
@@ -1585,7 +1613,18 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         if (m_shouldGenerateTimestamps)
             m_timestampOffset = frameEndTimestamp;
 
-        m_buffered->ranges().add(presentationTimestamp, presentationTimestamp + frameDuration);
+        // Eliminate small gaps between buffered ranges by coalescing
+        // disjoint ranges separated by less than a "fudge factor".
+        auto presentationEndTime = presentationTimestamp + frameDuration;
+        auto nearestToPresentationStartTime = m_buffered->ranges().nearest(presentationTimestamp);
+        if ((presentationTimestamp - nearestToPresentationStartTime).isBetween(MediaTime::zeroTime(), currentTimeFudgeFactor()))
+            presentationTimestamp = nearestToPresentationStartTime;
+
+        auto nearestToPresentationEndTime = m_buffered->ranges().nearest(presentationEndTime);
+        if ((nearestToPresentationEndTime - presentationEndTime).isBetween(MediaTime::zeroTime(), currentTimeFudgeFactor()))
+            presentationEndTime = nearestToPresentationEndTime;
+
+        m_buffered->ranges().add(presentationTimestamp, presentationEndTime);
         m_bufferedSinceLastMonitor += frameDuration.toDouble();
         setBufferedDirty(true);
 

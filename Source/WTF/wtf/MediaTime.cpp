@@ -433,6 +433,13 @@ MediaTime::ComparisonFlags MediaTime::compare(const MediaTime& rhs) const
     return lhsFactor > rhsFactor ? GreaterThan : LessThan;
 }
 
+bool MediaTime::isBetween(const MediaTime& a, const MediaTime& b) const
+{
+    if (a > b)
+        return *this > b && *this < a;
+    return *this > a && *this < b;
+}
+
 const MediaTime& MediaTime::zeroTime()
 {
     static const MediaTime* time = new MediaTime(0, 1, Valid);

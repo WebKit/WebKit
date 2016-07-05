@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples, false, true);
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSamples() {
+        samples = concatenateSamples([
+            makeASample(0, 0, 0.99, 1, SAMPLE_FLAG.SYNC),
+            makeASample(1, 1, 0.99, 1, SAMPLE_FLAG.NONE),
+            makeASample(2, 2, 0.99, 1, SAMPLE_FLAG.NONE),
+            makeASample(3, 3, 0.99, 1, SAMPLE_FLAG.NONE),
+            makeASample(4, 4, 0.99, 1, SAMPLE_FLAG.SYNC),
+            makeASample(5, 5, 0.99, 1, SAMPLE_FLAG.NONE),
+            makeASample(6, 6, 0.99, 1, SAMPLE_FLAG.NONE),
+            makeASample(7, 7, 1, 1, SAMPLE_FLAG.NONE),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', checkBuffered, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function checkBuffered() {
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpected('sourceBuffer.buffered.start(0)', 0);
+        testExpected('sourceBuffer.buffered.end(0)', 8);
+
+        run('video.play()');
+        waitForEvent('ended', ended);
+    }
+
+    function ended() {
+        testExpected('video.currentTime', 8);
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <div>This tests the SourceBuffer.buffered() API. This test will add 8 samples with a small gap (0.01s) between each sample. The SourceBuffer should coalesce such small gaps to make a single contiguous range. The video element should also play continuously from the beginning to the end.</div>
+    <video></video>
+</body>
+</html>

@@ -1,3 +1,13 @@
+2016-07-05  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r202641): Netflix playback stalls after a few seconds
+        https://bugs.webkit.org/show_bug.cgi?id=159365
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-small-gap-expected.txt: Added.
+        * media/media-source/media-source-small-gap.html: Added.
+
 2016-07-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Sierra] Rebaseline tests to use un-mocked system font metrics
