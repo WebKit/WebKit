@@ -1433,3 +1433,7 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 webkit.org/b/159379 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Failure ]
 
 webkit.org/b/158747 [ ElCapitan ] media/restore-from-page-cache.html [ Pass Failure ]
+
+# rdar://problem/27182687
+[ Sierra+ ] canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
+[ Sierra+ ] imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]

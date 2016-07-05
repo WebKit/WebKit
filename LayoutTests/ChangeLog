@@ -1,3 +1,9 @@
+2016-07-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land test expectations for rdar://problem/27182687.
+
+        * platform/mac/TestExpectations:
+
 2016-07-05  Enrica Casucci  <enrica@apple.com>
 
         HTMLAttachment elements don't receive clicks after the first on iOS.
