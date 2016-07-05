@@ -60,7 +60,7 @@
 
 .visual-style-property-editor-link > .visual-style-property-editor-link-border {
     position: absolute;
-    top: -webkit-calc(50% - 0.5px);
+    top: calc(50% - 0.5px);
     width: 48px;
     border-top: 1px dashed hsl(0, 0%, 50%);
 }
