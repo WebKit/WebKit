@@ -397,19 +397,18 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
 {
     const unsigned lengthOfUseStrictLiteral = 12; // "use strict".length
     TreeSourceElements sourceElements = context.createSourceElements();
-    bool seenNonDirective = false;
     const Identifier* directive = 0;
     unsigned directiveLiteralLength = 0;
     auto savePoint = createSavePoint();
-    bool hasSetStrict = false;
+    bool shouldCheckForUseStrict = mode == CheckForStrictMode;
     
     while (TreeStatement statement = parseStatementListItem(context, directive, &directiveLiteralLength)) {
-        if (mode == CheckForStrictMode && !seenNonDirective) {
+        if (shouldCheckForUseStrict) {
             if (directive) {
                 // "use strict" must be the exact literal without escape sequences or line continuation.
-                if (!hasSetStrict && directiveLiteralLength == lengthOfUseStrictLiteral && m_vm->propertyNames->useStrictIdentifier == *directive) {
+                if (directiveLiteralLength == lengthOfUseStrictLiteral && m_vm->propertyNames->useStrictIdentifier == *directive) {
                     setStrictMode();
-                    hasSetStrict = true;
+                    shouldCheckForUseStrict = false; // We saw "use strict", there is no need to keep checking for it.
                     if (!isValidStrictMode()) {
                         if (m_parserState.lastFunctionName) {
                             if (m_vm->propertyNames->arguments == *m_parserState.lastFunctionName)
@@ -428,8 +427,16 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
                     propagateError();
                     continue;
                 }
-            } else
-                seenNonDirective = true;
+
+                // We saw a directive, but it wasn't "use strict". We reset our state to
+                // see if the next statement we parse is also a directive.
+                directive = nullptr;
+            } else {
+                // We saw a statement that wasn't in the form of a directive. The spec says that "use strict"
+                // is only allowed as the first statement, or after a sequence of directives before it, but
+                // not after non-directive statements.
+                shouldCheckForUseStrict = false;
+            }
         }
         context.appendStatement(sourceElements, statement);
     }
@@ -1601,7 +1608,6 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
 {
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth++;
-    directive = 0;
     int nonTrivialExpressionCount = 0;
     failIfStackOverflow();
     TreeStatement result = 0;
@@ -1720,7 +1726,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     default:
         TreeStatement exprStatement = parseExpressionStatement(context);
         if (directive && nonTrivialExpressionCount != m_parserState.nonTrivialExpressionCount)
-            directive = 0;
+            directive = nullptr;
         result = exprStatement;
         break;
     }

@@ -1,5 +1,41 @@
 2016-07-05  Saam Barati  <sbarati@apple.com>
 
+        our parsing for "use strict" is wrong when we first parse other directives that are not "use strict" but are located in a place where "use strict" would be valid
+        https://bugs.webkit.org/show_bug.cgi?id=159376
+        <rdar://problem/27108773>
+
+        Reviewed by Benjamin Poulain.
+
+        Our strict mode detection algorithm used to break if we ever saw a directive
+        that is not "use strict" but is syntactically located in a location where our
+        parser looks for "use strict". It broke as follows:
+
+        If a function started with a non "use strict" string literal, we will allow
+        "use strict" to be in any arbitrary statement inside the top level block in
+        the function body. For example, this meant that if we parsed a sequence of string
+        literals, followed by arbitrary statements, followed by "use strict", we would parse
+        the function as if it's in strict mode. This is the wrong behavior with respect to
+        the spec. This has consequences in other ways that break invariants of the language.
+        For example, we used to allow functions that are lexically nested inside what we deemed
+        a strict function to be non-strict. This used to fire an assertion if we ever skipped over
+        that function using the source provider cache, but it worked just fine in release builds.
+
+        This patch fixes this bug.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseSourceElements):
+        (JSC::Parser<LexerType>::parseStatement):
+        * tests/stress/ensure-proper-strict-mode-parsing.js: Added.
+        (foo.bar):
+        (foo):
+        (bar.foo):
+        (bar):
+        (bar.call.undefined.this.throw.new.Error.string_appeared_here.baz):
+        (baz.call.undefined.undefined.throw.new.Error.string_appeared_here.jaz):
+        (jaz.call.undefined.this.throw.new.Error.string_appeared_here.vaz):
+
+2016-07-05  Saam Barati  <sbarati@apple.com>
+
         reportAbandonedObjectGraph should report abandoned bytes based on capacity() so it works even if a GC has never happened
         https://bugs.webkit.org/show_bug.cgi?id=159222
         <rdar://problem/27001991>
