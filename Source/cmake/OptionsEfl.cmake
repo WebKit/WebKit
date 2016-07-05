@@ -39,6 +39,8 @@ if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
 endif ()
 
 add_definitions(-DBUILDING_EFL__=1)
+add_definitions(-DUSER_AGENT_EFL_MAJOR_VERSION="602")
+add_definitions(-DUSER_AGENT_EFL_MINOR_VERSION="1")
 add_definitions(-DDATA_DIR="${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}"
                 -DDEFAULT_THEME_DIR="${THEME_BINARY_DIR}")
 

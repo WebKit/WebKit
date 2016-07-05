@@ -1,3 +1,16 @@
+2016-07-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Remove mac configuration dependency in WebKit Version definition
+        https://bugs.webkit.org/show_bug.cgi?id=159407
+
+        Reviewed by Yusuke Suzuki.
+
+        EFL port has been used Version.xconfig file in WebKit/mac/Configurations.
+        in order to generate WebKitVersion.h file. But it can be simply defined
+        in cmake.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2016-07-03  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] With default verbosity, make(1) output no longer hides environment variable listings

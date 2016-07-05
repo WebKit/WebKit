@@ -26,7 +26,6 @@
 #include "config.h"
 #include "UserAgentEfl.h"
 
-#include "WebKitVersion.h"
 #include <wtf/NeverDestroyed.h>
 
 #if OS(UNIX)
@@ -57,11 +56,7 @@ static String platformVersionForUAString()
 
 static const char* versionForUAString()
 {
-#define MAKE_STRING(value) #value
-#define MAKE_VERSION(major, minor) MAKE_STRING(major) "." MAKE_STRING(minor)
-    return MAKE_VERSION(WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
-#undef MAKE_STRING
-#undef MAKE_VERSION
+    return USER_AGENT_EFL_MAJOR_VERSION "." USER_AGENT_EFL_MINOR_VERSION;
 }
 
 String standardUserAgent(const String& applicationName, const String& applicationVersion)
