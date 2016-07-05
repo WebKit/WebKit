@@ -1,3 +1,22 @@
+2016-07-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Crash @ bankofamerica.com, University of Vienna
+        https://bugs.webkit.org/show_bug.cgi?id=159439
+
+        Reviewed by Saam Barati.
+
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link): Do check for stack overflow in the arity mismatch thunk
+        because it can happen. Don't store a CallSiteIndex because we haven't
+        stored a CodeBlock yet, and our stack frame is not fully constructed,
+        so it would be an error for any client to try to load this value (and
+        operationCallArityCheck does not load this value).
+
+        * tests/stress/arity-check-ftl-throw.js: Added. New test case for stressing
+        a stack overflow with arity mismatch. Sadly, after hours of fiddling, I
+        can't seem to get this to fail in trunk. Still, it's good to have some
+        more testing in this area.
+
 2016-07-05  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] The prototype cycle checks throws the wrong error type

@@ -137,19 +137,22 @@ void link(State& state)
             CCallHelpers::TrustedImm32(codeBlock->numParameters())));
         jit.emitFunctionPrologue();
         jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        jit.store32(
-            CCallHelpers::TrustedImm32(CallSiteIndex(0).bits()),
-            CCallHelpers::tagFor(JSStack::ArgumentCount));
         jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
         CCallHelpers::Call callArityCheck = jit.call();
+
+        auto noException = jit.branch32(CCallHelpers::AboveOrEqual, GPRInfo::returnValueGPR, CCallHelpers::TrustedImm32(0));
+        jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+        jit.move(CCallHelpers::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
+        jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+        CCallHelpers::Call callLookupExceptionHandlerFromCallerFrame = jit.call();
+        jit.jumpToExceptionHandler();
+        noException.link(&jit);
+
 #if !ASSERT_DISABLED
-        // FIXME: need to make this call register with exception handling somehow. This is
-        // part of a bigger problem: FTL should be able to handle exceptions.
-        // https://bugs.webkit.org/show_bug.cgi?id=113622
-        // Until then, use a JIT ASSERT.
         jit.load64(vm.addressOfException(), GPRInfo::regT1);
         jit.jitAssertIsNull(GPRInfo::regT1);
 #endif
+
         jit.move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
         jit.emitFunctionEpilogue();
         mainPathJumps.append(jit.branchTest32(CCallHelpers::Zero, GPRInfo::argumentGPR0));
@@ -164,6 +167,7 @@ void link(State& state)
             return;
         }
         linkBuffer->link(callArityCheck, codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck);
+        linkBuffer->link(callLookupExceptionHandlerFromCallerFrame, lookupExceptionHandlerFromCallerFrame);
         linkBuffer->link(callArityFixup, FunctionPtr((vm.getCTIStub(arityFixupGenerator)).code().executableAddress()));
         linkBuffer->link(mainPathJumps, CodeLocationLabel(bitwise_cast<void*>(state.generatedFunction)));
 
