@@ -129,11 +129,11 @@ void CoordinatedImageBacking::update()
     IntRect rect(IntPoint::zero(), IntSize(m_image->size()));
 
     ImageBackingSurfaceClient surfaceClient(*m_image, rect);
-    m_surface->paintToSurface(rect, &surfaceClient);
+    m_surface->paintToSurface(rect, surfaceClient);
 
     m_nativeImagePtr = m_image->nativeImageForCurrentFrame();
 
-    m_client->updateImageBacking(id(), m_surface);
+    m_client->updateImageBacking(id(), m_surface.copyRef());
     m_isDirty = false;
 }
 

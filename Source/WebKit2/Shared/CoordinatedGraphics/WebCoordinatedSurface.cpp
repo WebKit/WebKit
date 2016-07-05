@@ -181,12 +181,10 @@ bool WebCoordinatedSurface::createHandle(Handle& handle)
     return true;
 }
 
-void WebCoordinatedSurface::paintToSurface(const IntRect& rect, CoordinatedSurface::Client* client)
+void WebCoordinatedSurface::paintToSurface(const IntRect& rect, CoordinatedSurface::Client& client)
 {
-    ASSERT(client);
-
     auto context = createGraphicsContext(rect);
-    client->paintToSurfaceContext(*context);
+    client.paintToSurfaceContext(*context);
 }
 
 #if USE(TEXTURE_MAPPER)

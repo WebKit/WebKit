@@ -72,7 +72,7 @@ bool Tile::updateBackBuffer()
 
     SurfaceUpdateInfo updateInfo;
 
-    if (!m_tiledBackingStore.client()->paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, this))
+    if (!m_tiledBackingStore.client()->paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, *this))
         return false;
 
     updateInfo.updateRect = m_dirtyRect;

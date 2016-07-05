@@ -61,12 +61,12 @@ CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost()
 
 CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage& webPage)
     : LayerTreeHost(webPage)
-    , m_coordinator(std::make_unique<CompositingCoordinator>(webPage.corePage(), this))
+    , m_coordinator(webPage.corePage(), *this)
     , m_layerFlushTimer(RunLoop::main(), this, &CoordinatedLayerTreeHost::layerFlushTimerFired)
 {
-    m_coordinator->createRootLayer(m_webPage.size());
+    m_coordinator.createRootLayer(m_webPage.size());
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    m_layerTreeContext.contextID = toCoordinatedGraphicsLayer(m_coordinator->rootLayer())->id();
+    m_layerTreeContext.contextID = toCoordinatedGraphicsLayer(m_coordinator.rootLayer())->id();
 #endif
 
     CoordinatedSurface::setFactory(createCoordinatedSurface);
@@ -90,19 +90,19 @@ void CoordinatedLayerTreeHost::cancelPendingLayerFlush()
 void CoordinatedLayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* viewOverlayRootLayer)
 {
     LayerTreeHost::setViewOverlayRootLayer(viewOverlayRootLayer);
-    m_coordinator->setViewOverlayRootLayer(viewOverlayRootLayer);
+    m_coordinator.setViewOverlayRootLayer(viewOverlayRootLayer);
 }
 
 void CoordinatedLayerTreeHost::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
-    m_coordinator->setRootCompositingLayer(graphicsLayer);
+    m_coordinator.setRootCompositingLayer(graphicsLayer);
 }
 
 void CoordinatedLayerTreeHost::invalidate()
 {
     cancelPendingLayerFlush();
 
-    m_coordinator->clearRootLayer();
+    m_coordinator.clearRootLayer();
     LayerTreeHost::invalidate();
 }
 
@@ -110,7 +110,7 @@ void CoordinatedLayerTreeHost::forceRepaint()
 {
     // This is necessary for running layout tests. Since in this case we are not waiting for a UIProcess to reply nicely.
     // Instead we are just triggering forceRepaint. But we still want to have the scripted animation callbacks being executed.
-    m_coordinator->syncDisplayState();
+    m_coordinator.syncDisplayState();
 
     // We need to schedule another flush, otherwise the forced paint might cancel a later expected flush.
     // This is aligned with LayerTreeHostCA.
@@ -119,7 +119,7 @@ void CoordinatedLayerTreeHost::forceRepaint()
     if (m_isWaitingForRenderer)
         return;
 
-    m_coordinator->flushPendingLayerChanges();
+    m_coordinator.flushPendingLayerChanges();
 }
 
 bool CoordinatedLayerTreeHost::forceRepaintAsync(uint64_t callbackID)
@@ -133,13 +133,13 @@ bool CoordinatedLayerTreeHost::forceRepaintAsync(uint64_t callbackID)
 
 void CoordinatedLayerTreeHost::sizeDidChange(const IntSize& newSize)
 {
-    m_coordinator->sizeDidChange(newSize);
+    m_coordinator.sizeDidChange(newSize);
     scheduleLayerFlush();
 }
 
 void CoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector)
 {
-    m_coordinator->setVisibleContentsRect(rect, trajectoryVector);
+    m_coordinator.setVisibleContentsRect(rect, trajectoryVector);
     scheduleLayerFlush();
 }
 
@@ -147,12 +147,12 @@ void CoordinatedLayerTreeHost::renderNextFrame()
 {
     m_isWaitingForRenderer = false;
     scheduleLayerFlush();
-    m_coordinator->renderNextFrame();
+    m_coordinator.renderNextFrame();
 }
 
 void CoordinatedLayerTreeHost::purgeBackingStores()
 {
-    m_coordinator->purgeBackingStores();
+    m_coordinator.purgeBackingStores();
 }
 
 void CoordinatedLayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
@@ -167,12 +167,12 @@ void CoordinatedLayerTreeHost::layerFlushTimerFired()
     if (m_isSuspended || m_isWaitingForRenderer)
         return;
 
-    m_coordinator->syncDisplayState();
+    m_coordinator.syncDisplayState();
 
     if (!m_isValid)
         return;
 
-    bool didSync = m_coordinator->flushPendingLayerChanges();
+    bool didSync = m_coordinator.flushPendingLayerChanges();
 
     if (m_forceRepaintAsyncCallbackID) {
         m_webPage.send(Messages::WebPageProxy::VoidCallback(m_forceRepaintAsyncCallbackID));
@@ -212,7 +212,7 @@ RefPtr<CoordinatedSurface> CoordinatedLayerTreeHost::createCoordinatedSurface(co
 
 void CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
 {
-    m_coordinator->deviceOrPageScaleFactorChanged();
+    m_coordinator.deviceOrPageScaleFactorChanged();
     m_webPage.mainFrame()->pageOverlayController().didChangeDeviceScaleFactor();
 }
 
@@ -222,7 +222,7 @@ void CoordinatedLayerTreeHost::pageBackgroundTransparencyChanged()
 
 GraphicsLayerFactory* CoordinatedLayerTreeHost::graphicsLayerFactory()
 {
-    return m_coordinator.get();
+    return &m_coordinator;
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -235,13 +235,13 @@ void CoordinatedLayerTreeHost::scheduleAnimation()
         return;
 
     scheduleLayerFlush();
-    m_layerFlushTimer.startOneShot(m_coordinator->nextAnimationServiceTime());
+    m_layerFlushTimer.startOneShot(m_coordinator.nextAnimationServiceTime());
 }
 #endif
 
 void CoordinatedLayerTreeHost::commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset)
 {
-    m_coordinator->commitScrollOffset(layerID, offset);
+    m_coordinator.commitScrollOffset(layerID, offset);
 }
 
 } // namespace WebKit

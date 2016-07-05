@@ -76,9 +76,6 @@ GeneralAreaAllocator::GeneralAreaAllocator(const IntSize& size)
     m_root = new Node();
     m_root->rect = IntRect(0, 0, m_size.width(), m_size.height());
     m_root->largestFree = m_size;
-    m_root->parent = 0;
-    m_root->left = 0;
-    m_root->right = 0;
     m_nodeCount = 1;
     setMinimumAllocation(IntSize(8, 8));
 }
@@ -128,13 +125,13 @@ void GeneralAreaAllocator::expand(const IntSize& size)
         Node* right = new Node();
         m_nodeCount += 2;
         m_root->parent = parent;
-        parent->parent = 0;
+        parent->parent = nullptr;
         parent->left = m_root;
         parent->right = right;
         parent->largestFree = m_root->rect.size();
         right->parent = parent;
-        right->left = 0;
-        right->right = 0;
+        right->left = nullptr;
+        right->right = nullptr;
         right->largestFree = m_root->rect.size();
         if (split == SplitOnX) {
             parent->rect = IntRect(m_root->rect.x(), m_root->rect.y(),
@@ -240,20 +237,15 @@ IntPoint GeneralAreaAllocator::allocateFromNode(const IntSize& size, Node* node)
     return IntPoint(-1, -1);
 }
 
-GeneralAreaAllocator::Node* GeneralAreaAllocator::splitNode
-    (Node* node, Split split)
+GeneralAreaAllocator::Node* GeneralAreaAllocator::splitNode(Node* node, Split split)
 {
     Node* left = new Node();
-    Node* right = new Node();
-    m_nodeCount += 2;
     left->parent = node;
-    left->left = 0;
-    left->right = 0;
+    Node* right = new Node();
     right->parent = node;
-    right->left = 0;
-    right->right = 0;
     node->left = left;
     node->right = right;
+    m_nodeCount += 2;
 
     if (split == SplitOnX) {
         left->rect = IntRect(node->rect.x(), node->rect.y(),
@@ -317,8 +309,8 @@ void GeneralAreaAllocator::release(const IntRect& rect)
         freeNode(node->left);
         freeNode(node->right);
         m_nodeCount -= 2;
-        node->left = 0;
-        node->right = 0;
+        node->left = nullptr;
+        node->right = nullptr;
         node->largestFree = node->rect.size();
     }
 

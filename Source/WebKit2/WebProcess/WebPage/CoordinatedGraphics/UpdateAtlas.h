@@ -41,17 +41,17 @@ class UpdateAtlas {
 public:
     class Client {
     public:
-        virtual void createUpdateAtlas(uint32_t /* id */, PassRefPtr<WebCore::CoordinatedSurface>) = 0;
+        virtual void createUpdateAtlas(uint32_t /* id */, RefPtr<WebCore::CoordinatedSurface>&&) = 0;
         virtual void removeUpdateAtlas(uint32_t /* id */) = 0;
     };
 
-    UpdateAtlas(Client*, int dimension, WebCore::CoordinatedSurface::Flags);
+    UpdateAtlas(Client&, int dimension, WebCore::CoordinatedSurface::Flags);
     ~UpdateAtlas();
 
     inline WebCore::IntSize size() const { return m_surface->size(); }
 
     // Returns false if there is no available buffer.
-    bool paintOnAvailableBuffer(const WebCore::IntSize&, uint32_t& atlasID, WebCore::IntPoint& offset, WebCore::CoordinatedSurface::Client*);
+    bool paintOnAvailableBuffer(const WebCore::IntSize&, uint32_t& atlasID, WebCore::IntPoint& offset, WebCore::CoordinatedSurface::Client&);
     void didSwapBuffers();
     bool supportsAlpha() const { return m_surface->supportsAlpha(); }
 
@@ -71,11 +71,11 @@ private:
     void buildLayoutIfNeeded();
 
 private:
-    Client* m_client;
+    Client& m_client;
     std::unique_ptr<GeneralAreaAllocator> m_areaAllocator;
     RefPtr<WebCore::CoordinatedSurface> m_surface;
-    double m_inactivityInSeconds;
-    uint32_t m_ID;
+    double m_inactivityInSeconds { 0 };
+    uint32_t m_ID { 0 };
 };
 
 } // namespace WebKit

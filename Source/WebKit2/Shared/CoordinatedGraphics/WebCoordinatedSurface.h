@@ -71,7 +71,7 @@ public:
 
     virtual ~WebCoordinatedSurface();
 
-    void paintToSurface(const WebCore::IntRect&, WebCore::CoordinatedSurface::Client*) override;
+    void paintToSurface(const WebCore::IntRect&, WebCore::CoordinatedSurface::Client&) override;
 
 #if USE(TEXTURE_MAPPER)
     void copyToTexture(RefPtr<WebCore::BitmapTexture>, const WebCore::IntRect& target, const WebCore::IntPoint& sourceOffset) override;

@@ -52,12 +52,10 @@ ThreadSafeCoordinatedSurface::~ThreadSafeCoordinatedSurface()
 {
 }
 
-void ThreadSafeCoordinatedSurface::paintToSurface(const IntRect& rect, CoordinatedSurface::Client* client)
+void ThreadSafeCoordinatedSurface::paintToSurface(const IntRect& rect, CoordinatedSurface::Client& client)
 {
-    ASSERT(client);
-
     GraphicsContext& context = beginPaint(rect);
-    client->paintToSurfaceContext(context);
+    client.paintToSurfaceContext(context);
     endPaint();
 }
 

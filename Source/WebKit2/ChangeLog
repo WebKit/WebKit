@@ -1,3 +1,67 @@
+2016-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Coordinated Graphics] Modernize and cleanup CompositingCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=159212
+
+        Reviewed by Žan Doberšek.
+
+        Changes done:
+
+          - Use references instead of pointers when possible.
+          - Add missing final/override keywords.
+          - Reduce the use of PassRefPtr
+          - Move member initializations to the declaration.
+          - Use nullptr instead of 0.
+          - Use HashMap::ensure() instead of complicated code with iterators.
+          - Avoid heap allocation when possible.
+
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::paintToSurface):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.cpp:
+        (WebKit::ThreadSafeCoordinatedSurface::paintToSurface):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.h:
+        * WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp:
+        (WebKit::GeneralAreaAllocator::expand):
+        (WebKit::GeneralAreaAllocator::splitNode):
+        (WebKit::GeneralAreaAllocator::release):
+        (WebKit::GeneralAreaAllocator::GeneralAreaAllocator): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::CompositingCoordinator):
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        (WebKit::CompositingCoordinator::createImageBackingIfNeeded):
+        (WebKit::CompositingCoordinator::updateImageBacking):
+        (WebKit::CompositingCoordinator::notifyFlushRequired):
+        (WebKit::CompositingCoordinator::paintContents):
+        (WebKit::CompositingCoordinator::createUpdateAtlas):
+        (WebKit::CompositingCoordinator::commitScrollOffset):
+        (WebKit::CompositingCoordinator::paintToSurface):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::setViewOverlayRootLayer):
+        (WebKit::CoordinatedLayerTreeHost::setRootCompositingLayer):
+        (WebKit::CoordinatedLayerTreeHost::invalidate):
+        (WebKit::CoordinatedLayerTreeHost::forceRepaint):
+        (WebKit::CoordinatedLayerTreeHost::sizeDidChange):
+        (WebKit::CoordinatedLayerTreeHost::setVisibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHost::renderNextFrame):
+        (WebKit::CoordinatedLayerTreeHost::purgeBackingStores):
+        (WebKit::CoordinatedLayerTreeHost::layerFlushTimerFired):
+        (WebKit::CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        (WebKit::CoordinatedLayerTreeHost::graphicsLayerFactory):
+        (WebKit::CoordinatedLayerTreeHost::scheduleAnimation):
+        (WebKit::CoordinatedLayerTreeHost::commitScrollOffset):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit::UpdateAtlas::~UpdateAtlas):
+        (WebKit::UpdateAtlas::buildLayoutIfNeeded):
+        (WebKit::UpdateAtlas::paintOnAvailableBuffer):
+        (WebKit::UpdateAtlasSurfaceClient::UpdateAtlasSurfaceClient): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h:
+
 2016-07-04  Brady Eidson  <beidson@apple.com>
 
         WebProcesses don't handle DatabaseProcess going away uncleanly..

@@ -85,7 +85,7 @@ private:
 
     static RefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
-    std::unique_ptr<CompositingCoordinator> m_coordinator;
+    CompositingCoordinator m_coordinator;
     bool m_isWaitingForRenderer { true };
     uint64_t m_forceRepaintAsyncCallbackID { 0 };
     RunLoop::Timer<CoordinatedLayerTreeHost> m_layerFlushTimer;

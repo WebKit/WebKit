@@ -76,26 +76,28 @@ protected:
     WebCore::IntSize roundAllocation(const WebCore::IntSize&) const;
 };
 
-class GeneralAreaAllocator : public AreaAllocator {
+class GeneralAreaAllocator final : public AreaAllocator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit GeneralAreaAllocator(const WebCore::IntSize&);
     virtual ~GeneralAreaAllocator();
 
-    void expand(const WebCore::IntSize&);
-    WebCore::IntRect allocate(const WebCore::IntSize&);
-    void release(const WebCore::IntRect&);
-    int overhead() const;
+    void expand(const WebCore::IntSize&) override;
+    WebCore::IntRect allocate(const WebCore::IntSize&) override;
+    void release(const WebCore::IntRect&) override;
+    int overhead() const override;
 
 private:
     enum Split { SplitOnX, SplitOnY };
 
     struct Node {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         WebCore::IntRect rect;
         WebCore::IntSize largestFree;
-        Node* parent;
-        Node* left;
-        Node* right;
+        Node* parent { nullptr };
+        Node* left { nullptr };
+        Node* right { nullptr };
     };
 
     Node* m_root;

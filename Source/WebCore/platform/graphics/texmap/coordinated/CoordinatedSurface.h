@@ -53,7 +53,7 @@ public:
     bool supportsAlpha() const { return flags() & SupportsAlpha; }
     IntSize size() const { return m_size; }
 
-    virtual void paintToSurface(const IntRect&, Client*) = 0;
+    virtual void paintToSurface(const IntRect&, Client&) = 0;
 
 #if USE(TEXTURE_MAPPER)
     virtual void copyToTexture(RefPtr<BitmapTexture>, const IntRect& target, const IntPoint& sourceOffset) = 0;

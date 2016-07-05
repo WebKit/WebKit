@@ -48,12 +48,12 @@ class CoordinatedSurface;
 
 namespace WebKit {
 
-class CompositingCoordinator : public WebCore::GraphicsLayerClient
+class CompositingCoordinator final : public WebCore::GraphicsLayerClient
     , public WebCore::CoordinatedGraphicsLayerClient
     , public WebCore::CoordinatedImageBacking::Client
     , public UpdateAtlas::Client
     , public WebCore::GraphicsLayerFactory {
-    WTF_MAKE_NONCOPYABLE(CompositingCoordinator); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CompositingCoordinator);
 public:
     class Client {
     public:
@@ -63,7 +63,7 @@ public:
         virtual void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) = 0;
     };
 
-    CompositingCoordinator(WebCore::Page*, CompositingCoordinator::Client*);
+    CompositingCoordinator(WebCore::Page*, CompositingCoordinator::Client&);
     virtual ~CompositingCoordinator();
 
     void setRootCompositingLayer(WebCore::GraphicsLayer*);
@@ -100,20 +100,20 @@ private:
 
     // CoordinatedImageBacking::Client
     void createImageBacking(WebCore::CoordinatedImageBackingID) override;
-    void updateImageBacking(WebCore::CoordinatedImageBackingID, PassRefPtr<WebCore::CoordinatedSurface>) override;
+    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedSurface>&&) override;
     void clearImageBackingContents(WebCore::CoordinatedImageBackingID) override;
     void removeImageBacking(WebCore::CoordinatedImageBackingID) override;
 
     // CoordinatedGraphicsLayerClient
     bool isFlushingLayerChanges() const override { return m_isFlushingLayerChanges; }
     WebCore::FloatRect visibleContentsRect() const override;
-    PassRefPtr<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) override;
+    Ref<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
-    bool paintToSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& /* atlasID */, WebCore::IntPoint&, WebCore::CoordinatedSurface::Client*) override;
+    bool paintToSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& /* atlasID */, WebCore::IntPoint&, WebCore::CoordinatedSurface::Client&) override;
     void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;
 
     // UpdateAtlas::Client
-    void createUpdateAtlas(uint32_t atlasID, PassRefPtr<WebCore::CoordinatedSurface>) override;
+    void createUpdateAtlas(uint32_t atlasID, RefPtr<WebCore::CoordinatedSurface>&&) override;
     void removeUpdateAtlas(uint32_t atlasID) override;
 
     // GraphicsLayerFactory
@@ -130,11 +130,11 @@ private:
     double timestamp() const;
 
     WebCore::Page* m_page;
-    CompositingCoordinator::Client* m_client;
+    CompositingCoordinator::Client& m_client;
 
     std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
-    WebCore::GraphicsLayer* m_rootCompositingLayer;
-    WebCore::GraphicsLayer* m_overlayCompositingLayer;
+    WebCore::GraphicsLayer* m_rootCompositingLayer { nullptr };
+    WebCore::GraphicsLayer* m_overlayCompositingLayer { nullptr };
 
     WebCore::CoordinatedGraphicsState m_state;
 
@@ -145,18 +145,17 @@ private:
     Vector<std::unique_ptr<UpdateAtlas>> m_updateAtlases;
 
     // We don't send the messages related to releasing resources to renderer during purging, because renderer already had removed all resources.
-    bool m_isDestructing;
-    bool m_isPurging;
-    bool m_isFlushingLayerChanges;
+    bool m_isDestructing { false };
+    bool m_isPurging { false };
+    bool m_isFlushingLayerChanges { false };
+    bool m_shouldSyncFrame { false };
+    bool m_didInitializeRootCompositingLayer { false };
 
     WebCore::FloatRect m_visibleContentsRect;
-
-    bool m_shouldSyncFrame;
-    bool m_didInitializeRootCompositingLayer;
     WebCore::Timer m_releaseInactiveAtlasesTimer;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    double m_lastAnimationServiceTime;
+    double m_lastAnimationServiceTime { 0 };
 #endif
 };
 

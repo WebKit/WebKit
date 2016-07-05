@@ -42,7 +42,7 @@ public:
     class Client {
     public:
         virtual void createImageBacking(CoordinatedImageBackingID) = 0;
-        virtual void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>) = 0;
+        virtual void updateImageBacking(CoordinatedImageBackingID, RefPtr<CoordinatedSurface>&&) = 0;
         virtual void clearImageBackingContents(CoordinatedImageBackingID) = 0;
         virtual void removeImageBacking(CoordinatedImageBackingID) = 0;
     };
