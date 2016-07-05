@@ -1,3 +1,18 @@
+2016-07-05  Frederic Wang  <fred.wang@free.fr>
+
+        Remove obsolete test mathml/presentation/bug97990.html
+
+        This test is currently skipped on all platforms. It was a test for the
+        old flexbox-based MathML layout. The new layout ignore padding or
+        borders for MathML elements and it's not clear whether this will change
+        in the future.
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Remove skip flag for bug97990.html.
+        * mathml/presentation/bug97990-expected.html: Removed.
+        * mathml/presentation/bug97990.html: Removed.
+
 2016-07-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Null Node dereference in FrameSelection::notifyAccessibilityForSelectionChange of FrameSelectionAtk.cpp
