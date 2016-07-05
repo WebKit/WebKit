@@ -109,7 +109,7 @@ public:
     // various platforms. When adding a new type of IC, implement
     // its placeholder code here, and log the size. That way we
     // can intelligently choose sizes on various platforms.
-    NO_RETURN_DUE_TO_CRASH void dumpCacheSizesAndCrash(VM&);
+    NO_RETURN_DUE_TO_CRASH static void dumpCacheSizesAndCrash(VM&);
 };
 
 } // namespace JSC
