@@ -229,8 +229,6 @@ public:
     void deleteAllUnlinkedCodeBlocks();
 
     void didAllocate(size_t);
-    void didAbandon(size_t);
-
     bool isPagedOut(double deadline);
     
     const JITStubRoutineSet& jitStubRoutines() { return m_jitStubRoutines; }

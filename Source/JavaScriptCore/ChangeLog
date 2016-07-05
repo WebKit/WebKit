@@ -1,3 +1,24 @@
+2016-07-05  Saam Barati  <sbarati@apple.com>
+
+        reportAbandonedObjectGraph should report abandoned bytes based on capacity() so it works even if a GC has never happened
+        https://bugs.webkit.org/show_bug.cgi?id=159222
+        <rdar://problem/27001991>
+
+        Reviewed by Geoffrey Garen.
+
+        When reportAbandonedObjectGraph() was called before the first GC, it used to
+        not indicate to the GC timers that we have memory that needs to be collected
+        because the calculation was based on m_sizeAfterLastCollect (which was zero).
+        This patch makes the calculation based on capacity() which is a valid number
+        even before the first GC.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::reportAbandonedObjectGraph):
+        (JSC::Heap::protect):
+        (JSC::Heap::didAbandon): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::jitStubRoutines):
+
 2016-07-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Typo fix after r202214

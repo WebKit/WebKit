@@ -432,22 +432,17 @@ void Heap::reportAbandonedObjectGraph()
 {
     // Our clients don't know exactly how much memory they
     // are abandoning so we just guess for them.
-    double abandonedBytes = 0.1 * m_sizeAfterLastCollect;
+    size_t abandonedBytes = static_cast<size_t>(0.1 * capacity());
 
     // We want to accelerate the next collection. Because memory has just 
     // been abandoned, the next collection has the potential to 
     // be more profitable. Since allocation is the trigger for collection, 
     // we hasten the next collection by pretending that we've allocated more memory. 
-    didAbandon(abandonedBytes);
-}
-
-void Heap::didAbandon(size_t bytes)
-{
     if (m_fullActivityCallback) {
         m_fullActivityCallback->didAllocate(
             m_sizeAfterLastCollect - m_sizeAfterLastFullCollect + m_bytesAllocatedThisCycle + m_bytesAbandonedSinceLastFullCollect);
     }
-    m_bytesAbandonedSinceLastFullCollect += bytes;
+    m_bytesAbandonedSinceLastFullCollect += abandonedBytes;
 }
 
 void Heap::protect(JSValue k)
