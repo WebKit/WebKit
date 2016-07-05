@@ -40,6 +40,8 @@ public:
     ThreadIdentifier originThreadID() const { return m_originThreadID; }
 
     void contextDestroyed() final {
+        ASSERT(currentThread() == m_originThreadID);
+
         Locker<Lock> lock(m_scriptExecutionContextLock);
         ActiveDOMObject::contextDestroyed();
     }

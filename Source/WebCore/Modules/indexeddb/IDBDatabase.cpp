@@ -276,7 +276,9 @@ void IDBDatabase::connectionToServerLost(const IDBError& error)
 
     Ref<Event> event = Event::create(eventNames().errorEvent, true, false);
     event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
+
+    if (auto* context = scriptExecutionContext())
+        context->eventQueue().enqueueEvent(WTFMove(event));
 }
 
 void IDBDatabase::maybeCloseInServer()
