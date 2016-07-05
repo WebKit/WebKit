@@ -34,7 +34,7 @@
 }
 
 .timeline-record-frame.tall {
-    -webkit-mask-image: -webkit-linear-gradient(hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 1) 10%);
+    -webkit-mask-image: linear-gradient(hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 1) 10%);
 }
 
 .timeline-record-frame > .frame {
@@ -50,11 +50,11 @@
 }
 
 .timeline-record-frame.selected {
-    background: -webkit-linear-gradient(left, hsl(210, 98%, 96%), hsl(210, 98%, 96%)) no-repeat 1px -1px;
+    background: linear-gradient(to right, hsl(210, 98%, 96%), hsl(210, 98%, 96%)) no-repeat 1px -1px;
 }
 
 body.window-inactive .timeline-record-frame.selected {
-    background: -webkit-linear-gradient(left, hsl(0, 0%, 96%), hsl(0, 0%, 96%)) no-repeat 1px -1px;
+    background: linear-gradient(to right, hsl(0, 0%, 96%), hsl(0, 0%, 96%)) no-repeat 1px -1px;
 }
 
 .timeline-record-frame.filtered > .frame {

@@ -53,11 +53,11 @@
     height: 3px;
     top: -5px;
 
-    background: -webkit-linear-gradient(left, hsl(210, 100%, 49%), hsl(210, 100%, 49%)) no-repeat 1px 0;
+    background: linear-gradient(to right, hsl(210, 100%, 49%), hsl(210, 100%, 49%)) no-repeat 1px 0;
 
     pointer-events: none;
 }
 
 body.window-inactive .timeline-overview-graph.rendering-frame > .frame-marker {
-    background-image: -webkit-linear-gradient(left, hsl(0, 0%, 60%), hsl(0, 0%, 60%));
+    background-image: linear-gradient(to right, hsl(0, 0%, 60%), hsl(0, 0%, 60%));
 }

@@ -1,5 +1,21 @@
 2016-07-05  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Switch last uses of -webkit-linear-gradient() to linear-gradient()
+        https://bugs.webkit.org/show_bug.cgi?id=159438
+        rdar://problem/27183417
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        (.timeline-overview-graph.rendering-frame > .frame-marker):
+        (body.window-inactive .timeline-overview-graph.rendering-frame > .frame-marker):
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame.tall):
+        (.timeline-record-frame.selected):
+        (body.window-inactive .timeline-record-frame.selected):
+
+2016-07-05  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Drop -webkit-calc() in completions and a single use
         https://bugs.webkit.org/show_bug.cgi?id=159435
         rdar://problem/27179340
