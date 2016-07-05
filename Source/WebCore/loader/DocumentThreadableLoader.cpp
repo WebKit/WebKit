@@ -244,9 +244,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
             // Force any subsequent request to use these checks.
             m_sameOriginRequest = false;
 
-            // Since the request is no longer same-origin, if the user didn't request credentials in
-            // the first place, update our state so we neither request them nor expect they must be allowed.
-            if (m_options.credentialRequest() == ClientDidNotRequestCredentials)
+            if (m_options.credentials == FetchOptions::Credentials::SameOrigin)
                 m_options.setAllowCredentials(DoNotAllowStoredCredentials);
 
             cleanRedirectedRequestForAccessControl(request);

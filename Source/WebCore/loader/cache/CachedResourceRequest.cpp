@@ -99,6 +99,7 @@ void CachedResourceRequest::setAsPotentiallyCrossOrigin(const String& mode, Docu
     if (mode.isNull())
         return;
     m_options.mode = FetchOptions::Mode::Cors;
+    m_options.credentials = equalLettersIgnoringASCIICase(mode, "use-credentials") ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     m_options.setAllowCredentials(equalLettersIgnoringASCIICase(mode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials);
 
     ASSERT(document.securityOrigin());

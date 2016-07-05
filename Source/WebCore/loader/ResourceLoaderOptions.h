@@ -82,25 +82,24 @@ struct ResourceLoaderOptions : public FetchOptions {
         , m_dataBufferingPolicy(BufferData)
         , m_allowCredentials(DoNotAllowStoredCredentials)
         , m_clientCredentialPolicy(DoNotAskClientForAnyCredentials)
-        , m_credentialRequest(ClientDidNotRequestCredentials)
         , m_securityCheck(DoSecurityCheck)
         , m_certificateInfoPolicy(DoNotIncludeCertificateInfo)
     {
     }
 
-    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentials allowCredentials, ClientCredentialPolicy credentialPolicy, CredentialRequest credentialRequest, SecurityCheckPolicy securityCheck, FetchOptions::Mode mode, CertificateInfoPolicy certificateInfoPolicy, ContentSecurityPolicyImposition contentSecurityPolicyImposition, DefersLoadingPolicy defersLoadingPolicy, CachingPolicy cachingPolicy)
+    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentials allowCredentials, ClientCredentialPolicy credentialPolicy, FetchOptions::Credentials credentials, SecurityCheckPolicy securityCheck, FetchOptions::Mode mode, CertificateInfoPolicy certificateInfoPolicy, ContentSecurityPolicyImposition contentSecurityPolicyImposition, DefersLoadingPolicy defersLoadingPolicy, CachingPolicy cachingPolicy)
         : m_sendLoadCallbacks(sendLoadCallbacks)
         , m_sniffContent(sniffContent)
         , m_dataBufferingPolicy(dataBufferingPolicy)
         , m_allowCredentials(allowCredentials)
         , m_clientCredentialPolicy(credentialPolicy)
-        , m_credentialRequest(credentialRequest)
         , m_securityCheck(securityCheck)
         , m_certificateInfoPolicy(certificateInfoPolicy)
         , m_contentSecurityPolicyImposition(contentSecurityPolicyImposition)
         , m_defersLoadingPolicy(defersLoadingPolicy)
         , m_cachingPolicy(cachingPolicy)
     {
+        this->credentials = credentials;
         this->mode = mode;
     }
 
@@ -114,8 +113,6 @@ struct ResourceLoaderOptions : public FetchOptions {
     void setAllowCredentials(StoredCredentials allow) { m_allowCredentials = allow; }
     ClientCredentialPolicy clientCredentialPolicy() const { return static_cast<ClientCredentialPolicy>(m_clientCredentialPolicy); }
     void setClientCredentialPolicy(ClientCredentialPolicy policy) { m_clientCredentialPolicy = policy; }
-    CredentialRequest credentialRequest() { return static_cast<CredentialRequest>(m_credentialRequest); }
-    void setCredentialRequest(CredentialRequest credentialRequest) { m_credentialRequest = credentialRequest; }
     SecurityCheckPolicy securityCheck() const { return static_cast<SecurityCheckPolicy>(m_securityCheck); }
     void setSecurityCheck(SecurityCheckPolicy check) { m_securityCheck = check; }
     CertificateInfoPolicy certificateInfoPolicy() const { return static_cast<CertificateInfoPolicy>(m_certificateInfoPolicy); }
@@ -132,7 +129,6 @@ struct ResourceLoaderOptions : public FetchOptions {
     unsigned m_dataBufferingPolicy : 1;
     unsigned m_allowCredentials : 1; // Whether HTTP credentials and cookies are sent with the request.
     unsigned m_clientCredentialPolicy : 2; // When we should ask the client for credentials (if we allow credentials at all).
-    unsigned m_credentialRequest: 1; // Whether the client (e.g. XHR) wanted credentials in the first place.
     unsigned m_securityCheck : 1;
     unsigned m_certificateInfoPolicy : 1; // Whether the response should include certificate info.
     ContentSecurityPolicyImposition m_contentSecurityPolicyImposition { ContentSecurityPolicyImposition::DoPolicyCheck };

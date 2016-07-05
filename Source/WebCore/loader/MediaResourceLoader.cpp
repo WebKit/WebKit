@@ -63,27 +63,21 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(const Resourc
         return nullptr;
 
     DataBufferingPolicy bufferingPolicy = options & LoadOption::BufferData ? WebCore::BufferData : WebCore::DoNotBufferData;
-    FetchOptions::Mode corsPolicy = !m_crossOriginMode.isNull() ? FetchOptions::Mode::Cors : FetchOptions::Mode::NoCors;
     auto cachingPolicy = options & LoadOption::DisallowCaching ? CachingPolicy::DisallowCaching : CachingPolicy::AllowCaching;
-    StoredCredentials allowCredentials = m_crossOriginMode.isNull() || equalLettersIgnoringASCIICase(m_crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
 
-    auto updatedRequest = request;
-    updatedRequest.setRequester(ResourceRequest::Requester::Media);
+    // FIXME: Skip Content Security Policy check if the element that inititated this request is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505>.
+    CachedResourceRequest cacheRequest(request, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, AllowStoredCredentials, AskClientForAllCredentials, FetchOptions::Credentials::Include, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, cachingPolicy));
+
+    cacheRequest.setAsPotentiallyCrossOrigin(m_crossOriginMode, *m_document);
+
+    cacheRequest.mutableResourceRequest().setRequester(ResourceRequest::Requester::Media);
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && PLATFORM(MAC)
     // FIXME: Workaround for <rdar://problem/26071607>. We are not able to do CORS checking on 304 responses because they
     // are usually missing the headers we need.
-    if (corsPolicy == FetchOptions::Mode::Cors)
-        updatedRequest.makeUnconditional();
+    if (cacheRequest.options().mode == FetchOptions::Mode::Cors)
+        cacheRequest.mutableResourceRequest().makeUnconditional();
 #endif
 
-    // FIXME: Skip Content Security Policy check if the element that inititated this request
-    // is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505>.
-    CachedResourceRequest cacheRequest(updatedRequest, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, allowCredentials, AskClientForAllCredentials, ClientDidNotRequestCredentials, DoSecurityCheck, corsPolicy, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, cachingPolicy));
-
-    if (!m_crossOriginMode.isNull()) {
-        ASSERT(m_document->securityOrigin());
-        updateRequestForAccessControl(cacheRequest.mutableResourceRequest(), *m_document->securityOrigin(), allowCredentials);
-    }
     CachedResourceHandle<CachedRawResource> resource = m_document->cachedResourceLoader().requestMedia(cacheRequest);
     if (!resource)
         return nullptr;
