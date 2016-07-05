@@ -102,45 +102,45 @@ layer at (0,0) size 800x600
 layer at (20,28) size 760x32 clip at (21,29) size 758x30
   RenderTextControl {TEXTAREA} at (0,2) size 760x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 754x13
-      RenderText {#text} at (0,0) size 20x13
-        text run at (0,0) width 20: "test"
+      RenderText {#text} at (0,0) size 21x13
+        text run at (0,0) width 21: "test"
 layer at (20,82) size 760x32 clip at (21,83) size 758x30
   RenderTextControl {TEXTAREA} at (0,2) size 760x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 754x13
-      RenderText {#text} at (0,0) size 20x13
-        text run at (0,0) width 20: "test"
+      RenderText {#text} at (0,0) size 21x13
+        text run at (0,0) width 21: "test"
 layer at (24,138) size 752x32 clip at (25,139) size 750x30
   RenderTextControl {TEXTAREA} at (0,2) size 752x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 746x13
-      RenderText {#text} at (0,0) size 20x13
-        text run at (0,0) width 20: "test"
+      RenderText {#text} at (0,0) size 21x13
+        text run at (0,0) width 21: "test"
 layer at (24,196) size 752x32 clip at (25,197) size 750x30
   RenderTextControl {TEXTAREA} at (0,2) size 752x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 746x13
-      RenderText {#text} at (0,0) size 20x13
-        text run at (0,0) width 20: "test"
+      RenderText {#text} at (0,0) size 21x13
+        text run at (0,0) width 21: "test"
 layer at (27,255) size 746x32 clip at (28,256) size 744x30
   RenderTextControl {TEXTAREA} at (1,3) size 746x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 740x13
-      RenderText {#text} at (0,0) size 20x13
-        text run at (0,0) width 20: "test"
+      RenderText {#text} at (0,0) size 21x13
+        text run at (0,0) width 21: "test"
 layer at (27,315) size 746x32 clip at (28,316) size 744x30
   RenderTextControl {TEXTAREA} at (1,3) size 746x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 740x13
-      RenderText {#text} at (0,0) size 20x13
-        text run at (0,0) width 20: "test"
+      RenderText {#text} at (0,0) size 21x13
+        text run at (0,0) width 21: "test"
 layer at (24,374) size 752x32 clip at (25,375) size 750x30
   RenderTextControl {TEXTAREA} at (1,3) size 752x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 746x13
-      RenderText {#text} at (0,0) size 20x13
-        text run at (0,0) width 20: "test"
+      RenderText {#text} at (0,0) size 21x13
+        text run at (0,0) width 21: "test"
 layer at (27,433) size 746x32 clip at (28,434) size 744x30
   RenderTextControl {TEXTAREA} at (2,4) size 746x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 740x13
-      RenderText {#text} at (0,0) size 20x13
-        text run at (0,0) width 20: "test"
+      RenderText {#text} at (0,0) size 21x13
+        text run at (0,0) width 21: "test"
 layer at (31,495) size 738x32 clip at (32,496) size 736x30
   RenderTextControl {TEXTAREA} at (2,4) size 738x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 732x13
-      RenderText {#text} at (0,0) size 20x13
-        text run at (0,0) width 20: "test"
+      RenderText {#text} at (0,0) size 21x13
+        text run at (0,0) width 21: "test"

@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
               RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
               RenderText {#text} at (13,2) size 36x52
                 text run at (13,2) width 28: "short"
-                text run at (10,15) width 34: "words"
+                text run at (11,15) width 32: "words"
                 text run at (16,28) width 22: "only"
                 text run at (9,41) width 36: "please"
         RenderText {#text} at (0,0) size 0x0
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
             RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
             RenderText {#text} at (13,2) size 36x52
               text run at (13,2) width 28: "short"
-              text run at (10,15) width 34: "words"
+              text run at (11,15) width 32: "words"
               text run at (16,28) width 22: "only"
               text run at (9,41) width 36: "please"
       RenderBlock {P} at (0,218) size 784x0
@@ -39,6 +39,6 @@ layer at (8,226) size 100x50
         RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
         RenderText {#text} at (13,2) size 36x52
           text run at (13,2) width 28: "short"
-          text run at (10,15) width 34: "words"
+          text run at (11,15) width 32: "words"
           text run at (16,28) width 22: "only"
           text run at (9,41) width 36: "please"

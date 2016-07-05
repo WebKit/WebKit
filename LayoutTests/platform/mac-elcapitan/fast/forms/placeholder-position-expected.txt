@@ -1,0 +1,131 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTextControl {INPUT} at (2,2) size 164x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFlexibleBox {DIV} at (3,0) size 158x19
+          RenderBlock {DIV} at (0,0) size 8x19
+          RenderBlock {DIV} at (8,3) size 131x13
+          RenderBlock {DIV} at (138,0) size 20x19
+      RenderBR {BR} at (167,16) size 1x0
+      RenderTextControl {INPUT} at (2,25) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBR {BR} at (140,39) size 1x0
+      RenderTextControl {INPUT} at (2,48) size 164x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFlexibleBox {DIV} at (3,0) size 158x19
+          RenderBlock {DIV} at (149,0) size 9x19
+          RenderBlock {DIV} at (19,3) size 131x13
+          RenderBlock {DIV} at (0,0) size 19x19
+      RenderBR {BR} at (167,62) size 1x0
+      RenderTextControl {INPUT} at (2,71) size 178x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFlexibleBox {DIV} at (3,0) size 172x19
+          RenderBlock {DIV} at (0,0) size 22x19
+          RenderBlock {DIV} at (22,3) size 131x13
+          RenderBlock {DIV} at (152,0) size 20x19
+      RenderBR {BR} at (181,85) size 1x0
+      RenderBR {BR} at (156,128) size 0x0
+      RenderTextControl {INPUT} at (2,130) size 137x33 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBR {BR} at (140,144) size 1x0
+      RenderBR {BR} at (156,214) size 0x0
+      RenderTextControl {INPUT} at (5,219) size 185x29 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
+      RenderBR {BR} at (194,239) size 1x0
+      RenderTextControl {INPUT} at (2,255) size 137x31 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (140,261) size 5x18
+        text run at (140,261) width 5: " "
+      RenderTextControl {INPUT} at (146,255) size 137x31 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (284,261) size 5x18
+        text run at (284,261) width 5: " "
+      RenderBR {BR} at (288,275) size 1x0
+      RenderTextControl {INPUT} at (2,290) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (140,290) size 5x18
+        text run at (140,290) width 5: " "
+      RenderTextControl {INPUT} at (146,290) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (284,290) size 5x18
+        text run at (284,290) width 5: " "
+      RenderTextControl {INPUT} at (290,290) size 138x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (429,290) size 5x18
+        text run at (429,290) width 5: " "
+      RenderBR {BR} at (433,304) size 1x0
+      RenderBR {BR} at (140,341) size 1x0
+layer at (21,13) size 130x13
+  RenderBlock {DIV} at (11,3) size 131x13 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 62x13
+      text run at (0,0) width 62: "placeholder"
+layer at (21,13) size 130x13
+  RenderBlock {DIV} at (0,0) size 131x13
+layer at (13,36) size 130x13
+  RenderBlock {DIV} at (3,3) size 131x13 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 62x13
+      text run at (0,0) width 62: "placeholder"
+layer at (13,36) size 130x13
+  RenderBlock {DIV} at (3,3) size 131x13
+layer at (32,59) size 130x13
+  RenderBlock {DIV} at (22,3) size 131x13 [color=#A9A9A9]
+    RenderText {#text} at (68,0) size 63x13
+      text run at (68,0) width 63: "placeholder"
+layer at (32,59) size 130x13
+  RenderBlock {DIV} at (0,0) size 131x13
+layer at (35,82) size 130x13
+  RenderBlock {DIV} at (25,3) size 131x13 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 62x13
+      text run at (0,0) width 62: "placeholder"
+layer at (35,82) size 130x13
+  RenderBlock {DIV} at (0,0) size 131x13
+layer at (10,102) size 152x32 clip at (11,103) size 150x30
+  RenderTextControl {TEXTAREA} at (2,94) size 152x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 146x13
+    RenderBlock {DIV} at (3,3) size 146x13 [color=#A9A9A9]
+      RenderText {#text} at (0,0) size 62x13
+        text run at (0,0) width 62: "placeholder"
+layer at (13,141) size 130x13
+  RenderBlock {DIV} at (3,3) size 131x13 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 62x13
+      text run at (0,0) width 62: "placeholder"
+layer at (13,141) size 130x13
+  RenderBlock {DIV} at (3,3) size 131x13
+layer at (10,175) size 152x45 clip at (11,176) size 150x43
+  RenderTextControl {TEXTAREA} at (2,167) size 152x45 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,16) size 146x13
+    RenderBlock {DIV} at (3,16) size 146x13 [color=#A9A9A9]
+      RenderText {#text} at (0,0) size 62x13
+        text run at (0,0) width 62: "placeholder"
+layer at (19,233) size 173x17
+  RenderBlock {DIV} at (6,6) size 173x17 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 82x17
+      text run at (0,0) width 82: "placeholder"
+layer at (19,233) size 173x17
+  RenderBlock {DIV} at (6,6) size 173x17
+layer at (13,266) size 130x25
+  RenderBlock {DIV} at (3,3) size 131x25
+    RenderText {#text} at (0,6) size 29x13
+      text run at (0,6) width 29: "Value"
+layer at (157,266) size 130x25
+  RenderBlock {DIV} at (3,3) size 131x25 [color=#A9A9A9]
+    RenderText {#text} at (0,6) size 62x13
+      text run at (0,6) width 62: "placeholder"
+layer at (157,266) size 130x25
+  RenderBlock {DIV} at (3,3) size 131x25
+layer at (13,301) size 130x13
+  RenderBlock {DIV} at (3,3) size 131x13
+    RenderText {#text} at (50,0) size 30x13
+      text run at (50,0) width 30: "Value"
+layer at (157,301) size 130x13
+  RenderBlock {DIV} at (3,3) size 131x13 [color=#A9A9A9]
+    RenderText {#text} at (34,0) size 63x13
+      text run at (34,0) width 63: "placeholder"
+layer at (157,301) size 130x13
+  RenderBlock {DIV} at (3,3) size 131x13
+layer at (302,301) size 130x13
+  RenderBlock {DIV} at (3,3) size 131x13 [color=#A9A9A9]
+    RenderText {#text} at (34,0) size 63x13
+      text run at (34,0) width 63: "placeholder"
+layer at (302,301) size 130x13
+  RenderBlock {DIV} at (3,3) size 131x13
+layer at (10,321) size 136x33
+  RenderTextControl {INPUT} at (2,313) size 137x33 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+layer at (13,338) size 130x13
+  RenderBlock {DIV} at (3,17) size 131x13 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 62x13
+      text run at (0,0) width 62: "placeholder"
+layer at (13,338) size 130x13
+  RenderBlock {DIV} at (3,17) size 131x13

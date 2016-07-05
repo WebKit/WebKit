@@ -28,9 +28,9 @@ layer at (0,0) size 800x600
             text run at (38,0) width 26: "\x{9}"
         RenderText {#text} at (64,0) size 39x18
           text run at (64,0) width 39: "<-Tab"
-layer at (10,62) size 152x32 clip at (11,63) size 150x30
-  RenderTextControl {TEXTAREA} at (2,2) size 152x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 146x13
-      RenderText {#text} at (0,0) size 85x13
-        text run at (0,0) width 85: "Tab->\x{9}<-Tab"
+layer at (10,62) size 161x32 clip at (11,63) size 159x30
+  RenderTextControl {TEXTAREA} at (2,2) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 155x13
+      RenderText {#text} at (0,0) size 83x13
+        text run at (0,0) width 83: "Tab->\x{9}<-Tab"
 caret: position 5 of child 2 {#text} of child 4 {DIV} of body

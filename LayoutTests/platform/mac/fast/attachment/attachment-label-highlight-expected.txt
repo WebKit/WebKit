@@ -6,9 +6,9 @@ layer at (0,0) size 800x108
       RenderAttachment {ATTACHMENT} at (0,0) size 60x77
       RenderAttachment {ATTACHMENT} at (60,0) size 90x92
       RenderAttachment {ATTACHMENT} at (150,0) size 90x92
-      RenderAttachment {ATTACHMENT} at (240,0) size 96x92
-      RenderAttachment {ATTACHMENT} at (336,0) size 102x92
-      RenderAttachment {ATTACHMENT} at (438,0) size 106x92
+      RenderAttachment {ATTACHMENT} at (240,0) size 104x92
+      RenderAttachment {ATTACHMENT} at (344,0) size 102x92
+      RenderAttachment {ATTACHMENT} at (446,0) size 106x92
       RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 2 {ATTACHMENT} of body
 selection end:   position 1 of child 7 {ATTACHMENT} of body

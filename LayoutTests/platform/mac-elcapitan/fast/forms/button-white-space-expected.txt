@@ -1,0 +1,63 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x579
+      RenderBlock {P} at (0,0) size 784x36
+        RenderInline {A} at (0,0) size 63x18 [color=#0000EE]
+          RenderText {#text} at (0,0) size 63x18
+            text run at (0,0) width 63: "Bug 5656"
+        RenderText {#text} at (62,0) size 780x36
+          text run at (62,0) width 718: " tests whether buttons force a white-space mode or not. These tests will only pass if the white-space mode is not"
+          text run at (0,18) width 175: "forced and if it is inherited."
+      RenderBlock {DIV} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 365x18
+          text run at (0,0) width 365: "Buttons should appear next to each other in a single row:"
+      RenderTable {TABLE} at (0,70) size 196x28
+        RenderTableSection {TBODY} at (0,0) size 196x28
+          RenderTableRow {TR} at (0,2) size 196x24
+            RenderTableCell {TD} at (2,2) size 192x24 [r=0 c=0 rs=1 cs=1]
+              RenderButton {BUTTON} at (3,3) size 79x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+                RenderBlock (anonymous) at (8,2) size 63x13
+                  RenderText {#text} at (0,0) size 63x13
+                    text run at (0,0) width 63: "Search Mail"
+              RenderText {#text} at (83,2) size 5x18
+                text run at (83,2) width 5: " "
+              RenderButton {BUTTON} at (89,3) size 100x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+                RenderBlock (anonymous) at (8,2) size 84x13
+                  RenderText {#text} at (0,0) size 84x13
+                    text run at (0,0) width 84: "Search the Web"
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,98) size 784x18
+        RenderText {#text} at (0,0) size 193x18
+          text run at (0,0) width 193: "Buttons should look identical:"
+      RenderBlock {DIV} at (0,116) size 784x22
+        RenderButton {BUTTON} at (2,2) size 74x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,2) size 58x13
+            RenderText {#text} at (0,0) size 58x13
+              text run at (0,0) width 58: "test button"
+      RenderBlock {DIV} at (0,138) size 784x22
+        RenderButton {BUTTON} at (2,2) size 74x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,2) size 58x13
+            RenderText {#text} at (0,0) size 58x13
+              text run at (0,0) width 24: "test "
+              text run at (23,0) width 35: "button"
+      RenderBlock {DIV} at (0,160) size 784x18
+        RenderText {#text} at (0,0) size 353x18
+          text run at (0,0) width 353: "Buttons should look identical (ignore vertical spacing):"
+      RenderBlock {DIV} at (0,178) size 784x22
+        RenderButton {BUTTON} at (2,2) size 91x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,2) size 75x13
+            RenderText {#text} at (0,0) size 75x13
+              text run at (0,0) width 75: "  test  button  "
+      RenderBlock {DIV} at (0,200) size 784x22
+        RenderButton {BUTTON} at (2,2) size 91x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,2) size 75x13
+            RenderText {#text} at (0,0) size 75x13
+              text run at (0,0) width 75: "  test  button  "
+      RenderBlock {DIV} at (0,235) size 784x22
+        RenderBlock {PRE} at (0,0) size 784x22
+          RenderButton {BUTTON} at (2,2) size 91x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,2) size 75x13
+              RenderText {#text} at (0,0) size 75x13
+                text run at (0,0) width 75: "  test  button  "

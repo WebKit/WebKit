@@ -18,23 +18,23 @@ layer at (0,0) size 800x600
         RenderText {#text} at (139,18) size 5x18
           text run at (139,18) width 5: "."
       RenderBlock (anonymous) at (0,52) size 784x467
-        RenderListBox {SELECT} at (2,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderText {#text} at (51,40) size 4x18
-          text run at (51,40) width 4: " "
-        RenderListBox {SELECT} at (57,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (108,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (159,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (210,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (261,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (312,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (363,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (414,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (465,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (516,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (567,2) size 47x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderText {#text} at (616,40) size 4x18
-          text run at (616,40) width 4: " "
-        RenderBR {BR} at (620,54) size 0x0
+        RenderListBox {SELECT} at (2,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (52,40) size 4x18
+          text run at (52,40) width 4: " "
+        RenderListBox {SELECT} at (58,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (110,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (162,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (214,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (266,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (318,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (370,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (422,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (474,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (526,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (578,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (628,40) size 4x18
+          text run at (628,40) width 4: " "
+        RenderBR {BR} at (632,54) size 0x0
         RenderText {#text} at (52,449) size 4x18
           text run at (52,449) width 4: " "
         RenderText {#text} at (0,0) size 0x0

@@ -12,8 +12,8 @@ layer at (8,8) size 100x122
   RenderBlock (positioned) {DIV} at (0,0) size 100x122
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
     RenderBlock (anonymous) at (0,100) size 100x22
-      RenderButton {BUTTON} at (2,2) size 52x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (8,2) size 36x13
-          RenderText {#text} at (0,0) size 36x13
-            text run at (0,0) width 36: "Button"
+      RenderButton {BUTTON} at (2,2) size 51x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+        RenderBlock (anonymous) at (8,2) size 35x13
+          RenderText {#text} at (0,0) size 35x13
+            text run at (0,0) width 35: "Button"
       RenderText {#text} at (0,0) size 0x0

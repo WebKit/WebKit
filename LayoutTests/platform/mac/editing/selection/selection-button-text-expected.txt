@@ -14,9 +14,9 @@ layer at (0,0) size 800x138
           RenderText {#text} at (0,19) size 61x18
             text run at (0,19) width 61: "with text "
           RenderButton {INPUT} at (62,20) size 60x18 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (8,2) size 43x13
-              RenderText at (0,0) size 43x13
-                text run at (0,0) width 43: "too little"
+            RenderBlock (anonymous) at (8,2) size 44x13
+              RenderText at (0,0) size 44x13
+                text run at (0,0) width 44: "too little"
           RenderText {#text} at (123,19) size 59x18
             text run at (123,19) width 59: " too little"
         RenderBlock {DIV} at (0,40) size 784x22

@@ -18,10 +18,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 23x18
           text run at (0,0) width 23: "abc"
         RenderBR {BR} at (22,14) size 1x0
-        RenderMenuList {SELECT} at (2,20) size 226x18 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (0,0) size 226x18
-            RenderText at (8,2) size 195x13
-              text run at (8,2) width 195: "this select box shouldn't be selected"
+        RenderMenuList {SELECT} at (2,20) size 224x18 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 224x18
+            RenderText at (8,2) size 193x13
+              text run at (8,2) width 193: "this select box shouldn't be selected"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 1 of child 0 {#text} of child 3 {DIV} of body
 selection end:   position 1 of child 1 {BR} of child 3 {DIV} of body

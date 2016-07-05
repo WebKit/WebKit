@@ -7,8 +7,8 @@ layer at (0,0) size 785x600
         RenderText {#text} at (0,0) size 317x18
           text run at (0,0) width 317: "The body should always have a vertical scrollbar."
       RenderBlock (anonymous) at (0,218) size 769x55
-        RenderText {#text} at (156,37) size 4x18
-          text run at (156,37) width 4: " "
+        RenderText {#text} at (165,37) size 4x18
+          text run at (165,37) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (8,26) size 300x100 clip at (8,26) size 285x100 scrollHeight 324
   RenderBlock {DIV} at (0,18) size 300x100
@@ -72,13 +72,13 @@ layer at (8,126) size 300x100 clip at (8,126) size 300x85 scrollWidth 1208
       text run at (0,0) width 496: "X scroll X scroll X scroll X scroll X scroll X scroll X scroll X scroll X scroll "
       text run at (495,0) width 332: "X scroll X scroll X scroll X scroll X scroll X scroll "
       text run at (826,0) width 383: "X scroll X scroll X scroll X scroll X scroll X scroll X scroll"
-layer at (10,243) size 152x32 clip at (11,244) size 135x30
-  RenderTextControl {TEXTAREA} at (2,17) size 152x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 131x13
-      RenderText {#text} at (0,0) size 87x13
-        text run at (0,0) width 87: "Textarea y-scroll"
-layer at (170,228) size 152x47 clip at (171,229) size 150x30
-  RenderTextControl {TEXTAREA} at (162,2) size 152x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 146x13
-      RenderText {#text} at (0,0) size 87x13
-        text run at (0,0) width 87: "Textarea x-scroll"
+layer at (10,243) size 161x32 clip at (11,244) size 144x30
+  RenderTextControl {TEXTAREA} at (2,17) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 140x13
+      RenderText {#text} at (0,0) size 88x13
+        text run at (0,0) width 88: "Textarea y-scroll"
+layer at (179,228) size 161x47 clip at (180,229) size 159x30
+  RenderTextControl {TEXTAREA} at (171,2) size 161x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 155x13
+      RenderText {#text} at (0,0) size 88x13
+        text run at (0,0) width 88: "Textarea x-scroll"

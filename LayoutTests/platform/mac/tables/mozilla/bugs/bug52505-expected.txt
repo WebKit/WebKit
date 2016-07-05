@@ -8,10 +8,10 @@ layer at (0,0) size 800x110
           RenderBlock (anonymous) at (8,2) size 238x13
             RenderText at (0,0) size 238x13
               text run at (0,0) width 238: "[Step 1] Set cell width to 60px (nothing seen)"
-        RenderButton {INPUT} at (2,20) size 257x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 241x13
-            RenderText at (0,0) size 241x13
-              text run at (0,0) width 241: "[Step 2] Set cell width to 20px (garbage seen)"
+        RenderButton {INPUT} at (2,20) size 258x18 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (8,2) size 242x13
+            RenderText at (0,0) size 242x13
+              text run at (0,0) width 242: "[Step 2] Set cell width to 20px (garbage seen)"
       RenderTable {TABLE} at (0,40) size 34x54
         RenderTableSection {TBODY} at (0,0) size 34x54
           RenderTableRow {TR} at (0,2) size 34x24

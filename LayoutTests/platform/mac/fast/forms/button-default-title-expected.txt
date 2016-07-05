@@ -21,8 +21,8 @@ layer at (0,0) size 785x652
       RenderBlock (anonymous) at (0,145) size 769x22
         RenderButton {INPUT} at (0,0) size 80x21 [bgcolor=#008000] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 64x13
-            RenderText at (21,0) size 22x13
-              text run at (21,0) width 22: "Foo"
+            RenderText at (22,0) size 20x13
+              text run at (22,0) width 20: "Foo"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,182) size 769x19
         RenderText {#text} at (0,0) size 316x18
@@ -48,8 +48,8 @@ layer at (0,0) size 785x652
       RenderBlock (anonymous) at (0,402) size 769x22
         RenderButton {INPUT} at (0,0) size 80x21 [bgcolor=#008000] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 64x13
-            RenderText at (16,0) size 32x13
-              text run at (16,0) width 32: "Reset"
+            RenderText at (17,0) size 30x13
+              text run at (17,0) width 30: "Reset"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,439) size 769x19
         RenderText {#text} at (0,0) size 300x18
@@ -57,8 +57,8 @@ layer at (0,0) size 785x652
       RenderBlock (anonymous) at (0,473) size 769x22
         RenderButton {INPUT} at (0,0) size 80x21 [bgcolor=#008000] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 64x13
-            RenderText at (21,0) size 22x13
-              text run at (21,0) width 22: "Foo"
+            RenderText at (22,0) size 20x13
+              text run at (22,0) width 20: "Foo"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,510) size 769x19
         RenderText {#text} at (0,0) size 316x18

@@ -1,4 +1,4 @@
-              
+             
 This tests that the readonly state of the AXValue property is correctly reported for native and non-native elements.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -28,9 +28,9 @@ layer at (68,261) size 201x17
   RenderFlexibleBox {DIV} at (60,24) size 201x17
 layer at (76,263) size 32x13 blendMode: plus-lighter
   RenderFlexibleBox {DIV} at (8,2) size 32x13 [color=#FFFFFF]
-    RenderBlock (anonymous) at (2,0) size 30x13
-      RenderText {#text} at (0,0) size 30x13
-        text run at (0,0) width 30: "00:00"
+    RenderBlock (anonymous) at (-1,0) size 33x13
+      RenderText {#text} at (0,0) size 33x13
+        text run at (0,0) width 33: "00:00"
 layer at (118,261) size 96x17
   RenderFlexibleBox {DIV} at (50,0) size 96x17
 layer at (118,261) size 96x17 blendMode: plus-lighter
@@ -40,9 +40,9 @@ layer at (118,261) size 96x17 blendMode: plus-lighter
         RenderBlock {DIV} at (0,0) size 3x15
 layer at (224,263) size 37x13 blendMode: plus-lighter
   RenderFlexibleBox {DIV} at (156,2) size 37x13 [color=#FFFFFF]
-    RenderBlock (anonymous) at (0,0) size 35x13
-      RenderText {#text} at (0,0) size 35x13
-        text run at (0,0) width 35: "-00:06"
+    RenderBlock (anonymous) at (0,0) size 38x13
+      RenderText {#text} at (0,0) size 38x13
+        text run at (0,0) width 38: "-00:06"
 layer at (277,257) size 14x25
   RenderFlexibleBox {DIV} at (269,20) size 14x25
 layer at (277,262) size 14x15 blendMode: plus-lighter

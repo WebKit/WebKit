@@ -57,10 +57,10 @@ layer at (0,0) size 785x2386
               RenderText at (8,2) size 22x13
                 text run at (8,2) width 22: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (110,30) size 28x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 12x13
-            RenderText at (0,0) size 12x13
-              text run at (0,0) width 12: "Hi"
+        RenderButton {INPUT} at (110,30) size 27x18 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (8,2) size 11x13
+            RenderText at (0,0) size 11x13
+              text run at (0,0) width 11: "Hi"
         RenderBlock (anonymous) at (10,50) size 200x18
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,424) size 769x18
