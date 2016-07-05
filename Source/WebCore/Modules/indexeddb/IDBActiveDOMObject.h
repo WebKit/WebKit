@@ -65,7 +65,7 @@ public:
         context->postCrossThreadTask(object, method, arguments...);
     }
 
-    void callFunctionOnOriginThread(Function<void ()>&& function)
+    void callFunctionOnOriginThread(WTF::Function<void ()>&& function)
     {
         if (originThreadID() == currentThread()) {
             function();
