@@ -2457,7 +2457,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
             fontProxy.drawBidiText(*c, textRun, location + offset, FontCascade::UseFallbackIfFontNotReady);
         }
 
-        auto maskImage = ImageBuffer::createCompatibleBuffer(maskRect.size(), *c);
+        auto maskImage = ImageBuffer::createCompatibleBuffer(maskRect.size(), ColorSpaceSRGB, *c);
         if (!maskImage)
             return;
 

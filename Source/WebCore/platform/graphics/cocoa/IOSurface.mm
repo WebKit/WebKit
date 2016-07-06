@@ -45,7 +45,7 @@ NSString * const WebIOSurfaceAcceleratorUnwireSurfaceKey = @"UnwireSurface";
 
 using namespace WebCore;
 
-inline std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::surfaceFromPool(IntSize size, IntSize contextSize, ColorSpace colorSpace, Format pixelFormat)
+inline std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::surfaceFromPool(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpace, Format pixelFormat)
 {
     auto cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace, pixelFormat);
     if (!cachedSurface)
@@ -55,7 +55,7 @@ inline std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::surfaceFromPool(I
     return cachedSurface;
 }
 
-std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::create(IntSize size, ColorSpace colorSpace, Format pixelFormat)
+std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::create(IntSize size, CGColorSpaceRef colorSpace, Format pixelFormat)
 {
     if (auto cachedSurface = surfaceFromPool(size, size, colorSpace, pixelFormat))
         return cachedSurface;
@@ -63,20 +63,20 @@ std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::create(IntSize size, Col
     return std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace, pixelFormat));
 }
 
-std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::create(IntSize size, IntSize contextSize, ColorSpace colorSpace, Format pixelFormat)
+std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::create(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpace, Format pixelFormat)
 {
     if (auto cachedSurface = surfaceFromPool(size, contextSize, colorSpace, pixelFormat))
         return cachedSurface;
     return std::unique_ptr<IOSurface>(new IOSurface(size, contextSize, colorSpace, pixelFormat));
 }
 
-std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::createFromSendRight(const MachSendRight& sendRight, ColorSpace colorSpace)
+std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::createFromSendRight(const MachSendRight& sendRight, CGColorSpaceRef colorSpace)
 {
     auto surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight.sendRight()));
     return IOSurface::createFromSurface(surface.get(), colorSpace);
 }
 
-std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::createFromSurface(IOSurfaceRef surface, ColorSpace colorSpace)
+std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::createFromSurface(IOSurfaceRef surface, CGColorSpaceRef colorSpace)
 {
     return std::unique_ptr<IOSurface>(new IOSurface(surface, colorSpace));
 }
@@ -89,7 +89,7 @@ std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::createFromImage(CGImageR
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
-    auto surface = IOSurface::create(IntSize(width, height), ColorSpaceSRGB);
+    auto surface = IOSurface::create(IntSize(width, height), sRGBColorSpaceRef());
     auto surfaceContext = surface->ensurePlatformContext();
     CGContextDrawImage(surfaceContext, CGRectMake(0, 0, width, height), image);
     CGContextFlush(surfaceContext);
@@ -179,7 +179,7 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat)
 
 }
 
-WebCore::IOSurface::IOSurface(IntSize size, ColorSpace colorSpace, Format format)
+WebCore::IOSurface::IOSurface(IntSize size, CGColorSpaceRef colorSpace, Format format)
     : m_colorSpace(colorSpace)
     , m_size(size)
     , m_contextSize(size)
@@ -207,7 +207,7 @@ WebCore::IOSurface::IOSurface(IntSize size, ColorSpace colorSpace, Format format
         NSLog(@"Surface creation failed for options %@", options);
 }
 
-WebCore::IOSurface::IOSurface(IntSize size, IntSize contextSize, ColorSpace colorSpace, Format pixelFormat)
+WebCore::IOSurface::IOSurface(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpace, Format pixelFormat)
     : IOSurface(size, colorSpace, pixelFormat)
 {
     ASSERT(contextSize.width() <= size.width());
@@ -215,7 +215,7 @@ WebCore::IOSurface::IOSurface(IntSize size, IntSize contextSize, ColorSpace colo
     m_contextSize = contextSize;
 }
 
-WebCore::IOSurface::IOSurface(IOSurfaceRef surface, ColorSpace colorSpace)
+WebCore::IOSurface::IOSurface(IOSurfaceRef surface, CGColorSpaceRef colorSpace)
     : m_colorSpace(colorSpace)
     , m_surface(surface)
 {
@@ -297,7 +297,7 @@ CGContextRef WebCore::IOSurface::ensurePlatformContext()
         break;
     }
     
-    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, cachedCGColorSpace(m_colorSpace), bitmapInfo));
+    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.get(), bitmapInfo));
 
     return m_cgContext.get();
 }

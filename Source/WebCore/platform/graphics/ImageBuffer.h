@@ -80,8 +80,9 @@ public:
     }
 
     // Create an image buffer compatible with the context, with suitable resolution for drawing into the buffer and then into this context.
-    static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const GraphicsContext&, bool hasAlpha = true);
-    static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, ColorSpace, const GraphicsContext&, bool hasAlpha);
+    static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const GraphicsContext&);
+    static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, ColorSpace, const GraphicsContext&);
+    static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, ColorSpace, const GraphicsContext&);
 
     static IntSize compatibleBufferSize(const FloatSize&, const GraphicsContext&);
     bool isCompatibleWithContext(const GraphicsContext&) const;
@@ -172,6 +173,9 @@ private:
     // This constructor will place its success into the given out-variable
     // so that create() knows when it should return failure.
     WEBCORE_EXPORT ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, bool& success);
+#if USE(CG)
+    ImageBuffer(const FloatSize&, float resolutionScale, CGColorSpaceRef, RenderingMode, bool& success);
+#endif
 };
 
 #if USE(CG)
