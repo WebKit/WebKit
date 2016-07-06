@@ -190,7 +190,7 @@ void NetworkResourcesData::setResourceContent(const String& requestId, const Str
         return;
     if (ensureFreeSpace(dataLength) && !resourceData->isContentEvicted()) {
         // We can not be sure that we didn't try to save this request data while it was loading, so remove it, if any.
-        if (resourceData->hasContent())
+        if (resourceData->hasContent() || resourceData->hasData())
             m_contentSize -= resourceData->removeContent();
         m_requestIdsDeque.append(requestId);
         resourceData->setContent(content, base64Encoded);

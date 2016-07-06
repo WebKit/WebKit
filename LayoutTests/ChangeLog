@@ -1,3 +1,13 @@
+2016-07-05  Johan K. Jensen  <jj@johanjensen.dk>
+
+        Web Inspector: Sending XHR with UTF8 encoded data shows garbled data in Resource sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=159358
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/inspector/network/xhr-request-data-encoded-correctly-expected.txt: Added.
+        * http/tests/inspector/network/xhr-request-data-encoded-correctly.html: Added.
+
 2016-07-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Test gardening after r202835.
