@@ -781,18 +781,48 @@ static JSValueRef scalePageByCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeUndefined(context);
 }
 
+void mouseScrollBy(double x, double y, bool continuous)
+{
+    RECT rect;
+    ::GetWindowRect(webViewWindow, &rect);
+
+    // This value is taken from Source/WebCore/platform/win/WheelEventWin.cpp
+    const float cScrollbarPixelsPerLine = 100.0f / 3.0f;
+
+    if (x) {
+        UINT scrollChars = 1;
+        ::SystemParametersInfo(SPI_GETWHEELSCROLLCHARS, 0, &scrollChars, 0);
+        x *= WHEEL_DELTA / scrollChars;
+        if (continuous)
+            x /= cScrollbarPixelsPerLine;
+        MSG msg = makeMsg(webViewWindow, WM_MOUSEHWHEEL, MAKEWPARAM(0, x), MAKELPARAM(rect.left + lastMousePosition.x, rect.top + lastMousePosition.y));
+        dispatchMessage(&msg);
+    }
+
+    if (y) {
+        UINT scrollLines = 3;
+        ::SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &scrollLines, 0);
+        y *= WHEEL_DELTA / scrollLines;
+        if (continuous)
+            y /= cScrollbarPixelsPerLine;
+        MSG msg = makeMsg(webViewWindow, WM_MOUSEWHEEL, MAKEWPARAM(0, y), MAKELPARAM(rect.left + lastMousePosition.x, rect.top + lastMousePosition.y));
+        dispatchMessage(&msg);
+    }
+}
+
 static JSValueRef mouseScrollBy(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    double delta = JSValueToNumber(context, arguments[1], exception);
+    double deltaX = JSValueToNumber(context, arguments[0], exception);
 
-    RECT rect;
-    ::GetWindowRect(webViewWindow, &rect);
+    double deltaY = 0;
 
-    MSG msg = makeMsg(webViewWindow, WM_MOUSEWHEEL, MAKEWPARAM(0, delta), MAKELPARAM(rect.left + lastMousePosition.x, rect.top + lastMousePosition.y));
-    dispatchMessage(&msg);
+    if (argumentCount >= 2)
+        deltaY = JSValueToNumber(context, arguments[1], exception);
+
+    mouseScrollBy(deltaX, deltaY, false);
 
     return JSValueMakeUndefined(context);
 }
@@ -800,6 +830,23 @@ static JSValueRef mouseScrollBy(JSContextRef context, JSObjectRef function, JSOb
 static JSValueRef mouseScrollByWithWheelAndMomentumPhasesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     return mouseScrollBy(context, function, thisObject, argumentCount, arguments, exception);
+}
+
+static JSValueRef continuousMouseScrollBy(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    double deltaX = JSValueToNumber(context, arguments[0], exception);
+
+    double deltaY = 0;
+
+    if (argumentCount >= 2)
+        deltaY = JSValueToNumber(context, arguments[1], exception);
+
+    mouseScrollBy(deltaX, deltaY, true);
+
+    return JSValueMakeUndefined(context);
 }
 
 static JSStaticFunction staticFunctions[] = {
@@ -818,6 +865,7 @@ static JSStaticFunction staticFunctions[] = {
     { "scalePageBy", scalePageByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseScrollBy", mouseScrollBy, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseScrollByWithWheelAndMomentumPhases", mouseScrollByWithWheelAndMomentumPhasesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "continuousMouseScrollBy", continuousMouseScrollBy,  kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
 

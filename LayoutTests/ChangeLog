@@ -1,5 +1,16 @@
 2016-07-05  Per Arne Vollan  <pvollan@apple.com>
 
+        Enhance Windows DRT implementation to support platform scroll wheel events.
+        https://bugs.webkit.org/show_bug.cgi?id=36002
+
+        Reviewed by Brent Fulgham.
+
+        Update test expectations.
+
+        * platform/win/TestExpectations:
+
+2016-07-05  Per Arne Vollan  <pvollan@apple.com>
+
         [Win] Layout Test http/tests/security/contentSecurityPolicy/source-list-parsing-10.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=147646
 

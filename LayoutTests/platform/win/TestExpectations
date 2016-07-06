@@ -224,23 +224,13 @@ http/tests/misc/image-checks-for-accept.html [ Skip ]
 # TODO Need to add functionality to DumpRenderTree to handle enable/disable Spatial Navigation
 fast/spatial-navigation/ [ Skip ]
 
-# TODO mouseScrollBy() and continuousMouseScrollBy() are not yet implemented in the Windows EventSender API.
-webkit.org/b/36002 fast/events/remove-child-onscroll.html [ Skip ]
-webkit.org/b/36002 fast/events/platform-wheelevent-in-scrolling-div.html [ Skip ]
-webkit.org/b/36002 fast/events/platform-wheelevent-with-delta-zero-crash.html [ Skip ]
-webkit.org/b/36002 fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Skip ]
-webkit.org/b/36002 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Skip ]
-webkit.org/b/36002 fast/events/wheelevent-direction-inverted-from-device.html [ Skip ]
-webkit.org/b/36002 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Skip ]
-webkit.org/b/36002 fast/events/wheelevent-in-text-node.html [ Skip ]
-webkit.org/b/36002 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Skip ]
-webkit.org/b/36002 fast/forms/search/search-scroll-hidden-decoration-container-crash.html [ Skip ]
-webkit.org/b/36002 fast/repaint/overflow-auto-in-overflow-auto-scrolled.html [ Skip ]
-webkit.org/b/36002 fast/repaint/overflow-scroll-in-overflow-scroll-scrolled.html [ Skip ]
-webkit.org/b/36002 fast/repaint/table-overflow-auto-in-overflow-auto-scrolled.html [ Skip ]
-webkit.org/b/36002 fast/repaint/table-overflow-scroll-in-overflow-scroll-scrolled.html [ Skip ]
-webkit.org/b/36002 scrollbars/scrollevent-iframe-no-scrolling-wheel.html [ Skip ]
-webkit.org/b/36002 scrollbars/scroll-rtl-or-bt-layer.html [ Skip ]
+# TODO Investigate why these mouse scroll tests are failing.
+fast/events/platform-wheelevent-in-scrolling-div.html [ Failure ]
+fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
+fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
+fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
+fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
+scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
 
 # TODO Needs testRunner.enableAutoResizeMode()
 fast/autoresize/ [ Skip ]

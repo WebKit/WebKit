@@ -1,3 +1,16 @@
+2016-07-05  Per Arne Vollan  <pvollan@apple.com>
+
+        Enhance Windows DRT implementation to support platform scroll wheel events.
+        https://bugs.webkit.org/show_bug.cgi?id=36002
+
+        Reviewed by Brent Fulgham.
+
+        Implement function continuousMouseScrollBy in Windows event sender.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (mouseScrollBy):
+        (continuousMouseScrollBy):
+
 2016-07-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Sierra] Rebaseline tests to use un-mocked system font metrics
