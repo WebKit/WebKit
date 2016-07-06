@@ -20,7 +20,7 @@
 #ifndef MediaPlayerPrivateGStreamerOwr_h
 #define MediaPlayerPrivateGStreamerOwr_h
 
-#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
+#if ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
 
 #include "MediaPlayerPrivateGStreamerBase.h"
 #include "MediaStreamTrackPrivate.h"
@@ -109,6 +109,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
+#endif // ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
 
 #endif // MediaPlayerPrivateGStreamerOwr_h

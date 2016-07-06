@@ -22,7 +22,7 @@
 
 #include "MediaPlayerPrivateGStreamerOwr.h"
 
-#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
+#if ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
 
 #include "GStreamerUtilities.h"
 #include "MediaPlayer.h"
@@ -336,4 +336,4 @@ GstElement* MediaPlayerPrivateGStreamerOwr::createVideoSink()
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
+#endif // ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
