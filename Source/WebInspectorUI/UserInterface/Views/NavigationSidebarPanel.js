@@ -208,6 +208,14 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         if (!treeElement || !treeElement.representedObject)
             return false;
 
+        // FIXME: <https://webkit.org/b/153634> Web Inspector: some background tabs think they are the foreground tab and do unnecessary work
+        // Do not steal a content view if we are not the active tab/sidebar.
+        if (!this.selected) {
+            let contentView = this.contentBrowser.contentViewForRepresentedObject(treeElement.representedObject);
+            if (contentView && contentView.parentContainer !== this.contentBrowser.contentViewContainer)
+                return false;
+        }
+
         let contentView = this.contentBrowser.showContentViewForRepresentedObject(treeElement.representedObject);
         if (!contentView)
             return false;

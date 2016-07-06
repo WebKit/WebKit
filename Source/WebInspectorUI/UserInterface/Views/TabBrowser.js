@@ -204,6 +204,8 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
     {
         var tabContentView = this._tabBar.selectedTabBarItem ? this._tabBar.selectedTabBarItem.representedObject : null;
 
+        this._showNavigationSidebarPanelForTabContentView(tabContentView);
+
         if (tabContentView) {
             this._recentTabContentViews.remove(tabContentView);
             this._recentTabContentViews.unshift(tabContentView);
@@ -219,7 +221,6 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
             console.assert(!this.selectedTabContentView);
         }
 
-        this._showNavigationSidebarPanelForTabContentView(tabContentView);
         this._showDetailsSidebarPanelsForTabContentView(tabContentView);
 
         this.dispatchEventToListeners(WebInspector.TabBrowser.Event.SelectedTabContentViewDidChange);

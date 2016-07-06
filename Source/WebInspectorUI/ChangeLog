@@ -1,3 +1,26 @@
+2016-07-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: sometimes reloading a page with main resource selected will show an empty content view
+        https://bugs.webkit.org/show_bug.cgi?id=158069
+        <rdar://problem/26516710>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.showDefaultContentView):
+        Continue until we get one that works.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.showDefaultContentViewForTreeElement):
+        Avoid showing a content view for a background tab if it could steal
+        the content view from a foreground tab. This is a targeted fix for
+        reload + tab content view loading behavior. A more general fix would
+        be reducing the work done by non-foreground tabs.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser.prototype._tabBarItemSelected):
+        Update navigation sidebar first so it is set when showing the TabContentView.
+
 2016-07-06  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Uncaught Exception reporter should include the currently dispatching protocol event or request/response if applicable
