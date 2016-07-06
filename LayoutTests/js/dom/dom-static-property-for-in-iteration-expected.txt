@@ -127,11 +127,11 @@ PASS a["shadowRoot"] is null
 PASS a["slot"] is 
 PASS a["previousElementSibling"] is [object HTMLDivElement]
 PASS a["nextElementSibling"] is [object HTMLScriptElement]
-PASS a["assignedSlot"] is null
 PASS a["children"] is [object HTMLCollection]
 PASS a["firstElementChild"] is null
 PASS a["lastElementChild"] is null
 PASS a["childElementCount"] is 0
+PASS a["assignedSlot"] is null
 PASS a["ALLOW_KEYBOARD_INPUT"] is 1
 PASS a["nodeName"] is A
 PASS a["nodeValue"] is null

@@ -33,3 +33,4 @@
     [RaisesException] Text               replaceWholeText(optional DOMString content = "undefined");
 };
 
+Text implements Slotable;

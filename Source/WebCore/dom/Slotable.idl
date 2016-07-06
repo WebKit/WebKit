@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,10 +24,11 @@
  *
  */
 
-// https://dom.spec.whatwg.org/#interface-nondocumenttypechildnode
 [
     NoInterfaceObject,
-] interface NonDocumentTypeChildNode {
-    readonly attribute Element previousElementSibling;
-    readonly attribute Element nextElementSibling;
+    EnabledAtRuntime=ShadowDOM,
+] interface Slotable {
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    [ImplementedAs=assignedSlotForBindings] readonly attribute HTMLSlotElement? assignedSlot;
+#endif
 };

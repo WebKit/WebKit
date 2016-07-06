@@ -1178,7 +1178,7 @@ PASS Text interface: existence and properties of interface prototype object
 PASS Text interface: existence and properties of interface prototype object's "constructor" property 
 PASS Text interface: operation splitText(unsigned long) 
 PASS Text interface: attribute wholeText 
-FAIL Text interface: attribute assignedSlot assert_own_property: expected property "assignedSlot" missing
+PASS Text interface: attribute assignedSlot 
 PASS Text must be primary interface of document.createTextNode("abc") 
 PASS Stringification of document.createTextNode("abc") 
 PASS Text interface: document.createTextNode("abc") must inherit property "splitText" with the proper type (0) 

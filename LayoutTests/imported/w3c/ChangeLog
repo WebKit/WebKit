@@ -1,5 +1,17 @@
 2016-07-06  Chris Dumez  <cdumez@apple.com>
 
+        [ShadowDOM] assignedSlot property should be on Text, not CharacterData
+        https://bugs.webkit.org/show_bug.cgi?id=159482
+        <rdar://problem/27201687>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that one more check is passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+
+2016-07-06  Chris Dumez  <cdumez@apple.com>
+
         Add support for Node.isConnected
         https://bugs.webkit.org/show_bug.cgi?id=159474
         <rdar://problem/27197947>

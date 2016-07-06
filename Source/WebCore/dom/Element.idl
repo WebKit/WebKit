@@ -241,5 +241,6 @@ dictionary ShadowRootInit {
 };
 
 Element implements ChildNode;
-Element implements ParentNode;
 Element implements NonDocumentTypeChildNode;
+Element implements ParentNode;
+Element implements Slotable;
