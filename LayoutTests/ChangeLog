@@ -1,3 +1,11 @@
+2016-07-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Correct a typo in the Mac TestExpectations file.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-07-06  Chris Dumez  <cdumez@apple.com>
 
         [ShadowDOM] assignedSlot property should be on Text, not CharacterData
