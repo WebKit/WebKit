@@ -146,8 +146,8 @@ protected:
     DrawingAreaType m_type;
     WebPage& m_webPage;
 
-#if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
-    uint64_t m_nativeSurfaceHandleForCompositing;
+#if PLATFORM(GTK) && USE(TEXTURE_MAPPER)
+    uint64_t m_nativeSurfaceHandleForCompositing { 0 };
 #endif
 
 private:

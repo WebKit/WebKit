@@ -1,3 +1,75 @@
+2016-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Duplicated code in DrawingAreaImpl and CoordinatedDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=159259
+
+        Reviewed by Žan Doberšek.
+
+        It seems that CoordinatedDrawingArea is just a copy paste of DrawingAreaImpl with non-accelerated code path
+        removed. There's actually nothing (or very little) specific to coordinated graphics in the
+        CoordinatedDrawingArea implementation. This patch renames CoordinatedDrawingArea as AcceleratedDrawingArea and
+        makes DrawingAreaImpl inherit from it, so that in case of accelerated compositing the parent class is used, and
+        DrawingAreaImpl only adds the non accelerated code path.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp.
+        (WebKit::AcceleratedDrawingArea::~AcceleratedDrawingArea):
+        (WebKit::AcceleratedDrawingArea::AcceleratedDrawingArea):
+        (WebKit::AcceleratedDrawingArea::setNeedsDisplay):
+        (WebKit::AcceleratedDrawingArea::setNeedsDisplayInRect):
+        (WebKit::AcceleratedDrawingArea::scroll):
+        (WebKit::AcceleratedDrawingArea::pageBackgroundTransparencyChanged):
+        (WebKit::AcceleratedDrawingArea::setLayerTreeStateIsFrozen):
+        (WebKit::AcceleratedDrawingArea::forceRepaint):
+        (WebKit::AcceleratedDrawingArea::forceRepaintAsync):
+        (WebKit::AcceleratedDrawingArea::setPaintingEnabled):
+        (WebKit::AcceleratedDrawingArea::updatePreferences):
+        (WebKit::AcceleratedDrawingArea::mainFrameContentSizeChanged):
+        (WebKit::AcceleratedDrawingArea::layerHostDidFlushLayers):
+        (WebKit::AcceleratedDrawingArea::graphicsLayerFactory):
+        (WebKit::AcceleratedDrawingArea::setRootCompositingLayer):
+        (WebKit::AcceleratedDrawingArea::scheduleCompositingLayerFlush):
+        (WebKit::AcceleratedDrawingArea::scheduleCompositingLayerFlushImmediately):
+        (WebKit::AcceleratedDrawingArea::updateBackingStoreState):
+        (WebKit::AcceleratedDrawingArea::sendDidUpdateBackingStoreState):
+        (WebKit::AcceleratedDrawingArea::suspendPainting):
+        (WebKit::AcceleratedDrawingArea::resumePainting):
+        (WebKit::AcceleratedDrawingArea::enterAcceleratedCompositingMode):
+        (WebKit::AcceleratedDrawingArea::exitAcceleratedCompositingModeSoon):
+        (WebKit::AcceleratedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage):
+        (WebKit::AcceleratedDrawingArea::viewStateDidChange):
+        (WebKit::AcceleratedDrawingArea::attachViewOverlayGraphicsLayer):
+        * WebProcess/WebPage/AcceleratedDrawingArea.h: Renamed from Source/WebKit2/WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h.
+        (WebKit::AcceleratedDrawingArea::exitAcceleratedCompositingModePending):
+        (WebKit::AcceleratedDrawingArea::didUpdateBackingStoreState):
+        (WebKit::AcceleratedDrawingArea::exitAcceleratedCompositingMode):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        (WebKit::DrawingAreaImpl::setNeedsDisplay):
+        (WebKit::DrawingAreaImpl::setNeedsDisplayInRect):
+        (WebKit::DrawingAreaImpl::scroll):
+        (WebKit::DrawingAreaImpl::forceRepaint):
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        (WebKit::DrawingAreaImpl::updateBackingStoreState):
+        (WebKit::DrawingAreaImpl::didUpdateBackingStoreState):
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState):
+        (WebKit::DrawingAreaImpl::suspendPainting):
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::~DrawingAreaImpl): Deleted.
+        (WebKit::DrawingAreaImpl::mainFrameContentSizeChanged): Deleted.
+        (WebKit::DrawingAreaImpl::updatePreferences): Deleted.
+        (WebKit::DrawingAreaImpl::didUpdate): Deleted.
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode): Deleted.
+        (WebKit::DrawingAreaImpl::scheduleDisplay): Deleted.
+        (WebKit::DrawingAreaImpl::displayTimerFired): Deleted.
+        (WebKit::DrawingAreaImpl::display): Deleted.
+        (WebKit::shouldPaintBoundsRect): Deleted.
+        (WebKit::DrawingAreaImpl::setNativeSurfaceHandleForCompositing): Deleted.
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+
 2016-07-06  Youenn Fablet  <youenn@apple.com>
 
         Refactor NetworkResourceLoadParameters

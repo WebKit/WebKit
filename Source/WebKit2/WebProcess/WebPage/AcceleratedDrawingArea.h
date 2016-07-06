@@ -24,24 +24,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CoordinatedDrawingArea_h
-#define CoordinatedDrawingArea_h
-
-#if USE(COORDINATED_GRAPHICS)
+#pragma once
 
 #include "DrawingArea.h"
-#include "LayerTreeHost.h"
-#include <WebCore/Region.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
 
-class CoordinatedDrawingArea : public DrawingArea {
-public:
-    CoordinatedDrawingArea(WebPage&, const WebPageCreationParameters&);
-    virtual ~CoordinatedDrawingArea();
+class LayerTreeHost;
 
-private:
+class AcceleratedDrawingArea : public DrawingArea {
+public:
+    AcceleratedDrawingArea(WebPage&, const WebPageCreationParameters&);
+    virtual ~AcceleratedDrawingArea();
+
+protected:
     // DrawingArea
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;
@@ -62,7 +59,14 @@ private:
     void scheduleCompositingLayerFlush() override;
     void scheduleCompositingLayerFlushImmediately() override;
 
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+#endif
+
+#if PLATFORM(GTK) && USE(TEXTURE_MAPPER)
+    void setNativeSurfaceHandleForCompositing(uint64_t) override;
+    void destroyNativeSurfaceHandleForCompositing(bool&) override;
+#endif
 
     void viewStateDidChange(WebCore::ViewState::Flags, bool /* wantsDidUpdateViewState */, const Vector<uint64_t>& /* callbackIDs */) override;
     void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
@@ -71,51 +75,50 @@ private:
 
     // IPC message handlers.
     void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset) override;
+
+    void exitAcceleratedCompositingModeSoon();
+    bool exitAcceleratedCompositingModePending() const { return m_exitCompositingTimer.isActive(); }
+
     virtual void suspendPainting();
     virtual void resumePainting();
 
-    void sendDidUpdateBackingStoreState();
+    virtual void sendDidUpdateBackingStoreState();
+    virtual void didUpdateBackingStoreState() { }
 
-    void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
-    void exitAcceleratedCompositingModeSoon();
-    bool exitAcceleratedCompositingModePending() const { return m_exitCompositingTimer.isActive(); }
-    void exitAcceleratedCompositingMode() { }
+    virtual void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
+    virtual void exitAcceleratedCompositingMode() { }
 
-    uint64_t m_backingStoreStateID;
+    uint64_t m_backingStoreStateID { 0 };
 
     // Whether painting is enabled. If painting is disabled, any calls to setNeedsDisplay and scroll are ignored.
-    bool m_isPaintingEnabled;
+    bool m_isPaintingEnabled { true };
 
     // Whether we're currently processing an UpdateBackingStoreState message.
-    bool m_inUpdateBackingStoreState;
+    bool m_inUpdateBackingStoreState { false };
 
     // When true, we should send an UpdateBackingStoreState message instead of any other messages
     // we normally send to the UI process.
-    bool m_shouldSendDidUpdateBackingStoreState;
+    bool m_shouldSendDidUpdateBackingStoreState { false };
 
     // True between sending the 'enter compositing' messages, and the 'exit compositing' message.
-    bool m_compositingAccordingToProxyMessages;
+    bool m_compositingAccordingToProxyMessages { false };
 
     // When true, we maintain the layer tree in its current state by not leaving accelerated compositing mode
     // and not scheduling layer flushes.
-    bool m_layerTreeStateIsFrozen;
+    bool m_layerTreeStateIsFrozen { false };
 
     // True when we were asked to exit accelerated compositing mode but couldn't because layer tree
     // state was frozen.
-    bool m_wantsToExitAcceleratedCompositingMode;
+    bool m_wantsToExitAcceleratedCompositingMode { false };
 
     // Whether painting is suspended. We'll still keep track of the dirty region but we
     // won't paint until painting has resumed again.
-    bool m_isPaintingSuspended;
+    bool m_isPaintingSuspended { false };
 
-    RunLoop::Timer<CoordinatedDrawingArea> m_exitCompositingTimer;
+    RunLoop::Timer<AcceleratedDrawingArea> m_exitCompositingTimer;
 
     // The layer tree host that handles accelerated compositing.
     RefPtr<LayerTreeHost> m_layerTreeHost;
 };
 
 } // namespace WebKit
-
-#endif // USE(COORDINATED_GRAPHICS)
-
-#endif // CoordinatedDrawingArea_h
