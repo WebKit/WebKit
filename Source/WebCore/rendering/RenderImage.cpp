@@ -28,6 +28,7 @@
 #include "config.h"
 #include "RenderImage.h"
 
+#include "AXObjectCache.h"
 #include "BitmapImage.h"
 #include "CachedImage.h"
 #include "FocusController.h"
@@ -250,6 +251,11 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
             return;
         }
         imageSizeChange = setImageSizeForAltText(imageResource().cachedImage());
+    }
+
+    if (UNLIKELY(AXObjectCache::accessibilityEnabled())) {
+        if (AXObjectCache* cache = document().existingAXObjectCache())
+            cache->recomputeIsIgnored(this);
     }
 
     repaintOrMarkForLayout(imageSizeChange, rect);

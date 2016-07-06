@@ -1,3 +1,13 @@
+2016-07-05  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Image attachment in email does not show up in AX tree
+        https://bugs.webkit.org/show_bug.cgi?id=159422
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/image-load-on-delay-expected.txt: Added.
+        * accessibility/image-load-on-delay.html: Added.
+
 2016-07-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Land test expectations for rdar://problem/27182687.

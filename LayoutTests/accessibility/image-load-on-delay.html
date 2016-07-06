@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+<button>1</button>
+<img src="resources/___.png" width=100 height=100 id="image">
+<button>2</button>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+    description("This verifies that when an image loads its resource late, the AX tree is updated to re-add the image.");
+
+    if (window.accessibilityController) {
+          window.jsTestIsAsync = true;
+          var content = accessibilityController.accessibleElementById("content");
+          debug("BEFORE: Group count: " + content.childrenCount);
+
+          document.getElementById("image").onload = function() {
+              debug("AFTER: Group count: " + content.childrenCount);
+              finishJSTest();
+          };
+
+          setTimeout(function() { 
+              document.getElementById("image").src = "resources/cake.png"; 
+          }, 1000);
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
