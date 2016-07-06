@@ -81,8 +81,12 @@ void StackVisitor::gotoNextFrame()
 void StackVisitor::unwindToMachineCodeBlockFrame()
 {
 #if ENABLE(DFG_JIT)
-    while (m_frame.isInlinedFrame())
-        gotoNextFrame();
+    if (m_frame.isInlinedFrame()) {
+        CodeOrigin codeOrigin = m_frame.inlineCallFrame()->directCaller;
+        while (codeOrigin.inlineCallFrame)
+            codeOrigin = codeOrigin.inlineCallFrame->directCaller;
+        readNonInlinedFrame(m_frame.callFrame(), &codeOrigin);
+    }
 #endif
 }
 

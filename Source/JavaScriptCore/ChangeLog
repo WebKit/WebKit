@@ -1,3 +1,37 @@
+2016-07-05  Saam Barati  <sbarati@apple.com>
+
+        StackVisitor::unwindToMachineCodeBlockFrame() may unwind past a VM entry frame when catching an exception and the frame has inlined tail calls
+        https://bugs.webkit.org/show_bug.cgi?id=159448
+        <rdar://problem/27084459>
+
+        Reviewed by Mark Lam.
+
+        Consider the following stack trace:
+        (machine) foo -> VM entry frame -> (machine) bar -> (inlined tailcall) baz
+
+        If an exception is thrown at 'baz', we will do exception unwinding,
+        which will eventually call unwindToMachineCodeBlockFrame() which will call
+        gotoNextFrame() on the 'baz' frame. The next logical frame for 'baz' is 'foo' because
+        'bar' tail called 'baz' even though there is a machine frame for 'bar' on the stack.
+        This is a bug. unwindToMachineCodeBlockFrame() should not care about the next
+        logical frame, it just wants to move StackVisitor's state to the current machine
+        frame. The bug here is that we would end up unwinding past the VM entry frame
+        which can have all kinds of terrible consequences.
+
+        This bug fixes unwindToMachineCodeBlockFrame() by having it not rely
+        on gotoNextFrame() and instead using its own mechanism for setting
+        the StackVisotor's state to the current machine frame.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::unwindToMachineCodeBlockFrame):
+        * tests/stress/dont-unwind-past-vm-entry-frame.js: Added.
+        (let.p.new.Proxy):
+        (let.p.new.Proxy.apply):
+        (bar):
+        (let.good):
+        (getItem):
+        (start):
+
 2016-07-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         RELEASE_ASSERT(!thisObject) in ObjCCallbackFunctionImpl::call when calling JSExport ObjC Constructor without operator new
