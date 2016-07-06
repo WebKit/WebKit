@@ -5067,6 +5067,8 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
     if (m_videoFullscreenMode != VideoFullscreenModeNone)
         exitFullscreen();
 
+    setPreparedForInline(true);
+
     updatePlaybackControlsManager();
     m_inActiveDocument = false;
 
