@@ -1,3 +1,13 @@
+2016-07-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Height percentages are not properly resolved for item's children
+        https://bugs.webkit.org/show_bug.cgi?id=159258
+
+        Reviewed by Sergio Villar Senin.
+
+        * fast/css-grid-layout/percent-resolution-grid-item-children-expected.txt: Added.
+        * fast/css-grid-layout/percent-resolution-grid-item-children.html: Added.
+
 2016-07-05  Youenn Fablet  <youenn@apple.com>
 
         Rebasing tests

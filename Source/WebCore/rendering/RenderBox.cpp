@@ -2989,6 +2989,8 @@ Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& hei
 #if ENABLE(CSS_GRID_LAYOUT)
     else if (hasOverrideContainingBlockLogicalHeight())
         availableHeight = overrideContainingBlockContentLogicalHeight();
+    else if (cb->isGridItem() && cb->hasOverrideLogicalContentHeight())
+        availableHeight = cb->overrideLogicalContentHeight();
 #endif
     else if (is<RenderTableCell>(*cb)) {
         if (!skippedAutoHeightContainingBlock) {
