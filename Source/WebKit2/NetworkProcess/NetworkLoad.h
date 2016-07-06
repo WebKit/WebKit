@@ -128,6 +128,7 @@ private:
     ResponseCompletionHandler m_responseCompletionHandler;
     RedirectCompletionHandler m_redirectCompletionHandler;
 #else
+    bool m_waitingForContinueCanAuthenticateAgainstProtectionSpace { false };
     RefPtr<RemoteNetworkingContext> m_networkingContext;
 #endif
     RefPtr<WebCore::ResourceHandle> m_handle;

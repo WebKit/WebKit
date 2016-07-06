@@ -79,6 +79,9 @@ NetworkLoad::~NetworkLoad()
         m_challengeCompletionHandler(AuthenticationChallengeDisposition::Cancel, { });
     if (m_task)
         m_task->clearClient();
+#elif USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    if (m_handle && m_waitingForContinueCanAuthenticateAgainstProtectionSpace)
+        m_handle->continueCanAuthenticateAgainstProtectionSpace(false);
 #endif
     if (m_handle)
         m_handle->clearClient();
@@ -334,6 +337,9 @@ void NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* han
         return;
     }
 
+#if !USE(NETWORK_SESSION)
+    m_waitingForContinueCanAuthenticateAgainstProtectionSpace = true;
+#endif
     m_client.canAuthenticateAgainstProtectionSpaceAsync(protectionSpace);
 }
 #endif
@@ -364,6 +370,8 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
         else
             NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, *m_challenge, WTFMove(completionHandler));
     }
+#else
+    m_waitingForContinueCanAuthenticateAgainstProtectionSpace = false;
 #endif
     if (m_handle)
         m_handle->continueCanAuthenticateAgainstProtectionSpace(result);
