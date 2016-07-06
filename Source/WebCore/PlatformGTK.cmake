@@ -1,7 +1,10 @@
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Linux.cmake)
-include(platform/TextureMapper.cmake)
+
+if (USE_TEXTURE_MAPPER)
+    include(platform/TextureMapper.cmake)
+endif ()
 
 set(WebCore_OUTPUT_NAME WebCoreGTK)
 

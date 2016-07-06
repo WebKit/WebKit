@@ -23,8 +23,11 @@
 #include "GLContext.h"
 #include "GraphicsContext3D.h"
 #include "PlatformLayer.h"
+
+#if USE(TEXTURE_MAPPER)
 #include "TextureMapperPlatformLayer.h"
 #include "TextureMapperPlatformLayerProxy.h"
+#endif
 
 namespace WebCore {
 

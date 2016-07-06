@@ -28,14 +28,17 @@
 #include "MainThreadNotifier.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
-#include "TextureMapperPlatformLayer.h"
-#include "TextureMapperPlatformLayerProxy.h"
 #include <glib.h>
 #include <wtf/Condition.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
+
+#if USE(TEXTURE_MAPPER)
+#include "TextureMapperPlatformLayer.h"
+#include "TextureMapperPlatformLayerProxy.h"
 #if USE(TEXTURE_MAPPER_GL)
 #include "TextureMapperGL.h"
+#endif
 #endif
 
 typedef struct _GstBaseSink GstBaseSink;
