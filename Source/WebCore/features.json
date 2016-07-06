@@ -183,15 +183,16 @@
     {
         "name": "IndexedDB",
         "status": {
-            "status": "In Development"
+            "status": "Done"
         },
         "url": "http://www.w3.org/TR/IndexedDB/",
-        "keywords": ["indexeddb", "index db"],
-        "description": "A standard interface to a browser database of records for simple values and objects.",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=149117",
+        "keywords": ["indexeddb", "index db", "indexed db", "indexed database" "idb"],
+        "description": "A standard interface to a browser database of records for simple values and objects. IndexedDB currently matches the W3C recommended spec (version 1). We are participating in development of version 2 of the spec and plan to implement new features as they stabilize.",
         "contact": {
-            "name": "Jon Davis",
-            "twitter": "@jonathandavis",
-            "email": "web-evangelist@apple.com"
+            "name": "Brady Eidson",
+            "twitter": "@bradeeoh",
+            "email": "beidson@webkit.org"
         }
     },
     {
