@@ -1433,3 +1433,6 @@ webkit.org/b/158747 [ ElCapitan ] media/restore-from-page-cache.html [ Pass Fail
 # rdar://problem/27182687
 [ Sierra+ ] canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
 [ Sierra+ ] imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
+
+# rdar://problem/27187013
+[ Sierra+ ]fast/block/float/overhanging-tall-block.html [ Failure ]
