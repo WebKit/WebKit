@@ -2613,7 +2613,7 @@ HTMLElement* Document::bodyOrFrameset() const
 {
     // Return the first body or frameset child of the html element.
     auto* element = documentElement();
-    if (!element)
+    if (!is<HTMLHtmlElement>(element))
         return nullptr;
     for (auto& child : childrenOfType<HTMLElement>(*element)) {
         if (is<HTMLBodyElement>(child) || is<HTMLFrameSetElement>(child))
