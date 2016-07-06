@@ -41,6 +41,7 @@ class VM;
 class InlineAccess {
 public:
 
+    // This is the maximum between inline and out of line self access cases.
     static constexpr size_t sizeForPropertyAccess()
     {
 #if CPU(X86_64)
@@ -60,6 +61,7 @@ public:
 #endif
     }
 
+    // This is the maximum between inline and out of line property replace cases.
     static constexpr size_t sizeForPropertyReplace()
     {
 #if CPU(X86_64)
@@ -79,23 +81,28 @@ public:
 #endif
     }
 
-    static constexpr size_t sizeForLengthAccess()
+    // FIXME: Make this constexpr when GCC is able to compile std::max() inside a constexpr function.
+    // https://bugs.webkit.org/show_bug.cgi?id=159436
+    //
+    // This is the maximum between the size for array length access, and the size for regular self access.
+    ALWAYS_INLINE static size_t sizeForLengthAccess()
     {
 #if CPU(X86_64)
-        return 26;
+        size_t size = 26;
 #elif CPU(X86)
-        return 27;
+        size_t size = 27;
 #elif CPU(ARM64)
-        return 32;
+        size_t size = 32;
 #elif CPU(ARM)
 #if CPU(ARM_THUMB2)
-        return 30;
+        size_t size = 30;
 #else
-        return 50;
+        size_t size = 50;
 #endif
 #else
 #error "unsupported platform"
 #endif
+        return std::max(size, sizeForPropertyAccess());
     }
 
     static bool generateSelfPropertyAccess(VM&, StructureStubInfo&, Structure*, PropertyOffset);
