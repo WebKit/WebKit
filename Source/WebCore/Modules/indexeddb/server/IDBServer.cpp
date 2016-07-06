@@ -503,11 +503,11 @@ void IDBServer::closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::
         return;
     }
 
-    HashSet<UniqueIDBDatabase*> openDatabases;
+    HashSet<RefPtr<UniqueIDBDatabase>> openDatabases;
     for (auto* connection : m_databaseConnections.values())
         openDatabases.add(&connection->database());
 
-    for (auto* database : openDatabases)
+    for (auto& database : openDatabases)
         database->immediateCloseForUserDelete();
 
     postDatabaseTask(createCrossThreadTask(*this, &IDBServer::performCloseAndDeleteDatabasesModifiedSince, modificationTime, callbackID));
@@ -519,7 +519,7 @@ void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginDat
     auto addResult = m_deleteDatabaseCompletionHandlers.add(callbackID, WTFMove(completionHandler));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
-    HashSet<UniqueIDBDatabase*> openDatabases;
+    HashSet<RefPtr<UniqueIDBDatabase>> openDatabases;
     for (auto* connection : m_databaseConnections.values()) {
         const auto& identifier = connection->database().identifier();
         for (auto& origin : origins) {
@@ -530,7 +530,7 @@ void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginDat
         }
     }
 
-    for (auto* database : openDatabases)
+    for (auto& database : openDatabases)
         database->immediateCloseForUserDelete();
 
     postDatabaseTask(createCrossThreadTask(*this, &IDBServer::performCloseAndDeleteDatabasesForOrigins, origins, callbackID));
