@@ -28,7 +28,6 @@
 #include "ArrayConstructor.h"
 #include "BuiltinNames.h"
 #include "ButterflyInlines.h"
-#include "CachedCall.h"
 #include "CodeBlock.h"
 #include "CopiedSpaceInlines.h"
 #include "Error.h"

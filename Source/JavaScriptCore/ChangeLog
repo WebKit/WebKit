@@ -1,3 +1,15 @@
+2016-07-05  Mark Lam  <mark.lam@apple.com>
+
+        Remove some unneeded #include "CachedCall.h".
+        https://bugs.webkit.org/show_bug.cgi?id=159449
+
+        Reviewed by Saam Barati.
+
+        * runtime/ArrayPrototype.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/SetPrototype.cpp:
+
 2016-07-05  Geoffrey Garen  <ggaren@apple.com>
 
         Crash @ bankofamerica.com, University of Vienna

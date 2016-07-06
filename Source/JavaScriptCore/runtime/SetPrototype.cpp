@@ -27,7 +27,6 @@
 #include "SetPrototype.h"
 
 #include "BuiltinNames.h"
-#include "CachedCall.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
