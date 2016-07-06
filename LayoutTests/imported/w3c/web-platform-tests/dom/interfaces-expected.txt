@@ -202,7 +202,7 @@ PASS Node interface: constant NOTATION_NODE on interface prototype object
 PASS Node interface: attribute nodeType 
 PASS Node interface: attribute nodeName 
 PASS Node interface: attribute baseURI 
-FAIL Node interface: attribute isConnected assert_true: The prototype object must have a property "isConnected" expected true got false
+PASS Node interface: attribute isConnected 
 PASS Node interface: attribute ownerDocument 
 PASS Node interface: attribute parentNode 
 PASS Node interface: attribute parentElement 
@@ -377,7 +377,7 @@ PASS Node interface: new Document() must inherit property "NOTATION_NODE" with t
 PASS Node interface: new Document() must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: new Document() must inherit property "nodeName" with the proper type (13) 
 FAIL Node interface: new Document() must inherit property "baseURI" with the proper type (14) assert_equals: expected "string" but got "object"
-FAIL Node interface: new Document() must inherit property "isConnected" with the proper type (15) assert_inherits: property "isConnected" not found in prototype chain
+PASS Node interface: new Document() must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: new Document() must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: new Document() must inherit property "parentNode" with the proper type (17) 
 PASS Node interface: new Document() must inherit property "parentElement" with the proper type (18) 
@@ -547,7 +547,7 @@ PASS Node interface: xmlDoc must inherit property "NOTATION_NODE" with the prope
 PASS Node interface: xmlDoc must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: xmlDoc must inherit property "nodeName" with the proper type (13) 
 FAIL Node interface: xmlDoc must inherit property "baseURI" with the proper type (14) assert_equals: expected "string" but got "object"
-FAIL Node interface: xmlDoc must inherit property "isConnected" with the proper type (15) assert_inherits: property "isConnected" not found in prototype chain
+PASS Node interface: xmlDoc must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: xmlDoc must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: xmlDoc must inherit property "parentNode" with the proper type (17) 
 PASS Node interface: xmlDoc must inherit property "parentElement" with the proper type (18) 
@@ -677,7 +677,7 @@ PASS Node interface: document.doctype must inherit property "NOTATION_NODE" with
 PASS Node interface: document.doctype must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: document.doctype must inherit property "nodeName" with the proper type (13) 
 PASS Node interface: document.doctype must inherit property "baseURI" with the proper type (14) 
-FAIL Node interface: document.doctype must inherit property "isConnected" with the proper type (15) assert_inherits: property "isConnected" not found in prototype chain
+PASS Node interface: document.doctype must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.doctype must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: document.doctype must inherit property "parentNode" with the proper type (17) 
 PASS Node interface: document.doctype must inherit property "parentElement" with the proper type (18) 
@@ -793,7 +793,7 @@ PASS Node interface: document.createDocumentFragment() must inherit property "NO
 PASS Node interface: document.createDocumentFragment() must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: document.createDocumentFragment() must inherit property "nodeName" with the proper type (13) 
 PASS Node interface: document.createDocumentFragment() must inherit property "baseURI" with the proper type (14) 
-FAIL Node interface: document.createDocumentFragment() must inherit property "isConnected" with the proper type (15) assert_inherits: property "isConnected" not found in prototype chain
+PASS Node interface: document.createDocumentFragment() must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.createDocumentFragment() must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: document.createDocumentFragment() must inherit property "parentNode" with the proper type (17) 
 PASS Node interface: document.createDocumentFragment() must inherit property "parentElement" with the proper type (18) 
@@ -1040,7 +1040,7 @@ PASS Node interface: element must inherit property "NOTATION_NODE" with the prop
 PASS Node interface: element must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: element must inherit property "nodeName" with the proper type (13) 
 FAIL Node interface: element must inherit property "baseURI" with the proper type (14) assert_equals: expected "string" but got "object"
-FAIL Node interface: element must inherit property "isConnected" with the proper type (15) assert_inherits: property "isConnected" not found in prototype chain
+PASS Node interface: element must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: element must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: element must inherit property "parentNode" with the proper type (17) 
 PASS Node interface: element must inherit property "parentElement" with the proper type (18) 
@@ -1221,7 +1221,7 @@ PASS Node interface: document.createTextNode("abc") must inherit property "NOTAT
 PASS Node interface: document.createTextNode("abc") must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: document.createTextNode("abc") must inherit property "nodeName" with the proper type (13) 
 PASS Node interface: document.createTextNode("abc") must inherit property "baseURI" with the proper type (14) 
-FAIL Node interface: document.createTextNode("abc") must inherit property "isConnected" with the proper type (15) assert_inherits: property "isConnected" not found in prototype chain
+PASS Node interface: document.createTextNode("abc") must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.createTextNode("abc") must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: document.createTextNode("abc") must inherit property "parentNode" with the proper type (17) 
 PASS Node interface: document.createTextNode("abc") must inherit property "parentElement" with the proper type (18) 
@@ -1335,7 +1335,7 @@ PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inher
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nodeName" with the proper type (13) 
 FAIL Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "baseURI" with the proper type (14) assert_equals: expected "string" but got "object"
-FAIL Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isConnected" with the proper type (15) assert_inherits: property "isConnected" not found in prototype chain
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentNode" with the proper type (17) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentElement" with the proper type (18) 
@@ -1447,7 +1447,7 @@ PASS Node interface: document.createComment("abc") must inherit property "NOTATI
 PASS Node interface: document.createComment("abc") must inherit property "nodeType" with the proper type (12) 
 PASS Node interface: document.createComment("abc") must inherit property "nodeName" with the proper type (13) 
 PASS Node interface: document.createComment("abc") must inherit property "baseURI" with the proper type (14) 
-FAIL Node interface: document.createComment("abc") must inherit property "isConnected" with the proper type (15) assert_inherits: property "isConnected" not found in prototype chain
+PASS Node interface: document.createComment("abc") must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.createComment("abc") must inherit property "ownerDocument" with the proper type (16) 
 PASS Node interface: document.createComment("abc") must inherit property "parentNode" with the proper type (17) 
 PASS Node interface: document.createComment("abc") must inherit property "parentElement" with the proper type (18) 

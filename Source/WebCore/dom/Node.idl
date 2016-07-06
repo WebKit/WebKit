@@ -120,6 +120,8 @@
     // FIXME: other should not be optional.
     boolean contains(optional Node? other = null);
 
+    [EnabledAtRuntime=ShadowDOM, ImplementedAs=inDocument] readonly attribute boolean isConnected;
+
     // IE extensions
     readonly attribute Element          parentElement;
 
