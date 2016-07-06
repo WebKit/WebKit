@@ -421,9 +421,7 @@
 #include "JSRTCTrackEvent.cpp"
 #include "JSScreen.cpp"
 #include "JSScriptProcessorNode.cpp"
-#if ENABLE(CSP_NEXT)
 #include "JSSecurityPolicyViolationEvent.cpp"
-#endif
 #include "JSSourceBuffer.cpp"
 #include "JSSourceBufferList.cpp"
 #include "JSSourceInfo.cpp"

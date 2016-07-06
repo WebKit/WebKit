@@ -2181,7 +2181,6 @@ http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
 http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
 http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
 http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html [ Failure ]
-webkit.org/b/147646 http/tests/security/contentSecurityPolicy/source-list-parsing-10.html [ Failure ]
 
 # Crashes
 http/tests/misc/drag-not-loaded-image.html [ Skip ] # Crash
