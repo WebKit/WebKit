@@ -1,3 +1,13 @@
+2016-07-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Test gardening after r202835.
+
+        Unreviewed test garedening.
+
+        * platform/ios-simulator/fast/attachment/attachment-select-on-click-expected.txt:
+        * platform/mac-elcapitan/fast/attachment/attachment-select-on-click-expected.txt: Removed.
+        * platform/mac/fast/attachment/attachment-select-on-click-expected.txt:
+
 2016-07-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Image attachment in email does not show up in AX tree
