@@ -1334,6 +1334,7 @@ static void testObjectiveCAPIMain()
             } \
         })()"];
         checkResult(@"shouldn't be able to construct ClassC", ![canConstructClassC toBool]);
+
         JSValue *canConstructClassCPrime = [context evaluateScript:@"(function() { \
             try { \
                 (new ClassCPrime(1)); \
@@ -1343,6 +1344,19 @@ static void testObjectiveCAPIMain()
             } \
         })()"];
         checkResult(@"shouldn't be able to construct ClassCPrime", ![canConstructClassCPrime toBool]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        context[@"ClassA"] = [ClassA class];
+        context.exceptionHandler = ^(JSContext *context, JSValue *exception) {
+            NSLog(@"%@", [exception toString]);
+            context.exception = exception;
+        };
+
+        checkResult(@"ObjC Constructor without 'new' pre", !context.exception);
+        [context evaluateScript:@"ClassA(42)"];
+        checkResult(@"ObjC Constructor without 'new' post", context.exception);
     }
 
     @autoreleasepool {

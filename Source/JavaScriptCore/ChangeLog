@@ -1,3 +1,27 @@
+2016-07-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        RELEASE_ASSERT(!thisObject) in ObjCCallbackFunctionImpl::call when calling JSExport ObjC Constructor without operator new
+        https://bugs.webkit.org/show_bug.cgi?id=159446
+
+        Reviewed by Mark Lam.
+
+        Treat ObjC JSExport init constructors like ES6 Class Constructors
+        and throw a TypeError when called without 'new'.
+
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunctionImpl::type):
+        (JSC::objCCallbackFunctionCallAsFunction):
+        When calling an init method as a function instead of construction
+        throw a TypeError.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        Improve error message.
+
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+        Test we get an exception when calling an ObjC constructor without 'new'.
+
 2016-07-05  Mark Lam  <mark.lam@apple.com>
 
         Remove some unneeded #include "CachedCall.h".

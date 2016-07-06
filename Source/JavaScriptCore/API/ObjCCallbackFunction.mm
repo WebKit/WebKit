@@ -428,6 +428,8 @@ public:
         }
     }
 
+    CallbackType type() const { return m_type; }
+
     bool isConstructible()
     {
         return !!wrappedBlock() || m_type == CallbackInitMethod;
@@ -454,6 +456,12 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
     ObjCCallbackFunction* callback = static_cast<ObjCCallbackFunction*>(toJS(function));
     ObjCCallbackFunctionImpl* impl = callback->impl();
     JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(callback->globalObject()->globalExec())];
+
+    if (impl->type() == CallbackInitMethod) {
+        JSGlobalContextRef contextRef = [context JSGlobalContextRef];
+        *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("Cannot call a class constructor without |new|")));
+        return JSValueMakeUndefined(contextRef);
+    }
 
     CallbackData callbackData;
     JSValueRef result;

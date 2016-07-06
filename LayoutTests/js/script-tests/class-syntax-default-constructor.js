@@ -43,11 +43,11 @@ class A { };
 class B extends A { };
 
 shouldBeTrue('new A instanceof A');
-shouldThrow('A()', '"TypeError: Cannot call a class constructor"');
+shouldThrow('A()', '"TypeError: Cannot call a class constructor without |new|"');
 shouldBeTrue('A.prototype.constructor instanceof Function');
 shouldBe('A.prototype.constructor.name', '"A"');
 shouldBeTrue('new B instanceof A; new B instanceof A');
-shouldThrow('B()', '"TypeError: Cannot call a class constructor"');
+shouldThrow('B()', '"TypeError: Cannot call a class constructor without |new|"');
 shouldBe('B.prototype.constructor.name', '"B"');
 shouldBeTrue('A !== B');
 shouldBeTrue('A.prototype.constructor !== B.prototype.constructor');

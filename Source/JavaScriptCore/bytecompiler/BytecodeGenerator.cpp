@@ -564,7 +564,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                 else
                     emitCreateThis(&m_thisRegister);
             } else if (constructorKind() != ConstructorKind::None)
-                emitThrowTypeError("Cannot call a class constructor");
+                emitThrowTypeError("Cannot call a class constructor without |new|");
             else {
                 bool shouldEmitToThis = false;
                 if (functionNode->usesThis() || codeBlock->usesEval() || m_scopeNode->doAnyInnerArrowFunctionsUseThis() || m_scopeNode->doAnyInnerArrowFunctionsUseEval())
