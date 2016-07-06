@@ -1,6 +1,0 @@
-
-FAIL rootNode attribute must return the context object when it does not have any parent assert_equals: rootNode on an element without a parent must return the element itself expected (object) Element node <div></div> but got (undefined) undefined
-FAIL rootNode attribute must return the parent node of the context object when the context object has a single ancestor not in a document assert_equals: rootNode on an element with a single ancestor must return the parent node expected (object) Element node <div><div></div></div> but got (undefined) undefined
-FAIL rootNode attribute must return the document when a node is in document assert_equals: rootNode on an element inside a document must return the document expected (object) Document node with 2 children but got (undefined) undefined
-FAIL rootNode attribute must return a document fragment when a node is in the fragment assert_equals: rootNode on an element inside a document fragment must return the fragment expected (object) DocumentFragment node with 1 child but got (undefined) undefined
-

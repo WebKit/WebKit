@@ -55,5 +55,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_playing.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_initial.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_reflects_attribute_not_source_elements.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_008.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_volume_check.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/volume_nonfinite.html

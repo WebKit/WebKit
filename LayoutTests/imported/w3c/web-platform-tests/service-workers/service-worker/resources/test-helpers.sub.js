@@ -13,10 +13,13 @@ function service_worker_unregister_and_register(test, url, scope) {
                                'unregister and register should not fail'));
 }
 
-function service_worker_unregister(test, documentUrl) {
-  return navigator.serviceWorker.getRegistration(documentUrl)
+// This unregisters the registration that precisely matches scope. Use this
+// when unregistering by scope. If no registration is found, it just resolves.
+function service_worker_unregister(test, scope) {
+  var absoluteScope = (new URL(scope, window.location).href);
+  return navigator.serviceWorker.getRegistration(scope)
     .then(function(registration) {
-        if (registration)
+        if (registration && registration.scope === absoluteScope)
           return registration.unregister();
       })
     .catch(unreached_rejection(test, 'unregister should not fail'));
@@ -156,31 +159,6 @@ function service_worker_test(url, description) {
     }, description);
 }
 
-function get_host_info() {
-  var ORIGINAL_HOST = '127.0.0.1';
-  var REMOTE_HOST = 'localhost';
-  var UNAUTHENTICATED_HOST = 'example.test';
-  var HTTP_PORT = 8000;
-  var HTTPS_PORT = 8443;
-  try {
-    // In W3C test, we can get the hostname and port number in config.json
-    // using wptserve's built-in pipe.
-    // http://wptserve.readthedocs.org/en/latest/pipes.html#built-in-pipes
-    HTTP_PORT = eval('{{ports[http][0]}}');
-    HTTPS_PORT = eval('{{ports[https][0]}}');
-    ORIGINAL_HOST = eval('\'{{host}}\'');
-    REMOTE_HOST = 'www1.' + ORIGINAL_HOST;
-  } catch (e) {
-  }
-  return {
-    HTTP_ORIGIN: 'http://' + ORIGINAL_HOST + ':' + HTTP_PORT,
-    HTTPS_ORIGIN: 'https://' + ORIGINAL_HOST + ':' + HTTPS_PORT,
-    HTTP_REMOTE_ORIGIN: 'http://' + REMOTE_HOST + ':' + HTTP_PORT,
-    HTTPS_REMOTE_ORIGIN: 'https://' + REMOTE_HOST + ':' + HTTPS_PORT,
-    UNAUTHENTICATED_ORIGIN: 'http://' + UNAUTHENTICATED_HOST + ':' + HTTP_PORT
-  };
-}
-
 function base_path() {
   return location.pathname.replace(/\/[^\/]*$/, '/');
 }
@@ -188,8 +166,8 @@ function base_path() {
 function test_login(test, origin, username, password, cookie) {
   return new Promise(function(resolve, reject) {
       with_iframe(
-        origin +
-        '/serviceworker/resources/fetch-access-control-login.html')
+        origin + base_path() +
+        'resources/fetch-access-control-login.html')
         .then(test.step_func(function(frame) {
             var channel = new MessageChannel();
             channel.port1.onmessage = test.step_func(function() {
@@ -203,20 +181,47 @@ function test_login(test, origin, username, password, cookie) {
     });
 }
 
+function test_websocket(test, frame, url) {
+  return new Promise(function(resolve, reject) {
+      var ws = new frame.contentWindow.WebSocket(url, ['echo', 'chat']);
+      var openCalled = false;
+      ws.addEventListener('open', test.step_func(function(e) {
+          assert_equals(ws.readyState, 1, "The WebSocket should be open");
+          openCalled = true;
+          ws.close();
+        }), true);
+
+      ws.addEventListener('close', test.step_func(function(e) {
+          assert_true(openCalled, "The WebSocket should be closed after being opened");
+          resolve();
+        }), true);
+
+      ws.addEventListener('error', reject);
+    });
+}
+
 function login(test) {
-  return test_login(test, 'http://127.0.0.1:8000',
+  return test_login(test, 'http://{{domains[www1]}}:{{ports[http][0]}}',
                     'username1', 'password1', 'cookie1')
     .then(function() {
-        return test_login(test, 'http://localhost:8000',
+        return test_login(test, 'http://{{host}}:{{ports[http][0]}}',
                           'username2', 'password2', 'cookie2');
       });
 }
 
 function login_https(test) {
-  return test_login(test, 'https://127.0.0.1:8443',
+  return test_login(test, 'https://{{domains[www1]}}:{{ports[https][0]}}',
                     'username1s', 'password1s', 'cookie1')
     .then(function() {
-        return test_login(test, 'https://localhost:8443',
+        return test_login(test, 'https://{{host}}:{{ports[https][0]}}',
                           'username2s', 'password2s', 'cookie2');
       });
+}
+
+function websocket(test, frame) {
+  return test_websocket(test, frame, get_websocket_url());
+}
+
+function get_websocket_url() {
+  return 'wss://{{host}}:{{ports[wss][0]}}/echo';
 }

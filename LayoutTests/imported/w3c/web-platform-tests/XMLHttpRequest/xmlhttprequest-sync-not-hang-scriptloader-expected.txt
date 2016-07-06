@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 14: XMLHttpRequest cannot load data:,. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 14: NetworkError: DOM Exception 19:  A network error occurred.
+
+
+PASS Ensure that an async script added during a defer script that then does a
+  sync XHR still runs 
+

@@ -268,6 +268,8 @@ imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/r
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1b.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-subframe.html [ Skip ]
+imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-subframe.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 
 # Skip W3C tests that are too slow in debug builds.
@@ -313,7 +315,8 @@ imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-twi
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ Skip ]
-
+# Failing assertion with dynamic message
+imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm [ Failure ]
 # Fetch Worker tests skipped until bug 156737 is resolved
 imported/w3c/web-platform-tests/fetch/api/cors/cors-basic-worker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-worker.html [ Skip ]
@@ -341,6 +344,7 @@ imported/w3c/web-platform-tests/fetch/nosniff/worker.html [ Skip ]
 
 webkit.org/b/157068 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Skip ]
 webkit.org/b/157145 imported/w3c/web-platform-tests/fetch/nosniff/stylesheet.html [ Failure Pass ]
+webkit.org/b/159413 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.html [ Failure ]
 
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
@@ -398,11 +402,6 @@ imported/w3c/web-platform-tests/common [ Skip ]
 imported/w3c/web-platform-tests/fonts [ Skip ]
 imported/w3c/web-platform-tests/images [ Skip ]
 imported/w3c/web-platform-tests/tools [ Skip ]
-
-# W3C domparsing test suite
-# Tests marked as pass or fail until wpt server proves to be stable enough
-imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-html.html [ Pass Failure ]
-imported/w3c/web-platform-tests/domparsing/insert-adjacent.html [ Pass Failure ]
 
 # Imported W3C canvas failed tests
 webkit.org/b/138676 imported/w3c/canvas/2d.pattern.image.null.html [ Failure ]

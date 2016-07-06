@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Not allowed to load local resource: blob:djfksfjs?l=blob:djfksfjs&count=1
+
+PASS Fetch: handling different schemes in redirects 
+PASS Fetch: handling different schemes in redirects 1 
+PASS Fetch: handling different schemes in redirects 2 
+PASS Fetch: handling different schemes in redirects 3 
+PASS Fetch: handling different schemes in redirects 4 
+PASS Fetch: handling different schemes in redirects 5 
+

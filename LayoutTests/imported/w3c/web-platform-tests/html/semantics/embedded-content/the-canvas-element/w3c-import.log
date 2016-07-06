@@ -37,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/fallback.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/fallback.multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/fallback.nested.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/initial.colour.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/initial.colour.png
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/initial.reset.2dstate.html

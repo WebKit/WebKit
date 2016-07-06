@@ -15,7 +15,7 @@
     {
         "name": "web-platform-tests",
         "url": "https://github.com/w3c/web-platform-tests.git", 
-        "revision": "12b7800",
+        "revision": "03916af",
         "paths_to_skip": [
             "conformance-checkers",
             "docs",
@@ -30,6 +30,6 @@
             "config.default.json",
             "serve.py"
         ],
-        "import_options": ["generate_git_submodules_description", "generate_gitignore"]
+        "import_options": ["generate_git_submodules_description", "generate_gitignore", "generate_init_py"]
     }
 ]

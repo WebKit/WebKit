@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 17: XMLHttpRequest cannot load data:,. Cross origin requests are only supported for HTTP.
+
+FAIL Check that while a sync XHR is in flight async script loads don't complete and run script NetworkError: DOM Exception 19
+

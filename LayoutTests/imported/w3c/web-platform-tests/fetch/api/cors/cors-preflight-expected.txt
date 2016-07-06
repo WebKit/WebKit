@@ -1,3 +1,8 @@
 
-PASS Fetch: Check cors fetches requiring preflight 
+PASS CORS [DELETE], server refuses 
+PASS CORS [PUT], server refuses 
+FAIL CORS [PATCH], server allows promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS CORS [PATCH], server refuses 
+FAIL CORS [DELETE], server allows promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL CORS [PUT], server allows promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

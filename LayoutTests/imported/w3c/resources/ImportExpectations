@@ -181,6 +181,7 @@ web-platform-tests/html/semantics/scripting-1/the-script-element/script-text.xht
 web-platform-tests/html/the-xhtml-syntax [ Skip ]
 #web-platform-tests/html/syntax [ Import ]
 web-platform-tests/html/syntax/parsing [ Import ]
+web-platform-tests/html/syntax/parsing/template [ Import ]
 web-platform-tests/html/syntax/parsing-html-fragments [ Skip ]
 web-platform-tests/html/syntax/serializing-html-fragments [ Skip ]
 web-platform-tests/html/syntax/serializing-xml-fragments [ Skip ]

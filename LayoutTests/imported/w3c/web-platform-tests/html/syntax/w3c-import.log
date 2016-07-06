@@ -15,4 +15,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-workers/resources/test-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/html-element-list.js

@@ -1,3 +1,107 @@
+2016-07-05  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT tests up to 03916af
+        https://bugs.webkit.org/show_bug.cgi?id=159420
+
+        Reviewed by Alex Christensen.
+
+        Rrefreshing tests.
+        Used clean option to remove obsolete tests.
+
+        * resources/ImportExpectations:
+        * resources/TestRepositories:
+        * web-platform-tests/XMLHttpRequest/resources/last-modified.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/w3c-import.log:
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties-expected.txt:
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm:
+        * web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt:
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-subframe.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-scripts-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-scripts.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-subframe.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader.html: Added.
+        * web-platform-tests/common/entities.json: Added.
+        * web-platform-tests/common/form-submission.py:
+        (main):
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/dom/nodes/Node-contains-xhtml-expected.txt: Removed.
+        * web-platform-tests/dom/nodes/Node-contains-xhtml.xhtml: Removed.
+        * web-platform-tests/dom/nodes/rootNode-expected.txt: Removed.
+        * web-platform-tests/dom/nodes/rootNode.html: Removed.
+        * web-platform-tests/fetch/api/basic/integrity.js:
+        * web-platform-tests/fetch/api/basic/mode-no-cors-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-no-cors-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-no-cors.js:
+        * web-platform-tests/fetch/api/cors/cors-basic-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-basic.js:
+        * web-platform-tests/fetch/api/cors/cors-cookies-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-cookies.js:
+        * web-platform-tests/fetch/api/cors/cors-filtering.js:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins.js:
+        (corsMultipleOrigins):
+        * web-platform-tests/fetch/api/cors/cors-preflight-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight.js:
+        (corsPreflight):
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.js:
+        * web-platform-tests/fetch/api/redirect/redirect-schemes-expected.txt: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-schemes.html: Added.
+        * web-platform-tests/fetch/api/request/request-idl.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.body-getter-expected.txt: Removed.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.body-getter.html: Removed.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.body-setter-01-expected.txt: Removed.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.body-setter-01.html: Removed.
+        * web-platform-tests/html/dom/elements-microdata.js: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/cues.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.scaled-manual.png: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-form-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-input-element/input-textselection-01-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/the-input-element/input-textselection-01.html: Removed.
+        * web-platform-tests/html/syntax/html-element-list.js: Added.
+        * web-platform-tests/html/syntax/w3c-import.log: Renamed from LayoutTests/imported/w3c/web-platform-tests/service-workers/service-workers/resources/w3c-import.log.
+        * web-platform-tests/service-workers/service-worker/resources/test-helpers.sub.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/service-workers/service-workers/resources/test-helpers.js.
+        (service_worker_unregister_and_register):
+        (service_worker_unregister):
+        (service_worker_unregister_and_done):
+        (unreached_fulfillment):
+        (with_iframe.):
+        (wait_for_update):
+        (wait_for_state):
+        (base_path):
+        (test_login):
+        (login_https):
+        (websocket):
+        (get_websocket_url):
+        * web-platform-tests/streams/OWNERS: Added.
+        * web-platform-tests/streams/byte-length-queuing-strategy.https.html:
+        * web-platform-tests/streams/count-queuing-strategy.https.html:
+        * web-platform-tests/streams/readable-streams/bad-strategies.https.html:
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.https.html:
+        * web-platform-tests/streams/readable-streams/brand-checks.https.html:
+        * web-platform-tests/streams/readable-streams/cancel.https.html:
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.https.html:
+        * web-platform-tests/streams/readable-streams/garbage-collection-1-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/garbage-collection-1.html: Removed.
+        * web-platform-tests/streams/readable-streams/garbage-collection-2-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/garbage-collection-2.html: Removed.
+        * web-platform-tests/streams/readable-streams/garbage-collection.https.html:
+        * web-platform-tests/streams/readable-streams/general.https.html:
+        * web-platform-tests/streams/readable-streams/pipe-through.https.html:
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.https.html:
+        * web-platform-tests/streams/readable-streams/tee.https.html:
+        * web-platform-tests/streams/readable-streams/templated.https.html:
+        * web-platform-tests/streams/w3c-import.log:
+
 2016-06-30  Youenn Fablet  <youennf@gmail.com>
 
         LayoutTests intermittently failing to run due to issues starting Web Platform Test server
