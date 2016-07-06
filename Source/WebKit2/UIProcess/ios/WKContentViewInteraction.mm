@@ -368,6 +368,10 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 - (void)invalidate
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+    id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)_contentView.inputDelegate;
+    [suggestionDelegate setSuggestions:nil];
+#endif
     _contentView = nil;
 }
 

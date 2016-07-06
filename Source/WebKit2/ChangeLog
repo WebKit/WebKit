@@ -1,3 +1,14 @@
+2016-07-06  Chelsea Pugh  <cpugh@apple.com>
+
+        [iOS] Text suggestions should be cleared when form input session is invalidated        
+        https://bugs.webkit.org/show_bug.cgi?id=159477
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession invalidate]): Set input delegate's suggestions to nil when a form input session is
+        invalidated. This will set the keyboard QuickType suggestions back to their default values.
+
 2016-07-06  Alex Christensen  <achristensen@webkit.org>
 
         Call continueCanAuthenticateAgainstProtectionSpace when cancelling loads waiting for the callback
