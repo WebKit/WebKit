@@ -137,7 +137,6 @@ private:
 
     float playbackPosition() const;
 
-    void cacheDuration();
     void updateStates();
     void asyncStateChangeDone();
 
@@ -219,14 +218,13 @@ private:
     float m_playbackRate;
     float m_lastPlaybackRate;
     bool m_errorOccured;
-    mutable gfloat m_mediaDuration;
     bool m_downloadFinished;
+    float m_durationAtEOS;
     Timer m_fillTimer;
     float m_maxTimeLoaded;
     int m_bufferingPercentage;
     MediaPlayer::Preload m_preload;
     bool m_delayingLoad;
-    bool m_mediaDurationKnown;
     mutable float m_maxTimeLoadedAtLastDidLoadingProgress;
     bool m_volumeAndMuteInitialized;
     bool m_hasVideo;
