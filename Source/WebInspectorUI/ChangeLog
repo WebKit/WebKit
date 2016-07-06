@@ -1,3 +1,35 @@
+2016-07-06  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Uncaught Exception reporter should include the currently dispatching protocol event or request/response if applicable
+        https://bugs.webkit.org/show_bug.cgi?id=159320
+        <rdar://problem/27117754>
+
+        Reviewed by Timothy Hatcher and Joseph Pecoraro.
+
+        Keep track of the currently dispatched protocol response or protocol event and make
+        them available to the uncaught exception reporter. If an internal exception is reported
+        while dispatching an event or response, dump the protocol message(s) into the pre-filled
+        bug report.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (stringifyAndTruncateObject): Added.
+        Rearrange the code that generates the pre-filled report so it's easier to add optional sections.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.get currentDispatchState): Expose the dispatching state.
+        (InspectorBackendClass.prototype._sendCommandToBackendWithCallback):
+        (InspectorBackendClass.prototype._sendCommandToBackendExpectingPromise):
+        Store the originating command request with the pendingResponse data so that we can examine
+        the originating request if the response causes an error. This will cause request message objects
+        to be garbage-collected after their responses are dispatched rather than when the request is sent.
+        But, I don't forsee this being a performance problem since we should always get a command response
+        and pending command responses do not typically accumulate except when the inspector first loads.
+
+        (InspectorBackendClass.prototype._dispatchResponse): Save the response being dispatched.
+        (InspectorBackendClass.prototype._dispatchResponseToCallback): Simplify exception reporting.
+        (InspectorBackendClass.prototype._dispatchEvent): Save the event being dispatched.
+
 2016-07-05  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Switch last uses of -webkit-linear-gradient() to linear-gradient()

@@ -181,16 +181,46 @@ function createErrorSheet() {
         inspectedPageURL = WebInspector.frameResourceManager.mainFrame.url;
     } catch (e) { }
 
+    let topLevelItems = [
+        `Inspected URL:        ${inspectedPageURL || "(unknown)"}`,
+        `Loading completed:    ${!!loadCompleted}`,
+        `Frontend User Agent:  ${window.navigator.userAgent}`,
+    ];
+
+    function stringifyAndTruncateObject(object) {
+        let string = JSON.stringify(object);
+        return string.length > 500 ? string.substr(0, 500) + "…" : string;
+    }
+
+    if (InspectorBackend && InspectorBackend.currentDispatchState) {
+        let state = InspectorBackend.currentDispatchState;
+        if (state.event) {
+            topLevelItems.push("Dispatch Source:      Protocol Event");
+            topLevelItems.push("");
+            topLevelItems.push("Protocol Event:");
+            topLevelItems.push(stringifyAndTruncateObject(state.event));
+        }
+        if (state.response) {
+            topLevelItems.push("Dispatch Source:      Protocol Command Response");
+            topLevelItems.push("");
+            topLevelItems.push("Protocol Command Response:");
+            topLevelItems.push(stringifyAndTruncateObject(state.response));
+        }
+        if (state.request) {
+            topLevelItems.push("");
+            topLevelItems.push("Protocol Command Request:");
+            topLevelItems.push(stringifyAndTruncateObject(state.request));
+        }
+    }
+
     let formattedErrorDetails = window.__uncaughtExceptions.map((entry) => formattedEntry(entry));
     let detailsForBugReport = formattedErrorDetails.map((line) => ` - ${line}`).join("\n");
-    let encodedBugDescription = encodeURIComponent(`-------
-Auto-generated details:
+    topLevelItems.push("");
+    topLevelItems.push("Uncaught Exceptions:");
+    topLevelItems.push(detailsForBugReport);
 
-Inspected URL:        ${inspectedPageURL || "(unknown)"}
-Loading completed:    ${!!loadCompleted}
-Frontend User Agent:  ${window.navigator.userAgent}
-Uncaught exceptions:
-${detailsForBugReport}
+    let encodedBugDescription = encodeURIComponent(`-------
+${topLevelItems.join("\n")}
 -------
 
 * STEPS TO REPRODUCE
