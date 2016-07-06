@@ -951,7 +951,11 @@ void PlatformCALayerCocoa::updateCustomAppearance(GraphicsLayer::CustomAppearanc
     case GraphicsLayer::NoCustomAppearance:
     case GraphicsLayer::LightBackdropAppearance:
     case GraphicsLayer::DarkBackdropAppearance:
+        ScrollbarThemeMac::removeOverhangAreaBackground(platformLayer());
         ScrollbarThemeMac::removeOverhangAreaShadow(platformLayer());
+        break;
+    case GraphicsLayer::ScrollingOverhang:
+        ScrollbarThemeMac::setUpOverhangAreaBackground(platformLayer());
         break;
     case GraphicsLayer::ScrollingShadow:
         ScrollbarThemeMac::setUpOverhangAreaShadow(platformLayer());
