@@ -1869,12 +1869,16 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
         float scaleFactor = deviceScaleFactor();
         IntSize logicalScrollDelta(-deltaX * scaleFactor, -deltaY * scaleFactor);
 
-        if (!m_gestureTargetNode || !m_gestureTargetNode->renderer()) {
+        RenderLayer* scrollableLayer = nullptr;
+        if (m_gestureTargetNode && m_gestureTargetNode->renderer() && m_gestureTargetNode->renderer()->enclosingLayer())
+            scrollableLayer = m_gestureTargetNode->renderer()->enclosingLayer()->enclosingScrollableLayer();
+
+        if (!scrollableLayer) {
             // We might directly hit the document without hitting any nodes
             coreFrame->view()->scrollBy(logicalScrollDelta);
             scrolledArea = coreFrame->view();
         } else
-            m_gestureTargetNode->renderer()->enclosingLayer()->enclosingScrollableLayer()->scrollByRecursively(logicalScrollDelta, WebCore::RenderLayer::ScrollOffsetClamped, &scrolledArea);
+            scrollableLayer->scrollByRecursively(logicalScrollDelta, WebCore::RenderLayer::ScrollOffsetClamped, &scrolledArea);
 
         if (!(UpdatePanningFeedbackPtr() && BeginPanningFeedbackPtr() && EndPanningFeedbackPtr())) {
             CloseGestureInfoHandlePtr()(gestureHandle);
