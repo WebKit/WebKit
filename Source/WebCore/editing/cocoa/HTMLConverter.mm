@@ -317,7 +317,7 @@ typedef NSUInteger NSTextTabType;
 
 #else
 static NSFileWrapper *fileWrapperForURL(DocumentLoader *, NSURL *);
-static NSFileWrapper *fileWrapperForElement(HTMLImageElement&);
+static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement&);
 
 @interface NSTextAttachment (WebCoreNSTextAttachment)
 - (void)setIgnoresOrientation:(BOOL)flag;
@@ -2453,24 +2453,24 @@ static NSFileWrapper *fileWrapperForURL(DocumentLoader* dataSource, NSURL *URL)
     return nil;
 }
 
-static NSFileWrapper *fileWrapperForElement(HTMLImageElement& element)
+static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
 {
-    // FIXME: Should this use currentSrc instead of src?
-    auto src = element.src();
-    NSFileWrapper *wrapper = src.isEmpty() ? nil : fileWrapperForURL(element.document().loader(), src);
+    if (CachedImage* cachedImage = element.cachedImage()) {
+        if (SharedBuffer* sharedBuffer = cachedImage->resourceBuffer())
+            return adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:sharedBuffer->createNSData().get()]);
+    }
 
-    if (!wrapper) {
-        auto* renderer = element.renderer();
-        if (is<RenderImage>(renderer)) {
-            auto* image = downcast<RenderImage>(*renderer).cachedImage();
-            if (image && !image->errorOccurred()) {
-                wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)image->imageForRenderer(renderer)->getTIFFRepresentation()] autorelease];
-                [wrapper setPreferredFilename:@"image.tiff"];
-            }
+    auto* renderer = element.renderer();
+    if (is<RenderImage>(renderer)) {
+        auto* image = downcast<RenderImage>(*renderer).cachedImage();
+        if (image && !image->errorOccurred()) {
+            RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)image->imageForRenderer(renderer)->getTIFFRepresentation()]);
+            [wrapper setPreferredFilename:@"image.tiff"];
+            return wrapper;
         }
     }
 
-    return wrapper;
+    return nil;
 }
 
 #endif
@@ -2505,8 +2505,8 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
             if (&startContainer == &endContainer && (startOffset == endOffset - 1)) {
                 Node* node = startContainer.traverseToChildAt(startOffset);
                 if (is<HTMLImageElement>(node)) {
-                    auto fileWrapper = fileWrapperForElement(downcast<HTMLImageElement>(*node));
-                    NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
+                    RetainPtr<NSFileWrapper> fileWrapper = fileWrapperForElement(downcast<HTMLImageElement>(*node));
+                    NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()];
                     [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];
                     [attachment release];
                 }
