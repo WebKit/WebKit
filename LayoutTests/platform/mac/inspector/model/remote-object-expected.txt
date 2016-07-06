@@ -1961,6 +1961,13 @@ EXPRESSION: text = document.createTextNode('text content'); text
       },
       {
         "_listeners": null,
+        "_name": "assignedSlot",
+        "_type": "object",
+        "_subtype": "null",
+        "_value": "null"
+      },
+      {
+        "_listeners": null,
         "_name": "splitText",
         "_type": "function",
         "_value": ""
@@ -1976,12 +1983,6 @@ EXPRESSION: text = document.createTextNode('text content'); text
         "_name": "data",
         "_type": "string",
         "_value": "text content"
-      },
-      {
-        "_listeners": null,
-        "_name": "length",
-        "_type": "number",
-        "_value": "12"
       }
     ],
     "_entries": null
@@ -2031,10 +2032,9 @@ EXPRESSION: comment = document.createComment('comment content'); comment
       },
       {
         "_listeners": null,
-        "_name": "assignedSlot",
-        "_type": "object",
-        "_subtype": "null",
-        "_value": "null"
+        "_name": "substringData",
+        "_type": "function",
+        "_value": ""
       }
     ],
     "_entries": null
