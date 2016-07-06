@@ -32,13 +32,8 @@
 
 namespace WebKit {
 
-class NetworkResourceLoadParameters;
-
 class NetworkLoadParameters {
 public:
-    NetworkLoadParameters() = default;
-    NetworkLoadParameters(const NetworkResourceLoadParameters&);
-
     uint64_t webPageID { 0 };
     uint64_t webFrameID { 0 };
     WebCore::SessionID sessionID { WebCore::SessionID::emptySessionID() };

@@ -34,21 +34,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NetworkResourceLoadParameters::NetworkResourceLoadParameters()
-    : identifier(0)
-    , webPageID(0)
-    , webFrameID(0)
-    , sessionID(SessionID::emptySessionID())
-    , contentSniffingPolicy(SniffContent)
-    , allowStoredCredentials(DoNotAllowStoredCredentials)
-    , clientCredentialPolicy(DoNotAskClientForAnyCredentials)
-    , shouldClearReferrerOnHTTPSToHTTPRedirect(true)
-    , defersLoading(false)
-    , needsCertificateInfo(false)
-    , maximumBufferingTime(0ms)
-{
-}
-
 void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << identifier;
