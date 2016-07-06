@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ inline bool JSStack::ensureCapacityFor(Register* newTopOfStack)
     return grow(newTopOfStack);
 #else
     ASSERT(wtfThreadData().stack().isGrowingDownward());
-    return newTopOfStack >= m_vm.stackLimit();
+    return newTopOfStack >= m_vm.jsCPUStackLimit();
 #endif
 }
 
@@ -62,7 +62,7 @@ inline void JSStack::shrink(Register* newTopOfStack)
     Register* newEnd = newTopOfStack - 1;
     if (newEnd >= m_end)
         return;
-    setStackLimit(newTopOfStack);
+    setJSEmulatedStackLimit(newTopOfStack);
     // Note: Clang complains of an unresolved linkage to maxExcessCapacity if
     // invoke std::max() with it as an argument. To work around this, we first
     // assign the constant to a local variable, and use the local instead.
@@ -80,11 +80,11 @@ inline bool JSStack::grow(Register* newTopOfStack)
     return growSlowCase(newTopOfStack);
 }
 
-inline void JSStack::setStackLimit(Register* newTopOfStack)
+inline void JSStack::setJSEmulatedStackLimit(Register* newTopOfStack)
 {
     Register* newEnd = newTopOfStack - 1;
     m_end = newEnd;
-    m_vm.setJSStackLimit(newTopOfStack);
+    m_vm.setJSEmulatedStackLimit(newTopOfStack);
 }
 
 #endif // !ENABLE(JIT)

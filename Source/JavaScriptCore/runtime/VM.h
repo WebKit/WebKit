@@ -461,18 +461,18 @@ public:
     size_t reservedZoneSize() const { return m_reservedZoneSize; }
     size_t updateReservedZoneSize(size_t reservedZoneSize);
 
+    void* jsCPUStackLimit() { return m_jsCPUStackLimit; }
+    void** addressOfJSCPUStackLimit() { return &m_jsCPUStackLimit; }
 #if !ENABLE(JIT)
-    void* jsStackLimit() { return m_jsStackLimit; }
-    void setJSStackLimit(void* limit) { m_jsStackLimit = limit; }
+    void* jsEmulatedStackLimit() { return m_jsEmulatedStackLimit; }
+    void setJSEmulatedStackLimit(void* limit) { m_jsEmulatedStackLimit = limit; }
 #endif
-    void* stackLimit() { return m_stackLimit; }
-    void** addressOfStackLimit() { return &m_stackLimit; }
 
     bool isSafeToRecurse(size_t neededStackInBytes = 0) const
     {
         ASSERT(wtfThreadData().stack().isGrowingDownward());
         int8_t* curr = reinterpret_cast<int8_t*>(&curr);
-        int8_t* limit = reinterpret_cast<int8_t*>(m_stackLimit);
+        int8_t* limit = reinterpret_cast<int8_t*>(m_jsCPUStackLimit);
         return curr >= limit && static_cast<size_t>(curr - limit) >= neededStackInBytes;
     }
 
@@ -642,20 +642,23 @@ private:
 #if ENABLE(GC_VALIDATION)
     const ClassInfo* m_initializingObjectClass;
 #endif
+
     void* m_stackPointerAtVMEntry;
     size_t m_reservedZoneSize;
-#if !ENABLE(JIT)
-    struct {
-        void* m_stackLimit;
-        void* m_jsStackLimit;
+#if ENABLE(JIT)
+    union {
+        void* m_jsCPUStackLimit { nullptr };
+        void* m_llintStackLimit;
     };
 #else
+    void* m_jsCPUStackLimit { nullptr };
     union {
-        void* m_stackLimit;
-        void* m_jsStackLimit;
+        void* m_jsEmulatedStackLimit { nullptr };
+        void* m_llintStackLimit;
     };
 #endif
     void* m_lastStackTop;
+
     Exception* m_exception { nullptr };
     Exception* m_lastException { nullptr };
     bool m_failNextNewCodeBlock { false };

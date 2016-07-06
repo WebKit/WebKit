@@ -189,7 +189,7 @@ public:
 
         // Stack Overflow Check.
         unsigned exitFrameSize = m_graph.requiredRegisterCountForExit() * sizeof(Register);
-        MacroAssembler::AbsoluteAddress addressOfStackLimit(vm().addressOfStackLimit());
+        MacroAssembler::AbsoluteAddress addressOfStackLimit(vm().addressOfJSCPUStackLimit());
         PatchpointValue* stackOverflowHandler = m_out.patchpoint(Void);
         CallSiteIndex callSiteIndex = callSiteIndexForCodeOrigin(m_ftlState, CodeOrigin(0));
         stackOverflowHandler->appendSomeRegister(m_callFrame);

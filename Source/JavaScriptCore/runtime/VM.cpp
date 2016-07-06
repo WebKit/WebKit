@@ -185,10 +185,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_initializingObjectClass(0)
 #endif
     , m_stackPointerAtVMEntry(0)
-    , m_stackLimit(0)
-#if !ENABLE(JIT)
-    , m_jsStackLimit(0)
-#endif
     , m_codeCache(std::make_unique<CodeCache>())
     , m_builtinExecutables(std::make_unique<BuiltinExecutables>(*this))
     , m_typeProfilerEnabledCount(0)
@@ -654,20 +650,20 @@ static void preCommitStackMemory(void* stackLimit)
 inline void VM::updateStackLimit()
 {
 #if PLATFORM(WIN)
-    void* lastStackLimit = m_stackLimit;
+    void* lastJSCPUStackLimit = m_jsCPUStackLimit;
 #endif
 
     if (m_stackPointerAtVMEntry) {
         ASSERT(wtfThreadData().stack().isGrowingDownward());
         char* startOfStack = reinterpret_cast<char*>(m_stackPointerAtVMEntry);
-        m_stackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize);
+        m_jsCPUStackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize);
     } else {
-        m_stackLimit = wtfThreadData().stack().recursionLimit(m_reservedZoneSize);
+        m_jsCPUStackLimit = wtfThreadData().stack().recursionLimit(m_reservedZoneSize);
     }
 
 #if PLATFORM(WIN)
-    if (lastStackLimit != m_stackLimit)
-        preCommitStackMemory(m_stackLimit);
+    if (lastJSCPUStackLimit != m_jsCPUStackLimit)
+        preCommitStackMemory(m_jsCPUStackLimit);
 #endif
 }
 

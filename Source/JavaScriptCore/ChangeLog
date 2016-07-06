@@ -1,3 +1,98 @@
+2016-07-05  Mark Lam  <mark.lam@apple.com>
+
+        Rename VM stack limit fields to better describe their purpose.
+        https://bugs.webkit.org/show_bug.cgi?id=159451
+
+        Reviewed by Keith Miller.
+
+        This is in preparation for an upcoming patch that changes what stack limit values
+        are used under various circumstances.  This patch aims to do some minimal work to
+        rename the fields so that it will be easier to reason about the upcoming patch.
+    
+        In this patch, we make the following changes:
+
+        1. Rename VM::m_stackLimit to VM::m_jsCPUStackLimit.
+
+        2. VM::m_jsStackLimit used to have an overloaded meaning:
+           a. For JIT builds, m_jsStackLimit is synonymous with m_stackLimit.
+           b. For C Loop builds, m_jsStackLimit is a separate pointer that points to the
+              emulated JS stack that the C Loop uses.
+
+           In place of m_jsStackLimit, this patch introduces 2 new fields:
+           VM::m_jsEmulatedStackLimit and VM::m_llintStackLimit.
+
+           m_llintStackLimit is the limit that the LLInt assembly uses for its stack
+           check.  m_llintStackLimit behaves like the old m_jsStackLimit in that:
+           a. For JIT builds, m_llintStackLimit is synonymous with m_jsCPUStackLimit.
+           b. For C Loop builds, m_llintStackLimit is synonymous with m_jsEmulatedStackLimit.
+
+           m_jsEmulatedStackLimit is used for the emulated stack that the C Loop uses.
+
+        3. Rename the following methods to match the above:
+             VM::stackLimit() ==> VM::jsCPUStackLimit()
+             VM::addressOfStackLimit() ==> VM::addressOfJSCPUStackLimit()
+             VM::jsStackLimit() ==> VM::jsEmulatedStackLimit()
+             VM::setJSStackLimit() ==> VM::setJSEmulatedStackLimit()
+             JSStack::setStackLimit() ==> JSStack::setEmulatedStackLimit()
+
+        4. With change (2) and (3), the limits will be used as follows:
+           a. VM code doing stack recursion checks will only use m_jsCPUStackLimit.
+           b. JIT code will only use m_jsCPUStackLimit.
+           c. C Loop emulated stack code in JSStack will only use m_jsEmulatedStackLimit.
+              Note: the part of JSStack that operates on a JIT build will use
+                    m_jsCPUStackLimit as expected.
+           d. LLINT assembly code will only use m_llintStackLimit.
+
+        This patch only contains the above refactoring changes.  There is no behavior
+        change.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::JSStack):
+        (JSC::JSStack::growSlowCase):
+        (JSC::JSStack::lowAddress):
+        (JSC::JSStack::highAddress):
+        * interpreter/JSStack.h:
+        * interpreter/JSStackInlines.h:
+        (JSC::JSStack::ensureCapacityFor):
+        (JSC::JSStack::shrink):
+        (JSC::JSStack::grow):
+        (JSC::JSStack::setJSEmulatedStackLimit):
+        (JSC::JSStack::setStackLimit): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::finishCreation):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::updateStackLimit):
+        * runtime/VM.h:
+        (JSC::VM::reservedZoneSize):
+        (JSC::VM::jsCPUStackLimit):
+        (JSC::VM::addressOfJSCPUStackLimit):
+        (JSC::VM::jsEmulatedStackLimit):
+        (JSC::VM::setJSEmulatedStackLimit):
+        (JSC::VM::isSafeToRecurse):
+        (JSC::VM::jsStackLimit): Deleted.
+        (JSC::VM::setJSStackLimit): Deleted.
+        (JSC::VM::stackLimit): Deleted.
+        (JSC::VM::addressOfStackLimit): Deleted.
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::startFunction):
+
 2016-07-05  Saam Barati  <sbarati@apple.com>
 
         StackVisitor::unwindToMachineCodeBlockFrame() may unwind past a VM entry frame when catching an exception and the frame has inlined tail calls

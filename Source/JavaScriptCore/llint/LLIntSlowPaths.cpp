@@ -484,9 +484,9 @@ LLINT_SLOW_PATH_DECL(stack_check)
     dataLogF("Num vars = %u.\n", exec->codeBlock()->m_numVars);
 
 #if ENABLE(JIT)
-    dataLogF("Current end is at %p.\n", exec->vm().stackLimit());
+    dataLogF("Current end is at %p.\n", exec->vm().jsCPUStackLimit());
 #else
-    dataLogF("Current end is at %p.\n", exec->vm().jsStackLimit());
+    dataLogF("Current end is at %p.\n", exec->vm().jsEmulatedStackLimit());
 #endif
 
 #endif

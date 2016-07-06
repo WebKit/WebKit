@@ -222,7 +222,7 @@ RegExp::RegExp(VM& vm, const String& patternString, RegExpFlags flags)
 void RegExp::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm.stackLimit());
+    Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm.jsCPUStackLimit());
     if (m_constructionError)
         m_state = ParseError;
     else
@@ -264,7 +264,7 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 {
     ConcurrentJITLocker locker(m_lock);
     
-    Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm->stackLimit());
+    Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm->jsCPUStackLimit());
     if (m_constructionError) {
         RELEASE_ASSERT_NOT_REACHED();
 #if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
@@ -317,7 +317,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 {
     ConcurrentJITLocker locker(m_lock);
     
-    Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm->stackLimit());
+    Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm->jsCPUStackLimit());
     if (m_constructionError) {
         RELEASE_ASSERT_NOT_REACHED();
 #if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)

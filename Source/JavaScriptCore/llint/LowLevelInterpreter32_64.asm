@@ -152,7 +152,7 @@ macro doVMEntry(makeCall)
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
     # before we start copying the args from the protoCallFrame below.
-    bpaeq t3, VM::m_jsStackLimit[vm], .stackHeightOK
+    bpaeq t3, VM::m_llintStackLimit[vm], .stackHeightOK
 
     if C_LOOP
         move entry, t4

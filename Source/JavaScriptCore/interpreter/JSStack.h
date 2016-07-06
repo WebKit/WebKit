@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2009, 2013-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,7 +130,7 @@ namespace JSC {
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
 
-        void setStackLimit(Register* newTopOfStack);
+        void setJSEmulatedStackLimit(Register* newTopOfStack);
 #endif // !ENABLE(JIT)
 
         VM& m_vm;
