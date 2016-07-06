@@ -232,11 +232,6 @@ ImageBuffer::~ImageBuffer()
 {
 }
 
-std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, const GraphicsContext& context)
-{
-    return createCompatibleBuffer(size, ColorSpaceSRGB, context);
-}
-
 GraphicsContext& ImageBuffer::context() const
 {
     return *m_data.m_context;

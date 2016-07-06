@@ -164,14 +164,14 @@ bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, GC3Denum, Platform3D
 }
 #endif
 
-std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, ColorSpace colorSpace, const GraphicsContext& context)
+std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, const GraphicsContext& context, bool hasAlpha)
 {
     if (size.isEmpty())
         return nullptr;
 
     IntSize scaledSize = ImageBuffer::compatibleBufferSize(size, context);
 
-    auto buffer = ImageBuffer::createCompatibleBuffer(scaledSize, 1, colorSpace, context);
+    auto buffer = ImageBuffer::createCompatibleBuffer(scaledSize, 1, ColorSpaceSRGB, context, hasAlpha);
     if (!buffer)
         return nullptr;
 
@@ -180,7 +180,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     return buffer;
 }
 
-std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const GraphicsContext& context)
+std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const GraphicsContext& context, bool)
 {
     return create(size, context.renderingMode(), resolutionScale, colorSpace);
 }

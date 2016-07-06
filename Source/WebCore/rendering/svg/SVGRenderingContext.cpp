@@ -351,7 +351,7 @@ bool SVGRenderingContext::bufferForeground(std::unique_ptr<ImageBuffer>& imageBu
 
     // Create a new buffer and paint the foreground into it.
     if (!imageBuffer) {
-        if ((imageBuffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(boundingBox.size()), ColorSpaceSRGB, m_paintInfo->context()))) {
+        if ((imageBuffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(boundingBox.size()), m_paintInfo->context(), true))) {
             GraphicsContext& bufferedRenderingContext = imageBuffer->context();
             bufferedRenderingContext.translate(-boundingBox.x(), -boundingBox.y());
             PaintInfo bufferedInfo(*m_paintInfo);

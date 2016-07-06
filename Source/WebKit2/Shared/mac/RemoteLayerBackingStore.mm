@@ -150,7 +150,7 @@ bool RemoteLayerBackingStore::decode(IPC::ArgumentDecoder& decoder, RemoteLayerB
         MachSendRight sendRight;
         if (!decoder.decode(sendRight))
             return false;
-        result.m_frontBuffer.surface = WebCore::IOSurface::createFromSendRight(sendRight, sRGBColorSpaceRef());
+        result.m_frontBuffer.surface = WebCore::IOSurface::createFromSendRight(sendRight, ColorSpaceSRGB);
         return true;
     }
 #endif
@@ -210,7 +210,7 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
         std::swap(m_frontBuffer, m_backBuffer);
 
         if (!m_frontBuffer.surface)
-            m_frontBuffer.surface = WebCore::IOSurface::create(expandedScaledSize, sRGBColorSpaceRef(), bufferFormat(m_isOpaque));
+            m_frontBuffer.surface = WebCore::IOSurface::create(expandedScaledSize, ColorSpaceSRGB, bufferFormat(m_isOpaque));
 
         setBufferVolatility(BufferType::Front, false);
         return;

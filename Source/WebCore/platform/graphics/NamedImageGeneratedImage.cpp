@@ -64,7 +64,7 @@ void NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& d
 void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
 {
 #if USE(NEW_THEME)
-    auto imageBuffer = ImageBuffer::createCompatibleBuffer(size(), context);
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(size(), context, true);
     if (!imageBuffer)
         return;
 

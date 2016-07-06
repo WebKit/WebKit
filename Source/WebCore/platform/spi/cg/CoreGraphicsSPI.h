@@ -188,7 +188,6 @@ CGImageRef CGIOSurfaceContextCreateImageReference(CGContextRef);
 CGSRegionEnumeratorObj CGSRegionEnumerator(CGRegionRef);
 CGRect* CGSNextRect(const CGSRegionEnumeratorObj);
 CGError CGSReleaseRegionEnumerator(const CGSRegionEnumeratorObj);
-CGColorSpaceRef CGContextCopyDeviceColorSpace(CGContextRef);
 #endif
 
 #if PLATFORM(WIN)

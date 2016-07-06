@@ -28,6 +28,7 @@
 
 #if USE(IOSURFACE)
 
+#include "ColorSpace.h"
 #include "IOSurface.h"
 #include "IntSize.h"
 #include "IntSizeHash.h"
@@ -47,7 +48,7 @@ class IOSurfacePool {
 public:
     WEBCORE_EXPORT static IOSurfacePool& sharedPool();
 
-    std::unique_ptr<IOSurface> takeSurface(IntSize, CGColorSpaceRef, IOSurface::Format);
+    std::unique_ptr<IOSurface> takeSurface(IntSize, ColorSpace, IOSurface::Format);
     WEBCORE_EXPORT void addSurface(std::unique_ptr<IOSurface>);
 
     void discardAllSurfaces();
