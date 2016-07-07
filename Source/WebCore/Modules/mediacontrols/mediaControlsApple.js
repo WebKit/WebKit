@@ -2288,33 +2288,37 @@ Controller.prototype = {
             {
                 name: "Show Controls",
                 object: this.showControlsButton,
-                extraProperties: ["hidden"]
+                extraProperties: ["hidden"],
             },
             {
                 name: "Status Display",
                 object: this.controls.statusDisplay,
                 styleValues: ["display"],
-                extraProperties: ["textContent"]
+                extraProperties: ["textContent"],
             },
             {
                 name: "Play Button",
-                object: this.controls.playButton
+                object: this.controls.playButton,
+                extraProperties: ["hidden"],
             },
             {
                 name: "Rewind Button",
-                object: this.controls.rewindButton
+                object: this.controls.rewindButton,
+                extraProperties: ["hidden"],
             },
             {
                 name: "Timeline Box",
-                object: this.controls.timelineBox
+                object: this.controls.timelineBox,
             },
             {
                 name: "Mute Box",
-                object: this.controls.muteBox
+                object: this.controls.muteBox,
+                extraProperties: ["hidden"],
             },
             {
                 name: "Fullscreen Button",
-                object: this.controls.fullscreenButton
+                object: this.controls.fullscreenButton,
+                extraProperties: ["hidden"],
             },
             {
                 name: "AppleTV Device Picker",
@@ -2326,10 +2330,36 @@ Controller.prototype = {
                 name: "Picture-in-picture Button",
                 object: this.controls.pictureInPictureButton,
                 extraProperties: ["parentElement"],
+                extraProperties: ["hidden"],
+            },
+            {
+                name: "Caption Button",
+                object: this.controls.captionButton,
+                extraProperties: ["hidden"],
+            },
+            {
+                name: "Timeline",
+                object: this.controls.timeline,
+                extraProperties: ["hidden"],
+            },
+            {
+                name: "Current Time",
+                object: this.controls.currentTime,
+                extraProperties: ["hidden"],
+            },
+            {
+                name: "Thumbnail Track",
+                object: this.controls.thumbnailTrack,
+                extraProperties: ["hidden"],
+            },
+            {
+                name: "Time Remaining",
+                object: this.controls.remainingTime,
+                extraProperties: ["hidden"],
             },
             {
                 name: "Track Menu",
-                object: this.captionMenu
+                object: this.captionMenu,
             },
             {
                 name: "Inline playback placeholder",
