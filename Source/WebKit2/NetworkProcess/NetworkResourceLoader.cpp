@@ -405,8 +405,8 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
     if (isSynchronous()) {
         m_synchronousLoadData->error = error;
         sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr);
-    } else
-        send(Messages::WebResourceLoader::DidFailResourceLoad(error));
+    } else if (auto* connection = messageSenderConnection())
+        connection->send(Messages::WebResourceLoader::DidFailResourceLoad(error), 0, 0);
 
     cleanup();
 }

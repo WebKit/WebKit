@@ -1,5 +1,20 @@
 2016-07-07  Alex Christensen  <achristensen@webkit.org>
 
+        Fix crash when sending failure message to closed WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=159526
+        <rdar://problem/26767037>
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        Check to see if there is a connection before using it to send a message.
+        Sometimes it was null.
+        I think this could be tested if we had real network loading from TestWebKitAPI
+        by cancelling slow loads and closing WebProcesses around the same time, but no such infrastructure exists yet.
+
+2016-07-07  Alex Christensen  <achristensen@webkit.org>
+
         Use SocketProvider to create WebSocketChannels
         https://bugs.webkit.org/show_bug.cgi?id=158776
 
