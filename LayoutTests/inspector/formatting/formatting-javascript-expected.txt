@@ -1,4 +1,4 @@
-Test JavaScript formatting tests.
+Test JavaScript formatting.
 
 
 == Running test suite: EsprimaFormatter.JavaScript

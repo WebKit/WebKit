@@ -1,3 +1,14 @@
+2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector, regression: JS/JSON pretty-printing sporadically broken in STP8
+        https://bugs.webkit.org/show_bug.cgi?id=159511
+        <rdar://problem/27218435>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/formatting/formatting-json-expected.txt: Added.
+        * inspector/formatting/formatting-json.html: Added.
+
 2016-07-07  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r199054): CrashTracer: [USER] parseWebKit at WebCore: WebCore::RenderBlockFlow::checkFloatsInCleanLine + 107

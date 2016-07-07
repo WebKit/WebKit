@@ -1,3 +1,15 @@
+2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector, regression: JS/JSON pretty-printing sporadically broken in STP8
+        https://bugs.webkit.org/show_bug.cgi?id=159511
+        <rdar://problem/27218435>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Workers/Formatter/FormatterWorker.js:
+        (FormatterWorker.prototype.formatJavaScript):
+        Attempt to format invalid JSON that can be evaluated to an object.
+
 2016-07-07  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: scrolled Snapshot list is reset to top and drawn blank after switching back from Snapshot Comparison view

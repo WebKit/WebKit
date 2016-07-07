@@ -42,6 +42,7 @@ FormatterWorker = class FormatterWorker
 
     formatJavaScript(sourceText, indentString, includeSourceMapData)
     {
+        // Format a JavaScript program.
         let formatter = new EsprimaFormatter(sourceText, indentString);
         if (formatter.success) {
             let result = {formattedText: formatter.formattedText};
@@ -56,6 +57,7 @@ FormatterWorker = class FormatterWorker
             return result;
         }
 
+        // Format valid JSON.
         // The formatter could fail if this was just a JSON string. So try a JSON.parse and stringify.
         // This will produce empty source map data, but it is not code, so it is not as important.
         try {
@@ -65,6 +67,20 @@ FormatterWorker = class FormatterWorker
                 result.sourceMapData = {mapping: {original: [], formatted: []}, originalLineEndings:[], formattedLineEndings: []};
             return result;
         } catch (e) {}
+
+        // Format invalid JSON.
+        // Some applications do not use JSON.parse but eval on JSON content. That is more permissive
+        // so try to format invalid JSON. Again no source map data since it is not code.
+        if (/^\s*\{/.test(sourceText)) {
+            let invalidJSONFormatter = new EsprimaFormatter("(" + sourceText + ")", indentString);
+            if (invalidJSONFormatter.success) {
+                let formattedTextWithParens = invalidJSONFormatter.formattedText;
+                let result = {formattedText: formattedTextWithParens.substring(1, formattedTextWithParens.length - 2)}; // Remove "(" and ")\n".
+                if (includeSourceMapData)
+                    result.sourceMapData = {mapping: {original: [], formatted: []}, originalLineEndings:[], formattedLineEndings: []};
+                return result;
+            }
+        }
 
         return {formattedText: null};
     }

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    function ensureJSON(string, expectation) {
+        let invalid = false;
+        try {
+            JSON.parse(string);
+        } catch (e) {
+            invalid = true;
+        }
+        if (expectation === "invalid")
+            InspectorTest.expectThat(invalid, "JSON should be invalid.");
+        else
+            InspectorTest.expectThat(!invalid, "JSON should be valid.");
+    }
+
+    function ensureEval(string, expectation) {
+        let isObject = false;
+        try {
+            let result = eval("(" + string + ")");
+            isObject = typeof result === "object";
+        } catch (e) {}
+
+        if (expectation === "object")
+            InspectorTest.expectThat(isObject, "Should be able to be evaluated to an object.");
+        else
+            InspectorTest.expectThat(!isObject, "Should not be able to be evaluated to an object.");
+    }
+
+
+    let suite = InspectorTest.createAsyncSuite("EsprimaFormatter.JSON");
+
+    let indentString = "    ";
+    let workerProxy = WebInspector.FormatterWorkerProxy.singleton();
+
+    suite.addTestCase({
+        name: "EsprimaFormatter.ValidJSON",
+        description: "Format valid JSON",
+        test: (resolve, reject) => {
+            let validJSON = JSON.stringify({"a":123,"b":[1,2,3],"c":{"d":"e"}});
+            InspectorTest.log("JSON: " + doubleQuotedString(validJSON));
+            ensureJSON(validJSON, "valid");
+            workerProxy.formatJavaScript(validJSON, indentString, ({formattedText, sourceMapData}) => {
+                InspectorTest.log("FORMATTED:");
+                InspectorTest.log(formattedText);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "EsprimaFormatter.InvalidButObject",
+        description: "Format invalid JSON due to literal keys, but it can be evaluated as a valid JavaScript Object",
+        test: (resolve, reject) => {
+            let invalidJSON = `{a:123,b:[1,2,3],c:{d:"e"}}`;
+            InspectorTest.log("JSON: " + doubleQuotedString(invalidJSON));
+            ensureJSON(invalidJSON, "invalid");
+            ensureEval(invalidJSON, "object");
+            workerProxy.formatJavaScript(invalidJSON, indentString, ({formattedText, sourceMapData}) => {
+                InspectorTest.log("FORMATTED:");
+                InspectorTest.log(formattedText);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "EsprimaFormatter.InvalidWithComments",
+        description: "Format invalid JSON due to comments, but it can be evaluated as a valid JavaScript Object",
+        test: (resolve, reject) => {
+            let invalidJSON = JSON.stringify({"a":123,"b":[1,2,3],"c":{"d":"e"}}) + "/*Comment*/";
+            InspectorTest.log("JSON: " + doubleQuotedString(invalidJSON));
+            ensureJSON(invalidJSON, "invalid");
+            ensureEval(invalidJSON, "object");
+            workerProxy.formatJavaScript(invalidJSON, indentString, ({formattedText, sourceMapData}) => {
+                InspectorTest.log("FORMATTED:");
+                InspectorTest.log(formattedText);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "EsprimaFormatter.Invalid",
+        description: "Format invalid JSON, that is not a valid JavaScript Object",
+        test: (resolve, reject) => {
+            let invalid = `{a:1 b:2}`;
+            InspectorTest.log("INPUT: " + doubleQuotedString(invalid));
+            ensureJSON(invalid, "invalid");
+            ensureEval(invalid, "bad");
+            workerProxy.formatJavaScript(invalid, indentString, ({formattedText, sourceMapData}) => {
+                InspectorTest.expectThat(formattedText === null, "Response should be null.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test JSON formatting.</p>
+</body>
+</html>

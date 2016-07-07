@@ -1,0 +1,53 @@
+Test JSON formatting.
+
+
+== Running test suite: EsprimaFormatter.JSON
+-- Running test case: EsprimaFormatter.ValidJSON
+JSON: "{\"a\":123,\"b\":[1,2,3],\"c\":{\"d\":\"e\"}}"
+PASS: JSON should be valid.
+FORMATTED:
+{
+    "a": 123,
+    "b": [
+        1,
+        2,
+        3
+    ],
+    "c": {
+        "d": "e"
+    }
+}
+
+-- Running test case: EsprimaFormatter.InvalidButObject
+JSON: "{a:123,b:[1,2,3],c:{d:\"e\"}}"
+PASS: JSON should be invalid.
+PASS: Should be able to be evaluated to an object.
+FORMATTED:
+{
+    a: 123,
+    b: [1, 2, 3],
+    c: {
+        d: "e"
+    }
+}
+
+-- Running test case: EsprimaFormatter.InvalidWithComments
+JSON: "{\"a\":123,\"b\":[1,2,3],\"c\":{\"d\":\"e\"}}/*Comment*/"
+PASS: JSON should be invalid.
+PASS: Should be able to be evaluated to an object.
+FORMATTED:
+{
+    "a": 123,
+    "b": [1, 2, 3],
+    "c": {
+        "d": "e"
+    }
+} /*Comment*/
+
+
+-- Running test case: EsprimaFormatter.Invalid
+INPUT: "{a:1 b:2}"
+PASS: JSON should be invalid.
+PASS: Should not be able to be evaluated to an object.
+PASS: Response should be null.
+
