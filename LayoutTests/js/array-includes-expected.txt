@@ -34,6 +34,37 @@ Array-like object with invalid lengths
 PASS var obj = { 0: 1, 1: 1, 2: 1, length: 0 }; Array.prototype.includes.call(obj, 1) is false
 PASS var obj = { 0: 1, 1: 1, 2: 1, length: -0 }; Array.prototype.includes.call(obj, 1) is false
 PASS var obj = { 0: 1, 1: 1, 2: 1, length: -3 }; Array.prototype.includes.call(obj, 1) is false
+The index is converted to integer
+PASS [2, 3, 5, 7, 11, 13, 17].includes(2, NaN) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(7, NaN) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(17, NaN) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(2, Infinity) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(7, Infinity) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(17, Infinity) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(2, -Infinity) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(7, -Infinity) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(17, -Infinity) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(2, Number.MAX_SAFE_INTEGER) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(7, Number.MAX_SAFE_INTEGER) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(17, Number.MAX_SAFE_INTEGER) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(2, Number.MAX_SAFE_INTEGER + 1) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(7, Number.MAX_SAFE_INTEGER + 1) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(17, Number.MAX_SAFE_INTEGER + 1) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(2, Number.MIN_SAFE_INTEGER) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(7, Number.MIN_SAFE_INTEGER) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(17, Number.MIN_SAFE_INTEGER) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(2, Number.MIN_SAFE_INTEGER - 1) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(7, Number.MIN_SAFE_INTEGER - 1) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(17, Number.MIN_SAFE_INTEGER - 1) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(2, { valueOf: () => { return 1; } }) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(7, { valueOf: () => { return 1; } }) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(17, { valueOf: () => { return 1; } }) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(2, { toString: () => { return '1'; } }) is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(7, { toString: () => { return '1'; } }) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(17, { toString: () => { return '1'; } }) is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(2, '1') is false
+PASS [2, 3, 5, 7, 11, 13, 17].includes(7, '1') is true
+PASS [2, 3, 5, 7, 11, 13, 17].includes(17, '1') is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

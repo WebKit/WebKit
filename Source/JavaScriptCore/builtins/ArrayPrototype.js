@@ -434,7 +434,7 @@ function includes(searchElement /*, fromIndex*/)
 
     var fromIndex = 0;
     if (arguments.length > 1 && arguments[1] !== @undefined)
-        fromIndex = arguments[1] | 0;
+        fromIndex = @toInteger(arguments[1]);
 
     var index;
     if (fromIndex >= 0)

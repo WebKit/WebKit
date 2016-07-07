@@ -1,5 +1,15 @@
 2016-07-07  Benjamin Poulain  <benjamin@webkit.org>
 
+        [JSC] Array.prototype.includes uses ToInt32 instead of ToInteger on the index argument
+        https://bugs.webkit.org/show_bug.cgi?id=159505
+
+        Reviewed by Mark Lam.
+
+        * js/array-includes-expected.txt:
+        * js/script-tests/array-includes.js:
+
+2016-07-07  Benjamin Poulain  <benjamin@webkit.org>
+
         [JSC] String.prototype.normalize should have a length of zero
         https://bugs.webkit.org/show_bug.cgi?id=159506
 
