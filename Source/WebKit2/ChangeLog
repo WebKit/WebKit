@@ -1,3 +1,14 @@
+2016-07-07  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/27175583.
+
+    2016-06-23  Dean Jackson  <dino@apple.com>
+
+            Disable some features on safari-602.1.40-branch.
+            <rdar://problem/27175583>
+
+            * Configurations/FeatureDefines.xcconfig:
+
 2016-07-06  Tim Horton  <timothy_horton@apple.com>
 
         Some API tests started failing after r202889
