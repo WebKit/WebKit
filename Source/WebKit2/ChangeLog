@@ -1,3 +1,20 @@
+2016-07-07  Antoine Quint  <graouts@apple.com>
+
+        <img> with a wide gamut PDF does not display using a wide gamut color space
+        https://bugs.webkit.org/show_bug.cgi?id=158983
+        <rdar://problem/25720247>
+
+        Reviewed by Dean Jackson.
+
+        ColorSpace parameters have been replaced with CGColorSpaceRef parameters for IOSurface.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::decode):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+
 2016-07-07  Anders Carlsson  <andersca@apple.com>
 
         Memory corruption destroying PaymentCoordinator

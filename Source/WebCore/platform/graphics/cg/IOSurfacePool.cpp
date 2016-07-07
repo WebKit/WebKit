@@ -64,7 +64,7 @@ IOSurfacePool& IOSurfacePool::sharedPool()
     return pool;
 }
 
-static bool surfaceMatchesParameters(IOSurface& surface, IntSize requestedSize, ColorSpace colorSpace, IOSurface::Format format)
+static bool surfaceMatchesParameters(IOSurface& surface, IntSize requestedSize, CGColorSpaceRef colorSpace, IOSurface::Format format)
 {
     if (format != surface.format())
         return false;
@@ -107,7 +107,7 @@ void IOSurfacePool::didUseSurfaceOfSize(IntSize size)
     m_sizesInPruneOrder.append(size);
 }
 
-std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, ColorSpace colorSpace, IOSurface::Format format)
+std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, CGColorSpaceRef colorSpace, IOSurface::Format format)
 {
     CachedSurfaceMap::iterator mapIter = m_cachedSurfaces.find(size);
 

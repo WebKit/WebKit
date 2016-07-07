@@ -70,7 +70,32 @@ static FloatSize scaleSizeToUserSpace(const FloatSize& logicalSize, const IntSiz
     return FloatSize(logicalSize.width() * xMagnification, logicalSize.height() * yMagnification);
 }
 
-ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpace imageColorSpace, RenderingMode renderingMode, bool& success)
+std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, const GraphicsContext& context)
+{
+    if (size.isEmpty())
+        return nullptr;
+
+    IntSize scaledSize = ImageBuffer::compatibleBufferSize(size, context);
+    float resolutionScale = context.scaleFactor().width();
+    RetainPtr<CGColorSpaceRef> colorSpace;
+#if PLATFORM(COCOA)
+    colorSpace = adoptCF(CGContextCopyDeviceColorSpace(context.platformContext()));
+#else
+    colorSpace = sRGBColorSpaceRef();
+#endif
+    RenderingMode renderingMode = context.renderingMode();
+    bool success = false;
+    std::unique_ptr<ImageBuffer> buffer(new ImageBuffer(scaledSize, resolutionScale, colorSpace.get(), renderingMode, success));
+
+    if (!success)
+        return nullptr;
+
+    // Set up a corresponding scale factor on the graphics context.
+    buffer->context().scale(FloatSize(scaledSize.width() / size.width(), scaledSize.height() / size.height()));
+    return buffer;
+}
+
+ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSpaceRef colorSpace, RenderingMode renderingMode, bool& success)
     : m_logicalSize(size)
     , m_resolutionScale(resolutionScale)
 {
@@ -108,13 +133,13 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
     ASSERT(renderingMode == Unaccelerated);
 #endif
 
-    m_data.colorSpace = cachedCGColorSpace(imageColorSpace);
+    m_data.colorSpace = colorSpace;
 
     RetainPtr<CGContextRef> cgContext;
     if (accelerateRendering) {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
         FloatSize userBounds = sizeForDestinationSize(FloatSize(width.unsafeGet(), height.unsafeGet()));
-        m_data.surface = IOSurface::create(m_data.backingStoreSize, IntSize(userBounds), imageColorSpace);
+        m_data.surface = IOSurface::create(m_data.backingStoreSize, IntSize(userBounds), colorSpace);
         cgContext = m_data.surface->ensurePlatformContext();
         if (cgContext)
             CGContextClearRect(cgContext.get(), FloatRect(FloatPoint(), userBounds));
@@ -149,6 +174,11 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
     context().applyDeviceScaleFactor(m_resolutionScale);
 
     success = true;
+}
+
+ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpace imageColorSpace, RenderingMode renderingMode, bool& success)
+    : ImageBuffer(size, resolutionScale, cachedCGColorSpace(imageColorSpace), renderingMode, success)
+{
 }
 
 ImageBuffer::~ImageBuffer()
