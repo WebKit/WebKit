@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,7 @@ NSString * const WebKitErrorPlugInPageURLStringKey =    @"WebKitErrorPlugInPageU
 #define WebKitErrorDescriptionCannotShowURL UI_STRING_INTERNAL("The URL can’t be shown", "WebKitErrorCannotShowURL description")
 #define WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange UI_STRING_INTERNAL("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description")
 #define WebKitErrorDescriptionCannotUseRestrictedPort UI_STRING_INTERNAL("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description")
+#define WebKitErrorDescriptionFrameLoadBlockedByContentFilter UI_STRING_INTERNAL("The URL was blocked by a content filter", "WebKitErrorFrameLoadBlockedByContentFilter description")
 
 // Plug-in and java errors
 #define WebKitErrorDescriptionCannotFindPlugin UI_STRING_INTERNAL("The plug-in can’t be found", "WebKitErrorCannotFindPlugin description")
@@ -154,7 +155,8 @@ static void registerErrors()
         WebKitErrorDescriptionCannotShowURL,                        [NSNumber numberWithInt: WebKitErrorCannotShowURL],
         WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   [NSNumber numberWithInt: WebKitErrorFrameLoadInterruptedByPolicyChange],
         WebKitErrorDescriptionCannotUseRestrictedPort,              [NSNumber numberWithInt: WebKitErrorCannotUseRestrictedPort],
-        
+        WebKitErrorDescriptionFrameLoadBlockedByContentFilter,      [NSNumber numberWithInt: WebKitErrorFrameLoadBlockedByContentFilter],
+
         // Plug-in and java errors
         WebKitErrorDescriptionCannotFindPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotFindPlugIn],
         WebKitErrorDescriptionCannotLoadPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],

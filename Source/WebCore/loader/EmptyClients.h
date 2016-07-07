@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel (eric@webkit.org)
- * Copyright (C) 2008-2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
@@ -336,6 +336,9 @@ public:
     ResourceError blockedByContentBlockerError(const ResourceRequest&) override { return { }; }
     ResourceError cannotShowURLError(const ResourceRequest&) override { return { }; }
     ResourceError interruptedForPolicyChangeError(const ResourceRequest&) override { return { }; }
+#if ENABLE(CONTENT_FILTERING)
+    ResourceError blockedByContentFilterError(const ResourceRequest&) override { return { }; }
+#endif
 
     ResourceError cannotShowMIMETypeError(const ResourceResponse&) override { return { }; }
     ResourceError fileDoesNotExistError(const ResourceResponse&) override { return { }; }

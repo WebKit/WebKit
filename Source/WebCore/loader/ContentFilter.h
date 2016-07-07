@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentFilter_h
-#define ContentFilter_h
+#pragma once
 
 #if ENABLE(CONTENT_FILTERING)
 
 #include "CachedResourceHandle.h"
 #include "PlatformContentFilter.h"
+#include "ResourceError.h"
 #include <functional>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CachedRawResource;
-class ContentFilterUnblockHandler;
 class DocumentLoader;
 class ResourceRequest;
 class ResourceResponse;
-class SharedBuffer;
+class SubstituteData;
 
 class ContentFilter {
     WTF_MAKE_FAST_ALLOCATED;
@@ -62,9 +61,8 @@ public:
     bool continueAfterDataReceived(CachedResource*, const char* data, int length);
     bool continueAfterNotifyFinished(CachedResource*);
 
-    ContentFilterUnblockHandler unblockHandler() const;
-    Ref<SharedBuffer> replacementData() const;
-    String unblockRequestDeniedScript() const;
+    static bool continueAfterSubstituteDataRequest(const DocumentLoader& activeLoader, const SubstituteData&);
+    void handleProvisionalLoadFailure(const ResourceError&);
 
 private:
     using State = PlatformContentFilter::State;
@@ -88,6 +86,8 @@ private:
     CachedResourceHandle<CachedRawResource> m_mainResource;
     PlatformContentFilter* m_blockingContentFilter { nullptr };
     State m_state { State::Stopped };
+    ResourceError m_blockedError;
+    bool m_isLoadingBlockedPage { false };
 };
 
 template <typename T>
@@ -100,5 +100,3 @@ ContentFilter::Type ContentFilter::type()
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_FILTERING)
-
-#endif // ContentFilter_h

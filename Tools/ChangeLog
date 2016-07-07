@@ -1,3 +1,30 @@
+2016-07-07  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Load blocked pages more like other error pages are loaded
+        https://bugs.webkit.org/show_bug.cgi?id=159485
+        <rdar://problem/26014076>
+
+        Reviewed by Brady Eidson.
+
+        Added API tests for WebView and WKWebView to verify that alternate HTML loaded in response
+        to a content filtering provisional navigation failure is ignored in preference of
+        ContentFilter's own error page.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm:
+        (-[LoadAlternateNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[LoadAlternateNavigationDelegate webView:didFinishNavigation:]):
+        (loadAlternateTest):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFilteringPlugIn.mm:
+        (-[MockContentFilterEnabler initWithCoder:]):
+        * TestWebKitAPI/Tests/mac/ContentFiltering.mm: Added.
+        (-[LoadAlternateFrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        (-[LoadAlternateFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::loadAlternateTest):
+        (TestWebKitAPI::TEST):
+
 2016-07-07  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed: add myself to the reviewers list.

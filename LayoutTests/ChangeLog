@@ -1,3 +1,54 @@
+2016-07-07  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Load blocked pages more like other error pages are loaded
+        https://bugs.webkit.org/show_bug.cgi?id=159485
+        <rdar://problem/26014076>
+
+        Reviewed by Brady Eidson.
+
+        Changed allow-* and block-* tests from ref tests to text tests so that they can capture
+        frame load delegate callbacks and the back forward list.
+
+        * contentfiltering/allow-after-add-data-expected.html: Removed.
+        * contentfiltering/allow-after-add-data-expected.txt: Added.
+        * contentfiltering/allow-after-finished-adding-data-expected.html: Removed.
+        * contentfiltering/allow-after-finished-adding-data-expected.txt: Added.
+        * contentfiltering/allow-after-response-expected.html: Removed.
+        * contentfiltering/allow-after-response-expected.txt: Added.
+        * contentfiltering/allow-after-will-send-request-expected.html: Removed.
+        * contentfiltering/allow-after-will-send-request-expected.txt: Added.
+        * contentfiltering/allow-never-expected.html: Removed.
+        * contentfiltering/allow-never-expected.txt: Added.
+        * contentfiltering/block-after-add-data-expected.html: Removed.
+        * contentfiltering/block-after-add-data-expected.txt: Added.
+        * contentfiltering/block-after-add-data-then-allow-unblock-expected.html: Removed.
+        * contentfiltering/block-after-add-data-then-allow-unblock-expected.txt: Added.
+        * contentfiltering/block-after-add-data-then-deny-unblock-expected.html: Removed.
+        * contentfiltering/block-after-add-data-then-deny-unblock-expected.txt: Added.
+        * contentfiltering/block-after-finished-adding-data-expected.html: Removed.
+        * contentfiltering/block-after-finished-adding-data-expected.txt: Added.
+        * contentfiltering/block-after-finished-adding-data-then-allow-unblock-expected.html: Removed.
+        * contentfiltering/block-after-finished-adding-data-then-allow-unblock-expected.txt: Added.
+        * contentfiltering/block-after-finished-adding-data-then-deny-unblock-expected.html: Removed.
+        * contentfiltering/block-after-finished-adding-data-then-deny-unblock-expected.txt: Added.
+        * contentfiltering/block-after-response-expected.html: Removed.
+        * contentfiltering/block-after-response-expected.txt: Added.
+        * contentfiltering/block-after-response-then-allow-unblock-expected.html: Removed.
+        * contentfiltering/block-after-response-then-allow-unblock-expected.txt: Added.
+        * contentfiltering/block-after-response-then-deny-unblock-expected.html: Removed.
+        * contentfiltering/block-after-response-then-deny-unblock-expected.txt: Added.
+        * contentfiltering/block-after-will-send-request-expected.html: Removed.
+        * contentfiltering/block-after-will-send-request-expected.txt: Added.
+        * contentfiltering/block-after-will-send-request-then-allow-unblock-expected.html: Removed.
+        * contentfiltering/block-after-will-send-request-then-allow-unblock-expected.txt: Added.
+        * contentfiltering/block-after-will-send-request-then-deny-unblock-expected.html: Removed.
+        * contentfiltering/block-after-will-send-request-then-deny-unblock-expected.txt: Added.
+        * contentfiltering/block-never-expected.html: Removed.
+        * contentfiltering/block-never-expected.txt: Added.
+        * contentfiltering/resources/contentfiltering.js: Added testRunner calls to dump as text,
+        dump frame load callbacks, and dump the back forward list. Changed from loading data: URLs
+        to file: URLs in the test iframe.
+
 2016-07-07  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Array.prototype[Symbol.unscopables] should have the "includes" property

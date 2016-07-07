@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameLoaderClient_h
-#define FrameLoaderClient_h
+#pragma once
 
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
@@ -232,6 +231,9 @@ namespace WebCore {
         virtual ResourceError blockedByContentBlockerError(const ResourceRequest&) = 0;
         virtual ResourceError cannotShowURLError(const ResourceRequest&) = 0;
         virtual ResourceError interruptedForPolicyChangeError(const ResourceRequest&) = 0;
+#if ENABLE(CONTENT_FILTERING)
+        virtual ResourceError blockedByContentFilterError(const ResourceRequest&) = 0;
+#endif
 
         virtual ResourceError cannotShowMIMETypeError(const ResourceResponse&) = 0;
         virtual ResourceError fileDoesNotExistError(const ResourceResponse&) = 0;
@@ -355,5 +357,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // FrameLoaderClient_h

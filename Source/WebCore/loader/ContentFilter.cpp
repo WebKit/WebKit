@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,17 @@
 #include "CachedRawResource.h"
 #include "ContentFilterUnblockHandler.h"
 #include "DocumentLoader.h"
+#include "Frame.h"
+#include "FrameLoadRequest.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "Logging.h"
 #include "NetworkExtensionContentFilter.h"
 #include "ParentalControlsContentFilter.h"
+#include "ScriptController.h"
 #include "SharedBuffer.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/Vector.h>
 
 #if !LOG_DISABLED
@@ -119,32 +125,9 @@ void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
 
 void ContentFilter::stopFilteringMainResource()
 {
-    m_state = State::Stopped;
+    if (m_state != State::Blocked)
+        m_state = State::Stopped;
     m_mainResource = nullptr;
-}
-
-ContentFilterUnblockHandler ContentFilter::unblockHandler() const
-{
-    ASSERT(m_state == State::Blocked);
-    ASSERT(m_blockingContentFilter);
-    ASSERT(m_blockingContentFilter->didBlockData());
-    return m_blockingContentFilter->unblockHandler();
-}
-
-Ref<SharedBuffer> ContentFilter::replacementData() const
-{
-    ASSERT(m_state == State::Blocked);
-    ASSERT(m_blockingContentFilter);
-    ASSERT(m_blockingContentFilter->didBlockData());
-    return m_blockingContentFilter->replacementData();
-}
-
-String ContentFilter::unblockRequestDeniedScript() const
-{
-    ASSERT(m_state == State::Blocked);
-    ASSERT(m_blockingContentFilter);
-    ASSERT(m_blockingContentFilter->didBlockData());
-    return m_blockingContentFilter->unblockRequestDeniedScript();
 }
 
 bool ContentFilter::continueAfterResponseReceived(CachedResource* resource, const ResourceResponse& response)
@@ -236,8 +219,24 @@ void ContentFilter::didDecide(State state)
     ASSERT(state == State::Allowed || state == State::Blocked);
     LOG(ContentFiltering, "ContentFilter decided load should be %s for main resource at <%s>.\n", state == State::Allowed ? "allowed" : "blocked", m_mainResource ? m_mainResource->url().string().ascii().data() : "");
     m_state = state;
-    if (m_state == State::Blocked)
-        m_documentLoader.contentFilterDidBlock();
+    if (m_state != State::Blocked)
+        return;
+
+    ContentFilterUnblockHandler unblockHandler { m_blockingContentFilter->unblockHandler() };
+    unblockHandler.setUnreachableURL(m_documentLoader.documentURL());
+    RefPtr<Frame> frame { m_documentLoader.frame() };
+    String unblockRequestDeniedScript { m_blockingContentFilter->unblockRequestDeniedScript() };
+    if (!unblockRequestDeniedScript.isEmpty() && frame) {
+        static_assert(std::is_base_of<ThreadSafeRefCounted<Frame>, Frame>::value, "Frame must be ThreadSafeRefCounted.");
+        unblockHandler.wrapWithDecisionHandler([frame = WTFMove(frame), script = unblockRequestDeniedScript.isolatedCopy()](bool unblocked) {
+            if (!unblocked)
+                frame->script().executeScript(script);
+        });
+    }
+    m_documentLoader.frameLoader()->client().contentFilterDidBlockLoad(WTFMove(unblockHandler));
+
+    m_blockedError = m_documentLoader.frameLoader()->blockedByContentFilterError(m_documentLoader.request());
+    m_documentLoader.cancelMainResourceLoad(m_blockedError);
 }
 
 void ContentFilter::deliverResourceData(CachedResource& resource)
@@ -246,6 +245,51 @@ void ContentFilter::deliverResourceData(CachedResource& resource)
     ASSERT(resource.dataBufferingPolicy() == BufferData);
     if (auto* resourceBuffer = resource.resourceBuffer())
         m_documentLoader.dataReceived(&resource, resourceBuffer->data(), resourceBuffer->size());
+}
+
+static const URL& blockedPageURL()
+{
+    static LazyNeverDestroyed<URL> blockedPageURL;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        auto webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
+        auto blockedPageCFURL = adoptCF(CFBundleCopyResourceURL(webCoreBundle, CFSTR("ContentFilterBlockedPage"), CFSTR("html"), nullptr));
+        blockedPageURL.construct(blockedPageCFURL.get());
+    });
+
+    return blockedPageURL;
+}
+
+bool ContentFilter::continueAfterSubstituteDataRequest(const DocumentLoader& activeLoader, const SubstituteData& substituteData)
+{
+    if (auto contentFilter = activeLoader.contentFilter()) {
+        if (contentFilter->m_state == State::Blocked && !contentFilter->m_isLoadingBlockedPage)
+            return contentFilter->m_blockedError.failingURL() != substituteData.failingURL();
+    }
+
+    if (activeLoader.request().url() == blockedPageURL()) {
+        ASSERT(activeLoader.substituteData().isValid());
+        return activeLoader.substituteData().failingURL() != substituteData.failingURL();
+    }
+
+    return true;
+}
+
+void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
+{
+    if (m_state != State::Blocked)
+        return;
+
+    if (m_blockedError.errorCode() != error.errorCode() || m_blockedError.domain() != error.domain())
+        return;
+
+    ASSERT(m_blockedError.failingURL() == error.failingURL());
+
+    RefPtr<SharedBuffer> replacementData { m_blockingContentFilter->replacementData() };
+    ResourceResponse response { URL(), ASCIILiteral("text/html"), replacementData->size(), ASCIILiteral("UTF-8") };
+    SubstituteData substituteData { WTFMove(replacementData), error.failingURL(), response, SubstituteData::SessionHistoryVisibility::Hidden };
+    TemporaryChange<bool> loadingBlockedPage { m_isLoadingBlockedPage, true };
+    m_documentLoader.frameLoader()->load(FrameLoadRequest(m_documentLoader.frame(), blockedPageURL(), ShouldOpenExternalURLsPolicy::ShouldNotAllow, substituteData));
 }
 
 } // namespace WebCore

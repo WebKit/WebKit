@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2009 Adam Barth. All rights reserved.
@@ -323,26 +323,6 @@ private:
     Document& m_originDocument;
 };
 
-class ScheduledSubstituteDataLoad : public ScheduledNavigation {
-public:
-    ScheduledSubstituteDataLoad(const URL& baseURL, const SubstituteData& substituteData)
-        : ScheduledNavigation { 0, LockHistory::No, LockBackForwardList::No, false, false }
-        , m_baseURL { baseURL }
-        , m_substituteData { substituteData }
-    {
-    }
-
-    void fire(Frame& frame) override
-    {
-        UserGestureIndicator gestureIndicator { wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture };
-        frame.loader().load(FrameLoadRequest { &frame, m_baseURL, m_shouldOpenExternalURLsPolicy, m_substituteData });
-    }
-
-private:
-    URL m_baseURL;
-    SubstituteData m_substituteData;
-};
-
 NavigationScheduler::NavigationScheduler(Frame& frame)
     : m_frame(frame)
     , m_timer(*this, &NavigationScheduler::timerFired)
@@ -497,12 +477,6 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
 
     // In all other cases, schedule the history traversal to occur asynchronously.
     schedule(std::make_unique<ScheduledHistoryNavigation>(steps));
-}
-
-void NavigationScheduler::scheduleSubstituteDataLoad(const URL& baseURL, const SubstituteData& substituteData)
-{
-    if (shouldScheduleNavigation())
-        schedule(std::make_unique<ScheduledSubstituteDataLoad>(baseURL, substituteData));
 }
 
 void NavigationScheduler::schedulePageBlock(Document& originDocument)
