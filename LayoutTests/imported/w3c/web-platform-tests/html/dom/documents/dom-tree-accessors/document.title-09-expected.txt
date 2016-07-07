@@ -1,7 +1,7 @@
 
-FAIL No title element in SVG document assert_equals: expected "title" but got "x-child"
-FAIL Title element in SVG document assert_equals: expected "foobar" but got "foo"
-FAIL Title element not child of SVG root assert_equals: expected "" but got "foo"
-FAIL Title element not in SVG namespace assert_equals: expected "" but got "foo"
-FAIL Root element not named "svg" assert_equals: expected "" but got "foo"
+PASS No title element in SVG document 
+PASS Title element in SVG document 
+PASS Title element not child of SVG root 
+PASS Title element not in SVG namespace 
+PASS Root element not named "svg" 
 

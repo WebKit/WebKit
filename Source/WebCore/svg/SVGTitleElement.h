@@ -30,6 +30,8 @@ class SVGTitleElement final : public SVGElement {
 public:
     static Ref<SVGTitleElement> create(const QualifiedName&, Document&);
 
+    void setText(const String&);
+
 private:
     SVGTitleElement(const QualifiedName&, Document&);
 

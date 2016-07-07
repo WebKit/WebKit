@@ -100,7 +100,7 @@ void HTMLTitleElement::setText(const String& value)
 
     // We make a copy here because entity of "value" argument can be Document::m_title,
     // which goes empty during removeChildren() invocation below,
-    // which causes HTMLTitleElement::childrenChanged(), which ends up Document::setTitle().
+    // which causes HTMLTitleElement::childrenChanged(), which ends up calling Document::setTitle().
     String valueCopy(value);
 
     if (hasChildNodes())

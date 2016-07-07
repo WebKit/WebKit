@@ -1,5 +1,17 @@
 2016-07-06  Chris Dumez  <cdumez@apple.com>
 
+        Document.title setter does not work for SVG documents
+        https://bugs.webkit.org/show_bug.cgi?id=159503
+        <rdar://problem/27212313>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that all checks are passing.
+
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-09-expected.txt:
+
+2016-07-06  Chris Dumez  <cdumez@apple.com>
+
         Align Document.body setter with the HTML specification
         https://bugs.webkit.org/show_bug.cgi?id=159490
 

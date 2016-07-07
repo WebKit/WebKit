@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +24,7 @@
 
 #include "Document.h"
 #include "SVGNames.h"
+#include "Text.h"
 
 namespace WebCore {
 
@@ -59,6 +61,27 @@ void SVGTitleElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
     document().titleElementTextChanged(*this);
+}
+
+void SVGTitleElement::setText(const String& value)
+{
+    Ref<SVGTitleElement> protectedThis(*this);
+
+    if (!value.isEmpty() && hasOneChild() && is<Text>(*firstChild())) {
+        downcast<Text>(*firstChild()).setData(value);
+        return;
+    }
+
+    // We make a copy here because entity of "value" argument can be Document::m_title,
+    // which goes empty during removeChildren() invocation below,
+    // which causes SVGTitleElement::childrenChanged(), which ends up calling Document::setTitle().
+    String valueCopy(value);
+
+    if (hasChildNodes())
+        removeChildren();
+
+    if (!valueCopy.isEmpty())
+        appendChild(document().createTextNode(valueCopy), IGNORE_EXCEPTION);
 }
 
 }
