@@ -1,3 +1,20 @@
+2016-07-06  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: REGRESSION: Hitting ⌘T in Web Inspector no longer opens in new tab in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=159487
+        rdar://problem/27188047
+
+        Change Command-T to Command-Option-T to open a new tab.
+
+        I also changed Command-1, etc. to Command-Option-1, etc. to switch tabs. The number commands
+        conflicted similarly with Safari and didn't work for me as a Web Inspector shortcut at all.
+        We can't use Command-Shift because of Command-Shift-3 and Command-Shift-4 for screenshots.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+
 2016-07-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: sometimes reloading a page with main resource selected will show an empty content view
