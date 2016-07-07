@@ -43,7 +43,6 @@ public:
     float relativeLineThickness() const { return m_defaultLineThickness ? m_lineThickness / m_defaultLineThickness : LayoutUnit(0); }
 
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
-    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
 
 protected:
     void computePreferredLogicalWidths() final;

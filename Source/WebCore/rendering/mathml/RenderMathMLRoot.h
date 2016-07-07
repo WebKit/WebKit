@@ -49,7 +49,6 @@ public:
 
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
-    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
 
 protected:
     void paint(PaintInfo&, const LayoutPoint&) final;

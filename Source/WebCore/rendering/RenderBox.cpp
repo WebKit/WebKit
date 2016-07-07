@@ -2441,6 +2441,10 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
     
     if (!hasPerpendicularContainingBlock && containerLogicalWidth && containerLogicalWidth != (computedValues.m_extent + computedValues.m_margins.m_start + computedValues.m_margins.m_end)
         && !isFloating() && !isInline() && !cb.isFlexibleBoxIncludingDeprecated()
+#if ENABLE(MATHML)
+        // RenderMathMLBlocks take the size of their content so we must not adjust the margin to fill the container size.
+        && !cb.isRenderMathMLBlock()
+#endif
 #if ENABLE(CSS_GRID_LAYOUT)
         && !cb.isRenderGrid()
 #endif
@@ -2587,6 +2591,12 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
         if (dir == MAUTO || dir == MFORWARD || dir == MBACKWARD || dir == MLEFT || dir == MRIGHT)
             return true;
     }
+
+#if ENABLE(MATHML)
+    // RenderMathMLBlocks take the size of their content, not of their container.
+    if (parent()->isRenderMathMLBlock())
+        return true;
+#endif
 
     // Flexible box items should shrink wrap, so we lay them out at their intrinsic widths.
     // In the case of columns that have a stretch alignment, we layout at the stretched size

@@ -85,7 +85,7 @@ void RenderMathMLFenced::updateFromElement()
 
 RenderPtr<RenderMathMLOperator> RenderMathMLFenced::createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
 {
-    RenderPtr<RenderMathMLOperator> newOperator = createRenderer<RenderMathMLOperator>(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX), operatorString, form, flag);
+    RenderPtr<RenderMathMLOperator> newOperator = createRenderer<RenderMathMLOperator>(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK), operatorString, form, flag);
     newOperator->initializeStyle();
     return newOperator;
 }

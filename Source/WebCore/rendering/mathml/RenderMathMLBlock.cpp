@@ -31,6 +31,7 @@
 #include "RenderMathMLBlock.h"
 
 #include "GraphicsContext.h"
+#include "LayoutRepainter.h"
 #include "MathMLNames.h"
 #include "RenderView.h"
 #include <wtf/text/StringBuilder.h>
@@ -44,12 +45,18 @@ namespace WebCore {
 using namespace MathMLNames;
 
 RenderMathMLBlock::RenderMathMLBlock(Element& container, RenderStyle&& style)
-    : RenderFlexibleBox(container, WTFMove(style))
+    : RenderBlock(container, WTFMove(style), 0)
 {
+    setChildrenInline(false); // All of our children must be block-level.
 }
 
 RenderMathMLBlock::RenderMathMLBlock(Document& document, RenderStyle&& style)
-    : RenderFlexibleBox(document, WTFMove(style))
+    : RenderBlock(document, WTFMove(style), 0)
+{
+    setChildrenInline(false); // All of our children must be block-level.
+}
+
+RenderMathMLBlock::~RenderMathMLBlock()
 {
 }
 
@@ -82,28 +89,13 @@ int RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLin
     if (linePositionMode == PositionOfInteriorLineBoxes)
         return 0;
 
-    // FIXME: This may be unnecessary after flex baselines are implemented (https://bugs.webkit.org/show_bug.cgi?id=96188).
-    return firstLineBaseline().valueOrCompute([&] {
-        return RenderFlexibleBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
-    });
-}
-
-const char* RenderMathMLBlock::renderName() const
-{
-    EDisplay display = style().display();
-    if (display == FLEX)
-        return isAnonymous() ? "RenderMathMLBlock (anonymous, flex)" : "RenderMathMLBlock (flex)";
-    if (display == INLINE_FLEX)
-        return isAnonymous() ? "RenderMathMLBlock (anonymous, inline-flex)" : "RenderMathMLBlock (inline-flex)";
-    // |display| should be one of the above.
-    ASSERT_NOT_REACHED();
-    return isAnonymous() ? "RenderMathMLBlock (anonymous)" : "RenderMathMLBlock";
+    return firstLineBaseline().valueOr(RenderBlock::baselinePosition(baselineType, firstLine, direction, linePositionMode));
 }
 
 #if ENABLE(DEBUG_MATH_LAYOUT)
 void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    RenderFlexibleBox::paint(info, paintOffset);
+    RenderBlock::paint(info, paintOffset);
 
     if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground)
         return;
@@ -314,6 +306,74 @@ Optional<int> RenderMathMLTable::firstLineBaseline() const
     // http://dev.w3.org/csswg/css3-flexbox/#flex-baselines. We want to vertically center an <mtable>, such as a matrix. Essentially the whole <mtable> element fits on a
     // single line, whose baseline gives this centering. This is different than RenderTable::firstLineBoxBaseline, which returns the baseline of the first row of a <table>.
     return (logicalHeight() + style().fontMetrics().xHeight()) / 2;
+}
+
+void RenderMathMLBlock::layoutItems(bool relayoutChildren)
+{
+    LayoutUnit verticalOffset = borderBefore() + paddingBefore();
+    LayoutUnit horizontalOffset = borderStart() + paddingStart();
+
+    LayoutUnit preferredHorizontalExtent = 0;
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        LayoutUnit childHorizontalExtent = child->maxPreferredLogicalWidth() - child->horizontalBorderAndPaddingExtent();
+        LayoutUnit childHorizontalMarginBoxExtent = child->horizontalBorderAndPaddingExtent() + childHorizontalExtent;
+        childHorizontalMarginBoxExtent += child->horizontalMarginExtent();
+
+        preferredHorizontalExtent += childHorizontalMarginBoxExtent;
+    }
+
+    LayoutUnit currentHorizontalExtent = contentLogicalWidth();
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        LayoutUnit childSize = child->maxPreferredLogicalWidth() - child->horizontalBorderAndPaddingExtent();
+
+        if (preferredHorizontalExtent > currentHorizontalExtent)
+            childSize = currentHorizontalExtent;
+
+        LayoutUnit childPreferredSize = childSize + child->horizontalBorderAndPaddingExtent();
+
+        if (childPreferredSize != child->width())
+            child->setChildNeedsLayout(MarkOnlyThis);
+
+        updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, *child);
+        child->layoutIfNeeded();
+
+        LayoutUnit childVerticalMarginBoxExtent;
+        childVerticalMarginBoxExtent = child->height() + child->verticalMarginExtent();
+
+        setLogicalHeight(std::max(logicalHeight(), verticalOffset + borderAfter() + paddingAfter() + childVerticalMarginBoxExtent + horizontalScrollbarHeight()));
+
+        horizontalOffset += child->marginStart();
+
+        LayoutUnit childHorizontalExtent = child->width();
+        LayoutPoint childLocation(style().isLeftToRightDirection() ? horizontalOffset : width() - horizontalOffset - childHorizontalExtent,
+            verticalOffset + child->marginBefore());
+
+        child->setLocation(childLocation);
+        horizontalOffset += childHorizontalExtent + child->marginEnd();
+    }
+}
+
+void RenderMathMLBlock::layoutBlock(bool relayoutChildren, LayoutUnit)
+{
+    ASSERT(needsLayout());
+
+    if (!relayoutChildren && simplifiedLayout())
+        return;
+
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+
+    if (recomputeLogicalWidth())
+        relayoutChildren = true;
+
+    setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
+
+    layoutItems(relayoutChildren);
+
+    updateLogicalHeight();
+
+    repainter.repaintAfterLayout();
+
+    clearNeedsLayout();
 }
 
 }

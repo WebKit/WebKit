@@ -43,7 +43,6 @@ public:
     void updateOperatorProperties();
 
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
-    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
     Optional<int> firstLineBaseline() const override;
 
 protected:

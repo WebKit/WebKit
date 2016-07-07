@@ -1,3 +1,33 @@
+2016-07-07  Frederic Wang  <fwang@igalia.com>
+
+        Refactor layout functions to avoid using flexbox in MathML
+        https://bugs.webkit.org/show_bug.cgi?id=153991
+
+        Reviewed by Brent Fulgham.
+
+        Update expectations of some MathML tests to take into account the
+        removal of some line breaks and a better computation of the width of
+        MathML expressions with vertical stretchy operators.
+
+        * mathml/presentation/stretchy-depth-height-expected.txt:
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.png:
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/gtk/mathml/opentype/vertical-expected.png:
+        * platform/gtk/mathml/opentype/vertical-expected.txt:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt:
+        * platform/gtk/mathml/presentation/roots-expected.png:
+        * platform/gtk/mathml/presentation/roots-expected.txt:
+        * platform/ios-simulator/mathml/opentype/opentype-stretchy-expected.png:
+        * platform/ios-simulator/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/ios-simulator/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/opentype/opentype-stretchy-expected.png:
+        * platform/mac/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.png:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * accessibility/mac/mathml-elements-expected.txt:
+        * imported/blink/fast/text/output-isolate-at-end-of-line-crash-expected.txt:
+
 2016-07-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector, regression: JS/JSON pretty-printing sporadically broken in STP8

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x254
   RenderBlock {HTML} at (0,0) size 800x254
     RenderBody {BODY} at (8,8) size 784x238
-      RenderMathMLMath {math} at (0,2) size 70x18 [padding: 0 1 0 1]
+      RenderMathMLMath {math} at (0,2) size 60x18 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 58x18
           RenderMathMLOperator {mo} at (0,1) size 6x15
             RenderBlock (anonymous) at (0,0) size 6x16
@@ -61,8 +61,8 @@ layer at (0,0) size 800x254
             RenderBlock (anonymous) at (0,0) size 11x13
               RenderText {#text} at (0,0) size 11x17
                 text run at (0,0) width 11: "\x{2225}"
-      RenderText {#text} at (69,0) size 5x19
-        text run at (69,0) width 5: " "
+      RenderText {#text} at (59,0) size 5x19
+        text run at (59,0) width 5: " "
       RenderBR {BR} at (0,0) size 0x0
       RenderMathMLMath {math} at (0,20) size 70x143 [padding: 0 1 0 1]
         RenderMathMLRow {mrow} at (1,0) size 68x143

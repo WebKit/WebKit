@@ -161,8 +161,7 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit& ascent, LayoutUnit& descent)
     }
 
     LayoutUnit centerBlockOffset = 0;
-    // FIXME: Remove the FLEX when it is not required by the css.
-    if (style().display() == BLOCK || style().display() == FLEX)
+    if (style().display() == BLOCK)
         centerBlockOffset = std::max<LayoutUnit>(0, (logicalWidth() - (horizontalOffset + borderEnd() + paddingEnd())) / 2);
 
     if (shouldFlipHorizontal && centerBlockOffset > 0)
@@ -198,14 +197,6 @@ void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
     updateLogicalHeight();
 
     clearNeedsLayout();
-}
-
-void RenderMathMLRow::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
-{
-    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (!paintChild(*child, paintInfo, paintOffset, paintInfoForChild, usePrintRect, PaintAsInlineBlock))
-            return;
-    }
 }
 
 }

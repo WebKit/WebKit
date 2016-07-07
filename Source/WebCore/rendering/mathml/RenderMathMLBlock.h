@@ -29,7 +29,7 @@
 
 #if ENABLE(MATHML)
 
-#include "RenderFlexibleBox.h"
+#include "RenderBlock.h"
 #include "RenderTable.h"
 #include "StyleInheritedData.h"
 
@@ -39,10 +39,11 @@ namespace WebCore {
 
 class RenderMathMLOperator;
 
-class RenderMathMLBlock : public RenderFlexibleBox {
+class RenderMathMLBlock : public RenderBlock {
 public:
     RenderMathMLBlock(Element&, RenderStyle&&);
     RenderMathMLBlock(Document&, RenderStyle&&);
+    virtual ~RenderMathMLBlock();
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
@@ -71,10 +72,14 @@ protected:
         return child.firstLineBaseline().valueOr(child.logicalHeight());
     }
 
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
+
 private:
     bool isRenderMathMLBlock() const final { return true; }
-    const char* renderName() const override;
-    bool isFlexibleBoxImpl() const override { return true; }
+    const char* renderName() const override { return "RenderMathMLBlock"; }
+    bool avoidsFloats() const final { return true; }
+    bool canDropAnonymousBlockChild() const final { return false; }
+    void layoutItems(bool relayoutChildren);
 };
 
 class RenderMathMLTable final : public RenderTable {

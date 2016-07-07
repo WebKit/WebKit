@@ -227,14 +227,6 @@ Optional<int> RenderMathMLFraction::firstLineBaseline() const
     return RenderMathMLBlock::firstLineBaseline();
 }
 
-void RenderMathMLFraction::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
-{
-    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (!paintChild(*child, paintInfo, paintOffset, paintInfoForChild, usePrintRect, PaintAsInlineBlock))
-            return;
-    }
-}
-
 }
 
 #endif // ENABLE(MATHML)

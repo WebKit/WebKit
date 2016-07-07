@@ -95,21 +95,20 @@ math {
 }
 
 math {
-    display: -webkit-inline-flex !important;
+    display: inline !important;
     padding-left: 1px;
     padding-right: 1px;
 }
 
 math[display="block"] {
-    display: flex !important;
-    justify-content: center;
+    display: block !important;
     page-break-inside: avoid;
     /* -webkit-margin-before: 1em; -- FIXME: Ask www-math for a default MathML stylesheet, including this (or margin-top). */
     -webkit-margin-after: 1em;
 }
 
-ms, mi, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose {
-    display: -webkit-inline-flex !important;
+ms, mspace, mtext, mi, mn, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose, semantics, mpadded, maction {
+    display: block !important;
 }
 
 ms, mtext, mi, mn, mo, annotation, mtd {
@@ -189,6 +188,10 @@ mtr {
 mtd {
     display: table-cell;
     padding: 0.5ex;
+}
+/* Use inline-block for children so that the text-align property is taken into account */
+mtd > * {
+    display: inline-block !important;
 }
 
 mtable[columnalign="left"], mtr[columnalign="left"], mtd[columnalign="left"] {
