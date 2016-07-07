@@ -102,6 +102,17 @@ static inline bool skipValue(const String& str, unsigned& pos)
     return pos != start;
 }
 
+// See RFC 7230, Section 3.1.2.
+bool isValidReasonPhrase(const String& value)
+{
+    for (unsigned i = 0; i < value.length(); ++i) {
+        UChar c = value[i];
+        if (c == 0x7F || c > 0xFF || (c < 0x20 && c != '\t'))
+            return false;
+    }
+    return true;
+}
+
 // See RFC 7230, Section 3.2.3.
 bool isValidHTTPHeaderValue(const String& value)
 {

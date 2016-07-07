@@ -34,6 +34,7 @@
 #include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "FetchRequest.h"
+#include "HTTPParsers.h"
 #include "JSFetchResponse.h"
 #include "ScriptExecutionContext.h"
 
@@ -86,9 +87,8 @@ void FetchResponse::initializeWith(const Dictionary& init, ExceptionCode& ec)
         return;
     }
 
-    // FIXME: Validate reason phrase (https://tools.ietf.org/html/rfc7230#section-3.1.2).
     String statusText;
-    if (!init.get("statusText", statusText)) {
+    if (!init.get("statusText", statusText) || !isValidReasonPhrase(statusText)) {
         ec = TypeError;
         return;
     }

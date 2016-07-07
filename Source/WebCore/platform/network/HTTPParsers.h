@@ -69,13 +69,14 @@ enum XFrameOptionsDisposition {
 };
 
 ContentDispositionType contentDispositionType(const String&);
+bool isValidReasonPhrase(const String&);
 bool isValidHTTPHeaderValue(const String&);
 bool isValidHTTPToken(const String&);
 bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& delay, String& url);
 Optional<std::chrono::system_clock::time_point> parseHTTPDate(const String&);
-String filenameFromHTTPContentDisposition(const String&); 
+String filenameFromHTTPContentDisposition(const String&);
 String extractMIMETypeFromMediaType(const String&);
-String extractCharsetFromMediaType(const String&); 
+String extractCharsetFromMediaType(const String&);
 void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, unsigned int& charsetLen, unsigned int start = 0);
 XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL);
 AtomicString extractReasonPhraseFromHTTPStatusLine(const String&);
