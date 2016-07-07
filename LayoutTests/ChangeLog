@@ -1,3 +1,15 @@
+2016-07-07  Frederic Wang  <fwang@igalia.com>
+
+        Tweak mathml/presentation/semantics.html to make it pass on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=159457
+
+        Reviewed by Sergio Villar Senin.
+
+        * mathml/presentation/semantics-expected.html: Force a line break between the two tests.
+        * mathml/presentation/semantics.html: Ditto.
+        * platform/ios-simulator-wk1/TestExpectations: Remove failure expectation.
+        * platform/ios-simulator-wk2/TestExpectations: Ditto.
+
 2016-07-06  Chris Dumez  <cdumez@apple.com>
 
         Align Document.body setter with the HTML specification

@@ -135,7 +135,6 @@ scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 mathml/mathml-in-dashboard.html [ Skip ]
 
 # MathML tests that fail due to slight pixel differences:
-mathml/presentation/semantics.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
 # SVG tests that time out (these require EventSender)
