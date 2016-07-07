@@ -1,5 +1,15 @@
 2016-07-06  Ryan Haddad  <ryanhaddad@apple.com>
 
+        More test gardening after r202835.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan/fast/attachment/attachment-select-on-click-expected.txt: Copied from LayoutTests/platform/mac/fast/attachment/attachment-select-on-click-expected.txt.
+        * platform/mac/fast/attachment/attachment-select-on-click-expected.png:
+        * platform/mac/fast/attachment/attachment-select-on-click-expected.txt:
+
+2016-07-06  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline inspector/model/remote-object.html after r202873
 
         Unreviewed test gardening.
