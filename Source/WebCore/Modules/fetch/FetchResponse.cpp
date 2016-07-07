@@ -65,7 +65,7 @@ RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext& context, c
         return nullptr;
     }
     if (!isRedirectStatus(status)) {
-        ec = TypeError;
+        ec = RangeError;
         return nullptr;
     }
     auto redirectResponse = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
