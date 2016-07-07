@@ -213,6 +213,11 @@ bool MediaElementSession::pageAllowsPlaybackAfterResuming(const HTMLMediaElement
 
 bool MediaElementSession::canControlControlsManager() const
 {
+    if (m_element.isFullscreen()) {
+        LOG(Media, "MediaElementSession::canControlControlsManager - returning TRUE: Is fullscreen");
+        return true;
+    }
+
     if (!m_element.hasAudio()) {
         LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: No audio");
         return false;
