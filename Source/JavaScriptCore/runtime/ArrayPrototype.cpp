@@ -126,6 +126,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         "fill",
         "find",
         "findIndex",
+        "includes",
         "keys",
         "values"
     };

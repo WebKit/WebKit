@@ -9,7 +9,7 @@ function test(actual, expected) {
 
     test(typeof unscopables, "object");
     test(unscopables.__proto__, undefined);
-    test(String(Object.keys(unscopables).sort()), "copyWithin,entries,fill,find,findIndex,keys,values");
+    test(String(Object.keys(unscopables).sort()), "copyWithin,entries,fill,find,findIndex,includes,keys,values");
 }());
 
 (function () {
