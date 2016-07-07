@@ -37,7 +37,6 @@
 #include "NotImplemented.h"
 #include "VideoSinkGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
-#include <gst/gst.h>
 #include <wtf/glib/GMutexLocker.h>
 #include <wtf/text/CString.h>
 
@@ -45,6 +44,7 @@
 #include <gst/video/gstvideometa.h>
 
 #if USE(GSTREAMER_GL)
+#include <gst/app/gstappsink.h>
 #define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
 #undef GST_USE_UNSTABLE_API
@@ -168,8 +168,15 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
     m_notifier.cancelPendingNotifications();
 
-    if (m_videoSink)
+    if (m_videoSink) {
         g_signal_handlers_disconnect_matched(m_videoSink.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+#if USE(GSTREAMER_GL)
+        if (GST_IS_BIN(m_videoSink.get())) {
+            GRefPtr<GstElement> appsink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_videoSink.get()), "webkit-gl-video-sink"));
+            g_signal_handlers_disconnect_by_data(appsink.get(), this);
+        }
+#endif
+    }
 
     g_mutex_clear(&m_sampleMutex);
 
@@ -579,14 +586,18 @@ void MediaPlayerPrivateGStreamerBase::repaintCallback(MediaPlayerPrivateGStreame
 }
 
 #if USE(GSTREAMER_GL)
-gboolean MediaPlayerPrivateGStreamerBase::drawCallback(MediaPlayerPrivateGStreamerBase* player, GstBuffer* buffer, GstPad* pad, GstBaseSink* sink)
+GstFlowReturn MediaPlayerPrivateGStreamerBase::newSampleCallback(GstElement* sink, MediaPlayerPrivateGStreamerBase* player)
 {
-    GST_PAD_STREAM_LOCK(pad);
-    GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(pad));
-    GRefPtr<GstSample> sample = adoptGRef(gst_sample_new(buffer, caps.get(), &sink->segment, NULL));
-    GST_PAD_STREAM_UNLOCK(pad);
+    GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
     player->triggerRepaint(sample.get());
-    return TRUE;
+    return GST_FLOW_OK;
+}
+
+GstFlowReturn MediaPlayerPrivateGStreamerBase::newPrerollCallback(GstElement* sink, MediaPlayerPrivateGStreamerBase* player)
+{
+    GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(sink)));
+    player->triggerRepaint(sample.get());
+    return GST_FLOW_OK;
 }
 #endif
 
@@ -780,23 +791,24 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
         return nullptr;
     }
 
-    GstElement* fakesink = gst_element_factory_make("fakesink", nullptr);
+    GstElement* appsink = gst_element_factory_make("appsink", "webkit-gl-video-sink");
 
-    gst_bin_add_many(GST_BIN(videoSink), upload, colorconvert, fakesink, nullptr);
+    gst_bin_add_many(GST_BIN(videoSink), upload, colorconvert, appsink, nullptr);
 
     GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw(" GST_CAPS_FEATURE_MEMORY_GL_MEMORY "), format = (string) { RGBA }"));
 
     result &= gst_element_link_pads(upload, "src", colorconvert, "sink");
-    result &= gst_element_link_pads_filtered(colorconvert, "src", fakesink, "sink", caps.get());
+    result &= gst_element_link_pads_filtered(colorconvert, "src", appsink, "sink", caps.get());
 
     GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(upload, "sink"));
     gst_element_add_pad(videoSink, gst_ghost_pad_new("sink", pad.get()));
 
-    g_object_set(fakesink, "enable-last-sample", FALSE, "signal-handoffs", TRUE, "silent", TRUE, "sync", TRUE, nullptr);
+    g_object_set(appsink, "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
 
-    if (result)
-        g_signal_connect_swapped(fakesink, "handoff", G_CALLBACK(drawCallback), this);
-    else {
+    if (result) {
+        g_signal_connect(appsink, "new-sample", G_CALLBACK(newSampleCallback), this);
+        g_signal_connect(appsink, "new-preroll", G_CALLBACK(newPrerollCallback), this);
+    } else {
         WARN_MEDIA_MESSAGE("Failed to link GstGL elements");
         gst_object_unref(videoSink);
         videoSink = nullptr;

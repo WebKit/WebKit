@@ -29,6 +29,7 @@
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
 #include <glib.h>
+#include <gst/gst.h>
 #include <wtf/Condition.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
@@ -41,8 +42,6 @@
 #endif
 #endif
 
-typedef struct _GstBaseSink GstBaseSink;
-typedef struct _GstMessage GstMessage;
 typedef struct _GstStreamVolume GstStreamVolume;
 typedef struct _GstVideoInfo GstVideoInfo;
 typedef struct _GstGLContext GstGLContext;
@@ -137,6 +136,8 @@ protected:
     virtual GstElement* createVideoSink();
 
 #if USE(GSTREAMER_GL)
+    static GstFlowReturn newSampleCallback(GstElement*, MediaPlayerPrivateGStreamerBase*);
+    static GstFlowReturn newPrerollCallback(GstElement*, MediaPlayerPrivateGStreamerBase*);
     GstElement* createVideoSinkGL();
 #endif
 
@@ -152,9 +153,6 @@ protected:
     void repaint();
 
     static void repaintCallback(MediaPlayerPrivateGStreamerBase*, GstSample*);
-#if USE(GSTREAMER_GL)
-    static gboolean drawCallback(MediaPlayerPrivateGStreamerBase*, GstBuffer*, GstPad*, GstBaseSink*);
-#endif
 
     void notifyPlayerOfVolumeChange();
     void notifyPlayerOfMute();
