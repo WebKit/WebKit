@@ -1,5 +1,20 @@
 2016-07-07  Frederic Wang  <fwang@igalia.com>
 
+        Replace reftest scripts-height.html with script tests
+        https://bugs.webkit.org/show_bug.cgi?id=159423
+
+        We import a test from the MathML in HTML5 test suite to replace the test scripts-height.html
+        and make results more reliable, explicit and accurate. This avoids the failure on iOS.
+
+        Reviewed by Martin Robinson.
+
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-4-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-4.html: Added.
+        * mathml/presentation/scripts-height.html: Removed.
+        * platform/ios-simulator/TestExpectations: Remove failure expectation.
+
+2016-07-07  Frederic Wang  <fwang@igalia.com>
+
         Replace multiscripts-positions.html reftest with script tests
         https://bugs.webkit.org/show_bug.cgi?id=159418
 
