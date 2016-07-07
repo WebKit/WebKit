@@ -5094,6 +5094,8 @@ void HTMLMediaElement::contextDestroyed()
     m_promiseTaskQueue.close();
     m_pauseAfterDetachedTaskQueue.close();
 
+    m_pendingPlayPromises.clear();
+
     ActiveDOMObject::contextDestroyed();
 }
 
