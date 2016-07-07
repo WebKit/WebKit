@@ -56,7 +56,7 @@ WEBCORE_EXPORT
     RefPtr<WebCore::WebPlaybackSessionInterfaceMac> _webPlaybackSessionInterfaceMac;
 }
 
-@property (retain) WebCore::WebPlaybackSessionInterfaceMac* webPlaybackSessionInterfaceMac;
+@property (assign) WebCore::WebPlaybackSessionInterfaceMac* webPlaybackSessionInterfaceMac;
 @property (readwrite) NSTimeInterval contentDuration;
 @property (nonatomic, retain, readwrite) AVValueTiming *timing;
 @property (nonatomic, retain, readwrite) NSArray *seekableTimeRanges;

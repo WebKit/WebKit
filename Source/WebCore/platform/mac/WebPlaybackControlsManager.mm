@@ -31,6 +31,9 @@
 #if USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 #import <WebKitAdditions/WebPlaybackControlsControllerAdditions.mm>
 #else
+
+#import "WebPlaybackSessionInterfaceMac.h"
+
 @implementation WebPlaybackControlsManager
 
 using namespace WebCore;
@@ -41,8 +44,6 @@ using namespace WebCore;
 @synthesize rate=_rate;
 @synthesize playing=_playing;
 @synthesize canTogglePlayback=_canTogglePlayback;
-
-@synthesize webPlaybackSessionInterfaceMac=_webPlaybackSessionInterfaceMac;
 
 - (WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
 {
