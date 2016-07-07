@@ -2837,8 +2837,8 @@ PASS HTMLTableCellElement interface: attribute colSpan
 PASS HTMLTableCellElement interface: attribute rowSpan 
 PASS HTMLTableCellElement interface: attribute headers 
 PASS HTMLTableCellElement interface: attribute cellIndex 
-FAIL HTMLTableCellElement interface: attribute scope assert_true: The prototype object must have a property "scope" expected true got false
-FAIL HTMLTableCellElement interface: attribute abbr assert_true: The prototype object must have a property "abbr" expected true got false
+PASS HTMLTableCellElement interface: attribute scope 
+PASS HTMLTableCellElement interface: attribute abbr 
 PASS HTMLTableCellElement interface: attribute align 
 PASS HTMLTableCellElement interface: attribute axis 
 PASS HTMLTableCellElement interface: attribute height 
@@ -2848,8 +2848,8 @@ PASS HTMLTableCellElement interface: attribute chOff
 PASS HTMLTableCellElement interface: attribute noWrap 
 PASS HTMLTableCellElement interface: attribute vAlign 
 PASS HTMLTableCellElement interface: attribute bgColor 
-FAIL HTMLTableCellElement must be primary interface of document.createElement("td") assert_equals: document.createElement("td")'s prototype is not HTMLTableCellElement.prototype expected object "[object HTMLTableCellElementPrototype]" but got object "[object HTMLTableDataCellElementPrototype]"
-FAIL Stringification of document.createElement("td") assert_equals: class string of document.createElement("td") expected "[object HTMLTableCellElement]" but got "[object HTMLTableDataCellElement]"
+PASS HTMLTableCellElement must be primary interface of document.createElement("td") 
+PASS Stringification of document.createElement("td") 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "colSpan" with the proper type (0) 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "rowSpan" with the proper type (1) 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "headers" with the proper type (2) 
@@ -2865,8 +2865,8 @@ PASS HTMLTableCellElement interface: document.createElement("td") must inherit p
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "noWrap" with the proper type (12) 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "vAlign" with the proper type (13) 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "bgColor" with the proper type (14) 
-FAIL HTMLTableCellElement must be primary interface of document.createElement("th") assert_equals: document.createElement("th")'s prototype is not HTMLTableCellElement.prototype expected object "[object HTMLTableCellElementPrototype]" but got object "[object HTMLTableHeaderCellElementPrototype]"
-FAIL Stringification of document.createElement("th") assert_equals: class string of document.createElement("th") expected "[object HTMLTableCellElement]" but got "[object HTMLTableHeaderCellElement]"
+PASS HTMLTableCellElement must be primary interface of document.createElement("th") 
+PASS Stringification of document.createElement("th") 
 PASS HTMLTableCellElement interface: document.createElement("th") must inherit property "colSpan" with the proper type (0) 
 PASS HTMLTableCellElement interface: document.createElement("th") must inherit property "rowSpan" with the proper type (1) 
 PASS HTMLTableCellElement interface: document.createElement("th") must inherit property "headers" with the proper type (2) 

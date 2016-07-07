@@ -125,11 +125,11 @@ summary interfaceName=HTMLSummaryElement, JSInterfaceName=HTMLElement, condition
 sup interfaceName=HTMLElement
 table
 tbody interfaceName=HTMLTableSectionElement
-td interfaceName=HTMLTableDataCellElement
+td interfaceName=HTMLTableCellElement
 template
 textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement
 tfoot interfaceName=HTMLTableSectionElement
-th interfaceName=HTMLTableHeaderCellElement
+th interfaceName=HTMLTableCellElement
 thead interfaceName=HTMLTableSectionElement
 time
 title

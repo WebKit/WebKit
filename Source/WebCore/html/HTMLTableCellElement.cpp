@@ -36,6 +36,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+Ref<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document& document)
+{
+    return adoptRef(*new HTMLTableCellElement(tagName, document));
+}
+
 HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Document& document)
     : HTMLTablePartElement(tagName, document)
 {
@@ -154,9 +159,34 @@ void HTMLTableCellElement::setRowSpanForBindings(unsigned n)
     setAttributeWithoutSynchronization(rowspanAttr, AtomicString::number(limitToOnlyHTMLNonNegative(n, 1)));
 }
 
-String HTMLTableCellElement::scope() const
+const AtomicString& HTMLTableCellElement::scope() const
 {
-    return fastGetAttribute(scopeAttr);
+    // https://html.spec.whatwg.org/multipage/tables.html#attr-th-scope
+    static NeverDestroyed<const AtomicString> row("row", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> col("col", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> rowgroup("rowgroup", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> colgroup("colgroup", AtomicString::ConstructFromLiteral);
+
+    const AtomicString& value = fastGetAttribute(HTMLNames::scopeAttr);
+
+    // Only conforming for th elements.
+    if (!hasTagName(thTag))
+        return value;
+
+    if (equalIgnoringASCIICase(value, row))
+        return row;
+    if (equalIgnoringASCIICase(value, col))
+        return col;
+    if (equalIgnoringASCIICase(value, rowgroup))
+        return rowgroup;
+    if (equalIgnoringASCIICase(value, colgroup))
+        return colgroup;
+    return emptyAtom;
+}
+
+void HTMLTableCellElement::setScope(const AtomicString& scope)
+{
+    setAttributeWithoutSynchronization(scopeAttr, scope);
 }
 
 void HTMLTableCellElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

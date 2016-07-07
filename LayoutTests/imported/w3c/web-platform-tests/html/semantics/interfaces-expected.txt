@@ -260,14 +260,14 @@ PASS Interfaces for table
 PASS Interfaces for TABLE 
 PASS Interfaces for tbody 
 PASS Interfaces for TBODY 
-FAIL Interfaces for td assert_equals: Element td should have HTMLTableCellElement as its primary interface. expected "[object HTMLTableCellElement]" but got "[object HTMLTableDataCellElement]"
-FAIL Interfaces for TD assert_equals: Element TD should have HTMLTableCellElement as its primary interface. expected "[object HTMLTableCellElement]" but got "[object HTMLTableDataCellElement]"
+PASS Interfaces for td 
+PASS Interfaces for TD 
 PASS Interfaces for textarea 
 PASS Interfaces for TEXTAREA 
 PASS Interfaces for tfoot 
 PASS Interfaces for TFOOT 
-FAIL Interfaces for th assert_equals: Element th should have HTMLTableCellElement as its primary interface. expected "[object HTMLTableCellElement]" but got "[object HTMLTableHeaderCellElement]"
-FAIL Interfaces for TH assert_equals: Element TH should have HTMLTableCellElement as its primary interface. expected "[object HTMLTableCellElement]" but got "[object HTMLTableHeaderCellElement]"
+PASS Interfaces for th 
+PASS Interfaces for TH 
 PASS Interfaces for thead 
 PASS Interfaces for THEAD 
 PASS Interfaces for time 

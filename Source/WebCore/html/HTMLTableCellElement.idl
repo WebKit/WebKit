@@ -43,9 +43,7 @@ interface HTMLTableCellElement : HTMLElement {
     [Reflect] attribute DOMString vAlign;
     [Reflect] attribute DOMString width;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     [Reflect] attribute DOMString abbr;
-    [Reflect] attribute DOMString scope;
-#endif
+    attribute DOMString scope;
 };
 

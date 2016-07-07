@@ -1,3 +1,16 @@
+2016-07-07  Chris Dumez  <cdumez@apple.com>
+
+        td / th should be exposed as HTMLTableCellElement objects
+        https://bugs.webkit.org/show_bug.cgi?id=159518
+        <rdar://problem/27225436>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C tests now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/interfaces-expected.txt:
+
 2016-07-07  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Response constructor should throw in case of bad reason phrase

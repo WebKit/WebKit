@@ -30,8 +30,10 @@
 
 namespace WebCore {
 
-class HTMLTableCellElement : public HTMLTablePartElement {
+class HTMLTableCellElement final : public HTMLTablePartElement {
 public:
+    static Ref<HTMLTableCellElement> create(const QualifiedName&, Document&);
+
     int cellIndex() const;
     unsigned colSpan() const;
     unsigned colSpanForBindings() const;
@@ -45,11 +47,12 @@ public:
     String abbr() const;
     String axis() const;
     String headers() const;
-    String scope() const;
+    const AtomicString& scope() const;
+    void setScope(const AtomicString&);
 
     WEBCORE_EXPORT HTMLTableCellElement* cellAbove() const;
 
-protected:
+private:
     HTMLTableCellElement(const QualifiedName&, Document&);
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;

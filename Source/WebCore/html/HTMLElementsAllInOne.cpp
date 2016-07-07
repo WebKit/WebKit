@@ -102,7 +102,6 @@
 #include "HTMLTableCellElement.cpp"
 #include "HTMLTableColElement.cpp"
 #include "HTMLTableElement.cpp"
-#include "HTMLTableHeaderCellElement.cpp"
 #include "HTMLTablePartElement.cpp"
 #include "HTMLTableRowElement.cpp"
 #include "HTMLTableSectionElement.cpp"
