@@ -39,6 +39,7 @@
 #include "WebKitWebSourceGStreamer.h"
 #include <wtf/glib/GMutexLocker.h>
 #include <wtf/text/CString.h>
+#include <wtf/MathExtras.h>
 
 #include <gst/audio/streamvolume.h>
 #include <gst/video/gstvideometa.h>
@@ -153,7 +154,6 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamerBase::repaint)
 #endif
     , m_usingFallbackVideoSink(false)
-    , m_videoSourceRotation(NoVideoSourceRotation)
 #if USE(TEXTURE_MAPPER_GL)
     , m_textureMapperRotationFlag(0)
 #endif
@@ -300,7 +300,7 @@ FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
 #if USE(TEXTURE_MAPPER_GL)
     // When using accelerated compositing, if the video is tagged as rotated 90 or 270 degrees, swap width and height.
     if (m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player)) {
-        if (m_videoSourceRotation == VideoSourceRotation90 || m_videoSourceRotation == VideoSourceRotation270)
+        if (m_videoSourceOrientation.usesWidthAsHeight())
             originalSize = originalSize.transposedSize();
     }
 #endif
@@ -608,13 +608,6 @@ void MediaPlayerPrivateGStreamerBase::setSize(const IntSize& size)
 
 void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const FloatRect& rect)
 {
-#if USE(COORDINATED_GRAPHICS_THREADED)
-    return;
-#elif USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
-    if (client())
-        return;
-#endif
-
     if (context.paintingDisabled())
         return;
 
@@ -625,12 +618,16 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const Floa
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
+    ImagePaintingOptions paintingOptions(CompositeCopy);
+    if (m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player))
+        paintingOptions.m_orientationDescription.setImageOrientationEnum(m_videoSourceOrientation);
+
     RefPtr<ImageGStreamer> gstImage = ImageGStreamer::createImage(m_sample.get());
     if (!gstImage)
         return;
 
     if (Image* image = reinterpret_cast<Image*>(gstImage->image().get()))
-        context.drawImage(*image, rect, gstImage->rect(), CompositeCopy);
+        context.drawImage(*image, rect, gstImage->rect(), paintingOptions);
 }
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
@@ -712,32 +709,63 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
 
     unsigned textureID = *reinterpret_cast<unsigned*>(videoFrame.data[0]);
     IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
-    cairo_surface_t* surface = cairo_gl_surface_create_for_texture(device, CAIRO_CONTENT_COLOR_ALPHA, textureID, size.width(), size.height());
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_gl_surface_create_for_texture(device, CAIRO_CONTENT_COLOR_ALPHA, textureID, size.width(), size.height()));
+
+    IntSize rotatedSize = m_videoSourceOrientation.usesWidthAsHeight() ? size.transposedSize() : size;
+    RefPtr<cairo_surface_t> rotatedSurface = adoptRef(cairo_gl_surface_create(device, CAIRO_CONTENT_COLOR_ALPHA, rotatedSize.width(), rotatedSize.height()));
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(rotatedSurface.get()));
+
+    switch (m_videoSourceOrientation) {
+    case DefaultImageOrientation:
+        break;
+    case OriginRightTop:
+        cairo_translate(cr.get(), rotatedSize.width() * 0.5, rotatedSize.height() * 0.5);
+        cairo_rotate(cr.get(), piOverTwoDouble);
+        cairo_translate(cr.get(), -rotatedSize.height() * 0.5, -rotatedSize.width() * 0.5);
+        break;
+    case OriginBottomRight:
+        cairo_translate(cr.get(), rotatedSize.width() * 0.5, rotatedSize.height() * 0.5);
+        cairo_rotate(cr.get(), piDouble);
+        cairo_translate(cr.get(), -rotatedSize.width() * 0.5, -rotatedSize.height() * 0.5);
+        break;
+    case OriginLeftBottom:
+        cairo_translate(cr.get(), rotatedSize.width() * 0.5, rotatedSize.height() * 0.5);
+        cairo_rotate(cr.get(), 3 * piOverTwoDouble);
+        cairo_translate(cr.get(), -rotatedSize.height() * 0.5, -rotatedSize.width() * 0.5);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    cairo_set_source_surface(cr.get(), surface.get(), 0, 0);
+    cairo_set_operator(cr.get(), CAIRO_OPERATOR_SOURCE);
+    cairo_paint(cr.get());
+
     gst_video_frame_unmap(&videoFrame);
 
-    return adoptRef(surface);
+    return rotatedSurface;
 }
 #endif
 
-void MediaPlayerPrivateGStreamerBase::setVideoSourceRotation(VideoSourceRotation rotation)
+void MediaPlayerPrivateGStreamerBase::setVideoSourceOrientation(const ImageOrientation& orientation)
 {
-    if (m_videoSourceRotation == rotation)
+    if (m_videoSourceOrientation == orientation)
         return;
 
-    m_videoSourceRotation = rotation;
+    m_videoSourceOrientation = orientation;
 
 #if USE(TEXTURE_MAPPER_GL)
-    switch (m_videoSourceRotation) {
-    case NoVideoSourceRotation:
+    switch (m_videoSourceOrientation) {
+    case DefaultImageOrientation:
         m_textureMapperRotationFlag = 0;
         break;
-    case VideoSourceRotation90:
+    case OriginRightTop:
         m_textureMapperRotationFlag = TextureMapperGL::ShouldRotateTexture90;
         break;
-    case VideoSourceRotation180:
+    case OriginBottomRight:
         m_textureMapperRotationFlag = TextureMapperGL::ShouldRotateTexture180;
         break;
-    case VideoSourceRotation270:
+    case OriginLeftBottom:
         m_textureMapperRotationFlag = TextureMapperGL::ShouldRotateTexture270;
         break;
     default:
@@ -771,6 +799,10 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamerBase::movieLoadType() cons
 #if USE(GSTREAMER_GL)
 GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
 {
+    // FIXME: Currently it's not possible to get the video frames and caps using this approach until
+    // the pipeline gets into playing state. Due to this, trying to grab a frame and painting it by some
+    // other mean (canvas or webgl) before playing state can result in a crash.
+    // This is being handled in https://bugs.webkit.org/show_bug.cgi?id=159460.
     if (!webkitGstCheckVersion(1, 8, 0))
         return nullptr;
 

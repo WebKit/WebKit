@@ -62,13 +62,6 @@ class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface
 {
 
 public:
-    enum VideoSourceRotation {
-        NoVideoSourceRotation,
-        VideoSourceRotation90,
-        VideoSourceRotation180,
-        VideoSourceRotation270
-    };
-
     virtual ~MediaPlayerPrivateGStreamerBase();
 
     FloatSize naturalSize() const override;
@@ -129,7 +122,7 @@ public:
     NativeImagePtr nativeImageForCurrentTime() override;
 #endif
 
-    void setVideoSourceRotation(VideoSourceRotation);
+    void setVideoSourceOrientation(const ImageOrientation&);
 
 protected:
     MediaPlayerPrivateGStreamerBase(MediaPlayer*);
@@ -208,7 +201,7 @@ protected:
     Lock m_drawMutex;
 #endif
 
-    VideoSourceRotation m_videoSourceRotation;
+    ImageOrientation m_videoSourceOrientation;
 #if USE(TEXTURE_MAPPER_GL)
     TextureMapperGL::Flags m_textureMapperRotationFlag;
 #endif

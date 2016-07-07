@@ -1032,11 +1032,11 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         gst_message_parse_tag(message, &tags);
         if (gst_tag_list_get_string(tags, GST_TAG_IMAGE_ORIENTATION, &tag.outPtr())) {
             if (!g_strcmp0(tag.get(), "rotate-90"))
-                setVideoSourceRotation(VideoSourceRotation90);
+                setVideoSourceOrientation(ImageOrientation(OriginRightTop));
             else if (!g_strcmp0(tag.get(), "rotate-180"))
-                setVideoSourceRotation(VideoSourceRotation180);
+                setVideoSourceOrientation(ImageOrientation(OriginBottomRight));
             else if (!g_strcmp0(tag.get(), "rotate-270"))
-                setVideoSourceRotation(VideoSourceRotation270);
+                setVideoSourceOrientation(ImageOrientation(OriginLeftBottom));
         }
         gst_tag_list_unref(tags);
         break;
