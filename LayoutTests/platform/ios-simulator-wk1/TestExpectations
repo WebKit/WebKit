@@ -736,7 +736,6 @@ mathml/presentation/mo-invisible.html
 # MathML tests that fail:
 mathml/presentation/mo-stretch-update.html [ ImageOnlyFailure ]
 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
-mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
 # SVG tests that fail:
 imported/mozilla/svg/smil/motion/animateMotion-values-linear-1.svg [ ImageOnlyFailure ]

@@ -808,7 +808,6 @@ mathml/opentype/large-operators-italic-correction.html [ Skip ]
 # MathML tests that fail:
 mathml/presentation/multiscripts-positions.html [ Pass ImageOnlyFailure ]
 mathml/presentation/scripts-subsup.html [ Pass ImageOnlyFailure ]
-webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
 webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
 webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]

@@ -134,9 +134,6 @@ scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 # WebKitTestRunner needs testRunner.setUseDashboardCompatibilityMode
 mathml/mathml-in-dashboard.html [ Skip ]
 
-# MathML tests that fail due to slight pixel differences:
-mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
-
 # SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
 svg/animations/animate-calcMode-spline-by.html

@@ -1,3 +1,20 @@
+2016-07-07  Frederic Wang  <fwang@igalia.com>
+
+        Improve test mathml/presentation/tokenElements-background-color.html
+        https://bugs.webkit.org/show_bug.cgi?id=130693
+
+        We use the Ahem font to make tokenElements-background-color.html more reliable. However, we
+        remove the case of italic m because Ahem does not contain the required character U+1D45A.
+
+        Reviewed by Martin Robinson.
+
+        * mathml/presentation/tokenElements-background-color-expected.html:
+        * mathml/presentation/tokenElements-background-color.html:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-07-07  Frederic Wang  <fred.wang@free.fr>
 
         Fix the name of mathml-in-dashboard-expected.txt for iOS.
