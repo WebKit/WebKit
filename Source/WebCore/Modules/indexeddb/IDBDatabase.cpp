@@ -55,7 +55,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBClient::IDBConnecti
     , m_info(resultData.databaseInfo())
     , m_databaseConnectionIdentifier(resultData.databaseConnectionIdentifier())
 {
-    LOG(IndexedDB, "IDBDatabase::IDBDatabase - Creating database %s with version %" PRIu64 " connection %" PRIu64, m_info.name().utf8().data(), m_info.version(), m_databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBDatabase::IDBDatabase - Creating database %s with version %" PRIu64 " connection %" PRIu64 " (%p)", m_info.name().utf8().data(), m_info.version(), m_databaseConnectionIdentifier, this);
     suspendIfNeeded();
     m_connectionProxy->registerDatabaseConnection(*this);
 }
@@ -63,6 +63,10 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBClient::IDBConnecti
 IDBDatabase::~IDBDatabase()
 {
     ASSERT(currentThread() == originThreadID());
+
+    if (!m_closedInServer)
+        m_connectionProxy->databaseConnectionClosed(*this);
+
     m_connectionProxy->unregisterDatabaseConnection(*this);
 }
 
@@ -460,7 +464,7 @@ void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
 void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
     uint64_t currentVersion = m_info.version();
-    LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %" PRIu64 ", requested version %" PRIu64 ", connection %" PRIu64, currentVersion, requestedVersion, m_databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %" PRIu64 ", requested version %" PRIu64 ", connection %" PRIu64 " (%p)", currentVersion, requestedVersion, m_databaseConnectionIdentifier, this);
 
     ASSERT(currentThread() == originThreadID());
 
@@ -476,7 +480,7 @@ void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIde
 
 bool IDBDatabase::dispatchEvent(Event& event)
 {
-    LOG(IndexedDB, "IDBDatabase::dispatchEvent (%" PRIu64 ")", m_databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBDatabase::dispatchEvent (%" PRIu64 ") (%p)", m_databaseConnectionIdentifier, this);
     ASSERT(currentThread() == originThreadID());
 
     bool result = EventTargetWithInlineData::dispatchEvent(event);
