@@ -47,6 +47,7 @@ public:
 
     void removeMessageReceiver(StringReference messageReceiverName);
     void removeMessageReceiver(StringReference messageReceiverName, uint64_t destinationID);
+    void removeMessageReceiver(MessageReceiver&);
 
     void invalidate();
 

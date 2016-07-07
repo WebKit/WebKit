@@ -47,7 +47,7 @@ WebPaymentCoordinator::WebPaymentCoordinator(WebPage& webPage)
 
 WebPaymentCoordinator::~WebPaymentCoordinator()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::WebPaymentCoordinator::messageReceiverName(), m_webPage.pageID());
+    WebProcess::singleton().removeMessageReceiver(*this);
 }
 
 bool WebPaymentCoordinator::supportsVersion(unsigned version)
