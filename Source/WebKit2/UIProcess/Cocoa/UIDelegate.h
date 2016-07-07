@@ -97,7 +97,10 @@ private:
         RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) override;
         void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
         UIViewController *presentingViewController() override;
-#endif
+#endif // PLATFORM(IOS)
+
+        NSDictionary *dataDetectionContext() override;
+
         void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) override;
 
         UIDelegate& m_uiDelegate;
@@ -130,6 +133,7 @@ private:
         bool webViewDidNotHandleTapAsClickAtPoint : 1;
         bool presentingViewControllerForWebView : 1;
 #endif
+        bool dataDetectionContextForWebView : 1;
         bool webViewImageOrMediaDocumentSizeChanged : 1;
 
 #if ENABLE(CONTEXT_MENUS)

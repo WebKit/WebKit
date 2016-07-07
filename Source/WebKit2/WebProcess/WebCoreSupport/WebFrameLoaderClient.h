@@ -221,6 +221,8 @@ private:
     RemoteAXObjectRef accessibilityRemoteObject() override;
     
     NSCachedURLResponse* willCacheResponse(WebCore::DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const override;
+
+    NSDictionary *dataDetectionContext() override;
 #endif
 
     bool shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const override;

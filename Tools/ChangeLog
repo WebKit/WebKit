@@ -1,3 +1,20 @@
+2016-07-06  Tim Horton  <timothy_horton@apple.com>
+
+        Email from June 1st containing text 'Today @ 7:10PM' is linkified, but shouldn't be
+        https://bugs.webkit.org/show_bug.cgi?id=159498
+        <rdar://problem/26719903>
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/DataDetection.mm: Added.
+        (-[DataDetectionNavigationDelegate webView:didFinishNavigation:]):
+        (-[DataDetectionUIDelegate _dataDetectionContextForWebView:]):
+        (expectLinkCount):
+        (TEST):
+        Add a test ensuring that ReferenceDate in the DataDetectors context is respected
+        when deciding what to linkify.
+
 2016-07-06  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix - work around rdar://problem/27196668.

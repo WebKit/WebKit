@@ -37,6 +37,7 @@ OBJC_CLASS NSDictionary;
 OBJC_CLASS NSFont;
 OBJC_CLASS NSNumber;
 OBJC_CLASS NSString;
+OBJC_CLASS NSURL;
 
 namespace IPC {
 
@@ -86,6 +87,10 @@ bool decode(ArgumentDecoder&, RetainPtr<NSDate>&);
 // NSData
 void encode(ArgumentEncoder&, NSData *);
 bool decode(ArgumentDecoder&, RetainPtr<NSData>&);
+
+// NSURL
+void encode(ArgumentEncoder&, NSURL *);
+bool decode(ArgumentDecoder&, RetainPtr<NSURL>&);
 
 } // namespace IPC
 

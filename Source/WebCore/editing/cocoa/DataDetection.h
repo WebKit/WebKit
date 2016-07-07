@@ -32,6 +32,7 @@
 
 OBJC_CLASS DDActionContext;
 OBJC_CLASS NSArray;
+OBJC_CLASS NSDictionary;
 
 namespace WebCore {
 
@@ -57,7 +58,7 @@ public:
 #if PLATFORM(MAC)
     WEBCORE_EXPORT static RetainPtr<DDActionContext> detectItemAroundHitTestResult(const HitTestResult&, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange);
 #endif
-    WEBCORE_EXPORT static NSArray *detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes);
+    WEBCORE_EXPORT static NSArray *detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes, NSDictionary *context);
 #if PLATFORM(IOS)
     WEBCORE_EXPORT static bool isDataDetectorLink(Element&);
     WEBCORE_EXPORT static String dataDetectorIdentifier(Element&);

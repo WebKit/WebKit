@@ -54,6 +54,7 @@ typedef void* RemoteAXObjectRef;
 #if PLATFORM(COCOA)
 OBJC_CLASS NSArray;
 OBJC_CLASS NSCachedURLResponse;
+OBJC_CLASS NSDictionary;
 OBJC_CLASS NSView;
 #endif
 
@@ -292,6 +293,7 @@ namespace WebCore {
         // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
         virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;
         virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const = 0;
+        virtual NSDictionary *dataDetectionContext() { return nullptr; }
 #endif
 #if PLATFORM(WIN) && USE(CFNETWORK)
         // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.

@@ -1,3 +1,73 @@
+2016-07-06  Tim Horton  <timothy_horton@apple.com>
+
+        Email from June 1st containing text 'Today @ 7:10PM' is linkified, but shouldn't be
+        https://bugs.webkit.org/show_bug.cgi?id=159498
+        <rdar://problem/26719903>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Cocoa/LoadParametersCocoa.mm: Added.
+        (WebKit::LoadParameters::platformEncode):
+        (WebKit::LoadParameters::platformDecode):
+        * Shared/LoadParameters.cpp: Added.
+        (WebKit::LoadParameters::encode):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h: Added.
+        Add a struct that knows how to encode all of the different parameters
+        to all of the Load* messages, including the platform-specific DataDetectors parameters.
+
+        * Shared/mac/ArgumentCodersMac.h:
+        * Shared/mac/ArgumentCodersMac.mm:
+        (IPC::typeFromObject):
+        (IPC::encode):
+        (IPC::decode):
+        Add NSURL coders that defer to the CFURL coders.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::dataDetectionContext):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::dataDetectionContext):
+        Add APIUIClient methods to retrieve the DataDetectors context dictionary.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::addPlatformLoadParameters):
+        Add the DataDetectors context dictionary to the given LoadParameters.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dataDetectionContext):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::dataDetectionContext):
+        Store the dataDetectionContext on WebPage, and make it accessible to WebCore
+        via the FrameLoaderClient (it is used in FrameLoader when the load completes).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadHTMLString):
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+        (WebKit::WebPageProxy::loadPlainTextString):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::loadStringImpl):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadString):
+        (WebKit::WebPage::loadAlternateHTMLString):
+        (WebKit::WebPage::loadHTMLString): Deleted.
+        (WebKit::WebPage::loadPlainTextString): Deleted.
+        (WebKit::WebPage::loadWebArchiveData): Deleted.
+        * WebProcess/WebPage/WebPage.messages.in:
+        Adopt LoadParameters, taking this opportunity to reduce the number of very similar messages.
+        We can take this further (we should be able to get it down to just LoadRequest
+        and LoadData) in the future. When any load occurs, grab the client's DataDetectorse
+        context dictionary and send it along with the load request, storing it in WebPage.
+
 2016-07-06  Chris Dumez  <cdumez@apple.com>
 
         [WK2][Cocoa] Disable ResourceResponse lazy initialization

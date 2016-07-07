@@ -55,6 +55,7 @@ enum NSType {
     NSStringType,
     NSDateType,
     NSDataType,
+    NSURLType,
     Unknown,
 };
 
@@ -84,6 +85,8 @@ static NSType typeFromObject(id object)
         return NSDateType;
     if ([object isKindOfClass:[NSData class]])
         return NSDataType;
+    if ([object isKindOfClass:[NSURL class]])
+        return NSURLType;
 
     ASSERT_NOT_REACHED();
     return Unknown;
@@ -125,6 +128,9 @@ void encode(ArgumentEncoder& encoder, id object)
         return;
     case NSDataType:
         encode(encoder, static_cast<NSData *>(object));
+        return;
+    case NSURLType:
+        encode(encoder, static_cast<NSURL *>(object));
         return;
     case Unknown:
         break;
@@ -205,6 +211,13 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<id>& result)
         if (!decode(decoder, data))
             return false;
         result = data;
+        return true;
+    }
+    case NSURLType: {
+        RetainPtr<NSURL> URL;
+        if (!decode(decoder, URL))
+            return false;
+        result = URL;
         return true;
     }
     case Unknown:
@@ -502,6 +515,21 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSData>& result)
         return false;
 
     result = adoptNS((NSData *)data.leakRef());
+    return true;
+}
+
+void encode(ArgumentEncoder& encoder, NSURL *URL)
+{
+    encode(encoder, (CFURLRef)URL);
+}
+
+bool decode(ArgumentDecoder& decoder, RetainPtr<NSURL>& result)
+{
+    RetainPtr<CFURLRef> URL;
+    if (!decode(decoder, URL))
+        return false;
+
+    result = adoptNS((NSURL *)URL.leakRef());
     return true;
 }
 

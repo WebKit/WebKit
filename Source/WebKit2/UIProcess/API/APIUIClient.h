@@ -164,6 +164,9 @@ public:
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) { }
     virtual UIViewController *presentingViewController() { return nullptr; }
 #endif
+#if PLATFORM(COCOA)
+    virtual NSDictionary *dataDetectionContext() { return nullptr; }
+#endif
 
     virtual void didClickAutoFillButton(WebKit::WebPageProxy&, API::Object*) { }
 

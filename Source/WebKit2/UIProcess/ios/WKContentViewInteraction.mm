@@ -29,7 +29,6 @@
 #if PLATFORM(IOS)
 
 #import "APIUIClient.h"
-#import "DataDetectorsUISPI.h"
 #import "EditingRange.h"
 #import "ManagedConfigurationSPI.h"
 #import "NativeWebKeyboardEvent.h"
@@ -65,6 +64,7 @@
 #import <WebCore/Color.h>
 #import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/DataDetectorsCoreSPI.h>
+#import <WebCore/DataDetectorsUISPI.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/Path.h>

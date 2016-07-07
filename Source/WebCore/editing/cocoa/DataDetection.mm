@@ -29,6 +29,7 @@
 #import "Attr.h"
 #import "CSSStyleDeclaration.h"
 #import "DataDetectorsSPI.h"
+#import "DataDetectorsUISPI.h"
 #import "ElementAncestorIterator.h"
 #import "ElementTraversal.h"
 #import "FrameView.h"
@@ -429,7 +430,7 @@ static inline CFComparisonResult queryOffsetCompare(DDQueryOffset o1, DDQueryOff
     return kCFCompareEqualTo;
 }
 
-NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes types)
+NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes types, NSDictionary *context)
 {
     RetainPtr<DDScannerRef> scanner = adoptCF(softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
     RetainPtr<DDScanQueryRef> scanQuery = adoptCF(softLink_DataDetectorsCore_DDScanQueryCreate(NULL));
@@ -443,15 +444,15 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
     // FIXME: we should add a timeout to this call to make sure it doesn't take too much time.
     if (!softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), scanQuery.get()))
         return nil;
-    
+
     RetainPtr<CFArrayRef> scannerResults = adoptCF(softLink_DataDetectorsCore_DDScannerCopyResultsWithOptions(scanner.get(), get_DataDetectorsCore_DDScannerCopyResultsOptionsForPassiveUse() | DDScannerCopyResultsOptionsCoalesceSignatures));
     if (!scannerResults)
         return nil;
-    
+
     CFIndex resultCount = CFArrayGetCount(scannerResults.get());
     if (!resultCount)
         return nil;
-    
+
     Vector<RetainPtr<DDResultRef>> allResults;
     Vector<RetainPtr<NSIndexPath>> indexPaths;
     NSInteger currentTopLevelIndex = 0;
@@ -519,7 +520,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
     }
     
     auto tz = adoptCF(CFTimeZoneCopyDefault());
-    NSDate *referenceDate = [NSDate date];
+    NSDate *referenceDate = [context objectForKey:getkDataDetectorsReferenceDateKey()] ?: [NSDate date];
     Text* lastTextNodeToUpdate = nullptr;
     String lastNodeContent;
     size_t contentOffset = 0;
@@ -652,7 +653,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
 }
 
 #else
-NSArray *DataDetection::detectContentInRange(RefPtr<Range>&, DataDetectorTypes)
+NSArray *DataDetection::detectContentInRange(RefPtr<Range>&, DataDetectorTypes, NSDictionary *)
 {
     return nil;
 }

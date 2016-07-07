@@ -132,12 +132,11 @@ messages -> WebPage LegacyReceiver {
     TryRestoreScrollPosition()
 
     LoadURLInFrame(String url, uint64_t frameID)
-    LoadRequest(uint64_t navigationID, WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle, uint64_t shouldOpenExternalURLsPolicy, WebKit::UserData userData)
-    LoadData(uint64_t navigationID, IPC::DataReference data, String MIMEType, String encoding, String baseURL, WebKit::UserData userData)
-    LoadHTMLString(uint64_t navigationID, String htmlString, String baseURL, WebKit::UserData userData)
-    LoadAlternateHTMLString(String htmlString, String baseURL, String unreachableURL, String provisionalLoadErrorURL, WebKit::UserData userData)
-    LoadPlainTextString(String string, WebKit::UserData userData)
-    LoadWebArchiveData(IPC::DataReference webArchiveData, WebKit::UserData userData)
+    LoadRequest(struct WebKit::LoadParameters loadParameters)
+    LoadData(struct WebKit::LoadParameters loadParameters)
+    LoadString(struct WebKit::LoadParameters loadParameters)
+    LoadAlternateHTMLString(struct WebKit::LoadParameters loadParameters)
+
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
 
     Reload(uint64_t navigationID, bool reloadFromOrigin, bool contentBlockersEnabled, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
