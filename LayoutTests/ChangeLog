@@ -1,3 +1,14 @@
+2016-07-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Add a test for media control dropoff
+        https://bugs.webkit.org/show_bug.cgi?id=151287
+        <rdar://problem/23544666>
+
+        Unreviewed El Capitan-specific test results after r202905.
+
+        * platform/mac-elcapitan/media/controls: Added.
+        * platform/mac-elcapitan/media/controls/inline-elements-dropoff-order-expected.txt: Added.
+
 2016-07-07  Frederic Wang  <fwang@igalia.com>
 
         Replace reftest scripts-height.html with script tests
