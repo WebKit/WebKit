@@ -1,27 +1,27 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
+<iframe id="testFrame1" srcdoc="<html><body></body></html>"></iframe>
+<iframe id="testFrame2" srcdoc="<html></html>"></iframe>
 <script>
-description("Tests setting document.body");
+description("Tests setting document.body to another frame's body");
 
-iframe1 = document.createElement('iframe');
-document.body.appendChild(iframe1);
-document1 = iframe1.contentDocument.implementation.createHTMLDocument("document");
+var document1 = document.getElementById("testFrame1").contentDocument;
+var document2 = document.getElementById("testFrame2").contentDocument;
+if (document2.body)
+    document2.documentElement.removeChild(document2.body);
 
-shouldThrow("document1.body = iframe1", "'Error: HierarchyRequestError: DOM Exception 3'");
-shouldBe("iframe1.parentNode", "document.body");
+shouldNotBe("document1.body", "null");
+shouldBeNull("document2.body");
 
-shouldThrow("document1.body = document1.createElement('iframe')", "'Error: HierarchyRequestError: DOM Exception 3'");
+shouldNotThrow("document2.body = document1.body");
 
-document1.body = document.body;
-shouldBeTrue("document1.body != document.body");
+shouldNotBe("document2.body", "null");
+shouldBeNull("document1.body");
 
-body1 = document1.createElement('body');
-document1.body = body1;
-shouldBe("document1.body", "body1")
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

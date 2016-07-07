@@ -2624,27 +2624,26 @@ HTMLElement* Document::bodyOrFrameset() const
 
 void Document::setBodyOrFrameset(RefPtr<HTMLElement>&& newBody, ExceptionCode& ec)
 {
-    // FIXME: This does not support setting a <frameset> Element, only a <body>. This does
-    // not match the HTML specification:
-    // https://html.spec.whatwg.org/multipage/dom.html#dom-document-body
-    if (!newBody || !documentElement() || !newBody->hasTagName(bodyTag)) { 
+    if (!is<HTMLBodyElement>(newBody.get()) && !is<HTMLFrameSetElement>(newBody.get())) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
 
-    if (&newBody->document() != this) {
-        ec = 0;
-        RefPtr<Node> node = importNode(*newBody, true, ec);
-        if (ec)
-            return;
-        
-        newBody = downcast<HTMLElement>(node.get());
+    auto* currentBody = bodyOrFrameset();
+    if (newBody == currentBody)
+        return;
+
+    if (currentBody) {
+        documentElement()->replaceChild(*newBody, *currentBody, ec);
+        return;
     }
 
-    if (auto* body = bodyOrFrameset())
-        documentElement()->replaceChild(*newBody, *body, ec);
-    else
-        documentElement()->appendChild(*newBody, ec);
+    if (!documentElement()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return;
+    }
+
+    documentElement()->appendChild(*newBody, ec);
 }
 
 Location* Document::location() const

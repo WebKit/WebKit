@@ -1,3 +1,16 @@
+2016-07-06  Chris Dumez  <cdumez@apple.com>
+
+        Align Document.body setter with the HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=159490
+
+        Reviewed by Alex Christensen.
+
+        Update existing test that was setting a document's body to another frame's body
+        as it was expecting the body element to get cloned rather than adopted / transferred.
+
+        * fast/dom/document-set-body-expected.txt:
+        * fast/dom/document-set-body.html:
+
 2016-07-06  Brent Fulgham  <bfulgham@apple.com>
 
         Return values of JSArray::createUninitialized (and related) are not consistently checked for nullptr

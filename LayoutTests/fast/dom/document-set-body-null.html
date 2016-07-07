@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe id="testFrame" srcdoc="<html><body></body></html>"></iframe>
+<script>
+description("Tests setting document.body to null");
+
+var testDocument = document.getElementById("testFrame").contentDocument;
+shouldThrow("testDocument.body = null", "'Error: HierarchyRequestError: DOM Exception 3'");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

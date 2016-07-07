@@ -1,5 +1,16 @@
 2016-07-06  Chris Dumez  <cdumez@apple.com>
 
+        Align Document.body setter with the HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=159490
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline existing W3C test now that one more check is passing.
+
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/Document.body-expected.txt:
+
+2016-07-06  Chris Dumez  <cdumez@apple.com>
+
         Document.body should return the first child of the html element that is either a body / frameset element
         https://bugs.webkit.org/show_bug.cgi?id=159488
 
