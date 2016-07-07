@@ -1,3 +1,12 @@
+2016-07-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking media/video-main-content-allow-then-deny.html as failing on ElCapitan+
+        https://bugs.webkit.org/show_bug.cgi?id=159533
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-07-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: When IDBDatabase objects are garbage collected, they don't close their server connection.
