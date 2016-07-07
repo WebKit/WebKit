@@ -602,6 +602,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     Modules/indexeddb
     Modules/notifications
     Modules/webdatabase
+    Modules/websockets
 
     Modules/indexeddb/client
     Modules/indexeddb/shared
