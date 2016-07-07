@@ -79,7 +79,7 @@ public:
 
 private:
     WebPlaybackSessionModel* m_playbackSessionModel { nullptr };
-    RetainPtr<WebPlaybackControlsManager> m_playbackControlsManager;
+    WebPlaybackControlsManager *m_playbackControlsManager;
     WebPlaybackSessionInterfaceMacClient* m_client { nullptr };
 };
 

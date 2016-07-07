@@ -137,7 +137,7 @@ void WebPlaybackSessionInterfaceMac::ensureControlsManager()
 WebPlaybackControlsManager *WebPlaybackSessionInterfaceMac::playBackControlsManager()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    return m_playbackControlsManager.get();
+    return m_playbackControlsManager;
 #else
     return nil;
 #endif

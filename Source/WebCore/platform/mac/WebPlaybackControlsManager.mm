@@ -33,13 +33,26 @@
 #else
 @implementation WebPlaybackControlsManager
 
-@synthesize webPlaybackSessionInterfaceMac=_webPlaybackSessionInterfaceMac;
+using namespace WebCore;
+
 @synthesize contentDuration=_contentDuration;
 @synthesize hasEnabledAudio=_hasEnabledAudio;
 @synthesize hasEnabledVideo=_hasEnabledVideo;
 @synthesize rate=_rate;
 @synthesize playing=_playing;
 @synthesize canTogglePlayback=_canTogglePlayback;
+
+@synthesize webPlaybackSessionInterfaceMac=_webPlaybackSessionInterfaceMac;
+
+- (WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
+{
+    return _webPlaybackSessionInterfaceMac.get();
+}
+
+- (void)setWebPlaybackSessionInterfaceMac:(WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
+{
+    _webPlaybackSessionInterfaceMac = webPlaybackSessionInterfaceMac;
+}
 
 - (AVValueTiming *)timing
 {

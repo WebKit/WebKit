@@ -53,10 +53,10 @@ WEBCORE_EXPORT
     BOOL _canTogglePlayback;
 
 @private
-    WebCore::WebPlaybackSessionInterfaceMac* _webPlaybackSessionInterfaceMac;
+    RefPtr<WebCore::WebPlaybackSessionInterfaceMac> _webPlaybackSessionInterfaceMac;
 }
 
-@property (assign) WebCore::WebPlaybackSessionInterfaceMac* webPlaybackSessionInterfaceMac;
+@property (retain) WebCore::WebPlaybackSessionInterfaceMac* webPlaybackSessionInterfaceMac;
 @property (readwrite) NSTimeInterval contentDuration;
 @property (nonatomic, retain, readwrite) AVValueTiming *timing;
 @property (nonatomic, retain, readwrite) NSArray *seekableTimeRanges;
