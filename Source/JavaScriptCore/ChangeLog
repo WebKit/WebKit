@@ -1,3 +1,17 @@
+2016-07-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARMv7] REGRESSION(r197655): ASSERTION FAILED: (cond == Zero) || (cond == NonZero)
+        https://bugs.webkit.org/show_bug.cgi?id=159419
+
+        Reviewed by Benjamin Poulain.
+
+        Allow Signed and PositiveOrZero conditions too because tst instruction updates N and Z flags.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchTest32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchTest32): Add assertions to avoid possible bugs in the future.
+
 2016-07-06  Youenn Fablet  <youenn@apple.com>
 
         Builtin generator should use pragma once for header files
