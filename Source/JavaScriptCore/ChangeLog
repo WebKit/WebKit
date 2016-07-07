@@ -1,3 +1,16 @@
+2016-07-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] String.prototype.normalize should have a length of zero
+        https://bugs.webkit.org/show_bug.cgi?id=159506
+
+        Reviewed by Yusuke Suzuki.
+
+        Spec: https://tc39.github.io/ecma262/#sec-string.prototype.normalize
+        The argument is optional, the length should be zero.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2016-07-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARMv7] REGRESSION(r197655): ASSERTION FAILED: (cond == Zero) || (cond == NonZero)

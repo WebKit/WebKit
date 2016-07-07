@@ -1,3 +1,15 @@
+2016-07-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] String.prototype.normalize should have a length of zero
+        https://bugs.webkit.org/show_bug.cgi?id=159506
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/script-tests/string-normalize.js: Added.
+        (listener.toString):
+        * js/string-normalize-expected.txt: Added.
+        * js/string-normalize.html: Added.
+
 2016-07-07  Eric Carlson  <eric.carlson@apple.com>
 
         Add a test for media control dropoff
