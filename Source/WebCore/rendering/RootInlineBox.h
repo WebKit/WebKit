@@ -190,6 +190,8 @@ public:
     Node* getLogicalStartBoxWithNode(InlineBox*&) const;
     Node* getLogicalEndBoxWithNode(InlineBox*&) const;
 
+    virtual bool isTrailingFloatsRootInlineBox() const { return false; }
+
 #if ENABLE(TREE_DEBUGGING)
     const char* boxName() const final;
 #endif

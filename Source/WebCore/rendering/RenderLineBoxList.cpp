@@ -382,8 +382,15 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
 
         // FIXME: We shouldn't need to always dirty the next line. This is only strictly 
         // necessary some of the time, in situations involving BRs.
-        if (RootInlineBox* nextBox = box->nextRootBox())
+        if (RootInlineBox* nextBox = box->nextRootBox()) {
             nextBox->markDirty();
+
+            // Special root box for floats may be added at the end of the list. If this occurs with BRs we need to invalidate it explicitly.
+            if (auto* nextNextBox = nextBox->nextRootBox()) {
+                if (nextNextBox->isTrailingFloatsRootInlineBox())
+                    nextNextBox->markDirty();
+            }
+        }
     }
 }
 
