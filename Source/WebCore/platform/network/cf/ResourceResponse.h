@@ -68,6 +68,10 @@ public:
     {
     }
 
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT void disableLazyInitialization();
+#endif
+
     unsigned memoryUsage() const
     {
         // FIXME: Find some programmatic lighweight way to calculate ResourceResponse and associated classes.

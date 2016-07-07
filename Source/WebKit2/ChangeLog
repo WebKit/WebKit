@@ -1,3 +1,26 @@
+2016-07-06  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Disable ResourceResponse lazy initialization
+        https://bugs.webkit.org/show_bug.cgi?id=159497
+        <rdar://problem/27209066>
+
+        Reviewed by Alex Christensen.
+
+        Disable ResourceResponse lazy initialization for WebKit2 as
+        we always end up initializing all the fields anyway when
+        sending the response to the WebContent process via IPC.
+
+        Even worse, we always do a partial lazy initialization (common
+        fields only) before the IPC so we always do the initialization
+        in 2 steps. This normally would not be an issue but the 2 steps
+        actually have some overlap because both call
+        CFHTTPMessageCopyAllHeaderFields(), which is expensive (See
+        <rdar://problem/26796059>) to first get the common HTTP headers,
+        then ALL the HTTP headers.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+
 2016-07-06  Chelsea Pugh  <cpugh@apple.com>
 
         [iOS] Text suggestions should be cleared when form input session is invalidated        

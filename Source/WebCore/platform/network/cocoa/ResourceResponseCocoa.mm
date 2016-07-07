@@ -68,6 +68,11 @@ void ResourceResponse::initNSURLResponse() const
     [m_nsResponse.get() _setMIMEType:(NSString *)m_mimeType];
 }
 
+void ResourceResponse::disableLazyInitialization()
+{
+    lazyInit(AllFields);
+}
+
 CertificateInfo ResourceResponse::platformCertificateInfo() const
 {
 #if USE(CFNETWORK)
