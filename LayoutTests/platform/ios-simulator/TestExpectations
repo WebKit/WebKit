@@ -677,7 +677,6 @@ mathml/presentation/tokenElements-mathvariant.html [ Skip ]
 
 # MathML tests that fail:
 mathml/presentation/scripts-height.html [ ImageOnlyFailure ]
-mathml/presentation/multiscripts-positions.html [ Pass ImageOnlyFailure ]
 
 # <rdar://problem/19215305> ASSERT(m_cgFont.get()) fails in FontPlatformData::ctFont()
 svg/text/svg-fallback-font-crash.html

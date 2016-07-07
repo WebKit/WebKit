@@ -1,3 +1,22 @@
+2016-07-07  Frederic Wang  <fwang@igalia.com>
+
+        Replace multiscripts-positions.html reftest with script tests
+        https://bugs.webkit.org/show_bug.cgi?id=159418
+
+        We import more tests from the MathML in HTML5 test suite to replace
+        and extend the reftest testing metrics in the mmultiscripts element.
+        This allows to make such tests work on OS X and iOS.
+
+        Reviewed by Martin Robinson.
+
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-2-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-2.html: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-3-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-3.html: Added.
+        * mathml/presentation/multiscripts-positions.html: Removed.
+        * platform/ios-simulator/TestExpectations: Remove failure for multiscripts-positions.
+        * platform/mac/TestExpectations: Ditto.
+
 2016-07-07  Eric Carlson  <eric.carlson@apple.com>
 
         Add a test for media control dropoff
