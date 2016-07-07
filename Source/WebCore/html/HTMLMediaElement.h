@@ -781,6 +781,7 @@ private:
 
     void pauseAfterDetachedTask();
     void updatePlaybackControlsManager();
+    void scheduleUpdatePlaybackControlsManager();
 
     void updateRenderer();
 
@@ -797,6 +798,7 @@ private:
     GenericTaskQueue<Timer> m_shadowDOMTaskQueue;
     GenericTaskQueue<Timer> m_promiseTaskQueue;
     GenericTaskQueue<Timer> m_pauseAfterDetachedTaskQueue;
+    GenericTaskQueue<Timer> m_updatePlaybackControlsManagerQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 
