@@ -117,13 +117,6 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
         this._sortDataGrid();
     }
 
-    get scrollableElements()
-    {
-        if (!this._dataGrid)
-            return [];
-        return [this._dataGrid.scrollContainer];
-    }
-
     // Private
 
     _truncateValue(value)

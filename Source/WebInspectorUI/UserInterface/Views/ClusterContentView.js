@@ -97,6 +97,13 @@ WebInspector.ClusterContentView = class ClusterContentView extends WebInspector.
         this._contentViewContainer.goForward();
     }
 
+    get scrollableElements()
+    {
+        if (!this._contentViewContainer.currentContentView)
+            return [];
+        return this._contentViewContainer.currentContentView.scrollableElements;
+    }
+
     get selectionPathComponents()
     {
         if (!this._contentViewContainer.currentContentView)

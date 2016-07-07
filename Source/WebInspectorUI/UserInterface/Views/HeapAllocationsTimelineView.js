@@ -77,6 +77,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         this._baselineHeapSnapshotTimelineRecord = null;
         this._heapSnapshotDiff = null;
 
+        this._snapshotListScrollTop = 0;
         this._showingSnapshotList = true;
 
         this._snapshotListPathComponent = new WebInspector.HierarchicalPathComponent(WebInspector.UIString("Snapshot List"), "snapshot-list-icon", "snapshot-list", false, false);
@@ -105,6 +106,15 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
 
     // Public
 
+    get scrollableElements()
+    {
+        if (this._showingSnapshotList)
+            return [this._dataGrid.scrollContainer];
+        if (this._contentViewContainer.currentContentView)
+            return this._contentViewContainer.currentContentView.scrollableElements;
+        return [];
+    }
+
     showHeapSnapshotList()
     {
         if (this._showingSnapshotList)
@@ -118,6 +128,8 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         this.removeSubview(this._contentViewContainer);
         this.addSubview(this._dataGrid);
 
+        this._dataGrid.scrollContainer.scrollTop = this._snapshotListScrollTop;
+
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
         this.dispatchEventToListeners(WebInspector.ContentView.Event.NavigationItemsDidChange);
     }
@@ -125,6 +137,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
     showHeapSnapshotTimelineRecord(heapSnapshotTimelineRecord)
     {
         if (this._showingSnapshotList) {
+            this._snapshotListScrollTop = this._dataGrid.scrollContainer.scrollTop;
             this.removeSubview(this._dataGrid);
             this.addSubview(this._contentViewContainer);
             this._contentViewContainer.shown();
