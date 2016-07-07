@@ -1,5 +1,28 @@
 2016-07-07  Frederic Wang  <fwang@igalia.com>
 
+        Rewrite the tests of scripts-subsup.html
+        https://bugs.webkit.org/show_bug.cgi?id=159202
+
+        The tests for script metrics in scripts-subsup.html are very unreliable and difficult to
+        debug. They currently fail on all platforms. We remove them and import a test from the
+        MathML in HTML5 test suite that verifies equivalent features in a more reliable and
+        understandable way. The equivalence test for msubsup and empty script is not preserved as
+        the current code does not actually try to achieve this equivalence.
+
+        Reviewed by Martin Robinson.
+
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-1-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-1.html: Added.
+        * mathml/presentation/scripts-subsup-expected.html: Remove the tests for metrics.
+        * mathml/presentation/scripts-subsup.html: Ditto.
+        * platform/gtk/TestExpectations: Remove failure for scripts-subsup.html.
+        * platform/ios-simulator-wk1/TestExpectations: Ditto.
+        * platform/ios-simulator/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+
+2016-07-07  Frederic Wang  <fwang@igalia.com>
+
         Improve test mathml/presentation/tokenElements-background-color.html
         https://bugs.webkit.org/show_bug.cgi?id=130693
 

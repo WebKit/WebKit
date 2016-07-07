@@ -1943,7 +1943,6 @@ mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
 mathml/presentation/style-changed.html [ Crash Pass ]
 mathml/opentype/large-operators-munderover.html [ Failure ]
 mathml/presentation/attributes-mathvariant.html [ ImageOnlyFailure ]
-webkit.org/b/159202 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-mathvariant.html [ ImageOnlyFailure ]
 
 # These tests require the Latin Modern Math font.

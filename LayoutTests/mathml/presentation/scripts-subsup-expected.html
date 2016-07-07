@@ -8,112 +8,10 @@
       padding: 0;
       border: 0;
       }
-      td {
-      border: 1px solid black;
-      text-align: center; width: 100px; height: 100px;
-      vertical-align: middle;
-      }
-      span {
-      display: inline-block;
-      background: black;
-      border: 0;
-      margin: 0;
-      }
     </style>
   </head>
   <body>
-
-    <!-- The sub/sup scripts should be hidden by the black rectangles -->
-    <table style="position: absolute; top: 10px; left: 10px; font-family: Ahem;">
-      <tr>
-        <td style="text-align: left; vertical-align: top;">
-          <math style="font-family: Ahem;">
-            <msub>
-              <mtext>X</mtext>
-              <mtext style="visibility: hidden;">X</mtext>
-            </msub>
-          </math>
-        </td>
-        <td style="text-align: left;">
-          <math style="font-family: Ahem;">
-            <msubsup>
-              <mtext>X</mtext>
-              <mtext style="visibility: hidden;">X</mtext>
-              <mtext style="visibility: hidden;">X</mtext>
-            </msubsup>
-          </math>
-        </td>
-        <td style="text-align: left; vertical-align: bottom;">
-          <math style="font-family: Ahem;">
-            <msup>
-              <mtext>X</mtext>
-              <mtext style="visibility: hidden;">X</mtext>
-            </msup>
-          </math>
-        </td>
-      </tr>
-    </table>
-
-    <table style="position: absolute; top: 10px; left: 10px; font-family: Ahem;">
-      <tr>
-        <td style="text-align: left; vertical-align: top;">
-          <span style="visibility: hidden;">X</span><span style="vertical-align: -25%;">X</span>
-        </td>
-        <td style="text-align: left;">
-          <span style="visibility: hidden;">X</span><span>X<br/>X</span>
-        </td>
-        <td style="text-align: left; vertical-align: bottom;">
-          <span style="visibility: hidden;">X</span><span style="vertical-align: +50%;">X</span>
-        </td>
-      </tr>
-    </table>
-
-    <!-- The bases should be hidden by the black rectangles -->
-    <table style="position: absolute; top: 120px; left: 10px;">
-      <tr>
-        <td style="text-align: left; vertical-align: top;">
-          <math>
-            <msub>
-              <mtext style="visibility: hidden;">X</mtext>
-              <mtext>X</mtext>
-            </msub>
-          </math>
-        </td>
-        <td style="text-align: left;">
-          <math>
-            <msubsup>
-              <mtext style="visibility: hidden;">X</mtext>
-              <mtext>X</mtext>
-              <mtext>X</mtext>
-            </msubsup>
-          </math>
-        </td>
-        <td style="text-align: left; vertical-align: bottom;">
-          <math>
-            <msup>
-              <mtext style="visibility: hidden;">X</mtext>
-              <mtext>X</mtext>
-            </msup>
-          </math>
-        </td>
-      </tr>
-    </table>
-
-    <table style="position: absolute; top: 120px; left: 10px;">
-      <tr>
-        <td style="text-align: left; vertical-align: top;">
-          <span>X</span>
-        </td>
-        <td style="text-align: left;">
-          <span>X</span>
-        </td>
-        <td style="text-align: left; vertical-align: bottom;">
-          <span>X</span>
-        </td>
-      </tr>
-    </table>
-
-    <div style="position: absolute; top: 250px; left: 10px;">
+    <div>
       <math>
         <msub>
           <mi>A</mi>
@@ -128,16 +26,6 @@
           <mi>B</mi>
           <mi>C</mi>
         </msubsup>
-      </math>
-      <math>
-        <msub>
-          <mi>A</mi>
-          <mi>B</mi>
-        </msub>
-        <msup>
-          <mi>A</mi>
-          <mi>B</mi>
-        </msup>
       </math>
     </div>
 
