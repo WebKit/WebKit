@@ -1,5 +1,14 @@
 2016-07-07  Alex Christensen  <achristensen@webkit.org>
 
+        Followup to r202939.
+        https://bugs.webkit.org/show_bug.cgi?id=159526
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        We need the correct destination id when sending a message.
+
+2016-07-07  Alex Christensen  <achristensen@webkit.org>
+
         Fix crash when sending failure message to closed WebProcess
         https://bugs.webkit.org/show_bug.cgi?id=159526
         <rdar://problem/26767037>

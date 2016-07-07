@@ -406,7 +406,7 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
         m_synchronousLoadData->error = error;
         sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr);
     } else if (auto* connection = messageSenderConnection())
-        connection->send(Messages::WebResourceLoader::DidFailResourceLoad(error), 0, 0);
+        connection->send(Messages::WebResourceLoader::DidFailResourceLoad(error), messageSenderDestinationID(), 0);
 
     cleanup();
 }
