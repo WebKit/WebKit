@@ -1,3 +1,11 @@
+2016-07-07  Frederic Wang  <fred.wang@free.fr>
+
+        Fix the name of mathml-in-dashboard-expected.txt for iOS.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/mathml/mathml-in-dashboard-expected.txt: Renamed from LayoutTests/platform/ios-simulator/mathml/mathml-in-dashboard-actual.txt.
+
 2016-07-07  Frederic Wang  <fwang@igalia.com>
 
         Tweak mathml/presentation/semantics.html to make it pass on iOS
