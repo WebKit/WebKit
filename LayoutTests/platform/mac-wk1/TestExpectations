@@ -251,5 +251,3 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 
 [ Yosemite ] http/tests/media/hls/video-controller-getStartDate.html [ Pass Timeout ]
 
-# rdar://problem/27197375
-[ Sierra+ ] editing/style/text-indent.html [ Failure ]
