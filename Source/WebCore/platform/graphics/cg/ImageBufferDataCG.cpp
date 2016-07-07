@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,11 +97,9 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
         return nullptr;
 
     auto result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
-    unsigned char* resultData = result->data();
-    if (!resultData) {
-        WTFLogAlways("ImageBufferData: Unable to create buffer. Requested size was %d x %d = %u\n", rect.width(), rect.height(), area.unsafeGet());
+    unsigned char* resultData = result ? result->data() : nullptr;
+    if (!resultData)
         return nullptr;
-    }
 
     Checked<int> endx = rect.maxX();
     endx *= ceilf(resolutionScale);

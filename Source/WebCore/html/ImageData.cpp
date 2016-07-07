@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -115,6 +115,7 @@ ImageData::ImageData(const IntSize& size)
     : m_size(size)
     , m_data(Uint8ClampedArray::createUninitialized(size.width() * size.height() * 4))
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(m_data);
 }
 
 ImageData::ImageData(const IntSize& size, Ref<Uint8ClampedArray>&& byteArray)

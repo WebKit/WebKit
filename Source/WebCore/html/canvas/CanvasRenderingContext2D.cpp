@@ -2031,8 +2031,17 @@ RefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordinate
         return createEmptyImageData(imageDataRect.size());
 
     RefPtr<Uint8ClampedArray> byteArray = buffer->getUnmultipliedImageData(imageDataRect, coordinateSystem);
-    if (!byteArray)
+    if (!byteArray) {
+        StringBuilder consoleMessage;
+        consoleMessage.appendLiteral("Unable to get image data from canvas. Requested size was ");
+        consoleMessage.appendNumber(imageDataRect.width());
+        consoleMessage.appendLiteral(" x ");
+        consoleMessage.appendNumber(imageDataRect.height());
+
+        canvas()->document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, consoleMessage.toString());
+        ec = INVALID_STATE_ERR;
         return nullptr;
+    }
 
     return ImageData::create(imageDataRect.size(), byteArray.releaseNonNull());
 }

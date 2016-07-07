@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2015 Canon Inc. All rights reserved.
  *
@@ -144,6 +144,10 @@ const char* SharedBuffer::data() const
 RefPtr<ArrayBuffer> SharedBuffer::createArrayBuffer() const
 {
     RefPtr<ArrayBuffer> arrayBuffer = ArrayBuffer::createUninitialized(static_cast<unsigned>(size()), sizeof(char));
+    if (!arrayBuffer) {
+        WTFLogAlways("SharedBuffer::createArrayBuffer Unable to create buffer. Requested size was %d x %lu\n", size(), sizeof(char));
+        return nullptr;
+    }
 
     const char* segment = 0;
     unsigned position = 0;

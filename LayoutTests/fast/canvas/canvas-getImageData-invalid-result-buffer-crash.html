@@ -1,0 +1,18 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+function runTest() {
+    var canvas = document.getElementById("test");
+    var ctx = canvas.getContext("2d");
+    ctx.getImageData(10000, 125, -381000000, -0.9);
+}
+</script>
+</head>
+<body onload="runTest()">
+    <canvas id="test" width="1000" height="1000"></canvas>
+PASSED (If this page did not crash.)
+    <pre id='console'></pre>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
