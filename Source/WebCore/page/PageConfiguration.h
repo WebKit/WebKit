@@ -57,7 +57,7 @@ class ContextMenuClient;
 class PageConfiguration {
     WTF_MAKE_NONCOPYABLE(PageConfiguration); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT PageConfiguration(UniqueRef<EditorClient>&&, UniqueRef<SocketProvider>&&);
+    WEBCORE_EXPORT PageConfiguration(UniqueRef<EditorClient>&&, Ref<SocketProvider>&&);
     WEBCORE_EXPORT ~PageConfiguration();
 
     AlternativeTextClient* alternativeTextClient { nullptr };
@@ -66,7 +66,7 @@ public:
     ContextMenuClient* contextMenuClient { nullptr };
 #endif
     UniqueRef<EditorClient> editorClient;
-    UniqueRef<SocketProvider> socketProvider;
+    Ref<SocketProvider> socketProvider;
     DragClient* dragClient { nullptr };
     InspectorClient* inspectorClient { nullptr };
 #if ENABLE(APPLE_PAY)

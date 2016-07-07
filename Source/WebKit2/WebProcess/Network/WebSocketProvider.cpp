@@ -29,28 +29,30 @@
  */
 
 #include "config.h"
+#include "WebSocketProvider.h"
 
 #if ENABLE(WEB_SOCKETS)
 
-#include "ThreadableWebSocketChannel.h"
-
-#include "Document.h"
-#include "ScriptExecutionContext.h"
-#include "ThreadableWebSocketChannelClientWrapper.h"
-#include "WebSocketChannel.h"
-#include "WebSocketChannelClient.h"
-#include "WorkerGlobalScope.h"
-#include "WorkerRunLoop.h"
-#include "WorkerThread.h"
-#include "WorkerThreadableWebSocketChannel.h"
+#include <WebCore/Document.h>
+#include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/ThreadableWebSocketChannelClientWrapper.h>
+#include <WebCore/WebSocketChannel.h>
+#include <WebCore/WebSocketChannelClient.h>
+#include <WebCore/WorkerGlobalScope.h>
+#include <WebCore/WorkerRunLoop.h>
+#include <WebCore/WorkerThread.h>
+#include <WebCore/WorkerThreadableWebSocketChannel.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace WebKit {
 
 static const char webSocketChannelMode[] = "webSocketChannelMode";
 
-Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client)
+RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(ScriptExecutionContext& context, WebSocketChannelClient& client)
 {
+    // FIXME: This should return a proxy so we can do the actual network interactions in the NetworkProcess.
     if (is<WorkerGlobalScope>(context)) {
         WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
         WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
@@ -63,6 +65,6 @@ Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecuti
     return WebSocketChannel::create(downcast<Document>(context), client);
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(WEB_SOCKETS)

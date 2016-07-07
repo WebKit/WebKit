@@ -1034,7 +1034,6 @@ set(WebCore_SOURCES
     Modules/webdatabase/SQLTransactionCoordinator.cpp
     Modules/webdatabase/SQLTransactionStateMachine.cpp
 
-    Modules/websockets/ThreadableWebSocketChannel.cpp
     Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp
     Modules/websockets/WebSocket.cpp
     Modules/websockets/WebSocketChannel.cpp

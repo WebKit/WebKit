@@ -167,6 +167,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     css
     dom
     editing
+    fileapi
     history
     html
     inspector
@@ -184,6 +185,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     Modules/geolocation
     Modules/indexeddb
+    Modules/websockets
 
     Modules/indexeddb/client
     Modules/indexeddb/legacy

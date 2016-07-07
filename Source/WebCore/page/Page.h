@@ -696,7 +696,7 @@ private:
     unsigned m_lastSpatialNavigationCandidatesCount;
     unsigned m_forbidPromptsDepth;
 
-    UniqueRef<SocketProvider> m_socketProvider;
+    Ref<SocketProvider> m_socketProvider;
     Ref<ApplicationCacheStorage> m_applicationCacheStorage;
     Ref<DatabaseProvider> m_databaseProvider;
     Ref<StorageNamespaceProvider> m_storageNamespaceProvider;

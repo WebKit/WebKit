@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,33 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "WebSocketProvider.h"
 
-#include "WorkerThread.h"
+#if ENABLE(WEB_SOCKETS)
 
-namespace WebCore {
+#import <WebCore/Document.h>
+#import <WebCore/ScriptExecutionContext.h>
+#import <WebCore/ThreadableWebSocketChannelClientWrapper.h>
+#import <WebCore/WebSocketChannel.h>
+#import <WebCore/WebSocketChannelClient.h>
+#import <WebCore/WorkerGlobalScope.h>
+#import <WebCore/WorkerRunLoop.h>
+#import <WebCore/WorkerThread.h>
+#import <WebCore/WorkerThreadableWebSocketChannel.h>
+#import <wtf/text/StringBuilder.h>
 
-class ContentSecurityPolicyResponseHeaders;
-class WorkerObjectProxy;
+using namespace WebCore;
 
-class DedicatedWorkerThread : public WorkerThread {
-public:
-    template<typename... Args> static Ref<DedicatedWorkerThread> create(Args&&... args)
-    {
-        return adoptRef(*new DedicatedWorkerThread(std::forward<Args>(args)...));
+static const char webSocketChannelMode[] = "webSocketChannelMode";
+
+RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(ScriptExecutionContext& context, WebSocketChannelClient& client)
+{
+    if (is<WorkerGlobalScope>(context)) {
+        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
+        WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
+        StringBuilder mode;
+        mode.appendLiteral(webSocketChannelMode);
+        mode.appendNumber(runLoop.createUniqueId());
+        return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, mode.toString());
     }
-    virtual ~DedicatedWorkerThread();
 
-    WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
+    return WebSocketChannel::create(downcast<Document>(context), client);
+}
 
-protected:
-    Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin) override;
-    void runEventLoop() override;
-
-private:
-    DedicatedWorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
-
-    WorkerObjectProxy& m_workerObjectProxy;
-};
-
-} // namespace WebCore
+#endif // ENABLE(WEB_SOCKETS)

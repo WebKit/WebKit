@@ -119,7 +119,7 @@ protected:
     void derefThreadableWebSocketChannel() override { deref(); }
 
 private:
-    WebSocketChannel(Document&, WebSocketChannelClient&);
+    WEBCORE_EXPORT WebSocketChannel(Document&, WebSocketChannelClient&);
 
     bool appendToBuffer(const char* data, size_t len);
     void skipBuffer(size_t len);

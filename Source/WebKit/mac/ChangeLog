@@ -1,3 +1,18 @@
+2016-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use SocketProvider to create WebSocketChannels
+        https://bugs.webkit.org/show_bug.cgi?id=158776
+
+        Reviewed by Brent Fulgham.
+
+        * Misc/WebSocketProvider.mm: Copied from Source/WebCore/Modules/websockets/ThreadableWebSocketChannel.cpp.
+        (WebSocketProvider::createWebSocketChannel):
+        (WebCore::ThreadableWebSocketChannel::create): Deleted.
+        * Misc/WebSocketProvider.h:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2016-07-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Unify how we throw TypeError from C++

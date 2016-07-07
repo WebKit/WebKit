@@ -195,6 +195,7 @@ list(APPEND WebKit_SOURCES_Classes
     win/WebScriptWorld.cpp
     win/WebSecurityOrigin.cpp
     win/WebSerializedJSValue.cpp
+    win/WebSocketProvider.cpp
     win/WebTextRenderer.cpp
     win/WebURLAuthenticationChallenge.cpp
     win/WebURLAuthenticationChallengeSender.cpp

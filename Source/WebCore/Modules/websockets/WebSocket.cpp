@@ -50,6 +50,7 @@
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "SocketProvider.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
 #include <inspector/ScriptCallStack.h>
@@ -250,7 +251,11 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
         return;
     }
 
-    m_channel = ThreadableWebSocketChannel::create(*scriptExecutionContext(), *this);
+    if (auto socketProvider = scriptExecutionContext()->socketProvider())
+        m_channel = socketProvider->createWebSocketChannel(*scriptExecutionContext(), *this);
+
+    // Only an EmptySocketProvider can return nullptr, and every ScriptExecutionContext should have a SocketProvider.
+    RELEASE_ASSERT(m_channel);
 
     // FIXME: There is a disagreement about restriction of subprotocols between WebSocket API and hybi-10 protocol
     // draft. The former simply says "only characters in the range U+0021 to U+007E are allowed," while the latter

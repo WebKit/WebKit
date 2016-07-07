@@ -996,7 +996,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->group = WebViewGroup::getOrCreate(groupName, _private->preferences._localStorageDatabasePath);
     _private->group->addWebView(self);
 
-    PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(self), makeUniqueRef<WebSocketProvider>());
+    PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(self), WebSocketProvider::create());
 #if !PLATFORM(IOS)
     pageConfiguration.chromeClient = new WebChromeClient(self);
     pageConfiguration.contextMenuClient = new WebContextMenuClient(self);
@@ -1246,7 +1246,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->group = WebViewGroup::getOrCreate(groupName, _private->preferences._localStorageDatabasePath);
     _private->group->addWebView(self);
 
-    PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(self), makeUniqueRef<WebSocketProvider>());
+    PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(self), WebSocketProvider::create());
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = new WebDragClient(self);

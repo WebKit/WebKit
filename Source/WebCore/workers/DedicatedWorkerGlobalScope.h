@@ -42,7 +42,7 @@ namespace WebCore {
     class DedicatedWorkerGlobalScope : public WorkerGlobalScope {
     public:
         typedef WorkerGlobalScope Base;
-        static Ref<DedicatedWorkerGlobalScope> create(const URL&, const String& userAgent, DedicatedWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin, IDBClient::IDBConnectionProxy*);
+        static Ref<DedicatedWorkerGlobalScope> create(const URL&, const String& userAgent, DedicatedWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
         virtual ~DedicatedWorkerGlobalScope();
 
         bool isDedicatedWorkerGlobalScope() const override { return true; }
@@ -60,7 +60,7 @@ namespace WebCore {
         DedicatedWorkerThread& thread();
 
     private:
-        DedicatedWorkerGlobalScope(const URL&, const String& userAgent, DedicatedWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin, IDBClient::IDBConnectionProxy*);
+        DedicatedWorkerGlobalScope(const URL&, const String& userAgent, DedicatedWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
     };
 
 } // namespace WebCore

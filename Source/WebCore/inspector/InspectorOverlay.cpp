@@ -864,7 +864,7 @@ Page* InspectorOverlay::overlayPage()
     if (m_overlayPage)
         return m_overlayPage.get();
 
-    PageConfiguration pageConfiguration(makeUniqueRef<EmptyEditorClient>(), makeUniqueRef<EmptySocketProvider>());
+    PageConfiguration pageConfiguration(makeUniqueRef<EmptyEditorClient>(), EmptySocketProvider::create());
     fillWithEmptyClients(pageConfiguration);
     m_overlayPage = std::make_unique<Page>(WTFMove(pageConfiguration));
 

@@ -1045,6 +1045,7 @@
 		5C20CB9D1BB0DCFA00895BB1 /* NetworkSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
 		5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C298D9E1C3DEF2900470AFE /* PendingDownload.h */; };
+		5C7706741D1138380012700F /* WebSocketProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C7706731D111D8B0012700F /* WebSocketProvider.cpp */; };
 		5C85C7881C3F23CE0061A4FA /* PendingDownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C85C7861C3F23C50061A4FA /* PendingDownload.cpp */; };
 		5CBC9B8D1C65279C00A8FDCF /* NetworkDataTaskCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */; };
 		5CBC9B8E1C652CA000A8FDCF /* NetworkDataTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */; };
@@ -3093,6 +3094,7 @@
 		5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkSessionCocoa.mm; path = NetworkProcess/cocoa/NetworkSessionCocoa.mm; sourceTree = "<group>"; };
 		5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSession.h; path = NetworkProcess/NetworkSession.h; sourceTree = "<group>"; };
 		5C298D9E1C3DEF2900470AFE /* PendingDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PendingDownload.h; path = NetworkProcess/Downloads/PendingDownload.h; sourceTree = "<group>"; };
+		5C7706731D111D8B0012700F /* WebSocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketProvider.cpp; path = Network/WebSocketProvider.cpp; sourceTree = "<group>"; };
 		5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketProvider.h; path = Network/WebSocketProvider.h; sourceTree = "<group>"; };
 		5C85C7861C3F23C50061A4FA /* PendingDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PendingDownload.cpp; path = NetworkProcess/Downloads/PendingDownload.cpp; sourceTree = "<group>"; };
 		5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkDataTask.h; path = NetworkProcess/NetworkDataTask.h; sourceTree = "<group>"; };
@@ -5333,6 +5335,7 @@
 		5105B0D2162F7A5E00E27709 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				5C7706731D111D8B0012700F /* WebSocketProvider.cpp */,
 				5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */,
 				5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */,
 				5105B0D5162F7A7A00E27709 /* NetworkProcessConnection.h */,
@@ -9259,6 +9262,7 @@
 				1AA83F6C1A5B63FF00026EC6 /* WebDatabaseProvider.cpp in Sources */,
 				CD19A26D1A13E82A008D650E /* WebDiagnosticLoggingClient.cpp in Sources */,
 				1A5B1C5418987EDF004FCF9B /* WebDocumentLoader.cpp in Sources */,
+				5C7706741D1138380012700F /* WebSocketProvider.cpp in Sources */,
 				BC111A5D112F4FBB00337BAB /* WebDragClient.cpp in Sources */,
 				C574A37712E6099D002DFE98 /* WebDragClientMac.mm in Sources */,
 				BCA0EFA012332642007D3CFB /* WebEditCommandProxy.cpp in Sources */,

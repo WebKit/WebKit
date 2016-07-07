@@ -644,8 +644,12 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
 };
 
 class EmptySocketProvider final : public SocketProvider {
+public:
+    virtual ~EmptySocketProvider() { }
+    static Ref<EmptySocketProvider> create() { return adoptRef(*new EmptySocketProvider); }
+    RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(ScriptExecutionContext&, WebSocketChannelClient&) override;
 };
-    
+
 void fillWithEmptyClients(PageConfiguration&);
 
 }

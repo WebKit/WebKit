@@ -51,7 +51,6 @@ class ThreadableWebSocketChannel {
     WTF_MAKE_NONCOPYABLE(ThreadableWebSocketChannel);
 public:
     ThreadableWebSocketChannel() { }
-    static Ref<ThreadableWebSocketChannel> create(ScriptExecutionContext&, WebSocketChannelClient&);
 
     enum SendResult {
         SendSuccess,

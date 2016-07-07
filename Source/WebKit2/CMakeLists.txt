@@ -133,6 +133,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/svg"
     "${WEBCORE_DIR}/svg/graphics"
     "${WEBCORE_DIR}/svg/properties"
+    "${WEBCORE_DIR}/workers"
     "${JAVASCRIPTCORE_DIR}"
     "${JAVASCRIPTCORE_DIR}/ForwardingHeaders"
     "${JAVASCRIPTCORE_DIR}/API"
@@ -573,6 +574,7 @@ set(WebKit2_SOURCES
     WebProcess/Network/NetworkProcessConnection.cpp
     WebProcess/Network/WebLoaderStrategy.cpp
     WebProcess/Network/WebResourceLoader.cpp
+    WebProcess/Network/WebSocketProvider.cpp
 
     WebProcess/Notifications/NotificationPermissionRequestManager.cpp
     WebProcess/Notifications/WebNotificationManager.cpp

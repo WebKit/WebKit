@@ -160,7 +160,7 @@ private:
         Peer* m_peer;
     };
 
-    WorkerThreadableWebSocketChannel(WorkerGlobalScope&, WebSocketChannelClient&, const String& taskMode);
+    WEBCORE_EXPORT WorkerThreadableWebSocketChannel(WorkerGlobalScope&, WebSocketChannelClient&, const String& taskMode);
 
     class WorkerGlobalScopeDidInitializeTask;
 

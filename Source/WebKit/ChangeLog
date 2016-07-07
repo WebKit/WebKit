@@ -1,3 +1,14 @@
+2016-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use SocketProvider to create WebSocketChannels
+        https://bugs.webkit.org/show_bug.cgi?id=158776
+
+        Reviewed by Brent Fulgham.
+
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2016-07-03  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] DLLs are missing version information.

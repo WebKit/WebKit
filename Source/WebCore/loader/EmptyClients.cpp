@@ -45,6 +45,7 @@
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
+#include "ThreadableWebSocketChannel.h"
 #include "UserContentProvider.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -262,6 +263,11 @@ void EmptyEditorClient::registerUndoStep(PassRefPtr<UndoStep>)
 
 void EmptyEditorClient::registerRedoStep(PassRefPtr<UndoStep>)
 {
+}
+    
+RefPtr<ThreadableWebSocketChannel> EmptySocketProvider::createWebSocketChannel(ScriptExecutionContext&, WebSocketChannelClient&)
+{
+    return nullptr;
 }
 
 }

@@ -60,6 +60,7 @@ class MessagePort;
 class PublicURLManager;
 class ResourceRequest;
 class SecurityOrigin;
+class SocketProvider;
 class URL;
 
 namespace IDBClient {
@@ -86,6 +87,9 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
+#endif
+#if ENABLE(WEB_SOCKETS)
+    virtual SocketProvider* socketProvider() = 0;
 #endif
 
     bool sanitizeScriptError(String& errorMessage, int& lineNumber, int& columnNumber, String& sourceURL, Deprecated::ScriptValue& error, CachedScript* = nullptr);

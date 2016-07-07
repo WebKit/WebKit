@@ -25,7 +25,11 @@
 
 #pragma once
 
-#include <WebCore/SocketProvider.h>
+#import <WebCore/SocketProvider.h>
 
 class WebSocketProvider final : public WebCore::SocketProvider {
+public:
+    static Ref<WebSocketProvider> create() { return adoptRef(*new WebSocketProvider); }
+    RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::ScriptExecutionContext&, WebCore::WebSocketChannelClient&) override;
+    virtual ~WebSocketProvider() { }
 };

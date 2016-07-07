@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-PageConfiguration::PageConfiguration(UniqueRef<EditorClient>&& editorClient, UniqueRef<SocketProvider>&& socketProvider)
+PageConfiguration::PageConfiguration(UniqueRef<EditorClient>&& editorClient, Ref<SocketProvider>&& socketProvider)
     : editorClient(WTFMove(editorClient))
     , socketProvider(WTFMove(socketProvider))
 {

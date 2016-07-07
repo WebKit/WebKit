@@ -388,7 +388,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     Settings::setShouldManageAudioSessionCategory(true);
 #endif
 
-    PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(this), makeUniqueRef<WebSocketProvider>());
+    PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(this), WebSocketProvider::create());
     pageConfiguration.chromeClient = new WebChromeClient(this);
 #if ENABLE(CONTEXT_MENUS)
     pageConfiguration.contextMenuClient = new WebContextMenuClient(this);

@@ -1,3 +1,19 @@
+2016-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use SocketProvider to create WebSocketChannels
+        https://bugs.webkit.org/show_bug.cgi?id=158776
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebSocketProvider.cpp: Copied from Source/WebCore/Modules/websockets/ThreadableWebSocketChannel.cpp.
+        (WebKit::WebSocketProvider::createWebSocketChannel):
+        (WebCore::ThreadableWebSocketChannel::create): Deleted.
+        * WebProcess/Network/WebSocketProvider.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents):
+
 2016-07-07  Antoine Quint  <graouts@apple.com>
 
         <img> with a wide gamut PDF does not display using a wide gamut color space

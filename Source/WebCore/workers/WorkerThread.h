@@ -38,6 +38,7 @@ class ContentSecurityPolicyResponseHeaders;
 class URL;
 class NotificationClient;
 class SecurityOrigin;
+class SocketProvider;
 class WorkerGlobalScope;
 class WorkerLoaderProxy;
 class WorkerReportingProxy;
@@ -72,7 +73,7 @@ public:
 #endif
 
 protected:
-    WorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy*);
+    WorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     // Factory method for creating a new worker context for the thread.
     virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin) = 0;
@@ -83,6 +84,7 @@ protected:
     WorkerGlobalScope* workerGlobalScope() { return m_workerGlobalScope.get(); }
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy();
+    SocketProvider* socketProvider();
 
 private:
     // Static function executed as the core routine on the new thread. Passed a pointer to a WorkerThread object.
@@ -105,6 +107,9 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
+#endif
+#if ENABLE(WEB_SOCKETS)
+    RefPtr<SocketProvider> m_socketProvider;
 #endif
 };
 

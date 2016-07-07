@@ -25,10 +25,18 @@
 
 #pragma once
 
+#include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
+
 namespace WebCore {
 
-class SocketProvider {
+class ScriptExecutionContext;
+class ThreadableWebSocketChannel;
+class WebSocketChannelClient;
+
+class SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
 public:
+    virtual RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(ScriptExecutionContext&, WebSocketChannelClient&) = 0;
     virtual ~SocketProvider() { };
 };
 
