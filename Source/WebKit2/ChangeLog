@@ -1,5 +1,14 @@
 2016-07-06  Tim Horton  <timothy_horton@apple.com>
 
+        Some API tests started failing after r202889
+        https://bugs.webkit.org/show_bug.cgi?id=159498
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadHTMLString):
+        Fix a typo; this is a MIME type, not an encoding :|
+
+2016-07-06  Tim Horton  <timothy_horton@apple.com>
+
         Email from June 1st containing text 'Today @ 7:10PM' is linkified, but shouldn't be
         https://bugs.webkit.org/show_bug.cgi?id=159498
         <rdar://problem/26719903>

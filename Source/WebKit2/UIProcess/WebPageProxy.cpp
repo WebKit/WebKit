@@ -1035,7 +1035,7 @@ RefPtr<API::Navigation> WebPageProxy::loadHTMLString(const String& htmlString, c
     LoadParameters loadParameters;
     loadParameters.navigationID = navigation->navigationID();
     loadParameters.string = htmlString;
-    loadParameters.encodingName = ASCIILiteral("text/html");
+    loadParameters.MIMEType = ASCIILiteral("text/html");
     loadParameters.baseURLString = baseURL;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     addPlatformLoadParameters(loadParameters);
