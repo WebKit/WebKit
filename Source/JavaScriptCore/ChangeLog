@@ -1,3 +1,32 @@
+2016-07-07  Saam Barati  <sbarati@apple.com>
+
+        ToThis constant folding in DFG is incorrect when the structure indicates that toThis is overridden
+        https://bugs.webkit.org/show_bug.cgi?id=159501
+        <rdar://problem/27109354>
+
+        Reviewed by Mark Lam.
+
+        We *cannot* constant fold ToThis when the structure of an object
+        indicates that toThis() is overridden. isToThisAnIdentity() inside
+        AbstractInterpreterInlines accidentally wrote the opposite rule.
+        The rule was written as we can constant fold ToThis only when
+        toThis() is overridden. To fix the bug, we must write the rule
+        as isToThisAnIdentity() can only be true as long as the structure
+        set indicates that no structures override toThis().
+
+        We could probably get more clever in the future and notice
+        when we're dealing with a constant |this| values. For example,
+        a ToThis might occur on a constant JSLexicalEnvironment. We could
+        implement the rules of JSLexicalEnvironment's toThis() implementation
+        inside AI/constant folding.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::isToThisAnIdentity):
+        * tests/stress/to-this-on-constant-lexical-environment.js: Added.
+        (foo.bar):
+        (foo.inner):
+        (foo):
+
 2016-07-07  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Array.prototype.includes uses ToInt32 instead of ToInteger on the index argument

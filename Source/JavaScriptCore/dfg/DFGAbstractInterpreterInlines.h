@@ -167,7 +167,7 @@ inline bool isToThisAnIdentity(bool isStrictMode, AbstractValue& valueForNode)
             if (type.isObject() && type.overridesToThis())
                 overridesToThis = true;
         });
-        return overridesToThis;
+        return !overridesToThis;
     }
 
     return false;
