@@ -1,3 +1,28 @@
+2016-07-06  Youenn Fablet  <youenn@apple.com>
+
+        Builtin generator should use pragma once for header files
+        https://bugs.webkit.org/show_bug.cgi?id=159462
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/builtins/builtins_generate_combined_header.py:
+        (BuiltinsCombinedHeaderGenerator.generate_output): 
+        * Scripts/builtins/builtins_generate_separate_header.py:
+        (BuiltinsSeparateHeaderGenerator.generate_output):
+        * Scripts/builtins/builtins_templates.py:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-result:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+
 2016-07-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Unify how we throw TypeError from C++
