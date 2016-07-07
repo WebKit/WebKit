@@ -1,5 +1,11 @@
 2016-07-07  Per Arne Vollan  <pvollan@apple.com>
 
+        Unreviewed: add myself to the reviewers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2016-07-07  Per Arne Vollan  <pvollan@apple.com>
+
         [Win] The test http/tests/loading/main-resource-delegates-on-back-navigation.html is failing.
         https://bugs.webkit.org/show_bug.cgi?id=159509
 

@@ -2348,15 +2348,6 @@
             "podivilov"
          ]
       },
-      "Per Arne Vollan" : {
-         "emails" : [
-            "pvollan@apple.com",
-            "peavo@outlook.com"
-         ],
-         "nicks" : [
-            "peavo"
-         ]
-      },
       "Peter Beverloo" : {
          "emails" : [
             "peter@chromium.org",
@@ -4788,6 +4779,15 @@
          "expertise" : "Developer Tools, Web Inspector",
          "nicks" : [
             "pfeldman"
+         ]
+      },
+      "Per Arne Vollan" : {
+         "emails" : [
+            "pvollan@apple.com",
+            "peavo@outlook.com"
+         ],
+         "nicks" : [
+            "peavo"
          ]
       },
       "Philip Rogers" : {
