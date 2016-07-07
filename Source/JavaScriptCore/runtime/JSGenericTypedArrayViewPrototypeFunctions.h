@@ -56,7 +56,7 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
     if (constructor.isUndefined())
         return defaultConstructor();
     if (!constructor.isObject()) {
-        throwTypeError(exec, "constructor Property should not be null");
+        throwTypeError(exec, ASCIILiteral("constructor Property should not be null"));
         return nullptr;
     }
 
@@ -74,7 +74,7 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
     if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(result))
         return view;
 
-    throwTypeError(exec, "species constructor did not return a TypedArray View");
+    throwTypeError(exec, ASCIILiteral("species constructor did not return a TypedArray View"));
     return nullptr;
 }
 
@@ -99,7 +99,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(ExecState* exec)
     ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
 
     if (!exec->argumentCount())
-        return throwVMError(exec, createTypeError(exec, "Expected at least one argument"));
+        return throwVMTypeError(exec, ASCIILiteral("Expected at least one argument"));
 
     unsigned offset;
     if (exec->argumentCount() >= 2) {
@@ -117,7 +117,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(ExecState* exec)
 
     JSObject* sourceArray = jsDynamicCast<JSObject*>(exec->uncheckedArgument(0));
     if (!sourceArray)
-        return throwVMError(exec, createTypeError(exec, "First argument should be an object"));
+        return throwVMTypeError(exec, ASCIILiteral("First argument should be an object"));
 
     unsigned length;
     if (isTypedView(sourceArray->classInfo()->typedArrayStorageType)) {
@@ -145,7 +145,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncCopyWithin(ExecState*
         return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
 
     if (exec->argumentCount() < 2)
-        return throwVMError(exec, createTypeError(exec, "Expected at least two arguments"));
+        return throwVMTypeError(exec, ASCIILiteral("Expected at least two arguments"));
 
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -200,7 +200,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIndexOf(ExecState* ex
         return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
 
     if (!exec->argumentCount())
-        return throwVMError(exec, createTypeError(exec, "Expected at least one argument"));
+        return throwVMTypeError(exec, ASCIILiteral("Expected at least one argument"));
 
     unsigned length = thisObject->length();
 
@@ -264,7 +264,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncLastIndexOf(ExecState
         return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
 
     if (!exec->argumentCount())
-        return throwVMError(exec, createTypeError(exec, "Expected at least one argument"));
+        return throwVMTypeError(exec, ASCIILiteral("Expected at least one argument"));
 
     unsigned length = thisObject->length();
 
@@ -442,7 +442,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSubarray(ExecState* e
         return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
 
     if (!exec->argumentCount())
-        return throwVMError(exec, createTypeError(exec, "Expected at least one argument"));
+        return throwVMTypeError(exec, ASCIILiteral("Expected at least one argument"));
 
     // Get the length here; later assert that the length didn't change.
     unsigned thisLength = thisObject->length();

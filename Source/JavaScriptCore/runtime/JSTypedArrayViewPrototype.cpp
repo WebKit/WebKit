@@ -58,8 +58,8 @@ namespace JSC {
         return functionName<JSUint16Array>(exec);                                               \
     case NotTypedArray:                                                                         \
     case TypeDataView:                                                                          \
-        return throwVMError(exec, createTypeError(exec,                                         \
-            "Receiver should be a typed array view"));                                          \
+        return throwVMTypeError(exec,                                                           \
+            ASCIILiteral("Receiver should be a typed array view"));                             \
     }                                                                                           \
     RELEASE_ASSERT_NOT_REACHED();                                                               \
 } while (false)
@@ -78,7 +78,7 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState* exec)
 
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(argument);
     if (!thisObject || thisObject->mode() == DataViewMode)
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view"));
     if (thisObject->isNeutered())
         return throwVMTypeError(exec, "Underlying ArrayBuffer has been detached from the view");
 
@@ -103,7 +103,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSet(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncSet);
 }
 
@@ -111,7 +111,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncCopyWithin(ExecState*
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncCopyWithin);
 }
 
@@ -119,7 +119,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncFill(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncFill);
 }
 
@@ -127,7 +127,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncLastIndexOf(ExecState
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncLastIndexOf);
 }
 
@@ -135,7 +135,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncIndexOf(ExecState* ex
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncIndexOf);
 }
 
@@ -143,7 +143,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncJoin(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncJoin);
 }
 
@@ -151,7 +151,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncBuffer(ExecStat
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncBuffer);
 }
 
@@ -159,7 +159,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncLength(ExecStat
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncLength);
 }
 
@@ -167,7 +167,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncByteLength(Exec
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncByteLength);
 }
 
@@ -175,7 +175,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncByteOffset(Exec
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncByteOffset);
 }
 
@@ -183,7 +183,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncReverse(ExecState* ex
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncReverse);
 }
 
@@ -191,7 +191,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSubarray(ExecState* e
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncSubarray);
 }
 
@@ -199,7 +199,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSlice(ExecState* exec
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncSlice);
 }
 

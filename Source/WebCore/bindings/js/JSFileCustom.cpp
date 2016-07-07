@@ -49,7 +49,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState* exec)
 
     JSValue arg = exec->argument(0);
     if (arg.isUndefinedOrNull())
-        return throwVMError(exec, createTypeError(exec, "First argument to File constructor must be a valid sequence, was undefined or null"));
+        return throwVMTypeError(exec, ASCIILiteral("First argument to File constructor must be a valid sequence, was undefined or null"));
 
     unsigned blobPartsLength = 0;
     JSObject* blobParts = toJSSequence(exec, arg, blobPartsLength);
@@ -59,7 +59,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState* exec)
 
     arg = exec->argument(1);
     if (arg.isUndefined())
-        return throwVMError(exec, createTypeError(exec, "Second argument to File constructor must be a valid string, was undefined"));
+        return throwVMTypeError(exec, ASCIILiteral("Second argument to File constructor must be a valid string, was undefined"));
 
     String filename = arg.toWTFString(exec).replace('/', ':');
     if (exec->hadException())
@@ -72,7 +72,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState* exec)
     if (!arg.isUndefinedOrNull()) {
         JSObject* filePropertyBagObject = arg.getObject();
         if (!filePropertyBagObject)
-            return throwVMError(exec, createTypeError(exec, "Third argument of the constructor is not of type Object"));
+            return throwVMTypeError(exec, ASCIILiteral("Third argument of the constructor is not of type Object"));
 
         // Create the dictionary wrapper from the initializer object.
         JSDictionary dictionary(exec, filePropertyBagObject);

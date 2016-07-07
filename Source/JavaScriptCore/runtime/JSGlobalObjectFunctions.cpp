@@ -888,7 +888,7 @@ private:
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
 {
     if (exec->thisValue().isUndefinedOrNull()) 
-        return throwVMError(exec, createTypeError(exec, "Can't convert undefined or null to object"));
+        return throwVMTypeError(exec, ASCIILiteral("Can't convert undefined or null to object"));
 
     JSObject* thisObject = jsDynamicCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode));
 
@@ -945,7 +945,7 @@ bool checkProtoSetterAccessAllowed(ExecState* exec, JSObject* object)
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
 {
     if (exec->thisValue().isUndefinedOrNull()) 
-        return throwVMError(exec, createTypeError(exec, "Can't convert undefined or null to object"));
+        return throwVMTypeError(exec, ASCIILiteral("Can't convert undefined or null to object"));
 
     JSValue value = exec->argument(0);
 

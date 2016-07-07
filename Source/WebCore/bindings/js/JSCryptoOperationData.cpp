@@ -41,7 +41,7 @@ bool cryptoOperationDataFromJSValue(ExecState* exec, JSValue value, CryptoOperat
     else if (RefPtr<ArrayBufferView> bufferView = toArrayBufferView(value))
         result = std::make_pair(static_cast<uint8_t*>(bufferView->baseAddress()), bufferView->byteLength());
     else {
-        throwTypeError(exec, "Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData");
+        throwTypeError(exec, ASCIILiteral("Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData"));
         return false;
     }
     return true;

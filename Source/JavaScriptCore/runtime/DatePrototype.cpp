@@ -1112,13 +1112,13 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(toISOValue, callData);
     if (callType == CallType::None)
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("toISOString is not a function")));
+        return throwVMTypeError(exec, ASCIILiteral("toISOString is not a function"));
 
     JSValue result = call(exec, asObject(toISOValue), callType, callData, object, exec->emptyList());
     if (exec->hadException())
         return JSValue::encode(jsNull());
     if (result.isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("toISOString did not return a primitive value")));
+        return throwVMTypeError(exec, ASCIILiteral("toISOString did not return a primitive value"));
     return JSValue::encode(result);
 }
 

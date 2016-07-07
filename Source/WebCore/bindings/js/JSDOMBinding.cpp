@@ -374,12 +374,12 @@ static String rangeErrorString(double value, double min, double max)
 static double enforceRange(ExecState& state, double x, double minimum, double maximum)
 {
     if (std::isnan(x) || std::isinf(x)) {
-        state.vm().throwException(&state, createTypeError(&state, rangeErrorString(x, minimum, maximum)));
+        throwTypeError(&state, rangeErrorString(x, minimum, maximum));
         return 0;
     }
     x = trunc(x);
     if (x < minimum || x > maximum) {
-        state.vm().throwException(&state, createTypeError(&state, rangeErrorString(x, minimum, maximum)));
+        throwTypeError(&state, rangeErrorString(x, minimum, maximum));
         return 0;
     }
     return x;
@@ -736,7 +736,7 @@ bool BindingSecurity::shouldAllowAccessToNode(JSC::ExecState* state, Node* targe
     
 static EncodedJSValue throwTypeError(JSC::ExecState& state, const String& errorMessage)
 {
-    return throwVMError(&state, createTypeError(&state, errorMessage));
+    return throwVMTypeError(&state, errorMessage);
 }
 
 static void appendArgumentMustBe(StringBuilder& builder, unsigned argumentIndex, const char* argumentName, const char* interfaceName, const char* functionName)
@@ -791,7 +791,7 @@ JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState& state, unsigned
     appendArgumentMustBe(builder, argumentIndex, argumentName, functionInterfaceName, functionName);
     builder.appendLiteral("one of: ");
     builder.append(expectedValues);
-    return throwTypeError(state, builder.toString());
+    return throwVMTypeError(&state, builder.toString());
 }
 
 JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::ExecState& state, unsigned argumentIndex, const char* argumentName, const char* interfaceName, const char* functionName)
@@ -799,7 +799,7 @@ JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::ExecState& state, unsi
     StringBuilder builder;
     appendArgumentMustBe(builder, argumentIndex, argumentName, interfaceName, functionName);
     builder.appendLiteral("a function");
-    return throwTypeError(state, builder.toString());
+    return throwVMTypeError(&state, builder.toString());
 }
 
 JSC::EncodedJSValue throwArgumentTypeError(JSC::ExecState& state, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedType)
@@ -808,12 +808,12 @@ JSC::EncodedJSValue throwArgumentTypeError(JSC::ExecState& state, unsigned argum
     appendArgumentMustBe(builder, argumentIndex, argumentName, functionInterfaceName, functionName);
     builder.appendLiteral("an instance of ");
     builder.append(expectedType);
-    return throwTypeError(state, builder.toString());
+    return throwVMTypeError(&state, builder.toString());
 }
 
 void throwArrayElementTypeError(JSC::ExecState& state)
 {
-    throwTypeError(state, "Invalid Array element type");
+    throwTypeError(state, ASCIILiteral("Invalid Array element type"));
 }
 
 void throwAttributeTypeError(JSC::ExecState& state, const char* interfaceName, const char* attributeName, const char* expectedType)
@@ -829,7 +829,7 @@ JSC::EncodedJSValue throwConstructorDocumentUnavailableError(JSC::ExecState& sta
 
 JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
 {
-    return throwTypeError(state, makeString("The ", interfaceName, '.', attributeName, " getter can only be used on instances of ", interfaceName));
+    return throwVMTypeError(&state, makeString("The ", interfaceName, '.', attributeName, " getter can only be used on instances of ", interfaceName));
 }
 
 void throwSequenceTypeError(JSC::ExecState& state)
@@ -850,7 +850,7 @@ bool throwSetterTypeError(JSC::ExecState& state, const char* interfaceName, cons
 
 EncodedJSValue throwThisTypeError(JSC::ExecState& state, const char* interfaceName, const char* functionName)
 {
-    return throwTypeError(state, makeString("Can only call ", interfaceName, '.', functionName, " on instances of ", interfaceName));
+    return throwVMTypeError(&state, makeString("Can only call ", interfaceName, '.', functionName, " on instances of ", interfaceName));
 }
 
 void callFunctionWithCurrentArguments(JSC::ExecState& state, JSC::JSObject& thisObject, JSC::JSFunction& function)

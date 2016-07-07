@@ -69,7 +69,7 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState* exec)
 #if ENABLE(DATACUE_VALUE)
     if (exec->argumentCount() > 3) {
         if (!exec->argument(3).isString())
-            return throwVMError(exec, createTypeError(exec, "Second argument of the constructor is not of type String"));
+            return throwVMTypeError(exec, ASCIILiteral("Second argument of the constructor is not of type String"));
         type = exec->argument(3).getString(exec);
     }
 #endif

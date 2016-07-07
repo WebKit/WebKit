@@ -1185,8 +1185,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
             const Identifier& ident = codeBlock->variable(i);
             PropertySlot slot(globalLexicalEnvironment, PropertySlot::InternalMethodType::VMInquiry);
             if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, callFrame, ident, slot)) {
-                return checkedReturn(callFrame->vm().throwException(callFrame,
-                    createTypeError(callFrame, makeString("Can't create duplicate global variable in eval: '", String(ident.impl()), "'"))));
+                return checkedReturn(throwTypeError(callFrame, makeString("Can't create duplicate global variable in eval: '", String(ident.impl()), "'")));
             }
         }
 
@@ -1194,8 +1193,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
             FunctionExecutable* function = codeBlock->functionDecl(i);
             PropertySlot slot(globalLexicalEnvironment, PropertySlot::InternalMethodType::VMInquiry);
             if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, callFrame, function->name(), slot)) {
-                return checkedReturn(callFrame->vm().throwException(callFrame,
-                    createTypeError(callFrame, makeString("Can't create duplicate global variable in eval: '", String(function->name().impl()), "'"))));
+                return checkedReturn(throwTypeError(callFrame, makeString("Can't create duplicate global variable in eval: '", String(function->name().impl()), "'")));
             }
         }
     }

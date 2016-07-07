@@ -1,3 +1,13 @@
+2016-07-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Unify how we throw TypeError from C++
+        https://bugs.webkit.org/show_bug.cgi?id=159500
+
+        Reviewed by Saam Barati.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invokeMethod):
+
 2016-07-01  Youenn Fablet  <youennf@gmail.com>
 
         Add a runtime flag for DOM iterators

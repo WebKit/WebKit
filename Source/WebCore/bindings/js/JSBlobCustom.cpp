@@ -84,7 +84,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)
         JSValue blobPropertyBagValue = exec->argument(1);
 
         if (!blobPropertyBagValue.isObject())
-            return throwVMError(exec, createTypeError(exec, "Second argument of the constructor is not of type Object"));
+            return throwVMTypeError(exec, "Second argument of the constructor is not of type Object");
 
         // Given the above test, this will always yield an object.
         JSObject* blobPropertyBagObject = blobPropertyBagValue.toObject(exec);
@@ -99,7 +99,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)
 
         if (containsEndings) {
             if (endings != "transparent" && endings != "native")
-                return throwVMError(exec, createTypeError(exec, "The endings property must be either \"transparent\" or \"native\""));
+                return throwVMTypeError(exec, "The endings property must be either \"transparent\" or \"native\"");
         }
 
         // Attempt to get the type property.

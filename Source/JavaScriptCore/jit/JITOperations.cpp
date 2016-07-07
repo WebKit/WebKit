@@ -1172,7 +1172,7 @@ void JIT_OPERATION operationThrowStaticError(ExecState* exec, EncodedJSValue enc
     if (referenceErrorFlag)
         vm.throwException(exec, createReferenceError(exec, errorMessage));
     else
-        vm.throwException(exec, createTypeError(exec, errorMessage));
+        throwTypeError(exec, errorMessage);
 }
 
 void JIT_OPERATION operationDebug(ExecState* exec, int32_t debugHookID)
@@ -1873,7 +1873,7 @@ size_t JIT_OPERATION operationDeleteById(ExecState* exec, EncodedJSValue encoded
         return false;
     bool couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, exec, Identifier::fromUid(&vm, uid));
     if (!couldDelete && exec->codeBlock()->isStrictMode())
-        vm.throwException(exec, createTypeError(exec, ASCIILiteral("Unable to delete property.")));
+        throwTypeError(exec, ASCIILiteral("Unable to delete property."));
     return couldDelete;
 }
 
@@ -1905,7 +1905,7 @@ size_t JIT_OPERATION operationDeleteByVal(ExecState* exec, EncodedJSValue encode
         couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, exec, property);
     }
     if (!couldDelete && exec->codeBlock()->isStrictMode())
-        vm.throwException(exec, createTypeError(exec, ASCIILiteral("Unable to delete property.")));
+        throwTypeError(exec, ASCIILiteral("Unable to delete property."));
     return couldDelete;
 }
 

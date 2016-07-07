@@ -89,7 +89,7 @@ static bool cryptoKeyFormatFromJSValue(ExecState& state, JSValue value, CryptoKe
     else if (keyFormatString == "jwk")
         result = CryptoKeyFormat::JWK;
     else {
-        throwTypeError(&state, "Unknown key format");
+        throwTypeError(&state, ASCIILiteral("Unknown key format"));
         return false;
     }
     return true;
@@ -453,7 +453,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
     case CryptoKeyFormat::JWK: {
         String jwkString = String::fromUTF8(data.first, data.second);
         if (jwkString.isNull()) {
-            throwTypeError(&state, "JWK JSON serialization is not valid UTF-8");
+            throwTypeError(&state, ASCIILiteral("JWK JSON serialization is not valid UTF-8"));
             return;
         }
         keySerialization = std::make_unique<JSCryptoKeySerializationJWK>(&state, jwkString);
@@ -462,7 +462,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
         break;
     }
     default:
-        throwTypeError(&state, "Unsupported key format for import");
+        throwTypeError(&state, ASCIILiteral("Unsupported key format for import"));
         return;
     }
 
@@ -470,14 +470,14 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
 
     if (!keySerialization->reconcileAlgorithm(algorithm, parameters)) {
         if (!state.hadException())
-            throwTypeError(&state, "Algorithm specified in key is not compatible with one passed to importKey as argument");
+            throwTypeError(&state, ASCIILiteral("Algorithm specified in key is not compatible with one passed to importKey as argument"));
         return;
     }
     if (state.hadException())
         return;
 
     if (!algorithm) {
-        throwTypeError(&state, "Neither key nor function argument has crypto algorithm specified");
+        throwTypeError(&state, ASCIILiteral("Neither key nor function argument has crypto algorithm specified"));
         return;
     }
     ASSERT(parameters);
@@ -566,7 +566,7 @@ JSValue JSSubtleCrypto::importKey(ExecState& state)
 static void exportKey(ExecState& state, CryptoKeyFormat keyFormat, const CryptoKey& key, CryptoAlgorithm::VectorCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
 {
     if (!key.extractable()) {
-        throwTypeError(&state, "Key is not extractable");
+        throwTypeError(&state, ASCIILiteral("Key is not extractable"));
         return;
     }
 
@@ -590,7 +590,7 @@ static void exportKey(ExecState& state, CryptoKeyFormat keyFormat, const CryptoK
         break;
     }
     default:
-        throwTypeError(&state, "Unsupported key format for export");
+        throwTypeError(&state, ASCIILiteral("Unsupported key format for export"));
         break;
     }
 }

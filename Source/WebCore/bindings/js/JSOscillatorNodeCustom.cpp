@@ -45,7 +45,7 @@ void JSOscillatorNode::setType(ExecState& state, JSValue value)
     if (value.isNumber()) {
         uint32_t type = value.toUInt32(&state);
         if (!imp.setType(type))
-            state.vm().throwException(&state, createTypeError(&state, "Illegal OscillatorNode type"));
+            throwTypeError(&state, ASCIILiteral("Illegal OscillatorNode type"));
         return;
     }
 #endif
@@ -58,7 +58,7 @@ void JSOscillatorNode::setType(ExecState& state, JSValue value)
         }
     }
     
-    state.vm().throwException(&state, createTypeError(&state, "Illegal OscillatorNode type"));
+    throwTypeError(&state, ASCIILiteral("Illegal OscillatorNode type"));
 }
 
 } // namespace WebCore

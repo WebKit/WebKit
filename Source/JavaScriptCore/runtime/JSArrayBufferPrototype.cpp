@@ -41,10 +41,10 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
     
     JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(exec->thisValue());
     if (!thisObject)
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Receiver of slice must be an array buffer.")));
+        return throwVMTypeError(exec, ASCIILiteral("Receiver of slice must be an array buffer."));
     
     if (!exec->argumentCount())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Slice requires at least one argument.")));
+        return throwVMTypeError(exec, ASCIILiteral("Slice requires at least one argument."));
     
     int32_t begin = exec->argument(0).toInt32(exec);
     if (exec->hadException())

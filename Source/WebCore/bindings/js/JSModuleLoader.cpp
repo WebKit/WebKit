@@ -116,10 +116,10 @@ JSC::JSValue JSModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* exec
     else if (moduleKeyValue.isString())
         sourceUrl = URL(URL(), asString(moduleKeyValue)->value(exec));
     else
-        return JSC::throwTypeError(exec, "Module key is not Symbol or String.");
+        return JSC::throwTypeError(exec, ASCIILiteral("Module key is not Symbol or String."));
 
     if (!sourceUrl.isValid())
-        return JSC::throwTypeError(exec, "Module key is an invalid URL.");
+        return JSC::throwTypeError(exec, ASCIILiteral("Module key is an invalid URL."));
 
     // FIXME: Implement evaluating module code.
 

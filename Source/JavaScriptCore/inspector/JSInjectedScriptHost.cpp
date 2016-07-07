@@ -97,7 +97,7 @@ JSValue JSInjectedScriptHost::evaluateWithScopeExtension(ExecState* exec)
 {
     JSValue scriptValue = exec->argument(0);
     if (!scriptValue.isString())
-        return throwTypeError(exec, "InjectedScriptHost.evaluateWithScopeExtension first argument must be a string.");
+        return throwTypeError(exec, ASCIILiteral("InjectedScriptHost.evaluateWithScopeExtension first argument must be a string."));
 
     String program = scriptValue.toString(exec)->value(exec);
     if (exec->hadException())

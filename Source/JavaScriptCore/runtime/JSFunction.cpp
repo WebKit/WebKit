@@ -506,27 +506,27 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
      
     if (descriptor.configurablePresent() && descriptor.configurable()) {
         if (throwException)
-            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property.")));
+            throwTypeError(exec, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property."));
         return false;
     }
     if (descriptor.enumerablePresent() && descriptor.enumerable()) {
         if (throwException)
-            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property.")));
+            throwTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property."));
         return false;
     }
     if (descriptor.isAccessorDescriptor()) {
         if (throwException)
-            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError)));
+            throwTypeError(exec, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
         return false;
     }
     if (descriptor.writablePresent() && descriptor.writable()) {
         if (throwException)
-            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property.")));
+            throwTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property."));
         return false;
     }
     if (!valueCheck) {
         if (throwException)
-            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property.")));
+            throwTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property."));
         return false;
     }
     return true;

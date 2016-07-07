@@ -208,12 +208,17 @@ bool hasErrorInfo(ExecState* exec, JSObject* error)
 
 JSObject* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState* exec, const char* constructorName)
 {
-    return exec->vm().throwException(exec, createTypeError(exec, makeString("calling ", constructorName, " constructor without new is invalid")));
+    return throwTypeError(exec, makeString("calling ", constructorName, " constructor without new is invalid"));
 }
 
 JSObject* throwTypeError(ExecState* exec)
 {
     return exec->vm().throwException(exec, createTypeError(exec));
+}
+
+JSObject* throwTypeError(ExecState* exec, ASCIILiteral errorMessage)
+{
+    return throwTypeError(exec, String(errorMessage));
 }
 
 JSObject* throwTypeError(ExecState* exec, const String& message)

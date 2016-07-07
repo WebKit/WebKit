@@ -155,7 +155,7 @@ JSValue CInstance::getMethod(ExecState* exec, PropertyName propertyName)
 JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
     if (!asObject(runtimeMethod)->inherits(CRuntimeMethod::info()))
-        return exec->vm().throwException(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
+        return throwTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object.");
 
     CMethod* method = static_cast<CMethod*>(runtimeMethod->method());
     ASSERT(method);

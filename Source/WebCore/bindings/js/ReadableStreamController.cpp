@@ -55,7 +55,7 @@ JSC::JSValue ReadableStreamController::invoke(JSC::ExecState& state, JSC::JSObje
 
     if (!function.isFunction()) {
         if (!function.isUndefined())
-            throwVMError(&state, createTypeError(&state, ASCIILiteral("ReadableStream trying to call a property that is not callable")));
+            throwTypeError(&state, ASCIILiteral("ReadableStream trying to call a property that is not callable"));
         return JSC::jsUndefined();
     }
 

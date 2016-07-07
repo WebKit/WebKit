@@ -157,7 +157,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
         if (offset != invalidOffset) {
             if (attributes & ReadOnly) {
                 if (slot.isStrictMode())
-                    exec->vm().throwException(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
+                    throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
                 return false;
             }
 
@@ -346,7 +346,7 @@ JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnErr
     if (isUndefined())
         return vm.smallStrings.undefinedString();
     if (isSymbol()) {
-        throwTypeError(exec, "Cannot convert a symbol to a string");
+        throwTypeError(exec, ASCIILiteral("Cannot convert a symbol to a string"));
         return errorValue();
     }
 

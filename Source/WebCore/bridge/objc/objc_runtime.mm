@@ -157,7 +157,7 @@ ObjcArray::ObjcArray(ObjectStructPtr a, RefPtr<RootObject>&& rootObject)
 bool ObjcArray::setValueAt(ExecState* exec, unsigned int index, JSValue aValue) const
 {
     if (![_array.get() respondsToSelector:@selector(insertObject:atIndex:)]) {
-        exec->vm().throwException(exec, createTypeError(exec, "Array is not mutable."));
+        throwTypeError(exec, ASCIILiteral("Array is not mutable."));
         return false;
     }
 

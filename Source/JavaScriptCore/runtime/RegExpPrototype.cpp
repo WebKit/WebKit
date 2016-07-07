@@ -143,7 +143,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     
     if (arg0.inherits(RegExpObject::info())) {
         if (!arg1.isUndefined())
-            return throwVMError(exec, createTypeError(exec, ASCIILiteral("Cannot supply flags when constructing one RegExp from another.")));
+            return throwVMTypeError(exec, ASCIILiteral("Cannot supply flags when constructing one RegExp from another."));
         regExp = asRegExpObject(arg0)->regExp();
     } else {
         String pattern = !exec->argumentCount() ? emptyString() : arg0.toString(exec)->value(exec);

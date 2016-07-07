@@ -74,6 +74,7 @@ JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&)
 // Convenience wrappers, create an throw an exception with a default message.
 JS_EXPORT_PRIVATE JSObject* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState*, const char* constructorName);
 JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*);
+JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, ASCIILiteral errorMessage);
 JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, const String& errorMessage);
 JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*);
 JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*, const String& errorMessage);
@@ -83,6 +84,7 @@ inline JSObject* throwRangeError(ExecState* state, const String& errorMessage) {
 inline void throwVMError(ExecState* exec, Exception* exception) { exec->vm().throwException(exec, exception); }
 inline EncodedJSValue throwVMError(ExecState* exec, JSValue error) { return JSValue::encode(exec->vm().throwException(exec, error)); }
 inline EncodedJSValue throwVMTypeError(ExecState* exec) { return JSValue::encode(throwTypeError(exec)); }
+inline EncodedJSValue throwVMTypeError(ExecState* exec, ASCIILiteral errorMessage) { return JSValue::encode(throwTypeError(exec, errorMessage)); }
 inline EncodedJSValue throwVMTypeError(ExecState* exec, const String& errorMessage) { return JSValue::encode(throwTypeError(exec, errorMessage)); }
 inline EncodedJSValue throwVMRangeError(ExecState* state, const String& errorMessage) { return JSValue::encode(throwRangeError(state, errorMessage)); }
 

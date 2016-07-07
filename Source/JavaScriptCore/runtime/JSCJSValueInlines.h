@@ -632,7 +632,7 @@ inline JSValue JSValue::toPrimitive(ExecState* exec, PreferredPrimitiveType pref
 inline PreferredPrimitiveType toPreferredPrimitiveType(ExecState* exec, JSValue value)
 {
     if (!value.isString()) {
-        throwTypeError(exec, "Primitive hint is not a string.");
+        throwTypeError(exec, ASCIILiteral("Primitive hint is not a string."));
         return NoPreference;
     }
 
@@ -647,7 +647,7 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(ExecState* exec, JSValue 
     if (WTF::equal(hintString, "string"))
         return PreferString;
 
-    throwTypeError(exec, "Expected primitive hint to match one of 'default', 'number', 'string'.");
+    throwTypeError(exec, ASCIILiteral("Expected primitive hint to match one of 'default', 'number', 'string'."));
     return NoPreference;
 }
 

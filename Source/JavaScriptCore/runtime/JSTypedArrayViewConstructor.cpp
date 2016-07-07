@@ -71,15 +71,15 @@ static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(ExecState* exec)
 
     JSObject* object = jsDynamicCast<JSObject*>(value);
     if (!object)
-        return JSValue::encode(throwTypeError(exec, "new.target passed to TypedArray is not an object."));
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("new.target passed to TypedArray is not an object.")));
 
     ConstructData data;
     if (object->methodTable()->getConstructData(object, data) == ConstructType::None)
-        return JSValue::encode(throwTypeError(exec, "new.target passed to TypedArray is not a valid constructor."));
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("new.target passed to TypedArray is not a valid constructor.")));
 
     for (; !value.isNull(); value = jsCast<JSObject*>(value)->getPrototypeDirect()) {
         if (jsDynamicCast<JSTypedArrayViewConstructor*>(value))
-            return JSValue::encode(throwTypeError(exec, "Unable to find TypedArray constructor that inherits from TypedArray."));
+            return JSValue::encode(throwTypeError(exec, ASCIILiteral("Unable to find TypedArray constructor that inherits from TypedArray.")));
         if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSInt8Array>*>(value))
             return constructGenericTypedArrayView<JSInt8Array>(exec);
         if (jsDynamicCast<JSGenericTypedArrayViewConstructor<JSInt16Array>*>(value))
@@ -100,7 +100,7 @@ static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(ExecState* exec)
             return constructGenericTypedArrayView<JSFloat64Array>(exec);
     }
     
-    return JSValue::encode(throwTypeError(exec, "Unable to find TypedArray constructor in prototype-chain, hit null."));
+    return JSValue::encode(throwTypeError(exec, ASCIILiteral("Unable to find TypedArray constructor in prototype-chain, hit null.")));
 }
 
 ConstructType JSTypedArrayViewConstructor::getConstructData(JSCell*, ConstructData& constructData)

@@ -1357,7 +1357,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
 
     if (!isExtensible) {
         if (shouldThrowIfCantSet)
-            throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return false;
     }
 
@@ -1640,7 +1640,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(ExecState* exec, const JSOb
     if (exec->hadException())
         return exec->exception();
     if (result.isObject())
-        return mode == TypeHintMode::DoesNotTakeHint ? JSValue() : throwTypeError(exec, "Symbol.toPrimitive returned an object");
+        return mode == TypeHintMode::DoesNotTakeHint ? JSValue() : throwTypeError(exec, ASCIILiteral("Symbol.toPrimitive returned an object"));
     return result;
 }
 
@@ -1670,7 +1670,7 @@ JSValue JSObject::ordinaryToPrimitive(ExecState* exec, PreferredPrimitiveType hi
 
     ASSERT(!exec->hadException());
 
-    return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("No default value")));
+    return throwTypeError(exec, ASCIILiteral("No default value"));
 }
 
 JSValue JSObject::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType hint)
@@ -1756,7 +1756,7 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
         return false;
 
     if (!proto.isObject()) {
-        exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("instanceof called on an object with an invalid prototype property.")));
+        throwTypeError(exec, ASCIILiteral("instanceof called on an object with an invalid prototype property."));
         return false;
     }
 
@@ -2943,7 +2943,7 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
         // Step 2.a
         if (!isExtensible) {
             if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to define property on object that is not extensible.")));
+                throwTypeError(exec, ASCIILiteral("Attempting to define property on object that is not extensible."));
             return false;
         }
         if (!object)
@@ -2966,12 +2966,12 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
     if (!current.configurable()) {
         if (descriptor.configurable()) {
             if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property.")));
+                throwTypeError(exec, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property."));
             return false;
         }
         if (descriptor.enumerablePresent() && descriptor.enumerable() != current.enumerable()) {
             if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property.")));
+                throwTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property."));
             return false;
         }
     }
@@ -2991,7 +2991,7 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
     if (descriptor.isDataDescriptor() != current.isDataDescriptor()) {
         if (!current.configurable()) {
             if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError)));
+                throwTypeError(exec, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
             return false;
         }
 
@@ -3008,13 +3008,13 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
         if (!current.configurable()) {
             if (!current.writable() && descriptor.writable()) {
                 if (throwException)
-                    exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property.")));
+                    throwTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property."));
                 return false;
             }
             if (!current.writable()) {
                 if (descriptor.value() && !sameValue(exec, current.value(), descriptor.value())) {
                     if (throwException)
-                        exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property.")));
+                        throwTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property."));
                     return false;
                 }
             }
@@ -3033,17 +3033,17 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
     if (!current.configurable()) {
         if (descriptor.setterPresent() && !(current.setterPresent() && JSValue::strictEqual(exec, current.setter(), descriptor.setter()))) {
             if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change the setter of an unconfigurable property.")));
+                throwTypeError(exec, ASCIILiteral("Attempting to change the setter of an unconfigurable property."));
             return false;
         }
         if (descriptor.getterPresent() && !(current.getterPresent() && JSValue::strictEqual(exec, current.getter(), descriptor.getter()))) {
             if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change the getter of an unconfigurable property.")));
+                throwTypeError(exec, ASCIILiteral("Attempting to change the getter of an unconfigurable property."));
             return false;
         }
         if (current.attributes() & CustomAccessor) {
             if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError)));
+                throwTypeError(exec, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
             return false;
         }
     }
