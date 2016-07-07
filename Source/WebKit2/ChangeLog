@@ -1,3 +1,9 @@
+2016-07-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac][cmake] Unreviewed buildfix after r202889. Just for fun.
+
+        * PlatformMac.cmake:
+
 2016-07-06  Tim Horton  <timothy_horton@apple.com>
 
         Some API tests started failing after r202889
