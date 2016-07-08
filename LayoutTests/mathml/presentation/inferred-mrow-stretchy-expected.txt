@@ -12,6 +12,8 @@ This test passes if all the vertical bars stretch.
 |
  
 |
+ 
+|
 
 
 PASS operator stretching inside Mrow 
@@ -21,4 +23,5 @@ PASS operator stretching inside Error
 PASS operator stretching inside Phantom 
 PASS operator stretching inside Math 
 PASS operator stretching inside Menclose 
+PASS operator stretching inside Mpadded 
 

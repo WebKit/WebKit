@@ -8,7 +8,7 @@
       setup({ "explicit_done": true });
       function run()
       {
-        var tags = ["Mrow", "Sqrt", "Style", "Error", "Phantom", "Math", "Menclose"];
+        var tags = ["Mrow", "Sqrt", "Style", "Error", "Phantom", "Math", "Menclose", "Mpadded"];
         for (var i in tags) {
           var tag = tags[i];
           var mo = document.getElementById("mo" + tag);
@@ -32,6 +32,7 @@
       <math><mphantom><mo style="visibilty: visible;" id="moPhantom">|</mo><mspace width="1px" height="30px" depth="30px" mathbackground="red"></mspace></mphantom></math>
       <math><mo id="moMath">|</mo><mspace width="1px" height="30px" depth="30px" mathbackground="red"></mspace></math>
       <math><menclose notation="box"><mo id="moMenclose">|</mo><mspace width="1px" height="30px" depth="30px" mathbackground="red"></mspace></menclose></math>
+      <math><mpadded notation="box"><mo id="moMpadded">|</mo><mspace width="1px" height="30px" depth="30px" mathbackground="red"></mspace></mpadded></math>
     </p>
 
   </body>

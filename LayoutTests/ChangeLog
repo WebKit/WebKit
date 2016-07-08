@@ -1,5 +1,35 @@
 2016-07-07  Frederic Wang  <fwang@igalia.com>
 
+        Bug 155792 - Basic implementation of mpadded
+        https://bugs.webkit.org/show_bug.cgi?id=155792
+
+        Reviewed by Brent Fulgham.
+
+        We import mpadded tests from Mozilla test suite.
+        We also add some tests for dynamic changes of mpadded attributes and to verify
+        that the mpadded element behaves as if it had an inferred <mrow>.
+        Finally, we check that fallback properly for negative and pseudo-unit values that
+        we do not support yet.
+
+        * mathml/presentation/inferred-mrow-baseline.html: Check baseline for mpadded.
+        * mathml/presentation/inferred-mrow-baseline-expected.txt: Ditto.
+        * mathml/presentation/inferred-mrow-stretchy.html: Check stretching of operators for mpadded.
+        * mathml/presentation/inferred-mrow-stretchy-expected.txt: Ditto.
+        * mathml/presentation/mpadded-dynamic.html: Added. Verify dynamic change of mpadded attributes.
+        * mathml/presentation/mpadded-dynamic-expected.html: Added. Ditto.
+        * mathml/presentation/mpadded-unsupported-values.html: Added. Check negative and pseudo-unit values.
+        * mathml/presentation/mpadded-unsupported-values-expected.html: Added.
+        * mathml/presentation/mpadded-1-2-expected.html: Added.
+        * mathml/presentation/mpadded-1-2.html: Added.
+        * mathml/presentation/mpadded-1-expected.html: Added.
+        * mathml/presentation/mpadded-1.html: Added.
+        * mathml/presentation/mpadded-2-expected.html: Added.
+        * mathml/presentation/mpadded-2.html: Added.
+        * mathml/presentation/mpadded-3-expected.html: Added.
+        * mathml/presentation/mpadded-3.html: Added.
+
+2016-07-07  Frederic Wang  <fwang@igalia.com>
+
         Implement an internal style property for displaystyle.
         https://bugs.webkit.org/show_bug.cgi?id=133845
 

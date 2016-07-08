@@ -8,7 +8,7 @@
       setup({ "explicit_done": true });
       function run()
       {
-        var tags = ["Mrow", "Sqrt", "Style", "Error", "Phantom", "Math", "Menclose"];
+        var tags = ["Mrow", "Sqrt", "Style", "Error", "Phantom", "Math", "Menclose", "Mpadded"];
         for (var i in tags) {
           var tag = tags[i];
           var x = document.getElementById("above" + tag).getBoundingClientRect();
@@ -39,6 +39,8 @@
       <math><mspace id="aboveMath" width="10px" height="30px" mathbackground="red"></mspace><mspace id="belowMath" width="10px" depth="30px" mathbackground="blue"></mspace></math>
 	  
       <math><menclose notation="box"><mspace id="aboveMenclose" width="10px" height="30px" mathbackground="red"></mspace><mspace id="belowMenclose" width="10px" depth="30px" mathbackground="blue"></mspace></menclose></math>
+
+      <math><mpadded notation="box"><mspace id="aboveMpadded" width="10px" height="30px" mathbackground="red"></mspace><mspace id="belowMpadded" width="10px" depth="30px" mathbackground="blue"></mspace></mpadded></math>
     </p>
 
   </body>
