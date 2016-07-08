@@ -2613,6 +2613,31 @@ void SpeculativeJIT::emitTypedArrayBoundsCheck(Node* node, GPRReg baseGPR, GPRRe
     speculationCheck(OutOfBounds, JSValueRegs(), 0, jump);
 }
 
+JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds(Node* node, GPRReg base, JITCompiler::Jump outOfBounds)
+{
+    JITCompiler::Jump done;
+    if (outOfBounds.isSet()) {
+        done = m_jit.jump();
+        if (node->arrayMode().isInBounds())
+            speculationCheck(OutOfBounds, JSValueSource(), 0, outOfBounds);
+        else {
+            outOfBounds.link(&m_jit);
+
+            JITCompiler::Jump notWasteful = m_jit.branch32(
+                MacroAssembler::NotEqual,
+                MacroAssembler::Address(base, JSArrayBufferView::offsetOfMode()),
+                TrustedImm32(WastefulTypedArray));
+
+            JITCompiler::Jump hasNullVector = m_jit.branchTestPtr(
+                MacroAssembler::Zero,
+                MacroAssembler::Address(base, JSArrayBufferView::offsetOfVector()));
+            speculationCheck(Uncountable, JSValueSource(), node, hasNullVector);
+            notWasteful.link(&m_jit);
+        }
+    }
+    return done;
+}
+
 void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType type)
 {
     ASSERT(isInt(type));
@@ -2790,11 +2815,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     ASSERT_UNUSED(valueGPR, valueGPR != property);
     ASSERT(valueGPR != base);
     ASSERT(valueGPR != storageReg);
-    MacroAssembler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property);
-    if (node->arrayMode().isInBounds() && outOfBounds.isSet()) {
-        speculationCheck(OutOfBounds, JSValueSource(), 0, outOfBounds);
-        outOfBounds = MacroAssembler::Jump();
-    }
+    JITCompiler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property);
 
     switch (elementSize(type)) {
     case 1:
@@ -2809,8 +2830,10 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     default:
         CRASH();
     }
-    if (outOfBounds.isSet())
-        outOfBounds.link(&m_jit);
+
+    JITCompiler::Jump done = jumpForTypedArrayIsNeuteredIfOutOfBounds(node, base, outOfBounds);
+    if (done.isSet())
+        done.link(&m_jit);
     noResult(node);
 }
 
@@ -2865,10 +2888,6 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
     ASSERT_UNUSED(baseUse, node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(baseUse)));
     
     MacroAssembler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property);
-    if (node->arrayMode().isInBounds() && outOfBounds.isSet()) {
-        speculationCheck(OutOfBounds, JSValueSource(), 0, outOfBounds);
-        outOfBounds = MacroAssembler::Jump();
-    }
     
     switch (elementSize(type)) {
     case 4: {
@@ -2883,8 +2902,10 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
-    if (outOfBounds.isSet())
-        outOfBounds.link(&m_jit);
+
+    JITCompiler::Jump done = jumpForTypedArrayIsNeuteredIfOutOfBounds(node, base, outOfBounds);
+    if (done.isSet())
+        done.link(&m_jit);
     noResult(node);
 }
 

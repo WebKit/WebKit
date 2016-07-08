@@ -583,6 +583,16 @@ ALWAYS_INLINE JSValue jsNumber(unsigned long long i)
     return JSValue(i);
 }
 
+ALWAYS_INLINE EncodedJSValue encodedJSUndefined()
+{
+    return JSValue::encode(jsUndefined());
+}
+
+ALWAYS_INLINE EncodedJSValue encodedJSValue()
+{
+    return JSValue::encode(JSValue());
+}
+
 inline bool operator==(const JSValue a, const JSCell* b) { return a == JSValue(b); }
 inline bool operator==(const JSCell* a, const JSValue b) { return JSValue(a) == b; }
 

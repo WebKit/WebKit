@@ -8,9 +8,9 @@ PASS array[0] is 42
 PASS foo(array) is 100
 PASS bar(array) is 42
 PASS array.length is 0
-PASS array[0] is void 0
+PASS array[0] threw exception TypeError: Underlying ArrayBuffer has been detached from the view.
 PASS foo(array) is 0
-PASS bar(array) is void 0
+PASS bar(array) threw exception TypeError: Underlying ArrayBuffer has been detached from the view.
 PASS successfullyParsed is true
 
 TEST COMPLETE

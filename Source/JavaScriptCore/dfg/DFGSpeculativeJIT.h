@@ -2521,6 +2521,7 @@ public:
     void compileConstantStoragePointer(Node*);
     void compileGetIndexedPropertyStorage(Node*);
     JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR);
+    JITCompiler::Jump jumpForTypedArrayIsNeuteredIfOutOfBounds(Node*, GPRReg baseGPR, JITCompiler::Jump outOfBounds);
     void emitTypedArrayBoundsCheck(Node*, GPRReg baseGPR, GPRReg indexGPR);
     void compileGetTypedArrayByteOffset(Node*);
     void compileGetByValOnIntTypedArray(Node*, TypedArrayType);

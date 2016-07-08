@@ -37,6 +37,8 @@
 
 namespace JSC {
 
+static const char* typedArrayBufferHasBeenDetachedErrorMessage = "Underlying ArrayBuffer has been detached from the view";
+
 template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>::JSGenericTypedArrayView(
     VM& vm, ConstructionContext& context)
@@ -288,14 +290,28 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::existingBuffer()
 }
 
 template<typename Adaptor>
+EncodedJSValue JSGenericTypedArrayView<Adaptor>::throwNeuteredTypedArrayTypeError(ExecState* exec, EncodedJSValue object, PropertyName)
+{
+    ASSERT_UNUSED(object, jsCast<JSGenericTypedArrayView*>(JSValue::decode(object))->isNeutered());
+    return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
+}
+
+template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot(
     JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
-    Optional<uint32_t> index = parseIndex(propertyName);
-    if (index && thisObject->canGetIndexQuickly(index.value())) {
-        slot.setValue(thisObject, DontDelete | ReadOnly, thisObject->getIndexQuickly(index.value()));
+    if (Optional<uint32_t> index = parseIndex(propertyName)) {
+        if (thisObject->isNeutered()) {
+            slot.setCustom(thisObject, None, throwNeuteredTypedArrayTypeError);
+            return true;
+        }
+
+        if (thisObject->canGetIndexQuickly(index.value()))
+            slot.setValue(thisObject, DontDelete | ReadOnly, thisObject->getIndexQuickly(index.value()));
+        else
+            slot.setValue(thisObject, DontDelete | ReadOnly, jsUndefined());
         return true;
     }
     
@@ -308,7 +324,10 @@ bool JSGenericTypedArrayView<Adaptor>::put(
     PutPropertySlot& slot)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
-    
+
+    if (thisObject->isNeutered())
+        return reject(exec, true, typedArrayBufferHasBeenDetachedErrorMessage);
+
     // https://tc39.github.io/ecma262/#sec-integer-indexed-exotic-objects-set-p-v-receiver
     // Ignore the receiver even if the receiver is altered to non base value.
     // 9.4.5.5-2-b-i Return ? IntegerIndexedElementSet(O, numericIndex, V).
@@ -324,12 +343,20 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
     const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
-    
-    // This is matching Firefox behavior. In particular, it rejects all attempts to
-    // defineOwnProperty for indexed properties on typed arrays, even if they're out
-    // of bounds.
-    if (parseIndex(propertyName))
-        return reject(exec, shouldThrow, "Attempting to write to a read-only typed array property.");
+
+    if (parseIndex(propertyName)) {
+        if (descriptor.isAccessorDescriptor())
+            return reject(exec, shouldThrow, "Attempting to store accessor indexed property on a typed array.");
+
+        if (descriptor.attributes() & (DontEnum | DontDelete | ReadOnly))
+            return reject(exec, shouldThrow, "Attempting to store non-enumerable, non-configurable or non-writable indexed property on a typed array.");
+
+        if (descriptor.value()) {
+            PutPropertySlot unused(JSValue(thisObject), shouldThrow);
+            return thisObject->put(thisObject, exec, propertyName, descriptor.value(), unused);
+        }
+        return true;
+    }
     
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
@@ -339,7 +366,10 @@ bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
     JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
-    
+
+    if (thisObject->isNeutered())
+        return reject(exec, true, typedArrayBufferHasBeenDetachedErrorMessage);
+
     if (parseIndex(propertyName))
         return false;
     
@@ -351,7 +381,12 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
     JSObject* object, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
-    
+
+    if (thisObject->isNeutered()) {
+        slot.setCustom(thisObject, None, throwNeuteredTypedArrayTypeError);
+        return true;
+    }
+
     if (propertyName > MAX_ARRAY_INDEX) {
         return thisObject->methodTable()->getOwnPropertySlot(
             thisObject, exec, Identifier::from(exec, propertyName), slot);
@@ -369,7 +404,10 @@ bool JSGenericTypedArrayView<Adaptor>::putByIndex(
     JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
-    
+
+    if (thisObject->isNeutered())
+        return reject(exec, true, typedArrayBufferHasBeenDetachedErrorMessage);
+
     if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(JSValue(thisObject), shouldThrow);
         return thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
@@ -382,12 +420,7 @@ template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::deletePropertyByIndex(
     JSCell* cell, ExecState* exec, unsigned propertyName)
 {
-    if (propertyName > MAX_ARRAY_INDEX) {
-        return cell->methodTable()->deleteProperty(
-            cell, exec, Identifier::from(exec, propertyName));
-    }
-    
-    return false;
+    return cell->methodTable()->deleteProperty(cell, exec, Identifier::from(exec, propertyName));
 }
 
 template<typename Adaptor>

@@ -33,10 +33,3 @@ try {
 
 if (!didThrow)
     throw "Should have thrown.";
-
-if (a.length != 0)
-    throw "Error: bad length (end): " + a.length;
-if (a.byteOffset != 0)
-    throw "Error: bad offset (end): " + a.byteOffset;
-if (a.byteLength != 0)
-    throw "Error: bad byte length (end): " + a.byteLength;

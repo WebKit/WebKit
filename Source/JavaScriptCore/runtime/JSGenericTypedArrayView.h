@@ -269,9 +269,11 @@ public:
     ArrayBuffer* existingBuffer();
 
     static const TypedArrayType TypedArrayStorageType = Adaptor::typeValue;
-    
+
 protected:
     friend struct TypedArrayClassInfos;
+
+    static EncodedJSValue throwNeuteredTypedArrayTypeError(ExecState*, EncodedJSValue, PropertyName);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);

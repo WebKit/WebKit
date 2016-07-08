@@ -24,7 +24,7 @@ shouldBe("bar(array)", "42");
 window.postMessage(array, "*", [array.buffer]);
 
 shouldBe("array.length", "0");
-shouldBe("array[0]", "void 0");
+shouldThrow("array[0]");
 
 shouldBe("foo(array)", "0");
-shouldBe("bar(array)", "void 0");
+shouldThrow("bar(array)");

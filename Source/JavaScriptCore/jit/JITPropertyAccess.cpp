@@ -1655,7 +1655,7 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, Pa
     badType = patchableBranch32(NotEqual, earlyScratch, TrustedImm32(typeForTypedArrayType(type)));
     Jump inBounds = branch32(Below, property, Address(base, JSArrayBufferView::offsetOfLength()));
     emitArrayProfileOutOfBoundsSpecialCase(profile);
-    Jump done = jump();
+    slowCases.append(jump());
     inBounds.link(this);
     
 #if USE(JSVALUE64)
@@ -1697,8 +1697,6 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, Pa
         CRASH();
     }
     
-    done.link(this);
-    
     return slowCases;
 }
 
@@ -1727,7 +1725,7 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, 
     badType = patchableBranch32(NotEqual, earlyScratch, TrustedImm32(typeForTypedArrayType(type)));
     Jump inBounds = branch32(Below, property, Address(base, JSArrayBufferView::offsetOfLength()));
     emitArrayProfileOutOfBoundsSpecialCase(profile);
-    Jump done = jump();
+    slowCases.append(jump());
     inBounds.link(this);
     
 #if USE(JSVALUE64)
@@ -1766,8 +1764,6 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, 
     default:
         CRASH();
     }
-    
-    done.link(this);
     
     return slowCases;
 }

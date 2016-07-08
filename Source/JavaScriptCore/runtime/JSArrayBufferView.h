@@ -53,7 +53,7 @@ class LLIntOffsetsExtractor;
 // Typed array views have different modes depending on how big they are and
 // whether the user has done anything that requires a separate backing
 // buffer or the DOM-specified neutering capabilities.
-enum TypedArrayMode {
+enum TypedArrayMode : uint32_t {
     // Small and fast typed array. B is unused, V points to a vector
     // allocated in copied space, and M = FastTypedArray. V's liveness is
     // determined entirely by the view's liveness.

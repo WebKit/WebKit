@@ -3317,19 +3317,24 @@ private:
                         DFG_CRASH(m_graph, m_node, "Bad typed array type");
                     }
                 }
-                
+
                 if (m_node->arrayMode().isInBounds() || m_node->op() == PutByValAlias)
                     m_out.store(valueToStore, pointer, storeType);
                 else {
                     LBasicBlock isInBounds = m_out.newBlock();
+                    LBasicBlock isOutOfBounds = m_out.newBlock();
                     LBasicBlock continuation = m_out.newBlock();
                     
                     m_out.branch(
                         m_out.aboveOrEqual(index, lowInt32(child5)),
-                        unsure(continuation), unsure(isInBounds));
+                        unsure(isOutOfBounds), unsure(isInBounds));
                     
-                    LBasicBlock lastNext = m_out.appendTo(isInBounds, continuation);
+                    LBasicBlock lastNext = m_out.appendTo(isInBounds, isOutOfBounds);
                     m_out.store(valueToStore, pointer, storeType);
+                    m_out.jump(continuation);
+
+                    m_out.appendTo(isOutOfBounds, continuation);
+                    speculateTypedArrayIsNotNeutered(base);
                     m_out.jump(continuation);
                     
                     m_out.appendTo(continuation, lastNext);
@@ -3337,7 +3342,7 @@ private:
                 
                 return;
             }
-            
+
             DFG_CRASH(m_graph, m_node, "Bad array type");
             break;
         }
@@ -10587,7 +10592,24 @@ private:
         LValue value = lowJSValue(edge, ManualOperandSpeculation);
         typeCheck(jsValueValue(value), edge, SpecMisc, isNotMisc(value));
     }
-    
+
+    void speculateTypedArrayIsNotNeutered(LValue base)
+    {
+        LBasicBlock isWasteful = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue mode = m_out.load32(base, m_heaps.JSArrayBufferView_mode);
+        m_out.branch(m_out.equal(mode, m_out.constInt32(WastefulTypedArray)),
+            unsure(isWasteful), unsure(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(isWasteful, continuation);
+        LValue vector = m_out.loadPtr(base, m_heaps.JSArrayBufferView_vector);
+        speculate(Uncountable, jsValueValue(vector), m_node, m_out.notZero64(vector));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+    }
+
     bool masqueradesAsUndefinedWatchpointIsStillValid()
     {
         return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_node->origin.semantic);

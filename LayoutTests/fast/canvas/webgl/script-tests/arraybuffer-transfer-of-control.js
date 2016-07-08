@@ -91,35 +91,36 @@ function assertViewClosed(testName, view)
             }
             try {
                 var v = view[0];
-                if (v !== undefined) {
-                    testFailed(testName + ": index get on a closed view did not return undefined.");
+                testFailed(testName + ": index get on a closed view did not throw an exception");
+                return false;
+            } catch(xn) {
+                if (xn != "TypeError: Underlying ArrayBuffer has been detached from the view") {
+                    testFailed(testName + ": index get on a closed view threw the wrong exception: " + xn);
                     return false;
                 }
-            } catch(xn) {
-                testFailed(testName + ": index get on a closed view threw an exception: " + xn);
-                return false;
             }
+
             try {
                 view[0] = 42;
-                var v = view[0];
-                if (v !== undefined) {
-                    testFailed(testName + ": index set then get on a closed view did not return undefined.");
+                testFailed(testName + ": index set on a closed view did not throw an exception");
+                return false;
+            } catch(xn) {
+                if (xn != "TypeError: Underlying ArrayBuffer has been detached from the view") {
+                    testFailed(testName + ": index set then get on a closed view threw the wrong exception: " + xn);
                     return false;
                 }
-            } catch(xn) {
-                testFailed(testName + ": index set then get on a closed view threw an exception: " + xn);
-                return false;
             }
-            try {
-                view.get(0);
-                testFailed(testName + ": get on a closed view succeeded");
-                return false;
-            } catch (xn) { }
+
             try {
                 view.set(0, 1);
                 testFailed(testName + ": set on a closed view succeeded");
                 return false;
-            } catch (xn) { }
+            } catch (xn) {
+                if (xn != "TypeError: Underlying ArrayBuffer has been detached from the view") {
+                    testFailed(testName + ": set on a closed view threw the wrong exception: " + xn);
+                    return false;
+                }
+            }
         } else {
             try {
                 view.getInt8(0);

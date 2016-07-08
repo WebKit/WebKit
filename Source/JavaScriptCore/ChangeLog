@@ -1,3 +1,76 @@
+2016-07-08  Keith Miller  <keith_miller@apple.com>
+
+        TypedArrays need more isNeutered checks.
+        https://bugs.webkit.org/show_bug.cgi?id=159231
+
+        Reviewed by Filip Pizlo.
+
+        According to the ES6 spec if a user tries to get, set, or define a
+        property on a neutered TypedArray we should throw an
+        exception. Currently, if a user tries to get an out of bounds
+        access on a TypedArray we will always OSR.  This makes handling
+        the exception easy as all we need to do is make out of bounds gets
+        in PolymorphicAccess go to the slow path, which will then throw
+        the appropriate exception. For the case of set, we need ensure we
+        don't OSR on each out of bounds put since, for some confusing
+        reason, people do this.  Thus, for GetByVal in the DFG/FTL if the
+        user accesses out of bounds we then need to check if the view has
+        been neutered. If it is neutered then we will OSR.
+
+        Additionally, this patch adds a bunch of isNeutered checks to
+        various prototype functions for TypedArray, which are needed for
+        correctness.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateTypedArrayIsNotNeutered):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCJSValue.h:
+        (JSC::encodedJSUndefined):
+        (JSC::encodedJSValue):
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::throwNeuteredTypedArrayTypeError):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot):
+        (JSC::JSGenericTypedArrayView<Adaptor>::put):
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::deleteProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex):
+        (JSC::JSGenericTypedArrayView<Adaptor>::putByIndex):
+        (JSC::JSGenericTypedArrayView<Adaptor>::deletePropertyByIndex):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncCopyWithin):
+        (JSC::genericTypedArrayViewProtoFuncFill):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewProtoFuncSubarray):
+        * tests/stress/fold-typed-array-properties.js:
+        * tests/stress/typedarray-access-monomorphic-neutered.js: Added.
+        (check):
+        (test):
+        (testFTL):
+        * tests/stress/typedarray-access-neutered.js: Added.
+        (check):
+        (test):
+        * tests/stress/typedarray-functions-with-neutered.js:
+        (defaultForArg):
+        (callWithArgs):
+        (checkArgumentsForType):
+        (checkArguments):
+        * tests/stress/typedarray-view-string-properties-neutered.js: Added.
+        (call):
+        (test):
+
 2016-07-08  Youenn Fablet  <youenn@apple.com>
 
         Generate WebCore builtin wrapper files
