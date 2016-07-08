@@ -951,7 +951,11 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     getFrameRegisterSizeForCodeBlock(t1, t0)
     subp cfr, t0, t0
     loadp CodeBlock::m_vm[t1], t2
-    bpbeq VM::m_llintStackLimit[t2], t0, .stackHeightOK
+    if C_LOOP
+        bpbeq VM::m_cloopStackLimit[t2], t0, .stackHeightOK
+    else
+        bpbeq VM::m_osStackLimitWithReserve[t2], t0, .stackHeightOK
+    end
 
     # Stack height check failed - need to call a slow_path.
     # Set up temporary stack pointer for call including callee saves

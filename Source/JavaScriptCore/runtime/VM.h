@@ -461,18 +461,18 @@ public:
     size_t reservedZoneSize() const { return m_reservedZoneSize; }
     size_t updateReservedZoneSize(size_t reservedZoneSize);
 
-    void* jsCPUStackLimit() { return m_jsCPUStackLimit; }
-    void** addressOfJSCPUStackLimit() { return &m_jsCPUStackLimit; }
+    void* osStackLimitWithReserve() { return m_osStackLimitWithReserve; }
+    void** addressOfOSStackLimitWithReserve() { return &m_osStackLimitWithReserve; }
 #if !ENABLE(JIT)
-    void* jsEmulatedStackLimit() { return m_jsEmulatedStackLimit; }
-    void setJSEmulatedStackLimit(void* limit) { m_jsEmulatedStackLimit = limit; }
+    void* cloopStackLimit() { return m_cloopStackLimit; }
+    void setCLoopStackLimit(void* limit) { m_cloopStackLimit = limit; }
 #endif
 
     bool isSafeToRecurse(size_t neededStackInBytes = 0) const
     {
         ASSERT(wtfThreadData().stack().isGrowingDownward());
         int8_t* curr = reinterpret_cast<int8_t*>(&curr);
-        int8_t* limit = reinterpret_cast<int8_t*>(m_jsCPUStackLimit);
+        int8_t* limit = reinterpret_cast<int8_t*>(m_osStackLimitWithReserve);
         return curr >= limit && static_cast<size_t>(curr - limit) >= neededStackInBytes;
     }
 
@@ -645,17 +645,9 @@ private:
 
     void* m_stackPointerAtVMEntry;
     size_t m_reservedZoneSize;
-#if ENABLE(JIT)
-    union {
-        void* m_jsCPUStackLimit { nullptr };
-        void* m_llintStackLimit;
-    };
-#else
-    void* m_jsCPUStackLimit { nullptr };
-    union {
-        void* m_jsEmulatedStackLimit { nullptr };
-        void* m_llintStackLimit;
-    };
+    void* m_osStackLimitWithReserve { nullptr };
+#if !ENABLE(JIT)
+    void* m_cloopStackLimit { nullptr };
 #endif
     void* m_lastStackTop;
 

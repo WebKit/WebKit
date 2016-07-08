@@ -62,7 +62,7 @@ JSStack::JSStack(VM& vm)
     ASSERT(capacity && isPageAligned(capacity));
 
     m_reservation = PageReservation::reserve(WTF::roundUpToMultipleOf(commitSize(), capacity), OSAllocator::JSVMStackPages);
-    setJSEmulatedStackLimit(highAddress());
+    setCLoopStackLimit(highAddress());
     m_commitTop = highAddress();
     
     m_lastStackTop = baseOfStack();
@@ -87,7 +87,7 @@ bool JSStack::growSlowCase(Register* newTopOfStack)
     // If we have already committed enough memory to satisfy this request,
     // just update the end pointer and return.
     if (newTopOfStackWithReservedZone >= m_commitTop) {
-        setJSEmulatedStackLimit(newTopOfStack);
+        setCLoopStackLimit(newTopOfStack);
         return true;
     }
 
@@ -104,7 +104,7 @@ bool JSStack::growSlowCase(Register* newTopOfStack)
     m_reservation.commit(newCommitTop, delta);
     addToCommittedByteCount(delta);
     m_commitTop = newCommitTop;
-    setJSEmulatedStackLimit(newTopOfStack);
+    setCLoopStackLimit(newTopOfStack);
     return true;
 }
 
@@ -156,7 +156,7 @@ void JSStack::setReservedZoneSize(size_t reservedZoneSize)
 Register* JSStack::lowAddress() const
 {
     ASSERT(wtfThreadData().stack().isGrowingDownward());
-    return reinterpret_cast<Register*>(m_vm.jsCPUStackLimit());
+    return reinterpret_cast<Register*>(m_vm.osStackLimitWithReserve());
 }
 
 Register* JSStack::highAddress() const

@@ -599,7 +599,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     }
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, regT1);
-    Jump stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfJSCPUStackLimit()), regT1);
+    Jump stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfOSStackLimitWithReserve()), regT1);
 
     move(regT1, stackPointerRegister);
     checkStackPointerAlignment();

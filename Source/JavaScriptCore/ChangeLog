@@ -1,3 +1,66 @@
+2016-07-08  Mark Lam  <mark.lam@apple.com>
+
+        Rename jsCPUStackLimit to osStackLimitWithReserve and jsEmulatedStackLimit to cloopStackLimit.
+        https://bugs.webkit.org/show_bug.cgi?id=159544
+
+        Reviewed by Geoffrey Garen.
+
+        This patch does the following refactoring:
+        1. Rename jsCPUStackLimit to osStackLimitWithReserve.
+        2. Rename jsEmulatedStackLimit to cloopStackLimit.
+        2. Remove llintStackLimit (which previously is either an alias for
+           jsCPUStackLimit or jsEmulatedStackLimit depending on whether we have a JIT or
+           C Loop build).  Instead, we'll change the LLINT to conditionally use the
+           osStackLimitWithReserve or cloopStackLimit.
+
+        There are no semantic changes.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::JSStack):
+        (JSC::JSStack::growSlowCase):
+        (JSC::JSStack::lowAddress):
+        (JSC::JSStack::highAddress):
+        * interpreter/JSStack.h:
+        * interpreter/JSStackInlines.h:
+        (JSC::JSStack::ensureCapacityFor):
+        (JSC::JSStack::shrink):
+        (JSC::JSStack::grow):
+        (JSC::JSStack::setCLoopStackLimit):
+        (JSC::JSStack::setJSEmulatedStackLimit): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::finishCreation):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/VM.cpp:
+        (JSC::VM::updateStackLimit):
+        * runtime/VM.h:
+        (JSC::VM::reservedZoneSize):
+        (JSC::VM::osStackLimitWithReserve):
+        (JSC::VM::addressOfOSStackLimitWithReserve):
+        (JSC::VM::cloopStackLimit):
+        (JSC::VM::setCLoopStackLimit):
+        (JSC::VM::isSafeToRecurse):
+        (JSC::VM::jsCPUStackLimit): Deleted.
+        (JSC::VM::addressOfJSCPUStackLimit): Deleted.
+        (JSC::VM::jsEmulatedStackLimit): Deleted.
+        (JSC::VM::setJSEmulatedStackLimit): Deleted.
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::startFunction):
+
 2016-07-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r202799.

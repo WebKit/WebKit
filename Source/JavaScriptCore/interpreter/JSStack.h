@@ -130,7 +130,7 @@ namespace JSC {
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
 
-        void setJSEmulatedStackLimit(Register* newTopOfStack);
+        void setCLoopStackLimit(Register* newTopOfStack);
 #endif // !ENABLE(JIT)
 
         VM& m_vm;

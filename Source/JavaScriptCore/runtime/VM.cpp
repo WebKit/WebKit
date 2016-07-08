@@ -650,20 +650,20 @@ static void preCommitStackMemory(void* stackLimit)
 inline void VM::updateStackLimit()
 {
 #if PLATFORM(WIN)
-    void* lastJSCPUStackLimit = m_jsCPUStackLimit;
+    void* lastOSStackLimitWithReserve = m_osStackLimitWithReserve;
 #endif
 
     if (m_stackPointerAtVMEntry) {
         ASSERT(wtfThreadData().stack().isGrowingDownward());
         char* startOfStack = reinterpret_cast<char*>(m_stackPointerAtVMEntry);
-        m_jsCPUStackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize);
+        m_osStackLimitWithReserve = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize);
     } else {
-        m_jsCPUStackLimit = wtfThreadData().stack().recursionLimit(m_reservedZoneSize);
+        m_osStackLimitWithReserve = wtfThreadData().stack().recursionLimit(m_reservedZoneSize);
     }
 
 #if PLATFORM(WIN)
-    if (lastJSCPUStackLimit != m_jsCPUStackLimit)
-        preCommitStackMemory(m_jsCPUStackLimit);
+    if (lastOSStackLimitWithReserve != m_osStackLimitWithReserve)
+        preCommitStackMemory(m_osStackLimitWithReserve);
 #endif
 }
 

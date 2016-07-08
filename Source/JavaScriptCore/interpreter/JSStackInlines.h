@@ -39,7 +39,7 @@ inline bool JSStack::ensureCapacityFor(Register* newTopOfStack)
     return grow(newTopOfStack);
 #else
     ASSERT(wtfThreadData().stack().isGrowingDownward());
-    return newTopOfStack >= m_vm.jsCPUStackLimit();
+    return newTopOfStack >= m_vm.osStackLimitWithReserve();
 #endif
 }
 
@@ -62,7 +62,7 @@ inline void JSStack::shrink(Register* newTopOfStack)
     Register* newEnd = newTopOfStack - 1;
     if (newEnd >= m_end)
         return;
-    setJSEmulatedStackLimit(newTopOfStack);
+    setCLoopStackLimit(newTopOfStack);
     // Note: Clang complains of an unresolved linkage to maxExcessCapacity if
     // invoke std::max() with it as an argument. To work around this, we first
     // assign the constant to a local variable, and use the local instead.
@@ -80,11 +80,11 @@ inline bool JSStack::grow(Register* newTopOfStack)
     return growSlowCase(newTopOfStack);
 }
 
-inline void JSStack::setJSEmulatedStackLimit(Register* newTopOfStack)
+inline void JSStack::setCLoopStackLimit(Register* newTopOfStack)
 {
     Register* newEnd = newTopOfStack - 1;
     m_end = newEnd;
-    m_vm.setJSEmulatedStackLimit(newTopOfStack);
+    m_vm.setCLoopStackLimit(newTopOfStack);
 }
 
 #endif // !ENABLE(JIT)
