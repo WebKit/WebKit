@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,6 @@
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKDownloadDelegate.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
@@ -256,73 +255,6 @@ TEST(ContentFiltering, BlockDownloadNever)
 {
     downloadTest(Decision::Block, DecisionPoint::Never);
 }
-
-@interface LoadAlternateNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation LoadAlternateNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
-{
-    EXPECT_WK_STREQ(WebKitErrorDomain, error.domain);
-    EXPECT_EQ(WebKitErrorFrameLoadBlockedByContentFilter, error.code);
-    [webView _loadAlternateHTMLString:@"FAIL" baseURL:nil forUnreachableURL:[error.userInfo objectForKey:NSURLErrorFailingURLErrorKey]];
-}
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    [webView evaluateJavaScript:@"document.body.innerText" completionHandler:^ (id result, NSError *error) {
-        EXPECT_TRUE([result isKindOfClass:[NSString class]]);
-        EXPECT_WK_STREQ(@"blocked", result);
-        isDone = true;
-    }];
-}
-
-@end
-
-static void loadAlternateTest(Decision decision, DecisionPoint decisionPoint)
-{
-    @autoreleasepool {
-        [TestProtocol registerWithScheme:@"http"];
-
-        auto configuration = configurationWithContentFilterSettings(decision, decisionPoint);
-        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
-        auto navigationDelegate = adoptNS([[LoadAlternateNavigationDelegate alloc] init]);
-        [webView setNavigationDelegate:navigationDelegate.get()];
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://redirect/?result"]]];
-
-        isDone = false;
-        TestWebKitAPI::Util::run(&isDone);
-
-        [TestProtocol unregister];
-    }
-}
-
-TEST(ContentFiltering, LoadAlternateAfterWillSendRequestWK2)
-{
-    loadAlternateTest(Decision::Block, DecisionPoint::AfterWillSendRequest);
-}
-
-TEST(ContentFiltering, LoadAlternateAfterRedirectWK2)
-{
-    loadAlternateTest(Decision::Block, DecisionPoint::AfterRedirect);
-}
-
-TEST(ContentFiltering, LoadAlternateAfterResponseWK2)
-{
-    loadAlternateTest(Decision::Block, DecisionPoint::AfterResponse);
-}
-
-TEST(ContentFiltering, LoadAlternateAfterAddDataWK2)
-{
-    loadAlternateTest(Decision::Block, DecisionPoint::AfterAddData);
-}
-
-TEST(ContentFiltering, LoadAlternateAfterFinishedAddingDataWK2)
-{
-    loadAlternateTest(Decision::Block, DecisionPoint::AfterFinishedAddingData);
-}
-
 
 @interface LazilyLoadPlatformFrameworksController : NSObject <WKNavigationDelegate>
 @property (nonatomic, readonly) WKWebView *webView;

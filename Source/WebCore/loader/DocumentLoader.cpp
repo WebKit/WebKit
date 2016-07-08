@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2008, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,6 +63,7 @@
 #include "ResourceHandle.h"
 #include "ResourceLoadObserver.h"
 #include "SchemeRegistry.h"
+#include "ScriptController.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
@@ -1707,10 +1708,37 @@ void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(const String&
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-ContentFilter* DocumentLoader::contentFilter() const
+void DocumentLoader::installContentFilterUnblockHandler(ContentFilter& contentFilter)
 {
-    return m_contentFilter.get();
+    ContentFilterUnblockHandler unblockHandler { contentFilter.unblockHandler() };
+    unblockHandler.setUnreachableURL(documentURL());
+    RefPtr<Frame> frame { this->frame() };
+    String unblockRequestDeniedScript { contentFilter.unblockRequestDeniedScript() };
+    if (!unblockRequestDeniedScript.isEmpty() && frame) {
+        static_assert(std::is_base_of<ThreadSafeRefCounted<Frame>, Frame>::value, "Frame must be ThreadSafeRefCounted.");
+        unblockHandler.wrapWithDecisionHandler([frame = WTFMove(frame), script = unblockRequestDeniedScript.isolatedCopy()](bool unblocked) {
+            if (!unblocked)
+                frame->script().executeScript(script);
+        });
+    }
+    frameLoader()->client().contentFilterDidBlockLoad(WTFMove(unblockHandler));
+}
+
+void DocumentLoader::contentFilterDidBlock()
+{
+    ASSERT(m_contentFilter);
+
+    installContentFilterUnblockHandler(*m_contentFilter);
+
+    URL blockedURL;
+    blockedURL.setProtocol(ContentFilter::urlScheme());
+    blockedURL.setHost(ASCIILiteral("blocked-page"));
+    auto replacementData = m_contentFilter->replacementData();
+    ResourceResponse response(URL(), ASCIILiteral("text/html"), replacementData->size(), ASCIILiteral("UTF-8"));
+    SubstituteData substituteData { adoptRef(&replacementData.leakRef()), documentURL(), response, SubstituteData::SessionHistoryVisibility::Hidden };
+    frame()->navigationScheduler().scheduleSubstituteDataLoad(blockedURL, substituteData);
 }
 #endif
+
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2009 Adam Barth. All rights reserved.
  *
@@ -28,7 +28,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef NavigationScheduler_h
+#define NavigationScheduler_h
 
 #include "FrameLoaderTypes.h"
 #include "Timer.h"
@@ -41,6 +42,7 @@ class FormSubmission;
 class Frame;
 class ScheduledNavigation;
 class SecurityOrigin;
+class SubstituteData;
 class URL;
 
 class NavigationDisablerForBeforeUnload {
@@ -73,6 +75,7 @@ public:
     void scheduleFormSubmission(PassRefPtr<FormSubmission>);
     void scheduleRefresh(Document* initiatingDocument);
     void scheduleHistoryNavigation(int steps);
+    void scheduleSubstituteDataLoad(const URL& baseURL, const SubstituteData&);
     void schedulePageBlock(Document& originDocument);
 
     void startTimer();
@@ -95,3 +98,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // NavigationScheduler_h

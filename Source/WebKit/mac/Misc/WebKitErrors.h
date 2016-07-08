@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,13 +38,11 @@ extern NSString * const WebKitErrorPlugInPageURLStringKey;
     @constant WebKitErrorCannotShowMIMEType
     @constant WebKitErrorCannotShowURL
     @constant WebKitErrorFrameLoadInterruptedByPolicyChange
-    @constant WebKitErrorFrameLoadBlockedByContentFilter
 */
 enum {
     WebKitErrorCannotShowMIMEType =                             100,
     WebKitErrorCannotShowURL =                                  101,
     WebKitErrorFrameLoadInterruptedByPolicyChange =             102,
-    WebKitErrorFrameLoadBlockedByContentFilter =                105,
 };
 
 /*!

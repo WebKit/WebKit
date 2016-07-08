@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef DocumentLoader_h
+#define DocumentLoader_h
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
@@ -67,7 +68,6 @@ namespace WebCore {
     class ArchiveResourceCollection;
     class CachedRawResource;
     class CachedResourceLoader;
-    class ContentFilter;
     class FormState;
     class Frame;
     class FrameLoader;
@@ -77,12 +77,15 @@ namespace WebCore {
     class SubresourceLoader;
     class SubstituteResource;
 
+#if ENABLE(CONTENT_FILTERING)
+    class ContentFilter;
+#endif
+
     typedef HashMap<unsigned long, RefPtr<ResourceLoader>> ResourceLoaderMap;
     typedef Vector<ResourceResponse> ResponseVector;
 
     class DocumentLoader : public RefCounted<DocumentLoader>, private CachedRawResourceClient {
         WTF_MAKE_FAST_ALLOCATED;
-        friend class ContentFilter;
     public:
         static Ref<DocumentLoader> create(const ResourceRequest& request, const SubstituteData& data)
         {
@@ -282,10 +285,6 @@ namespace WebCore {
         void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy) { m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy; }
         ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToPropagate() const;
 
-#if ENABLE(CONTENT_FILTERING)
-        ContentFilter* contentFilter() const;
-#endif
-
     protected:
         WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -348,6 +347,12 @@ namespace WebCore {
 
         void cancelPolicyCheckIfNeeded();
         void becomeMainResourceClient();
+
+#if ENABLE(CONTENT_FILTERING)
+        friend class ContentFilter;
+        void installContentFilterUnblockHandler(ContentFilter&);
+        void contentFilterDidBlock();
+#endif
 
         Frame* m_frame;
         Ref<CachedResourceLoader> m_cachedResourceLoader;
@@ -474,3 +479,5 @@ namespace WebCore {
     }
 
 }
+
+#endif // DocumentLoader_h

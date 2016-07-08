@@ -1112,13 +1112,6 @@ ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const Resour
     return WebKit::interruptedForPolicyChangeError(request);
 }
 
-#if ENABLE(CONTENT_FILTERING)
-ResourceError WebFrameLoaderClient::blockedByContentFilterError(const ResourceRequest& request)
-{
-    return WebKit::blockedByContentFilterError(request);
-}
-#endif
-
 ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse& response)
 {
     return WebKit::cannotShowMIMETypeError(response);

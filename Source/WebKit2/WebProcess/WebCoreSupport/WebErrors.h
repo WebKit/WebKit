@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WebErrors_h
+#define WebErrors_h
 
 namespace WebCore {
     class URL;
@@ -39,12 +40,11 @@ WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
 WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&);
 WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
 WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&);
-#if ENABLE(CONTENT_FILTERING)
-WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceRequest&);
-#endif
 WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
 WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
 WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
 WebCore::ResourceError internalError(const WebCore::URL&);
 
 } // namespace WebKit
+
+#endif // WebErrors_h

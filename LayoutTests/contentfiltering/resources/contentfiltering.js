@@ -33,11 +33,7 @@ function _doTest(decisionPoint, decision, decideAfterUnblockRequest)
         }, false);
         iframe.contentDocument.location = settings.unblockRequestURL;
     }, false);
-
-    if (blockedStringText === "FAIL")
-        iframe.src = "resources/pass.html";
-    else
-        iframe.src = "resources/fail.html";
+    iframe.src = "data:text/html,<!DOCTYPE html><body>" + (blockedStringText === "FAIL" ? "PASS" : "FAIL");
 }
 
 function testContentFiltering(decisionPoint, decision, decideAfterUnblockRequest)
@@ -53,10 +49,6 @@ function testContentFiltering(decisionPoint, decision, decideAfterUnblockRequest
     }
 
     window.testRunner.waitUntilDone();
-    window.testRunner.dumpAsText();
-    window.testRunner.dumpChildFramesAsText();
-    window.testRunner.dumpBackForwardList();
-    window.testRunner.dumpFrameLoadCallbacks();
     window.addEventListener("load", function(event) {
         _doTest(decisionPoint, decision, decideAfterUnblockRequest);
     }, false);

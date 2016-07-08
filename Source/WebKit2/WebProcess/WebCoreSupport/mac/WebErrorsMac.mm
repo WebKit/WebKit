@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,11 +80,6 @@ ResourceError cannotShowURLError(const ResourceRequest& request)
 ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
     return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeFrameLoadInterruptedByPolicyChange, request.url(), WEB_UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description"));
-}
-
-ResourceError blockedByContentFilterError(const ResourceRequest& request)
-{
-    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeFrameLoadBlockedByContentFilter, request.url(), WEB_UI_STRING("The URL was blocked by a content filter", "WebKitErrorBlockedByContentFilter"));
 }
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)

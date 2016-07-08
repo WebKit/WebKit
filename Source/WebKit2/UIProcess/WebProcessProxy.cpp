@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -322,19 +322,11 @@ bool WebProcessProxy::hasAssumedReadAccessToURL(const URL& url) const
         return false;
 
     String path = url.fileSystemPath();
-    auto startsWithURLPath = [&path](const String& assumedAccessPath) {
+    for (const String& assumedAccessPath : m_localPathsWithAssumedReadAccess) {
         // There are no ".." components, because URL removes those.
-        return path.startsWith(assumedAccessPath);
-    };
-
-    auto& platformPaths = platformPathsWithAssumedReadAccess();
-    auto platformPathsEnd = platformPaths.end();
-    if (std::find_if(platformPaths.begin(), platformPathsEnd, startsWithURLPath) != platformPathsEnd)
-        return true;
-
-    auto localPathsEnd = m_localPathsWithAssumedReadAccess.end();
-    if (std::find_if(m_localPathsWithAssumedReadAccess.begin(), localPathsEnd, startsWithURLPath) != localPathsEnd)
-        return true;
+        if (path.startsWith(assumedAccessPath))
+            return true;
+    }
 
     return false;
 }
@@ -1042,13 +1034,5 @@ void WebProcessProxy::didReceiveMainThreadPing()
     for (auto& callback : isResponsiveCallbacks)
         callback(isWebProcessResponsive);
 }
-
-#if !PLATFORM(COCOA)
-const HashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
-{
-    static NeverDestroyed<HashSet<String>> platformPathsWithAssumedReadAccess;
-    return platformPathsWithAssumedReadAccess;
-}
-#endif
 
 } // namespace WebKit

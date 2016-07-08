@@ -31,7 +31,6 @@
 #include "config.h"
 #include "PolicyChecker.h"
 
-#include "ContentFilter.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
@@ -92,15 +91,10 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
 
     // We are always willing to show alternate content for unreachable URLs;
     // treat it like a reload so it maintains the right state for b/f list.
-    auto& substituteData = loader->substituteData();
-    if (substituteData.isValid() && !substituteData.failingURL().isEmpty()) {
-        bool shouldContinue = true;
-#if ENABLE(CONTENT_FILTERING)
-        shouldContinue = ContentFilter::continueAfterSubstituteDataRequest(*m_frame.loader().activeDocumentLoader(), substituteData);
-#endif
+    if (loader->substituteData().isValid() && !loader->substituteData().failingURL().isEmpty()) {
         if (isBackForwardLoadType(m_loadType))
             m_loadType = FrameLoadType::Reload;
-        function(request, 0, shouldContinue);
+        function(request, 0, true);
         return;
     }
 
