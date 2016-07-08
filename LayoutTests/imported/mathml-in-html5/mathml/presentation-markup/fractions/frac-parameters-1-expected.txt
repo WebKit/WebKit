@@ -1,0 +1,12 @@
+
+PASS AxisHeight 
+PASS DenominatorDisplayStyleGapMin 
+PASS DenominatorDisplayStyleShiftDown 
+PASS DenominatorGapMin 
+PASS DenominatorShiftDown 
+PASS NumeratorDisplayStyleGapMin 
+PASS NumeratorDisplayStyleShiftDown 
+PASS NumeratorGapMin 
+PASS NumeratorShiftDown 
+PASS FractionRuleThickness 
+

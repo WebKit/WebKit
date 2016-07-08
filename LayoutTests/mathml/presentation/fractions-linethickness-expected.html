@@ -22,17 +22,13 @@
          'A number without a unit is intepreted as a multiple of the default
          value.'
          
-         Here are the linethickness values used by WebKit:
-         
-         gLineThin = 0.33f;
-         gLineMedium = 1.f;
-         gLineThick = 3.f;
+         We follow the suggestion of the MathML in HTML5 implementation note and interpret thin as 50% and thick as 200%.
       -->
 
     <math>
-      <mfrac linethickness="0.33px"><mn>1</mn><mn>2</mn></mfrac>
+      <mfrac linethickness="0.5px"><mn>1</mn><mn>2</mn></mfrac>
       <mfrac linethickness="1px"><mn>1</mn><mn>2</mn></mfrac>
-      <mfrac linethickness="3px"><mn>1</mn><mn>2</mn></mfrac>
+      <mfrac linethickness="2px"><mn>1</mn><mn>2</mn></mfrac>
       <mfrac linethickness="5px"><mn>1</mn><mn>2</mn></mfrac>
     </math>
 

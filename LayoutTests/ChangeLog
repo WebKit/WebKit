@@ -1,5 +1,36 @@
 2016-07-08  Frederic Wang  <fwang@igalia.com>
 
+        Use Fraction* parameters from the OpenType MATH table
+        https://bugs.webkit.org/show_bug.cgi?id=155639
+
+        Reviewed by Brent Fulgham.
+
+        We import a test from the MathML in HTML5 test suite to verify Fraction* parameters.
+        We also do some small test adjustments.
+
+        * TestExpectations: We disable fractions-positions.html for now until it is replaced with a more reliable test.
+        * imported/mathml-in-html5/fonts/math/fraction-axisheight7000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/fraction-denominatordisplaystylegapmin5000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/fraction-denominatordisplaystyleshiftdown6000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/fraction-denominatorgapmin4000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/fraction-denominatorshiftdown3000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/fraction-numeratordisplaystylegapmin8000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/fraction-numeratordisplaystyleshiftup2000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/fraction-numeratorgapmin9000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/fraction-numeratorshiftup11000-rulethickness1000.woff: Added.
+        * imported/mathml-in-html5/fonts/math/fraction-rulethickness10000.woff: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-1-expected.txt: Added.
+        * imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-1.html: Added.
+        * mathml/presentation/fractions-linethickness-expected.html: Adjust the test to interpret
+        "thick" and "thin" as suggested the MathML in HTML5 implementation note.
+        * mathml/presentation/stretchy-depth-height-symmetric.html: Increase error tolerance.
+        * platform/gtk/mathml/presentation/roots-expected.png: Handle small rendering changes.
+        * platform/gtk/mathml/presentation/roots-expected.txt: Ditto.
+        * platform/ios-simulator/mathml/presentation/roots-expected.txt: Ditto.
+        * platform/mac/mathml/presentation/roots-expected.txt: Ditto.
+
+2016-07-08  Frederic Wang  <fwang@igalia.com>
+
         Use Radical* constants from the OpenType MATH table.
         https://bugs.webkit.org/show_bug.cgi?id=155638
 
