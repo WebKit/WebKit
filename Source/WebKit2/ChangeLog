@@ -1,3 +1,28 @@
+2016-07-08  Keith Rollin  <krollin@apple.com>
+
+        Add always-on logging for downloads
+        https://bugs.webkit.org/show_bug.cgi?id=159521
+        <rdar://problem/26630645>
+
+        Reviewed by Alex Christensen.
+
+        Add logging statements that track when a download starts, when it
+        first receives data, and when the download is done (due to completion,
+        cancelation, or failure).
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::Download):
+        (WebKit::Download::didReceiveResponse):
+        (WebKit::Download::didReceiveData):
+        (WebKit::Download::didFinish):
+        (WebKit::Download::didFail):
+        (WebKit::Download::didCancel):
+        (WebKit::Download::isAlwaysOnLoggingAllowed):
+        * NetworkProcess/Downloads/Download.h:
+        (WebKit::Download::Download):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+
 2016-07-08  Brady Eidson  <beidson@apple.com>
 
         Clearing LocalStorage doesn't also delete -wal and -shm files.

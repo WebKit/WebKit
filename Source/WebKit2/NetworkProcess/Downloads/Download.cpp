@@ -41,10 +41,13 @@
 
 using namespace WebCore;
 
+#define DOWNLOAD_LOG_ALWAYS(...) LOG_ALWAYS(isAlwaysOnLoggingAllowed(), __VA_ARGS__)
+#define DOWNLOAD_LOG_ALWAYS_ERROR(...) LOG_ALWAYS_ERROR(isAlwaysOnLoggingAllowed(), __VA_ARGS__)
+
 namespace WebKit {
 
 #if USE(NETWORK_SESSION) && PLATFORM(COCOA)
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, const String& suggestedName)
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, const WebCore::SessionID& sessionID, const String& suggestedName)
 #else
 Download::Download(DownloadManager& downloadManager, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
 #endif
@@ -55,6 +58,7 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, cons
 #endif
 #if USE(NETWORK_SESSION) && PLATFORM(COCOA)
     , m_download(download)
+    , m_sessionID(sessionID)
 #endif
     , m_suggestedName(suggestedName)
 {
@@ -86,11 +90,18 @@ void Download::didReceiveAuthenticationChallenge(const AuthenticationChallenge& 
 
 void Download::didReceiveResponse(const ResourceResponse& response)
 {
+    DOWNLOAD_LOG_ALWAYS("Download task (%llu) created", downloadID().downloadID());
+
     send(Messages::DownloadProxy::DidReceiveResponse(response));
 }
 
 void Download::didReceiveData(uint64_t length)
 {
+    if (!m_hasReceivedData) {
+        DOWNLOAD_LOG_ALWAYS("Download task (%llu) started receiving data", downloadID().downloadID());
+        m_hasReceivedData = true;
+    }
+
     send(Messages::DownloadProxy::DidReceiveData(length));
 }
 
@@ -126,6 +137,8 @@ void Download::didCreateDestination(const String& path)
 
 void Download::didFinish()
 {
+    DOWNLOAD_LOG_ALWAYS("Download task (%llu) finished", downloadID().downloadID());
+
     platformDidFinish();
 
     send(Messages::DownloadProxy::DidFinish());
@@ -140,6 +153,9 @@ void Download::didFinish()
 
 void Download::didFail(const ResourceError& error, const IPC::DataReference& resumeData)
 {
+    DOWNLOAD_LOG_ALWAYS("Download task (%llu) failed, isTimeout = %d, isCancellation = %d, errCode = %d",
+        downloadID().downloadID(), error.isTimeout(), error.isCancellation(), error.errorCode());
+
     send(Messages::DownloadProxy::DidFail(error, resumeData));
 
     if (m_sandboxExtension) {
@@ -151,6 +167,8 @@ void Download::didFail(const ResourceError& error, const IPC::DataReference& res
 
 void Download::didCancel(const IPC::DataReference& resumeData)
 {
+    DOWNLOAD_LOG_ALWAYS("Download task (%llu) canceled", downloadID().downloadID());
+
     send(Messages::DownloadProxy::DidCancel(resumeData));
 
     if (m_sandboxExtension) {
@@ -168,6 +186,15 @@ IPC::Connection* Download::messageSenderConnection()
 uint64_t Download::messageSenderDestinationID()
 {
     return m_downloadID.downloadID();
+}
+
+bool Download::isAlwaysOnLoggingAllowed() const
+{
+#if USE(NETWORK_SESSION) && PLATFORM(COCOA)
+    return m_sessionID.isAlwaysOnLoggingAllowed();
+#else
+    return false;
+#endif
 }
 
 } // namespace WebKit
