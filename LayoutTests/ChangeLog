@@ -1,3 +1,16 @@
+2016-07-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Eliminate test noise from roles-computedRoleString.html
+        https://bugs.webkit.org/show_bug.cgi?id=159563
+
+        Reviewed by Chris Fleizach.
+
+        Ensure we hide all the content, as the test intends to do.
+
+        * accessibility/roles-computedRoleString-expected.txt: Updated.
+        * accessibility/roles-computedRoleString.html: Updated.
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt: Updated.
+
 2016-07-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking some mathml tests as timeouts after r202983.

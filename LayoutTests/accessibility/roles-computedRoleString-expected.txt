@@ -1,4 +1,3 @@
- X
 This tests that native elements and ARIA overrides result in the same ARIA computed role, regardless of platform.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

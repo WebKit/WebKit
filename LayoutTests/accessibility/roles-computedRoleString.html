@@ -7,6 +7,7 @@
 <!-- HTML elements in alphabetical order, excepting the need for nesting (e.g. <li> is with its <ol> and <ul> parents) -->
 <!-- This only tests elements that have an exact 1:1 ARIA role mapping, and computed role overrides. -->
 <!-- ==================================================================================================== -->
+<div id="content">
 <a data-role="link" href="#" data-note="[href]" class="ex">X</a>
 <article data-role="article" class="ex">X</article>
 <aside data-role="complementary" class="ex">X</aside>
@@ -282,6 +283,7 @@ bar" src="foo.png"                   data-role="img" alt="X" class="ex"><!-- [si
 <img role="img text" src="foo.png"   data-role="img" alt="X" class="ex">
 <img role="presentation"             data-role="img" data-note="[aria-label]" alt="X" src="foo.png" aria-label="X" class="ex"><!-- presentation with global attr should fallback to implicit role -->
 <a href="#" role="foo bar"           data-role="link" class="ex">X</a>
+</div>
 
 <div id="console"></div>
 <script>
@@ -323,11 +325,7 @@ if (window.testRunner && window.accessibilityController) {
     }
 
     // Once tests are complete, hide all the example markup.
-    examples = document.querySelectorAll(".ex");
-    for (var i = 0, c = examples.length; i < c; i++) {
-        el = examples[i];
-        el.style.display = "none";
-    }
+    document.getElementById("content").style.visibility = "hidden";
 }
 </script>
 <script src="../resources/js-test-post.js"></script>
